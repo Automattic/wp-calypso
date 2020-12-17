@@ -17,7 +17,7 @@ import {
 
 const mockSupportAlternates = jest.fn( () => Promise.resolve() );
 
-jest.mock( 'lib/wp', () => ( {
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		supportAlternates: mockSupportAlternates,
 	} ),

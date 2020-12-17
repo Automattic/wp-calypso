@@ -41,7 +41,7 @@ class SelectDropdown extends Component {
 		options: PropTypes.arrayOf(
 			PropTypes.shape( {
 				value: PropTypes.string.isRequired,
-				label: TranslatableString.isRequired,
+				label: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 				path: PropTypes.string,
 				icon: PropTypes.element,
 			} )
@@ -223,7 +223,7 @@ class SelectDropdown extends Component {
 					<ul
 						id={ 'select-submenu-' + this.instanceId }
 						className="select-dropdown__options"
-						role="menu"
+						role="listbox"
 						aria-labelledby={ 'select-dropdown-' + this.instanceId }
 						aria-expanded={ this.state.isOpen }
 					>

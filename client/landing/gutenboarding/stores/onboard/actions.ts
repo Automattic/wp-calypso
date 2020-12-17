@@ -22,7 +22,6 @@ import { SITE_STORE } from '../site';
 import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import { isEnabled } from 'calypso/config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -42,15 +41,17 @@ export interface CreateSiteActionParameters {
 	languageSlug: string;
 	bearerToken?: string;
 	visibility: number;
+	anchorFmPodcastId: string | null;
+	anchorFmEpisodeId: string | null;
 }
 
 export function* createSite( {
 	username,
 	languageSlug,
 	bearerToken = undefined,
-	visibility = isEnabled( 'coming-soon-v2' )
-		? Site.Visibility.PublicNotIndexed
-		: Site.Visibility.Private,
+	visibility = Site.Visibility.PublicNotIndexed,
+	anchorFmPodcastId = null,
+	anchorFmEpisodeId = null,
 }: CreateSiteActionParameters ) {
 	const {
 		domain,
@@ -94,14 +95,13 @@ export function* createSite( {
 			} ),
 			use_patterns: true,
 			selected_features: selectedFeatures,
-			...( ! isEnabled( 'coming-soon-v2' ) &&
-				visibility === Site.Visibility.Private && {
-					wpcom_coming_soon: 1,
-				} ),
-			...( isEnabled( 'coming-soon-v2' ) &&
-				visibility === Site.Visibility.PublicNotIndexed && {
-					wpcom_public_coming_soon: 1,
-				} ),
+			wpcom_public_coming_soon: 1,
+			...( anchorFmPodcastId && {
+				anchor_fm_podcast_id: anchorFmPodcastId,
+			} ),
+			...( anchorFmEpisodeId && {
+				anchor_fm_episode_id: anchorFmEpisodeId,
+			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};

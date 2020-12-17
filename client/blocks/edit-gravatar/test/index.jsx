@@ -23,10 +23,10 @@ import VerifyEmailDialog from 'calypso/components/email-verification/email-verif
 import DropZone from 'calypso/components/drop-zone';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
-jest.mock( 'lib/oauth-token', () => ( {
+jest.mock( 'calypso/lib/oauth-token', () => ( {
 	getToken: () => 'bearerToken',
 } ) );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'EditGravatar', () => {
 	let sandbox;

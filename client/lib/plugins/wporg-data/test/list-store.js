@@ -11,10 +11,10 @@ import actionsSpies from './mocks/actions';
 import Dispatcher from 'calypso/dispatcher';
 import PluginsListsStore from 'calypso/lib/plugins/wporg-data/list-store';
 
-jest.mock( 'config', () => ( {
+jest.mock( 'calypso/config', () => ( {
 	isEnabled: () => true,
 } ) );
-jest.mock( 'lib/plugins/wporg-data/actions', () => require( './mocks/actions' ) );
+jest.mock( 'calypso/lib/plugins/wporg-data/actions', () => require( './mocks/actions' ) );
 
 describe( 'WPORG Plugins Lists Store', () => {
 	let pluginsList;

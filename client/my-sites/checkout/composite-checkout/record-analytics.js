@@ -7,17 +7,13 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
-import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
-import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from 'calypso/config';
+import { logStashLoadErrorEventAction, logStashEventAction } from './lib/analytics';
 
-const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
 
 export default function createAnalyticsEventHandler( reduxDispatch ) {
@@ -47,44 +43,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						} )
 					);
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
-				case 'PAYMENT_COMPLETE': {
-					const total_cost = action.payload.responseCart.total_cost;
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_payment_success', {
-							coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
-							currency: action.payload.total.amount.currency,
-							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod(
-									action.payload.paymentMethodId
-								) || '',
-							total_cost,
-						} )
-					);
-					const transactionResult = select( 'wpcom' ).getTransactionResult();
-					recordPurchase( {
-						cart: {
-							total_cost,
-							currency: action.payload.total.amount.currency,
-							is_signup: action.payload.responseCart.is_signup,
-							products: action.payload.responseCart.products,
-							coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
-							total_tax: action.payload.responseCart.total_tax,
-						},
-						orderId: transactionResult.receipt_id,
-					} );
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
-							redirect_url: action.payload.url,
-							coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
-							total: action.payload.total.amount.value,
-							currency: action.payload.total.amount.currency,
-							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod(
-									action.payload.paymentMethodId
-								) || '',
-						} )
-					);
-				}
 				case 'CART_INIT_COMPLETE':
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_cart_loaded', {
@@ -445,24 +403,4 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			);
 		}
 	};
-}
-
-function logStashLoadErrorEventAction( errorType, errorMessage, additionalData = {} ) {
-	return logStashEventAction( 'composite checkout load error', {
-		...additionalData,
-		type: errorType,
-		message: errorMessage,
-	} );
-}
-
-function logStashEventAction( message, dataForLog = {} ) {
-	return logToLogstash( {
-		feature: 'calypso_client',
-		message,
-		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-		extra: {
-			env: config( 'env_id' ),
-			...dataForLog,
-		},
-	} );
 }

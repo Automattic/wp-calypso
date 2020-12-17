@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -68,6 +67,7 @@ export class PluginsBrowser extends Component {
 		recommendedPlugins: PropTypes.arrayOf( PropTypes.object ),
 		selectedSite: PropTypes.object,
 		trackPageView: PropTypes.bool,
+		hideHeader: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -452,8 +452,7 @@ export class PluginsBrowser extends Component {
 		const site = siteSlug ? '/' + siteSlug : '';
 
 		return (
-			<Button className="plugins-browser__button" compact href={ '/plugins/manage' + site }>
-				<Gridicon icon="cog" />
+			<Button className="plugins-browser__button" href={ '/plugins/manage' + site }>
 				<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
 			</Button>
 		);
@@ -475,11 +474,9 @@ export class PluginsBrowser extends Component {
 		return (
 			<Button
 				className="plugins-browser__button"
-				compact
 				onClick={ this.handleUploadPluginButtonClick }
 				href={ uploadUrl }
 			>
-				<Gridicon icon="cloud-upload" />
 				<span className="plugins-browser__button-text">{ translate( 'Install plugin' ) }</span>
 			</Button>
 		);
@@ -497,10 +494,6 @@ export class PluginsBrowser extends Component {
 			<div className="plugins-browser__main">
 				<div className="plugins-browser__main-header">
 					<div className="plugins__header-navigation">{ navigation }</div>
-				</div>
-				<div className="plugins-browser__main-buttons">
-					{ this.renderManageButton() }
-					{ this.renderUploadPluginButton() }
 				</div>
 			</div>
 		);
@@ -556,11 +549,7 @@ export class PluginsBrowser extends Component {
 
 	render() {
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
-			return (
-				<NoPermissionsError
-					title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) }
-				/>
-			);
+			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
 
 		return (
@@ -569,14 +558,25 @@ export class PluginsBrowser extends Component {
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				<DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />
+				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<SidebarNavigation />
-				<FormattedHeader
-					brandFont
-					className="plugins-browser__page-heading"
-					headerText={ this.props.translate( 'Plugin Browser' ) }
-					align="left"
-				/>
+				{ ! this.props.hideHeader && (
+					<div className="plugins-browser__header">
+						<FormattedHeader
+							brandFont
+							className="plugins-browser__page-heading"
+							headerText={ this.props.translate( 'Plugins' ) }
+							align="left"
+							subHeaderText={ this.props.translate(
+								'Plugins are extensions that add useful features to your site.'
+							) }
+						/>
+						<div className="plugins-browser__main-buttons">
+							{ this.renderManageButton() }
+							{ this.renderUploadPluginButton() }
+						</div>
+					</div>
+				) }
 				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }

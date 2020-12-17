@@ -114,7 +114,9 @@ class WPCOMNotifications extends React.Component {
 					name={ options.promotion }
 					isEnabled={ get( settings, options.promotion ) }
 					title={ translate( 'Promotions' ) }
-					description={ translate( 'Promotions and deals on upgrades.' ) }
+					description={ translate(
+						'Sales and promotions for WordPress.com products and services.'
+					) }
 				/>
 
 				<EmailCategory
@@ -160,7 +162,7 @@ class WPCOMNotifications extends React.Component {
 							name={ options.jetpack_promotion }
 							isEnabled={ get( settings, options.jetpack_promotion ) }
 							title={ translate( 'Promotions' ) }
-							description={ translate( 'Promotions and deals on upgrades.' ) }
+							description={ translate( 'Sales and promotions for Jetpack products and services.' ) }
 						/>
 
 						<EmailCategory

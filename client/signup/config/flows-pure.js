@@ -115,10 +115,10 @@ export function generateFlows( {
 		},
 
 		onboarding: {
-			steps: [ 'user', 'domains', 'plans', 'secure-your-brand' ],
+			steps: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-11-24',
+			lastModified: '2020-12-10',
 			showRecaptcha: true,
 		},
 
@@ -307,7 +307,7 @@ export function generateFlows( {
 	};
 
 	flows[ 'launch-site' ] = {
-		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+		steps: [ 'domains-launch', 'plans-launch', 'domain-upsell', 'launch' ],
 		destination: getLaunchDestination,
 		description: 'A flow to launch a private site.',
 		providesDependenciesInQuery: [ 'siteSlug' ],

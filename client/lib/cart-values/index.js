@@ -8,13 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	hasRenewalItem,
-	hasFreeTrial,
-	hasProduct,
-	hasDomainRegistration,
-	hasPlan,
-} from './cart-items';
+import { hasRenewalItem, hasFreeTrial, hasDomainRegistration, hasPlan } from './cart-items';
 import {
 	isCredits,
 	isDomainRedemption,
@@ -160,24 +154,6 @@ export function setTaxPostalCode( postalCode ) {
 	};
 }
 
-export function setTaxLocation( { postalCode, countryCode } ) {
-	return function ( cart ) {
-		return update( cart, {
-			$auto: {
-				tax: {
-					$auto: {
-						location: {
-							$auto: {
-								$set: { postal_code: postalCode, country_code: countryCode },
-							},
-						},
-					},
-				},
-			},
-		} );
-	};
-}
-
 export function canRemoveFromCart( cart, cartItem ) {
 	if ( isCredits( cartItem ) ) {
 		return false;
@@ -221,15 +197,6 @@ export function getNewMessages( previousCartValue, nextCartValue ) {
 	const hasNewServerData = new Date( nextCartTimestamp ) > new Date( previousCartTimestamp );
 
 	return hasNewServerData ? nextCartMessages : {};
-}
-
-export function isPaidForFullyInCredits( cart ) {
-	return (
-		! hasFreeTrial( cart ) &&
-		! hasProduct( cart, 'wordpress-com-credits' ) &&
-		cart.total_cost <= cart.credits &&
-		cart.total_cost > 0
-	);
 }
 
 export function isFree( cart ) {

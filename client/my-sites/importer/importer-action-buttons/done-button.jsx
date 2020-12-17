@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { flow } from 'lodash';
 import { connect } from 'react-redux';
 import page from 'page';
 
@@ -80,13 +79,10 @@ export class DoneButton extends React.PureComponent {
 	}
 }
 
-export default flow(
-	connect(
-		( state ) => ( {
-			isSignup: isImportingFromSignupFlow( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-		} ),
-		{ clearImportingFromSignupFlow, setImportOriginSiteDetails, recordTracksEvent }
-	),
-	localize
-)( DoneButton );
+export default connect(
+	( state ) => ( {
+		isSignup: isImportingFromSignupFlow( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{ clearImportingFromSignupFlow, setImportOriginSiteDetails, recordTracksEvent }
+)( localize( DoneButton ) );

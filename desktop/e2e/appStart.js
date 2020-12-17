@@ -21,7 +21,7 @@ describe( 'check app loads', function () {
 					mainWindow.webContents.send( 'is-calypso' );
 				} );
 
-				ipcMain.on( 'is-calypso-response', function ( ev, value ) {
+				ipcMain.on( 'is-calypso-response', function ( _, value ) {
 					expect( value ).to.be.true;
 					done();
 				} );

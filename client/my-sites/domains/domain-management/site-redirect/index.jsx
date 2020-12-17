@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { trim, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
@@ -98,7 +97,7 @@ class SiteRedirect extends React.Component {
 					page(
 						domainManagementRedirectSettings(
 							this.props.selectedSite.slug,
-							trim( trimEnd( this.state.redirectUrl, '/' ) ),
+							this.state.redirectUrl.replace( /\/+$/, '' ).trim(),
 							this.props.currentRoute
 						)
 					);

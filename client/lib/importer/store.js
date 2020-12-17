@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, includes, map, omit, omitBy } from 'lodash';
+import { get, includes, isEmpty, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,9 +9,6 @@ import { get, includes, map, omit, omitBy } from 'lodash';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
-	IMPORTS_FETCH,
-	IMPORTS_FETCH_FAILED,
-	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
@@ -27,6 +24,7 @@ import {
 } from 'calypso/state/action-types';
 import { appStates } from 'calypso/state/imports/constants';
 import { createReducerStore } from 'calypso/lib/store';
+import { fromApi } from './common';
 
 // This library unfortunately relies on global Redux state directly.
 // Because of this, we need to ensure that the relevant portion of state is initialized.
@@ -36,13 +34,10 @@ import 'calypso/state/imports/init';
  * Module variables
  */
 const initialState = Object.freeze( {
-	count: 0,
 	importers: {},
 	importerLocks: {},
 	api: {
 		isHydrated: false,
-		isFetching: false,
-		retryCount: 0,
 	},
 } );
 
@@ -56,36 +51,6 @@ const ImporterStore = createReducerStore( function ( state, payload ) {
 			// this is here to enable
 			// unit-testing the store
 			return initialState;
-
-		case IMPORTS_FETCH:
-			return {
-				...state,
-				api: {
-					...state.api,
-					isFetching: true,
-				},
-			};
-
-		case IMPORTS_FETCH_FAILED:
-			return {
-				...state,
-				api: {
-					...state.api,
-					isFetching: false,
-					retryCount: get( state, 'api.retryCount', 0 ) + 1,
-				},
-			};
-
-		case IMPORTS_FETCH_COMPLETED:
-			return {
-				...state,
-				api: {
-					...state.api,
-					isFetching: false,
-					isHydrated: true,
-					retryCount: 0,
-				},
-			};
 
 		case IMPORTS_IMPORT_CANCEL:
 		case IMPORTS_IMPORT_RESET:
@@ -170,21 +135,33 @@ const ImporterStore = createReducerStore( function ( state, payload ) {
 					isHydrated: true,
 				},
 			};
-			const importerId = get( action, 'importerStatus.importerId' );
 
-			if ( get( newState, [ 'importerLocks', importerId ] ) ) {
+			// The REST endpoint returns an empty `[]` array if there are no known imports.
+			// In that case we don't update the `importerStatus` map, and only mark it as hydrated.
+			if ( isEmpty( action.importerStatus ) ) {
 				return newState;
 			}
+
+			// don't receive the response if the importer is locked
+			if ( newState.importerLocks[ action.importerStatus.importId ] ) {
+				return newState;
+			}
+
+			// convert the response with `fromApi` only after we know it's not empty
+			const importerStatus = fromApi( action.importerStatus );
 
 			const activeImporters = omitBy(
 				{
 					// filter the original set of importers...
 					...newState.importers,
 					// ...and the importer being received.
-					[ importerId ]: action.importerStatus,
+					[ importerStatus.importerId ]: importerStatus,
 				},
 				( importer ) =>
-					includes( [ appStates.CANCEL_PENDING, appStates.DEFUNCT ], importer.importerState )
+					includes(
+						[ appStates.CANCEL_PENDING, appStates.DEFUNCT, appStates.EXPIRED ],
+						importer.importerState
+					)
 			);
 
 			return {
@@ -208,7 +185,6 @@ const ImporterStore = createReducerStore( function ( state, payload ) {
 		case IMPORTS_IMPORT_START:
 			return {
 				...state,
-				count: get( state, 'count', 0 ) + 1,
 				importers: {
 					...state.importers,
 					[ action.importerId ]: {

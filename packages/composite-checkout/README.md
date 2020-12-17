@@ -107,7 +107,7 @@ If not using the `onClick` function, when the `submitButton` component has been 
 
 1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to [`.SUBMITTING`](#FormStatus) and disable the form.
 2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
-3. Payment processor functions return a `Promise`. When the `Promise` resolves, call `setTransactionComplete()` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. Depending on the payment processor, some transactions might require additional actions before they are complete. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead.
+3. Payment processor functions return a `Promise`. When the `Promise` resolves, check its value (it will be one of [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)). Then call `setTransactionComplete(responseData: unknown)` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead.
 4. If the `Promise` rejects, call `setTransactionError(message: string)`.
 5. At this point the [CheckoutProvider](#CheckoutProvider) will automatically take action if the transaction status is [`.COMPLETE`](#TransactionStatus) (call [onPaymentComplete](#CheckoutProvider)), [`.ERROR`](#TransactionStatus) (display the error and re-enable the form), or [`.REDIRECTING`](#TransactionStatus) (redirect to the url). If for some reason the transaction should be cancelled, call `resetTransaction()`.
 
@@ -169,7 +169,7 @@ It has the following props.
 - `items: object[]`. An array of [line item objects](#line-items) that will be displayed in the form.
 - `total: object`. A [line item object](#line-items) with the final total to be paid.
 - `theme?: object`. A [theme object](#styles-and-themes).
-- `onPaymentComplete: ({paymentMethodId: string}) => null`. A function to call for non-redirect payment methods when payment is successful. Passed the current payment method id.
+- `onPaymentComplete: ({paymentMethodId: string | null, transactionLastResponse: unknown }) => null`. A function to call for non-redirect payment methods when payment is successful. Passed the current payment method id and the transaction response as set by the payment processor function.
 - `showErrorMessage: (string) => null`. A function that will display a message with an "error" type.
 - `showInfoMessage: (string) => null`. A function that will display a message with an "info" type.
 - `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.
@@ -180,6 +180,7 @@ It has the following props.
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to [`.LOADING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
 - `isValidating?: boolean`. If set and true, the form status will be set to [`.VALIDATING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
 - `redirectToUrl?: (url: string) => void`. Will be used by [useTransactionStatus](#useTransactionStatus) if it needs to redirect. If not set, it will change `window.location.href`.
+- `initiallySelectedPaymentMethodId?: string | null`. If set, is used to preselect a payment method when the `paymentMethods` array changes. Default is `null`, which yields no initial selection. To change the selection in code, see the [`usePaymentMethodId`](#usePaymentMethodId) hook.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
@@ -260,6 +261,16 @@ This component's props are:
 A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout). It has the following props.
 
 - `areStepsActive?: boolean`. Whether or not the set of steps is active and able to be edited. Defaults to `true`.
+
+### CheckoutSubmitButton
+
+The submit button for the form. This actually renders the submit button for the currently active payment method, but it provides the `onClick` handler to attach it to the payment processor function, a `disabled` prop when the form should be disabled, and a React Error boundary. Normally this is already rendered by [CheckoutStepArea](#CheckoutStepArea), but if you want to use it directly, you can.
+
+The props you can provide to this component are as follows.
+
+- `className?: string`. An optional className.
+- `disabled?: boolean`. The button will automatically be disabled if the [form status](#useFormStatus) is not `ready`, but you can disable it for other cases as well.
+- `onLoadError?: ( error: string ) => void`. A callback that will be called if the error boundary is triggered.
 
 ### CheckoutSummaryArea
 
@@ -364,21 +375,6 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 ### createRegistry
 
 Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
-
-### createExistingCardMethod
-
-Creates a [Payment Method](#payment-methods) object for an existing credit card. Requires passing an object with the following properties:
-
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
-- `getCountry: () => string`. A function that returns the country to use for the transaction.
-- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
-- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
-- `id: string`. A unique id for this payment method (since there are likely to be several existing cards).
-- `cardholderName: string`. The cardholder's name. Used for display only.
-- `cardExpiry: string`. The card's expiry date. Used for display only.
-- `brand: string`. The card's brand (eg: `visa`). Used for display only.
-- `last4: string`. The card's last four digits. Used for display only.
 
 ### createPayPalMethod
 
@@ -495,6 +491,10 @@ A React Hook that returns a payment processor function as passed to the `payment
 
 A React Hook that returns all the payment processor functions in a Record.
 
+### useProcessPayment
+
+A React Hook that will return the function passed to each [payment method's submitButton component](#payment-methods). Call it with a payment method ID and data for the payment processor and it will handle the transaction.
+
 ### useRegisterStore
 
 A React Hook that can be used to create a @wordpress/data store. This is the same as calling `registerStore()` but is easier to use within functional components because it will only create the store once. Only works within [CheckoutProvider](#CheckoutProvider).
@@ -523,9 +523,9 @@ A React Hook that returns an object with the following properties to be used by 
 - `previousTransactionStatus: `[`TransactionStatus.`](#TransactionStatus). The last status of the transaction.
 - `transactionError: string | null`. The most recent error message encountered by the transaction if its status is [`.ERROR`](#TransactionStatus).
 - `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is [`.REDIRECTING`](#TransactionStatus).
-- `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionComplete`.
+- `transactionLastResponse: unknown | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionComplete`.
 - `resetTransaction: () => void`. Function to change the transaction status to [`.NOT_STARTED`](#TransactionStatus).
-- `setTransactionComplete: ( object ) => void`. Function to change the transaction status to [`.COMPLETE`](#TransactionStatus) and save the response object in `transactionLastResponse`.
+- `setTransactionComplete: ( transactionResponse: unknown ) => void`. Function to change the transaction status to [`.COMPLETE`](#TransactionStatus) and save the response object in `transactionLastResponse`.
 - `setTransactionError: ( string ) => void`. Function to change the transaction status to [`.ERROR`](#TransactionStatus) and save the error in `transactionError`.
 - `setTransactionPending: () => void`. Function to change the transaction status to [`.PENDING`](#TransactionStatus).
 - `setTransactionRedirecting: ( string ) => void`. Function to change the transaction status to [`.REDIRECTING`](#TransactionStatus) and save the redirect URL in `transactionRedirectUrl`.

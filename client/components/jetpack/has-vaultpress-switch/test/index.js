@@ -11,9 +11,9 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
 } ) );
-jest.mock( 'state/ui/selectors/get-selected-site-id' );
-jest.mock( 'state/selectors/get-rewind-state' );
-jest.mock( 'state/selectors/get-site-scan-state' );
+jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
+jest.mock( 'calypso/state/selectors/get-rewind-state' );
+jest.mock( 'calypso/state/selectors/get-site-scan-state' );
 
 /**
  * Internal dependencies

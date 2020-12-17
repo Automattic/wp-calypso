@@ -9,16 +9,16 @@ jest.mock( '../controller', () => ( {
 jest.mock( '../current-plan/controller', () => ( {
 	currentPlan: jest.fn(),
 } ) );
-jest.mock( 'controller', () => ( {
+jest.mock( 'calypso/controller', () => ( {
 	makeLayout: jest.fn(),
 	render: jest.fn(),
 } ) );
-jest.mock( 'my-sites/controller', () => ( {
+jest.mock( 'calypso/my-sites/controller', () => ( {
 	navigation: jest.fn(),
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-jest.mock( 'my-sites/plans/jetpack-plans', () => jest.fn() );
+jest.mock( 'calypso/my-sites/plans/jetpack-plans', () => jest.fn() );
 
 /**
  * External dependencies

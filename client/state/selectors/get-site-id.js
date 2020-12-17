@@ -17,7 +17,7 @@ import { getSite } from 'calypso/state/sites/selectors';
  *
  * @param  {object}  state       Global state tree
  * @param  {number|string|null}  siteIdOrSlug Site ID
- * @returns {?object}             Site object
+ * @returns {?number}             Site object
  */
 export default function getSiteId( state, siteIdOrSlug ) {
 	if ( ! siteIdOrSlug ) {

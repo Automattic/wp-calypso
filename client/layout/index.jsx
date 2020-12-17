@@ -291,9 +291,14 @@ export default compose(
 			wooDnaConfig( currentQuery ).isWooDnaFlow();
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
-		const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins', 'comments' ].includes(
-			sectionName
-		);
+		const isEligibleForJITM = [
+			'home',
+			'stats',
+			'plans',
+			'themes',
+			'plugins',
+			'comments',
+		].includes( sectionName );
 		const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
 
 		return {

@@ -16,7 +16,7 @@ import { getJetpackHost } from '../../data-helper.js';
 export default class PickAPlanPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		const host = getJetpackHost();
-		const plansCssHandle = host !== 'WPCOM' ? '.selector-alt__main' : '.plans-features-main__group';
+		const plansCssHandle = host !== 'WPCOM' ? '.selector__main' : '.plans-features-main__group';
 		super( driver, By.css( plansCssHandle ), null, config.get( 'explicitWaitMS' ) * 2 );
 		this.host = host;
 	}

@@ -108,7 +108,7 @@ export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, acti
 		case INVITES_REQUEST_SUCCESS: {
 			let inviteLinks = {};
 			const currentDate = moment();
-			action.links.forEach( ( link ) => {
+			Object.values( action.links ).forEach( ( link ) => {
 				// Do not process expired links
 				if ( link.expiry && currentDate.isAfter( link.expiry * 1000 ) ) {
 					return;

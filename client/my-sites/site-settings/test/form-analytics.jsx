@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
-jest.mock( 'components/notice', () => 'Notice' );
-jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
+jest.mock( 'calypso/components/notice', () => 'Notice' );
+jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
 
 /**
  * External dependencies

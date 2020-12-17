@@ -28,14 +28,14 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
 } ) );
 
-jest.mock( 'state/ui/selectors/get-selected-site-id' );
-jest.mock( 'state/selectors/get-site-timezone-value' );
-jest.mock( 'state/selectors/get-site-gmt-offset' );
+jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
+jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
+jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 
-jest.mock( 'state/selectors/get-rewind-capabilities' );
+jest.mock( 'calypso/state/selectors/get-rewind-capabilities' );
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 
-jest.mock( 'lib/jetpack/backup-utils' );
+jest.mock( 'calypso/lib/jetpack/backup-utils' );
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,

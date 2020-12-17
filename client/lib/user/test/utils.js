@@ -7,7 +7,7 @@ import User from 'calypso/lib/user';
 
 const user = User();
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const mock = jest.fn();
 	mock.isEnabled = jest.fn();
 

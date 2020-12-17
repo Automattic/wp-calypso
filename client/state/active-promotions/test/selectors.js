@@ -1,4 +1,4 @@
-jest.mock( 'lib/plans/constants', () => ( {
+jest.mock( 'calypso/lib/plans/constants', () => ( {
 	GROUP_WPCOM: 'GROUP_WPCOM',
 	GROUP_JETPACK: 'GROUP_JETPACK',
 

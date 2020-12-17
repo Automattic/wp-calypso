@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
@@ -25,6 +25,8 @@ type Props = {
 };
 
 const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) => {
+	const { __ } = useI18n();
+
 	const { features, featuresByType, plans } = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlansDetails( locale )
 	);

@@ -14,11 +14,15 @@ import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
-import { BillingHistoryList } from 'calypso/me/billing-history/main';
+import { BillingHistoryContent } from 'calypso/me/purchases/billing-history/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
-import { ReceiptBody, ReceiptPlaceholder, ReceiptTitle } from 'calypso/me/billing-history/receipt';
+import {
+	ReceiptBody,
+	ReceiptPlaceholder,
+	ReceiptTitle,
+} from 'calypso/me/purchases/billing-history/receipt';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -79,7 +83,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logBillingHistoryError }
 			>
-				<BillingHistoryList
+				<BillingHistoryContent
 					siteId={ selectedSiteId }
 					getReceiptUrlFor={ getReceiptUrlForReceiptId }
 				/>

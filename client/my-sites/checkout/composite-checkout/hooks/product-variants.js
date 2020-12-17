@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
+import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
 import debugFactory from 'debug';
 
 /**
@@ -21,7 +22,6 @@ import {
 	TERM_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import { myFormatCurrency } from 'calypso/blocks/subscription-length-picker';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 
@@ -216,3 +216,11 @@ const DoNotPayThis = styled.span`
 		margin-left: 8px;
 	}
 `;
+
+function myFormatCurrency( price, code, options = {} ) {
+	const precision = CURRENCIES[ code ].precision;
+	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
+
+	const hasCents = Math.abs( price % 1 ) >= EPSILON;
+	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
+}

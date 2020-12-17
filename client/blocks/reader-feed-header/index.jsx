@@ -25,6 +25,7 @@ import { isFollowing } from 'calypso/state/reader/follows/selectors';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import Gridicon from 'calypso/components/gridicon';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -52,6 +53,8 @@ class FeedHeader extends Component {
 	};
 
 	markAllAsSeen = () => {
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' );
+
 		this.props.requestMarkAllAsSeen( {
 			identifier: this.props.streamKey,
 			feedIds: [ this.props.feed.feed_ID ],
@@ -155,5 +158,5 @@ export default connect(
 		following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 	} ),
-	{ requestMarkAllAsSeen }
+	{ requestMarkAllAsSeen, recordReaderTracksEvent }
 )( localize( FeedHeader ) );

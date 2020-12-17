@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { trim, initial, flatMap } from 'lodash';
+import { trim, flatMap } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classnames from 'classnames';
@@ -140,17 +140,15 @@ class SearchStream extends React.Component {
 		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
-		const suggestionList = initial(
-			flatMap( suggestions, ( suggestion ) => [
-				<Suggestion
-					suggestion={ suggestion.text }
-					source="search"
-					sort={ sortOrder === 'date' ? sortOrder : undefined }
-					railcar={ suggestion.railcar }
-				/>,
-				', ',
-			] )
-		);
+		const suggestionList = flatMap( suggestions, ( suggestion ) => [
+			<Suggestion
+				suggestion={ suggestion.text }
+				source="search"
+				sort={ sortOrder === 'date' ? sortOrder : undefined }
+				railcar={ suggestion.railcar }
+			/>,
+			', ',
+		] ).slice( 0, -1 );
 
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (

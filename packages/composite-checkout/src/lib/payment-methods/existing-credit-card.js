@@ -27,7 +27,7 @@ export function createExistingCardMethod( {
 	storedDetailsId,
 	paymentMethodToken,
 	paymentPartnerProcessorId,
-	stripeConfiguration,
+	activePayButtonText = undefined,
 } ) {
 	debug( 'creating a new existing credit card payment method', {
 		id,
@@ -49,11 +49,11 @@ export function createExistingCardMethod( {
 		),
 		submitButton: (
 			<ExistingCardPayButton
-				stripeConfiguration={ stripeConfiguration }
 				cardholderName={ cardholderName }
 				storedDetailsId={ storedDetailsId }
 				paymentMethodToken={ paymentMethodToken }
 				paymentPartnerProcessorId={ paymentPartnerProcessorId }
+				activeButtonText={ activePayButtonText }
 			/>
 		),
 		inactiveContent: (
@@ -104,11 +104,11 @@ const CardHolderName = styled.span`
 function ExistingCardPayButton( {
 	disabled,
 	onClick,
-	stripeConfiguration,
 	cardholderName,
 	storedDetailsId,
 	paymentMethodToken,
 	paymentPartnerProcessorId,
+	activeButtonText = undefined,
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
@@ -122,30 +122,32 @@ function ExistingCardPayButton( {
 				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
 				onClick( 'existing-card', {
 					items,
-					total,
 					name: cardholderName,
 					storedDetailsId,
 					paymentMethodToken,
 					paymentPartnerProcessorId,
-					stripeConfiguration,
 				} );
 			} }
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ total }
+				activeButtonText={ activeButtonText }
+			/>
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
 }

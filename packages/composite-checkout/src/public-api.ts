@@ -7,6 +7,7 @@ import PaymentLogo from './lib/payment-methods/payment-logo';
 import { CheckoutProvider } from './components/checkout-provider';
 import useMessages from './components/use-messages';
 import useEvents from './components/use-events';
+import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
 	Checkout,
 	CheckoutStep,
@@ -80,6 +81,7 @@ import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 } from './lib/payment-processors';
+import useProcessPayment from './components/use-process-payment';
 import RadioButton from './components/radio-button';
 import checkoutTheme from './lib/theme';
 export * from './types';
@@ -101,6 +103,7 @@ export {
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutSteps,
+	CheckoutSubmitButton,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
 	MainContentWrapper,
@@ -153,6 +156,7 @@ export {
 	usePaymentMethodId,
 	usePaymentProcessor,
 	usePaymentProcessors,
+	useProcessPayment,
 	useRegisterStore,
 	useRegistry,
 	useSelect,

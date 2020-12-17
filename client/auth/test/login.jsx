@@ -23,7 +23,7 @@ jest.mock( '../login-request', () => ( {
 	errorTypes: {},
 } ) );
 
-jest.mock( 'lib/analytics/ga', () => ( {
+jest.mock( 'calypso/lib/analytics/ga', () => ( {
 	gaRecordEvent: () => {},
 } ) );
 

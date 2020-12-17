@@ -19,9 +19,9 @@ import { shallow } from 'enzyme';
  */
 import { Theme } from '../';
 
-jest.mock( 'components/popover/menu', () => 'components--popover--menu' );
-jest.mock( 'components/popover/menu-item', () => 'components--popover--menu-item' );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/components/popover/menu', () => 'components--popover--menu' );
+jest.mock( 'calypso/components/popover/menu-item', () => 'components--popover--menu-item' );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'Theme', () => {
 	let props;

@@ -7,22 +7,12 @@ import { parse } from 'url'; // eslint-disable-line no-restricted-imports
  * Internal dependencies
  */
 import {
-	hasRenewalItem,
-	getRenewalItems,
-	hasDomainRegistration,
-	hasDomainMapping,
-	hasProduct,
-} from 'calypso/lib/cart-values/cart-items';
-import { managePurchase } from 'calypso/me/purchases/paths';
-import {
 	UPGRADE_INTENT_PLUGINS,
 	UPGRADE_INTENT_INSTALL_PLUGIN,
 	UPGRADE_INTENT_THEMES,
 	UPGRADE_INTENT_INSTALL_THEME,
 } from 'calypso/lib/checkout/constants';
 import { decodeURIComponentIfValid, isExternal } from 'calypso/lib/url';
-import { domainManagementEdit } from '../../my-sites/domains/paths';
-import { isDomainRegistration } from '../products-values';
 
 const isValidValue = ( url ) => typeof url === 'string' && url;
 
@@ -68,61 +58,6 @@ export function getValidDeepRedirectTo( redirectTo ) {
 	) {
 		return redirectChain[ redirectChain.length - 1 ];
 	}
-}
-
-export function getExitCheckoutUrl(
-	cart,
-	siteSlug,
-	upgradeIntent,
-	redirectTo,
-	returnToBlockEditor,
-	returnToHome,
-	previousPath
-) {
-	let url = '/plans/';
-
-	if ( returnToBlockEditor ) {
-		return `/page/${ siteSlug }/home`;
-	}
-
-	if ( returnToHome ) {
-		return `/home/${ siteSlug }`;
-	}
-
-	if ( hasRenewalItem( cart ) ) {
-		const firstRenewalItem = getRenewalItems( cart )[ 0 ];
-		const { purchaseId, purchaseDomain } = firstRenewalItem.extra;
-		const siteName = siteSlug || purchaseDomain;
-
-		if ( isDomainRegistration( firstRenewalItem ) ) {
-			const domainManagementPage = domainManagementEdit( siteName, firstRenewalItem.meta );
-
-			if ( previousPath && previousPath.startsWith( domainManagementPage ) ) {
-				return domainManagementPage;
-			}
-		}
-
-		return managePurchase( siteName, purchaseId );
-	}
-
-	if ( isValidUpgradeIntent( upgradeIntent ) ) {
-		const finalRedirectTo = getValidDeepRedirectTo( redirectTo );
-		if ( finalRedirectTo ) {
-			return finalRedirectTo;
-		}
-	}
-
-	if ( hasDomainRegistration( cart ) ) {
-		url = '/domains/add/';
-	} else if ( hasDomainMapping( cart ) ) {
-		url = '/domains/add/mapping/';
-	} else if ( hasProduct( cart, 'offsite_redirect' ) ) {
-		url = '/domains/add/site-redirect/';
-	} else if ( hasProduct( cart, 'premium_theme' ) ) {
-		url = '/themes/';
-	}
-
-	return siteSlug ? url + siteSlug : url;
 }
 
 export { getCreditCardType, validatePaymentDetails } from './validation';

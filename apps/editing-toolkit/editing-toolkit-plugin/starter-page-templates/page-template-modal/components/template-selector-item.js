@@ -14,7 +14,8 @@ const TemplateSelectorItem = ( props ) => {
 		id,
 		value,
 		onSelect,
-		label,
+		title,
+		description,
 		useDynamicPreview = false,
 		staticPreviewImg,
 		staticPreviewImgAlt = '',
@@ -22,7 +23,7 @@ const TemplateSelectorItem = ( props ) => {
 		isSelected,
 	} = props;
 
-	if ( isNil( id ) || isNil( label ) || isNil( value ) ) {
+	if ( isNil( id ) || isNil( title ) || isNil( value ) ) {
 		return null;
 	}
 
@@ -41,9 +42,7 @@ const TemplateSelectorItem = ( props ) => {
 		/>
 	);
 
-	const labelId = `label-${ id }-${ value }`;
-
-	const handleLabelClick = () => {
+	const handleClick = () => {
 		onSelect( value );
 	};
 
@@ -54,8 +53,8 @@ const TemplateSelectorItem = ( props ) => {
 				'is-selected': isSelected,
 			} ) }
 			value={ value }
-			onClick={ handleLabelClick }
-			aria-labelledby={ `${ id } ${ labelId }` }
+			onClick={ handleClick }
+			aria-label={ description }
 		>
 			<span className="template-selector-item__preview-wrap">{ innerPreview }</span>
 		</button>

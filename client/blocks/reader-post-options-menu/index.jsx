@@ -37,6 +37,7 @@ import {
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -166,6 +167,8 @@ class ReaderPostOptionsMenu extends React.Component {
 			return;
 		}
 
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_seen_clicked' );
+
 		const feedId = post.feed_ID;
 		let postIds = [ post.ID ];
 		let feedItemIds = [ post.feed_item_ID ];
@@ -205,6 +208,8 @@ class ReaderPostOptionsMenu extends React.Component {
 		if ( ! post ) {
 			return;
 		}
+
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_unseen_clicked' );
 
 		const feedId = post.feed_ID;
 		let postIds = [ post.ID ];
@@ -372,5 +377,6 @@ export default connect(
 		requestMarkAsUnseen,
 		requestMarkAsSeenBlog,
 		requestMarkAsUnseenBlog,
+		recordReaderTracksEvent,
 	}
 )( localize( ReaderPostOptionsMenu ) );

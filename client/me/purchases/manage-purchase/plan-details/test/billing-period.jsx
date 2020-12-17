@@ -37,11 +37,11 @@ const props = {
 	moment,
 };
 
-jest.mock( 'lib/cart-values/cart-items', () => ( {
+jest.mock( 'calypso/lib/cart-values/cart-items', () => ( {
 	planItem: jest.fn(),
 } ) );
 
-jest.mock( 'lib/cart/actions', () => ( {
+jest.mock( 'calypso/lib/cart/actions', () => ( {
 	addItem: jest.fn(),
 } ) );
 

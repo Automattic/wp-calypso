@@ -918,6 +918,25 @@ Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 };
 
 /**
+ * Assign a stored payment method to a subscription.
+ *
+ * @param {string} subscriptionId The subscription ID (a.k.a. purchase ID) to be assigned
+ * @param {string} stored_details_id The payment method ID to assign
+ * @param {Function} [fn] The callback function
+ */
+Undocumented.prototype.assignPaymentMethod = function ( subscriptionId, stored_details_id, fn ) {
+	debug( '/upgrades/assign-payment-method query', { subscriptionId, stored_details_id } );
+	return this.wpcom.req.post(
+		{
+			path: '/upgrades/' + subscriptionId + '/assign-payment-method',
+			body: { stored_details_id },
+			apiVersion: '1',
+		},
+		fn
+	);
+};
+
+/**
  * Return a list of third-party services that WordPress.com can integrate with for a specific site
  *
  * @param {number|string} siteId The site ID or domain

@@ -18,7 +18,7 @@ const testSiteId = 5089392;
 describe( 'EmbedDialog', () => {
 	let EmbedDialog;
 	beforeAll( () => {
-		jest.mock( 'lib/wp', () => ( {
+		jest.mock( 'calypso/lib/wp', () => ( {
 			undocumented: () => ( {
 				site: () => ( {
 					embeds: () => {},

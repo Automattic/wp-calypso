@@ -5,7 +5,7 @@ import { viewStream } from '../actions';
 import { watermarks } from '../reducer';
 import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 
-jest.mock( 'lib/warn', () => () => {} );
+jest.mock( 'calypso/lib/warn', () => () => {} );
 
 const streamKey = 'special-chicken-stream';
 const mark = Date.now();

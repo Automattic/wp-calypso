@@ -56,7 +56,6 @@ import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import WebPreview from 'calypso/components/web-preview';
 import { getFirstConflictingPlugin } from 'calypso/lib/seo';
-import { isEnabled } from 'calypso/config';
 
 /**
  * Style dependencies
@@ -319,8 +318,9 @@ export class SeoForm extends React.Component {
 							type: TYPE_BUSINESS,
 						} ),
 			  };
-		// To ensure two Coming Soon badges don't appear while we introduce public coming soon
-		const isPublicComingSoon = isEnabled( 'coming-soon-v2' ) && ! isSitePrivate && siteIsComingSoon;
+
+		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
+		const isPublicComingSoon = ! isSitePrivate && siteIsComingSoon;
 
 		return (
 			<div>
@@ -333,12 +333,6 @@ export class SeoForm extends React.Component {
 						showDismiss={ false }
 						text={ ( function () {
 							if ( isSitePrivate ) {
-								if ( siteIsComingSoon ) {
-									return translate(
-										"SEO settings aren't recognized by search engines while your site is Coming Soon."
-									);
-								}
-
 								return translate(
 									"SEO settings aren't recognized by search engines while your site is Private."
 								);

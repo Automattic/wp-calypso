@@ -222,7 +222,7 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
-		asyncRequire( 'lib/network-connection', ( networkConnection ) =>
+		asyncRequire( 'calypso/lib/network-connection', ( networkConnection ) =>
 			networkConnection.init( reduxStore )
 		);
 	}
@@ -389,7 +389,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'dev/test-helper' ) &&
 		document.querySelector( '.environment.is-tests' )
 	) {
-		asyncRequire( 'lib/abtest/test-helper', ( testHelper ) => {
+		asyncRequire( 'calypso/lib/abtest/test-helper', ( testHelper ) => {
 			testHelper( document.querySelector( '.environment.is-tests' ) );
 		} );
 	}
@@ -397,7 +397,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )
 	) {
-		asyncRequire( 'lib/preferences-helper', ( prefHelper ) => {
+		asyncRequire( 'calypso/lib/preferences-helper', ( prefHelper ) => {
 			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
 		} );
 	}
@@ -405,7 +405,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		config.isEnabled( 'dev/features-helper' ) &&
 		document.querySelector( '.environment.is-features' )
 	) {
-		asyncRequire( 'lib/features-helper', ( featureHelper ) => {
+		asyncRequire( 'calypso/lib/features-helper', ( featureHelper ) => {
 			featureHelper( document.querySelector( '.environment.is-features' ) );
 		} );
 	}

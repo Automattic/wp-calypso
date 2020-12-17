@@ -15,22 +15,22 @@ import { MySitesSidebar } from '..';
 import config from 'calypso/config';
 import { abtest } from 'calypso/lib/abtest';
 
-jest.mock( 'lib/user', () => () => null );
-jest.mock( 'lib/user/index', () => () => {} );
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/user', () => () => null );
+jest.mock( 'calypso/lib/user/index', () => () => {} );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: jest.fn( () => {
 		return 'sidebarUpsells';
 	} ),
 } ) );
-jest.mock( 'lib/cart/store/index', () => null );
-jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
-jest.mock( 'my-sites/sidebar/utils', () => ( {
+jest.mock( 'calypso/lib/cart/store/index', () => null );
+jest.mock( 'calypso/lib/analytics/track-component-view', () => 'TrackComponentView' );
+jest.mock( 'calypso/my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const configMock = () => '';
 	configMock.isEnabled = jest.fn( () => true );
 	return configMock;
@@ -125,6 +125,104 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.html() ).toEqual( null );
+		} );
+	} );
+
+	describe( 'MySitesSidebar.woocommerce()', () => {
+		const defaultProps = {
+			site: {},
+			siteSuffix: '/mysite.com',
+			translate: ( x ) => x,
+		};
+
+		beforeEach( () => {
+			config.isEnabled.mockImplementation( () => true );
+		} );
+
+		test( 'Should return null item if woocommerce/store-deprecated is disabled', () => {
+			config.isEnabled.mockImplementation(
+				( feature ) => feature !== 'woocommerce/store-deprecated' // Only disable this one feature
+			);
+			const Sidebar = new MySitesSidebar( {
+				canUserUserStore: true,
+				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null item if site has Personal plan', () => {
+			const Sidebar = new MySitesSidebar( {
+				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'personal',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null item if site has eCommerce plan', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseStore: true,
+				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'ecommerce-bundle',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null item if site has Business plan and user cannot use store', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseStore: false,
+				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return WooCommerce menu item if site has Business plan and user can use store', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseStore: true,
+				...defaultProps,
+				site: {
+					options: {
+						admin_url: 'http://test.com/wp-admin/',
+					},
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).not.toEqual( null );
+			expect( wrapper.props().link ).toEqual( 'http://test.com/wp-admin/admin.php?page=wc-admin' );
 		} );
 	} );
 

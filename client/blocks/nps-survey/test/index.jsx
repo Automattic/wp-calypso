@@ -18,9 +18,9 @@ jest.mock( 'react-redux', () => ( {
 	connect: () => () => {},
 } ) );
 
-jest.mock( 'state/nps-survey/actions' );
-jest.mock( 'state/analytics/actions' );
-jest.mock( 'state/notices/actions' );
+jest.mock( 'calypso/state/nps-survey/actions' );
+jest.mock( 'calypso/state/analytics/actions' );
+jest.mock( 'calypso/state/notices/actions' );
 
 describe( 'NpsSurvey', () => {
 	const mockedProps = {

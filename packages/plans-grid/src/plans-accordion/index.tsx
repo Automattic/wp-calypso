@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import { useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 import { Button, SVG, Path } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
@@ -47,6 +47,8 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	disabledPlans,
 	locale,
 } ) => {
+	const { __ } = useI18n();
+
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
 

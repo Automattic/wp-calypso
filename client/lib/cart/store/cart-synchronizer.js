@@ -2,8 +2,6 @@
  * External dependencies
  */
 import { assign, flowRight, flow, get } from 'lodash';
-import Dispatcher from 'calypso/dispatcher';
-import { TRANSACTION_STEP_SET } from 'calypso/lib/transaction/action-types';
 import debugFactory from 'debug';
 
 /**
@@ -67,24 +65,9 @@ function CartSynchronizer( cartKey, wpcom ) {
 	this._activeRequest = null;
 	this._queuedChanges = null;
 	this._paused = false;
-
-	this.dispatchToken = Dispatcher.register( this.handleDispatch.bind( this ) );
 }
 
 Emitter( CartSynchronizer.prototype );
-
-CartSynchronizer.prototype.handleDispatch = function ( { action } ) {
-	switch ( action.type ) {
-		case TRANSACTION_STEP_SET:
-			if ( action.step.first && ! action.step.last ) {
-				this.pause();
-			}
-
-			if ( action.step.last && ! action.step.first ) {
-				this.resume();
-			}
-	}
-};
 
 CartSynchronizer.prototype.update = function ( changeFunction ) {
 	if ( ! this._hasLoadedFromServer ) {

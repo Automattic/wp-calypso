@@ -13,7 +13,14 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useLangRouteParam, usePath, Step, useCurrentStep } from '../../path';
+import {
+	useLangRouteParam,
+	usePath,
+	Step,
+	useCurrentStep,
+	useAnchorFmPodcastId,
+	useIsAnchorFm,
+} from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
@@ -43,6 +50,8 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
 	const isMobile = useViewportMatch( 'small', '<' );
+	const anchorFmPodcastId = useAnchorFmPodcastId();
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	const closeModal = () => {
 		clearErrors();
@@ -159,7 +168,11 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
+		isAnchorFmSignup
+			? `${ window.location.origin }/new${ makePath(
+					Step.IntentGathering
+			  ) }?new&anchor_podcast=${ anchorFmPodcastId }`
+			: `${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
 	);
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
@@ -167,7 +180,11 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	return (
 		<Modal
 			className={ 'signup-form' }
-			title={ __( 'Save your progress' ) }
+			title={
+				isAnchorFmSignup
+					? __( 'Create your podcast site with WordPress.com' )
+					: __( 'Save your progress' )
+			}
 			onRequestClose={ closeModal }
 			focusOnMount={ false }
 			isDismissible={ false }
@@ -178,12 +195,20 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			<SignupFormHeader onRequestClose={ closeModal } />
 
 			<div className="signup-form__body">
-				<h1 className="signup-form__title">{ __( 'Save your progress' ) }</h1>
+				<h1 className="signup-form__title">
+					{ isAnchorFmSignup
+						? __( 'Create your podcast site with WordPress.com' )
+						: __( 'Save your progress' ) }
+				</h1>
 
 				<form onSubmit={ handleSignUp }>
 					<fieldset className="signup-form__fieldset">
 						<legend className="signup-form__legend">
-							<p>{ __( 'Enter an email and password to save your progress and continue.' ) }</p>
+							<p>
+								{ isAnchorFmSignup
+									? __( 'Create a WordPress.com account and start creating your free site.' )
+									: __( 'Enter an email and password to save your progress and continue.' ) }
+							</p>
 						</legend>
 
 						<TextControl

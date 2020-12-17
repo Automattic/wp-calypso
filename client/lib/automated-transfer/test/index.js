@@ -1,15 +1,15 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const defaultExport = jest.fn();
 	defaultExport.isEnabled = jest.fn();
 	defaultExport.default = jest.fn();
 	return defaultExport;
 } );
 
-jest.mock( 'lib/site/utils', () => ( {
+jest.mock( 'calypso/lib/site/utils', () => ( {
 	userCan: jest.fn(),
 } ) );
 

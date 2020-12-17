@@ -12,20 +12,20 @@ import { isEnabled } from 'calypso/config';
 import { PLAN_ECOMMERCE } from '../../../../lib/plans/constants';
 
 let mockGSuiteCountryIsValid = true;
-jest.mock( 'lib/user', () =>
+jest.mock( 'calypso/lib/user', () =>
 	jest.fn( () => ( {
 		get: () => ( { is_valid_google_apps_country: mockGSuiteCountryIsValid } ),
 	} ) )
 );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn();
 	return mock;
 } );
 
 // Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: jest.fn( ( name ) => {
 		if ( 'conciergeUpsellDial' === name ) {
 			return 'offer';
@@ -122,6 +122,26 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/:receiptId' );
+	} );
+
+	// This test is for the A/B test defined in https://wp.me/pbxNRc-B0.
+	it( 'redirects to the premium plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'personal-bundle',
+				},
+			],
+		};
+		// Note: This requires the user to be assigned to the treatment of the premium bump A/B test
+		const shouldShowOneClickTreatment = true;
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			shouldShowOneClickTreatment,
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/premium/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {

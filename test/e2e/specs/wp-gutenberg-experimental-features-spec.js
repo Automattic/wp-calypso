@@ -26,6 +26,8 @@ const EXPERIMENTAL_FEATURES = {
 	'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
 	'@wordpress/date': [ '__experimentalGetSettings' ],
 	'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
+	'@wordpress/components': [ '__experimentalNavigationBackButton' ],
+	'@wordpress/edit-site': [ '__experimentalMainDashboardButton' ],
 };
 
 /**

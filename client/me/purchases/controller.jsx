@@ -15,7 +15,7 @@ import ConfirmCancelDomain from './confirm-cancel-domain';
 import Main from 'calypso/components/main';
 import ManagePurchase from './manage-purchase';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import PurchasesHeader from './purchases-list/header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import PurchasesList from './purchases-list';
 import { concatTitle } from 'calypso/lib/react-helpers';
 import { setDocumentHeadTitle } from 'calypso/state/document-head/actions';
@@ -38,7 +38,7 @@ function noSites( context, analyticsPath ) {
 	context.primary = (
 		<Main className="purchases__no-site is-wide-layout">
 			<PageViewTracker path={ analyticsPath } title="Purchases > No Sites" />
-			<PurchasesHeader section={ 'purchases' } />
+			<PurchasesNavigation section={ 'purchases' } />
 			<NoSitesMessage />
 		</Main>
 	);

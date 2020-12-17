@@ -1,5 +1,5 @@
-jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
-jest.mock( 'my-sites/plan-features', () => 'plan-features' );
+jest.mock( 'calypso/signup/step-wrapper', () => 'step-wrapper' );
+jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 
 /**
  * External dependencies

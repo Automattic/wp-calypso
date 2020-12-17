@@ -36,7 +36,6 @@ const stepNameToModuleName = {
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',
 	'rewind-form-creds': 'rewind-form-creds',
-	'secure-your-brand': 'secure-your-brand',
 	'site-or-domain': 'site-or-domain',
 	'site-picker': 'site-picker',
 	'site-style': 'site-style',
@@ -67,6 +66,7 @@ const stepNameToModuleName = {
 	passwordless: 'passwordless',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
+	'domain-upsell': 'domain-upsell',
 };
 
 export function getStepModuleName( stepName ) {
