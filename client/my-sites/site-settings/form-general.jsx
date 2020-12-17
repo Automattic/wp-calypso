@@ -41,7 +41,6 @@ import { preventWidows } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -698,7 +697,6 @@ const connectComponent = connect(
 		return {
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			isComingSoon: isSiteComingSoon( state, siteId ),
-			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
