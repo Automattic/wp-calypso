@@ -35,6 +35,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getPlan, isWpComPlan } from 'calypso/lib/plans';
 import getIntervalTypeForTerm from 'calypso/lib/plans/get-interval-type-for-term';
 import { isMonthly } from 'calypso/lib/plans/constants';
+import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 class Plans extends React.Component {
 	static propTypes = {
@@ -108,6 +109,7 @@ class Plans extends React.Component {
 			customerType,
 			isWPForTeamsSite,
 			hasWpcomMonthlyPlan,
+			showTreatmentPlansReorderTest,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
@@ -156,6 +158,7 @@ class Plans extends React.Component {
 										discountEndDate={ this.props.discountEndDate }
 										site={ selectedSite }
 										plansWithScroll={ false }
+										showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 									/>
 								) }
 								<PerformanceTrackerStop />
@@ -189,5 +192,6 @@ export default connect( ( state ) => {
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 		hasWpcomMonthlyPlan:
 			isWpComPlan( currentPlan?.productSlug ) && isMonthly( currentPlan?.productSlug ),
+		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
