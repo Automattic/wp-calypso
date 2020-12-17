@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, stubTrue } from 'lodash';
+import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, stubTrue, omit } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
 import { __, sprintf } from '@wordpress/i18n';
@@ -292,7 +292,16 @@ class PageTemplateModal extends Component {
 			}
 		}
 
-		return templateGroups;
+		return this.sortGroupsNames( templateGroups );
+	};
+
+	sortGroupsNames = ( groups ) => {
+		return Object.keys( groups )
+			.sort()
+			.reduce( ( result, key ) => {
+				result[ key ] = groups[ key ];
+				return result;
+			}, {} );
 	};
 
 	getTemplatesForGroup = ( groupName ) => {
@@ -325,7 +334,10 @@ class PageTemplateModal extends Component {
 	};
 
 	renderTemplateGroups = () => {
-		const groups = this.getTemplateGroups();
+		const unfilteredGroups = this.getTemplateGroups();
+		const groups = ! this.props.isFrontPage
+			? unfilteredGroups
+			: omit( unfilteredGroups, 'home-page' );
 
 		if ( ! groups ) {
 			return null;
@@ -338,6 +350,10 @@ class PageTemplateModal extends Component {
 
 		const blankGroup = this.renderTemplateGroup( 'blank', __( 'Blank', 'full-site-editing' ) );
 
+		const homePageGroup = this.props.isFrontPage
+			? this.renderTemplateGroup( 'home-page', __( 'Home Page', 'full-site-editing' ) )
+			: null;
+
 		const renderedGroups = [];
 		for ( const key in groups ) {
 			renderedGroups.push( this.renderTemplateGroup( key, groups[ key ].title ) );
@@ -347,6 +363,7 @@ class PageTemplateModal extends Component {
 			<>
 				{ currentGroup }
 				{ blankGroup }
+				{ homePageGroup }
 				{ renderedGroups }
 			</>
 		);
