@@ -11,8 +11,7 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import {
-	POPULAR_PRODUCTS_OFFERING_AB_TEST,
-	POPULAR_PRODUCTS_OFFERING_VARIANT,
+	REVERSE_PLANS_AB_TEST,
 	SWITCH_PLAN_SIDES_EXPERIMENT,
 	SWITCH_PLAN_SIDES_TREATMENT,
 } from '../experiments';
@@ -26,8 +25,6 @@ import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-i
 import { abtest } from 'calypso/lib/abtest';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from 'calypso/lib/plans/constants';
@@ -43,7 +40,7 @@ import getSiteId from 'calypso/state/selectors/get-site-id';
 /**
  * Type dependencies
  */
-import type { ProductsGridProps, SelectorProduct } from '../types';
+import type { ProductsGridProps } from '../types';
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
 import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
 
@@ -73,7 +70,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlanSlug =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
-	const tracksVariation = abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST );
+	const tracksVariation = abtest( REVERSE_PLANS_AB_TEST );
 	const exPlatVariation =
 		useSelector( ( state ) => getVariationForUser( state, SWITCH_PLAN_SIDES_EXPERIMENT ) ) || '';
 
@@ -103,21 +100,6 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 			),
 		[ duration, availableProducts, includedInPlanProducts, purchasedProducts, tracksVariation ]
 	);
-
-	let popularProducts = [] as SelectorProduct[];
-	let otherProducts = [] as SelectorProduct[];
-
-	if ( POPULAR_PRODUCTS_OFFERING_VARIANT === tracksVariation ) {
-		const allProducts = sortBy( [ ...sortedPlans, ...sortedProducts ], ( item ) =>
-			getProductPosition(
-				item.productSlug as JetpackPlanSlugs | JetpackProductSlug,
-				tracksVariation
-			)
-		);
-
-		popularProducts = allProducts.slice( 0, 3 );
-		otherProducts = allProducts.slice( 3 );
-	}
 
 	const scrollToComparison = () => {
 		if ( bundleComparisonRef.current ) {
@@ -153,11 +135,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	return (
 		<Experiment name={ SWITCH_PLAN_SIDES_EXPERIMENT }>
 			<section className="products-grid-i5__section">
-				<h2 className="products-grid-i5__section-title">
-					{ POPULAR_PRODUCTS_OFFERING_VARIANT === tracksVariation
-						? translate( 'Most Popular' )
-						: translate( 'Product Bundles' ) }
-				</h2>
+				<h2 className="products-grid-i5__section-title">{ translate( 'Product Bundles' ) }</h2>
 				<div className="products-grid-i5__filter-bar">
 					<PlansFilterBarI5
 						showDiscountMessage
@@ -172,10 +150,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					} ) }
 					ref={ planGridRef }
 				>
-					{ ( POPULAR_PRODUCTS_OFFERING_VARIANT === tracksVariation
-						? popularProducts
-						: sortedPlans
-					).map( ( product ) => (
+					{ sortedPlans.map( ( product ) => (
 						<li key={ product.iconSlug }>
 							<ProductCardI5
 								item={ product }
@@ -184,11 +159,10 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
 								isAligned={ ! isPlanRowWrapping }
-								featuredPlans={
-									POPULAR_PRODUCTS_OFFERING_VARIANT === tracksVariation
-										? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]
-										: [ PLAN_JETPACK_SECURITY_REALTIME, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]
-								}
+								featuredPlans={ [
+									PLAN_JETPACK_SECURITY_REALTIME,
+									PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+								] }
 							/>
 						</li>
 					) ) }
@@ -206,16 +180,9 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 				</div>
 			</section>
 			<section className="products-grid-i5__section">
-				<h2 className="products-grid-i5__section-title">
-					{ POPULAR_PRODUCTS_OFFERING_VARIANT === tracksVariation
-						? translate( 'More Products' )
-						: translate( 'Individual Products' ) }
-				</h2>
+				<h2 className="products-grid-i5__section-title">{ translate( 'Individual Products' ) }</h2>
 				<ul className="products-grid-i5__product-grid">
-					{ ( POPULAR_PRODUCTS_OFFERING_VARIANT === tracksVariation
-						? otherProducts
-						: sortedProducts
-					).map( ( product ) => (
+					{ sortedProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
 							<ProductCardI5
 								item={ product }
