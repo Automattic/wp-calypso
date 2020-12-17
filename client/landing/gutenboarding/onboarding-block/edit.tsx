@@ -15,7 +15,7 @@ import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
 import type { Attributes } from './types';
-import { Step, usePath, useNewQueryParam } from '../path';
+import { Step, usePath, useNewQueryParam, useIsAnchorFm } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import Features from './features';
@@ -32,6 +32,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
 	const shouldTriggerCreate = useNewQueryParam();
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	const makePath = usePath();
 
@@ -54,7 +55,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}, [ isCreatingSite, isRedirecting ] );
 
 	const getLatestStepPath = (): string => {
-		if ( canUseStyleStep() ) {
+		if ( canUseStyleStep() && ! isAnchorFmSignup ) {
 			return makePath( Step.Plans );
 		}
 
