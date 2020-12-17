@@ -15,6 +15,8 @@ import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
+	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
+	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
@@ -50,15 +52,16 @@ export const request = ( action ) => {
 	return [
 		notice,
 		tracksEvent,
+		{
+			type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
+			siteId: action.siteId,
+		},
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
 				body: { credentials, stream: true },
-
-				// TODO @azabani make this a requestDispatcher option to fully integrate with wpcom-http
-				onStreamRecord: ( record ) => debug( 'onStreamRecord: record=%o', record ),
 			},
 			{ ...action, noticeId }
 		),
@@ -199,12 +202,23 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	}
 };
 
+export const streamRecord = ( action, record ) => {
+	debug( 'onStreamRecord: record=%o', record );
+
+	return {
+		type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
+		siteId: action.siteId,
+		update: record,
+	};
+};
+
 registerHandlers( 'state/data-layer/wpcom/activity-log/update-credentials/index.js', {
 	[ JETPACK_CREDENTIALS_UPDATE ]: [
 		dispatchRequest( {
 			fetch: request,
 			onSuccess: success,
 			onError: failure,
+			onStreamRecord: streamRecord,
 		} ),
 	],
 } );

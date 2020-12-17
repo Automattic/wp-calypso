@@ -66,7 +66,7 @@ export const http = (
 		onSuccess: onSuccess || action,
 		onFailure: onFailure || action,
 		onProgress: onProgress || action,
-		onStreamRecord,
+		onStreamRecord: onStreamRecord || action,
 		options,
 	};
 };
