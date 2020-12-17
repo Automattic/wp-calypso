@@ -46,6 +46,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Patterns: Swap `can_register_pattern` logic from using a tag, to using `pattern_meta` instead (https://github.com/Automattic/wp-calypso/pull/48330)
 * NUX: New Welcome Tour Component (https://github.com/Automattic/wp-calypso/pull/47779)
 * NUX: Custom Welcome Guide for Anchor users (https://github.com/Automattic/wp-calypso/pull/48357)
+* Newspack Blocks: Update to 1.17.0 (https://github.com/Automattic/wp-calypso/pull/48450)
 
 = 2.8.14 =
 * Premium Patterns: add pink dot to indicate a premium pattern in the inserter. (https://github.com/Automattic/wp-calypso/pull/47896)
