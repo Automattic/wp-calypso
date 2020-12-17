@@ -398,18 +398,13 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		const legendLabel =
-			'blank' === groupName || 'current' === groupName
-				? groupTitle
-				: groupTitle + ' ' + __( 'Pages', 'full-site-editing' );
-
 		return (
 			<fieldset className="page-template-modal__list">
-				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
+				<legend className="page-template-modal__form-title">{ groupTitle }</legend>
 
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
-					legendLabel={ legendLabel }
+					legendLabel={ groupTitle }
 					templates={ filteredTemplatesList }
 					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }

@@ -35,7 +35,7 @@ const TemplateSelectorItem = ( props ) => {
 			? null
 			: 'https://s0.wordpress.com/mshots/v1/' +
 			  encodeURI( 'https://dotcompatterns.wordpress.com/' + value ) +
-			  '?vpw=1024&vph=1024&w=270&h=270';
+			  '?vpw=1024&vph=1024&w=500&h=500';
 
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
