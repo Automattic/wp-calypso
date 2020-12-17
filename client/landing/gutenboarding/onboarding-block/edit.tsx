@@ -46,10 +46,10 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
 	}, [ pathname ] );
 
-	// makePathState( path: StepType ) - A wrapper around makePath() that preserves location state.
+	// makePathWithState( path: StepType ) - A wrapper around makePath() that preserves location state.
 	// This uses makePath() to generate a string path, then transforms that
 	// string path into an object that also contains the location state.
-	const makePathState = React.useCallback(
+	const makePathWithState = React.useCallback(
 		( path: StepType ) => {
 			return {
 				pathname: makePath( path ),
@@ -73,14 +73,14 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 
 	const getLatestStepPath = () => {
 		if ( canUseStyleStep() && ! isAnchorFmSignup ) {
-			return makePathState( Step.Plans );
+			return makePathWithState( Step.Plans );
 		}
 
 		if ( canUseDesignStep() ) {
-			return makePathState( Step.DesignSelection );
+			return makePathWithState( Step.DesignSelection );
 		}
 
-		return makePathState( Step.IntentGathering );
+		return makePathWithState( Step.IntentGathering );
 	};
 
 	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
@@ -100,7 +100,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }
-					to={ makePathState( Step.CreateSite ) }
+					to={ makePathWithState( Step.CreateSite ) }
 				/>
 			) }
 			<Switch>
