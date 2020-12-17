@@ -22,6 +22,8 @@ import Features from './features';
 import Plans from './plans';
 import Domains from './domains';
 import Language from './language';
+import Login from './login';
+import { isEnabled } from 'calypso/config';
 
 import './colors.scss';
 import './style.scss';
@@ -123,6 +125,12 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>{ createSiteOrError() }</Route>
+
+				{ isEnabled( 'gutenboarding/social-login' ) && (
+					<Route path={ makePath( Step.Login ) }>
+						<Login />
+					</Route>
+				) }
 			</Switch>
 		</div>
 	);

@@ -76,6 +76,16 @@ export interface CreateAccountParams {
 	};
 }
 
+export interface CreateSocialAccountParams {
+	service: 'google' | 'apple';
+	id_token: string;
+	access_token?: string; // google specific
+	user_name?: string; // apple specific
+	user_email?: string; // apple specific
+	signup_flow_name?: string;
+	locale?: string;
+}
+
 export interface CreateAccountAction extends Action {
 	params?: CreateAccountParams;
 }

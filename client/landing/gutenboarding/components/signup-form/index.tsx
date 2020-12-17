@@ -31,7 +31,8 @@ import {
 } from '../../lib/analytics';
 import { localizeUrl } from '../../../../lib/i18n-utils';
 import { useTrackModal } from '../../hooks/use-track-modal';
-import config from '../../../../config';
+import config, { isEnabled } from '../../../../config';
+import LoginStep from '../../onboarding-block/login';
 
 interface Props {
 	onRequestClose: () => void;
@@ -257,6 +258,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 						</div>
 					</fieldset>
 				</form>
+				{
+					/* Temporary spot for social login button */
+					isEnabled( 'gutenboarding/social-login' ) && <LoginStep />
+				}
 			</div>
 
 			<div id="g-recaptcha"></div>
