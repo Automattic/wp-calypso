@@ -170,7 +170,7 @@ class ProfileLinksAddWordPress extends Component {
 							components: {
 								jetpackLink: (
 									<a
-										href="http://jetpack.me"
+										href="https://jetpack.me"
 										target="_blank"
 										rel="noreferrer"
 										className="profile-links-add-wordpress__jetpack-link"
