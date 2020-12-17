@@ -49,9 +49,7 @@ const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source, redir
 							<a
 								rel="noreferrer"
 								href={ localizeUrl(
-									`https://wordpress.com/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSlug }&source=${ source }${
-										redirectTo ? `&redirectTo=${ redirectTo }` : ''
-									}`
+									`https://wordpress.com/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSlug }&source=${ source }`
 								) }
 							/>
 						),
