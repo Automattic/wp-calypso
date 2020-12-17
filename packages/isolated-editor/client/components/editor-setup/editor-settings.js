@@ -48,11 +48,7 @@ export default function getEditorSettings(
 	hasFixedToolbar
 ) {
 	const disallowBlocks = getDisallowedBlocks( isoSettings.blocks );
-	console.log(
-		getAllowedBlockTypes( isoSettings.blocks, allBlockTypes ).filter(
-			( blockName ) => disallowBlocks.indexOf( blockName ) === -1
-		)
-	);
+
 	return {
 		...editorSettings,
 		hasFixedToolbar,

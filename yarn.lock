@@ -16840,36 +16840,6 @@ isobject@^4.0.0:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-4.0.0.tgz#3f1c9155e73b192022a80819bacd0343711697b0"
   integrity sha512-S/2fF5wH8SJA/kmwr6HYhK/RI/OkhD84k8ntalo0iJjZikgq1XFvR5M8NPT1x5F7fBwCG3qHfnzeP/Vh/ZxCUA==
 
-"isolated-editor@file:packages/isolated-editor":
-  version "1.0.0"
-  dependencies:
-    "@wordpress/a11y" "^2.11.0"
-    "@wordpress/api-fetch" "^3.18.0"
-    "@wordpress/base-styles" "^2.0.1"
-    "@wordpress/block-editor" "^4.3.6"
-    "@wordpress/block-library" "^2.22.6"
-    "@wordpress/blocks" "^6.20.3"
-    "@wordpress/components" "^10.0.5"
-    "@wordpress/compose" "^3.19.3"
-    "@wordpress/data" "^4.25.0"
-    "@wordpress/editor" "^9.20.6"
-    "@wordpress/element" "^2.16.0"
-    "@wordpress/format-library" "^1.22.6"
-    "@wordpress/hooks" "^2.9.0"
-    "@wordpress/i18n" "^3.14.0"
-    "@wordpress/icons" "^2.4.0"
-    "@wordpress/is-shallow-equal" "^2.1.0"
-    "@wordpress/keycodes" "^2.14.0"
-    "@wordpress/media-utils" "^1.18.0"
-    "@wordpress/reusable-blocks" "^1.0.3"
-    "@wordpress/rich-text" "^3.20.4"
-    classnames "^2.2.6"
-    lodash "^4.17.15"
-    react "^16.12.0"
-    redux-multi "^0.1.12"
-    redux-undo "^1.0.1"
-    refx "^3.1.1"
-
 isomorphic-fetch@^2.1.1, isomorphic-fetch@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/isomorphic-fetch/-/isomorphic-fetch-2.2.1.tgz#611ae1acf14f5e81f729507472819fe9733558a9"

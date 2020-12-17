@@ -178,27 +178,14 @@ class PostCommentForm extends React.Component {
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
-		const expandingAreaClasses = classNames( {
-			focused: this.state.haveFocus,
-			'expanding-area': true,
-		} );
-
-		// How auto expand works for the textarea is covered in this article:
-		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
-					<div className={ expandingAreaClasses }>
-						<pre>
-							<span>{ this.state.commentText }</span>
-							<br />
-						</pre>
-						<AutoDirection>
-							<PostCommentFormTextarea onChange={ this.handleTextChange } />
-						</AutoDirection>
-					</div>
+					<AutoDirection>
+						<PostCommentFormTextarea onChange={ this.handleTextChange } />
+					</AutoDirection>
 					<Button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }

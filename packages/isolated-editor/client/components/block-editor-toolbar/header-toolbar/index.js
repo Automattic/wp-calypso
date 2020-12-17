@@ -15,8 +15,6 @@ import { TableOfContents } from '@wordpress/editor';
 import { plus } from '@wordpress/icons';
 import { useRef } from '@wordpress/element';
 
-console.log( 'hello' );
-
 /**
  * Internal dependencies
  */

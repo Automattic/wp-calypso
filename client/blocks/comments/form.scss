@@ -16,46 +16,6 @@
 		padding: 5px 10px;
 	}
 
-	// The inner working of these styles is covered here: http://alistapart.com/article/expanding-text-areas-made-elegant
-	.expanding-area {
-		position: relative;
-		$initial-focused-height: 70px;
-
-		pre,
-		textarea {
-			max-height: 400px;
-			min-height: 33px;
-			margin: 0;
-			padding: 5px;
-			font-size: $font-body-small;
-			font-family: $serif;
-			line-height: 21px;
-
-			white-space: pre-wrap;
-			word-wrap: break-word;
-			word-break: break-word;
-		}
-
-		textarea {
-			position: absolute;
-			top: 0;
-			left: 0;
-			height: 100%;
-			resize: none;
-		}
-
-		pre {
-			border: 1px solid var( --color-neutral-light );
-			box-sizing: border-box;
-			display: block;
-			visibility: hidden;
-		}
-
-		&.focused {
-			min-height: $initial-focused-height;
-		}
-	}
-
 	button:not(.components-button) {
 		opacity: 0;
 		position: absolute;
