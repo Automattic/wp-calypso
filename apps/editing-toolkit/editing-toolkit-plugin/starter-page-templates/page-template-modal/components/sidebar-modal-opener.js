@@ -15,7 +15,7 @@ class SidebarModalOpener extends Component {
 	};
 
 	toggleTemplateModal = () => {
-		this.setState( { isOpenFromSidebar: ! this.state.isOpenFromSidebar } );
+		this.setState( state => ( { isOpenFromSidebar: ! state.isOpenFromSidebar } ) );
 	};
 
 	toggleWarningModal = () => {
