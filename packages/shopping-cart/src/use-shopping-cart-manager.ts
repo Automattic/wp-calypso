@@ -30,6 +30,7 @@ import { convertTempResponseCartToResponseCart } from './cart-functions';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
+import { createRequestCartProducts } from './create-request-cart-product';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 
@@ -84,12 +85,20 @@ export default function useShoppingCartManager( {
 	);
 
 	const addProductsToCart: AddProductsToCart = useCallback(
-		( products ) => dispatchAndWaitForValid( { type: 'CART_PRODUCTS_ADD', products } ),
+		( products ) =>
+			dispatchAndWaitForValid( {
+				type: 'CART_PRODUCTS_ADD',
+				products: createRequestCartProducts( products ),
+			} ),
 		[ dispatchAndWaitForValid ]
 	);
 
 	const replaceProductsInCart: ReplaceProductsInCart = useCallback(
-		( products ) => dispatchAndWaitForValid( { type: 'CART_PRODUCTS_REPLACE_ALL', products } ),
+		( products ) =>
+			dispatchAndWaitForValid( {
+				type: 'CART_PRODUCTS_REPLACE_ALL',
+				products: createRequestCartProducts( products ),
+			} ),
 		[ dispatchAndWaitForValid ]
 	);
 
