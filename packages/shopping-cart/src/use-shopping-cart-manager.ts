@@ -55,6 +55,13 @@ export default function useShoppingCartManager( {
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
 	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
+	const isMounted = useRef< boolean >( true );
+
+	useEffect( () => {
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( ! cartKey ) {
@@ -64,7 +71,7 @@ export default function useShoppingCartManager( {
 			debug(
 				`cart key "${ cartKey }" has changed from "${ previousCartKey.current }"; re-initializing cart`
 			);
-			hookDispatch( { type: 'CART_RELOAD' } );
+			isMounted.current && hookDispatch( { type: 'CART_RELOAD' } );
 		}
 		previousCartKey.current = cartKey;
 	}, [ cartKey, hookDispatch ] );
@@ -77,11 +84,11 @@ export default function useShoppingCartManager( {
 	const dispatchAndWaitForValid = useCallback(
 		( action ) => {
 			return new Promise< void >( ( resolve ) => {
-				hookDispatch( action );
+				isMounted.current && hookDispatch( action );
 				cartValidCallbacks.current.push( resolve );
 			} );
 		},
-		[ hookDispatch ]
+		[ hookDispatch, isMounted ]
 	);
 
 	const addProductsToCart: AddProductsToCart = useCallback(
