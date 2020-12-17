@@ -76,7 +76,6 @@ export const purchaseAddPaymentMethod = ( context, next ) => {
 export const purchaseChangePaymentMethod = ( context, next ) => {
 	context.primary = (
 		<PurchaseChangePaymentMethod
-			cardId={ context.params.cardId }
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>
