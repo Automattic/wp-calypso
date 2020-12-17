@@ -22,9 +22,10 @@ export default function getPlanFeatures(
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
 	hasRenewalInCart: boolean,
-	isMonthlyPricingTest: boolean
+	isMonthlyPricingTest: boolean,
+	planHasDomainCredit: boolean
 ): string[] {
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart;
+	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && planHasDomainCredit;
 	const productSlug = plan?.wpcom_meta?.product_slug;
 
 	if ( ! productSlug ) {

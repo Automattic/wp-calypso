@@ -307,6 +307,7 @@ export default function WPCheckout( {
 					</CheckoutSummaryTitleLink>
 					<CheckoutSummaryBody>
 						<WPCheckoutOrderSummary
+							siteId={ siteId }
 							onChangePlanLength={ changePlanLength }
 							nextDomainIsFree={ responseCart?.next_domain_is_free }
 						/>
