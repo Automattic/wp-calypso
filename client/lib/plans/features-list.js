@@ -12,11 +12,6 @@ import * as constants from './constants';
 import MaterialIcon from 'calypso/components/material-icon';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-import { abtest } from 'calypso/lib/abtest';
-import {
-	POPULAR_PRODUCTS_OFFERING_AB_TEST,
-	POPULAR_PRODUCTS_OFFERING_VARIANT,
-} from 'calypso/my-sites/plans/jetpack-plans/experiments';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 
@@ -331,7 +326,7 @@ export const FEATURES_LIST = {
 			i18n.translate( 'Free .blog Domain for one year', {
 				context: 'title',
 			} ),
-		getDescription: ( arg0, domainName ) => {
+		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
@@ -350,7 +345,7 @@ export const FEATURES_LIST = {
 			i18n.translate( 'Free domain for one year', {
 				context: 'title',
 			} ),
-		getDescription: ( arg0, domainName ) => {
+		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
@@ -1027,14 +1022,12 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
 		getIcon: () => 'lock',
 		getTitle: () =>
-			POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
-				? i18n.translate( 'All Security Daily features' )
-				: i18n.translate( '{{strong}}All Security {{em}}Daily{{/em}}{{/strong}} features', {
-						components: {
-							em: <em />,
-							strong: <strong />,
-						},
-				  } ),
+			i18n.translate( '{{strong}}All Security {{em}}Daily{{/em}}{{/strong}} features', {
+				components: {
+					em: <em />,
+					strong: <strong />,
+				},
+			} ),
 		isPlan: true,
 	},
 
@@ -1080,20 +1073,14 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_DAILY_V2,
-		getTitle: () =>
-			POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
-				? i18n.translate( 'Automated daily backups (off-site)' )
-				: i18n.translate( 'Automated daily site backups' ),
+		getTitle: () => i18n.translate( 'Automated daily site backups' ),
 	},
 
 	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
 		getTitle: () =>
 			( {
-				i5:
-					POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
-						? i18n.translate( 'Backup (real-time, off-site)' )
-						: i18n.translate( 'Automated real-time backups' ),
+				i5: i18n.translate( 'Automated real-time backups' ),
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated real-time site backups' ) ),
 	},
 
@@ -1124,10 +1111,7 @@ export const FEATURES_LIST = {
 						strong: <strong />,
 					},
 				} ),
-				i5:
-					POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
-						? i18n.translate( 'All Backup Daily features' )
-						: i18n.translate( 'Backup Daily (off-site)' ),
+				i5: i18n.translate( 'Backup Daily (off-site)' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
 				components: {
@@ -1228,10 +1212,7 @@ export const FEATURES_LIST = {
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () =>
 			( {
-				i5:
-					POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
-						? i18n.translate( 'Scan (daily, automated)' )
-						: i18n.translate( 'Scan Daily (automated)' ),
+				i5: i18n.translate( 'Scan Daily (automated)' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
 				components: {
@@ -1259,10 +1240,7 @@ export const FEATURES_LIST = {
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () =>
 			( {
-				i5:
-					POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
-						? i18n.translate( 'Scan (real-time, automated)' )
-						: i18n.translate( 'Real-time Scan (automated)' ),
+				i5: i18n.translate( 'Real-time Scan (automated)' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
 				components: {
@@ -1285,10 +1263,7 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_ANTISPAM_V2,
 		getTitle: () =>
 			( {
-				i5:
-					POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
-						? i18n.translate( 'Anti-spam ' )
-						: i18n.translate( 'Always-on spam protection' ),
+				i5: i18n.translate( 'Always-on spam protection' ),
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated spam protection' ) ),
 	},
 
@@ -1534,10 +1509,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => constants.FEATURE_SECURE_STORAGE_V2,
-		getTitle: () =>
-			POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
-				? i18n.translate( 'Unlimited site storage' )
-				: i18n.translate( 'Unlimited secure storage' ),
+		getTitle: () => i18n.translate( 'Unlimited secure storage' ),
 	},
 
 	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {
