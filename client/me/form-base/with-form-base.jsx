@@ -19,7 +19,6 @@ const withFormBase = ( WrappedComponent ) => {
 		state = {
 			redirect: false,
 			submittingForm: false,
-			changingUsername: false,
 			usernameAction: 'new',
 			showNotice: false,
 		};
