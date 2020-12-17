@@ -50,7 +50,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Experimental features we depend on are available (${ screenSize })`, function () {
+describe( `[${ host }] Experimental features we depend on are available (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	step( 'Can log in', async function () {
