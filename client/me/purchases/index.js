@@ -143,7 +143,7 @@ export default ( router ) => {
 			paths.addPaymentMethod( ':site', ':purchaseId' ),
 			sidebar,
 			siteSelection,
-			controller.addPaymentMethod,
+			controller.changePaymentMethod,
 			makeLayout,
 			clientRender
 		);
