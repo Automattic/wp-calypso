@@ -531,7 +531,7 @@ export const PageTemplatesPlugin = compose(
 	withSelect( ( select, ownProps ) => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
-		const isOpen = ownProps.isOpen || select( 'automattic/starter-page-layouts' ).isOpen();
+		const isOpen = ownProps.isPromptedFromSidebar ? ownProps.isOpen : select( 'automattic/starter-page-layouts' ).isOpen();
 		const currentBlocks = select( 'core/editor' ).getBlocks();
 		return {
 			isOpen,
