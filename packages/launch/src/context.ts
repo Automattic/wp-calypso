@@ -7,7 +7,7 @@ import { addQueryArgs } from '@wordpress/url';
 interface LaunchContext {
 	siteId: number;
 	redirectTo: ( url: string ) => void;
-	openCheckout: ( siteSlug: string, isEcommerce?: boolean ) => void;
+	openCheckout: ( siteSlug: string, isEcommerce?: boolean, onSuccessCallback?: () => void ) => void;
 	getCurrentLaunchFlowUrl: () => string | undefined;
 	flow: string;
 }

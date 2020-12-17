@@ -24,6 +24,7 @@ import type {
 } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
+import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -139,6 +140,8 @@ export default function CompositeCheckout( {
 	isNoSiteCart,
 	infoMessage,
 	isInEditor,
+	onAfterPaymentComplete,
+	isFocusedLaunch,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -155,6 +158,8 @@ export default function CompositeCheckout( {
 	isNoSiteCart?: boolean;
 	isInEditor?: boolean;
 	infoMessage?: JSX.Element;
+	onAfterPaymentComplete?: () => void;
+	isFocusedLaunch?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -600,6 +605,7 @@ export default function CompositeCheckout( {
 		feature,
 		isInEditor,
 		isComingFromUpsell,
+		isFocusedLaunch,
 	} );
 
 	if (
@@ -640,6 +646,11 @@ export default function CompositeCheckout( {
 		);
 	}
 
+	const handlePaymentComplete = ( args: PaymentCompleteCallbackArguments ) => {
+		onPaymentComplete?.( args );
+		onAfterPaymentComplete?.();
+	};
+
 	return (
 		<React.Fragment>
 			<QuerySitePlans siteId={ siteId } />
@@ -652,7 +663,7 @@ export default function CompositeCheckout( {
 			<CheckoutProvider
 				items={ itemsForCheckout }
 				total={ total }
-				onPaymentComplete={ onPaymentComplete }
+				onPaymentComplete={ handlePaymentComplete }
 				showErrorMessage={ showErrorMessage }
 				showInfoMessage={ showInfoMessage }
 				showSuccessMessage={ showSuccessMessage }

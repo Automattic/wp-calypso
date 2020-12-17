@@ -33,7 +33,9 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 
 	const { siteSubdomain } = useSiteDomains();
 
-	const { getCart, setCart } = useDispatch( SITE_STORE );
+	const { getCart, setCart, launchSite } = useDispatch( SITE_STORE );
+
+	const onSuccess = () => launchSite( siteId );
 
 	const goToCheckout = async () => {
 		// setting the cart with Launch products can be extracted
@@ -48,7 +50,7 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 		} );
 
 		// open checkout modal or redirect to /checkout only after the cart is updated
-		openCheckout( siteSubdomain?.domain || siteId.toString(), isEcommercePlan );
+		openCheckout( siteSubdomain?.domain || siteId.toString(), isEcommercePlan, onSuccess );
 	};
 
 	return {

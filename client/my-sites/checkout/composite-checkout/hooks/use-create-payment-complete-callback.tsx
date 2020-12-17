@@ -18,7 +18,12 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
  * Internal dependencies
  */
 import { infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { hasRenewalItem, getRenewalItems, hasPlan } from 'calypso/lib/cart-values/cart-items';
+import {
+	hasRenewalItem,
+	getRenewalItems,
+	hasPlan,
+	hasEcommercePlan,
+} from 'calypso/lib/cart-values/cart-items';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -62,6 +67,7 @@ export default function useCreatePaymentCompleteCallback( {
 	feature,
 	isInEditor,
 	isComingFromUpsell,
+	isFocusedLaunch,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -70,6 +76,7 @@ export default function useCreatePaymentCompleteCallback( {
 	feature?: string | undefined;
 	isInEditor?: boolean;
 	isComingFromUpsell?: boolean;
+	isFocusedLaunch?: boolean;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
@@ -191,6 +198,9 @@ export default function useCreatePaymentCompleteCallback( {
 				}
 			}
 
+			if ( isInEditor && isFocusedLaunch && ! hasEcommercePlan( responseCart ) ) {
+				return;
+			}
 			debug( 'just redirecting to', url );
 
 			if ( createUserAndSiteBeforeTransaction ) {

@@ -144,7 +144,7 @@ class CalypsoifyIframe extends Component<
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
-		cartData: {},
+		cartData: undefined,
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -152,6 +152,7 @@ class CalypsoifyIframe extends Component<
 	mediaSelectPort: MessagePort | null = null;
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
+	checkoutPort: MessagePort | null = null;
 	successfulIframeLoad = false;
 	waitForIframeToInit: ReturnType< typeof setInterval > | undefined = undefined;
 	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
@@ -165,7 +166,7 @@ class CalypsoifyIframe extends Component<
 		// a 3rd party cookie auth issue fix in place https://github.com/Automattic/jetpack/pull/16167
 		this.waitForIframeToInit = setInterval( () => {
 			if ( this.props.shouldLoadIframe ) {
-				clearInterval( this.waitForIframeToInit );
+				clearInterval( ( this.waitForIframeToInit as unknown ) as number );
 				this.waitForIframeToLoad = setTimeout( () => {
 					isDesktop
 						? this.props.notifyDesktopCannotOpenEditor(
@@ -293,7 +294,11 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
-			this.setState( { isCheckoutModalVisible: true, cartData: payload } );
+			this.checkoutPort = ports[ 0 ];
+			this.setState( {
+				isCheckoutModalVisible: true,
+				cartData: payload,
+			} );
 		}
 
 		if ( EditorActions.GetCheckoutModalStatus === action ) {
@@ -691,6 +696,22 @@ class CalypsoifyIframe extends Component<
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
 	};
 
+	handleCheckoutSuccess = () => {
+		if ( this.checkoutPort ) {
+			this.checkoutPort.postMessage( 'checkout complete' );
+
+			// this is a once-only port
+			// after sending our message we want to close it out
+			// and prevent sending more messages (which will be ignored)
+
+			this.checkoutPort.close();
+
+			this.checkoutPort = null;
+
+			this.setState( { isCheckoutModalVisible: false } );
+		}
+	};
+
 	render() {
 		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
@@ -749,6 +770,7 @@ class CalypsoifyIframe extends Component<
 				/>
 				{ isCheckoutOverlayEnabled && (
 					<AsyncLoad
+						checkoutOnSuccessCallback={ this.handleCheckoutSuccess }
 						require="calypso/blocks/editor-checkout-modal"
 						onClose={ this.closeCheckoutModal }
 						cartData={ cartData }
