@@ -5,7 +5,7 @@ import { monotonicNow } from './timing';
 // TODO: Throttle
 export async function fetchAllExperimentAssignments(
 	makeRequest: MakeRequest,
-	anonId?: string
+	anonId?: string | null
 ): Promise< [ ExperimentAssignment[], number ] > {
 	const retrievedTimestamp = monotonicNow();
 

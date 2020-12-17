@@ -31,7 +31,7 @@ export interface MakeRequest {
 }
 
 export interface GetAnonId {
-	(): string;
+	(): string | null;
 }
 
 export interface LogError {
