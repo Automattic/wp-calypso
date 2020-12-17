@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  */
 import notices from 'calypso/notices';
 import user from 'calypso/lib/user';
+import userSettings from 'calypso/lib/user-settings';
 
 const withFormBase = ( WrappedComponent ) => {
 	class EnhancedComponent extends React.Component {
@@ -21,12 +22,12 @@ const withFormBase = ( WrappedComponent ) => {
 		};
 
 		componentDidMount() {
-			this.props.userSettings.getSettings();
+			userSettings.getSettings();
 		}
 
 		componentWillUnmount() {
 			// Silently clean up unsavedSettings before unmounting
-			this.props.userSettings.unsavedSettings = {};
+			userSettings.unsavedSettings = {};
 		}
 
 		UNSAFE_componentWillReceiveProps( nextProp ) {
@@ -44,7 +45,7 @@ const withFormBase = ( WrappedComponent ) => {
 		};
 
 		showNotice() {
-			if ( this.props.userSettings.initialized && this.state.showNotice ) {
+			if ( userSettings.initialized && this.state.showNotice ) {
 				notices.clearNotices( 'notices' );
 				notices.success( this.props.translate( 'Settings saved successfully!' ) );
 				this.state.showNotice = false;
@@ -52,24 +53,24 @@ const withFormBase = ( WrappedComponent ) => {
 		}
 
 		getSetting = ( settingName ) => {
-			return this.props.userSettings.getSetting( settingName ) || '';
+			return userSettings.getSetting( settingName ) || '';
 		};
 
 		toggleSetting = ( event ) => {
 			const { name } = event.currentTarget;
-			this.props.userSettings.updateSetting( name, ! this.getSetting( name ) );
+			userSettings.updateSetting( name, ! this.getSetting( name ) );
 		};
 
 		updateSetting = ( event ) => {
 			const { name, value } = event.currentTarget;
-			this.props.userSettings.updateSetting( name, value );
+			userSettings.updateSetting( name, value );
 		};
 
 		submitForm = ( event ) => {
 			event.preventDefault();
 
 			this.setState( { submittingForm: true } );
-			this.props.userSettings.saveSettings(
+			userSettings.saveSettings(
 				function ( error ) {
 					if ( error ) {
 						// handle error case here
