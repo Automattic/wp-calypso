@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { useDispatch } from 'react-redux';
+
+/**
  * Internal dependencies
  */
 import { logToLogstash } from 'calypso/state/logstash/actions';
@@ -8,8 +13,13 @@ import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	isRedirectPaymentMethod,
 } from '../lib/translate-payment-method-names';
+import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 
-export function logStashLoadErrorEventAction( errorType, errorMessage, additionalData = {} ) {
+export function logStashLoadErrorEventAction(
+	errorType: string,
+	errorMessage: string,
+	additionalData: Record< string, string > = {}
+): ReturnType< typeof logToLogstash > {
 	return logStashEventAction( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
@@ -17,7 +27,10 @@ export function logStashLoadErrorEventAction( errorType, errorMessage, additiona
 	} );
 }
 
-export function logStashEventAction( message, dataForLog = {} ) {
+export function logStashEventAction(
+	message: string,
+	dataForLog: Record< string, string > = {}
+): ReturnType< typeof logToLogstash > {
 	return logToLogstash( {
 		feature: 'calypso_client',
 		message,
@@ -33,7 +46,11 @@ export function recordCompositeCheckoutErrorDuringAnalytics( {
 	errorObject,
 	failureDescription,
 	reduxDispatch,
-} ) {
+}: {
+	errorObject: Error;
+	failureDescription: string;
+	reduxDispatch: ReturnType< typeof useDispatch >;
+} ): void {
 	// This is a fallback to catch any errors caused by the analytics code
 	// Anything in this block should remain very simple and extremely
 	// tolerant of any kind of data. It should make no assumptions about
@@ -51,7 +68,13 @@ export function recordCompositeCheckoutErrorDuringAnalytics( {
 	);
 }
 
-export function recordTransactionBeginAnalytics( { reduxDispatch, paymentMethodId } ) {
+export function recordTransactionBeginAnalytics( {
+	reduxDispatch,
+	paymentMethodId,
+}: {
+	reduxDispatch: ReturnType< typeof useDispatch >;
+	paymentMethodId: CheckoutPaymentMethodSlug;
+} ): void {
 	try {
 		if ( isRedirectPaymentMethod( paymentMethodId ) ) {
 			reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
