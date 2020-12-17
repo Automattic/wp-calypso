@@ -34,6 +34,7 @@ import UpsellNudge, {
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
 } from './upsell-nudge';
+import CalypsoShoppingCartProvider from 'client/my-sites/checkout/calypso-shopping-cart-provider';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -175,13 +176,13 @@ export function gsuiteNudge( context, next ) {
 	}
 
 	context.primary = (
-		<CheckoutContainer purchaseId={ Number( receiptId ) }>
+		<CalypsoShoppingCartProvider>
 			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
 				selectedSiteId={ selectedSite.ID }
 			/>
-		</CheckoutContainer>
+		</CalypsoShoppingCartProvider>
 	);
 
 	next();
