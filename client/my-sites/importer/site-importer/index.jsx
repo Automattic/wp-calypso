@@ -66,6 +66,7 @@ class SiteImporter extends React.PureComponent {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		fromSite: PropTypes.string,
 	};
 
 	handleClick = () => {

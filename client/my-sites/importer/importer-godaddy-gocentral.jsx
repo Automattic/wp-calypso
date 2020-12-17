@@ -25,6 +25,7 @@ class ImporterGoDaddyGoCentral extends React.PureComponent {
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),
+		fromSite: PropTypes.string,
 	};
 
 	render() {

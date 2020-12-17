@@ -59,6 +59,7 @@ class SiteImporterInputPane extends React.Component {
 		onStartImport: PropTypes.func,
 		disabled: PropTypes.bool,
 		site: PropTypes.object,
+		fromSite: PropTypes.string,
 	};
 
 	static defaultProps = { description: null, onStartImport: noop };
