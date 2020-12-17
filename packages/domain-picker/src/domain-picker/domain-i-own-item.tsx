@@ -14,10 +14,9 @@ import { useLocalizeUrl } from '@automattic/i18n-utils';
 interface Props {
 	siteSlug: string;
 	source: string;
-	redirectTo?: string;
 }
 
-const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source, redirectTo } ) => {
+const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source } ) => {
 	const localizeUrl = useLocalizeUrl();
 
 	return (
