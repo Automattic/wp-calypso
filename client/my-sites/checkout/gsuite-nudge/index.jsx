@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, some, compact } from 'lodash';
 import page from 'page';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -19,10 +20,11 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import isEligibleForDotcomChecklist from 'calypso/state/selectors/is-eligible-for-dotcom-checklist';
-import { addItems, removeItem } from 'calypso/lib/cart/actions';
 import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import { isDotComPlan } from 'calypso/lib/products-values';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 
 /**
  * Style dependencies
@@ -41,24 +43,29 @@ export class GSuiteNudge extends React.Component {
 	};
 
 	handleAddEmailClick = ( cartItems ) => {
-		const { siteSlug, receiptId } = this.props;
+		const { siteSlug, receiptId, productsList } = this.props;
 		this.removePlanFromCart();
 
-		addItems(
-			// add `receipt_for_domain` to cartItem extras
-			cartItems.map( ( item ) => ( {
-				...item,
-				extra: { ...item.extra, receipt_for_domain: receiptId },
-			} ) )
-		);
-
-		page( `/checkout/${ siteSlug }` );
+		this.props.shoppingCartManager
+			.addProductsToCart(
+				// add `receipt_for_domain` to cartItem extras
+				cartItems
+					.map( ( item ) => ( {
+						...item,
+						extra: { ...item.extra, receipt_for_domain: receiptId },
+					} ) )
+					.map( ( item ) => fillInSingleCartItemAttributes( item, productsList ) )
+			)
+			.then( () => {
+				this.props.isMounted && page( `/checkout/${ siteSlug }` );
+			} );
 	};
 
-	removePlanFromCart() {
+	removePlanFromCart = () => {
 		const items = getAllCartItems( this.props.cart );
-		items.filter( isDotComPlan ).forEach( ( item ) => removeItem( item, false ) );
-	}
+		const filteredProducts = items.filter( isDotComPlan );
+		this.props.shoppingCartManager.replaceProductsInCart( filteredProducts );
+	};
 
 	render() {
 		const { domain, receiptId, selectedSiteId, siteSlug, siteTitle, translate } = this.props;
@@ -101,5 +108,6 @@ export default connect( ( state, props ) => {
 		siteSlug: getSiteSlug( state, props.selectedSiteId ),
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
 		isEligibleForChecklist,
+		productsList: getProductsList( state ),
 	};
-} )( localize( GSuiteNudge ) );
+} )( withShoppingCart( localize( GSuiteNudge ) ) );
