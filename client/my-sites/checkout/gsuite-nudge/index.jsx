@@ -74,7 +74,7 @@ export class GSuiteNudge extends React.Component {
 					.map( ( item ) => fillInSingleCartItemAttributes( item, productsList ) )
 			)
 			.then( () => {
-				this.props.isMounted && page( `/checkout/${ siteSlug }` );
+				this.isMounted && page( `/checkout/${ siteSlug }` );
 			} );
 	};
 
