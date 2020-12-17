@@ -47,7 +47,6 @@ export function twoStep( context, next ) {
 
 export function connectedApplications( context, next ) {
 	context.primary = React.createElement( ConnectedAppsComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
