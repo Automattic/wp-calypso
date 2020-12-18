@@ -13,7 +13,6 @@ import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/ac
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
-import CheckoutContainer from './checkout/checkout-container';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
@@ -35,7 +34,6 @@ import UpsellNudge, {
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
 } from './upsell-nudge';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
