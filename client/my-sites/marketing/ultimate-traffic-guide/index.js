@@ -15,6 +15,7 @@ import {
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isFetchingUserPurchases, getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -86,6 +87,7 @@ const SalesPage = ( { translate } ) => {
 	const isLoading = useSelector( ( state ) => isProductsListFetching( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const moment = useLocalizedMoment();
 
 	const defaultVariation = () => (
 		<>
@@ -97,7 +99,10 @@ const SalesPage = ( { translate } ) => {
 			</h2>
 			<p>
 				{ translate(
-					'We developed this 96 page guide to teach you every modern website traffic trick you need to know in 2020 and beyond.'
+					'We developed this 96 page guide to teach you every modern website traffic trick you need to know in %(currentYear)s and beyond.',
+					{
+						args: { currentYear: moment().format( 'YYYY' ) },
+					}
 				) }
 			</p>
 			<p>
