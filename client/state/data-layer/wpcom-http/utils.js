@@ -48,15 +48,6 @@ export const getHeaders = ( action ) => get( action, 'meta.dataLayer.headers', u
  */
 export const getProgress = ( action ) => get( action, 'meta.dataLayer.progress', undefined );
 
-/**
- * Returns stream record from an HTTP request action if available
- *
- * @param {object} action may contain stream record
- * @returns {*|undefined} response data if available
- */
-export const getStreamRecord = ( action ) =>
-	get( action, 'meta.dataLayer.streamRecord', undefined );
-
 const getRequestStatus = ( action ) => {
 	if ( undefined !== getError( action ) ) {
 		return 'failure';
@@ -211,7 +202,6 @@ function createRequestAction( options, action ) {
 		onSuccess = noop,
 		onError = noop,
 		onProgress = noop,
-		onStreamRecord = noop,
 		fromApi = identity,
 	} = options;
 
@@ -232,11 +222,6 @@ function createRequestAction( options, action ) {
 	const progress = getProgress( action );
 	if ( progress ) {
 		return onProgress( action, progress );
-	}
-
-	const record = getStreamRecord( action );
-	if ( record ) {
-		return onStreamRecord( action, record );
 	}
 
 	return fetch( action );
