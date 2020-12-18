@@ -155,4 +155,12 @@ export default ( router ) => {
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);
+	router( paths.addCardDetails( ':site', ':purchaseId' ), ( { params: { site, purchaseId } } ) =>
+		page.redirect( paths.addPaymentMethod( site, purchaseId ) )
+	);
+	router(
+		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
+		( { params: { site, purchaseId, cardId } } ) =>
+			page.redirect( paths.changePaymentMethod( site, purchaseId, cardId ) )
+	);
 };
