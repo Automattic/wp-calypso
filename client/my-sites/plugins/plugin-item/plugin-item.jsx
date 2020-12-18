@@ -152,10 +152,7 @@ class PluginItem extends Component {
 		const updated_versions = this.props.plugin.sites
 			.map( ( site ) => {
 				const sitePlugin = pluginsOnSites?.sites[ site.ID ];
-				if ( sitePlugin?.update?.new_version ) {
-					return sitePlugin.update.new_version;
-				}
-				return false;
+				return sitePlugin.update.new_version;
 			} )
 			.filter( ( version ) => version );
 
