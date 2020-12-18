@@ -42,10 +42,11 @@
 
 .business-tools__header-image-wrapper {
 	display: none;
+	padding: 25px 0 25px 50px;
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;
-		min-width: 400px;
+		min-width: 300px;
 	}
 
 	.business-tools__header-image {

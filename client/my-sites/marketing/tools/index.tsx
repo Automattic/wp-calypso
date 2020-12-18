@@ -27,7 +27,6 @@ import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
-import streakLogo from 'calypso/assets/images/illustrations/streak-logo.png';
 
 /**
  * Types
@@ -80,10 +79,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 
 	const handleVerblioClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_verblio_button_click' );
-	};
-
-	const handleStreakClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_streak_button_click' );
 	};
 
 	const handleStartSharingClick = () => {
@@ -215,22 +210,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						target="_blank"
 					>
 						{ translate( 'Start creating content' ) }
-					</Button>
-				</MarketingToolsFeature>
-
-				<MarketingToolsFeature
-					title={ translate( 'Manage workflow and leads from Gmail' ) }
-					description={ translate(
-						'Track everything and always have context, directly in your Gmail account. Keep your leads and sales pipeline moving with Streak.com.'
-					) }
-					imagePath={ streakLogo }
-				>
-					<Button
-						onClick={ handleStreakClick }
-						href="http://get.streak.com/wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Supercharge your Gmail' ) }
 					</Button>
 				</MarketingToolsFeature>
 			</div>

@@ -23,6 +23,8 @@ import evernoteLogo from 'calypso/assets/images/illustrations/evernote-logo.svg'
 import mondayLogo from 'calypso/assets/images/illustrations/monday-logo.svg';
 import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
 import todoistLogo from 'calypso/assets/images/illustrations/todoist-logo.svg';
+import streakLogo from 'calypso/assets/images/illustrations/streak-logo.png';
+import billcomLogo from 'calypso/assets/images/illustrations/billcom-logo.svg';
 
 /**
  * Types
@@ -66,6 +68,14 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 		recordTracksEvent( 'calypso_marketing_business_bench_button_click' );
 	};
 
+	const handleStreakClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_streak_button_click' );
+	};
+
+	const handleBillcomClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_billcom_button_click' );
+	};
+
 	return (
 		<Fragment>
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
@@ -103,7 +113,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						href="https://evernote.grsm.io/ebcc-wordpresscom"
 						target="_blank"
 					>
-						{ translate( 'Take better notes today' ) }
+						{ translate( 'Take better notes' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
@@ -134,7 +144,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 				>
 					<Button
 						onClick={ handleTodoistClick }
-						href="https://doist.grsm.io/wordpresscom"
+						href="https://href.li/?https://doist.grsm.io/wordpresscom-H"
 						target="_blank"
 					>
 						{ translate( 'Manage business tasks' ) }
@@ -155,6 +165,40 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 						target="_blank"
 					>
 						{ translate( 'Find a bookkeeper' ) }
+					</Button>
+				</MarketingBusinessToolsFeature>
+
+				<MarketingBusinessToolsFeature
+					category={ translate( 'Sales' ) }
+					title={ translate( 'Streak' ) }
+					description={ translate(
+						'Track everything and always have context, directly in your Gmail account. Keep your leads and sales pipeline moving with Streak.com.'
+					) }
+					imagePath={ streakLogo }
+				>
+					<Button
+						onClick={ handleStreakClick }
+						href="http://get.streak.com/wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Supercharge your Gmail' ) }
+					</Button>
+				</MarketingBusinessToolsFeature>
+
+				<MarketingBusinessToolsFeature
+					category={ translate( 'Finance' ) }
+					title={ translate( 'Bill.com' ) }
+					description={ translate(
+						'Bill.com is the intelligent way to create and pay bills, send invoices, and get paid.'
+					) }
+					imagePath={ billcomLogo }
+				>
+					<Button
+						onClick={ handleBillcomClick }
+						href="https://billcom.grsm.io/wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Manage bills and invoices' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 			</div>
