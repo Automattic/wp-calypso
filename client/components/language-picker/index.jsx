@@ -92,13 +92,7 @@ export class LanguagePicker extends PureComponent {
 		return language;
 	}
 
-	selectLanguage = ( languageSlug, { empathyMode, useFallbackForIncompleteLanguages } ) => {
-		// Find the language by the slug
-		const language = this.findLanguage( 'langSlug', languageSlug );
-		if ( ! language ) {
-			return;
-		}
-
+	handleSelectLanguage = ( language, { empathyMode, useFallbackForIncompleteLanguages } ) => {
 		// onChange takes an object in shape of a DOM event as argument
 		const value = language[ this.props.valueKey ] || language.langSlug;
 		const event = { target: { value, empathyMode, useFallbackForIncompleteLanguages } };
@@ -147,11 +141,10 @@ export class LanguagePicker extends PureComponent {
 
 		return (
 			<LanguagePickerModal
-				isVisible
 				languages={ languages }
 				onClose={ this.handleClose }
-				onSelected={ this.selectLanguage }
-				selected={ selectedLanguageSlug }
+				onSelectLanguage={ this.handleSelectLanguage }
+				selectedLanguageSlug={ selectedLanguageSlug }
 				showEmpathyModeControl={ showEmpathyModeControl }
 				empathyMode={ this.state.empathyMode }
 				useFallbackForIncompleteLanguages={ this.state.useFallbackForIncompleteLanguages }
