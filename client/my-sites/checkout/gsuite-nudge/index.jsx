@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, some, compact } from 'lodash';
 import page from 'page';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -23,10 +24,11 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import isEligibleForDotcomChecklist from 'calypso/state/selectors/is-eligible-for-dotcom-checklist';
-import { addItems, removeItem } from 'calypso/lib/cart/actions';
-import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import { isDotComPlan } from 'calypso/lib/products-values';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 
 /**
  * Style dependencies
@@ -40,29 +42,43 @@ export class GSuiteNudge extends React.Component {
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
+	isMounted = false;
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
 	handleSkipClick = () => {
-		this.props.handleCheckoutCompleteRedirect();
+		const getThankYouPageUrlArguments = {
+			siteSlug: this.props.siteSlug,
+			receiptId: this.props.receiptId,
+			cart: this.props.cart,
+		};
+		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+		page.redirect( url );
 	};
 
 	handleAddEmailClick = ( cartItems ) => {
-		const { siteSlug, receiptId } = this.props;
-		this.removePlanFromCart();
+		const { siteSlug, receiptId, productsList } = this.props;
 
-		addItems(
-			// add `receipt_for_domain` to cartItem extras
-			cartItems.map( ( item ) => ( {
-				...item,
-				extra: { ...item.extra, receipt_for_domain: receiptId },
-			} ) )
-		);
-
-		page( `/checkout/${ siteSlug }` );
+		this.props.shoppingCartManager
+			.addProductsToCart(
+				// add `receipt_for_domain` to cartItem extras
+				cartItems
+					.map( ( item ) => ( {
+						...item,
+						extra: { ...item.extra, receipt_for_domain: receiptId },
+					} ) )
+					.map( ( item ) => fillInSingleCartItemAttributes( item, productsList ) )
+			)
+			.then( () => {
+				this.isMounted && page( `/checkout/${ siteSlug }` );
+			} );
 	};
-
-	removePlanFromCart() {
-		const items = getAllCartItems( this.props.cart );
-		items.filter( isDotComPlan ).forEach( ( item ) => removeItem( item, false ) );
-	}
 
 	render() {
 		const { domain, receiptId, selectedSiteId, siteSlug, siteTitle, translate } = this.props;
@@ -109,5 +125,6 @@ export default connect( ( state, props ) => {
 		siteSlug: getSiteSlug( state, props.selectedSiteId ),
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
 		isEligibleForChecklist,
+		productsList: getProductsList( state ),
 	};
-} )( localize( GSuiteNudge ) );
+} )( withShoppingCart( localize( GSuiteNudge ) ) );
