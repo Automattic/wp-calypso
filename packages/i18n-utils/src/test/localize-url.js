@@ -61,7 +61,7 @@ describe( '#localizeUrl', () => {
 	} );
 
 	test( 'handles invalid URLs', () => {
-		[ undefined, null, [], {}, { href: 'https://test' }, 'not-a-url', () => {} ].forEach(
+		[ undefined, null, [], {}, { href: 'https://test' }, 'not-a-url', () => {}, 'http://' ].forEach(
 			( fullUrl ) => {
 				expect( localizeUrl( fullUrl, 'en' ) ).toEqual( fullUrl );
 				expect( localizeUrl( fullUrl, 'fr' ) ).toEqual( fullUrl );
