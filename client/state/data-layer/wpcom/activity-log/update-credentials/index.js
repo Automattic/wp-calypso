@@ -61,7 +61,7 @@ export const request = ( action ) => {
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
-				body: { credentials, stream: true },
+				body: { credentials, stream: action.stream },
 			},
 			{ ...action, noticeId }
 		),
@@ -132,6 +132,8 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			user: action.credentials.user,
 		} )
 	);
+
+	debug( 'failure: error=%o', error );
 
 	switch ( error.code ) {
 		case 'service_unavailable':
