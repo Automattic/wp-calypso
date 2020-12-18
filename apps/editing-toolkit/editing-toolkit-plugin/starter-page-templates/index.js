@@ -41,13 +41,13 @@ const templatesPluginSharedProps = {
 
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
-	dispatch( 'automattic/starter-page-layouts' ).setIsOpen( true );
-	registerPlugin( 'page-templates', {
-		render: () => (
-			<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
-		),
-	} );
+	dispatch( 'automattic/starter-page-layouts' ).setOpenState( 'OPEN_FROM_ADD_PAGE' );
 }
+registerPlugin( 'page-templates', {
+	render: () => (
+		<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
+	),
+} );
 
 // Always register ability to open from document sidebar.
 registerPlugin( 'page-templates-sidebar', {
@@ -59,7 +59,7 @@ registerPlugin( 'page-templates-sidebar', {
 				className="page-template-modal__sidebar" // eslint-disable-line wpcalypso/jsx-classname-namespace
 				icon="none"
 			>
-				<SidebarTemplatesPlugin { ...templatesPluginSharedProps } />
+				<SidebarTemplatesPlugin />
 			</PluginDocumentSettingPanel>
 		);
 	},

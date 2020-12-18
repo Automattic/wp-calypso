@@ -13,7 +13,7 @@ class SidebarModalOpener extends Component {
 	};
 
 	openTemplateModal = () => {
-		this.props.setIsOpen( true, true );
+		this.props.setOpenState( 'OPEN_FROM_SIDEBAR' );
 	};
 
 	toggleWarningModal = () => {
@@ -59,7 +59,7 @@ class SidebarModalOpener extends Component {
 
 const SidebarTemplatesPlugin = compose(
 	withDispatch( ( dispatch ) => ( {
-		setIsOpen: dispatch( 'automattic/starter-page-layouts' ).setIsOpen,
+		setOpenState: dispatch( 'automattic/starter-page-layouts' ).setOpenState,
 	} ) )
 )( SidebarModalOpener );
 
