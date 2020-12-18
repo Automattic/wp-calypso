@@ -3,7 +3,6 @@
  */
 
 import { compact, get } from 'lodash';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -15,8 +14,6 @@ import {
 	processInbound as inboundProcessor,
 	processOutbound as outboundProcessor,
 } from './pipeline';
-
-const debug = debugModule( 'calypso:data-layer:wpcom-http' );
 
 /**
  * Returns the appropriate fetcher in wpcom given the request method
@@ -41,7 +38,6 @@ export const failureMeta = ( error, headers ) => ( { meta: { dataLayer: { error,
 export const progressMeta = ( { total, loaded } ) => ( {
 	meta: { dataLayer: { progress: { total, loaded } } },
 } );
-export const streamRecordMeta = ( streamRecord ) => ( { meta: { dataLayer: { streamRecord } } } );
 
 export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch }, rawAction ) => {
 	const action = processOutbound( rawAction, dispatch );
@@ -50,34 +46,17 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 		return;
 	}
 
-	const {
-		body,
-		formData,
-		onStreamRecord: rawOnStreamRecord,
-		method: rawMethod,
-		onProgress,
-		options,
-		path,
-		query = {},
-	} = action;
+	const { body, formData, method: rawMethod, onProgress, options, path, query = {} } = action;
 	const { responseType } = options || {};
-
-	const onStreamRecord =
-		rawOnStreamRecord &&
-		( ( record ) => {
-			return dispatch( extendAction( rawOnStreamRecord, streamRecordMeta( record ) ) );
-		} );
 
 	const method = rawMethod.toUpperCase();
 
 	const request = fetcherMap( method )(
 		...compact( [
-			{ path, formData, onStreamRecord, responseType },
+			{ path, formData, responseType },
 			{ ...query }, // wpcom mutates the query so hand it a copy
 			method === 'POST' && body,
 			( error, data, headers ) => {
-				debug( 'callback fn by Req method: error=%o data=%o headers=%o', error, data, headers );
-
 				const {
 					failures,
 					nextData,
