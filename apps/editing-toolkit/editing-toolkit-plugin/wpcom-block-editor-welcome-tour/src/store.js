@@ -2,10 +2,31 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { registerStore } from '@wordpress/data';
+import { combineReducers, registerStore } from '@wordpress/data';
 
-const reducer = ( state = {}, { type, isNuxEnabled } ) =>
-	'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS' === type ? { ...state, isNuxEnabled } : state;
+const isNuxEnabledReducer = ( state = null, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS':
+			return action.isNuxEnabled;
+		default:
+			return state;
+	}
+};
+
+// TODO: next PR convert file to Typescript to ensure control of tourRating values: null, 'thumbs-up' 'thumbs-down'
+const tourRatingReducer = ( state = null, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING':
+			return action.tourRating;
+		default:
+			return state;
+	}
+};
+
+const reducer = combineReducers( {
+	isNuxEnabled: isNuxEnabledReducer,
+	tourRating: tourRatingReducer,
+} );
 
 const actions = {
 	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
@@ -21,10 +42,14 @@ const actions = {
 			isNuxEnabled,
 		};
 	},
+	setTourRating: ( tourRating ) => {
+		return { type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING', tourRating };
+	},
 };
 
 const selectors = {
 	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
+	tourRating: ( state ) => state.tourRating,
 };
 
 registerStore( 'automattic/nux', {
