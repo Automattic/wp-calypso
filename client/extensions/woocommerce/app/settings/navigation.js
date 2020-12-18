@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SectionNav from 'calypso/components/section-nav';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 	const items = [
@@ -42,18 +44,21 @@ export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 
 	const section = find( items, { id: activeSection } );
 	return (
-		<SectionNav selectedText={ section && section.title }>
-			<NavTabs>
-				{ items.map( ( { id, path, title } ) => {
-					const link = getLink( path, site );
-					return (
-						<NavItem selected={ activeSection === id } key={ id } path={ link }>
-							{ title }
-						</NavItem>
-					);
-				} ) }
-			</NavTabs>
-		</SectionNav>
+		<div>
+			{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
+			<SectionNav selectedText={ section && section.title }>
+				<NavTabs>
+					{ items.map( ( { id, path, title } ) => {
+						const link = getLink( path, site );
+						return (
+							<NavItem selected={ activeSection === id } key={ id } path={ link }>
+								{ title }
+							</NavItem>
+						);
+					} ) }
+				</NavTabs>
+			</SectionNav>
+		</div>
 	);
 };
 

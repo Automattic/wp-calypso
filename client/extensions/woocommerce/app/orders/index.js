@@ -15,6 +15,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'calypso/components/main';
 import OrdersList from './orders-list';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 function Orders( { className, params, site, translate } ) {
 	let addButton = null;
@@ -32,6 +33,7 @@ function Orders( { className, params, site, translate } ) {
 			<ActionHeader breadcrumbs={ <span>{ translate( 'Orders' ) }</span> }>
 				{ addButton }
 			</ActionHeader>
+			{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
 			<OrdersList currentStatus={ params && params.filter } />
 		</Main>
 	);
