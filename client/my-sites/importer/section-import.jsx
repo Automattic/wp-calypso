@@ -78,23 +78,27 @@ class SectionImport extends Component {
 	state = getImporterState();
 
 	onceAutoStartImport = once( () => {
-		const { engine, site } = this.props;
-		const { importers: imports } = this.state;
+		const { engine, site, afterStartImport } = this.props;
+		const { importers } = this.state;
 
 		if ( ! engine ) {
 			return;
 		}
 
-		if ( ! isEmpty( imports ) ) {
-			// Never clobber an existing import
-			return;
+		// If there is no existing import and the `engine` is valid, start a new import.
+		if ( isEmpty( importers ) && importerComponents[ engine ] ) {
+			defer( () => {
+				startImport( site.ID, getImporterTypeForEngine( engine ) );
+				// After import was started, redirect back to the route without `engine` query arg.
+				// That removes the `engine` prop from this component and doesn't spoil future
+				// rendering when the import is, e.g., cancelled.
+				afterStartImport?.( true );
+			} );
+		} else {
+			// We decided to not start the import despite being requested by the `engine` query arg.
+			// Redirect back to route without the request.
+			afterStartImport?.( false );
 		}
-
-		if ( ! importerComponents[ engine ] ) {
-			return;
-		}
-
-		defer( () => startImport( site.ID, getImporterTypeForEngine( engine ) ) );
 	} );
 
 	handleStateChanges = () => {
