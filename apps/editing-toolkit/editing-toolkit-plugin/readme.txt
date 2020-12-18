@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.15
+Stable tag: 2.8.16
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.16 =
+* Page layout selector: Fixed an issue where the wrong close button would appear in certain circumstances. (https://github.com/Automattic/wp-calypso/pull/48469)
 
 = 2.8.15 =
 * Page layout selector: Use description of the templates as label for screen readers (https://github.com/Automattic/wp-calypso/pull/48128)
