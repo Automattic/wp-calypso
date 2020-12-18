@@ -41,10 +41,12 @@ export function recordOnboardingStart(
 	if ( ! ref ) {
 		ref = new URLSearchParams( window.location.search ).get( 'ref' ) || ref;
 	}
-
-	trackEventWithFlow( 'calypso_newsite_start', { ref, site_count, is_podcasting_site } );
+	const eventProps = is_podcasting_site
+		? { ref, site_count, flow: 'anchor-fm' }
+		: { ref, site_count };
+	trackEventWithFlow( 'calypso_newsite_start', eventProps );
 	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
-	trackEventWithFlow( 'calypso_signup_start', { ref, site_count, is_podcasting_site } );
+	trackEventWithFlow( 'calypso_signup_start', eventProps );
 }
 
 /**
