@@ -23,7 +23,12 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'calypso/lib/gsuite/constants';
+import config from 'calypso/config';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+	GSUITE_EXTRA_LICENSE_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import {
 	formatProduct,
 	getDomain,
@@ -741,7 +746,12 @@ export function getGoogleApps( cart ) {
 }
 
 export function googleApps( properties ) {
-	const productSlug = properties.product_slug || GSUITE_BASIC_SLUG;
+	const productSlug =
+		properties.product_slug ||
+		( config.isEnabled( 'google-workspace-migration' )
+			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			: GSUITE_BASIC_SLUG );
+
 	const item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );

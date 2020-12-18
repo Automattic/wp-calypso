@@ -11,8 +11,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'calypso/config';
 import DocumentHead from 'calypso/components/data/document-head';
-import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import GSuiteUpsellCard from 'calypso/components/upgrades/gsuite/gsuite-upsell-card';
 import Main from 'calypso/components/main';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -63,6 +67,10 @@ export class GSuiteNudge extends React.Component {
 	render() {
 		const { domain, receiptId, selectedSiteId, siteSlug, siteTitle, translate } = this.props;
 
+		const productSlug = config.isEnabled( 'google-workspace-migration' )
+			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			: GSUITE_BASIC_SLUG;
+
 		return (
 			<Main className="gsuite-nudge">
 				<PageViewTracker
@@ -82,7 +90,7 @@ export class GSuiteNudge extends React.Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<GSuiteUpsellCard
 					domain={ this.props.domain }
-					productSlug={ GSUITE_BASIC_SLUG }
+					productSlug={ productSlug }
 					onSkipClick={ this.handleSkipClick }
 					onAddEmailClick={ this.handleAddEmailClick }
 				/>

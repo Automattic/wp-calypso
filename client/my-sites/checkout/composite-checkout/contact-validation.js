@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isLineItemADomain } from 'calypso/my-sites/checkout/composite-checkout/hooks/has-domains';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
@@ -123,7 +123,7 @@ export async function getSignupEmailValidationResult( email, emailTakenLoginRedi
 
 export async function getGSuiteValidationResult( items, contactInfo ) {
 	const domainNames = items
-		.filter( ( item ) => isGSuiteProductSlug( item.wpcom_meta?.product_slug ) )
+		.filter( ( item ) => isGSuiteOrGoogleWorkspaceProductSlug( item.wpcom_meta?.product_slug ) )
 		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
 	return wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
