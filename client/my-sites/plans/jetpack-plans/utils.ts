@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate, TranslateResult } from 'i18n-calypso';
-import { compact, get, isArray, isObject } from 'lodash';
+import { compact, get, isArray, isObject, isFunction } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
 
@@ -58,7 +58,10 @@ import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-j
 import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
 import config from 'calypso/config';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import {
+	getJetpackCROActiveVersion,
+	getPopularProductsOfferingVariation,
+} from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
@@ -410,12 +413,10 @@ export function itemToSelectorProduct(
 			term: item.term,
 			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
 			features: {
-				items: item.features
-					? buildCardFeaturesFromItem( item.features, {
-							withoutDescription: true,
-							withoutIcon: true,
-					  } )
-					: [],
+				items: buildCardFeaturesFromItem( item, {
+					withoutDescription: true,
+					withoutIcon: true,
+				} ),
 			},
 		};
 	} else if ( objectIsPlan( item ) ) {
@@ -464,11 +465,13 @@ export function itemToSelectorProduct(
  * @param {object?} options Options
  * @param {string?} options.withoutDescription Whether to build the card with a description
  * @param {string?} options.withoutIcon Whether to build the card with an icon
+ * @param {string?} variation Experiment variation
  * @returns {SelectorProductFeaturesItem} Feature item
  */
 export function buildCardFeatureItemFromFeatureKey(
 	featureKey: JetpackPlanCardFeature,
-	options?: { withoutDescription?: boolean; withoutIcon?: boolean }
+	options?: { withoutDescription?: boolean; withoutIcon?: boolean },
+	variation?: string
 ): SelectorProductFeaturesItem | undefined {
 	let feature;
 	let subFeaturesKeys;
@@ -486,7 +489,7 @@ export function buildCardFeatureItemFromFeatureKey(
 		return {
 			slug: feature.getSlug(),
 			icon: options?.withoutIcon ? undefined : feature.getIcon?.(),
-			text: feature.getTitle(),
+			text: feature.getTitle( variation ),
 			description: options?.withoutDescription ? undefined : feature.getDescription?.(),
 			subitems: subFeaturesKeys
 				? compact(
@@ -503,15 +506,19 @@ export function buildCardFeatureItemFromFeatureKey(
  *
  * @param {JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection} features Feature keys
  * @param {object?} options Options
+ * @param {string?} variation Experiment variation
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromFeatureKeys(
 	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection,
-	options?: Record< string, unknown >
+	options?: Record< string, unknown >,
+	variation?: string
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	// Without sections (JetpackPlanCardFeature[])
 	if ( isArray( features ) ) {
-		return compact( features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options ) ) );
+		return compact(
+			features.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
+		);
 	}
 
 	// With sections (JetpackPlanCardFeatureSection)
@@ -526,7 +533,7 @@ export function buildCardFeaturesFromFeatureKeys(
 				result.push( {
 					heading: category.getTitle(),
 					list: subfeatures.map( ( f: JetpackPlanCardFeature ) =>
-						buildCardFeatureItemFromFeatureKey( f, options )
+						buildCardFeatureItemFromFeatureKey( f, options, variation )
 					),
 				} as SelectorProductFeaturesSection );
 			}
@@ -550,10 +557,24 @@ export function buildCardFeaturesFromItem(
 	options?: Record< string, unknown >
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
-		const features = item.getPlanCardFeatures?.();
+		const features = item.getPlanCardFeatures?.( getPopularProductsOfferingVariation() );
 
 		if ( features ) {
-			return buildCardFeaturesFromFeatureKeys( features, options );
+			return buildCardFeaturesFromFeatureKeys(
+				features,
+				options,
+				getPopularProductsOfferingVariation()
+			);
+		}
+	} else if ( isFunction( item.getFeatures ) ) {
+		const features = item.getFeatures( getPopularProductsOfferingVariation() );
+
+		if ( features ) {
+			return buildCardFeaturesFromFeatureKeys(
+				features,
+				options,
+				getPopularProductsOfferingVariation()
+			);
 		}
 	}
 

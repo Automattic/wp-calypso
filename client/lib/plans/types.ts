@@ -51,7 +51,9 @@ export type Plan = {
 	getStoreSlug: () => JetpackPlanSlugs | string;
 	getPathSlug?: () => string;
 	getPlanCompareFeatures?: () => string[];
-	getPlanCardFeatures?: () => JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection;
+	getPlanCardFeatures?: (
+		variation?: string
+	) => JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection;
 	getSignupFeatures?: () => string[];
 	getBlogSignupFeatures?: () => string[];
 	getPortfolioSignupFeatures?: () => string[];
