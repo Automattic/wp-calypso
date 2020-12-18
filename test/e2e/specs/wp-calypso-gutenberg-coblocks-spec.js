@@ -212,4 +212,60 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			);
 		} );
 	} );
+
+	describe( 'WPCOM-specific gutter controls: @parallel', async function () {
+		const gutterControlsLocator = By.css(
+			'div[aria-label="Editor settings"] div[aria-label="Gutter"]'
+		);
+
+		async function setGutter( buttonText ) {
+			const controlsEl = await driver.findElement( gutterControlsLocator );
+			const buttonEl = await controlsEl.findElement(
+				By.xpath( `//button[text()='${ buttonText }']` )
+			);
+			const name = { None: 'no', S: 'small', M: 'medium', L: 'large', XL: 'huge' }[ buttonText ];
+
+			await buttonEl.click();
+			await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( `.wp-block-coblocks-pricing-table__inner.has-${ name }-gutter` )
+			);
+		}
+
+		step( 'Can log in', async function () {
+			this.loginFlow = new LoginFlow( driver, gutenbergUser );
+			return await this.loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Can see gutter controls for supporting block', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.addBlock( 'Pricing Table' );
+			await driverHelper.waitTillPresentAndDisplayed(
+				driver,
+				By.css( '.wp-block-coblocks-pricing-table' )
+			);
+			await gEditorComponent.openSidebar();
+			await driverHelper.waitTillPresentAndDisplayed( driver, gutterControlsLocator );
+		} );
+
+		step( 'Can set the "None" gutter value', async function () {
+			await setGutter( 'None' );
+		} );
+
+		step( 'Can set the "S" gutter value', async function () {
+			await setGutter( 'S' );
+		} );
+
+		step( 'Can set the "M" gutter value', async function () {
+			await setGutter( 'M' );
+		} );
+
+		step( 'Can set the "L" gutter value', async function () {
+			await setGutter( 'L' );
+		} );
+
+		step( 'Can set the "XL" gutter value', async function () {
+			await setGutter( 'XL' );
+		} );
+	} );
 } );
