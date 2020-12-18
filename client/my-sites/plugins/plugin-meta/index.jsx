@@ -413,13 +413,11 @@ export class PluginMeta extends Component {
 				}
 
 				const sitePlugin = pluginsOnSites?.sites[ site.ID ];
-				if ( sitePlugin?.update ) {
-					if ( 'error' !== sitePlugin.update?.new_version ) {
-						return {
-							title: site.title,
-							newVersion: sitePlugin.update.new_version,
-						};
-					}
+				if ( 'error' !== sitePlugin?.update?.new_version ) {
+					return {
+						title: site.title,
+						newVersion: sitePlugin.update.new_version,
+					};
 				}
 			} )
 			.filter( ( newVersions ) => newVersions );
