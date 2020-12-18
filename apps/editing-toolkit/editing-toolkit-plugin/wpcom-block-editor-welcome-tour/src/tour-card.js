@@ -16,7 +16,8 @@ import thumbsDown from './icons/thumbs_down';
 import classNames from 'classnames';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { close } from '@wordpress/icons';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -34,7 +35,6 @@ function WelcomeTourCard( {
 } ) {
 	const { description, heading, imgSrc } = cardContent;
 	const isLastCard = cardIndex === lastCardIndex;
-
 	// Ensure tracking is recorded once per slide view
 	useEffectOnlyOnce( () => {
 		// Don't track slide view if returning from minimized state
@@ -78,7 +78,7 @@ function WelcomeTourCard( {
 			</CardBody>
 			<CardFooter>
 				{ isLastCard ? (
-					<LastCardThumbsUpDown></LastCardThumbsUpDown>
+					<TourRating></TourRating>
 				) : (
 					<CardNavigation
 						cardIndex={ cardIndex }
@@ -157,17 +157,20 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 	);
 }
 
-function LastCardThumbsUpDown() {
-	const [ isDisabled, setIsDisabled ] = useState( false );
-	const [ selected, setSelected ] = useState( 'none' );
+function TourRating() {
+	let isDisabled = false;
+	const tourRating = useSelect( ( select ) => select( 'automattic/nux' ).tourRating() );
+	const { setTourRating } = useDispatch( 'automattic/nux' );
 
+	if ( ! isDisabled && tourRating ) {
+		isDisabled = true;
+	}
 	const rateTour = ( isThumbsUp ) => {
 		if ( isDisabled ) {
 			return;
 		}
-		setIsDisabled( true );
-		setSelected( isThumbsUp === true ? 'thumbs-up' : 'thumbs-down' );
-		// Currently the Welcome Tour only shows one time in editor (it is not wired in MoreMenu like NUX), we will want to adjust tracking if the Tour becomes accessible from the MoreMenu
+		isDisabled = true;
+		setTourRating( 'thumbs-up' );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 			thumbs_up: isThumbsUp,
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
@@ -180,7 +183,7 @@ function LastCardThumbsUpDown() {
 			<div>
 				<Button
 					className={ classNames( 'welcome-tour__end-icon', {
-						active: selected === 'thumbs-up',
+						active: tourRating === 'thumbs-up',
 					} ) }
 					disabled={ isDisabled }
 					icon={ thumbsUp }
@@ -189,7 +192,7 @@ function LastCardThumbsUpDown() {
 				/>
 				<Button
 					className={ classNames( 'welcome-tour__end-icon', {
-						active: selected === 'thumbs-down',
+						active: tourRating === 'thumbs-down',
 					} ) }
 					disabled={ isDisabled }
 					icon={ thumbsDown }
