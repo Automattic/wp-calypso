@@ -20,7 +20,6 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'calypso/state/sites/selectors';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import isEligibleForDotcomChecklist from 'calypso/state/selectors/is-eligible-for-dotcom-checklist';
-import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import { isDotComPlan } from 'calypso/lib/products-values';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -61,7 +60,6 @@ export class GSuiteNudge extends React.Component {
 
 	handleAddEmailClick = ( cartItems ) => {
 		const { siteSlug, receiptId, productsList } = this.props;
-		this.removePlanFromCart();
 
 		this.props.shoppingCartManager
 			.addProductsToCart(
@@ -76,12 +74,6 @@ export class GSuiteNudge extends React.Component {
 			.then( () => {
 				this.isMounted && page( `/checkout/${ siteSlug }` );
 			} );
-	};
-
-	removePlanFromCart = () => {
-		const items = getAllCartItems( this.props.cart );
-		const filteredProducts = items.filter( isDotComPlan );
-		this.props.shoppingCartManager.replaceProductsInCart( filteredProducts );
 	};
 
 	render() {
