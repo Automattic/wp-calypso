@@ -158,18 +158,6 @@ export function useAnchorFmParams(): AnchorFmParams {
 }
 
 /*
-// Returns the anchor podcast id. First looks in "location state",
-// provided by react-router-dom, if not available there, checks the query string.
-export function useAnchorFmPodcastId(): string | null {
-	return;
-}
-
-// Returns the anchor episode id. First looks in "location state",
-// provided by react-router-dom, if not available there, checks the query string.
-export function useAnchorFmEpisodeId(): string | null {}
-*/
-
-/*
  useAnchorParameter is an internal helper for finding a value that comes from either a query string, or location state.
  Outside callers shouldn't use it, so it's not exported.
 
