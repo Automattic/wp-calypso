@@ -3,6 +3,9 @@
  */
 import tracksRecordEvent from './track-record-event';
 
+// Curiously, the numeric ids of the tabs increment every time you close and
+// reopen the inserter, so we use this regex to ignore that and grab the tab
+// slug
 const tabPanelRegex = /tab-panel-\d*-(\w*)/;
 const gutenbergTabPanelName = ( tabPanel ) =>
 	( tabPanel.id.match( tabPanelRegex ) || [ null, null ] )[ 1 ];
