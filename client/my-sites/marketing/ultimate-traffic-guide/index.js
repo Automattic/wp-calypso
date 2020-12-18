@@ -5,19 +5,17 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
+import { Button, CompactCard } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { Button, CompactCard } from '@automattic/components';
-import {
-	getProductDisplayCost,
-	isProductsListFetching,
-} from 'calypso/state/products-list/selectors';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { isFetchingUserPurchases, getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -33,8 +31,6 @@ import { WPCOM_TRAFFIC_GUIDE } from 'calypso/lib/products-values/constants';
  * Style dependencies
  */
 import './style.scss';
-
-export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';
 
 export const hasTrafficGuidePurchase = ( purchases ) =>
 	!! ( purchases && purchases.find( ( purchase ) => isTrafficGuide( purchase ) ) );
@@ -83,11 +79,28 @@ const Placeholder = ( { num = 1 } ) =>
 	) );
 
 const SalesPage = ( { translate } ) => {
-	const cost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_TRAFFIC_GUIDE ) );
+	const cost = useSelector( ( state ) => getProductCost( state, WPCOM_TRAFFIC_GUIDE ) );
+	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isLoading = useSelector( ( state ) => isProductsListFetching( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const moment = useLocalizedMoment();
+
+	/**
+	 * The reference cost is calculated to the nearest 100
+	 */
+	const referenceCost = Math.floor( ( cost * 7 ) / 100 ) * 100;
+
+	const displayCost = formatCurrency( cost, currencyCode, { stripZeros: true } );
+	const displayReferenceCost = formatCurrency( referenceCost, currencyCode, { stripZeros: true } );
+
+	const cta = () => (
+		<p>
+			<Button href={ `/checkout/${ siteSlug }/${ WPCOM_TRAFFIC_GUIDE }` } primary>
+				{ translate( 'Click here to buy the guide now!' ) }
+			</Button>
+		</p>
+	);
 
 	const defaultVariation = () => (
 		<>
@@ -153,11 +166,18 @@ const SalesPage = ( { translate } ) => {
 					'It’s so effective you don’t even have to come close to a “perfect” site before you launch… even the ugliest site can drive an endless stream of business if you get this right!'
 				) }
 			</p>
-			<p>
-				{ translate(
-					'If you’ve spent any time looking for marketing help, you know that marketing guides like this often cost $100 or more. But you won’t have to pay anywhere near that amount.'
-				) }
-			</p>
+			{ isLoading ? (
+				<Placeholder />
+			) : (
+				<p>
+					{ translate(
+						'If you’ve spent any time looking for marketing help, you know that marketing guides like this often cost %(referenceCost)s or more. But you won’t have to pay anywhere near that amount.',
+						{
+							args: { referenceCost: displayReferenceCost },
+						}
+					) }
+				</p>
+			) }
 
 			{ isLoading ? (
 				<Placeholder />
@@ -167,12 +187,14 @@ const SalesPage = ( { translate } ) => {
 						{ translate(
 							'In fact, if you act today you’ll pay just %(cost)s for The Ultimate Traffic Guide.',
 							{
-								args: { cost },
+								args: { cost: displayCost },
 							}
 						) }
 					</strong>
 				</p>
 			) }
+
+			{ cta() }
 		</>
 	);
 
@@ -233,11 +255,19 @@ const SalesPage = ( { translate } ) => {
 					'You’re going to want to print out all 96 pages of the Ultimate Traffic Guide and keep it by your desk, because you’re going to consult this guide often.'
 				) }
 			</p>
-			<p>
-				{ translate(
-					'Similar resources are valued up to $100, but this amazing resource is available to our users at $17.'
-				) }
-			</p>
+			{ isLoading ? (
+				<Placeholder />
+			) : (
+				<p>
+					{ translate(
+						'Similar resources are valued up to %(referenceCost)s, but this amazing resource is available to our users at %(cost)s.',
+						{
+							args: { cost: displayCost, referenceCost: displayReferenceCost },
+						}
+					) }
+				</p>
+			) }
+			{ cta() }
 		</>
 	);
 
@@ -250,11 +280,6 @@ const SalesPage = ( { translate } ) => {
 					<Placeholder num={ 5 } />
 				</LoadingVariations>
 			</Experiment>
-			<p>
-				<Button href={ `/checkout/${ siteSlug }/${ WPCOM_TRAFFIC_GUIDE }` } primary>
-					{ translate( 'Click here to buy the guide now!' ) }
-				</Button>
-			</p>
 		</>
 	);
 };
