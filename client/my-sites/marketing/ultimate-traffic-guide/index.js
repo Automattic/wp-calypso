@@ -25,6 +25,8 @@ import Experiment, {
 	LoadingVariations,
 	Variation,
 } from 'calypso/components/experiment';
+import { isTrafficGuide } from 'calypso/lib/products-values';
+import { WPCOM_TRAFFIC_GUIDE } from 'calypso/lib/products-values/constants';
 
 /**
  * Style dependencies
@@ -34,9 +36,7 @@ import './style.scss';
 export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';
 
 export const hasTrafficGuidePurchase = ( purchases ) =>
-	!! (
-		purchases && purchases.find( ( purchase ) => WPCOM_TRAFFIC_GUIDE === purchase.productSlug )
-	);
+	!! ( purchases && purchases.find( ( purchase ) => isTrafficGuide( purchase ) ) );
 
 export const downloadTrafficGuide = () => {
 	window.location.href = 'https://public-api.wordpress.com/wpcom/v2/traffic-guide-download';

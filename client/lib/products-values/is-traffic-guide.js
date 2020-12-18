@@ -3,10 +3,11 @@
  */
 import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
 import { formatProduct } from 'calypso/lib/products-values/format-product';
+import { WPCOM_TRAFFIC_GUIDE } from 'calypso/lib/products-values/constants';
 
 export function isTrafficGuide( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return 'traffic-guide' === product.product_slug;
+	return WPCOM_TRAFFIC_GUIDE === product.product_slug;
 }
