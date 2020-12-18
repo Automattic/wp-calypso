@@ -121,6 +121,7 @@ export default function useCreatePaymentCompleteCallback( {
 					reduxDispatch,
 				} );
 			} catch ( err ) {
+				console.error( err ); // eslint-disable-line no-console
 				// This is a fallback to catch any errors caused by the analytics code
 				// Anything in this block should remain very simple and extremely
 				// tolerant of any kind of data. It should make no assumptions about
