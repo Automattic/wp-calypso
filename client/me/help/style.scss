@@ -4,7 +4,7 @@
 .help .upwork-banner {
 	margin: 10px 10px 20px;
 
-	@include break-small {
+	@include break-medium {
 		margin: 0 0 24px;
 	}
 }
@@ -12,52 +12,79 @@
 .help__support-link {
 	display: flex;
 
+	@include break-xlarge {
+		flex-direction: column;
+	}
+
 	&:hover {
 		background-color: var( --color-primary-0 );
-
-		.help__support-link-title {
-			color: var( --color-primary-dark );
-		}
 	}
 }
 
-.help__support-link .help__support-link-section {
-	padding-right: 32px;
+.help__section-title {
+	font-size: $font-title-small;
+	margin: 32px 16px 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 32px 0 16px;
+	}
 }
 
-.help__support-link-contact.is-card-link {
-	padding-right: 24px;
-}
-
-.help__support-link-contact .help__support-link-section {
-	flex-grow: 1;
-}
-
-.help__support-link-contact .gridicon {
+.help__support-link .gridicons-external {
 	display: none;
 }
 
-.help__support-link-button {
-	flex: 0 0 auto;
-	align-self: center;
-}
-
-.help__support-link.is-compact.is-card-link {
-	padding-right: 16px;
-}
-
 .help__support-link-title {
+	color: var( --color-neutral-70 );
 	font-size: $font-body;
-	color: var( --color-primary );
-	@include break-small {
-		font-size: $font-title-small;
-	}
+	font-weight: 600;
 }
 
 .help__support-link-content {
 	margin-bottom: 0;
 	font-size: $font-body-small;
-	color: var( --color-neutral-70 );
+	color: var( --color-neutral-60 );
+}
+
+.help__support-links {
+	margin-bottom: 24px;
+
+	@include break-xlarge {
+		display: grid;
+		grid-template-columns: repeat( auto-fit, minmax( 200px, 1fr ) );
+		gap: 24px;
+	}
+}
+
+.help__support-link.card.is-card-link {
+	height: 100%;
+	padding: 16px;
+
+	@include break-xlarge {
+		padding: 16px 24px;
+	}
+}
+
+.help__support-link .gridicon {
+	fill: var( --color-primary-20 );
+	flex-shrink: 0;
+	margin-top: 0;
+	margin-right: 16px;
+	position: relative;
+	left: -3px;
+	width: 24px;
+	height: 24px;
+
+	@include break-xlarge {
+		width: 36px;
+		height: 36px;
+		margin-right: 0;
+		margin-bottom: 24px;
+	}
+}
+
+.help__support-link-section {
+	width: 100%;
 }
 
 .help__support-links.is-placeholder {
@@ -147,5 +174,65 @@
 
 	.help__support-session-action {
 		margin-right: 16px;
+	}
+}
+
+.help__contact-us-card.card.is-card-link {
+	padding: 16px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	margin-bottom: 48px;
+
+	&:hover .gridicon {
+		fill: var( --color-primary );
+	}
+
+	@include break-xlarge {
+		align-items: center;
+	}
+}
+
+.help__contact-us-card .gridicons-chevron-right {
+	display: none;
+}
+
+.help__contact-us-card .gridicon {
+	flex-shrink: 0;
+	margin-right: 16px;
+	position: relative;
+	left: -4px;
+	width: 24px;
+	height: 24px;
+
+	@include break-xlarge {
+		width: 36px;
+		height: 36px;
+	}
+}
+
+.help__contact-us-section {
+	margin-right: 24px;
+}
+
+.help__contact-us-title {
+	color: var( --color-neutral-70 );
+	font-weight: 600;
+}
+
+.help__contact-us-content {
+	color: var( --color-neutral-60 );
+	margin: 0;
+}
+
+.help__contact-us-button {
+	margin: auto;
+	margin-top: 0;
+	margin-right: 0;
+	white-space: nowrap;
+	overflow: visible;
+
+	@include break-xlarge {
+		margin-top: auto;
 	}
 }

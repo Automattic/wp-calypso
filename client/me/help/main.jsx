@@ -12,10 +12,9 @@ import { some } from 'lodash';
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button, CompactCard, Card } from '@automattic/components';
-import HappinessEngineers from 'calypso/me/help/help-happiness-engineers';
+import Gridicon from 'calypso/components/gridicon';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
-import HelpTeaserButton from './help-teaser-button';
 import HelpUnverifiedWarning from './help-unverified-warning';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
@@ -122,33 +121,20 @@ class Help extends React.PureComponent {
 		);
 	};
 
-	getSupportLinks = () => {
-		return (
+	getSupportLinks = () => (
+		<>
+			<h2 className="help__section-title">{ this.props.translate( 'More Resources' ) }</h2>
 			<div className="help__support-links">
-				<CompactCard
-					className="help__support-link"
-					href={ localizeUrl( 'https://wordpress.com/support/' ) }
-					target="__blank"
-				>
-					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">
-							{ this.props.translate( 'All support articles' ) }
-						</h2>
-						<p className="help__support-link-content">
-							{ this.props.translate(
-								'Looking to learn more about a feature? Our docs have all the details.'
-							) }
-						</p>
-					</div>
-				</CompactCard>
+				{ this.getCoursesTeaser() }
 				<CompactCard
 					className="help__support-link"
 					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
 					target="__blank"
 				>
+					<Gridicon icon="video" size={ 36 } />
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Quick help video tutorials' ) }
+							{ this.props.translate( 'Video tutorials' ) }
 						</h2>
 						<p className="help__support-link-content">
 							{ this.props.translate(
@@ -162,9 +148,10 @@ class Help extends React.PureComponent {
 					href="https://dailypost.wordpress.com/blogging-university/"
 					target="__blank"
 				>
+					<Gridicon icon="mail" size={ 36 } />
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Self-guided email courses for site owners and bloggers' ) }
+							{ this.props.translate( 'Email courses' ) }
 						</h2>
 						<p className="help__support-link-content">
 							{ this.props.translate(
@@ -178,10 +165,9 @@ class Help extends React.PureComponent {
 					href="https://learn.wordpress.com"
 					target="__blank"
 				>
+					<Gridicon icon="list-ordered" size={ 36 } />
 					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Self-guided online tutorial' ) }
-						</h2>
+						<h2 className="help__support-link-title">{ this.props.translate( 'Guides' ) }</h2>
 						<p className="help__support-link-content">
 							{ this.props.translate(
 								'A step-by-step guide to getting familiar with the platform.'
@@ -189,43 +175,50 @@ class Help extends React.PureComponent {
 						</p>
 					</div>
 				</CompactCard>
-				<CompactCard
-					className="help__support-link help__support-link-contact"
-					href="/help/contact/"
-				>
-					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">{ this.props.translate( 'Get in touch' ) }</h2>
-						<p className="help__support-link-content">
-							{ this.props.translate(
-								"Can't find the answer? Drop us a line and we'll lend a hand."
-							) }
-						</p>
-					</div>
-					<Button className="help__support-link-button" primary>
-						{ this.props.translate( 'Contact Us' ) }
-					</Button>
-				</CompactCard>
 			</div>
-		);
-	};
+		</>
+	);
+
+	getContactUs = () => (
+		<>
+			<h2 className="help__section-title">{ this.props.translate( 'Contact Us' ) }</h2>
+			<CompactCard className="help__contact-us-card" href="/help/contact/">
+				<Gridicon icon="help" size={ 36 } />
+				<div className="help__contact-us-section">
+					<h3 className="help__contact-us-title">{ this.props.translate( 'Contact support' ) }</h3>
+					<p className="help__contact-us-content">
+						{ this.props.translate(
+							"Can't find the answer? Drop us a line and we'll lend a hand."
+						) }
+					</p>
+				</div>
+				<Button className="help__contact-us-button">
+					{ this.props.translate( 'Contact support' ) }
+				</Button>
+			</CompactCard>
+		</>
+	);
 
 	getCoursesTeaser = () => {
-		const { translate } = this.props;
-
 		if ( ! this.props.showCoursesTeaser ) {
 			return null;
 		}
 
 		return (
-			<HelpTeaserButton
+			<CompactCard
+				className="help__support-link"
+				href={ localizeUrl( 'https://wordpress.com/webinars' ) }
 				onClick={ this.trackCoursesButtonClick }
-				href="https://wordpress.com/webinars"
-				target="_blank"
-				title={ translate( 'Courses' ) }
-				description={ translate(
-					'Learn how to make the most of your site with these courses and webinars'
-				) }
-			/>
+				target="__blank"
+			>
+				<Gridicon icon="chat" size={ 36 } />
+				<div className="help__support-link-section">
+					<h2 className="help__support-link-title">{ this.props.translate( 'Webinars' ) }</h2>
+					<p className="help__support-link-content">
+						{ this.props.translate( 'Make the most of your site with courses and webinars.' ) }
+					</p>
+				</div>
+			</CompactCard>
 		);
 	};
 
@@ -284,17 +277,15 @@ class Help extends React.PureComponent {
 		} );
 	};
 
-	getPlaceholders = () => {
-		return (
-			<Main className="help" wideLayout>
-				<MeSidebarNavigation />
-				<div className="help-search is-placeholder" />
-				<div className="help__help-teaser-button is-placeholder" />
-				<div className="help-results is-placeholder" />
-				<div className="help__support-links is-placeholder" />
-			</Main>
-		);
-	};
+	getPlaceholders = () => (
+		<Main className="help" wideLayout>
+			<MeSidebarNavigation />
+			<div className="help-search is-placeholder" />
+			<div className="help__help-teaser-button is-placeholder" />
+			<div className="help-results is-placeholder" />
+			<div className="help__support-links is-placeholder" />
+		</Main>
+	);
 
 	render() {
 		const { isEmailVerified, userId, isLoading } = this.props;
@@ -309,11 +300,10 @@ class Help extends React.PureComponent {
 				<MeSidebarNavigation />
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
-				{ this.getCoursesTeaser() }
 				{ this.supportSessionCard() }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
-				<HappinessEngineers />
+				{ this.getContactUs() }
 				<QueryConciergeInitial />
 				<QueryUserPurchases userId={ userId } />
 			</Main>
@@ -325,15 +315,15 @@ function planHasOnboarding( { productSlug } ) {
 	return planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING );
 }
 
-export const mapStateToProps = ( state, ownProps ) => {
+export const mapStateToProps = ( state ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
 	const isLoading = isFetchingUserPurchases( state );
 	const isBusinessPlanUser = some( purchases, planHasOnboarding );
-	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
 	const hasAppointment = getConciergeNextAppointment( state );
 	const scheduleId = getConciergeScheduleId( state );
+	const showCoursesTeaser = isBusinessPlanUser;
 
 	return {
 		userId,
