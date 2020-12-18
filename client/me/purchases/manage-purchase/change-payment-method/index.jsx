@@ -277,6 +277,7 @@ function ChangePaymentMethodList( {
 }
 
 function onChangeComplete( { successCallback, translate, showSuccessMessage } ) {
+	recordTracksEvent( 'calypso_purchases_save_new_payment_method' );
 	showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	successCallback();
 }
