@@ -237,7 +237,7 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	getCheckoutCompleteRedirectPath = ( shouldHideUpsellNudges = false ) => {
+	getCheckoutCompleteRedirectPath = ( shouldHideUpsellNudges = false, currentRecieptId ) => {
 		// TODO: Cleanup and simplify this function.
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the Concierge / Checklist logic.
@@ -285,15 +285,19 @@ export class Checkout extends React.Component {
 			}
 		}
 
-		// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
-		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
 		let pendingOrReceiptId;
-
-		if ( get( stepResult, 'receipt_id', false ) ) {
+		if ( currentRecieptId && ! isNaN( currentRecieptId ) ) {
+			//The relevant receipt Id can be passed in by the checkoutComplete
+			//command whenever applicable and takes highest precedence
+			//Specially used in one click upsell (i.e. calypso/my-sites/checkout/upsell-nudge/purchase-modal/util.js::onComplete callback)
+			pendingOrReceiptId = currentRecieptId;
+		} else if ( get( stepResult, 'receipt_id', false ) ) {
 			pendingOrReceiptId = stepResult.receipt_id;
 		} else if ( get( stepResult, 'orderId', false ) ) {
 			pendingOrReceiptId = 'pending/' + stepResult.orderId;
 		} else {
+			// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
+			// The `:receiptId` string is filled in by our callback page after the PayPal checkout
 			pendingOrReceiptId = this.props.purchaseId ? this.props.purchaseId : ':receiptId';
 		}
 
@@ -377,7 +381,7 @@ export class Checkout extends React.Component {
 		window.location.href = redirectUrl;
 	}
 
-	handleCheckoutCompleteRedirect = ( shouldHideUpsellNudges = false ) => {
+	handleCheckoutCompleteRedirect = ( shouldHideUpsellNudges = false, currentRecieptId ) => {
 		let product;
 		let purchasedProducts;
 		let renewalItem;
@@ -391,7 +395,10 @@ export class Checkout extends React.Component {
 			translate,
 		} = this.props;
 
-		const redirectPath = this.getCheckoutCompleteRedirectPath( shouldHideUpsellNudges );
+		const redirectPath = this.getCheckoutCompleteRedirectPath(
+			shouldHideUpsellNudges,
+			currentRecieptId
+		);
 		const destinationFromCookie = retrieveSignupDestination();
 
 		this.props.clearPurchases();

@@ -233,8 +233,12 @@ export class UpsellNudge extends React.Component {
 
 	isEligibleForOneClickUpsell = ( buttonAction ) => {
 		const { cards, siteSlug, upsellType } = this.props;
-		const supportedUpsellTypes = [ 'concierge-quickstart-session', 'premium-plan-upgrade-upsell' ];
 
+		const supportedUpsellTypes = [
+			CONCIERGE_QUICKSTART_SESSION,
+			PREMIUM_PLAN_UPGRADE_UPSELL,
+			BUSINESS_PLAN_UPGRADE_UPSELL,
+		];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			return false;
 		}
@@ -251,8 +255,8 @@ export class UpsellNudge extends React.Component {
 		return true;
 	};
 
-	handleOneClickUpsellComplete = () => {
-		this.props.handleCheckoutCompleteRedirect( true );
+	handleOneClickUpsellComplete = ( currentRecieptId ) => {
+		this.props.handleCheckoutCompleteRedirect( true, currentRecieptId );
 	};
 
 	renderPurchaseModal = () => {
