@@ -11,20 +11,15 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 /**
  * Internal Dependencies
  */
-import wp from 'calypso/lib/wp';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
-import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import config from 'calypso/config';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import getCartKey from './get-cart-key';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcom = wp.undocumented();
+import getStripeConfiguration from 'calypso/my-sites/checkout/get-stripe-configuration';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 
@@ -120,10 +115,7 @@ export default function CheckoutSystemDecider( {
 				onError={ logCheckoutError }
 			>
 				<CalypsoShoppingCartProvider cartKey={ cartKey } getCart={ getCart }>
-					<StripeHookProvider
-						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
-						locale={ locale }
-					>
+					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 						<CompositeCheckout
 							siteSlug={ siteSlug }
 							siteId={ selectedSite?.ID }
@@ -144,8 +136,4 @@ export default function CheckoutSystemDecider( {
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 		</>
 	);
-}
-
-function fetchStripeConfigurationWpcom( args ) {
-	return fetchStripeConfiguration( args, wpcom );
 }

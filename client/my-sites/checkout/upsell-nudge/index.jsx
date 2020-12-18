@@ -48,7 +48,7 @@ import { getPlanByPathSlug } from 'calypso/lib/plans';
 import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import getStripeConfiguration from 'calypso/my-sites/checkout/get-stripe-configuration';
 
 /**
  * Style dependencies

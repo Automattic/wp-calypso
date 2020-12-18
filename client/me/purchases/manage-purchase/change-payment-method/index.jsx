@@ -29,7 +29,7 @@ import QueryPaymentCountries from 'calypso/components/data/query-countries/payme
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import getStripeConfiguration from 'calypso/my-sites/checkout/get-stripe-configuration';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,

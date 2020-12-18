@@ -39,10 +39,6 @@ export async function submitPayPalExpressRequest( transactionData, submit, trans
 	return submit( formattedTransactionData, transactionOptions );
 }
 
-export async function fetchStripeConfiguration( requestArgs, wpcom ) {
-	return wpcom.stripeConfiguration( requestArgs );
-}
-
 export async function submitStripeCardTransaction( transactionData, submit, transactionOptions ) {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,

@@ -16,7 +16,7 @@ import { closeAddCardDialog } from 'woocommerce/woocommerce-services/state/label
 import { getLabelSettingsForm } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import getStripeConfiguration from 'calypso/my-sites/checkout/get-stripe-configuration';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 

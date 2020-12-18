@@ -12,26 +12,19 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
+import getStripeConfiguration from 'calypso/my-sites/checkout/get-stripe-configuration';
 import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import userFactory from 'calypso/lib/user';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import wp from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-const wpcom = wp.undocumented();
-
-function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
-	return fetchStripeConfiguration( args, wpcom );
-}
 
 function removeHashFromUrl(): void {
 	try {
@@ -85,7 +78,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 			>
 				<CalypsoShoppingCartProvider cartKey={ cartKey }>
 					<StripeHookProvider
-						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+						fetchStripeConfiguration={ getStripeConfiguration }
 						locale={ props.locale }
 					>
 						<CompositeCheckout

@@ -69,9 +69,3 @@ function getEbanxParameters( cardDetails ) {
 			cardDetails[ 'expiration-date' ].substring( 3, 5 ),
 	};
 }
-
-export async function getStripeConfiguration( requestArgs ) {
-	const config = await wpcom.stripeConfiguration( requestArgs );
-	debug( 'Stripe configuration', config );
-	return config;
-}

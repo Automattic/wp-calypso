@@ -20,7 +20,7 @@ import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-meth
 import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import getStripeConfiguration from 'calypso/my-sites/checkout/get-stripe-configuration';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import titles from 'calypso/me/purchases/titles';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';

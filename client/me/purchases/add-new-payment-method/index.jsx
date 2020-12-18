@@ -13,7 +13,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { concatTitle } from 'calypso/lib/react-helpers';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import getStripeConfiguration from 'calypso/my-sites/checkout/get-stripe-configuration';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
