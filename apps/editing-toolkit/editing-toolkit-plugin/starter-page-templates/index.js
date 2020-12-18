@@ -43,6 +43,8 @@ const templatesPluginSharedProps = {
 if ( screenAction === 'add' ) {
 	dispatch( 'automattic/starter-page-layouts' ).setOpenState( 'OPEN_FROM_ADD_PAGE' );
 }
+
+// Register plugin unconditionally so it may be opened through the sidebar.
 registerPlugin( 'page-templates', {
 	render: () => (
 		<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
