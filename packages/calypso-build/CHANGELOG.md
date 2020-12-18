@@ -9,7 +9,7 @@
 - Add more target ECMAScript versions to Terser config and switch dependencies
 - Migrated from `webpack-rtl-plugin` to `@automattic/webpack-rtl-plugin`.
 - Added `calypso:src` as a field used to resolve modules.
-  - Updated dependencies
+- Updated dependencies
   - @babel/cli to ^7.12.1
   - @babel/core to ^7.12.3
   - @babel/helpers to ^7.12.5
