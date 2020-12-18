@@ -87,7 +87,7 @@ export default function PurchaseModalWrapper( props ) {
 					existingCardProcessor( transactionData, dataForProcessor ),
 			} }
 		>
-			<PurchaseModal { ...props } />;
+			<PurchaseModal { ...props } />
 		</CheckoutProvider>
 	);
 }
