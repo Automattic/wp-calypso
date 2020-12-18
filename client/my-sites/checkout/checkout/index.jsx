@@ -2,9 +2,8 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, get, isEmpty, reduce } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 // eslint-disable-next-line no-restricted-imports
@@ -25,7 +24,6 @@ import {
 	hasPersonalPlan,
 	hasPremiumPlan,
 	hasEcommercePlan,
-	hasPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	isJetpackProductSlug,
@@ -37,10 +35,8 @@ import {
 import { clearSitePlans } from 'calypso/state/sites/plans/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
-import notices from 'calypso/notices';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
-import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
@@ -54,17 +50,11 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
-import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { isApplePayAvailable } from 'calypso/lib/web-payment';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import config from 'calypso/config';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
-import {
-	persistSignupDestination,
-	retrieveSignupDestination,
-	clearSignupDestinationCookie,
-} from 'calypso/signup/storageUtils';
+import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { isExternal, addQueryArgs } from 'calypso/lib/url';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { abtest } from 'calypso/lib/abtest';
@@ -381,135 +371,6 @@ export class Checkout extends React.Component {
 		window.location.href = redirectUrl;
 	}
 
-	handleCheckoutCompleteRedirect = ( shouldHideUpsellNudges = false, currentRecieptId ) => {
-		let product;
-		let purchasedProducts;
-		let renewalItem;
-
-		const {
-			cart,
-			isDomainOnly,
-			reduxStore,
-			selectedSiteId,
-			transaction: { step: { data: receipt = null } = {} } = {},
-			translate,
-		} = this.props;
-
-		const redirectPath = this.getCheckoutCompleteRedirectPath(
-			shouldHideUpsellNudges,
-			currentRecieptId
-		);
-		const destinationFromCookie = retrieveSignupDestination();
-
-		this.props.clearPurchases();
-
-		// If the redirect is an external URL, send them out early.
-		if ( isExternal( redirectPath ) ) {
-			return this.handleCheckoutExternalRedirect( redirectPath );
-		}
-
-		// Removes the destination cookie only if redirecting to the signup destination.
-		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
-		if ( redirectPath.includes( destinationFromCookie ) ) {
-			clearSignupDestinationCookie();
-		}
-
-		if ( hasRenewalItem( cart ) ) {
-			// checkouts for renewals redirect back to `/purchases` with a notice
-
-			renewalItem = getRenewalItems( cart )[ 0 ];
-			// group all purchases into an array
-			purchasedProducts = reduce(
-				( receipt && receipt.purchases ) || {},
-				function ( result, value ) {
-					return result.concat( value );
-				},
-				[]
-			);
-			// and take the first product which matches the product id of the renewalItem
-			product = find( purchasedProducts, function ( item ) {
-				return item.product_id === renewalItem.product_id;
-			} );
-
-			if ( product && product.will_auto_renew ) {
-				notices.success(
-					translate(
-						'%(productName)s has been renewed and will now auto renew in the future. ' +
-							'{{a}}Learn more{{/a}}',
-						{
-							args: {
-								productName: renewalItem.product_name,
-							},
-							components: {
-								a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
-							},
-						}
-					),
-					{ persistent: true }
-				);
-			} else if ( product ) {
-				notices.success(
-					translate(
-						'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
-							'We sent your receipt to %(email)s.',
-						{
-							args: {
-								productName: renewalItem.product_name,
-								duration: this.props.moment
-									.duration( { days: renewalItem.bill_period } )
-									.humanize(),
-								date: this.props.moment( product.expiry ).format( 'LL' ),
-								email: product.user_email,
-							},
-						}
-					),
-					{ persistent: true }
-				);
-			}
-		} else if ( hasFreeTrial( cart ) ) {
-			this.props.clearSitePlans( selectedSiteId );
-		}
-
-		if ( receipt && receipt.receipt_id ) {
-			const receiptId = receipt.receipt_id;
-
-			this.props.fetchReceiptCompleted( receiptId, {
-				...receipt,
-				purchases: this.props.transaction.step.data.purchases,
-				failed_purchases: this.props.transaction.step.data.failed_purchases,
-			} );
-		}
-
-		if ( selectedSiteId ) {
-			this.props.requestSite( selectedSiteId );
-		}
-
-		this.props.setHeaderText( '' );
-
-		if (
-			( cart.create_new_blog && receipt && isEmpty( receipt.failed_purchases ) ) ||
-			( isDomainOnly && hasPlan( cart ) && ! selectedSiteId )
-		) {
-			notices.info( translate( 'Almost done…' ) );
-
-			const domainName = getDomainNameFromReceiptOrCart( receipt, cart );
-
-			if ( domainName ) {
-				fetchSitesAndUser(
-					domainName,
-					() => {
-						page( redirectPath );
-					},
-					reduxStore
-				);
-
-				return;
-			}
-		}
-
-		page( redirectPath );
-	};
-
 	render() {
 		this.props.setHeaderText( '' );
 		const children = React.Children.map( this.props.children, ( child ) => {
@@ -517,7 +378,6 @@ export class Checkout extends React.Component {
 				cart: this.props.cart,
 				cards: this.props.cards,
 				isFetchingStoredCards: this.props.isFetchingStoredCards,
-				handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
 			} );
 		} );
 
