@@ -45,15 +45,15 @@ export function bumpStat( group, name ) {
 		mcDebug( 'Bumping stat %s:%s', group, name );
 	}
 
-	if ( config( 'mc_analytics_enabled' ) ) {
-		const uriComponent = buildQuerystring( group, name );
-		new window.Image().src =
-			document.location.protocol +
-			'//pixel.wp.com/g.gif?v=wpcom-no-pv' +
-			uriComponent +
-			'&t=' +
-			Math.random();
-	}
+	//if ( config( 'mc_analytics_enabled' ) ) {
+	const uriComponent = buildQuerystring( group, name );
+	new window.Image().src =
+		document.location.protocol +
+		'//pixel.wp.com/g.gif?v=wpcom-no-pv' +
+		uriComponent +
+		'&t=' +
+		Math.random();
+	//}
 }
 
 export function bumpStatWithPageView( group, name ) {
