@@ -11,7 +11,15 @@ import type { BlockEditProps } from '@wordpress/blocks';
  */
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
-import { GutenLocationStateType, Step, StepType, useIsAnchorFm, useCurrentStep, usePath, useNewQueryParam } from '../path';
+import {
+	GutenLocationStateType,
+	Step,
+	StepType,
+	useIsAnchorFm,
+	useCurrentStep,
+	usePath,
+	useNewQueryParam,
+} from '../path';
 import { usePrevious } from '../hooks/use-previous';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
