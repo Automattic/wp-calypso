@@ -186,7 +186,7 @@ class Layout extends Component {
 		return (
 			<div className={ sectionClass }>
 				<QueryExperiments />
-				<Experiment name="new_onboarding_existing_users_non_en_v4" />
+				<Experiment name="new_onboarding_existing_users_non_en_v5" />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }

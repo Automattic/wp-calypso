@@ -28,7 +28,7 @@ export default function getOnboardingUrl( state ) {
 
 	const existingUsersOnboardingVariant = getVariationForUser(
 		state,
-		'new_onboarding_existing_users_non_en_v4'
+		'new_onboarding_existing_users_non_en_v5'
 	);
 	if ( existingUsersOnboardingVariant === 'treatment' ) {
 		return config( 'gutenboarding_url' );
