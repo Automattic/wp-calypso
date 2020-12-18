@@ -5,13 +5,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
-import { omit } from 'lodash';
+import { pick } from 'lodash';
+import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
 import Main from 'calypso/components/main';
 import QuerySites from 'calypso/components/data/query-sites';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { CompactCard } from '@automattic/components';
@@ -38,11 +41,14 @@ import { ConciergeSupportSession } from './concierge-support-session';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { PremiumPlanUpgradeUpsell } from './premium-plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
-import { PurchaseModal } from './purchase-modal';
-import { replaceCartWithItems } from 'calypso/lib/cart/actions';
+import PurchaseModal from './purchase-modal';
 import Gridicon from 'calypso/components/gridicon';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import { getPlanByPathSlug } from 'calypso/lib/plans';
+import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { extractStoredCardMetaValue } from './purchase-modal/util';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 
 /**
  * Style dependencies
@@ -60,7 +66,29 @@ export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export class UpsellNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
-		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
+		upsellType: PropTypes.string,
+		upgradeItem: PropTypes.string,
+		siteSlugParam: PropTypes.string,
+
+		// Below are provided by HOCs
+		currencyCode: PropTypes.string,
+		isLoading: PropTypes.bool,
+		hasProductsList: PropTypes.bool,
+		hasSitePlans: PropTypes.bool,
+		product: PropTypes.object,
+		productCost: PropTypes.number,
+		productDisplayCost: PropTypes.string,
+		planRawPrice: PropTypes.string,
+		planDiscountedRawPrice: PropTypes.string,
+		isLoggedIn: PropTypes.bool,
+		siteSlug: PropTypes.string,
+		selectedSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+		hasSevenDayRefundPeriod: PropTypes.bool,
+		trackUpsellButtonClick: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		cards: PropTypes.arrayOf( PropTypes.object ),
+		cart: PropTypes.object,
+		isFetchingStoredCards: PropTypes.bool,
 	};
 
 	state = {
@@ -73,6 +101,7 @@ export class UpsellNudge extends React.Component {
 		return (
 			<Main className={ upsellType }>
 				<QuerySites siteId={ selectedSiteId } />
+				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
 				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
@@ -204,10 +233,17 @@ export class UpsellNudge extends React.Component {
 	}
 
 	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
-		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
+		const { trackUpsellButtonClick, upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		handleCheckoutCompleteRedirect( shouldHideUpsellNudges );
+		const getThankYouPageUrlArguments = {
+			siteSlug: this.props.siteSlug,
+			receiptId: this.props.receiptId,
+			cart: this.props.cart,
+			hideNudge: shouldHideUpsellNudges,
+		};
+		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+		page.redirect( url );
 	};
 
 	handleClickAccept = ( buttonAction ) => {
@@ -220,9 +256,16 @@ export class UpsellNudge extends React.Component {
 		if ( this.isEligibleForOneClickUpsell( buttonAction ) ) {
 			this.setState( {
 				showPurchaseModal: true,
-				cartLastServerResponseDate: this.getCartUpdatedTime(),
 			} );
-			replaceCartWithItems( [ this.props.product ] );
+			const storedCard = this.props.cards[ 0 ];
+			const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
+			const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
+			this.props.shoppingCartManager.updateLocation( {
+				countryCode,
+				postalCode,
+				subdivisionCode: null,
+			} );
+			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
 			return;
 		}
 
@@ -232,7 +275,11 @@ export class UpsellNudge extends React.Component {
 	};
 
 	isEligibleForOneClickUpsell = ( buttonAction ) => {
-		const { cards, siteSlug, upsellType } = this.props;
+		const { product, cards, siteSlug, upsellType } = this.props;
+		
+		if ( ! product ) {
+			return false;
+		}
 
 		const supportedUpsellTypes = [
 			CONCIERGE_QUICKSTART_SESSION,
@@ -255,22 +302,25 @@ export class UpsellNudge extends React.Component {
 		return true;
 	};
 
-	handleOneClickUpsellComplete = ( currentRecieptId ) => {
-		this.props.handleCheckoutCompleteRedirect( true, currentRecieptId );
-	};
-
 	renderPurchaseModal = () => {
-		const isCartUpdating = this.state.cartLastServerResponseDate === this.getCartUpdatedTime();
+		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
+
+		const onCloseModal = () => {
+			this.props.shoppingCartManager.replaceProductsInCart( [] );
+			this.setState( { showPurchaseModal: false } );
+		};
 
 		return (
-			<PurchaseModal
-				cart={ this.props.cart }
-				cards={ this.props.cards }
-				onComplete={ this.handleOneClickUpsellComplete }
-				onClose={ () => this.setState( { showPurchaseModal: false } ) }
-				siteSlug={ this.props.siteSlug }
-				isCartUpdating={ isCartUpdating }
-			/>
+			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
+				<PurchaseModal
+					cart={ this.props.cart }
+					cards={ this.props.cards }
+					onClose={ onCloseModal }
+					siteId={ this.props.selectedSiteId }
+					siteSlug={ this.props.siteSlug }
+					isCartUpdating={ isCartUpdating }
+				/>
+			</StripeHookProvider>
 		);
 	};
 
@@ -280,10 +330,6 @@ export class UpsellNudge extends React.Component {
 				<Gridicon icon="cross-small" />
 			</div>
 		);
-	};
-
-	getCartUpdatedTime = () => {
-		return this.props.cart?.client_metadata?.last_server_response_date;
 	};
 }
 
@@ -318,18 +364,28 @@ export default connect(
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 			isMonthly: false,
 		} );
-
+		const isFetchingCards = isFetchingStoredCards( state );
 		const productSlug = resolveProductSlug( upsellType, upgradeItem );
+		const productProperties = pick( getProductBySlug( state, productSlug ), [
+			'product_slug',
+			'product_id',
+		] );
+		const product =
+			productProperties.product_slug && productProperties.product_id
+				? createRequestCartProduct( productProperties )
+				: null;
 
 		return {
+			isFetchingStoredCards: isFetchingCards,
+			cards: getStoredCards( state ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading:
-				props.isFetchingStoredCards ||
+				isFetchingCards ||
 				isProductsListFetching( state ) ||
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			product: omit( getProductBySlug( state, productSlug ), 'prices' ),
+			product,
 			productCost: getProductCost( state, productSlug ),
 			productDisplayCost: getProductDisplayCost( state, productSlug ),
 			planRawPrice: annualPrice,
@@ -343,4 +399,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( localize( UpsellNudge ) );
+)( withShoppingCart( localize( UpsellNudge ) ) );
