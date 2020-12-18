@@ -11,7 +11,7 @@ import { some } from 'lodash';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, Card } from '@automattic/components';
 import HappinessEngineers from 'calypso/me/help/help-happiness-engineers';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
@@ -23,6 +23,9 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SectionHeader from 'calypso/components/section-header';
 import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import { planHasFeature } from 'calypso/lib/plans';
@@ -32,6 +35,11 @@ import { FEATURE_BUSINESS_ONBOARDING } from 'calypso/lib/plans/constants';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Images
+ */
+import supportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -202,6 +210,8 @@ class Help extends React.PureComponent {
 	};
 
 	getCoursesTeaser = () => {
+		const { translate } = this.props;
+
 		if ( ! this.props.showCoursesTeaser ) {
 			return null;
 		}
@@ -211,12 +221,60 @@ class Help extends React.PureComponent {
 				onClick={ this.trackCoursesButtonClick }
 				href="https://wordpress.com/webinars"
 				target="_blank"
-				title={ this.props.translate( 'Courses' ) }
-				description={ this.props.translate(
+				title={ translate( 'Courses' ) }
+				description={ translate(
 					'Learn how to make the most of your site with these courses and webinars'
 				) }
 			/>
 		);
+	};
+
+	supportSessionCard = () => {
+		const { translate, hasAppointment, scheduleId } = this.props;
+
+		//If we already have an appointment or the scheduleId has not been loaded, bail
+		if ( hasAppointment || null === scheduleId ) {
+			return;
+		}
+
+		return (
+			<Card className="help__support-session-card">
+				<div className="help__support-session-text">
+					<h2 className="help__support-session-title">
+						{ translate( 'Schedule a support session' ) }
+					</h2>
+					<p className="help__support-session-description">
+						{ translate(
+							'Quick Start Support Sessions give you a way to talk to one of our Happiness Engineers via a screen share with audio.'
+						) }
+					</p>
+					<div className="help__support-session-actions">
+						<Button
+							className="help__support-session-action"
+							primary
+							href={ localizeUrl( 'https://wordpress.com/checkout/offer-quickstart-session/' ) }
+							onClick={ this.trackSupportSessionButtonClick }
+						>
+							{ translate( 'Schedule a session' ) }
+						</Button>
+						<Button
+							className="help__support-session-action is-link"
+							borderless
+							href={ localizeUrl( 'https://wordpress.com/support/quickstart-support/' ) }
+						>
+							{ translate( 'Learn more' ) }
+						</Button>
+					</div>
+				</div>
+				<div className="help__support-session-illustration">
+					<img src={ supportSession } alt="" />
+				</div>
+			</Card>
+		);
+	};
+
+	trackSupportSessionButtonClick = () => {
+		recordTracksEvent( 'calypso_help_support_session_card_click' );
 	};
 
 	trackCoursesButtonClick = () => {
@@ -228,7 +286,7 @@ class Help extends React.PureComponent {
 
 	getPlaceholders = () => {
 		return (
-			<Main className="help">
+			<Main className="help" wideLayout>
 				<MeSidebarNavigation />
 				<div className="help-search is-placeholder" />
 				<div className="help__help-teaser-button is-placeholder" />
@@ -246,15 +304,17 @@ class Help extends React.PureComponent {
 		}
 
 		return (
-			<Main className="help">
+			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
 				{ this.getCoursesTeaser() }
+				{ this.supportSessionCard() }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />
+				<QueryConciergeInitial />
 				<QueryUserPurchases userId={ userId } />
 			</Main>
 		);
@@ -272,6 +332,8 @@ export const mapStateToProps = ( state, ownProps ) => {
 	const isLoading = isFetchingUserPurchases( state );
 	const isBusinessPlanUser = some( purchases, planHasOnboarding );
 	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
+	const hasAppointment = getConciergeNextAppointment( state );
+	const scheduleId = getConciergeScheduleId( state );
 
 	return {
 		userId,
@@ -279,6 +341,8 @@ export const mapStateToProps = ( state, ownProps ) => {
 		showCoursesTeaser,
 		isLoading,
 		isEmailVerified,
+		hasAppointment,
+		scheduleId,
 	};
 };
 
