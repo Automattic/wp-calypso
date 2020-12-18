@@ -7,10 +7,10 @@ import { Search } from './search';
 
 export default { title: 'Search', component: Search };
 
-const BoxedSearch = ( props: any ) => (
+const BoxedSearch = ( props ) => (
 	<div style={ { position: 'relative', width: '270px', height: '50px' } }>
 		<Search
-			__={ ( str: string ) => str }
+			__={ ( str ) => str }
 			placeholder="Search..."
 			fitsContainer
 			onSearch={ ( search ) => console.log( 'Searched: ', search ) } // eslint-disable-line no-console
@@ -44,7 +44,7 @@ export const Compact = () => <BoxedSearch compact />;
 export const CompactPinned = () => <BoxedSearch pinned compact fitsContainer />;
 
 export const WithOverlayStyling = () => {
-	const overlayStyling = ( input: string ) => {
+	const overlayStyling = ( input ) => {
 		const tokens = input.split( /(\s+)/ );
 
 		return tokens
