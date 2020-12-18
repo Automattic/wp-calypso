@@ -13,9 +13,10 @@ import thumbsDown from './icons/thumbs_down';
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { close } from '@wordpress/icons';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,7 +158,16 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 }
 
 function LastCardThumbsUpDown() {
+	const [ isDisabled, setIsDisabled ] = useState( false );
+	const [ selected, setSelected ] = useState( 'none' );
+
 	const rateTour = ( isThumbsUp ) => {
+		if ( isDisabled ) {
+			return;
+		}
+		setIsDisabled( true );
+		setSelected( isThumbsUp === true ? 'thumbs-up' : 'thumbs-down' );
+		// Currently the Welcome Tour only shows one time in editor (it is not wired in MoreMenu like NUX), we will want to adjust tracking if the Tour becomes accessible from the MoreMenu
 		recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 			thumbs_up: isThumbsUp,
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
@@ -169,13 +179,19 @@ function LastCardThumbsUpDown() {
 			<p className="welcome-tour__end-text">Did you find this guide helpful?</p>
 			<div>
 				<Button
-					className="welcome-tour__end-icon"
+					className={ classNames( 'welcome-tour__end-icon', {
+						active: selected === 'thumbs-up',
+					} ) }
+					disabled={ isDisabled }
 					icon={ thumbsUp }
 					onClick={ () => rateTour( true ) }
 					iconSize={ 24 }
 				/>
 				<Button
-					className="welcome-tour__end-icon"
+					className={ classNames( 'welcome-tour__end-icon', {
+						active: selected === 'thumbs-down',
+					} ) }
+					disabled={ isDisabled }
 					icon={ thumbsDown }
 					onClick={ () => rateTour( false ) }
 					iconSize={ 24 }

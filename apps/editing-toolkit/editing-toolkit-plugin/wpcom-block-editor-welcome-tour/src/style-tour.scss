@@ -95,6 +95,15 @@
 			path {
 				fill: $gray-600;
 			}
+
+			&.active {
+				background-color: $black;
+				opacity: 1;
+
+				path {
+					fill: $white;
+				}
+			}
 		}
 	}
 
