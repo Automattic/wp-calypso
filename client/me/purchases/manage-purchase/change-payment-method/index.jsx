@@ -4,7 +4,7 @@
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, useMemo, useCallback } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
@@ -213,6 +213,7 @@ function ChangePaymentMethodList( {
 	apiParams,
 } ) {
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
 	const paymentMethods = useAssignablePaymentMethods();
 
@@ -239,7 +240,7 @@ function ChangePaymentMethodList( {
 				label: 'fake thing',
 			} }
 			onPaymentComplete={ () =>
-				onChangeComplete( { successCallback, translate, showSuccessMessage } )
+				onChangeComplete( { successCallback, translate, showSuccessMessage, reduxDispatch } )
 			}
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
@@ -276,7 +277,8 @@ function ChangePaymentMethodList( {
 	);
 }
 
-function onChangeComplete( { successCallback, translate, showSuccessMessage } ) {
+function onChangeComplete( { successCallback, translate, showSuccessMessage, reduxDispatch } ) {
+	reduxDispatch( recordTracksEvent( 'calypso_purchases_save_new_payment_method' ) );
 	showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	successCallback();
 }
