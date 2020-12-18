@@ -200,9 +200,7 @@ class PurchaseNotice extends Component {
 		) {
 			return (
 				<NoticeAction href={ changePaymentMethodPath }>
-					{ config.isEnabled( 'purchases/new-payment-methods' )
-						? translate( 'Add Payment Method' )
-						: translate( 'Add Credit Card' ) }
+					{ translate( 'Add Payment Method' ) }
 				</NoticeAction>
 			);
 		}
