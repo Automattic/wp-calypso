@@ -206,6 +206,7 @@ code,
 kbd,
 tt,
 var {
+	/* stylelint-disable-next-line scales/font-size */
 	font: 15px $code;
 }
 abbr,
@@ -310,4 +311,9 @@ object {
 // added to the html element when we don't want the background content to scroll
 html.no-scroll {
 	overflow: hidden;
+}
+
+/* @wordpress/components Form toggles use the color scheme's background color */
+.components-form-toggle.is-checked .components-form-toggle__track {
+	background-color: var( --color-primary );
 }
