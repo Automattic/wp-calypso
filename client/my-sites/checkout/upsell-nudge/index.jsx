@@ -48,15 +48,14 @@ import { getPlanByPathSlug } from 'calypso/lib/plans';
  * Style dependencies
  */
 import './style.scss';
-import { getPlanByPathSlug } from 'calypso/lib/plans';
 
 /**
  * Upsell Types
  */
 export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
-export const PREMIUM_PLAN_UPGRADE_UPSELL = 'plan-upgrade-upsell';
-export const BUSINESS_PLAN_UPGRADE_UPSELL = 'plan-upgrade-upsell';
+export const PREMIUM_PLAN_UPGRADE_UPSELL = 'premium-plan-upgrade-upsell';
+export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 
 export class UpsellNudge extends React.Component {
 	static propTypes = {
@@ -235,7 +234,11 @@ export class UpsellNudge extends React.Component {
 	isEligibleForOneClickUpsell = ( buttonAction ) => {
 		const { cards, siteSlug, upsellType } = this.props;
 
-		const supportedUpsellTypes = [ CONCIERGE_QUICKSTART_SESSION, PREMIUM_PLAN_UPGRADE_UPSELL, BUSINESS_PLAN_UPGRADE_UPSELL ];
+		const supportedUpsellTypes = [
+			CONCIERGE_QUICKSTART_SESSION,
+			PREMIUM_PLAN_UPGRADE_UPSELL,
+			BUSINESS_PLAN_UPGRADE_UPSELL,
+		];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			return false;
 		}
@@ -315,7 +318,6 @@ export default connect(
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 			isMonthly: false,
 		} );
-		const productSlug = resolveProductSlug( upsellType, upgradeItem );
 
 		const productSlug = resolveProductSlug( upsellType, upgradeItem );
 
