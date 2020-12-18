@@ -137,7 +137,10 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderSecondarySiteActions = ( site ) => {
-		const sitePlugin = this.props.pluginsOnSecondarySites?.sites[ site.ID ];
+		const sitePlugin = {
+			...this.props.plugin,
+			...this.props.pluginsOnSecondarySites?.sites[ site.ID ],
+		};
 
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
