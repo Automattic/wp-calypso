@@ -25,6 +25,7 @@
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,
+	"jetpack_connect_url": false,
 	"mc_analytics_enabled": false,
 	"oauth_client_id": false,
 	"olark_chat_identity": false,
