@@ -153,18 +153,10 @@
 
 .dashboard__store-move-notice {
     font-size: $font-body-small;
+    text-align: center;
 
-    .notice__action {
-        float: right;
-        padding: 0;
-        text-decoration: none;
-    }
-
-    .card {
-        text-align: center;
-        a {
-            margin-top: 40px;
-        }
+    a {
+        margin-top: 40px;
     }
 
     h1 {
@@ -173,10 +165,11 @@
     }
 
     p {
-        margin: 0;
+        max-width: 50%;
+        margin: auto;
     }
-}
 
-.dashboard__store-move-notice.store-removed {
-    margin-top: 40px;
+    &.store-removed {
+        margin-top: 40px;
+    }
 }
