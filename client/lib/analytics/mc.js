@@ -45,7 +45,7 @@ export function bumpStat( group, name ) {
 		mcDebug( 'Bumping stat %s:%s', group, name );
 	}
 
-	if ( 'undefined' !== typeof window && config( 'mc_analytics_enabled' ) ) {
+	if ( config( 'mc_analytics_enabled' ) ) {
 		const uriComponent = buildQuerystring( group, name );
 		new window.Image().src =
 			document.location.protocol +

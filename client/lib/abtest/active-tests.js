@@ -19,6 +19,14 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	letsCrashServers: {
+		datestamp: '20200101',
+		variations: {
+			original: 50,
+			better: 50,
+		},
+		defaultVariation: 'better',
+	},
 	builderReferralThemesBanner: {
 		datestamp: '20181218',
 		variations: {

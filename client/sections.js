@@ -13,10 +13,10 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'root',
+		name: 'isomorphic-abtest-failure',
 		paths: [ '/abtest-isomorphic-failure' ],
-		module: 'calypso/abtest-isomorphic-failure',
-		group: 'root',
+		module: 'calypso/isomorphic-abtest-failure',
+		group: 'sites',
 		isomorphic: true,
 	},
 	{

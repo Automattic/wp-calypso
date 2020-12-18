@@ -181,6 +181,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 
 ABTest.prototype.getVariationAndSetAsNeeded = function () {
 	if ( 'test' === process.env.NODE_ENV ) {
+		console.log( 'test environment - bailing on abtest' );
 		return this.defaultVariation;
 	}
 
@@ -200,7 +201,7 @@ ABTest.prototype.getVariationAndSetAsNeeded = function () {
 		debug( '%s: User is ineligible to participate in A/B test', this.experimentId );
 		return this.defaultVariation;
 	}
-
+	console.log( 'setting an abtest variation' );
 	const newVariation = this.assignVariation();
 	this.saveVariation( newVariation );
 	debug( '%s: new variation: "%s"', this.experimentId, newVariation );
