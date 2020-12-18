@@ -128,7 +128,7 @@
 	"siftscience_key": "a4f69f6759",
 	"wpcom_signup_id": "39911",
 	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
-	"mc_analytics_enabled": true,
+	"mc_analytics_enabled": false,
 	"boom_analytics_enabled": false,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "desktop",

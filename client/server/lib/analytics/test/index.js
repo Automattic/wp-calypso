@@ -11,6 +11,8 @@ import superagent from 'superagent';
 import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 import analytics from '../index';
 import config from 'calypso/config';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+
 jest.mock( 'calypso/config', () => require( 'sinon' ).stub() );
 jest.mock( 'calypso/lib/analytics/statsd-utils', () => ( {
 	statsdTimingUrl: require( 'sinon' ).stub(),
@@ -19,6 +21,12 @@ jest.mock( 'calypso/lib/analytics/statsd-utils', () => ( {
 
 describe( 'Server-Side Analytics', () => {
 	describe( 'tracks.recordEvent', () => {} );
+
+	describe( 'mc bumpStat', () => {
+		test( 'bumpStat should trigger an error due to window', () => {
+			bumpStat( 'letsCrashServers', 'better' );
+		} );
+	} );
 
 	describe( 'statsd.recordTiming', () => {
 		beforeAll( function () {
