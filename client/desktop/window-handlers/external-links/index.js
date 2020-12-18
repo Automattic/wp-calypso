@@ -75,9 +75,11 @@ module.exports = function ( mainWindow ) {
 				title: platform.isWindows() ? 'WordPress.com' : 'Proceed in External Browser?',
 				message: 'Proceed in External Browser?',
 				detail:
-					`Please note: WordPress Desktop does not support the Classic Editor plugin.` +
+					// eslint-disable-next-line prettier/prettier
+					`You have one or more plugins that prevent editing content` +
+					` within WordPress Desktop.` +
 					`\n\n` +
-					`In addition, Single Sign On is required to use this feature if on a Business Plan.`,
+					`Continue in an external browser?`,
 			};
 
 			const selected = await dialog.showMessageBox( mainWindow, redirectDialogOptions );
