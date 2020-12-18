@@ -3,18 +3,19 @@
  */
 import { registerStore } from '@wordpress/data';
 
-const reducer = ( state = { isOpen: false }, { type, ...action } ) =>
-	'SET_IS_OPEN' === type ? { ...state, isOpen: action.isOpen } : state;
+const reducer = ( state = 'CLOSED', { type, ...action } ) =>
+	'SET_IS_OPEN' === type ? action.openState : state;
 
 const actions = {
-	setIsOpen: ( isOpen ) => ( {
+	setOpenState: ( openState ) => ( {
 		type: 'SET_IS_OPEN',
-		isOpen,
+		openState: openState || 'CLOSED',
 	} ),
 };
 
 const selectors = {
-	isOpen: ( state ) => state.isOpen,
+	isOpen: ( state ) => 'CLOSED' !== state,
+	isPromptedFromSidebar: ( state ) => 'OPEN_FROM_SIDEBAR' === state,
 };
 
 registerStore( 'automattic/starter-page-layouts', {
