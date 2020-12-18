@@ -19,7 +19,10 @@ import {
 	getCurrentUserLocale,
 } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import { getAnnualPrice } from 'calypso/lib/gsuite';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -61,8 +64,14 @@ class EmailProvidersComparison extends React.Component {
 
 	goToAddGSuite = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
+
 		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'gsuite' } );
-		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domain.name, 'basic', currentRoute ) );
+
+		const planType = config.isEnabled( 'google-workspace-migration' ) ? 'starter' : 'basic';
+
+		page(
+			emailManagementNewGSuiteAccount( selectedSiteSlug, domain.name, planType, currentRoute )
+		);
 	};
 
 	onAddTitanClick = () => {
@@ -251,10 +260,14 @@ class EmailProvidersComparison extends React.Component {
 
 export default connect(
 	( state ) => {
+		const productSlug = config.isEnabled( 'google-workspace-migration' )
+			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			: GSUITE_BASIC_SLUG;
+
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentUserLocale: getCurrentUserLocale( state ),
-			gSuiteProduct: getProductBySlug( state, GSUITE_BASIC_SLUG ),
+			gSuiteProduct: getProductBySlug( state, productSlug ),
 			currentRoute: getCurrentRoute( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};

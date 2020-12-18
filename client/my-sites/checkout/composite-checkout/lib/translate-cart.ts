@@ -30,7 +30,7 @@ import type {
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequestWithLineItems,
 } from '../types/transaction-endpoint';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
 const debug = debugFactory( 'calypso:composite-checkout:translate-cart' );
 
@@ -343,7 +343,7 @@ function addRegistrationDataToGSuiteItem(
 	item: WPCOMCartItem,
 	contactDetails: DomainContactDetails | null
 ): WPCOMCartItem {
-	if ( ! isGSuiteProductSlug( item.wpcom_meta?.product_slug ) ) {
+	if ( ! isGSuiteOrGoogleWorkspaceProductSlug( item.wpcom_meta?.product_slug ) ) {
 		return item;
 	}
 	return {

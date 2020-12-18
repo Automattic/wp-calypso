@@ -21,7 +21,10 @@ import {
 	isPlan,
 	isSiteRedirect,
 } from 'calypso/lib/products-values';
-import { isGSuiteExtraLicenseProductSlug, isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import {
+	isGSuiteExtraLicenseProductSlug,
+	isGSuiteOrGoogleWorkspaceProductSlug,
+} from 'calypso/lib/gsuite';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -180,7 +183,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		if ( isGSuiteProductSlug( primaryPurchase.productSlug ) ) {
+		if ( isGSuiteOrGoogleWorkspaceProductSlug( primaryPurchase.productSlug ) ) {
 			return preventWidows(
 				translate(
 					'Your domain {{strong}}%(domainName)s{{/strong}} will be using G Suite very soon.',
