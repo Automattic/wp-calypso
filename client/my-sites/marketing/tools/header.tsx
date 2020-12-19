@@ -33,7 +33,7 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 
 				<h2 className="tools__header-description">
 					{ translate(
-						'From finance services to productivity apps and marketing tools, our Business Tool marketplace includes hand-picked services that we think can help you grow your business.'
+						'From finance services to productivity apps and marketing tools, our Business Tool hub includes hand-picked services that we think can help you grow your business.'
 					) }
 				</h2>
 
