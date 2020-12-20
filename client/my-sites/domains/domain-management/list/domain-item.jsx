@@ -389,7 +389,7 @@ class DomainItem extends PureComponent {
 			);
 		}
 
-		return <React.Fragment>{ getDomainTypeText( domainDetails ) }</React.Fragment>;
+		return <React.Fragment>{ getDomainTypeText( domainDetails, translate ) }</React.Fragment>;
 	}
 
 	busyMessage() {
