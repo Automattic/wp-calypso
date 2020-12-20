@@ -72,10 +72,11 @@ function WelcomeTourFrame() {
 	const [ justMaximized, setJustMaximized ] = useState( false );
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
-	const dismissWpcomNuxTour = () => {
+	const dismissWpcomNuxTour = ( source ) => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			slide_number: currentCardIndex + 1,
+			source: source,
 		} );
 
 		setWpcomNuxStatus( { isNuxEnabled: false } );

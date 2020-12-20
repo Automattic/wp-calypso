@@ -83,7 +83,7 @@ function WelcomeTourCard( {
 					<CardNavigation
 						cardIndex={ cardIndex }
 						lastCardIndex={ lastCardIndex }
-						onDismiss={ onDismiss }
+						onDismiss={ () => onDismiss( 'close-btn' ) }
 						setCurrentCardIndex={ setCurrentCardIndex }
 					></CardNavigation>
 				) }
@@ -102,7 +102,7 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 			/>
 			<div>
 				{ cardIndex === 0 ? (
-					<Button isTertiary={ true } onClick={ () => onDismiss() }>
+					<Button isTertiary={ true } onClick={ () => onDismiss( 'no-thanks-btn' ) }>
 						No thanks
 					</Button>
 				) : (
