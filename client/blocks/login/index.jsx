@@ -94,7 +94,9 @@ class Login extends Component {
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isNative: true, isJetpack: this.props.isJetpack } ) );
+			page(
+				login( { isNative: true, isJetpack: this.props.isJetpack, locale: this.props.locale } )
+			);
 		}
 
 		window.scrollTo( 0, 0 );
@@ -152,6 +154,7 @@ class Login extends Component {
 					isGutenboarding: this.props.isGutenboarding,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
+					locale: this.props.locale,
 				} )
 			);
 		}
@@ -165,6 +168,7 @@ class Login extends Component {
 				login( {
 					isNative: true,
 					socialConnect: true,
+					locale: this.props.locale,
 				} )
 			);
 		}
