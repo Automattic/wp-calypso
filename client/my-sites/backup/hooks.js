@@ -101,7 +101,11 @@ export const useFirstMatchingBackupAttempt = (
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
 		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
-	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, filter, shouldExecute );
+	const { activityLogs, isLoadingActivityLogs } = useActivityLogs(
+		siteId,
+		filter,
+		!! shouldExecute
+	);
 
 	if ( ! shouldExecute ) {
 		return {
