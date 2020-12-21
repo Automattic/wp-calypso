@@ -86,8 +86,8 @@ module.exports = {
 		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: {
-			config: 'server/config',
-			'calypso/config': 'server/config',
+			config: 'calypso/server/config',
+			'calypso/config': 'calypso/server/config',
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
@@ -103,7 +103,7 @@ module.exports = {
 		), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
+			'calypso/components/empty-component'
 		), // Depends on BOM
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
 	],
