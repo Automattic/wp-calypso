@@ -100,16 +100,24 @@ function WelcomeTourFrame() {
 					setCurrentCardIndex={ setCurrentCardIndex }
 				/>
 			) : (
-				<WelcomeTourMinimized onMaximize={ setIsMinimized } setJustMaximized={ setJustMaximized } />
+				<WelcomeTourMinimized
+					onMaximize={ setIsMinimized }
+					setJustMaximized={ setJustMaximized }
+					slideNumber={ currentCardIndex + 1 }
+				/>
 			) }
 		</div>
 	);
 }
 
-function WelcomeTourMinimized( { onMaximize, setJustMaximized } ) {
+function WelcomeTourMinimized( { onMaximize, setJustMaximized, slideNumber } ) {
 	const handleOnMaximize = () => {
 		onMaximize( false );
 		setJustMaximized( true );
+		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			slide_number: slideNumber,
+		} );
 	};
 
 	return (
