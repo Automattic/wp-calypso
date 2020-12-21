@@ -679,7 +679,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the component
 	 *
-	 * @returns {React.Component} the DateRange component
+	 * @returns {JSX.Element} the DateRange component
 	 */
 	render() {
 		const rootClassNames = classNames( {
