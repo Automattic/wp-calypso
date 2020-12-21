@@ -17,7 +17,7 @@ import { recordSiteTitleSelection } from '../../lib/analytics';
 import tip from './tip';
 import AcquireIntentTextInput from './acquire-intent-text-input';
 import useTyper from '../../hooks/use-typer';
-import { useIsAnchorFm, useAnchorFmPodcastId } from '../../path';
+import { useIsAnchorFm, useAnchorFmParams } from '../../path';
 
 interface Props {
 	onSubmit: () => void;
@@ -28,7 +28,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 	const { __, _x } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const isAnchorFmSignup = useIsAnchorFm();
-	const anchorFmPodcastId = useAnchorFmPodcastId();
+	const { anchorFmPodcastId } = useAnchorFmParams();
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
 	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
