@@ -21,6 +21,7 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	INSTALL_PLUGIN,
 	PLUGIN_UPLOAD,
+	RECEIVE_PLUGINS,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
@@ -729,7 +730,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'RECEIVE_PLUGINS':
+			case RECEIVE_PLUGINS:
 				return translate(
 					'Error fetching plugins on %(numberOfSites)d site.',
 					'Error fetching plugins on %(numberOfSites)d sites.',
@@ -944,7 +945,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 
-			case 'RECEIVE_PLUGINS':
+			case RECEIVE_PLUGINS:
 				return translate( 'Error fetching plugins on %(site)s.', {
 					args: translateArg,
 				} );

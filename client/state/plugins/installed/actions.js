@@ -37,6 +37,7 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	DISABLE_AUTOUPDATE_PLUGIN,
 	INSTALL_PLUGIN,
+	RECEIVE_PLUGINS,
 	REMOVE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -638,7 +639,7 @@ export function fetchSitePlugins( siteId ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_PLUGINS',
-				action: 'RECEIVE_PLUGINS',
+				action: RECEIVE_PLUGINS,
 				site,
 				data,
 				error,
