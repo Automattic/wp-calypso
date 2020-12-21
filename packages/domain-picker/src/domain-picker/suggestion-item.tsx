@@ -119,6 +119,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 
 	return (
 		<WrappingComponent
+			key={ domainName }
 			className={ classnames(
 				'domain-picker__suggestion-item',
 				{
