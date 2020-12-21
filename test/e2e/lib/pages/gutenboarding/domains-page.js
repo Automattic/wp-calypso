@@ -35,4 +35,9 @@ export default class DomainsPage extends AsyncBaseContainer {
 		const skipButtonSelector = By.css( '.action-buttons__skip' );
 		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
 	}
+
+	async enterDomainQuery( query ) {
+		const searchFieldSelector = By.css( '.domain-picker__search input[type="text"]' );
+		return await driverHelper.setWhenSettable( this.driver, searchFieldSelector, query );
+	}
 }

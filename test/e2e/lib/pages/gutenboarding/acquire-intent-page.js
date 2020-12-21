@@ -8,10 +8,11 @@ import { By } from 'selenium-webdriver';
  */
 import AsyncBaseContainer from '../../async-base-container';
 import * as driverHelper from '../../driver-helper';
+import * as dataHelper from '../../data-helper';
 
 export default class AcquireIntentPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		super( driver, By.css( '.acquire-intent' ) );
+	constructor( driver, url = dataHelper.getCalypsoURL( 'new' ) ) {
+		super( driver, By.css( '.acquire-intent' ), url );
 	}
 
 	async enterSiteTitle( siteTitle ) {

@@ -91,6 +91,7 @@ const FeaturesStep: React.FunctionComponent = () => {
 							key={ id }
 							onClick={ () => toggleFeature( feature.id ) }
 							isTertiary
+							data-e2e-button={ `feature-${ id }` }
 						>
 							<div className="features__item-image">
 								<FeatureIcon featureId={ feature.id } />

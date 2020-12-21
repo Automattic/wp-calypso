@@ -32,8 +32,8 @@ export default class CreateSiteFlow {
 		const domainsPage = await DomainsPage.Expect( this.driver );
 		await domainsPage.skipStep();
 
-		const featureswPage = await FeaturesPage.Expect( this.driver );
-		await featureswPage.skipStep();
+		const featuresPage = await FeaturesPage.Expect( this.driver );
+		await featuresPage.skipStep();
 
 		const plansPage = await PlansPage.Expect( this.driver );
 		await plansPage.expandAllPlans();
