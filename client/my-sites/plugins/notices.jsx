@@ -20,6 +20,7 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,
 	INSTALL_PLUGIN,
+	PLUGIN_UPLOAD,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
@@ -348,7 +349,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'PLUGIN_UPLOAD':
+			case PLUGIN_UPLOAD:
 				return translate( "You've successfully installed the %(plugin)s plugin.", {
 					args: translateArg,
 				} );
