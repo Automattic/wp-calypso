@@ -16,12 +16,12 @@ import { Button, Flex } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { Icon } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useState } from '@wordpress/element';
+import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 function LaunchWpcomWelcomeTour() {
-	const [ portalParent ] = useState( () => document.createElement( 'div' ) );
+	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const isWpcomNuxEnabled = useSelect( ( select ) =>
 		select( 'automattic/nux' ).isWpcomNuxEnabled()
 	);
