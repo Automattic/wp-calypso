@@ -2,7 +2,7 @@
 
 ## trunk
 
-## 6.5.0
+## 6.4.0
 
 - Added `--esm` and `--cjs` options to `copy-assets` and `transpile` to do only one kind of
   the build (ESM or CJS) instead of both that are done by default
@@ -19,14 +19,10 @@
   - @babel/preset-env to ^7.12.1
   - @babel/preset-react to ^7.12.5
   - @babel/preset-typescript to ^7.12.1
-- Do not mangle functions called '\_\_', '\_n', '\_nx' or '\_x' (used for extracting translations)
-
-## 6.4.0
-
-- Removed the exceptions for the `import/no-extraneous-dependencies` eslint rule for `*.md.jsx` and `*.md.js` files
-- Upgraded dependencies
   - typescript to ^4.0.3
   - terser-webpack-plugin to "4.2.2
+- Do not mangle functions called '\_\_', '\_n', '\_nx' or '\_x' (used for extracting translations)
+- Removed the exceptions for the `import/no-extraneous-dependencies` eslint rule for `*.md.jsx` and `*.md.js` files
 - Adds option to customize the [`output.jsonpFunction` setting for webpack](https://v4.webpack.js.org/configuration/output/#outputjsonpfunction)
 
 ## 6.3.0
