@@ -1,11 +1,25 @@
 # Changelog
 
-## trunk (6.5.0)
+## trunk
+
+## 6.5.0
 
 - Added `--esm` and `--cjs` options to `copy-assets` and `transpile` to do only one kind of
   the build (ESM or CJS) instead of both that are done by default
 - Add more target ECMAScript versions to Terser config and switch dependencies
 - Migrated from `webpack-rtl-plugin` to `@automattic/webpack-rtl-plugin`.
+- Added `calypso:src` as a field used to resolve modules.
+- Updated dependencies
+  - @babel/cli to ^7.12.1
+  - @babel/core to ^7.12.3
+  - @babel/helpers to ^7.12.5
+  - @babel/plugin-proposal-class-properties to ^7.12.1
+  - @babel/plugin-transform-react-jsx to ^7.12.5
+  - @babel/plugin-transform-runtime to ^7.12.1
+  - @babel/preset-env to ^7.12.1
+  - @babel/preset-react to ^7.12.5
+  - @babel/preset-typescript to ^7.12.1
+- Do not mangle functions called '\_\_', '\_n', '\_nx' or '\_x' (used for extracting translations)
 
 ## 6.4.0
 
