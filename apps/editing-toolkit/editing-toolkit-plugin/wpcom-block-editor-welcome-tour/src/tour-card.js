@@ -170,7 +170,7 @@ function TourRating() {
 			return;
 		}
 		isDisabled = true;
-		setTourRating( 'thumbs-up' );
+		setTourRating( isThumbsUp ? 'thumbs-up' : 'thumbs-down' );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 			thumbs_up: isThumbsUp,
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
