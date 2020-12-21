@@ -39,6 +39,7 @@ const NOTICE_GREEN = '#4ab866';
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
+		isCartPendingUpdate: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
@@ -172,6 +173,9 @@ class DomainRegistrationSuggestion extends React.Component {
 			} else {
 				buttonStyles = { ...buttonStyles, disabled: true };
 			}
+		}
+		if ( this.props.isCartPendingUpdate ) {
+			buttonStyles = { ...buttonStyles, busy: true };
 		}
 		return {
 			buttonContent,
