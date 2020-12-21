@@ -167,7 +167,7 @@ class PageTemplateModal extends Component {
 
 		// Skip setting template if user selects current layout
 		if ( 'current' === name ) {
-			this.props.setIsOpen( false );
+			this.props.setOpenState( false );
 			return;
 		}
 
@@ -551,7 +551,7 @@ export const PageTemplatesPlugin = compose(
 		const editorDispatcher = dispatch( 'core/editor' );
 		const { setOpenState } = dispatch( 'automattic/starter-page-layouts' );
 		return {
-			setIsOpen,
+			setOpenState,
 			saveTemplateChoice: ( name ) => {
 				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();
