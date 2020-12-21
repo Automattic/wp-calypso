@@ -151,7 +151,12 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 					iconSize={ 24 }
 					onClick={ handleOnMinimize }
 				></Button>
-				<Button isPrimary icon={ close } iconSize={ 24 } onClick={ () => onDismiss() }></Button>
+				<Button
+					isPrimary
+					icon={ close }
+					iconSize={ 24 }
+					onClick={ () => onDismiss( 'close-btn' ) }
+				></Button>
 			</Flex>
 		</div>
 	);
