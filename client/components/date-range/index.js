@@ -465,7 +465,7 @@ export class DateRange extends Component {
 	 * Formats a given date to the appropriate format for the
 	 * current locale
 	 *
-	 * @param  {Date} date the date to be converted
+	 * @param  {import('moment').Moment | Date} date the date to be converted
 	 * @returns {string}      the date as a formatted locale string
 	 */
 	formatDateToLocale( date ) {
