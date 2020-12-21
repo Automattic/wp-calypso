@@ -543,7 +543,6 @@ export class PluginsList extends React.Component {
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ isSelectable }
 				onClick={ selectThisPlugin }
-				hasUpdate={ this.pluginHasUpdate }
 				selectedSite={ this.props.selectedSite }
 				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
 				allowedActions={ allowedPluginActions }
