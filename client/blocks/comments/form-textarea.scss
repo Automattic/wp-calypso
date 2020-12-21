@@ -1,3 +1,28 @@
+@import '~coblocks/src/common.scss';
+@import '~coblocks/src/blocks/accordion/styles/style.scss';
+@import '~coblocks/src/blocks/accordion/accordion-item/styles/style.scss';
+@import '~coblocks/src/blocks/alert/styles/style.scss';
+@import '~coblocks/src/blocks/author/styles/style.scss';
+@import '~coblocks/src/blocks/buttons/styles/style.scss';
+@import '~coblocks/src/blocks/gallery-collage/styles/style.scss';
+@import '~coblocks/src/blocks/dynamic-separator/styles/style.scss';
+@import '~coblocks/src/blocks/features/styles/style.scss';
+@import '~coblocks/src/blocks/form/styles/style.scss';
+@import '~coblocks/src/blocks/gif/styles/style.scss';
+@import '~coblocks/src/blocks/gist/styles/style.scss';
+@import '~coblocks/src/blocks/hero/styles/style.scss';
+@import '~coblocks/src/blocks/highlight/styles/style.scss';
+@import '~coblocks/src/blocks/logos/styles/style.scss';
+@import '~coblocks/src/blocks/gallery-masonry/styles/style.scss';
+@import '~coblocks/src/blocks/media-card/styles/style.scss';
+@import '~coblocks/src/blocks/gallery-offset/styles/style.scss';
+@import '~coblocks/src/blocks/pricing-table/styles/style.scss';
+@import '~coblocks/src/blocks/row/styles/style.scss';
+@import '~coblocks/src/blocks/services/service/styles/style.scss';
+@import '~coblocks/src/blocks/services/styles/style.scss';
+@import '~coblocks/src/blocks/shape-divider/styles/style.scss';
+@import '~coblocks/src/blocks/gallery-stacked/styles/style.scss';
+
 [data-type="core/heading"] {
 	@at-root {
 		h1#{&}, h2#{&}, h3#{&}, h4#{&}, h5#{&}, h6#{&} {

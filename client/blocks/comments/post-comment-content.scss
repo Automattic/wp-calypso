@@ -39,6 +39,35 @@
 	line-height: 1.56;
 	word-break: break-word;
 
+	h1 {
+		font-size: $font-title-large;
+		font-weight: 700;
+		margin: 0 0 16px;
+	}
+
+	h2 {
+		font-size: $font-title-medium;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	h3 {
+		font-size: $font-title-small;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	h4 {
+		font-size: $font-title-small;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	h5 {
+		font-weight: 700;
+	}
+
+
 	p {
 		color: var( --color-text );
 

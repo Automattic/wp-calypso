@@ -77,6 +77,7 @@ const nodeModulesToTranspile = [
 	'@github/webauthn-json/',
 	'acorn-jsx/',
 	'chalk/',
+	'coblocks/',
 	'd3-array/',
 	'd3-scale/',
 	'debug/',
