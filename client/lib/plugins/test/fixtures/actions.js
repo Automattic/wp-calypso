@@ -6,7 +6,7 @@ import updatePluginsList from './plugins-updated';
 import site from './site';
 import multiSite from './multi-site';
 import updatePluginData from './updated-plugin';
-import { REMOVE_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { ACTIVATE_PLUGIN, REMOVE_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 
 export default {
 	// Fetch Data
@@ -106,15 +106,15 @@ export default {
 
 	// Activate
 	activatePlugin: {
-		type: 'ACTIVATE_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		type: ACTIVATE_PLUGIN,
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 	},
 
 	activatedPlugin: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: {
@@ -135,7 +135,7 @@ export default {
 
 	activatedPluginError: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,
@@ -148,7 +148,7 @@ export default {
 
 	activatedBrokenPluginError: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: [],
@@ -157,7 +157,7 @@ export default {
 
 	activatedPluginErrorAlreadyActive: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,

@@ -18,8 +18,8 @@ import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'calypso/components/count';
 import Notice from 'calypso/components/notice';
+import { ACTIVATE_PLUGIN, REMOVE_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
-import { REMOVE_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -79,7 +79,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'ACTIVATE_PLUGIN':
+			case ACTIVATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Activating', { context: 'plugin' } )
 					: translate(

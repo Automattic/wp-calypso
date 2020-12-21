@@ -105,7 +105,7 @@ export function activatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'ACTIVATE_PLUGIN',
-			action: 'ACTIVATE_PLUGIN',
+			action: ACTIVATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -114,7 +114,7 @@ export function activatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_ACTIVATED_PLUGIN',
-				action: 'ACTIVATE_PLUGIN',
+				action: ACTIVATE_PLUGIN,
 				site,
 				plugin,
 				data,
