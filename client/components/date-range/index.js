@@ -297,7 +297,7 @@ export class DateRange extends Component {
 	 *
 	 * Dates are only persisted via the commitDates method.
 	 *
-	 * @param  {Date} date the newly selected date object
+	 * @param  {import('moment').Moment} date the newly selected date object
 	 */
 	onSelectDate = ( date ) => {
 		if ( ! this.isValidDate( date ) ) {
