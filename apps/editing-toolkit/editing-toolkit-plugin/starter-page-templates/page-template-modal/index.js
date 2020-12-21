@@ -426,6 +426,7 @@ class PageTemplateModal extends Component {
 					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }
 					theme={ this.props.theme }
+					locale={ this.props.locale }
 					siteInformation={ this.props.siteInformation }
 					selectedTemplate={ this.state.previewedTemplate }
 				/>

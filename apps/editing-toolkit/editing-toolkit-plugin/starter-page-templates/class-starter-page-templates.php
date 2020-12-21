@@ -177,6 +177,7 @@ class Starter_Page_Templates {
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'isFrontPage'        => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
 				'hideFrontPageTitle' => get_theme_mod( 'hide_front_page_title' ),
+				'locale'             => $this->get_verticals_locale(),
 			)
 		);
 

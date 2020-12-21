@@ -12,6 +12,7 @@ const TemplateSelectorItem = ( props ) => {
 		title,
 		description,
 		theme,
+		locale,
 		templatePostID = null,
 		isSelected,
 	} = props;
@@ -26,7 +27,9 @@ const TemplateSelectorItem = ( props ) => {
 
 	const previewUrl = `${ designsEndpoint }${ encodeURIComponent( theme ) }/${ encodeURIComponent(
 		sourceSiteUrl
-	) }/?post_id=${ encodeURIComponent( templatePostID ) }`;
+	) }/?post_id=${ encodeURIComponent( templatePostID ) }&language=${ encodeURIComponent(
+		locale
+	) }`;
 
 	const staticPreviewImg =
 		'blank' === value

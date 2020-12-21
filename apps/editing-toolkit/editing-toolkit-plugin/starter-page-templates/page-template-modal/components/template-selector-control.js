@@ -26,6 +26,7 @@ export const TemplateSelectorControl = ( {
 	templates = [],
 	blocksByTemplates = {},
 	theme = 'maywood',
+	locale = 'en',
 	onTemplateSelect = noop,
 	siteInformation = {},
 	selectedTemplate,
@@ -59,6 +60,7 @@ export const TemplateSelectorControl = ( {
 							onSelect={ onTemplateSelect }
 							templatePostID={ ID }
 							theme={ theme }
+							locale={ locale }
 							blocks={ blocksByTemplates.hasOwnProperty( name ) ? blocksByTemplates[ name ] : [] }
 							isSelected={ name === selectedTemplate }
 						/>
