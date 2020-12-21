@@ -21,7 +21,7 @@
 		"currency_symbol": "€",
 		"nux_landing_page_string": "Schritt",
 		"wpcom_landing_page_string": "Anmelden",
-		"wpcom_base_url": "de.wordpress.com",
+		"wpcom_base_url": "wordpress.com/de",
 
 		"google_searches": [
 			{
@@ -61,7 +61,7 @@
 		"currency_symbol": "€",
 		"nux_landing_page_string": "Paso",
 		"wpcom_landing_page_string": "Acceder",
-		"wpcom_base_url": "es.wordpress.com",
+		"wpcom_base_url": "wordpress.com/es",
 
 		"google_searches": [
 			{
@@ -78,7 +78,7 @@
 		"currency_symbol": "€",
 		"nux_landing_page_string": "Étape",
 		"wpcom_landing_page_string": "Se Connecter",
-		"wpcom_base_url": "fr.wordpress.com",
+		"wpcom_base_url": "wordpress.com/fr",
 
 		"google_searches": [
 			{
@@ -112,7 +112,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "Langkah",
 		"wpcom_landing_page_string": "Log Masuk",
-		"wpcom_base_url": "id.wordpress.com",
+		"wpcom_base_url": "wordpress.com/id",
 
 		"google_searches": [
 			{
@@ -129,7 +129,7 @@
 		"currency_symbol": "€",
 		"nux_landing_page_string": "Passaggio",
 		"wpcom_landing_page_string": "Accedi",
-		"wpcom_base_url": "it.wordpress.com",
+		"wpcom_base_url": "wordpress.com/it",
 
 		"google_searches": [
 			{
@@ -146,7 +146,7 @@
 		"currency_symbol": "¥",
 		"nux_landing_page_string": "ステップ",
 		"wpcom_landing_page_string": "ログイン",
-		"wpcom_base_url": "ja.wordpress.com",
+		"wpcom_base_url": "wordpress.com/ja",
 
 		"google_searches": [
 			{
@@ -180,7 +180,7 @@
 		"currency_symbol": "€",
 		"nux_landing_page_string": "Stap",
 		"wpcom_landing_page_string": "Inloggen",
-		"wpcom_base_url": "nl.wordpress.com",
+		"wpcom_base_url": "wordpress.com/nl",
 
 		"google_searches": [
 			{
@@ -214,7 +214,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "Шаг",
 		"wpcom_landing_page_string": "Войти",
-		"wpcom_base_url": "ru.wordpress.com",
+		"wpcom_base_url": "wordpress.com/ru",
 
 		"google_searches": [
 			{
@@ -248,7 +248,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "başlayalım",
 		"wpcom_landing_page_string": "Giriş",
-		"wpcom_base_url": "tr.wordpress.com",
+		"wpcom_base_url": "wordpress.com/tr",
 
 		"google_searches": [
 			{
@@ -265,7 +265,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "步",
 		"wpcom_landing_page_string": "登录",
-		"wpcom_base_url": "zh-cn.wordpress.com",
+		"wpcom_base_url": "wordpress.com/zh-cn",
 
 		"google_searches": [
 			{
@@ -282,7 +282,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "步",
 		"wpcom_landing_page_string": "登入",
-		"wpcom_base_url": "zh-tw.wordpress.com",
+		"wpcom_base_url": "wordpress.com/zh-tw",
 
 		"google_searches": [
 			{
