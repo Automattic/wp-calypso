@@ -15,6 +15,7 @@ import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import Traffic from './traffic/';
+import UltimateTrafficGuide from './ultimate-traffic-guide';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSiteSlug,
@@ -141,6 +142,12 @@ export const sharingButtons = ( context, next ) => {
 
 export const traffic = ( context, next ) => {
 	context.contentComponent = createElement( Traffic );
+
+	next();
+};
+
+export const ultimateTrafficGuide = ( context, next ) => {
+	context.contentComponent = createElement( UltimateTrafficGuide );
 
 	next();
 };
