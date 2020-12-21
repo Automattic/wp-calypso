@@ -20,7 +20,7 @@ import {
 	successNotice,
 	warningNotice,
 } from 'calypso/state/notices/actions';
-import { INSTALL_PLUGIN, REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { INSTALL_PLUGIN, REMOVE_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { filterNotices, isSamePluginIdSlug } from 'calypso/lib/plugins/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
@@ -213,7 +213,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully updated %(plugin)s on %(site)s.', {
@@ -396,7 +396,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 				break;
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Updating %(plugin)s on %(site)s.', {
@@ -598,7 +598,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -848,7 +848,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate( 'Error updating %(plugin)s on %(site)s, remote management is off.', {

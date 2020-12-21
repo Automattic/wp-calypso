@@ -281,7 +281,7 @@ export function updatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'UPDATE_PLUGIN',
-			action: 'UPDATE_PLUGIN',
+			action: UPDATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -290,7 +290,7 @@ export function updatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_UPDATED_PLUGIN',
-				action: 'UPDATE_PLUGIN',
+				action: UPDATE_PLUGIN,
 				site,
 				plugin,
 				data,

@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import Gridicon from 'calypso/components/gridicon';
 import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
+import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 
@@ -55,7 +56,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 	getOngoingUpdates = () => {
 		return this.props.inProgressStatuses.filter(
 			( status ) =>
-				parseInt( status.siteId ) === this.props.site.ID && status.action === 'UPDATE_PLUGIN'
+				parseInt( status.siteId ) === this.props.site.ID && status.action === UPDATE_PLUGIN
 		);
 	};
 

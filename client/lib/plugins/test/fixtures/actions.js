@@ -6,7 +6,7 @@ import updatePluginsList from './plugins-updated';
 import site from './site';
 import multiSite from './multi-site';
 import updatePluginData from './updated-plugin';
-import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { REMOVE_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 
 export default {
 	// Fetch Data
@@ -45,14 +45,14 @@ export default {
 	// Update
 	updatePlugin: {
 		type: 'UPDATE_PLUGIN',
-		action: 'UPDATE_PLUGIN',
+		action: UPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ], // hello dolly
 	},
 
 	updatedPlugin: {
 		type: 'RECEIVE_UPDATED_PLUGIN',
-		action: 'UPDATE_PLUGIN',
+		action: UPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 		data: updatePluginData,
@@ -68,7 +68,7 @@ export default {
 
 	updatedPluginError: {
 		type: 'RECEIVE_UPDATED_PLUGIN',
-		action: 'UPDATE_PLUGIN',
+		action: UPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 		data: {},

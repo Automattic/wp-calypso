@@ -19,7 +19,7 @@ import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-t
 import Count from 'calypso/components/count';
 import Notice from 'calypso/components/notice';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
-import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { REMOVE_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -69,7 +69,7 @@ class PluginItem extends Component {
 
 		let message;
 		switch ( log && log.action ) {
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Updating', { context: 'plugin' } )
 					: translate(
