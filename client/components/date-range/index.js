@@ -509,7 +509,7 @@ export class DateRange extends Component {
 	 * for display in a text input. Also converts
 	 * to locale appropriate format.
 	 *
-	 * @param  {Date} date the date for conversion
+	 * @param  {import('moment').Moment | Date} date the date for conversion
 	 * @returns {string}      the date expressed as a locale appropriate string or if null
 	 *                       then returns the locale format (eg: MM/DD/YYYY)
 	 */
