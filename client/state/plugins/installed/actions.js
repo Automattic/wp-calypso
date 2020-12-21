@@ -339,7 +339,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'ENABLE_AUTOUPDATE_PLUGIN',
-			action: 'ENABLE_AUTOUPDATE_PLUGIN',
+			action: ENABLE_AUTOUPDATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -348,7 +348,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-				action: 'ENABLE_AUTOUPDATE_PLUGIN',
+				action: ENABLE_AUTOUPDATE_PLUGIN,
 				site,
 				plugin,
 				data,

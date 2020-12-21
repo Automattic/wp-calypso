@@ -17,6 +17,7 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
@@ -288,7 +289,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully enabled autoupdates for %(plugin)s on %(site)s.', {
@@ -480,7 +481,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Enabling autoupdates for %(plugin)s on %(site)s.', {
@@ -676,7 +677,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -905,7 +906,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate(

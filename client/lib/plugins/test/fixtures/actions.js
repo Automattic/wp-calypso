@@ -9,6 +9,7 @@ import updatePluginData from './updated-plugin';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
@@ -226,14 +227,14 @@ export default {
 	// Enable Autoupdate
 	enableAutoupdatePlugin: {
 		type: 'ENABLE_AUTOUPDATE_PLUGIN',
-		action: 'ENABLE_AUTOUPDATE_PLUGIN',
+		action: ENABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 	},
 
 	enabledAutoupdatePlugin: {
 		type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-		action: 'ENABLE_AUTOUPDATE_PLUGIN',
+		action: ENABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: {
@@ -254,7 +255,7 @@ export default {
 
 	enabledAutoupdatePluginError: {
 		type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-		action: 'ENABLE_AUTOUPDATE_PLUGIN',
+		action: ENABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,

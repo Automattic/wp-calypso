@@ -11,13 +11,14 @@ import { localize } from 'i18n-calypso';
  */
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import ExternalLink from 'calypso/components/external-link';
+import { ENABLE_AUTOUPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
 
-const autoUpdateActions = [ 'ENABLE_AUTOUPDATE_PLUGIN', 'DISABLE_AUTOUPDATE_PLUGIN' ];
+const autoUpdateActions = [ ENABLE_AUTOUPDATE_PLUGIN, 'DISABLE_AUTOUPDATE_PLUGIN' ];
 
 export class PluginAutoUpdateToggle extends Component {
 	toggleAutoUpdates = () => {
