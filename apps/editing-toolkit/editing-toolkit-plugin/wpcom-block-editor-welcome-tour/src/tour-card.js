@@ -136,6 +136,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
 				<Button
+					aria-label="Minimize Tour"
 					isPrimary
 					className="welcome-tour-card__minimize-icon"
 					icon={ minimize }
@@ -143,6 +144,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 					onClick={ handleOnMinimize }
 				></Button>
 				<Button
+					aria-label="Close Tour"
 					isPrimary
 					icon={ close }
 					iconSize={ 24 }
@@ -178,6 +180,7 @@ function TourRating() {
 			<p className="welcome-tour__end-text">Did you find this guide helpful?</p>
 			<div>
 				<Button
+					aria-label="Rate thumbs up"
 					className={ classNames( 'welcome-tour__end-icon', {
 						active: tourRating === 'thumbs-up',
 					} ) }
@@ -187,6 +190,7 @@ function TourRating() {
 					iconSize={ 24 }
 				/>
 				<Button
+					aria-label="Rate thumbs down"
 					className={ classNames( 'welcome-tour__end-icon', {
 						active: tourRating === 'thumbs-down',
 					} ) }
