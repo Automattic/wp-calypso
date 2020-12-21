@@ -38,7 +38,7 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN,
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
-} from './constants';
+} from 'calypso/lib/plugins/constants';
 import { getSite } from 'calypso/state/sites/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
