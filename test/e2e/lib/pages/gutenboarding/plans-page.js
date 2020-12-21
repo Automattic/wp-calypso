@@ -31,6 +31,9 @@ export default class PlansPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, freePlanSelector );
 	}
 
+	/**
+	 * @returns {Promise<string>} the name of the plan that's being recommended
+	 */
 	async getRecommendedPlan() {
 		// Using the .has-badge selector to find the recommended plan
 		const planNameSelector = By.css(

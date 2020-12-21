@@ -21,6 +21,11 @@ export default class DomainsPage extends AsyncBaseContainer {
 		);
 	}
 
+	/**
+	 * Selects the free domain from the list of search results
+	 *
+	 * @returns {Promise<string>} The selected domain
+	 */
 	async selectFreeDomain() {
 		const freeDomainButtonSelector = By.css( '.domain-picker__suggestion-item.is-free' );
 		const freeDomainNameSelector = By.css(
