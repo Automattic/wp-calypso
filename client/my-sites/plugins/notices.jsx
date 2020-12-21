@@ -16,6 +16,7 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
  */
 import {
 	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
@@ -264,7 +265,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully deactivated %(plugin)s on %(site)s.', {
@@ -452,7 +453,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Deactivating %(plugin)s on %(site)s', {
@@ -650,7 +651,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -889,7 +890,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate(

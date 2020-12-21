@@ -12,7 +12,7 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
-import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
@@ -23,7 +23,7 @@ import { isPluginActionInProgress } from 'calypso/state/plugins/installed/select
  */
 import './style.scss';
 
-const activationActions = [ ACTIVATE_PLUGIN, 'DEACTIVATE_PLUGIN' ];
+const activationActions = [ ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN ];
 
 export class PluginActivateToggle extends Component {
 	toggleActivation = () => {

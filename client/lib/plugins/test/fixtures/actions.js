@@ -6,7 +6,12 @@ import updatePluginsList from './plugins-updated';
 import site from './site';
 import multiSite from './multi-site';
 import updatePluginData from './updated-plugin';
-import { ACTIVATE_PLUGIN, REMOVE_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	REMOVE_PLUGIN,
+	UPDATE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
 
 export default {
 	// Fetch Data
@@ -169,14 +174,14 @@ export default {
 	// Deactivate
 	deactivatePlugin: {
 		type: 'DEACTIVATE_PLUGIN',
-		action: 'DEACTIVATE_PLUGIN',
+		action: DEACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 	},
 
 	deactivatedPlugin: {
 		type: 'RECEIVE_DEACTIVATED_PLUGIN',
-		action: 'DEACTIVATE_PLUGIN',
+		action: DEACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: {
@@ -197,7 +202,7 @@ export default {
 
 	deactivatedPluginError: {
 		type: 'RECEIVE_DEACTIVATED_PLUGIN',
-		action: 'DEACTIVATE_PLUGIN',
+		action: DEACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,

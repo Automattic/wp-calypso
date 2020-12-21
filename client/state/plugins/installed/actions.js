@@ -187,7 +187,7 @@ export function deactivatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'DEACTIVATE_PLUGIN',
-			action: 'DEACTIVATE_PLUGIN',
+			action: DEACTIVATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -196,7 +196,7 @@ export function deactivatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_DEACTIVATED_PLUGIN',
-				action: 'DEACTIVATE_PLUGIN',
+				action: DEACTIVATE_PLUGIN,
 				site,
 				plugin,
 				data,
