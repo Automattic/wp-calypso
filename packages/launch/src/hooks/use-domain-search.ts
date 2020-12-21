@@ -23,7 +23,7 @@ export function useDomainSearch(): {
 
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 
-	let search = domainSearch.trim() || filterUnsuitableTitles( title );
+	let search = domainSearch.trim() || filterUnsuitableTitles( title || '' );
 
 	if ( ! search || isDefaultSiteTitle( { currentSiteTitle: search } ) ) {
 		search = siteSubdomain?.domain?.split( '.' )[ 0 ] ?? '';
