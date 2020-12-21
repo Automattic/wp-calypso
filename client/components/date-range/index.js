@@ -627,7 +627,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the DatePicker component
 	 *
-	 * @returns {React.Component} the DatePicker component
+	 * @returns {JSX.Element} the DatePicker component
 	 */
 	renderDatePicker() {
 		const fromDate = this.momentDateToJsDate( this.state.startDate );
