@@ -43,7 +43,7 @@ const BackupJustCompleted: React.FC< Props > = ( { lastBackupDate, isFeatured } 
 			<div className="backup-card__main">
 				<div className="backup-card__header">
 					<div className="backup-card__header-text">
-						<h2 className="backup-card__date">{ translate( 'Backup in progress' ) }</h2>
+						<h2 className="backup-card__date">{ translate( 'Backup just completed' ) }</h2>
 						<p className="backup-card__title backup-card__title--in-progress">
 							<img className="backup-card__icon" src={ cloudScheduleIcon } alt="" />
 							{ translate( "We're almost done making a backup of your site" ) }
