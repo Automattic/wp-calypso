@@ -43,6 +43,8 @@ import SetupTasksView from './setup';
 import StoreLocationSetupView from './setup/store-location';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import warn from 'calypso/lib/warn';
+import StoreMoveNoticeView from './store-move-notice-view';
+import config from 'calypso/config';
 
 class Dashboard extends Component {
 	static propTypes = {
@@ -246,6 +248,7 @@ class Dashboard extends Component {
 		return (
 			<Main className={ classNames( 'dashboard', className ) } wideLayout={ useWideLayout }>
 				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
+				{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreMoveNoticeView /> }
 				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
 				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
 			</Main>

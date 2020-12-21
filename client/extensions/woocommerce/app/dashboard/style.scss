@@ -150,3 +150,26 @@
 		}
 	}
 }
+
+.dashboard__store-move-notice {
+    font-size: $font-body-small;
+    text-align: center;
+
+    a {
+        margin-top: 40px;
+    }
+
+    h1 {
+        font-weight: bold;
+        margin: 17px;
+    }
+
+    p {
+        max-width: 50%;
+        margin: auto;
+    }
+
+    &.store-removed {
+        margin-top: 40px;
+    }
+}
