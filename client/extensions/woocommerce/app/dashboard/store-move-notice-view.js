@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { localize, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -28,14 +29,17 @@ class StoreMoveNoticeView extends Component {
 				<img src={ megaphoneImage } alt="" />
 				<h1>{ title }</h1>
 				<p>
-					Now you'll be able to access all of your most important store management features in one
-					place.{ ' ' }
-					<a href="https://wordpress.com/support/store/">
-						Find more information about this change here.
-					</a>
+					{ translate(
+						"Now you'll be able to access all of your most important store management features in one place. {{a}}Find more information about this change here.{{/a}}",
+						{
+							components: {
+								a: <a href="https://wordpress.com/support/store/" />,
+							},
+						}
+					) }
 				</p>
 				<Button primary href={ site.URL + '/wp-admin/admin.php?page=wc-admin' }>
-					Go to WooCommerce Home
+					{ translate( 'Go to WooCommerce Home' ) }
 				</Button>
 			</Card>
 		);
@@ -48,10 +52,10 @@ function mapStateToProps( state ) {
 	let status;
 
 	if ( config.isEnabled( 'woocommerce/store-deprecated' ) ) {
-		title = 'Store is moving to WooCommerce';
+		title = translate( 'Store is moving to WooCommerce' );
 		status = 'store-deprecated';
 	} else if ( config.isEnabled( 'woocommerce/store-removed' ) ) {
-		title = 'Store has moved to WooCommerce';
+		title = translate( 'Store has moved to WooCommerce' );
 		status = 'store-removed';
 	}
 
@@ -62,4 +66,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( StoreMoveNoticeView );
+export default connect( mapStateToProps )( localize( StoreMoveNoticeView ) );
