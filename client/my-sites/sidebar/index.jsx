@@ -581,25 +581,11 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
-		const displayPlanName = ! this.props.isJetpack || this.props.isAtomicSite || this.props.isVip;
-
 		return (
 			<ExpandableSidebarMenu
 				onClick={ this.toggleSection( SIDEBAR_SECTION_UPGRADES ) }
 				expanded={ this.props.isUpgradesSectionOpen }
-				title={
-					<>
-						<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar="Upgrades">
-							{ this.props.translate( 'Upgrades', { context: 'noun' } ) }
-						</span>
-						{ displayPlanName && (
-							<span className="sidebar__menu-link-secondary-text">
-								{ this.props.site?.plan.product_name_short }
-							</span>
-						) }
-					</>
-				}
+				title={ this.props.translate( 'Upgrades', { context: 'noun' } ) }
 				customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
 			>
 				{ this.plans() }
@@ -621,7 +607,16 @@ export class MySitesSidebar extends Component {
 	}
 
 	plans() {
-		const { canUserManageOptions, path, site, siteSuffix, translate } = this.props;
+		const {
+			canUserManageOptions,
+			isAtomicSite,
+			isJetpack,
+			isVip,
+			path,
+			site,
+			siteSuffix,
+			translate,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -639,6 +634,9 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
+		const displayPlanName = ! isJetpack || isAtomicSite || isVip;
+
 		return (
 			<SidebarItem
 				label={ translate( 'Plans', { context: 'noun' } ) }
@@ -649,7 +647,13 @@ export class MySitesSidebar extends Component {
 				preloadSectionName="plans"
 				forceInternalLink
 				expandSection={ this.expandPlanSection }
-			/>
+			>
+				{ displayPlanName && (
+					<span className="sidebar__menu-link-secondary-text">
+						{ site?.plan.product_name_short }
+					</span>
+				) }
+			</SidebarItem>
 		);
 	}
 
