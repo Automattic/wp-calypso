@@ -588,7 +588,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the Popover component
 	 *
-	 * @returns {React.Component} the Popover component
+	 * @returns {JSX.Element} the Popover component
 	 */
 	renderPopover() {
 		const headerProps = {
