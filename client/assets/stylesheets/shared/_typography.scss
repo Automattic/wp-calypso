@@ -10,3 +10,471 @@ $signup-sans: 'Noto Sans', $sans;
 	-moz-osx-font-smoothing: grayscale;
 	color: var( --color-text );
 }
+
+%rendered-block-content {
+	@extend %content-font;
+	margin: 0;
+	padding-top: 16px;
+	position: relative;
+	font-size: 1rem;
+	line-height: 1.7;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+
+	h1 {
+		font-size: $font-title-large;
+		font-weight: 700;
+		margin: 0 0 16px;
+	}
+
+	h2 {
+		font-size: $font-title-medium;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	h3 {
+		font-size: $font-title-small;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	h4 {
+		font-size: $font-title-small;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	h5 {
+		font-weight: 700;
+	}
+
+	p,
+	> div {
+		margin: 0 0 24px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	blockquote {
+		padding: 0 24px 0 32px;
+		margin: 16px 0 32px;
+		border-left: 3px solid var( --color-neutral-0 );
+		color: var( --color-neutral-50 );
+		font-weight: 400;
+		background: transparent;
+	}
+
+	aside {
+		margin: 0;
+		border: none;
+		background: none;
+		font-size: $font-body-small;
+	}
+
+	hr {
+		background: var( --color-neutral-0 );
+		margin: 24px 0;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+		display: inline;
+		margin: auto;
+
+		&.emoji,
+		&.emojify__emoji,
+		&.wp-smiley {
+			height: 1em;
+			margin-bottom: 0;
+		}
+	}
+
+	audio,
+	video {
+		display: block;
+		width: 100%;
+		margin: 24px auto;
+	}
+
+	iframe[class^='twitter-'],
+	iframe[class^='instagram-'],
+	.fb_iframe_widget {
+		display: block;
+		margin: 24px auto !important;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		.alignleft {
+			max-width: 100%;
+			float: left;
+			margin-top: 12px;
+			margin-bottom: 12px;
+			margin-right: 32px;
+		}
+
+		.alignright {
+			max-width: 100%;
+			float: right;
+			margin-top: 12px;
+			margin-bottom: 12px;
+			margin-left: 32px;
+		}
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		.alignleft,
+		.alignright {
+			clear: both;
+			margin-top: 24px;
+			margin-bottom: 24px;
+		}
+	}
+
+	.aligncenter {
+		clear: both;
+		display: block;
+		margin-top: 24px;
+		margin-bottom: 24px;
+		text-align: center;
+	}
+
+	.wp-caption.alignnone {
+		clear: both;
+		display: block;
+		margin-top: 24px;
+		margin-bottom: 24px;
+	}
+
+	.wp-caption {
+		position: relative;
+		max-width: 100%;
+
+		&.alignright {
+			float: right;
+		}
+
+		&.alignleft {
+			float: left;
+		}
+
+		&.alignright,
+		&.alignleft {
+			max-width: 100%;
+
+			@include breakpoint-deprecated( '>660px' ) {
+				max-width: 50%;
+			}
+
+			img.alignright,
+			img.alignleft {
+				float: none;
+			}
+		}
+
+		img {
+			display: block;
+			margin: 0 auto;
+
+			&.emoji,
+			&.emojify__emoji {
+				display: inline;
+			}
+		}
+	}
+
+	.wp-caption-text,
+	figure figcaption,
+	figure .caption,
+	.wp-caption .wp-media-credit {
+		padding: 12px;
+		margin: 0;
+		font-size: $font-body-small;
+		text-align: center;
+		color: var( --color-neutral-40 );
+	}
+
+	// placeholder for videopress videos
+	.video-plh-notice {
+		position: relative;
+		margin-bottom: 24px;
+		padding: 11px 24px;
+		border-radius: 2px;
+		background: var( --color-neutral-0 );
+		box-sizing: border-box;
+		font-size: $font-body-small;
+		line-height: 1.4285;
+		animation: appear 0.3s ease-in-out;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			padding: 13px 48px;
+			font-size: inherit;
+		}
+	}
+
+	sup,
+	sub {
+		vertical-align: baseline;
+		position: relative;
+		font-size: 0.875rem;
+	}
+
+	sup {
+		top: -0.4em;
+	}
+
+	sub {
+		bottom: -0.2em;
+	}
+
+	table th,
+	table td {
+		padding: 10px;
+	}
+
+	img:first-child {
+		margin-top: 0;
+	}
+
+	// Gutenberg blocks
+	.wp-block-image,
+	.wp-block-embed {
+		margin-bottom: 1em;
+	}
+
+	.wp-block-gallery {
+		margin-left: 0;
+		margin-bottom: 1em;
+	}
+
+	.blocks-gallery-caption {
+		margin: auto;
+	}
+
+	.wp-block-buttons {
+		margin: 0;
+	}
+
+	.wp-block-button {
+		border-style: solid;
+		font-family: $sans;
+		border-width: 1px;
+		cursor: pointer;
+		display: inline-block;
+		margin: 0;
+		margin-right: 0.25em;
+		margin-bottom: 0.6em;
+		outline: 0;
+		overflow: hidden;
+		vertical-align: top;
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 22px;
+		border-radius: 2px;
+		padding: 8px 14px;
+		border-color: var( --color-neutral-10 );
+	}
+
+	.wp-block-table table {
+		border-collapse: collapse;
+	}
+
+	.wp-block-table td,
+	.wp-block-table th {
+		border: 1px solid var( --color-neutral-10 );
+		font-size: 1rem;
+		line-height: 1.8;
+	}
+
+	.wp-block-table th {
+		font-weight: bold;
+		background: var( --color-neutral-0 );
+	}
+
+	.wp-block-button__link,
+	.wp-block-button__link:hover {
+		color: inherit;
+	}
+
+	$grid-size-large: 16px;
+	$default-font-size: $font-body-small;
+	$content-width: 610px;
+	$break-small: 600px;
+	$black: #000;
+	$white: #fff;
+	
+	@mixin break-small() {
+		@media ( min-width: #{ ( $break-small ) } ) {
+			@content;
+		}
+	}	
+	
+	// From https://github.com/WordPress/gutenberg/blob/HEAD/packages/block-library/src/gallery/style.scss
+	.wp-block-gallery,
+	.blocks-gallery-grid {
+		display: flex;
+		flex-wrap: wrap;
+		list-style-type: none;
+		padding: 0;
+		// Some themes give all <ul> default margin instead of padding.
+		margin: 0;
+	
+		.blocks-gallery-image,
+		.blocks-gallery-item {
+			// Add space between thumbnails, and unset right most thumbnails later.
+			margin: 0 $grid-size-large $grid-size-large 0;
+			display: flex;
+			flex-grow: 1;
+			flex-direction: column;
+			justify-content: center;
+			position: relative;
+	
+			figure {
+				margin: 0;
+				height: 100%;
+	
+				// IE doesn't support flex so omit that.
+				@supports ( position: sticky ) {
+					display: flex;
+					align-items: flex-end;
+					justify-content: flex-start;
+				}
+			}
+	
+			img {
+				display: block;
+				max-width: 100%;
+				height: auto;
+			}
+	
+			// IE doesn't handle cropping, so we need an explicit width here.
+			img {
+				width: 100%;
+	
+				// IE11 doesn't read rules inside this query. They are applied only to modern browsers.
+				@supports ( position: sticky ) {
+					width: auto;
+				}
+			}
+	
+			figcaption {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				max-height: 100%;
+				overflow: auto;
+				padding: 40px 10px 9px;
+				color: $white;
+				text-align: center;
+				font-size: $default-font-size;
+				background: linear-gradient(
+					0deg,
+					rgba( $color: $black, $alpha: 0.7 ) 0,
+					rgba( $color: $black, $alpha: 0.3 ) 70%,
+					transparent
+				);
+	
+				img {
+					display: inline;
+				}
+			}
+		}
+	
+		// Cropped
+		&.is-cropped .blocks-gallery-image,
+		&.is-cropped .blocks-gallery-item {
+			a,
+			img {
+				// IE11 doesn't support object-fit, so just make sure images aren't skewed.
+				// The following rules are for all browsers.
+				width: 100%;
+	
+				// IE11 doesn't read rules inside this query. They are applied only to modern browsers.
+				@supports ( position: sticky ) {
+					height: 100%;
+					flex: 1;
+					object-fit: cover;
+				}
+			}
+		}
+	
+		// On mobile and responsive viewports, we allow only 1 or 2 columns at the most.
+		& .blocks-gallery-image,
+		& .blocks-gallery-item {
+			width: calc( ( 100% - #{$grid-size-large} ) / 2 );
+	
+			&:nth-of-type( even ) {
+				margin-right: 0;
+			}
+		}
+	
+		&.columns-1 .blocks-gallery-image,
+		&.columns-1 .blocks-gallery-item {
+			width: 100%;
+			margin-right: 0;
+		}
+	
+		// Beyond mobile viewports, we allow up to 8 columns.
+		@include break-small {
+			@for $i from 3 through 8 {
+				&.columns-#{ $i } .blocks-gallery-image,
+				&.columns-#{ $i } .blocks-gallery-item {
+					width: calc( ( 100% - #{$grid-size-large} * #{$i - 1} ) / #{$i} );
+					margin-right: 16px;
+	
+					// Rules inside this query are only run by Microsoft Edge.
+					// Edge miscalculates `calc`, so we have to add some buffer.
+					// See also https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/15637241/
+					@supports ( -ms-ime-align: auto ) {
+						width: calc( ( 100% - #{$grid-size-large} * #{$i - 1} ) / #{$i} - 1px );
+					}
+				}
+			}
+	
+			// Unset the right margin on every rightmost gallery item to ensure center balance.
+			@for $column-count from 1 through 8 {
+				&.columns-#{ $column-count } .blocks-gallery-image:nth-of-type( #{ $column-count }n ),
+				&.columns-#{ $column-count } .blocks-gallery-item:nth-of-type( #{ $column-count }n ) {
+					margin-right: 0;
+				}
+			}
+		}
+	
+		// Last item always needs margins reset.
+		.blocks-gallery-image:last-child,
+		.blocks-gallery-item:last-child {
+			margin-right: 0;
+		}
+	
+		// Apply max-width to floated items that have no intrinsic width.
+		&.alignleft,
+		&.alignright {
+			max-width: $content-width / 2;
+			width: 100%;
+		}
+	
+		// If the gallery is centered, center the content inside as well.
+		&.aligncenter {
+			.blocks-gallery-item figure {
+				justify-content: center;
+			}
+		}
+	}	
+
+	.wp-block-embed .embed-vimeo {
+		padding-top: 0;
+		margin-bottom: 1.4em;
+	}
+
+	.wp-block-cover-image {
+		display: none;
+	}
+
+	// iCloud embeds - force a min height because they're a bit slender by default
+	.wp-block-embed__wrapper iframe[src*='icloud.com'] {
+		min-height: 300px;
+	}
+}
