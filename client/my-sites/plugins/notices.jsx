@@ -20,6 +20,7 @@ import {
 	successNotice,
 	warningNotice,
 } from 'calypso/state/notices/actions';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { filterNotices, isSamePluginIdSlug } from 'calypso/lib/plugins/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
@@ -136,7 +137,7 @@ class PluginNotices extends React.Component {
 		const { translate } = this.props;
 
 		switch ( action ) {
-			case 'INSTALL_PLUGIN':
+			case INSTALL_PLUGIN:
 				if ( translateArg.isMultiSite ) {
 					switch ( combination ) {
 						case '1 site 1 plugin':
@@ -350,7 +351,7 @@ class PluginNotices extends React.Component {
 		const { translate } = this.props;
 
 		switch ( action ) {
-			case 'INSTALL_PLUGIN':
+			case INSTALL_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Installing %(plugin)s on %(site)s.', {
@@ -550,7 +551,7 @@ class PluginNotices extends React.Component {
 			return this.singleErrorMessage( action, translateArg, sampleLog );
 		}
 		switch ( action ) {
-			case 'INSTALL_PLUGIN':
+			case INSTALL_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -810,7 +811,7 @@ class PluginNotices extends React.Component {
 		const additionalExplanation = this.additionalExplanation( sampleLog.error.error );
 
 		switch ( action ) {
-			case 'INSTALL_PLUGIN':
+			case INSTALL_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate(

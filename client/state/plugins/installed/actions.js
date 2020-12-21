@@ -477,13 +477,13 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 		const dispatchMessage = ( type, responseData, error ) => {
 			const message = {
 				type,
-				action: 'INSTALL_PLUGIN',
+				action: INSTALL_PLUGIN,
 				site,
 				plugin,
 				data: responseData,
 				error: error,
 			};
-			if ( 'INSTALL_PLUGIN' === type ) {
+			if ( INSTALL_PLUGIN === type ) {
 				Dispatcher.handleViewAction( message );
 				return;
 			}
@@ -522,7 +522,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			return Promise.reject( error );
 		};
 
-		dispatchMessage( 'INSTALL_PLUGIN' );
+		dispatchMessage( INSTALL_PLUGIN );
 
 		if ( isMainNetworkSite ) {
 			return doInstall( plugin )
