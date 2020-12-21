@@ -42,6 +42,7 @@ const FeaturesStep: React.FunctionComponent = () => {
 	const { addFeature, removeFeature } = useDispatch( ONBOARD_STORE );
 
 	const hasSelectedFeatures = selectedFeatures.length > 0;
+	const hasSelectedVideoStorage = selectedFeatures.includes( 'video-storage' );
 
 	const toggleFeature = ( featureId: FeatureId ) => {
 		if ( selectedFeatures.includes( featureId ) ) {
@@ -53,12 +54,15 @@ const FeaturesStep: React.FunctionComponent = () => {
 
 	// Keep a copy of the selected domain locally so it's available when the component is unmounting
 	const hasSelectedFeaturesRef = React.useRef< boolean >();
+	const hasSelectedVideoStorageRef = React.useRef< boolean >();
 	React.useEffect( () => {
 		hasSelectedFeaturesRef.current = hasSelectedFeatures;
+		hasSelectedVideoStorageRef.current = hasSelectedVideoStorage;
 	}, [ hasSelectedFeatures ] );
 
 	useTrackStep( 'Features', () => ( {
 		has_selected_features: hasSelectedFeaturesRef.current,
+		has_selected_video_storage: hasSelectedVideoStorageRef.current
 	} ) );
 
 	return (
