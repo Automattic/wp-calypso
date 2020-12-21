@@ -425,7 +425,7 @@ class PageTemplateModal extends Component {
 					templates={ filteredTemplatesList }
 					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }
-					useDynamicPreview={ isCurrentPreview }
+					theme={ this.props.theme }
 					siteInformation={ this.props.siteInformation }
 					selectedTemplate={ this.state.previewedTemplate }
 				/>

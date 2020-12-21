@@ -1,13 +1,8 @@
 /**
  * External dependencies
  */
-import { isNil, isEmpty } from 'lodash';
+import { isNil } from 'lodash';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import BlockIframePreview from './block-iframe-preview';
 
 const TemplateSelectorItem = ( props ) => {
 	const {
@@ -16,9 +11,8 @@ const TemplateSelectorItem = ( props ) => {
 		onSelect,
 		title,
 		description,
-		useDynamicPreview = false,
-		staticPreviewImgAlt = '',
-		blocks = [],
+		theme,
+		templatePostID = null,
 		isSelected,
 	} = props;
 
@@ -26,25 +20,33 @@ const TemplateSelectorItem = ( props ) => {
 		return null;
 	}
 
-	if ( useDynamicPreview && ( isNil( blocks ) || isEmpty( blocks ) ) ) {
-		return null;
-	}
+	const mshotsUrl = 'https://s0.wordpress.com/mshots/v1/';
+	const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
+	const sourceSiteUrl = 'dotcompatterns.wordpress.com';
+
+	const previewUrl = `${ designsEndpoint }${ encodeURIComponent( theme ) }/${ encodeURIComponent(
+		sourceSiteUrl
+	) }/?post_id=${ encodeURIComponent( templatePostID ) }`;
 
 	const staticPreviewImg =
 		'blank' === value
 			? null
-			: 'https://s0.wordpress.com/mshots/v1/' +
-			  encodeURI( 'https://dotcompatterns.wordpress.com/' + value ) +
-			  '?vpw=1024&vph=1024&w=500&h=500';
+			: mshotsUrl + encodeURIComponent( previewUrl ) + '?vpw=1024&vph=1024&w=500&h=500';
 
-	// Define static or dynamic preview.
-	const innerPreview = useDynamicPreview ? (
-		<BlockIframePreview blocks={ blocks } viewportWidth={ 960 } />
-	) : (
+	const refreshSourceImg = ( e ) => {
+		const img = e.target;
+
+		setTimeout( () => {
+			img.src = img.src + '&reload=1';
+		}, 3000 );
+	};
+
+	const innerPreview = (
 		<img
 			className="template-selector-item__media"
 			src={ staticPreviewImg }
-			alt={ staticPreviewImgAlt }
+			alt={ title }
+			onLoad={ refreshSourceImg }
 		/>
 	);
 

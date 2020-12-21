@@ -152,10 +152,12 @@ class Starter_Page_Templates {
 
 		$default_templates = array(
 			array(
+				'ID'    => null,
 				'title' => __( 'Blank', 'full-site-editing' ),
 				'name'  => 'blank',
 			),
 			array(
+				'ID'    => null,
 				'title' => __( 'Current', 'full-site-editing' ),
 				'name'  => 'current',
 			),

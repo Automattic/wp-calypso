@@ -25,16 +25,12 @@ export const TemplateSelectorControl = ( {
 	instanceId,
 	templates = [],
 	blocksByTemplates = {},
-	useDynamicPreview = false,
+	theme = 'maywood',
 	onTemplateSelect = noop,
 	siteInformation = {},
 	selectedTemplate,
 } ) => {
 	if ( isEmpty( templates ) || ! isArray( templates ) ) {
-		return null;
-	}
-
-	if ( true === useDynamicPreview && isEmpty( blocksByTemplates ) ) {
 		return null;
 	}
 
@@ -52,7 +48,7 @@ export const TemplateSelectorControl = ( {
 				data-testid="template-selector-control-options"
 				aria-label={ legendLabel }
 			>
-				{ map( templates, ( { name, title, description, preview, previewAlt } ) => (
+				{ map( templates, ( { ID, name, title, description } ) => (
 					<li key={ `${ id }-${ name }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
@@ -61,10 +57,9 @@ export const TemplateSelectorControl = ( {
 							description={ description }
 							help={ help }
 							onSelect={ onTemplateSelect }
-							staticPreviewImg={ preview }
-							staticPreviewImgAlt={ previewAlt }
+							templatePostID={ ID }
+							theme={ theme }
 							blocks={ blocksByTemplates.hasOwnProperty( name ) ? blocksByTemplates[ name ] : [] }
-							useDynamicPreview={ useDynamicPreview }
 							isSelected={ name === selectedTemplate }
 						/>
 					</li>
