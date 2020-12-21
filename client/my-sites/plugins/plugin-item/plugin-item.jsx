@@ -21,6 +21,7 @@ import Notice from 'calypso/components/notice';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
@@ -115,7 +116,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'DISABLE_AUTOUPDATE_PLUGIN':
+			case DISABLE_AUTOUPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Disabling autoupdates' )
 					: translate(

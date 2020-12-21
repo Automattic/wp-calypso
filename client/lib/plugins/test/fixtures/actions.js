@@ -9,6 +9,7 @@ import updatePluginData from './updated-plugin';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
@@ -268,14 +269,14 @@ export default {
 	// Disable Autoupdate
 	disableAutoupdatePlugin: {
 		type: 'DISABLE_AUTOUPDATE_PLUGIN',
-		action: 'DISABLE_AUTOUPDATE_PLUGIN',
+		action: DISABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 	},
 
 	disabledAutoupdatePlugin: {
 		type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-		action: 'DISABLE_AUTOUPDATE_PLUGIN',
+		action: DISABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: {
@@ -296,7 +297,7 @@ export default {
 
 	disabledAutoupdatePluginError: {
 		type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-		action: 'DISABLE_AUTOUPDATE_PLUGIN',
+		action: DISABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,

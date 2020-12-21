@@ -393,7 +393,7 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'DISABLE_AUTOUPDATE_PLUGIN',
-			action: 'DISABLE_AUTOUPDATE_PLUGIN',
+			action: DISABLE_AUTOUPDATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -402,7 +402,7 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-				action: 'DISABLE_AUTOUPDATE_PLUGIN',
+				action: DISABLE_AUTOUPDATE_PLUGIN,
 				site,
 				plugin,
 				data,
