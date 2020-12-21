@@ -60,39 +60,3 @@ export default function useGetDisplayDate() {
 			: formattedDateTime;
 	};
 }
-
-// export const useGetDisplayDateForSite: DisplayDateHook = ( siteId ) => {
-// 	const moment = useLocalizedMoment();
-// 	const translate = useTranslate();
-// 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
-// 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
-
-// 	return useCallback(
-// 		( date ) => {
-// 			if ( ! date ) {
-// 				return undefined;
-// 			}
-
-// 			const siteDate = applySiteOffset( date, { gmtOffset, timezone } );
-
-// 			const today = applySiteOffset( moment(), { gmtOffset, timezone } );
-// 			if ( siteDate.isSame( today, 'day' ) ) {
-// 				return translate( 'Today %(time)s', {
-// 					args: { time: siteDate.format( 'LT' ) },
-// 					comment: '%(time)s is a localized representation of the time of day',
-// 				} );
-// 			}
-
-// 			const yesterday = moment( today ).subtract( 1, 'day' );
-// 			if ( siteDate.isSame( yesterday, 'day' ) ) {
-// 				return translate( 'Yesterday %(time)s', {
-// 					args: { time: siteDate.format( 'LT' ) },
-// 					comment: '%(time)s is a localized representation of the time of day',
-// 				} );
-// 			}
-
-// 			return siteDate.format( 'LLL' );
-// 		},
-// 		[ moment, translate, gmtOffset, timezone ]
-// 	);
-// };
