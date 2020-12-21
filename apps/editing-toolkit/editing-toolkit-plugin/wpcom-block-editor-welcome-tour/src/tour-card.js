@@ -110,23 +110,14 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 						Back
 					</Button>
 				) }
-				{ cardIndex < lastCardIndex ? (
-					<Button
-						className="welcome-tour-card__next-btn"
-						isPrimary={ true }
-						onClick={ () => setCurrentCardIndex( cardIndex + 1 ) }
-					>
-						{ cardIndex === 0 ? "Let's start" : 'Next' }
-					</Button>
-				) : (
-					<Button
-						className="welcome-tour-card__next-btn"
-						isPrimary={ true }
-						onClick={ () => onDismiss() }
-					>
-						Done
-					</Button>
-				) }
+
+				<Button
+					className="welcome-tour-card__next-btn"
+					isPrimary={ true }
+					onClick={ () => setCurrentCardIndex( cardIndex + 1 ) }
+				>
+					{ cardIndex === 0 ? "Let's start" : 'Next' }
+				</Button>
 			</div>
 		</>
 	);
