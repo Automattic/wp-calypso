@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Card, ProgressBar } from '@automattic/components';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
@@ -25,15 +25,14 @@ import { useGetDisplayDate } from './hooks';
 import './style.scss';
 import cloudScheduleIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-schedule.svg';
 
-const BackupInProgress: React.FC< Props > = ( { percent, lastBackupDate, isFeatured } ) => {
+const BackupJustCompleted: React.FC< Props > = ( { lastBackupDate, isFeatured } ) => {
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
-		shouldExecute: !! lastBackupDate,
-	} );
-	const lastBackupDisplayDate = lastBackupDate && getDisplayDate( lastBackupDate );
+	const siteLastBackupDate = useDateWithOffset( lastBackupDate );
+
+	const lastBackupDisplayDate = siteLastBackupDate && getDisplayDate( siteLastBackupDate );
 
 	return (
 		<Card
@@ -47,10 +46,8 @@ const BackupInProgress: React.FC< Props > = ( { percent, lastBackupDate, isFeatu
 						<h2 className="backup-card__date">{ translate( 'Backup in progress' ) }</h2>
 						<p className="backup-card__title backup-card__title--in-progress">
 							<img className="backup-card__icon" src={ cloudScheduleIcon } alt="" />
-							{ translate( "We're making a backup of your site now" ) }
+							{ translate( "We're almost done making a backup of your site" ) }
 						</p>
-
-						<ProgressBar className="backup-card__progress" value={ percent } total={ 100 } />
 					</div>
 				</div>
 			</div>
@@ -65,11 +62,9 @@ const BackupInProgress: React.FC< Props > = ( { percent, lastBackupDate, isFeatu
 							<div className="backup-card__about-body">
 								{ siteLastBackupDate
 									? translate(
-											'Jetpack is currently backing up your site. {{link}}Your last backup before today was %(lastBackupDisplayDate)s.{{/link}}',
+											"You'll be able to access your new backup in just a few minutes. {{link}}Your last backup before today was %(lastBackupDisplayDate)s.{{/link}}",
 											{
-												args: {
-													lastBackupDisplayDate: preventWidows( lastBackupDisplayDate ),
-												},
+												args: { lastBackupDisplayDate: preventWidows( lastBackupDisplayDate ) },
 												components: {
 													link: (
 														<a
@@ -81,7 +76,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, lastBackupDate, isFeatu
 												},
 											}
 									  )
-									: translate( 'Jetpack is currently backing up your site.' ) }
+									: translate( "You'll be able to access your new backup in just a few minutes." ) }
 							</div>
 						</li>
 					</ul>
@@ -92,9 +87,8 @@ const BackupInProgress: React.FC< Props > = ( { percent, lastBackupDate, isFeatu
 };
 
 type Props = {
-	percent: number;
 	lastBackupDate?: Moment;
 	isFeatured: boolean;
 };
 
-export default BackupInProgress;
+export default BackupJustCompleted;

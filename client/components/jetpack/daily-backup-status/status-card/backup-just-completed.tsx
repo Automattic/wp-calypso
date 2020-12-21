@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import React from 'react';
@@ -22,43 +21,25 @@ import useGetDisplayDate from '../use-get-display-date';
 import './style.scss';
 import cloudScheduleIcon from './icons/cloud-schedule.svg';
 
-const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBackupDate } ) => {
+const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, lastBackupDate } ) => {
 	const translate = useTranslate();
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const getDisplayDate = useGetDisplayDate();
 
-	const siteSlug = useSelector( getSelectedSiteSlug );
-
-	// The backup 'period' is a Unix timestamp in terms of seconds
-	const inProgressDisplayDate = getDisplayDate( inProgressDate, false );
-	const lastBackupDisplayDate = lastBackupDate
-		? getDisplayDate( lastBackupDate, false )
-		: undefined;
+	const justCompletedDisplayDate = getDisplayDate( justCompletedBackupDate, false );
+	const lastBackupDisplayDate = getDisplayDate( lastBackupDate, false );
 
 	return (
 		<>
 			<div className="status-card__message-head">
 				<img src={ cloudScheduleIcon } alt="" role="presentation" />
-				<div className="status-card__hide-mobile">{ translate( 'Backup In Progress' ) }</div>
+				<div className="status-card__hide-mobile">{ translate( 'Backup just completed' ) }</div>
 			</div>
-			<div className="status-card__title">
-				<div className="status-card__hide-desktop">{ translate( 'Backup In Progress' ) }:</div>
-			</div>
+			<div className="status-card__title">{ justCompletedDisplayDate }</div>
 
 			<p className="status-card__label">
-				{ translate(
-					"We're making a backup of your site from {{strong}}%(inProgressDisplayDate)s{{/strong}}.",
-					{
-						args: {
-							inProgressDisplayDate: preventWidows( inProgressDisplayDate ),
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
+				{ translate( "You'll be able to access your new backup in just a few minutes." ) }
 			</p>
-
-			<ProgressBar value={ percent } total={ 100 } />
 
 			{ lastBackupDate && (
 				<div className="status-card__no-backup-last-backup">
@@ -81,9 +62,8 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 };
 
 type Props = {
-	percent: number;
-	inProgressDate: Moment;
+	justCompletedBackupDate: Moment;
 	lastBackupDate?: Moment;
 };
 
-export default BackupInProgress;
+export default BackupJustCompleted;

@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getHttpData } from 'calypso/state/data-layer/http-data';
+import { getHttpData, resetHttpData } from 'calypso/state/data-layer/http-data';
 import { getRequestActivityLogsId, requestActivityLogs } from 'calypso/state/data-getters';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
@@ -42,12 +42,21 @@ const useMemoizeFilter = ( filter ) => {
 	return filterRef.current;
 };
 
-export const useActivityLogs = ( siteId, filter, shouldExecute = true ) => {
+export const useActivityLogs = (
+	siteId,
+	filter,
+	{ shouldExecute = true, forceRefresh = false } = {}
+) => {
 	const memoizedFilter = useMemoizeFilter( filter );
 
 	useEffect( () => {
+		if ( forceRefresh ) {
+			const cacheId = getRequestActivityLogsId( siteId, memoizedFilter );
+			resetHttpData( cacheId );
+		}
+
 		shouldExecute && requestActivityLogs( siteId, memoizedFilter );
-	}, [ shouldExecute, siteId, memoizedFilter ] );
+	}, [ shouldExecute, forceRefresh, siteId, memoizedFilter ] );
 
 	const requestId = getRequestActivityLogsId( siteId, memoizedFilter );
 	const response = useSelector( () => shouldExecute && getHttpData( requestId ), [
@@ -87,7 +96,7 @@ const getRealtimeAttemptFilter = ( { before, after, sortOrder } = {} ) => {
 export const useFirstMatchingBackupAttempt = (
 	siteId,
 	{ before, after, successOnly, sortOrder } = {},
-	shouldExecute = true
+	{ shouldExecute = true, forceRefresh = false } = {}
 ) => {
 	useEffect( () => {
 		requestRewindCapabilities( siteId );
@@ -101,11 +110,10 @@ export const useFirstMatchingBackupAttempt = (
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
 		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
-	const { activityLogs, isLoadingActivityLogs } = useActivityLogs(
-		siteId,
-		filter,
-		!! shouldExecute
-	);
+	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, filter, {
+		shouldExecute,
+		forceRefresh,
+	} );
 
 	if ( ! shouldExecute ) {
 		return {
