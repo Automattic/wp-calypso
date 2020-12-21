@@ -41,14 +41,15 @@ const TemplateSelectorItem = ( props ) => {
 		}, 3000 );
 	};
 
-	const innerPreview = (
-		<img
-			className="template-selector-item__media"
-			src={ staticPreviewImg }
-			alt={ title }
-			onLoad={ refreshSourceImg }
-		/>
-	);
+	const innerPreview =
+		'blank' === value ? null : (
+			<img
+				className="template-selector-item__media"
+				src={ staticPreviewImg }
+				alt={ title }
+				onLoad={ refreshSourceImg }
+			/>
+		);
 
 	const handleClick = () => {
 		onSelect( value );
