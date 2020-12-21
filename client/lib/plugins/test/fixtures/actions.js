@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-
 import plugins from './plugins';
 import updatePluginsList from './plugins-updated';
 import site from './site';
 import multiSite from './multi-site';
 import updatePluginData from './updated-plugin';
+import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
 
 export default {
 	// Fetch Data
@@ -82,14 +82,14 @@ export default {
 	// Remove Plugin
 	removePlugin: {
 		type: 'REMOVE_PLUGIN',
-		action: 'REMOVE_PLUGIN',
+		action: REMOVE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 	},
 
 	removedPluginError: {
 		type: 'RECEIVE_REMOVE_PLUGIN',
-		action: 'REMOVE_PLUGIN',
+		action: REMOVE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 		data: null,
@@ -99,7 +99,7 @@ export default {
 	// Remove Plugin
 	removedPlugin: {
 		type: 'RECEIVE_REMOVE_PLUGIN',
-		action: 'REMOVE_PLUGIN',
+		action: REMOVE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 	},

@@ -561,7 +561,7 @@ export function removePlugin( siteId, plugin ) {
 
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PLUGIN',
-			action: 'REMOVE_PLUGIN',
+			action: REMOVE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -569,7 +569,7 @@ export function removePlugin( siteId, plugin ) {
 		const dispatchMessage = ( type, responseData, error ) => {
 			const message = {
 				type,
-				action: 'REMOVE_PLUGIN',
+				action: REMOVE_PLUGIN,
 				site,
 				plugin,
 				data: responseData,
