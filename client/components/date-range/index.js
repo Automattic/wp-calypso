@@ -485,11 +485,11 @@ export class DateRange extends Component {
 	 * Enforces that given date is within the bounds of the
 	 * range specified
 	 *
-	 * @param  {Date}  date             momentJS instance
-	 * @param  {Array} options          date range
-	 * @param  {Date}  options.dateFrom the start of the date range
-	 * @param  {Date}  options.dateTo   the end of the date range
-	 * @returns {Date}                  the date clamped to be within the range
+	 * @param  {import('moment').Moment}  date             momentJS instance
+	 * @param  {object} options          date range
+	 * @param  {import('moment').Moment | Date}  options.dateFrom the start of the date range
+	 * @param  {import('moment').Moment | Date}  options.dateTo   the end of the date range
+	 * @returns {import('moment').Moment}                  the date clamped to be within the range
 	 */
 	clampDateToRange( date, { dateFrom, dateTo } ) {
 		// Ensure endDate is within bounds of firstSelectableDate
