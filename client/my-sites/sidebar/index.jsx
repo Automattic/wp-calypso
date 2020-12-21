@@ -65,6 +65,7 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
+	collapseMySitesSidebarSection as collapseSection,
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'calypso/state/my-sites/sidebar/actions';
@@ -109,6 +110,8 @@ export class MySitesSidebar extends Component {
 		sitePlanSlug: PropTypes.string,
 	};
 
+	collapseManageSection = () => this.props.collapseSection( SIDEBAR_SECTION_MANAGE );
+
 	expandUpgradesSection = () => this.props.expandSection( SIDEBAR_SECTION_UPGRADES );
 
 	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
@@ -122,6 +125,11 @@ export class MySitesSidebar extends Component {
 	expandJetpackSection = () => this.props.expandSection( SIDEBAR_SECTION_JETPACK );
 
 	toggleSection = memoize( ( id ) => () => this.props.toggleSection( id ) );
+
+	expandDomains = () => {
+		this.collapseManageSection();
+		this.expandUpgradesSection();
+	};
 
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
@@ -552,7 +560,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackDomainsClick }
 				preloadSectionName="domains"
 				tipTarget="domains"
-				expandSection={ this.expandUpgradesSection }
+				expandSection={ this.expandDomains }
 			/>
 		);
 	}
@@ -646,7 +654,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackPlanClick }
 				preloadSectionName="plans"
 				forceInternalLink
-				expandSection={ this.expandPlanSection }
+				expandSection={ this.expandUpgradesSection }
 			>
 				{ displayPlanName && (
 					<span className="sidebar__menu-link-secondary-text">
@@ -1182,6 +1190,7 @@ export default connect( mapStateToProps, {
 	recordTracksEvent,
 	setLayoutFocus,
 	setNextLayoutFocus,
+	collapseSection,
 	expandSection,
 	toggleSection,
 } )( localize( MySitesSidebar ) );
