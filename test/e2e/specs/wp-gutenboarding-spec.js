@@ -17,9 +17,11 @@ import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';
 import FeaturesPage from '../lib/pages/gutenboarding/features-page.js';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
+import LanguagePickerComponent from '../lib/components/gutenboarding-language-picker';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
+import * as driverHelper from '../lib/driver-helper.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -44,7 +46,12 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 
 		step( 'Can visit Gutenboarding page and see Onboarding block', async function () {
-			const page = await NewPage.Visit( driver );
+			const page = await NewPage.Visit(
+				driver,
+				NewPage.getGutenboardingURL( {
+					query: 'flags=gutenboarding/language-picker',
+				} )
+			);
 			const blockExists = await page.waitForBlock();
 			assert( blockExists, 'Onboarding block is not rendered' );
 		} );
@@ -52,6 +59,28 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		step( 'Can see Acquire Intent and set site title', async function () {
 			const acquireIntentPage = await AcquireIntentPage.Expect( driver );
 			await acquireIntentPage.enterSiteTitle( siteTitle );
+		} );
+
+		step( 'Can change language to Spanish and back to English', async function () {
+			const acquireIntentPage = await AcquireIntentPage.Expect( driver );
+			const languagePicker = await LanguagePickerComponent.Expect( driver );
+
+			await languagePicker.switchLanguage( 'es' );
+
+			await driverHelper.waitTillTextPresent(
+				driver,
+				acquireIntentPage.nextButtonSelector,
+				'Continuar'
+			);
+
+			await languagePicker.switchLanguage( 'en' );
+
+			await driverHelper.waitTillTextPresent(
+				driver,
+				acquireIntentPage.nextButtonSelector,
+				'Continue'
+			);
+
 			await acquireIntentPage.goToNextStep();
 		} );
 
