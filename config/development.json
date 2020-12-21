@@ -217,8 +217,6 @@
 		"woocommerce/store-deprecated": false,
 		"woocommerce/store-removed": false,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"woocommerce/store-deprecated": false,
-		"woocommerce/store-removed": false,
 		"wpcom-user-bootstrap": false
 	}
 }
