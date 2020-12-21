@@ -1,21 +1,30 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
-import { marketingConnections, marketingBusinessTools } from 'calypso/my-sites/marketing/paths';
+import {
+	marketingConnections,
+	marketingBusinessTools,
+	marketingUltimateTrafficGuide,
+} from 'calypso/my-sites/marketing/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 
 /**
  * Images
@@ -27,6 +36,7 @@ import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
+import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 
 /**
  * Types
@@ -38,16 +48,15 @@ import * as T from 'calypso/types';
  */
 import './style.scss';
 
-interface Props {
-	recordTracksEvent: typeof recordTracksEventAction;
-	selectedSiteSlug: T.SiteSlug | null;
-}
-
-export const MarketingTools: FunctionComponent< Props > = ( {
-	recordTracksEvent,
-	selectedSiteSlug,
-} ) => {
+export const MarketingTools: FunctionComponent = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) ) || 0;
+	const selectedSiteSlug: T.SiteSlug | null = useSelector( ( state ) =>
+		getSelectedSiteSlug( state )
+	);
+	const purchases = useSelector( ( state ) => getUserPurchases( state, userId ) );
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -87,8 +96,17 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		page( marketingConnections( selectedSiteSlug ) );
 	};
 
+	const handleUltimateTrafficGuideClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_ultimate_traffic_guide_button_click' );
+
+		page( marketingUltimateTrafficGuide( selectedSiteSlug ) );
+	};
+
+	const isEnglish = config( 'english_locales' ).includes( getLocaleSlug() );
+
 	return (
 		<Fragment>
+			{ ! purchases && <QueryUserPurchases userId={ userId } /> }
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
@@ -212,16 +230,26 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						{ translate( 'Start creating content' ) }
 					</Button>
 				</MarketingToolsFeature>
+
+				{ isEnglish && (
+					<MarketingToolsFeature
+						title={ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
+						description={ translate(
+							"Our brand new Ultimate Traffic Guide reveals more than a dozen of today's most effective traffic techniques. " +
+								'The guide is appropriate for beginner to intermediate users.'
+						) }
+						imagePath={ rocket }
+					>
+						<Button onClick={ handleUltimateTrafficGuideClick }>
+							{ hasTrafficGuidePurchase( purchases )
+								? translate( 'Download now' )
+								: translate( 'Learn more' ) }
+						</Button>
+					</MarketingToolsFeature>
+				) }
 			</div>
 		</Fragment>
 	);
 };
 
-export default connect(
-	( state ) => ( {
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ),
-	{
-		recordTracksEvent: recordTracksEventAction,
-	}
-)( MarketingTools );
+export default MarketingTools;
