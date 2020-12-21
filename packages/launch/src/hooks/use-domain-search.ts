@@ -40,7 +40,7 @@ function filterUnsuitableTitles( title: string ): string {
 	return isGoodDefaultDomainQuery( title ) ? title : '';
 }
 
-export function isGoodDefaultDomainQuery( domainQuery: string ): boolean {
+function isGoodDefaultDomainQuery( domainQuery: string ): boolean {
 	if ( typeof domainQuery.normalize === 'undefined' ) {
 		// If the browser doesn't support String.prototype.normalize then
 		// play it safe and assume this isn't a safe domain query.
