@@ -278,8 +278,8 @@ export class DateRange extends Component {
 	 * Converts moment dates to a DateRange
 	 * as required by Day Picker DateUtils
 	 *
-	 * @param  {Date} startDate the start date for the range
-	 * @param  {Date} endDate   the end date for the range
+	 * @param  {import('moment').Moment} startDate the start date for the range
+	 * @param  {import('moment').Moment} endDate   the end date for the range
 	 * @returns {object}           the date range object
 	 */
 	toDateRange( startDate, endDate ) {
