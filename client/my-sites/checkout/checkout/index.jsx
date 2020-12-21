@@ -26,7 +26,6 @@ import {
 	hasPremiumPlan,
 	hasEcommercePlan,
 	hasPlan,
-	hasTrafficGuide,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	isJetpackProductSlug,
@@ -366,10 +365,6 @@ export class Checkout extends React.Component {
 		// when purchasing a concierge session.
 		if ( hasConciergeSession( cart ) ) {
 			displayModeParam = { d: 'concierge' };
-		}
-
-		if ( hasTrafficGuide( cart ) ) {
-			displayModeParam = { d: 'traffic-guide' };
 		}
 
 		if ( this.props.isEligibleForSignupDestination ) {
