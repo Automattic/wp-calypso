@@ -22,8 +22,15 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async selectFreeDomain() {
-		const firstDomainSelector = By.css( '.domain-picker__suggestion-item.is-free' );
-		return await driverHelper.clickWhenClickable( this.driver, firstDomainSelector );
+		const freeDomainButtonSelector = By.css( '.domain-picker__suggestion-item.is-free' );
+		const freeDomainNameSelector = By.css(
+			'.domain-picker__suggestion-item.is-free .domain-picker__suggestion-item-name'
+		);
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, freeDomainNameSelector );
+		const domainNameElement = await this.driver.findElement( freeDomainNameSelector );
+		const domainName = await domainNameElement.getText();
+		await driverHelper.clickWhenClickable( this.driver, freeDomainButtonSelector );
+		return domainName;
 	}
 
 	async continueToNextStep() {

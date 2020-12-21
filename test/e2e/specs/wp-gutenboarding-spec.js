@@ -8,6 +8,7 @@ import assert from 'assert';
  * Internal dependencies
  */
 import LoginFlow from '../lib/flows/login-flow.js';
+import DeleteSiteFlow from '../lib/flows/delete-site-flow.js';
 import NewPage from '../lib/pages/gutenboarding/new-page.js';
 import AcquireIntentPage from '../lib/pages/gutenboarding/acquire-intent-page.js';
 import DesignSelectorPage from '../lib/pages/gutenboarding/design-selector-page.js';
@@ -15,6 +16,7 @@ import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';
 import FeaturesPage from '../lib/pages/gutenboarding/features-page.js';
+import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -32,11 +34,13 @@ before( async function () {
 
 describe( 'Gutenboarding: (' + screenSize + ')', function () {
 	this.timeout( mochaTimeOut );
-	describe( 'Visit Gutenboarding page as a new user @parallel @canary', function () {
+	describe( 'Create new site as existing user @parallel @canary', function () {
 		const siteTitle = dataHelper.randomPhrase();
+		const domainQuery = dataHelper.randomPhrase();
+		let newSiteDomain = '';
 
-		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
+		step( 'Can log in as user', async function () {
+			await new LoginFlow( driver ).login();
 		} );
 
 		step( 'Can visit Gutenboarding page and see Onboarding block', async function () {
@@ -53,7 +57,8 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 
 		step( 'Can see Domains Page and pick a free domain and continue', async function () {
 			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.selectFreeDomain();
+			await domainsPage.enterDomainQuery( domainQuery );
+			newSiteDomain = await domainsPage.selectFreeDomain();
 			await domainsPage.continueToNextStep();
 		} );
 
@@ -62,20 +67,43 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await designSelectorPage.selectFreeDesign();
 		} );
 
-		step( 'Can see Style Preview and continue', async function () {
+		step( 'Can see Style Preview, choose a random font pairing, and continue', async function () {
 			const stylePreviewPage = await StylePreviewPage.Expect( driver );
+			await stylePreviewPage.selectFontPairing();
 			await stylePreviewPage.continue();
 		} );
 
-		step( 'Can see Feature picker and skip', async function () {
-			const featureswPage = await FeaturesPage.Expect( driver );
-			await featureswPage.skipStep();
+		step(
+			'Can see Feature picker and choose a feature that requires a business plan',
+			async function () {
+				const featuresPage = await FeaturesPage.Expect( driver );
+				await featuresPage.selectPluginsFeature();
+				await featuresPage.goToNextStep();
+			}
+		);
+
+		step(
+			'Can see Plans Grid with business plan recommended and can choose free plan',
+			async function () {
+				const plansPage = await PlansPage.Expect( driver );
+				const recommendedPlan = await plansPage.getRecommendedPlan( driver );
+				assert.strictEqual(
+					recommendedPlan,
+					'Business',
+					'The Business plan should be recommended because the plugins feature was selected in the previous step'
+				);
+				await plansPage.expandAllPlans();
+				await plansPage.selectFreePlan();
+			}
+		);
+
+		step( 'Can see the gutenberg page editor', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.initEditor();
 		} );
 
-		step( 'Can see Plans Grid with no selected plan', async function () {
-			const plansPage = await PlansPage.Expect( driver );
-			const hasSelectedPlan = await plansPage.hasSelectedPlan();
-			assert.strictEqual( hasSelectedPlan, false, 'There is a preselected plan' );
+		after( 'Can delete site', async function () {
+			await new DeleteSiteFlow( driver ).deleteSite( newSiteDomain );
 		} );
 	} );
 

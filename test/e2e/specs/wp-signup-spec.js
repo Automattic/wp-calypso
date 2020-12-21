@@ -34,13 +34,7 @@ import DomainDetailsPage from '../lib/pages/domain-details-page';
 import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
 import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import SettingsPage from '../lib/pages/settings-page';
-import GutenboardingAcquireIntentPage from '../lib/pages/gutenboarding/acquire-intent-page';
-import GutenboardingDomainsPage from '../lib/pages/gutenboarding/domains-page';
-import GutenboardingDesignSelectorPage from '../lib/pages/gutenboarding/design-selector-page';
-import GutenboardingStylePreviewPage from '../lib/pages/gutenboarding/style-preview-page';
-import GutenboardingFeaturesPage from '../lib/pages/gutenboarding/features-page';
-import GutenboardingPlansPage from '../lib/pages/gutenboarding/plans-page';
-import GutenboardingSignupPage from '../lib/pages/gutenboarding/signup-page';
+import NewPage from '../lib/pages/gutenboarding/new-page';
 import AccountSettingsPage from '../lib/pages/account/account-settings-page';
 
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
@@ -1345,79 +1339,23 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Signup and create new site using gutenboarding flow @signup', function () {
-		const blogName = dataHelper.getNewBlogName();
-		const domainQuery = dataHelper.getNewBlogName();
+	describe( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
 		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
 
 		before( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'Can enter the gutenboarding flow and enter site title', async function () {
-			const acquireIntentPage = await GutenboardingAcquireIntentPage.Visit( driver );
-			await acquireIntentPage.enterSiteTitle( blogName );
-			await acquireIntentPage.goToNextStep();
-		} );
+		step( 'Signup and create site using default options', async function () {
+			await NewPage.Visit( driver );
 
-		step( 'Can see the domain picker and choose a free sub domain', async function () {
-			const domainsPage = await GutenboardingDomainsPage.Expect( driver );
-			await domainsPage.enterDomainQuery( domainQuery );
-			await domainsPage.selectFreeDomain();
-			await domainsPage.continueToNextStep();
-		} );
-
-		step( 'Can see the design selector and choose a free design', async function () {
-			const designSelectorPage = await GutenboardingDesignSelectorPage.Expect( driver );
-			await designSelectorPage.selectFreeDesign();
-		} );
-
-		step( 'Can see the style preview step and choose a random font pairing', async function () {
-			const stylePreviewPage = await GutenboardingStylePreviewPage.Expect( driver );
-			await stylePreviewPage.selectFontPairing();
-			await stylePreviewPage.continue();
-		} );
-
-		step(
-			'Can see the feature picker and choose a feature that requires a business plan',
-			async function () {
-				const featuresPage = await GutenboardingFeaturesPage.Expect( driver );
-				await featuresPage.selectPluginsFeature();
-				await featuresPage.goToNextStep();
-			}
-		);
-
-		step(
-			'Can see the plan picker with business plan recommended and can choose free plan',
-			async function () {
-				const plansPage = await GutenboardingPlansPage.Expect( driver );
-				const recommendedPlan = await plansPage.getRecommendedPlan( driver );
-				assert.strictEqual(
-					recommendedPlan,
-					'Business',
-					'The Business plan should be recommended because the plugins feature was selected in the previous step'
-				);
-				await plansPage.expandAllPlans();
-				await plansPage.selectFreePlan();
-			}
-		);
-
-		step( 'Can see signup page and create a new account', async function () {
-			const signupPage = await GutenboardingSignupPage.Expect( driver );
-			await signupPage.enterEmail( emailAddress );
-			await signupPage.enterPassword( passwordForTestAccounts );
-			await signupPage.createAccount();
-		} );
-
-		step( 'Can see the gutenberg page editor', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.initEditor();
+			await new GutenboardingFlow( driver ).signupAndCreateFreeSite( { emailAddress } );
 		} );
 
 		after( 'Can delete our newly created account', async function () {
 			// Gutenboarding creates users with auto-generated usernames so we need
 			// to find the username before we can delete it.
-			const accountSettingsPage = await AccountSettingsPage.Visit( this.driver );
+			const accountSettingsPage = await AccountSettingsPage.Visit( driver );
 			const username = await accountSettingsPage.getUsername();
 
 			return await new DeleteAccountFlow( driver ).deleteAccount( username );
