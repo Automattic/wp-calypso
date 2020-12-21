@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getHttpData, resetHttpData } from 'calypso/state/data-layer/http-data';
+import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { getRequestActivityLogsId, requestActivityLogs } from 'calypso/state/data-getters';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
@@ -42,21 +42,12 @@ const useMemoizeFilter = ( filter ) => {
 	return filterRef.current;
 };
 
-export const useActivityLogs = (
-	siteId,
-	filter,
-	{ shouldExecute = true, forceRefresh = false } = {}
-) => {
+export const useActivityLogs = ( siteId, filter, shouldExecute = true ) => {
 	const memoizedFilter = useMemoizeFilter( filter );
 
 	useEffect( () => {
-		if ( forceRefresh ) {
-			const cacheId = getRequestActivityLogsId( siteId, memoizedFilter );
-			resetHttpData( cacheId );
-		}
-
 		shouldExecute && requestActivityLogs( siteId, memoizedFilter );
-	}, [ shouldExecute, forceRefresh, siteId, memoizedFilter ] );
+	}, [ shouldExecute, siteId, memoizedFilter ] );
 
 	const requestId = getRequestActivityLogsId( siteId, memoizedFilter );
 	const response = useSelector( () => shouldExecute && getHttpData( requestId ), [
@@ -96,7 +87,7 @@ const getRealtimeAttemptFilter = ( { before, after, sortOrder } = {} ) => {
 export const useFirstMatchingBackupAttempt = (
 	siteId,
 	{ before, after, successOnly, sortOrder } = {},
-	{ shouldExecute = true, forceRefresh = false } = {}
+	shouldExecute = true
 ) => {
 	useEffect( () => {
 		requestRewindCapabilities( siteId );
@@ -110,10 +101,7 @@ export const useFirstMatchingBackupAttempt = (
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
 		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
-	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, filter, {
-		shouldExecute,
-		forceRefresh,
-	} );
+	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, filter, shouldExecute );
 
 	if ( ! shouldExecute ) {
 		return {

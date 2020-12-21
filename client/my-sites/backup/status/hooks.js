@@ -16,28 +16,16 @@ import {
 } from 'calypso/lib/jetpack/backup-utils';
 import { useActivityLogs, useFirstMatchingBackupAttempt } from '../hooks';
 
-const useLatestBackupAttempt = (
-	siteId,
-	{ before, after, successOnly = false } = {},
-	{ forceRefresh = false } = {}
-) => {
-	return useFirstMatchingBackupAttempt(
-		siteId,
-		{
-			before,
-			after,
-			successOnly,
-			sortOrder: 'desc',
-		},
-		{ forceRefresh }
-	);
+const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
+	return useFirstMatchingBackupAttempt( siteId, {
+		before,
+		after,
+		successOnly,
+		sortOrder: 'desc',
+	} );
 };
 
-const useBackupDeltas = (
-	siteId,
-	{ before, after, number = 1000 } = {},
-	{ shouldExecute = true, forceRefresh = false } = {}
-) => {
+const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, shouldExecute = true ) => {
 	const filter = {
 		name: DELTA_ACTIVITIES,
 		before: before ? before.toISOString() : undefined,
@@ -47,10 +35,11 @@ const useBackupDeltas = (
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { isLoadingActivityLogs, activityLogs } = useActivityLogs( siteId, filter, {
-		shouldExecute: !! ( isValidRequest && shouldExecute ),
-		forceRefresh,
-	} );
+	const { isLoadingActivityLogs, activityLogs } = useActivityLogs(
+		siteId,
+		filter,
+		!! ( isValidRequest && shouldExecute )
+	);
 
 	return {
 		isLoadingDeltas: !! ( shouldExecute && isLoadingActivityLogs ),
@@ -61,7 +50,7 @@ const useBackupDeltas = (
 const useRawBackupDeltas = (
 	siteId,
 	{ before, after, number = 1000 } = {},
-	{ shouldExecute = true, forceRefresh = false } = {}
+	shouldExecute = true
 ) => {
 	const filter = {
 		name: DELTA_ACTIVITIES,
@@ -72,10 +61,11 @@ const useRawBackupDeltas = (
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { isLoadingActivityLogs, activityLogs } = useActivityLogs( siteId, filter, {
-		shouldExecute: !! ( isValidRequest && shouldExecute ),
-		forceRefresh,
-	} );
+	const { isLoadingActivityLogs, activityLogs } = useActivityLogs(
+		siteId,
+		filter,
+		!! ( isValidRequest && shouldExecute )
+	);
 
 	return {
 		isLoadingDeltas: !! ( shouldExecute && isLoadingActivityLogs ),
@@ -83,33 +73,21 @@ const useRawBackupDeltas = (
 	};
 };
 
-export const useDailyBackupStatus = ( siteId, selectedDate, { forceRefresh = false } = {} ) => {
+export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 	const moment = useLocalizedMoment();
 
-	const lastBackupBeforeDate = useLatestBackupAttempt(
-		siteId,
-		{
-			before: moment( selectedDate ).startOf( 'day' ),
-			successOnly: true,
-		},
-		{ forceRefresh }
-	);
-	const lastAttemptOnDate = useLatestBackupAttempt(
-		siteId,
-		{
-			after: moment( selectedDate ).startOf( 'day' ),
-			before: moment( selectedDate ).endOf( 'day' ),
-		},
-		{ forceRefresh }
-	);
+	const lastBackupBeforeDate = useLatestBackupAttempt( siteId, {
+		before: moment( selectedDate ).startOf( 'day' ),
+		successOnly: true,
+	} );
+	const lastAttemptOnDate = useLatestBackupAttempt( siteId, {
+		after: moment( selectedDate ).startOf( 'day' ),
+		before: moment( selectedDate ).endOf( 'day' ),
+	} );
 
-	const mostRecentBackupEver = useLatestBackupAttempt(
-		siteId,
-		{
-			successOnly: true,
-		},
-		{ forceRefresh }
-	);
+	const mostRecentBackupEver = useLatestBackupAttempt( siteId, {
+		successOnly: true,
+	} );
 
 	const hasPreviousBackup = ! lastBackupBeforeDate.isLoading && lastBackupBeforeDate.backupAttempt;
 	const successfulLastAttempt =
@@ -121,7 +99,7 @@ export const useDailyBackupStatus = ( siteId, selectedDate, { forceRefresh = fal
 			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
 			before: moment( lastAttemptOnDate.backupAttempt?.activityTs ),
 		},
-		{ shouldExecute: !! ( hasPreviousBackup && successfulLastAttempt ), forceRefresh }
+		!! ( hasPreviousBackup && successfulLastAttempt )
 	);
 
 	const rawBackupDeltas = useRawBackupDeltas(
@@ -130,7 +108,7 @@ export const useDailyBackupStatus = ( siteId, selectedDate, { forceRefresh = fal
 			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
 			before: moment( lastAttemptOnDate.backupAttempt?.activityTs ),
 		},
-		{ shouldExecute: !! ( hasPreviousBackup && successfulLastAttempt ), forceRefresh }
+		!! ( hasPreviousBackup && successfulLastAttempt )
 	);
 
 	return {
@@ -149,34 +127,22 @@ export const useDailyBackupStatus = ( siteId, selectedDate, { forceRefresh = fal
 	};
 };
 
-export const useRealtimeBackupStatus = ( siteId, selectedDate, { forceRefresh = false } = {} ) => {
+export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 	const moment = useLocalizedMoment();
 
-	const mostRecentBackupEver = useLatestBackupAttempt(
-		siteId,
-		{
-			successOnly: true,
-		},
-		{ forceRefresh }
-	);
+	const mostRecentBackupEver = useLatestBackupAttempt( siteId, {
+		successOnly: true,
+	} );
 
-	const lastBackupBeforeDate = useLatestBackupAttempt(
-		siteId,
-		{
-			before: moment( selectedDate ).startOf( 'day' ),
-			successOnly: true,
-		},
-		{ forceRefresh }
-	);
+	const lastBackupBeforeDate = useLatestBackupAttempt( siteId, {
+		before: moment( selectedDate ).startOf( 'day' ),
+		successOnly: true,
+	} );
 
-	const { activityLogs, isLoadingActivityLogs } = useActivityLogs(
-		siteId,
-		{
-			before: moment( selectedDate ).endOf( 'day' ).toISOString(),
-			after: moment( selectedDate ).startOf( 'day' ).toISOString(),
-		},
-		{ forceRefresh }
-	);
+	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, {
+		before: moment( selectedDate ).endOf( 'day' ).toISOString(),
+		after: moment( selectedDate ).startOf( 'day' ).toISOString(),
+	} );
 
 	const {
 		backupAttemptsOnDate,
@@ -205,7 +171,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate, { forceRefresh = 
 			before: moment( lastBackupAttemptOnDate?.activityTs ),
 			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
 		},
-		{ shouldExecute: !! ( hasPreviousBackup && lastAttemptWasSuccessful ), forceRefresh }
+		!! ( hasPreviousBackup && lastAttemptWasSuccessful )
 	);
 
 	return {
