@@ -17,7 +17,10 @@ import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button'
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 import Site from 'calypso/blocks/site';
 import { Button } from '@automattic/components';
-import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPluginOnSite,
+	isPluginActionInProgress,
+} from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
@@ -76,7 +79,7 @@ class PluginSiteJetpack extends React.Component {
 
 		const showAutoManagedMessage = this.props.isAutoManaged;
 
-		const settingsLink = this.props?.site?.plugin?.action_links?.Settings ?? null;
+		const settingsLink = this.props?.pluginOnSite?.action_links?.Settings ?? null;
 
 		return (
 			<FoldableCard
@@ -101,17 +104,17 @@ class PluginSiteJetpack extends React.Component {
 			>
 				<div>
 					{ canToggleActivation && (
-						<PluginActivateToggle site={ this.props.site } plugin={ this.props.site.plugin } />
+						<PluginActivateToggle site={ this.props.site } plugin={ this.props.pluginOnSite } />
 					) }
 					{ canToggleAutoupdate && (
 						<PluginAutoupdateToggle
 							site={ this.props.site }
-							plugin={ this.props.site.plugin }
+							plugin={ this.props.pluginOnSite }
 							wporg={ true }
 						/>
 					) }
 					{ canToggleRemove && (
-						<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
+						<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
 					) }
 					{ settingsLink && (
 						<Button compact href={ settingsLink }>
@@ -133,7 +136,7 @@ class PluginSiteJetpack extends React.Component {
 			return null;
 		}
 
-		if ( ! this.props.site.plugin ) {
+		if ( ! this.props.pluginOnSite ) {
 			return this.renderInstallPlugin();
 		}
 
@@ -142,5 +145,6 @@ class PluginSiteJetpack extends React.Component {
 }
 
 export default connect( ( state, { site, plugin } ) => ( {
+	pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
 	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'INSTALL_PLUGIN' ),
 } ) )( localize( PluginSiteJetpack ) );
