@@ -588,7 +588,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the Popover component
 	 *
-	 * @returns {JSX.Element} the Popover component
+	 * @returns {React.Element} the Popover component
 	 */
 	renderPopover() {
 		const headerProps = {
@@ -627,7 +627,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the DatePicker component
 	 *
-	 * @returns {JSX.Element} the DatePicker component
+	 * @returns {React.Element} the DatePicker component
 	 */
 	renderDatePicker() {
 		const fromDate = this.momentDateToJsDate( this.state.startDate );
@@ -679,7 +679,7 @@ export class DateRange extends Component {
 	/**
 	 * Renders the component
 	 *
-	 * @returns {JSX.Element} the DateRange component
+	 * @returns {React.Element} the DateRange component
 	 */
 	render() {
 		const rootClassNames = classNames( {
