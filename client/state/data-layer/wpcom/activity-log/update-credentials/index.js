@@ -3,6 +3,7 @@
  */
 import i18n from 'i18n-calypso';
 import page from 'page';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -25,6 +26,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
+const debug = debugModule( 'calypso:data-layer:update-credentials' );
 const navigateTo =
 	undefined !== typeof window
 		? ( path ) => window.open( path, '_blank' )
@@ -71,7 +73,7 @@ export const request = ( action ) => {
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
-				body: { credentials, stream: true },
+				body: { credentials, stream: action.stream },
 			},
 			{ ...action, ...maybeNoticeId }
 		),
@@ -142,6 +144,8 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			user: action.credentials.user,
 		} )
 	);
+
+	debug( 'failure: error=%o', error );
 
 	switch ( error.code ) {
 		case 'service_unavailable':

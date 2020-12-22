@@ -19,10 +19,11 @@ export const getCredentials = ( siteId ) => ( {
 	siteId,
 } );
 
-export const updateCredentials = ( siteId, credentials, shouldUseNotices = true ) => ( {
+export const updateCredentials = ( siteId, credentials, stream = false, shouldUseNotices = true ) => ( {
 	type: JETPACK_CREDENTIALS_UPDATE,
 	siteId,
 	credentials,
+	stream,
 	shouldUseNotices,
 } );
 
