@@ -386,8 +386,8 @@ const sections = [
 	},
 	{
 		name: 'gutenberg-in-calypso',
-		paths: [ '/without-iframe/block-editor' ],
-		module: 'wp-calypso-client/gutenberg/without-iframe',
+		paths: [ '/without-iframe' ],
+		module: 'calypso/gutenberg/without-iframe',
 		group: 'gutenberg',
 	},
 	{

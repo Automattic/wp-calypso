@@ -6,15 +6,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { siteSelection } from 'my-sites/controller';
+import { siteSelection } from 'calypso/my-sites/controller';
 import { authenticate, redirect } from '../editor/controller';
 import { gutenbergWithoutIframe } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { performanceTrackerStart } from 'lib/performance-tracking/performance-tracker-start';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { performanceTrackerStart } from 'calypso/lib/performance-tracking/performance-tracker-start';
 
 export default function () {
 	page(
-		'/without-iframe/block-editor/post/:site/:post?',
+		'/without-iframe/post/:site/:post?',
 		siteSelection,
 		redirect,
 		authenticate,
@@ -25,7 +25,7 @@ export default function () {
 	);
 
 	page(
-		'/without-iframe/block-editor/page/:site/:post?',
+		'/without-iframe/page/:site/:post?',
 		siteSelection,
 		redirect,
 		authenticate,
