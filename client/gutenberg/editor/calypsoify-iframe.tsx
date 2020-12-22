@@ -382,7 +382,7 @@ class CalypsoifyIframe extends Component<
 			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' ); // TODO: remove after ETK 2.8.6 is released
 			const isPersistentLaunchButton = config.isEnabled( 'create/persistent-launch-button' ); // TODO: remove after ETK 2.8.6 is released
 			const isFocusedLaunchFlow = config.isEnabled( 'create/focused-launch-flow' );
-			const currentCalypsoUrl = window.location.href;
+			const currentCalypsoUrl = window.location.href; // Used to pass in the Calypso URL to Focused Launch for the "Domain I Own" flow Back Button
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
