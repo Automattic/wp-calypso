@@ -11,7 +11,7 @@ import classNames from 'classnames';
  */
 import { CompactCard } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
-import { getGoogleMailServiceName } from 'calypso/lib/gsuite';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 /**
  * Style dependencies
@@ -68,7 +68,7 @@ class ListHeader extends React.PureComponent {
 								'purchasing Titan Mail or %(googleMailService)s subscription. Note that ' +
 								'email forwarding requires a plan subscription.',
 							{
-								args: { googleMailService: getGoogleMailServiceName() },
+								args: { googleMailService: getGoogleMailServiceFamily() },
 								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 							}
 						) }
