@@ -36,7 +36,7 @@ const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source } ) =>
 					</span>
 				</div>
 			</div>
-			<div className="domain-picker__action-link with-underline">
+			<div className="domain-picker__action-link domain-picker__action-link domain-picker__action-link--with-underline">
 				{ createInterpolateElement(
 					__(
 						'<strong><use_domain_link>Use a domain I own</use_domain_link></strong>',

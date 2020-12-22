@@ -522,12 +522,12 @@ $accent-blue: #117ac9;
 	display: flex;
 	align-items: center;
 
-	&.with-underline {
+	&--with-underline {
 		text-decoration: underline;
 	}
 
 	a,
 	a:hover {
-		color: var(--mainColor);
+		color: var( --mainColor );
 	}
 }
