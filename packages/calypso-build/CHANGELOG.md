@@ -2,6 +2,10 @@
 
 ## trunk
 
+## 6.5.0
+
+- Added `corejs`, `debug`, and `useBuiltIns` options to the `babel/default` preset.
+
 ## 6.4.0
 
 - Added `--esm` and `--cjs` options to `copy-assets` and `transpile` to do only one kind of
