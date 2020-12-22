@@ -39,6 +39,10 @@ const TemplateSelectorItem = ( props ) => {
 	const refreshSourceImg = ( e ) => {
 		const img = e.target;
 
+		if ( -1 !== img.src.indexOf( 'reload=1' ) ) {
+			return;
+		}
+
 		setTimeout( () => {
 			img.src = img.src + '&reload=1';
 		}, 3000 );
