@@ -9,7 +9,6 @@ import {
 	get,
 	includes,
 	isEmpty,
-	isNull,
 	omitBy,
 	pick,
 	startsWith,
@@ -101,7 +100,10 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 
 		SignupCart.createCart(
 			siteId,
-			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
+			omitBy(
+				pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ),
+				( dep ) => dep === null
+			),
 			( error ) => {
 				callback( error, providedDependencies );
 			}
