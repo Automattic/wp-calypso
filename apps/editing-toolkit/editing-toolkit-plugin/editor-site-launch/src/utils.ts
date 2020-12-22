@@ -8,6 +8,7 @@ interface CalypsoifyWindow extends Window {
 	currentSiteId?: number;
 	calypsoifyGutenberg?: {
 		isSiteUnlaunched?: boolean;
+		currentCalypsoUrl?: string;
 		isFocusedLaunchFlow?: boolean;
 		[ key: string ]: unknown;
 	};
@@ -26,9 +27,9 @@ export const redirectToWpcomPath = ( url: string ) => {
 
 export const getCurrentLaunchFlowUrl = (): string | undefined => {
 	try {
-		return window?.calypsoifyGutenberg?.currentCalypsoUrl as string;
+		return window?.calypsoifyGutenberg?.currentCalypsoUrl;
 	} catch ( err ) {
-		return undefined;
+		return window.location.href;
 	}
 };
 
