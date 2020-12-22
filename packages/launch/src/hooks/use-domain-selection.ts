@@ -4,13 +4,13 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import type { DomainSuggestions } from '@automattic/data-stores';
-import { mockDomainSuggestion } from '@automattic/domain-picker';
+import { mockDomainSuggestion, useDomainSuggestions } from '@automattic/domain-picker';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE, SITE_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE } from '../stores';
 import LaunchContext from '../context';
 import { isDomainProduct } from '../utils';
 import type { DomainProduct } from '../utils';
@@ -42,15 +42,10 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 
 	const domainName = domainProductFromCart?.meta;
 
-	const domainSuggestion = useSelect( ( select ) =>
-		domainName
-			? select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainName, {
-					quantity: 1,
-					include_wordpressdotcom: false,
-					include_dotblogsubdomain: false,
-			  } )?.[ 0 ]
-			: undefined
-	);
+	const domainSuggestion = useDomainSuggestions( domainName, 1, undefined, undefined, {
+		include_wordpressdotcom: false,
+		include_dotblogsubdomain: true,
+	} )?.allDomainSuggestions?.[ 0 ];
 
 	return domainSuggestion;
 }

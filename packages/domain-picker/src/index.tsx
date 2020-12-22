@@ -8,3 +8,4 @@ export { ITEM_TYPE_RADIO, ITEM_TYPE_BUTTON } from './domain-picker/suggestion-it
 export type { SUGGESTION_ITEM_TYPE } from './domain-picker/suggestion-item';
 
 export { mockDomainSuggestion } from './utils';
+export { useDomainSuggestions } from './hooks';

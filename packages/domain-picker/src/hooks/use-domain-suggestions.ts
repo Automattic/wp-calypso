@@ -22,7 +22,8 @@ export function useDomainSuggestions(
 	searchTerm = '',
 	quantity: number,
 	domainCategory?: string,
-	locale = 'en'
+	locale = 'en',
+	extraOptions = {}
 ): DomainSuggestionsResult | undefined {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
 
@@ -52,6 +53,7 @@ export function useDomainSuggestions(
 				quantity: quantity + 1, // increment the count to add the free domain
 				locale,
 				category_slug: domainCategory,
+				...extraOptions,
 			} );
 
 			const state = getDomainState();
