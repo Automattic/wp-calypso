@@ -50,7 +50,10 @@ export const TemplateSelectorControl = ( {
 				aria-label={ legendLabel }
 			>
 				{ map( templates, ( { ID, name, title, description } ) => (
-					<li key={ `${ id }-${ name }` } className="template-selector-control__template">
+					<li
+						key={ `${ ID }-${ name }-${ legendLabel }` }
+						className="template-selector-control__template"
+					>
 						<TemplateSelectorItem
 							id={ id }
 							value={ name }
