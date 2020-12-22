@@ -213,7 +213,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			return;
 		}
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
-		dispatch( updateCredentials( siteId, { role, ...formState }, false ) );
+		dispatch( updateCredentials( siteId, { role, ...formState }, true, false ) );
 	};
 
 	const disableForm = 'pending' === formSubmissionStatus;
