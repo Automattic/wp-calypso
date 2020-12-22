@@ -485,7 +485,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const { launchSite } = useDispatch( SITE_STORE );
 	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
-	const { title, updateTitle, saveTitle } = useTitle();
+	const { title, updateTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
@@ -536,7 +536,6 @@ const Summary: React.FunctionComponent = () => {
 			key={ stepIndex }
 			value={ title || '' }
 			onChange={ updateTitle }
-			onBlur={ saveTitle }
 		/>
 	);
 

@@ -3,6 +3,7 @@
  */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useContext, useEffect, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 /**
  * Internal dependencies
@@ -13,24 +14,21 @@ import LaunchContext from '../context';
 export function useTitle() {
 	const { siteId } = useContext( LaunchContext );
 	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
-	const [ localStateTitle, setLocalStateTitle ] = useState< string | undefined >( title );
+	const [ localStateTitle, setLocalStateTitle ] = useState< string | undefined >( undefined );
+	const saveSiteTitle = useDispatch( SITE_STORE ).saveSiteTitle;
+	const [ debouncedSaveSiteTitle ] = useDebouncedCallback( saveSiteTitle, 1000 );
+
+	const localStateTitleIsUndefined = typeof localStateTitle === 'undefined';
 
 	useEffect( () => {
-		setLocalStateTitle( title );
-	}, [ title ] );
-
-	const saveSiteTitle = useDispatch( SITE_STORE ).saveSiteTitle;
+		if ( localStateTitleIsUndefined ) {
+			return;
+		}
+		debouncedSaveSiteTitle( siteId, localStateTitle );
+	}, [ localStateTitle, debouncedSaveSiteTitle, siteId, localStateTitleIsUndefined ] );
 
 	return {
-		title: localStateTitle,
+		title: localStateTitleIsUndefined ? title : localStateTitle,
 		updateTitle: setLocalStateTitle,
-		saveTitle: () => {
-			// if saveTitle is called before the original title is fetched, it is a noop
-			// this is needed to make sure not to overwrite the original title by calling saveTitle too early
-			if ( typeof title === 'undefined' ) {
-				return;
-			}
-			saveSiteTitle( siteId, localStateTitle );
-		},
 	};
 }
