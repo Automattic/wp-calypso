@@ -28,6 +28,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
 
 	const handleNext = () => {
+		confirmDomainSelection();
 		onNextStep?.();
 	};
 
@@ -44,7 +45,6 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 	};
 
 	const handleExistingSubdomainSelect = () => {
-		confirmDomainSelection();
 		unsetDomain();
 	};
 
@@ -75,7 +75,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ currentDomain }
+					currentDomain={ currentDomain || mockDomainSuggestion( siteSubdomain?.domain ) }
 					existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
 					onDomainSelect={ handleDomainSelect }
 					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
