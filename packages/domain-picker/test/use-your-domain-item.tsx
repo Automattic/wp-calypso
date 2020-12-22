@@ -12,12 +12,12 @@ import '@testing-library/jest-dom/extend-expect';
 /**
  * Internal dependencies
  */
-import DomainIOwn from '../src/domain-picker/domain-i-own-item';
+import UseYourDomainItem from '../src/domain-picker/use-your-domain-item';
 
-describe( '<DomainIOwn />', () => {
+describe( '<UseYourDomainItem />', () => {
 	test( 'Component renders correct text', () => {
 		render(
-			<DomainIOwn
+			<UseYourDomainItem
 				siteSlug="test.wordpress.com"
 				source="https://wordpress.com/page/test.worpdress.com/home"
 			/>
@@ -29,7 +29,7 @@ describe( '<DomainIOwn />', () => {
 
 	test( 'Component renders correctly', () => {
 		render(
-			<DomainIOwn
+			<UseYourDomainItem
 				siteSlug="test.wordpress.com"
 				source="https://wordpress.com/page/test.worpdress.com/home"
 			/>

@@ -16,7 +16,7 @@ interface Props {
 	source: string;
 }
 
-const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source } ) => {
+const UseYourDomainItem: React.FunctionComponent< Props > = ( { siteSlug, source } ) => {
 	const localizeUrl = useLocalizeUrl();
 
 	return (
@@ -56,4 +56,4 @@ const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source } ) =>
 	);
 };
 
-export default DomainIOwn;
+export default UseYourDomainItem;
