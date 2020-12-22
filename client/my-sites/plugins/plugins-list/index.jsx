@@ -161,7 +161,7 @@ export class PluginsList extends React.Component {
 		active( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
 				return plugin.sites.some( ( site ) => {
-					const sitePlugin = this.props.pluginsOnSites[ plugin.slug ]?.sites[ site.ID ];
+					const sitePlugin = this.getSitePlugin( plugin, site );
 					return sitePlugin?.active;
 				} );
 			}
@@ -170,7 +170,7 @@ export class PluginsList extends React.Component {
 		inactive( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
 				return plugin.sites.some( ( site ) => {
-					const sitePlugin = this.props.pluginsOnSites[ plugin.slug ]?.sites[ site.ID ];
+					const sitePlugin = this.getSitePlugin( plugin, site );
 					return ! sitePlugin?.active;
 				} );
 			}
@@ -179,7 +179,7 @@ export class PluginsList extends React.Component {
 		updates( plugin ) {
 			if ( this.isSelected( plugin ) ) {
 				return plugin.sites.some( ( site ) => {
-					const sitePlugin = this.props.pluginsOnSites[ plugin.slug ]?.sites[ site.ID ];
+					const sitePlugin = this.getSitePlugin( plugin, site );
 					return sitePlugin?.update?.new_version && site.canUpdateFiles;
 				} );
 			}
@@ -250,9 +250,16 @@ export class PluginsList extends React.Component {
 			} );
 	}
 
+	getSitePlugin = ( plugin, site ) => {
+		return {
+			...plugin,
+			...this.props.pluginsOnSites[ plugin.slug ]?.sites[ site.ID ],
+		};
+	};
+
 	pluginHasUpdate = ( plugin ) => {
 		return plugin.sites.some( ( site ) => {
-			const sitePlugin = this.props.pluginsOnSites[ plugin.slug ]?.sites[ site.ID ];
+			const sitePlugin = this.getSitePlugin( plugin, site );
 			return sitePlugin?.update && site.canUpdateFiles;
 		} );
 	};
@@ -261,7 +268,7 @@ export class PluginsList extends React.Component {
 		this.removePluginStatuses();
 		this.props.plugins.forEach( ( plugin ) => {
 			plugin.sites.forEach( ( site ) => {
-				const sitePlugin = this.props.pluginsOnSites[ plugin.slug ]?.sites[ site.ID ];
+				const sitePlugin = this.getSitePlugin( plugin, site );
 				return this.props.updatePlugin( site.ID, sitePlugin );
 			} );
 		} );
