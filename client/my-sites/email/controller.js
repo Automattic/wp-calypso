@@ -11,6 +11,7 @@ import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagement from 'calypso/my-sites/email/email-management';
 import { emailManagementAddGSuiteUsers } from 'calypso/my-sites/email/paths';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
+import TitanMailQuantitySelection from 'calypso/my-sites/email/titan-mail-quantity-selection';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
@@ -31,6 +32,11 @@ export default {
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
+		next();
+	},
+
+	emailManagementNewTitanAccount( pageContext, next ) {
+		pageContext.primary = <TitanMailQuantitySelection />;
 		next();
 	},
 

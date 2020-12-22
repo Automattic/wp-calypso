@@ -30,6 +30,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	emailManagementForwarding,
 	emailManagementNewGSuiteAccount,
+	emailManagementNewTitanAccount,
 } from 'calypso/my-sites/email/paths';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -75,21 +76,29 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onAddTitanClick = () => {
-		if ( this.state.isFetchingProvisioningURL ) {
-			return;
-		}
-
-		const { domain, translate } = this.props;
-		this.setState( { isFetchingProvisioningURL: true } );
-		this.fetchTitanOrderProvisioningURL( domain.name ).then( ( { error, provisioningURL } ) => {
-			this.setState( { isFetchingProvisioningURL: false } );
-			if ( error ) {
-				this.props.errorNotice( translate( 'An unknown error occurred. Please try again later.' ) );
-			} else {
-				window.location.href = provisioningURL;
-			}
-		} );
 		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'titan' } );
+
+		if ( config.isEnabled( 'titan/phase-2' ) ) {
+			const { domain, currentRoute, selectedSiteSlug } = this.props;
+			page( emailManagementNewTitanAccount( selectedSiteSlug, domain.name, currentRoute ) );
+		} else {
+			if ( this.state.isFetchingProvisioningURL ) {
+				return;
+			}
+
+			const { domain, translate } = this.props;
+			this.setState( { isFetchingProvisioningURL: true } );
+			this.fetchTitanOrderProvisioningURL( domain.name ).then( ( { error, provisioningURL } ) => {
+				this.setState( { isFetchingProvisioningURL: false } );
+				if ( error ) {
+					this.props.errorNotice(
+						translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else {
+					window.location.href = provisioningURL;
+				}
+			} );
+		}
 	};
 
 	fetchTitanOrderProvisioningURL = ( domain ) => {

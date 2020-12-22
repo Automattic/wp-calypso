@@ -50,6 +50,10 @@ export function emailManagementNewGSuiteAccount(
 	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType, relativeTo );
 }
 
+export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'titan/new/', relativeTo );
+}
+
 export function emailManagement( siteName, domainName, relativeTo = null ) {
 	let path;
 
