@@ -65,7 +65,7 @@ class ListHeader extends React.PureComponent {
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
 							'You can receive email using your custom domain by using email forwarding or by ' +
-								'purchasing Titan Mail or %(googleMailService)s subscription. Note that ' +
+								'purchasing Titan Mail or %(googleMailService)s. Note that ' +
 								'email forwarding requires a plan subscription.',
 							{
 								args: { googleMailService: getGoogleMailServiceFamily() },
