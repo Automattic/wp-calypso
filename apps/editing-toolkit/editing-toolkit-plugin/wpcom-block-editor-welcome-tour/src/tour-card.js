@@ -83,7 +83,7 @@ function WelcomeTourCard( {
 					<CardNavigation
 						cardIndex={ cardIndex }
 						lastCardIndex={ lastCardIndex }
-						onDismiss={ () => onDismiss( 'close-btn' ) }
+						onDismiss={ onDismiss }
 						setCurrentCardIndex={ setCurrentCardIndex }
 					></CardNavigation>
 				) }
