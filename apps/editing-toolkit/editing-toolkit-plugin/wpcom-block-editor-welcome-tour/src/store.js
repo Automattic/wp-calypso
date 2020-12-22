@@ -4,7 +4,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { combineReducers, registerStore } from '@wordpress/data';
 
-const isNuxEnabledReducer = ( state = null, action ) => {
+const isNuxEnabledReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS':
 			return action.isNuxEnabled;
@@ -14,7 +14,7 @@ const isNuxEnabledReducer = ( state = null, action ) => {
 };
 
 // TODO: next PR convert file to Typescript to ensure control of tourRating values: null, 'thumbs-up' 'thumbs-down'
-const tourRatingReducer = ( state = null, action ) => {
+const tourRatingReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING':
 			return action.tourRating;
