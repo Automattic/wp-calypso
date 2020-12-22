@@ -23,6 +23,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
 } from 'calypso/lib/gsuite/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { getAnnualPrice } from 'calypso/lib/gsuite';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -171,12 +172,26 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderTitanDetails( className ) {
-		const { currentUserLocale, translate } = this.props;
+		const { currencyCode, currentUserLocale, titanMailProduct, translate } = this.props;
 		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
 		const billingFrequency =
 			isEnglish || i18n.hasTranslation( 'Annual or monthly billing' )
 				? translate( 'Annual or monthly billing' )
 				: translate( 'Monthly billing' );
+
+		const formattedPrice = config.isEnabled( 'titan/phase-2' )
+			? translate( '{{price/}} /user /month', {
+					components: {
+						price: <span>{ formatCurrency( titanMailProduct.cost, currencyCode ) }</span>,
+					},
+					comment: '{{price/}} is the formatted price, e.g. $20',
+			  } )
+			: translate( '{{price/}} /user /month', {
+					components: {
+						price: <span>{ formatCurrency( 3.5, 'USD' ) }</span>,
+					},
+					comment: '{{price/}} is the formatted price, e.g. $20',
+			  } );
 
 		return (
 			<EmailProviderDetails
@@ -193,12 +208,7 @@ class EmailProvidersComparison extends React.Component {
 					translate( 'One-click import of existing emails and contacts' ),
 					translate( 'Read receipts to track email opens' ),
 				] }
-				formattedPrice={ translate( '{{price/}} /user /month', {
-					components: {
-						price: <span>{ formatCurrency( 3.5, 'USD' ) }</span>,
-					},
-					comment: '{{price/}} is the formatted price, e.g. $20',
-				} ) }
+				formattedPrice={ formattedPrice }
 				buttonLabel={ translate( 'Add Titan Mail' ) }
 				hasPrimaryButton={ true }
 				isButtonBusy={ this.state.isFetchingProvisioningURL }
@@ -277,6 +287,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentUserLocale: getCurrentUserLocale( state ),
 			gSuiteProduct: getProductBySlug( state, productSlug ),
+			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			currentRoute: getCurrentRoute( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};

@@ -20,6 +20,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { addItems } from 'calypso/lib/cart/actions';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 
 /**
  * Style dependencies
@@ -65,7 +66,7 @@ class TitanMailQuantitySelection extends React.Component {
 
 		addItems( [
 			{
-				product_slug: 'wp_titan_mail_monthly',
+				product_slug: TITAN_MAIL_MONTHLY_SLUG,
 				quantity: this.state.quantity,
 				meta: selectedDomainName,
 			},
