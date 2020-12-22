@@ -70,6 +70,7 @@
 		"@wordpress/format-library": "^1.22.6",
 		"@wordpress/i18n": "^3.14.0",
 		"@wordpress/icons": "^2.4.0",
+		"@wordpress/interface": "^0.7.5",
 		"@wordpress/is-shallow-equal": "^2.1.0",
 		"@wordpress/keycodes": "^2.14.0",
 		"@wordpress/notices": "^2.8.3",

@@ -21,9 +21,7 @@ export const mediaCalypsoToGutenberg = ( media ) => {
 		url: get( media, 'URL' ),
 		alt: get( media, 'alt' ),
 		// TODO: replace with `{ source: 'rich-text' }` after updating Gutenberg
-		caption: !! media.caption
-			? parseWithAttributeSchema( media.caption, { source: 'children' } )
-			: '',
+		caption: media.caption ? parseWithAttributeSchema( media.caption, { source: 'children' } ) : '',
 		description: get( media, 'description' ),
 		filename: get( media, 'file' ),
 		height: get( media, 'height' ),

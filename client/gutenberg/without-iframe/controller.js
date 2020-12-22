@@ -6,18 +6,18 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { EDITOR_START, POST_EDIT } from 'state/action-types';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import WithoutIframe from './without-iframe';
-import { getSiteFragment, sectionify } from 'lib/route';
-import { getSiteOption } from 'state/sites/selectors';
-import NavigationComponent from 'my-sites/navigation';
+import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import NavigationComponent from 'calypso/my-sites/navigation';
 
 function determinePostType( context ) {
-	if ( context.path.startsWith( '/without-iframe/block-editor/post/' ) ) {
+	if ( context.path.startsWith( '/without-iframe/post/' ) ) {
 		return 'post';
 	}
-	if ( context.path.startsWith( '/without-iframe/block-editor/page/' ) ) {
+	if ( context.path.startsWith( '/without-iframe/page/' ) ) {
 		return 'page';
 	}
 

@@ -6,25 +6,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-<<<<<<< HEAD
 import { siteSelection, sites } from 'calypso/my-sites/controller';
-import {
-	authenticate,
-	post,
-	redirect,
-	siteEditor,
-	gutenbergWithoutIframe,
-	exitPost,
-} from './controller';
+import { authenticate, post, redirect, siteEditor, exitPost } from './controller';
 import config from 'calypso/config';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { performanceTrackerStart } from 'calypso/lib/performance-tracking/performance-tracker-start';
-=======
-import { siteSelection, sites } from 'my-sites/controller';
-import { authenticate, post, redirect, siteEditor } from './controller';
-import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
->>>>>>> Split GB in calypso into separate section
 
 export default function () {
 	page(
@@ -51,23 +36,9 @@ export default function () {
 	page.exit( '/post/:site?/:post?', exitPost );
 	page( '/post/:site?', siteSelection, redirect, makeLayout, clientRender );
 
-<<<<<<< HEAD
 	page( '/page', siteSelection, sites, makeLayout, clientRender );
 	page( '/page/new', '/page' ); // redirect from beep-beep-boop
-	page(
-		'/without-iframe/post/:site/:post?',
-		siteSelection,
-		redirect,
-		authenticate,
-		performanceTrackerStart( 'without-iframe' ),
-		gutenbergWithoutIframe,
-		makeLayout,
-		clientRender
-	);
 
-=======
-	page( '/block-editor/page', siteSelection, sites, makeLayout, clientRender );
->>>>>>> Split GB in calypso into separate section
 	page(
 		'/page/:site/:post?',
 		siteSelection,
@@ -78,22 +49,8 @@ export default function () {
 		clientRender
 	);
 
-<<<<<<< HEAD
 	page.exit( '/page/:site?/:post?', exitPost );
 	page( '/page/:site?', siteSelection, redirect, makeLayout, clientRender );
-
-	page(
-		'/without-iframe/page/:site/:post?',
-		siteSelection,
-		redirect,
-		authenticate,
-		gutenbergWithoutIframe,
-		makeLayout,
-		clientRender
-	);
-=======
-	page( '/block-editor/page/:site?', siteSelection, redirect, makeLayout, clientRender );
->>>>>>> Split GB in calypso into separate section
 
 	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		page( '/edit/:customPostType', siteSelection, sites, makeLayout, clientRender );

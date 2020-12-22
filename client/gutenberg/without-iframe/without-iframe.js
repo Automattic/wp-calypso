@@ -28,19 +28,17 @@ import '@wordpress/format-library/build-style/style.css';
 /**
  * Internal dependencies
  */
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import EditorDocumentHead from 'post-editor/editor-document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
 import './without-iframe.scss';
-import PerformanceTrackerStop from 'lib/performance-tracking/performance-tracker-stop';
+import PerformanceTrackerStop from 'calypso/lib/performance-tracking/performance-tracker-stop';
 import Editor from '@wordpress/edit-post/src/editor';
 import { setCurrentSiteId } from './fix-api-fetch';
 
 registerCoreBlocks();
 
 const getStatsPath = ( { postId } ) =>
-	postId
-		? '/block-editor/without-iframe/:post_type/:site/:post_id'
-		: '/block-editor/without-iframe/:post_type/:site';
+	postId ? '/without-iframe/:post_type/:site/:post_id' : '/without-iframe/:post_type/:site';
 
 const getStatsTitle = ( { postId, postType } ) => {
 	let postTypeText;
