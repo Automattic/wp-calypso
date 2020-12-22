@@ -27,6 +27,25 @@ export type SUGGESTION_ITEM_TYPE =
 	| typeof ITEM_TYPE_BUTTON
 	| typeof ITEM_TYPE_INDIVIDUAL_ITEM;
 
+// to avoid nesting buttons, wrap the item with a div instead of button in button mode
+// (button mode means there is a Select button, not the whole item being a button)
+const WrappingComponent: React.FC<
+	{ type: SUGGESTION_ITEM_TYPE; disabled?: boolean } & (
+		| React.HTMLAttributes< HTMLDivElement >
+		| React.ButtonHTMLAttributes< HTMLButtonElement >
+	 )
+> = ( { type, disabled, ...props } ) => {
+	if ( type === 'button' ) {
+		return <div { ...( props as React.HTMLAttributes< HTMLDivElement > ) } />;
+	}
+	return (
+		<button
+			disabled={ disabled }
+			{ ...( props as React.ButtonHTMLAttributes< HTMLButtonElement > ) }
+		/>
+	);
+};
+
 interface Props {
 	isUnavailable?: boolean;
 	domain: string;
@@ -110,15 +129,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		onSelect( domain );
 	};
 
-	// to avoid nesting buttons, wrap the item with a div instead of button in button mode
-	// (button mode means there is a Select button, not the whole item being a button)
-	const WrappingComponent =
-		type === 'button'
-			? ( props: React.HTMLAttributes< HTMLDivElement > ) => <div { ...props } />
-			: ( props: React.ButtonHTMLAttributes< HTMLButtonElement > ) => <button { ...props } />;
-
 	return (
 		<WrappingComponent
+			type={ type }
 			key={ domainName }
 			className={ classnames(
 				'domain-picker__suggestion-item',
