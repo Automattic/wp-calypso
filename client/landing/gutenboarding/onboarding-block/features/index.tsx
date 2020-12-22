@@ -58,11 +58,11 @@ const FeaturesStep: React.FunctionComponent = () => {
 	React.useEffect( () => {
 		hasSelectedFeaturesRef.current = hasSelectedFeatures;
 		hasSelectedVideoStorageRef.current = hasSelectedVideoStorage;
-	}, [ hasSelectedFeatures ] );
+	}, [ hasSelectedFeatures, hasSelectedVideoStorage ] );
 
 	useTrackStep( 'Features', () => ( {
 		has_selected_features: hasSelectedFeaturesRef.current,
-		has_selected_video_storage: hasSelectedVideoStorageRef.current
+		has_selected_video_storage: hasSelectedVideoStorageRef.current,
 	} ) );
 
 	return (
