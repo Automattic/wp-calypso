@@ -51,7 +51,7 @@ export function emailManagementNewGSuiteAccount(
 }
 
 export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/new/', relativeTo );
+	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
 }
 
 export function emailManagement( siteName, domainName, relativeTo = null ) {

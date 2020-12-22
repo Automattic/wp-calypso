@@ -36,7 +36,9 @@ export default {
 	},
 
 	emailManagementNewTitanAccount( pageContext, next ) {
-		pageContext.primary = <TitanMailQuantitySelection />;
+		pageContext.primary = (
+			<TitanMailQuantitySelection selectedDomainName={ pageContext.params.domain } />
+		);
 		next();
 	},
 
