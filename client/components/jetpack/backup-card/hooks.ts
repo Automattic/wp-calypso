@@ -4,12 +4,16 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 type GetDisplayDateHook = () => ( date: Moment ) => TranslateResult | undefined;
 
@@ -19,7 +23,11 @@ export const useGetDisplayDate: GetDisplayDateHook = () => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
-	const today = useDateWithOffset( moment() );
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+
+	const today = applySiteOffset( moment(), { timezone, gmtOffset } );
 	const yesterday = moment( today ).subtract( 1, 'day' );
 
 	return useCallback(
@@ -28,22 +36,24 @@ export const useGetDisplayDate: GetDisplayDateHook = () => {
 				return undefined;
 			}
 
-			if ( date.isSame( today, 'day' ) ) {
+			const siteDate = applySiteOffset( date, { timezone, gmtOffset } );
+
+			if ( siteDate.isSame( today, 'day' ) ) {
 				return translate( 'Today %(time)s', {
-					args: { time: date.format( 'LT' ) },
+					args: { time: siteDate.format( 'LT' ) },
 					comment: '%(time)s is a localized representation of the time of day',
 				} );
 			}
 
-			if ( date.isSame( yesterday, 'day' ) ) {
+			if ( siteDate.isSame( yesterday, 'day' ) ) {
 				return translate( 'Yesterday %(time)s', {
-					args: { time: date.format( 'LT' ) },
+					args: { time: siteDate.format( 'LT' ) },
 					comment: '%(time)s is a localized representation of the time of day',
 				} );
 			}
 
-			return date.format( 'lll' );
+			return siteDate.format( 'lll' );
 		},
-		[ translate, today, yesterday ]
+		[ timezone, gmtOffset, translate, today, yesterday ]
 	);
 };

@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
  */
 import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import useGetDisplayDate from '../use-get-display-date';
@@ -27,8 +28,9 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 	const getDisplayDate = useGetDisplayDate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
-
-	// The backup 'period' is a Unix timestamp in terms of seconds
+	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
+		shouldExecute: !! lastBackupDate,
+	} );
 	const inProgressDisplayDate = getDisplayDate( inProgressDate, false );
 	const lastBackupDisplayDate = lastBackupDate
 		? getDisplayDate( lastBackupDate, false )
@@ -60,7 +62,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 
 			<ProgressBar value={ percent } total={ 100 } />
 
-			{ lastBackupDate && (
+			{ siteLastBackupDate && (
 				<div className="status-card__no-backup-last-backup">
 					{ translate( 'Last backup before today: {{link}}%(lastBackupDisplayDate)s{{/link}}', {
 						args: { lastBackupDisplayDate: preventWidows( lastBackupDisplayDate ) },
@@ -68,7 +70,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 							link: (
 								<a
 									href={ backupMainPath( siteSlug, {
-										date: lastBackupDate.format( INDEX_FORMAT ),
+										date: siteLastBackupDate.format( INDEX_FORMAT ),
 									} ) }
 								/>
 							),

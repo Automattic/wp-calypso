@@ -30,9 +30,10 @@ const BackupJustCompleted: React.FC< Props > = ( { lastBackupDate, isFeatured } 
 	const getDisplayDate = useGetDisplayDate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteLastBackupDate = useDateWithOffset( lastBackupDate );
-
-	const lastBackupDisplayDate = siteLastBackupDate && getDisplayDate( siteLastBackupDate );
+	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
+		shouldExecute: !! lastBackupDate,
+	} );
+	const lastBackupDisplayDate = lastBackupDate ? getDisplayDate( lastBackupDate ) : undefined;
 
 	return (
 		<Card

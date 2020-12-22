@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
  */
 import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import useGetDisplayDate from '../use-get-display-date';
@@ -23,9 +24,12 @@ import cloudScheduleIcon from './icons/cloud-schedule.svg';
 
 const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, lastBackupDate } ) => {
 	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const getDisplayDate = useGetDisplayDate();
 
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
+		shouldExecute: !! lastBackupDate,
+	} );
 	const justCompletedDisplayDate = getDisplayDate( justCompletedBackupDate, false );
 	const lastBackupDisplayDate = getDisplayDate( lastBackupDate, false );
 
@@ -41,7 +45,7 @@ const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, last
 				{ translate( "You'll be able to access your new backup in just a few minutes." ) }
 			</p>
 
-			{ lastBackupDate && (
+			{ siteLastBackupDate && (
 				<div className="status-card__no-backup-last-backup">
 					{ translate( 'Last backup before today: {{link}}%(lastBackupDisplayDate)s{{/link}}', {
 						args: { lastBackupDisplayDate: preventWidows( lastBackupDisplayDate ) },
@@ -49,7 +53,7 @@ const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, last
 							link: (
 								<a
 									href={ backupMainPath( siteSlug, {
-										date: lastBackupDate.format( INDEX_FORMAT ),
+										date: siteLastBackupDate.format( INDEX_FORMAT ),
 									} ) }
 								/>
 							),

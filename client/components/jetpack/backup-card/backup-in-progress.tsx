@@ -33,7 +33,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, lastBackupDate, isFeatu
 	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
 		shouldExecute: !! lastBackupDate,
 	} );
-	const lastBackupDisplayDate = lastBackupDate && getDisplayDate( lastBackupDate );
+	const lastBackupDisplayDate = lastBackupDate ? getDisplayDate( lastBackupDate ) : undefined;
 
 	return (
 		<Card
