@@ -22,15 +22,17 @@ export function useDomainSuggestions(
 	searchTerm = '',
 	quantity: number,
 	domainCategory?: string,
-	locale = 'en'
+	locale = 'en',
+	extraOptions = {}
 ): DomainSuggestionsResult | undefined {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
-
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-	// @ts-ignore
 	// Missing types for invalidateResolutionForStoreSelector
 	// (see packages/data/src/namespace-store/metadata/actions.js#L57)
-	const { invalidateResolutionForStoreSelector } = useDispatch( DOMAIN_SUGGESTIONS_STORE );
+	const { invalidateResolutionForStoreSelector } = ( useDispatch(
+		DOMAIN_SUGGESTIONS_STORE
+	) as unknown ) as {
+		invalidateResolutionForStoreSelector: ( arg0: string ) => void;
+	};
 
 	return useSelect(
 		( select ) => {
@@ -52,6 +54,7 @@ export function useDomainSuggestions(
 				quantity: quantity + 1, // increment the count to add the free domain
 				locale,
 				category_slug: domainCategory,
+				...extraOptions,
 			} );
 
 			const state = getDomainState();
