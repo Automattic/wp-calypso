@@ -279,6 +279,11 @@ $accent-blue: #117ac9;
 		// provides equal spacing between this and the recommended badge.
 		margin-right: 10px;
 	}
+
+	&.with-bold-text {
+		// stylelint-disable-next-line scales/font-weight
+		font-weight: 500;
+	}
 }
 
 .domain-picker__suggestion-item.type-individual-item {

@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronRight } from '@wordpress/icons';
-import { createInterpolateElement } from '@wordpress/element';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 
 /**
@@ -24,13 +23,8 @@ const UseYourDomainItem: React.FunctionComponent< Props > = ( { siteSlug, source
 			{ /* eslint-disable-next-line */ }
 			<label className="domain-picker__suggestion-item contains-link">
 				<div className="domain-picker__suggestion-item-name">
-					<span className="domain-picker__domain-wrapper with-margin">
-						{ createInterpolateElement(
-							__( '<strong>Already own a domain?</strong>', __i18n_text_domain__ ),
-							{
-								strong: <strong />,
-							}
-						) }
+					<span className="domain-picker__domain-wrapper with-margin with-bold-text">
+						{ __( 'Already own a domain?', __i18n_text_domain__ ) }
 					</span>
 					<div>
 						<span className="domain-picker__item-tip">
