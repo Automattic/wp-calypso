@@ -6,7 +6,8 @@
 @import 'story.scss';
 
 .reader-full-post__story-content {
-	@extend %rendered-block-content;
+    @extend %rendered-block-content;
+	padding-top: 16px;
 }
 
 // Longreads-Specific Full Post View Styles
@@ -91,6 +92,7 @@
     display: block;
     width: 36px;
     height: 36px;
+    /* stylelint-disable-next-line scales/radii */
     border-radius: 36px;
     margin-right: 8px;
     transition: transform 0.1s ease;

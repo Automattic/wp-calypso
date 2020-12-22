@@ -14,7 +14,6 @@ $signup-sans: 'Noto Sans', $sans;
 %rendered-block-content {
 	@extend %content-font;
 	margin: 0;
-	padding-top: 16px;
 	position: relative;
 	font-size: 1rem;
 	line-height: 1.7;
@@ -310,8 +309,8 @@ $signup-sans: 'Noto Sans', $sans;
 		@media ( min-width: #{ ( $break-small ) } ) {
 			@content;
 		}
-	}	
-	
+	}
+
 	// From https://github.com/WordPress/gutenberg/blob/HEAD/packages/block-library/src/gallery/style.scss
 	.wp-block-gallery,
 	.blocks-gallery-grid {
@@ -462,7 +461,7 @@ $signup-sans: 'Noto Sans', $sans;
 				justify-content: center;
 			}
 		}
-	}	
+	}
 
 	.wp-block-embed .embed-vimeo {
 		padding-top: 0;
