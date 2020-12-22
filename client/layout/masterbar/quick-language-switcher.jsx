@@ -20,9 +20,9 @@ import {
 
 function QuickLanguageSwitcher( props ) {
 	const [ isShowingModal, toggleLanguagesModal ] = useReducer( ( toggled ) => ! toggled, false );
-	const onSelected = ( languageSlug, { empathyMode, useFallbackForIncompleteLanguages } ) => {
+	const onSelected = ( language, { empathyMode, useFallbackForIncompleteLanguages } ) => {
 		props.setLocale(
-			useFallbackForIncompleteLanguages ? config( 'i18n_default_locale_slug' ) : languageSlug
+			useFallbackForIncompleteLanguages ? config( 'i18n_default_locale_slug' ) : language.langSlug
 		);
 		toggleLanguageEmpathyMode( empathyMode );
 	};
@@ -38,11 +38,11 @@ function QuickLanguageSwitcher( props ) {
 			</MasterbarItem>
 			{ isShowingModal && (
 				<LanguagePickerModal
-					isVisible
 					languages={ languages }
-					selected={ props.selectedLanguageSlug }
+					selectedLanguageSlug={ props.selectedLanguageSlug }
 					empathyMode={ getLanguageEmpathyModeActive() }
-					onSelected={ onSelected }
+					showEmpathyModeControl
+					onSelectLanguage={ onSelected }
 					onClose={ toggleLanguagesModal }
 				/>
 			) }
