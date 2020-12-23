@@ -67,7 +67,8 @@ function render_fallback_coming_soon_page() {
  * @return array current value of `wpcom_public_coming_soon`
  */
 function add_public_coming_soon_to_settings_endpoint_get( $options ) {
-	$options['wpcom_public_coming_soon'] = (int) get_option( 'wpcom_public_coming_soon' );
+	$wpcom_public_coming_soon            = (int) get_option( 'wpcom_public_coming_soon' );
+	$options['wpcom_public_coming_soon'] = $wpcom_public_coming_soon;
 
 	return $options;
 }
@@ -94,15 +95,17 @@ add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming
  * This can happen due to clicking the launch button from the banner
  * Or due to manually updating the setting in wp-admin or calypso settings page.
  *
- * @param string $old_value the old value of blog_public.
- * @param string $value     the new value of blog_public.
+ * @param  string $old_value the old value of blog_public.
+ * @param  string $value     the new value of blog_public.
+ * @return bool              whether an update occurred.
  */
 function disable_coming_soon_on_privacy_change( $old_value, $value ) {
 	if ( 0 !== (int) $old_value || 0 === (int) $value ) {
 		// Do nothing if not moving from public-not-indexed.
-		return;
+		return false;
 	}
 	update_option( 'wpcom_public_coming_soon', 0 );
+	return true;
 }
 add_action( 'update_option_blog_public', __NAMESPACE__ . '\disable_coming_soon_on_privacy_change', 10, 2 );
 
@@ -116,11 +119,14 @@ add_action( 'update_option_blog_public', __NAMESPACE__ . '\disable_coming_soon_o
  * @param string $path       Site path.
  * @param int    $network_id Network ID. Only relevant on multi-network installations.
  * @param array  $meta       Meta data. Used to set initial site options.
+ * @return bool              whether an update occurred.
  */
 function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $network_id, $meta ) {
 	if ( 0 === $meta['public'] && 1 === (int) $meta['options']['wpcom_public_coming_soon'] ) {
 		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 1 );
+		return true;
 	}
+	return false;
 }
 // phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 add_action( 'wpmu_new_blog', __NAMESPACE__ . '\add_option_to_new_site', 10, 6 );
