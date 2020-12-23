@@ -3,14 +3,16 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Count from 'calypso/components/count';
 import Favicon from 'calypso/reader/components/favicon';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Styles
@@ -26,7 +28,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	handleSidebarClick = () => {
 		recordAction( 'clicked_reader_sidebar_organization_item' );
 		recordGaEvent( 'Clicked Reader Sidebar Organization Item' );
-		recordTrack( 'calypso_reader_sidebar_organization_item_clicked', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_organization_item_clicked', {
 			blog: decodeURIComponent( this.props.site ),
 		} );
 	};
@@ -58,4 +60,6 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	}
 }
 
-export default ReaderSidebarOrganizationsListItem;
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( ReaderSidebarOrganizationsListItem );
