@@ -5,6 +5,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, useMemo, useCallback } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
+import { find, some } from 'lodash';
 import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
@@ -26,10 +27,13 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -39,6 +43,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	getStoredCards,
 	getStoredCardById,
+	getStoredPaymentAgreements,
 	hasLoadedStoredCardsFromServer,
 } from 'calypso/state/stored-cards/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -194,7 +199,7 @@ function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
 
 // We want to preselect the current method if it is in the list, but if not, preselect the first method.
 function getInitiallySelectedPaymentMethodId( currentlyAssignedPaymentMethodId, paymentMethods ) {
-	if ( [ 'credits', 'paypal', 'none' ].includes( currentlyAssignedPaymentMethodId ) ) {
+	if ( ! some( paymentMethods, [ 'id', currentlyAssignedPaymentMethodId ] ) ) {
 		return paymentMethods?.[ 0 ]?.id;
 	}
 
@@ -230,6 +235,11 @@ function ChangePaymentMethodList( {
 		notices.success( message, { persistent: true, duration: 5000 } );
 	}, [] );
 
+	const currentPaymentMethodNotAvailable = ! some( paymentMethods, [
+		'id',
+		currentlyAssignedPaymentMethodId,
+	] );
+
 	return (
 		<CheckoutProvider
 			items={ [] }
@@ -262,7 +272,9 @@ function ChangePaymentMethodList( {
 		>
 			<Card className="change-payment-method__content">
 				<QueryPaymentCountries />
-
+				{ currentPaymentMethodNotAvailable && (
+					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
+				) }
 				<CheckoutPaymentMethods className="change-payment-method__list" isComplete={ false } />
 				<div className="change-payment-method__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
@@ -359,6 +371,43 @@ function TosText( { translate } ) {
 			},
 		}
 	);
+}
+
+function CurrentPaymentMethodNotAvailableNotice( { purchase } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+	const storedPaymentAgreements = useSelector( getStoredPaymentAgreements );
+
+	let noticeText = '';
+
+	if ( creditCardHasAlreadyExpired( purchase ) ) {
+		noticeText = translate( 'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s.', {
+			args: {
+				cardType: purchase.payment.creditCard.type.toUpperCase(),
+				cardNumber: parseInt( purchase.payment.creditCard.number, 10 ),
+				cardExpiry: moment( purchase.payment.creditCard.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
+			},
+		} );
+	} else if ( getCurrentPaymentMethodId( purchase.payment ) === 'paypal' ) {
+		const storedPaymentAgreement = find( storedPaymentAgreements, [
+			'stored_details_id',
+			purchase.payment.storedDetailsId,
+		] );
+		if ( storedPaymentAgreement?.email ) {
+			noticeText = translate(
+				'This purchase is currently billed to your PayPal account (%(emailAddress)s).',
+				{
+					args: {
+						emailAddress: storedPaymentAgreement.email,
+					},
+				}
+			);
+		} else {
+			noticeText = translate( 'This purchase is currently billed to your PayPal account.' );
+		}
+	}
+
+	return noticeText && <Notice text={ noticeText } showDismiss={ false } />;
 }
 
 const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {

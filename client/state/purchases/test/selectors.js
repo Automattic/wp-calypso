@@ -103,6 +103,7 @@ describe( 'selectors', () => {
 					countryName: undefined,
 					name: undefined,
 					type: undefined,
+					storedDetailsId: undefined,
 				},
 				priceText: undefined,
 				productId: NaN,
