@@ -15,7 +15,7 @@ function render() {
 	return (
 		<SiteVerticalsSuggestionSearch
 			// eslint-disable-next-line jsx-a11y/no-autofocus
-			autoFocus={ true }
+			autoFocus
 			onChange={ onChange }
 			searchValue={ stateValue }
 		/>

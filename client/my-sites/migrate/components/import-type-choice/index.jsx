@@ -78,7 +78,7 @@ export default class ImportTypeChoice extends Component {
 				data-key={ key }
 				key={ key }
 			>
-				<FormRadio checked={ this.state.activeItem === key } readOnly={ true } />
+				<FormRadio checked={ this.state.activeItem === key } readOnly />
 				<div className="import-type-choice__option-data">
 					<div className="import-type-choice__option-header">
 						<p className="import-type-choice__option-title">{ item.title }</p>

@@ -90,7 +90,7 @@ function ReaderSubscriptionListItem( {
 					preferBlavatar={ isMultiAuthor }
 					preferGravatar={ preferGravatar }
 					siteUrl={ streamUrl }
-					isCompact={ true }
+					isCompact
 					onClick={ recordAvatarClick }
 				/>
 			</div>
@@ -130,7 +130,7 @@ function ReaderSubscriptionListItem( {
 							href={ siteUrl }
 							className="reader-subscription-list-item__site-url"
 							onClick={ recordSiteUrlClick }
-							icon={ true }
+							icon
 							iconSize={ 14 }
 						>
 							{ formatUrlForDisplay( siteUrl ) }

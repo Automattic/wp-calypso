@@ -79,7 +79,7 @@ class SiteSettingsPerformance extends Component {
 
 						{ siteIsAtomicPrivate ? (
 							<EligibilityWarnings
-								isEligible={ true }
+								isEligible
 								backUrl={ `/settings/performance/${ siteSlug }` }
 								eligibilityData={ {
 									eligibilityHolds: [ siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC' ],

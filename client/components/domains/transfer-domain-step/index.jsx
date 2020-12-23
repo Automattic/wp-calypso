@@ -258,7 +258,7 @@ class TransferDomainStep extends React.Component {
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInput
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ true }
+							autoFocus
 							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
@@ -420,7 +420,7 @@ class TransferDomainStep extends React.Component {
 						) }
 						plan={ PLAN_PERSONAL }
 						title={ translate( 'Personal plan required' ) }
-						showIcon={ true }
+						showIcon
 					/>
 					{ content }
 				</div>

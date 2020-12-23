@@ -66,7 +66,7 @@ class RewindMigrate extends Component {
 					<ActivityLogRewindToggle
 						siteId={ siteId }
 						label={ translate( 'Migrate your credentials' ) }
-						isVpMigrate={ true }
+						isVpMigrate
 					/>
 				</Card>
 				<div className="rewind-migrate__warning">
@@ -89,9 +89,9 @@ class RewindMigrate extends Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				stepContent={ this.stepContent() }
-				hideFormattedHeader={ true }
-				hideSkip={ true }
-				hideBack={ true }
+				hideFormattedHeader
+				hideSkip
+				hideBack
 			/>
 		);
 	}

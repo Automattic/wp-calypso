@@ -139,7 +139,7 @@ export class GoogleAnalyticsForm extends Component {
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ plan }
 				href={ href }
-				showIcon={ true }
+				showIcon
 				title={ nudgeTitle }
 			/>
 		);
@@ -207,7 +207,7 @@ export class GoogleAnalyticsForm extends Component {
 							/>
 							{ ! this.state.isCodeValid && (
 								<FormTextValidation
-									isError={ true }
+									isError
 									text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 								/>
 							) }

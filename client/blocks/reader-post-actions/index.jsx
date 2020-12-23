@@ -104,7 +104,7 @@ const ReaderPostActions = ( props ) => {
 						site={ site }
 						fullPost={ fullPost }
 						tagName="button"
-						forceCounter={ true }
+						forceCounter
 						iconSize={ iconSize }
 						showZeroCount={ false }
 						likeSource={ 'reader' }

@@ -137,7 +137,7 @@ export const EligibilityWarnings = ( {
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
 					<Button
-						primary={ true }
+						primary
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||

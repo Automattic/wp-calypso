@@ -51,7 +51,7 @@ export class PlanStorageBar extends Component {
 
 		return (
 			<div className={ classes }>
-				<ProgressBar value={ percent } total={ 100 } compact={ true } />
+				<ProgressBar value={ percent } total={ 100 } compact />
 
 				<span className="plan-storage__storage-label">
 					{ translate( '%(percent)f%% of %(max)s used', {

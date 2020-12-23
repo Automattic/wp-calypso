@@ -89,14 +89,14 @@ class SitePicker extends React.Component {
 				<CloseOnEscape onEscape={ this.closePicker } />
 				<SiteSelector
 					isPlaceholder={ ! this.state.isRendered }
-					indicator={ true }
-					showAddNewSite={ true }
-					showAllSites={ true }
+					indicator
+					showAddNewSite
+					showAllSites
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
 					autoFocus={ this.state.isAutoFocused }
 					onClose={ this.onClose }
-					groups={ true }
+					groups
 				/>
 			</div>
 		);

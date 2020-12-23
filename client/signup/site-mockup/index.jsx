@@ -186,7 +186,7 @@ class SiteMockups extends Component {
 				<div className="site-mockup__devices">
 					<SignupSitePreview
 						defaultViewportDevice="desktop"
-						resize={ true }
+						resize
 						scrolling={ false }
 						{ ...otherProps }
 					/>

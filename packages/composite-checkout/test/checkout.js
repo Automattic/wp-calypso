@@ -693,7 +693,7 @@ function createStepObjectConverter( paymentData ) {
 				editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
 				nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
 				isStepActive={ false }
-				isStepComplete={ true }
+				isStepComplete
 				stepNumber={ 1 }
 				stepId={ stepObject.id }
 				key={ stepObject.id }

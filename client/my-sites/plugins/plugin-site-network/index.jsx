@@ -42,7 +42,7 @@ class PluginSiteNetwork extends React.Component {
 	renderInstallButton = () => {
 		return (
 			<PluginInstallButton
-				isEmbed={ true }
+				isEmbed
 				selectedSite={ this.props.site }
 				plugin={ this.props.plugin }
 				isInstalling={ this.props.installInProgress }
@@ -81,11 +81,7 @@ class PluginSiteNetwork extends React.Component {
 	renderPluginActions = () => {
 		return (
 			<div className="plugin-site-network__actions">
-				<PluginAutoupdateToggle
-					site={ this.props.site }
-					plugin={ this.props.pluginOnSite }
-					wporg={ true }
-				/>
+				<PluginAutoupdateToggle site={ this.props.site } plugin={ this.props.pluginOnSite } wporg />
 				<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
 			</div>
 		);
@@ -107,11 +103,7 @@ class PluginSiteNetwork extends React.Component {
 					/>
 				}
 				expandedSummary={
-					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						expanded={ true }
-					/>
+					<PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } expanded />
 				}
 			>
 				<div>

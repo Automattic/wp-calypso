@@ -63,7 +63,7 @@ export function addCardDetails( context, next ) {
 				siteSlug={ context.params.site }
 				getManagePurchaseUrlFor={ managePurchaseUrl }
 				purchaseListUrl={ purchasesRoot }
-				isFullWidth={ true }
+				isFullWidth
 			/>
 		</Main>
 	);
@@ -129,7 +129,7 @@ export function editCardDetails( context, next ) {
 				siteSlug={ context.params.site }
 				getManagePurchaseUrlFor={ managePurchaseUrl }
 				purchaseListUrl={ purchasesRoot }
-				isFullWidth={ true }
+				isFullWidth
 			/>
 		</Main>
 	);

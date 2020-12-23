@@ -30,10 +30,10 @@ export const marketingConnectionsTour = makeTour(
 			style={ {
 				marginLeft: '-24px',
 			} }
-			waitForTarget={ true }
+			waitForTarget
 			target={ CONNECT_BUTTON_SELECTOR }
 			onTargetDisappear={ handleDisappear }
-			keepRepositioning={ true }
+			keepRepositioning
 		>
 			{ ( { translate } ) => (
 				<>

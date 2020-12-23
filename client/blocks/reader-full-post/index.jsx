@@ -414,7 +414,7 @@ export class FullPostView extends React.Component {
 				<BackButton onClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
-						icon={ true }
+						icon
 						href={ externalHref }
 						onClick={ this.handleVisitSiteClick }
 						target="_blank"
@@ -455,7 +455,7 @@ export class FullPostView extends React.Component {
 								<LikeButton
 									siteId={ +post.site_ID }
 									postId={ +post.ID }
-									fullPost={ true }
+									fullPost
 									tagName="div"
 									likeSource={ 'reader' }
 								/>
@@ -497,7 +497,7 @@ export class FullPostView extends React.Component {
 								post={ post }
 								site={ site }
 								onCommentClick={ this.handleCommentClick }
-								fullPost={ true }
+								fullPost
 							/>
 
 							{ ! isLoading && <PerformanceTrackerStop /> }
@@ -530,7 +530,7 @@ export class FullPostView extends React.Component {
 							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
 								{ shouldShowComments( post ) && (
 									<Comments
-										showNestingReplyArrow={ true }
+										showNestingReplyArrow
 										post={ post }
 										initialSize={ startingCommentId ? commentCount : 10 }
 										pageSize={ 25 }
@@ -538,10 +538,10 @@ export class FullPostView extends React.Component {
 										commentCount={ commentCount }
 										maxDepth={ 1 }
 										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-										showConversationFollowButton={ true }
+										showConversationFollowButton
 										followSource={ READER_FULL_POST }
 										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-										shouldHighlightNew={ true }
+										shouldHighlightNew
 									/>
 								) }
 							</div>

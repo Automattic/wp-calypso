@@ -172,7 +172,7 @@ class CloneDestinationStep extends Component {
 					isError={ !! formErrors.destinationSiteName }
 				/>
 				{ formErrors.destinationSiteName && (
-					<FormInputValidation isError={ true } text={ formErrors.destinationSiteName } />
+					<FormInputValidation isError text={ formErrors.destinationSiteName } />
 				) }
 
 				<FormLabel className="clone-destination__label">Destination site URL</FormLabel>
@@ -182,7 +182,7 @@ class CloneDestinationStep extends Component {
 					isError={ !! formErrors.destinationSiteUrl }
 				/>
 				{ formErrors.destinationSiteUrl && (
-					<FormInputValidation isError={ true } text={ formErrors.destinationSiteUrl } />
+					<FormInputValidation isError text={ formErrors.destinationSiteUrl } />
 				) }
 
 				<p className="clone-destination__tos">

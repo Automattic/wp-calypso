@@ -68,7 +68,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 			<div>
 				<RedirectWhenLoggedIn
 					redirectTo="/help"
-					replaceCurrentLocation={ true }
+					replaceCurrentLocation
 					waitForEmailAddress={ emailAddress }
 				/>
 

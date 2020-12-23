@@ -8,7 +8,7 @@ This component displays a Site item using site data retrieved from Redux store. 
 import Site from 'calypso/blocks/site';
 
 function render() {
-	return <Site siteId={ siteId } indicator={ true } />;
+	return <Site siteId={ siteId } indicator />;
 }
 ```
 

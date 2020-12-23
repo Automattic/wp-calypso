@@ -158,7 +158,7 @@ export class LoginLinks extends React.Component {
 		return (
 			<ExternalLink
 				key="help-link"
-				icon={ true }
+				icon
 				onClick={ this.recordHelpLinkClick }
 				target="_blank"
 				href="https://wordpress.com/support/security/two-step-authentication/"

@@ -65,9 +65,9 @@ class RewindWereBacking extends Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				stepContent={ this.stepContent() }
-				hideFormattedHeader={ true }
-				hideSkip={ true }
-				hideBack={ true }
+				hideFormattedHeader
+				hideSkip
+				hideBack
 			/>
 		);
 	}

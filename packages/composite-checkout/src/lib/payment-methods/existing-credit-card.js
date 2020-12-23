@@ -91,7 +91,7 @@ export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } 
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</div>
 			<div className="existing-credit-card__logo payment-logos">
-				<PaymentLogo brand={ brand } isSummary={ true } />
+				<PaymentLogo brand={ brand } isSummary />
 			</div>
 		</React.Fragment>
 	);
@@ -161,7 +161,7 @@ function ExistingCardSummary( { cardholderName, cardExpiry, brand, last4 } ) {
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName }</SummaryLine>
 			<SummaryLine>
-				<PaymentLogo brand={ brand } isSummary={ true } />
+				<PaymentLogo brand={ brand } isSummary />
 				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</SummaryLine>

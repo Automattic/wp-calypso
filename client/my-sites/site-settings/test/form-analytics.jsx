@@ -95,11 +95,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 		( product_slug ) => {
 			test( `Jetpack Security for (${ product_slug })`, () => {
 				const comp = shallow(
-					<GoogleAnalyticsForm
-						{ ...myProps }
-						siteIsJetpack={ true }
-						site={ { plan: { product_slug } } }
-					/>
+					<GoogleAnalyticsForm { ...myProps } siteIsJetpack site={ { plan: { product_slug } } } />
 				);
 				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(

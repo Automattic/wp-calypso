@@ -123,7 +123,7 @@ describe( 'PlanStorageBar basic tests', () => {
 	} );
 
 	test( 'should include upgrade link when displayUpgradeLink is true', () => {
-		const bar = shallow( <PlanStorageBar { ...props } displayUpgradeLink={ true } /> );
+		const bar = shallow( <PlanStorageBar { ...props } displayUpgradeLink /> );
 		assert.lengthOf( bar.find( '.plan-storage__storage-link' ), 1 );
 	} );
 

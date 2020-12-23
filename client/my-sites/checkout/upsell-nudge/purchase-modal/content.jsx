@@ -63,7 +63,7 @@ function PaymentMethodStep( { siteSlug, card } ) {
 			<div className="purchase-modal__step-content">
 				<div className="purchase-modal__card-holder">{ card?.name }</div>
 				<div>
-					<PaymentLogo brand={ card?.card_type } isSummary={ true } />
+					<PaymentLogo brand={ card?.card_type } isSummary />
 					<span className="purchase-modal__card-number">{ maskedCard }</span>
 					<span className="purchase-modal__card-expiry">{ `${ translate(
 						'Expiry:'

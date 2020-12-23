@@ -28,7 +28,7 @@ function PendingGSuiteTosNoticeAction( props ) {
 
 	return (
 		<Fragment>
-			<Button primary={ true } compact={ props.isCompact } onClick={ onFixClickHandler }>
+			<Button primary compact={ props.isCompact } onClick={ onFixClickHandler }>
 				{ props.cta || translate( 'Finish Setup' ) }
 			</Button>
 

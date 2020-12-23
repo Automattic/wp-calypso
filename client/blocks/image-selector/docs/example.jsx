@@ -62,7 +62,7 @@ class ImageSelectorExample extends Component {
 					onRemoveImage={ this.removeImage }
 					onAddImage={ this.addImage }
 					multiple
-					showEditIcon={ true }
+					showEditIcon
 				/>
 			</div>
 		);

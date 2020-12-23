@@ -132,7 +132,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				data-lpignore="true"
 			/>
 			{ formErrors.user && ( interactions.user || ! formErrors.user.waitForInteraction ) && (
-				<FormInputValidation isError={ true } text={ formErrors.user.message } />
+				<FormInputValidation isError text={ formErrors.user.message } />
 			) }
 		</FormFieldset>
 	);
@@ -168,7 +168,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					data-lpignore="true"
 				/>
 				{ formErrors.pass && ( interactions.pass || ! formErrors.pass.waitForInteraction ) && (
-					<FormInputValidation isError={ true } text={ formErrors.pass.message } />
+					<FormInputValidation isError text={ formErrors.pass.message } />
 				) }
 			</FormFieldset>
 		</div>
@@ -206,7 +206,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					{ translate( 'Only non-encrypted private keys are supported.' ) }
 				</FormSettingExplanation>
 				{ formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction ) && (
-					<FormInputValidation isError={ true } text={ formErrors.kpri.message } />
+					<FormInputValidation isError text={ formErrors.kpri.message } />
 				) }
 			</FormFieldset>
 		</>
@@ -388,7 +388,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						}
 					/>
 					{ formErrors.host && ( interactions.host || ! formErrors.host.waitForInteraction ) && (
-						<FormInputValidation isError={ true } text={ formErrors.host.message } />
+						<FormInputValidation isError text={ formErrors.host.message } />
 					) }
 				</FormFieldset>
 
@@ -418,7 +418,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						}
 					/>
 					{ formErrors.port && ( interactions.port || ! formErrors.port.waitForInteraction ) && (
-						<FormInputValidation isError={ true } text={ formErrors.port.message } />
+						<FormInputValidation isError text={ formErrors.port.message } />
 					) }
 				</FormFieldset>
 			</div>
@@ -452,7 +452,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				/>
 
 				{ formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction ) && (
-					<FormInputValidation isError={ true } text={ formErrors.path.message } />
+					<FormInputValidation isError text={ formErrors.path.message } />
 				) }
 			</FormFieldset>
 

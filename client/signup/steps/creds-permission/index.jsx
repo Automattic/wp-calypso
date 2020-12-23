@@ -84,9 +84,9 @@ class CredsPermissionStep extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				stepContent={ this.renderStepContent() }
 				goToNextStep={ this.skipStep }
-				hideFormattedHeader={ true }
+				hideFormattedHeader
 				skipLabelText="Skip"
-				hideBack={ true }
+				hideBack
 			/>
 		);
 	}

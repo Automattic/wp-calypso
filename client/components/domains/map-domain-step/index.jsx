@@ -105,7 +105,7 @@ class MapDomainStep extends React.Component {
 							false
 						) }
 						price={ suggestion.cost }
-						isMappingProduct={ true }
+						isMappingProduct
 					/>
 
 					<div className="map-domain-step__add-domain" role="group">

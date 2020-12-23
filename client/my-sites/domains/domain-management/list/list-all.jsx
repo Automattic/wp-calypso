@@ -121,7 +121,7 @@ class ListAll extends Component {
 					domain={ domain }
 					domainDetails={ domainDetails }
 					site={ sites[ domain?.blogId ] }
-					isManagingAllSites={ true }
+					isManagingAllSites
 					isLoadingDomainDetails={
 						! domainDetails && ( requestingSiteDomains[ domain?.blogId ] ?? false )
 					}

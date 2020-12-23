@@ -75,7 +75,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should not render features if is placeholder', () => {
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } isPlaceholder={ true } /> );
+		const comp = shallow( <ProductPurchaseFeaturesList { ...props } isPlaceholder /> );
 		expect( comp.find( '.product-purchase-features-list' ).children() ).toHaveLength( 0 );
 	} );
 

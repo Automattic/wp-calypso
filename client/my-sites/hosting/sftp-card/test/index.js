@@ -48,7 +48,7 @@ describe( 'SftpCard', () => {
 		} );
 		it( 'should not display spinner if disabled', () => {
 			const wrapper = mount(
-				<SftpCard translate={ translate } requestSftpUsers={ requestSftpUsers } disabled={ true } />
+				<SftpCard translate={ translate } requestSftpUsers={ requestSftpUsers } disabled />
 			);
 
 			expect( wrapper.find( 'Spinner' ) ).toHaveLength( 0 );

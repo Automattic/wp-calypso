@@ -66,7 +66,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 	test( 'displays names and price for each purchase ordered by expiration date ascending', () => {
 		render(
 			<UpcomingRenewalsDialog
-				isVisible={ true }
+				isVisible
 				purchases={ mockPurchases() }
 				site={ site }
 				onConfirm={ jest.fn() }
@@ -108,7 +108,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		];
 		render(
 			<UpcomingRenewalsDialog
-				isVisible={ true }
+				isVisible
 				purchases={ purchases }
 				site={ site }
 				onConfirm={ jest.fn() }
@@ -126,7 +126,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		const purchases = mockPurchases();
 		render(
 			<UpcomingRenewalsDialog
-				isVisible={ true }
+				isVisible
 				purchases={ purchases }
 				site={ site }
 				onConfirm={ onConfirm }
@@ -144,7 +144,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 		const purchases = mockPurchases();
 		render(
 			<UpcomingRenewalsDialog
-				isVisible={ true }
+				isVisible
 				purchases={ purchases }
 				site={ site }
 				onConfirm={ onConfirm }
@@ -161,7 +161,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 	test( 'disables the submit button if no purchases are selected', () => {
 		render(
 			<UpcomingRenewalsDialog
-				isVisible={ true }
+				isVisible
 				purchases={ mockPurchases() }
 				site={ site }
 				onConfirm={ jest.fn() }

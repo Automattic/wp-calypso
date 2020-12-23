@@ -130,7 +130,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 	return (
 		<IntervalTypeToggleWrapper>
-			<SegmentedControl compact className={ segmentClasses } primary={ true }>
+			<SegmentedControl compact className={ segmentClasses } primary>
 				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
 					path={ generatePath( props, { intervalType: 'monthly' } ) }
@@ -164,7 +164,7 @@ export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = 
 	const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
 
 	return (
-		<SegmentedControl className={ segmentClasses } primary={ true }>
+		<SegmentedControl className={ segmentClasses } primary>
 			<SegmentedControl.Item
 				selected={ customerType === 'personal' }
 				path={ generatePath( props, { customerType: 'personal' } ) }

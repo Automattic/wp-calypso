@@ -58,7 +58,7 @@ describe( 'MapDomain component', () => {
 	} );
 
 	test( 'redirects if site cannot be upgraded at new props', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } isSiteUpgradeable={ true } /> );
+		const wrapper = shallow( <MapDomain { ...defaultProps } isSiteUpgradeable /> );
 		wrapper.setProps( { selectedSiteId: 501, isSiteUpgradeable: false } );
 		expect( pageSpy.redirect ).to.have.been.calledWith( '/domains/add/mapping' );
 	} );

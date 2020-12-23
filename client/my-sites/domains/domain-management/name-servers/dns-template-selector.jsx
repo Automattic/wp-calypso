@@ -19,7 +19,7 @@ class DnsTemplateSelector extends React.PureComponent {
 
 		return (
 			<SimplifiedSegmentedControl
-				primary={ true }
+				primary
 				options={ templates.map( ( template ) => {
 					return {
 						value: template.dnsTemplateService,

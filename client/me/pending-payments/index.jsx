@@ -73,7 +73,7 @@ export class PendingPayments extends Component {
 
 		if ( response.state !== 'success' ) {
 			// intentionally includes error states
-			content = <PurchasesSite isPlaceholder={ true } />;
+			content = <PurchasesSite isPlaceholder />;
 		} else if ( pendingPayments.length === 0 ) {
 			content = (
 				<CompactCard className="pending-payments__no-content">

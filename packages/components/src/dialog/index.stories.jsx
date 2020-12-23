@@ -14,7 +14,7 @@ export const Default = () => {
 	return (
 		<>
 			<button onClick={ handleShowDialog }>Open Dialog</button>
-			<Dialog isVisible={ isVisible } onClose={ handleHideDialog } shouldCloseOnEsc={ true }>
+			<Dialog isVisible={ isVisible } onClose={ handleHideDialog } shouldCloseOnEsc>
 				Hello World!
 			</Dialog>
 		</>

@@ -151,7 +151,7 @@ class PluginItem extends Component {
 					isCompact
 					icon="checkmark"
 					status="is-success"
-					inline={ true }
+					inline
 					text={ translate( 'Updated' ) }
 				/>
 			);
@@ -168,7 +168,7 @@ class PluginItem extends Component {
 			<Notice
 				isCompact
 				icon="sync"
-				inline={ true }
+				inline
 				text={ translate( 'Version %(newPluginVersion)s is available', {
 					args: { newPluginVersion: updated_versions[ 0 ] },
 				} ) }
@@ -190,7 +190,7 @@ class PluginItem extends Component {
 		if ( progress.length ) {
 			const message = this.doing();
 			if ( message ) {
-				return <Notice isCompact status="is-info" text={ message } inline={ true } />;
+				return <Notice isCompact status="is-info" text={ message } inline />;
 			}
 		}
 		if ( this.props.isAutoManaged ) {
@@ -307,7 +307,7 @@ class PluginItem extends Component {
 						id={ plugin.slug }
 						onClick={ this.props.onClick }
 						checked={ this.props.isSelected }
-						readOnly={ true }
+						readOnly
 					/>
 				) }
 				<a

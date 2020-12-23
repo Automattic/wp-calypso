@@ -99,7 +99,7 @@ class AuthorSwitcherShell extends React.Component {
 							compact
 							onSearch={ this.onSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
-							delaySearch={ true }
+							delaySearch
 							ref="authorSelectorSearch"
 						/>
 					) }
@@ -229,7 +229,7 @@ class AuthorSwitcherShell extends React.Component {
 
 	renderLoadingAuthors = () => {
 		return (
-			<PopoverMenuItem disabled={ true } key="author-item-placeholder">
+			<PopoverMenuItem disabled key="author-item-placeholder">
 				<UserItem />
 			</PopoverMenuItem>
 		);

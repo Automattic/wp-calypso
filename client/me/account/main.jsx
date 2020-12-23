@@ -620,7 +620,7 @@ const Account = createReactClass( {
 				break;
 		}
 
-		return <FormTextValidation isError={ true } text={ notice } />;
+		return <FormTextValidation isError text={ notice } />;
 	},
 
 	/*

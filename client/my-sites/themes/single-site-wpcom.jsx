@@ -49,8 +49,8 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 					className="themes__showcase-banner"
 					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
 					event="themes_plans_free_personal"
-					forceHref={ true }
-					showIcon={ true }
+					forceHref
+					showIcon
 				/>
 			);
 		} else {
@@ -64,7 +64,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 						'Get advanced customization, more storage space, and video support along with all your new themes.'
 					) }
 					event="themes_plans_free_personal"
-					showIcon={ true }
+					showIcon
 				/>
 			);
 		}

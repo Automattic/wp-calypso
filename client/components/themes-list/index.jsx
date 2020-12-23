@@ -106,7 +106,7 @@ export class ThemesList extends React.Component {
 				<Theme
 					key={ 'placeholder-' + i }
 					theme={ { id: 'placeholder-' + i, name: 'Loading…' } }
-					isPlaceholder={ true }
+					isPlaceholder
 				/>
 			);
 		} );

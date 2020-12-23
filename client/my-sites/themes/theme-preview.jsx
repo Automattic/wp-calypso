@@ -114,7 +114,7 @@ class ThemePreview extends React.Component {
 				{ this.props.children }
 				{ this.props.demoUrl && (
 					<WebPreview
-						showPreview={ true }
+						showPreview
 						showExternal={ false }
 						showSEO={ false }
 						onClose={ this.props.hideThemePreview }
@@ -122,7 +122,7 @@ class ThemePreview extends React.Component {
 						externalUrl={ this.props.demoUrl }
 						belowToolbar={ this.props.belowToolbar }
 					>
-						{ showActionIndicator && <PulsingDot active={ true } /> }
+						{ showActionIndicator && <PulsingDot active /> }
 						{ ! showActionIndicator && this.renderSecondaryButton() }
 						{ ! showActionIndicator && this.renderPrimaryButton() }
 					</WebPreview>

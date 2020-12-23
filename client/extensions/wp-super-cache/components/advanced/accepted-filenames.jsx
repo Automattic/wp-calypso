@@ -103,7 +103,7 @@ class AcceptedFilenames extends Component {
 									components: {
 										a: (
 											<ExternalLink
-												icon={ true }
+												icon
 												target="_blank"
 												href="http://codex.wordpress.org/Conditional_Tags"
 											/>

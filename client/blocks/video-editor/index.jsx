@@ -150,7 +150,7 @@ class VideoEditor extends Component {
 			<Notice
 				className="video-editor__notice"
 				status="is-error"
-				showDismiss={ true }
+				showDismiss
 				text={ translate( 'We are unable to edit this video.' ) }
 				isCompact={ false }
 				onDismissClick={ onCancel }
@@ -181,7 +181,7 @@ class VideoEditor extends Component {
 						{ uploadProgress && ! error && ! isSelectingFrame && (
 							<ProgressBar
 								className="video-editor__progress-bar"
-								isPulsing={ true }
+								isPulsing
 								total={ 100 }
 								value={ uploadProgress }
 							/>

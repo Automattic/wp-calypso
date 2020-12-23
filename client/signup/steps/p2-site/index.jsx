@@ -378,7 +378,7 @@ class P2Site extends React.Component {
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						autoCapitalize={ 'off' }
 						className="p2-site__site-title"
 						disabled={ fieldDisabled }

@@ -59,7 +59,7 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 			noticeId={ NOTICE_CELEBRATE_SITE_LAUNCH }
 			title={ translate( 'You launched your site!' ) }
 			illustration={ launchedIllustration }
-			showSkip={ true }
+			showSkip
 			skipText={ isSiteSetupComplete ? translate( 'Dismiss' ) : translate( 'Skip site setup' ) }
 			onSkip={ ! isSiteSetupComplete ? skipSiteSetup : null }
 		/>

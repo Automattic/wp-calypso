@@ -146,7 +146,7 @@ class PrivacyPolicyBanner extends Component {
 				<Banner
 					callToAction={ translate( 'Learn More' ) }
 					description={ this.getDescription( privacyPolicy.effective_date ) }
-					disableHref={ true }
+					disableHref
 					icon="pages"
 					onClick={ this.openPrivacyPolicyDialog }
 					title={ translate( 'Privacy Policy Updates.' ) }

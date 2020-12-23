@@ -187,7 +187,7 @@ export default class Devdocs extends React.Component {
 					placeholder="Search documentation…"
 					analyticsGroup="Docs"
 					initialValue={ this.state.term }
-					delaySearch={ true }
+					delaySearch
 					onSearchChange={ this.onSearchChange }
 					onSearch={ this.onSearch }
 				/>

@@ -122,7 +122,7 @@ class RegisteredDomainType extends React.Component {
 					( isLoadingPurchase || purchase ) &&
 					( domain.isRenewable || domain.isRedeemable ) && (
 						<RenewButton
-							primary={ true }
+							primary
 							purchase={ purchase }
 							selectedSite={ this.props.selectedSite }
 							subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -220,7 +220,7 @@ class RegisteredDomainType extends React.Component {
 			<div>
 				{ ( isLoadingPurchase || purchase ) && (
 					<RenewButton
-						compact={ true }
+						compact
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -243,7 +243,7 @@ class RegisteredDomainType extends React.Component {
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
-				withTextStatus={ true }
+				withTextStatus
 				toggleSource="registered-domain-status"
 			/>
 		);
@@ -323,7 +323,7 @@ class RegisteredDomainType extends React.Component {
 							selectedDomainName={ domain.name }
 							selectedSiteSlug={ this.props.selectedSite.slug }
 							explanationContext="new-status"
-							compact={ true }
+							compact
 						/>
 					) }
 					<ExpiringCreditCard
@@ -343,7 +343,7 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderDomainOnlyNotice() }
 					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
-				<Card compact={ true } className="domain-types__expiration-row">
+				<Card compact className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ domain.currentUserCanManage && this.renderAutoRenew() }

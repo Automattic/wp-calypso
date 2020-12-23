@@ -28,7 +28,7 @@ export default function ( props ) {
 			shouldCombineCards={ false }
 			className="conversations__stream"
 			followSource="conversations"
-			useCompactCards={ true }
+			useCompactCards
 			trackScrollPage={ props.trackScrollPage }
 			emptyContent={ emptyContent }
 			intro={ intro }

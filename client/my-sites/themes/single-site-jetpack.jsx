@@ -105,7 +105,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 							' security, real-time backups, and unlimited video hosting.'
 					) }
 					event="themes_plans_free_personal_premium"
-					showIcon={ true }
+					showIcon
 					href={ `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_REALTIME }` }
 				/>
 			) }

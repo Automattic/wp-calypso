@@ -74,7 +74,7 @@ const ServerCredentialsForm = ( {
 						disabled={ formIsSubmitting }
 						isError={ !! formErrors.host }
 					/>
-					{ formErrors.host && <FormInputValidation isError={ true } text={ formErrors.host } /> }
+					{ formErrors.host && <FormInputValidation isError text={ formErrors.host } /> }
 				</FormFieldset>
 
 				<FormFieldset className="server-credentials-form__port-number">
@@ -88,7 +88,7 @@ const ServerCredentialsForm = ( {
 						disabled={ formIsSubmitting }
 						isError={ !! formErrors.port }
 					/>
-					{ formErrors.port && <FormInputValidation isError={ true } text={ formErrors.port } /> }
+					{ formErrors.port && <FormInputValidation isError text={ formErrors.port } /> }
 				</FormFieldset>
 			</div>
 
@@ -108,7 +108,7 @@ const ServerCredentialsForm = ( {
 						// Hint to LastPass not to attempt autofill
 						data-lpignore="true"
 					/>
-					{ formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> }
+					{ formErrors.user && <FormInputValidation isError text={ formErrors.user } /> }
 				</FormFieldset>
 
 				<FormFieldset className="server-credentials-form__password">
@@ -126,7 +126,7 @@ const ServerCredentialsForm = ( {
 						// Hint to LastPass not to attempt autofill
 						data-lpignore="true"
 					/>
-					{ formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> }
+					{ formErrors.pass && <FormInputValidation isError text={ formErrors.pass } /> }
 				</FormFieldset>
 			</div>
 
@@ -143,7 +143,7 @@ const ServerCredentialsForm = ( {
 					disabled={ formIsSubmitting }
 					isError={ !! formErrors.path }
 				/>
-				{ formErrors.path && <FormInputValidation isError={ true } text={ formErrors.path } /> }
+				{ formErrors.path && <FormInputValidation isError text={ formErrors.path } /> }
 			</FormFieldset>
 
 			<FormFieldset className="server-credentials-form__kpri">

@@ -102,7 +102,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 	].forEach( ( product_slug ) => {
 		test( `Jetpack Business for (${ product_slug })`, () => {
 			const comp = shallow(
-				<SeoPreviewNudge { ...props } isJetpack={ true } site={ { plan: { product_slug } } } />
+				<SeoPreviewNudge { ...props } isJetpack site={ { plan: { product_slug } } } />
 			);
 			expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
 			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_BUSINESS );

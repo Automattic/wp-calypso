@@ -130,7 +130,7 @@ export class Theme extends Component {
 		if ( this.props.installing ) {
 			return (
 				<div className="theme__installing">
-					<PulsingDot active={ true } />
+					<PulsingDot active />
 				</div>
 			);
 		}

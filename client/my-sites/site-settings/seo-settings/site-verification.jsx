@@ -193,7 +193,7 @@ class SiteVerification extends Component {
 
 		return (
 			<FormInputValidation
-				isError={ true }
+				isError
 				text={
 					isPasteError
 						? translate( 'Verification code should be copied and pasted into this field.' )
@@ -323,38 +323,30 @@ class SiteVerification extends Component {
 									b: <strong />,
 									support: (
 										<ExternalLink
-											icon={ true }
+											icon
 											target="_blank"
 											href="https://wordpress.com/support/webmaster-tools/"
 										/>
 									),
 									google: (
 										<ExternalLink
-											icon={ true }
+											icon
 											target="_blank"
 											href="https://www.google.com/webmasters/tools/"
 										/>
 									),
 									bing: (
-										<ExternalLink
-											icon={ true }
-											target="_blank"
-											href="https://www.bing.com/webmaster/"
-										/>
+										<ExternalLink icon target="_blank" href="https://www.bing.com/webmaster/" />
 									),
 									pinterest: (
 										<ExternalLink
-											icon={ true }
+											icon
 											target="_blank"
 											href="https://pinterest.com/website/verify/"
 										/>
 									),
 									yandex: (
-										<ExternalLink
-											icon={ true }
-											target="_blank"
-											href="https://webmaster.yandex.com/sites/"
-										/>
+										<ExternalLink icon target="_blank" href="https://webmaster.yandex.com/sites/" />
 									),
 								},
 							}

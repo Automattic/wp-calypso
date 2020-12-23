@@ -17,12 +17,12 @@ export default class extends React.Component {
 		return (
 			<Card>
 				<p>
-					<ExternalLink icon={ true } href="https://wordpress.org">
+					<ExternalLink icon href="https://wordpress.org">
 						WordPress.org
 					</ExternalLink>
 				</p>
 				<p>
-					<ExternalLink showIconFirst={ true } icon={ true } href="https://wordpress.org">
+					<ExternalLink showIconFirst icon href="https://wordpress.org">
 						WordPress.org
 					</ExternalLink>
 				</p>

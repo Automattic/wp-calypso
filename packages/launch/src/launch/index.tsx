@@ -42,7 +42,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	return (
 		<LocaleProvider localeSlug={ locale }>
 			<Modal
-				open={ true }
+				open
 				className={ classNames( 'launch__focused-modal', {
 					'launch__focused-modal--hide-title': ! isModalTitleVisible,
 				} ) }

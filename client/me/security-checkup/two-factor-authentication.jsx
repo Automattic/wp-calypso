@@ -39,7 +39,7 @@ class SecurityCheckupTwoFactorAuthentication extends React.Component {
 			return (
 				<React.Fragment>
 					<QueryUserSettings />
-					<SecurityCheckupNavigationItem isPlaceholder={ true } />
+					<SecurityCheckupNavigationItem isPlaceholder />
 				</React.Fragment>
 			);
 		}

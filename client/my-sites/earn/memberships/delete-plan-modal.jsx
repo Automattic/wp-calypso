@@ -26,7 +26,7 @@ const RecurringPaymentsPlanDeleteModal = ( { closeDialog, deleteProduct, product
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			buttons={ [
 				{
 					label: translate( 'Cancel' ),

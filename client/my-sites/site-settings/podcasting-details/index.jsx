@@ -244,7 +244,7 @@ class PodcastingDetails extends Component {
 							event="podcasting_details_upload_audio"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
+							showIcon
 						/>
 					) }
 					{ ! error && (
@@ -308,7 +308,7 @@ class PodcastingDetails extends Component {
 						selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
 						podcastingCategoryId={ podcastingCategoryId }
 						onChange={ this.onCategorySelected }
-						addTerm={ true }
+						addTerm
 						onAddTermSuccess={ this.onCategorySelected }
 						height={ 200 }
 					/>

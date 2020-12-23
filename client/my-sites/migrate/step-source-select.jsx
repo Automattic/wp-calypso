@@ -158,7 +158,7 @@ class StepSourceSelect extends Component {
 				/>
 
 				<Card>
-					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
+					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>

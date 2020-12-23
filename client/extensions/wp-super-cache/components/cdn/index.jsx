@@ -159,7 +159,7 @@ const CdnTab = ( {
 										components: {
 											a: (
 												<ExternalLink
-													icon={ true }
+													icon
 													target="_blank"
 													href="http://en.wikipedia.org/wiki/CNAME_record"
 												/>

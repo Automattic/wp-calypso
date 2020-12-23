@@ -102,7 +102,7 @@ class StatsSummary extends Component {
 						path="countryviews"
 						period={ this.props.period }
 						query={ merge( {}, statsQueryOptions, query ) }
-						summary={ true }
+						summary
 					/>
 				);
 				break;
@@ -135,7 +135,7 @@ class StatsSummary extends Component {
 						query={ query }
 						statType="statsTopAuthors"
 						className="stats__author-views"
-						summary={ true }
+						summary
 					/>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -223,7 +223,7 @@ class StatsSummary extends Component {
 		const { module } = this.props.context.params;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }

@@ -85,7 +85,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 				/>
 			</div>
 			<div className="nux-launch-step__footer">
-				<ActionButtons sticky={ true }>
+				<ActionButtons sticky>
 					<BackButton onClick={ handlePrev } />
 					<NextButton onClick={ handleNext } disabled={ ! domainSearch } />
 				</ActionButtons>

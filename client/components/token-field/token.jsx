@@ -56,13 +56,7 @@ export default class extends React.PureComponent {
 					onClick={ ! this.props.disabled ? this._onClickRemove : null }
 				/>
 				{ tooltip && (
-					<Tooltip
-						showOnMobile
-						context={ this }
-						status={ status }
-						isVisible={ true }
-						position="bottom"
-					>
+					<Tooltip showOnMobile context={ this } status={ status } isVisible position="bottom">
 						{ tooltip }
 					</Tooltip>
 				) }

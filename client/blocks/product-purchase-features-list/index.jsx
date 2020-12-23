@@ -223,7 +223,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain
 					selectedSite={ selectedSite }
 					hasDomainCredit={ planHasDomainCredit }
-					onlyBlogDomain={ true }
+					onlyBlogDomain
 				/>
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<SiteActivity />

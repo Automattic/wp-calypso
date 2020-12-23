@@ -54,7 +54,7 @@ const getCardProps = ( isConnected, message, translate ) => {
 };
 
 const ConnectionStatus = ( { cardProps } ) => (
-	<Card compact={ true } className={ cardProps.className }>
+	<Card compact className={ cardProps.className }>
 		<img className="settings__icon" src={ cardProps.iconPath } alt="" />
 		<div className="settings__details">
 			<div className="settings__details-head"> { cardProps.title } </div>
@@ -164,7 +164,7 @@ const SettingsPage = () => {
 					}
 					expanded={ formOpen }
 					onClick={ () => setFormOpen( ! formOpen ) }
-					clickableHeader={ true }
+					clickableHeader
 					className="settings__form-card"
 				>
 					<ServerCredentialsForm

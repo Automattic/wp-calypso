@@ -52,7 +52,7 @@ class PluginSiteJetpack extends React.Component {
 	renderInstallButton = () => {
 		return (
 			<PluginInstallButton
-				isEmbed={ true }
+				isEmbed
 				selectedSite={ this.props.site }
 				plugin={ this.props.plugin }
 				isInstalling={ this.props.installInProgress }
@@ -96,11 +96,7 @@ class PluginSiteJetpack extends React.Component {
 					/>
 				}
 				expandedSummary={
-					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						expanded={ true }
-					/>
+					<PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } expanded />
 				}
 			>
 				<div>
@@ -111,7 +107,7 @@ class PluginSiteJetpack extends React.Component {
 						<PluginAutoupdateToggle
 							site={ this.props.site }
 							plugin={ this.props.pluginOnSite }
-							wporg={ true }
+							wporg
 						/>
 					) }
 					{ canToggleRemove && (

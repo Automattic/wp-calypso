@@ -445,7 +445,7 @@ class RegisterDomainStep extends React.Component {
 						<Search
 							additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-							delaySearch={ true }
+							delaySearch
 							delayTimeout={ 1000 }
 							describedBy={ 'step-header' }
 							dir="ltr"

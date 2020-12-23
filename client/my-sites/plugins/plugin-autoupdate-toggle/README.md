@@ -10,7 +10,7 @@ import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-t
 function render() {
 	return (
 		<div className="your-plugins-list">
-			<PluginAutoupdateToggle plugin={ plugin } site={ site } notices={ notices } wporg={ true } />
+			<PluginAutoupdateToggle plugin={ plugin } site={ site } notices={ notices } wporg />
 		</div>
 	);
 }

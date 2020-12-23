@@ -213,7 +213,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 				</ThemeProvider>
 			</div>
 			<div className="nux-launch-step__footer">
-				<ActionButtons sticky={ true }>
+				<ActionButtons sticky>
 					<BackButton onClick={ handlePrev } />
 				</ActionButtons>
 			</div>

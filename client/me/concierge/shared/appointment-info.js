@@ -65,7 +65,7 @@ class AppointmentInfo extends Component {
 							/>
 							{ conferenceLink && (
 								<a href={ conferenceLink } target="_blank" rel="noopener noreferrer">
-									<FormButton isPrimary={ true } type="button">
+									<FormButton isPrimary type="button">
 										{ translate( 'Start session' ) }
 									</FormButton>
 								</a>

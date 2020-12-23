@@ -76,8 +76,8 @@ class ActivityLogExample extends Component {
 						<ActivityLogItem
 							key={ log.activityTs }
 							activity={ log }
-							disableRestore={ true }
-							disableBackup={ true }
+							disableRestore
+							disableBackup
 							siteId={ siteId }
 						/>
 					) ) }

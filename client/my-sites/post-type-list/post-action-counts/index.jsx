@@ -163,7 +163,7 @@ class PostActionCounts extends PureComponent {
 					<PostLikesPopover
 						siteId={ siteId }
 						postId={ postId }
-						showDisplayNames={ true }
+						showDisplayNames
 						context={ this.liRef.current }
 						position="bottom"
 						onClose={ this.closeLikesPopover }

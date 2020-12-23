@@ -21,7 +21,7 @@ describe( 'ProgressBar', () => {
 	} );
 
 	test( 'should add is-pulsing class when isPulsing property is true', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } isPulsing={ true } /> );
+		const progressBar = shallow( <ProgressBar value={ 20 } isPulsing /> );
 
 		expect( progressBar.hasClass( 'is-pulsing' ) ).toBe( true );
 	} );
@@ -33,7 +33,7 @@ describe( 'ProgressBar', () => {
 	} );
 
 	test( 'should add is-compact class when compact property is true', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } compact={ true } /> );
+		const progressBar = shallow( <ProgressBar value={ 20 } compact /> );
 
 		expect( progressBar.hasClass( 'is-compact' ) ).toBe( true );
 	} );

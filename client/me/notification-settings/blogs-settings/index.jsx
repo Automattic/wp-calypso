@@ -73,7 +73,7 @@ class BlogsSettings extends Component {
 		return (
 			<InfiniteList
 				items={ sites }
-				lastPage={ true }
+				lastPage
 				fetchNextPage={ noop }
 				fetchingNextPage={ false }
 				guessedItemHeight={ 69 }

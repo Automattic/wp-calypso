@@ -46,7 +46,7 @@ class NewDomainsRedirectionNoticeUpsell extends React.Component {
 		return (
 			<UpsellNudge
 				className="new-domains-redirection-notice-upsell__banner"
-				showIcon={ true }
+				showIcon
 				icon="info"
 				href={ `/checkout/${ selectedSiteId }/personal` }
 				title={ '' }

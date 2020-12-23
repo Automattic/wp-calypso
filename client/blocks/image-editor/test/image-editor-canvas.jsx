@@ -30,7 +30,7 @@ describe( 'ImageEditorToolbar', () => {
 	let wrapper;
 
 	beforeEach( () => {
-		wrapper = shallow( <ImageEditorCanvas isImageLoaded={ true } />, {
+		wrapper = shallow( <ImageEditorCanvas isImageLoaded />, {
 			disableLifecycleMethods: true,
 		} );
 	} );

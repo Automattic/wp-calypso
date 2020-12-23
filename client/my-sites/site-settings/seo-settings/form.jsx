@@ -373,7 +373,7 @@ export class SeoForm extends React.Component {
 								'Get tools to optimize your site for improved search engine results.'
 							) }
 							event={ 'calypso_seo_settings_upgrade_nudge' }
-							showIcon={ true }
+							showIcon
 						/>
 					) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
@@ -443,7 +443,7 @@ export class SeoForm extends React.Component {
 									/>
 									{ hasHtmlTagError && (
 										<FormInputValidation
-											isError={ true }
+											isError
 											text={ translate( 'HTML tags are not allowed.' ) }
 										/>
 									) }

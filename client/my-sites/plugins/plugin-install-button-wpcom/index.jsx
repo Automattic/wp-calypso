@@ -57,7 +57,7 @@ export const WpcomPluginInstallButton = ( props ) => {
 	}
 
 	return (
-		<Button onClick={ installButtonAction } primary={ true } disabled={ disabled }>
+		<Button onClick={ installButtonAction } primary disabled={ disabled }>
 			{ translate( 'Install' ) }
 		</Button>
 	);

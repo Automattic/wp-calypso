@@ -217,7 +217,7 @@ class FollowingManage extends Component {
 				<ReaderMain className="following-manage">
 					<DocumentHead title={ 'Manage Following' } />
 					{ ! searchResults && sitesQuery && (
-						<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
+						<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed />
 					) }
 					{ this.shouldRequestMoreRecs() && (
 						<QueryReaderRecommendedSites
@@ -232,14 +232,14 @@ class FollowingManage extends Component {
 								onSearch={ this.updateQuery }
 								onSearchClose={ this.handleSearchClosed }
 								autoFocus={ this.props.autoFocusInput }
-								delaySearch={ true }
+								delaySearch
 								delayTimeout={ 500 }
 								placeholder={ searchPlaceholderText }
 								additionalClasses="following-manage__search-new"
 								initialValue={ sitesQuery }
 								value={ sitesQuery }
 								maxLength={ 500 }
-								disableAutocorrect={ true }
+								disableAutocorrect
 							/>
 						</CompactCard>
 

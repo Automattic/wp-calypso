@@ -272,7 +272,7 @@ export class PluginInstallButton extends Component {
 					{ isInstalling ? (
 						<span className="plugin-install-button__installing">{ label }</span>
 					) : (
-						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
+						<Button compact onClick={ this.installAction } disabled={ disabled }>
 							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
 							<Gridicon icon="plugins" size={ 18 } />
 							{ translate( 'Install' ) }
@@ -284,11 +284,7 @@ export class PluginInstallButton extends Component {
 
 		return (
 			<span className="plugin-install-button__install">
-				<Button
-					onClick={ this.installAction }
-					primary={ true }
-					disabled={ isInstalling || disabled }
-				>
+				<Button onClick={ this.installAction } primary disabled={ isInstalling || disabled }>
 					{ label }
 				</Button>
 			</span>

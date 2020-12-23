@@ -180,7 +180,7 @@ export class SearchPurchase extends Component {
 					isFetching={
 						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
 					}
-					isInstall={ true }
+					isInstall
 					isSearch={ isSearch }
 					candidateSites={ this.state.candidateSites }
 				/>

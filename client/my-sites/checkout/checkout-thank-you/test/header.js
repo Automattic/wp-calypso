@@ -54,7 +54,7 @@ describe( 'CheckoutThankYouHeader', () => {
 			expect( comp.find( '.checkout-thank-you__header-heading' ).text() ).toBe( 'Loading…' );
 		} );
 		test( 'Should display getText()-based success message when isSimplified=false (default)', () => {
-			const comp = shallow( <CheckoutThankYouHeader isDataLoaded={ true } { ...defaultProps } /> );
+			const comp = shallow( <CheckoutThankYouHeader isDataLoaded { ...defaultProps } /> );
 			expect( comp.find( '.checkout-thank-you__header-heading' ).text() ).toEqual(
 				'Congratulations on your purchase!'
 			);
@@ -64,7 +64,7 @@ describe( 'CheckoutThankYouHeader', () => {
 		} );
 		test( 'Should display an alternative success message when isSimplified=true', () => {
 			const comp = shallow(
-				<CheckoutThankYouHeader isDataLoaded={ true } isSimplified={ true } { ...defaultProps } />
+				<CheckoutThankYouHeader isDataLoaded isSimplified { ...defaultProps } />
 			);
 			expect( comp.find( '.checkout-thank-you__header-heading' ).text() ).toEqual(
 				'Congratulations on your purchase!'
@@ -76,9 +76,9 @@ describe( 'CheckoutThankYouHeader', () => {
 		test( 'Should display a list of success messages when siteUnlaunchedBeforeUpgrade=true', () => {
 			const comp = shallow(
 				<CheckoutThankYouHeader
-					isDataLoaded={ true }
-					isSimplified={ true }
-					siteUnlaunchedBeforeUpgrade={ true }
+					isDataLoaded
+					isSimplified
+					siteUnlaunchedBeforeUpgrade
 					{ ...defaultProps }
 				/>
 			);

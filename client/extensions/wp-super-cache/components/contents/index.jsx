@@ -141,7 +141,7 @@ class ContentsTab extends Component {
 						<CacheStats
 							files={ wpcache.cached_list }
 							header={ translate( 'Fresh Full Cache Files' ) }
-							isCached={ true }
+							isCached
 							isSupercache={ false }
 						/>
 					) }
@@ -159,8 +159,8 @@ class ContentsTab extends Component {
 						<CacheStats
 							files={ supercache.cached_list }
 							header={ translate( 'Fresh Super Cached Files' ) }
-							isCached={ true }
-							isSupercache={ true }
+							isCached
+							isSupercache
 						/>
 					) }
 
@@ -169,7 +169,7 @@ class ContentsTab extends Component {
 							files={ supercache.expired_list }
 							header={ translate( 'Stale Super Cached Files' ) }
 							isCached={ false }
-							isSupercache={ true }
+							isSupercache
 						/>
 					) }
 				</div>

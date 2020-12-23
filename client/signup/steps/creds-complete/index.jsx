@@ -64,9 +64,9 @@ class CredsCompleteStep extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				stepContent={ this.renderStepContent() }
 				goToNextStep={ this.skipStep }
-				hideFormattedHeader={ true }
-				hideBack={ true }
-				hideSkip={ true }
+				hideFormattedHeader
+				hideBack
+				hideSkip
 			/>
 		);
 	}

@@ -167,7 +167,7 @@ class SearchStream extends React.Component {
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
 							autoFocus={ this.props.autoFocusInput }
-							delaySearch={ true }
+							delaySearch
 							delayTimeout={ 500 }
 							placeholder={ searchPlaceholderText }
 							initialValue={ query || '' }
@@ -237,11 +237,7 @@ class SearchStream extends React.Component {
 						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) && (
 							<PostResults { ...this.props } />
 						) ) || (
-							<SiteResults
-								query={ query }
-								sort={ pickSort( sortOrder ) }
-								showLastUpdatedDate={ true }
-							/>
+							<SiteResults query={ query } sort={ pickSort( sortOrder ) } showLastUpdatedDate />
 						) }
 					</div>
 				) }

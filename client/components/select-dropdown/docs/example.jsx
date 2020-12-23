@@ -198,12 +198,12 @@ class SelectDropdownExample extends React.PureComponent {
 					<SelectDropdown.Label>
 						<strong>Statuses</strong>
 					</SelectDropdown.Label>
-					<SelectDropdown.Item count={ 10 } selected={ true }>
+					<SelectDropdown.Item count={ 10 } selected>
 						Published publish publish publish
 					</SelectDropdown.Item>
 					<SelectDropdown.Item count={ 4 }> Scheduled scheduled</SelectDropdown.Item>
 					<SelectDropdown.Item count={ 3343 }>Drafts</SelectDropdown.Item>
-					<SelectDropdown.Item disabled={ true }>Disabled Item</SelectDropdown.Item>
+					<SelectDropdown.Item disabled>Disabled Item</SelectDropdown.Item>
 					<SelectDropdown.Separator />
 					<SelectDropdown.Item count={ 3 }>Trashed</SelectDropdown.Item>
 				</SelectDropdown>
@@ -213,7 +213,7 @@ class SelectDropdownExample extends React.PureComponent {
 					compact={ this.state.compactButtons }
 					options={ this.props.options }
 					onSelect={ this.onDropdownSelect }
-					disabled={ true }
+					disabled
 				/>
 			</div>
 		);

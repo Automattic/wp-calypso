@@ -66,7 +66,7 @@ function PostLikesPopover( props ) {
 		<Popover
 			{ ...popoverProps }
 			className={ classes }
-			isVisible={ true }
+			isVisible
 			context={ context }
 			onClose={ onClose }
 			key={ popoverKey }

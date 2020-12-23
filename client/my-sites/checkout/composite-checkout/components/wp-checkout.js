@@ -328,7 +328,7 @@ export default function WPCheckout( {
 					className="wp-checkout__review-order-step"
 					stepId="review-order-step"
 					isStepActive={ isOrderReviewActive }
-					isStepComplete={ true }
+					isStepComplete
 					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
 					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
 					activeStepContent={

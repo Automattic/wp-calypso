@@ -77,12 +77,7 @@ class ReadingWidget extends Component {
 							const { date, ID, title, URL } = post;
 							return (
 								<li key={ ID }>
-									<ExternalLink
-										icon={ true }
-										href={ URL }
-										rel="noopener noreferrer"
-										target="_blank"
-									>
+									<ExternalLink icon href={ URL } rel="noopener noreferrer" target="_blank">
 										{ title }
 									</ExternalLink>
 									<span>{ humanDate( date ) }</span>

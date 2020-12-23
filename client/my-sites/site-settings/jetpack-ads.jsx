@@ -61,7 +61,7 @@ class JetpackAds extends Component {
 				feature={ FEATURE_WORDADS_INSTANT }
 				plan={ PLAN_JETPACK_SECURITY_DAILY }
 				title={ translate( 'Enable WordAds by upgrading to a Jetpack Security or Complete plan' ) }
-				showIcon={ true }
+				showIcon
 			/>
 		);
 	}

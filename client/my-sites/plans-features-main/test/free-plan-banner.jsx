@@ -14,7 +14,7 @@ import FreePlanBanner from '../free-plan-banner';
 
 describe( '<FreePlanBanner />', () => {
 	it( 'should be hidden when hidden prop is true', () => {
-		const node = shallow( <FreePlanBanner hidden={ true } /> );
+		const node = shallow( <FreePlanBanner hidden /> );
 		expect( node.isEmptyRender() ).toBe( true );
 	} );
 

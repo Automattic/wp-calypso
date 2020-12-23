@@ -78,7 +78,7 @@ class EditContactInfo extends React.Component {
 					domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
 					selectedDomain={ getSelectedDomain( this.props ) }
 					selectedSite={ this.props.selectedSite }
-					showContactInfoNote={ true }
+					showContactInfoNote
 				/>
 			</div>
 		);

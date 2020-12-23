@@ -26,12 +26,7 @@ export default function PaymentMethodSidebar( { purchase } ) {
 			{ renderMainCard( purchase, translate, moment ) }
 
 			<Card className="payment-method-sidebar__security-card">
-				<CardHeading
-					tagName="h1"
-					size={ 16 }
-					isBold={ true }
-					className="payment-method-sidebar__title"
-				>
+				<CardHeading tagName="h1" size={ 16 } isBold className="payment-method-sidebar__title">
 					{ translate( 'Security' ) }
 				</CardHeading>
 				<p className="payment-method-sidebar__paragraph">
@@ -52,12 +47,7 @@ function renderMainCard( purchase, translate, moment ) {
 
 		return (
 			<Card className="payment-method-sidebar__details-card">
-				<CardHeading
-					tagName="h1"
-					size={ 16 }
-					isBold={ true }
-					className="payment-method-sidebar__title"
-				>
+				<CardHeading tagName="h1" size={ 16 } isBold className="payment-method-sidebar__title">
 					{ translate( 'Purchase Details' ) }
 				</CardHeading>
 
@@ -71,12 +61,7 @@ function renderMainCard( purchase, translate, moment ) {
 
 	return (
 		<Card className="payment-method-sidebar__details-card">
-			<CardHeading
-				tagName="h1"
-				size={ 16 }
-				isBold={ true }
-				className="payment-method-sidebar__title"
-			>
+			<CardHeading tagName="h1" size={ 16 } isBold className="payment-method-sidebar__title">
 				{ translate( 'Usage' ) }
 			</CardHeading>
 

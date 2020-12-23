@@ -220,7 +220,7 @@ class MobileDownloadCard extends React.Component {
 								/>
 							) : (
 								<>
-									<FormPhoneInput countriesList={ this.props.countriesList } isDisabled={ true } />
+									<FormPhoneInput countriesList={ this.props.countriesList } isDisabled />
 								</>
 							) }
 						</div>

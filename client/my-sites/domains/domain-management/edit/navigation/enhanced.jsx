@@ -556,11 +556,11 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 		return (
 			<RemovePurchase
-				hasLoadedSites={ true }
-				hasLoadedUserPurchasesFromServer={ true }
+				hasLoadedSites
+				hasLoadedUserPurchasesFromServer
 				site={ selectedSite }
 				purchase={ purchase }
-				useVerticalNavItem={ true }
+				useVerticalNavItem
 				className="navigation__nav-item is-clickable"
 				onClickTracks={ this.handleDomainDeleteClick }
 			>

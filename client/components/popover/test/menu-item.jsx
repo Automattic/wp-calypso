@@ -27,7 +27,7 @@ describe( 'PopoverMenuItem', () => {
 	} );
 
 	test( 'should be an ExternalLink if the isExternalLink prop is true and the href prop is set', () => {
-		const wrapper = shallow( <PopoverMenuItem isExternalLink={ true } href={ 'xyz' } /> );
+		const wrapper = shallow( <PopoverMenuItem isExternalLink href={ 'xyz' } /> );
 		expect( wrapper.type() ).toEqual( ExternalLink );
 	} );
 } );

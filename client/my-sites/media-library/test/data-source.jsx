@@ -38,11 +38,7 @@ describe( 'MediaLibraryDataSource', () => {
 			setStore( store );
 			const wrapper = mount(
 				<ReduxProvider store={ store }>
-					<MediaLibraryDataSource
-						source={ '' }
-						onSourceChange={ noop }
-						ignorePermissions={ true }
-					/>
+					<MediaLibraryDataSource source={ '' } onSourceChange={ noop } ignorePermissions />
 				</ReduxProvider>
 			);
 			expect( wrapper.find( 'button[data-source="google_photos"]' ) ).to.have.length( 1 );
@@ -58,7 +54,7 @@ describe( 'MediaLibraryDataSource', () => {
 						source={ '' }
 						onSourceChange={ noop }
 						disabledSources={ [ 'pexels' ] }
-						ignorePermissions={ true }
+						ignorePermissions
 					/>
 				</ReduxProvider>
 			);

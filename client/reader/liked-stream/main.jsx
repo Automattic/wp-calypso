@@ -21,12 +21,7 @@ class LikedStream extends React.Component {
 	render() {
 		const emptyContent = <EmptyContent />;
 		return (
-			<Stream
-				{ ...this.props }
-				listName={ title }
-				emptyContent={ emptyContent }
-				showFollowInHeader={ true }
-			>
+			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showFollowInHeader>
 				<DocumentHead title={ documentTitle } />
 			</Stream>
 		);

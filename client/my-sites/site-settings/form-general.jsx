@@ -670,7 +670,7 @@ export class SiteSettingsFormGeneral extends Component {
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
-								showIcon={ true }
+								showIcon
 							/>
 						) }
 					</div>

@@ -60,7 +60,7 @@ export default function Inspector( props ) {
 			) }
 			<PanelBody
 				title="Add a new subscription"
-				initialOpen={ true }
+				initialOpen
 				className={ `${ className }---settings-add_plan` }
 			>
 				{ apiState === API_STATE_REQUESTING && (
@@ -110,8 +110,8 @@ export default function Inspector( props ) {
 						<PanelRow>
 							<Button
 								// @ts-ignore isSecondary is missing from the type definition
-								isSecondary={ true }
-								isLarge={ true }
+								isSecondary
+								isLarge
 								onClick={
 									/**
 									 * @param { import('react').MouseEvent<HTMLElement> } e

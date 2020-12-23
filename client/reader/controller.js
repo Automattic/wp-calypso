@@ -219,7 +219,7 @@ const exported = {
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showPrimaryFollowButtonOnCards={ false }
-				suppressSiteNameLink={ true }
+				suppressSiteNameLink
 				showBack={ userHasHistory( context ) }
 				placeholder={ null }
 			/>
@@ -254,7 +254,7 @@ const exported = {
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 				showPrimaryFollowButtonOnCards={ false }
-				suppressSiteNameLink={ true }
+				suppressSiteNameLink
 				showBack={ userHasHistory( context ) }
 				placeholder={ null }
 			/>

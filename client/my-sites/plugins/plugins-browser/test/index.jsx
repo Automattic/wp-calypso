@@ -89,7 +89,7 @@ describe( 'PluginsBrowser basic tests', () => {
 				{ ...props }
 				selectedSiteId={ 10 }
 				sitePlan={ null }
-				isJetpackSite={ true }
+				isJetpackSite
 				hasBusinessPlan={ false }
 			/>
 		);
@@ -103,7 +103,7 @@ describe( 'PluginsBrowser basic tests', () => {
 				{ ...props }
 				selectedSiteId={ 10 }
 				sitePlan={ { product_slug: PLAN_PREMIUM } }
-				isJetpackSite={ true }
+				isJetpackSite
 				hasBusinessPlan={ false }
 			/>
 		);
@@ -118,7 +118,7 @@ describe( 'PluginsBrowser basic tests', () => {
 				selectedSiteId={ 10 }
 				sitePlan={ { product_slug: PLAN_PREMIUM } }
 				isJetpackSite={ false }
-				hasBusinessPlan={ true }
+				hasBusinessPlan
 			/>
 		);
 		expect( comp.find( 'UpsellNudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length ).toBe(

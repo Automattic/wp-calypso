@@ -26,16 +26,16 @@ export default function CreditCardLoading() {
 	const { __ } = useI18n();
 
 	return (
-		<CreditCardFieldsWrapper isLoaded={ true }>
+		<CreditCardFieldsWrapper isLoaded>
 			<CreditCardField
 				id="credit-card-number"
 				type="Number"
 				label={ __( 'Card number' ) }
 				icon={ <LockIcon /> }
-				isIconVisible={ true }
+				isIconVisible
 				autoComplete="cc-number"
 				value={ '' }
-				disabled={ true }
+				disabled
 			/>
 			<FieldRow gap="4%" columnWidths="48% 48%">
 				<LeftColumn>
@@ -45,7 +45,7 @@ export default function CreditCardLoading() {
 						label={ __( 'Expiry date' ) }
 						autoComplete="cc-exp"
 						value={ '' }
-						disabled={ true }
+						disabled
 					/>
 				</LeftColumn>
 				<RightColumn>
@@ -53,13 +53,7 @@ export default function CreditCardLoading() {
 						<LabelText>{ __( 'Security code' ) }</LabelText>
 						<GridRow gap="4%" columnWidths="67% 29%">
 							<LeftColumn>
-								<Field
-									id="card-cvc"
-									type="Number"
-									autoComplete="cc-csc"
-									value={ '' }
-									disabled={ true }
-								/>
+								<Field id="card-cvc" type="Number" autoComplete="cc-csc" value={ '' } disabled />
 							</LeftColumn>
 							<RightColumn>
 								<CVVImage />
@@ -76,7 +70,7 @@ export default function CreditCardLoading() {
 				description={ __( "Enter your name as it's written on the card" ) }
 				autoComplete="cc-name"
 				value={ '' }
-				disabled={ true }
+				disabled
 			/>
 		</CreditCardFieldsWrapper>
 	);

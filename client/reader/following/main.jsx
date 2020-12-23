@@ -64,7 +64,7 @@ const FollowingStream = ( props ) => {
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
-					delaySearch={ true }
+					delaySearch
 					delayTimeout={ 500 }
 					placeholder={ placeholderText }
 				/>

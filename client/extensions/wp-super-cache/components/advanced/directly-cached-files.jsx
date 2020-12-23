@@ -98,7 +98,7 @@ class DirectlyCachedFiles extends Component {
 
 							{ cache_direct_pages.map( ( page, index ) => (
 								<FormFieldset key={ index }>
-									<FormTextInput disabled={ true } key={ index } value={ page || '' } />
+									<FormTextInput disabled key={ index } value={ page || '' } />
 									<Button
 										compact
 										className="wp-super-cache__directly-cached-files-delete"

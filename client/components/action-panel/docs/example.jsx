@@ -20,7 +20,7 @@ const ActionPanelExample = () => (
 		<div>
 			<ActionPanel>
 				<ActionPanelBody>
-					<ActionPanelFigure inlineBodyText={ true }>
+					<ActionPanelFigure inlineBodyText>
 						<img
 							src="/calypso/images/wordpress/logo-stars.svg"
 							width="170"
@@ -44,7 +44,7 @@ const ActionPanelExample = () => (
 		<div>
 			<ActionPanel>
 				<ActionPanelBody>
-					<ActionPanelFigure inlineBodyText={ true } align="left">
+					<ActionPanelFigure inlineBodyText align="left">
 						<img
 							src="/calypso/images/wordpress/logo-stars.svg"
 							width="170"

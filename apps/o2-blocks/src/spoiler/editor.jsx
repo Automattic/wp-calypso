@@ -32,7 +32,7 @@ const edit = ( { attributes: { summary }, className, isSelected, setAttributes }
 				<RichText
 					tagName="heading"
 					placeholder="Enter a preview or description of what's hidden inside"
-					keepPlaceholderOnFocus={ true }
+					keepPlaceholderOnFocus
 					value={ summary }
 					onChange={ ( newSummary ) => setAttributes( { summary: newSummary } ) }
 				/>

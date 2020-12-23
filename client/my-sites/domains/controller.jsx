@@ -185,11 +185,7 @@ const transferDomainPrecheck = ( context, next ) => {
 			/>
 			<CartData>
 				<div>
-					<TransferDomainStep
-						forcePrecheck={ true }
-						initialQuery={ domain }
-						goBack={ handleGoBack }
-					/>
+					<TransferDomainStep forcePrecheck initialQuery={ domain } goBack={ handleGoBack } />
 				</div>
 			</CartData>
 		</Main>

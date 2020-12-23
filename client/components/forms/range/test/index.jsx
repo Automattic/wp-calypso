@@ -58,9 +58,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should render a value label if passed a truthy `showValueLabel` prop', () => {
-		const range = TestUtils.renderIntoDocument(
-			<FormRange value={ 8 } showValueLabel={ true } readOnly={ true } />
-		);
+		const range = TestUtils.renderIntoDocument( <FormRange value={ 8 } showValueLabel readOnly /> );
 		const label = TestUtils.findRenderedDOMComponentWithClass( range, 'range__label' );
 
 		expect( label.textContent ).to.equal( '8' );

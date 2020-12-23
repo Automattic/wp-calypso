@@ -84,7 +84,7 @@ describe( 'PeopleInviteDetails', () => {
 				deleteInvite={ mockDeleteInvite }
 				translate={ mockTranslate }
 				moment={ moment }
-				canViewPeople={ true }
+				canViewPeople
 			/>
 		);
 
@@ -113,7 +113,7 @@ describe( 'PeopleInviteDetails', () => {
 				deleteInvite={ mockDeleteInvite }
 				translate={ mockTranslate }
 				moment={ moment }
-				canViewPeople={ true }
+				canViewPeople
 			/>
 		);
 
@@ -133,13 +133,13 @@ describe( 'PeopleInviteDetails', () => {
 			<PeopleInviteDetails
 				site={ siteObject }
 				requesting={ false }
-				deleting={ true }
+				deleting
 				deleteSuccess={ false }
 				inviteKey={ acceptedInviteObject.key }
 				invite={ acceptedInviteObject }
 				translate={ mockTranslate }
 				moment={ moment }
-				canViewPeople={ true }
+				canViewPeople
 			/>
 		);
 

@@ -32,12 +32,7 @@ const ContactFormNotice = ( { showAt, hideAt, heading, message, compact } ) => {
 
 	if ( compact ) {
 		return (
-			<FoldableCard
-				className="contact-form-notice"
-				clickableHeader={ true }
-				compact={ true }
-				header={ heading }
-			>
+			<FoldableCard className="contact-form-notice" clickableHeader compact header={ heading }>
 				{ message }
 			</FoldableCard>
 		);

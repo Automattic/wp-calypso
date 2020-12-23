@@ -41,7 +41,7 @@ class SecurityCheckupNavigationItem extends React.Component {
 
 	render() {
 		if ( this.props.isPlaceholder ) {
-			return <VerticalNavItem isPlaceholder={ true } />;
+			return <VerticalNavItem isPlaceholder />;
 		}
 
 		return (

@@ -69,7 +69,7 @@ const InlineHelpSearchCard = ( {
 			initialValue={ query }
 			onSearch={ searchHelperHandler }
 			placeholder={ placeholder || translate( 'Search for help…' ) }
-			delaySearch={ true }
+			delaySearch
 		/>
 	);
 };

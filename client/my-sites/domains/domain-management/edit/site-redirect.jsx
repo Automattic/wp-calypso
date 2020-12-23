@@ -12,7 +12,7 @@ import Edit from './index';
 
 class SiteRedirect extends React.PureComponent {
 	render() {
-		return <Edit { ...this.props } isSiteRedirect={ true } />;
+		return <Edit { ...this.props } isSiteRedirect />;
 	}
 }
 

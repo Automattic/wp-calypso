@@ -103,7 +103,7 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 					onChange={ onChange }
 					onBlur={ onBlur }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
-					autoFocus={ true }
+					autoFocus
 				/>
 			}
 		/>
@@ -342,7 +342,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							</p>
 						</label>
 						<div>
-							<FocusedLaunchSummaryItem readOnly={ true }>
+							<FocusedLaunchSummaryItem readOnly>
 								<LeadingContentSide
 									label={
 										/* translators: Purchased plan label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */

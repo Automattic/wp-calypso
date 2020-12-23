@@ -23,7 +23,7 @@ const Webinars = () => {
 			actionText={ translate( 'Register for free' ) }
 			actionUrl="https://wordpress.com/webinars/"
 			actionTarget="_blank"
-			completeOnStart={ true }
+			completeOnStart
 			illustration={ webinarsIllustration }
 			timing={ 2 }
 			taskId={ TASK_WEBINARS }

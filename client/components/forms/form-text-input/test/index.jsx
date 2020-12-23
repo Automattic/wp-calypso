@@ -41,7 +41,7 @@ describe( '<FormTextInput />', () => {
 	} );
 
 	test( 'should call select if selectOnFocus is true', () => {
-		const wrapper = shallow( <FormTextInput selectOnFocus={ true } /> );
+		const wrapper = shallow( <FormTextInput selectOnFocus /> );
 		const event = {
 			target: {
 				select: () => {},

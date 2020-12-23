@@ -199,7 +199,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 												href="https://www.google.com/business/"
 												target="_blank"
 												rel="noopener noreferrer"
-												icon={ true }
+												icon
 												onClick={ this.trackGoogleMyBusinessClick }
 											/>
 										),

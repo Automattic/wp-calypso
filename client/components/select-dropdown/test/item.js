@@ -33,7 +33,7 @@ describe( 'item', () => {
 		test( 'should do nothing when is disabled', () => {
 			const onClickSpy = sinon.spy();
 			const dropdownItem = shallow(
-				<SelectDropdownItem disabled={ true } onClick={ onClickSpy }>
+				<SelectDropdownItem disabled onClick={ onClickSpy }>
 					Published
 				</SelectDropdownItem>
 			);

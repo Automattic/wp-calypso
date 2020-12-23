@@ -60,9 +60,9 @@ export class CommentRepliesList extends Component {
 					<Comment
 						commentId={ commentId }
 						isAtMaxDepth={ depth >= maxDepth }
-						isPostView={ true }
+						isPostView
 						key={ `comment-${ siteId }-${ commentParentId }-${ commentId }` }
-						refreshCommentData={ true }
+						refreshCommentData
 					/>
 				) ) }
 			</div>

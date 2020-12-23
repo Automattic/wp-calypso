@@ -48,7 +48,7 @@ class PluginEligibility extends Component {
 		return (
 			<MainComponent>
 				<PageViewTracker path="/plugins/:plugin/eligibility/:site" title="Plugins > Eligibility" />
-				<HeaderCake isCompact={ true } onClick={ this.goBack }>
+				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'Install plugin' ) }
 				</HeaderCake>
 				<EligibilityWarnings

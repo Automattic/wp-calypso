@@ -73,7 +73,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 				/>
 			</div>
 			<div className="nux-launch-step__footer">
-				<ActionButtons sticky={ true }>
+				<ActionButtons sticky>
 					<BackButton onClick={ handlePrev } />
 				</ActionButtons>
 			</div>

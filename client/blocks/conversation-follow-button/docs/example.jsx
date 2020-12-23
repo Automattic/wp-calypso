@@ -22,7 +22,7 @@ export default class ConversationFollowButtonExample extends React.PureComponent
 					<ConversationFollowButton isFollowing={ false } />
 				</Card>
 				<Card compact>
-					<ConversationFollowButton isFollowing={ true } />
+					<ConversationFollowButton isFollowing />
 				</Card>
 			</div>
 		);

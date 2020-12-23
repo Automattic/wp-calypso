@@ -286,7 +286,7 @@ class DeleteUser extends React.Component {
 					</FormFieldset>
 
 					<FormButtonsBar>
-						<FormButton scary={ true } disabled={ this.isDeleteButtonDisabled() }>
+						<FormButton scary disabled={ this.isDeleteButtonDisabled() }>
 							{ translate( 'Delete user', { context: 'Button label' } ) }
 						</FormButton>
 					</FormButtonsBar>

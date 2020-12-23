@@ -91,7 +91,7 @@ describe( 'ContactDetailsFormFields', () => {
 
 		test( 'should render GAppsFieldset in place of default contact fields when required', () => {
 			const wrapper = shallow(
-				<ContactDetailsFormFields { ...defaultProps } needsOnlyGoogleAppsDetails={ true } />
+				<ContactDetailsFormFields { ...defaultProps } needsOnlyGoogleAppsDetails />
 			);
 
 			expect( wrapper.find( '.contact-details-form-fields__row.g-apps-fieldset' ) ).toHaveLength(
@@ -133,7 +133,7 @@ describe( 'ContactDetailsFormFields', () => {
 		} );
 
 		test( 'should render fax field when fax required', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } needsFax={ true } /> );
+			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } needsFax /> );
 
 			expect( wrapper.find( '[name="fax"]' ) ).toHaveLength( 1 );
 		} );

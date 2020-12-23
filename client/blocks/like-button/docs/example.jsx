@@ -48,7 +48,7 @@ class LikeButtons extends React.PureComponent {
 					<SimpleLikeButtonContainer tagName="a" likeCount={ 12 } />
 				</Card>
 				<Card compact>
-					<SimpleLikeButtonContainer tagName="a" likeCount={ 12 } liked={ true } />
+					<SimpleLikeButtonContainer tagName="a" likeCount={ 12 } liked />
 				</Card>
 			</div>
 		);
