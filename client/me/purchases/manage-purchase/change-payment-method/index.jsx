@@ -245,13 +245,6 @@ function ChangePaymentMethodList( {
 
 	return (
 		<CheckoutProvider
-			items={ [] }
-			total={ {
-				amount: { value: 0, currency: 'USD', displayValue: '$0' },
-				id: 'xyzzy',
-				type: 'FAAAKE',
-				label: 'fake thing',
-			} }
 			onPaymentComplete={ () =>
 				onChangeComplete( { successCallback, translate, showSuccessMessage, reduxDispatch } )
 			}
