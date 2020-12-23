@@ -39,6 +39,7 @@ export interface Props {
 	CTAVariation?: CTAVariation;
 	popularBadgeVariation?: PopularBadgeVariation;
 	customTagLines?: CustomTagLinesMap;
+	hidePlansComparison?: boolean;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -55,6 +56,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
 	customTagLines,
+	hidePlansComparison = false,
 } ) => {
 	const { __ } = useI18n();
 
@@ -92,15 +94,16 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 					) }
 				</div>
 			</div>
-
-			<div className="plans-grid__details">
-				<div className="plans-grid__details-heading">
-					<Title tagName="h2">{ __( 'Detailed comparison', __i18n_text_domain__ ) }</Title>
+			{ ! hidePlansComparison && (
+				<div className="plans-grid__details">
+					<div className="plans-grid__details-heading">
+						<Title tagName="h2">{ __( 'Detailed comparison', __i18n_text_domain__ ) }</Title>
+					</div>
+					<div className="plans-grid__details-container">
+						<PlansDetails onSelect={ onPlanSelect } locale={ locale } />
+					</div>
 				</div>
-				<div className="plans-grid__details-container">
-					<PlansDetails onSelect={ onPlanSelect } locale={ locale } />
-				</div>
-			</div>
+			) }
 		</div>
 	);
 };
