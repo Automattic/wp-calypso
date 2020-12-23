@@ -12,9 +12,12 @@ import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import Gridicon from 'calypso/components/gridicon';
-import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
-import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import {
+	getPluginOnSite,
+	getPluginStatusesByType,
+} from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 
 /**
@@ -71,11 +74,11 @@ class PluginSiteUpdateIndicator extends React.Component {
 
 		if ( isUpdating ) {
 			message = this.props.translate( 'Updating to version %(version)s', {
-				args: { version: this.props.site.plugin.update.new_version },
+				args: { version: this.props.pluginOnSite.update.new_version },
 			} );
 		} else {
 			message = this.props.translate( 'Update to %(version)s', {
-				args: { version: this.props.site.plugin.update.new_version },
+				args: { version: this.props.pluginOnSite.update.new_version },
 			} );
 		}
 		return (
@@ -98,7 +101,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 		}
 		if (
 			this.props.site.canUpdateFiles &&
-			( ( this.props.site.plugin.update && ! this.props.site.plugin.update.recentlyUpdated ) ||
+			( ( this.props.pluginOnSite.update && ! this.props.pluginOnSite.update.recentlyUpdated ) ||
 				this.isUpdating() )
 		) {
 			if ( ! this.props.expanded ) {
@@ -118,8 +121,9 @@ class PluginSiteUpdateIndicator extends React.Component {
 }
 
 export default connect(
-	( state ) => ( {
+	( state, { plugin, site } ) => ( {
 		inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
+		pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
 	} ),
 	{ removePluginStatuses, updatePlugin }
 )( localize( PluginSiteUpdateIndicator ) );
