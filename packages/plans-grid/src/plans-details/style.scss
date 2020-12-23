@@ -3,11 +3,30 @@
 @import '~@automattic/onboarding/styles/mixins';
 @import '~@automattic/typography/styles/variables';
 
+// Used to "counter" the negative margin set on the container, while allowing the
+// table to scroll horizontally in case it doesn't fit in the viewport.
+@mixin plans-grid-edge2edge-padding {
+	padding-left: $onboarding-block-margin-mobile;
+	padding-right: $onboarding-block-margin-mobile;
+
+	@include break-small {
+		padding-left: $onboarding-block-margin-small;
+		padding-right: $onboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		padding-left: $onboarding-block-margin-medium;
+		padding-right: $onboarding-block-margin-medium;
+	}
+}
+
 .plans-grid__details-heading {
 	margin-bottom: 20px;
 }
 
 .plans-details__table {
+	@include plans-grid-edge2edge-padding;
+
 	width: 100%;
 	border-spacing: 0;
 
@@ -32,20 +51,6 @@
 	// TODO: Deal with a11y later.
 	.hidden {
 		display: none;
-	}
-
-	padding-right: $onboarding-block-margin-mobile;
-
-	@include break-small {
-		padding-right: $onboarding-block-margin-small;
-	}
-
-	@include break-medium {
-		padding-right: $onboarding-block-margin-medium;
-	}
-
-	@include break-huge {
-		padding-right: 0;
 	}
 }
 
