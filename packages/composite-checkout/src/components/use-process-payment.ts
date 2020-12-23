@@ -8,7 +8,11 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { usePaymentProcessors, useTransactionStatus } from '../public-api';
+import {
+	usePaymentProcessors,
+	useTransactionStatus,
+	InvalidPaymentProcessorResponseError,
+} from '../public-api';
 import {
 	PaymentProcessorResponse,
 	PaymentProcessorResponseType,
@@ -92,7 +96,7 @@ async function handlePaymentProcessorResponse(
 	debug( 'payment processor function response', rawResponse );
 	const isValid = validateProcessorResponse( rawResponse );
 	if ( ! isValid ) {
-		throw new Error( `Invalid payment processor response for processor "${ paymentProcessorId }"` );
+		throw new InvalidPaymentProcessorResponseError( paymentProcessorId );
 	}
 	const processorResponse = rawResponse as PaymentProcessorResponse;
 	if ( processorResponse.type === PaymentProcessorResponseType.REDIRECT ) {
@@ -109,7 +113,7 @@ async function handlePaymentProcessorResponse(
 	if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
 		return processorResponse;
 	}
-	throw new Error( `Unknown payment processor response for processor "${ paymentProcessorId }"` );
+	throw new InvalidPaymentProcessorResponseError( paymentProcessorId );
 }
 
 function validateProcessorResponse( response: unknown ): response is PaymentProcessorResponse {
