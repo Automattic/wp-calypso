@@ -78,7 +78,7 @@ function useHandlePaymentProcessorResponse() {
 }
 
 async function handlePaymentProcessorResponse(
-	processorResponse: PaymentProcessorResponse,
+	rawResponse: unknown,
 	paymentProcessorId: string,
 	redirectErrorMessage: string,
 	{
@@ -89,7 +89,12 @@ async function handlePaymentProcessorResponse(
 		setTransactionComplete: SetTransactionComplete;
 	}
 ): Promise< PaymentProcessorResponse > {
-	debug( 'payment processor function response', processorResponse );
+	debug( 'payment processor function response', rawResponse );
+	const isValid = validateProcessorResponse( rawResponse );
+	if ( ! isValid ) {
+		throw new Error( `Invalid payment processor response for processor "${ paymentProcessorId }"` );
+	}
+	const processorResponse = rawResponse as PaymentProcessorResponse;
 	if ( processorResponse.type === PaymentProcessorResponseType.REDIRECT ) {
 		if ( ! processorResponse.payload ) {
 			throw new Error( redirectErrorMessage );
@@ -105,4 +110,19 @@ async function handlePaymentProcessorResponse(
 		return processorResponse;
 	}
 	throw new Error( `Unknown payment processor response for processor "${ paymentProcessorId }"` );
+}
+
+function validateProcessorResponse( response: unknown ): response is PaymentProcessorResponse {
+	const processorResponse = response as PaymentProcessorResponse;
+	if ( ! processorResponse || ! processorResponse.type ) {
+		return false;
+	}
+	if (
+		processorResponse.type === PaymentProcessorResponseType.SUCCESS &&
+		! processorResponse.payload
+	) {
+		return false;
+	}
+	// No need to validate missing redirect payloads; they are already handled by redirectErrorMessage
+	return true;
 }
