@@ -14,7 +14,7 @@ import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import HeaderCake from 'calypso/components/header-cake';
 import { Card } from '@automattic/components';
 import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
-import PluginsStore from 'calypso/lib/plugins/store';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import {
 	isFetching as isWporgPluginFetching,
 	isFetched as isWporgPluginFetched,
@@ -42,6 +42,7 @@ import hasNavigated from 'calypso/state/selectors/has-navigated';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
+	getSiteObjectsWithPlugin,
 	getSitesWithoutPlugin,
 	isPluginActionInProgress,
 	isRequestingForSites,
@@ -53,12 +54,6 @@ function goBack() {
 }
 
 class SinglePlugin extends React.Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = this.getSitesPlugin();
-	}
-
 	UNSAFE_componentWillMount() {
 		if ( ! this.isFetched() ) {
 			this.props.wporgFetchPluginData( this.props.pluginSlug );
@@ -66,49 +61,12 @@ class SinglePlugin extends React.Component {
 	}
 
 	componentDidMount() {
-		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 		this.hasAlreadyShownTheTour = false;
 	}
 
 	componentWillUnmount() {
-		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		this.hasAlreadyShownTheTour = false;
-		if ( this.pluginRefreshTimeout ) {
-			clearTimeout( this.pluginRefreshTimeout );
-		}
 	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.refreshSitesAndPlugins( nextProps );
-	}
-
-	getSitesPlugin = ( nextProps ) => {
-		const props = nextProps || this.props;
-
-		const sites = uniq( props.sites );
-		const plugin = Object.assign(
-			{
-				name: props.pluginSlug,
-				id: props.pluginSlug,
-				slug: props.pluginSlug,
-			},
-			props.plugin
-		);
-
-		const notInstalledSites = props.sitesWithoutPlugin.map( ( siteId ) =>
-			sites.find( ( site ) => site.ID === siteId )
-		);
-
-		return {
-			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
-			notInstalledSites,
-			plugin,
-		};
-	};
-
-	refreshSitesAndPlugins = ( nextProps ) => {
-		this.setState( this.getSitesPlugin( nextProps ) );
-	};
 
 	getPageTitle() {
 		const plugin = this.getPlugin();
@@ -195,8 +153,15 @@ class SinglePlugin extends React.Component {
 	}
 
 	getPlugin() {
+		const { pluginSlug, wporgPlugin } = this.props;
+
 		// assign it .org details
-		return { ...this.state.plugin, ...this.props.wporgPlugin };
+		return {
+			name: pluginSlug,
+			id: pluginSlug,
+			slug: pluginSlug,
+			...wporgPlugin,
+		};
 	}
 
 	getPluginDoesNotExistView( selectedSite ) {
@@ -242,7 +207,10 @@ class SinglePlugin extends React.Component {
 			return;
 		}
 
-		const { translate } = this.props;
+		const { translate, sites, sitesWithPlugin, sitesWithoutPlugin } = this.props;
+		const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
+			sites.find( ( site ) => site.ID === siteId )
+		);
 
 		return (
 			<div>
@@ -251,7 +219,7 @@ class SinglePlugin extends React.Component {
 					title={ translate( 'Installed on', {
 						comment: 'header for list of sites a plugin is installed on',
 					} ) }
-					sites={ this.state.sites }
+					sites={ sitesWithPlugin }
 					plugin={ plugin }
 				/>
 				{ plugin.wporg && (
@@ -260,7 +228,7 @@ class SinglePlugin extends React.Component {
 						title={ translate( 'Available sites', {
 							comment: 'header for list of sites a plugin can be installed on',
 						} ) }
-						sites={ this.state.notInstalledSites }
+						sites={ notInstalledSites }
 						plugin={ plugin }
 					/>
 				) }
@@ -269,7 +237,7 @@ class SinglePlugin extends React.Component {
 	}
 
 	renderPluginPlaceholder() {
-		const { selectedSite } = this.props;
+		const { selectedSite, sitesWithPlugin } = this.props;
 		return (
 			<MainComponent>
 				<SidebarNavigation />
@@ -280,7 +248,7 @@ class SinglePlugin extends React.Component {
 						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						plugin={ this.getPlugin() }
 						siteUrl={ this.props.siteUrl }
-						sites={ this.state.sites }
+						sites={ sitesWithPlugin }
 						selectedSite={ selectedSite }
 						isAtomicSite={ this.props.isAtomicSite }
 					/>
@@ -290,7 +258,7 @@ class SinglePlugin extends React.Component {
 	}
 
 	render() {
-		const { selectedSite } = this.props;
+		const { selectedSite, siteIds, sitesWithPlugin } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
@@ -315,6 +283,7 @@ class SinglePlugin extends React.Component {
 			<MainComponent>
 				<DocumentHead title={ this.getPageTitle() } />
 				<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
+				<QueryJetpackPlugins siteIds={ siteIds } />
 				<SidebarNavigation />
 				<PluginNotices pluginId={ plugin.id } sites={ this.props.sites } plugins={ [ plugin ] } />
 
@@ -323,7 +292,7 @@ class SinglePlugin extends React.Component {
 					<PluginMeta
 						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
-						sites={ this.state.sites }
+						sites={ sitesWithPlugin }
 						selectedSite={ selectedSite }
 						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						isInstalling={ this.props.isInstallingPlugin }
@@ -352,6 +321,7 @@ export default connect(
 
 		return {
 			plugin: getPluginOnSites( state, siteIds, props.pluginSlug ),
+			sitesWithPlugin: getSiteObjectsWithPlugin( state, siteIds, props.pluginSlug ),
 			sitePlugin: selectedSiteId && getPluginOnSite( state, selectedSiteId, props.pluginSlug ),
 			wporgPlugin: getWporgPlugin( state, props.pluginSlug ),
 			wporgFetching: isWporgPluginFetching( state, props.pluginSlug ),
@@ -371,6 +341,7 @@ export default connect(
 			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
 				: canCurrentUserManagePlugins( state ),
+			siteIds,
 			sites,
 			toursHistory: getToursHistory( state ),
 			navigated: hasNavigated( state ),
