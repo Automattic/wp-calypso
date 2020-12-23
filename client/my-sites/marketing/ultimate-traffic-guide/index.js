@@ -15,7 +15,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { isFetchingUserPurchases, getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getCurrentUserCurrencyCode, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import Experiment, {
@@ -83,6 +83,7 @@ const SalesPage = ( { translate } ) => {
 	const isLoading = useSelector( ( state ) => isProductsListFetching( state ) );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
 	/**
 	 * The reference cost is calculated to the nearest 100
@@ -94,9 +95,17 @@ const SalesPage = ( { translate } ) => {
 
 	const cta = () => (
 		<p>
-			<Button href={ `/checkout/${ siteSlug }/${ WPCOM_TRAFFIC_GUIDE }` } primary>
-				{ translate( 'Click here to buy the guide now!' ) }
-			</Button>
+			{ isJetpack ? (
+				<em>
+					{ translate(
+						'The Ultimate Traffic Guide is currently only available on WordPress.com sites.'
+					) }
+				</em>
+			) : (
+				<Button href={ `/checkout/${ siteSlug }/${ WPCOM_TRAFFIC_GUIDE }` } primary>
+					{ translate( 'Click here to buy the guide now!' ) }
+				</Button>
+			) }
 		</p>
 	);
 
