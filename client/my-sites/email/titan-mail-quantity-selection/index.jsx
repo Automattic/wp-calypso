@@ -30,6 +30,8 @@ import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwar
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Notice from 'calypso/components/notice';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { hasTitanMailWithUs, getMaxTitanMailboxCount } from 'calypso/lib/titan';
 
 /**
  * Style dependencies
@@ -66,16 +68,25 @@ class TitanMailQuantitySelection extends React.Component {
 		this.goToEmail();
 	};
 
+	getCartItem = () => {
+		const { selectedDomain } = this.props;
+		let quantity = this.state.quantity;
+
+		if ( hasTitanMailWithUs( selectedDomain ) ) {
+			quantity += getMaxTitanMailboxCount( selectedDomain );
+		}
+
+		return titanMailMonthly( { domain: selectedDomain.name, quantity } );
+	};
+
 	handleContinue = () => {
-		const { selectedSite, selectedDomainName } = this.props;
+		const { selectedSite } = this.props;
 
 		this.recordClickEvent(
 			'calypso_email_management_titan_quantity_selection_continue_button_click'
 		);
 
-		addItems( [
-			titanMailMonthly( { domain: selectedDomainName, quantity: this.state.quantity } ),
-		] );
+		addItems( [ this.getCartItem() ] );
 		page( '/checkout/' + selectedSite.slug );
 	};
 
@@ -173,7 +184,7 @@ class TitanMailQuantitySelection extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteId = selectedSite?.ID ?? null;
 		const domains = getDomainsBySiteId( state, siteId );
@@ -182,6 +193,10 @@ export default connect(
 		return {
 			selectedSite,
 			isLoadingDomains,
+			selectedDomain: getSelectedDomain( {
+				domains,
+				selectedDomainName: ownProps.selectedDomainName,
+			} ),
 			currentRoute: getCurrentRoute( state ),
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 		};
