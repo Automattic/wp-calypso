@@ -10,12 +10,12 @@ import React, { Component } from 'react';
 import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 import Count from 'calypso/components/count';
+import Favicon from 'calypso/reader/components/favicon';
 
 /**
  * Styles
  */
 import '../style.scss';
-import Favicon from 'calypso/reader/components/favicon';
 
 export class ReaderSidebarOrganizationsListItem extends Component {
 	static propTypes = {
