@@ -10,11 +10,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import config from 'calypso/config';
 
 /**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
-
-/**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
