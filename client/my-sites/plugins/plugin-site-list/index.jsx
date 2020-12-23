@@ -13,9 +13,11 @@ import PropTypes from 'prop-types';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
 import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
-import PluginsStore from 'calypso/lib/plugins/store';
 import SectionHeader from 'calypso/components/section-header';
-import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPluginOnSites,
+	getSiteObjectsWithPlugin,
+} from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
@@ -31,10 +33,12 @@ export class PluginSiteList extends Component {
 	};
 
 	getSecondaryPluginSites( site, secondarySites ) {
-		const sitePlugin = this.props.pluginsOnSites?.sites[ site.ID ];
-		const secondaryPluginSites = sitePlugin
-			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
-			: secondarySites;
+		const pluginsOnSites = this.props.pluginsOnSites?.sites[ site.ID ];
+		const secondarySitesWithPlugin = this.props.sitesWithPlugin.filter(
+			( siteWithPlugin ) =>
+				secondarySites && secondarySites.some( ( secSite ) => secSite.ID === siteWithPlugin.ID )
+		);
+		const secondaryPluginSites = pluginsOnSites ? secondarySitesWithPlugin : secondarySites;
 		return compact( secondaryPluginSites );
 	}
 
@@ -81,6 +85,7 @@ export default connect( ( state, { plugin, sites } ) => {
 	const siteIds = sites.map( ( site ) => site.ID );
 
 	return {
+		sitesWithPlugin: getSiteObjectsWithPlugin( state, siteIds, plugin.slug ),
 		sitesWithSecondarySites: getSitesWithSecondarySites( state, sites ),
 		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
 	};
