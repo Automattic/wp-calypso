@@ -10,6 +10,11 @@ import { useViewportMatch } from '@wordpress/compose';
 import config from 'calypso/config';
 
 /**
+ * WordPress dependencies
+ */
+import apiFetch from '@wordpress/api-fetch';
+
+/**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
@@ -80,16 +85,15 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 				return;
 			}
 
-			let resp;
+			let resp: Promise<object>;
 
 			try {
-				resp = await window.fetch( `https://public-api.wordpress.com/wpcom/v2/podcast-player?url=https://anchor.fm/s/${ encodeURIComponent( anchorFmPodcastId ) }/podcast/rss` );
+				resp = await apiFetch( { path: `https://public-api.wordpress.com/wpcom/v2/podcast-details?url=https://anchor.fm/s/${ encodeURIComponent( anchorFmPodcastId ) }/podcast/rss` } );
 			} catch ( err ) {
 				return;
 			}
 
-			const json = await resp.json();
-			const podcastTitle = json?.title;
+			const podcastTitle = await resp?.title;
 			podcastTitle?.length > 1 && setSiteTitle( podcastTitle );
 		}
 		fetchPodcastTitle();
