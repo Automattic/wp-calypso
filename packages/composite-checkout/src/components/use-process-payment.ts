@@ -121,12 +121,5 @@ function validateProcessorResponse( response: unknown ): response is PaymentProc
 	if ( ! processorResponse || ! processorResponse.type ) {
 		return false;
 	}
-	if (
-		processorResponse.type === PaymentProcessorResponseType.SUCCESS &&
-		! processorResponse.payload
-	) {
-		return false;
-	}
-	// No need to validate missing redirect payloads; they are already handled by redirectErrorMessage
 	return true;
 }
