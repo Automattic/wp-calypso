@@ -522,17 +522,3 @@ $accent-blue: #117ac9;
 		width: auto;
 	}
 }
-
-.domain-picker__action-link {
-	display: flex;
-	align-items: center;
-
-	&--with-underline {
-		text-decoration: underline;
-	}
-
-	a,
-	a:hover {
-		color: var( --mainColor );
-	}
-}

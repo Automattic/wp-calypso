@@ -5,6 +5,7 @@ import * as React from 'react';
 import classnames from 'classnames';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
+import { Icon, chevronRight, chevronLeft } from '@wordpress/icons';
 
 /**
  * Style dependencies
@@ -90,6 +91,31 @@ export const SkipButton: React.FunctionComponent< Button.ButtonProps > = ( {
 			{ children ||
 				/* translators: Button label for skipping a step in onboarding */
 				__( 'Skip for now', __i18n_text_domain__ ) }
+		</Button>
+	);
+};
+
+interface ArrowButtonProps extends Button.ButtonProps {
+	arrow: 'left' | 'right';
+}
+
+export const ArrowButton: React.FunctionComponent< ArrowButtonProps > = ( {
+	className,
+	children,
+	arrow = 'right',
+	...buttonProps
+} ) => {
+	return (
+		<Button
+			className={ classnames(
+				`action_buttons__button action-buttons__arrow action-buttons__arrow--${ arrow }`,
+				className
+			) }
+			{ ...buttonProps }
+		>
+			{ arrow === 'left' && <Icon icon={ chevronLeft } /> }
+			{ children }
+			{ arrow === 'right' && <Icon icon={ chevronRight } /> }
 		</Button>
 	);
 };

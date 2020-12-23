@@ -26,7 +26,7 @@ import './style.scss';
 const ANALYTICS_UI_LOCATION = 'domain_step';
 
 const DomainDetails: React.FunctionComponent = () => {
-	const { getCurrentLaunchFlowUrl } = React.useContext( LaunchContext );
+	const { getCurrentLaunchFlowUrl, redirectTo } = React.useContext( LaunchContext );
 	const locale = useLocale();
 
 	const { siteSubdomain } = useSiteDomains();
@@ -39,6 +39,10 @@ const DomainDetails: React.FunctionComponent = () => {
 	};
 
 	const launchFlowUrl = getCurrentLaunchFlowUrl();
+	const redirectToUseDomainFlow = (): void => {
+		const useYourDomainUrl = `/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSubdomain?.domain }&source=${ launchFlowUrl }`;
+		redirectTo( useYourDomainUrl );
+	};
 
 	const handleSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
 		onDomainSelect( suggestion );
@@ -83,7 +87,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					segregateFreeAndPaid
 					locale={ locale }
 					itemType={ ITEM_TYPE_BUTTON }
-					useYourDomainLink={ launchFlowUrl }
+					onUseYourDomainClick={ redirectToUseDomainFlow }
 				/>
 			</div>
 		</div>
