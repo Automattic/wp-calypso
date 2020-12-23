@@ -445,7 +445,9 @@ function useAssignablePaymentMethods() {
 		activePayButtonText: translate( 'Save card' ),
 	} );
 
-	const payPalMethod = useCreatePayPal();
+	const payPalMethod = useCreatePayPal( {
+		labelText: translate( 'Add a new PayPal account' ),
+	} );
 
 	// getStoredCards always returns a new array, but we need a memoized version
 	// to pass to useCreateExistingCards, which has storedCards as a data dependency.
