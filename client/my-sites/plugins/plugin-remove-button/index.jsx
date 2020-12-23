@@ -19,6 +19,7 @@ import accept from 'calypso/lib/accept';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import ExternalLink from 'calypso/components/external-link';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
@@ -213,7 +214,7 @@ class PluginRemoveButton extends React.Component {
 
 export default connect(
 	( state, { site, plugin } ) => ( {
-		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'REMOVE_PLUGIN' ),
+		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, REMOVE_PLUGIN ),
 	} ),
 	{ removePlugin, removePluginStatuses }
 )( localize( PluginRemoveButton ) );

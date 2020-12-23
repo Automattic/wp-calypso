@@ -8,7 +8,11 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { INSTALL_PLUGIN, DEACTIVATE_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN } from '../constants';
+import {
+	DEACTIVATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	INSTALL_PLUGIN,
+} from 'calypso/lib/plugins/constants';
 import * as selectors from '../selectors';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';

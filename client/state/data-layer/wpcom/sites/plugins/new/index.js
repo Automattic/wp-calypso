@@ -9,6 +9,7 @@ import { find, includes } from 'lodash';
  * Internal dependencies
  */
 import { PLUGIN_UPLOAD } from 'calypso/state/action-types';
+import { PLUGIN_UPLOAD as PLUGIN_UPLOAD_ACTION } from 'calypso/lib/plugins/constants';
 import {
 	completePluginUpload,
 	pluginUploadError,
@@ -84,7 +85,7 @@ export const uploadComplete = ( { siteId }, data ) => ( dispatch, getState ) => 
 	 */
 	Dispatcher.handleServerAction( {
 		type: 'RECEIVE_INSTALLED_PLUGIN',
-		action: 'PLUGIN_UPLOAD',
+		action: PLUGIN_UPLOAD_ACTION,
 		site,
 		plugin: data,
 		data,

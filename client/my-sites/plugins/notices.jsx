@@ -15,6 +15,17 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
  * Internal dependencies
  */
 import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	INSTALL_PLUGIN,
+	PLUGIN_UPLOAD,
+	RECEIVE_PLUGINS,
+	REMOVE_PLUGIN,
+	UPDATE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
+import {
 	errorNotice,
 	infoNotice,
 	successNotice,
@@ -136,7 +147,7 @@ class PluginNotices extends React.Component {
 		const { translate } = this.props;
 
 		switch ( action ) {
-			case 'INSTALL_PLUGIN':
+			case INSTALL_PLUGIN:
 				if ( translateArg.isMultiSite ) {
 					switch ( combination ) {
 						case '1 site 1 plugin':
@@ -189,7 +200,7 @@ class PluginNotices extends React.Component {
 				}
 
 				break;
-			case 'REMOVE_PLUGIN':
+			case REMOVE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully removed %(plugin)s on %(site)s.', {
@@ -212,7 +223,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully updated %(plugin)s on %(site)s.', {
@@ -235,7 +246,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'ACTIVATE_PLUGIN':
+			case ACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully activated %(plugin)s on %(site)s.', {
@@ -258,7 +269,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully deactivated %(plugin)s on %(site)s.', {
@@ -281,7 +292,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully enabled autoupdates for %(plugin)s on %(site)s.', {
@@ -310,7 +321,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DISABLE_AUTOUPDATE_PLUGIN':
+			case DISABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Successfully disabled autoupdates for %(plugin)s on %(site)s.', {
@@ -339,7 +350,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'PLUGIN_UPLOAD':
+			case PLUGIN_UPLOAD:
 				return translate( "You've successfully installed the %(plugin)s plugin.", {
 					args: translateArg,
 				} );
@@ -350,7 +361,7 @@ class PluginNotices extends React.Component {
 		const { translate } = this.props;
 
 		switch ( action ) {
-			case 'INSTALL_PLUGIN':
+			case INSTALL_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Installing %(plugin)s on %(site)s.', {
@@ -377,7 +388,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'REMOVE_PLUGIN':
+			case REMOVE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Removing %(plugin)s on %(site)s.', { args: translateArg } );
@@ -395,7 +406,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 				break;
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Updating %(plugin)s on %(site)s.', {
@@ -419,7 +430,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 				break;
-			case 'ACTIVATE_PLUGIN':
+			case ACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Activating %(plugin)s on %(site)s.', {
@@ -446,7 +457,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Deactivating %(plugin)s on %(site)s', {
@@ -473,7 +484,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Enabling autoupdates for %(plugin)s on %(site)s.', {
@@ -500,7 +511,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DISABLE_AUTOUPDATE_PLUGIN':
+			case DISABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site 1 plugin':
 						return translate( 'Disabling autoupdates for %(plugin)s on %(site)s.', {
@@ -550,7 +561,7 @@ class PluginNotices extends React.Component {
 			return this.singleErrorMessage( action, translateArg, sampleLog );
 		}
 		switch ( action ) {
-			case 'INSTALL_PLUGIN':
+			case INSTALL_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -575,7 +586,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'REMOVE_PLUGIN':
+			case REMOVE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -597,7 +608,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -619,7 +630,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'ACTIVATE_PLUGIN':
+			case ACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -644,7 +655,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -669,7 +680,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -694,7 +705,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'DISABLE_AUTOUPDATE_PLUGIN':
+			case DISABLE_AUTOUPDATE_PLUGIN:
 				switch ( combination ) {
 					case '1 site n plugins':
 						return translate(
@@ -719,7 +730,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 				break;
-			case 'RECEIVE_PLUGINS':
+			case RECEIVE_PLUGINS:
 				return translate(
 					'Error fetching plugins on %(numberOfSites)d site.',
 					'Error fetching plugins on %(numberOfSites)d sites.',
@@ -810,7 +821,7 @@ class PluginNotices extends React.Component {
 		const additionalExplanation = this.additionalExplanation( sampleLog.error.error );
 
 		switch ( action ) {
-			case 'INSTALL_PLUGIN':
+			case INSTALL_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate(
@@ -835,7 +846,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 
-			case 'REMOVE_PLUGIN':
+			case REMOVE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate( 'Error removing %(plugin)s on %(site)s, remote management is off.', {
@@ -847,7 +858,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate( 'Error updating %(plugin)s on %(site)s, remote management is off.', {
@@ -868,7 +879,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 
-			case 'ACTIVATE_PLUGIN':
+			case ACTIVATE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate(
@@ -883,7 +894,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate(
@@ -898,7 +909,7 @@ class PluginNotices extends React.Component {
 						} );
 				}
 
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate(
@@ -916,7 +927,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 
-			case 'DISABLE_AUTOUPDATE_PLUGIN':
+			case DISABLE_AUTOUPDATE_PLUGIN:
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
 						return translate(
@@ -934,7 +945,7 @@ class PluginNotices extends React.Component {
 						);
 				}
 
-			case 'RECEIVE_PLUGINS':
+			case RECEIVE_PLUGINS:
 				return translate( 'Error fetching plugins on %(site)s.', {
 					args: translateArg,
 				} );
