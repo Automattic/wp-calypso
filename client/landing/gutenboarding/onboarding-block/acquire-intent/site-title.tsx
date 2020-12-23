@@ -22,7 +22,7 @@ import { recordSiteTitleSelection } from '../../lib/analytics';
 import tip from './tip';
 import AcquireIntentTextInput from './acquire-intent-text-input';
 import useTyper from '../../hooks/use-typer';
-import { useIsAnchorFm, useAnchorFmParams } from '../../path';
+import { useIsAnchorFm } from '../../path';
 
 interface Props {
 	onSubmit: () => void;
@@ -33,7 +33,6 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 	const { __, _x } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
 	const isAnchorFmSignup = useIsAnchorFm();
-	const { anchorFmPodcastId } = useAnchorFmParams();
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
 	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
@@ -78,26 +77,6 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		   feel free to create your own but please keep it under 22 characters */
 		_x( 'Max’s Burger Bar', 'sample site title' ),
 	];
-
-	React.useEffect( () => {
-		const fetchPodcastTitle = async () => {
-			if ( ! anchorFmPodcastId ) {
-				return;
-			}
-
-			let resp: Promise<object>;
-
-			try {
-				resp = await apiFetch( { path: `https://public-api.wordpress.com/wpcom/v2/podcast-details?url=https://anchor.fm/s/${ encodeURIComponent( anchorFmPodcastId ) }/podcast/rss` } );
-			} catch ( err ) {
-				return;
-			}
-
-			const podcastTitle = await resp?.title;
-			podcastTitle?.length > 1 && setSiteTitle( podcastTitle );
-		}
-		fetchPodcastTitle();
-	}, [] )
 
 	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		// hitting 'Enter' when focused on the input field should direct to next step.

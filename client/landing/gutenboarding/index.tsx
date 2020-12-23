@@ -10,6 +10,7 @@ import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';
 import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -77,6 +78,11 @@ window.AppBoot = async () => {
 
 	// Update list of randomized designs in the gutenboarding session store
 	ensureRandomizedDesignsAreUpToDate();
+
+	// Get podcast title if this will be an Anchor.fm podcast site
+	try {
+		setPodcastTitle();
+	} catch {}
 
 	ReactDom.render(
 		<LocaleContext>
@@ -171,4 +177,30 @@ function ensureRandomizedDesignsAreUpToDate() {
  */
 function isDeepEqual( stored: Design[], available: Design[] ): boolean {
 	return isEmpty( xorWith( stored, available, isEqual ) );
+}
+
+/**
+ * Pre-fill Anchor.fm podcast title if available
+ */
+async function setPodcastTitle() {
+	// Feature flag 'anchor-fm-dev' is required for anchor podcast id to be read
+	if ( ! config.isEnabled( 'anchor-fm-dev' ) ) {
+		return;
+	}
+
+	const anchorFmPodcastId = new URLSearchParams( window.location.search )
+		.get( 'anchor_podcast' )
+		?.replace( /[^a-zA-Z0-9]/g, '' );
+
+	if ( ! anchorFmPodcastId ) {
+		return;
+	}
+
+	await apiFetch( {
+		path: `https://public-api.wordpress.com/wpcom/v2/podcast-details?url=https://anchor.fm/s/${ encodeURIComponent(
+			anchorFmPodcastId
+		) }/podcast/rss`,
+	} ).then( ( response ) => {
+		response.title?.length > 1 && dispatch( ONBOARD_STORE ).setSiteTitle( response.title );
+	} );
 }
