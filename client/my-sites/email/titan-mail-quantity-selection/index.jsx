@@ -21,6 +21,15 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { addItems } from 'calypso/lib/cart/actions';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import {
+	getDomainsBySiteId,
+	hasLoadedSiteDomains,
+	isRequestingSiteDomains,
+} from 'calypso/state/sites/domains/selectors';
+import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import Notice from 'calypso/components/notice';
+import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 
 /**
  * Style dependencies
@@ -81,8 +90,37 @@ class TitanMailQuantitySelection extends React.Component {
 		this.setState( { quantity } );
 	};
 
+	renderForwardsNotice() {
+		const { domainsWithForwards, translate } = this.props;
+		return domainsWithForwards.length ? (
+			<Notice showDismiss={ false } status="is-warning">
+				{ translate(
+					'Please note that email forwards are not compatible with %(productName)s, ' +
+						'and will be disabled once %(productName)s is added to this domain. The following ' +
+						'domains have forwards:',
+					{
+						args: {
+							productName: translate( 'Titan Mail' ),
+						},
+						comment: '%(productName)s is the name of the product, e.g. Titan Mail',
+					}
+				) }
+				<ul>
+					{ domainsWithForwards.map( ( domainName ) => {
+						return <li key={ domainName }>{ domainName }</li>;
+					} ) }
+				</ul>
+			</Notice>
+		) : null;
+	}
+
 	renderForm() {
-		const { translate } = this.props;
+		const { isLoadingDomains, translate } = this.props;
+
+		if ( isLoadingDomains ) {
+			return <AddEmailAddressesCardPlaceholder />;
+		}
+
 		return (
 			<>
 				<SectionHeader label={ translate( 'Choose Quantity' ) } />
@@ -116,9 +154,10 @@ class TitanMailQuantitySelection extends React.Component {
 	}
 
 	render() {
-		const { selectedDomainName, translate } = this.props;
+		const { selectedDomainName, selectedSite, translate } = this.props;
 		return (
 			<>
+				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				<Main>
 					<DomainManagementHeader
 						onClick={ this.goToEmail }
@@ -127,6 +166,7 @@ class TitanMailQuantitySelection extends React.Component {
 						{ translate( 'Titan Mail' ) }
 					</DomainManagementHeader>
 
+					{ this.renderForwardsNotice() }
 					{ this.renderForm() }
 				</Main>
 			</>
@@ -137,9 +177,15 @@ class TitanMailQuantitySelection extends React.Component {
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
+		const siteId = selectedSite?.ID ?? null;
+		const domains = getDomainsBySiteId( state, siteId );
+		const isLoadingDomains =
+			! hasLoadedSiteDomains( state, siteId ) || isRequestingSiteDomains( state, siteId );
 		return {
-			currentRoute: getCurrentRoute( state ),
 			selectedSite,
+			isLoadingDomains,
+			currentRoute: getCurrentRoute( state ),
+			domainsWithForwards: getDomainsWithForwards( state, domains ),
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
