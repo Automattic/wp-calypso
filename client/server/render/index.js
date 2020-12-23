@@ -56,7 +56,7 @@ function bumpStat( group, name ) {
  * @returns {string} Rendered markup
  */
 export function renderJsx( view, props ) {
-	const requireComponent = require.context( 'document', true, /\.jsx$/ );
+	const requireComponent = require.context( 'calypso/document', true, /\.jsx$/ );
 	const component = requireComponent( './' + view + '.jsx' ).default;
 	const doctype = `<!DOCTYPE html><!--
 	<3

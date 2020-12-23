@@ -165,7 +165,7 @@ const buildApp = ( environment ) => {
 			serverRender,
 		} = require( 'calypso/server/render' );
 		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
-		mocks.sanitize = require( 'sanitize' );
+		mocks.sanitize = require( 'calypso/server/sanitize' );
 		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
 		mocks.execSync = require( 'child_process' ).execSync;
 		mocks.login = require( 'calypso/lib/paths' ).login;
