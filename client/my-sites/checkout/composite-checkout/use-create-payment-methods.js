@@ -47,7 +47,7 @@ import { createFullCreditsMethod } from './payment-methods/full-credits';
 import { createFreePaymentMethod } from './payment-methods/free-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
-export function useCreatePayPal( { labelText = null } ) {
+export function useCreatePayPal( { labelText = null } = {} ) {
 	const paypalMethod = useMemo( () => createPayPalMethod( { labelText } ), [ labelText ] );
 	return paypalMethod;
 }
