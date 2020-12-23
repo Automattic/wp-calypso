@@ -21,23 +21,23 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:paypal' );
 
-export function createPayPalMethod() {
+export function createPayPalMethod( { labelText = null } ) {
 	debug( 'creating new paypal payment method' );
 	return {
 		id: 'paypal',
-		label: <PaypalLabel />,
+		label: <PaypalLabel labelText={ labelText } />,
 		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
 		getAriaLabel: ( __ ) => __( 'PayPal' ),
 	};
 }
 
-export function PaypalLabel() {
+export function PaypalLabel( { labelText = null } ) {
 	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<span>{ __( 'PayPal' ) }</span>
+			<span>{ labelText || __( 'PayPal' ) }</span>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PaypalLogo />
 			</PaymentMethodLogos>

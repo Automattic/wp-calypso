@@ -47,8 +47,8 @@ import { createFullCreditsMethod } from './payment-methods/full-credits';
 import { createFreePaymentMethod } from './payment-methods/free-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
-export function useCreatePayPal() {
-	const paypalMethod = useMemo( createPayPalMethod, [] );
+export function useCreatePayPal( { labelText = null } ) {
+	const paypalMethod = useMemo( () => createPayPalMethod( { labelText } ), [ labelText ] );
 	return paypalMethod;
 }
 
@@ -288,10 +288,7 @@ function useCreateApplePay( {
 	return applePayMethod;
 }
 
-export function useCreateExistingCards( {
-	storedCards,
-	activePayButtonText = undefined,
-} ) {
+export function useCreateExistingCards( { storedCards, activePayButtonText = undefined } ) {
 	const existingCardMethods = useMemo( () => {
 		return storedCards.map( ( storedDetails ) =>
 			createExistingCardMethod( {
