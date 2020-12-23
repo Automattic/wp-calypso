@@ -141,9 +141,7 @@ class TitanMailQuantitySelection extends React.Component {
 					<hr className="titan-mail-quantity-selection__divider" />
 
 					<div className="titan-mail-quantity-selection__buttons">
-						<Button className="titan-mail-quantity-selection__cancel" onClick={ this.handleCancel }>
-							{ translate( 'Cancel' ) }
-						</Button>
+						<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
 						<Button primary onClick={ this.handleContinue }>
 							{ translate( 'Continue' ) }
 						</Button>
