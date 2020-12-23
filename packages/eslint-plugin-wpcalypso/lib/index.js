@@ -11,3 +11,4 @@
 
 // import all rules in lib/rules
 module.exports.rules = require( './rules' );
+module.exports.configs = require( './configs' );
