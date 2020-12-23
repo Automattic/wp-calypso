@@ -50,8 +50,13 @@ class QueryPosts extends Component {
 			}
 
 			if ( singlePost && ! props.requestingPost ) {
-				log( 'Request single post for site %d post %d', props.siteId, props.postId );
-				props.requestSitePost( props.siteId, props.postId );
+				log(
+					'Request single post for site %d post %d using query %o',
+					props.siteId,
+					props.postId,
+					props.query
+				);
+				props.requestSitePost( props.siteId, props.postId, props.query );
 			}
 		} else if ( ! props.requestingPosts ) {
 			log( 'Request post list for all sites using query %o', props.query );

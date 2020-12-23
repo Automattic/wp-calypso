@@ -1,41 +1,20 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
-
-// A hack to make React available for non-transpiled components imported by `wp/edit-post`
-window.React = React;
-
-/**
- * WordPress dependencies
- */
-import '@wordpress/core-data';
-import '@wordpress/viewport';
-import '@wordpress/notices';
-import '@wordpress/edit-post';
-
-import { registerCoreBlocks } from '@wordpress/block-library';
-import '@wordpress/format-library';
-import { useDispatch, useSelect } from '@wordpress/data';
-
-import '@wordpress/components/build-style/style.css';
-import '@wordpress/block-editor/build-style/style.css';
-import '@wordpress/block-library/build-style/style.css';
-import '@wordpress/block-library/build-style/editor.css';
-import '@wordpress/block-library/build-style/theme.css';
-import '@wordpress/format-library/build-style/style.css';
+import React from 'react';
+import { connect } from 'react-redux';
+import IsolatedBlockEditor from 'isolated-editor';
 
 /**
  * Internal dependencies
  */
+import { getSitePost } from 'calypso/state/posts/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryPosts from 'calypso/components/data/query-posts';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
 import './without-iframe.scss';
 import PerformanceTrackerStop from 'calypso/lib/performance-tracking/performance-tracker-stop';
-import Editor from '@wordpress/edit-post/src/editor';
 import { setCurrentSiteId } from './fix-api-fetch';
-
-registerCoreBlocks();
 
 const getStatsPath = ( { postId } ) =>
 	postId ? '/without-iframe/:post_type/:site/:post_id' : '/without-iframe/:post_type/:site';
@@ -64,22 +43,8 @@ const getStatsProps = ( { postId, postType } ) =>
 	postId ? { post_type: postType, post_id: postId } : { post_type: postType };
 
 function Gutenberg( props ) {
-	const { postId, siteId, postType } = props;
-
+	const { postId, siteId, post } = props;
 	setCurrentSiteId( siteId );
-
-	const { toggleFeature } = useDispatch( 'core/edit-post' );
-	const isFullscreenActive = useSelect( ( select ) =>
-		select( 'core/edit-post' ).isFeatureActive( 'fullscreenMode' )
-	);
-
-	useEffect( () => {
-		if ( isFullscreenActive ) {
-			// toggle fullscreen off by default
-			toggleFeature( 'fullscreenMode' );
-		}
-	}, [ toggleFeature, isFullscreenActive ] );
-
 	return (
 		<>
 			<PageViewTracker
@@ -89,19 +54,20 @@ function Gutenberg( props ) {
 			/>
 			<EditorDocumentHead />
 			<PerformanceTrackerStop />
+			<QueryPosts siteId={ siteId } postId={ postId } query={ { context: 'edit' } } />
 
-			<div className="editor__without-iframe" role="main">
-				<Editor
-					postId={ postId }
-					postType={ postType }
-					settings={ {
-						__experimentalBlockPatternCategories: [],
-						__experimentalBlockPatterns: [],
-					} }
+			{ post && (
+				<IsolatedBlockEditor
+					onLoad={ ( parse ) => parse( post.content ) }
+					// eslint-disable-next-line no-console
+					onError={ console.error }
+					settings={ {} }
 				/>
-			</div>
+			) }
 		</>
 	);
 }
 
-export default Gutenberg;
+export default connect( ( state, props ) => ( {
+	post: getSitePost( state, props.siteId, props.postId ),
+} ) )( Gutenberg );
