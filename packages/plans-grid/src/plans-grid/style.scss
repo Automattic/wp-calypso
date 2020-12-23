@@ -25,7 +25,8 @@
 }
 
 .plans-grid__details-container {
-	@media ( max-width: $plans-grid-max-page-width ) {
+	// -1px is becuase this is a `max-width` media query, instead of the usual `min-width`
+	@media ( max-width: $plans-grid-max-page-width - 1px ) {
 		overflow-x: auto;
 		width: 100%;
 		position: absolute;
