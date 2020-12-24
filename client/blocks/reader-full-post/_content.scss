@@ -8,6 +8,7 @@
 .reader-full-post__story-content {
     @extend %rendered-block-content;
 	padding-top: 16px;
+	line-height: 1.7;
 }
 
 // Longreads-Specific Full Post View Styles
