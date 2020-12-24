@@ -46,4 +46,4 @@ function ProductIcon( { className, slug }: Props ): JSX.Element | null {
 	);
 }
 
-export default ProductIcon;
+export default React.memo( ProductIcon ) as typeof ProductIcon;
