@@ -55,7 +55,7 @@ class TitanMailQuantitySelection extends React.Component {
 		page(
 			emailManagement(
 				this.props.selectedSite.slug,
-				this.props.selectedDomainName,
+				this.props.selectedDomain?.name,
 				this.props.currentRoute
 			)
 		);
@@ -163,7 +163,19 @@ class TitanMailQuantitySelection extends React.Component {
 	}
 
 	render() {
-		const { selectedDomainName, selectedSite, translate } = this.props;
+		const {
+			selectedDomainName,
+			selectedSite,
+			selectedDomain,
+			isLoadingDomains,
+			translate,
+		} = this.props;
+
+		if ( ! isLoadingDomains && ! selectedDomain ) {
+			this.goToEmail();
+			return null;
+		}
+
 		return (
 			<>
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
