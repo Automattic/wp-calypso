@@ -46,6 +46,7 @@ import {
 	isPluginActionInProgress,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 
 function goBack() {
 	window.history.back();
@@ -363,7 +364,7 @@ export default connect(
 				state,
 				selectedSiteId,
 				props.pluginSlug,
-				'INSTALL_PLUGIN'
+				INSTALL_PLUGIN
 			),
 			isRequestingSites: isRequestingSites( state ),
 			requestingPluginsForSites: isRequestingForSites( state, siteIds ),

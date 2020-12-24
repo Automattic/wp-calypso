@@ -21,6 +21,7 @@ import {
 	getPluginOnSite,
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 
 /**
  * Style dependencies
@@ -145,6 +146,6 @@ class PluginSiteJetpack extends React.Component {
 }
 
 export default connect( ( state, { site, plugin } ) => ( {
+	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, INSTALL_PLUGIN ),
 	pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
-	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'INSTALL_PLUGIN' ),
 } ) )( localize( PluginSiteJetpack ) );

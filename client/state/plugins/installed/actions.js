@@ -37,8 +37,9 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	DISABLE_AUTOUPDATE_PLUGIN,
 	INSTALL_PLUGIN,
+	RECEIVE_PLUGINS,
 	REMOVE_PLUGIN,
-} from './constants';
+} from 'calypso/lib/plugins/constants';
 import { getSite } from 'calypso/state/sites/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -105,7 +106,7 @@ export function activatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'ACTIVATE_PLUGIN',
-			action: 'ACTIVATE_PLUGIN',
+			action: ACTIVATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -114,7 +115,7 @@ export function activatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_ACTIVATED_PLUGIN',
-				action: 'ACTIVATE_PLUGIN',
+				action: ACTIVATE_PLUGIN,
 				site,
 				plugin,
 				data,
@@ -187,7 +188,7 @@ export function deactivatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'DEACTIVATE_PLUGIN',
-			action: 'DEACTIVATE_PLUGIN',
+			action: DEACTIVATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -196,7 +197,7 @@ export function deactivatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_DEACTIVATED_PLUGIN',
-				action: 'DEACTIVATE_PLUGIN',
+				action: DEACTIVATE_PLUGIN,
 				site,
 				plugin,
 				data,
@@ -281,7 +282,7 @@ export function updatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'UPDATE_PLUGIN',
-			action: 'UPDATE_PLUGIN',
+			action: UPDATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -290,7 +291,7 @@ export function updatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_UPDATED_PLUGIN',
-				action: 'UPDATE_PLUGIN',
+				action: UPDATE_PLUGIN,
 				site,
 				plugin,
 				data,
@@ -339,7 +340,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'ENABLE_AUTOUPDATE_PLUGIN',
-			action: 'ENABLE_AUTOUPDATE_PLUGIN',
+			action: ENABLE_AUTOUPDATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -348,7 +349,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-				action: 'ENABLE_AUTOUPDATE_PLUGIN',
+				action: ENABLE_AUTOUPDATE_PLUGIN,
 				site,
 				plugin,
 				data,
@@ -393,7 +394,7 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'DISABLE_AUTOUPDATE_PLUGIN',
-			action: 'DISABLE_AUTOUPDATE_PLUGIN',
+			action: DISABLE_AUTOUPDATE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -402,7 +403,7 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-				action: 'DISABLE_AUTOUPDATE_PLUGIN',
+				action: DISABLE_AUTOUPDATE_PLUGIN,
 				site,
 				plugin,
 				data,
@@ -477,13 +478,13 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 		const dispatchMessage = ( type, responseData, error ) => {
 			const message = {
 				type,
-				action: 'INSTALL_PLUGIN',
+				action: INSTALL_PLUGIN,
 				site,
 				plugin,
 				data: responseData,
 				error: error,
 			};
-			if ( 'INSTALL_PLUGIN' === type ) {
+			if ( INSTALL_PLUGIN === type ) {
 				Dispatcher.handleViewAction( message );
 				return;
 			}
@@ -522,7 +523,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			return Promise.reject( error );
 		};
 
-		dispatchMessage( 'INSTALL_PLUGIN' );
+		dispatchMessage( INSTALL_PLUGIN );
 
 		if ( isMainNetworkSite ) {
 			return doInstall( plugin )
@@ -561,7 +562,7 @@ export function removePlugin( siteId, plugin ) {
 
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PLUGIN',
-			action: 'REMOVE_PLUGIN',
+			action: REMOVE_PLUGIN,
 			site,
 			plugin,
 		} );
@@ -569,7 +570,7 @@ export function removePlugin( siteId, plugin ) {
 		const dispatchMessage = ( type, responseData, error ) => {
 			const message = {
 				type,
-				action: 'REMOVE_PLUGIN',
+				action: REMOVE_PLUGIN,
 				site,
 				plugin,
 				data: responseData,
@@ -638,7 +639,7 @@ export function fetchSitePlugins( siteId ) {
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_PLUGINS',
-				action: 'RECEIVE_PLUGINS',
+				action: RECEIVE_PLUGINS,
 				site,
 				data,
 				error,

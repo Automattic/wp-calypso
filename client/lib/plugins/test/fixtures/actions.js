@@ -1,12 +1,19 @@
 /**
  * Internal dependencies
  */
-
 import plugins from './plugins';
 import updatePluginsList from './plugins-updated';
 import site from './site';
 import multiSite from './multi-site';
 import updatePluginData from './updated-plugin';
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	REMOVE_PLUGIN,
+	UPDATE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
 
 export default {
 	// Fetch Data
@@ -45,14 +52,14 @@ export default {
 	// Update
 	updatePlugin: {
 		type: 'UPDATE_PLUGIN',
-		action: 'UPDATE_PLUGIN',
+		action: UPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ], // hello dolly
 	},
 
 	updatedPlugin: {
 		type: 'RECEIVE_UPDATED_PLUGIN',
-		action: 'UPDATE_PLUGIN',
+		action: UPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 		data: updatePluginData,
@@ -68,7 +75,7 @@ export default {
 
 	updatedPluginError: {
 		type: 'RECEIVE_UPDATED_PLUGIN',
-		action: 'UPDATE_PLUGIN',
+		action: UPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 		data: {},
@@ -82,14 +89,14 @@ export default {
 	// Remove Plugin
 	removePlugin: {
 		type: 'REMOVE_PLUGIN',
-		action: 'REMOVE_PLUGIN',
+		action: REMOVE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 	},
 
 	removedPluginError: {
 		type: 'RECEIVE_REMOVE_PLUGIN',
-		action: 'REMOVE_PLUGIN',
+		action: REMOVE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 		data: null,
@@ -99,22 +106,22 @@ export default {
 	// Remove Plugin
 	removedPlugin: {
 		type: 'RECEIVE_REMOVE_PLUGIN',
-		action: 'REMOVE_PLUGIN',
+		action: REMOVE_PLUGIN,
 		site: site,
 		plugin: plugins[ 2 ],
 	},
 
 	// Activate
 	activatePlugin: {
-		type: 'ACTIVATE_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		type: ACTIVATE_PLUGIN,
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 	},
 
 	activatedPlugin: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: {
@@ -135,7 +142,7 @@ export default {
 
 	activatedPluginError: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,
@@ -148,7 +155,7 @@ export default {
 
 	activatedBrokenPluginError: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: [],
@@ -157,7 +164,7 @@ export default {
 
 	activatedPluginErrorAlreadyActive: {
 		type: 'RECEIVE_ACTIVATED_PLUGIN',
-		action: 'ACTIVATE_PLUGIN',
+		action: ACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,
@@ -169,14 +176,14 @@ export default {
 	// Deactivate
 	deactivatePlugin: {
 		type: 'DEACTIVATE_PLUGIN',
-		action: 'DEACTIVATE_PLUGIN',
+		action: DEACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 	},
 
 	deactivatedPlugin: {
 		type: 'RECEIVE_DEACTIVATED_PLUGIN',
-		action: 'DEACTIVATE_PLUGIN',
+		action: DEACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: {
@@ -197,7 +204,7 @@ export default {
 
 	deactivatedPluginError: {
 		type: 'RECEIVE_DEACTIVATED_PLUGIN',
-		action: 'DEACTIVATE_PLUGIN',
+		action: DEACTIVATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,
@@ -221,14 +228,14 @@ export default {
 	// Enable Autoupdate
 	enableAutoupdatePlugin: {
 		type: 'ENABLE_AUTOUPDATE_PLUGIN',
-		action: 'ENABLE_AUTOUPDATE_PLUGIN',
+		action: ENABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 	},
 
 	enabledAutoupdatePlugin: {
 		type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-		action: 'ENABLE_AUTOUPDATE_PLUGIN',
+		action: ENABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: {
@@ -249,7 +256,7 @@ export default {
 
 	enabledAutoupdatePluginError: {
 		type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-		action: 'ENABLE_AUTOUPDATE_PLUGIN',
+		action: ENABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,
@@ -262,14 +269,14 @@ export default {
 	// Disable Autoupdate
 	disableAutoupdatePlugin: {
 		type: 'DISABLE_AUTOUPDATE_PLUGIN',
-		action: 'DISABLE_AUTOUPDATE_PLUGIN',
+		action: DISABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 	},
 
 	disabledAutoupdatePlugin: {
 		type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-		action: 'DISABLE_AUTOUPDATE_PLUGIN',
+		action: DISABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: {
@@ -290,7 +297,7 @@ export default {
 
 	disabledAutoupdatePluginError: {
 		type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-		action: 'DISABLE_AUTOUPDATE_PLUGIN',
+		action: DISABLE_AUTOUPDATE_PLUGIN,
 		site: site,
 		plugin: plugins[ 1 ], // developer
 		data: null,

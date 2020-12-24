@@ -18,4 +18,14 @@ export default class PlansPage extends AsyncBaseContainer {
 		const skipButtonSelector = By.css( '.action-buttons__skip' );
 		return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
 	}
+
+	async goToNextStep() {
+		const nextButtonSelector = By.css( '.action-buttons__next' );
+		return await driverHelper.clickWhenClickable( this.driver, nextButtonSelector );
+	}
+
+	async selectPluginsFeature() {
+		const pluginsFeatureButon = By.css( 'button[data-e2e-button="feature-plugins"]' );
+		return await driverHelper.clickIfPresent( this.driver, pluginsFeatureButon );
+	}
 }
