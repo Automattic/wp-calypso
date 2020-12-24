@@ -134,16 +134,16 @@ class TitanMailQuantitySelection extends React.Component {
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Choose Quantity' ) } />
+				<SectionHeader label={ translate( 'Choose Mailbox Quantity' ) } />
 
 				<Card>
 					<div>
-						<FormLabel>{ translate( 'Number of new users to add' ) }</FormLabel>
+						<FormLabel>{ translate( 'Number of new mailboxes to add' ) }</FormLabel>
 						<FormTextInput
 							name="quantity"
 							type="number"
 							min="1"
-							placeholder={ translate( 'Number of new users' ) }
+							placeholder={ translate( 'Number of new mailboxes' ) }
 							value={ this.state.quantity }
 							onChange={ this.onQuantityChange }
 						/>
