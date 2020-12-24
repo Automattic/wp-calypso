@@ -21,7 +21,7 @@ type Props = {
 	slug: SupportedSlugs;
 };
 
-function ProductIcon( { className, slug }: Props ): JSX.Element | null {
+const ProductIcon: React.FC< Props > = ( { className, slug } ) => {
 	if ( ! slug ) {
 		return null;
 	}
@@ -44,6 +44,6 @@ function ProductIcon( { className, slug }: Props ): JSX.Element | null {
 			alt=""
 		/>
 	);
-}
+};
 
 export default React.memo( ProductIcon ) as typeof ProductIcon;
