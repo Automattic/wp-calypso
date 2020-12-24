@@ -10,7 +10,12 @@ import classNames from 'classnames';
  */
 import './style.scss';
 
-export default ( props ) => (
+type Props = {
+	color?: 'green' | undefined;
+	children: React.ReactNode;
+};
+
+const Ribbon: React.FC< Props > = ( props ) => (
 	<div
 		className={ classNames( {
 			ribbon: true,
@@ -20,3 +25,5 @@ export default ( props ) => (
 		<span className="ribbon__title">{ props.children }</span>
 	</div>
 );
+
+export default React.memo( Ribbon );
