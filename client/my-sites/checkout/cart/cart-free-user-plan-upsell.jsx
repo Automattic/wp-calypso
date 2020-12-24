@@ -22,7 +22,6 @@ import {
 	hasPlan,
 	planItem,
 } from 'calypso/lib/cart-values/cart-items';
-import { addItem } from 'calypso/lib/cart/actions';
 import SectionHeader from 'calypso/components/section-header';
 import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
@@ -37,6 +36,7 @@ import { isDomainRegistration, isDomainTransfer } from '../../../lib/products-va
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		addItemToCart: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		hasPaidPlan: PropTypes.bool,
 		hasPlanInCart: PropTypes.bool,
@@ -180,7 +180,7 @@ const mapStateToProps = ( state, { cart, addItemToCart } ) => {
 		showPlanUpsell: getCurrentUser( state )
 			? selectedSiteId && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
-		addItemToCart: addItemToCart || addItem,
+		addItemToCart,
 	};
 };
 
