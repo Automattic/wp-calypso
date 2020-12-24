@@ -10,7 +10,7 @@ import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
  */
 import './style.scss';
 
-type TagName< P = any > = React.ElementType< P >; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type TagName< P = any > = React.ElementType< P >; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 type OwnProps = {
 	className?: string;
@@ -21,13 +21,15 @@ type OwnProps = {
 	highlight?: 'error' | 'info' | 'success' | 'warning';
 };
 
-type Props< P, T extends TagName > = P &
+type ElementProps< P, T extends TagName > = P &
 	Omit< React.ComponentProps< T >, 'tagName' | keyof P > & {
 		tagName?: T | keyof JSX.IntrinsicElements;
 		children?: React.ReactNode;
 	};
 
-const Card = < T extends TagName = 'div' >( props: Props< OwnProps, T > ): JSX.Element => {
+export type Props< T extends TagName > = ElementProps< OwnProps, T >;
+
+const Card = < T extends TagName = 'div' >( props: Props< T > ): JSX.Element => {
 	const {
 		children,
 		className,
