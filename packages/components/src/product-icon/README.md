@@ -83,6 +83,8 @@ Plan or product slug. Can be one of the following:
 - `jetpack_search_v2`
 - `jetpack_search_monthly_v2`
 
+When adding a new product slug it must be added to the `SupportedSlugs` type as well as into the map of `icon-slug -> product-slug[]`.
+
 ### `className`
 
 Additional class name to be added to the icon element.
@@ -96,6 +98,6 @@ In order to add a new icon to the component, do the following:
 - Add the image path to the `paths` object in the `config.js` file.
 - Add a new entry in the `iconToProductSlugMap` object in the `config.js` file:
   - key should match the image slug that just have been added,
-  - value should be an array of product slugs the image should be displayed for.
-- Document the new icon as an available option for the `slug` prop in this README.
+  - value should be an array of product slugs for which the image should be displayed.
+- Document the new icon as an available option for the `slug` prop in this README and in the `SupportedSlugs` type.
 - Optionally, update the `docs/example.jsx` file to include the new icon.
