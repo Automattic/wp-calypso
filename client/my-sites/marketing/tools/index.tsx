@@ -11,8 +11,7 @@ import config from 'calypso/config';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
@@ -54,12 +53,9 @@ export const MarketingTools: FunctionComponent = () => {
 	const dispatch = useDispatch();
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) ) || 0;
-	const siteId = useSelector( getSelectedSiteId );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( ( state ) =>
 		getSelectedSiteSlug( state )
 	);
-
 	const purchases = useSelector( ( state ) => getUserPurchases( state, userId ) );
 
 	const handleBusinessToolsClick = () => {
@@ -235,7 +231,7 @@ export const MarketingTools: FunctionComponent = () => {
 					</Button>
 				</MarketingToolsFeature>
 
-				{ isEnglish && ! isJetpack && (
+				{ isEnglish && (
 					<MarketingToolsFeature
 						title={ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
 						description={ translate(
