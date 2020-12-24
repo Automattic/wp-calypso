@@ -688,7 +688,7 @@ export class MySitesSidebar extends Component {
 				materialIcon="shopping_cart"
 				forceInternalLink
 			>
-				{ isEnabled( 'woocommerce/store-deprecated' ) && (
+				{ isEnabled( 'woocommerce/store-deprecated' ) && isBusiness( site.plan ) && (
 					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
 						<div>{ translate( 'Store is moving to WooCommerce' ) }.</div>
 						<ExternalLink href="https://wordpress.com/support/store/">
