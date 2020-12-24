@@ -85,6 +85,7 @@ import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 import { isP2PlusPlan } from 'calypso/lib/plans';
@@ -686,7 +687,16 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackStoreClick }
 				materialIcon="shopping_cart"
 				forceInternalLink
-			/>
+			>
+				{ isEnabled( 'woocommerce/store-deprecated' ) && (
+					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
+						<div>{ translate( 'Store is moving to WooCommerce' ) }.</div>
+						<ExternalLink href="https://wordpress.com/support/store/">
+							{ translate( 'More' ) }
+						</ExternalLink>
+					</InfoPopover>
+				) }
+			</SidebarItem>
 		);
 	}
 
