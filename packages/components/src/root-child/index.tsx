@@ -4,7 +4,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-export default class RootChild extends React.Component {
+type State = { containerEl: HTMLDivElement | null };
+
+export default class RootChild extends React.Component< void, State > {
 	// we can render the children only after the container DOM element has been created and added
 	// to the DOM tree. And we can't create and append the element in component constructor because
 	// there is no corresponding destructor that would safely remove it in case the render is not
@@ -20,22 +22,24 @@ export default class RootChild extends React.Component {
 	// Another thing that fails inside a detached DOM element is accessing `iframe.contentWindow`.
 	// The `contentWindow` is `null` until the `iframe` becomes active, i.e., is added to the DOM
 	// tree. We access the `contentWindow` in `WebPreview`, for example.
-	state = { containerEl: null };
+	state: State = {
+		containerEl: null,
+	};
 
-	componentDidMount() {
+	componentDidMount(): void {
 		// create the container element and immediately trigger a rerender
 		const containerEl = document.createElement( 'div' );
 		document.body.appendChild( containerEl );
 		this.setState( { containerEl } ); // eslint-disable-line react/no-did-mount-set-state
 	}
 
-	componentWillUnmount() {
+	componentWillUnmount(): void {
 		if ( this.state.containerEl ) {
 			document.body.removeChild( this.state.containerEl );
 		}
 	}
 
-	render() {
+	render(): JSX.Element | null {
 		// don't render anything until the `containerEl` is created. That's the correct behavior
 		// in SSR (no portals there, `RootChild` renders as empty).
 		if ( ! this.state.containerEl ) {
