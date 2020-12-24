@@ -33,7 +33,6 @@
 
 	border: solid 2px currentColor;
 	border-radius: 4px;
-	color: var( --studio-jetpack-green-40 );
 
 	font-size: 1rem;
 	font-weight: 700;
@@ -49,5 +48,9 @@
 .is-section-jetpack-cloud-pricing {
 	.more-info-box__more-container {
 		background-color: rgba( var( --studio-jetpack-green-10-rgb ), 0.1 );
+	}
+
+	.more-info-box__more-button.button {
+		color: var( --studio-jetpack-green-40 );
 	}
 }
