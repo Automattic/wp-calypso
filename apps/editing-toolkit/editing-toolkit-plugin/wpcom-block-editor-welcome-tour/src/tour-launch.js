@@ -16,10 +16,12 @@ import { Button, Flex } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { Icon } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useState } from '@wordpress/element';
+import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 function LaunchWpcomWelcomeTour() {
+	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const isWpcomNuxEnabled = useSelect( ( select ) =>
 		select( 'automattic/nux' ).isWpcomNuxEnabled()
 	);
@@ -27,10 +29,6 @@ function LaunchWpcomWelcomeTour() {
 
 	// Preload first card image (others preloaded after NUX status confirmed)
 	new window.Image().src = getTourContent()[ 0 ].imgSrc;
-
-	// Create parent div for welcome tour portal
-	const portalParent = document.createElement( 'div' );
-	portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
 
 	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
 	useEffect( () => {
@@ -49,13 +47,20 @@ function LaunchWpcomWelcomeTour() {
 		if ( ! isWpcomNuxEnabled ) {
 			return;
 		}
-
+		portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
 		document.body.appendChild( portalParent );
+
+		recordTracksEvent( 'calypso_editor_wpcom_tour_open', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
 		return () => {
-			// TODO: figure out how to unmount the LaunchWpcomWelcomeTour as this is not running when modal is closed
 			document.body.removeChild( portalParent );
 		};
-	} );
+	}, [ isWpcomNuxEnabled, portalParent ] );
+
+	if ( ! isWpcomNuxEnabled ) {
+		return null;
+	}
 
 	return <div>{ createPortal( <WelcomeTourFrame />, portalParent ) }</div>;
 }
@@ -63,11 +68,17 @@ function LaunchWpcomWelcomeTour() {
 function WelcomeTourFrame() {
 	const cardContent = getTourContent();
 	const [ isMinimized, setIsMinimized ] = useState( false );
-	const [ currentCard, setCurrentCard ] = useState( 0 );
+	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
+	const [ justMaximized, setJustMaximized ] = useState( false );
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
-	const dismissWpcomNuxTour = () => {
-		// TODO recordTracksEvent
+	const dismissWpcomNuxTour = ( source ) => {
+		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			slide_number: currentCardIndex + 1,
+			action: source,
+		} );
+
 		setWpcomNuxStatus( { isNuxEnabled: false } );
 	};
 
@@ -78,24 +89,39 @@ function WelcomeTourFrame() {
 		<div className="wpcom-editor-welcome-tour-frame">
 			{ ! isMinimized ? (
 				<WelcomeTourCard
-					cardContent={ cardContent[ currentCard ] }
-					cardIndex={ currentCard }
-					key={ currentCard }
+					cardContent={ cardContent[ currentCardIndex ] }
+					cardIndex={ currentCardIndex }
+					justMaximized={ justMaximized }
+					key={ currentCardIndex }
 					lastCardIndex={ cardContent.length - 1 }
 					onDismiss={ dismissWpcomNuxTour }
 					onMinimize={ setIsMinimized }
-					setCurrentCard={ setCurrentCard }
+					setJustMaximized={ setJustMaximized }
+					setCurrentCardIndex={ setCurrentCardIndex }
 				/>
 			) : (
-				<WelcomeTourMinimized onMaximize={ setIsMinimized } />
+				<WelcomeTourMinimized
+					onMaximize={ setIsMinimized }
+					setJustMaximized={ setJustMaximized }
+					slideNumber={ currentCardIndex + 1 }
+				/>
 			) }
 		</div>
 	);
 }
 
-function WelcomeTourMinimized( { onMaximize } ) {
+function WelcomeTourMinimized( { onMaximize, setJustMaximized, slideNumber } ) {
+	const handleOnMaximize = () => {
+		onMaximize( false );
+		setJustMaximized( true );
+		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			slide_number: slideNumber,
+		} );
+	};
+
 	return (
-		<Button onClick={ () => onMaximize( false ) } className="wpcom-editor-welcome-tour__resume-btn">
+		<Button onClick={ handleOnMaximize } className="wpcom-editor-welcome-tour__resume-btn">
 			<Flex gap={ 13 }>
 				<p>Click to resume tutorial</p>
 				<Icon icon={ maximize } size={ 24 } />
