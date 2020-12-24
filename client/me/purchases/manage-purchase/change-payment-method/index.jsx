@@ -379,23 +379,30 @@ function CurrentPaymentMethodNotAvailableNotice( { purchase } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const storedPaymentAgreements = useSelector( getStoredPaymentAgreements );
-
-	let noticeText = '';
+	const noticeProps = { showDismiss: false };
 
 	if ( creditCardHasAlreadyExpired( purchase ) ) {
-		noticeText = translate( 'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s.', {
-			args: {
-				cardType: purchase.payment.creditCard.type.toUpperCase(),
-				cardNumber: parseInt( purchase.payment.creditCard.number, 10 ),
-				cardExpiry: moment( purchase.payment.creditCard.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
-			},
-		} );
-	} else if ( getCurrentPaymentMethodId( purchase.payment ) === 'paypal' ) {
+		noticeProps.text = translate(
+			'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s.',
+			{
+				args: {
+					cardType: purchase.payment.creditCard.type.toUpperCase(),
+					cardNumber: parseInt( purchase.payment.creditCard.number, 10 ),
+					cardExpiry: moment( purchase.payment.creditCard.expiryDate, 'MM/YY' ).format(
+						'MMMM YYYY'
+					),
+				},
+			}
+		);
+		return <Notice { ...noticeProps } />;
+	}
+
+	if ( getCurrentPaymentMethodId( purchase.payment ) === 'paypal' ) {
 		const storedPaymentAgreement = storedPaymentAgreements.find(
 			( agreement ) => agreement.stored_details_id === purchase.payment.storedDetailsId
 		);
 		if ( storedPaymentAgreement?.email ) {
-			noticeText = translate(
+			noticeProps.text = translate(
 				'This purchase is currently billed to your PayPal account (%(emailAddress)s).',
 				{
 					args: {
@@ -403,12 +410,14 @@ function CurrentPaymentMethodNotAvailableNotice( { purchase } ) {
 					},
 				}
 			);
-		} else {
-			noticeText = translate( 'This purchase is currently billed to your PayPal account.' );
+			return <Notice { ...noticeProps } />;
 		}
+
+		noticeProps.text = translate( 'This purchase is currently billed to your PayPal account.' );
+		return <Notice { ...noticeProps } />;
 	}
 
-	return noticeText && <Notice text={ noticeText } showDismiss={ false } />;
+	return null;
 }
 
 const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
