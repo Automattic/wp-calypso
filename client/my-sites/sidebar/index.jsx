@@ -692,10 +692,8 @@ export class MySitesSidebar extends Component {
 			>
 				{ isCalypsoStoreDeprecatedOrRemoved && isBusiness( site.plan ) && (
 					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
-						<div>{ translate( 'Store is moving to WooCommerce' ) }.</div>
-						<ExternalLink href="https://wordpress.com/support/store/">
-							{ translate( 'More' ) }
-						</ExternalLink>
+						<div>{ 'Store is moving to WooCommerce' }.</div>
+						<ExternalLink href="https://wordpress.com/support/store/">{ 'More' }</ExternalLink>
 					</InfoPopover>
 				) }
 			</SidebarItem>
