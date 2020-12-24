@@ -199,6 +199,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 	}, [ initialDomainSearch, showSearchField ] );
 
+	useEffect( () => {
+		// when people unfold for more results, focus on the first item after the fold
+		// this is not the cleanest solution, but still cleaner than useRef spaghetti
+		if ( isExpanded ) {
+			( document.querySelectorAll( '.domain-picker__suggestion-item button' )[
+				quantity
+			] as HTMLButtonElement )?.focus?.();
+		}
+	}, [ isExpanded, quantity ] );
+
 	const handleItemRender = (
 		domain: string,
 		railcarId: string,
