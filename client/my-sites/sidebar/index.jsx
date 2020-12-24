@@ -662,6 +662,8 @@ export class MySitesSidebar extends Component {
 
 	store() {
 		const { translate, site, siteSuffix, canUserUseStore } = this.props;
+		const isCalypsoStoreDeprecatedOrRemoved =
+			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 
 		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
@@ -688,7 +690,7 @@ export class MySitesSidebar extends Component {
 				materialIcon="shopping_cart"
 				forceInternalLink
 			>
-				{ isEnabled( 'woocommerce/store-deprecated' ) && isBusiness( site.plan ) && (
+				{ isCalypsoStoreDeprecatedOrRemoved && isBusiness( site.plan ) && (
 					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
 						<div>{ translate( 'Store is moving to WooCommerce' ) }.</div>
 						<ExternalLink href="https://wordpress.com/support/store/">
