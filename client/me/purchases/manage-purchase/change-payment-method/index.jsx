@@ -5,7 +5,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, useMemo, useCallback } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
-import { find, some } from 'lodash';
 import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
@@ -199,7 +198,11 @@ function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
 
 // We want to preselect the current method if it is in the list, but if not, preselect the first method.
 function getInitiallySelectedPaymentMethodId( currentlyAssignedPaymentMethodId, paymentMethods ) {
-	if ( ! some( paymentMethods, [ 'id', currentlyAssignedPaymentMethodId ] ) ) {
+	if (
+		! paymentMethods.some(
+			( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
+		)
+	) {
 		return paymentMethods?.[ 0 ]?.id;
 	}
 
@@ -235,10 +238,9 @@ function ChangePaymentMethodList( {
 		notices.success( message, { persistent: true, duration: 5000 } );
 	}, [] );
 
-	const currentPaymentMethodNotAvailable = ! some( paymentMethods, [
-		'id',
-		currentlyAssignedPaymentMethodId,
-	] );
+	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
+		( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
+	);
 
 	return (
 		<CheckoutProvider
@@ -389,10 +391,9 @@ function CurrentPaymentMethodNotAvailableNotice( { purchase } ) {
 			},
 		} );
 	} else if ( getCurrentPaymentMethodId( purchase.payment ) === 'paypal' ) {
-		const storedPaymentAgreement = find( storedPaymentAgreements, [
-			'stored_details_id',
-			purchase.payment.storedDetailsId,
-		] );
+		const storedPaymentAgreement = storedPaymentAgreements.find(
+			( agreement ) => agreement.stored_details_id === purchase.payment.storedDetailsId
+		);
 		if ( storedPaymentAgreement?.email ) {
 			noticeText = translate(
 				'This purchase is currently billed to your PayPal account (%(emailAddress)s).',
