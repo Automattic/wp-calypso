@@ -5,6 +5,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -19,7 +20,6 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { addItems } from 'calypso/lib/cart/actions';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainsBySiteId,
@@ -32,6 +32,8 @@ import Notice from 'calypso/components/notice';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasTitanMailWithUs, getMaxTitanMailboxCount } from 'calypso/lib/titan';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 
 /**
  * Style dependencies
@@ -42,6 +44,16 @@ class TitanMailQuantitySelection extends React.Component {
 	state = {
 		quantity: 1,
 	};
+
+	isMounted = false;
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
 
 	recordClickEvent = ( eventName ) => {
 		const { recordTracksEvent, selectedDomainName } = this.props;
@@ -86,8 +98,11 @@ class TitanMailQuantitySelection extends React.Component {
 			'calypso_email_management_titan_quantity_selection_continue_button_click'
 		);
 
-		addItems( [ this.getCartItem() ] );
-		page( '/checkout/' + selectedSite.slug );
+		this.props.shoppingCartManager
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( this.getCartItem(), this.props.productsList ),
+			] )
+			.then( () => this.isMounted && page( '/checkout/' + selectedSite.slug ) );
 	};
 
 	onQuantityChange = ( e ) => {
@@ -211,7 +226,8 @@ export default connect(
 			} ),
 			currentRoute: getCurrentRoute( state ),
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
+			productsList: getProductsList( state ),
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( localize( TitanMailQuantitySelection ) );
+)( withShoppingCart( localize( TitanMailQuantitySelection ) ) );
