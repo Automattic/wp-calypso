@@ -92,12 +92,12 @@ class SectionImport extends Component {
 				// After import was started, redirect back to the route without `engine` query arg.
 				// That removes the `engine` prop from this component and doesn't spoil future
 				// rendering when the import is, e.g., cancelled.
-				afterStartImport?.( true );
+				afterStartImport?.();
 			} );
 		} else {
 			// We decided to not start the import despite being requested by the `engine` query arg.
 			// Redirect back to route without the request.
-			afterStartImport?.( false );
+			afterStartImport?.();
 		}
 	} );
 
