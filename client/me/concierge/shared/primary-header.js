@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import ClosureNotice from '../shared/closure-notice';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ExternalLink from 'calypso/components/external-link';
 import { localize } from 'i18n-calypso';
@@ -18,6 +19,18 @@ class PrimaryHeader extends Component {
 
 		return (
 			<Fragment>
+				<ClosureNotice
+					displayAt="2020-12-17 00:00Z"
+					closesAt="2020-12-24 00:00Z"
+					reopensAt="2020-12-26 07:00Z"
+					holidayName="Christmas"
+				/>
+				<ClosureNotice
+					displayAt="2020-12-26 07:00Z"
+					closesAt="2020-12-31 00:00Z"
+					reopensAt="2021-01-02 07:00Z"
+					holidayName="New Year's Day"
+				/>
 				<Card>
 					<img
 						className="shared__info-illustration"
