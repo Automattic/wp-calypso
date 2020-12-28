@@ -182,7 +182,7 @@ class EmailProvidersComparison extends React.Component {
 		const formattedPrice = config.isEnabled( 'titan/phase-2' )
 			? translate( '{{price/}} /user /month', {
 					components: {
-						price: <span>{ formatCurrency( titanMailProduct.cost, currencyCode ) }</span>,
+						price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
 					},
 					comment: '{{price/}} is the formatted price, e.g. $20',
 			  } )
