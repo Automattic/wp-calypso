@@ -115,7 +115,6 @@ $z-layers: (
 		'.editor-featured-image .editor-drawer-well__remove': 20,
 		'.main': 20, //TODO: this doesn't always have a stacking context
 		'.main.calypsoify.is-iframe': 20,
-		'.is-nav-unification .layout__secondary': 21,
 		'.search': 22,
 		'.reader-update-notice': 22,
 		'.editor-ground-control': 22,
@@ -132,6 +131,7 @@ $z-layers: (
 		'.inline-help__mobile-overlay': 175,
 		'.floating-help': 176,
 		'.directly-rtm.is-minimized': 176,
+		'.is-nav-unification .layout__secondary': 176,
 		'.editor-confirmation-sidebar__overlay': 176,
 		'.editor-confirmation-sidebar__sidebar': 177,
 		'.happychat__container.is-open': 177,
