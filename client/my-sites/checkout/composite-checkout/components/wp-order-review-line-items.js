@@ -34,6 +34,7 @@ import {
 } from 'calypso/lib/plans/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -83,6 +84,8 @@ function WPLineItem( {
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
+	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
+
 	// Unless a user in the monthly pricing test, reset the related monthly plan costs
 	if ( ! isMonthlyPricingTest && item.wpcom_meta ) {
 		item.wpcom_meta = {
@@ -114,6 +117,7 @@ function WPLineItem( {
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
+			{ isTitanMail && <TitanMailMeta item={ item } /> }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
@@ -433,6 +437,27 @@ function GSuiteUsersList( { item } ) {
 				);
 			} ) }
 		</>
+	);
+}
+
+function TitanMailMeta( { item } ) {
+	const translate = useTranslate();
+	const quantity = item.wpcom_meta?.extra?.new_quantity ?? 1;
+	const domainName = item.wpcom_meta?.meta;
+	return (
+		<LineItemMeta>
+			{ translate(
+				'%(mailboxes)d new mailbox for %(domainName)s',
+				'%(mailboxes)d new mailboxes for %(domainName)s',
+				{
+					args: {
+						mailboxes: quantity,
+						domainName,
+					},
+					count: quantity,
+				}
+			) }
+		</LineItemMeta>
 	);
 }
 
