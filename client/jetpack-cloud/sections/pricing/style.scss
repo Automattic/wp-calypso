@@ -124,4 +124,16 @@
 			}
 		}
 	}
+
+	// On cloud.jetpack.com, we want to override the primary color, used on
+	// the featured product card, with --studio-purple-50.
+	.jetpack-product-card-i5.is-featured {
+		.jetpack-product-card-i5__header {
+			background-color: var( --studio-purple-50 );
+		}
+
+		.jetpack-product-card-i5__body {
+			border: solid 2px var( --studio-purple-50 );
+		}
+	}
 }
