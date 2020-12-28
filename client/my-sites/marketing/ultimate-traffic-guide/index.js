@@ -271,7 +271,7 @@ const SalesPage = ( { translate } ) => {
 
 	return (
 		<>
-			<Experiment name="traffic_guide_copy_test">
+			<Experiment name="traffic_guide_copy_test_v2">
 				<DefaultVariation>{ defaultVariation() }</DefaultVariation>
 				<Variation name="treatment">{ treatmentVariation() }</Variation>
 				<LoadingVariations>

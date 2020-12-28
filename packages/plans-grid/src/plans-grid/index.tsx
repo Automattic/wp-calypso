@@ -40,6 +40,7 @@ export interface Props {
 	popularBadgeVariation?: PopularBadgeVariation;
 	customTagLines?: CustomTagLinesMap;
 	hidePlansComparison?: boolean;
+	defaultAllPlansExpanded?: boolean;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -57,6 +58,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	popularBadgeVariation = 'ON_TOP',
 	customTagLines,
 	hidePlansComparison = false,
+	defaultAllPlansExpanded = false,
 } ) => {
 	const { __ } = useI18n();
 
@@ -90,6 +92,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							disabledPlans={ disabledPlans }
 							locale={ locale }
 							showTaglines={ showPlanTaglines }
+							defaultAllPlansExpanded={ defaultAllPlansExpanded }
 						></PlansTable>
 					) }
 				</div>
