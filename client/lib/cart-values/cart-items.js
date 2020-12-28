@@ -795,6 +795,7 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 export function titanMailMonthly( properties ) {
 	return assign( domainItem( TITAN_MAIL_MONTHLY_SLUG, properties.domain, properties.source ), {
 		quantity: properties.quantity,
+		extra: properties.extra,
 	} );
 }
 

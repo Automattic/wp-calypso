@@ -83,12 +83,13 @@ class TitanMailQuantitySelection extends React.Component {
 	getCartItem = () => {
 		const { selectedDomain } = this.props;
 		let quantity = this.state.quantity;
+		const new_quantity = quantity;
 
 		if ( hasTitanMailWithUs( selectedDomain ) ) {
 			quantity += getMaxTitanMailboxCount( selectedDomain );
 		}
 
-		return titanMailMonthly( { domain: selectedDomain.name, quantity } );
+		return titanMailMonthly( { domain: selectedDomain.name, quantity, extra: { new_quantity } } );
 	};
 
 	handleContinue = () => {
