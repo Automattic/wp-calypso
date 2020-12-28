@@ -67,7 +67,7 @@ class TitanMailQuantitySelection extends React.Component {
 		page(
 			emailManagement(
 				this.props.selectedSite.slug,
-				this.props.selectedDomain?.name,
+				this.props.isSelectedDomainNameValid ? this.props.selectedDomainName : null,
 				this.props.currentRoute
 			)
 		);
@@ -81,15 +81,10 @@ class TitanMailQuantitySelection extends React.Component {
 	};
 
 	getCartItem = () => {
-		const { selectedDomain } = this.props;
-		let quantity = this.state.quantity;
-		const new_quantity = quantity;
-
-		if ( hasTitanMailWithUs( selectedDomain ) ) {
-			quantity += getMaxTitanMailboxCount( selectedDomain );
-		}
-
-		return titanMailMonthly( { domain: selectedDomain.name, quantity, extra: { new_quantity } } );
+		const { maxTitanMailboxCount, selectedDomainName } = this.props;
+		const quantity = this.state.quantity + maxTitanMailboxCount;
+		const new_quantity = this.state.quantity;
+		return titanMailMonthly( { domain: selectedDomainName, quantity, extra: { new_quantity } } );
 	};
 
 	handleContinue = () => {
@@ -182,12 +177,12 @@ class TitanMailQuantitySelection extends React.Component {
 		const {
 			selectedDomainName,
 			selectedSite,
-			selectedDomain,
+			isSelectedDomainNameValid,
 			isLoadingDomains,
 			translate,
 		} = this.props;
 
-		if ( ! isLoadingDomains && ! selectedDomain ) {
+		if ( ! isLoadingDomains && ! isSelectedDomainNameValid ) {
 			this.goToEmail();
 			return null;
 		}
@@ -218,16 +213,20 @@ export default connect(
 		const domains = getDomainsBySiteId( state, siteId );
 		const isLoadingDomains =
 			! hasLoadedSiteDomains( state, siteId ) || isRequestingSiteDomains( state, siteId );
+		const selectedDomain = getSelectedDomain( {
+			domains,
+			selectedDomainName: ownProps.selectedDomainName,
+		} );
 		return {
 			selectedSite,
 			isLoadingDomains,
-			selectedDomain: getSelectedDomain( {
-				domains,
-				selectedDomainName: ownProps.selectedDomainName,
-			} ),
 			currentRoute: getCurrentRoute( state ),
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			productsList: getProductsList( state ),
+			maxTitanMailboxCount: hasTitanMailWithUs( selectedDomain )
+				? getMaxTitanMailboxCount( selectedDomain )
+				: 0,
+			isSelectedDomainNameValid: !! selectedDomain,
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
