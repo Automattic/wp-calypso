@@ -74,13 +74,4 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	popularProductsOffering: {
-		datestamp: '20201217',
-		variations: {
-			dailyProducts: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };
