@@ -34,7 +34,8 @@
 		"gridicons": "^3.3.1",
 		"lodash": "^4.17.15",
 		"prop-types": "^15.7.2",
-		"react-modal": "^3.8.1"
+		"react-modal": "^3.8.1",
+		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
 		"react": "^16.8",

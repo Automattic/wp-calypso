@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import type { ElementType, ComponentProps, ReactNode } from 'react';
 import classnames from 'classnames';
 import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 
@@ -10,7 +11,7 @@ import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
  */
 import './style.scss';
 
-export type TagName< P = any > = React.ElementType< P >; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type TagName< P = any > = ElementType< P >; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 type OwnProps = {
 	className?: string;
@@ -22,9 +23,9 @@ type OwnProps = {
 };
 
 type ElementProps< P, T extends TagName > = P &
-	Omit< React.ComponentProps< T >, 'tagName' | keyof P > & {
+	Omit< ComponentProps< T >, 'tagName' | keyof P > & {
 		tagName?: T | keyof JSX.IntrinsicElements;
-		children?: React.ReactNode;
+		children?: ReactNode;
 	};
 
 export type Props< T extends TagName > = ElementProps< OwnProps, T >;
@@ -79,4 +80,4 @@ const Card = < T extends TagName = 'div' >( props: Props< T > ): JSX.Element => 
 	);
 };
 
-export default React.memo( Card ) as typeof Card;
+export default Card;

@@ -1,60 +1,32 @@
 /**
  * Internal dependencies
  */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
 import jetpackBackup from './images/jetpack-backup.svg';
-// @ts-ignore
 import jetpackBackupV2 from './images/jetpack-backup-v2.svg';
-// @ts-ignore
 import jetpackBackupV2Darkblue from './images/jetpack-backup-v2-darkblue.svg';
-// @ts-ignore
 import jetpackScan from './images/jetpack-scan.svg';
-// @ts-ignore
 import jetpackScanV2 from './images/jetpack-scan-v2.svg';
-// @ts-ignore
 import jetpackScanV2Darkblue from './images/jetpack-scan-v2-darkblue.svg';
-// @ts-ignore
 import jetpackFree from './images/jetpack-free.svg';
-// @ts-ignore
 import jetpackPersonal from './images/jetpack-personal.svg';
-// @ts-ignore
 import jetpackPremium from './images/jetpack-premium.svg';
-// @ts-ignore
 import jetpackProfessional from './images/jetpack-professional.svg';
-// @ts-ignore
 import jetpackCompleteV2 from './images/jetpack-complete-v2.svg';
-// @ts-ignore
 import jetpackCrmV2 from './images/jetpack-crm-v2.svg';
-// @ts-ignore
 import jetpackCrmV2Darkblue from './images/jetpack-crm-v2-darkblue.svg';
-// @ts-ignore
 import jetpackSearch from './images/jetpack-search.svg';
-// @ts-ignore
 import jetpackSearchV2 from './images/jetpack-search-v2.svg';
-// @ts-ignore
 import jetpackSearchV2Darkblue from './images/jetpack-search-v2-darkblue.svg';
-// @ts-ignore
 import jetpackSecurityV2 from './images/jetpack-security-v2.svg';
-// @ts-ignore
 import jetpackAntiSpam from './images/jetpack-anti-spam.svg';
-// @ts-ignore
 import jetpackAntiSpamV2 from './images/jetpack-anti-spam-v2.svg';
-// @ts-ignore
 import jetpackAntiSpamV2Darkblue from './images/jetpack-anti-spam-v2-darkblue.svg';
-// @ts-ignore
 import wpcomBlogger from './images/wpcom-blogger.svg';
-// @ts-ignore
 import wpcomBusiness from './images/wpcom-business.svg';
-// @ts-ignore
 import wpcomEcommerce from './images/wpcom-ecommerce.svg';
-// @ts-ignore
 import wpcomFree from './images/wpcom-free.svg';
-// @ts-ignore
 import wpcomPersonal from './images/wpcom-personal.svg';
-// @ts-ignore
 import wpcomPremium from './images/wpcom-premium.svg';
-/* eslint-enable @typescript-eslint/ban-ts-comment */
 
 export const paths = {
 	'jetpack-scan': jetpackScan,
