@@ -1,25 +1,56 @@
-const defaultGetCacheKey = ( ...args ) => args.join();
+declare const process: {
+	env: {
+		NODE_ENV: unknown;
+	};
+};
 
-const isFunction = ( fn ) => {
+interface GenerateCacheKey< A extends unknown[] > {
+	( ...args: A ): string;
+}
+
+const defaultGetCacheKey: GenerateCacheKey< unknown[] > = ( ...args: unknown[] ): string =>
+	args.join();
+
+const isFunction = ( fn: unknown ): fn is ( ...args: unknown[] ) => unknown => {
 	return fn && typeof fn === 'function';
 };
 
-const isObject = ( o ) => {
+const isObject = ( o: unknown ): o is Record< string, unknown > => {
 	return o && typeof o === 'object';
 };
+
+type WeakMapKey = object; // eslint-disable-line @typescript-eslint/ban-types
+
+interface Options< A extends unknown[] > {
+	/** Custom way to compute the cache key from the `args` list */
+	getCacheKey?: GenerateCacheKey< A >;
+}
+
+interface CachedSelector< S, A extends unknown[], R = unknown > {
+	( state: S, ...args: A ): R;
+	clearCache: () => void;
+}
 
 /**
  * Returns a selector that caches values.
  *
- * @param  {Function} getDependents A Function describing the dependent(s) of the selector.
- *                                    Must return an array which gets passed as the first arg to the selector
- * @param  {Function} selector      A standard selector for calculating cached result
- * @param  {object}   options       Options bag with additional arguments
- * @param  {Function} options.getCacheKey
- *                                  Custom way to compute the cache key from the `args` list
- * @returns {Function}               Cached selector
+ * @param getDependents A Function describing the dependent(s) of the selector.
+ *                      Must return an array which gets passed as the first arg to the selector.
+ * @param selector      A standard selector for calculating cached result.
+ * @param options       Options bag with additional arguments.
+ *
+ * @returns {Function}  Cached selector
  */
-export default function treeSelect( getDependents, selector, options = {} ) {
+export default function treeSelect<
+	State = unknown,
+	Args extends unknown[] = unknown[],
+	Deps extends WeakMapKey[] = any[], // eslint-disable-line @typescript-eslint/no-explicit-any
+	Result = unknown
+>(
+	getDependents: ( state: State, ...args: Args ) => Deps,
+	selector: ( deps: Deps, ...args: Args ) => Result,
+	options: Options< Args > = {}
+): CachedSelector< State, Args, Result > {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( ! isFunction( getDependents ) || ! isFunction( selector ) ) {
 			throw new TypeError(
@@ -32,7 +63,10 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 
 	const { getCacheKey = defaultGetCacheKey } = options;
 
-	const cachedSelector = function ( state, ...args ) {
+	const cachedSelector: CachedSelector< State, Args, Result > = function (
+		state: State,
+		...args: Args
+	) {
 		const dependents = getDependents( state, ...args );
 
 		if ( process.env.NODE_ENV !== 'production' ) {
@@ -44,11 +78,11 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 		// create a dependency tree for caching selector results.
 		// this is beneficial over standard memoization techniques so that we can
 		// garbage collect any values that are based on outdated dependents
-		const leafCache = dependents.reduce( insertDependentKey, cache );
+		const leafCache: Map< string, Result > = dependents.reduce( insertDependentKey, cache );
 
 		const key = getCacheKey( ...args );
 		if ( leafCache.has( key ) ) {
-			return leafCache.get( key );
+			return leafCache.get( key ) as Result;
 		}
 
 		const value = selector( dependents, ...args );
@@ -76,7 +110,8 @@ const NULLISH_KEY = {};
  * Note: Inserts WeakMaps except for the last map which will be a regular Map.
  * The last map is a regular one because the the key for the last map is the string results of args.join().
  */
-function insertDependentKey( map, key, currentIndex, arr ) {
+function insertDependentKey( map: any, key: unknown, currentIndex: number, arr: unknown[] ) {
+	// eslint-disable-line @typescript-eslint/no-explicit-any
 	if ( key != null && Object( key ) !== key ) {
 		throw new TypeError( 'key must be an object, `null`, or `undefined`' );
 	}

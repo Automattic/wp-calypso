@@ -28,6 +28,7 @@
 		{ "path": "./react-i18n" },
 		{ "path": "./search" },
 		{ "path": "./shopping-cart" },
+		{ "path": "./tree-select" },
 		{ "path": "./wpcom-checkout" }
 	]
 }
