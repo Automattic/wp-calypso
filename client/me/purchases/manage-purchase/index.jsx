@@ -40,7 +40,11 @@ import {
 	purchaseType,
 	getName,
 } from 'calypso/lib/purchases';
-import { canEditPaymentDetails, getChangePaymentMethodPath } from '../utils';
+import {
+	canEditPaymentDetails,
+	getAddNewPaymentMethodPath,
+	getChangePaymentMethodPath,
+} from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -110,7 +114,7 @@ import './style.scss';
 class ManagePurchase extends Component {
 	static propTypes = {
 		cardTitle: PropTypes.string,
-		getAddPaymentMethodUrlFor: PropTypes.func,
+		getAddNewPaymentMethodUrlFor: PropTypes.func,
 		getCancelPurchaseUrlFor: PropTypes.func,
 		getChangePaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
@@ -134,7 +138,7 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
-		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
+		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
 		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
@@ -669,7 +673,7 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 			getManagePurchaseUrlFor,
-			getAddPaymentMethodUrlFor,
+			getAddNewPaymentMethodUrlFor,
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
@@ -720,7 +724,7 @@ class ManagePurchase extends Component {
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					/>
 				) }
 				<AsyncLoad

@@ -1,7 +1,14 @@
 /**
  * Internal dependencies
  */
-import { addCardDetails, editCardDetails, addPaymentMethod, changePaymentMethod } from './paths';
+import {
+	addCardDetails,
+	editCardDetails,
+	addCreditCard,
+	addPaymentMethod,
+	changePaymentMethod,
+	addNewPaymentMethod,
+} from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -44,4 +51,13 @@ function getChangePaymentMethodPath( siteSlug, purchase ) {
 	return addCardDetails( siteSlug, purchase.id );
 }
 
-export { canEditPaymentDetails, getChangePaymentMethodPath, isDataLoading };
+function getAddNewPaymentMethodPath() {
+	return isEnabled( 'purchases/new-payment-methods' ) ? addNewPaymentMethod : addCreditCard;
+}
+
+export {
+	canEditPaymentDetails,
+	getChangePaymentMethodPath,
+	getAddNewPaymentMethodPath,
+	isDataLoading,
+};
