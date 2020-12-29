@@ -248,6 +248,7 @@ $accent-blue: #117ac9;
 	color: var( --studio-blue-40 );
 	// keep TLDs intact as they're had to read if they were across-lines
 	word-break: keep-all;
+	margin-right: 5px;
 
 	.domain-picker__suggestion-item.is-unavailable & {
 		color: var( --studio-gray-40 );
