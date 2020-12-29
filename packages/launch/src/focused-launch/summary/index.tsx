@@ -296,7 +296,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		if (
 			selectedPaidPlan &&
 			defaultPaidPlan &&
-			selectedPaidPlan?.storeSlug !== defaultPaidPlan?.storeSlug
+			selectedPaidPlan.storeSlug !== defaultPaidPlan.storeSlug
 		) {
 			setNonDefaultPaidPlan( selectedPaidPlan );
 		}
