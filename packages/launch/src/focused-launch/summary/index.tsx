@@ -302,11 +302,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { sitePlan } = useSite();
 
-	const allAvailablePlans: ( Plan | undefined )[] = [
-		defaultPaidPlan,
-		...( nonDefaultPaidPlan ? [ nonDefaultPaidPlan ] : [] ),
-		defaultFreePlan,
-	];
+	const allAvailablePlans: ( Plan | undefined )[] = nonDefaultPaidPlan
+		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
+		: [ defaultPaidPlan, defaultFreePlan ];
 
 	return (
 		<SummaryStep
