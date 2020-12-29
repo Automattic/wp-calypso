@@ -85,6 +85,7 @@ import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 import { isP2PlusPlan } from 'calypso/lib/plans';
@@ -661,6 +662,8 @@ export class MySitesSidebar extends Component {
 
 	store() {
 		const { translate, site, siteSuffix, canUserUseStore } = this.props;
+		const isCalypsoStoreDeprecatedOrRemoved =
+			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 
 		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
@@ -686,7 +689,14 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackStoreClick }
 				materialIcon="shopping_cart"
 				forceInternalLink
-			/>
+			>
+				{ isCalypsoStoreDeprecatedOrRemoved && isBusiness( site.plan ) && (
+					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
+						<div>{ 'Store is moving to WooCommerce' }.</div>
+						<ExternalLink href="https://wordpress.com/support/store/">{ 'More' }</ExternalLink>
+					</InfoPopover>
+				) }
+			</SidebarItem>
 		);
 	}
 
