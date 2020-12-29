@@ -34,6 +34,7 @@ import {
 } from 'calypso/state/invites/selectors';
 import { deleteInvites } from 'calypso/state/invites/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 
 /**
  * Style dependencies
@@ -70,7 +71,7 @@ class PeopleInvites extends React.PureComponent {
 	};
 
 	render() {
-		const { site, canViewPeople, isJetpack, isPrivate, translate } = this.props;
+		const { site, canViewPeople, isComingSoon, isJetpack, isPrivate, translate } = this.props;
 		const siteId = site && site.ID;
 
 		if ( siteId && ! canViewPeople ) {
@@ -101,6 +102,7 @@ class PeopleInvites extends React.PureComponent {
 					site={ site }
 					isJetpack={ isJetpack }
 					isPrivate={ isPrivate }
+					isComingSoon={ isComingSoon }
 				/>
 				{ this.renderInvitesList() }
 			</Main>
@@ -273,6 +275,7 @@ export default connect(
 			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
 			deleting: isDeletingAnyInvite( state, siteId ),
 			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+			isComingSoon: isSiteComingSoon( state, siteId ),
 		};
 	},
 	{ deleteInvites }
