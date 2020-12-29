@@ -10,6 +10,9 @@ import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import type { CTAVariation, PopularBadgeVariation } from './types';
 import { useSelect } from '@wordpress/data';
+import { Icon, check } from '@wordpress/icons';
+
+const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 /**
  * Internal dependencies
@@ -78,6 +81,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	disabledLabel,
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
+	isSelected,
 } ) => {
 	const { __ } = useI18n();
 
@@ -186,7 +190,10 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								</Button>
 							) : (
 								<Button
-									className="plan-item__select-button full-width"
+									className={ classNames( 'plan-item__select-button full-width', {
+										'is-selected': isSelected,
+										'is-popular': isPopular,
+									} ) }
 									onClick={ () => {
 										onSelect( planProduct?.productId );
 									} }
@@ -194,10 +201,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									disabled={ !! disabledLabel }
 								>
 									<span>
-										{
-											/* translators: %s is a WordPress.com plan name (eg: Free, Personal) */
-											disabledLabel ?? sprintf( __( 'Select %s', __i18n_text_domain__ ), name )
-										}
+										{ isSelected ? TickIcon : '' }
+										{ isSelected
+											? sprintf( __( 'Current Selection', __i18n_text_domain__ ), name )
+											: /* translators: %s is a WordPress.com plan name (eg: Free, Personal) */
+											  sprintf( __( 'Select %s', __i18n_text_domain__ ), name ) }
 									</span>
 								</Button>
 							) }

@@ -234,10 +234,30 @@
 	// stylelint-disable-next-line scales/radii
 	border-radius: 4px;
 	margin-top: 15px;
-	border: 1px solid var( --studio-gray-5 );
+	
+	&:not( .is-popular ) {
+		border: 1px solid var( --studio-gray-5 );
+	}
+
+	&.is-selected {
+		// popular selected items don't need a blue border
+		&:not( .is-popular ) {
+			border: 1px solid var( --studio-blue-40 );
+			color: var( --studio-blue-40 );
+		}
+
+		svg {
+			fill: currentColor;
+			stroke: currentColor;
+			// makes it look more vertically centered
+			transform: translateY( -1px );
+			vertical-align: middle;
+			margin-right: 4px;
+		}
+	}
 }
 
-.plan-item__select-button.components-button.is-primary {
+.plan-item__select-button.components-button.is-primary:not( .full-width ) {
 	border: 0;
 
 	svg {
