@@ -58,10 +58,7 @@ import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-j
 import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
 import config from 'calypso/config';
-import {
-	getJetpackCROActiveVersion,
-	getPopularProductsOfferingVariation,
-} from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
@@ -557,24 +554,16 @@ export function buildCardFeaturesFromItem(
 	options?: Record< string, unknown >
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
-		const features = item.getPlanCardFeatures?.( getPopularProductsOfferingVariation() );
+		const features = item.getPlanCardFeatures?.();
 
 		if ( features ) {
-			return buildCardFeaturesFromFeatureKeys(
-				features,
-				options,
-				getPopularProductsOfferingVariation()
-			);
+			return buildCardFeaturesFromFeatureKeys( features, options );
 		}
 	} else if ( isFunction( item.getFeatures ) ) {
-		const features = item.getFeatures( getPopularProductsOfferingVariation() );
+		const features = item.getFeatures();
 
 		if ( features ) {
-			return buildCardFeaturesFromFeatureKeys(
-				features,
-				options,
-				getPopularProductsOfferingVariation()
-			);
+			return buildCardFeaturesFromFeatureKeys( features, options );
 		}
 	}
 
