@@ -23,7 +23,7 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 	}
 
 	context.store.dispatch( hideMasterbar() );
-	context.header = <Header />;
+	context.header = <Header urlQueryArgs={ urlQueryArgs } />;
 	context.footer = <JetpackComFooter />;
 	next();
 }
