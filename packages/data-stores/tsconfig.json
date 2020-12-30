@@ -34,5 +34,6 @@
 		"composite": true
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/test/*" ]
+	"exclude": [ "**/docs/*", "**/test/*" ],
+	"references": [ { "path": "../wpcom-proxy-request" } ]
 }
