@@ -246,7 +246,7 @@ $accent-blue: #117ac9;
 
 .domain-picker__domain-tld {
 	color: var( --studio-blue-40 );
-	// keep TLDs intact as they're had to read if they were across-lines
+	// keep TLDs intact as they're hard to read if they were across-lines
 	word-break: keep-all;
 	margin-right: 5px;
 
