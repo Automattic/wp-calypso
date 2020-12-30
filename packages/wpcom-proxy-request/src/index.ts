@@ -314,11 +314,9 @@ function patchFileObjects( formData: [ unknown, unknown ][] ) {
 }
 
 /**
- * Injects the proxy <iframe> instance in the <body> of the current
- * HTML page.
+ * Injects or reloads the proxy <iframe> instance in the <body> of the current HTML page.
  */
-
-function install() {
+function install(): void {
 	debug( 'install()' );
 	if ( iframe ) {
 		uninstall();
@@ -338,12 +336,7 @@ function install() {
 	document.body.appendChild( iframe );
 }
 
-/**
- * Reloads the proxy iframe.
- */
-export function reloadProxy(): void {
-	install();
-}
+export { install as reloadProxy };
 
 /**
  * Removes the <iframe> proxy instance from the <body> of the page.
