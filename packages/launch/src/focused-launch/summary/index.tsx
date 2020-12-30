@@ -302,9 +302,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { sitePlan } = useSite();
 
-	const allAvailablePlans = [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ].filter(
-		Boolean
-	) as Plan[];
+	const allAvailablePlans: ( Plan | undefined )[] = nonDefaultPaidPlan
+		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
+		: [ defaultPaidPlan, defaultFreePlan ];
 
 	return (
 		<SummaryStep
@@ -373,42 +373,46 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							</span>
 						</p>
 						<div>
-							{ allAvailablePlans.map( ( plan ) => (
-								<FocusedLaunchSummaryItem
-									key={ plan.storeSlug }
-									isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-									onClick={ () => setPlan( plan ) }
-									isSelected={ isPlanSelected( plan ) }
-									readOnly={ plan.isFree && ( hasPaidDomain || selectedPaidDomain ) }
-								>
-									<LeadingContentSide
-										label={
-											/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
-											sprintf( __( '%s Plan', __i18n_text_domain__ ), plan.title ?? '' )
-										}
-										badgeText={ plan.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
-									/>
-									{ plan.isFree ? (
-										<TrailingContentSide
-											nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
-										>
-											{ hasPaidDomain || selectedPaidDomain
-												? __( 'Not available with your domain selection', __i18n_text_domain__ )
-												: __( 'Free', __i18n_text_domain__ ) }
-										</TrailingContentSide>
-									) : (
-										<TrailingContentSide nodeType="PRICE">
-											<span>{ planPrices[ plan.storeSlug ] }</span>
-											<span>
-												{
-													// translators: /mo is short for "per-month"
-													__( '/mo', __i18n_text_domain__ )
-												}
-											</span>
-										</TrailingContentSide>
-									) }
-								</FocusedLaunchSummaryItem>
-							) ) }
+							{ allAvailablePlans.map( ( plan, index ) =>
+								! plan ? (
+									<FocusedLaunchSummaryItem key={ index } isLoading />
+								) : (
+									<FocusedLaunchSummaryItem
+										key={ plan.storeSlug }
+										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
+										onClick={ () => setPlan( plan ) }
+										isSelected={ isPlanSelected( plan ) }
+										readOnly={ plan.isFree && ( hasPaidDomain || selectedPaidDomain ) }
+									>
+										<LeadingContentSide
+											label={
+												/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
+												sprintf( __( '%s Plan', __i18n_text_domain__ ), plan.title ?? '' )
+											}
+											badgeText={ plan.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
+										/>
+										{ plan.isFree ? (
+											<TrailingContentSide
+												nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
+											>
+												{ hasPaidDomain || selectedPaidDomain
+													? __( 'Not available with your domain selection', __i18n_text_domain__ )
+													: __( 'Free', __i18n_text_domain__ ) }
+											</TrailingContentSide>
+										) : (
+											<TrailingContentSide nodeType="PRICE">
+												<span>{ planPrices[ plan.storeSlug ] }</span>
+												<span>
+													{
+														// translators: /mo is short for "per-month"
+														__( '/mo', __i18n_text_domain__ )
+													}
+												</span>
+											</TrailingContentSide>
+										) }
+									</FocusedLaunchSummaryItem>
+								)
+							) }
 						</div>
 						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all plans', __i18n_text_domain__ ) }
