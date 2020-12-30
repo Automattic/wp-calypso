@@ -27,6 +27,10 @@ import { FormStatus } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
+export const RadioButtons = styled.div`
+	margin-bottom: 16px;
+`;
+
 export default function CheckoutPaymentMethods( {
 	summary,
 	isComplete,
@@ -35,7 +39,7 @@ export default function CheckoutPaymentMethods( {
 	summary?: boolean;
 	isComplete: boolean;
 	className?: string;
-} ) {
+} ): JSX.Element | null {
 	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const onError = useCallback(
@@ -119,11 +123,11 @@ CheckoutPaymentMethods.propTypes = {
 	className: PropTypes.string,
 };
 
-export function CheckoutPaymentMethodsTitle() {
+export function CheckoutPaymentMethodsTitle(): JSX.Element {
 	const { __ } = useI18n();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	return ! isActive && isComplete ? __( 'Payment method' ) : __( 'Pick a payment method' );
+	return <>{ ! isActive && isComplete ? __( 'Payment method' ) : __( 'Pick a payment method' ) }</>;
 }
 
 function PaymentMethod( {
@@ -178,7 +182,3 @@ interface PaymentMethodProps {
 	inactiveContent?: React.ReactNode;
 	summary?: boolean;
 }
-
-export const RadioButtons = styled.div`
-	margin-bottom: 16px;
-`;

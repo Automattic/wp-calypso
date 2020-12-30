@@ -9,6 +9,26 @@ import { ReactElement } from 'react';
  */
 import { Theme } from './lib/theme';
 
+export interface CheckoutStepProps {
+	stepId: string;
+	titleContent: React.ReactNode;
+	isCompleteCallback: () => boolean | Promise< boolean >;
+	activeStepContent?: React.ReactNode;
+	completeStepContent?: React.ReactNode;
+	className?: string;
+	editButtonText?: string;
+	editButtonAriaLabel?: string;
+	nextStepButtonText?: string;
+	nextStepButtonAriaLabel?: string;
+	validatingButtonText?: string;
+	validatingButtonAriaLabel?: string;
+}
+
+export interface OrderSummaryData {
+	className: string;
+	summaryContent: React.ReactNode;
+}
+
 export interface PaymentMethod {
 	id: string;
 	label: React.ReactNode;
