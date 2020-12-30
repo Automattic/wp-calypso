@@ -293,7 +293,11 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
 
 	React.useEffect( () => {
-		if ( selectedPaidPlan && selectedPaidPlan?.storeSlug !== defaultPaidPlan?.storeSlug ) {
+		if (
+			selectedPaidPlan &&
+			defaultPaidPlan &&
+			selectedPaidPlan.storeSlug !== defaultPaidPlan.storeSlug
+		) {
 			setNonDefaultPaidPlan( selectedPaidPlan );
 		}
 	}, [ selectedPaidPlan, defaultPaidPlan, nonDefaultPaidPlan ] );
