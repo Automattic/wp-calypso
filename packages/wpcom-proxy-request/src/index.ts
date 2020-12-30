@@ -266,9 +266,6 @@ function isFile( v: unknown ): v is File {
  * Find a `File` object in a form data value. It can be either the value itself, or
  * in a `fileContents` property of the value.
  */
-function getFileValue( v: File ): File;
-function getFileValue( v: { fileContents?: File } ): File;
-function getFileValue( v: any /* eslint-disable-line @typescript-eslint/no-explicit-any */ ): null;
 function getFileValue( v: unknown ): File | null {
 	if ( isFile( v ) ) {
 		return v;
@@ -293,7 +290,7 @@ function getFileValue( v: unknown ): File | null {
  *
  * @param formData Form data to patch
  */
-function patchFileObjects( formData ) {
+function patchFileObjects( formData: [ unknown, unknown ][] ) {
 	// There are several landmines to avoid when making file uploads work on all browsers:
 	// - the `new File()` constructor trick breaks file uploads on Safari 10 in a way that's
 	//   impossible to detect: it will send empty files in the multipart/form-data body.
