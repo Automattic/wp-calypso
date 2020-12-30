@@ -199,14 +199,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 	}, [ initialDomainSearch, showSearchField ] );
 
+	const suggestionRefs = React.useRef< ( HTMLButtonElement | null )[] >( [] );
 	useEffect( () => {
-		// when people unfold for more results, focus on the first item after the fold
-		// this is not the cleanest solution, but still cleaner than useRef spaghetti
 		if ( isExpanded ) {
-			const focusableElements = document.querySelectorAll(
-				'.domain-picker__suggestion-select-button, button.domain-picker__suggestion-item'
-			);
-			( focusableElements[ quantity ] as HTMLButtonElement )?.focus?.();
+			suggestionRefs.current[ quantity ]?.focus?.();
 		}
 	}, [ isExpanded, quantity ] );
 
@@ -356,6 +352,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 													: true;
 												return (
 													<SuggestionItem
+														ref={ ( ref ) => {
+															suggestionRefs.current[ index ] = ref;
+														} }
 														key={ suggestion.domain_name }
 														isUnavailable={ ! isAvailable }
 														domain={ suggestion.domain_name }
