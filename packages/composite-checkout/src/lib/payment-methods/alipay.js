@@ -190,7 +190,7 @@ function AlipayLabel() {
 function AlipayLogo() {
 	return (
 		<svg width="58" height="16" viewBox="0 0 58 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<g clip-path="url(#alipay-logo-clip)">
+			<g clipPath="url(#alipay-logo-clip)">
 				<path
 					d="M33.3289 4.27654C33.9371 4.27654 34.4302 3.83697 34.4302 3.29473C34.4302 2.7525 33.9371 2.31293 33.3289 2.31293C32.7207 2.31293 32.2276 2.7525 32.2276 3.29473C32.2276 3.83697 32.7207 4.27654 33.3289 4.27654Z"
 					fill="#009FE3"
