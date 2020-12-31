@@ -36,7 +36,7 @@ class TitanControlPanelLoginCard extends React.Component {
 					this.props.errorNotice(
 						error ?? this.props.translate( 'An unknown error occurred. Please try again later.' )
 					);
-				} else {
+				} else if ( this._mounted ) {
 					this.setState( { iframeURL } );
 				}
 			}
