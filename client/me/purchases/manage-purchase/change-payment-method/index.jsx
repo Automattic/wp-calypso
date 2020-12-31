@@ -213,6 +213,8 @@ function getInitiallySelectedPaymentMethodId( currentlyAssignedPaymentMethodId, 
 const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
+const wpcomCreatePayPalAgreement = ( subscriptionId, successUrl, cancelUrl, fn ) =>
+	wpcom.createPayPalAgreement( subscriptionId, successUrl, cancelUrl, fn );
 
 function ChangePaymentMethodList( {
 	currentlyAssignedPaymentMethodId,
@@ -253,7 +255,7 @@ function ChangePaymentMethodList( {
 			showSuccessMessage={ showSuccessMessage }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
-				paypal: assignPayPalProcessor,
+				paypal: () => assignPayPalProcessor( purchase ),
 				'existing-card': ( data ) => assignExistingCardProcessor( purchase, data ),
 				card: ( data ) =>
 					assignNewCardProcessor(
@@ -298,8 +300,13 @@ async function assignExistingCardProcessor( purchase, { storedDetailsId } ) {
 	} );
 }
 
-async function assignPayPalProcessor() {
-	// TODO: create a new paypal billing agreement
+async function assignPayPalProcessor( purchase ) {
+	return wpcomCreatePayPalAgreement( purchase.id, window.location.href, window.location.href ).then(
+		( data ) => {
+			// @todo Implement this better; right now it pops an error message on the screen before redirecting.
+			window.location.href = data;
+		}
+	);
 }
 
 async function assignNewCardProcessor(
