@@ -135,13 +135,13 @@ class TitanControlPanelLoginCard extends React.Component {
 				<CompactCard>
 					{ this.state.iframeURL ? (
 						<iframe
-							title="Titan Control Panel"
+							title={ translate( 'Email Control Panel' ) }
 							src={ this.state.iframeURL }
 							width="100%"
 							height="650px"
 						/>
 					) : (
-						<div>Loading the control panel...</div>
+						<div>{ translate( 'Loading the control panel…' ) }</div>
 					) }
 				</CompactCard>
 			</div>
