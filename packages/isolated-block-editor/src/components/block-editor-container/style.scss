@@ -1,0 +1,133 @@
+@import '@wordpress/base-styles/_mixins';
+@import '@wordpress/base-styles/_variables';
+
+.iso-editor {
+	// Add some bottom space when an error occurs
+	.editor-error-boundary {
+		margin-bottom: 60px;
+		box-shadow: none;
+		border: none;
+	}
+
+	// This hides the 'manage all reusable blocks' link in the reusable blocks inserter
+	.block-editor-inserter__manage-reusable-blocks-container {
+		display: none;
+	}
+
+	.block-editor-writing-flow {
+		// Requested by mtias to add extra top and bottom padding
+		padding: 10px 0;
+
+		ul {
+			list-style-type: disc;
+		}
+	}
+
+	// This doesn't seem right, but list elements in the editor don't have any margins
+	.block-editor-writing-flow [data-type='core/list'] li {
+		margin-left: 20px;
+	}
+
+	// These are default editor styles
+	.wp-block {
+		// Remove the Gutenberg fixed width so that our content fills P2
+		max-width: none;
+
+		// TODO: the default padding/margin of the block editor content are not set properly
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.wp-block[data-align='wide'] {
+		max-width: 1100px;
+	}
+
+	.wp-block[data-align='full'] {
+		max-width: none;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	iframe {
+		width: 100%;
+	}
+
+	.components-navigate-regions {
+		height: 100%;
+	}
+
+	// Styles the placeholder block the same as a standard paragraph block
+	.block-editor-block-list__layout:first-of-type {
+		.block-editor-default-block-appender {
+			margin-left: 0;
+		}
+
+		.block-editor-default-block-appender__content {
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+	}
+
+	.edit-post-text-editor {
+		padding-top: 0;
+	}
+
+	.edit-post-text-editor__body {
+		max-width: none;
+		margin-top: 32px;
+		margin-bottom: 32px;
+		padding-top: 0;
+
+		textarea {
+			padding: 15px;
+		}
+	}
+
+	.components-resizable-box__handle::before {
+		box-sizing: border-box;
+	}
+
+	// Prevent problems with themes overriding Gutenberg UI
+	.components-popover__content button:focus,
+	.components-popover__content button:hover {
+		text-decoration: none;
+	}
+
+	.components-popover__content button {
+		font-weight: normal;
+		text-transform: none;
+		font-family: Arial;
+
+		// Some themes can set a button style, which we don't want
+		&:active,
+		&:focus,
+		&:hover {
+			background-color: transparent;
+			background-image: none;
+		}
+	}
+
+	// Some themes have lines above headings - Twenty Nineteen
+	.components-popover__content h1:before, .components-popover__content h2:before {
+		content: none;
+		display: unset;
+		height: unset;
+		margin: unset;
+		width: unset;
+		background: unset;
+	}
+
+	.components-popover__content .block-editor-inserter__menu .components-tab-panel__tab-content button {
+		font-size: $editor-font-size;
+	}
+
+	// Prevents any theme CSS interfering with the textarea. e.g TwentyTwelve
+	.block-editor-default-block-appender textarea {
+		border: none !important;
+		border-radius: unset !important;
+		box-shadow: none !important;
+	}
+}
