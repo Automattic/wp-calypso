@@ -66,7 +66,11 @@ export default function useStoredCards(
 function storedCardsReducer( state: StoredCardState, action: StoredCardAction ) {
 	switch ( action.type ) {
 		case 'FETCH_END':
-			return { ...state, storedCards: action.payload, isLoading: false };
+			// The endpoint may have returned a non-array without actually failing,
+			// so we need to ensure that storedCards is actually an array here.
+			// eslint-disable-next-line no-case-declarations
+			const storedCards = Array.isArray( action.payload ) ? action.payload : [];
+			return { ...state, storedCards, isLoading: false };
 		case 'FETCH_ERROR':
 			return { ...state, storedCards: [], error: action.payload, isLoading: false };
 		default:
