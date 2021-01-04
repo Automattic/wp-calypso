@@ -121,6 +121,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					'is-free': isFree,
 					'is-selected': selected,
 					'is-unavailable': isUnavailable,
+					'is-mobile': isMobile,
 				},
 				`type-${ type }`
 			) }
@@ -214,12 +215,13 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				( isLoading ? (
 					<Spinner />
 				) : (
-					<div className="domain-picker__action">
+					<div className={ classnames( 'domain-picker__action', { 'is-mobile': isMobile } ) }>
 						<Button
 							isSecondary
 							aria-labelledby={ labelId }
 							className={ classnames( 'domain-picker__suggestion-select-button', {
 								'is-selected': selected && ! isUnavailable,
+								'is-mobile': isMobile,
 							} ) }
 							disabled={ isUnavailable }
 							onClick={ onDomainSelect }

@@ -91,6 +91,11 @@ $accent-blue: #117ac9;
 	text-align: left;
 	cursor: pointer;
 
+	&.is-mobile {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
 	&.type-individual-item {
 		min-height: 64px;
 		border-width: 2px;
@@ -451,5 +456,16 @@ $accent-blue: #117ac9;
 	&.is-selected {
 		box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-10 );
 		color: var( --wp-admin-theme-color-darker-10 );
+	}
+
+	&.is-mobile {
+		width: 100%;
+	}
+}
+
+.domain-picker__action {
+	&.is-mobile {
+		margin-top: rem( 16px );
+		width: 100%;
 	}
 }
