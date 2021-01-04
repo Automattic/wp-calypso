@@ -10,6 +10,7 @@ import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
+	makeRedirectResponse,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
@@ -303,8 +304,7 @@ async function assignExistingCardProcessor( purchase, { storedDetailsId } ) {
 async function assignPayPalProcessor( purchase ) {
 	return wpcomCreatePayPalAgreement( purchase.id, window.location.href, window.location.href ).then(
 		( data ) => {
-			// @todo Implement this better; right now it pops an error message on the screen before redirecting.
-			window.location.href = data;
+			return makeRedirectResponse( data );
 		}
 	);
 }
