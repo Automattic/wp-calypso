@@ -4,17 +4,6 @@
 const state = require( 'calypso/desktop/lib/state' );
 const handler = require( 'wpcom-xhr-request' );
 
-const promiseTimeout = function ( ms, promise ) {
-	const timeout = new Promise( ( _, reject ) => {
-		const id = setTimeout( () => {
-			clearTimeout( id );
-			reject( `Request timed out in ${ ms } ms` );
-		}, ms );
-	} );
-
-	return Promise.race( [ promise, timeout ] );
-};
-
 async function fetchNote( noteId ) {
 	return new Promise( ( resolve, reject ) => {
 		handler(
@@ -66,7 +55,6 @@ async function markReadStatus( noteId, isRead ) {
 }
 
 module.exports = {
-	// use more forgiving timeouts for users on slower connections
-	fetchNote: ( noteId ) => promiseTimeout( 2000, fetchNote( noteId ) ),
-	markReadStatus: ( noteId, isRead ) => promiseTimeout( 2000, markReadStatus( noteId, isRead ) ), // response time of this endpoint is very slow!
+	fetchNote: ( noteId ) => fetchNote( noteId ),
+	markReadStatus: ( noteId, isRead ) => markReadStatus( noteId, isRead ),
 };
