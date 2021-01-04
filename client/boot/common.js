@@ -446,7 +446,7 @@ const boot = ( currentUser, registerRoutes ) => {
 	} );
 };
 
-function waitForCookieAuth( user ) {
+function waitForDesktopCookieAuth( user ) {
 	const timeoutMs = 1500;
 	const loggedIn = user.get() !== false;
 
@@ -496,7 +496,7 @@ export const bootApp = async ( appName, registerRoutes ) => {
 	const user = userFactory();
 	await user.initialize();
 	if ( config.isEnabled( 'desktop' ) ) {
-		await waitForCookieAuth( user );
+		await waitForDesktopCookieAuth( user );
 	}
 	debug( `Starting ${ appName }. Let's do this.` );
 	boot( user, registerRoutes );
