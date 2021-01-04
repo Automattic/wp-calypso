@@ -72,7 +72,7 @@ const prefixLocalizedUrlPath = (
 	return url;
 };
 
-type LinkLocalizer = ( url: URL, localeSlug: string ) => URL;
+type LinkLocalizer = ( url: URL, localeSlug: string, isLoggedIn: boolean ) => URL;
 
 interface UrlLocalizationMapping {
 	[ key: string ]: LinkLocalizer;
@@ -88,7 +88,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
-	'wordpress.com/help/contact/': ( url: URL, localeSlug: Locale, isLoggedIn?: bool ) => {
+	'wordpress.com/help/contact/': ( url: URL, localeSlug: Locale, isLoggedIn?: boolean ) => {
 		if ( isLoggedIn ) {
 			return url;
 		}
@@ -98,7 +98,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 };
 
-export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn?: bool ): string {
+export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn?: boolean ): string {
 	const loggedIn = typeof isLoggedIn === 'undefined' ? true : !! isLoggedIn;
 	let url;
 	try {
@@ -151,13 +151,13 @@ export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn?: bool 
 export function useLocalizeUrl(): (
 	fullUrl: string,
 	locale?: Locale,
-	isLoggedIn?: bool
+	isLoggedIn?: boolean
 ) => string {
 	const loggedIn = typeof isLoggedIn === 'undefined' ? true : !! isLoggedIn;
 	const providerLocale = useLocale();
 
 	return useCallback(
-		( fullUrl: string, locale?: Locale, isLoggedIn?: bool ) => {
+		( fullUrl: string, locale?: Locale, isLoggedIn?: boolean ) => {
 			const loggedIn = typeof isLoggedIn === 'undefined' ? true : !! isLoggedIn;
 			if ( locale ) {
 				return localizeUrl( fullUrl, locale, loggedIn );
