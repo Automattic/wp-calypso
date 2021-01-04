@@ -114,7 +114,6 @@ $font-size: rem( 14px );
 
 		.sidebar__expandable-content {
 			background: var( --color-sidebar-submenu-background );
-			box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
 			padding: 7px 0 8px;
 
 			.sidebar__menu-link {
@@ -503,6 +502,7 @@ $font-size: rem( 14px );
 				position: absolute;
 				left: var( --sidebar-width-max );
 				width: 160px;
+				box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
 
 				.sidebar__menu-link:hover {
 					font-weight: normal;
