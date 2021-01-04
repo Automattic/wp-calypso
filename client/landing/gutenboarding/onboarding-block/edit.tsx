@@ -11,7 +11,15 @@ import type { BlockEditProps } from '@wordpress/blocks';
  */
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
-import { Step, useIsAnchorFm, useCurrentStep, usePath, useNewQueryParam } from '../path';
+import {
+	GutenLocationStateType,
+	Step,
+	StepType,
+	useIsAnchorFm,
+	useCurrentStep,
+	usePath,
+	useNewQueryParam,
+} from '../path';
 import { usePrevious } from '../hooks/use-previous';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
@@ -40,11 +48,24 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const currentStep = useCurrentStep();
 	const previousStep = usePrevious( currentStep );
 
-	const { pathname } = useLocation();
+	const { pathname, state: locationState = {} } = useLocation< GutenLocationStateType >();
 
 	React.useEffect( () => {
 		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
 	}, [ pathname ] );
+
+	// makePathWithState( path: StepType ) - A wrapper around makePath() that preserves location state.
+	// This uses makePath() to generate a string path, then transforms that
+	// string path into an object that also contains the location state.
+	const makePathWithState = React.useCallback(
+		( path: StepType ) => {
+			return {
+				pathname: makePath( path ),
+				state: locationState,
+			};
+		},
+		[ makePath, locationState ]
+	);
 
 	const canUseDesignStep = React.useCallback( (): boolean => {
 		return !! siteTitle;
@@ -58,16 +79,16 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
-	const getLatestStepPath = (): string => {
+	const getLatestStepPath = () => {
 		if ( canUseStyleStep() && ! isAnchorFmSignup ) {
-			return makePath( Step.Plans );
+			return makePathWithState( Step.Plans );
 		}
 
 		if ( canUseDesignStep() ) {
-			return makePath( Step.DesignSelection );
+			return makePathWithState( Step.DesignSelection );
 		}
 
-		return makePath( Step.IntentGathering );
+		return makePathWithState( Step.IntentGathering );
 	};
 
 	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
@@ -87,7 +108,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }
-					to={ makePath( Step.CreateSite ) }
+					to={ makePathWithState( Step.CreateSite ) }
 				/>
 			) }
 			<Switch>
