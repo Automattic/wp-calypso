@@ -88,10 +88,18 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
+	'wordpress.com/help/contact/': ( url: URL, localeSlug: Locale, isLoggedIn?: bool ) => {
+		if ( isLoggedIn ) {
+			return url;
+		}
+		url.pathname = url.pathname.replace( /\/help\//, '/support/' );
+		return prefixLocalizedUrlPath( supportSiteLocales )( url, localeSlug );
+	},
 	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 };
 
-export function localizeUrl( fullUrl: string, locale: Locale ): string {
+export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn?: bool ): string {
+	const loggedIn = typeof isLoggedIn === 'undefined' ? true : !! isLoggedIn;
 	let url;
 	try {
 		url = new URL( String( fullUrl ), INVALID_URL );
@@ -132,7 +140,7 @@ export function localizeUrl( fullUrl: string, locale: Locale ): string {
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
-			return urlLocalizationMapping[ lookup[ i ] ]( url, locale ).href;
+			return urlLocalizationMapping[ lookup[ i ] ]( url, locale, loggedIn ).href;
 		}
 	}
 
@@ -140,17 +148,23 @@ export function localizeUrl( fullUrl: string, locale: Locale ): string {
 	return fullUrl;
 }
 
-export function useLocalizeUrl(): ( fullUrl: string, locale?: Locale ) => string {
+export function useLocalizeUrl(): (
+	fullUrl: string,
+	locale?: Locale,
+	isLoggedIn?: bool
+) => string {
+	const loggedIn = typeof isLoggedIn === 'undefined' ? true : !! isLoggedIn;
 	const providerLocale = useLocale();
 
 	return useCallback(
-		( fullUrl: string, locale?: Locale ) => {
+		( fullUrl: string, locale?: Locale, isLoggedIn?: bool ) => {
+			const loggedIn = typeof isLoggedIn === 'undefined' ? true : !! isLoggedIn;
 			if ( locale ) {
-				return localizeUrl( fullUrl, locale );
+				return localizeUrl( fullUrl, locale, loggedIn );
 			}
-			return localizeUrl( fullUrl, providerLocale );
+			return localizeUrl( fullUrl, providerLocale, loggedIn );
 		},
-		[ providerLocale ]
+		[ providerLocale, loggedIn ]
 	);
 }
 
