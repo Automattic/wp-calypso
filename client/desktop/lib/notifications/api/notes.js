@@ -57,9 +57,9 @@ async function markReadStatus( noteId, isRead ) {
 			},
 			( error ) => {
 				if ( error ) {
-					reject( error );
+					return reject( error );
 				}
-				resolve( null );
+				return resolve( null );
 			}
 		);
 	} );
