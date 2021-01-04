@@ -229,6 +229,13 @@ const buildApp = ( environment ) => {
 							...assets.map( ( asset ) => asset.replace( 'entry-main', 'entry-gutenboarding' ) ),
 						],
 					},
+					'entry-logged-out-editor': {
+						assets: [
+							...assets.map( ( asset ) =>
+								asset.replace( 'entry-main', 'entry-logged-out-editor' )
+							),
+						],
+					},
 				},
 				chunks: [
 					...sections.map( ( section ) => ( {
@@ -1433,6 +1440,15 @@ describe( 'main app', () => {
 			sectionName: 'gutenboarding',
 			sectionGroup: 'gutenboarding',
 			entry: 'entry-gutenboarding',
+		} );
+	} );
+
+	describe( `Route /logged-out-editor`, () => {
+		assertSection( {
+			url: '/logged-out-editor',
+			sectionName: 'logged-out-editor',
+			sectionGroup: 'logged-out-editor',
+			entry: 'entry-logged-out-editor',
 		} );
 	} );
 

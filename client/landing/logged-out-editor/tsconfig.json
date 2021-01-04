@@ -1,0 +1,12 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"composite": false,
+		"noEmit": true,
+		"emitDeclarationOnly": false,
+		"tsBuildInfoFile": null,
+		"importsNotUsedAsValues": "error"
+	},
+	"files": [ "index.tsx" ],
+	"include": []
+}
