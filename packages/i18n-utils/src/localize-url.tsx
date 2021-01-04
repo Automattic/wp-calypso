@@ -147,11 +147,7 @@ export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true 
 	return fullUrl;
 }
 
-export function useLocalizeUrl(): (
-	fullUrl: string,
-	locale?: Locale,
-	isLoggedIn?: boolean
-) => string {
+export function useLocalizeUrl() {
 	const providerLocale = useLocale();
 
 	return useCallback(
