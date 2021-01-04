@@ -461,35 +461,33 @@ function waitForDesktopCookieAuth( user ) {
 		return Promise.race( [ promise, timeout ] );
 	};
 
-	const renderPromise = () => {
-		return new Promise( function ( resolve ) {
-			const sendUserAuth = () => {
-				debug( 'Sending user info to desktop...' );
-				window.electron.send(
-					'user-auth',
-					{ id: user.data.ID, username: user.data.username },
-					getToken()
-				);
-			};
+	const renderPromise = new Promise( ( resolve ) => {
+		const sendUserAuth = () => {
+			debug( 'Sending user info to desktop...' );
+			window.electron.send(
+				'user-auth',
+				{ id: user.data.ID, username: user.data.username },
+				getToken()
+			);
+		};
 
-			if ( loggedIn ) {
-				debug( 'Desktop user logged in, waiting on cookie authentication...' );
-				window.electron.receive( 'cookie-auth-complete', function () {
-					debug( 'Desktop cookies set, rendering main layout...' );
-					resolve();
-				} );
-				// Send user auth and wait on cookie-auth-complete
-				sendUserAuth();
-			} else {
-				debug( 'Desktop user logged out, rendering main layout...' );
-				// Send user auth and resolve immediately
-				sendUserAuth();
+		if ( loggedIn ) {
+			debug( 'Desktop user logged in, waiting on cookie authentication...' );
+			window.electron.receive( 'cookie-auth-complete', function () {
+				debug( 'Desktop cookies set, rendering main layout...' );
 				resolve();
-			}
-		} );
-	};
+			} );
+			// Send user auth and wait on cookie-auth-complete
+			sendUserAuth();
+		} else {
+			debug( 'Desktop user logged out, rendering main layout...' );
+			// Send user auth and resolve immediately
+			sendUserAuth();
+			resolve();
+		}
+	} );
 
-	return promiseTimeout( timeoutMs, renderPromise() );
+	return promiseTimeout( timeoutMs, renderPromise );
 }
 
 export const bootApp = async ( appName, registerRoutes ) => {
