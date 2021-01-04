@@ -8,6 +8,10 @@ import React from 'react';
  */
 import './style.scss';
 
-export default function ScreenReaderText( { children } ) {
+interface Props {
+	children: React.ReactNode;
+}
+
+export default function ScreenReaderText( { children }: Props ): JSX.Element {
 	return <span className="screen-reader-text">{ children }</span>;
 }
