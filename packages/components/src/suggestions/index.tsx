@@ -3,8 +3,7 @@
  */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import { find, groupBy, isEqual, partition, property } from 'lodash';
+import { find, groupBy, isEqual, partition, property, noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -17,23 +16,36 @@ import Item from './item';
  */
 import './style.scss';
 
-class Suggestions extends Component {
-	static propTypes = {
-		query: PropTypes.string,
-		suggestions: PropTypes.arrayOf(
-			PropTypes.shape( {
-				label: PropTypes.string,
-			} )
-		).isRequired,
-		suggest: PropTypes.func.isRequired,
-		railcar: PropTypes.object,
-		title: PropTypes.string,
-		className: PropTypes.string,
-	};
+type Suggestion = { label: string; category?: string };
 
+type CategorizedSuggestions = {
+	category?: string;
+	categoryKey: string;
+	suggestions: ( Suggestion & {
+		originalIndex: number;
+		index: number;
+	} )[];
+}[];
+
+interface Props {
+	query?: string;
+	suggestions: Suggestion[];
+	suggest: ( suggestion: Suggestion, index: number ) => void;
+	railcar: unknown;
+	title: string;
+	className?: string;
+	onSuggestionItemMount?: ( arg: { suggestionIndex: number; index: number } ) => void;
+}
+
+interface State {
+	lastSuggestions: null | Suggestion[];
+	suggestionPosition: number;
+}
+
+class Suggestions extends Component< Props, State > {
 	static defaultProps = {
 		query: '',
-		onSuggestionItemMount: () => {},
+		onSuggestionItemMount: noop,
 	};
 
 	state = {
@@ -41,9 +53,9 @@ class Suggestions extends Component {
 		suggestionPosition: 0,
 	};
 
-	refsCollection = {};
+	refsCollection: Record< string, Item | null > = {};
 
-	static getDerivedStateFromProps( props, state ) {
+	static getDerivedStateFromProps( props: Props, state: State ): State | null {
 		if ( isEqual( props.suggestions, state.lastSuggestions ) ) {
 			return null;
 		}
@@ -54,9 +66,9 @@ class Suggestions extends Component {
 		};
 	}
 
-	getSuggestionsCount = () => this.props.suggestions.length;
+	getSuggestionsCount = (): number => this.props.suggestions.length;
 
-	getOriginalIndexFromPosition = ( index ) =>
+	getOriginalIndexFromPosition = ( index: number ): number =>
 		this.getCategories().reduce( ( foundIndex, category ) => {
 			if ( foundIndex !== -1 ) return foundIndex;
 
@@ -64,35 +76,37 @@ class Suggestions extends Component {
 			return suggestion ? suggestion.originalIndex : -1;
 		}, -1 );
 
-	suggest = ( originalIndex ) =>
+	suggest = ( originalIndex: number ): void =>
 		this.props.suggest( this.props.suggestions[ originalIndex ], originalIndex );
 
-	moveSelectionDown = () => {
+	moveSelectionDown = (): void => {
 		const position = ( this.state.suggestionPosition + 1 ) % this.getSuggestionsCount();
-		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView( {
-			block: 'nearest',
-		} );
+		const element = ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] );
+		if ( element instanceof Element ) {
+			element.scrollIntoView( { block: 'nearest' } );
+		}
 
 		this.changePosition( position );
 	};
 
-	moveSelectionUp = () => {
+	moveSelectionUp = (): void => {
 		const position =
 			( this.state.suggestionPosition - 1 + this.getSuggestionsCount() ) %
 			this.getSuggestionsCount();
-		ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] ).scrollIntoView( {
-			block: 'nearest',
-		} );
+		const element = ReactDOM.findDOMNode( this.refsCollection[ 'suggestion_' + position ] );
+		if ( element instanceof Element ) {
+			element.scrollIntoView( { block: 'nearest' } );
+		}
 
 		this.changePosition( position );
 	};
 
-	changePosition = ( position ) =>
+	changePosition = ( position: number ): void =>
 		this.setState( {
 			suggestionPosition: position,
 		} );
 
-	handleKeyEvent = ( event ) => {
+	handleKeyEvent = ( event: KeyboardEvent ): void => {
 		if ( this.getSuggestionsCount() === 0 ) {
 			return;
 		}
@@ -115,17 +129,19 @@ class Suggestions extends Component {
 		}
 	};
 
-	handleMouseDown = ( originalIndex ) => {
+	handleMouseDown = ( originalIndex: number ): void => {
 		this.suggest( originalIndex );
 	};
 
-	handleMouseOver = ( suggestionPosition ) => this.setState( { suggestionPosition } );
+	handleMouseOver = ( suggestionPosition: number ): void => this.setState( { suggestionPosition } );
 
-	getCategories() {
+	getCategories(): CategorizedSuggestions {
 		// We need to remember the original index of the suggestion according to the
 		// `suggestions` prop for tracks and firing callbacks.
 		const withOriginalIndex = this.props.suggestions.map( ( suggestion, originalIndex ) => ( {
 			...suggestion,
+			// this will be updated later on in this function
+			index: originalIndex,
 			originalIndex,
 		} ) );
 
@@ -138,11 +154,13 @@ class Suggestions extends Component {
 		// https://github.com/lodash/lodash/issues/2212
 		const byCategory = groupBy( withCategory, property( 'category' ) );
 
-		const categories = Object.entries( byCategory ).map( ( [ category, suggestions ] ) => ( {
-			category,
-			categoryKey: category,
-			suggestions,
-		} ) );
+		const categories: CategorizedSuggestions = Object.entries( byCategory ).map(
+			( [ category, suggestions ] ) => ( {
+				category,
+				categoryKey: category,
+				suggestions,
+			} )
+		);
 
 		// Add uncategorised suggestions to the front, they always appear at
 		// the top of the list.
@@ -161,7 +179,7 @@ class Suggestions extends Component {
 		return categories;
 	}
 
-	render() {
+	render(): JSX.Element | null {
 		const { query, className, title } = this.props;
 		const containerClass = classnames( 'suggestions', className );
 
@@ -186,7 +204,7 @@ class Suggestions extends Component {
 								hasHighlight={ index === this.state.suggestionPosition }
 								query={ query }
 								onMount={ () =>
-									this.props.onSuggestionItemMount( {
+									this.props.onSuggestionItemMount?.( {
 										suggestionIndex: originalIndex,
 										index,
 									} )
