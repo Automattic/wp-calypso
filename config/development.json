@@ -183,6 +183,7 @@
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,
+		"titan/iframe-control-panel": true,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
