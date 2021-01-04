@@ -474,7 +474,7 @@ $font-size: rem( 14px );
 		&.focus-sidebar {
 			.sidebar,
 			.layout__secondary {
-				z-index: 1;
+				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
 				overflow: initial;
 			}
 		}
