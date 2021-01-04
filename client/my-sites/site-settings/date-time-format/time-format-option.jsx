@@ -14,7 +14,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { defaultTimeFormats } from './default-formats';
+import { getDefaultTimeFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
@@ -29,7 +29,7 @@ export const TimeFormatOption = ( {
 } ) => (
 	<FormFieldset>
 		<FormLabel>{ translate( 'Time Format' ) }</FormLabel>
-		{ defaultTimeFormats.map( ( format ) => (
+		{ getDefaultTimeFormats().map( ( format ) => (
 			<FormLabel key={ format }>
 				<FormRadio
 					checked={ ! isCustom && format === timeFormat }

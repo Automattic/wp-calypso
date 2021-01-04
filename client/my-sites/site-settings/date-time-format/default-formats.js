@@ -1,3 +1,17 @@
-export const defaultDateFormats = [ 'F j, Y', 'Y-m-d', 'm/d/Y', 'd/m/Y' ];
+/**
+ * Internal dependencies
+ */
+import { translate } from 'i18n-calypso';
 
-export const defaultTimeFormats = [ 'g:i a', 'g:i A', 'H:i' ];
+export function getDefaultDateFormats() {
+	return [
+		translate( 'F j, Y' ),
+		translate( 'Y-m-d' ),
+		translate( 'm/d/Y' ),
+		translate( 'd/m/Y' ),
+	];
+}
+
+export function getDefaultTimeFormats() {
+	return [ translate( 'g:i a' ), translate( 'g:i A' ), translate( 'H:i' ) ];
+}
