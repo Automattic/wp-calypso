@@ -2,30 +2,29 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import type { MouseEvent, FocusEvent, ReactNode } from 'react';
 import classNames from 'classnames';
 import { escapeRegExp } from 'lodash';
 
-function escapeRegExpWithSpace( str ) {
+function escapeRegExpWithSpace( str: string ) {
 	return escapeRegExp( str ).replace( /\s/g, '\\s' );
 }
 
-class Item extends PureComponent {
-	static propTypes = {
-		label: PropTypes.string.isRequired,
-		hasHighlight: PropTypes.bool,
-		query: PropTypes.string,
-		onMount: PropTypes.func.isRequired,
-		onMouseDown: PropTypes.func.isRequired,
-		onMouseOver: PropTypes.func.isRequired,
-	};
-
+interface Props {
+	label: string;
+	hasHighlight?: boolean;
+	query: string;
+	onMount: () => void;
+	onMouseDown: () => void;
+	onMouseOver: () => void;
+}
+class Item extends PureComponent< Props > {
 	static defaultProps = {
 		hasHighlight: false,
 		query: '',
 	};
 
-	componentDidMount() {
+	componentDidMount(): void {
 		this.props.onMount();
 	}
 
@@ -37,7 +36,7 @@ class Item extends PureComponent {
 	 *
 	 * @returns {Array< ReactElement< JSX.IntrinsicElements[ 'span' ] > >} An element including the highlighted text.
 	 */
-	createTextWithHighlight( text, query ) {
+	createTextWithHighlight( text: string, query: string ): ReactNode {
 		const re = new RegExp( '(' + escapeRegExpWithSpace( query ) + ')', 'gi' );
 		const parts = text.split( re );
 
@@ -59,17 +58,19 @@ class Item extends PureComponent {
 		} );
 	}
 
-	handleMouseDown = ( event ) => {
+	handleMouseDown = (
+		event: MouseEvent< HTMLButtonElement > | FocusEvent< HTMLButtonElement >
+	): void => {
 		event.stopPropagation();
 		event.preventDefault();
 		this.props.onMouseDown();
 	};
 
-	handleMouseOver = () => {
+	handleMouseOver = (): void => {
 		this.props.onMouseOver();
 	};
 
-	render() {
+	render(): JSX.Element {
 		const { hasHighlight, label, query } = this.props;
 
 		const className = classNames( 'suggestions__item', { 'has-highlight': hasHighlight } );
