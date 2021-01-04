@@ -70,6 +70,11 @@ function parseCookie( cookieStr ) {
 function setSessionCookies( window, authorizeResponse ) {
 	return new Promise( ( resolve ) => {
 		let cookieHeaders = authorizeResponse.headers[ 'set-cookie' ];
+		if ( ! cookieHeaders ) {
+			log.info( `'set-cookie' header not present in response.` );
+			return resolve( true );
+		}
+
 		let count = 0;
 		if ( ! Array.isArray( cookieHeaders ) ) {
 			cookieHeaders = [ cookieHeaders ];
