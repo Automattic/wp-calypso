@@ -75,7 +75,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	newUsersWithFreePlan: {
-		datestamp: '20201218',
+		datestamp: '20210104',
 		variations: {
 			newOnboarding: 50,
 			control: 50,
