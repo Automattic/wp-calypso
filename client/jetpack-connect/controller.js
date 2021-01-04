@@ -139,7 +139,7 @@ export function offerResetRedirects( context, next ) {
 
 export function offerResetContext( context, next ) {
 	debug( 'controller: offerResetContext', context.params );
-	context.header = <StoreHeader />;
+	context.header = <StoreHeader urlQueryArgs={ context.query } />;
 
 	if ( getJetpackCROActiveVersion() !== Iterations.I5 ) {
 		context.footer = <StoreFooter />;
