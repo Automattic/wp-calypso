@@ -40,7 +40,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QueryExperiments from 'calypso/components/data/query-experiments';
-import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
@@ -581,11 +580,6 @@ export default function CompositeCheckout( {
 		return (
 			<React.Fragment>
 				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-				<CartMessages
-					cart={ responseCart }
-					selectedSite={ { slug: siteSlug } }
-					isLoadingCart={ isInitialCartLoading }
-				/>
 				<ThemeProvider theme={ theme }>
 					<MainContentWrapper>
 						<CheckoutStepAreaWrapper>
@@ -611,11 +605,6 @@ export default function CompositeCheckout( {
 			<QueryProducts />
 			<QueryContactDetailsCache />
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-			<CartMessages
-				cart={ responseCart }
-				selectedSite={ { slug: siteSlug } }
-				isLoadingCart={ isInitialCartLoading }
-			/>
 			<CheckoutProvider
 				items={ itemsForCheckout }
 				total={ total }
