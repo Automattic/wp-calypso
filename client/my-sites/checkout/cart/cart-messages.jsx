@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
@@ -10,17 +11,16 @@ import { localize } from 'i18n-calypso';
  */
 import notices from 'calypso/notices';
 import { getNewMessages } from 'calypso/lib/cart-values';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class CartMessages extends PureComponent {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		isLoadingCart: PropTypes.bool,
-		selectedSite: PropTypes.shape( {
-			slug: PropTypes.string,
-		} ).isRequired,
 
-		// connected
+		// from HOCs
 		translate: PropTypes.func.isRequired,
+		selectedSiteSlug: PropTypes.string,
 	};
 
 	previousCart = null;
@@ -41,7 +41,7 @@ class CartMessages extends PureComponent {
 			{
 				components: {
 					strong: <strong />,
-					a: <a href={ '/checkout/' + this.props.selectedSite.slug } />,
+					a: <a href={ '/checkout/' + this.props.selectedSiteSlug ?? '' } />,
 				},
 			}
 		);
@@ -55,7 +55,9 @@ class CartMessages extends PureComponent {
 					a: (
 						<a
 							href={
-								'https://wordpress.com/error-report/?url=payment@' + this.props.selectedSite.slug
+								'https://wordpress.com/error-report/' + this.props.selectedSiteSlug
+									? '?url=payment@' + this.props.selectedSiteSlug
+									: ''
 							}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -121,4 +123,10 @@ class CartMessages extends PureComponent {
 	}
 }
 
-export default localize( CartMessages );
+function mapStateToProps( state ) {
+	return {
+		selectedSiteSlug: getSelectedSiteSlug( state ),
+	};
+}
+
+export default connect( mapStateToProps )( localize( CartMessages ) );
