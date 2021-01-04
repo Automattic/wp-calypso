@@ -6004,6 +6004,13 @@
   dependencies:
     "@babel/runtime" "^7.11.2"
 
+"@wordpress/hooks@^2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/hooks/-/hooks-2.11.0.tgz#a919fbaad710c34162eeef91a0ceaea99362f4bb"
+  integrity sha512-TbvCrHcMiSZoyiflegEqVS3DDytDTpkms+yLUaGN4sMvNdR/Mv5s0WnNKyM0T49lbmZYPWlbWhwJ1F6hr/FQDg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 "@wordpress/hooks@^2.9.0":
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/@wordpress/hooks/-/hooks-2.9.0.tgz#181328fbb2899698e2c429da98af765b1294f627"
