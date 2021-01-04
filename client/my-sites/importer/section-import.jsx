@@ -182,7 +182,6 @@ class SectionImport extends Component {
 					siteTitle={ siteTitle }
 					importerStatus={ {
 						importerState: state,
-						siteTitle,
 						type: getImporterTypeForEngine( engine ),
 					} }
 				/>
@@ -216,7 +215,9 @@ class SectionImport extends Component {
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
 	renderActiveImporters( importsForSite ) {
-		return importsForSite.map( ( importItem, idx ) => {
+		const { fromSite, site, siteTitle } = this.props;
+
+		return importsForSite.map( ( importItem ) => {
 			const importer = getImporterByKey( importItem.type );
 			if ( ! importer ) {
 				return;
@@ -224,43 +225,14 @@ class SectionImport extends Component {
 
 			const ImporterComponent = importerComponents[ importer.engine ];
 
-			/**
-			 * Ugly hack™
-			 *
-			 * Sometimes due to the convoluted voodoo sorcery that is the Import Red(fl)ux store
-			 * the `site` object that gets passed in `importItem` contains only `{ ID: <site_id> }`.
-			 *
-			 * This makes the components down the chain fail as they expect to have the full `site` object
-			 * with all it's properties.
-			 *
-			 * That usually happens when you land on an import directly, such as when coming from a
-			 * `/?engine=wordpress` URL. In those cases a slew of artifacts occur - the upload reports issues,
-			 * the author mapping screen doesn't show any authors to choose from, etc.
-			 *
-			 * This hack makes sure to overwrite the the `site` object if it's the same as the current site.
-			 * Ideally this should always be the case, but if there's an instance where the current site is different
-			 * than what's stored in the import data, let it fail as it does now.
-			 */
-			const importItemId = get( importItem, 'site.ID', null );
-			const currentSiteId = get( this.props, 'site.ID', null );
-
-			if ( importItemId && importItemId === currentSiteId ) {
-				importItem.site = this.props.site;
-			}
-
-			const siteTitle = importItem.siteTitle || this.props.siteTitle;
-
 			return (
 				ImporterComponent && (
 					<ImporterComponent
-						key={ importItem.type + idx }
-						site={ importItem.site }
-						fromSite={ this.props.fromSite }
+						key={ importItem.importerId }
+						site={ site }
+						fromSite={ fromSite }
 						siteTitle={ siteTitle }
-						importerStatus={ {
-							...importItem,
-							siteTitle: siteTitle,
-						} }
+						importerStatus={ importItem }
 					/>
 				)
 			);
@@ -275,21 +247,22 @@ class SectionImport extends Component {
 	renderImporters() {
 		const {
 			api: { isHydrated },
-			importers: imports,
+			importers,
 		} = this.state;
 		const { engine, site, siteTitle } = this.props;
 
+		const importsForSite = filterImportsForSite( site.ID, importers );
+
+		// If starting a new import was requested by the `engine` query param, never show the list
+		// of available "idle" importers. Always render the list of active importers, even if it's
+		// initially empty. A new import will be started very soon by `onceAutoStartImport`.
 		if ( engine && importerComponents[ engine ] ) {
-			return this.renderActiveImporters( filterImportsForSite( site.ID, imports ) );
+			return this.renderActiveImporters( importsForSite );
 		}
 
 		if ( ! isHydrated ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
-
-		const importsForSite = filterImportsForSite( site.ID, imports )
-			// Add in the 'site' and 'siteTitle' properties to the import objects.
-			.map( ( item ) => Object.assign( {}, item, { site, siteTitle } ) );
 
 		if ( 0 === importsForSite.length ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
