@@ -26,6 +26,7 @@ import { v4 as uuid } from 'uuid';
 import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -1538,4 +1539,4 @@ export default connect(
 		hideSitePreview,
 		showSitePreview,
 	}
-)( localize( RegisterDomainStep ) );
+)( withShoppingCart( localize( RegisterDomainStep ) ) );
