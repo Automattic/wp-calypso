@@ -110,6 +110,7 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
  * Style dependencies
  */
 import './style.scss';
+import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 
 class ManagePurchase extends Component {
 	static propTypes = {
@@ -270,7 +271,12 @@ class ManagePurchase extends Component {
 			? translate( 'Pick Another Plan' )
 			: translate( 'Upgrade Plan' );
 
-		if ( ! isPlan( purchase ) || isEcommerce( purchase ) || isComplete( purchase ) ) {
+		if (
+			! isPlan( purchase ) ||
+			isEcommerce( purchase ) ||
+			isComplete( purchase ) ||
+			isP2Plus( purchase )
+		) {
 			return null;
 		}
 
