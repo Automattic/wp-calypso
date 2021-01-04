@@ -143,65 +143,47 @@ export type SupportedSlugs =
 	| 'jetpack_security_realtime'
 	| 'jetpack_security_realtime_monthly';
 
-export const iconToProductSlugMap: Record< keyof typeof paths, SupportedSlugs[] > = {
-	'wpcom-free': [ 'free_plan' ] as SupportedSlugs[],
-	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ] as SupportedSlugs[],
-	'wpcom-personal': [
-		'personal-bundle',
-		'personal-bundle-2y',
-		'personal-bundle-monthly',
-	] as SupportedSlugs[],
+export const iconToProductSlugMap: Record< keyof typeof paths, readonly SupportedSlugs[] > = {
+	'wpcom-free': [ 'free_plan' ],
+	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ],
+	'wpcom-personal': [ 'personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly' ],
 	'wpcom-premium': [
 		'value_bundle',
 		'value_bundle-2y',
 		'value_bundle-monthly',
 		'value_bundle_monthly',
-	] as SupportedSlugs[],
-	'wpcom-ecommerce': [
-		'ecommerce-bundle',
-		'ecommerce-bundle-2y',
-		'ecommerce-bundle-monthly',
-	] as SupportedSlugs[],
-	'wpcom-business': [
-		'business-bundle',
-		'business-bundle-2y',
-		'business-bundle-monthly',
-	] as SupportedSlugs[],
-	'jetpack-free': [ 'jetpack_free' ] as SupportedSlugs[],
-	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ] as SupportedSlugs[],
-	'jetpack-premium': [ 'jetpack_premium', 'jetpack_premium_monthly' ] as SupportedSlugs[],
-	'jetpack-professional': [ 'jetpack_business', 'jetpack_business_monthly' ] as SupportedSlugs[],
+	],
+	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
+	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
+	'jetpack-free': [ 'jetpack_free' ],
+	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],
+	'jetpack-premium': [ 'jetpack_premium', 'jetpack_premium_monthly' ],
+	'jetpack-professional': [ 'jetpack_business', 'jetpack_business_monthly' ],
 	'jetpack-complete-v2': [
 		'jetpack_complete',
 		'jetpack_complete_monthly',
 		'jetpack_complete_v2',
 		'jetpack_complete_monthly_v2',
-	] as SupportedSlugs[],
-	'jetpack-crm-v2': [ 'jetpack_crm', 'jetpack_crm_monthly' ] as SupportedSlugs[],
-	'jetpack-crm-v2-dark': [ 'jetpack_crm_dark', 'jetpack_crm_monthly_dark' ] as SupportedSlugs[],
-	'jetpack-backup-daily': [
-		'jetpack_backup_daily',
-		'jetpack_backup_daily_monthly',
-	] as SupportedSlugs[],
-	'jetpack-backup-realtime': [
-		'jetpack_backup_realtime',
-		'jetpack_backup_realtime_monthly',
-	] as SupportedSlugs[],
+	],
+	'jetpack-crm-v2': [ 'jetpack_crm', 'jetpack_crm_monthly' ],
+	'jetpack-crm-v2-dark': [ 'jetpack_crm_dark', 'jetpack_crm_monthly_dark' ],
+	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
+	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 	'jetpack-backup-v2': [
 		'jetpack_backup_v2',
 		'jetpack_backup_daily_v2',
 		'jetpack_backup_daily_monthly_v2',
 		'jetpack_backup_realtime_v2',
 		'jetpack_backup_realtime_monthly_v2',
-	] as SupportedSlugs[],
+	],
 	'jetpack-backup-v2-dark': [
 		'jetpack_backup_v2_dark',
 		'jetpack_backup_daily_v2_dark',
 		'jetpack_backup_daily_monthly_v2_dark',
 		'jetpack_backup_realtime_v2_dark',
 		'jetpack_backup_realtime_monthly_v2_dark',
-	] as SupportedSlugs[],
-	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ] as SupportedSlugs[],
+	],
+	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
 	'jetpack-scan-v2': [
 		'jetpack_scan_v2',
 		'jetpack_scan_monthly_v2',
@@ -209,7 +191,7 @@ export const iconToProductSlugMap: Record< keyof typeof paths, SupportedSlugs[] 
 		'jetpack_scan_daily_monthly_v2',
 		'jetpack_scan_realtime_v2',
 		'jetpack_scan_realtime_monthly_v2',
-	] as SupportedSlugs[],
+	],
 	'jetpack-scan-v2-dark': [
 		'jetpack_scan_v2_dark',
 		'jetpack_scan_monthly_v2_dark',
@@ -217,27 +199,18 @@ export const iconToProductSlugMap: Record< keyof typeof paths, SupportedSlugs[] 
 		'jetpack_scan_daily_monthly_v2_dark',
 		'jetpack_scan_realtime_v2_dark',
 		'jetpack_scan_realtime_monthly_v2_dark',
-	] as SupportedSlugs[],
+	],
 	'jetpack-search': [
 		'jetpack_search',
 		'jetpack_search_monthly',
 		'wpcom_search',
 		'wpcom_search_monthly',
-	] as SupportedSlugs[],
-	'jetpack-search-v2': [ 'jetpack_search_v2', 'jetpack_search_monthly_v2' ] as SupportedSlugs[],
-	'jetpack-search-v2-dark': [
-		'jetpack_search_v2_dark',
-		'jetpack_search_monthly_v2_dark',
-	] as SupportedSlugs[],
-	'jetpack-anti-spam': [ 'jetpack_anti_spam', 'jetpack_anti_spam_monthly' ] as SupportedSlugs[],
-	'jetpack-anti-spam-v2': [
-		'jetpack_anti_spam_v2',
-		'jetpack_anti_spam_monthly_v2',
-	] as SupportedSlugs[],
-	'jetpack-anti-spam-v2-dark': [
-		'jetpack_anti_spam_v2_dark',
-		'jetpack_anti_spam_monthly_v2_dark',
-	] as SupportedSlugs[],
+	],
+	'jetpack-search-v2': [ 'jetpack_search_v2', 'jetpack_search_monthly_v2' ],
+	'jetpack-search-v2-dark': [ 'jetpack_search_v2_dark', 'jetpack_search_monthly_v2_dark' ],
+	'jetpack-anti-spam': [ 'jetpack_anti_spam', 'jetpack_anti_spam_monthly' ],
+	'jetpack-anti-spam-v2': [ 'jetpack_anti_spam_v2', 'jetpack_anti_spam_monthly_v2' ],
+	'jetpack-anti-spam-v2-dark': [ 'jetpack_anti_spam_v2_dark', 'jetpack_anti_spam_monthly_v2_dark' ],
 	'jetpack-security-v2': [
 		'jetpack_security_v2',
 		'jetpack_security_monthly_v2',
@@ -249,5 +222,5 @@ export const iconToProductSlugMap: Record< keyof typeof paths, SupportedSlugs[] 
 		'jetpack_security_daily_monthly',
 		'jetpack_security_realtime',
 		'jetpack_security_realtime_monthly',
-	] as SupportedSlugs[],
-};
+	],
+} as const;
