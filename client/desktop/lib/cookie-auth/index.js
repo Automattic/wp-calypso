@@ -81,6 +81,7 @@ function setSessionCookies( window, authorizeResponse ) {
 			return resolve( true );
 		}
 
+		// Note: Do not use Promise.all as we do not want to abort setting subsequent cookies when an error is encountered.
 		cookieHeaders.forEach( async function ( cookieStr ) {
 			const cookie = parseCookie( cookieStr );
 			cookie.url = 'https://wordpress.com/';
