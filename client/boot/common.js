@@ -451,10 +451,12 @@ function waitForDesktopCookieAuth( user ) {
 	const loggedIn = user.get() !== false;
 
 	const promiseTimeout = ( ms, promise ) => {
-		const timeout = new Promise( ( _, reject ) => {
+		const timeout = new Promise( ( resolve ) => {
 			const id = setTimeout( () => {
 				clearTimeout( id );
-				reject( `Request timed out in ${ ms } ms` );
+				debug( `Request timed out in ${ ms } ms` );
+				// Resolve anyway so the entire boot sequence isn't aborted
+				resolve();
 			}, ms );
 		} );
 
