@@ -88,7 +88,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
-	'wordpress.com/help/contact/': ( url: URL, localeSlug: Locale, isLoggedIn?: boolean ) => {
+	'wordpress.com/help/contact/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		if ( isLoggedIn ) {
 			return url;
 		}
@@ -98,8 +98,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 };
 
-export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn?: boolean ): string {
-	const loggedIn = typeof isLoggedIn === 'undefined' ? true : !! isLoggedIn;
+export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true ): string {
 	let url;
 	try {
 		url = new URL( String( fullUrl ), INVALID_URL );
@@ -140,7 +139,7 @@ export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn?: boole
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
-			return urlLocalizationMapping[ lookup[ i ] ]( url, locale, loggedIn ).href;
+			return urlLocalizationMapping[ lookup[ i ] ]( url, locale, isLoggedIn ).href;
 		}
 	}
 
