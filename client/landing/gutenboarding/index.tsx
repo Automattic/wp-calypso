@@ -79,10 +79,8 @@ window.AppBoot = async () => {
 	// Update list of randomized designs in the gutenboarding session store
 	ensureRandomizedDesignsAreUpToDate();
 
-	// Try to set podcast title as site title if this will be an Anchor.fm podcast site
-	try {
-		setPodcastTitle();
-	} catch {}
+	// Set podcast title as site title if this will be an Anchor.fm podcast site
+	setPodcastTitle();
 
 	ReactDom.render(
 		<LocaleContext>
