@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
-import type { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
 import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions/types';
 import { useDebounce } from 'use-debounce';
 
@@ -13,6 +13,7 @@ import { DOMAIN_SUGGESTIONS_STORE, DOMAIN_SEARCH_DEBOUNCE_INTERVAL } from '../co
 
 type DomainSuggestionsResult = {
 	allDomainSuggestions: DomainSuggestion[] | undefined;
+	fallbackDomainSuggestions: DomainSuggestion[] | undefined;
 	errorMessage: string | null;
 	state: DataStatus;
 	retryRequest: () => void;
@@ -20,6 +21,7 @@ type DomainSuggestionsResult = {
 
 export function useDomainSuggestions(
 	searchTerm = '',
+	fallbackSearchTerm = '',
 	quantity: number,
 	domainCategory?: string,
 	locale = 'en'
@@ -45,20 +47,29 @@ export function useDomainSuggestions(
 				invalidateResolutionForStoreSelector( '__internalGetDomainSuggestions' );
 			};
 
-			const allDomainSuggestions = getDomainSuggestions( domainSearch, {
+			const domainSearchOptions = {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: true,
 				include_dotblogsubdomain: false,
 				quantity: quantity + 1, // increment the count to add the free domain
 				locale,
 				category_slug: domainCategory,
-			} );
+			};
+
+			const allDomainSuggestions = getDomainSuggestions( domainSearch, domainSearchOptions );
 
 			const state = getDomainState();
 
 			const errorMessage = getDomainErrorMessage();
 
-			return { allDomainSuggestions, state, errorMessage, retryRequest };
+			const hasFallbackSearchTerm = !! fallbackSearchTerm && fallbackSearchTerm.length > 2;
+
+			const fallbackDomainSuggestions =
+				errorMessage === DataStatus.Failure && hasFallbackSearchTerm
+					? getDomainSuggestions( fallbackSearchTerm, domainSearchOptions )
+					: [];
+
+			return { allDomainSuggestions, fallbackDomainSuggestions, state, errorMessage, retryRequest };
 		},
 		[ domainSearch, domainCategory, quantity ]
 	);

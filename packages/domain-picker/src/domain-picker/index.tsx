@@ -151,14 +151,25 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestionVendor()
 	);
 
+	const searchTerm = domainSearch.trim();
+	const fallbackSearchTerm = existingSubdomain?.domain_name;
+
 	const {
 		allDomainSuggestions,
+		fallbackDomainSuggestions,
 		errorMessage: domainSuggestionErrorMessage,
 		state: domainSuggestionState,
 		retryRequest: retryDomainSuggestionRequest,
-	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
+	} =
+		useDomainSuggestions(
+			searchTerm,
+			fallbackSearchTerm,
+			quantityExpanded,
+			domainCategory,
+			locale
+		) || {};
 
-	const domainSuggestions = allDomainSuggestions?.slice(
+	const domainSuggestions = ( allDomainSuggestions || fallbackDomainSuggestions )?.slice(
 		existingSubdomain ? 1 : 0,
 		isExpanded ? quantityExpanded : quantity
 	);
