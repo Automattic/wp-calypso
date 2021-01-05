@@ -84,9 +84,9 @@ class SiteImporter extends React.PureComponent {
 
 	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
-		const state = this.props.importerStatus;
-		const isEnabled = appStates.DISABLED !== state.importerState;
-		const showStart = includes( compactStates, state.importerState );
+		const { importerStatus } = this.props;
+		const isEnabled = appStates.DISABLED !== importerStatus.importerState;
+		const showStart = includes( compactStates, importerStatus.importerState );
 		const cardClasses = classNames( 'importer__site-importer-card', {
 			'is-compact': showStart,
 			'is-disabled': ! isEnabled,
@@ -99,20 +99,20 @@ class SiteImporter extends React.PureComponent {
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
-				<ImporterHeader importerStatus={ state } { ...{ icon, title, description } } />
-				{ includes( importingStates, state.importerState ) && (
+				<ImporterHeader importerStatus={ importerStatus } { ...{ icon, title, description } } />
+				{ includes( importingStates, importerStatus.importerState ) && (
 					<ImportingPane
 						{ ...this.props }
-						importerStatus={ state }
+						importerStatus={ importerStatus }
 						sourceType={ title }
 						site={ this.props.site }
 					/>
 				) }
-				{ includes( uploadingStates, state.importerState ) && (
+				{ includes( uploadingStates, importerStatus.importerState ) && (
 					<SiteImporterInputPane
 						{ ...this.props }
 						description={ uploadDescription }
-						importerStatus={ state }
+						importerStatus={ importerStatus }
 						onStartImport={ this.validateSite }
 						isEnabled={ isEnabled }
 					/>
