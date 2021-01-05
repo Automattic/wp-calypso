@@ -101,6 +101,10 @@ async function assertNoErrorInEditor() {
 	assert.strictEqual( errorDisplayed, false, 'The block errored in the editor!' );
 }
 
+async function assertNoInvalidBlocksInEditor() {
+	assert.strictEqual( await gEditorComponent.hasInvalidBlocks(), false, 'The block is invalid!' );
+}
+
 /**
  * Re-usable collection of steps for verifying blocks in the editor.
  *
@@ -118,6 +122,10 @@ function verifyBlockInEditor( blockClass ) {
 
 	step( 'Block does not error in the editor', async function () {
 		await assertNoErrorInEditor();
+	} );
+
+	step( 'Blocks do not invalidate', async function () {
+		await assertNoInvalidBlocksInEditor();
 	} );
 }
 
