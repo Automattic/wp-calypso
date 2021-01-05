@@ -156,6 +156,10 @@ async function startNewPost( siteURL ) {
 }
 
 describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ screenSize })`, function () {
+	const username = 'gutenbergUpgradeUser';
+	const siteName = 'e2egbupgradehever';
+	let isLoggedIn = false;
+
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
 			this.timeout( startBrowserTimeoutMS );
@@ -190,17 +194,16 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 		PremiumContentBlockComponent,
 	].forEach( ( blockClass ) => {
 		describe( `Test the ${ blockClass.blockName } block`, function () {
-			const username = 'gutenbergUpgradeUser';
-			const siteName = 'e2egbupgradehever';
+			let currentGutenbergBlocksCode;
 
 			describe( `Test the block on a non-edge site`, function () {
 				step( `Log in and start a new post`, async function () {
 					const siteURL = `${ siteName }.wordpress.com`;
 
-					if ( ! this.isLoggedIn ) {
+					if ( ! isLoggedIn ) {
 						const loginFlow = new LoginFlow( driver, username );
 						await loginFlow.login( siteURL, true );
-						this.isLoggedIn = true;
+						isLoggedIn = true;
 					}
 
 					await startNewPost( siteURL );
@@ -213,10 +216,10 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 				verifyBlockInEditor( blockClass );
 
 				step( 'Copy the markup for the block', async function () {
-					this.currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
+					currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
 				} );
 
-				verifyBlockInPublishedPage( blockClass, siteName );
+				verifyBlockInPublishedPage( blockClass );
 			} );
 
 			describe( `Test the same block on a corresponding edge site`, function () {
@@ -225,7 +228,7 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 				} );
 
 				step( 'Load block via markup copied from non-edge site', async function () {
-					await gEditorComponent.setBlocksCode( this.currentGutenbergBlocksCode );
+					await gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
 				} );
 
 				verifyBlockInEditor( blockClass );
