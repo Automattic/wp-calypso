@@ -17,11 +17,12 @@ import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
 import SidebarItem from 'calypso/layout/sidebar/item';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Count from 'calypso/components/count';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
- * Styles
+ * Style dependencies
  */
 import '../style.scss';
 
@@ -32,11 +33,11 @@ export class ReaderSidebarFollowedSites extends Component {
 		isFollowingOpen: PropTypes.bool,
 	};
 
-	handleReaderSidebarFollowedSitesClicked() {
+	handleReaderSidebarFollowedSitesClicked = () => {
 		recordAction( 'clicked_reader_sidebar_followed_sites' );
 		recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
-		recordTrack( 'calypso_reader_sidebar_followed_sites_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' );
+	};
 
 	renderAll() {
 		const { path, translate, sites } = this.props;
@@ -95,6 +96,7 @@ export default connect(
 		};
 	},
 	{
+		recordReaderTracksEvent,
 		toggleReaderSidebarFollowing,
 	}
 )( localize( ReaderSidebarFollowedSites ) );

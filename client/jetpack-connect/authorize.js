@@ -153,6 +153,7 @@ export class JetpackAuthorize extends Component {
 			this.isSso( nextProps ) ||
 			this.isWooRedirect( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
+			this.isFromJetpackBoost( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps ) ||
 			this.props.isVip
 		) {
@@ -222,9 +223,11 @@ export class JetpackAuthorize extends Component {
 			this.isSso() ||
 			this.isWooRedirect() ||
 			this.isFromJpo() ||
+			this.isFromJetpackBoost() ||
 			this.isFromBlockEditor() ||
 			this.shouldRedirectJetpackStart() ||
-			getRoleFromScope( scope ) === 'subscriber'
+			getRoleFromScope( scope ) === 'subscriber' ||
+			this.isJetpackUpgradeFlow()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -265,6 +268,11 @@ export class JetpackAuthorize extends Component {
 		return startsWith( from, 'jpo' );
 	}
 
+	isFromJetpackBoost( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-boost' );
+	}
+
 	isFromBlockEditor( props = this.props ) {
 		const { from } = props.authQuery;
 		return 'jetpack-block-editor' === from;
@@ -281,6 +289,18 @@ export class JetpackAuthorize extends Component {
 	isSso( props = this.props ) {
 		const { from, clientId } = props.authQuery;
 		return 'sso' === from && isSsoApproved( clientId );
+	}
+
+	/**
+	 * Check if the user is coming from the Jetpack upgrade flow.
+	 *
+	 * @param  {object}  props           Props to test
+	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
+	 * @returns {boolean}                True if the user is coming from the Jetpack upgrade flow, false otherwise.
+	 */
+	isJetpackUpgradeFlow( props = this.props ) {
+		const { redirectAfterAuth } = props.authQuery;
+		return redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' );
 	}
 
 	isWooRedirect = ( props = this.props ) => {

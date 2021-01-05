@@ -592,3 +592,22 @@ function getInnerTextMatcherFunction( match ) {
 		throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
 	};
 }
+
+export async function waitTillTextPresent( driver, selector, text, waitOverride ) {
+	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+
+	return driver.wait(
+		function () {
+			return driver.findElements( selector ).then(
+				async function ( allElements ) {
+					return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
+				},
+				function () {
+					return false;
+				}
+			);
+		},
+		timeoutWait,
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed with text '${ text }'`
+	);
+}

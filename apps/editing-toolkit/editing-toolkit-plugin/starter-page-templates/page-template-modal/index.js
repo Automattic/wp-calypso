@@ -182,7 +182,7 @@ class PageTemplateModal extends Component {
 
 		// Skip setting template if user selects current layout
 		if ( 'current' === slug ) {
-			this.props.setIsOpen( false );
+			this.props.setOpenState( false );
 			return;
 		}
 
@@ -190,7 +190,7 @@ class PageTemplateModal extends Component {
 		// and reset the template if so.
 		if ( 'blank' === slug ) {
 			this.props.insertTemplate( '', [] );
-			this.props.setIsOpen( false );
+			this.props.setOpenState( false );
 			return;
 		}
 
@@ -205,7 +205,7 @@ class PageTemplateModal extends Component {
 		// Skip inserting if this is not a blank template
 		// and there's nothing to insert.
 		if ( ! blocks || ! blocks.length ) {
-			this.props.setIsOpen( false );
+			this.props.setOpenState( false );
 			return;
 		}
 
@@ -226,7 +226,7 @@ class PageTemplateModal extends Component {
 				}
 
 				this.props.insertTemplate( title, blocksWithAssets );
-				this.props.setIsOpen( false );
+				this.props.setOpenState( false );
 			} )
 			.catch( ( error ) => {
 				this.setState( {
@@ -246,11 +246,6 @@ class PageTemplateModal extends Component {
 		}
 
 		this.setTemplate( slug );
-
-		// Turn off sidebar's instance of modal
-		if ( this.props.isPromptedFromSidebar ) {
-			this.props.toggleTemplateModal();
-		}
 	};
 
 	previewTemplate = ( slug ) => {
@@ -366,7 +361,13 @@ class PageTemplateModal extends Component {
 
 	render() {
 		const { previewedTemplate, isLoading } = this.state;
-		const { isPromptedFromSidebar, hidePageTitle, isOpen, currentBlocks } = this.props;
+		const {
+			isPromptedFromSidebar,
+			hidePageTitle,
+			isOpen,
+			currentBlocks,
+			setOpenState,
+		} = this.props;
 
 		if ( ! isOpen ) {
 			return null;
@@ -414,7 +415,7 @@ class PageTemplateModal extends Component {
 				{ isPromptedFromSidebar ? (
 					<IconButton
 						className="page-template-modal__close-button components-icon-button"
-						onClick={ this.props.toggleTemplateModal }
+						onClick={ () => setOpenState( false ) }
 						icon="no-alt"
 						label={ __( 'Close Layout Selector', 'full-site-editing' ) }
 					/>
@@ -531,10 +532,11 @@ export const PageTemplatesPlugin = compose(
 	withSelect( ( select ) => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
-		const isOpen = select( 'automattic/starter-page-layouts' ).isOpen();
+		const { isOpen, isPromptedFromSidebar } = select( 'automattic/starter-page-layouts' );
 		const currentBlocks = select( 'core/editor' ).getBlocks();
 		return {
-			isOpen,
+			isOpen: isOpen(),
+			isPromptedFromSidebar: isPromptedFromSidebar(),
 			getMeta,
 			_starter_page_template,
 			currentBlocks,
@@ -546,9 +548,9 @@ export const PageTemplatesPlugin = compose(
 	} ),
 	withDispatch( ( dispatch, ownProps ) => {
 		const editorDispatcher = dispatch( 'core/editor' );
-		const { setIsOpen } = dispatch( 'automattic/starter-page-layouts' );
+		const { setOpenState } = dispatch( 'automattic/starter-page-layouts' );
 		return {
-			setIsOpen,
+			setOpenState,
 			saveTemplateChoice: ( slug ) => {
 				// Save selected template slug in meta.
 				const currentMeta = ownProps.getMeta();

@@ -474,7 +474,7 @@ $font-size: rem( 14px );
 		&.focus-sidebar {
 			.sidebar,
 			.layout__secondary {
-				z-index: 1;
+				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
 				overflow: initial;
 			}
 		}
@@ -502,6 +502,7 @@ $font-size: rem( 14px );
 				position: absolute;
 				left: var( --sidebar-width-max );
 				width: 160px;
+				box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
 
 				.sidebar__menu-link:hover {
 					font-weight: normal;

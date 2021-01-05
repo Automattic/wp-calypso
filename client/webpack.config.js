@@ -366,7 +366,7 @@ const webpackConfig = {
 		 */
 		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
 			if ( res.context.includes( '@wordpress/components/' ) ) {
-				res.request = 'components/empty-component';
+				res.request = 'calypso/components/empty-component';
 			}
 		} ),
 		/*

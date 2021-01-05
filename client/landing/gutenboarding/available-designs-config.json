@@ -12,7 +12,7 @@
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": true,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Twenty Twenty One",
@@ -26,7 +26,7 @@
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": true,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Cassel",
@@ -39,7 +39,7 @@
 			},
 			"categories": [ "featured", "blog" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Edison",
@@ -52,7 +52,7 @@
 			},
 			"categories": [ "featured", "blog" ],
 			"is_premium": true,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Vesta",
@@ -65,7 +65,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Doyle",
@@ -78,7 +78,7 @@
 			},
 			"categories": [ "featured", "business" ],
 			"is_premium": true,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Bowen",
@@ -91,7 +91,7 @@
 			},
 			"categories": [ "featured", "blog" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Easley",
@@ -104,7 +104,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Camdem",
@@ -117,7 +117,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Reynolds",
@@ -130,7 +130,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Overton",
@@ -143,7 +143,7 @@
 			},
 			"categories": [ "featured", "business" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Brice",
@@ -156,7 +156,7 @@
 			},
 			"categories": [ "featured", "charity", "non-profit" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Barnsbury",
@@ -169,7 +169,7 @@
 			},
 			"categories": [ "featured", "business" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Alves",
@@ -182,7 +182,7 @@
 			},
 			"categories": [ "featured", "non-profit", "charity" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Mayland",
@@ -195,7 +195,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Rivington",
@@ -208,7 +208,7 @@
 			},
 			"categories": [ "featured", "real estate listing" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Maywood",
@@ -221,7 +221,7 @@
 			},
 			"categories": [ "featured", "restaurant, small business" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Balasana",
@@ -234,7 +234,7 @@
 			},
 			"categories": [ "featured", "restaurant, small business" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Stratford",
@@ -247,7 +247,7 @@
 			},
 			"categories": [ "featured", "school" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Rockfield",
@@ -260,7 +260,7 @@
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Coutoire",
@@ -273,7 +273,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Leven",
@@ -286,7 +286,7 @@
 			},
 			"categories": [ "featured", "portfolio", "small business" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Gibbs",
@@ -299,7 +299,7 @@
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
 			"is_premium": false,
-			"is_anchorfm": false
+			"features": []
 		},
 		{
 			"title": "Leven (Anchor Placeholder, to be removed)",
@@ -312,7 +312,7 @@
 			},
 			"categories": [ "featured", "portfolio", "small business" ],
 			"is_premium": false,
-			"is_anchorfm": true
+			"features": [ "anchorfm" ]
 		},
 		{
 			"title": "Gibbs (Anchor Placeholder, to be removed)",
@@ -325,7 +325,7 @@
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
 			"is_premium": false,
-			"is_anchorfm": true
+			"features": [ "anchorfm" ]
 		}
 	]
 }

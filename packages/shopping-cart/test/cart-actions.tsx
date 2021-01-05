@@ -13,7 +13,13 @@ import { screen, act, render, waitFor, fireEvent } from '@testing-library/react'
  */
 import { useShoppingCart, ShoppingCartProvider } from '../index';
 import { getEmptyResponseCart } from '../src/empty-carts';
-import { RequestCartProduct, ResponseCartProduct, RequestCart, ResponseCart } from '../src/types';
+import type {
+	RequestCartProduct,
+	ResponseCartProduct,
+	RequestCart,
+	ResponseCart,
+	MinimalRequestCartProduct,
+} from '../src/types';
 
 const planOne: ResponseCartProduct = {
 	product_name: 'WordPress.com Personal',
@@ -129,12 +135,14 @@ async function setCart( cartKey: string, newCart: RequestCart ): Promise< Respon
 
 function ProductList( {
 	initialProducts,
+	initialProductsForReplace,
 	initialCoupon,
 }: {
-	initialProducts?: RequestCartProduct[];
+	initialProducts?: MinimalRequestCartProduct[];
+	initialProductsForReplace?: MinimalRequestCartProduct[];
 	initialCoupon?: string;
 } ) {
-	const { responseCart, addProductsToCart, applyCoupon } = useShoppingCart();
+	const { responseCart, addProductsToCart, replaceProductsInCart, applyCoupon } = useShoppingCart();
 	const hasAddedProduct = useRef( false );
 	useEffect( () => {
 		if ( initialProducts && ! hasAddedProduct.current ) {
@@ -142,6 +150,12 @@ function ProductList( {
 			addProductsToCart( initialProducts );
 		}
 	}, [ addProductsToCart, initialProducts ] );
+	useEffect( () => {
+		if ( initialProductsForReplace && ! hasAddedProduct.current ) {
+			hasAddedProduct.current = true;
+			replaceProductsInCart( initialProductsForReplace );
+		}
+	}, [ replaceProductsInCart, initialProductsForReplace ] );
 	const hasAddedCoupon = useRef( false );
 	useEffect( () => {
 		if ( initialCoupon && ! hasAddedCoupon.current ) {
@@ -191,10 +205,10 @@ describe( 'useShoppingCart', () => {
 	} );
 
 	describe( 'addProductsToCart', () => {
-		const TestComponent = ( { initialProducts = undefined, products } ) => {
+		const TestComponent = ( { initialProducts = undefined, products = undefined } ) => {
 			const { addProductsToCart } = useShoppingCart();
 			const onClick = () => {
-				addProductsToCart( products ).then( () => markUpdateComplete() );
+				products && addProductsToCart( products ).then( () => markUpdateComplete() );
 			};
 			return (
 				<div>
@@ -213,6 +227,16 @@ describe( 'useShoppingCart', () => {
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
 			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+		} );
+
+		it( 'throws an error if the product is missing a product_id', async () => {
+			expect( () => {
+				render(
+					<MockProvider>
+						<TestComponent initialProducts={ [ { product_slug: planOne.product_slug } ] } />
+					</MockProvider>
+				);
+			} ).toThrow( /product_id/ );
 		} );
 
 		it( 'adds a product to the cart if the existing products are not renewals and the new products are also', async () => {
@@ -327,14 +351,17 @@ describe( 'useShoppingCart', () => {
 	} );
 
 	describe( 'replaceProductsInCart', () => {
-		const TestComponent = () => {
+		const TestComponent = ( { initialProductsForReplace = undefined } ) => {
 			const { replaceProductsInCart } = useShoppingCart();
 			const onClick = () => {
 				replaceProductsInCart( [ planTwo ] ).then( () => markUpdateComplete() );
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ [ planOne ] } />
+					<ProductList
+						initialProducts={ initialProductsForReplace ? undefined : [ planOne ] }
+						initialProductsForReplace={ initialProductsForReplace }
+					/>
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
@@ -353,6 +380,18 @@ describe( 'useShoppingCart', () => {
 			} );
 			expect( screen.queryByText( planOne.product_name ) ).not.toBeInTheDocument();
 			expect( screen.getByText( planTwo.product_name ) ).toBeInTheDocument();
+		} );
+
+		it( 'throws an error if a product is missing a product_id', async () => {
+			expect( () => {
+				render(
+					<MockProvider>
+						<TestComponent
+							initialProductsForReplace={ [ { product_slug: planOne.product_slug } ] }
+						/>
+					</MockProvider>
+				);
+			} ).toThrow( /product_id/ );
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {

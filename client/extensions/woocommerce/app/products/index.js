@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
 import SectionNav from 'calypso/components/section-nav';
 import Search from 'calypso/components/search';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 class Products extends Component {
 	static propTypes = {
@@ -126,6 +128,7 @@ class Products extends Component {
 						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
+				{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
 				{ this.renderSectionNav() }
 				{ productsDisplay }
 			</Main>

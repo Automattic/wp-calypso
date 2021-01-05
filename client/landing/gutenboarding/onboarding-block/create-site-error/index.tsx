@@ -6,6 +6,7 @@ import { ExternalLink } from '@wordpress/components';
 import React, { FunctionComponent, useEffect } from 'react';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import type { LocationDescriptor } from 'history';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import { Title, SubTitle } from '@automattic/onboarding';
 import './style.scss';
 
 interface Props {
-	linkTo: string;
+	linkTo: string | LocationDescriptor;
 }
 
 const CreateSiteError: FunctionComponent< Props > = ( { linkTo } ) => {

@@ -59,7 +59,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 }
 
 export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
-	paymentMethod: CheckoutPaymentMethodSlug
+	paymentMethod: CheckoutPaymentMethodSlug | string
 ): WPCOMPaymentMethod | null {
 	// existing cards have unique paymentMethodIds
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
@@ -105,6 +105,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'free-purchase':
 			return 'WPCOM_Billing_WPCOM';
 	}
+	return null;
 }
 
 export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod | null {

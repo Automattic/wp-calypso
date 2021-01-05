@@ -74,13 +74,4 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	jetpackPricingReversePlans: {
-		datestamp: '20201208',
-		variations: {
-			priceAsc: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };

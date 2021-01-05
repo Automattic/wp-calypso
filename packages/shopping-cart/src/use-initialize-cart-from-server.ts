@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -19,6 +19,13 @@ export default function useInitializeCartFromServer(
 	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
+	const isMounted = useRef< boolean >( true );
+	useEffect( () => {
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
+
 	useEffect( () => {
 		if ( cacheStatus !== 'fresh' ) {
 			debug( 'not initializing cart; cacheStatus is not fresh' );
@@ -36,18 +43,20 @@ export default function useInitializeCartFromServer(
 			.then( ( response ) => {
 				debug( 'initialized cart is', response );
 				const initialResponseCart = convertRawResponseCartToResponseCart( response );
-				hookDispatch( {
-					type: 'RECEIVE_INITIAL_RESPONSE_CART',
-					initialResponseCart,
-				} );
+				isMounted.current &&
+					hookDispatch( {
+						type: 'RECEIVE_INITIAL_RESPONSE_CART',
+						initialResponseCart,
+					} );
 			} )
 			.catch( ( error ) => {
 				debug( 'error while initializing cart', error );
-				hookDispatch( {
-					type: 'RAISE_ERROR',
-					error: 'GET_SERVER_CART_ERROR',
-					message: error.message,
-				} );
+				isMounted.current &&
+					hookDispatch( {
+						type: 'RAISE_ERROR',
+						error: 'GET_SERVER_CART_ERROR',
+						message: error.message,
+					} );
 			} );
-	}, [ cacheStatus, cartKey, hookDispatch, getCart, setCart ] );
+	}, [ isMounted, cacheStatus, cartKey, hookDispatch, getCart, setCart ] );
 }

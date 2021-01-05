@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { Card, CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
 import CreditCardFormFieldsLoadingPlaceholder from 'calypso/components/credit-card-form-fields/loading-placeholder';
 import FormButton from 'calypso/components/forms/form-button';
 import LoadingPlaceholder from 'calypso/me/purchases/components/loading-placeholder';
@@ -26,11 +26,9 @@ export default function PaymentMethodLoader( { title } ) {
 				<Column type="main">
 					<Card className="payment-method-loader__credit-card-content credit-card-form__content">
 						<CreditCardFormFieldsLoadingPlaceholder />
-					</Card>
 
-					<CompactCard className="payment-method-loader__credit-card-footer credit-card-form__footer">
 						<FormButton isPrimary={ false } />
-					</CompactCard>
+					</Card>
 				</Column>
 				<Column type="sidebar">
 					<Card className="payment-method-loader__top-card">

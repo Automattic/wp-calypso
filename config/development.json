@@ -20,6 +20,7 @@
 	"google_recaptcha_site_key": "6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn",
 	"hotjar_enabled": true,
 	"signup_url": "/start",
+	"gutenboarding_url": "/new",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
@@ -68,7 +69,9 @@
 		"gdpr-banner": false,
 		"google-my-business": true,
 		"google-drive": true,
+		"google-workspace-migration": false,
 		"gutenboarding/alpha-templates": true,
+		"gutenboarding/language-picker": true,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/show-vertical-input": false,
@@ -180,6 +183,7 @@
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,
+		"titan/iframe-control-panel": true,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
@@ -214,8 +218,6 @@
 		"woocommerce/store-deprecated": false,
 		"woocommerce/store-removed": false,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"woocommerce/store-deprecated": false,
-		"woocommerce/store-removed": false,
 		"wpcom-user-bootstrap": false
 	}
 }

@@ -1,5 +1,9 @@
 #### Unreleased
 
+#### v5.1.0 (2020-12-14)
+
+- Absorb package `eslint-config-wpcalypso`
+
 #### v5.0.0 (2020-07-23)
 
 - Breaking: Removed rule [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)

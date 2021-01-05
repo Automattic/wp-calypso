@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import { isNull } from 'lodash';
 
 /**
  * Internal dependencies
@@ -100,7 +99,7 @@ export class FacebookSharePreview extends PureComponent {
 							</a>
 						</div>
 
-						{ ! isNull( imageUrl ) && (
+						{ imageUrl !== null && (
 							<div className="facebook-share-preview__image-wrapper">
 								<img
 									alt="Facebook Preview Thumbnail"
@@ -110,7 +109,7 @@ export class FacebookSharePreview extends PureComponent {
 							</div>
 						) }
 
-						{ isNull( imageUrl ) && (
+						{ imageUrl === null && (
 							<div className="facebook-share-preview__card-wrapper">
 								<FacebookPreview
 									title={ seoTitle }

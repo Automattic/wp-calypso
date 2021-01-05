@@ -14,9 +14,11 @@ import {
 	redirectConnections,
 	redirectDefaultConnectionsDomain,
 	redirectMarketingTools,
+	marketingBusinessTools,
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
+	ultimateTrafficGuide,
 } from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
@@ -27,8 +29,10 @@ export default function () {
 		'/marketing/sharing-buttons',
 		'/marketing/tools',
 		'/marketing/traffic',
+		'/marketing/ultimate-traffic-guide',
 		'/sharing',
 		'/sharing/buttons',
+		'/marketing/business-tools',
 	];
 
 	paths.forEach( ( path ) => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
@@ -77,6 +81,27 @@ export default function () {
 		siteSelection,
 		navigation,
 		marketingTools,
+		layout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/business-tools/:domain',
+		siteSelection,
+		navigation,
+		marketingBusinessTools,
+		layout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/ultimate-traffic-guide/:domain',
+		siteSelection,
+		sites,
+		navigation,
+		ultimateTrafficGuide,
 		layout,
 		makeLayout,
 		clientRender

@@ -3,12 +3,11 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { ACTIVATE_PLUGIN } from '../constants';
+import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { isRequesting, plugins } from '../reducer';
 import status from '../status/reducer';
 import { akismet, jetpack } from './fixtures/plugins';
@@ -95,7 +94,7 @@ describe( 'reducer:', () => {
 
 		test( 'should show an updated plugin as up-to-date', () => {
 			const originalState = deepFreeze( { 'one.site': [ jetpack ] } );
-			const updatedPlugin = omit( jetpack, 'update' );
+			const updatedPlugin = { ...jetpack, update: { recentlyUpdated: true } };
 			const state = plugins( originalState, {
 				type: PLUGIN_UPDATE_REQUEST_SUCCESS,
 				siteId: 'one.site',

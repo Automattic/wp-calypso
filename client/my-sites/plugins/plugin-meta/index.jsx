@@ -45,6 +45,7 @@ import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/sele
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
+import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
@@ -404,18 +405,19 @@ export class PluginMeta extends Component {
 	}
 
 	getAvailableNewVersions() {
+		const { pluginsOnSites } = this.props;
 		return this.props.sites
 			.map( ( site ) => {
 				if ( ! site.canUpdateFiles ) {
 					return null;
 				}
-				if ( site.plugin && site.plugin.update ) {
-					if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
-						return {
-							title: site.title,
-							newVersion: site.plugin.update.new_version,
-						};
-					}
+
+				const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+				if ( sitePlugin?.update?.new_version && 'error' !== sitePlugin.update.new_version ) {
+					return {
+						title: site.title,
+						newVersion: sitePlugin.update.new_version,
+					};
 				}
 			} )
 			.filter( ( newVersions ) => newVersions );
@@ -577,9 +579,11 @@ export class PluginMeta extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state, { plugin, sites } ) => {
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+	const siteIds = sites.map( ( site ) => site.ID );
 
 	return {
 		atEnabled: isATEnabled( selectedSite ),
@@ -587,6 +591,7 @@ const mapStateToProps = ( state ) => {
 		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),
 		isVipSite: isVipSite( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
+		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
 	};
 };
 

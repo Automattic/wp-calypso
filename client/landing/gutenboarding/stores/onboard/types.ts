@@ -29,11 +29,12 @@ export interface SiteVertical {
 	slug?: string;
 }
 
+export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
+
 export interface Design {
 	categories: Array< string >;
 	fonts: FontPair;
 	is_alpha?: boolean;
-	is_anchorfm?: boolean;
 	is_fse?: boolean;
 	is_premium: boolean;
 	slug: string;
@@ -41,4 +42,5 @@ export interface Design {
 	template: string;
 	theme: string;
 	title: string;
+	features: Array< DesignFeatures >;
 }

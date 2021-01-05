@@ -10,7 +10,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import analytics from '../../lib/analytics';
-import { logSectionResponse } from 'pages/analytics';
+import { logSectionResponse } from 'calypso/server/pages/analytics';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 const TWO_SECONDS = 2000;

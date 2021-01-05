@@ -10,6 +10,7 @@
 	"rtl": false,
 	"login_url": "/connect",
 	"logout_url": "https://jetpack.com",
+	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
 	"site_name": "Jetpack: WordPress Security, Backups, Speed, & Growth",
 	"meta": [
 		{

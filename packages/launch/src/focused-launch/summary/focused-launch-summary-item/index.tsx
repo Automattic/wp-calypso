@@ -51,7 +51,10 @@ const FocusedLaunchSummaryItem: React.FunctionComponent<
 		isSelected?: boolean;
 		readOnly?: boolean;
 		isLoading?: boolean;
-		children: [ ReturnType< typeof LeadingContentSide >, ReturnType< typeof TrailingContentSide > ];
+		children?: [
+			ReturnType< typeof LeadingContentSide >,
+			ReturnType< typeof TrailingContentSide >
+		];
 	} & React.ButtonHTMLAttributes< HTMLButtonElement >
 > = ( { children, isSelected = false, readOnly = false, isLoading, ...rest } ) => {
 	return (
@@ -64,8 +67,8 @@ const FocusedLaunchSummaryItem: React.FunctionComponent<
 				'is-loading': isLoading,
 			} ) }
 		>
-			{ children[ 0 ] }
-			{ children[ 1 ] }
+			{ children?.[ 0 ] }
+			{ children?.[ 1 ] }
 		</button>
 	);
 };

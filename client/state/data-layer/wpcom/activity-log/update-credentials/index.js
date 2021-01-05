@@ -216,11 +216,15 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	}
 };
 
-export const streamRecord = ( action, record ) => ( {
-	type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
-	siteId: action.siteId,
-	update: record,
-} );
+export const streamRecord = ( action, record ) => {
+	debug( 'onStreamRecord: record=%o', record );
+
+	return {
+		type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
+		siteId: action.siteId,
+		update: record,
+	};
+};
 
 registerHandlers( 'state/data-layer/wpcom/activity-log/update-credentials/index.js', {
 	[ JETPACK_CREDENTIALS_UPDATE ]: [

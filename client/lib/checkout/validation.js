@@ -91,7 +91,6 @@ export function getStripeElementsRules() {
 
 /**
  * Returns the tef payment validation rule set
- * See: client/my-sites/checkout/checkout/redirect-payment-box.jsx
  *
  * @returns {object} the ruleset
  */
@@ -425,7 +424,7 @@ function getEbanxCreditCardRules( { country } ) {
 
 /**
  *
- * @param {object} cardDetails - a map of credit card field key value pairs
+ * @param {{country: string}} cardDetails - a map of credit card field key value pairs
  * @returns {object|null} If match is found,
  * an object containing rule sets for specific credit card processing providers,
  * otherwise `null`

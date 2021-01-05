@@ -443,10 +443,10 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 				constants.FEATURE_SITE_MONETIZATION_V2,
 			],
 			i5: [
-				constants.FEATURE_ALL_FREE_FEATURES,
 				constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 				constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 				constants.FEATURE_ANTISPAM_V2,
+				constants.FEATURE_VIDEO_HOSTING_V2,
 			],
 		}[ getJetpackCROActiveVersion() ] || {
 			[ constants.FEATURE_CATEGORY_SECURITY ]: [
@@ -605,7 +605,9 @@ const getPlanJetpackCompleteDetails = () => ( {
 				constants.FEATURE_PRODUCT_SEARCH_V2,
 			],
 			i5: [
-				constants.FEATURE_PLAN_SECURITY_REALTIME,
+				constants.FEATURE_PLAN_SECURITY_DAILY,
+				constants.FEATURE_BACKUP_REALTIME_V2,
+				constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 				constants.FEATURE_CRM_V2,
 				constants.FEATURE_PRODUCT_SEARCH_V2,
 			],

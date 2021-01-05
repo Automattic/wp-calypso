@@ -8,7 +8,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+	GSUITE_BUSINESS_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import GSuiteSingleFeature from './single-feature';
 
 /**
@@ -22,7 +26,9 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 	const getStorageText = () => {
 		if ( compact ) {
 			return undefined;
-		} else if ( GSUITE_BASIC_SLUG === productSlug ) {
+		} else if (
+			[ GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY, GSUITE_BASIC_SLUG ].includes( productSlug )
+		) {
 			return translate( 'Get 30GB of storage for all your files synced across devices.' );
 		} else if ( GSUITE_BUSINESS_SLUG === productSlug ) {
 			return translate( 'Get unlimited storage for all your files synced across devices.' );
@@ -34,7 +40,9 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 	const getStorageTitle = () => {
 		if ( ! compact ) {
 			return translate( 'Keep all your files secure' );
-		} else if ( GSUITE_BASIC_SLUG === productSlug ) {
+		} else if (
+			[ GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY, GSUITE_BASIC_SLUG ].includes( productSlug )
+		) {
 			return translate( '30GB of cloud storage' );
 		} else if ( GSUITE_BUSINESS_SLUG === productSlug ) {
 			return translate( 'Unlimited cloud storage (or 1TB per user if fewer than 5 users)' );

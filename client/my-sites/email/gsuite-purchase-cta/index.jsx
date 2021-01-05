@@ -17,7 +17,10 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import GSuiteFeatures from 'calypso/components/gsuite/gsuite-features';
 import GSuiteLearnMore from 'calypso/components/gsuite/gsuite-learn-more';
 import GSuitePrice from 'calypso/components/gsuite/gsuite-price';
@@ -44,7 +47,9 @@ export const GSuitePurchaseCta = ( {
 		} );
 	}, [ domainName ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const goToAddGSuiteUsers = ( planType ) => {
+	const goToAddGSuiteUsers = () => {
+		const planType = config.isEnabled( 'google-workspace-migration' ) ? 'starter' : 'basic';
+
 		recordEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
 			domain_name: domainName,
 			plan_type: planType,
@@ -97,9 +102,7 @@ export const GSuitePurchaseCta = ( {
 						{ upgradeAvailable && (
 							<Button
 								className="gsuite-purchase-cta__get-gsuite-button"
-								onClick={ () => {
-									goToAddGSuiteUsers( 'basic' );
-								} }
+								onClick={ goToAddGSuiteUsers }
 								primary
 							>
 								{ translate( 'Add G Suite' ) }
@@ -114,7 +117,7 @@ export const GSuitePurchaseCta = ( {
 			</CompactCard>
 
 			<CompactCard className="gsuite-purchase-cta__info">
-				<GSuiteFeatures domainName={ domainName } productSlug={ GSUITE_BASIC_SLUG } />
+				<GSuiteFeatures domainName={ domainName } productSlug={ product.product_slug } />
 
 				<GSuiteLearnMore onLearnMoreClick={ handleLearnMoreClick } />
 			</CompactCard>
@@ -131,11 +134,17 @@ GSuitePurchaseCta.propTypes = {
 };
 
 export default connect(
-	( state ) => ( {
-		currentRoute: getCurrentRoute( state ),
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		product: getProductBySlug( state, GSUITE_BASIC_SLUG ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ),
+	( state ) => {
+		const productSlug = config.isEnabled( 'google-workspace-migration' )
+			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			: GSUITE_BASIC_SLUG;
+
+		return {
+			currentRoute: getCurrentRoute( state ),
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			product: getProductBySlug( state, productSlug ),
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+		};
+	},
 	{ recordTracksEvent }
 )( GSuitePurchaseCta );

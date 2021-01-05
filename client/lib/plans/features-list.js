@@ -1021,13 +1021,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
 		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
 		getIcon: () => 'lock',
-		getTitle: () =>
-			i18n.translate( '{{strong}}All Security {{em}}Daily{{/em}}{{/strong}} features', {
-				components: {
-					em: <em />,
-					strong: <strong />,
-				},
-			} ),
+		getTitle: () => i18n.translate( 'All Security Daily features' ),
 		isPlan: true,
 	},
 
@@ -1073,14 +1067,14 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_DAILY_V2,
-		getTitle: () => i18n.translate( 'Automated daily site backups' ),
+		getTitle: () => i18n.translate( 'Automated daily backups (off-site)' ),
 	},
 
 	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
 		getTitle: () =>
 			( {
-				i5: i18n.translate( 'Automated real-time backups' ),
+				i5: i18n.translate( 'Backup (real-time, off-site)' ),
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated real-time site backups' ) ),
 	},
 
@@ -1111,7 +1105,7 @@ export const FEATURES_LIST = {
 						strong: <strong />,
 					},
 				} ),
-				i5: i18n.translate( 'Backup Daily (off-site)' ),
+				i5: i18n.translate( 'All Backup Daily features' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
 				components: {
@@ -1212,7 +1206,7 @@ export const FEATURES_LIST = {
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () =>
 			( {
-				i5: i18n.translate( 'Scan Daily (automated)' ),
+				i5: i18n.translate( 'Scan (daily, automated)' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
 				components: {
@@ -1240,7 +1234,7 @@ export const FEATURES_LIST = {
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () =>
 			( {
-				i5: i18n.translate( 'Real-time Scan (automated)' ),
+				i5: i18n.translate( 'Scan (real-time, automated)' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
 				components: {
@@ -1263,7 +1257,7 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_ANTISPAM_V2,
 		getTitle: () =>
 			( {
-				i5: i18n.translate( 'Always-on spam protection' ),
+				i5: i18n.translate( 'Anti-spam ' ),
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated spam protection' ) ),
 	},
 
@@ -1509,7 +1503,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => constants.FEATURE_SECURE_STORAGE_V2,
-		getTitle: () => i18n.translate( 'Unlimited secure storage' ),
+		getTitle: () => i18n.translate( 'Unlimited site storage' ),
 	},
 
 	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {

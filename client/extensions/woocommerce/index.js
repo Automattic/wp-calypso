@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
  */
 import App from './app';
 import Dashboard from './app/dashboard';
+import StoreMoveNoticeView from './app/dashboard/store-move-notice-view';
 import EmptyContent from 'calypso/components/empty-content';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import installActionHandlers from './state/data-layer';
@@ -47,7 +48,7 @@ import './style.scss';
 const getStorePages = () => {
 	const pages = [
 		{
-			container: Dashboard,
+			container: config.isEnabled( 'woocommerce/store-removed' ) ? StoreMoveNoticeView : Dashboard,
 			configKey: 'woocommerce/extension-dashboard',
 			path: '/store/:site',
 		},
@@ -194,11 +195,11 @@ function getAnalyticsPath( path, params ) {
 	}
 
 	if ( '/store/settings/email/:site/:setup?' === path ) {
-		return !! params.setup ? '/store/settings/email/:site/:setup' : '/store/settings/email/:site';
+		return params.setup ? '/store/settings/email/:site/:setup' : '/store/settings/email/:site';
 	}
 
 	if ( '/store/settings/shipping/zone/:site/:zone?' === path ) {
-		return !! params.zone
+		return params.zone
 			? '/store/settings/shipping/zone/:site/:zone'
 			: '/store/settings/shipping/zone/:site';
 	}

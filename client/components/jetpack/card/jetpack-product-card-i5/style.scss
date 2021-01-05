@@ -24,7 +24,7 @@
 	width: 100%;
 	padding: 8px;
 
-	background-color: var( --studio-purple-50 );
+	background-color: var( --color-primary );
 	border-top-left-radius: inherit;
 	border-top-right-radius: inherit;
 	color: var( --color-text-inverted );
@@ -47,7 +47,7 @@
 	padding: 24px 32px;
 
 	.is-featured & {
-		border: solid 2px var( --studio-purple-50 );
+		border: solid 2px var( --color-primary );
 		border-top: none;
 		border-bottom-left-radius: inherit;
 		border-bottom-right-radius: inherit;

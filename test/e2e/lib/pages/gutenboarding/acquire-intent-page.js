@@ -12,6 +12,7 @@ import * as driverHelper from '../../driver-helper';
 export default class AcquireIntentPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.acquire-intent' ) );
+		this.nextButtonSelector = By.css( '.action-buttons__next' );
 	}
 
 	async enterSiteTitle( siteTitle ) {
@@ -20,8 +21,7 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 	}
 
 	async goToNextStep() {
-		const nextButtonSelector = By.css( '.action-buttons__next' );
-		return await driverHelper.clickWhenClickable( this.driver, nextButtonSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.nextButtonSelector );
 	}
 
 	async skipStep() {

@@ -10,8 +10,12 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { addItems } from 'calypso/lib/cart/actions';
+import config from 'calypso/config';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
-import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import GSuiteUpsellCard from './gsuite-upsell-card';
 import HeaderCake from 'calypso/components/header-cake';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -40,6 +44,10 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 
 	const translate = useTranslate();
 
+	const productSlug = config.isEnabled( 'google-workspace-migration' )
+		? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+		: GSUITE_BASIC_SLUG;
+
 	return (
 		<div>
 			<HeaderCake onClick={ handleGoBack }>
@@ -48,7 +56,7 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 
 			<GSuiteUpsellCard
 				domain={ domain }
-				productSlug={ GSUITE_BASIC_SLUG }
+				productSlug={ productSlug }
 				onSkipClick={ handleSkipClick }
 				onAddEmailClick={ handleAddEmailClick }
 			/>

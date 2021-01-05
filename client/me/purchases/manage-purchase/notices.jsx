@@ -12,7 +12,7 @@ import { isEmpty, merge, minBy } from 'lodash';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import config from 'calypso/config';
-import { getChangePaymentMethodPath } from '../utils';
+import { getAddNewPaymentMethodPath } from '../utils';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -65,13 +65,13 @@ class PurchaseNotice extends Component {
 		selectedSite: PropTypes.object,
 		changePaymentMethodPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		getManagePurchaseUrlFor: PropTypes.func,
-		getAddPaymentMethodUrlFor: PropTypes.func,
+		getAddNewPaymentMethodUrlFor: PropTypes.func,
 		isProductOwner: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		getManagePurchaseUrlFor: managePurchase,
-		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
+		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
 	};
 
 	state = {
@@ -345,7 +345,7 @@ class PurchaseNotice extends Component {
 			selectedSite,
 			renewableSitePurchases,
 			getManagePurchaseUrlFor,
-			getAddPaymentMethodUrlFor,
+			getAddNewPaymentMethodUrlFor,
 		} = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/upcoming-renewals-notices' ) ) {
@@ -651,7 +651,7 @@ class PurchaseNotice extends Component {
 				);
 			} else {
 				noticeStatus = showCreditCardExpiringWarning( currentPurchase ) ? 'is-error' : 'is-info';
-				noticeActionHref = getAddPaymentMethodUrlFor( selectedSite.slug, currentPurchase );
+				noticeActionHref = getAddNewPaymentMethodUrlFor( selectedSite.slug );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-soon-others-renew-soon-cc-expiring';
@@ -745,7 +745,7 @@ class PurchaseNotice extends Component {
 				);
 			} else {
 				noticeStatus = 'is-info';
-				noticeActionHref = getAddPaymentMethodUrlFor( selectedSite.slug, currentPurchase );
+				noticeActionHref = getAddNewPaymentMethodUrlFor( selectedSite.slug );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-later-others-renew-soon-cc-expiring';

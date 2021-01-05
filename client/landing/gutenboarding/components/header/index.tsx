@@ -14,7 +14,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
-import { useCurrentStep, Step } from '../../path';
+import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import Link from '../link';
 
@@ -27,20 +27,19 @@ const Header: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const currentStep = useCurrentStep();
+	const isAnchorFmSignup = useIsAnchorFm();
+	const makePath = usePath();
 
 	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	// steps (including modals) where we show Domains button
-	const showDomainsButton = [
-		'DesignSelection',
-		'Style',
-		'Features',
-		'Plans',
-		'PlansModal',
-	].includes( currentStep );
+	const showDomainsButton =
+		[ 'DesignSelection', 'Style', 'Features', 'Plans', 'PlansModal' ].includes( currentStep ) &&
+		! isAnchorFmSignup;
 
 	// steps (including modals) where we show Plans button
-	const showPlansButton = [ 'DesignSelection', 'Style', 'Features' ].includes( currentStep );
+	const showPlansButton =
+		[ 'DesignSelection', 'Style', 'Features' ].includes( currentStep ) && ! isAnchorFmSignup;
 
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
@@ -53,7 +52,7 @@ const Header: React.FunctionComponent = () => {
 		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
 			return (
 				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
-					<Link to={ Step.LanguageModal }>
+					<Link to={ makePath( Step.LanguageModal ) }>
 						<span>{ __( 'Site Language' ) } </span>
 						<span className="gutenboarding__header-site-language-badge">{ locale }</span>
 					</Link>

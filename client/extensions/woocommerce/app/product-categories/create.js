@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit, isNumber, isNull } from 'lodash';
+import { isEmpty, omit, isNumber } from 'lodash';
 import page from 'page';
 
 /**
@@ -122,7 +122,7 @@ class ProductCategoryCreate extends React.Component {
 			category &&
 			category.name &&
 			category.name.length &&
-			! isNull( category.parent ) &&
+			category.parent !== null &&
 			! isUploading;
 
 		return (

@@ -122,3 +122,5 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = {
 		ratio: 12,
 	},
 };
+
+export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';

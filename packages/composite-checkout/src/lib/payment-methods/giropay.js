@@ -12,7 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import { FormStatus, useLineItems, useEvents } from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -128,7 +128,6 @@ const GiropayField = styled( Field )`
 function GiropayPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
 
 	return (
@@ -137,10 +136,6 @@ function GiropayPayButton( { disabled, onClick, store, stripe, stripeConfigurati
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting giropay payment' );
-					onEvent( {
-						type: 'REDIRECT_TRANSACTION_BEGIN',
-						payload: { paymentMethodId: 'giropay' },
-					} );
 					onClick( 'giropay', {
 						stripe,
 						name: customerName?.value,

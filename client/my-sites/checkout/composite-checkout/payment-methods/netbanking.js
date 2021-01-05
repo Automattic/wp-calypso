@@ -10,7 +10,6 @@ import {
 	Button,
 	FormStatus,
 	useLineItems,
-	useEvents,
 	useFormStatus,
 	registerStore,
 	useSelect,
@@ -215,7 +214,6 @@ function NetBankingPayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
 	const massagedFields = Object.entries( fields ).reduce(
@@ -232,10 +230,6 @@ function NetBankingPayButton( { disabled, onClick, store } ) {
 			onClick={ () => {
 				if ( isFormValid( store, contactCountryCode, __ ) ) {
 					debug( 'submitting netbanking payment' );
-					onEvent( {
-						type: 'REDIRECT_TRANSACTION_BEGIN',
-						payload: { paymentMethodId: 'netbanking' },
-					} );
 					onClick( 'netbanking', {
 						...massagedFields,
 						name: customerName?.value,

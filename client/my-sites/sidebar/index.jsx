@@ -12,7 +12,7 @@ import { ProgressBar } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'calypso/config';
+import { isEnabled } from 'calypso/config';
 import CurrentSite from 'calypso/my-sites/current-site';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ExternalLink from 'calypso/components/external-link';
@@ -81,9 +81,11 @@ import {
 import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import InfoPopover from 'calypso/components/info-popover';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 import { isP2PlusPlan } from 'calypso/lib/plans';
@@ -660,6 +662,8 @@ export class MySitesSidebar extends Component {
 
 	store() {
 		const { translate, site, siteSuffix, canUserUseStore } = this.props;
+		const isCalypsoStoreDeprecatedOrRemoved =
+			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 
 		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
@@ -685,7 +689,14 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackStoreClick }
 				materialIcon="shopping_cart"
 				forceInternalLink
-			/>
+			>
+				{ isCalypsoStoreDeprecatedOrRemoved && isBusiness( site.plan ) && (
+					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
+						<div>{ 'Store is moving to WooCommerce' }.</div>
+						<ExternalLink href="https://wordpress.com/support/store/">{ 'More' }</ExternalLink>
+					</InfoPopover>
+				) }
+			</SidebarItem>
 		);
 	}
 
@@ -919,7 +930,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Add new site' ) }
-				link={ `${ config( 'signup_url' ) }?ref=calypso-selector` }
+				link={ `${ this.props.onboardingUrl }?ref=calypso-sidebar` }
 				onNavigate={ this.trackAddNewSiteClick }
 				icon="add-outline"
 			/>
@@ -1130,6 +1141,7 @@ function mapStateToProps( state ) {
 		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
 		isWpMobile: isWpMobileApp(), // This doesn't rely on state, but we inject it here for future testability
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
+		onboardingUrl: getOnboardingUrl( state ),
 	};
 }
 

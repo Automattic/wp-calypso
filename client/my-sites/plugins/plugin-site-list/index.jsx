@@ -15,6 +15,7 @@ import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connecte
 import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
 import PluginsStore from 'calypso/lib/plugins/store';
 import SectionHeader from 'calypso/components/section-header';
+import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
@@ -30,7 +31,8 @@ export class PluginSiteList extends Component {
 	};
 
 	getSecondaryPluginSites( site, secondarySites ) {
-		const secondaryPluginSites = site.plugin
+		const sitePlugin = this.props.pluginsOnSites?.sites[ site.ID ];
+		const secondaryPluginSites = sitePlugin
 			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
 			: secondarySites;
 		return compact( secondaryPluginSites );
@@ -74,6 +76,12 @@ function getSitesWithSecondarySites( state, sites ) {
 		} ) );
 }
 
-export default connect( ( state, props ) => ( {
-	sitesWithSecondarySites: getSitesWithSecondarySites( state, props.sites ),
-} ) )( PluginSiteList );
+export default connect( ( state, { plugin, sites } ) => {
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+	const siteIds = sites.map( ( site ) => site.ID );
+
+	return {
+		sitesWithSecondarySites: getSitesWithSecondarySites( state, sites ),
+		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
+	};
+} )( PluginSiteList );

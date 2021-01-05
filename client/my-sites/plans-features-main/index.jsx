@@ -221,6 +221,7 @@ export class PlansFeaturesMain extends Component {
 			hidePersonalPlan,
 			hidePremiumPlan,
 			sitePlanSlug,
+			showTreatmentPlansReorderTest,
 		} = this.props;
 
 		const currentPlan = getPlan( selectedPlan );
@@ -287,6 +288,10 @@ export class PlansFeaturesMain extends Component {
 
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
 			plans.splice( plans.indexOf( plans.filter( ( p ) => p === PLAN_PERSONAL )[ 0 ] ), 1 );
+		}
+
+		if ( showTreatmentPlansReorderTest ) {
+			return plans.reverse();
 		}
 
 		return plans;
