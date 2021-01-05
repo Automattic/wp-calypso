@@ -90,7 +90,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const paidIncludedDomainLabel =
 		type === ITEM_TYPE_INDIVIDUAL_ITEM
 			? firstYearIncludedInPaid
-			: __( 'Included in plans', __i18n_text_domain__ );
+			: __( isMobile ? 'Free' : 'Included in plans', __i18n_text_domain__ );
 
 	useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.

@@ -91,11 +91,6 @@ $accent-blue: #117ac9;
 	text-align: left;
 	cursor: pointer;
 
-	@media ( max-width: $break-mobile ) {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
 	&.type-individual-item {
 		min-height: 64px;
 		border-width: 2px;
@@ -402,6 +397,27 @@ $accent-blue: #117ac9;
 	.domain-picker__price-cost {
 		color: $accent-blue;
 		opacity: 0.68;
+	}
+}
+
+.domain-picker__suggestion-item.type-button {
+	@media ( max-width: $break-mobile ) {
+		flex-direction: column;
+		align-items: flex-start;
+
+		.domain-picker__price.is-paid {
+			display: flex;
+		}
+
+		.domain-picker__price-inclusive {
+			display: inline;
+			order: 2;
+
+			&::before {
+				// add a no-break space to get spacing between price-inclusive & price-cost
+				content: '\00a0';
+			}
+		}
 	}
 }
 
