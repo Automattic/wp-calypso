@@ -153,13 +153,11 @@ class SinglePlugin extends React.Component {
 	}
 
 	getPlugin() {
-		const { pluginSlug, wporgPlugin } = this.props;
+		const { plugin, wporgPlugin } = this.props;
 
 		// assign it .org details
 		return {
-			name: pluginSlug,
-			id: pluginSlug,
-			slug: pluginSlug,
+			...plugin,
 			...wporgPlugin,
 		};
 	}
