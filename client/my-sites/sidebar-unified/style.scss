@@ -86,6 +86,7 @@ $font-size: rem( 14px );
 			&::after {
 				content: ' ';
 				display: none;
+				z-index: 1;
 				position: absolute;
 				top: 50%;
 				right: 0;
