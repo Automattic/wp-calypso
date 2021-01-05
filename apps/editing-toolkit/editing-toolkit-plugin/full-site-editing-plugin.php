@@ -344,3 +344,11 @@ function load_coming_soon() {
 	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
+
+/**
+ * JS Log Errors
+ */
+function load_js_log_errors() {
+	require_once __DIR__ . '/js-log-errors/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_js_log_errors' );
