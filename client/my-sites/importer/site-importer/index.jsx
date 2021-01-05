@@ -84,7 +84,6 @@ class SiteImporter extends React.PureComponent {
 
 	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
-		const site = this.props.site;
 		const state = this.props.importerStatus;
 		const isEnabled = appStates.DISABLED !== state.importerState;
 		const showStart = includes( compactStates, state.importerState );
@@ -100,10 +99,7 @@ class SiteImporter extends React.PureComponent {
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
-				<ImporterHeader
-					importerStatus={ state }
-					{ ...{ icon, title, description, isEnabled, site } }
-				/>
+				<ImporterHeader importerStatus={ state } { ...{ icon, title, description } } />
 				{ includes( importingStates, state.importerState ) && (
 					<ImportingPane
 						{ ...this.props }

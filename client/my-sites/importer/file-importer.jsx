@@ -116,10 +116,7 @@ class FileImporter extends React.PureComponent {
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
-				<ImporterHeader
-					importerStatus={ importerStatus }
-					{ ...{ icon, title, description, isEnabled, site } }
-				/>
+				<ImporterHeader importerStatus={ importerStatus } { ...{ icon, title, description } } />
 				{ errorData && <ErrorPane type={ errorData.type } description={ errorData.description } /> }
 				{ includes( importingStates, importerState ) && (
 					<ImportingPane importerStatus={ importerStatus } sourceType={ title } site={ site } />
