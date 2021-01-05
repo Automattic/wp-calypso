@@ -84,8 +84,8 @@ export const Sharing = ( {
 	}
 
 	// Include Business Tools link if a site is selected and the
-	// required Jetpack module is active
-	if ( showBusinessTools ) {
+	// site is not VIP
+	if ( ! isVip && showBusinessTools ) {
 		filters.push( {
 			id: 'business-buttons',
 			route: '/marketing/business-tools' + pathSuffix,
@@ -156,7 +156,7 @@ export default connect( ( state ) => {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,
-		showBusinessTools: !! siteId && canManageOptions && ! isJetpack,
+		showBusinessTools: !! siteId && canManageOptions,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

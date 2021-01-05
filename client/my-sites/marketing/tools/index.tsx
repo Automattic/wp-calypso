@@ -90,6 +90,10 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_verblio_button_click' );
 	};
 
+	const handleSimpleTextingClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_simpletexting_button_click' );
+	};
+
 	const handleStartSharingClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_start_sharing_button_click' );
 
@@ -191,7 +195,7 @@ export const MarketingTools: FunctionComponent = () => {
 					imagePath={ simpletextLogo }
 				>
 					<Button
-						onClick={ handleCreateALogoClick }
+						onClick={ handleSimpleTextingClick }
 						href="https://simpletexting.grsm.io/wordpresscom"
 						target="_blank"
 					>
