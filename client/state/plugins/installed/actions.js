@@ -44,6 +44,7 @@ import {
 import { getSite } from 'calypso/state/sites/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { sitePluginUpdated } from 'calypso/state/sites/actions';
 
 import 'calypso/state/plugins/init';
 
@@ -304,6 +305,7 @@ export function updatePlugin( siteId, plugin ) {
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
 			afterUpdateCallback( undefined, data );
+			sitePluginUpdated( siteId );
 
 			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleViewAction( {
