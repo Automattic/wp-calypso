@@ -16,7 +16,7 @@ import type { DomainSuggestions } from '@automattic/data-stores';
  */
 import SuggestionItem from './suggestion-item';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
-import UseYourDomainItem from './domain-i-own-item';
+import UseYourDomainItem from './use-your-domain-item';
 import {
 	useDomainSuggestions,
 	useDomainAvailabilities,
@@ -391,9 +391,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											times( placeholdersCount, ( i ) => (
 												<SuggestionItemPlaceholder type={ itemType } key={ i } />
 											) ) }
-											{ ! areDependenciesLoading && existingSubdomain && onUseYourDomainClick && (
-												<UseYourDomainItem onClick={ onUseYourDomainClick } />
-											) }
+										{ ! areDependenciesLoading && existingSubdomain && onUseYourDomainClick && (
+											<UseYourDomainItem onClick={ onUseYourDomainClick } />
+										) }
 									</ItemGrouper>
 								</Fragment>
 							)
