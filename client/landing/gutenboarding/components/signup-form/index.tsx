@@ -50,7 +50,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
 	const isMobile = useViewportMatch( 'small', '<' );
-	const { anchorFmPodcastId } = useAnchorFmParams();
+	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	const closeModal = () => {
@@ -167,13 +167,25 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	}
 
 	const langFragment = lang ? `/${ lang }` : '';
-	const loginRedirectUrl = encodeURIComponent(
-		isAnchorFmSignup
-			? `${ window.location.origin }/new${ makePath(
-					Step.IntentGathering
-			  ) }?new&anchor_podcast=${ anchorFmPodcastId }` // Fix in #48389
-			: `${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
-	);
+
+	let loginRedirectUrl = window.location.origin + '/new';
+	if ( isAnchorFmSignup ) {
+		loginRedirectUrl += `${ makePath( Step.IntentGathering ) }?new`;
+		const queryParts = {
+			anchor_podcast: anchorFmPodcastId,
+			anchor_episode: anchorFmEpisodeId,
+			spotify_show_url: anchorFmSpotifyShowUrl,
+		};
+		for ( const [ k, v ] of Object.entries( queryParts ) ) {
+			if ( v ) {
+				loginRedirectUrl += `&${ k }=${ encodeURIComponent( v ) }`;
+			}
+		}
+	} else {
+		loginRedirectUrl += `${ makePath( Step.CreateSite ) }?new`;
+	}
+	loginRedirectUrl = encodeURIComponent( loginRedirectUrl );
+
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
