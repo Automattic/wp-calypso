@@ -45,7 +45,6 @@ export default {
 				analyticsTitle="Domain Management"
 				component={ DomainManagement.List }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -74,7 +73,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Edit }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -92,7 +90,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -110,7 +107,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.TransferIn }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -142,7 +138,6 @@ export default {
 				analyticsTitle="Domain Management > Contacts and Privacy > Manage Consent for Personal Data Use"
 				component={ DomainManagement.ManageConsent }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
