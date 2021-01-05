@@ -12,7 +12,7 @@ import { Theme } from './lib/theme';
 export interface CheckoutStepProps {
 	stepId: string;
 	titleContent: React.ReactNode;
-	isCompleteCallback: () => boolean | Promise< boolean >;
+	isCompleteCallback: IsCompleteCallback;
 	activeStepContent?: React.ReactNode;
 	completeStepContent?: React.ReactNode;
 	className?: string;
@@ -23,6 +23,8 @@ export interface CheckoutStepProps {
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
 }
+
+export type IsCompleteCallback = () => boolean | Promise< boolean >;
 
 export interface OrderSummaryData {
 	className: string;
