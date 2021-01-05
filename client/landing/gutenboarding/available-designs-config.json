@@ -294,8 +294,8 @@
 			"template": "gilbert",
 			"theme": "gilbert",
 			"fonts": {
-				"headings": "Chivo",
-				"base": "Open Sans"
+				"headings": "Roboto",
+				"base": "Roboto"
 			},
 			"categories": [ "featured" ],
 			"is_premium": false,
@@ -307,8 +307,8 @@
 			"template": "riley",
 			"theme": "riley",
 			"fonts": {
-				"headings": "Fira Sans",
-				"base": "Fira Sans"
+				"headings": "Raleway",
+				"base": "Cabin"
 			},
 			"categories": [ "featured" ],
 			"is_premium": false,

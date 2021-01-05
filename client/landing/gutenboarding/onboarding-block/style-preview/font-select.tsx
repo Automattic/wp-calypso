@@ -8,11 +8,12 @@ import classnames from 'classnames';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import { useIsAnchorFm } from '../../path';
 
 /**
  * Internal dependencies
  */
-import { fontPairings, getFontTitle, FontPair } from '../../constants';
+import { fontPairings, getFontTitle, FontPair, anchorFmFontPairings } from '../../constants';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 const FontSelect: React.FunctionComponent = () => {
@@ -57,6 +58,12 @@ const FontSelect: React.FunctionComponent = () => {
 		__( 'Select fonts' )
 	);
 
+	const isAnchorFmSignup = useIsAnchorFm();
+
+	const effectiveFontPairings = isAnchorFmSignup
+		? [ ...fontPairings, ...anchorFmFontPairings ]
+		: fontPairings;
+
 	const fontPairingsFilter = ( pair: FontPair ): boolean => {
 		if ( ! selectedDesignDefaultFonts ) {
 			return true;
@@ -83,7 +90,7 @@ const FontSelect: React.FunctionComponent = () => {
 					>
 						<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 					</Button>
-					{ fontPairings.filter( fontPairingsFilter ).map( ( fontPair ) => {
+					{ effectiveFontPairings.filter( fontPairingsFilter ).map( ( fontPair ) => {
 						// Font pairs are objects, we need `isShallowEqual` as we can't guarantee referential equality
 						// (E.g. if `selectedFonts` is coming from persisted state)
 						const isSelected = !! selectedFonts && isShallowEqual( fontPair, selectedFonts );
@@ -143,7 +150,7 @@ const FontSelect: React.FunctionComponent = () => {
 						>
 							<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 						</Button>
-						{ fontPairings.filter( fontPairingsFilter ).map( ( fontPair ) => {
+						{ effectiveFontPairings.filter( fontPairingsFilter ).map( ( fontPair ) => {
 							// Font pairs are objects, we need `isShallowEqual` as we can't guarantee referential equality
 							// (E.g. if `selectedFonts` is coming from persisted state)
 							const isSelected = !! selectedFonts && isShallowEqual( fontPair, selectedFonts );
