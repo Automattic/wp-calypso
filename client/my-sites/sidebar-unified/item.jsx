@@ -25,18 +25,20 @@ import {
 } from 'calypso/state/my-sites/sidebar/actions';
 
 export const MySitesSidebarUnifiedItem = ( {
-	title,
+	count,
 	icon,
-	url,
-	slug,
-	selected = false,
 	isSubItem = false,
 	sectionId,
+	selected = false,
+	slug,
+	title,
+	url,
 } ) => {
 	const reduxDispatch = useDispatch();
 
 	return (
 		<SidebarItem
+			count={ count }
 			label={ title }
 			link={ url }
 			onNavigate={ () => {
@@ -54,6 +56,7 @@ export const MySitesSidebarUnifiedItem = ( {
 };
 
 MySitesSidebarUnifiedItem.propTypes = {
+	count: PropTypes.number,
 	icon: PropTypes.string,
 	sectionId: PropTypes.string,
 	slug: PropTypes.string,
