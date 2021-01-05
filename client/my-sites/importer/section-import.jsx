@@ -221,7 +221,7 @@ class SectionImport extends Component {
 	renderActiveImporters( importsForSite ) {
 		const { fromSite, site, siteTitle } = this.props;
 
-		return importsForSite.map( ( importItem ) => {
+		return importsForSite.map( ( importItem, idx ) => {
 			const importer = getImporterByKey( importItem.type );
 			if ( ! importer ) {
 				return;
@@ -232,7 +232,7 @@ class SectionImport extends Component {
 			return (
 				ImporterComponent && (
 					<ImporterComponent
-						key={ importItem.importerId }
+						key={ idx }
 						site={ site }
 						fromSite={ fromSite }
 						siteTitle={ siteTitle }
