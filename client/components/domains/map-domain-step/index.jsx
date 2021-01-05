@@ -176,6 +176,7 @@ class MapDomainStep extends React.Component {
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.cart.hasPendingServerUpdates }
 					onButtonClick={ this.registerSuggestedDomain }
 				/>
 			</div>
