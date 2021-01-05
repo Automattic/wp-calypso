@@ -42,9 +42,6 @@ import {
 	PremiumContentBlockComponent,
 } from '../lib/gutenberg/blocks';
 
-let driver;
-let loginFlow;
-let gEditorComponent;
 let currentGutenbergBlocksCode;
 let sampleImages;
 
@@ -94,13 +91,13 @@ const blockInits = new Map()
  */
 async function insertBlock( blockClass ) {
 	const blockInit = blockInits.get( blockClass );
-	const block = await gEditorComponent.insertBlock( blockClass );
+	const block = await this.gEditorComponent.insertBlock( blockClass );
 
 	return blockInit && blockInit( block );
 }
 
 async function assertNoErrorInEditor() {
-	const errorDisplayed = await gEditorComponent.errorDisplayed();
+	const errorDisplayed = await this.gEditorComponent.errorDisplayed();
 	assert.strictEqual( errorDisplayed, false, 'The block errored in the editor!' );
 }
 
@@ -111,7 +108,7 @@ async function assertNoErrorInEditor() {
  */
 function verifyBlockInEditor( blockClass ) {
 	step( 'Block is displayed in the editor', async function () {
-		const displayed = await gEditorComponent.blockDisplayedInEditor( blockClass.blockName );
+		const displayed = await this.gEditorComponent.blockDisplayedInEditor( blockClass.blockName );
 		assert.strictEqual(
 			displayed,
 			true,
@@ -131,7 +128,7 @@ function verifyBlockInEditor( blockClass ) {
  */
 function verifyBlockInPublishedPage( blockClass ) {
 	step( 'Publish page', async function () {
-		await gEditorComponent.publish( { visit: true } );
+		await this.gEditorComponent.publish( { visit: true } );
 	} );
 
 	/**
@@ -142,28 +139,31 @@ function verifyBlockInPublishedPage( blockClass ) {
 	 */
 	if ( ! [ YoutubeBlockComponent, SlideshowBlockComponent ].includes( blockClass ) ) {
 		step( 'Block is displayed in the published page', async function () {
-			await driverHelper.waitTillPresentAndDisplayed( driver, blockClass.blockFrontendSelector );
+			await driverHelper.waitTillPresentAndDisplayed(
+				this.driver,
+				blockClass.blockFrontendSelector
+			);
 		} );
 	}
 }
 
 async function startNewPost( siteURL ) {
-	await ReaderPage.Visit( driver );
-	await NavBarComponent.Expect( driver );
+	await ReaderPage.Visit( this.driver );
+	await NavBarComponent.Expect( this.driver );
 
-	const navbarComponent = await NavBarComponent.Expect( driver );
+	const navbarComponent = await NavBarComponent.Expect( this.driver );
 	await navbarComponent.clickCreateNewPost( { siteURL } );
 
-	gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-	await gEditorComponent.initEditor();
+	this.gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+	await this.gEditorComponent.initEditor();
 }
 
 describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most popular themes (${ screenSize })`, function () {
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
 			this.timeout( startBrowserTimeoutMS );
-			driver = await driverManager.startBrowser();
-			loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
+			this.driver = await driverManager.startBrowser();
+			this.loginFlow = new LoginFlow( this.driver, 'gutenbergUpgradeUser' );
 			sampleImages = times( 5, () => mediaHelper.createFile() );
 		} else {
 			this.skip();
@@ -200,7 +200,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 				describe( `Test the block in the non-edge site (${ siteName })`, function () {
 					step( `Login to ${ siteName }`, async function () {
-						await loginFlow.login( siteURL, true );
+						await this.loginFlow.login( siteURL, true );
 						await startNewPost( siteURL );
 					} );
 
@@ -211,7 +211,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 					verifyBlockInEditor( blockClass, siteName );
 
 					step( 'Copy the markup for the block', async function () {
-						currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
+						currentGutenbergBlocksCode = await this.gEditorComponent.getBlocksCode();
 					} );
 
 					verifyBlockInPublishedPage( blockClass, siteName );
@@ -225,7 +225,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 					} );
 
 					step( 'Load block via markup copied from non-edge site', async function () {
-						await gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
+						await this.gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
 					} );
 
 					verifyBlockInEditor( blockClass, edgeSiteName );
