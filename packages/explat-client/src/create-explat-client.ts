@@ -12,14 +12,24 @@ const EXPERIMENT_FETCH_TIMEOUT = 5000;
 
 export interface ExPlatClient {
 	/**
-	 * Get, starting an assignment if necessary, an Experiment Assignment Promise.
+	 * Loads and returns an Experiment Assignment Promise, starting an assignment if necessary.
 	 *
 	 * Call as many times as you like, it will only make one request at a time and
 	 * will only trigger a request when the assignment TTL is expired.
+	 * 
+	 * Will never throw in production, it will return the default assignment
 	 *
 	 * @param experimentName
 	 */
 	loadExperimentAssignmentDangerousInSSR: ( experimentName: string ) => Promise< ExperimentAssignment >;
+
+	/**
+	 * Get an already loaded Experiment Assignment, will throw if there is an error, e.g. if it hasn't been loaded.
+	 * 
+	 * Make sure loadExperimentAssignmentDangerousInSSR has been called before calling this function.
+	 * 
+	 */
+	dangerouslyGetExperimentAssignmentMayThrow: ( experimentName: string ) => ExperimentAssignment;
 }
 
 /**
@@ -113,6 +123,30 @@ export default function createExPlatClient(
 				}
 				return createNullExperimentAssignment();
 			}
+		},
+
+		dangerouslyGetExperimentAssignmentMayThrow: ( experimentName: string ): ExperimentAssignment => {
+			if ( Validation.isName( experimentName ) ) {
+				throw new Error( `Invalid experimentName: ${ experimentName }` );
+			}
+
+			const storedExperimentAssignment = State.retrieveExperimentAssignment( experimentName );
+			if ( ! storedExperimentAssignment ) {
+				throw new Error(`Trying to dangerously get an ExperimentAssignment that hasn't loaded, are you sure you have loaded this experiment?`);
+			}
+
+			if ( 
+				storedExperimentAssignment &&
+				! ExperimentAssignments.isAlive( storedExperimentAssignment )
+			) {
+				if ( isDevelopmentMode ) {
+					throw new Error(`Trying to dangerously get an ExperimentAssignment that has loaded but has since expired`);
+				} else {
+					logError(`Dangerously getting an ExperimentAssignment that has loaded but has since expired.`);
+				}
+			}
+
+			return storedExperimentAssignment;
 		},
 	};
 }
