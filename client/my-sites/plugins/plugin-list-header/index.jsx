@@ -110,7 +110,7 @@ export class PluginsListHeader extends PureComponent {
 
 	canUpdatePlugins() {
 		return this.props.selected.some( ( plugin ) =>
-			plugin.sites.some( ( site ) => site.canUpdateFiles )
+			Object.values( plugin.sites ).some( ( site ) => site.canUpdateFiles )
 		);
 	}
 
