@@ -68,7 +68,6 @@ if (
 		applyFlags( match[ 1 ], 'URL' );
 	}
 }
-
 const configApi = createConfig( configData );
 
 export default configApi;

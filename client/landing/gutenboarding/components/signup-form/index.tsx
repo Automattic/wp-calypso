@@ -103,7 +103,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
-			extra: { username_hint },
+			extra: { username_hint, is_anchor_fm_signup: isAnchorFmSignup },
 			is_passwordless: false,
 		} );
 
