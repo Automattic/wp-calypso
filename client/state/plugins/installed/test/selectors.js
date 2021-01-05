@@ -170,6 +170,11 @@ describe( 'Installed plugin selectors', () => {
 			expect( plugins ).to.have.lengthOf( 0 );
 		} );
 
+		test( 'Should get an empty array if the plugins for this site are still being requested', () => {
+			const plugins = selectors.getPlugins( state, [ 'site.three' ] );
+			expect( plugins ).to.have.lengthOf( 0 );
+		} );
+
 		test( 'Should get a plugin list of length 3 if both sites are requested', () => {
 			const plugins = selectors.getPlugins( state, [ 'site.one', 'site.two' ] );
 			expect( plugins ).to.have.lengthOf( 3 );
