@@ -279,10 +279,20 @@ export default function buildFallbackResponse( {
 			type: 'separator',
 		},
 		// Add WooCommerce here
-		...( shouldShowWooCommerce ? [] : [] ),
-		{
-			type: 'separator',
-		},
+		...( shouldShowWooCommerce
+			? [
+					{
+						icon: 'dashicons-admin-generic',
+						slug: 'woo-php',
+						title: translate( 'WooCommerce' ),
+						type: 'menu-item',
+						url: `https://${ siteDomain }/wp-admin/admin.php?page=wc-admin`,
+					},
+					{
+						type: 'separator',
+					},
+			  ]
+			: [] ),
 		...( shouldShowThemes
 			? [
 					{
