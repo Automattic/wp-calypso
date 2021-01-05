@@ -25,7 +25,6 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
-const themedSites = dataHelper.configGet( 'themedSites' );
 
 import {
 	BlogPostsBlockComponent,
@@ -42,8 +41,8 @@ import {
 	PremiumContentBlockComponent,
 } from '../lib/gutenberg/blocks';
 
-let currentGutenbergBlocksCode;
 let sampleImages;
+let gEditorComponent;
 
 const blockInits = new Map()
 	.set( TiledGalleryBlockComponent, ( block ) => block.uploadImages( sampleImages ) )
@@ -91,13 +90,13 @@ const blockInits = new Map()
  */
 async function insertBlock( blockClass ) {
 	const blockInit = blockInits.get( blockClass );
-	const block = await this.gEditorComponent.insertBlock( blockClass );
+	const block = await gEditorComponent.insertBlock( blockClass );
 
 	return blockInit && blockInit( block );
 }
 
 async function assertNoErrorInEditor() {
-	const errorDisplayed = await this.gEditorComponent.errorDisplayed();
+	const errorDisplayed = await gEditorComponent.errorDisplayed();
 	assert.strictEqual( errorDisplayed, false, 'The block errored in the editor!' );
 }
 
@@ -108,7 +107,7 @@ async function assertNoErrorInEditor() {
  */
 function verifyBlockInEditor( blockClass ) {
 	step( 'Block is displayed in the editor', async function () {
-		const displayed = await this.gEditorComponent.blockDisplayedInEditor( blockClass.blockName );
+		const displayed = await gEditorComponent.blockDisplayedInEditor( blockClass.blockName );
 		assert.strictEqual(
 			displayed,
 			true,
@@ -128,7 +127,7 @@ function verifyBlockInEditor( blockClass ) {
  */
 function verifyBlockInPublishedPage( blockClass ) {
 	step( 'Publish page', async function () {
-		await this.gEditorComponent.publish( { visit: true } );
+		await gEditorComponent.publish( { visit: true } );
 	} );
 
 	/**
@@ -154,11 +153,11 @@ async function startNewPost( siteURL ) {
 	const navbarComponent = await NavBarComponent.Expect( this.driver );
 	await navbarComponent.clickCreateNewPost( { siteURL } );
 
-	this.gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-	await this.gEditorComponent.initEditor();
+	gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+	await gEditorComponent.initEditor();
 }
 
-describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most popular themes (${ screenSize })`, function () {
+describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ screenSize })`, function () {
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
 			this.timeout( startBrowserTimeoutMS );
@@ -193,44 +192,45 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 		YoutubeBlockComponent,
 		PremiumContentBlockComponent,
 	].forEach( ( blockClass ) => {
-		themedSites.forEach( ( siteName ) => {
-			describe( `Test the ${ blockClass.blockName } block on ${ siteName } @parallel`, function () {
-				const edgeSiteName = siteName + 'edge';
-				const siteURL = `${ siteName }.wordpress.com`;
+		describe( `Test the ${ blockClass.blockName } block`, function () {
+			const siteName = 'e2egbupgradehever';
 
-				describe( `Test the block in the non-edge site (${ siteName })`, function () {
-					step( `Login to ${ siteName }`, async function () {
+			describe( `Test the block on a non-edge site`, function () {
+				step( `Log in and start a new post`, async function () {
+					const siteURL = `${ siteName }.wordpress.com`;
+
+					if ( ! this.isLoggedIn ) {
 						await this.loginFlow.login( siteURL, true );
-						await startNewPost( siteURL );
-					} );
+						this.isLoggedIn = true;
+					}
 
-					step( `Insert and configure ${ blockClass.blockName }`, async function () {
-						await insertBlock( blockClass );
-					} );
-
-					verifyBlockInEditor( blockClass, siteName );
-
-					step( 'Copy the markup for the block', async function () {
-						currentGutenbergBlocksCode = await this.gEditorComponent.getBlocksCode();
-					} );
-
-					verifyBlockInPublishedPage( blockClass, siteName );
+					await startNewPost( siteURL );
 				} );
 
-				describe( `Test the same block in the corresponding edge site (${ edgeSiteName })`, function () {
-					const edgeSiteURL = `${ edgeSiteName }.wordpress.com`;
-
-					step( `Switches to edge site (${ edgeSiteName })`, async function () {
-						await startNewPost( edgeSiteURL );
-					} );
-
-					step( 'Load block via markup copied from non-edge site', async function () {
-						await this.gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
-					} );
-
-					verifyBlockInEditor( blockClass, edgeSiteName );
-					verifyBlockInPublishedPage( blockClass, edgeSiteName );
+				step( `Insert and configure ${ blockClass.blockName }`, async function () {
+					await insertBlock( blockClass );
 				} );
+
+				verifyBlockInEditor( blockClass );
+
+				step( 'Copy the markup for the block', async function () {
+					this.currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
+				} );
+
+				verifyBlockInPublishedPage( blockClass, siteName );
+			} );
+
+			describe( `Test the same block on a corresponding edge site`, function () {
+				step( `Start new post`, async function () {
+					await startNewPost( `${ siteName }edge.wordpress.com` );
+				} );
+
+				step( 'Load block via markup copied from non-edge site', async function () {
+					await gEditorComponent.setBlocksCode( this.currentGutenbergBlocksCode );
+				} );
+
+				verifyBlockInEditor( blockClass );
+				verifyBlockInPublishedPage( blockClass );
 			} );
 		} );
 	} );
