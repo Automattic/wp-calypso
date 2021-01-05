@@ -73,7 +73,7 @@ class UpworkBanner extends PureComponent {
 	}
 
 	render() {
-		const { isBannerVisible, location, translate } = this.props;
+		const { isBannerVisible, translate } = this.props;
 		if ( ! isBannerVisible ) {
 			return null;
 		}
@@ -83,18 +83,14 @@ class UpworkBanner extends PureComponent {
 				role="button"
 				style={ { backgroundColor: '#DAF5FC' } }
 				onClick={ this.onStartNowClick }
-				href={ `/experts/upwork?source=${ location }` }
-				target="_blank"
-				rel="noopener noreferrer"
+				href={ 'https://wordpress.com/built-by-wordpress-com/' }
 			>
 				<QueryPreferences />
 				<h1 className="upwork-banner__title">
 					{ translate( 'Need an expert to help realize your vision? Hire one!' ) }
 				</h1>
 				<p className="upwork-banner__description">
-					{ translate(
-						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. They know their stuff and they're waiting to help you build your dream site."
-					) }
+					{ translate( 'You want the website of your dreams. Our experts can create it for you.' ) }
 				</p>
 				<Button className="upwork-banner__cta" compact primary={ this.props.primaryButton }>
 					{ translate( 'Find your expert' ) }
@@ -103,7 +99,7 @@ class UpworkBanner extends PureComponent {
 					<Gridicon icon="cross-small" size={ 18 } />
 				</Button>
 				<img
-					alt={ translate( 'Upwork' ) }
+					alt={ translate( 'Find your expert' ) }
 					width={ 390 }
 					className="upwork-banner__image"
 					src={ builderIllustration }

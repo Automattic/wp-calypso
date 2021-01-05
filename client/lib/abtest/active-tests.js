@@ -19,14 +19,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	builderReferralThemesBanner: {
-		datestamp: '20181218',
-		variations: {
-			builderReferralBanner: 25,
-			original: 75,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
