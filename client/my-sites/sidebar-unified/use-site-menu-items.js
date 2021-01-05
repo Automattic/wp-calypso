@@ -15,6 +15,9 @@ import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
+
 const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -24,6 +27,7 @@ const useSiteMenuItems = () => {
 	useEffect( () => {
 		if ( selectedSiteId !== null ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
+			dispatch( fetchPlugins( [ selectedSiteId ] ) );
 		}
 	}, [ dispatch, selectedSiteId ] );
 
@@ -42,7 +46,9 @@ const useSiteMenuItems = () => {
 	const shouldShowPortfolio = useSelector( ( state ) =>
 		get( state.siteSettings.items, [ selectedSiteId, 'jetpack_portfolio' ], false )
 	);
-	const shouldShowWooCommerce = true;
+	const shouldShowWooCommerce = useSelector(
+		( state ) => !! getPluginOnSite( state, selectedSiteId, 'woocommerce' )?.active
+	);
 	/*
 	 * Header controlled by: current_theme_supports( 'custom-header' ) && current_user_can( 'customize' )
 	 * Background controlled by: current_theme_supports( 'custom-background' ) && current_user_can( 'customize' )
@@ -67,7 +73,6 @@ const useSiteMenuItems = () => {
 		shouldShowAdControl,
 		shouldShowAMP,
 	};
-
 	return menuItems ?? buildFallbackResponse( fallbackOptions );
 };
 
