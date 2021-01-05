@@ -18,7 +18,6 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -50,13 +49,11 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
 	}
 
-	// Include Jetpack CRM
+	// Include Jetpack CRM (currently we're only offering the yearly billing CRM product)
 	if (
-		! ownedProducts.some( ( ownedProduct ) =>
-			[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
-		)
+		! ownedProducts.some( ( ownedProduct ) => [ PRODUCT_JETPACK_CRM ].includes( ownedProduct ) )
 	) {
-		availableProducts = [ ...availableProducts, PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
+		availableProducts = [ ...availableProducts, PRODUCT_JETPACK_CRM ];
 	}
 
 	const backupProductsToShow = [];
