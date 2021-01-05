@@ -42,6 +42,7 @@ import {
 } from '../lib/gutenberg/blocks';
 
 let sampleImages;
+let driver;
 let gEditorComponent;
 
 const blockInits = new Map()
@@ -138,22 +139,19 @@ function verifyBlockInPublishedPage( blockClass ) {
 	 */
 	if ( ! [ YoutubeBlockComponent, SlideshowBlockComponent ].includes( blockClass ) ) {
 		step( 'Block is displayed in the published page', async function () {
-			await driverHelper.waitTillPresentAndDisplayed(
-				this.driver,
-				blockClass.blockFrontendSelector
-			);
+			await driverHelper.waitTillPresentAndDisplayed( driver, blockClass.blockFrontendSelector );
 		} );
 	}
 }
 
 async function startNewPost( siteURL ) {
-	await ReaderPage.Visit( this.driver );
-	await NavBarComponent.Expect( this.driver );
+	await ReaderPage.Visit( driver );
+	await NavBarComponent.Expect( driver );
 
-	const navbarComponent = await NavBarComponent.Expect( this.driver );
+	const navbarComponent = await NavBarComponent.Expect( driver );
 	await navbarComponent.clickCreateNewPost( { siteURL } );
 
-	gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+	gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 	await gEditorComponent.initEditor();
 }
 
@@ -161,8 +159,7 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
 			this.timeout( startBrowserTimeoutMS );
-			this.driver = await driverManager.startBrowser();
-			this.loginFlow = new LoginFlow( this.driver, 'gutenbergUpgradeUser' );
+			driver = await driverManager.startBrowser();
 			sampleImages = times( 5, () => mediaHelper.createFile() );
 		} else {
 			this.skip();
@@ -193,6 +190,7 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 		PremiumContentBlockComponent,
 	].forEach( ( blockClass ) => {
 		describe( `Test the ${ blockClass.blockName } block`, function () {
+			const username = 'gutenbergUpgradeUser';
 			const siteName = 'e2egbupgradehever';
 
 			describe( `Test the block on a non-edge site`, function () {
@@ -200,7 +198,8 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 					const siteURL = `${ siteName }.wordpress.com`;
 
 					if ( ! this.isLoggedIn ) {
-						await this.loginFlow.login( siteURL, true );
+						const loginFlow = new LoginFlow( driver, username );
+						await loginFlow.login( siteURL, true );
 						this.isLoggedIn = true;
 					}
 
