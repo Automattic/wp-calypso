@@ -17,7 +17,7 @@ import { Card } from '@automattic/components';
 import ImporterHeader from '../importer-header';
 import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';
-import { startImport } from 'calypso/lib/importer/actions';
+import { startImport } from 'calypso/state/imports/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
@@ -74,7 +74,7 @@ class SiteImporter extends React.PureComponent {
 			site: { ID: siteId },
 		} = this.props;
 
-		startImport( siteId, type );
+		this.props.startImport( siteId, type );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
@@ -122,4 +122,4 @@ class SiteImporter extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( SiteImporter );
+export default connect( null, { recordTracksEvent, startImport } )( SiteImporter );

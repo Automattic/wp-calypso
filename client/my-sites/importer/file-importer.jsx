@@ -12,13 +12,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { isEnabled as isConfigEnabled } from 'calypso/config';
-import { appStates } from 'calypso/state/imports/constants';
 import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
-import { startImport } from 'calypso/lib/importer/actions';
+import { appStates } from 'calypso/state/imports/constants';
+import { startImport } from 'calypso/state/imports/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
@@ -73,7 +73,7 @@ class FileImporter extends React.PureComponent {
 		} = this.props;
 
 		if ( shouldStartImport ) {
-			startImport( siteId, type );
+			this.props.startImport( siteId, type );
 		}
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
@@ -134,4 +134,4 @@ class FileImporter extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( FileImporter );
+export default connect( null, { recordTracksEvent, startImport } )( FileImporter );

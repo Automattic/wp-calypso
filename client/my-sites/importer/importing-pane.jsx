@@ -6,12 +6,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { defer, get, has, omit } from 'lodash';
+import { has, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { mapAuthor, startImporting } from 'calypso/lib/importer/actions';
+import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { ProgressBar } from '@automattic/components';
 import AuthorMappingPane from './author-mapping-pane';
@@ -191,7 +191,7 @@ class ImportingPane extends React.PureComponent {
 	}
 
 	handleOnMap = ( source, target ) =>
-		defer( () => mapAuthor( get( this.props, 'importerStatus.importerId' ), source, target ) );
+		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
 	renderActionButtons = () => {
 		if ( this.isProcessing() || this.isMapping() ) {
@@ -261,7 +261,7 @@ class ImportingPane extends React.PureComponent {
 					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ this.handleOnMap }
-						onStartImport={ () => startImporting( this.props.importerStatus ) }
+						onStartImport={ () => this.props.startImporting( this.props.importerStatus ) }
 						siteId={ siteId }
 						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }
@@ -292,4 +292,8 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-export default connect( null, { loadTrackingTool } )( localize( ImportingPane ) );
+export default connect( null, {
+	loadTrackingTool,
+	mapAuthor,
+	startImporting,
+} )( localize( ImportingPane ) );

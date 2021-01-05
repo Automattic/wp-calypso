@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_COMPLETED,
@@ -9,7 +9,7 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
 
-const inProgress = withoutPersistence( ( state = false, action ) => {
+const inProgress = ( state = false, action ) => {
 	switch ( action.type ) {
 		case IMPORTS_UPLOAD_COMPLETED:
 			return false;
@@ -20,9 +20,9 @@ const inProgress = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const percentComplete = withoutPersistence( ( state = 0, action ) => {
+const percentComplete = ( state = 0, action ) => {
 	switch ( action.type ) {
 		case IMPORTS_UPLOAD_SET_PROGRESS:
 			return ( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100;
@@ -35,9 +35,9 @@ const percentComplete = withoutPersistence( ( state = 0, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const filename = withoutPersistence( ( state = '', action ) => {
+const filename = ( state = '', action ) => {
 	switch ( action.type ) {
 		case IMPORTS_UPLOAD_COMPLETED:
 			return '';
@@ -48,7 +48,7 @@ const filename = withoutPersistence( ( state = '', action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	inProgress,
