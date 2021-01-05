@@ -17,7 +17,8 @@ export interface ExPlatClient {
 	 * Call as many times as you like, it will only make one request at a time and
 	 * will only trigger a request when the assignment TTL is expired.
 	 * 
-	 * Will never throw in production, it will return the default assignment
+	 * Will never throw in production, it will return the default assignment.
+	 * It should not be run on the server but it won't crash anything.
 	 *
 	 * @param experimentName
 	 */
