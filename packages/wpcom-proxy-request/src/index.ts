@@ -6,6 +6,27 @@ import WPError from 'wp-error';
 import ProgressEvent from 'progress-event';
 import debugFactory from 'debug';
 
+export interface WpcomRequestParams {
+	path?: string;
+	method?: string;
+	apiVersion?: string;
+	body?: unknown;
+	token?: string;
+	query?: string;
+	metaAPI?: {
+		accessAllUsersBlogs?: boolean;
+	};
+}
+
+interface WpcomProgressEvent extends Event {
+	body?: unknown;
+	data?: unknown;
+	err?: unknown;
+	error?: unknown;
+	headers?: unknown;
+	response?: unknown;
+}
+
 /**
  * debug instance
  */
@@ -64,7 +85,7 @@ const supportsFileConstructor = ( () => {
  * Reference to the <iframe> DOM element.
  * Gets set in the install() function.
  */
-let iframe = null;
+let iframe: HTMLIFrameElement | null = null;
 
 /**
  * Set to `true` upon the iframe's "load" event.
@@ -76,12 +97,12 @@ let loaded = false;
  * proxy <iframe> is "loaded", and fulfilled once the "load" DOM event on the
  * iframe occurs.
  */
-let buffered;
+let buffered: WpcomRequestParams[] = [];
 
 /**
  * In-flight API request XMLHttpRequest dummy "proxy" instances.
  */
-const requests = {};
+const requests: Record< string, { params: WpcomRequestParams; xhr: XMLHttpRequest } > = {};
 
 /**
  * Are HTML5 XMLHttpRequest2 "progress" events supported?
@@ -91,48 +112,51 @@ const supportsProgress = !! window.ProgressEvent && !! window.FormData;
 
 debug( 'using "origin": %o', origin );
 
+interface Callback {
+	( ...args: unknown[] ): unknown;
+}
+
 /**
  * Performs a "proxied REST API request". This happens by calling
  * `iframe.postMessage()` on the proxy iframe instance, which from there
  * takes care of WordPress.com user authentication (via the currently
  * logged-in user's cookies).
  *
- * @param {object} originalParams - request parameters
- * @param {Function} [fn] - callback response
- * @returns {window.XMLHttpRequest} XMLHttpRequest instance
+ * @param originalParams - request parameters
+ * @param fn - callback response
+ * @returns XMLHttpRequest instance
  */
-const makeRequest = ( originalParams, fn ) => {
-	const params = Object.assign( {}, originalParams );
-
-	debug( 'request(%o)', params );
-
+function makeRequest( originalParams: WpcomRequestParams, fn: Callback ): XMLHttpRequest {
 	// inject the <iframe> upon the first proxied API request
 	if ( ! iframe ) {
 		install();
 	}
 
+	debug( 'request(%o)', originalParams );
+
 	// generate a uuid for this API request
 	const id = uuidv4();
-	params.callback = id;
-	params.supports_args = true; // supports receiving variable amount of arguments
-	params.supports_error_obj = true; // better Error object info
-	params.supports_progress = supportsProgress; // supports receiving XHR "progress" events
-
-	// force uppercase "method" since that's what the <iframe> is expecting
-	params.method = String( params.method || 'GET' ).toUpperCase();
+	const params = {
+		...originalParams,
+		callback: id,
+		supports_args: true, // supports receiving variable amount of arguments
+		supports_error_obj: true, // better Error object info
+		supports_progress: supportsProgress, // supports receiving XHR "progress" events
+		// force uppercase "method" since that's what the <iframe> is expecting
+		method: String( originalParams.method || 'GET' ).toUpperCase(),
+	};
 
 	debug( 'params object: %o', params );
 
 	const xhr = new window.XMLHttpRequest();
-	xhr.params = params;
 
 	// store the `XMLHttpRequest` instance so that "onmessage" can access it again
-	requests[ id ] = xhr;
+	requests[ id ] = { params, xhr };
 
 	if ( 'function' === typeof fn ) {
 		// a callback function was provided
 		let called = false;
-		const xhrOnLoad = ( e ) => {
+		const xhrOnLoad: ( e: WpcomProgressEvent ) => void = ( e ) => {
 			if ( called ) {
 				return;
 			}
@@ -143,7 +167,7 @@ const makeRequest = ( originalParams, fn ) => {
 			debug( 'headers: ', e.headers );
 			fn( null, body, e.headers );
 		};
-		const xhrOnError = ( e ) => {
+		const xhrOnError: ( e: WpcomProgressEvent ) => void = ( e ) => {
 			if ( called ) {
 				return;
 			}
@@ -168,7 +192,7 @@ const makeRequest = ( originalParams, fn ) => {
 	}
 
 	return xhr;
-};
+}
 
 /**
  * Performs a "proxied REST API request". This happens by calling
@@ -178,12 +202,17 @@ const makeRequest = ( originalParams, fn ) => {
  *
  * If no function is specified as second parameter, a promise is returned.
  *
- * @param {object} originalParams - request parameters
- * @param {Function} [fn] - callback response
- * @returns {window.XMLHttpRequest|Promise} XMLHttpRequest instance or Promise
+ * @param originalParams - request parameters
+ * @param fn - callback response
+ *
+ * @returns XMLHttpRequest instance or Promise
  */
-const request = ( originalParams, fn ) => {
-	// if callback is provided, behave traditionally
+export default function request( originalParams: WpcomRequestParams, fn: Callback ): XMLHttpRequest;
+export default function request< T >( originalParams: WpcomRequestParams ): Promise< T >;
+export default function request< T >(
+	originalParams: WpcomRequestParams,
+	fn?: Callback
+): XMLHttpRequest | Promise< T > {
 	if ( 'function' === typeof fn ) {
 		// request method
 		return makeRequest( originalParams, fn );
@@ -192,10 +221,10 @@ const request = ( originalParams, fn ) => {
 	// but if not, return a Promise
 	return new Promise( ( res, rej ) => {
 		makeRequest( originalParams, ( err, response ) => {
-			err ? rej( err ) : res( response );
+			err ? rej( err ) : res( response as T );
 		} );
 	} );
-};
+}
 
 /**
  * Set proxy to "access all users' blogs" mode.
@@ -207,9 +236,8 @@ export function requestAllBlogsAccess() {
 /**
  * Calls the `postMessage()` function on the <iframe>.
  *
- * @param {object} params
+ * @param params Request parameters
  */
-
 function submitRequest( params ) {
 	debug( 'sending API request to proxy <iframe> %o', params );
 
@@ -219,30 +247,34 @@ function submitRequest( params ) {
 		patchFileObjects( params.formData );
 	}
 
-	iframe.contentWindow.postMessage( postStrings ? JSON.stringify( params ) : params, proxyOrigin );
+	( ( iframe as HTMLIFrameElement ).contentWindow as Window ).postMessage(
+		postStrings ? JSON.stringify( params ) : params,
+		proxyOrigin
+	);
 }
 
 /**
  * Returns `true` if `v` is a DOM File instance, `false` otherwise.
  *
- * @param {any} v - instance to analyze
- * @returns {boolean} `true` if `v` is a DOM File instance
+ * @param v Instance to analyze
+ * @returns `true` if `v` is a DOM File instance
  */
-function isFile( v ) {
-	return v && Object.prototype.toString.call( v ) === '[object File]';
+function isFile( v: unknown ): v is File {
+	return Boolean( v ) && Object.prototype.toString.call( v ) === '[object File]';
 }
 
 /*
  * Find a `File` object in a form data value. It can be either the value itself, or
  * in a `fileContents` property of the value.
  */
-function getFileValue( v ) {
+function getFileValue( v: unknown ): File | null {
 	if ( isFile( v ) ) {
 		return v;
 	}
 
-	if ( typeof v === 'object' && isFile( v.fileContents ) ) {
-		return v.fileContents;
+	const fileContents = ( v as { fileContents?: unknown } )?.fileContents;
+	if ( isFile( fileContents ) ) {
+		return fileContents;
 	}
 
 	return null;
@@ -257,9 +289,9 @@ function getFileValue( v ) {
  * @see https://bugs.chromium.org/p/chromium/issues/detail?id=866805
  * @see https://bugs.chromium.org/p/chromium/issues/detail?id=631877
  *
- * @param {Array} formData Form data to patch
+ * @param formData Form data to patch
  */
-function patchFileObjects( formData ) {
+function patchFileObjects( formData: [ unknown, unknown ][] ) {
 	// There are several landmines to avoid when making file uploads work on all browsers:
 	// - the `new File()` constructor trick breaks file uploads on Safari 10 in a way that's
 	//   impossible to detect: it will send empty files in the multipart/form-data body.
@@ -268,30 +300,28 @@ function patchFileObjects( formData ) {
 	//   so it's detectable by the `supportsFileConstructor` code.
 	// - `window.chrome` exists also on Edge (!), `window.chrome.webstore` is only in Chrome and
 	//   not in other Chromium based browsers (which have the site isolation bug, too).
-	if ( ! window.chrome || ! supportsFileConstructor ) {
+	if ( ! ( window as { chrome?: unknown } ).chrome || ! supportsFileConstructor ) {
 		return;
 	}
 
 	for ( let i = 0; i < formData.length; i++ ) {
 		const val = getFileValue( formData[ i ][ 1 ] );
 		if ( val ) {
-			formData[ i ][ 1 ] = new window.File( [ val ], val.name, { type: val.type } );
+			formData[ i ][ 1 ] = new window.File( [ val ], ( val as File ).name, {
+				type: ( val as File ).type,
+			} );
 		}
 	}
 }
 
 /**
- * Injects the proxy <iframe> instance in the <body> of the current
- * HTML page.
+ * Injects or reloads the proxy <iframe> instance in the <body> of the current HTML page.
  */
-
-function install() {
+function install(): void {
 	debug( 'install()' );
 	if ( iframe ) {
 		uninstall();
 	}
-
-	buffered = [];
 
 	// listen to messages sent to `window`
 	window.addEventListener( 'message', onmessage );
@@ -307,12 +337,7 @@ function install() {
 	document.body.appendChild( iframe );
 }
 
-/**
- * Reloads the proxy iframe.
- */
-const reloadProxy = () => {
-	install();
-};
+export { install as reloadProxy };
 
 /**
  * Removes the <iframe> proxy instance from the <body> of the page.
@@ -320,7 +345,7 @@ const reloadProxy = () => {
 function uninstall() {
 	debug( 'uninstall()' );
 	window.removeEventListener( 'message', onmessage );
-	document.body.removeChild( iframe );
+	document.body.removeChild( iframe as HTMLIFrameElement );
 	loaded = false;
 	iframe = null;
 }
@@ -334,11 +359,11 @@ function onload() {
 	loaded = true;
 
 	// flush any buffered API calls
-	if ( buffered ) {
+	if ( buffered.length ) {
 		for ( let i = 0; i < buffered.length; i++ ) {
 			submitRequest( buffered[ i ] );
 		}
-		buffered = null;
+		buffered = [];
 	}
 }
 
@@ -348,7 +373,7 @@ function onload() {
  * @param {window.Event} e
  */
 
-function onmessage( e ) {
+function onmessage( e: MessageEvent ) {
 	debug( 'onmessage' );
 
 	// Filter out messages from different origins
@@ -358,7 +383,7 @@ function onmessage( e ) {
 	}
 
 	// Filter out messages from different iframes
-	if ( e.source !== iframe.contentWindow ) {
+	if ( e.source !== ( iframe as HTMLIFrameElement ).contentWindow ) {
 		debug( 'ignoring message... iframe elements do not match' );
 		return;
 	}
@@ -393,10 +418,9 @@ function onmessage( e ) {
 		return debug( 'bailing, no matching request with callback: %o', id );
 	}
 
-	const xhr = requests[ id ];
+	const { params, xhr } = requests[ id ];
 
 	// Build `error` and `body` object from the `data` object
-	const { params } = xhr;
 
 	const body = data[ 0 ];
 	let statusCode = data[ 1 ];
@@ -440,7 +464,7 @@ function onmessage( e ) {
 
 function onprogress( data ) {
 	debug( 'got "progress" event: %o', data );
-	const xhr = requests[ data.callbackId ];
+	const { xhr } = requests[ data.callbackId ];
 	if ( xhr ) {
 		const prog = new ProgressEvent( 'progress', data );
 		const target = data.upload ? xhr.upload : xhr;
@@ -451,12 +475,12 @@ function onprogress( data ) {
 /**
  * Emits the "load" event on the `xhr`.
  *
- * @param {window.XMLHttpRequest} xhr
- * @param {object} body
+ * @param xhr
+ * @param body
  */
 
-function resolve( xhr, body, headers ) {
-	const e = new ProgressEvent( 'load' );
+function resolve( xhr: XMLHttpRequest, body: Record< string, unknown >, headers ) {
+	const e: WpcomProgressEvent = new ProgressEvent( 'load' );
 	e.data = e.body = e.response = body;
 	e.headers = headers;
 	xhr.dispatchEvent( e );
@@ -469,15 +493,9 @@ function resolve( xhr, body, headers ) {
  * @param {Error} err
  */
 
-function reject( xhr, err, headers ) {
-	const e = new ProgressEvent( 'error' );
+function reject( xhr: XMLHttpRequest, err: unknown, headers ) {
+	const e: WpcomProgressEvent = new ProgressEvent( 'error' );
 	e.error = e.err = err;
 	e.headers = headers;
 	xhr.dispatchEvent( e );
 }
-
-/**
- * Export `request` function.
- */
-export default request;
-export { reloadProxy };
