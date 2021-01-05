@@ -3,6 +3,7 @@
  */
 import Dispatcher from 'calypso/dispatcher';
 import wpcom from 'calypso/lib/wp';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -447,6 +448,16 @@ export function togglePluginAutoUpdate( siteId, plugin ) {
 	};
 }
 
+function refreshNetworkSites( siteId ) {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const networkSites = getNetworkSites( state, siteId );
+		if ( networkSites ) {
+			networkSites.forEach( ( networkSite ) => dispatch( fetchSitePlugins( networkSite.ID ) ) );
+		}
+	};
+}
+
 function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
@@ -496,6 +507,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } );
 			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', data );
+			refreshNetworkSites( siteId );
 		};
 
 		const errorCallback = ( error ) => {
@@ -602,6 +614,7 @@ export function removePlugin( siteId, plugin ) {
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_SUCCESS } );
 			dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', data );
+			refreshNetworkSites( siteId );
 		};
 
 		const errorCallback = ( error ) => {
