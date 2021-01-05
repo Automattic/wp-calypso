@@ -82,3 +82,5 @@ export const isFlowStarted = ( state: State ): boolean =>
 // Get first incomplete step
 export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefined =>
 	LaunchSequence.find( ( step ) => ! isStepCompleted( state, step ) );
+
+export const getSiteTitle = ( state: State ): string | undefined => state?.siteTitle;
