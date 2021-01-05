@@ -19,7 +19,7 @@ export interface ExPlatClient {
 	 *
 	 * @param experimentName
 	 */
-	getExperimentAssignment: ( experimentName: string ) => Promise< ExperimentAssignment >;
+	loadExperimentAssignmentDangerousInSSR: ( experimentName: string ) => Promise< ExperimentAssignment >;
 }
 
 /**
@@ -73,7 +73,7 @@ export default function createExPlatClient(
 	} );
 
 	return {
-		getExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
+		loadExperimentAssignmentDangerousInSSR: async ( experimentName: string ): Promise< ExperimentAssignment > => {
 			try {
 				if ( Validation.isName( experimentName ) ) {
 					throw new Error( `Invalid experimentName: ${ experimentName }` );
