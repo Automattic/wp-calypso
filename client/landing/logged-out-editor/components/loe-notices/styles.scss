@@ -1,0 +1,13 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+
+.loe-notices {
+	bottom: 20px;
+	padding-left: 16px;
+	padding-right: 16px;
+	position: fixed;
+	right: 0;
+}
+
+@include editor-left( '.loe-notices' );

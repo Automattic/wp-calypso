@@ -1,0 +1,26 @@
+// Color Schemes
+// Currently used only by Calypso dev badge shown in development mode
+@import '~@automattic/calypso-color-schemes/src/calypso-color-schemes';
+
+// Shared
+@import 'shared/reset'; // css reset before the rest of the styles are defined
+@import './shared/loading';
+@import './gutenberg-base-styles';
+
+// Gutenberg resets
+// Not an actual "CSS reset", but an opiniated base style for HTML elements in Gutenberg views.
+:root {
+	@include reset;
+}
+
+// Hide Calypso header while Calypso boots
+.masterbar {
+	display: none;
+}
+
+// Gutenberg default typography
+html,
+body {
+	font-family: $default-font;
+	font-size: $font-body;
+}

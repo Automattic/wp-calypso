@@ -1,0 +1,37 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+
+.loe-editor-styles-wrapper {
+	width: 100%;
+
+	@include break-small {
+		width: calc( 100% - #{$sidebar-width} );
+	}
+	// We need the styles scoped to "body" to be added to the
+	// div.editor-styles wrapper
+	font-family: $editor-font;
+	font-size: $editor-font-size;
+	line-height: $editor-line-height;
+	color: $gray-900;
+
+	// Important all other selectors scoped underneath
+	// `div.editor-styles-wrapper`
+	@import '~@wordpress/editor/src/editor-styles.scss';
+}
+
+.loe-editor__block-list {
+	padding-bottom: $grid-unit-60;
+	padding-top: $grid-unit-60 + 5;
+	margin-left: auto;
+	margin-right: auto;
+
+	.block-editor-block-list__block {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.wp-block {
+		max-width: $content-width;
+	}
+}
