@@ -7,6 +7,10 @@
 @import '~@wordpress/block-editor/src/style.scss';
 @import '~@wordpress/format-library/src/style.scss';
 
+@import '~@wordpress/block-library/build-style/style.css';
+@import '~@wordpress/block-library/build-style/editor.css';
+@import '~@wordpress/block-library/build-style/theme.css';
+
 .is-section-logged-out-editor {
 	@include reset;
 }
