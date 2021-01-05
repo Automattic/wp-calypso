@@ -22,15 +22,15 @@ export interface ExPlatClient {
 	 *
 	 * @param experimentName
 	 */
-	loadExperimentAssignmentDangerousInSSR: ( experimentName: string ) => Promise< ExperimentAssignment >;
+	loadExperimentAssignment: ( experimentName: string ) => Promise< ExperimentAssignment >;
 
 	/**
 	 * Get an already loaded Experiment Assignment, will throw if there is an error, e.g. if it hasn't been loaded.
 	 * 
-	 * Make sure loadExperimentAssignmentDangerousInSSR has been called before calling this function.
+	 * Make sure loadExperimentAssignment has been called before calling this function.
 	 * 
 	 */
-	dangerouslyGetExperimentAssignmentMayThrow: ( experimentName: string ) => ExperimentAssignment;
+	dangerouslyGetExperimentAssignment: ( experimentName: string ) => ExperimentAssignment;
 }
 
 /**
@@ -84,7 +84,7 @@ export default function createExPlatClient(
 	} );
 
 	return {
-		loadExperimentAssignmentDangerousInSSR: async ( experimentName: string ): Promise< ExperimentAssignment > => {
+		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
 			try {
 				if ( Validation.isName( experimentName ) ) {
 					throw new Error( `Invalid experimentName: ${ experimentName }` );
@@ -126,7 +126,7 @@ export default function createExPlatClient(
 			}
 		},
 
-		dangerouslyGetExperimentAssignmentMayThrow: ( experimentName: string ): ExperimentAssignment => {
+		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {
 			if ( Validation.isName( experimentName ) ) {
 				throw new Error( `Invalid experimentName: ${ experimentName }` );
 			}

@@ -24,7 +24,7 @@ export default function createExPlatReactClient(ExPlatClient: ExPlatClient): ExP
 
             useEffect(() => {
                 let isSubscribed = true;
-                ExPlatClient.loadExperimentAssignmentDangerousInSSR(experimentName).then((experimentAssignment) => {
+                ExPlatClient.loadExperimentAssignment(experimentName).then((experimentAssignment) => {
                     if (isSubscribed) {
                         setExperimentAssignment(experimentAssignment);
                         setIsLoading(false);

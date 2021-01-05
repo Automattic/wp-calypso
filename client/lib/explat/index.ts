@@ -32,6 +32,6 @@ const ExPlatClient = createExPlatClient(
 const ExPlatReactClient = createExPlatReactClient(ExPlatClient)
 
 export { 
-    ExPlatClient.loadExperimentAssignmentDangerousInSSR as loadExperimentAssignmentDangerousInSSR
+    ExPlatClient.loadExperimentAssignment as loadExperimentAssignment
     ExPlatReactClient.useExperiment as useExperiment
 }
