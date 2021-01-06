@@ -10,9 +10,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import notices from 'calypso/notices';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -23,7 +23,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 export class SeoSettings extends Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.purchasesError ) {
-			notices.error( nextProps.purchasesError );
+			this.props.errorNotice( nextProps.purchasesError );
 		}
 	}
 
@@ -52,12 +52,17 @@ SeoSettings.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		siteId,
-		hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
-		purchasesError: getPurchasesError( state ),
-		sitePurchases: getSitePurchases( state, siteId ),
-	};
-} )( SeoSettings );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			siteId,
+			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
+			purchasesError: getPurchasesError( state ),
+			sitePurchases: getSitePurchases( state, siteId ),
+		};
+	},
+	{
+		errorNotice,
+	}
+)( SeoSettings );
