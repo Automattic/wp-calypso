@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
  */
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
-import { productButtonLabel } from '../utils';
+import { productButtonLabel, productTooltip } from '../utils';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card-i5';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from 'calypso/lib/plans';
@@ -64,7 +64,7 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 
 	// Calculate the product price.
-	const { originalPrice, discountedPrice } = useItemPrice(
+	const { originalPrice, discountedPrice, priceTiers } = useItemPrice(
 		siteId,
 		item,
 		item?.monthlyProductSlug || ''
@@ -104,6 +104,8 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
+			displayFrom={ priceTiers !== null }
+			tooltipText={ priceTiers && productTooltip( item, priceTiers ) }
 		/>
 	);
 };
