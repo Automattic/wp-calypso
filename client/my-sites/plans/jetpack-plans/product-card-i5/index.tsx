@@ -104,8 +104,8 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
-			displayFrom={ priceTiers !== null }
-			tooltipText={ priceTiers && productTooltip( item, priceTiers ) }
+			displayFrom={ ! siteId && priceTiers !== null }
+			tooltipText={ ! siteId && priceTiers && productTooltip( item, priceTiers ) }
 		/>
 	);
 };
