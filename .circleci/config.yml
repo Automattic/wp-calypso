@@ -786,12 +786,17 @@ jobs:
           name: Persist Mac Executable
           command: |
             # If this isn't a full artifact build, ensure to persist the built application for inspection
-            test -f desktop/release/*.zip || ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
+            if ls desktop/release/*.zip &>/dev/null
+            then
+              ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
+              ditto -ck --rsrc --sequesterRsrc desktop/release/mac-arm64 desktop/release/mac-arm64.app.zip
+            fi
       - run:
           when: always
           name: Clean Up
           command: |
             rm -rf desktop/release/mac
+            rm -rf desktop/release/mac-arm64
       - store_artifacts:
           when: always
           path: desktop/release
