@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useMemo } from 'react';
 import {
 	BlockEditorKeyboardShortcuts,
 	BlockEditorProvider,
@@ -17,6 +17,7 @@ import {
 	SlotFillProvider,
 	FocusReturnProvider,
 } from '@wordpress/components';
+import { uploadMedia } from '@wordpress/media-utils';
 
 /**
  * Internal dependencies
@@ -24,7 +25,27 @@ import {
 import Notices from '../loe-notices';
 import './styles.scss';
 
-const Editor: FC = () => {
+type Settings = NonNullable< BlockEditorProvider.Props[ 'settings' ] >;
+
+interface Props {
+	settings: Settings;
+}
+
+const Editor: FC< Props > = ( { settings: _settings } ) => {
+	const settings = useMemo(
+		(): Settings => ( {
+			..._settings,
+			mediaUpload( { onError, ...rest } ) {
+				uploadMedia( {
+					wpAllowedMimeTypes: _settings.allowedMimeTypes,
+					onError: ( { message } ) => onError( message ),
+					...rest,
+				} );
+			},
+		} ),
+		[ _settings ]
+	);
+
 	const [ blocks, setBlocks ] = useState< BlockInstance[] >( [] );
 
 	// Wrapper for updating blocks. Required as `onInput` callback passed to
@@ -47,10 +68,7 @@ const Editor: FC = () => {
 										<BlockEditorProvider
 											value={ blocks }
 											onInput={ handleSetBlocks }
-											settings={ {
-												__experimentalBlockPatterns: [],
-												__experimentalBlockPatternCategories: [],
-											} }
+											settings={ settings }
 										>
 											<BlockEditorKeyboardShortcuts />
 											<WritingFlow>

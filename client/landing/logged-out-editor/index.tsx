@@ -16,6 +16,7 @@ import 'calypso/types';
  * Internal dependencies
  */
 import Editor from './components/loe-editor';
+import { bootstrapUser, bootstrapEditorSettings } from './bootstrap';
 import './styles.scss';
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
@@ -23,7 +24,9 @@ const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 window.AppBoot = () => {
 	setupDebugging();
 	registerCoreBlocks();
-	// initializeLoggedOutEditor();
+	bootstrapUser();
+
+	const editorSettings = bootstrapEditorSettings();
 
 	let localeSlug = DEFAULT_LOCALE_SLUG;
 	let localeData = undefined;
@@ -36,7 +39,7 @@ window.AppBoot = () => {
 		<StrictMode>
 			<I18nProvider localeData={ localeData }>
 				<LocaleProvider localeSlug={ localeSlug }>
-					<Editor />
+					<Editor settings={ editorSettings } />
 				</LocaleProvider>
 			</I18nProvider>
 		</StrictMode>,
