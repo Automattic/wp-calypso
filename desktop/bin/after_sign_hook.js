@@ -25,7 +25,7 @@ module.exports = async function ( context ) {
 		return;
 	}
 
-	const arch = context.appOutDir.includes( 'arm64 ' ) ? 'arm64' : 'x64';
+	const arch = context.appOutDir.includes( 'arm64' ) ? 'arm64' : 'x64';
 	const app = path.join( context.appOutDir, `${ context.packager.appInfo.productFilename }.app` );
 	const appName = path.basename( app );
 
