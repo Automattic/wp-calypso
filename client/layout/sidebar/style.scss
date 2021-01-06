@@ -149,7 +149,12 @@
 		line-height: 0;
 		padding: 8px 6px;
 		position: absolute;
-		top: 10px;
+		top: 9px;
+
+		// No positioning necessary for submenu items.
+		.sidebar__menu-item--child & {
+			top: 6px;
+		}
 	}
 
 	.badge {
