@@ -13,7 +13,9 @@ describe( 'isBusinessPlanUser()', () => {
 	test( 'should return true if any purchase is a business plan.', () => {
 		const state = deepFreeze( {
 			currentUser: {
-				id: 123,
+				user: {
+					ID: 123,
+				},
 			},
 			purchases: {
 				data: [
@@ -36,7 +38,9 @@ describe( 'isBusinessPlanUser()', () => {
 	test( 'should return true if any purchase is a business plan (2y).', () => {
 		const state = deepFreeze( {
 			currentUser: {
-				id: 123,
+				user: {
+					ID: 123,
+				},
 			},
 			purchases: {
 				data: [
@@ -59,7 +63,9 @@ describe( 'isBusinessPlanUser()', () => {
 	test( 'should return false if non of the purchases is a business plan.', () => {
 		const state = deepFreeze( {
 			currentUser: {
-				id: 123,
+				user: {
+					ID: 123,
+				},
 			},
 			purchases: {
 				data: [
@@ -90,7 +96,9 @@ describe( 'isBusinessPlanUser()', () => {
 	test( 'should return false if purchasing data is null.', () => {
 		const state = deepFreeze( {
 			currentUser: {
-				id: 123,
+				user: {
+					ID: 123,
+				},
 			},
 			purchases: {
 				data: [

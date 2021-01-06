@@ -13,6 +13,7 @@ import thunk from 'redux-thunk';
  * Internal dependencies
  */
 import { combineReducers } from 'calypso/state/utils';
+import userReducer from 'calypso/state/current-user/reducer';
 import signupReducer from 'calypso/state/signup/reducer';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
@@ -27,7 +28,7 @@ jest.mock( 'calypso/signup/config/steps-pure', () => require( './mocks/signup/co
 
 function createSignupStore( initialState ) {
 	return createStore(
-		combineReducers( { signup: signupReducer } ),
+		combineReducers( { currentUser: userReducer, signup: signupReducer } ),
 		initialState,
 		applyMiddleware( thunk )
 	);
@@ -73,6 +74,9 @@ describe( 'flow-controller', () => {
 
 		test( 'should reset stores if user is logged in and there is a user step in the saved progress', () => {
 			const store = createSignupStore( {
+				currentUser: {
+					user: { ID: 123 },
+				},
 				signup: {
 					progress: [ { stepName: 'user' } ],
 				},

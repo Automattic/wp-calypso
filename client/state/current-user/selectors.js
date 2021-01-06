@@ -4,23 +4,13 @@
 import { get } from 'lodash';
 
 /**
- * Returns the current user ID
- *
- * @param  {object}  state  Global state tree
- * @returns {?number}        Current user ID
- */
-export function getCurrentUserId( state ) {
-	return get( state, [ 'currentUser', 'id' ] );
-}
-
-/**
  * Is the current user logged in?
  *
  * @param {object} state Global state tree
  * @returns {boolean}	True if logged in, False if not
  */
 export function isUserLoggedIn( state ) {
-	return getCurrentUserId( state ) !== null;
+	return getCurrentUserId( state ) != null;
 }
 
 /**
@@ -30,7 +20,17 @@ export function isUserLoggedIn( state ) {
  * @returns {?object}        Current user
  */
 export function getCurrentUser( state ) {
-	return get( state, [ 'currentUser', 'user' ], null );
+	return state.currentUser?.user ?? null;
+}
+
+/**
+ * Returns the current user ID
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {?number}        Current user ID
+ */
+export function getCurrentUserId( state ) {
+	return getCurrentUser( state )?.ID ?? null;
 }
 
 /**
@@ -133,6 +133,14 @@ export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
 export const getCurrentUserDisplayName = createCurrentUserSelector( 'display_name' );
 
 /**
+ *  Returns the flags of the current user.
+ *
+ *  @param {object} state Global state tree
+ *  @returns {Array} The array of current user's flags.
+ */
+export const getCurrentUserFlags = createCurrentUserSelector( [ 'meta', 'data', 'flags' ], [] );
+
+/**
  * Returns true if the specified flag is enabled for the user
  *
  * @param  {object}   state      Global state tree
@@ -140,7 +148,7 @@ export const getCurrentUserDisplayName = createCurrentUserSelector( 'display_nam
  * @returns {boolean}            Whether the flag is enabled for the user
  */
 export function currentUserHasFlag( state, flagName ) {
-	return state.currentUser.flags.indexOf( flagName ) !== -1;
+	return getCurrentUserFlags( state ).includes( flagName );
 }
 
 /**
@@ -157,9 +165,7 @@ export const isCurrentUserEmailVerified = createCurrentUserSelector( 'email_veri
  * @param  {object}  state  Global state tree
  * @returns {?string}       Lasagna JWT
  */
-export function getCurrentUserLasagnaJwt( state ) {
-	return state.currentUser.lasagnaJwt;
-}
+export const getCurrentUserLasagnaJwt = createCurrentUserSelector( 'lasagna_jwt', null );
 
 /**
  * Returns true if the user was bootstrapped (i.e. user data was fetched by the server

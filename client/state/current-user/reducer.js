@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isEqual, reduce } from 'lodash';
+import { isEqual, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,31 +13,9 @@ import {
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './schema';
+import { capabilitiesSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
-
-/**
- * Tracks the current user ID.
- *
- * In development, if you are receiving Redux errors like this:
- *
- *     Error: Given action "CURRENT_USER_RECEIVE", reducer "id" returned undefined.
- *
- * This is likely caused by a server-side error or stored state corruption/auth token expiry.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case CURRENT_USER_RECEIVE:
-			return action.user.ID;
-	}
-
-	return state;
-} );
 
 export const user = ( state = null, action ) => {
 	switch ( action.type ) {
@@ -52,15 +30,6 @@ export const user = ( state = null, action ) => {
 
 	return state;
 };
-
-export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
-		case CURRENT_USER_RECEIVE:
-			return get( action.user, 'meta.data.flags.active_flags', [] );
-	}
-
-	return state;
-} );
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.
@@ -98,21 +67,9 @@ export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = 
 	return state;
 } );
 
-export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case CURRENT_USER_RECEIVE:
-			return action.user.lasagna_jwt || null;
-	}
-
-	return state;
-} );
-
 export default combineReducers( {
-	id,
 	user,
 	capabilities,
-	flags,
 	gravatarStatus,
 	emailVerification,
-	lasagnaJwt,
 } );

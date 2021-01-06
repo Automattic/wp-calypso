@@ -27,13 +27,13 @@ import {
 import { combineReducers, withPersistence } from 'calypso/state/utils';
 import { addReducerToStore } from 'calypso/state/add-reducer';
 
-import currentUser from 'calypso/state/current-user/reducer';
+import sites from 'calypso/state/sites/reducer';
 import postTypes from 'calypso/state/post-types/reducer';
 import reader from 'calypso/state/reader/reducer';
 
 // Create a legacy initial reducer, with no modularization.
 const initialReducer = combineReducers( {
-	currentUser,
+	sites,
 	postTypes,
 } );
 
@@ -52,7 +52,6 @@ describe( 'initial-state', () => {
 
 					const savedState = {
 						'redux-state-123456789': {
-							currentUser: { id: 123456789 },
 							postTypes: {
 								items: {
 									2916284: {
@@ -67,7 +66,6 @@ describe( 'initial-state', () => {
 
 					beforeAll( async () => {
 						isSupportSession.mockReturnValue( true );
-						window.initialReduxState = { currentUser: { currencyCode: 'USD' } };
 						consoleErrorSpy = jest.spyOn( global.console, 'error' );
 						getStoredItemSpy = jest
 							.spyOn( browserStorage, 'getAllStoredItems' )
@@ -78,7 +76,6 @@ describe( 'initial-state', () => {
 
 					afterAll( () => {
 						isSupportSession.mockReturnValue( false );
-						window.initialReduxState = null;
 						consoleErrorSpy.mockRestore();
 						getStoredItemSpy.mockRestore();
 					} );
@@ -108,7 +105,11 @@ describe( 'initial-state', () => {
 
 				const savedState = {
 					'redux-state-123456789': {
-						currentUser: { id: 123456789 },
+						sites: {
+							items: {
+								2916284: { ID: 2916284, name: 'test' },
+							},
+						},
 						postTypes: {
 							items: {
 								2916284: {
@@ -152,7 +153,7 @@ describe( 'initial-state', () => {
 				} );
 
 				test( 'builds initial state using IndexedDB state', () => {
-					expect( state.currentUser.id ).toBe( 123456789 );
+					expect( state.sites.items ).toEqual( savedState[ 'redux-state-123456789' ].sites.items );
 				} );
 
 				test( 'does not add timestamp to initial state', () => {
@@ -171,7 +172,6 @@ describe( 'initial-state', () => {
 
 				const savedState = {
 					'redux-state-123456789': {
-						currentUser: { id: 123456789 },
 						postTypes: {
 							items: {
 								2916284: {
@@ -234,7 +234,6 @@ describe( 'initial-state', () => {
 
 				const savedState = {
 					'redux-state-123456789': {
-						currentUser: { id: 123456789 },
 						postTypes: {
 							items: {
 								2916284: {
@@ -269,8 +268,7 @@ describe( 'initial-state', () => {
 					expect( consoleErrorSpy ).not.toHaveBeenCalled();
 				} );
 
-				test( 'builds state using local forage state', () => {
-					expect( state.currentUser.id ).toBe( 123456789 );
+				test( 'builds state using IndexedDB state', () => {
 					expect( state.postTypes.items ).toEqual(
 						savedState[ 'redux-state-123456789' ].postTypes.items
 					);

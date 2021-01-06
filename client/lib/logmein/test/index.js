@@ -39,7 +39,9 @@ const store = createStore( ( state ) => state, {
 		],
 	},
 	currentUser: {
-		id: 'not null',
+		user: {
+			ID: 'not null',
+		},
 	},
 } );
 
@@ -182,7 +184,9 @@ describe( 'logmein', () => {
 					],
 				},
 				currentUser: {
-					id: 'not null',
+					user: {
+						ID: 'not null',
+					},
 				},
 			} );
 			setLogmeinReduxStore( nonapplicableStore );
@@ -247,7 +251,9 @@ describe( 'logmein', () => {
 					],
 				},
 				currentUser: {
-					id: 'not null',
+					user: {
+						ID: 'not null',
+					},
 				},
 			} );
 			setLogmeinReduxStore( repeatstore );

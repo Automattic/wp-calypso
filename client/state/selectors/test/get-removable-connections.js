@@ -11,7 +11,9 @@ import getRemovableConnections from 'calypso/state/selectors/get-removable-conne
 describe( 'getRemovableConnections()', () => {
 	const state = {
 		currentUser: {
-			id: 26957695,
+			user: {
+				ID: 26957695,
+			},
 			capabilities: {
 				2916284: {
 					edit_others_posts: true,

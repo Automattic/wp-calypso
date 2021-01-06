@@ -3258,7 +3258,9 @@ describe( 'selectors', () => {
 		test( 'should return exists for attributes if a site is Jetpack', () => {
 			const state = {
 				currentUser: {
-					id: 73705554,
+					user: {
+						ID: 73705554,
+					},
 					capabilities: {
 						77203074: {
 							manage_options: false,

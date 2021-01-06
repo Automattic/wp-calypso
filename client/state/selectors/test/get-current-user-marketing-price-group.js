@@ -14,8 +14,8 @@ describe( 'getCurrentUserMarketingPriceGroup()', () => {
 		expect(
 			getCurrentUserMarketingPriceGroup( {
 				currentUser: {
-					id: 12345,
 					user: {
+						ID: 12345,
 						meta: {
 							marketing_price_group: marketingPriceGroup,
 						},

@@ -1,6 +1,8 @@
 export const userState = {
 	currentUser: {
-		id: 12345678,
+		user: {
+			ID: 12345678,
+		},
 		capabilities: {},
 	},
 	users: {

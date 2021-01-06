@@ -1,8 +1,3 @@
-export const idSchema = {
-	type: [ 'integer', 'null' ],
-	minimum: 0,
-};
-
 export const capabilitiesSchema = {
 	type: 'object',
 	additionalProperties: false,
@@ -30,12 +25,4 @@ export const capabilitiesSchema = {
 			},
 		},
 	},
-};
-
-export const flagsSchema = {
-	type: 'array',
-};
-
-export const lasagnaSchema = {
-	type: [ 'string', 'null' ],
 };
