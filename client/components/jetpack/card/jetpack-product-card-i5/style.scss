@@ -102,6 +102,13 @@
 	}
 }
 
+.jetpack-product-card-i5__price-from {
+	margin-right: 12px;
+	color: var( --studio-gray-40 );
+	font-size: 0.875rem;
+	line-height: 1.2;
+}
+
 .jetpack-product-card-i5 .plan-price {
 	display: flex;
 
@@ -127,12 +134,23 @@
 
 .jetpack-product-card-i5__billing-time-frame,
 .jetpack-product-card-i5__expiration-date {
-	margin-left: 12px;
+	margin: 0 12px;
 
 	color: var( --studio-gray-40 );
 
 	font-size: 0.875rem;
 	line-height: 1.2;
+}
+
+.jetpack-product-card-i5__price-tooltip {
+	color: var( --studio-gray-40 );
+}
+
+.jetpack-product-card-i5__price-tooltip.popover .popover__inner {
+	text-align: center;
+}
+.jetpack-product-card-i5__price-tooltip p {
+	margin-bottom: 1rem;
 }
 
 .jetpack-product-card-i5__expiration-date {
