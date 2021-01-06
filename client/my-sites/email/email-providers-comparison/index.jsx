@@ -29,7 +29,7 @@ import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-f
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import {
