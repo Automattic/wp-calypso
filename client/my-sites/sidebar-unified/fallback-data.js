@@ -61,6 +61,29 @@ export default function buildFallbackResponse( {
 			title: translate( 'Upgrades' ),
 			type: 'menu-item',
 			url: `/plans/${ siteDomain }`,
+			children: [
+				{
+					parent: 'upgrades',
+					slug: 'upgrades',
+					title: translate( 'Plans' ),
+					type: 'submenu-item',
+					url: `/plans/${ siteDomain }`,
+				},
+				{
+					parent: 'upgrades',
+					slug: 'upgrades',
+					title: translate( 'Purchases' ),
+					type: 'submenu-item',
+					url: `/purchases/subscriptions/${ siteDomain }`,
+				},
+				{
+					parent: 'upgrades',
+					slug: 'upgrades',
+					title: translate( 'Domains' ),
+					type: 'submenu-item',
+					url: `/domains/manage/${ siteDomain }`,
+				},
+			],
 		},
 		{
 			icon: 'dashicons-admin-post',
