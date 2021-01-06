@@ -12,19 +12,11 @@ use PHPUnit\Framework\TestCase;
 require_once __DIR__ . '/../coming-soon.php';
 
 /**
- * Class Is_FSE_Active_Test
+ * Class Coming_Soon_Test
  */
 class Coming_Soon_Test extends TestCase {
 	/**
-	 * Pre-test suite set up.
-	 */
-	public static function setUpBeforeClass() {
-		parent::setUpBeforeClass();
-		apply_filters( 'a8c_enable_public_coming_soon', '__return_true' );
-	}
-
-	/**
-	 * Post-test uite actions.
+	 * Post-test suite actions.
 	 */
 	public static function tearDownAfterClass() {
 		self::delete_coming_soon_site_options();
