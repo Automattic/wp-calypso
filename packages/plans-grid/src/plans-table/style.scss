@@ -242,7 +242,7 @@
 	}
 
 	&:not( .is-popular ) {
-		border: 1px solid $focused-launch-accent-blue;
+		border: 1px solid var( --studio-gray-5 );
 	}
 
 	&.is-selected {
