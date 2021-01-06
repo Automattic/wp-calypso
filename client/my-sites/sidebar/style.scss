@@ -15,3 +15,26 @@
 	filter: brightness( 100 );
 	-webkit-filter: brightness( 100 );
 }
+
+.sidebar__store-tooltip {
+	&.popover.info-popover__tooltip {
+		&.is-bottom .popover__arrow::before,
+		&.is-bottom-left .popover__arrow::before,
+		&.is-bottom-right .popover__arrow::before {
+			border-bottom-color: var( --color-neutral-100 );
+		}
+
+		.popover__inner {
+			align-items: center;
+			font-size: 0.75rem;
+			max-width: 300px;
+			color: var( --color-text-inverted );
+			background-color: var( --color-neutral-100 );
+		}
+
+		a {
+			color: var( --color-text-inverted );
+			text-decoration: underline;
+		}
+	}
+}
