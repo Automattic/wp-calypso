@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import React, { useEffect, useRef } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 
@@ -22,9 +22,10 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 
-const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
+export default function GSuiteUpgrade( { domain } ) {
+	const { responseCart: cart, addProductsToCart, isLoading } = useShoppingCart();
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const productsList = useSelector( getProductsList );
-	const { addProductsToCart, isLoading } = useShoppingCart();
 
 	const isMounted = useRef( true );
 	useEffect( () => {
@@ -76,8 +77,4 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 			/>
 		</div>
 	);
-};
-
-export default connect( ( state ) => ( {
-	selectedSiteSlug: getSelectedSiteSlug( state ),
-} ) )( GSuiteUpgrade );
+}
