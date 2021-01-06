@@ -315,13 +315,6 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/backup/${ siteDomain }`,
 				},
-				{
-					parent: 'jetpack',
-					slug: 'jetpack-scan',
-					title: translate( 'Scan' ),
-					type: 'submenu-item',
-					url: `/scan/${ siteDomain }`,
-				},
 			],
 		},
 		{
