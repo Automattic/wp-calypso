@@ -25,11 +25,12 @@ module.exports = async function ( context ) {
 		return;
 	}
 
+	const arch = context.appOutDir.includes( 'arm64 ' ) ? 'arm64' : 'x64';
 	const app = path.join( context.appOutDir, `${ context.packager.appInfo.productFilename }.app` );
 	const appName = path.basename( app );
 
 	const start = new Date();
-	console.log( `  • notarizing ${ appName }...` ); // eslint-disable-line no-console
+	console.log( `  • notarizing ${ appName } (${ arch })...` ); // eslint-disable-line no-console
 	await notarize( {
 		appBundleId: APP_ID,
 		appPath: app,
@@ -37,5 +38,5 @@ module.exports = async function ( context ) {
 		appleIdPassword: NOTARIZATION_PWD,
 		ascProvider: NOTARIZATION_ASC_PROVIDER,
 	} );
-	console.log( `  • done notarizing ${ appName }, took ${ elapsed( start ) }` ); // eslint-disable-line no-console
+	console.log( `  • done notarizing ${ appName } ( ${ arch } ), took ${ elapsed( start ) }` ); // eslint-disable-line no-console
 };
