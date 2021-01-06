@@ -57,7 +57,7 @@ export class StreamResult< T, E > {
 			const { message, stack } = this.error;
 			const error = { message, stack };
 
-			return { ...this, error };
+			return Object.assign( {}, this, { error } );
 		}
 
 		return this;
