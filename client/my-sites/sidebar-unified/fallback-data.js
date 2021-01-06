@@ -383,13 +383,6 @@ export default function buildFallbackResponse( {
 								: [] ),
 							{
 								parent: 'themes.php',
-								slug: 'themes-options',
-								title: translate( 'Theme Options' ),
-								type: 'submenu-item',
-								url: `https://${ siteDomain }/wp-admin/`,
-							},
-							{
-								parent: 'themes.php',
 								slug: 'themes-widgets',
 								title: translate( 'Widgets' ),
 								type: 'submenu-item',
