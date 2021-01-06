@@ -409,6 +409,42 @@ $accent-blue: #117ac9;
 	}
 }
 
+.domain-picker__suggestion-item.type-button {
+	flex-direction: column;
+	align-items: flex-start;
+
+	.domain-picker__price.is-paid {
+		display: flex;
+	}
+
+	.domain-picker__price-inclusive {
+		display: inline;
+		order: 1;
+
+		&::before {
+			// add a no-break space to get spacing between price-inclusive & price-cost
+			content: '\00a0';
+		}
+	}
+
+	@include break-medium {
+		flex-direction: initial;
+		align-items: center;
+
+		.domain-picker__price.is-paid {
+			display: block;
+		}
+
+		.domain-picker__price-inclusive {
+			order: initial;
+
+			&::before {
+				content: none;
+			}
+		}
+	}
+}
+
 .domain-picker__body {
 	display: flex;
 
@@ -449,8 +485,9 @@ $accent-blue: #117ac9;
 }
 
 .domain-picker__suggestion-select-button.components-button.is-secondary {
-	min-width: 140px;
 	justify-content: center;
+	width: 100%;
+	min-width: 140px;
 	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
 	color: var( --mainColor );
 
@@ -459,5 +496,19 @@ $accent-blue: #117ac9;
 	&.is-selected {
 		box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-10 );
 		color: var( --wp-admin-theme-color-darker-10 );
+	}
+
+	@include break-medium {
+		width: auto;
+	}
+}
+
+.domain-picker__action {
+	margin-top: rem( 16px );
+	width: 100%;
+
+	@include break-medium {
+		margin-top: 0;
+		width: auto;
 	}
 }
