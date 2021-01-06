@@ -10,7 +10,6 @@ import {
 	Button,
 	FormStatus,
 	useLineItems,
-	useEvents,
 	useFormStatus,
 	registerStore,
 	useSelect,
@@ -286,7 +285,6 @@ function EbanxTefPayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'ebanx-tef' ).getCustomerName() );
 	const customerBank = useSelect( ( select ) => select( 'ebanx-tef' ).getCustomerBank() );
 	const fields = useSelect( ( select ) => select( 'ebanx-tef' ).getFields() );
@@ -304,10 +302,6 @@ function EbanxTefPayButton( { disabled, onClick, store } ) {
 			onClick={ () => {
 				if ( isFormValid( store, contactCountryCode, __ ) ) {
 					debug( 'submitting ebanx-tef payment' );
-					onEvent( {
-						type: 'REDIRECT_TRANSACTION_BEGIN',
-						payload: { paymentMethodId: 'ebanx-tef' },
-					} );
 					onClick( 'ebanx-tef', {
 						...massagedFields,
 						name: customerName?.value, // this needs to come after massagedFields to prevent it from being overridden

@@ -199,6 +199,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 	}, [ initialDomainSearch, showSearchField ] );
 
+	const suggestionRefs = React.useRef< ( HTMLButtonElement | null )[] >( [] );
+	useEffect( () => {
+		if ( isExpanded ) {
+			suggestionRefs.current[ quantity ]?.focus?.();
+		}
+	}, [ isExpanded, quantity ] );
+
 	const handleItemRender = (
 		domain: string,
 		railcarId: string,
@@ -299,7 +306,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											{ __( 'Keep sub-domain', __i18n_text_domain__ ) }
 										</ItemGroupLabel>
 									) }
-									<ItemGrouper groupItems={ segregateFreeAndPaid }>
+									<ItemGrouper key={ group } groupItems={ segregateFreeAndPaid }>
 										{ ( ! areDependenciesLoading && existingSubdomain && (
 											<SuggestionItem
 												key={ existingSubdomain?.domain_name }
@@ -332,7 +339,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											{ __( 'Professional domains', __i18n_text_domain__ ) }
 										</ItemGroupLabel>
 									) }
-									<ItemGrouper groupItems={ segregateFreeAndPaid }>
+									<ItemGrouper key={ group } groupItems={ segregateFreeAndPaid }>
 										{ ( ! areDependenciesLoading &&
 											domainSuggestions?.map( ( suggestion, i ) => {
 												const index = existingSubdomain?.domain_name ? i + 1 : i;
@@ -345,6 +352,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 													: true;
 												return (
 													<SuggestionItem
+														ref={ ( ref ) => {
+															suggestionRefs.current[ index ] = ref;
+														} }
 														key={ suggestion.domain_name }
 														isUnavailable={ ! isAvailable }
 														domain={ suggestion.domain_name }

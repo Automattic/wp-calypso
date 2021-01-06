@@ -1,4 +1,5 @@
 @import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/plans-grid/src/variables';
 
 .nux-launch-modal.step-plan {
 	// Remove extraneous whitespace after plans details.
@@ -10,5 +11,10 @@
 	.plans-grid__details-container {
 		position: relative;
 		@include onboarding-block-edge2edge-container;
+
+		@media ( min-width: $plans-grid-max-page-width ) {
+			margin-left: 0;
+			margin-right: 0;
+		}
 	}
 }

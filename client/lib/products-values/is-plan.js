@@ -11,6 +11,7 @@ import { isJetpackPlan } from 'calypso/lib/products-values/is-jetpack-plan';
 import { isJpphpBundle } from 'calypso/lib/products-values/is-jpphp-bundle';
 import { isPersonal } from 'calypso/lib/products-values/is-personal';
 import { isPremium } from 'calypso/lib/products-values/is-premium';
+import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 
 export function isPlan( product ) {
 	product = formatProduct( product );
@@ -24,6 +25,7 @@ export function isPlan( product ) {
 		isEcommerce( product ) ||
 		isEnterprise( product ) ||
 		isJetpackPlan( product ) ||
-		isJpphpBundle( product )
+		isJpphpBundle( product ) ||
+		isP2Plus( product )
 	);
 }

@@ -36,17 +36,19 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 	noArrow = true,
 } ) => {
 	const [ showTooltip, setShowTooltip ] = useState< boolean >( false );
-	const handleClick = () => {
+	const handleClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ): void => {
 		setShowTooltip( ! showTooltip );
+		// when the info tooltip inside a button, we don't want clicking it to propagate up
+		event.stopPropagation();
 	};
 	const handleClose = () => {
 		setShowTooltip( false );
 	};
 
+	const ButtonWithIcon = ( props: Button.Props & { icon: typeof info } ) => <Button { ...props } />;
+
 	return (
-		<Button
-			// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-			// @ts-ignore
+		<ButtonWithIcon
 			icon={ info }
 			onClick={ handleClick }
 			className="info-tooltip"
@@ -63,7 +65,7 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 					{ children }
 				</Popover>
 			) }
-		</Button>
+		</ButtonWithIcon>
 	);
 };
 

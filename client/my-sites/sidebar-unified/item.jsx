@@ -19,7 +19,10 @@ import PropTypes from 'prop-types';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
-import { collapseAllMySitesSidebarSections } from 'calypso/state/my-sites/sidebar/actions';
+import {
+	collapseAllMySitesSidebarSections,
+	expandMySitesSidebarSection,
+} from 'calypso/state/my-sites/sidebar/actions';
 
 export const MySitesSidebarUnifiedItem = ( {
 	title,
@@ -28,6 +31,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	selected = false,
 	isSubItem = false,
+	sectionId,
 } ) => {
 	const reduxDispatch = useDispatch();
 
@@ -35,7 +39,10 @@ export const MySitesSidebarUnifiedItem = ( {
 		<SidebarItem
 			label={ title }
 			link={ url }
-			onNavigate={ () => reduxDispatch( collapseAllMySitesSidebarSections() ) }
+			onNavigate={ () => {
+				reduxDispatch( collapseAllMySitesSidebarSections() );
+				reduxDispatch( expandMySitesSidebarSection( sectionId ) );
+			} }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink
@@ -47,8 +54,10 @@ export const MySitesSidebarUnifiedItem = ( {
 };
 
 MySitesSidebarUnifiedItem.propTypes = {
-	title: PropTypes.string,
 	icon: PropTypes.string,
+	sectionId: PropTypes.string,
+	slug: PropTypes.string,
+	title: PropTypes.string,
 	url: PropTypes.string,
 };
 

@@ -39,6 +39,7 @@ const NOTICE_GREEN = '#4ab866';
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
+		isCartPendingUpdate: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
 		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
@@ -166,12 +167,8 @@ class DomainRegistrationSuggestion extends React.Component {
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
 			} );
-		} else if ( pendingCheckSuggestion ) {
-			if ( pendingCheckSuggestion.domain_name === suggestion.domain_name ) {
-				buttonStyles = { ...buttonStyles, busy: true };
-			} else {
-				buttonStyles = { ...buttonStyles, disabled: true };
-			}
+		} else if ( pendingCheckSuggestion || this.props.isCartPendingUpdate ) {
+			buttonStyles = { ...buttonStyles, busy: true, disabled: true };
 		}
 		return {
 			buttonContent,

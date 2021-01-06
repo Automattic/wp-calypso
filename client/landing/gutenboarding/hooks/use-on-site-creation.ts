@@ -14,6 +14,7 @@ import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
+import { useIsAnchorFm, useAnchorFmParams } from '../path';
 
 const wpcom = wp.undocumented();
 
@@ -55,7 +56,7 @@ interface Cart {
  * 3. The user is still seeing 'Free Plan' label on PlansButton => redirect to editor
  **/
 
-export default function useOnSiteCreation() {
+export default function useOnSiteCreation(): void {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
@@ -63,6 +64,9 @@ export default function useOnSiteCreation() {
 	const selectedPlan = useSelectedPlan();
 	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+
+	const isAnchorFmSignup = useIsAnchorFm();
+	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const flowCompleteTrackingParams = {
@@ -126,9 +130,24 @@ export default function useOnSiteCreation() {
 			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = design?.is_fse
-				? `/site-editor/${ newSite.site_slug }/`
-				: `/page/${ newSite.site_slug }/home`;
+			let destination;
+			if ( design?.is_fse ) {
+				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else if ( isAnchorFmSignup ) {
+				const params = {
+					anchor_podcast: anchorFmPodcastId,
+					anchor_episode: anchorFmEpisodeId,
+					spotify_show_url: anchorFmSpotifyShowUrl,
+				};
+				const queryString = Object.keys( params )
+					.filter( ( key ) => params[ key as keyof typeof params ] != null )
+					.map( ( key ) => key + '=' + params[ key as keyof typeof params ] )
+					.join( '&' );
+				destination = `/post/${ newSite.site_slug }?${ queryString }`;
+			} else {
+				destination = `/page/${ newSite.site_slug }/home`;
+			}
+			window.location.href = destination;
 		}
 	}, [
 		domain,
@@ -142,5 +161,9 @@ export default function useOnSiteCreation() {
 		flowCompleteTrackingParams,
 		shouldRedirectToEditorAfterCheckout,
 		design,
+		isAnchorFmSignup,
+		anchorFmPodcastId,
+		anchorFmEpisodeId,
+		anchorFmSpotifyShowUrl,
 	] );
 }

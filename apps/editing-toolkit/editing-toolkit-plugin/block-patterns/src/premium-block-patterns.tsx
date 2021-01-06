@@ -53,16 +53,23 @@ export const PremiumBlockPatterns: React.FunctionComponent = () => {
 			if ( pattern.isPremium && typeof pattern.title === 'string' ) {
 				const originalTitle = pattern.title;
 
-				pattern.title = <PatternTitleContainer title={ originalTitle } />;
-				// Add simple premium badging for screen readers
-				pattern.title.toString = () =>
-					sprintf(
-						// translators: %s is the title of a block pattern e.g. "Two columns (Premium)". "Premium" is synonymous with "paid"
-						__( '%s (Premium)', 'full-site-editing' ),
-						originalTitle
-					);
+				const titleOverride = <PatternTitleContainer title={ originalTitle } />;
 
-				shouldUpdateBlockPatterns = true;
+				// When React is running in development mode, ReactElement calls Object.freeze() on the element.
+				// To prevent the editor from throwing a fatal, we should only attempt to run the override
+				// when the React element is extensible so we can use the custom toString method. This means that
+				// in React development mode (define SCRIPT_DEBUG as true in PHP) this feature is switched off.
+				// See: https://github.com/facebook/react/blob/702fad4b1b48ac8f626ed3f35e8f86f5ea728084/packages/react/src/jsx/ReactJSXElement.js#L194
+				if ( Object.isExtensible( titleOverride ) ) {
+					pattern.title = titleOverride;
+					pattern.title.toString = () =>
+						sprintf(
+							// translators: %s is the title of a block pattern e.g. "Two columns (Premium)". "Premium" is synonymous with "paid"
+							__( '%s (Premium)', 'full-site-editing' ),
+							originalTitle
+						);
+					shouldUpdateBlockPatterns = true;
+				}
 			}
 			updatedPatterns.push( pattern );
 		} );

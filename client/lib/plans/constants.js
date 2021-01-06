@@ -319,7 +319,6 @@ export const FEATURE_P2_UNLIMITED_POSTS_PAGES = 'p2-unlimited-posts-pages';
 export const FEATURE_P2_SIMPLE_SEARCH = 'p2-simple-search';
 export const FEATURE_P2_CUSTOMIZATION_OPTIONS = 'p2-customization-options';
 export const FEATURE_P2_13GB_STORAGE = 'p2-13gb-storage';
-export const FEATURE_P2_UNLIMITED_FREE_VIEWERS = 'p2-unlimited-free-viewers';
 export const FEATURE_P2_ADVANCED_SEARCH = 'p2-advanced-search';
 export const FEATURE_P2_VIDEO_SHARING = 'p2-video-sharing';
 export const FEATURE_P2_MORE_FILE_TYPES = 'p2-more-file-types';

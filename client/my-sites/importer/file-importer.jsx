@@ -58,7 +58,6 @@ class FileImporter extends React.PureComponent {
 				description: PropTypes.string.isRequired,
 			} ),
 			importerState: PropTypes.string.isRequired,
-			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 			type: PropTypes.string.isRequired,
 		} ),

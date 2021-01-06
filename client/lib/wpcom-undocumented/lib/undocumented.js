@@ -792,6 +792,22 @@ Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn
 };
 
 /**
+ * Retrieves the URL to embed Titan's control panel in an iframe.
+ *
+ * @param orderId the Titan order ID
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanControlPanelIframeURL = function ( orderId, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-iframe-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
+/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function

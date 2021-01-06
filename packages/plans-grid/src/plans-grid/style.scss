@@ -4,21 +4,6 @@
 @import '~@automattic/onboarding/styles/mixins';
 @import '../variables.scss';
 
-@mixin plans-grid-edge2edge-padding {
-	padding-left: $onboarding-block-margin-mobile;
-	padding-right: $onboarding-block-margin-mobile;
-
-	@include break-small {
-		padding-left: $onboarding-block-margin-small;
-		padding-right: $onboarding-block-margin-small;
-	}
-
-	@include break-medium {
-		padding-left: $onboarding-block-margin-medium;
-		padding-right: $onboarding-block-margin-medium;
-	}
-}
-
 .plans-grid {
 	// Space to accomadate sticky footer
 	margin-bottom: 85px; // @TODO: replace with a variable
@@ -40,13 +25,12 @@
 }
 
 .plans-grid__details-container {
-	@media ( max-width: $plans-grid-max-page-width ) {
+	// -1px is becuase this is a `max-width` media query, instead of the usual `min-width`
+	@media ( max-width: $plans-grid-max-page-width - 1px ) {
 		overflow-x: auto;
 		width: 100%;
 		position: absolute;
 		left: 0;
-
-		@include plans-grid-edge2edge-padding;
 	}
 	// this is needed on mobiles to uncover the CTA button
 	// without it, it's covered by the sticky bottom bar
