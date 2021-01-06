@@ -46,6 +46,11 @@ $font-size: rem( 14px );
 }
 
 .is-nav-unification {
+	// client/layout/style.scss
+	.layout__content {
+		min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
+	}
+
 	// client/layout/sidebar/style.scss
 	.sidebar {
 		position: relative;
@@ -86,6 +91,7 @@ $font-size: rem( 14px );
 			&::after {
 				content: ' ';
 				display: none;
+				z-index: 1;
 				position: absolute;
 				top: 50%;
 				right: 0;
@@ -585,8 +591,13 @@ $font-size: rem( 14px );
 }
 
 @media screen and ( max-width: 660px ) {
-	// client/layout/sidebar/style.scss
 	.is-nav-unification {
+		// client/layout/style.scss
+		.layout__content {
+			min-height: initial;
+		}
+
+		// client/layout/sidebar/style.scss
 		.sidebar {
 			position: absolute;
 		}

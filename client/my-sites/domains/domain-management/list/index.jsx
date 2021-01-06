@@ -64,7 +64,6 @@ export class List extends React.Component {
 		selectedSite: PropTypes.object.isRequired,
 		domains: PropTypes.array.isRequired,
 		isRequestingDomains: PropTypes.bool,
-		cart: PropTypes.object,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
 		hasSingleSite: PropTypes.bool,
@@ -154,7 +153,6 @@ export class List extends React.Component {
 					/>
 					<div className="domains__header-buttons">
 						<HeaderCart
-							cart={ this.props.cart }
 							selectedSite={ this.props.selectedSite }
 							currentRoute={ this.props.currentRoute }
 						/>

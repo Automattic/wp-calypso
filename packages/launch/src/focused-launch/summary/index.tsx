@@ -102,8 +102,6 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 					value={ value }
 					onChange={ onChange }
 					onBlur={ onBlur }
-					// eslint-disable-next-line jsx-a11y/no-autofocus
-					autoFocus={ true }
 				/>
 			}
 		/>

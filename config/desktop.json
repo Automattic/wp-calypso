@@ -77,6 +77,7 @@
 		"me/notifications": true,
 		"nav-unification": false,
 		"oauth": true,
+		"p2/p2-plus": true,
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,
 		"post-editor/html-toolbar": true,
