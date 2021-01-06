@@ -32,10 +32,10 @@ export default function buildFallbackResponse( {
 		},
 		{
 			icon: 'dashicons-cart',
-			slug: 'purchases',
-			title: translate( 'Purchases' ),
+			slug: 'upgrades',
+			title: translate( 'Upgrades' ),
 			type: 'menu-item',
-			url: `/purchases/${ siteDomain }`,
+			url: `/plans/${ siteDomain }`,
 		},
 		{
 			icon: 'dashicons-admin-post',
