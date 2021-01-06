@@ -26,6 +26,8 @@ import { translate } from 'i18n-calypso';
  */
 /* eslint-enable jsdoc/require-param */
 
+const JETPACK_ICON = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" %3E%3Cpath fill="%23a0a5aa" d="M16,0C7.2,0,0,7.2,0,16s7.2,16,16,16s16-7.2,16-16S24.8,0,16,0z"%3E%3C/path%3E%3Cpolygon fill="%23fff" points="15,19 7,19 15,3 "%3E%3C/polygon%3E%3Cpolygon fill="%23fff" points="17,29 17,13 25,13 "%3E%3C/polygon%3E%3C/svg%3E`;
+
 export default function buildFallbackResponse( {
 	siteDomain = '',
 	shouldShowLinks = false,
@@ -270,7 +272,7 @@ export default function buildFallbackResponse( {
 			type: 'separator',
 		},
 		{
-			icon: 'dashicons-jetpack',
+			icon: JETPACK_ICON,
 			slug: 'jetpack',
 			title: translate( 'Jetpack' ),
 			type: 'menu-item',
