@@ -28,10 +28,12 @@ export default {
 
 	emailManagementNewGSuiteAccount( pageContext, next ) {
 		pageContext.primary = (
-			<GSuiteAddUsers
-				planType={ pageContext.params.planType }
-				selectedDomainName={ pageContext.params.domain }
-			/>
+			<CalypsoShoppingCartProvider>
+				<GSuiteAddUsers
+					planType={ pageContext.params.planType }
+					selectedDomainName={ pageContext.params.domain }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 		next();
 	},
