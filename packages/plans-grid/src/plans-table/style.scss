@@ -234,7 +234,11 @@
 	// stylelint-disable-next-line scales/radii
 	border-radius: 4px;
 	margin-top: 15px;
-	
+
+	&.is-popular {
+		background: var( --studio-blue-40 );
+	}
+
 	&:not( .is-popular ) {
 		border: 1px solid var( --studio-gray-5 );
 	}
@@ -244,6 +248,7 @@
 		&:not( .is-popular ) {
 			border: 1px solid var( --studio-blue-40 );
 			color: var( --studio-blue-40 );
+			background: #fafcfe;
 		}
 
 		svg {
