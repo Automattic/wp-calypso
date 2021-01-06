@@ -50,6 +50,7 @@ function createPurchaseObject( purchase ) {
 			type: purchase.payment_type,
 			countryCode: purchase.payment_country_code,
 			countryName: purchase.payment_country_name,
+			storedDetailsId: purchase.stored_details_id,
 		},
 		pendingTransfer: Boolean( purchase.pending_transfer ),
 		productId: Number( purchase.product_id ),
