@@ -7,7 +7,7 @@
 	background: var( --color-surface );
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
-	box-shadow: 0px 4px 24px rgba( 0, 0, 0, 0.05 );
+	box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 );
 
 	&.is-featured.is-aligned {
 		position: relative;
