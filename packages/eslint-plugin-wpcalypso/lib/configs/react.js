@@ -1,5 +1,5 @@
 module.exports = {
-	extends: '../index.js',
+	extends: 'plugin:wpcalypso/recommended',
 	parserOptions: {
 		ecmaVersion: 7,
 		ecmaFeatures: {
@@ -7,7 +7,7 @@ module.exports = {
 		},
 		sourceType: 'module',
 	},
-	plugins: [ 'react', 'react-hooks', 'wpcalypso' ],
+	plugins: [ 'react', 'react-hooks' ],
 	rules: {
 		'react/jsx-curly-spacing': [ 2, 'always' ],
 		'react/jsx-no-duplicate-props': 2,

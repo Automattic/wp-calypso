@@ -23,6 +23,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
 } from 'calypso/lib/gsuite/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { getAnnualPrice } from 'calypso/lib/gsuite';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -30,6 +31,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	emailManagementForwarding,
 	emailManagementNewGSuiteAccount,
+	emailManagementNewTitanAccount,
 } from 'calypso/my-sites/email/paths';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -75,21 +77,29 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onAddTitanClick = () => {
-		if ( this.state.isFetchingProvisioningURL ) {
-			return;
-		}
-
-		const { domain, translate } = this.props;
-		this.setState( { isFetchingProvisioningURL: true } );
-		this.fetchTitanOrderProvisioningURL( domain.name ).then( ( { error, provisioningURL } ) => {
-			this.setState( { isFetchingProvisioningURL: false } );
-			if ( error ) {
-				this.props.errorNotice( translate( 'An unknown error occurred. Please try again later.' ) );
-			} else {
-				window.location.href = provisioningURL;
-			}
-		} );
 		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'titan' } );
+
+		if ( config.isEnabled( 'titan/phase-2' ) ) {
+			const { domain, currentRoute, selectedSiteSlug } = this.props;
+			page( emailManagementNewTitanAccount( selectedSiteSlug, domain.name, currentRoute ) );
+		} else {
+			if ( this.state.isFetchingProvisioningURL ) {
+				return;
+			}
+
+			const { domain, translate } = this.props;
+			this.setState( { isFetchingProvisioningURL: true } );
+			this.fetchTitanOrderProvisioningURL( domain.name ).then( ( { error, provisioningURL } ) => {
+				this.setState( { isFetchingProvisioningURL: false } );
+				if ( error ) {
+					this.props.errorNotice(
+						translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else {
+					window.location.href = provisioningURL;
+				}
+			} );
+		}
 	};
 
 	fetchTitanOrderProvisioningURL = ( domain ) => {
@@ -162,12 +172,26 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderTitanDetails( className ) {
-		const { currentUserLocale, translate } = this.props;
+		const { currencyCode, currentUserLocale, titanMailProduct, translate } = this.props;
 		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
 		const billingFrequency =
 			isEnglish || i18n.hasTranslation( 'Annual or monthly billing' )
 				? translate( 'Annual or monthly billing' )
 				: translate( 'Monthly billing' );
+
+		const formattedPrice = config.isEnabled( 'titan/phase-2' )
+			? translate( '{{price/}} /user /month', {
+					components: {
+						price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
+					},
+					comment: '{{price/}} is the formatted price, e.g. $20',
+			  } )
+			: translate( '{{price/}} /user /month', {
+					components: {
+						price: <span>{ formatCurrency( 3.5, 'USD' ) }</span>,
+					},
+					comment: '{{price/}} is the formatted price, e.g. $20',
+			  } );
 
 		return (
 			<EmailProviderDetails
@@ -184,12 +208,7 @@ class EmailProvidersComparison extends React.Component {
 					translate( 'One-click import of existing emails and contacts' ),
 					translate( 'Read receipts to track email opens' ),
 				] }
-				formattedPrice={ translate( '{{price/}} /user /month', {
-					components: {
-						price: <span>{ formatCurrency( 3.5, 'USD' ) }</span>,
-					},
-					comment: '{{price/}} is the formatted price, e.g. $20',
-				} ) }
+				formattedPrice={ formattedPrice }
 				buttonLabel={ translate( 'Add Titan Mail' ) }
 				hasPrimaryButton={ true }
 				isButtonBusy={ this.state.isFetchingProvisioningURL }
@@ -268,6 +287,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentUserLocale: getCurrentUserLocale( state ),
 			gSuiteProduct: getProductBySlug( state, productSlug ),
+			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			currentRoute: getCurrentRoute( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};

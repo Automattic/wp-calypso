@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useDispatch } from 'react-redux';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 
 /**
@@ -14,4 +15,5 @@ export interface PaymentProcessorOptions {
 	createUserAndSiteBeforeTransaction: boolean;
 	stripeConfiguration: StripeConfiguration | null;
 	recordEvent: ( action: ReactStandardAction ) => void;
+	reduxDispatch: ReturnType< typeof useDispatch >;
 }

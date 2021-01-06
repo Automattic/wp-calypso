@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit, debounce, isNull } from 'lodash';
+import { isEmpty, omit, debounce } from 'lodash';
 import page from 'page';
 
 /**
@@ -172,7 +172,7 @@ class ProductCategoryUpdate extends React.Component {
 			category &&
 			category.name &&
 			category.name.length &&
-			! isNull( category.parent ) &&
+			category.parent !== null &&
 			! isUploading;
 
 		return (

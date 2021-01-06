@@ -21,7 +21,7 @@ import './styles.scss';
 interface Props {
 	locale?: string;
 	siteId: number;
-	openCheckout: ( siteId: number, isEcommerce?: boolean ) => void;
+	openCheckout: ( siteSlug: string, isEcommerce?: boolean ) => void;
 	redirectTo: ( path: string ) => void;
 }
 

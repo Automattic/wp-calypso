@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { PLUGIN_UPLOAD } from 'calypso/lib/plugins/constants';
 import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
 import Dispatcher from 'calypso/dispatcher';
 import {
@@ -72,7 +73,7 @@ describe( 'uploadComplete', () => {
 
 		expect( Dispatcher.handleServerAction ).toHaveBeenCalledWith( {
 			type: 'RECEIVE_INSTALLED_PLUGIN',
-			action: 'PLUGIN_UPLOAD',
+			action: PLUGIN_UPLOAD,
 			site,
 			plugin: SUCCESS_RESPONSE,
 			data: SUCCESS_RESPONSE,

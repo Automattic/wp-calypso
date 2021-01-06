@@ -22,7 +22,7 @@ import {
 	getCancelPurchaseUrlFor,
 	getConfirmCancelDomainUrlFor,
 	getManagePurchaseUrlFor,
-	getAddPaymentMethodUrlFor,
+	getAddNewPaymentMethodUrlFor,
 } from './paths';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
@@ -117,7 +117,7 @@ export function PurchaseDetails( {
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 					redirectTo={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
-					getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>

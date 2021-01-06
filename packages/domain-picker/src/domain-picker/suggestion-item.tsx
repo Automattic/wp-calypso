@@ -149,6 +149,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						<span className="domain-picker__domain-sub-domain">{ domainName }</span>
 						<span className="domain-picker__domain-tld">{ domainTld }</span>
 					</span>
+					{ isRecommended && ! isUnavailable && (
+						<div className="domain-picker__badge is-recommended">
+							{ __( 'Recommended', __i18n_text_domain__ ) }
+						</div>
+					) }
 					{ hstsRequired && (
 						<InfoTooltip
 							position={ isMobile ? 'bottom center' : 'middle right' }
@@ -172,11 +177,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 								}
 							) }
 						</InfoTooltip>
-					) }
-					{ isRecommended && ! isUnavailable && (
-						<div className="domain-picker__badge is-recommended">
-							{ __( 'Recommended', __i18n_text_domain__ ) }
-						</div>
 					) }
 				</div>
 				{ isExistingSubdomain && type !== ITEM_TYPE_INDIVIDUAL_ITEM && (

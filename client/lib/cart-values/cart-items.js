@@ -29,6 +29,7 @@ import {
 	GSUITE_BASIC_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from 'calypso/lib/gsuite/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	formatProduct,
 	getDomain,
@@ -783,6 +784,19 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 			return addCartItem( item );
 		} )
 	);
+}
+
+/**
+ * Creates a new shopping cart item for Titan Mail Monthly.
+ *
+ * @param {object} properties - list of properties
+ * @returns {CartItemValue} the new item as `CartItemValue` object
+ */
+export function titanMailMonthly( properties ) {
+	return assign( domainItem( TITAN_MAIL_MONTHLY_SLUG, properties.domain, properties.source ), {
+		quantity: properties.quantity,
+		extra: properties.extra,
+	} );
 }
 
 /**

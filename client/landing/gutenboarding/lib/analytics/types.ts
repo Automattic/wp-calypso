@@ -95,9 +95,14 @@ type TracksPlanSelectEventProperties = {
 
 type TracksFeaturesSelectEventProperties = {
 	/**
-	 * The selected features
+	 * If the user selected features
 	 */
 	has_selected_features: boolean | undefined;
+
+	/**
+	 * If the user seleceted the "Video storage" feature
+	 */
+	has_selected_video_storage: boolean | undefined;
 };
 
 export type TracksEventProperties =

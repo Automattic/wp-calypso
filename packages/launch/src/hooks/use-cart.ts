@@ -10,6 +10,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { getPlanProduct, getDomainProduct } from '../utils';
+import { useSiteDomains } from '../hooks';
 
 export function useCart(): { goToCheckout: () => Promise< void > } {
 	const { siteId, flow, openCheckout } = React.useContext( LaunchContext );
@@ -18,6 +19,7 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 	const isEcommercePlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).isPlanEcommerce( plan?.storeSlug )
 	);
+	const { siteSubdomain } = useSiteDomains();
 
 	const { getCart, setCart } = useDispatch( SITE_STORE );
 
@@ -34,7 +36,7 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 		} );
 
 		// open checkout modal or redirect to /checkout only after the cart is updated
-		openCheckout( siteId, isEcommercePlan );
+		openCheckout( siteSubdomain?.domain || siteId.toString(), isEcommercePlan );
 	};
 
 	return {

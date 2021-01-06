@@ -2,14 +2,14 @@
  * External dependencies
  */
 import page from 'page';
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useRef } from 'react';
+import { connect, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { addItems } from 'calypso/lib/cart/actions';
 import config from 'calypso/config';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -19,12 +19,26 @@ import {
 import GSuiteUpsellCard from './gsuite-upsell-card';
 import HeaderCake from 'calypso/components/header-cake';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 
 const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
-	const handleAddEmailClick = ( cartItems ) => {
-		addItems( cartItems );
+	const productsList = useSelector( getProductsList );
+	const { addProductsToCart, isLoading } = useShoppingCart();
 
-		page( `/checkout/${ selectedSiteSlug }` );
+	const isMounted = useRef( true );
+	useEffect( () => {
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
+
+	const handleAddEmailClick = ( cartItems ) => {
+		addProductsToCart(
+			cartItems.map( ( item ) => fillInSingleCartItemAttributes( item, productsList ) )
+		).then( () => {
+			isMounted.current && page( `/checkout/${ selectedSiteSlug }` );
+		} );
 	};
 
 	const handleGoBack = () => {
@@ -36,11 +50,11 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 	};
 
 	useEffect( () => {
-		if ( cart && cart.hasLoadedFromServer && ! hasDomainInCart( cart, domain ) ) {
+		if ( cart && ! isLoading && ! hasDomainInCart( cart, domain ) ) {
 			// Should we handle this more gracefully?
 			page( `/domains/add/${ selectedSiteSlug }` );
 		}
-	}, [ cart, domain, selectedSiteSlug ] );
+	}, [ cart, domain, selectedSiteSlug, isLoading ] );
 
 	const translate = useTranslate();
 

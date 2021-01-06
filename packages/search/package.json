@@ -29,9 +29,9 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@babel/runtime": "^7.12.5",
 		"@wordpress/components": "^10.0.5",
-		"@wordpress/i18n": "^3.14.0",
 		"@wordpress/icons": "^2.4.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",

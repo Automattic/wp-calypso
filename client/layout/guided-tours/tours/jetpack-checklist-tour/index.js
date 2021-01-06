@@ -50,6 +50,7 @@ export const JetpackChecklistTour = makeTour(
 				marginTop: '-25px',
 			} }
 			target="jetpack-checklist-wpadmin-link"
+			shouldScrollTo
 		>
 			{ ( { translate } ) => (
 				<>

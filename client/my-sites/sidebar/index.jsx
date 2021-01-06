@@ -662,7 +662,6 @@ export class MySitesSidebar extends Component {
 
 	store() {
 		const { translate, site, siteSuffix, canUserUseStore } = this.props;
-
 		const isCalypsoStoreDeprecatedOrRemoved =
 			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 

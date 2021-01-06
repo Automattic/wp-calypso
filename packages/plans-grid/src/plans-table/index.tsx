@@ -28,6 +28,7 @@ export interface Props {
 	CTAVariation?: CTAVariation;
 	popularBadgeVariation: PopularBadgeVariation;
 	customTagLines?: CustomTagLinesMap;
+	defaultAllPlansExpanded?: boolean;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
@@ -41,10 +42,11 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
 	customTagLines,
+	defaultAllPlansExpanded = false,
 } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
-	const [ allPlansExpanded, setAllPlansExpanded ] = useState( false );
+	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
 
 	return (
 		<div className="plans-table">

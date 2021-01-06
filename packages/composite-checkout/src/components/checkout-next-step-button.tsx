@@ -8,18 +8,23 @@ import React from 'react';
  */
 import Button, { ButtonProps } from './button';
 
-const CheckoutNextStepButton: React.FC<
-	CheckoutNextStepButtonProps & ButtonProps & React.ButtonHTMLAttributes< HTMLButtonElement >
-> = ( { value, onClick, ariaLabel, ...props } ) => {
+function CheckoutNextStepButton( {
+	value,
+	onClick,
+	ariaLabel,
+	...props
+}: CheckoutNextStepButtonProps &
+	ButtonProps &
+	React.ButtonHTMLAttributes< HTMLButtonElement > ): JSX.Element {
 	return (
 		<Button onClick={ onClick } buttonType="primary" aria-label={ ariaLabel } { ...props }>
 			{ value }
 		</Button>
 	);
-};
+}
 
 interface CheckoutNextStepButtonProps {
-	value: React.ReactChildren;
+	value: React.ReactNode;
 	onClick: () => void;
 	ariaLabel: string;
 }

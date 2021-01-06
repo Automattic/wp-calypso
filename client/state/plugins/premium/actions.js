@@ -9,6 +9,7 @@ import { get, keys } from 'lodash';
  */
 import Dispatcher from 'calypso/dispatcher';
 import versionCompare from 'calypso/lib/version-compare';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import {
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
@@ -56,7 +57,7 @@ const getPluginHandler = ( site, plugin ) => {
 function install( site, plugin, dispatch ) {
 	Dispatcher.handleViewAction( {
 		type: 'INSTALL_PLUGIN',
-		action: 'INSTALL_PLUGIN',
+		action: INSTALL_PLUGIN,
 		site: site,
 		plugin: plugin,
 		data: null,
@@ -97,7 +98,7 @@ function install( site, plugin, dispatch ) {
 				} );
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_INSTALLED_PLUGIN',
-					action: 'INSTALL_PLUGIN',
+					action: INSTALL_PLUGIN,
 					site: site,
 					plugin: plugin,
 					data: null,
@@ -129,7 +130,7 @@ function update( site, plugin, dispatch ) {
 			} );
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_INSTALLED_PLUGIN',
-				action: 'INSTALL_PLUGIN',
+				action: INSTALL_PLUGIN,
 				site: site,
 				plugin: plugin,
 				data: null,
@@ -147,7 +148,7 @@ function activate( site, plugin, dispatch ) {
 		} );
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_INSTALLED_PLUGIN',
-			action: 'INSTALL_PLUGIN',
+			action: INSTALL_PLUGIN,
 			site: site,
 			plugin: data,
 			data: data,
@@ -175,7 +176,7 @@ function activate( site, plugin, dispatch ) {
 			} );
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_INSTALLED_PLUGIN',
-				action: 'INSTALL_PLUGIN',
+				action: INSTALL_PLUGIN,
 				site: site,
 				plugin: plugin,
 				data: null,

@@ -23,6 +23,7 @@ import {
 	getPluginOnSites,
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 
 /**
  * Style dependencies
@@ -169,6 +170,6 @@ export default connect( ( state, { plugin, secondarySites, site } ) => {
 	return {
 		pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
 		pluginsOnSecondarySites: getPluginOnSites( state, secondarySiteIds, plugin.slug ),
-		installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'INSTALL_PLUGIN' ),
+		installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, INSTALL_PLUGIN ),
 	};
 } )( localize( PluginSiteNetwork ) );

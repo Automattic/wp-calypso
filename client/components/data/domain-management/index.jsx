@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CartStore from 'calypso/lib/cart/store';
 import { fetchUsers } from 'calypso/lib/users/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
@@ -27,7 +26,6 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 
 function getStateFromStores( props ) {
 	return {
-		cart: CartStore.get(),
 		context: props.context,
 		domains: props.selectedSite ? props.domains : null,
 		isRequestingSiteDomains: props.isRequestingSiteDomains,
@@ -47,7 +45,6 @@ class DomainManagementData extends React.Component {
 		context: PropTypes.object.isRequired,
 		domains: PropTypes.array,
 		isRequestingSiteDomains: PropTypes.bool,
-		needsCart: PropTypes.bool,
 		needsContactDetails: PropTypes.bool,
 		needsDns: PropTypes.bool,
 		needsDomains: PropTypes.bool,
@@ -81,7 +78,6 @@ class DomainManagementData extends React.Component {
 
 	render() {
 		const {
-			needsCart,
 			needsContactDetails,
 			needsDomains,
 			needsPlans,
@@ -91,9 +87,6 @@ class DomainManagementData extends React.Component {
 		} = this.props;
 
 		const stores = [];
-		if ( needsCart ) {
-			stores.push( CartStore );
-		}
 		if ( needsUsers ) {
 			stores.push( UsersStore );
 		}

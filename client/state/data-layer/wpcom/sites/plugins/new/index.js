@@ -8,7 +8,11 @@ import { find, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PLUGIN_UPLOAD } from 'calypso/state/action-types';
+import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
+import {
+	INSTALL_PLUGIN,
+	PLUGIN_UPLOAD as PLUGIN_UPLOAD_ACTION,
+} from 'calypso/lib/plugins/constants';
 import {
 	completePluginUpload,
 	pluginUploadError,
@@ -78,13 +82,22 @@ export const uploadComplete = ( { siteId }, data ) => ( dispatch, getState ) => 
 
 	dispatch( completePluginUpload( siteId, pluginId ) );
 
+	// Notifying installed plugins that this plugin was successfully installed
+	dispatch( {
+		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+		action: INSTALL_PLUGIN,
+		siteId,
+		pluginId: data.id,
+		data,
+	} );
+
 	/*
 	 * Adding plugin to legacy flux store provides data for plugin page
 	 * and displays a success message.
 	 */
 	Dispatcher.handleServerAction( {
 		type: 'RECEIVE_INSTALLED_PLUGIN',
-		action: 'PLUGIN_UPLOAD',
+		action: PLUGIN_UPLOAD_ACTION,
 		site,
 		plugin: data,
 		data,

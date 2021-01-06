@@ -9,7 +9,6 @@ import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
 	useLineItems,
-	useEvents,
 	useFormStatus,
 	registerStore,
 	useSelect,
@@ -214,7 +213,6 @@ function IdWalletPayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'id_wallet' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'id_wallet' ).getFields() );
 	const massagedFields = Object.entries( fields ).reduce(
@@ -231,10 +229,6 @@ function IdWalletPayButton( { disabled, onClick, store } ) {
 			onClick={ () => {
 				if ( isFormValid( store, contactCountryCode, __ ) ) {
 					debug( 'submitting id wallet payment' );
-					onEvent( {
-						type: 'REDIRECT_TRANSACTION_BEGIN',
-						payload: { paymentMethodId: 'id_wallet' },
-					} );
 					onClick( 'id_wallet', {
 						...massagedFields,
 						name: customerName?.value,

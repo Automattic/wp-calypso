@@ -61,7 +61,7 @@ export function usePath() {
 	const langParam = useLangRouteParam();
 	const planParam = usePlanRouteParam();
 
-	return ( step?: StepType, lang?: string, plan?: string ) => {
+	return ( step?: StepType, lang?: string, plan?: string ): string => {
 		// When lang is null, remove lang.
 		// When lang is empty or undefined, get lang from route param.
 		lang = lang === null ? '' : lang || langParam;

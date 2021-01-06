@@ -214,6 +214,7 @@ $accent-blue: #117ac9;
 	letter-spacing: 0.4px;
 	// smaller gap between domain name and price on mobile
 	margin-right: 10px;
+	word-break: break-all;
 
 	@include break-medium {
 		margin-right: 24px;
@@ -245,6 +246,9 @@ $accent-blue: #117ac9;
 
 .domain-picker__domain-tld {
 	color: var( --studio-blue-40 );
+	// keep TLDs intact as they're hard to read if they were across-lines
+	word-break: keep-all;
+	margin-right: 5px;
 
 	.domain-picker__suggestion-item.is-unavailable & {
 		color: var( --studio-gray-40 );

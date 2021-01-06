@@ -20,3 +20,6 @@
 
 // @wordpress/components stylesheet
 @import '~@wordpress/components/build-style/style.css';
+
+// Overrides for @wordpress/components
+@import './_wp-components-overrides.scss';

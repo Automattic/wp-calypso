@@ -18,6 +18,14 @@ import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'calypso/components/count';
 import Notice from 'calypso/components/notice';
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	REMOVE_PLUGIN,
+	UPDATE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
@@ -68,7 +76,7 @@ class PluginItem extends Component {
 
 		let message;
 		switch ( log && log.action ) {
-			case 'UPDATE_PLUGIN':
+			case UPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Updating', { context: 'plugin' } )
 					: translate(
@@ -78,7 +86,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'ACTIVATE_PLUGIN':
+			case ACTIVATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Activating', { context: 'plugin' } )
 					: translate(
@@ -88,7 +96,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'DEACTIVATE_PLUGIN':
+			case DEACTIVATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Deactivating', { context: 'plugin' } )
 					: translate(
@@ -98,7 +106,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'ENABLE_AUTOUPDATE_PLUGIN':
+			case ENABLE_AUTOUPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Enabling autoupdates' )
 					: translate(
@@ -108,7 +116,7 @@ class PluginItem extends Component {
 					  );
 				break;
 
-			case 'DISABLE_AUTOUPDATE_PLUGIN':
+			case DISABLE_AUTOUPDATE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Disabling autoupdates' )
 					: translate(
@@ -118,7 +126,7 @@ class PluginItem extends Component {
 					  );
 
 				break;
-			case 'REMOVE_PLUGIN':
+			case REMOVE_PLUGIN:
 				message = this.props.selectedSite
 					? translate( 'Removing' )
 					: translate(

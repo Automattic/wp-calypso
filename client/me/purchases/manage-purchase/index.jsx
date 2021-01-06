@@ -40,7 +40,11 @@ import {
 	purchaseType,
 	getName,
 } from 'calypso/lib/purchases';
-import { canEditPaymentDetails, getChangePaymentMethodPath } from '../utils';
+import {
+	canEditPaymentDetails,
+	getAddNewPaymentMethodPath,
+	getChangePaymentMethodPath,
+} from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -106,11 +110,12 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
  * Style dependencies
  */
 import './style.scss';
+import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 
 class ManagePurchase extends Component {
 	static propTypes = {
 		cardTitle: PropTypes.string,
-		getAddPaymentMethodUrlFor: PropTypes.func,
+		getAddNewPaymentMethodUrlFor: PropTypes.func,
 		getCancelPurchaseUrlFor: PropTypes.func,
 		getChangePaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
@@ -134,7 +139,7 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
-		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
+		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
 		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
@@ -266,7 +271,12 @@ class ManagePurchase extends Component {
 			? translate( 'Pick Another Plan' )
 			: translate( 'Upgrade Plan' );
 
-		if ( ! isPlan( purchase ) || isEcommerce( purchase ) || isComplete( purchase ) ) {
+		if (
+			! isPlan( purchase ) ||
+			isEcommerce( purchase ) ||
+			isComplete( purchase ) ||
+			isP2Plus( purchase )
+		) {
 			return null;
 		}
 
@@ -669,7 +679,7 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 			getManagePurchaseUrlFor,
-			getAddPaymentMethodUrlFor,
+			getAddNewPaymentMethodUrlFor,
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
@@ -720,7 +730,7 @@ class ManagePurchase extends Component {
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					/>
 				) }
 				<AsyncLoad
