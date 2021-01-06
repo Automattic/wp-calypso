@@ -21,6 +21,7 @@ export default class WPHomePage extends AsyncBaseContainer {
 		const setCookieCode = function ( sandboxValue ) {
 			window.document.cookie =
 				'store_sandbox=' + sandboxValue + ';domain=.wordpress.com;SameSite=None;Secure';
+			window.document.cookie = 'store_sandbox=' + sandboxValue + ';domain=.wordpress.com';
 		};
 		await this.driver.executeScript( setCookieCode, sandboxCookieValue );
 		return true;
@@ -30,6 +31,7 @@ export default class WPHomePage extends AsyncBaseContainer {
 		const setCookieCode = function ( currencyValue ) {
 			window.document.cookie =
 				'landingpage_currency=' + currencyValue + ';domain=.wordpress.com;SameSite=None;Secure';
+			window.document.cookie = 'landingpage_currency=' + currencyValue + ';domain=.wordpress.com';
 		};
 		return await this.driver.executeScript( setCookieCode, currency );
 	}
