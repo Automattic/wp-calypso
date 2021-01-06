@@ -5,8 +5,7 @@
 
 /* @wordpress/components Button overrides */
 .components-button {
-	color: var( --color-neutral-70 );
-
+	&,
 	&:hover:not( :disabled ) {
 		color: var( --color-neutral-70 );
 	}
@@ -66,10 +65,7 @@
 		color: var( --color-accent-60 );
 	}
 
-	&:visited {
-		color: var( --color-accent-60 );
-	}
-
+	&:visited,
 	&[disabled],
 	&:disabled,
 	&.disabled {
