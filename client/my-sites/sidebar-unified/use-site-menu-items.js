@@ -4,7 +4,6 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import buildFallbackResponse from './fallback-data.js';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
