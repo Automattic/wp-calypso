@@ -1,4 +1,5 @@
 @import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 @import '~@automattic/typography/styles/variables';
 @import '../variables.scss';
@@ -227,6 +228,7 @@
 	}
 }
 
+// it's OK to use $focused-launch-accent-blue variable here because the full-width mode is only used there
 .plan-item__select-button.components-button.full-width {
 	width: 100%;
 	justify-content: center;
@@ -236,18 +238,18 @@
 	margin-top: 15px;
 
 	&.is-popular {
-		background: var( --studio-blue-40 );
+		background: $focused-launch-accent-blue;
 	}
 
 	&:not( .is-popular ) {
-		border: 1px solid var( --studio-gray-5 );
+		border: 1px solid $focused-launch-accent-blue;
 	}
 
 	&.is-selected {
 		// popular selected items don't need a blue border
 		&:not( .is-popular ) {
-			border: 1px solid var( --studio-blue-40 );
-			color: var( --studio-blue-40 );
+			border: 1px solid $focused-launch-accent-blue;
+			color: $focused-launch-accent-blue;
 			background: #fafcfe;
 		}
 
