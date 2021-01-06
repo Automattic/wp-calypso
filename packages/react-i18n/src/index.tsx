@@ -59,7 +59,7 @@ export const I18nProvider: React.FunctionComponent< Props > = ( { children, loca
 		hasFilter,
 		applyFilters,
 	} = hooks;
-	const [ filters, setFilters ] = React.useState( {
+	const filters = React.useRef( {
 		addFilter,
 		removeFilter,
 		hasFilter,
@@ -82,19 +82,19 @@ export const I18nProvider: React.FunctionComponent< Props > = ( { children, loca
 		} );
 
 		addAction( 'hookAdded', 'a8c/react-i18n/filters', () => {
-			setFilters( { addFilter, removeFilter, hasFilter, applyFilters } );
+			filters.current = { addFilter, removeFilter, hasFilter, applyFilters };
 			return () => removeAction( 'hookAdded', 'a8c/react-i18n/filters' );
 		} );
 		addAction( 'hookRemoved', 'a8c/react-i18n/filters', () => {
-			setFilters( { addFilter, removeFilter, hasFilter, applyFilters } );
+			filters.current = { addFilter, removeFilter, hasFilter, applyFilters };
 			return () => removeAction( 'hookRemoved', 'a8c/react-i18n/filters' );
 		} );
 	}, [] );
 
-	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData, filters ), [
-		localeData,
-		filters,
-	] );
+	const contextValue = React.useMemo< I18nReact >(
+		() => makeContextValue( localeData, filters.current ),
+		[ localeData, filters.current ]
+	);
 
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
