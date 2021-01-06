@@ -87,7 +87,7 @@ class UpworkBanner extends PureComponent {
 			>
 				<QueryPreferences />
 				<h1 className="upwork-banner__title">
-					{ translate( 'Need an expert to help realize your vision? Hire one!' ) }
+					{ translate( 'Hire a WordPress.com Expert to Build Your Site' ) }
 				</h1>
 				<p className="upwork-banner__description">
 					{ translate( 'You want the website of your dreams. Our experts can create it for you.' ) }
