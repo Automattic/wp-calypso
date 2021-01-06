@@ -22,7 +22,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export class SeoSettings extends Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.purchasesError ) {
+		if ( ! this.props.purchasesError && nextProps.purchasesError ) {
 			this.props.errorNotice( nextProps.purchasesError );
 		}
 	}
@@ -47,7 +47,7 @@ SeoSettings.propTypes = {
 	section: PropTypes.string,
 	//connected
 	hasLoadedSitePurchasesFromServer: PropTypes.bool,
-	purchasesError: PropTypes.object,
+	purchasesError: PropTypes.string,
 	sitePurchases: PropTypes.array,
 	siteId: PropTypes.number,
 };
