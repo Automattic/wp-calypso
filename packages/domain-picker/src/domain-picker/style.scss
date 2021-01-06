@@ -381,6 +381,11 @@ $accent-blue: #117ac9;
 	}
 }
 
+.domain-picker__price-renewal {
+	display: none;
+	font-size: $font-body-extra-small;
+}
+
 .domain-picker__suggestion-item.type-individual-item {
 	.domain-picker__price-inclusive {
 		display: block;
@@ -415,6 +420,7 @@ $accent-blue: #117ac9;
 
 	.domain-picker__price.is-paid {
 		display: flex;
+		flex-wrap: wrap;
 	}
 
 	.domain-picker__price-inclusive {
@@ -425,6 +431,12 @@ $accent-blue: #117ac9;
 			// add a no-break space to get spacing between price-inclusive & price-cost
 			content: '\00a0';
 		}
+	}
+
+	.domain-picker__price-renewal {
+		display: inline;
+		order: 2;
+		width: 100%;
 	}
 
 	@include break-medium {

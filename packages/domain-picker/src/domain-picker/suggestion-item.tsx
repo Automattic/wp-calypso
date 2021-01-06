@@ -238,6 +238,9 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 								sprintf( __( '%s/year', __i18n_text_domain__ ), cost )
 							}
 						</span>
+						<span className="domain-picker__price-renewal">
+							{ sprintf( __( 'Renews at %s/year', __i18n_text_domain__ ), cost ) }
+						</span>
 					</>
 				) }
 			</div>
