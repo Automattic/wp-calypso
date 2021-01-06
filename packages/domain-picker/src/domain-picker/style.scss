@@ -90,6 +90,12 @@ $accent-blue: #117ac9;
 	position: relative;
 	text-align: left;
 	cursor: pointer;
+	outline-color: $accent-blue;
+
+	// in type radio, we outline the radio circle, not the whole element
+	&.type-radio {
+		outline: none;
+	}
 
 	&.type-individual-item {
 		min-height: 64px;
@@ -150,7 +156,7 @@ $accent-blue: #117ac9;
 
 	$radio-button-size: 16px;
 
-	input[type='radio'].domain-picker__suggestion-radio-button {
+	.domain-picker__suggestion-radio-circle {
 		@include radio-control; // explicitly include Gutenberg's radio-control style mixin, see https://github.com/WordPress/gutenberg/pull/22596
 
 		width: $radio-button-size;
@@ -161,7 +167,7 @@ $accent-blue: #117ac9;
 		vertical-align: middle;
 		position: relative;
 
-		&:checked {
+		&.is-checked {
 			border-color: var( --studio-blue-30 );
 			background-color: var( --studio-blue-30 );
 
@@ -187,20 +193,23 @@ $accent-blue: #117ac9;
 			}
 		}
 
-		&:not( :disabled ):focus,
-		&:not( :disabled ):hover {
+		&:not( .is-unavailable ):focus,
+		&:not( .is-unavailable ):hover {
 			border-color: var( --studio-blue-30 );
 			box-shadow: 0 0 0 1px var( --studio-blue-30 );
 		}
 
-		&:disabled {
+		&.is-unavailable {
 			border-color: var( --studio-gray-40 );
 		}
 	}
 
-	// hide the radio button in individual mode
-	&.type-individual-item input[type='radio'].domain-picker__suggestion-radio-button {
-		display: none;
+	// in radio mode, pass down the button focus to the radio circle
+	&:focus {
+		.domain-picker__suggestion-radio-circle {
+			border-color: var( --studio-blue-30 );
+			box-shadow: 0 0 0 1px var( --studio-blue-30 );
+		}
 	}
 
 	.components-spinner {
@@ -209,7 +218,7 @@ $accent-blue: #117ac9;
 }
 
 .domain-picker__suggestion-item-name {
-	flex-grow: 2;
+	flex-grow: 1;
 	flex-basis: 2px;
 	letter-spacing: 0.4px;
 	// smaller gap between domain name and price on mobile
@@ -279,7 +288,7 @@ $accent-blue: #117ac9;
 .domain-picker__info-tooltip {
 	margin-right: 10px;
 	cursor: pointer;
-	z-index: 1;
+	z-index: 100001;
 }
 
 .domain-picker__badge {
@@ -442,12 +451,11 @@ $accent-blue: #117ac9;
 .domain-picker__suggestion-select-button.components-button.is-secondary {
 	min-width: 140px;
 	justify-content: center;
+	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
+	color: var( --mainColor );
 
-	&:not( :hover ):not( .is-selected ) {
-		box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
-		color: var( --mainColor );
-	}
-
+	&:focus,
+	&:hover,
 	&.is-selected {
 		box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-10 );
 		color: var( --wp-admin-theme-color-darker-10 );
