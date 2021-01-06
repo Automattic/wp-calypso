@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { memoize } from 'lodash';
 import { ProgressBar } from '@automattic/components';
-import interpolateComponents from 'interpolate-components';
 
 /**
  * Internal dependencies
@@ -684,14 +683,14 @@ export class MySitesSidebar extends Component {
 			storeLink = site.options.admin_url + 'admin.php?page=wc-admin&calypsoify=1';
 		}
 
-		const infoCopy = interpolateComponents( {
-			mixedString: translate(
-				'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.'
-			),
-			components: {
-				link: <a href="https://wordpress.com/support/store/" rel="noreferrer" target="_blank" />,
-			},
-		} );
+		const infoCopy = translate(
+			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
+			{
+				components: {
+					link: <a href="https://wordpress.com/support/store/" rel="noreferrer" target="_blank" />,
+				},
+			}
+		);
 
 		return (
 			<SidebarItem
