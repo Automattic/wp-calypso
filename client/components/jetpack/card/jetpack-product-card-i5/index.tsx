@@ -45,6 +45,8 @@ type OwnProps = {
 	isOwned?: boolean;
 	isDeprecated?: boolean;
 	isAligned?: boolean;
+	isDisabled?: boolean;
+	disabledMessage?: TranslateResult | null;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -68,6 +70,8 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	isDeprecated,
 	isAligned,
 	features,
+	isDisabled,
+	disabledMessage,
 }: Props ) => {
 	const translate = useTranslate();
 	const isDiscounted = isFinite( discountedPrice );
@@ -78,6 +82,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	return (
 		<div
 			className={ classNames( 'jetpack-product-card-i5', {
+				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
 				'is-aligned': isAligned,
@@ -118,10 +123,14 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 						</>
 					) }
 				</div>
+				{ isDisabled && disabledMessage && (
+					<p className="jetpack-product-card-i5__disabled-message">{ disabledMessage }</p>
+				) }
 				<Button
 					primary={ buttonPrimary }
 					className="jetpack-product-card-i5__button"
 					onClick={ onButtonClick }
+					disabled={ isDisabled }
 				>
 					{ buttonLabel }
 				</Button>

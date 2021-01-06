@@ -3,6 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { PRODUCT_JETPACK_CRM_MONTHLY } from 'calypso/lib/products-values/constants';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -44,6 +46,7 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 	isAligned,
 	featuredPlans,
 } ) => {
+	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
@@ -85,6 +88,15 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
 
+	// Disable CRM Monthly card because only offered with yearly subscription
+	const disabledProps = {
+		isDisabled: item.productSlug === PRODUCT_JETPACK_CRM_MONTHLY,
+		disabledMessage:
+			item.productSlug === PRODUCT_JETPACK_CRM_MONTHLY
+				? translate( 'Only available in yearly billing' )
+				: null,
+	};
+
 	return (
 		<JetpackProductCard
 			productSlug={ item.productSlug }
@@ -104,6 +116,7 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
+			{ ...disabledProps }
 		/>
 	);
 };

@@ -81,6 +81,10 @@
 	em {
 		font-style: normal;
 	}
+
+	.is-disabled & {
+		opacity: 0.4;
+	}
 }
 
 .jetpack-product-card-i5__description {
@@ -88,6 +92,10 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		min-height: 108px;
+	}
+
+	.is-disabled & {
+		opacity: 0.4;
 	}
 }
 
@@ -99,6 +107,10 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: -40px;
+	}
+
+	.is-disabled & {
+		opacity: 0.4;
 	}
 }
 
@@ -139,6 +151,14 @@
 	color: var( --studio-pink-50 );
 }
 
+.jetpack-product-card-i5__disabled-message {
+	color: var( --color-accent );
+
+	text-align: center;
+	font-weight: 600;
+	//letter-spacing: -0.04rem;
+}
+
 .jetpack-product-card-i5__button {
 	width: 100%;
 	height: 45px;
@@ -155,6 +175,10 @@
 
 .jetpack-product-card-i5__features {
 	margin-bottom: 10px;
+
+	.is-disabled & {
+		opacity: 0.4;
+	}
 }
 
 .jetpack-product-card-i5__features-list {
