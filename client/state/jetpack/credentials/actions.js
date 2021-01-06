@@ -19,7 +19,6 @@ export const getCredentials = ( siteId ) => ( {
 	siteId,
 } );
 
-
 export const updateCredentials = (
 	siteId,
 	credentials,
