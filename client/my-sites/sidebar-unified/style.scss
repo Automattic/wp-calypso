@@ -287,10 +287,7 @@ $font-size: rem( 14px );
 		color: #000;
 		padding: 7px 12px 7px 4px;
 		line-height: 26px;
-	}
-
-	.upsell-nudge.banner.card.is-compact .banner__content {
-		padding-left: 3px;
+		margin-top: 8px;
 	}
 
 	.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
@@ -298,6 +295,7 @@ $font-size: rem( 14px );
 	}
 
 	.upsell-nudge.banner.card.is-compact .banner__action {
+		top: 0;
 		margin-left: 0;
 	}
 
