@@ -17,7 +17,6 @@ import {
 	CART_ITEMS_REPLACE_ALL,
 	CART_PRIVACY_PROTECTION_ADD,
 	CART_PRIVACY_PROTECTION_REMOVE,
-	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
 	CART_RELOAD,
@@ -96,13 +95,6 @@ export function replaceItem( oldItem, newItem ) {
 		type: CART_ITEM_REPLACE,
 		oldItem,
 		newItem,
-	} );
-}
-
-export function addGoogleAppsRegistrationData( registrationData ) {
-	Dispatcher.handleViewAction( {
-		type: CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
-		registrationData: registrationData,
 	} );
 }
 

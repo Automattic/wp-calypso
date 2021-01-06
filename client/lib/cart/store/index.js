@@ -10,7 +10,6 @@ import {
 	CART_COUPON_APPLY,
 	CART_COUPON_REMOVE,
 	CART_DISABLE,
-	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
@@ -38,7 +37,6 @@ import {
 import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
-	fillGoogleAppsRegistrationData,
 	addCartItem,
 	addCartItemWithoutReplace,
 	removeItemAndDependencies,
@@ -158,10 +156,6 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 
 		case CART_PRIVACY_PROTECTION_REMOVE:
 			update( removePrivacyFromAllDomains( CartStore.get() ) );
-			break;
-
-		case CART_GOOGLE_APPS_REGISTRATION_DATA_ADD:
-			update( fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
 			break;
 
 		case CART_ITEMS_ADD:
