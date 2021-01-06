@@ -137,6 +137,13 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		} );
 	};
 
+	const handleUseYourDomain = () => {
+		trackEventWithFlow( 'calypso_newsite_use_your_domain_click', {
+			where: isModal ? 'domain_modal' : 'domain_page',
+		} );
+		window.location.href = `/start/domains/use-your-domain?source=${ window.location.href }`;
+	};
+
 	return (
 		<div className="gutenboarding-page domains">
 			<DomainPicker
@@ -150,6 +157,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				onDomainSelect={ onDomainSelect }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
 				locale={ locale }
+				onUseYourDomainClick={ handleUseYourDomain }
 			/>
 		</div>
 	);
