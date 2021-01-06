@@ -195,10 +195,8 @@ class PurchaseNotice extends Component {
 		}
 
 		if (
-			( ! hasPaymentMethod( purchase ) &&
-				( ! canExplicitRenew( purchase ) ||
-					shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) ) ||
-			isPaidWithCredits( purchase )
+			! hasPaymentMethod( purchase ) &&
+			( ! canExplicitRenew( purchase ) || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
 		) {
 			return (
 				<NoticeAction href={ changePaymentMethodPath }>
