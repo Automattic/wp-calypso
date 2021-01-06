@@ -443,15 +443,18 @@ $accent-blue: #117ac9;
 		flex-direction: initial;
 		align-items: center;
 
-		.domain-picker__price.is-paid {
-			display: block;
-		}
+		// .domain-picker__price.is-paid {
+		// 	display: block;
+		// }
 
 		.domain-picker__price-inclusive {
 			order: initial;
 
 			&::before {
 				content: none;
+			}
+			&::after {
+				content: '\00a0';
 			}
 		}
 	}
