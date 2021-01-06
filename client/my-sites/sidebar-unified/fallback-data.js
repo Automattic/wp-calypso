@@ -10,7 +10,8 @@ export default function buildFallbackResponse( {
 	shouldShowPortfolio = false,
 	shouldShowWooCommerce = false,
 	shouldShowThemes = false,
-	shouldShowApperanceHeaderAndBackground = false,
+	shouldShowApperanceHeader = false,
+	shouldShowApperanceBackground = false,
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
 } = {} ) {
@@ -316,7 +317,8 @@ export default function buildFallbackResponse( {
 								type: 'submenu-item',
 								url: `/customize/${ siteDomain }`,
 							},
-							...( shouldShowApperanceHeaderAndBackground
+
+							...( shouldShowApperanceHeader
 								? [
 										{
 											parent: 'themes.php',
@@ -325,6 +327,10 @@ export default function buildFallbackResponse( {
 											type: 'submenu-item',
 											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=header_image`,
 										},
+								  ]
+								: [] ),
+							...( shouldShowApperanceBackground
+								? [
 										{
 											parent: 'themes.php',
 											slug: 'themes-background',
