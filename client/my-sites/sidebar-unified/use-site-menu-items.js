@@ -31,15 +31,6 @@ const useSiteMenuItems = () => {
 		}
 	}, [ dispatch, selectedSiteId ] );
 
-	/**
-	 * To ensure that a menu is always available in the UI even
-	 * if the network fails on an uncached request we provide a
-	 * set of static fallback data to render a basic menu. This
-	 * avoids a situation where the user might be left with an
-	 * empty menu.
-	 */
-
-	const shouldShowLinks = true;
 	const shouldShowTestimonials = useSelector( ( state ) =>
 		get( state.siteSettings.items, [ selectedSiteId, 'jetpack_testimonial' ], false )
 	);
@@ -49,30 +40,18 @@ const useSiteMenuItems = () => {
 	const shouldShowWooCommerce = useSelector(
 		( state ) => !! getPluginOnSite( state, selectedSiteId, 'woocommerce' )?.active
 	);
-	/*
-	 * Header controlled by: current_theme_supports( 'custom-header' ) && current_user_can( 'customize' )
-	 * Background controlled by: current_theme_supports( 'custom-background' ) && current_user_can( 'customize' )
-	 * "What the theme supports" doesn't seem to be available in calypso most of the time?
-	 * Example theme w/ these options: "Dara"
-	 */
 	const shouldShowThemes = useSelector( ( state ) =>
 		canCurrentUser( state, selectedSiteId, 'edit_theme_options' )
 	);
-	const shouldShowApperanceHeaderAndBackground = true;
 
-	const shouldShowAdControl = false;
-	const shouldShowAMP = false;
 	const fallbackOptions = {
 		siteDomain,
-		shouldShowLinks,
 		shouldShowTestimonials,
 		shouldShowPortfolio,
 		shouldShowWooCommerce,
 		shouldShowThemes,
-		shouldShowApperanceHeaderAndBackground,
-		shouldShowAdControl,
-		shouldShowAMP,
 	};
+
 	return menuItems ?? buildFallbackResponse( fallbackOptions );
 };
 
