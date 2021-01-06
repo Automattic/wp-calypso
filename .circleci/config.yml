@@ -759,7 +759,7 @@ jobs:
       - run: *desktop-install-app-deps
       - run:
           name: Build Desktop Mac
-          no_output_timeout: 30m
+          no_output_timeout: 45m
           environment:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
