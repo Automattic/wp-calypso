@@ -99,7 +99,12 @@ class SiteImporter extends React.PureComponent {
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
-				<ImporterHeader importerStatus={ importerStatus } { ...{ icon, title, description } } />
+				<ImporterHeader
+					importerStatus={ importerStatus }
+					icon={ icon }
+					title={ title }
+					description={ description }
+				/>
 				{ includes( importingStates, importerStatus.importerState ) && (
 					<ImportingPane
 						{ ...this.props }
