@@ -107,7 +107,6 @@ function ChangePaymentMethod( props ) {
 		props.clearPurchases();
 		page( props.getManagePurchaseUrlFor( props.siteSlug, id ) );
 	};
-	const purchaseUrl = props.getManagePurchaseUrlFor( props.siteSlug, props.purchase.id );
 
 	return (
 		<Fragment>
@@ -136,7 +135,6 @@ function ChangePaymentMethod( props ) {
 							purchase={ props.purchase }
 							successCallback={ successCallback }
 							siteSlug={ props.siteSlug }
-							purchaseUrl={ purchaseUrl }
 							apiParams={ { purchaseId: props.purchase.id } }
 						/>
 					) : (
@@ -224,7 +222,6 @@ function ChangePaymentMethodList( {
 	purchase,
 	successCallback,
 	siteSlug,
-	purchaseUrl,
 	apiParams,
 } ) {
 	const translate = useTranslate();
@@ -259,7 +256,7 @@ function ChangePaymentMethodList( {
 			showSuccessMessage={ showSuccessMessage }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
-				paypal: () => assignPayPalProcessor( purchase, purchaseUrl ),
+				paypal: () => assignPayPalProcessor( purchase ),
 				'existing-card': ( data ) => assignExistingCardProcessor( purchase, data ),
 				card: ( data ) =>
 					assignNewCardProcessor(
@@ -304,8 +301,8 @@ async function assignExistingCardProcessor( purchase, { storedDetailsId } ) {
 	} );
 }
 
-async function assignPayPalProcessor( purchase, purchaseUrl ) {
-	return wpcomCreatePayPalAgreement( purchase.id, purchaseUrl, window.location.href ).then(
+async function assignPayPalProcessor( purchase ) {
+	return wpcomCreatePayPalAgreement( purchase.id, window.location.href, window.location.href ).then(
 		( data ) => {
 			return makeRedirectResponse( data );
 		}
