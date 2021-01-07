@@ -16,6 +16,7 @@
 	border-color: var( --color-accent );
 	color: var( --color-text-inverted );
 
+	&:active:not( :disabled ),
 	&:hover:not( :disabled ),
 	&:focus:not( :disabled ) {
 		background-color: var( --color-accent-60 );
@@ -70,5 +71,15 @@
 	&:disabled,
 	&.disabled {
 		color: var( --color-accent-60 );
+	}
+}
+
+/* @wordpress/components ButtonGroup overrides */
+.components-button-group {
+	.components-button {
+		&,
+		&.is-primary {
+			box-shadow: inset 0 0 0 1px var( --color-accent-60 );
+		}
 	}
 }
