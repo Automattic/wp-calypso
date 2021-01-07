@@ -426,7 +426,7 @@ export class PluginMeta extends Component {
 	getPluginForSite = ( siteId ) => {
 		return {
 			...this.props.plugin,
-			...this.props.pluginsOnSites.sites[ siteId ],
+			...this.props.pluginsOnSites?.sites[ siteId ],
 		};
 	};
 
