@@ -48,6 +48,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Editor welcome tour tracking and fixes. (https://github.com/Automattic/wp-calypso/pull/48390)
 * New Onboarding: pre-select subdomain in editor launch flow. (https://github.com/Automattic/wp-calypso/pull/48247)
 * New Onboarding: use site slug instead of siteId when redirecting after launch. (https://github.com/Automattic/wp-calypso/pull/48248)
+* Coming Soon: add php unit tests. (https://github.com/Automattic/wp-calypso/pull/48584)
 * Focused Launch: miscellaneous improvements and fixes
 * Checkout: miscellaneous fixes
 
