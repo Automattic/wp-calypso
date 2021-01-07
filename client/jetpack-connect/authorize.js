@@ -227,7 +227,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromBlockEditor() ||
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber' ||
-			this.isJetpackUpgradeFlow()
+			this.isJetpackUpgradeFlow() ||
+			this.isFromJetpackConnectionManager()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -301,6 +302,11 @@ export class JetpackAuthorize extends Component {
 	isJetpackUpgradeFlow( props = this.props ) {
 		const { redirectAfterAuth } = props.authQuery;
 		return redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' );
+	}
+
+	isFromJetpackConnectionManager( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'connection-ui' );
 	}
 
 	isWooRedirect = ( props = this.props ) => {
