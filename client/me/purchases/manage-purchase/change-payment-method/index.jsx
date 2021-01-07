@@ -68,7 +68,7 @@ import {
 	getInitializedFields,
 } from 'calypso/me/purchases/components/payment-method-form/helpers';
 import {
-	useDisplayErrorMessageFromUrl,
+	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
 import 'calypso/me/purchases/components/payment-method-form/style.scss';
@@ -250,9 +250,11 @@ function ChangePaymentMethodList( {
 		( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
 	);
 
-	useDisplayErrorMessageFromUrl(
-		translate( 'There was a problem assigning that payment method. Please try again.' )
-	);
+	useHandleRedirectChangeError( () => {
+		showErrorMessage(
+			translate( 'There was a problem assigning that payment method. Please try again.' )
+		);
+	} );
 	useHandleRedirectChangeComplete( () => {
 		onChangeComplete( { successCallback, translate, showSuccessMessage, reduxDispatch } );
 	} );

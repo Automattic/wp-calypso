@@ -1,30 +1,28 @@
 /**
  * External dependencies
  */
-import { useEffect } from 'react';
-import { TranslateResult } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 
-/**
- * Internal Dependencies
- */
-import notices from 'calypso/notices';
-
-export function useDisplayErrorMessageFromUrl( errorMessage: string | TranslateResult ): void {
-	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		const errorParam = urlParams.get( 'error' );
-		if ( errorParam ) {
-			notices.error( errorMessage );
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+export function useHandleRedirectChangeError( errorCallback: () => void ): void {
+	useCallbackOnceForQueryParam( 'error', errorCallback );
 }
 
 export function useHandleRedirectChangeComplete( successCallback: () => void ): void {
+	useCallbackOnceForQueryParam( 'success', successCallback );
+}
+
+function useCallbackOnceForQueryParam( queryParamKey: string, callback: () => void ): void {
+	const didRunCallback = useRef< boolean >( false );
+
 	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-		const errorParam = urlParams.get( 'success' );
-		if ( errorParam ) {
-			successCallback();
+		if ( didRunCallback.current ) {
+			return;
 		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+		const urlParams = new URLSearchParams( window.location.search );
+		const param = urlParams.get( queryParamKey );
+		if ( param ) {
+			callback();
+			didRunCallback.current = true;
+		}
+	}, [ callback, queryParamKey ] );
 }
