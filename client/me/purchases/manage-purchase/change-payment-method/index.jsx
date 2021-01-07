@@ -183,7 +183,9 @@ function getCurrentPaymentMethodId( payment ) {
 		return 'credits';
 	}
 	if ( payment?.type === 'paypal' ) {
-		return 'paypal';
+		// This intentionally is not 'paypal' because we don't want to highlight
+		// the paypal checkbox in case they want to add a new paypal agreement.
+		return 'paypal-existing';
 	}
 	if ( payment?.type === 'credit_card' ) {
 		return 'existingCard-' + payment.creditCard.id;
@@ -415,7 +417,7 @@ function CurrentPaymentMethodNotAvailableNotice( { purchase } ) {
 		return <Notice { ...noticeProps } />;
 	}
 
-	if ( getCurrentPaymentMethodId( purchase.payment ) === 'paypal' ) {
+	if ( getCurrentPaymentMethodId( purchase.payment ) === 'paypal-existing' ) {
 		const storedPaymentAgreement = storedPaymentAgreements.find(
 			( agreement ) => agreement.stored_details_id === purchase.payment.storedDetailsId
 		);
