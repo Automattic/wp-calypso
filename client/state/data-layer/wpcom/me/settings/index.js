@@ -13,8 +13,8 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
-	updateUserSettings,
 	clearUnsavedUserSettings,
+	updateUserSettings,
 	updateUserSettingsFailure,
 } from 'calypso/state/user-settings/actions';
 import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';

@@ -8,11 +8,11 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import {
-	USER_SETTINGS_UPDATE,
-	USER_SETTINGS_UNSAVED_CLEAR,
-	USER_SETTINGS_UNSAVED_SET,
-	USER_SETTINGS_UNSAVED_REMOVE,
 	USER_SETTINGS_SAVE,
+	USER_SETTINGS_UNSAVED_CLEAR,
+	USER_SETTINGS_UNSAVED_REMOVE,
+	USER_SETTINGS_UNSAVED_SET,
+	USER_SETTINGS_UPDATE,
 	USER_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
