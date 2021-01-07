@@ -76,7 +76,9 @@ export function saveUserSettings( action ) {
 export function saveUserSettingsFailure( { settingsOverride }, error ) {
 	if ( settingsOverride?.password ) {
 		return [
-			errorNotice( translate( 'There was a problem saving your password. Please, try again.' ) ),
+			errorNotice( translate( 'There was a problem saving your password. Please, try again.' ), {
+				id: 'update-settings-password-failure',
+			} ),
 			updateUserSettingsFailure( settingsOverride, error ),
 		];
 	}
