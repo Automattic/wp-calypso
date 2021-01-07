@@ -3,16 +3,43 @@
  */
 import { translate } from 'i18n-calypso';
 
-const shouldShowLinks = true;
-const shouldShowTestimonials = true;
-const shouldShowPortfolio = true;
-const shouldShowWooCommerce = true;
-const shouldShowApperanceHeaderAndBackground = true;
-const shouldShowAdControl = true;
-const shouldShowAMP = true;
-const showShowThemeOptions = true;
+/* eslint-disable jsdoc/require-param */
+/**
+ * Fallback nav menu items.
+ *
+ * These are used as a fallback to ensure that if the API response for menu items
+ * fails, the user always sees some menu items. They are required only in the
+ * following circumstances:
+ *
+ * 1. The user has loaded the site for the first time and the Menus API response
+ * has yet to be returned or cached in the Browser Storage APIs.
+ *
+ * 2. The Menu API REST API response fails and there is no response cached in the
+ * Browser Storage.
+ *
+ * As a result of these conditions being an edge case, in most cases the user will
+ * not see these menus items. They are a safe guard in case of error.
+ *
+ * As a rule the menu items are intended to be as close to the anticipated Menus API
+ * response as possible but we should not take this too far. We need only show the bear
+ * minimum required to navigate in the case that the API response fails.
+ */
+/* eslint-enable jsdoc/require-param */
 
-export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
+const JETPACK_ICON = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" %3E%3Cpath fill="%23a0a5aa" d="M16,0C7.2,0,0,7.2,0,16s7.2,16,16,16s16-7.2,16-16S24.8,0,16,0z"%3E%3C/path%3E%3Cpolygon fill="%23fff" points="15,19 7,19 15,3 "%3E%3C/polygon%3E%3Cpolygon fill="%23fff" points="17,29 17,13 25,13 "%3E%3C/polygon%3E%3C/svg%3E`;
+
+export default function buildFallbackResponse( {
+	siteDomain = '',
+	shouldShowLinks = false,
+	shouldShowTestimonials = false,
+	shouldShowPortfolio = false,
+	shouldShowWooCommerce = false,
+	shouldShowThemes = false,
+	shouldShowApperanceHeader = false,
+	shouldShowApperanceBackground = false,
+	shouldShowAdControl = false,
+	shouldShowAMP = false,
+} = {} ) {
 	const fallbackResponse = [
 		{
 			icon: 'dashicons-admin-home',
@@ -30,10 +57,33 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 		},
 		{
 			icon: 'dashicons-cart',
-			slug: 'purchases',
-			title: translate( 'Purchases' ),
+			slug: 'upgrades',
+			title: translate( 'Upgrades' ),
 			type: 'menu-item',
-			url: `/purchases/${ siteDomain }`,
+			url: `/plans/${ siteDomain }`,
+			children: [
+				{
+					parent: 'upgrades',
+					slug: 'upgrades',
+					title: translate( 'Plans' ),
+					type: 'submenu-item',
+					url: `/plans/${ siteDomain }`,
+				},
+				{
+					parent: 'upgrades',
+					slug: 'upgrades',
+					title: translate( 'Purchases' ),
+					type: 'submenu-item',
+					url: `/purchases/subscriptions/${ siteDomain }`,
+				},
+				{
+					parent: 'upgrades',
+					slug: 'upgrades',
+					title: translate( 'Domains' ),
+					type: 'submenu-item',
+					url: `/domains/manage/${ siteDomain }`,
+				},
+			],
 		},
 		{
 			icon: 'dashicons-admin-post',
@@ -79,38 +129,40 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 			type: 'menu-item',
 			url: `/media/${ siteDomain }`,
 		},
-		...( shouldShowLinks && [
-			{
-				icon: 'dashicons-admin-links',
-				slug: 'link-manager-php',
-				title: translate( 'Links' ),
-				type: 'menu-item',
-				url: `https://${ siteDomain }/wp-admin/link-manager.php`,
-				children: [
+		...( shouldShowLinks
+			? [
 					{
-						parent: 'link-manager.php',
+						icon: 'dashicons-admin-links',
 						slug: 'link-manager-php',
-						title: translate( 'All Links' ),
-						type: 'submenu-item',
+						title: translate( 'Links' ),
+						type: 'menu-item',
 						url: `https://${ siteDomain }/wp-admin/link-manager.php`,
+						children: [
+							{
+								parent: 'link-manager.php',
+								slug: 'link-manager-php',
+								title: translate( 'All Links' ),
+								type: 'submenu-item',
+								url: `https://${ siteDomain }/wp-admin/link-manager.php`,
+							},
+							{
+								parent: 'link-manager.php',
+								slug: 'link-add-php',
+								title: translate( 'Add New' ),
+								type: 'submenu-item',
+								url: `https://${ siteDomain }/wp-admin/link-add.php`,
+							},
+							{
+								parent: 'link-manager.php',
+								slug: 'edit-tags-phptaxonomylink_category',
+								title: translate( 'Link Categories' ),
+								type: 'submenu-item',
+								url: `https://${ siteDomain }/wp-admin/edit-tags.php?taxonomy=link_category`,
+							},
+						],
 					},
-					{
-						parent: 'link-manager.php',
-						slug: 'link-add-php',
-						title: translate( 'Add New' ),
-						type: 'submenu-item',
-						url: `https://${ siteDomain }/wp-admin/link-add.php`,
-					},
-					{
-						parent: 'link-manager.php',
-						slug: 'edit-tags-phptaxonomylink_category',
-						title: translate( 'Link Categories' ),
-						type: 'submenu-item',
-						url: `https://${ siteDomain }/wp-admin/edit-tags.php?taxonomy=link_category`,
-					},
-				],
-			},
-		] ),
+			  ]
+			: [] ),
 		{
 			icon: 'dashicons-admin-page',
 			slug: 'edit-phppost_typepage',
@@ -134,70 +186,74 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 				},
 			],
 		},
-		...( shouldShowTestimonials && [
-			{
-				icon: 'dashicons-admin-links',
-				slug: 'testimonials',
-				title: translate( 'Testimonials' ),
-				type: 'menu-item',
-				url: `/types/jetpack-testimonial/${ siteDomain }`,
-				children: [
+		...( shouldShowTestimonials
+			? [
 					{
-						parent: 'testimonials',
+						icon: 'dashicons-admin-links',
 						slug: 'testimonials',
-						title: translate( 'All Testimonials' ),
-						type: 'submenu-item',
+						title: translate( 'Testimonials' ),
+						type: 'menu-item',
 						url: `/types/jetpack-testimonial/${ siteDomain }`,
+						children: [
+							{
+								parent: 'testimonials',
+								slug: 'testimonials',
+								title: translate( 'All Testimonials' ),
+								type: 'submenu-item',
+								url: `/types/jetpack-testimonial/${ siteDomain }`,
+							},
+							{
+								parent: 'testimonials',
+								slug: 'testimonials-add',
+								title: translate( 'Add New' ),
+								type: 'submenu-item',
+								url: `/edit/jetpack-testimonial/${ siteDomain }`,
+							},
+						],
 					},
+			  ]
+			: [] ),
+		...( shouldShowPortfolio
+			? [
 					{
-						parent: 'testimonials',
-						slug: 'testimonials-add',
-						title: translate( 'Add New' ),
-						type: 'submenu-item',
-						url: `/edit/jetpack-testimonial/${ siteDomain }`,
-					},
-				],
-			},
-		] ),
-		...( shouldShowPortfolio && [
-			{
-				icon: 'dashicons-admin-links',
-				slug: 'portfolio',
-				title: translate( 'Portfolio' ),
-				type: 'menu-item',
-				url: `/types/jetpack-portfolio/${ siteDomain }`,
-				children: [
-					{
-						parent: 'portfolio',
+						icon: 'dashicons-admin-links',
 						slug: 'portfolio',
-						title: translate( 'All Projects' ),
-						type: 'submenu-item',
+						title: translate( 'Portfolio' ),
+						type: 'menu-item',
 						url: `/types/jetpack-portfolio/${ siteDomain }`,
+						children: [
+							{
+								parent: 'portfolio',
+								slug: 'portfolio',
+								title: translate( 'All Projects' ),
+								type: 'submenu-item',
+								url: `/types/jetpack-portfolio/${ siteDomain }`,
+							},
+							{
+								parent: 'portfolio',
+								slug: 'portfolio-add',
+								title: translate( 'Add New' ),
+								type: 'submenu-item',
+								url: `/edit/jetpack-portfolio/${ siteDomain }`,
+							},
+							{
+								parent: 'portfolio',
+								slug: 'portfolio-types',
+								title: translate( 'Project Types' ),
+								type: 'submenu-item',
+								url: `https://${ siteDomain }/wp-admin/edit-tags.php?taxonomy=jetpack-portfolio-type&post_type=jetpack-portfolio`,
+							},
+							{
+								parent: 'portfolio',
+								slug: 'portfolio-tags',
+								title: translate( 'Project Tags' ),
+								type: 'submenu-item',
+								url: `https://${ siteDomain }/wp-admin/edit-tags.php?taxonomy=jetpack-portfolio-tag&post_type=jetpack-portfolio`,
+							},
+						],
 					},
-					{
-						parent: 'portfolio',
-						slug: 'portfolio-add',
-						title: translate( 'Add New' ),
-						type: 'submenu-item',
-						url: `/edit/jetpack-portfolio/${ siteDomain }`,
-					},
-					{
-						parent: 'portfolio',
-						slug: 'portfolio-types',
-						title: translate( 'Project Types' ),
-						type: 'submenu-item',
-						url: `https://${ siteDomain }/wp-admin/edit-tags.php?taxonomy=jetpack-portfolio-type&post_type=jetpack-portfolio`,
-					},
-					{
-						parent: 'portfolio',
-						slug: 'portfolio-tags',
-						title: translate( 'Project Tags' ),
-						type: 'submenu-item',
-						url: `https://${ siteDomain }/wp-admin/edit-tags.php?taxonomy=jetpack-portfolio-tag&post_type=jetpack-portfolio`,
-					},
-				],
-			},
-		] ),
+			  ]
+			: [] ),
 		{
 			icon: 'dashicons-admin-comments',
 			slug: 'edit-comments-php',
@@ -239,7 +295,7 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 			type: 'separator',
 		},
 		{
-			icon: 'dashicons-jetpack',
+			icon: JETPACK_ICON,
 			slug: 'jetpack',
 			title: translate( 'Jetpack' ),
 			type: 'menu-item',
@@ -259,85 +315,90 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 					type: 'submenu-item',
 					url: `/backup/${ siteDomain }`,
 				},
-				{
-					parent: 'jetpack',
-					slug: 'jetpack-scan',
-					title: translate( 'Scan' ),
-					type: 'submenu-item',
-					url: `/scan/${ siteDomain }`,
-				},
 			],
 		},
 		{
 			type: 'separator',
 		},
 		// Add WooCommerce here
-		...( shouldShowWooCommerce && [] ),
-		{
-			type: 'separator',
-		},
-		{
-			icon: 'dashicons-admin-appearance',
-			slug: 'themes-php',
-			title: translate( 'Appearance' ),
-			type: 'menu-item',
-			url: `/themes/${ siteDomain }`,
-			children: [
-				{
-					parent: 'themes.php',
-					slug: 'themes-php',
-					title: translate( 'Themes' ),
-					type: 'submenu-item',
-					url: `/themes/${ siteDomain }`,
-				},
-				{
-					parent: 'themes.php',
-					slug: 'themes-customize',
-					title: translate( 'Customize' ),
-					type: 'submenu-item',
-					url: `/customize/${ siteDomain }`,
-				},
-				...( shouldShowApperanceHeaderAndBackground && [
+		...( shouldShowWooCommerce
+			? [
 					{
-						parent: 'themes.php',
-						slug: 'themes-header',
-						title: translate( 'Header' ),
-						type: 'submenu-item',
-						url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=header_image`,
+						icon: 'dashicons-admin-generic',
+						slug: 'woo-php',
+						title: translate( 'WooCommerce' ),
+						type: 'menu-item',
+						url: `https://${ siteDomain }/wp-admin/admin.php?page=wc-admin`,
 					},
 					{
-						parent: 'themes.php',
-						slug: 'themes-background',
-						title: translate( 'Background' ),
-						type: 'submenu-item',
-						url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=background_image`,
+						type: 'separator',
 					},
-				] ),
-				...( showShowThemeOptions && [
+			  ]
+			: [] ),
+		...( shouldShowThemes
+			? [
 					{
-						parent: 'themes.php',
-						slug: 'themes-options',
-						title: translate( 'Theme Options' ),
-						type: 'submenu-item',
-						url: `https://${ siteDomain }/wp-admin/`,
+						icon: 'dashicons-admin-appearance',
+						slug: 'themes-php',
+						title: translate( 'Appearance' ),
+						type: 'menu-item',
+						url: `/themes/${ siteDomain }`,
+						children: [
+							{
+								parent: 'themes.php',
+								slug: 'themes-php',
+								title: translate( 'Themes' ),
+								type: 'submenu-item',
+								url: `/themes/${ siteDomain }`,
+							},
+							{
+								parent: 'themes.php',
+								slug: 'themes-customize',
+								title: translate( 'Customize' ),
+								type: 'submenu-item',
+								url: `/customize/${ siteDomain }`,
+							},
+
+							...( shouldShowApperanceHeader
+								? [
+										{
+											parent: 'themes.php',
+											slug: 'themes-header',
+											title: translate( 'Header' ),
+											type: 'submenu-item',
+											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=header_image`,
+										},
+								  ]
+								: [] ),
+							...( shouldShowApperanceBackground
+								? [
+										{
+											parent: 'themes.php',
+											slug: 'themes-background',
+											title: translate( 'Background' ),
+											type: 'submenu-item',
+											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=background_image`,
+										},
+								  ]
+								: [] ),
+							{
+								parent: 'themes.php',
+								slug: 'themes-widgets',
+								title: translate( 'Widgets' ),
+								type: 'submenu-item',
+								url: `/customize/${ siteDomain }?autofocus[panel]=widgets`,
+							},
+							{
+								parent: 'themes.php',
+								slug: 'themes-menus',
+								title: translate( 'Menus' ),
+								type: 'submenu-item',
+								url: `/customize/${ siteDomain }?autofocus[panel]=nav_menus`,
+							},
+						],
 					},
-				] ),
-				{
-					parent: 'themes.php',
-					slug: 'themes-widgets',
-					title: translate( 'Widgets' ),
-					type: 'submenu-item',
-					url: `/customize/${ siteDomain }?autofocus[panel]=widgets`,
-				},
-				{
-					parent: 'themes.php',
-					slug: 'themes-menus',
-					title: translate( 'Menus' ),
-					type: 'submenu-item',
-					url: `/customize/${ siteDomain }?autofocus[panel]=nav_menus`,
-				},
-			],
-		},
+			  ]
+			: [] ),
 		{
 			icon: 'dashicons-admin-plugins',
 			slug: 'plugins',
@@ -482,25 +543,29 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 					type: 'submenu-item',
 					url: `https://${ siteDomain }/wp-admin/options-general.php?page=ratings&action=options`,
 				},
-				...( shouldShowAdControl && [
-					{
-						parent: 'options-general.php',
-						slug: 'options-ad-control',
-						title: translate( 'AdControl' ),
-						type: 'submenu-item',
-						url: `https://${ siteDomain }/wp-admin/options-general.php?page=adcontrol`,
-					},
-				] ),
+				...( shouldShowAdControl
+					? [
+							{
+								parent: 'options-general.php',
+								slug: 'options-ad-control',
+								title: translate( 'AdControl' ),
+								type: 'submenu-item',
+								url: `https://${ siteDomain }/wp-admin/options-general.php?page=adcontrol`,
+							},
+					  ]
+					: [] ),
 			],
 		},
-		...( shouldShowAMP && [
-			{
-				slug: 'amp',
-				title: translate( 'AMP' ),
-				type: 'menu-item',
-				url: `https://${ siteDomain }/wp-admin/admin.php?page=amp-options`,
-			},
-		] ),
+		...( shouldShowAMP
+			? [
+					{
+						slug: 'amp',
+						title: translate( 'AMP' ),
+						type: 'menu-item',
+						url: `https://${ siteDomain }/wp-admin/admin.php?page=amp-options`,
+					},
+			  ]
+			: [] ),
 	];
 
 	return fallbackResponse;
