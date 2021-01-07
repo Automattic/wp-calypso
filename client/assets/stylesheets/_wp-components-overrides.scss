@@ -83,3 +83,15 @@
 		}
 	}
 }
+
+/* @wordpress/components RadioControl overrides */
+.components-radio-control {
+	&__input[type='radio'] {
+		padding: 6px;
+
+		&:checked {
+			border-color: var( --color-accent );
+			background-color: var( --color-accent );
+		}
+	}
+}
