@@ -43,6 +43,13 @@ const AccountPassword = createReactClass( {
 		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
 	},
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.isPendingPasswordChange && ! this.props.isPendingPasswordChange ) {
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( { isUnsaved: false } );
+		}
+	},
+
 	componentWillUnmount() {
 		this.props.accountPasswordData.clearValidatedPassword();
 	},
@@ -101,7 +108,6 @@ const AccountPassword = createReactClass( {
 	submitForm( event ) {
 		event.preventDefault();
 
-		this.setState( { isUnsaved: false } );
 		this.props.saveUserSettings( { password: this.state.password } );
 	},
 
