@@ -31,12 +31,6 @@ const withFormBase = ( WrappedComponent ) => {
 			userSettings.unsavedSettings = {};
 		}
 
-		UNSAFE_componentWillReceiveProps( nextProp ) {
-			if ( nextProp.showNoticeInitially ) {
-				this.setState( { showNotice: nextProp.showNoticeInitially } );
-			}
-		}
-
 		componentDidUpdate() {
 			this.showNotice();
 		}
