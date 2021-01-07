@@ -59,6 +59,7 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
 		is_new_site: params.isNewSite,
 		blog_id: params.blogId,
 		has_cart_items: params.hasCartItems,
+		flow: params.flow,
 	};
 	trackEventWithFlow( 'calypso_newsite_complete', trackingParams );
 	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
