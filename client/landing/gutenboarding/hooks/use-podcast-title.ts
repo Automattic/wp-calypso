@@ -12,9 +12,9 @@ import { useAnchorFmParams } from '../path';
 export default function usePodcastTitle(): string | null {
 	const [ podcastTitle, setPodcastTitle ] = useState< string | null >( '' );
 	const { anchorFmPodcastId } = useAnchorFmParams();
-	type PodcastDetailsObject = {
+	interface PodcastDetailsObject {
 		title?: string;
-	};
+	}
 
 	useEffect( () => {
 		if ( ! anchorFmPodcastId ) {
