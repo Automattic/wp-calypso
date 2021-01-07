@@ -76,6 +76,7 @@ import type {
 	SelectorProductFeaturesItem,
 	SelectorProductFeaturesSection,
 	QueryArgs,
+	SiteProduct,
 } from './types';
 import type {
 	JetpackPlanSlugs,
@@ -367,6 +368,21 @@ export function productTooltip(
 				},
 			}
 		);
+	}
+	return null;
+}
+
+export function productAboveButtonText(
+	product: SelectorProduct,
+	siteProduct?: SiteProduct
+): TranslateResult | null {
+	if ( siteProduct && JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
+		return translate( '*estimated price based off of %(records)s records', {
+			args: {
+				records: numberFormat( siteProduct.tierUsage, 0 ),
+			},
+			comment: 'records = number of records (posts, pages, etc) in a site',
+		} );
 	}
 	return null;
 }
