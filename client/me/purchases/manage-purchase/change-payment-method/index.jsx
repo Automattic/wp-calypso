@@ -5,13 +5,11 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, useCallback } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
-import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
-	makeRedirectResponse,
-	makeSuccessResponse,
 } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -19,7 +17,6 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import wp from 'calypso/lib/wp';
 import notices from 'calypso/notices';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import HeaderCake from 'calypso/components/header-cake';
@@ -57,15 +54,16 @@ import Gridicon from 'calypso/components/gridicon';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
 import {
-	getTokenForSavingCard,
-	updateCreditCard,
-	getInitializedFields,
-} from 'calypso/me/purchases/components/payment-method-form/helpers';
-import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
 import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
+import {
+	assignPayPalProcessor,
+	assignNewCardProcessor,
+	assignExistingCardProcessor,
+} from './assignment-processor-functions';
+
 import 'calypso/me/purchases/components/payment-method-form/style.scss';
 
 function ChangePaymentMethod( props ) {
@@ -211,12 +209,6 @@ function getInitiallySelectedPaymentMethodId( currentlyAssignedPaymentMethodId, 
 	return currentlyAssignedPaymentMethodId;
 }
 
-const wpcom = wp.undocumented();
-const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
-	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
-const wpcomCreatePayPalAgreement = ( subscriptionId, successUrl, cancelUrl, fn ) =>
-	wpcom.createPayPalAgreement( subscriptionId, successUrl, cancelUrl, fn );
-
 function ChangePaymentMethodList( {
 	currentlyAssignedPaymentMethodId,
 	purchase,
@@ -302,64 +294,6 @@ function onChangeComplete( { successCallback, translate, showSuccessMessage, red
 	reduxDispatch( recordTracksEvent( 'calypso_purchases_save_new_payment_method' ) );
 	showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	successCallback();
-}
-
-async function assignExistingCardProcessor( purchase, { storedDetailsId } ) {
-	return wpcomAssignPaymentMethod( purchase.id, storedDetailsId ).then( ( data ) => {
-		return makeSuccessResponse( data );
-	} );
-}
-
-async function assignPayPalProcessor( purchase ) {
-	return wpcomCreatePayPalAgreement( purchase.id, window.location.href, window.location.href ).then(
-		( data ) => {
-			return makeRedirectResponse( data );
-		}
-	);
-}
-
-async function assignNewCardProcessor(
-	{ purchase, translate, siteSlug, apiParams, stripe, stripeConfiguration },
-	{ name, countryCode, postalCode }
-) {
-	const createStripeSetupIntentAsync = async ( paymentDetails ) => {
-		const { country, 'postal-code': zip } = paymentDetails;
-		const paymentDetailsForStripe = {
-			name,
-			address: {
-				country: country,
-				postal_code: zip,
-			},
-		};
-		return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
-	};
-
-	const formFieldValues = getInitializedFields( {
-		country: countryCode,
-		postalCode,
-		name,
-	} );
-
-	return getTokenForSavingCard( {
-		formFieldValues,
-		createCardToken: createStripeSetupIntentAsync,
-		parseTokenFromResponse: ( response ) => response.payment_method,
-		translate,
-	} )
-		.then( ( token ) =>
-			updateCreditCard( {
-				formFieldValues,
-				apiParams,
-				purchase,
-				siteSlug,
-				token,
-				translate,
-				stripeConfiguration,
-			} )
-		)
-		.then( ( data ) => {
-			return makeSuccessResponse( data );
-		} );
 }
 
 function TosText( { translate } ) {
