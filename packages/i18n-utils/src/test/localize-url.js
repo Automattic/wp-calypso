@@ -279,7 +279,7 @@ describe( '#localizeUrl', () => {
 	} );
 
 	test( 'Contact Support', () => {
-		// Assumes logged-in, these URLs should not be modified
+		// Assumes logged-in, these URLs should not be modified.
 		expect( localizeUrl( 'https://wordpress.com/help/contact', 'en' ) ).toEqual(
 			'https://wordpress.com/help/contact/'
 		);
@@ -292,6 +292,10 @@ describe( '#localizeUrl', () => {
 		);
 		expect( localizeUrl( 'https://wordpress.com/help/contact', 'de', false ) ).toEqual(
 			'https://wordpress.com/de/support/contact/'
+		);
+		// pl is not a supportSiteLocale:
+		expect( localizeUrl( 'https://wordpress.com/help/contact', 'pl', false ) ).toEqual(
+			'https://wordpress.com/support/contact/'
 		);
 	} );
 } );
