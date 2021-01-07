@@ -163,7 +163,7 @@ async function startNewPost( siteURL ) {
 	await gEditorComponent.initEditor();
 }
 
-describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ screenSize })`, function () {
+describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ screenSize }): @parallel`, function () {
 	const username = 'gutenbergUpgradeUser';
 	const siteName = 'e2egbupgradehever';
 	let isLoggedIn = false;
