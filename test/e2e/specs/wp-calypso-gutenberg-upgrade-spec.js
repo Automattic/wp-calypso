@@ -163,10 +163,9 @@ async function startNewPost( siteURL ) {
 	await gEditorComponent.initEditor();
 }
 
-describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ screenSize }): @parallel`, function () {
+describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ screenSize })`, function () {
 	const username = 'gutenbergUpgradeUser';
 	const siteName = 'e2egbupgradehever';
-	let isLoggedIn = false;
 
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
@@ -201,23 +200,19 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 		YoutubeBlockComponent,
 		PremiumContentBlockComponent,
 	].forEach( ( blockClass ) => {
-		describe( `Test the ${ blockClass.blockName } block`, function () {
+		describe( `Test the ${ blockClass.blockName } block: @parallel`, function () {
 			let currentGutenbergBlocksCode;
 
 			describe( `Test the block on a non-edge site`, function () {
 				step( `Log in and start a new post`, async function () {
 					const siteURL = `${ siteName }.wordpress.com`;
+					const loginFlow = new LoginFlow( driver, username );
 
-					if ( ! isLoggedIn ) {
-						const loginFlow = new LoginFlow( driver, username );
-						await loginFlow.login( siteURL, true );
-						isLoggedIn = true;
-					}
-
+					await loginFlow.login( siteURL, true );
 					await startNewPost( siteURL );
 				} );
 
-				step( `Insert and configure ${ blockClass.blockName }`, async function () {
+				step( `Insert and configure`, async function () {
 					await insertBlock( blockClass );
 				} );
 
