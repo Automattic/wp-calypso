@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .help-results {
 	margin-bottom: 16px;
 
@@ -32,17 +35,28 @@
 .help-result__wrapper {
 	display: flex;
 	width: 100%;
+	align-items: flex-start;
 }
 
 .help-result__icon-wrapper {
 	background: var( --color-primary-0 );
-	width: 225px;
+	width: 160px;
 	height: 120px;
-	display: flex;
+	display: none;
 	align-items: center;
 	justify-content: center;
 	margin: auto;
 	margin-right: 0;
+	margin-top: 0;
+	flex-shrink: 0;
+
+	@include break-medium {
+		display: flex;
+	}
+
+	@include break-large {
+		width: 225px;
+	}
 }
 
 .help-result__icon {
@@ -50,8 +64,12 @@
 }
 
 .help-result__content-wrapper {
-	max-width: 65%;
+	width: 100%;
 	margin-right: 20px;
+
+	@include break-medium {
+		max-width: 65%;
+	}
 }
 
 .help-result__title {
