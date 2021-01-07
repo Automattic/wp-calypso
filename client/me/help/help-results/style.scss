@@ -13,11 +13,11 @@
 
 .help-results__header.card.is-compact,
 .help-results__footer.card.is-compact {
-	padding: 8px 16px;
-}
+	padding: 16px;
 
-.help-results__footer {
-	font-size: $font-body-small;
+	@include break-medium {
+		padding: 16px 24px;
+	}
 }
 
 .help-result {

@@ -9,7 +9,6 @@ import React from 'react';
  */
 import { CompactCard } from '@automattic/components';
 import HelpResult from './item';
-import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies
@@ -25,22 +24,25 @@ export default class extends React.PureComponent {
 		}
 
 		return (
-			<div className="help-results">
-				<SectionHeader label={ this.props.header } />
-				{ this.props.helpLinks.map( ( helpLink ) => (
-					<HelpResult
-						key={ helpLink.link }
-						helpLink={ helpLink }
-						iconTypeDescription={ this.props.iconTypeDescription }
-						onClick={ this.props.onClick }
-					/>
-				) ) }
-				<a href={ this.props.searchLink } target="__blank">
-					<CompactCard className="help-results__footer">
-						<span className="help-results__footer-text">{ this.props.footer }</span>
-					</CompactCard>
-				</a>
-			</div>
+			<>
+				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
+				<h2 className="help__section-title">{ this.props.header }</h2>
+				<div className="help-results">
+					{ this.props.helpLinks.map( ( helpLink ) => (
+						<HelpResult
+							key={ helpLink.link }
+							helpLink={ helpLink }
+							iconTypeDescription={ this.props.iconTypeDescription }
+							onClick={ this.props.onClick }
+						/>
+					) ) }
+					<a href={ this.props.searchLink } target="__blank">
+						<CompactCard className="help-results__footer">
+							<span className="help-results__footer-text">{ this.props.footer }</span>
+						</CompactCard>
+					</a>
+				</div>
+			</>
 		);
 	}
 }

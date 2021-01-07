@@ -8,11 +8,8 @@
 	}
 }
 
-.help-search .no-results {
-	margin-left: 35px;
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-left: 25px;
-	}
+.help-search .card.search-card {
+	margin-bottom: 24px;
 }
 
 .help-results__placeholder {
