@@ -262,13 +262,11 @@ const wrapWithMain = ( Component ) => ( props ) => (
 /* eslint-enable */
 
 export default connect(
-	( state, ownProps ) => (
-		{
-			readerAliasedFollowFeedUrl:
-				ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
-		},
-		{
-			recordReaderTracksEvent,
-		}
-	)
+	( state, ownProps ) => ( {
+		readerAliasedFollowFeedUrl:
+			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+	} ),
+	{
+		recordReaderTracksEvent,
+	}
 )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
