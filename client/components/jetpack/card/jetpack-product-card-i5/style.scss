@@ -6,8 +6,8 @@
 
 	background: var( --color-surface );
 	border: 1px solid var( --color-border-subtle );
-	border-radius: 8px;
-	box-shadow: 0px 4px 24px rgba( 0, 0, 0, 0.05 );
+	border-radius: ( 2px * 4 );
+	box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 );
 
 	&.is-featured.is-aligned {
 		position: relative;
@@ -70,7 +70,7 @@
 
 	color: var( --studio-gray-100 );
 
-	font-size: 1.875rem;
+	font-size: 2rem;
 	font-weight: 700;
 	line-height: 1.2;
 
@@ -102,6 +102,13 @@
 	}
 }
 
+.jetpack-product-card-i5__price-from {
+	margin-right: 12px;
+	color: var( --studio-gray-40 );
+	font-size: 0.875rem;
+	line-height: 1.2;
+}
+
 .jetpack-product-card-i5 .plan-price {
 	display: flex;
 
@@ -127,12 +134,23 @@
 
 .jetpack-product-card-i5__billing-time-frame,
 .jetpack-product-card-i5__expiration-date {
-	margin-left: 12px;
+	margin: 0 12px;
 
 	color: var( --studio-gray-40 );
 
 	font-size: 0.875rem;
 	line-height: 1.2;
+}
+
+.jetpack-product-card-i5__price-tooltip {
+	color: var( --studio-gray-40 );
+}
+
+.jetpack-product-card-i5__price-tooltip.popover .popover__inner {
+	text-align: center;
+}
+.jetpack-product-card-i5__price-tooltip p {
+	margin-bottom: 1rem;
 }
 
 .jetpack-product-card-i5__expiration-date {
@@ -143,7 +161,7 @@
 	width: 100%;
 	height: 45px;
 
-	border-radius: 4px;
+	border-radius: ( 2px * 2 );
 
 	font-size: 1rem;
 	font-weight: 700;

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { translate, TranslateResult } from 'i18n-calypso';
+import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
 import { compact, get, isArray, isObject, isFunction } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
@@ -85,6 +85,8 @@ import type {
 } from 'calypso/lib/plans/types';
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
+import ExternalLink from 'calypso/components/external-link';
+import { PriceTiers } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 
 /**
  * Duration utils.
@@ -300,6 +302,73 @@ export function productBadgeLabelAlt(
 	if ( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) ) {
 		return translate( 'Included in your plan' );
 	}
+}
+
+/**
+ * Gets a price in a set of price tiers.
+ *
+ * @param tiers A range of tiered pricing.
+ * @param tierKey A key in the tiered pricing object.
+ * @param units Optional. Number of units to use when dealing with variable pricing.
+ * @returns {number|null} The amount it costs or null.
+ */
+export function getPriceTier(
+	tiers: PriceTiers,
+	tierKey: keyof PriceTiers,
+	units = 1
+): number | null {
+	if ( ! ( tierKey in tiers ) ) {
+		return null;
+	}
+	const tier = tiers[ tierKey ];
+	if ( 'flat_price' in tier ) {
+		return tier.flat_price;
+	}
+	return tier.variable_price_per_unit * units;
+}
+
+/**
+ * Gets tooltip for product.
+ *
+ * @param product Product to check.
+ * @param tiers Product price tiers.
+ */
+export function productTooltip(
+	product: SelectorProduct,
+	tiers: PriceTiers
+): null | TranslateResult {
+	if ( JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
+		return translate(
+			'{{p}}{{strong}}Pay only for what you need.{{/strong}}{{/p}}' +
+				'{{p}}Up to 100 records $%(price100)s{{br/}}' +
+				'Up to 1,000 records $%(price1000)s{{/p}}' +
+				'{{Info}}More info{{/Info}}',
+			{
+				args: {
+					price100: numberFormat( getPriceTier( tiers, 'up_to_100_records' ) || 50, 2 ).replace(
+						'.00',
+						''
+					),
+					price1000: numberFormat( getPriceTier( tiers, 'up_to_1k_records' ) || 100, 2 ).replace(
+						'.00',
+						''
+					),
+				},
+				comment:
+					'price100 = price per 100 records, price1000 = price per 1000 records. See https://jetpack.com/upgrade/search/.',
+				components: {
+					strong: createElement( 'strong' ),
+					p: createElement( 'p' ),
+					br: createElement( 'br' ),
+					Info: createElement( ExternalLink, {
+						icon: true,
+						href: 'https://jetpack.com/upgrade/search/',
+					} ),
+				},
+			}
+		);
+	}
+	return null;
 }
 
 /**
