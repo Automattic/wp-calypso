@@ -51,8 +51,6 @@ import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-
 import { isEnabled } from 'calypso/config';
 import { concatTitle } from 'calypso/lib/react-helpers';
 import Gridicon from 'calypso/components/gridicon';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
 import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
@@ -63,6 +61,7 @@ import {
 	assignNewCardProcessor,
 	assignExistingCardProcessor,
 } from './assignment-processor-functions';
+import TosText from './tos-text';
 
 import 'calypso/me/purchases/components/payment-method-form/style.scss';
 
@@ -280,7 +279,7 @@ function ChangePaymentMethodList( {
 				<div className="change-payment-method__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
-						<TosText translate={ translate } />
+						<TosText />
 					</p>
 				</div>
 
@@ -294,34 +293,6 @@ function onChangeComplete( { successCallback, translate, showSuccessMessage, red
 	reduxDispatch( recordTracksEvent( 'calypso_purchases_save_new_payment_method' ) );
 	showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	successCallback();
-}
-
-function TosText( { translate } ) {
-	// TODO: Make sure we use the correct ToS text for paypal
-	return translate(
-		'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
-			'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
-			'on a recurring basis until you cancel, which you can do at any time. ' +
-			'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
-			'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
-		{
-			components: {
-				tosLink: (
-					<a
-						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-						target="_blank"
-						rel="noopener noreferrer"
-					/>
-				),
-				autoRenewalSupportPage: (
-					<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
-				),
-				managePurchasesSupportPage: (
-					<a href={ MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
-				),
-			},
-		}
-	);
 }
 
 function CurrentPaymentMethodNotAvailableNotice( { purchase } ) {
