@@ -6,12 +6,19 @@ import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import '../style.scss';
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+
+/**
+ * Style dependencies
+ */
+import '../style.scss';
 
 export class ReaderSidebarTagsListItem extends Component {
 	static propTypes = {
@@ -36,7 +43,7 @@ export class ReaderSidebarTagsListItem extends Component {
 	handleTagSidebarClick = () => {
 		recordAction( 'clicked_reader_sidebar_tag_item' );
 		recordGaEvent( 'Clicked Reader Sidebar Tag Item' );
-		recordTrack( 'calypso_reader_sidebar_tag_item_clicked', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_tag_item_clicked', {
 			tag: decodeURIComponent( this.props.tag.slug ),
 		} );
 	};
@@ -71,4 +78,6 @@ export class ReaderSidebarTagsListItem extends Component {
 	}
 }
 
-export default localize( ReaderSidebarTagsListItem );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( ReaderSidebarTagsListItem ) );

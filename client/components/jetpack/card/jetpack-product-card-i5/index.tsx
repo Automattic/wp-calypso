@@ -14,6 +14,7 @@ import JetpackProductCardTimeFrame from './time-frame';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
+import InfoPopover from 'calypso/components/info-popover';
 
 /**
  * Type dependencies
@@ -47,6 +48,8 @@ type OwnProps = {
 	isAligned?: boolean;
 	isDisabled?: boolean;
 	disabledMessage?: TranslateResult | null;
+	displayFrom?: boolean;
+	tooltipText?: TranslateResult | ReactNode;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -72,6 +75,8 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	features,
 	isDisabled,
 	disabledMessage,
+	displayFrom,
+	tooltipText,
 }: Props ) => {
 	const translate = useTranslate();
 	const isDiscounted = isFinite( discountedPrice );
@@ -108,6 +113,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 				<div className="jetpack-product-card-i5__price">
 					{ currencyCode && originalPrice ? (
 						<>
+							{ displayFrom && <span className="jetpack-product-card-i5__price-from">from</span> }
 							<span className="jetpack-product-card-i5__raw-price">
 								<PlanPrice
 									rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
@@ -115,6 +121,11 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 								/>
 							</span>
 							<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+							{ tooltipText && (
+								<InfoPopover position="top" className="jetpack-product-card-i5__price-tooltip">
+									{ tooltipText }
+								</InfoPopover>
+							) }
 						</>
 					) : (
 						<>

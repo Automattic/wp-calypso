@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
-import formBase from 'calypso/me/form-base';
+import withFormBase from 'calypso/me/form-base/with-form-base';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -43,7 +43,7 @@ const debug = debugFactory( 'calypso:me:profile' );
 const Profile = createReactClass( {
 	displayName: 'Profile',
 
-	mixins: [ formBase, observe( 'userSettings' ) ],
+	mixins: [ observe( 'userSettings' ) ],
 
 	componentDidMount() {
 		debug( this.displayName + ' component is mounted.' );
@@ -107,28 +107,28 @@ const Profile = createReactClass( {
 
 					<EditGravatar />
 
-					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
+					<form onSubmit={ this.props.submitForm } onChange={ this.props.markChanged }>
 						<FormFieldset>
 							<FormLabel htmlFor="first_name">{ this.props.translate( 'First name' ) }</FormLabel>
 							<FormTextInput
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="first_name"
 								name="first_name"
-								onChange={ this.updateSetting }
+								onChange={ this.props.updateSetting }
 								onFocus={ this.getFocusHandler( 'First Name Field' ) }
-								value={ this.getSetting( 'first_name' ) }
+								value={ this.props.getSetting( 'first_name' ) }
 							/>
 						</FormFieldset>
 
 						<FormFieldset>
 							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last name' ) }</FormLabel>
 							<FormTextInput
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="last_name"
 								name="last_name"
-								onChange={ this.updateSetting }
+								onChange={ this.props.updateSetting }
 								onFocus={ this.getFocusHandler( 'Last Name Field' ) }
-								value={ this.getSetting( 'last_name' ) }
+								value={ this.props.getSetting( 'last_name' ) }
 							/>
 						</FormFieldset>
 
@@ -137,35 +137,35 @@ const Profile = createReactClass( {
 								{ this.props.translate( 'Public display name' ) }
 							</FormLabel>
 							<FormTextInput
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="display_name"
 								name="display_name"
-								onChange={ this.updateSetting }
+								onChange={ this.props.updateSetting }
 								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
-								value={ this.getSetting( 'display_name' ) }
+								value={ this.props.getSetting( 'display_name' ) }
 							/>
 						</FormFieldset>
 
 						<FormFieldset>
 							<FormLabel htmlFor="description">{ this.props.translate( 'About me' ) }</FormLabel>
 							<FormTextarea
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="description"
 								name="description"
-								onChange={ this.updateSetting }
+								onChange={ this.props.updateSetting }
 								onFocus={ this.getFocusHandler( 'About Me Field' ) }
-								value={ this.getSetting( 'description' ) }
+								value={ this.props.getSetting( 'description' ) }
 							/>
 						</FormFieldset>
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton
 								disabled={
-									! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState()
+									! this.props.userSettings.hasUnsavedSettings() || this.props.getDisabledState()
 								}
 								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
 							>
-								{ this.state.submittingForm
+								{ this.props.formState.submittingForm
 									? this.props.translate( 'Saving…' )
 									: this.props.translate( 'Save profile details' ) }
 							</FormButton>
@@ -181,4 +181,4 @@ const Profile = createReactClass( {
 
 const connectComponent = connect( null, { recordGoogleEvent } );
 
-export default flowRight( connectComponent, protectForm, localize )( Profile );
+export default flowRight( connectComponent, protectForm, localize, withFormBase )( Profile );

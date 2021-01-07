@@ -135,13 +135,13 @@ class PurchaseNotice extends Component {
 		if ( isPaidWithCredits( purchase ) ) {
 			if ( autoRenewingUpgradesLink ) {
 				return translate(
-					"You purchased %(purchaseName)s with credits – please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
+					"You purchased %(purchaseName)s with credits – please update your payment information before your plan expires %(expiry)s so that you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 					translateOptions
 				);
 			}
 
 			return translate(
-				"You purchased %(purchaseName)s with credits. Please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features!",
+				"You purchased %(purchaseName)s with credits. Please update your payment information before your plan expires %(expiry)s so that you don't lose out on your paid features!",
 				translateOptions
 			);
 		}
@@ -176,13 +176,13 @@ class PurchaseNotice extends Component {
 
 		if ( autoRenewingUpgradesLink ) {
 			return translate(
-				"%(purchaseName)s will expire and be removed from your site %(expiry)s – add a credit card so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
+				"%(purchaseName)s will expire and be removed from your site %(expiry)s – update your payment information so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 				translateOptions
 			);
 		}
 
 		return translate(
-			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Add a credit card so you don't lose out on your paid features!",
+			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Update your payment information so you don't lose out on your paid features!",
 			translateOptions
 		);
 	}

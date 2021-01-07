@@ -16,7 +16,12 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
-		pageContext.primary = <GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />;
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<GSuiteAddUsers selectedDomainName={ pageContext.params.domain } />
+			</CalypsoShoppingCartProvider>
+		);
+
 		next();
 	},
 
@@ -28,11 +33,14 @@ export default {
 
 	emailManagementNewGSuiteAccount( pageContext, next ) {
 		pageContext.primary = (
-			<GSuiteAddUsers
-				planType={ pageContext.params.planType }
-				selectedDomainName={ pageContext.params.domain }
-			/>
+			<CalypsoShoppingCartProvider>
+				<GSuiteAddUsers
+					planType={ pageContext.params.planType }
+					selectedDomainName={ pageContext.params.domain }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
+
 		next();
 	},
 
@@ -42,16 +50,19 @@ export default {
 				<TitanMailQuantitySelection selectedDomainName={ pageContext.params.domain } />
 			</CalypsoShoppingCartProvider>
 		);
+
 		next();
 	},
 
 	emailManagementForwarding( pageContext, next ) {
 		pageContext.primary = <EmailForwarding selectedDomainName={ pageContext.params.domain } />;
+
 		next();
 	},
 
 	emailManagement( pageContext, next ) {
 		pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
+
 		next();
 	},
 };

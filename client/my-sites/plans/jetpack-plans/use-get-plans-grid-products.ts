@@ -25,7 +25,12 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';
 
-const useSelectorPageProducts = ( siteId: number | null ) => {
+/**
+ * Type dependencies
+ */
+import type { PlanGridProducts, SelectorProduct } from './types';
+
+const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	let availableProducts: string[] = [];
 
 	// Products/features included in the current plan
@@ -120,9 +125,11 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 	}
 
 	return {
-		availableProducts: availableProducts.map( slugToSelectorProduct ),
-		purchasedProducts: purchasedProducts.map( slugToSelectorProduct ),
-		includedInPlanProducts: includedInPlanProducts.map( slugToSelectorProduct ),
+		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],
+		purchasedProducts: purchasedProducts.map( slugToSelectorProduct ) as SelectorProduct[],
+		includedInPlanProducts: includedInPlanProducts.map(
+			slugToSelectorProduct
+		) as SelectorProduct[],
 	};
 };
 
