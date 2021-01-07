@@ -46,10 +46,12 @@ export const unsavedSettings = ( state = {}, action ) => {
 
 export const pendingPasswordChange = ( state = false, action ) => {
 	switch ( action.type ) {
-		case USER_SETTINGS_SAVE:
+		case USER_SETTINGS_SAVE: {
+			return !! action.settingsOverride?.password;
+		}
 		case USER_SETTINGS_UPDATE:
 		case USER_SETTINGS_UPDATE_FAILURE: {
-			return action.type === USER_SETTINGS_SAVE && Boolean( action.settingsOverride?.password );
+			return false;
 		}
 	}
 	return state;
