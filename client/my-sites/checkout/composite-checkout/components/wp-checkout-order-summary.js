@@ -403,12 +403,18 @@ const CheckoutSummaryFeatures = styled.div`
 		padding: 20px;
 	}
 
-	.checkout__payment-chat-button.is-borderless {
+	.payment-chat-button.is-borderless {
 		color: ${ ( props ) => props.theme.colors.textColor };
 		padding: 0;
 
 		svg {
+			margin-right: 4px;
 			width: 20px;
+
+			.rtl & {
+				margin-right: 0;
+				margin-left: 4px;
+			}
 		}
 	}
 `;

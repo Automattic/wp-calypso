@@ -62,6 +62,20 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
+const gutenbergRedirect = function ( flowName, locale ) {
+	const url = new URL( window.location );
+	let path = '/new';
+	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		path += `/${ flowName }`;
+	}
+	if ( locale ) {
+		path += `/${ locale }`;
+	}
+
+	url.pathname = path;
+	window.location.replace( url.toString() );
+};
+
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -113,6 +127,14 @@ export default {
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data;
+					const localeFromParams = context.params.lang;
+					const flowName = getFlowName( context.params );
+
+					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
+						gutenbergRedirect( flowName, localeFromParams );
+						return;
+					}
+
 					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
@@ -126,7 +148,6 @@ export default {
 						removeWhiteBackground();
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
-						const localeFromParams = context.params.lang;
 						const urlWithLocale = getStepUrl(
 							'onboarding-registrationless',
 							stepName,
