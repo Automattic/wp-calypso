@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
-import { FLOW_ID } from '../../gutenboarding/constants';
+import { FLOW_ID, ANCHOR_FM_FLOW_ID } from '../../gutenboarding/constants';
 
 /**
  * Internal dependencies
@@ -121,14 +121,14 @@ export default function useOnSiteCreation(): void {
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
-					flow: isAnchorFmSignup ? 'anchor-fm' : FLOW_ID,
+					flow: isAnchorFmSignup ? ANCHOR_FM_FLOW_ID : FLOW_ID,
 				} );
 				go();
 				return;
 			}
 			recordOnboardingComplete( {
 				...flowCompleteTrackingParams,
-				flow: isAnchorFmSignup ? 'anchor-fm' : FLOW_ID,
+				flow: isAnchorFmSignup ? ANCHOR_FM_FLOW_ID : FLOW_ID,
 			} );
 			resetOnboardStore();
 			clearLastNonEditorRoute();
