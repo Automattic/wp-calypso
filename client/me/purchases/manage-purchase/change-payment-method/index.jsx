@@ -236,7 +236,7 @@ function ChangePaymentMethodList( {
 
 	const showErrorMessage = useCallback( ( error ) => {
 		const message = error?.toString ? error.toString() : error;
-		notices.error( message );
+		notices.error( message, { persistent: true } );
 	}, [] );
 
 	const showInfoMessage = useCallback( ( message ) => {
