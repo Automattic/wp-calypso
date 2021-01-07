@@ -117,16 +117,19 @@ $accent-blue: #117ac9;
 		cursor: default;
 	}
 
-	&.type-individual-item,
-	&:first-of-type {
-		border-top-left-radius: 5px; /* stylelint-disable-line scales/radii */
-		border-top-right-radius: 5px; /* stylelint-disable-line scales/radii */
-	}
-
-	&.type-individual-item,
-	&:last-of-type {
-		border-bottom-left-radius: 5px; /* stylelint-disable-line scales/radii */
-		border-bottom-right-radius: 5px; /* stylelint-disable-line scales/radii */
+	.domain-picker__sugggested-items-container & {
+		// use first-child and last-child selectors because placeholders / suggested items are different types (div/label)
+		&.type-individual-item,
+		&:first-child {
+			border-top-left-radius: 5px; /* stylelint-disable-line scales/radii */
+			border-top-right-radius: 5px; /* stylelint-disable-line scales/radii */
+		}
+	
+		&.type-individual-item,
+		&:last-child {
+			border-bottom-left-radius: 5px; /* stylelint-disable-line scales/radii */
+			border-bottom-right-radius: 5px; /* stylelint-disable-line scales/radii */
+		}
 	}
 
 	& + & {
@@ -456,6 +459,7 @@ $accent-blue: #117ac9;
 
 .domain-picker__body {
 	display: flex;
+	// flex-direction: column;
 
 	// When in mobile, domain categories appear above
 	// the list of domain suggestions.
