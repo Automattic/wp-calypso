@@ -3,16 +3,17 @@
  */
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { last } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 export class ReaderSidebarListsListItem extends Component {
 	static propTypes = {
@@ -36,7 +37,7 @@ export class ReaderSidebarListsListItem extends Component {
 	handleListSidebarClick = () => {
 		recordAction( 'clicked_reader_sidebar_list_item' );
 		recordGaEvent( 'Clicked Reader Sidebar List Item' );
-		recordTrack( 'calypso_reader_sidebar_list_item_clicked', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_list_item_clicked', {
 			list: decodeURIComponent( this.props.list.slug ),
 		} );
 	};
@@ -51,7 +52,9 @@ export class ReaderSidebarListsListItem extends Component {
 			listRelativeUrl + '/delete',
 		];
 
-		const lastPathSegment = last( this.props.path.split( '/' ) );
+		const pathSegments = this.props.path?.split( '/' );
+		const lastPathSegment =
+			Array.isArray( pathSegments ) && pathSegments[ pathSegments.length - 1 ];
 		const isCurrentList =
 			lastPathSegment &&
 			// Prevents partial slug matches (e.g. bluefuton/test and bluefuton/test2)
@@ -87,4 +90,6 @@ export class ReaderSidebarListsListItem extends Component {
 	}
 }
 
-export default localize( ReaderSidebarListsListItem );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( ReaderSidebarListsListItem ) );

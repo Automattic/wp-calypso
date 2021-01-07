@@ -21,7 +21,8 @@ import {
 	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -33,6 +34,7 @@ class ListStream extends React.Component {
 		super( props );
 		this.title = props.translate( 'Loading list' );
 	}
+
 	toggleFollowing = ( isFollowRequested ) => {
 		const list = this.props.list;
 
@@ -47,7 +49,7 @@ class ListStream extends React.Component {
 			isFollowRequested ? 'Clicked Follow List' : 'Clicked Unfollow List',
 			list.owner + ':' + list.slug
 		);
-		recordTrack(
+		this.props.recordReaderTracksEvent(
 			isFollowRequested
 				? 'calypso_reader_reader_list_followed'
 				: 'calypso_reader_reader_list_unfollowed',
@@ -129,5 +131,5 @@ export default connect(
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 		};
 	},
-	{ followList, unfollowList }
+	{ followList, recordReaderTracksEvent, unfollowList }
 )( localize( ListStream ) );
