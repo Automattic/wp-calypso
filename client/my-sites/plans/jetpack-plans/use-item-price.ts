@@ -117,7 +117,7 @@ const useItemPrice = (
 
 	let originalPrice = 0;
 	let discountedPrice = undefined;
-	let priceTiers: PriceTiers | null = null;
+	let priceTiers: PriceTiers | null = rawPriceTiers;
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
