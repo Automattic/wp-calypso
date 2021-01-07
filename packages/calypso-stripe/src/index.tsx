@@ -24,7 +24,7 @@ declare global {
 
 type StripeFactory = ( key: string, options?: Record< string, string > ) => Stripe;
 
-type PaymentDetails = Record< string, string >;
+type PaymentDetails = Record< string, unknown >;
 
 type HandleCardSetupResponse = { setupIntent: StripeSetupIntent; error: StripeError };
 
