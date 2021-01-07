@@ -20,7 +20,6 @@ import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import SectionHeader from 'calypso/components/section-header';
 import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
@@ -97,27 +96,30 @@ class Help extends React.PureComponent {
 		];
 
 		return (
-			<div className="help-results">
-				<SectionHeader label={ this.props.translate( 'Most Helpful Articles' ) } />
-				{ helpfulResults.map( ( result, index ) => {
-					const trackClick = () => {
-						debug( 'Suggested result click: ', result.link );
-						recordTracksEvent( 'calypso_help_suggested_result_click', {
-							link: result.link,
-							position: index,
-						} );
-					};
+			<>
+				<h2 className="help__section-title">{ this.props.translate( 'Most Helpful Articles' ) }</h2>
+				<div className="help-results">
+					{ helpfulResults.map( ( result, index ) => {
+						const trackClick = () => {
+							debug( 'Suggested result click: ', result.link );
+							recordTracksEvent( 'calypso_help_suggested_result_click', {
+								link: result.link,
+								position: index,
+							} );
+						};
 
-					return (
-						<HelpResult
-							key={ result.link }
-							helpLink={ result }
-							iconTypeDescription="book"
-							onClick={ trackClick }
-						/>
-					);
-				} ) }
-			</div>
+						return (
+							<HelpResult
+								key={ result.link }
+								helpLink={ result }
+								iconTypeDescription="book"
+								onClick={ trackClick }
+								localizedReadArticle={ this.props.translate( 'Read article' ) }
+							/>
+						);
+					} ) }
+				</div>
+			</>
 		);
 	};
 

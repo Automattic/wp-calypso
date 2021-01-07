@@ -53,11 +53,13 @@ export default class extends React.PureComponent {
 				onClick={ this.onClick }
 			>
 				<CompactCard className="help-result__wrapper">
-					{ this.getResultIcon() }
-					<h2 className="help-result__title">{ decodeEntities( this.props.helpLink.title ) }</h2>
-					<p className="help-result__description">
-						{ decodeEntities( this.props.helpLink.description ) }
-					</p>
+					<div className="help-result__content-wrapper">
+						<h2 className="help-result__title">{ decodeEntities( this.props.helpLink.title ) }</h2>
+						<p className="help-result__description">
+							{ decodeEntities( this.props.helpLink.description ) }
+						</p>
+					</div>
+					<div className="help-result__icon-wrapper">{ this.getResultIcon() }</div>
 				</CompactCard>
 			</a>
 		);

@@ -14,15 +14,11 @@
 }
 
 .help-results__footer {
-	font: 14px/24px $sans;
+	font-size: $font-body-small;
 }
 
 .help-result {
 	&:hover {
-		.help-result__wrapper {
-			background-color: var( ---color-primary-0 );
-		}
-
 		.help-result__title {
 			color: var( --color-primary-dark );
 		}
@@ -33,20 +29,41 @@
 	}
 }
 
+.help-result__wrapper {
+	display: flex;
+	width: 100%;
+}
+
+.help-result__icon-wrapper {
+	background: var( --color-primary-0 );
+	width: 225px;
+	height: 120px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: auto;
+	margin-right: 0;
+}
+
 .help-result__icon {
-	position: absolute;
-	margin: -2px 16px 0 -8px;
-	fill: var( --color-neutral );
+	fill: var( --color-primary );
+}
+
+.help-result__content-wrapper {
+	max-width: 65%;
+	margin-right: 20px;
 }
 
 .help-result__title {
-	margin: -2px 0 0 32px;
 	color: var( --color-primary );
-	font: 16px/20px $sans;
+	font-size: $font-body;
+	font-weight: 600;
+	margin: 0 0 8px;
 }
 
 .help-result__description {
-	color: var( --color-neutral-50 );
-	font: 14px/20px $sans;
-	margin: 2px 0 0 32px;
+	color: var( --color-text-subtle );
+	font-size: $font-body;
+	line-height: 24px;
+	margin: 0 0 8px;
 }
