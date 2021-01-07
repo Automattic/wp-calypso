@@ -48,6 +48,7 @@ type OwnProps = {
 	isAligned?: boolean;
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
+	aboveButtonText?: TranslateResult | ReactNode;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -73,6 +74,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	features,
 	displayFrom,
 	tooltipText,
+	aboveButtonText = null,
 }: Props ) => {
 	const translate = useTranslate();
 	const isDiscounted = isFinite( discountedPrice );
@@ -129,6 +131,9 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 						</>
 					) }
 				</div>
+				{ aboveButtonText && (
+					<p className="jetpack-product-card-i5__above-button">{ aboveButtonText }</p>
+				) }
 				<Button
 					primary={ buttonPrimary }
 					className="jetpack-product-card-i5__button"
