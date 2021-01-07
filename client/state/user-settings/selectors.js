@@ -4,5 +4,5 @@
  * @param {object} state Global state tree
  */
 export const isPendingPasswordChange = ( state ) => {
-	return state.userSettings.pendingPasswordChange;
+	return state.userSettings.updatingPassword;
 };

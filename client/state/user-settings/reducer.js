@@ -44,7 +44,7 @@ export const unsavedSettings = ( state = {}, action ) => {
 	}
 };
 
-export const pendingPasswordChange = ( state = false, action ) => {
+export const updatingPassword = ( state = false, action ) => {
 	switch ( action.type ) {
 		case USER_SETTINGS_SAVE: {
 			return !! action.settingsOverride?.password;
@@ -60,5 +60,5 @@ export const pendingPasswordChange = ( state = false, action ) => {
 export default combineReducers( {
 	settings,
 	unsavedSettings,
-	pendingPasswordChange,
+	updatingPassword,
 } );
