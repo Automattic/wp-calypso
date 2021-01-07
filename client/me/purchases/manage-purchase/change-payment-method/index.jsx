@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment, useMemo, useCallback } from 'react';
+import React, { Fragment, useCallback } from 'react';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import {
@@ -41,7 +41,6 @@ import {
 import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
-	getStoredCards,
 	getStoredCardById,
 	getStoredPaymentAgreements,
 	hasLoadedStoredCardsFromServer,
@@ -54,11 +53,6 @@ import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import { isEnabled } from 'calypso/config';
 import { concatTitle } from 'calypso/lib/react-helpers';
-import {
-	useCreateCreditCard,
-	useCreateExistingCards,
-	useCreatePayPal,
-} from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
 import Gridicon from 'calypso/components/gridicon';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
@@ -71,6 +65,7 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
+import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
 import 'calypso/me/purchases/components/payment-method-form/style.scss';
 
 function ChangePaymentMethod( props ) {
@@ -232,7 +227,7 @@ function ChangePaymentMethodList( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
-	const paymentMethods = useAssignablePaymentMethods( currentlyAssignedPaymentMethodId );
+	const paymentMethods = useCreateAssignablePaymentMethods( currentlyAssignedPaymentMethodId );
 
 	const showErrorMessage = useCallback( ( error ) => {
 		const message = error?.toString ? error.toString() : error;
@@ -451,43 +446,6 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	userId: getCurrentUserId( state ),
 	locale: getCurrentUserLocale( state ),
 } );
-
-function useAssignablePaymentMethods( currentPaymentMethodId ) {
-	const translate = useTranslate();
-	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
-
-	const stripeMethod = useCreateCreditCard( {
-		isStripeLoading,
-		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
-		shouldUseEbanx: false,
-		shouldShowTaxFields: true,
-		activePayButtonText: translate( 'Save card' ),
-	} );
-
-	const payPalMethod = useCreatePayPal( {
-		labelText:
-			currentPaymentMethodId === 'paypal-existing' ? translate( 'New PayPal account' ) : 'PayPal',
-	} );
-
-	// getStoredCards always returns a new array, but we need a memoized version
-	// to pass to useCreateExistingCards, which has storedCards as a data dependency.
-	const rawStoredCards = useSelector( getStoredCards );
-	const storedCards = useMemo( () => rawStoredCards, [] ); // eslint-disable-line
-	const existingCardMethods = useCreateExistingCards( {
-		storedCards,
-		stripeConfiguration,
-		activePayButtonText: translate( 'Use this card' ),
-	} );
-
-	const paymentMethods = useMemo(
-		() => [ ...existingCardMethods, stripeMethod, payPalMethod ].filter( Boolean ),
-		[ stripeMethod, existingCardMethods, payPalMethod ]
-	);
-
-	return paymentMethods;
-}
 
 function ChangePaymentMethodWrapper( props ) {
 	return (
