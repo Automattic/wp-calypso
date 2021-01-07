@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -17,18 +16,16 @@ import {
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'settings',
-			'unsavedSettings',
-			'pendingPasswordChange',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ).sort() ).toEqual(
+			[ 'settings', 'unsavedSettings', 'pendingPasswordChange' ].sort()
+		);
 	} );
 
 	describe( 'settings', () => {
 		test( 'should default to a `null` value', () => {
 			const state = settings( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should store user settings after initial update', () => {
@@ -37,7 +34,7 @@ describe( 'reducer', () => {
 				settingValues: { foo: 'bar' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
@@ -52,7 +49,7 @@ describe( 'reducer', () => {
 				settingValues: { baz: 'qux' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 				baz: 'qux',
 			} );
@@ -63,7 +60,7 @@ describe( 'reducer', () => {
 		test( 'should default to empty object', () => {
 			const state = unsavedSettings( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store a user settings after it is set', () => {
@@ -73,7 +70,7 @@ describe( 'reducer', () => {
 				value: 'bar',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
@@ -89,7 +86,7 @@ describe( 'reducer', () => {
 				value: 'qux',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 				baz: 'qux',
 			} );
@@ -106,7 +103,7 @@ describe( 'reducer', () => {
 				settingName: 'baz',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
@@ -121,7 +118,7 @@ describe( 'reducer', () => {
 				type: USER_SETTINGS_UNSAVED_CLEAR,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should clear user settings after successful partial save', () => {
@@ -135,7 +132,7 @@ describe( 'reducer', () => {
 				settingNames: [ 'baz' ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
