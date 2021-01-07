@@ -15,7 +15,7 @@ export default function useSiteTitle(): void {
 	const podcastTitle = usePodcastTitle();
 
 	useEffect( () => {
-		if ( podcastTitle && podcastTitle.length > 1 ) {
+		if ( podcastTitle ) {
 			// Set initial site title to podcast title
 			setSiteTitle( podcastTitle );
 		}
