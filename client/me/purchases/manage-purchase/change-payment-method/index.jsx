@@ -107,9 +107,8 @@ function ChangePaymentMethod( props ) {
 		} );
 
 	const successCallback = () => {
-		const { id } = props.purchase;
 		props.clearPurchases();
-		page( props.getManagePurchaseUrlFor( props.siteSlug, id ) );
+		page( props.getManagePurchaseUrlFor( props.siteSlug, props.purchase.id ) );
 	};
 
 	return (
