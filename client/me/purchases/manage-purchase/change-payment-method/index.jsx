@@ -232,7 +232,7 @@ function ChangePaymentMethodList( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
-	const paymentMethods = useAssignablePaymentMethods();
+	const paymentMethods = useAssignablePaymentMethods( currentlyAssignedPaymentMethodId );
 
 	const showErrorMessage = useCallback( ( error ) => {
 		const message = error?.toString ? error.toString() : error;
@@ -452,7 +452,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	locale: getCurrentUserLocale( state ),
 } );
 
-function useAssignablePaymentMethods() {
+function useAssignablePaymentMethods( currentPaymentMethodId ) {
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 
@@ -467,7 +467,8 @@ function useAssignablePaymentMethods() {
 	} );
 
 	const payPalMethod = useCreatePayPal( {
-		labelText: translate( 'Add a new PayPal account' ),
+		labelText:
+			currentPaymentMethodId === 'paypal-existing' ? translate( 'New PayPal account' ) : 'PayPal',
 	} );
 
 	// getStoredCards always returns a new array, but we need a memoized version
