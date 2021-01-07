@@ -117,7 +117,7 @@ function WPLineItem( {
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
-			{ isTitanMail && <TitanMailMeta item={ item } /> }
+			{ isTitanMail && <TitanMailMeta item={ item } isRenewal={ isRenewal } /> }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
@@ -440,23 +440,30 @@ function GSuiteUsersList( { item } ) {
 	);
 }
 
-function TitanMailMeta( { item } ) {
+function TitanMailMeta( { item, isRenewal } ) {
 	const translate = useTranslate();
 	const quantity = item.wpcom_meta?.extra?.new_quantity ?? 1;
 	const domainName = item.wpcom_meta?.meta;
+	const translateArgs = {
+		args: {
+			mailboxes: quantity,
+			domainName,
+		},
+		count: quantity,
+	};
 	return (
 		<LineItemMeta>
-			{ translate(
-				'%(mailboxes)d new mailbox for %(domainName)s',
-				'%(mailboxes)d new mailboxes for %(domainName)s',
-				{
-					args: {
-						mailboxes: quantity,
-						domainName,
-					},
-					count: quantity,
-				}
-			) }
+			{ isRenewal
+				? translate(
+						'%(mailboxes)d mailbox for %(domainName)s',
+						'%(mailboxes)d mailboxes for %(domainName)s',
+						translateArgs
+				  )
+				: translate(
+						'%(mailboxes)d new mailbox for %(domainName)s',
+						'%(mailboxes)d new mailboxes for %(domainName)s',
+						translateArgs
+				  ) }
 		</LineItemMeta>
 	);
 }

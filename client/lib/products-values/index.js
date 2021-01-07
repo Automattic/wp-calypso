@@ -66,6 +66,7 @@ export { isSpaceUpgrade } from './is-space-upgrade';
 export { isSecurityDaily } from './is-security-daily';
 export { isSecurityRealTime } from './is-security-realtime';
 export { isTheme } from './is-theme';
+export { isTitanMail } from './is-titan-mail';
 export { isUnlimitedSpace } from './is-unlimited-space';
 export { isUnlimitedThemes } from './is-unlimited-themes';
 export { isVideoPress } from './is-video-press';

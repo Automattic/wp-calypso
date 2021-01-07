@@ -60,6 +60,7 @@ import {
 	isVideoPress,
 	isConciergeSession,
 	isTrafficGuide,
+	isTitanMail,
 	isMonthly,
 } from 'calypso/lib/products-values';
 import sortProducts from 'calypso/lib/products-values/sort';
@@ -793,10 +794,17 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
  * @returns {CartItemValue} the new item as `CartItemValue` object
  */
 export function titanMailMonthly( properties ) {
-	return assign( domainItem( TITAN_MAIL_MONTHLY_SLUG, properties.domain, properties.source ), {
-		quantity: properties.quantity,
-		extra: properties.extra,
-	} );
+	return assign(
+		domainItem(
+			TITAN_MAIL_MONTHLY_SLUG,
+			properties.meta ? properties.meta : properties.domain,
+			properties.source
+		),
+		{
+			quantity: properties.quantity,
+			extra: properties.extra,
+		}
+	);
 }
 
 /**
@@ -987,6 +995,10 @@ export function getRenewalItemFromProduct( product, properties ) {
 
 	if ( isGoogleApps( product ) ) {
 		cartItem = googleApps( product );
+	}
+
+	if ( isTitanMail( product ) ) {
+		cartItem = titanMailMonthly( product );
 	}
 
 	if ( isSiteRedirect( product ) ) {
