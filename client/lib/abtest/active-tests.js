@@ -80,6 +80,7 @@ export default {
 			newOnboarding: 50,
 			control: 50,
 		},
+		localeTargets: 'any',
 		localeExceptions: [ 'en', 'es' ],
 		defaultVariation: 'control',
 		allowExistingUsers: false,
