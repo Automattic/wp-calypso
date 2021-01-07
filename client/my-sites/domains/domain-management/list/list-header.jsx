@@ -11,6 +11,7 @@ import classNames from 'classnames';
  */
 import { CompactCard } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 /**
  * Style dependencies
@@ -64,8 +65,12 @@ class ListHeader extends React.PureComponent {
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
 							'You can receive email using your custom domain by using email forwarding or by ' +
-								'purchasing a G Suite subscription. Note that email forwarding requires a plan ' +
-								'subscription.'
+								'purchasing Titan Mail or %(googleMailService)s. Note that ' +
+								'email forwarding requires a plan subscription.',
+							{
+								args: { googleMailService: getGoogleMailServiceFamily() },
+								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+							}
 						) }
 					</InfoPopover>
 				</div>

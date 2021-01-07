@@ -16,3 +16,4 @@ export { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from './gsuite-su
 export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
 export { hasGSuiteWithUs } from './has-gsuite-with-us';
 export { hasPendingGSuiteUsers } from './has-pending-gsuite-users';
+export { getGoogleMailServiceFamily } from './get-google-mail-service-family';
