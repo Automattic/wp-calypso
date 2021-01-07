@@ -22,8 +22,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
-import notices from 'calypso/notices';
 import debugFactory from 'debug';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
 import {
 	getSelectedSiteId,
@@ -118,7 +118,7 @@ class Upload extends React.Component {
 
 	successMessage() {
 		const { translate, uploadedTheme, themeId } = this.props;
-		notices.success(
+		this.props.successNotice(
 			translate( 'Successfully uploaded theme %(name)s', {
 				args: {
 					// using themeId lets us show a message before theme data arrives
@@ -152,7 +152,7 @@ class Upload extends React.Component {
 		} );
 
 		const unknownCause = error.error ? `: ${ error.error }` : '';
-		notices.error( cause || translate( 'Problem installing theme' ) + unknownCause );
+		this.props.errorNotice( cause || translate( 'Problem installing theme' ) + unknownCause );
 	}
 
 	renderProgressBar() {
@@ -314,7 +314,13 @@ const mapStateToProps = ( state ) => {
 };
 
 const flowRightArgs = [
-	connect( mapStateToProps, { uploadTheme, clearThemeUpload, initiateThemeTransfer } ),
+	connect( mapStateToProps, {
+		errorNotice,
+		successNotice,
+		uploadTheme,
+		clearThemeUpload,
+		initiateThemeTransfer,
+	} ),
 	localize,
 ];
 
