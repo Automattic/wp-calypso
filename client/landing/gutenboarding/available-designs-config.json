@@ -68,19 +68,6 @@
 			"features": []
 		},
 		{
-			"title": "Doyle",
-			"slug": "doyle",
-			"template": "doyle",
-			"theme": "alves",
-			"fonts": {
-				"headings": "Playfair Display",
-				"base": "Fira Sans"
-			},
-			"categories": [ "featured", "business" ],
-			"is_premium": true,
-			"features": []
-		},
-		{
 			"title": "Bowen",
 			"slug": "bowen",
 			"template": "bowen",
