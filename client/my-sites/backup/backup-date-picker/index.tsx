@@ -11,13 +11,13 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Button from 'calypso/components/forms/form-button';
 import DateRangeSelector from 'calypso/my-sites/activity/filterbar/date-range-selector';
 import Gridicon from 'calypso/components/gridicon';
-import { useDateWithOffset } from '../hooks';
 import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
 
 /**
