@@ -15,7 +15,7 @@ export default function TosText(): JSX.Element {
 	return (
 		<>
 			{ translate(
-				'You agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if you use it to pay for a subscription or plan, you authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
+				'By saving a payment method, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if you use it to pay for a subscription or plan, you authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
 				{
 					components: {
 						tosLink: (
