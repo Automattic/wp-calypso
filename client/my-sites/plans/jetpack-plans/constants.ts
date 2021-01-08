@@ -308,7 +308,7 @@ export const EXTERNAL_PRODUCT_CRM_MONTHLY: SelectorProduct = {
 	...EXTERNAL_PRODUCT_CRM,
 	productSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 	term: TERM_MONTHLY,
-	displayTerm: getJetpackCROActiveVersion() === 'v2' ? TERM_ANNUALLY : undefined,
+	displayTerm: TERM_ANNUALLY,
 	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 };

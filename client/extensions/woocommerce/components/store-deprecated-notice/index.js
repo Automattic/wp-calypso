@@ -17,11 +17,13 @@ class StoreDeprecatedNotice extends Component {
 		return (
 			<Notice
 				status="is-warning"
-				text={ translate( 'Store is moving to WooCommerce' ) }
+				text={ translate(
+					'Your favorite Store functions will become part of WooCommerce menus in February.'
+				) }
 				showDismiss={ false }
 			>
 				<NoticeAction href="https://wordpress.com/support/store/">
-					{ translate( 'More' ) }
+					{ translate( 'Learn more' ) }
 				</NoticeAction>
 			</Notice>
 		);

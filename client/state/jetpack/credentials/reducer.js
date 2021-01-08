@@ -9,6 +9,8 @@ import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
+	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
+	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
@@ -65,9 +67,22 @@ export const errors = keyedReducer( 'siteId', ( state, { type, error } ) => {
 	return state;
 } );
 
+export const progressUpdates = keyedReducer( 'siteId', ( state, { type, update } ) => {
+	switch ( type ) {
+		case JETPACK_CREDENTIALS_UPDATE_PROGRESS_START:
+			return [];
+
+		case JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE:
+			return [ ...state, update ];
+	}
+
+	return state;
+} );
+
 export const reducer = combineReducers( {
 	items,
 	getRequestStatus,
 	updateRequestStatus,
 	errors,
+	progressUpdates,
 } );

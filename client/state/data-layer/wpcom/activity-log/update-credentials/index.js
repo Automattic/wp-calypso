@@ -32,14 +32,26 @@ const navigateTo =
 		? ( path ) => window.open( path, '_blank' )
 		: ( path ) => page( path );
 
+const getMaybeNoticeId = ( action ) =>
+	'noticeId' in action ? { noticeId: action.noticeId } : {};
+
 export const request = ( action ) => {
-	const notice = infoNotice( i18n.translate( 'Testing connection…' ), {
-		duration: 30000,
-		showDismiss: false,
-	} );
-	const {
-		notice: { noticeId },
-	} = notice;
+	const maybeNotice = [];
+	const maybeNoticeId = {};
+
+	if ( action.shouldUseNotices ) {
+		const notice = infoNotice( i18n.translate( 'Testing connection…' ), {
+			duration: 30000,
+			showDismiss: false,
+		} );
+
+		const {
+			notice: { noticeId },
+		} = notice;
+
+		maybeNotice.push( notice );
+		Object.assign( maybeNoticeId, { noticeId } );
+	}
 
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
@@ -50,7 +62,7 @@ export const request = ( action ) => {
 	} );
 
 	return [
-		notice,
+		...maybeNotice,
 		tracksEvent,
 		{
 			type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
@@ -63,7 +75,7 @@ export const request = ( action ) => {
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
 				body: { credentials, stream: action.stream },
 			},
-			{ ...action, noticeId }
+			{ ...action, ...maybeNoticeId }
 		),
 	];
 };
@@ -83,7 +95,7 @@ export const success = ( action, { rewind_state } ) => [
 	},
 	successNotice( i18n.translate( 'Your site is now connected.' ), {
 		duration: 4000,
-		id: action.noticeId,
+		...getMaybeNoticeId( action ),
 	} ),
 	recordTracksEvent( 'calypso_rewind_creds_update_success', {
 		site_id: action.siteId,
@@ -112,7 +124,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 	const getHelp = () => navigateTo( contactSupportUrl( getSelectedSiteSlug( getState() ) ) );
 
-	const baseOptions = { duration: 10000, id: action.noticeId };
+	const baseOptions = { duration: 10000, ...getMaybeNoticeId( action ) };
 
 	const announce = ( message, options = {} ) =>
 		dispatch( errorNotice( message, { ...baseOptions, ...options } ) );

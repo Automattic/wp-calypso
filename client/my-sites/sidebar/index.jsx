@@ -682,6 +682,15 @@ export class MySitesSidebar extends Component {
 			storeLink = site.options.admin_url + 'admin.php?page=wc-admin&calypsoify=1';
 		}
 
+		const infoCopy = translate(
+			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
+			{
+				components: {
+					link: <a href="https://wordpress.com/support/store/" rel="noreferrer" target="_blank" />,
+				},
+			}
+		);
+
 		return (
 			<SidebarItem
 				label={ translate( 'Store' ) }
@@ -692,8 +701,7 @@ export class MySitesSidebar extends Component {
 			>
 				{ isCalypsoStoreDeprecatedOrRemoved && isBusiness( site.plan ) && (
 					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
-						<div>{ 'Store is moving to WooCommerce' }.</div>
-						<ExternalLink href="https://wordpress.com/support/store/">{ 'More' }</ExternalLink>
+						{ infoCopy }
 					</InfoPopover>
 				) }
 			</SidebarItem>

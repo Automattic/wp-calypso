@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { localize, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,22 +21,49 @@ import config from 'calypso/config';
 
 import megaphoneImage from 'calypso/assets/images/woocommerce/megaphone.svg';
 
+function getStoreStatus( isStoreDeprecated, isStoreRemoved ) {
+	if ( isStoreDeprecated ) {
+		return 'store-deprecated';
+	}
+
+	if ( isStoreRemoved ) {
+		return 'store-removed';
+	}
+
+	return '';
+}
+
 class StoreMoveNoticeView extends Component {
 	render = () => {
-		const { site, title, status } = this.props;
+		const { site, isStoreDeprecated, isStoreRemoved } = this.props;
+		const status = getStoreStatus( isStoreDeprecated, isStoreRemoved );
+
 		return (
 			<Card className={ classNames( 'dashboard__store-move-notice', status ) }>
 				<img src={ megaphoneImage } alt="" />
-				<h1>{ title }</h1>
+				<h1>{ translate( 'Find all of your business features in WooCommerce' ) }</h1>
 				<p>
-					Now you'll be able to access all of your most important store management features in one
-					place.{ ' ' }
-					<a href="https://wordpress.com/support/store/">
-						Find more information about this change here.
-					</a>
+					{ isStoreDeprecated &&
+						translate(
+							'We’re rolling your favorite Store features into WooCommerce in February. {{link}}Learn more{{/link}} about this streamlined, commerce-focused navigation experience, designed to help you save time and access your favorite extensions faster.',
+							{
+								components: {
+									link: <a href="https://wordpress.com/support/store/" />,
+								},
+							}
+						) }
+					{ isStoreRemoved &&
+						translate(
+							'We’ve rolled your favorite Store functions into WooCommerce. {{link}}Learn more{{/link}} about how this streamlined, commerce-focused navigation experience can help you save time and access your favorite extensions faster.',
+							{
+								components: {
+									link: <a href="https://wordpress.com/support/store/" />,
+								},
+							}
+						) }
 				</p>
 				<Button primary href={ site.URL + '/wp-admin/admin.php?page=wc-admin' }>
-					Go to WooCommerce Home
+					{ translate( 'Go to WooCommerce Home' ) }
 				</Button>
 			</Card>
 		);
@@ -43,23 +71,11 @@ class StoreMoveNoticeView extends Component {
 }
 
 function mapStateToProps( state ) {
-	const site = getSelectedSiteWithFallback( state );
-	let title;
-	let status;
-
-	if ( config.isEnabled( 'woocommerce/store-deprecated' ) ) {
-		title = 'Store is moving to WooCommerce';
-		status = 'store-deprecated';
-	} else if ( config.isEnabled( 'woocommerce/store-removed' ) ) {
-		title = 'Store has moved to WooCommerce';
-		status = 'store-removed';
-	}
-
 	return {
-		site,
-		title,
-		status,
+		site: getSelectedSiteWithFallback( state ),
+		isStoreDeprecated: config.isEnabled( 'woocommerce/store-deprecated' ),
+		isStoreRemoved: config.isEnabled( 'woocommerce/store-removed' ),
 	};
 }
 
-export default connect( mapStateToProps )( StoreMoveNoticeView );
+export default connect( mapStateToProps )( localize( StoreMoveNoticeView ) );

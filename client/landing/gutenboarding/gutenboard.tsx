@@ -24,6 +24,7 @@ import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 import useSignup from './hooks/use-signup';
 import useOnSignup from './hooks/use-on-signup';
 import useOnLogin from './hooks/use-on-login';
+import useSiteTitle from './hooks/use-site-title';
 import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
 
 import './style.scss';
@@ -37,6 +38,7 @@ const Gutenboard: React.FunctionComponent = () => {
 	useOnSiteCreation();
 	usePageViewTracksEvents();
 	useTrackOnboardingStart();
+	useSiteTitle();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
 
 	// TODO: Explore alternatives for loading fonts and optimizations

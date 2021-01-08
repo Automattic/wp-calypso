@@ -30,7 +30,10 @@ import {
 	removePlugin,
 	updatePlugin,
 } from 'calypso/state/plugins/installed/actions';
-import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPluginOnSites,
+	getPluginStatusesByType,
+} from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
@@ -157,25 +160,28 @@ export class PluginsList extends React.Component {
 	filterSelection = {
 		active( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
-				return plugin.sites.some( ( site ) => site.plugin && site.plugin.active );
+				return plugin.sites.some( ( site ) => {
+					const sitePlugin = this.getSitePlugin( plugin, site );
+					return sitePlugin?.active;
+				} );
 			}
 			return false;
 		},
 		inactive( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
-				return plugin.sites.some( ( site ) => site.plugin && ! site.plugin.active );
+				return plugin.sites.some( ( site ) => {
+					const sitePlugin = this.getSitePlugin( plugin, site );
+					return ! sitePlugin?.active;
+				} );
 			}
 			return false;
 		},
 		updates( plugin ) {
 			if ( this.isSelected( plugin ) ) {
-				return plugin.sites.some(
-					( site ) =>
-						site.plugin &&
-						site.plugin.update &&
-						site.plugin.update.new_version &&
-						site.canUpdateFiles
-				);
+				return plugin.sites.some( ( site ) => {
+					const sitePlugin = this.getSitePlugin( plugin, site );
+					return sitePlugin?.update?.new_version && site.canUpdateFiles;
+				} );
 			}
 			return false;
 		},
@@ -221,7 +227,7 @@ export class PluginsList extends React.Component {
 		this.props.removePluginStatuses( 'completed', 'error' );
 	}
 
-	doActionOverSelected( actionName, action, siteIdOnly = false ) {
+	doActionOverSelected( actionName, action ) {
 		const isDeactivatingAndJetpackSelected = ( { slug } ) =>
 			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
 
@@ -230,55 +236,63 @@ export class PluginsList extends React.Component {
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
 			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
-			.map( ( p ) => p.sites ) // list of plugins -> list of list of sites
+			.map( ( p ) => {
+				return p.sites.map( ( site ) => {
+					site.plugin = p;
+					return site;
+				} );
+			} ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
-			.forEach( ( site ) => {
-				// Our Redux actions only need a site ID instead of an entire site object
-				const siteArg = siteIdOnly ? site.ID : site;
-				return action( siteArg, site.plugin );
-			} );
+			.forEach( ( site ) => action( site.ID, site.plugin ) );
 	}
 
-	pluginHasUpdate( plugin ) {
-		return plugin.sites.some(
-			( site ) => site.plugin && site.plugin.update && site.canUpdateFiles
-		);
-	}
+	getSitePlugin = ( plugin, site ) => {
+		return {
+			...plugin,
+			...this.props.pluginsOnSites[ plugin.slug ]?.sites[ site.ID ],
+		};
+	};
+
+	pluginHasUpdate = ( plugin ) => {
+		return plugin.sites.some( ( site ) => {
+			const sitePlugin = this.getSitePlugin( plugin, site );
+			return sitePlugin?.update && site.canUpdateFiles;
+		} );
+	};
 
 	updateAllPlugins = () => {
 		this.removePluginStatuses();
 		this.props.plugins.forEach( ( plugin ) => {
-			plugin.sites.forEach( ( site ) => this.props.updatePlugin( site.ID, site.plugin ) );
+			plugin.sites.forEach( ( site ) => {
+				const sitePlugin = this.getSitePlugin( plugin, site );
+				return this.props.updatePlugin( site.ID, sitePlugin );
+			} );
 		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	};
 
 	updateSelected = () => {
-		this.doActionOverSelected( 'updating', this.props.updatePlugin, true );
+		this.doActionOverSelected( 'updating', this.props.updatePlugin );
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	};
 
 	activateSelected = () => {
-		this.doActionOverSelected( 'activating', this.props.activatePlugin, true );
+		this.doActionOverSelected( 'activating', this.props.activatePlugin );
 		this.recordEvent( 'Clicked Activate Plugin(s)', true );
 	};
 
 	deactivateSelected = () => {
-		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin, true );
+		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin );
 		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
 	};
 
 	deactiveAndDisconnectSelected = () => {
 		let waitForDeactivate = false;
 
-		this.doActionOverSelected(
-			'deactivating',
-			( site, plugin ) => {
-				waitForDeactivate = true;
-				this.props.deactivatePlugin( site, plugin, true );
-			},
-			true
-		);
+		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
+			waitForDeactivate = true;
+			this.props.deactivatePlugin( site, plugin );
+		} );
 
 		if ( waitForDeactivate && this.props.selectedSite ) {
 			this.setState( { disconnectJetpackNotice: true } );
@@ -288,12 +302,12 @@ export class PluginsList extends React.Component {
 	};
 
 	setAutoupdateSelected = () => {
-		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin, true );
+		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin );
 		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
 	};
 
 	unsetAutoupdateSelected = () => {
-		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin, true );
+		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin );
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
 	};
 
@@ -409,7 +423,7 @@ export class PluginsList extends React.Component {
 
 	removeSelected = ( accepted ) => {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', this.props.removePlugin, true );
+			this.doActionOverSelected( 'removing', this.props.removePlugin );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
 		}
 	};
@@ -558,10 +572,19 @@ export class PluginsList extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, { plugins } ) => {
 		const selectedSite = getSelectedSite( state );
 
+		/* eslint-disable wpcalypso/redux-no-bound-selectors */
+		const pluginsOnSites = Object.values( plugins ).reduce( ( acc, plugin ) => {
+			const siteIds = plugin.sites.map( ( site ) => site.ID );
+			acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
+			return acc;
+		}, {} );
+		/* eslint-enable wpcalypso/redux-no-bound-selectors */
+
 		return {
+			pluginsOnSites,
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
