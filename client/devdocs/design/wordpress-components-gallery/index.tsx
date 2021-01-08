@@ -49,6 +49,8 @@ import ToolbarExample from './toolbar';
 import TooltipExample from './tooltip';
 import TreeSelectExample from './tree-select';
 import VisuallyHiddenExample from './visually-hidden';
+import { isEnabled } from 'calypso/config';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 
 import './style.scss';
 
@@ -68,6 +70,9 @@ const WordPressComponentsGallery = () => (
 		<h1 className="wordpress-components-gallery__heading">
 			The kitchen sink of WordPress components from the <code>@wordpress/components</code> package.
 		</h1>
+		{ isEnabled( 'devdocs/color-scheme-picker' ) && (
+			<ColorSchemePicker readmeFilePath="color-scheme-picker" />
+		) }
 		<Flex justify="flex-start" gap={ 4 } style={ { flexWrap: 'wrap' } }>
 			<ExampleComponent name="Angle Picker Control">
 				<AnglePickerControlExample />
