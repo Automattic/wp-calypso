@@ -228,7 +228,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				{ isFree && ! isUnavailable && freeDomainLabel }
 				{ ! isFree && ! isUnavailable && (
 					<>
-						<span className="domain-picker__price-cost" data-testid="price-cost">
+						<span className="domain-picker__price-cost">
 							{
 								/* translators: %s is the price with currency. Eg: $15/year. */
 								sprintf( __( '%s/year', __i18n_text_domain__ ), cost )
@@ -238,7 +238,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 							{ /* Intentional whitespace to get the spacing around the text right */ }{ ' ' }
 							{ paidIncludedDomainLabel }{ ' ' }
 						</span>
-						<span className="domain-picker__price-renewal" data-testid="price-renewal">
+						<span className="domain-picker__price-renewal">
 							{ sprintf( __( 'Renews at: %s /year', __i18n_text_domain__ ), cost ) }
 						</span>
 					</>

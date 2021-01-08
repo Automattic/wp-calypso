@@ -364,7 +364,7 @@ describe( 'check conditional elements render correctly', () => {
 			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
 		);
 
-		expect( screen.queryByTestId( 'price-cost' ) ).toBeTruthy();
+		expect( screen.queryByText( /Renews at: €12.00/i ) ).toBeTruthy();
 	} );
 
 	it( 'renders the cost as free if given prop of isFree even though it has a cost prop', async () => {
@@ -442,7 +442,7 @@ describe( 'test that suggested items are rendered correctly based on availabilit
 		expect( screen.queryAllByText( /.com/i ) ).toBeTruthy();
 
 		expect( screen.queryByText( /Unavailable/i ) ).toBeFalsy();
-		expect( screen.queryByTestId( 'price-cost' ) ).toBeTruthy();
+		expect( screen.queryByText( /Renews at: €12.00/i ) ).toBeTruthy();
 		expect( screen.queryByText( /Recommended/i ) ).toBeTruthy();
 		expect( screen.queryByRole( 'button' )?.getAttribute( 'disabled' ) ).toBe( null );
 	} );
