@@ -30,7 +30,10 @@ import {
 	removePlugin,
 	updatePlugin,
 } from 'calypso/state/plugins/installed/actions';
-import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPluginOnSites,
+	getPluginStatusesByType,
+} from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
@@ -157,25 +160,28 @@ export class PluginsList extends React.Component {
 	filterSelection = {
 		active( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
-				return plugin.sites.some( ( site ) => site.plugin && site.plugin.active );
+				return plugin.sites.some( ( site ) => {
+					const sitePlugin = this.getSitePlugin( plugin, site );
+					return sitePlugin?.active;
+				} );
 			}
 			return false;
 		},
 		inactive( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
-				return plugin.sites.some( ( site ) => site.plugin && ! site.plugin.active );
+				return plugin.sites.some( ( site ) => {
+					const sitePlugin = this.getSitePlugin( plugin, site );
+					return ! sitePlugin?.active;
+				} );
 			}
 			return false;
 		},
 		updates( plugin ) {
 			if ( this.isSelected( plugin ) ) {
-				return plugin.sites.some(
-					( site ) =>
-						site.plugin &&
-						site.plugin.update &&
-						site.plugin.update.new_version &&
-						site.canUpdateFiles
-				);
+				return plugin.sites.some( ( site ) => {
+					const sitePlugin = this.getSitePlugin( plugin, site );
+					return sitePlugin?.update?.new_version && site.canUpdateFiles;
+				} );
 			}
 			return false;
 		},
@@ -230,7 +236,12 @@ export class PluginsList extends React.Component {
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
 			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
-			.map( ( p ) => p.sites ) // list of plugins -> list of list of sites
+			.map( ( p ) => {
+				return p.sites.map( ( site ) => {
+					site.plugin = p;
+					return site;
+				} );
+			} ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
 			.forEach( ( site ) => {
 				// Our Redux actions only need a site ID instead of an entire site object
@@ -239,16 +250,27 @@ export class PluginsList extends React.Component {
 			} );
 	}
 
-	pluginHasUpdate( plugin ) {
-		return plugin.sites.some(
-			( site ) => site.plugin && site.plugin.update && site.canUpdateFiles
-		);
-	}
+	getSitePlugin = ( plugin, site ) => {
+		return {
+			...plugin,
+			...this.props.pluginsOnSites[ plugin.slug ]?.sites[ site.ID ],
+		};
+	};
+
+	pluginHasUpdate = ( plugin ) => {
+		return plugin.sites.some( ( site ) => {
+			const sitePlugin = this.getSitePlugin( plugin, site );
+			return sitePlugin?.update && site.canUpdateFiles;
+		} );
+	};
 
 	updateAllPlugins = () => {
 		this.removePluginStatuses();
 		this.props.plugins.forEach( ( plugin ) => {
-			plugin.sites.forEach( ( site ) => this.props.updatePlugin( site.ID, site.plugin ) );
+			plugin.sites.forEach( ( site ) => {
+				const sitePlugin = this.getSitePlugin( plugin, site );
+				return this.props.updatePlugin( site.ID, sitePlugin );
+			} );
 		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	};
@@ -558,10 +580,19 @@ export class PluginsList extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, { plugins } ) => {
 		const selectedSite = getSelectedSite( state );
 
+		/* eslint-disable wpcalypso/redux-no-bound-selectors */
+		const pluginsOnSites = Object.values( plugins ).reduce( ( acc, plugin ) => {
+			const siteIds = plugin.sites.map( ( site ) => site.ID );
+			acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
+			return acc;
+		}, {} );
+		/* eslint-enable wpcalypso/redux-no-bound-selectors */
+
 		return {
+			pluginsOnSites,
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
