@@ -4,7 +4,6 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import wp from '../../../lib/wp';
-import { FLOW_ID, ANCHOR_FM_FLOW_ID } from '../../gutenboarding/constants';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
-import { useIsAnchorFm, useAnchorFmParams } from '../path';
+import { useIsAnchorFm, useAnchorFmParams, useOnboardingFlow } from '../path';
 
 const wpcom = wp.undocumented();
 
@@ -67,6 +66,7 @@ export default function useOnSiteCreation(): void {
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	const isAnchorFmSignup = useIsAnchorFm();
+	const flow = useOnboardingFlow();
 	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
@@ -121,14 +121,14 @@ export default function useOnSiteCreation(): void {
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
-					flow: isAnchorFmSignup ? ANCHOR_FM_FLOW_ID : FLOW_ID,
+					flow,
 				} );
 				go();
 				return;
 			}
 			recordOnboardingComplete( {
 				...flowCompleteTrackingParams,
-				flow: isAnchorFmSignup ? ANCHOR_FM_FLOW_ID : FLOW_ID,
+				flow,
 			} );
 			resetOnboardStore();
 			clearLastNonEditorRoute();

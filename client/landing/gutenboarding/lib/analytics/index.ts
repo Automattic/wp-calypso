@@ -6,7 +6,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 /**
  * Internal dependencies
  */
-import { FLOW_ID, ANCHOR_FM_FLOW_ID } from '../../constants';
+import { FLOW_ID } from '../../constants';
 import type { StepNameType } from '../../path';
 import type { ErrorParameters, OnboardingCompleteParameters, TracksEventProperties } from './types';
 
@@ -31,17 +31,12 @@ export function trackEventWithFlow( eventId: string, params = {}, flow = FLOW_ID
  *
  * @param {string} ref  The value of a `ref` query parameter, usually set by marketing landing pages
  * @param {number} site_count The number of sites owned by the current user or 0 if there is no logged in user
- * @param {boolean} is_podcasting_site If the current onboarding flow is a Podcast-flavored onboarding flow
+ * @param {string} flow the current onboarding flow
  */
-export function recordOnboardingStart(
-	ref = '',
-	site_count: number,
-	is_podcasting_site: boolean
-): void {
+export function recordOnboardingStart( ref = '', site_count: number, flow: string ): void {
 	if ( ! ref ) {
 		ref = new URLSearchParams( window.location.search ).get( 'ref' ) || ref;
 	}
-	const flow = is_podcasting_site ? ANCHOR_FM_FLOW_ID : '';
 	const eventProps = { ref, site_count };
 	trackEventWithFlow( 'calypso_newsite_start', eventProps, flow );
 	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
