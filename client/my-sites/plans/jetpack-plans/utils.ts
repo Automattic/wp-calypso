@@ -5,6 +5,7 @@ import { translate, TranslateResult, numberFormat } from 'i18n-calypso';
 import { compact, get, isArray, isObject, isFunction } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -338,25 +339,24 @@ export function productTooltip(
 	product: SelectorProduct,
 	tiers: PriceTiers
 ): null | TranslateResult {
+	const currency = product.displayCurrency || 'USD';
 	if ( JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
 		return translate(
 			'{{p}}{{strong}}Pay only for what you need.{{/strong}}{{/p}}' +
-				'{{p}}Up to 100 records $%(price100)s{{br/}}' +
-				'Up to 1,000 records $%(price1000)s{{/p}}' +
+				'{{p}}Up to 100 records %(price100)s{{br/}}' +
+				'Up to 1,000 records %(price1000)s{{/p}}' +
 				'{{Info}}More info{{/Info}}',
 			{
 				args: {
-					price100: numberFormat( getPriceTier( tiers, 'up_to_100_records' ) || 50, 2 ).replace(
-						'.00',
-						''
-					),
-					price1000: numberFormat( getPriceTier( tiers, 'up_to_1k_records' ) || 100, 2 ).replace(
-						'.00',
-						''
-					),
+					price100: formatCurrency( getPriceTier( tiers, 'up_to_100_records' ) || 50, currency, {
+						stripZeros: true,
+					} ),
+					price1000: formatCurrency( getPriceTier( tiers, 'up_to_1k_records' ) || 100, currency, {
+						stripZeros: true,
+					} ),
 				},
 				comment:
-					'price100 = price per 100 records, price1000 = price per 1000 records. See https://jetpack.com/upgrade/search/.',
+					'price100 = formatted price per 100 records, price1000 = formatted price per 1000 records. See https://jetpack.com/upgrade/search/.',
 				components: {
 					strong: createElement( 'strong' ),
 					p: createElement( 'p' ),

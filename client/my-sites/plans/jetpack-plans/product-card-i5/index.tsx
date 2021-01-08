@@ -89,13 +89,16 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
 
+	// Sets the currency. This is needed for the tooltip below.
+	item.displayCurrency = item.displayCurrency ?? currencyCode ?? undefined;
+
 	return (
 		<JetpackProductCard
 			productSlug={ item.productSlug }
 			productName={ item.displayName }
 			headingLevel={ 3 }
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
-			currencyCode={ item.displayCurrency || currencyCode }
+			currencyCode={ item.displayCurrency }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			billingTerm={ item.displayTerm || item.term }
