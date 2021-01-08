@@ -60,12 +60,6 @@ Note: pluginFilter can be any of the following string: 'none' , 'all', 'active',
 
 Returns an array of plugin objects for a particular site.
 
----
-
-#### PluginsStore.getSites( sites, pluginSlug );
-
-Returns an array of sites that have a particular plugin.
-
 ### Example Component Code
 
 ```js

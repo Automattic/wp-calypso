@@ -65,6 +65,9 @@ const selectedSite = {
 const props = {
 	selectedSite,
 	sites: [ [ {} ] ],
+	pluginsOnSites: {
+		sites: {},
+	},
 	plugin: { active: false },
 	selectedSiteId: 123,
 	translate: ( x ) => x,

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { assign, clone, isArray, sortBy, values, find } from 'lodash';
+import { assign, isArray, sortBy, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +14,6 @@ import versionCompare from 'calypso/lib/version-compare';
 import { normalizePluginData } from 'calypso/lib/plugins/utils';
 import { reduxDispatch, reduxGetState } from 'calypso/lib/redux-bridge';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
-import { getSite } from 'calypso/state/sites/selectors';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 
@@ -163,32 +162,6 @@ const PluginsStore = {
 			return _pluginsBySite[ site.ID ];
 		}
 		return values( _pluginsBySite[ site.ID ] );
-	},
-
-	// Array of sites with a particular plugin.
-	getSites: function ( sites, pluginSlug ) {
-		const plugins = this.getPlugins( sites );
-		if ( ! plugins ) {
-			return;
-		}
-
-		const plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
-		if ( ! plugin ) {
-			return null;
-		}
-
-		const pluginSites = plugin.sites
-			.filter( ( site ) => site.visible )
-			.map( ( site ) => {
-				// clone the site object before adding a new property. Don't modify the return value of getSite
-				const pluginSite = clone( getSite( reduxGetState(), site.ID ) );
-				pluginSite.plugin = site.plugin;
-				return pluginSite;
-			} );
-
-		return pluginSites.sort( function ( first, second ) {
-			return first.title.toLowerCase() > second.title.toLowerCase() ? 1 : -1;
-		} );
 	},
 
 	emitChange: function () {

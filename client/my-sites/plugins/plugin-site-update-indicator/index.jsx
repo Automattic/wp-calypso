@@ -57,6 +57,10 @@ class PluginSiteUpdateIndicator extends React.Component {
 	};
 
 	getOngoingUpdates = () => {
+		if ( ! this.props.pluginOnSite?.update?.new_version ) {
+			return [];
+		}
+
 		return this.props.inProgressStatuses.filter(
 			( status ) =>
 				parseInt( status.siteId ) === this.props.site.ID && status.action === UPDATE_PLUGIN

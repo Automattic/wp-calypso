@@ -108,25 +108,6 @@ describe( 'Plugins Store', () => {
 			} );
 		} );
 
-		describe( 'getSites method', () => {
-			test( 'Store should have method getSites', () => {
-				assert.isFunction( PluginsStore.getSites );
-			} );
-
-			test( 'Should return Array of Objects', () => {
-				const Sites = PluginsStore.getSites( site, 'akismet' );
-				assert.isArray( Sites );
-				assert.isObject( Sites[ 0 ] );
-			} );
-
-			test( 'Should return Array of Objects that has the pluginSlug as a attribute', () => {
-				const Sites = PluginsStore.getSites( site, 'akismet' );
-				assert.isArray( Sites );
-				assert.isObject( Sites[ 0 ] );
-				assert.equal( Sites[ 0 ].plugin.slug, 'akismet' );
-			} );
-		} );
-
 		test( 'Should return an empty array if RECEIVE_PLUGINS errors', () => {
 			Dispatcher.handleServerAction( actions.fetchedError );
 			const UpdatedStore = PluginsStore.getPlugins( {

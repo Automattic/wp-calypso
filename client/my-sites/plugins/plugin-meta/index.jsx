@@ -423,9 +423,17 @@ export class PluginMeta extends Component {
 			.filter( ( newVersions ) => newVersions );
 	}
 
+	getPluginForSite = ( siteId ) => {
+		return {
+			...this.props.plugin,
+			...this.props.pluginsOnSites?.sites[ siteId ],
+		};
+	};
+
 	handlePluginUpdatesSingleSite = ( event ) => {
 		event.preventDefault();
-		this.props.updatePlugin( this.props.sites[ 0 ].ID, this.props.sites[ 0 ].plugin );
+		const plugin = this.getPluginForSite( this.props.sites[ 0 ].ID );
+		this.props.updatePlugin( this.props.sites[ 0 ].ID, plugin );
 
 		gaRecordEvent(
 			'Plugins',
@@ -435,7 +443,7 @@ export class PluginMeta extends Component {
 		);
 		recordTracksEvent( 'calypso_plugins_actions_update_plugin', {
 			site: this.props.sites[ 0 ].ID,
-			plugin: this.props.sites[ 0 ].plugin.slug,
+			plugin: plugin.slug,
 			selected_site: this.props.sites[ 0 ].ID,
 		} );
 	};
@@ -443,7 +451,7 @@ export class PluginMeta extends Component {
 	handlePluginUpdatesMultiSite = ( event ) => {
 		event.preventDefault();
 		this.props.sites.forEach( ( site ) => {
-			const { plugin } = site;
+			const plugin = this.getPluginForSite( site.ID );
 			if (
 				site.canUpdateFiles &&
 				plugin.update &&
@@ -503,10 +511,11 @@ export class PluginMeta extends Component {
 			'is-placeholder': !! this.props.isPlaceholder,
 		} );
 
-		const plugin =
-			this.props.selectedSite && this.props.sites[ 0 ] && this.props.sites[ 0 ].plugin
-				? this.props.sites[ 0 ].plugin
-				: this.props.plugin;
+		let { plugin } = this.props;
+		if ( this.props.selectedSite ) {
+			plugin = this.getPluginForSite( this.props.selectedSite.ID );
+		}
+
 		const path =
 			( ! this.props.selectedSite || plugin.active ) && getExtensionSettingsPath( plugin );
 

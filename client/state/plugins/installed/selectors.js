@@ -120,6 +120,11 @@ export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	return sortBy( pluginSites, ( siteId ) => getSiteTitle( state, siteId ).toLowerCase() );
 }
 
+export function getSiteObjectsWithPlugin( state, siteIds, pluginSlug ) {
+	const siteIdsWithPlugin = getSitesWithPlugin( state, siteIds, pluginSlug );
+	return siteIdsWithPlugin.map( ( siteId ) => getSite( state, siteId ) );
+}
+
 export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 	const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || [];
 	return filter( siteIds, function ( siteId ) {
