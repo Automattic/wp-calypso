@@ -118,7 +118,7 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			features={ item.features }
 			displayFrom={ ! siteId && priceTiers !== null }
 			tooltipText={ ! siteId && priceTiers && productTooltip( item, priceTiers ) }
-      { ...disabledProps }
+			{ ...disabledProps }
 		/>
 	);
 };
