@@ -66,8 +66,9 @@ class PluginNotices extends React.Component {
 
 	getPluginById( pluginId ) {
 		return this.props.plugins.find(
-			( plugin ) =>
-				isSamePluginIdSlug( plugin.id, pluginId ) || isSamePluginIdSlug( plugin.slug, pluginId )
+			( { id, slug } ) =>
+				( id && isSamePluginIdSlug( id, pluginId ) ) ||
+				( slug && isSamePluginIdSlug( slug, pluginId ) )
 		);
 	}
 
