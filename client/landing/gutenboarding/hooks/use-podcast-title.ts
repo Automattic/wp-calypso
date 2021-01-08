@@ -21,11 +21,11 @@ export default function usePodcastTitle(): string | null {
 			return;
 		}
 		// Fetch podcast title from /podcast-details endpoint
-		( apiFetch< PodcastDetails >( {
+		apiFetch< PodcastDetails >( {
 			path: `https://public-api.wordpress.com/wpcom/v2/podcast-details?url=https://anchor.fm/s/${ encodeURIComponent(
 				anchorFmPodcastId
 			) }/podcast/rss&_fields=title`,
-		} ) )
+		} )
 			.then( ( response ) => {
 				if ( response?.title ) {
 					setPodcastTitle( response.title );

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useSelector } from 'react-redux';
+import { clone } from 'lodash';
 
 /**
  * Internal dependencies
@@ -104,7 +105,7 @@ const useItemPrice = (
 	const isFetching = siteId ? sitePrices.isFetching : listPrices.isFetching;
 	const itemCost = siteId ? sitePrices.itemCost : listPrices.itemCost;
 	const monthlyItemCost = siteId ? sitePrices.monthlyItemCost : listPrices.monthlyItemCost;
-	const priceTiers = siteId ? sitePrices.priceTiers : listPrices.priceTiers;
+	const rawPriceTiers = siteId ? sitePrices.priceTiers : listPrices.priceTiers;
 
 	if ( isFetching ) {
 		return {
@@ -116,15 +117,17 @@ const useItemPrice = (
 
 	let originalPrice = 0;
 	let discountedPrice = undefined;
+	let priceTiers: PriceTiers | null = rawPriceTiers;
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
 			originalPrice = monthlyItemCost;
 			discountedPrice = itemCost / 12;
 
-			if ( priceTiers ) {
-				for ( const tierKey in priceTiers ) {
-					const tier = priceTiers[ tierKey ];
+			if ( rawPriceTiers ) {
+				priceTiers = {};
+				for ( const tierKey in rawPriceTiers ) {
+					const tier = clone( rawPriceTiers[ tierKey ] );
 					if ( 'flat_price' in tier ) {
 						tier.flat_price = tier.flat_price / 12;
 					} else if ( 'variable_price_per_unit' in tier ) {

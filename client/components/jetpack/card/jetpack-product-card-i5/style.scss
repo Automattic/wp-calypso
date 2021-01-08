@@ -157,6 +157,7 @@
 
 .jetpack-product-card-i5__price-tooltip {
 	color: var( --studio-gray-40 );
+	margin-bottom: 0.875rem;
 }
 
 .jetpack-product-card-i5__price-tooltip.popover .popover__inner {
@@ -168,6 +169,12 @@
 
 .jetpack-product-card-i5__expiration-date {
 	color: var( --studio-pink-50 );
+}
+
+.jetpack-product-card-i5__above-button {
+	color: var( --studio-gray-40 );
+	font-size: 0.875rem;
+	line-height: 1.2;
 }
 
 .jetpack-product-card-i5__disabled-message {
