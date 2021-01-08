@@ -44,8 +44,8 @@ ul.plans-feature-list__item-group {
 
 	// the tick
 	& > svg path {
-		fill: var( --studio-gray-100 );
-		stroke: var( --studio-gray-100 );
+		fill: var( --studio-green-40 );
+		stroke: var( --studio-green-40 );
 	}
 
 	&--disabled-message {
