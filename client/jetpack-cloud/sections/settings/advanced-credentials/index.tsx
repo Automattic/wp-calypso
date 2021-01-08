@@ -13,7 +13,6 @@ import React, { FunctionComponent, useMemo, useState, useEffect } from 'react';
 import { Button, Card } from '@automattic/components';
 import { ConnectionStatus, StatusState } from './connection-status';
 import { FormMode, FormState, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate } from './form';
-import Verification from './verification';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -112,12 +111,17 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	}, [ hasCredentials, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
-		if ( 'pending' === formSubmissionStatus ) {
-			return Step.Verification;
-		} else if ( statusState === StatusState.Connected ) {
+		if ( statusState === StatusState.Connected ) {
 			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
-		} else if ( undefined === host ) {
+			// Verification pushed to future
+		} /* else if ( 'pending' === formSubmissionStatus ) {
+			return State.Verification;
+		} */ else if (
+			undefined === host
+		) {
 			return Step.HostSelection;
+		} else if ( 'pending' === formSubmissionStatus ) {
+			return Step.Verification;
 		}
 		return Step.Credentials;
 	}, [ action, formSubmissionStatus, host, statusState ] );
@@ -161,13 +165,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			}
 		}
 	}, [ setFormErrors, formSubmissionError, translate ] );
-
-	// on success, move from edit to connected state
-	useEffect( () => {
-		if ( formSubmissionStatus === 'success' ) {
-			page( settingsPath( siteSlug as string ) );
-		}
-	}, [ formSubmissionStatus, siteSlug ] );
 
 	// reset form information on siteId change
 	useEffect( () => {
@@ -221,7 +218,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			return;
 		}
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
-		dispatch( updateCredentials( siteId, { role, ...formState }, true, false ) );
+		dispatch( updateCredentials( siteId, { role, ...formState }, true ) );
 	};
 
 	const disableForm = 'pending' === formSubmissionStatus;
@@ -290,17 +287,8 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			case Step.HostSelection:
 				return <HostSelection />;
 			case Step.Credentials:
-				return renderCredentialsForm( false );
 			case Step.Verification:
-				return (
-					<Verification
-						formSubmissionError={ formSubmissionError }
-						formSubmissionStatus={ formSubmissionStatus }
-						onFinishUp={ () => {
-							/* TODO @azabani */
-						} }
-					/>
-				);
+				return renderCredentialsForm( false );
 			case Step.Connected:
 				return (
 					<div>

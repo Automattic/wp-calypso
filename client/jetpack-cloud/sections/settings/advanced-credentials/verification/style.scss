@@ -3,7 +3,8 @@
 	margin-left: 0;
 }
 
-.verification__step-item {
+.verification__step-complete,
+.verification__step-in-progress {
 	display: flex;
 	align-items: center;
 	.gridicon {
@@ -11,28 +12,15 @@
 	}
 }
 
-.verification__step-waiting,
-.verification__step-unknown {
+.verification__step-complete {
 	.gridicon {
-		fill: var( --color-neutral );
+		fill: var( --studio-jetpack-green-50 );
 	}
 }
 
-.verification__step-active {
+.verification__step-in-progress {
 	.gridicon {
-		fill: var( --color-secondary );
-	}
-}
-
-.verification__step-good {
-	.gridicon {
-		fill: var( --color-success );
-	}
-}
-
-.verification__step-bad {
-	.gridicon {
-		fill: var( --color-error );
+		fill: var( --studio-yellow-30 );
 	}
 }
 
