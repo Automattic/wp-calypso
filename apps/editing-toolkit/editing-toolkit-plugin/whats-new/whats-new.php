@@ -59,11 +59,11 @@ class Whats_New {
 
 		$style_path = 'dist/whats-new' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		wp_enqueue_style(
-			'wpcom-block-patterns-modifications',
+			'wpcom-whats-new',
 			plugins_url( $style_path, __FILE__ ),
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . $style_path )
 		);
 	}
 }
-add_action( 'init', array( __NAMESPACE__ . '\Whats_new', 'init' ) );
+add_action( 'init', array( __NAMESPACE__ . '\Whats_New', 'init' ) );
