@@ -1,6 +1,80 @@
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
+/******************************************/
+/*       Vertical Scroll Experiment       */
+/******************************************/
+
+.in-vertically-scrolled-plans-experiment {
+	// If experiment succeeds the following styles
+	// need to be moved to the corresponding selectors
+
+	// To be moved to line 651 approximately
+	.plan-features--signup {
+		.plan-features__table {
+			@media ( max-width: 1040px ) {
+				display: none;
+			}
+		}
+
+		//To be moved to line 66 approximately
+		.plan-features__mobile {
+			@media ( min-width: 660px ) and ( max-width: 1040px ) {
+				.plan-features__summary, .plan-features__description {
+					padding: 16px 33px;
+
+				}
+				.plan-features--signup .plan-features__pricing {
+					padding: 0 7px;
+
+				}
+			}
+
+			@media ( max-width: 1040px ) {
+				display: block;
+			}
+
+			.plan-features__pricing .plan-price__currency-symbol {
+				vertical-align: super;
+				font-size: $font-body-extra-small;
+				font-weight: normal;
+			}
+
+			//To be moved to line 904 approximately
+			.plan-price.plan-price {
+				font-weight: 400;
+				margin-right: 10px;
+				font-size: $font-title-medium;
+				font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+			}
+
+			.plan-features__header-title {
+				font-size: 1.25rem;
+				color: var( --color-primary );
+				line-height: 0.7;
+			}
+
+			.plan-features__header-billing-info {
+				margin-bottom: 1.4em;
+				font-size: 0.75rem;
+				font-style: italic;
+				font-weight: 400;
+				color: var( --color-text-subtle );
+				line-height: normal;
+			}
+		}
+
+	}
+}
+
+
+.plan-features--loading-container {
+	margin-top: 300px;
+}
+
+/******************************************/
+
+
 /* Breakpoints 1150px, */
 
 .plan-features__content {

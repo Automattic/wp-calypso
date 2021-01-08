@@ -146,6 +146,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			isInVerticalScrollingPlansExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -189,6 +190,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 				/>
 			</div>
 		);
@@ -299,6 +301,7 @@ export class PlansFeaturesMain extends Component {
 			selectedPlan,
 			plansWithScroll,
 			withWPPlanTabs,
+			showAllPlans,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
@@ -334,9 +337,15 @@ export class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( ! withWPPlanTabs ) {
+		if ( showAllPlans || ! withWPPlanTabs ) {
 			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ] )
+				isPlanOneOfType( plan, [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+				] )
 			);
 		}
 
@@ -484,6 +493,7 @@ PlansFeaturesMain.propTypes = {
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	withWPPlanTabs: PropTypes.bool,
+	showAllPlans: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
 	customHeader: PropTypes.node,
