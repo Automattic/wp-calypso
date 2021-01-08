@@ -53,8 +53,8 @@ import {
 	getSite,
 	isJetpackSite,
 	canCurrentUserUseEarn,
-	canCurrentUserUseStore,
 	getSiteOption,
+	canCurrentUserUseCalypsoStore,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -662,19 +662,11 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { translate, site, siteSuffix, canUserUseStore } = this.props;
+		const { translate, site, siteSuffix, canUserUseCalypsoStore } = this.props;
 		const isCalypsoStoreDeprecatedOrRemoved =
 			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
-			return null;
-		}
-
-		if ( ! canUserUseStore ) {
-			return null;
-		}
-
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site || ! canUserUseCalypsoStore ) {
 			return null;
 		}
 
@@ -717,17 +709,16 @@ export class MySitesSidebar extends Component {
 	};
 
 	woocommerce() {
-		const { site, canUserUseStore, siteSuffix, isSiteWpcomStore } = this.props;
+		const { site, canUserUseWooCommerceCoreStore, siteSuffix, isSiteWpcomStore } = this.props;
 
 		const isCalypsoStoreDeprecatedOrRemoved =
 			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 
 		if (
-			! isEnabled( 'woocommerce/extension-dashboard' ) ||
 			! isCalypsoStoreDeprecatedOrRemoved ||
 			! site ||
 			! isBusiness( site.plan ) ||
-			! canUserUseStore
+			! canUserUseWooCommerceCoreStore
 		) {
 			return null;
 		}
@@ -1112,7 +1103,7 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseStore: canCurrentUserUseStore( state, siteId ),
+		canUserUseCalypsoStore: canCurrentUserUseCalypsoStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		currentUser,

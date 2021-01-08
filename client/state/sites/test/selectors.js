@@ -37,7 +37,7 @@ import {
 	hasStaticFrontPage,
 	canCurrentUserUseAds,
 	canCurrentUserUseCustomerHome,
-	canCurrentUserUseStore,
+	canCurrentUserUseCalypsoStore,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
@@ -3497,7 +3497,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'canCurrentUserUseStore()', () => {
+	describe( 'canCurrentUserUseCalypsoStore()', () => {
 		const createState = (
 			manage_options,
 			is_automated_transfer,
@@ -3526,26 +3526,26 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if site is AT and user can manage it', () => {
-			expect( canCurrentUserUseStore( createState( true, true, false ) ) ).toBe( true );
+			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( true );
 		} );
 
 		test( 'should return false if site is not AT and user can manage it', () => {
-			expect( canCurrentUserUseStore( createState( true, false, false ) ) ).toBe( false );
+			expect( canCurrentUserUseCalypsoStore( createState( true, false, false ) ) ).toBe( false );
 		} );
 
 		test( "should return false if site is AT and user can't manage it", () => {
-			expect( canCurrentUserUseStore( createState( false, true, false ) ) ).toBe( false );
+			expect( canCurrentUserUseCalypsoStore( createState( false, true, false ) ) ).toBe( false );
 		} );
 
 		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
 			const oldEnabled = config.isEnabled;
 			config.isEnabled = () => true;
-			expect( canCurrentUserUseStore( createState( false, false, true ) ) ).toBe( true );
+			expect( canCurrentUserUseCalypsoStore( createState( false, false, true ) ) ).toBe( true );
 			config.isEnabled = oldEnabled;
 		} );
 
 		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
-			expect( canCurrentUserUseStore( createState( false, false, true ) ) ).toBe( false );
+			expect( canCurrentUserUseCalypsoStore( createState( false, false, true ) ) ).toBe( false );
 		} );
 	} );
 

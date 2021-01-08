@@ -66,7 +66,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return store menu item if user can use store on this site', () => {
 			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: true,
+				canUserUseCalypsoStore: true,
 				...defaultProps,
 				site: {
 					plan: {
@@ -82,7 +82,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return Calypsoified store menu item if user can use store on this site and the site is an ecommerce plan', () => {
 			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: true,
+				canUserUseCalypsoStore: true,
 				...defaultProps,
 				site: {
 					options: {
@@ -102,7 +102,7 @@ describe( 'MySitesSidebar', () => {
 		test( 'Should return null item if user who can upgrade can not use store on this site (control a/b group)', () => {
 			abtest.mockImplementation( () => 'control' );
 			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: false,
+				canUserUseCalypsoStore: false,
 				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
@@ -115,7 +115,7 @@ describe( 'MySitesSidebar', () => {
 		test( "Should return null if user who can't upgrade  user can not use store on this site (control a/b group)", () => {
 			abtest.mockImplementation( () => 'control' );
 			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: false,
+				canUserUseCalypsoStore: false,
 				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
@@ -137,12 +137,15 @@ describe( 'MySitesSidebar', () => {
 			config.isEnabled.mockImplementation( () => true );
 		} );
 
-		test( 'Should return null item if woocommerce/store-deprecated is disabled', () => {
-			config.isEnabled.mockImplementation(
-				( feature ) => feature !== 'woocommerce/store-deprecated' // Only disable this one feature
-			);
+		test( 'Should return null item if woocommerce/store-deprecated and woocommerce/store-removed is disabled', () => {
+			// Enable all features except for store deprecation and removal
+			config.isEnabled.mockImplementation( ( feature ) => {
+				return (
+					feature !== 'woocommerce/store-deprecated' && feature !== 'woocommerce/store-removed'
+				);
+			} );
 			const Sidebar = new MySitesSidebar( {
-				canUserUserStore: true,
+				canUserUseWooCommerceCoreStore: true,
 				...defaultProps,
 				site: {
 					plan: {
@@ -173,7 +176,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return null item if site has eCommerce plan', () => {
 			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: true,
+				canUserUseWooCommerceCoreStore: true,
 				...defaultProps,
 				site: {
 					plan: {
@@ -189,7 +192,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return null item if site has Business plan and user cannot use store', () => {
 			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: false,
+				canUserUseWooCommerceCoreStore: false,
 				...defaultProps,
 				site: {
 					plan: {
@@ -205,7 +208,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return WooCommerce menu item redirecting to WooCommerce if site has Business plan and user can use store', () => {
 			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: true,
+				canUserUseWooCommerceCoreStore: true,
 				...defaultProps,
 				site: {
 					options: {
@@ -228,7 +231,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return WooCommerce menu item linking to Store UI dashboard if site has Business plan, WooCommerce plugin not installed yet, and user can use store', () => {
 			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: true,
+				canUserUseWooCommerceCoreStore: true,
 				...defaultProps,
 				site: {
 					options: {

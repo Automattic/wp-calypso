@@ -10,13 +10,13 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
- * Returns true if current user can see and use Store option in menu
+ * Returns true if current user can see and use the Calypso-based Store option in menu
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable
  */
-export default function canCurrentUserUseStore( state, siteId = null ) {
+export default function canCurrentUserUseCalypsoStore( state, siteId = null ) {
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
