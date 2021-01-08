@@ -135,7 +135,8 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading,
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
 	padding: $grid-unit-05 $grid-unit-20;
-	font-size: $big-font-size;
+	/* stylelint-disable-next-line scales/font-size */
+	font-size: 18px;
 	color: $white;
 	margin: 0 0 8px;
 }

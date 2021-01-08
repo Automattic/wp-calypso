@@ -126,7 +126,6 @@
 		"@wordpress/html-entities": "*",
 		"@wordpress/i18n": "*",
 		"@wordpress/icons": "*",
-		"@wordpress/interface": "^0.11.1",
 		"@wordpress/keycodes": "*",
 		"@wordpress/nux": "^3.24.1",
 		"@wordpress/plugins": "*",
