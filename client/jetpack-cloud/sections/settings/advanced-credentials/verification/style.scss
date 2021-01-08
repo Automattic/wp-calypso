@@ -45,3 +45,20 @@
 	display: flex;
 	flex-direction: row-reverse;
 }
+
+.verification__error {
+	> details {
+		p {
+			font-size: $font-body;
+			white-space: pre-wrap;
+
+			// hanging indent
+			padding-left: 1em;
+			text-indent: -1em;
+		}
+
+		span {
+			color: var( --color-text-subtle );
+		}
+	}
+}

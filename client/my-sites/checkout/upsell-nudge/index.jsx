@@ -276,7 +276,7 @@ export class UpsellNudge extends React.Component {
 
 	isEligibleForOneClickUpsell = ( buttonAction ) => {
 		const { product, cards, siteSlug, upsellType } = this.props;
-		
+
 		if ( ! product ) {
 			return false;
 		}
