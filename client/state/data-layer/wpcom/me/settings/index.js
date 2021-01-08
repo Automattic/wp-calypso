@@ -20,7 +20,7 @@ import {
 import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /*
  * Decodes entities in those specific user settings properties
@@ -83,14 +83,19 @@ export function saveUserSettingsFailure( { settingsOverride }, error ) {
 		];
 	}
 
-	return updateUserSettingsFailure( settingsOverride, error );
+	return [
+		errorNotice( error.message || translate( 'There was a problem saving your changes.' ), {
+			id: 'save-user-settings-failure',
+		} ),
+		updateUserSettingsFailure( settingsOverride, error ),
+	];
 }
 
 /*
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const finishUserSettingsSave = ( { settingsOverride }, data ) => ( dispatch ) => {
+export const finishUserSettingsSave = ( { settingsOverride, onSuccess }, data ) => ( dispatch ) => {
 	dispatch( updateUserSettings( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
 
@@ -105,6 +110,16 @@ export const finishUserSettingsSave = ( { settingsOverride }, data ) => ( dispat
 	const userLibModule = require( 'calypso/lib/user' );
 	const userLib = userLibModule.default ? userLibModule.default : userLibModule; // TODO: delete line after removing add-module-exports.
 	userLib().fetch();
+
+	if ( onSuccess && typeof onSuccess === 'function' ) {
+		onSuccess( data );
+	}
+
+	dispatch(
+		successNotice( translate( 'Settings saved successfully!' ), {
+			id: 'save-user-settings-success',
+		} )
+	);
 };
 
 registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {

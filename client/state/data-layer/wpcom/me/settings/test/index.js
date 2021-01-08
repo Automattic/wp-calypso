@@ -14,6 +14,7 @@ import {
 } from '../';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { updateUserSettings, clearUnsavedUserSettings } from 'calypso/state/user-settings/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'user settings request', () => {
@@ -149,13 +150,18 @@ describe( 'wpcom-api', () => {
 					language: 'qix',
 				} )( dispatch );
 
-				expect( dispatch ).toHaveBeenCalledTimes( 2 );
+				expect( dispatch ).toHaveBeenCalledTimes( 3 );
 				expect( dispatch ).toHaveBeenCalledWith(
 					updateUserSettings( {
 						language: 'qix',
 					} )
 				);
 				expect( dispatch ).toHaveBeenCalledWith( clearUnsavedUserSettings() );
+				expect( dispatch ).toHaveBeenCalledWith(
+					successNotice( 'Settings saved successfully!', {
+						id: 'save-user-settings-success',
+					} )
+				);
 			} );
 
 			test( 'should dispatch user settings update and clear only one unsaved setting on partial save', () => {
@@ -167,13 +173,18 @@ describe( 'wpcom-api', () => {
 
 				finishUserSettingsSave( action, data )( dispatch );
 
-				expect( dispatch ).toHaveBeenCalledTimes( 2 );
+				expect( dispatch ).toHaveBeenCalledTimes( 3 );
 				expect( dispatch ).toHaveBeenCalledWith(
 					updateUserSettings( {
 						language: 'qix',
 					} )
 				);
 				expect( dispatch ).toHaveBeenCalledWith( clearUnsavedUserSettings( [ 'language' ] ) );
+				expect( dispatch ).toHaveBeenCalledWith(
+					successNotice( 'Settings saved successfully!', {
+						id: 'save-user-settings-success',
+					} )
+				);
 			} );
 
 			test( 'should decode HTML entities returned in some fields of HTTP response', () => {

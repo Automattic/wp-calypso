@@ -21,7 +21,6 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SectionHeader from 'calypso/components/section-header';
@@ -43,8 +42,6 @@ const debug = debugFactory( 'calypso:me:profile' );
 const Profile = createReactClass( {
 	displayName: 'Profile',
 
-	mixins: [ observe( 'userSettings' ) ],
-
 	componentDidMount() {
 		debug( this.displayName + ' component is mounted.' );
 	},
@@ -62,8 +59,7 @@ const Profile = createReactClass( {
 	},
 
 	render() {
-		const gravatarProfileLink =
-			'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
+		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
 
 		return (
 			<Main className="profile is-wide-layout">
@@ -160,12 +156,10 @@ const Profile = createReactClass( {
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton
-								disabled={
-									! this.props.userSettings.hasUnsavedSettings() || this.props.getDisabledState()
-								}
+								disabled={ ! this.props.hasUnsavedUserSettings || this.props.getDisabledState() }
 								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
 							>
-								{ this.props.formState.submittingForm
+								{ this.props.getDisabledState()
 									? this.props.translate( 'Saving…' )
 									: this.props.translate( 'Save profile details' ) }
 							</FormButton>

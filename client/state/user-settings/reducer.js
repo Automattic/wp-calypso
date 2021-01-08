@@ -17,7 +17,7 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
-export const settings = ( state = null, { type, settingValues } ) =>
+export const settings = ( state = {}, { type, settingValues } ) =>
 	USER_SETTINGS_UPDATE === type ? { ...state, ...settingValues } : state;
 
 export const unsavedSettings = ( state = {}, action ) => {
@@ -57,8 +57,22 @@ export const updatingPassword = ( state = false, action ) => {
 	return state;
 };
 
+export const updating = ( state = false, action ) => {
+	switch ( action.type ) {
+		case USER_SETTINGS_SAVE: {
+			return true;
+		}
+		case USER_SETTINGS_UPDATE:
+		case USER_SETTINGS_UPDATE_FAILURE: {
+			return false;
+		}
+	}
+	return state;
+};
+
 export default combineReducers( {
 	settings,
 	unsavedSettings,
 	updatingPassword,
+	updating,
 } );

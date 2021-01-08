@@ -19,7 +19,7 @@ import {
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( reducer( undefined, {} ) ).sort() ).toEqual(
-			[ 'settings', 'unsavedSettings', 'updatingPassword' ].sort()
+			[ 'settings', 'unsavedSettings', 'updatingPassword', 'updating' ].sort()
 		);
 	} );
 
@@ -27,7 +27,7 @@ describe( 'reducer', () => {
 		test( 'should default to a `null` value', () => {
 			const state = settings( undefined, {} );
 
-			expect( state ).toBeNull();
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store user settings after initial update', () => {

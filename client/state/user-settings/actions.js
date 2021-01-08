@@ -13,10 +13,10 @@ import {
 	USER_SETTINGS_REQUEST,
 	USER_SETTINGS_SAVE,
 	USER_SETTINGS_UPDATE,
+	USER_SETTINGS_UPDATE_FAILURE,
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
-	USER_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/me/settings';
@@ -36,11 +36,13 @@ export const fetchUserSettings = () => ( {
  * Post settings to WordPress.com API at /me/settings endpoint
  *
  * @param {object} settingsOverride - default settings object
+ * @param {Function} onSuccess A callback function to be called on success by the data layer handler
  * @returns {object} Action object
  */
-export const saveUserSettings = ( settingsOverride ) => ( {
+export const saveUserSettings = ( settingsOverride, onSuccess ) => ( {
 	type: USER_SETTINGS_SAVE,
 	settingsOverride,
+	onSuccess,
 } );
 
 /**
