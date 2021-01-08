@@ -210,6 +210,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 							productName: primaryPurchase.productName,
 						},
 						components: { strong: <strong /> },
+						comment: '%(productName)s can be either "G Suite" or "Google Workspace Business "',
 					}
 				)
 			);

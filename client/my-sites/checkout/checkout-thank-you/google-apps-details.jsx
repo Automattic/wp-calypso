@@ -18,6 +18,7 @@ const GoogleAppsDetails = ( { purchases } ) => {
 	const email = useSelector( getCurrentUserEmail );
 
 	const purchase = purchases.find( isGoogleApps );
+	const productName = purchase.productName;
 
 	if ( isGSuiteExtraLicenseProductSlug( purchase.productSlug ) ) {
 		return (
@@ -56,21 +57,27 @@ const GoogleAppsDetails = ( { purchases } ) => {
 		<PurchaseDetail
 			icon="mail"
 			title={ i18n.translate(
-				'Keep an eye on your email to finish setting up your G Suite account'
+				'Keep an eye on your email to finish setting up your %(productName)s account',
+				{
+					args: {
+						productName,
+					},
+				}
 			) }
 			description={
 				<div>
 					<p>
 						{ i18n.translate(
-							'We are setting up your new G Suite account but {{strong}}this process can take several ' +
+							'We are setting up your new %(productName)s account but {{strong}}this process can take several ' +
 								'minutes{{/strong}}. We will email you at %(email)s with login information once it is ' +
-								'ready, so you can start using your new professional email addresses and other G Suite apps.',
+								'ready, so you can start using your new professional email addresses and other %(productName)s apps.',
 							{
 								components: {
 									strong: <strong />,
 								},
 								args: {
 									email,
+									productName,
 								},
 							}
 						) }
@@ -95,7 +102,11 @@ const GoogleAppsDetails = ( { purchases } ) => {
 					</p>
 				</div>
 			}
-			buttonText={ i18n.translate( 'Learn more about G Suite' ) }
+			buttonText={ i18n.translate( 'Learn more about %(productName)s', {
+				args: {
+					productName,
+				},
+			} ) }
 			href={ GOOGLE_APPS_LEARNING_CENTER }
 			target="_blank"
 			rel="noopener noreferrer"
