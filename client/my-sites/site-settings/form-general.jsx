@@ -12,7 +12,6 @@ import { flowRight, get, has } from 'lodash';
  */
 import wrapSettingsForm from './wrap-settings-form';
 import { Card, CompactCard, Button } from '@automattic/components';
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import LanguagePicker from 'calypso/components/language-picker';
@@ -42,7 +41,6 @@ import { preventWidows } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -581,15 +579,6 @@ export class SiteSettingsFormGeneral extends Component {
 
 	privacySettingsWrapper() {
 		if ( this.props.isUnlaunchedSite ) {
-			if ( this.props.needsVerification ) {
-				return (
-					<EmailVerificationGate>
-						{ this.renderLaunchSite() }
-						{ this.privacySettings() }
-					</EmailVerificationGate>
-				);
-			}
-
 			return (
 				<>
 					{ this.renderLaunchSite() }
@@ -708,7 +697,6 @@ const connectComponent = connect(
 		return {
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			isComingSoon: isSiteComingSoon( state, siteId ),
-			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),

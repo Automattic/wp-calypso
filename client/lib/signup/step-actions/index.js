@@ -9,7 +9,6 @@ import {
 	get,
 	includes,
 	isEmpty,
-	isNull,
 	omitBy,
 	pick,
 	startsWith,
@@ -101,7 +100,10 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 
 		SignupCart.createCart(
 			siteId,
-			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
+			omitBy(
+				pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ),
+				( dep ) => dep === null
+			),
 			( error ) => {
 				callback( error, providedDependencies );
 			}
@@ -552,6 +554,8 @@ export function createAccount(
 
 		const marketing_price_group = response?.marketing_price_group ?? '';
 
+		const plans_reorder_abtest_variation = response?.plans_reorder_abtest_variation ?? '';
+
 		// Fire after a new user registers.
 		recordRegistration( {
 			userData: registrationUserData,
@@ -559,7 +563,10 @@ export function createAccount(
 			type: signupType,
 		} );
 
-		const providedDependencies = assign( { username, marketing_price_group }, bearerToken );
+		const providedDependencies = assign(
+			{ username, marketing_price_group, plans_reorder_abtest_variation },
+			bearerToken
+		);
 
 		if ( signupType === SIGNUP_TYPE_DEFAULT && oauth2Signup ) {
 			assign( providedDependencies, {

@@ -6,11 +6,14 @@ export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { getMonthlyPrice } from './get-monthly-price';
 export {
+	isGoogleWorkspaceProductSlug,
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
+	isGSuiteOrGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
 } from './gsuite-product-slug';
 export { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from './gsuite-supported-domain';
 export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
 export { hasGSuiteWithUs } from './has-gsuite-with-us';
 export { hasPendingGSuiteUsers } from './has-pending-gsuite-users';
+export { getGoogleMailServiceFamily } from './get-google-mail-service-family';

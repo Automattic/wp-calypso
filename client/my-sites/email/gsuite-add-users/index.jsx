@@ -7,11 +7,11 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { addItems } from 'calypso/lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import { Button, Card } from '@automattic/components';
 import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header';
@@ -31,7 +31,10 @@ import {
 	validateAgainstExistingUsers,
 } from 'calypso/lib/gsuite/new-users';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -43,6 +46,8 @@ import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 
 /**
  * Style dependencies
@@ -53,6 +58,8 @@ class GSuiteAddUsers extends React.Component {
 	state = {
 		users: [],
 	};
+
+	isMounted = false;
 
 	static getDerivedStateFromProps(
 		{ domains, isRequestingDomains, selectedDomainName },
@@ -77,14 +84,17 @@ class GSuiteAddUsers extends React.Component {
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
-			addItems(
-				getItemsForCart(
-					domains,
-					'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG,
-					users
+			this.props.shoppingCartManager
+				.addProductsToCart(
+					getItemsForCart(
+						domains,
+						'basic' === planType ? GSUITE_BASIC_SLUG : GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+						users
+					).map( ( item ) => fillInSingleCartItemAttributes( item, this.props.productsList ) )
 				)
-			);
-			page( '/checkout/' + selectedSite.slug );
+				.then( () => {
+					this.isMounted && page( '/checkout/' + selectedSite.slug );
+				} );
 		}
 	};
 
@@ -134,6 +144,11 @@ class GSuiteAddUsers extends React.Component {
 	componentDidMount() {
 		const { domains, isRequestingDomains, selectedDomainName } = this.props;
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
 	}
 
 	shouldComponentUpdate( nextProps ) {
@@ -265,7 +280,7 @@ GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
 	isRequestingDomains: PropTypes.bool.isRequired,
-	planType: PropTypes.oneOf( [ 'basic', 'business' ] ),
+	planType: PropTypes.oneOf( [ 'basic', 'starter' ] ),
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
@@ -284,8 +299,9 @@ export default connect(
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gsuiteUsers: getGSuiteUsers( state, siteId ),
 			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
+			productsList: getProductsList( state ),
 			selectedSite,
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( localize( GSuiteAddUsers ) );
+)( withShoppingCart( localize( GSuiteAddUsers ) ) );

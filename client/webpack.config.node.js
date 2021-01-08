@@ -137,8 +137,8 @@ const webpackConfig = {
 		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
-			'calypso/config': 'server/config',
-			config: 'server/config',
+			'calypso/config': 'calypso/server/config',
+			config: 'calypso/server/config',
 		},
 	},
 	node: {
@@ -173,7 +173,7 @@ const webpackConfig = {
 		), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
+			'calypso/components/empty-component'
 		), // Depends on BOM
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
 		! isDevelopment && new ExternalModulesWriter(),

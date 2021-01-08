@@ -741,4 +741,39 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
+
+	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'traffic-guide',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
+	} );
+
+	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart and site has a non-atomic jetpack plan', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'traffic-guide',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+			isJetpackNotAtomic: true,
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
+	} );
 } );

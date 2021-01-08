@@ -12,7 +12,7 @@ import { isEmpty, merge, minBy } from 'lodash';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import config from 'calypso/config';
-import { getChangePaymentMethodPath } from '../utils';
+import { getAddNewPaymentMethodPath } from '../utils';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -65,13 +65,13 @@ class PurchaseNotice extends Component {
 		selectedSite: PropTypes.object,
 		changePaymentMethodPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		getManagePurchaseUrlFor: PropTypes.func,
-		getAddPaymentMethodUrlFor: PropTypes.func,
+		getAddNewPaymentMethodUrlFor: PropTypes.func,
 		isProductOwner: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		getManagePurchaseUrlFor: managePurchase,
-		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
+		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
 	};
 
 	state = {
@@ -135,13 +135,13 @@ class PurchaseNotice extends Component {
 		if ( isPaidWithCredits( purchase ) ) {
 			if ( autoRenewingUpgradesLink ) {
 				return translate(
-					"You purchased %(purchaseName)s with credits – please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
+					"You purchased %(purchaseName)s with credits – please update your payment information before your plan expires %(expiry)s so that you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 					translateOptions
 				);
 			}
 
 			return translate(
-				"You purchased %(purchaseName)s with credits. Please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features!",
+				"You purchased %(purchaseName)s with credits. Please update your payment information before your plan expires %(expiry)s so that you don't lose out on your paid features!",
 				translateOptions
 			);
 		}
@@ -176,13 +176,13 @@ class PurchaseNotice extends Component {
 
 		if ( autoRenewingUpgradesLink ) {
 			return translate(
-				"%(purchaseName)s will expire and be removed from your site %(expiry)s – add a credit card so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
+				"%(purchaseName)s will expire and be removed from your site %(expiry)s – update your payment information so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 				translateOptions
 			);
 		}
 
 		return translate(
-			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Add a credit card so you don't lose out on your paid features!",
+			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Update your payment information so you don't lose out on your paid features!",
 			translateOptions
 		);
 	}
@@ -345,7 +345,7 @@ class PurchaseNotice extends Component {
 			selectedSite,
 			renewableSitePurchases,
 			getManagePurchaseUrlFor,
-			getAddPaymentMethodUrlFor,
+			getAddNewPaymentMethodUrlFor,
 		} = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/upcoming-renewals-notices' ) ) {
@@ -651,7 +651,7 @@ class PurchaseNotice extends Component {
 				);
 			} else {
 				noticeStatus = showCreditCardExpiringWarning( currentPurchase ) ? 'is-error' : 'is-info';
-				noticeActionHref = getAddPaymentMethodUrlFor( selectedSite.slug, currentPurchase );
+				noticeActionHref = getAddNewPaymentMethodUrlFor( selectedSite.slug );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-soon-others-renew-soon-cc-expiring';
@@ -745,7 +745,7 @@ class PurchaseNotice extends Component {
 				);
 			} else {
 				noticeStatus = 'is-info';
-				noticeActionHref = getAddPaymentMethodUrlFor( selectedSite.slug, currentPurchase );
+				noticeActionHref = getAddNewPaymentMethodUrlFor( selectedSite.slug );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-later-others-renew-soon-cc-expiring';

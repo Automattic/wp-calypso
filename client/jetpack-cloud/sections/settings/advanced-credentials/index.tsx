@@ -161,6 +161,13 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		}
 	}, [ setFormErrors, formSubmissionError, translate ] );
 
+	// on success, move from edit to connected state
+	useEffect( () => {
+		if ( formSubmissionStatus === 'success' ) {
+			page( settingsPath( siteSlug as string ) );
+		}
+	}, [ formSubmissionStatus, siteSlug ] );
+
 	// reset form information on siteId change
 	useEffect( () => {
 		setFormState( INITIAL_FORM_STATE );

@@ -202,4 +202,76 @@ describe( 'JetpackAuthorize', () => {
 			expect( result ).toBe( true );
 		} );
 	} );
+
+	describe( 'isJetpackUpgradeFlow', () => {
+		const isJetpackUpgradeFlow = new JetpackAuthorize().isJetpackUpgradeFlow;
+
+		test( 'should see plans', () => {
+			const props = {
+				authQuery: {
+					redirectAfterAuth: 'page=jetpack&action=something_else',
+				},
+			};
+
+			expect( isJetpackUpgradeFlow( props ) ).toBe( false );
+		} );
+
+		test( 'should be sent back', () => {
+			const props = {
+				authQuery: {
+					redirectAfterAuth: 'page=jetpack&action=authorize_redirect',
+				},
+			};
+
+			expect( isJetpackUpgradeFlow( props ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'isFromJetpackConnectionManager', () => {
+		const isFromJetpackConnectionManager = new JetpackAuthorize().isFromJetpackConnectionManager;
+
+		test( 'is from connection manager', () => {
+			const props = {
+				authQuery: {
+					from: 'connection-ui',
+				},
+			};
+
+			expect( isFromJetpackConnectionManager( props ) ).toBe( true );
+		} );
+
+		test( 'is not from connection manager', () => {
+			const props = {
+				authQuery: {
+					from: 'not-connection-ui',
+				},
+			};
+
+			expect( isFromJetpackConnectionManager( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isFromJetpackBoost', () => {
+		const isFromJetpackBoost = new JetpackAuthorize().isFromJetpackBoost;
+
+		test( 'is from jetpack boost', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-boost-something',
+				},
+			};
+
+			expect( isFromJetpackBoost( props ) ).toBe( true );
+		} );
+
+		test( 'is not from jetpack boost', () => {
+			const props = {
+				authQuery: {
+					from: 'not-jetpack-boost-something',
+				},
+			};
+
+			expect( isFromJetpackBoost( props ) ).toBe( false );
+		} );
+	} );
 } );

@@ -8,6 +8,7 @@ import { By } from 'selenium-webdriver';
  */
 import AsyncBaseContainer from '../../async-base-container';
 import * as driverHelper from '../../driver-helper';
+import * as dataHelper from '../../data-helper';
 
 export default class StylePreviewPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -17,5 +18,17 @@ export default class StylePreviewPage extends AsyncBaseContainer {
 	async continue() {
 		const continueButton = By.css( '.action-buttons__next' );
 		await driverHelper.clickWhenClickable( this.driver, continueButton );
+	}
+
+	async selectFontPairing( fontIndex ) {
+		const fontOptions = await this.driver.findElements(
+			By.css( 'button.style-preview__font-option' )
+		);
+
+		if ( fontIndex === undefined ) {
+			fontIndex = dataHelper.getRandomInt( 0, fontOptions.length - 1 );
+		}
+
+		fontOptions[ fontIndex ].click();
 	}
 }

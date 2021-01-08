@@ -19,7 +19,6 @@ export function notifications( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( NotificationsComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();

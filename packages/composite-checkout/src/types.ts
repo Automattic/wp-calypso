@@ -9,6 +9,28 @@ import { ReactElement } from 'react';
  */
 import { Theme } from './lib/theme';
 
+export interface CheckoutStepProps {
+	stepId: string;
+	titleContent: React.ReactNode;
+	isCompleteCallback: IsCompleteCallback;
+	activeStepContent?: React.ReactNode;
+	completeStepContent?: React.ReactNode;
+	className?: string;
+	editButtonText?: string;
+	editButtonAriaLabel?: string;
+	nextStepButtonText?: string;
+	nextStepButtonAriaLabel?: string;
+	validatingButtonText?: string;
+	validatingButtonAriaLabel?: string;
+}
+
+export type IsCompleteCallback = () => boolean | Promise< boolean >;
+
+export interface OrderSummaryData {
+	className: string;
+	summaryContent: React.ReactNode;
+}
+
 export interface PaymentMethod {
 	id: string;
 	label: React.ReactNode;
@@ -82,20 +104,23 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 export interface CheckoutProviderProps {
 	theme?: Theme;
 	registry?: DataRegistry;
-	total: LineItem;
-	items: LineItem[];
+	total?: LineItem;
+	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
 	onPaymentComplete: PaymentCompleteCallback;
-	showErrorMessage: ( message: string ) => void;
-	showInfoMessage: ( message: string ) => void;
-	showSuccessMessage: ( message: string ) => void;
+	showErrorMessage: ShowNoticeFunction;
+	showInfoMessage: ShowNoticeFunction;
+	showSuccessMessage: ShowNoticeFunction;
 	onEvent?: ( event: ReactStandardAction ) => void;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;
 	paymentProcessors: PaymentProcessorProp;
 	isValidating?: boolean;
 	initiallySelectedPaymentMethodId?: string | null;
+	children: React.ReactNode;
 }
+
+export type ShowNoticeFunction = ( message: string ) => void;
 
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;

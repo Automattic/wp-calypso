@@ -24,6 +24,7 @@ import {
 	hasBusinessPlan,
 	hasEcommercePlan,
 	hasMonthlyCartItem,
+	hasTrafficGuide,
 } from 'calypso/lib/cart-values/cart-items';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
@@ -181,8 +182,18 @@ export default function getThankYouPageUrl( {
 	}
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
-	// when purchasing a concierge session.
+	// when purchasing a concierge session or when purchasing the Ultimate Traffic Guide
 	const displayModeParam = getDisplayModeParamFromCart( cart );
+
+	const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
+		cart,
+		siteSlug,
+		pendingOrReceiptId,
+	} );
+	if ( thankYouPageUrlForTrafficGuide ) {
+		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, displayModeParam );
+	}
+
 	if ( isEligibleForSignupDestinationResult && urlFromCookie ) {
 		debug( 'is eligible for signup destination', urlFromCookie );
 		return getUrlWithQueryParam( urlFromCookie, displayModeParam );
@@ -379,6 +390,9 @@ function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< 
 	if ( cart && hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
 	}
+	if ( cart && hasTrafficGuide( cart ) ) {
+		return { d: 'traffic-guide' };
+	}
 	return {};
 }
 
@@ -438,5 +452,20 @@ function modifyCookieUrlIfAtomic(
 
 	if ( updatedUrl !== urlFromCookie ) {
 		saveUrlToCookie( updatedUrl );
+	}
+}
+
+function getThankYouPageUrlForTrafficGuide( {
+	cart,
+	siteSlug,
+	pendingOrReceiptId,
+}: {
+	cart: ResponseCart | undefined;
+	siteSlug: string | undefined;
+	pendingOrReceiptId: string;
+} ) {
+	if ( ! cart ) return;
+	if ( hasTrafficGuide( cart ) ) {
+		return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 	}
 }

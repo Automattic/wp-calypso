@@ -8,6 +8,7 @@ import { select } from '@wordpress/data';
  */
 import type { State } from './reducer';
 import { STORE_KEY } from './constants';
+import { SiteLaunchStatus } from './types';
 
 export const getState = ( state: State ) => state;
 
@@ -32,12 +33,14 @@ export const getSite = ( state: State, siteId: number ) => {
 export const getSiteTitle = ( _: State, siteId: number ) =>
 	select( STORE_KEY ).getSite( siteId )?.name;
 
+// @TODO: Return LaunchStatus instead of a boolean
 export const isSiteLaunched = ( state: State, siteId: number ) => {
-	return state.launchStatus[ siteId ]?.isSiteLaunched;
+	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.SUCCESS;
 };
 
+// @TODO: Return LaunchStatus instead of a boolean
 export const isSiteLaunching = ( state: State, siteId: number ) => {
-	return state.launchStatus[ siteId ]?.isSiteLaunching;
+	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.IN_PROGRESS;
 };
 
 export const getSiteDomains = ( state: State, siteId: number ) => {

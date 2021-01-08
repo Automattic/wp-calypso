@@ -67,7 +67,7 @@ export function useDomainSelection(): DomainSelection {
 	const { domain: selectedDomain, plan, confirmedDomainSelection } = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getState()
 	);
-	const { siteSubdomain } = useSiteDomains();
+	const { siteSubdomain, hasPaidDomain, sitePrimaryDomain } = useSiteDomains();
 
 	function onDomainSelect( suggestion: DomainSuggestions.DomainSuggestion ) {
 		confirmDomainSelection();
@@ -86,6 +86,8 @@ export function useDomainSelection(): DomainSelection {
 
 	if ( selectedDomain ) {
 		currentDomain = selectedDomain;
+	} else if ( hasPaidDomain ) {
+		currentDomain = mockDomainSuggestion( sitePrimaryDomain?.domain );
 	} else if ( confirmedDomainSelection ) {
 		// in the scenario where confirmedDomainSelection is true and selectedDomain is falsey we can assume they've selected the sub-domain
 		currentDomain = mockDomainSuggestion( siteSubdomain?.domain );

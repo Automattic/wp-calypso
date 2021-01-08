@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'calypso/components/main';
 import PromotionsList from './promotions-list';
 import SearchCard from 'calypso/components/search-card';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 class Promotions extends Component {
 	static propTypes = {
@@ -109,6 +111,7 @@ class Promotions extends Component {
 						{ translate( 'Add promotion' ) }
 					</Button>
 				</ActionHeader>
+				{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
 				{ content }
 			</Main>
 		);

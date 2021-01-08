@@ -46,6 +46,11 @@ $font-size: rem( 14px );
 }
 
 .is-nav-unification {
+	// client/layout/style.scss
+	.layout__content {
+		min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
+	}
+
 	// client/layout/sidebar/style.scss
 	.sidebar {
 		position: relative;
@@ -86,6 +91,7 @@ $font-size: rem( 14px );
 			&::after {
 				content: ' ';
 				display: none;
+				z-index: 1;
 				position: absolute;
 				top: 50%;
 				right: 0;
@@ -287,10 +293,7 @@ $font-size: rem( 14px );
 		color: #000;
 		padding: 7px 12px 7px 4px;
 		line-height: 26px;
-	}
-
-	.upsell-nudge.banner.card.is-compact .banner__content {
-		padding-left: 3px;
+		margin-top: 8px;
 	}
 
 	.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
@@ -298,6 +301,7 @@ $font-size: rem( 14px );
 	}
 
 	.upsell-nudge.banner.card.is-compact .banner__action {
+		top: 0;
 		margin-left: 0;
 	}
 
@@ -474,7 +478,7 @@ $font-size: rem( 14px );
 		&.focus-sidebar {
 			.sidebar,
 			.layout__secondary {
-				z-index: 1;
+				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
 				overflow: initial;
 			}
 		}
@@ -502,6 +506,7 @@ $font-size: rem( 14px );
 				position: absolute;
 				left: var( --sidebar-width-max );
 				width: 160px;
+				box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
 
 				.sidebar__menu-link:hover {
 					font-weight: normal;
@@ -584,8 +589,13 @@ $font-size: rem( 14px );
 }
 
 @media screen and ( max-width: 660px ) {
-	// client/layout/sidebar/style.scss
 	.is-nav-unification {
+		// client/layout/style.scss
+		.layout__content {
+			min-height: initial;
+		}
+
+		// client/layout/sidebar/style.scss
 		.sidebar {
 			position: absolute;
 		}

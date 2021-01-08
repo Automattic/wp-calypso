@@ -1,17 +1,20 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import * as React from 'react';
+import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
+
+/**
+ * Wordpress dependencies
+ */
 import { createInterpolateElement } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import classnames from 'classnames';
-import { sprintf } from '@wordpress/i18n';
-import { v4 as uuid } from 'uuid';
-import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -28,6 +31,31 @@ export type SUGGESTION_ITEM_TYPE =
 	| typeof ITEM_TYPE_BUTTON
 	| typeof ITEM_TYPE_INDIVIDUAL_ITEM;
 
+// to avoid nesting buttons, wrap the item with a div instead of button in button mode
+// (button mode means there is a Select button, not the whole item being a button)
+
+interface WrappingComponentAdditionalProps {
+	type: SUGGESTION_ITEM_TYPE;
+	disabled?: boolean;
+}
+type WrappingComponentProps = WrappingComponentAdditionalProps &
+	( React.HTMLAttributes< HTMLDivElement > | React.ButtonHTMLAttributes< HTMLButtonElement > );
+
+const WrappingComponent = React.forwardRef< HTMLButtonElement, WrappingComponentProps >(
+	( { type, disabled, ...props }, ref ) => {
+		if ( type === 'button' ) {
+			return <div { ...( props as React.HTMLAttributes< HTMLDivElement > ) } />;
+		}
+		return (
+			<button
+				ref={ ref }
+				disabled={ disabled }
+				{ ...( props as React.ButtonHTMLAttributes< HTMLButtonElement > ) }
+			/>
+		);
+	}
+);
+
 interface Props {
 	isUnavailable?: boolean;
 	domain: string;
@@ -42,9 +70,10 @@ interface Props {
 	onSelect: ( domain: string ) => void;
 	selected?: boolean;
 	type?: SUGGESTION_ITEM_TYPE;
+	buttonRef?: React.Ref< HTMLButtonElement >;
 }
 
-const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
+const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	isUnavailable,
 	domain,
 	isLoading,
@@ -58,6 +87,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	onRender,
 	selected,
 	type = ITEM_TYPE_RADIO,
+	buttonRef,
 } ) => {
 	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
@@ -68,10 +98,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const domainName = domain.slice( 0, dotPos );
 	const domainTld = domain.slice( dotPos );
 
-	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
-	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
-
-	const labelId = uuid();
+	const [ previousDomain, setPreviousDomain ] = React.useState< string | undefined >();
+	const [ previousRailcarId, setPreviousRailcarId ] = React.useState< string | undefined >();
 
 	const freeDomainLabel =
 		type === ITEM_TYPE_INDIVIDUAL_ITEM
@@ -90,9 +118,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const paidIncludedDomainLabel =
 		type === ITEM_TYPE_INDIVIDUAL_ITEM
 			? firstYearIncludedInPaid
-			: __( 'Included in plans', __i18n_text_domain__ );
+			: __( isMobile ? 'Free' : 'Included in plans', __i18n_text_domain__ );
 
-	useEffect( () => {
+	React.useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.
 		// This effectively records the render event only once for each set of search results.
 		if ( domain !== previousDomain && previousRailcarId !== railcarId && railcarId ) {
@@ -114,7 +142,10 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<label
+		<WrappingComponent
+			ref={ buttonRef }
+			type={ type }
+			key={ domainName }
 			className={ classnames(
 				'domain-picker__suggestion-item',
 				{
@@ -124,19 +155,19 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				},
 				`type-${ type }`
 			) }
+			// if the wrapping element is a div, don't assign a click listener
+			onClick={ type !== 'button' ? onDomainSelect : undefined }
+			disabled={ isUnavailable }
 		>
-			{ [ ITEM_TYPE_RADIO, ITEM_TYPE_INDIVIDUAL_ITEM ].indexOf( type ) > -1 &&
+			{ type === ITEM_TYPE_RADIO &&
 				( isLoading ? (
 					<Spinner />
 				) : (
-					<input
-						aria-labelledby={ labelId }
-						className="domain-picker__suggestion-radio-button"
-						type="radio"
-						disabled={ isUnavailable }
-						name="domain-picker-suggestion-option"
-						onChange={ onDomainSelect }
-						checked={ selected && ! isUnavailable }
+					<span
+						className={ classnames( 'domain-picker__suggestion-radio-circle', {
+							'is-checked': selected,
+							'is-unavailable': isUnavailable,
+						} ) }
 					/>
 				) ) }
 			<div className="domain-picker__suggestion-item-name">
@@ -149,6 +180,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						<span className="domain-picker__domain-sub-domain">{ domainName }</span>
 						<span className="domain-picker__domain-tld">{ domainTld }</span>
 					</span>
+					{ isRecommended && ! isUnavailable && (
+						<div className="domain-picker__badge is-recommended">
+							{ __( 'Recommended', __i18n_text_domain__ ) }
+						</div>
+					) }
 					{ hstsRequired && (
 						<InfoTooltip
 							position={ isMobile ? 'bottom center' : 'middle right' }
@@ -172,11 +208,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 								}
 							) }
 						</InfoTooltip>
-					) }
-					{ isRecommended && ! isUnavailable && (
-						<div className="domain-picker__badge is-recommended">
-							{ __( 'Recommended', __i18n_text_domain__ ) }
-						</div>
 					) }
 				</div>
 				{ isExistingSubdomain && type !== ITEM_TYPE_INDIVIDUAL_ITEM && (
@@ -216,8 +247,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				) : (
 					<div className="domain-picker__action">
 						<Button
+							ref={ buttonRef }
 							isSecondary
-							aria-labelledby={ labelId }
 							className={ classnames( 'domain-picker__suggestion-select-button', {
 								'is-selected': selected && ! isUnavailable,
 							} ) }
@@ -230,8 +261,10 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						</Button>
 					</div>
 				) ) }
-		</label>
+		</WrappingComponent>
 	);
 };
 
-export default DomainPickerSuggestionItem;
+export default React.forwardRef< HTMLButtonElement, Props >( ( props, ref ) => {
+	return <DomainPickerSuggestionItem { ...props } buttonRef={ ref } />;
+} );

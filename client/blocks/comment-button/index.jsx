@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { isNull, noop, omitBy } from 'lodash';
+import { noop, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ function CommentButton( props ) {
 				onClick,
 				target: 'a' === tagName ? target : null,
 			},
-			isNull
+			( prop ) => prop === null
 		),
 		<Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
 		<span className="comment-button__label">

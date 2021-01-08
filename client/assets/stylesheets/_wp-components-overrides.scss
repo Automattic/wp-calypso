@@ -1,0 +1,74 @@
+/* @wordpress/components Form toggles use the color scheme's background color */
+.components-form-toggle.is-checked .components-form-toggle__track {
+	background-color: var( --color-primary );
+}
+
+/* @wordpress/components Button overrides */
+.components-button {
+	&,
+	&:hover:not( :disabled ) {
+		color: var( --color-neutral-70 );
+	}
+}
+
+.components-button.is-primary {
+	background-color: var( --color-accent );
+	border-color: var( --color-accent );
+	color: var( --color-text-inverted );
+
+	&:hover:not( :disabled ),
+	&:focus:not( :disabled ) {
+		background-color: var( --color-accent-60 );
+		border-color: var( --color-accent-60 );
+		color: var( --color-text-inverted );
+	}
+
+	&[disabled],
+	&:disabled,
+	&.disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+	}
+}
+
+.components-button.is-secondary {
+	background-color: var( --color-surface );
+	color: var( --color-neutral-70 );
+	box-shadow: inset 0 0 0 1px var( --color-neutral-10 );
+
+	&:active:not( :disabled ),
+	&:hover:not( :disabled ) {
+		box-shadow: inset 0 0 0 1px var( --color-neutral-20 );
+		color: var( --color-neutral-70 );
+	}
+
+	&:visited {
+		color: var( --color-neutral-70 );
+	}
+
+	&[disabled],
+	&:disabled,
+	&.disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		box-shadow: inset 0 0 0 1px var( --color-neutral-5 );
+	}
+}
+
+.components-button.is-tertiary {
+	color: var( --color-accent );
+
+	&:active:not( :disabled ),
+	&:hover:not( :disabled ) {
+		box-shadow: inset 0 0 0 1px var( --color-neutral-20 );
+		color: var( --color-accent-60 );
+	}
+
+	&:visited,
+	&[disabled],
+	&:disabled,
+	&.disabled {
+		color: var( --color-accent-60 );
+	}
+}

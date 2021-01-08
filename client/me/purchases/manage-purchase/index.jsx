@@ -27,6 +27,7 @@ import {
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
+	isPaidWithCredits,
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
@@ -39,7 +40,11 @@ import {
 	purchaseType,
 	getName,
 } from 'calypso/lib/purchases';
-import { canEditPaymentDetails, getChangePaymentMethodPath } from '../utils';
+import {
+	canEditPaymentDetails,
+	getAddNewPaymentMethodPath,
+	getChangePaymentMethodPath,
+} from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -105,11 +110,12 @@ import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dial
  * Style dependencies
  */
 import './style.scss';
+import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 
 class ManagePurchase extends Component {
 	static propTypes = {
 		cardTitle: PropTypes.string,
-		getAddPaymentMethodUrlFor: PropTypes.func,
+		getAddNewPaymentMethodUrlFor: PropTypes.func,
 		getCancelPurchaseUrlFor: PropTypes.func,
 		getChangePaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
@@ -133,7 +139,7 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
-		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
+		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
 		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
@@ -265,7 +271,12 @@ class ManagePurchase extends Component {
 			? translate( 'Pick Another Plan' )
 			: translate( 'Upgrade Plan' );
 
-		if ( ! isPlan( purchase ) || isEcommerce( purchase ) || isComplete( purchase ) ) {
+		if (
+			! isPlan( purchase ) ||
+			isEcommerce( purchase ) ||
+			isComplete( purchase ) ||
+			isP2Plus( purchase )
+		) {
 			return null;
 		}
 
@@ -305,9 +316,6 @@ class ManagePurchase extends Component {
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
 			const renewing = isRenewing( purchase );
-			const addPaymentMethodCopy = config.isEnabled( 'purchases/new-payment-methods' )
-				? translate( 'Add Payment Method' )
-				: translate( 'Add Credit Card' );
 
 			if (
 				renewing &&
@@ -319,9 +327,7 @@ class ManagePurchase extends Component {
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
-					{ hasPaymentMethod( purchase )
-						? translate( 'Change Payment Method' )
-						: addPaymentMethodCopy }
+					{ addPaymentMethodLinkText( { purchase, translate } ) }
 				</CompactCard>
 			);
 		}
@@ -673,7 +679,7 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 			getManagePurchaseUrlFor,
-			getAddPaymentMethodUrlFor,
+			getAddNewPaymentMethodUrlFor,
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
@@ -724,7 +730,7 @@ class ManagePurchase extends Component {
 						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					/>
 				) }
 				<AsyncLoad
@@ -740,6 +746,19 @@ class ManagePurchase extends Component {
 			</Fragment>
 		);
 	}
+}
+
+function addPaymentMethodLinkText( { purchase, translate } ) {
+	let linkText = null;
+	// TODO: we need a "hasRechargeablePaymentMethod" function here
+	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
+		linkText = translate( 'Change Payment Method' );
+	} else {
+		linkText = config.isEnabled( 'purchases/new-payment-methods' )
+			? translate( 'Add Payment Method' )
+			: translate( 'Add Credit Card' );
+	}
+	return linkText;
 }
 
 export default connect( ( state, props ) => {

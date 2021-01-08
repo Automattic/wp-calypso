@@ -101,13 +101,11 @@ class ImportingPane extends React.PureComponent {
 			} ),
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
-			site: PropTypes.shape( {
-				slug: PropTypes.string.isRequired,
-			} ),
 			statusMessage: PropTypes.string,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
+			name: PropTypes.string.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
 		sourceType: PropTypes.string.isRequired,

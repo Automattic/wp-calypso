@@ -47,6 +47,12 @@ export interface ProductsGridProps {
 	onDurationChange?: DurationChangeCallback;
 }
 
+export type PlanGridProducts = {
+	availableProducts: SelectorProduct[];
+	purchasedProducts: SelectorProduct[];
+	includedInPlanProducts: SelectorProduct[];
+};
+
 export interface JetpackFreeProps {
 	urlQueryArgs: QueryArgs;
 	siteId: number | null;
@@ -104,10 +110,12 @@ export interface SelectorProduct extends SelectorProductCost {
 	buttonLabel?: TranslateResult;
 	features: SelectorProductFeatures;
 	subtypes: string[];
+	infoText?: TranslateResult | ReactNode;
 	legacy?: boolean;
 	hidePrice?: boolean;
 	externalUrl?: string;
 	displayTerm?: Duration;
 	displayPrice?: number;
 	displayCurrency?: string;
+	displayFrom?: boolean;
 }

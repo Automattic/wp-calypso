@@ -92,7 +92,12 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 };
 
 export function localizeUrl( fullUrl: string, locale: Locale ): string {
-	const url = new URL( String( fullUrl ), INVALID_URL );
+	let url;
+	try {
+		url = new URL( String( fullUrl ), INVALID_URL );
+	} catch ( e ) {
+		return fullUrl;
+	}
 
 	// Ignore and passthrough /relative/urls that have no host specified
 	if ( url.origin === INVALID_URL ) {

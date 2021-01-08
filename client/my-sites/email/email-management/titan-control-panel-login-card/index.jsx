@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'calypso/config';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { Button, CompactCard } from '@automattic/components';
@@ -23,7 +24,28 @@ import './style.scss';
 class TitanControlPanelLoginCard extends React.Component {
 	state = {
 		isFetchingAutoLoginLink: false,
+		iframeURL: '',
 	};
+
+	componentDidMount() {
+		this._mounted = true;
+
+		this.fetchTitanIframeURL( getTitanMailOrderId( this.props.domain ) ).then(
+			( { error, iframeURL } ) => {
+				if ( error ) {
+					this.props.errorNotice(
+						error ?? this.props.translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else if ( this._mounted ) {
+					this.setState( { iframeURL } );
+				}
+			}
+		);
+	}
+
+	componentWillUnmount() {
+		this._mounted = false;
+	}
 
 	fetchTitanAutoLoginURL = ( orderId ) => {
 		return new Promise( ( resolve ) => {
@@ -31,6 +53,17 @@ class TitanControlPanelLoginCard extends React.Component {
 				resolve( {
 					error: serverError?.message,
 					loginURL: serverError ? null : result.auto_login_url,
+				} );
+			} );
+		} );
+	};
+
+	fetchTitanIframeURL = ( orderId ) => {
+		return new Promise( ( resolve ) => {
+			wpcom.undocumented().getTitanControlPanelIframeURL( orderId, ( serverError, result ) => {
+				resolve( {
+					error: serverError?.message,
+					iframeURL: serverError ? null : result.iframe_url,
 				} );
 			} );
 		} );
@@ -56,7 +89,7 @@ class TitanControlPanelLoginCard extends React.Component {
 		} );
 	};
 
-	render() {
+	renderAutoLogin() {
 		const { domain, translate } = this.props;
 		const translateArgs = {
 			args: {
@@ -85,6 +118,42 @@ class TitanControlPanelLoginCard extends React.Component {
 				</CompactCard>
 			</div>
 		);
+	}
+
+	renderIframe() {
+		const { domain, translate } = this.props;
+		const translateArgs = {
+			args: {
+				domainName: domain.name,
+			},
+			comment: '%(domainName)s is a domain name, e.g. example.com',
+		};
+
+		return (
+			<div className="titan-control-panel-login-card">
+				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) } />
+				<CompactCard>
+					{ this.state.iframeURL ? (
+						<iframe
+							title={ translate( 'Email Control Panel' ) }
+							src={ this.state.iframeURL }
+							width="100%"
+							height="650px"
+						/>
+					) : (
+						<div>{ translate( 'Loading the control panel…' ) }</div>
+					) }
+				</CompactCard>
+			</div>
+		);
+	}
+
+	render() {
+		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
+			return this.renderIframe();
+		}
+
+		return this.renderAutoLogin();
 	}
 }
 

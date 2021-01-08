@@ -77,6 +77,8 @@ const PlanDetails: React.FunctionComponent = () => {
 					}
 					CTAVariation="FULL_WIDTH"
 					locale={ locale }
+					hidePlansComparison
+					defaultAllPlansExpanded
 				/>
 			</div>
 		</div>

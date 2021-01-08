@@ -9,11 +9,13 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import MarketingTools from './tools';
+import MarketingBusinessTools from './business-tools';
 import notices from 'calypso/notices';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import Traffic from './traffic/';
+import UltimateTrafficGuide from './ultimate-traffic-guide';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSiteSlug,
@@ -60,6 +62,10 @@ export const redirectMarketingTools = ( context ) => {
 	page.redirect( '/marketing/tools/' + context.params.domain );
 };
 
+export const redirectMarketingBusinessTools = ( context ) => {
+	page.redirect( '/marketing/business-tools/' + context.params.domain );
+};
+
 export const redirectSharingButtons = ( context ) => {
 	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
 };
@@ -97,6 +103,12 @@ export const marketingTools = ( context, next ) => {
 	next();
 };
 
+export const marketingBusinessTools = ( context, next ) => {
+	context.contentComponent = createElement( MarketingBusinessTools );
+
+	next();
+};
+
 export const sharingButtons = ( context, next ) => {
 	const { store } = context;
 	const state = store.getState();
@@ -130,6 +142,12 @@ export const sharingButtons = ( context, next ) => {
 
 export const traffic = ( context, next ) => {
 	context.contentComponent = createElement( Traffic );
+
+	next();
+};
+
+export const ultimateTrafficGuide = ( context, next ) => {
+	context.contentComponent = createElement( UltimateTrafficGuide );
 
 	next();
 };

@@ -30,6 +30,7 @@ import { convertTempResponseCartToResponseCart } from './cart-functions';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
+import { createRequestCartProducts } from './create-request-cart-product';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 
@@ -54,6 +55,13 @@ export default function useShoppingCartManager( {
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
 	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
+	const isMounted = useRef< boolean >( true );
+
+	useEffect( () => {
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( ! cartKey ) {
@@ -63,7 +71,7 @@ export default function useShoppingCartManager( {
 			debug(
 				`cart key "${ cartKey }" has changed from "${ previousCartKey.current }"; re-initializing cart`
 			);
-			hookDispatch( { type: 'CART_RELOAD' } );
+			isMounted.current && hookDispatch( { type: 'CART_RELOAD' } );
 		}
 		previousCartKey.current = cartKey;
 	}, [ cartKey, hookDispatch ] );
@@ -76,20 +84,28 @@ export default function useShoppingCartManager( {
 	const dispatchAndWaitForValid = useCallback(
 		( action ) => {
 			return new Promise< void >( ( resolve ) => {
-				hookDispatch( action );
+				isMounted.current && hookDispatch( action );
 				cartValidCallbacks.current.push( resolve );
 			} );
 		},
-		[ hookDispatch ]
+		[ hookDispatch, isMounted ]
 	);
 
 	const addProductsToCart: AddProductsToCart = useCallback(
-		( products ) => dispatchAndWaitForValid( { type: 'CART_PRODUCTS_ADD', products } ),
+		( products ) =>
+			dispatchAndWaitForValid( {
+				type: 'CART_PRODUCTS_ADD',
+				products: createRequestCartProducts( products ),
+			} ),
 		[ dispatchAndWaitForValid ]
 	);
 
 	const replaceProductsInCart: ReplaceProductsInCart = useCallback(
-		( products ) => dispatchAndWaitForValid( { type: 'CART_PRODUCTS_REPLACE_ALL', products } ),
+		( products ) =>
+			dispatchAndWaitForValid( {
+				type: 'CART_PRODUCTS_REPLACE_ALL',
+				products: createRequestCartProducts( products ),
+			} ),
 		[ dispatchAndWaitForValid ]
 	);
 

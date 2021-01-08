@@ -14,7 +14,6 @@ import {
 	purchaseDetails,
 	purchaseCancel,
 	purchaseCancelDomain,
-	purchaseAddPaymentMethod,
 	purchaseChangePaymentMethod,
 	billingHistory,
 	receiptView,
@@ -78,7 +77,7 @@ export default ( router ) => {
 			'/purchases/subscriptions/:site/:purchaseId/payment-method/add',
 			siteSelection,
 			navigation,
-			purchaseAddPaymentMethod,
+			purchaseChangePaymentMethod,
 			makeLayout,
 			clientRender
 		);
@@ -105,7 +104,7 @@ export default ( router ) => {
 			'/purchases/subscriptions/:site/:purchaseId/payment/add',
 			siteSelection,
 			navigation,
-			purchaseAddPaymentMethod,
+			purchaseChangePaymentMethod,
 			makeLayout,
 			clientRender
 		);

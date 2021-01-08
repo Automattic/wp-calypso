@@ -74,13 +74,15 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	jetpackPricingReversePlans: {
-		datestamp: '20201208',
+	newUsersWithFreePlan: {
+		datestamp: '20210107',
 		variations: {
-			priceAsc: 50,
+			newOnboarding: 50,
 			control: 50,
 		},
+		localeTargets: 'any',
+		localeExceptions: [ 'en', 'es' ],
 		defaultVariation: 'control',
-		allowExistingUsers: true,
+		allowExistingUsers: false,
 	},
 };

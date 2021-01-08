@@ -27,7 +27,7 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import store from 'store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
@@ -43,7 +43,6 @@ import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'calypso/lib/abtest';
 import user from 'calypso/lib/user';
-import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 /**
  * Constants
@@ -63,13 +62,17 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
-const gutenbergRedirect = function ( flowName ) {
+const gutenbergRedirect = function ( flowName, locale ) {
 	const url = new URL( window.location );
-	if ( [ 'beginner', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
-		url.pathname = `/new/${ flowName }`;
-	} else {
-		url.pathname = '/new';
+	let path = '/new';
+	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		path += `/${ flowName }`;
 	}
+	if ( locale ) {
+		path += `/${ locale }`;
+	}
+
+	url.pathname = path;
 	window.location.replace( url.toString() );
 };
 
@@ -121,30 +124,17 @@ export default {
 
 			next();
 		} else {
-			const state = context.store.getState();
-			const locale = getCurrentUserLocale( state );
-			const flowName = getFlowName( context.params );
-			const userLoggedIn = isUserLoggedIn( state );
-
-			if ( userLoggedIn && flowName === 'onboarding' ) {
-				// Assign to the experiment only logged-in users creating a site using 'onboarding' flow.
-				const existingUsersOnboardingVariant = getVariationForUser(
-					state,
-					'new_onboarding_existing_users_non_en_v2'
-				);
-
-				if (
-					existingUsersOnboardingVariant === 'treatment' ||
-					[ 'en', 'en-gb' ].includes( locale )
-				) {
-					gutenbergRedirect( context.params.flowName );
-					return;
-				}
-			}
-
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data;
+					const localeFromParams = context.params.lang;
+					const flowName = getFlowName( context.params );
+
+					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
+						gutenbergRedirect( flowName, localeFromParams );
+						return;
+					}
+
 					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
@@ -158,7 +148,6 @@ export default {
 						removeWhiteBackground();
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
-						const localeFromParams = context.params.lang;
 						const urlWithLocale = getStepUrl(
 							'onboarding-registrationless',
 							stepName,

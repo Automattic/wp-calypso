@@ -1,21 +1,30 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
-import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketing/paths';
+import {
+	marketingConnections,
+	marketingBusinessTools,
+	marketingUltimateTrafficGuide,
+} from 'calypso/my-sites/marketing/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 
 /**
  * Images
@@ -23,6 +32,11 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
+import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
+import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
+import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
+import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
+import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 
 /**
  * Types
@@ -34,21 +48,20 @@ import * as T from 'calypso/types';
  */
 import './style.scss';
 
-interface Props {
-	recordTracksEvent: typeof recordTracksEventAction;
-	selectedSiteSlug: T.SiteSlug | null;
-}
-
-export const MarketingTools: FunctionComponent< Props > = ( {
-	recordTracksEvent,
-	selectedSiteSlug,
-} ) => {
+export const MarketingTools: FunctionComponent = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) ) || 0;
+	const selectedSiteSlug: T.SiteSlug | null = useSelector( ( state ) =>
+		getSelectedSiteSlug( state )
+	);
+	const purchases = useSelector( ( state ) => getUserPurchases( state, userId ) );
 
-	const handleBoostMyTrafficClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_boost_my_traffic_button_click' );
+	const handleBusinessToolsClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
 
-		page( marketingTraffic( selectedSiteSlug ) );
+		page( marketingBusinessTools( selectedSiteSlug ) );
 	};
 
 	const handleEarnClick = () => {
@@ -65,8 +78,16 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		recordTracksEvent( 'calypso_marketing_tools_facebook_messenger_button_click' );
 	};
 
-	const handleFindYourExpertClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_find_your_expert_button_click' );
+	const handleCanvaClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_canva_button_click' );
+	};
+
+	const handleSendinblueClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_sendinblue_button_click' );
+	};
+
+	const handleVerblioClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_verblio_button_click' );
 	};
 
 	const handleStartSharingClick = () => {
@@ -75,11 +96,20 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		page( marketingConnections( selectedSiteSlug ) );
 	};
 
+	const handleUltimateTrafficGuideClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_ultimate_traffic_guide_button_click' );
+
+		page( marketingUltimateTrafficGuide( selectedSiteSlug ) );
+	};
+
+	const isEnglish = config( 'english_locales' ).includes( getLocaleSlug() );
+
 	return (
 		<Fragment>
+			{ ! purchases && <QueryUserPurchases userId={ userId } /> }
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
-			<MarketingToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
+			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
 
 			<div className="tools__feature-list">
 				<MarketingToolsFeature
@@ -95,6 +125,18 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						target="_blank"
 					>
 						{ translate( 'Create a logo' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Create beautiful designs and graphics for your website' ) }
+					description={ translate(
+						"Everyone can create professional designs with Canva. It's a free and drag-and-drop tool for creating images, cover images, and more."
+					) }
+					imagePath={ canvaLogo }
+				>
+					<Button onClick={ handleCanvaClick } href="https://wp.me/design-tool" target="_blank">
+						{ translate( 'Create custom images with Canva' ) }
 					</Button>
 				</MarketingToolsFeature>
 
@@ -142,30 +184,72 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
-					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
+					title={ translate( 'SimpleTexting' ) }
 					description={ translate(
-						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
+						'SimpleTexting makes it easy, fast and affordable to send SMS marketing campaigns or engage in 1-on-1 conversations with your customers.'
 					) }
-					imagePath="/calypso/images/marketing/upwork-logo.png"
+					imagePath={ simpletextLogo }
 				>
 					<Button
-						onClick={ handleFindYourExpertClick }
-						href={ '/experts/upwork?source=marketingtools' }
+						onClick={ handleCreateALogoClick }
+						href="https://simpletexting.grsm.io/wordpresscom"
 						target="_blank"
 					>
-						{ translate( 'Find your expert' ) }
+						{ translate( 'Start texting' ) }
 					</Button>
 				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Turn your visitors into customers' ) }
+					description={ translate(
+						'Sendinblue is an all-in-one marketing and CRM platform to help you grow your business through building stronger customer relationships.'
+					) }
+					imagePath={ sendinblueLogo }
+				>
+					<Button
+						onClick={ handleSendinblueClick }
+						href="https://sendinblue.grsm.io/wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Start with CRM' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Get help with content for your blog or website' ) }
+					description={ translate(
+						'Verblio makes blog and content creation happen. Its writers can help create high-powered content for your website that drives SEO.'
+					) }
+					imagePath={ verblioLogo }
+				>
+					<Button
+						onClick={ handleVerblioClick }
+						href="https://verblio.grsm.io/wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Start creating content' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				{ isEnglish && (
+					<MarketingToolsFeature
+						title={ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
+						description={ translate(
+							"Our brand new Ultimate Traffic Guide reveals more than a dozen of today's most effective traffic techniques. " +
+								'The guide is appropriate for beginner to intermediate users.'
+						) }
+						imagePath={ rocket }
+					>
+						<Button onClick={ handleUltimateTrafficGuideClick }>
+							{ hasTrafficGuidePurchase( purchases )
+								? translate( 'Download now' )
+								: translate( 'Learn more' ) }
+						</Button>
+					</MarketingToolsFeature>
+				) }
 			</div>
 		</Fragment>
 	);
 };
 
-export default connect(
-	( state ) => ( {
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ),
-	{
-		recordTracksEvent: recordTracksEventAction,
-	}
-)( MarketingTools );
+export default MarketingTools;

@@ -34,6 +34,8 @@ import DomainDetailsPage from '../lib/pages/domain-details-page';
 import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
 import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import SettingsPage from '../lib/pages/settings-page';
+import NewPage from '../lib/pages/gutenboarding/new-page';
+import AccountSettingsPage from '../lib/pages/account/account-settings-page';
 
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
@@ -515,7 +517,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a premium paid plan coming in via /create as premium flow in JPY currency @signup', function () {
+	describe.skip( 'Sign up for a site on a premium paid plan coming in via /create as premium flow in JPY currency @signup', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -1334,6 +1336,29 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		after( 'Can delete our newly created account', async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );
+		} );
+	} );
+
+	describe( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
+		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
+
+		before( async function () {
+			await driverManager.ensureNotLoggedIn( driver );
+		} );
+
+		step( 'Signup and create site using default options', async function () {
+			await NewPage.Visit( driver );
+
+			await new GutenboardingFlow( driver ).signupAndCreateFreeSite( { emailAddress } );
+		} );
+
+		after( 'Can delete our newly created account', async function () {
+			// Gutenboarding creates users with auto-generated usernames so we need
+			// to find the username before we can delete it.
+			const accountSettingsPage = await AccountSettingsPage.Visit( driver );
+			const username = await accountSettingsPage.getUsername();
+
+			return await new DeleteAccountFlow( driver ).deleteAccount( username );
 		} );
 	} );
 } );

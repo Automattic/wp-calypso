@@ -3,26 +3,43 @@
  */
 import { type as domainTypes } from './constants';
 
-export function getDomainTypeText( domain = {} ) {
+/**
+ * Translate function placeholder.
+ *
+ * @param   {string} string Input string
+ * @returns {string}        Returns the input string
+ */
+function translatePlaceholder( string ) {
+	return string;
+}
+
+/**
+ * Get domain type text.
+ *
+ * @param   {Object}   domain Domain object
+ * @param   {Function} __     Translate function
+ * @returns {string}          Domain type text
+ */
+export function getDomainTypeText( domain = {}, __ = translatePlaceholder ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
-			return 'Mapped Domain';
+			return __( 'Mapped Domain' );
 
 		case domainTypes.REGISTERED:
 			if ( domain?.isPremium ) {
-				return 'Premium Domain';
+				return __( 'Premium Domain' );
 			}
 
-			return 'Registered Domain';
+			return __( 'Registered Domain' );
 
 		case domainTypes.SITE_REDIRECT:
-			return 'Site Redirect';
+			return __( 'Site Redirect' );
 
 		case domainTypes.WPCOM:
-			return 'Default Site Domain';
+			return __( 'Default Site Domain' );
 
 		case domainTypes.TRANSFER:
-			return 'Domain Transfer';
+			return __( 'Domain Transfer' );
 
 		default:
 			return '';

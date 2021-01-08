@@ -12,7 +12,11 @@ import {
  * Internal dependencies
  */
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
-import { logStashLoadErrorEventAction, logStashEventAction } from './lib/analytics';
+import {
+	logStashLoadErrorEventAction,
+	logStashEventAction,
+	recordCompositeCheckoutErrorDuringAnalytics,
+} from './lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
 
@@ -253,36 +257,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_composite_free_purchase_submit_clicked', {} )
 					);
 				}
-				case 'REDIRECT_TRANSACTION_BEGIN': {
-					reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_form_submit', {
-							credits: null,
-							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod(
-									action.payload.paymentMethodId
-								) || '',
-						} )
-					);
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_form_submit', {
-							credits: null,
-							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod(
-									action.payload.paymentMethodId
-								) || '',
-						} )
-					);
-					const paymentMethodIdForTracks = action.payload.paymentMethodId
-						.replace( /-/, '_' )
-						.toLowerCase();
-					return reduxDispatch(
-						recordTracksEvent(
-							`calypso_checkout_composite_${ paymentMethodIdForTracks }_submit_clicked`,
-							{}
-						)
-					);
-				}
 				case 'FULL_CREDITS_TRANSACTION_BEGIN': {
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_form_submit', {
@@ -382,25 +356,11 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 			}
 		} catch ( err ) {
-			// This is a fallback to catch any errors caused by the analytics code
-			// (particularly for the error reporting analytics code). Anything in
-			// this block should remain very simple and extremely tolerant of any
-			// kind of data. It should make no assumptions about the data it uses.
-			// There's no fallback for the fallback!
-			debug( 'checkout event error', err.message );
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_error', {
-					error_message: err.message,
-					action_type: String( action?.type ),
-					action_payload: String( action?.payload ),
-				} )
-			);
-			return reduxDispatch(
-				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
-					action_type: String( action?.type ),
-					action_payload: String( action?.payload ),
-				} )
-			);
+			recordCompositeCheckoutErrorDuringAnalytics( {
+				reduxDispatch,
+				errorObject: err,
+				failureDescription: String( action?.type ) + ':' + String( action?.payload ),
+			} );
 		}
 	};
 }

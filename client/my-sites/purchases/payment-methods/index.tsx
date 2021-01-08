@@ -19,7 +19,7 @@ import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
 import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
+import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import titles from 'calypso/me/purchases/titles';
@@ -78,7 +78,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPaymentMethodsError }
 			>
-				<PaymentMethodList addPaymentMethodUrl={ getAddNewPaymentMethod( siteSlug ) } />
+				<PaymentMethodList addPaymentMethodUrl={ getAddNewPaymentMethodUrlFor( siteSlug ) } />
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);

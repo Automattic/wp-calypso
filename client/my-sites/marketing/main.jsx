@@ -37,6 +37,7 @@ export const Sharing = ( {
 	showButtons,
 	showConnections,
 	showTraffic,
+	showBusinessTools,
 	siteId,
 	isJetpack,
 	isVip,
@@ -79,6 +80,16 @@ export const Sharing = ( {
 			id: 'sharing-buttons',
 			route: '/marketing/sharing-buttons' + pathSuffix,
 			title: translate( 'Sharing Buttons' ),
+		} );
+	}
+
+	// Include Business Tools link if a site is selected and the
+	// required Jetpack module is active
+	if ( showBusinessTools ) {
+		filters.push( {
+			id: 'business-buttons',
+			route: '/marketing/business-tools' + pathSuffix,
+			title: translate( 'Business Tools' ),
 		} );
 	}
 
@@ -129,6 +140,7 @@ Sharing.propTypes = {
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
 	showConnections: PropTypes.bool,
+	showBusinessTools: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	translate: PropTypes.func,
@@ -144,6 +156,7 @@ export default connect( ( state ) => {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,
+		showBusinessTools: !! siteId && canManageOptions && ! isJetpack,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

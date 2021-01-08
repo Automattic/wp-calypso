@@ -210,9 +210,9 @@ const googleAppsWithRegistration = ( context, next ) => {
 						args: { domain: context.params.registerDomain },
 					} ) }
 				/>
-				<CartData>
+				<CalypsoShoppingCartProvider>
 					<GSuiteUpgrade domain={ context.params.registerDomain } />
-				</CartData>
+				</CalypsoShoppingCartProvider>
 			</Main>
 		);
 	}

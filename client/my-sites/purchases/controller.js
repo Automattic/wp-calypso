@@ -12,7 +12,6 @@ import {
 	PurchaseDetails,
 	PurchaseCancel,
 	PurchaseCancelDomain,
-	PurchaseAddPaymentMethod,
 	PurchaseChangePaymentMethod,
 } from 'calypso/my-sites/purchases/main';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
@@ -56,16 +55,6 @@ export const purchaseCancel = ( context, next ) => {
 export const purchaseCancelDomain = ( context, next ) => {
 	context.primary = (
 		<PurchaseCancelDomain
-			siteSlug={ context.params.site }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-		/>
-	);
-	next();
-};
-
-export const purchaseAddPaymentMethod = ( context, next ) => {
-	context.primary = (
-		<PurchaseAddPaymentMethod
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>

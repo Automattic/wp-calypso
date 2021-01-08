@@ -23,13 +23,13 @@ export const getPurchaseListUrlFor = ( targetSiteSlug: string ) =>
 
 export const getAddPaymentMethodUrlFor = (
 	targetSiteSlug: string,
-	targetPurchase: { id: string | number }
+	targetPurchaseId: string | number
 ) =>
 	isEnabled( 'purchases/new-payment-methods' )
-		? `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment-method/add`
-		: `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/add`;
+		? `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/payment-method/add`
+		: `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/payment/add`;
 
-export const getAddNewPaymentMethod = ( targetSiteSlug: string ) =>
+export const getAddNewPaymentMethodUrlFor = ( targetSiteSlug: string ) =>
 	isEnabled( 'purchases/new-payment-methods' )
 		? `/purchases/add-payment-method/${ targetSiteSlug }`
 		: `/purchases/add-credit-card/${ targetSiteSlug }`;
@@ -39,12 +39,12 @@ export const getPaymentMethodsUrlFor = ( targetSiteSlug: string ) =>
 
 export const getChangePaymentMethodUrlFor = (
 	targetSiteSlug: string,
-	targetPurchase: { id: string | number },
-	targetCardId: { id: string | number }
+	targetPurchaseId: string | number,
+	targetCardId: string | number
 ) =>
 	isEnabled( 'purchases/new-payment-methods' )
-		? `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment-method/change/${ targetCardId }`
-		: `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/edit/${ targetCardId }`;
+		? `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/payment-method/change/${ targetCardId }`
+		: `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/payment/edit/${ targetCardId }`;
 
 export const getReceiptUrlFor = ( targetSiteSlug: string, targetReceiptId: string | number ) =>
 	`/purchases/billing-history/${ targetSiteSlug }/${ targetReceiptId }`;

@@ -17,7 +17,6 @@ import { LAUNCH_STORE } from '../../stores';
 import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic/launch';
 
 import { FLOW_ID } from '../../constants';
-import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { plan } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
@@ -28,6 +27,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
 
 	const handleNext = () => {
+		confirmDomainSelection();
 		onNextStep?.();
 	};
 
@@ -44,7 +44,6 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 	};
 
 	const handleExistingSubdomainSelect = () => {
-		confirmDomainSelection();
 		unsetDomain();
 	};
 
@@ -75,7 +74,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ currentDomain }
+					currentDomain={ currentDomain || mockDomainSuggestion( siteSubdomain?.domain ) }
 					existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
 					onDomainSelect={ handleDomainSelect }
 					onExistingSubdomainSelect={ handleExistingSubdomainSelect }

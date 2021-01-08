@@ -4,7 +4,7 @@
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, useMemo, useCallback } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
@@ -26,10 +26,13 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -39,6 +42,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	getStoredCards,
 	getStoredCardById,
+	getStoredPaymentAgreements,
 	hasLoadedStoredCardsFromServer,
 } from 'calypso/state/stored-cards/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -72,23 +76,21 @@ function ChangePaymentMethod( props ) {
 		! props.hasLoadedStoredCardsFromServer ||
 		isStripeLoading;
 	const isDataValid = ( { purchase, selectedSite } ) => purchase && selectedSite;
-	const changePaymentMethodTitle = isEnabled( 'purchases/new-payment-methods' )
-		? titles.changePaymentMethod
-		: titles.editCardDetails;
 
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
 		page( props.purchaseListUrl );
 	}
 
+	const currentPaymentMethodId = getCurrentPaymentMethodId( props.payment );
+	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
+
 	if ( isDataLoading ) {
 		return (
 			<Fragment>
 				<QueryStoredCards />
-
 				<QueryUserPurchases userId={ props.userId } />
-
-				<PaymentMethodLoader title={ titles.changePaymentMethod } />
+				<PaymentMethodLoader title={ changePaymentMethodTitle } />
 			</Fragment>
 		);
 	}
@@ -127,7 +129,7 @@ function ChangePaymentMethod( props ) {
 				<Column type="main">
 					{ isEnabled( 'purchases/new-payment-methods' ) ? (
 						<ChangePaymentMethodList
-							currentPaymentMethod={ props.card }
+							currentlyAssignedPaymentMethodId={ currentPaymentMethodId }
 							purchase={ props.purchase }
 							successCallback={ successCallback }
 							siteSlug={ props.siteSlug }
@@ -160,6 +162,7 @@ ChangePaymentMethod.propTypes = {
 	hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 	purchaseId: PropTypes.number.isRequired,
 	purchase: PropTypes.object,
+	payment: PropTypes.object,
 	selectedSite: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
@@ -169,20 +172,56 @@ ChangePaymentMethod.propTypes = {
 	isFullWidth: PropTypes.bool.isRequired,
 };
 
+// Returns an ID as used in the payment method list inside CheckoutPaymentMethods.
+function getCurrentPaymentMethodId( payment ) {
+	if ( payment?.type === 'credits' ) {
+		return 'credits';
+	}
+	if ( payment?.type === 'paypal' ) {
+		return 'paypal';
+	}
+	if ( payment?.type === 'credit_card' ) {
+		return 'existingCard-' + payment.creditCard.id;
+	}
+	return 'none';
+}
+
+function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
+	if ( isEnabled( 'purchases/new-payment-methods' ) ) {
+		if ( [ 'credits', 'none' ].includes( currentPaymentMethodId ) ) {
+			return titles.addPaymentMethod;
+		}
+		return titles.changePaymentMethod;
+	}
+	return titles.editCardDetails;
+}
+
+// We want to preselect the current method if it is in the list, but if not, preselect the first method.
+function getInitiallySelectedPaymentMethodId( currentlyAssignedPaymentMethodId, paymentMethods ) {
+	if (
+		! paymentMethods.some(
+			( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
+		)
+	) {
+		return paymentMethods?.[ 0 ]?.id;
+	}
+
+	return currentlyAssignedPaymentMethodId;
+}
+
 const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
 
 function ChangePaymentMethodList( {
-	currentPaymentMethod,
+	currentlyAssignedPaymentMethodId,
 	purchase,
 	successCallback,
 	siteSlug,
 	apiParams,
 } ) {
-	const currentlyAssignedPaymentMethodId = 'existingCard-' + currentPaymentMethod.stored_details_id; // TODO: make this work for paypal.
-
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
 	const paymentMethods = useAssignablePaymentMethods();
 
@@ -199,6 +238,10 @@ function ChangePaymentMethodList( {
 		notices.success( message, { persistent: true, duration: 5000 } );
 	}, [] );
 
+	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
+		( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
+	);
+
 	return (
 		<CheckoutProvider
 			items={ [] }
@@ -209,7 +252,7 @@ function ChangePaymentMethodList( {
 				label: 'fake thing',
 			} }
 			onPaymentComplete={ () =>
-				onChangeComplete( { successCallback, translate, showSuccessMessage } )
+				onChangeComplete( { successCallback, translate, showSuccessMessage, reduxDispatch } )
 			}
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
@@ -224,11 +267,16 @@ function ChangePaymentMethodList( {
 					),
 			} }
 			isLoading={ isStripeLoading }
-			initiallySelectedPaymentMethodId={ currentlyAssignedPaymentMethodId }
+			initiallySelectedPaymentMethodId={ getInitiallySelectedPaymentMethodId(
+				currentlyAssignedPaymentMethodId,
+				paymentMethods
+			) }
 		>
 			<Card className="change-payment-method__content">
 				<QueryPaymentCountries />
-
+				{ currentPaymentMethodNotAvailable && (
+					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
+				) }
 				<CheckoutPaymentMethods className="change-payment-method__list" isComplete={ false } />
 				<div className="change-payment-method__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
@@ -243,7 +291,8 @@ function ChangePaymentMethodList( {
 	);
 }
 
-function onChangeComplete( { successCallback, translate, showSuccessMessage } ) {
+function onChangeComplete( { successCallback, translate, showSuccessMessage, reduxDispatch } ) {
+	reduxDispatch( recordTracksEvent( 'calypso_purchases_save_new_payment_method' ) );
 	showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	successCallback();
 }
@@ -326,12 +375,58 @@ function TosText( { translate } ) {
 	);
 }
 
+function CurrentPaymentMethodNotAvailableNotice( { purchase } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+	const storedPaymentAgreements = useSelector( getStoredPaymentAgreements );
+	const noticeProps = { showDismiss: false };
+
+	if ( creditCardHasAlreadyExpired( purchase ) ) {
+		noticeProps.text = translate(
+			'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s.',
+			{
+				args: {
+					cardType: purchase.payment.creditCard.type.toUpperCase(),
+					cardNumber: parseInt( purchase.payment.creditCard.number, 10 ),
+					cardExpiry: moment( purchase.payment.creditCard.expiryDate, 'MM/YY' ).format(
+						'MMMM YYYY'
+					),
+				},
+			}
+		);
+		return <Notice { ...noticeProps } />;
+	}
+
+	if ( getCurrentPaymentMethodId( purchase.payment ) === 'paypal' ) {
+		const storedPaymentAgreement = storedPaymentAgreements.find(
+			( agreement ) => agreement.stored_details_id === purchase.payment.storedDetailsId
+		);
+		if ( storedPaymentAgreement?.email ) {
+			noticeProps.text = translate(
+				'This purchase is currently billed to your PayPal account (%(emailAddress)s).',
+				{
+					args: {
+						emailAddress: storedPaymentAgreement.email,
+					},
+				}
+			);
+			return <Notice { ...noticeProps } />;
+		}
+
+		noticeProps.text = translate( 'This purchase is currently billed to your PayPal account.' );
+		return <Notice { ...noticeProps } />;
+	}
+
+	return null;
+}
+
 const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	card: getStoredCardById( state, cardId ),
 	hasLoadedSites: ! isRequestingSites( state ),
 	hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	purchase: getByPurchaseId( state, purchaseId ),
+	payment: getByPurchaseId( state, purchaseId )?.payment,
 	selectedSite: getSelectedSite( state ),
 	userId: getCurrentUserId( state ),
 	locale: getCurrentUserLocale( state ),

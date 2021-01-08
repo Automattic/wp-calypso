@@ -26,4 +26,4 @@ To start a plan checkout flow, use appropriate URLS:
 - /checkout/site.jetpack.me/premium
 - /checkout/site.jetpack.me/professional
 
-Plan routes are sourced from `lib/plans/constants.js`. Checkout flow is handled by `my-sites/upgrades/checkout/checkout.jsx`
+Plan routes are sourced from `lib/plans/constants.js`.

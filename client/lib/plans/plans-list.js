@@ -443,10 +443,10 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 				constants.FEATURE_SITE_MONETIZATION_V2,
 			],
 			i5: [
-				constants.FEATURE_ALL_FREE_FEATURES,
 				constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 				constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 				constants.FEATURE_ANTISPAM_V2,
+				constants.FEATURE_VIDEO_HOSTING_V2,
 			],
 		}[ getJetpackCROActiveVersion() ] || {
 			[ constants.FEATURE_CATEGORY_SECURITY ]: [
@@ -605,7 +605,9 @@ const getPlanJetpackCompleteDetails = () => ( {
 				constants.FEATURE_PRODUCT_SEARCH_V2,
 			],
 			i5: [
-				constants.FEATURE_PLAN_SECURITY_REALTIME,
+				constants.FEATURE_PLAN_SECURITY_DAILY,
+				constants.FEATURE_BACKUP_REALTIME_V2,
+				constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 				constants.FEATURE_CRM_V2,
 				constants.FEATURE_PRODUCT_SEARCH_V2,
 			],
@@ -1533,7 +1535,6 @@ export const PLANS_LIST = {
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_P2_13GB_STORAGE,
-			constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS,
 			constants.FEATURE_P2_ADVANCED_SEARCH,
 			constants.FEATURE_P2_VIDEO_SHARING,
 			constants.FEATURE_P2_MORE_FILE_TYPES,

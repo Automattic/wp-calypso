@@ -26,6 +26,7 @@ import { v4 as uuid } from 'uuid';
 import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -130,6 +131,7 @@ function getQueryObject( props ) {
 class RegisterDomainStep extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isCartPendingUpdate: PropTypes.bool,
 		isDomainOnly: PropTypes.bool,
 		onDomainsAvailabilityChange: PropTypes.func,
 		products: PropTypes.object,
@@ -1190,6 +1192,7 @@ class RegisterDomainStep extends React.Component {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
+						isCartPendingUpdate={ this.props.isCartPendingUpdate }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						onButtonClick={ this.onAddDomain }
@@ -1371,6 +1374,7 @@ class RegisterDomainStep extends React.Component {
 				railcarId={ this.state.railcarId }
 				fetchAlgo={ this.getFetchAlgo() }
 				cart={ this.props.cart }
+				isCartPendingUpdate={ this.props.isCartPendingUpdate }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
@@ -1538,4 +1542,4 @@ export default connect(
 		hideSitePreview,
 		showSitePreview,
 	}
-)( localize( RegisterDomainStep ) );
+)( withShoppingCart( localize( RegisterDomainStep ) ) );

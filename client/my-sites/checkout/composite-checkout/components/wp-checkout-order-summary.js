@@ -13,7 +13,6 @@ import {
 	useFormStatus,
 	useLineItemsOfType,
 	useTotal,
-	useSelect,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -50,8 +49,10 @@ import Gridicon from 'calypso/components/gridicon';
 import { useIsLoading } from 'calypso/state/experiments/hooks';
 import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
 export default function WPCheckoutOrderSummary( {
+	siteId,
 	onChangePlanLength,
 	nextDomainIsFree = false,
 } = {} ) {
@@ -83,6 +84,7 @@ export default function WPCheckoutOrderSummary( {
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
 					<CheckoutSummaryFeaturesList
+						siteId={ siteId }
 						isMonthlyPricingTest={ isMonthlyPricingTest }
 						hasMonthlyPlan={ hasMonthlyPlan }
 						nextDomainIsFree={ nextDomainIsFree }
@@ -153,7 +155,7 @@ function CheckoutSummaryFeaturesList( props ) {
 	const domains = useDomainsInCart();
 	const hasPlanInCart = useHasPlanInCart();
 	const translate = useTranslate();
-	const siteId = useSelect( ( select ) => select( 'wpcom' )?.getSiteId?.() );
+	const siteId = props.siteId;
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
@@ -266,17 +268,19 @@ function CheckoutSummaryFeaturesListDomainItem( {
 	);
 }
 
-function CheckoutSummaryPlanFeatures( { isMonthlyPricingTest } ) {
+function CheckoutSummaryPlanFeatures( { isMonthlyPricingTest, siteId } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const planInCart = usePlanInCart();
 	const hasRenewalInCart = useHasRenewalInCart();
+	const planHasDomainCredit = useSelector( ( state ) => hasDomainCredit( state, siteId ) );
 	const planFeatures = getPlanFeatures(
 		planInCart,
 		translate,
 		hasDomainsInCart,
 		hasRenewalInCart,
-		isMonthlyPricingTest
+		isMonthlyPricingTest,
+		planHasDomainCredit
 	);
 
 	return (
@@ -399,12 +403,18 @@ const CheckoutSummaryFeatures = styled.div`
 		padding: 20px;
 	}
 
-	.checkout__payment-chat-button.is-borderless {
+	.payment-chat-button.is-borderless {
 		color: ${ ( props ) => props.theme.colors.textColor };
 		padding: 0;
 
 		svg {
+			margin-right: 4px;
 			width: 20px;
+
+			.rtl & {
+				margin-right: 0;
+				margin-left: 4px;
+			}
 		}
 	}
 `;

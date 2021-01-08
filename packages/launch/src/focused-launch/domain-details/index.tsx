@@ -41,6 +41,11 @@ const DomainDetails: React.FunctionComponent = () => {
 		goBack();
 	};
 
+	const handleSubdomainSelect = () => {
+		onExistingSubdomainSelect();
+		goBack();
+	};
+
 	const trackDomainSearchInteraction = ( query: string ) => {
 		recordTracksEvent( 'calypso_newsite_domain_search_blur', {
 			flow: FOCUSED_LAUNCH_FLOW_ID,
@@ -68,7 +73,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					currentDomain={ currentDomain }
 					existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
 					onDomainSelect={ handleSelect }
-					onExistingSubdomainSelect={ onExistingSubdomainSelect }
+					onExistingSubdomainSelect={ handleSubdomainSelect }
 					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
 					analyticsUiAlgo={ ANALYTICS_UI_LOCATION }
 					segregateFreeAndPaid

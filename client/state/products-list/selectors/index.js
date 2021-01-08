@@ -5,6 +5,7 @@ export { getPlanPrice } from './get-plan-price';
 export { getProductBySlug } from './get-product-by-slug';
 export { getProductCost } from './get-product-cost';
 export { getProductDisplayCost } from './get-product-display-cost';
+export { getProductPriceTiers } from './get-product-price-tiers';
 export { getProductsList } from './get-products-list';
 export { isProductsListFetching } from './is-products-list-fetching';
 export { planSlugToPlanProduct } from './plan-slug-to-plan-product';

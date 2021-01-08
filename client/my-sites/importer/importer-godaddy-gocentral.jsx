@@ -16,15 +16,16 @@ class ImporterGoDaddyGoCentral extends React.PureComponent {
 	static displayName = 'ImporterGoDaddyGoCentral';
 
 	static propTypes = {
+		siteTitle: PropTypes.string.isRequired,
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
 			errorData: PropTypes.shape( {
 				type: PropTypes.string.isRequired,
 				description: PropTypes.string.isRequired,
 			} ),
-			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),
+		fromSite: PropTypes.string,
 	};
 
 	render() {

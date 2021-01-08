@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.14
+Stable tag: 2.8.17
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,29 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.17 =
+* Domain Picker: make items keyboard accessible (https://github.com/Automattic/wp-calypso/pull/48172)
+* Patterns: Guard the premium patterns indicator behind an Object.isExtensible check to prevent editor fatals in SCRIPT_DEBUG mode. (https://github.com/Automattic/wp-calypso/pull/48640)
+* Onboarding: Fix plan picker comparison table width on large displays. (https://github.com/Automattic/wp-calypso/pull/48112)
+* Add an initial sync to remove need to make an edit for sync to happen. (https://github.com/Automattic/wp-calypso/pull/48586)
+* Editor welcome tour tracking and fixes. (https://github.com/Automattic/wp-calypso/pull/48390)
+* New Onboarding: pre-select subdomain in editor launch flow. (https://github.com/Automattic/wp-calypso/pull/48247)
+* New Onboarding: use site slug instead of siteId when redirecting after launch. (https://github.com/Automattic/wp-calypso/pull/48248)
+* Coming Soon: add php unit tests. (https://github.com/Automattic/wp-calypso/pull/48584)
+* Focused Launch: miscellaneous improvements and fixes
+* Checkout: miscellaneous fixes
+
+= 2.8.16 =
+* Page layout selector: Fixed an issue where the wrong close button would appear in certain circumstances. (https://github.com/Automattic/wp-calypso/pull/48469)
+
+= 2.8.15 =
+* Page layout selector: Use description of the templates as label for screen readers (https://github.com/Automattic/wp-calypso/pull/48128)
+* Remove usages of lodash trimEnd() (https://github.com/Automattic/wp-calypso/pull/48255)
+* Patterns: Swap `can_register_pattern` logic from using a tag, to using `pattern_meta` instead (https://github.com/Automattic/wp-calypso/pull/48330)
+* NUX: New Welcome Tour Component (https://github.com/Automattic/wp-calypso/pull/47779)
+* NUX: Custom Welcome Guide for Anchor users (https://github.com/Automattic/wp-calypso/pull/48357)
+* Newspack Blocks: Update to 1.17.1 (https://github.com/Automattic/wp-calypso/pull/48456)
 
 = 2.8.14 =
 * Premium Patterns: add pink dot to indicate a premium pattern in the inserter. (https://github.com/Automattic/wp-calypso/pull/47896)

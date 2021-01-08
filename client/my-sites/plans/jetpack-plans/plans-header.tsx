@@ -17,6 +17,10 @@ import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 
+// New Year 2021 promotion; runs from Jan 1 00:00 to Jan 18 23:59 UTC automatically.
+// Safe to remove on or after Jan 19.
+import NewYear2021SaleBanner from 'calypso/components/jetpack/new-year-2021-sale-banner';
+
 const StandardPlansHeader = () => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
@@ -69,5 +73,10 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 };
 
 export default function setJetpackHeader( context: PageJS.Context ) {
-	context.header = <PlansHeader context={ context } />;
+	context.header = (
+		<>
+			<PlansHeader context={ context } />
+			<NewYear2021SaleBanner urlQueryArgs={ context.query } />
+		</>
+	);
 }

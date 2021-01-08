@@ -4,13 +4,14 @@
 import { findKey } from 'lodash';
 import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { Plans } from '@automattic/data-stores';
+import languages from '@automattic/languages';
+
 import type { ValuesType } from 'utility-types';
 
 /**
  * Internal dependencies
  */
 import config from 'calypso/config';
-import { getLanguageRouteParam } from '../../lib/i18n-utils';
 
 type PlanPath = Plans.PlanPath;
 
@@ -41,7 +42,7 @@ const routeFragments = {
 	// We add the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
 	step: `:step(${ steps.join( '|' ) })?`,
 	plan: `:plan(${ plansPaths.join( '|' ) })?`,
-	lang: getLanguageRouteParam(),
+	lang: `:lang(${ languages.map( ( lang ) => lang.langSlug ).join( '|' ) })?`,
 };
 
 export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
@@ -52,6 +53,7 @@ export type StepNameType = keyof typeof Step;
 export interface GutenLocationStateType {
 	anchorFmPodcastId?: string;
 	anchorFmEpisodeId?: string;
+	anchorFmSpotifyShowUrl?: string;
 }
 export type GutenLocationStateKeyType = keyof GutenLocationStateType;
 
@@ -59,7 +61,7 @@ export function usePath() {
 	const langParam = useLangRouteParam();
 	const planParam = usePlanRouteParam();
 
-	return ( step?: StepType, lang?: string, plan?: string ) => {
+	return ( step?: StepType, lang?: string, plan?: string ): string => {
 		// When lang is null, remove lang.
 		// When lang is empty or undefined, get lang from route param.
 		lang = lang === null ? '' : lang || langParam;
@@ -97,7 +99,7 @@ export function usePlanRouteParam() {
 	return match?.params.plan;
 }
 
-export function useCurrentStep() {
+export function useCurrentStep(): StepNameType {
 	const stepRouteParam = useStepRouteParam();
 	return findKey( Step, ( step ) => step === stepRouteParam ) as StepNameType;
 }
@@ -110,33 +112,49 @@ export function useNewQueryParam() {
 }
 
 export function useIsAnchorFm(): boolean {
-	const podcastId = useAnchorFmPodcastId();
-	return Boolean( podcastId && podcastId.match( /^[0-9a-f]{7,8}$/i ) );
+	const { anchorFmPodcastId } = useAnchorFmParams();
+	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
 }
 
-// Returns the anchor podcast id. First looks in "location state",
-// provided by react-router-dom, if not available there, checks the query string.
-export function useAnchorFmPodcastId(): string | null {
-	const sanitize = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
-	return useAnchorParameter( {
+export interface AnchorFmParams {
+	anchorFmPodcastId: string | null;
+	anchorFmEpisodeId: string | null;
+	anchorFmSpotifyShowUrl: string | null;
+}
+export function useAnchorFmParams(): AnchorFmParams {
+	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+	const anchorFmPodcastId = useAnchorParameter( {
 		queryParamName: 'anchor_podcast',
 		locationStateParamName: 'anchorFmPodcastId',
-		sanitize,
+		sanitize: sanitizePodcast,
 	} );
-}
 
-// Returns the anchor episode id. First looks in "location state",
-// provided by react-router-dom, if not available there, checks the query string.
-export function useAnchorFmEpisodeId(): string | null {
 	// Allow all characters allowed in urls
 	// Reserved characters: !*'();:@&=+$,/?#[]
 	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
-	const sanitize = ( id: string ) => id.replace( /[^A-Za-z0-9_.\-~%]/g, '' );
-	return useAnchorParameter( {
+	const sanitizeEpisode = ( id: string ) => id.replace( /[^A-Za-z0-9_.\-~%]/g, '' );
+	const anchorFmEpisodeId = useAnchorParameter( {
 		queryParamName: 'anchor_episode',
 		locationStateParamName: 'anchorFmEpisodeId',
-		sanitize,
+		sanitize: sanitizeEpisode,
 	} );
+
+	// Allow all characters allowed in urls
+	// Reserved characters: !*'();:@&=+$,/?#[]
+	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
+	const sanitizeShowUrl = ( id: string ) =>
+		id.replace( /[^A-Za-z0-9_.\-~%!*'();:@&=+$,/?#[\]]/g, '' );
+	const anchorFmSpotifyShowUrl = useAnchorParameter( {
+		queryParamName: 'spotify_show_url',
+		locationStateParamName: 'anchorFmSpotifyShowUrl',
+		sanitize: sanitizeShowUrl,
+	} );
+
+	return {
+		anchorFmPodcastId,
+		anchorFmEpisodeId,
+		anchorFmSpotifyShowUrl,
+	};
 }
 
 /*
