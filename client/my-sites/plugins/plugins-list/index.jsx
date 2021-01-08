@@ -227,7 +227,7 @@ export class PluginsList extends React.Component {
 		this.props.removePluginStatuses( 'completed', 'error' );
 	}
 
-	doActionOverSelected( actionName, action, siteIdOnly = false ) {
+	doActionOverSelected( actionName, action ) {
 		const isDeactivatingAndJetpackSelected = ( { slug } ) =>
 			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
 
@@ -243,11 +243,7 @@ export class PluginsList extends React.Component {
 				} );
 			} ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
-			.forEach( ( site ) => {
-				// Our Redux actions only need a site ID instead of an entire site object
-				const siteArg = siteIdOnly ? site.ID : site;
-				return action( siteArg, site.plugin );
-			} );
+			.forEach( ( site ) => action( site.ID, site.plugin ) );
 	}
 
 	getSitePlugin = ( plugin, site ) => {
@@ -276,31 +272,27 @@ export class PluginsList extends React.Component {
 	};
 
 	updateSelected = () => {
-		this.doActionOverSelected( 'updating', this.props.updatePlugin, true );
+		this.doActionOverSelected( 'updating', this.props.updatePlugin );
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	};
 
 	activateSelected = () => {
-		this.doActionOverSelected( 'activating', this.props.activatePlugin, true );
+		this.doActionOverSelected( 'activating', this.props.activatePlugin );
 		this.recordEvent( 'Clicked Activate Plugin(s)', true );
 	};
 
 	deactivateSelected = () => {
-		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin, true );
+		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin );
 		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
 	};
 
 	deactiveAndDisconnectSelected = () => {
 		let waitForDeactivate = false;
 
-		this.doActionOverSelected(
-			'deactivating',
-			( site, plugin ) => {
-				waitForDeactivate = true;
-				this.props.deactivatePlugin( site, plugin, true );
-			},
-			true
-		);
+		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
+			waitForDeactivate = true;
+			this.props.deactivatePlugin( site, plugin );
+		} );
 
 		if ( waitForDeactivate && this.props.selectedSite ) {
 			this.setState( { disconnectJetpackNotice: true } );
@@ -310,12 +302,12 @@ export class PluginsList extends React.Component {
 	};
 
 	setAutoupdateSelected = () => {
-		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin, true );
+		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin );
 		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
 	};
 
 	unsetAutoupdateSelected = () => {
-		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin, true );
+		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin );
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
 	};
 
@@ -431,7 +423,7 @@ export class PluginsList extends React.Component {
 
 	removeSelected = ( accepted ) => {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', this.props.removePlugin, true );
+			this.doActionOverSelected( 'removing', this.props.removePlugin );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
 		}
 	};
