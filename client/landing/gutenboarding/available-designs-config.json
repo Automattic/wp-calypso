@@ -314,6 +314,32 @@
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"features": [ "anchorfm" ]
+		},
+		{
+			"title": "Balan",
+			"slug": "balan",
+			"template": "balan",
+			"theme": "mayland",
+			"fonts": {
+				"headings": "Rubik",
+				"base": "Roboto"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Pollard",
+			"slug": "pollard",
+			"template": "pollard",
+			"theme": "mayland",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Raleway"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"features": []
 		}
 	]
 }
