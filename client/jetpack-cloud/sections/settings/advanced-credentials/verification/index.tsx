@@ -1,17 +1,18 @@
 /**
  * External dependencies
  */
-import { random } from 'lodash';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { useInterval, EVERY_SECOND } from 'calypso/lib/interval';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
+import { CredentialsTestProgress as Progress } from 'calypso/state/data-layer/wpcom/activity-log/update-credentials/vendor';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -29,23 +30,23 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
 	const translate = useTranslate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
-
-	const steps = [
-		translate( 'Preflight check' ),
-		translate( 'Login successful' ),
-		translate( 'Locating WordPress installation' ),
-		translate( 'File permission check complete' ),
-		translate( 'Secure connection established' ),
-	];
-
-	const [ currentStep, setCurrentStep ] = useState( 0 );
-
-	useInterval(
-		() => {
-			setCurrentStep( currentStep + 1 );
-		},
-		currentStep < steps.length ? random( EVERY_SECOND, EVERY_SECOND * 3 ) : null
+	const siteId = useSelector( getSelectedSiteId );
+	const updateProgress = useSelector( ( state ) =>
+		getJetpackCredentialsUpdateProgress( state, siteId )
 	);
+
+	// TODO @azabani change this when implementing proper success/failure screens
+	const showFinishUp = false;
+
+	const stepLabels = new Map( [
+		[ 'check jetpack site', translate( 'Checking Jetpack site' ) ],
+		[ 'check public host', translate( 'Checking public host' ) ],
+		[ 'connect', translate( 'Connecting to server' ) ],
+		[ 'authenticate', translate( 'Authenticating with server' ) ],
+		[ 'find wordpress', translate( 'Locating WordPress installation' ) ],
+		[ 'save special paths', translate( 'Saving path settings' ) ],
+		[ 'disconnect', translate( 'Disconnecting' ) ],
+	] );
 
 	return (
 		<div>
@@ -62,26 +63,23 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
 				</h3>
 			</div>
 			<ul className="verification__step-list">
-				{ steps.map( ( step, index ) => {
-					if ( index < currentStep ) {
-						return (
-							<li key={ index } className="verification__step-complete">
-								<Gridicon icon="checkmark" />
-								{ step }
-							</li>
-						);
-					} else if ( index === currentStep ) {
-						return (
-							<li key={ index } className="verification__step-in-progress">
-								<Gridicon icon="sync" />
-								{ step }
-							</li>
-						);
-					}
-					return null;
+				{ updateProgress.steps.map( ( step ) => {
+					const [ className, icon ] = {
+						[ Progress.StepState.Waiting ]: [ 'verification__step-waiting', 'ellipsis' ],
+						[ Progress.StepState.Active ]: [ 'verification__step-active', 'chevron-right' ],
+						[ Progress.StepState.Good ]: [ 'verification__step-good', 'checkmark' ],
+						[ Progress.StepState.Bad ]: [ 'verification__step-bad', 'cross' ],
+					}[ step.state ] ?? [ 'verification__step-unknown', 'notice' ];
+
+					return (
+						<li key={ step.label } className={ classNames( 'verification__step-item', className ) }>
+							<Gridicon icon={ icon } />
+							{ stepLabels.has( step.label ) ? stepLabels.get( step.label ) : step.label }
+						</li>
+					);
 				} ) }
 			</ul>
-			{ currentStep >= steps.length && (
+			{ showFinishUp && (
 				<div className="verification__buttons">
 					<Button primary onClick={ onFinishUp }>
 						{ translate( 'Finish up' ) }
