@@ -8,14 +8,17 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
+import {
+	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
+	MANAGE_PURCHASES_FAQ_CANCELLING,
+} from 'calypso/lib/url/support';
 
 export default function TosText(): JSX.Element {
 	const translate = useTranslate();
 	return (
 		<>
 			{ translate(
-				'By saving a payment method, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if you use it to pay for a subscription or plan, you authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
+				'You agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
 				{
 					components: {
 						tosLink: (
@@ -26,10 +29,18 @@ export default function TosText(): JSX.Element {
 							/>
 						),
 						autoRenewalSupportPage: (
-							<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+							<a
+								href={ MANAGE_PURCHASES_AUTOMATIC_RENEWAL }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
 						),
 						faqCancellingSupportPage: (
-							<a href={ MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
+							<a
+								href={ MANAGE_PURCHASES_FAQ_CANCELLING }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
 						),
 					},
 				}
