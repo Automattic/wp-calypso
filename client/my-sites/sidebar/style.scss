@@ -25,15 +25,14 @@
 		}
 
 		.popover__inner {
-			display: flex;
 			align-items: center;
+			font-size: 0.75rem;
 			max-width: 300px;
 			color: var( --color-text-inverted );
 			background-color: var( --color-neutral-100 );
 		}
 
-		.external-link {
-			margin-left: 8px;
+		a {
 			color: var( --color-text-inverted );
 			text-decoration: underline;
 		}
