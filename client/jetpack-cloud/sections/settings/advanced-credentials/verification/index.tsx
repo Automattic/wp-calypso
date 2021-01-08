@@ -26,8 +26,6 @@ import './style.scss';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 
 interface Props {
-	formSubmissionError: Error | null;
-	formSubmissionStatus: 'unsubmitted' | 'pending' | 'success' | 'failed';
 	onFinishUp: () => void;
 	onReview: () => void;
 }

@@ -145,7 +145,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	// if a new error occurs from a form submission add that to the errors
 	useEffect( () => {
 		if ( null !== formSubmissionError ) {
-			switch ( formSubmissionError.code ) {
+			switch ( formSubmissionError.wpcomError?.code ) {
 				case 'invalid_wordpress_path':
 					setFormErrors( {
 						path: {
@@ -160,13 +160,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			}
 		}
 	}, [ setFormErrors, formSubmissionError, translate ] );
-
-	// on success, move from edit to connected state
-	useEffect( () => {
-		if ( formSubmissionStatus === 'success' ) {
-			page( settingsPath( siteSlug as string ) );
-		}
-	}, [ formSubmissionStatus, siteSlug ] );
 
 	// reset form information on siteId change
 	useEffect( () => {
@@ -293,8 +286,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			case Step.Verification:
 				return (
 					<Verification
-						formSubmissionError={ formSubmissionError }
-						formSubmissionStatus={ formSubmissionStatus }
 						onFinishUp={ () => {
 							dispatch( {
 								type: JETPACK_CREDENTIALS_UPDATE_RESET,
