@@ -50,6 +50,11 @@
 	margin-top: 0;
 	flex-shrink: 0;
 
+	img {
+		max-width: 165px;
+		max-height: 80px;
+	}
+
 	@include break-medium {
 		display: flex;
 	}

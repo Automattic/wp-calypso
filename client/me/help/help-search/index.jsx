@@ -48,7 +48,7 @@ export class HelpSearch extends React.PureComponent {
 			return (
 				<div className="help-results__placeholder">
 					<HelpResults
-						header="Dummy documentation header"
+						header="..."
 						helpLinks={ [
 							{
 								title: '',
@@ -57,7 +57,7 @@ export class HelpSearch extends React.PureComponent {
 								disabled: true,
 							},
 						] }
-						footer="Dummy documentation footer"
+						footer="..."
 						iconTypeDescription=""
 						searchLink="#"
 					/>

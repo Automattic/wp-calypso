@@ -23,7 +23,20 @@ export default class extends React.PureComponent {
 		this.props.onClick && this.props.onClick( event, this.props.helpLink );
 	};
 
+	getResultImage = () => {
+		if ( ! this.props.helpLink.image ) {
+			return;
+		}
+
+		return <img src={ this.props.helpLink.image } alt="" />;
+	};
+
 	getResultIcon = () => {
+		//If we've assigned an image, don't show the icon
+		if ( this.props.helpLink.image ) {
+			return;
+		}
+
 		const { iconTypeDescription = 'book' } = this.props;
 		const iconClass = 'help-result__icon';
 		const iconSize = 24;
@@ -59,7 +72,10 @@ export default class extends React.PureComponent {
 							{ decodeEntities( this.props.helpLink.description ) }
 						</p>
 					</div>
-					<div className="help-result__icon-wrapper">{ this.getResultIcon() }</div>
+					<div className="help-result__icon-wrapper">
+						{ this.getResultImage() }
+						{ this.getResultIcon() }
+					</div>
 				</CompactCard>
 			</a>
 		);

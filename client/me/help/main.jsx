@@ -37,7 +37,12 @@ import './style.scss';
 /**
  * Images
  */
-import supportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
+import helpSupportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
+import helpDomains from 'calypso/assets/images/illustrations/help-domains.svg';
+import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.svg';
+import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
+import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
+import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -57,6 +62,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
 				),
+				image: helpWebsite,
 			},
 			{
 				link: 'https://wordpress.com/support/business-plan/',
@@ -64,6 +70,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'Learn more about installing a custom theme or plugin using the Business plan.'
 				),
+				image: helpPlugins,
 			},
 			{
 				link: 'https://wordpress.com/support/domains/',
@@ -71,6 +78,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 				),
+				image: helpDomains,
 			},
 			{
 				link: 'https://wordpress.com/support/start/',
@@ -78,6 +86,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
 				),
+				image: helpGetStarted,
 			},
 			{
 				link: 'https://wordpress.com/support/settings/privacy-settings/',
@@ -85,6 +94,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
 				),
+				image: helpPrivacy,
 			},
 			{
 				link: 'https://wordpress.com/support/manage-purchases/',
@@ -262,7 +272,7 @@ class Help extends React.PureComponent {
 					</div>
 				</div>
 				<div className="help__support-session-illustration">
-					<img src={ supportSession } alt="" />
+					<img src={ helpSupportSession } alt="" />
 				</div>
 			</Card>
 		);
