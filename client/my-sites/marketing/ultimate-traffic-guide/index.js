@@ -210,7 +210,7 @@ const SalesPage = ( { translate } ) => {
 				{ translate(
 					'Do you want more traffic to your website?' +
 						' Of course you do, who builds a website and doesn’t want traffic?' +
-						' You’ve time building your website and you’ve just realized that “if you build it, they will come” does not always apply.'
+						' You’ve spent time building your website and you’ve just realized that “if you build it, they will come” does not always apply.'
 				) }
 			</p>
 			<p>
