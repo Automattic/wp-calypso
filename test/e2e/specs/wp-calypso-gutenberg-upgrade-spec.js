@@ -8,24 +8,14 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import LoginFlow from '../lib/flows/login-flow.js';
-
-import ReaderPage from '../lib/pages/reader-page';
-
-import NavBarComponent from '../lib/components/nav-bar-component.js';
-
-import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
-
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
 import * as mediaHelper from '../lib/media-helper';
 import * as driverHelper from '../lib/driver-helper';
-
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
-const screenSize = driverManager.currentScreenSize();
-const host = dataHelper.getJetpackHost();
-
+import LoginFlow from '../lib/flows/login-flow.js';
+import ReaderPage from '../lib/pages/reader-page';
+import NavBarComponent from '../lib/components/nav-bar-component.js';
+import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import {
 	BlogPostsBlockComponent,
 	ContactFormBlockComponent,
@@ -41,12 +31,19 @@ import {
 	PremiumContentBlockComponent,
 } from '../lib/gutenberg/blocks';
 
-let sampleImages;
+const mochaTimeOut = config.get( 'mochaTimeoutMS' );
+const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
+const screenSize = driverManager.currentScreenSize();
+const host = dataHelper.getJetpackHost();
+
 let driver;
-let gEditorComponent;
+let editor;
+let sampleImages;
 
 const blockInits = new Map()
-	.set( TiledGalleryBlockComponent, ( block ) => block.uploadImages( sampleImages ) )
+	.set( TiledGalleryBlockComponent, async ( block ) => {
+		await block.uploadImages( sampleImages );
+	} )
 	.set( ContactFormBlockComponent, async ( block ) => {
 		await block.openEditSettings();
 		await block.insertEmail( 'testing@automattic.com' );
@@ -57,8 +54,8 @@ const blockInits = new Map()
 		await block.insertBlock( RatingStarBlockComponent );
 		await block.insertBlock( DynamicSeparatorBlockComponent );
 	} )
-	.set( ContactInfoBlockComponent, ( block ) =>
-		block.fillUp( {
+	.set( ContactInfoBlockComponent, async ( block ) => {
+		await block.fillUp( {
 			email: 'awesome@possum.ttt',
 			phoneNumber: '555-234-4323',
 			streetAddress: 'E2E street',
@@ -69,89 +66,43 @@ const blockInits = new Map()
 			zipCode: '1337',
 			country: 'United Gutenberg States of Calypsoland',
 			linkToGmaps: true,
-		} )
-	)
-	.set( YoutubeBlockComponent, ( block ) =>
-		block.embed( 'https://www.youtube.com/watch?v=FhMO5QnRNvo' )
-	)
-	.set( DynamicSeparatorBlockComponent, ( block ) => block.resizeBy( 150 ) )
-	.set( SlideshowBlockComponent, ( block ) => block.uploadImages( sampleImages ) )
-	.set( GalleryMasonryBlockComponent, ( block ) => block.uploadImages( sampleImages ) );
-
-/**
- * Wrapper that provides an uniform API for creating blocks on the page. It uses the `inits`
- * dictionary defined in this module. If an entry is not found for the passed `blockClass`, it
- * fall-backs to just inserting the block on the page.
- *
- * IMPORTANT: It relies on the `gEditorComponent` having a proper instance of
- * `GutenbergEditorComponent`, so make sure to call it only when this instance is available.
- *
- * @param { Function } blockClass A block class.
- * @returns { Function } the init function to be called.
- */
-async function insertBlock( blockClass ) {
-	const blockInit = blockInits.get( blockClass );
-	const block = await gEditorComponent.insertBlock( blockClass );
-
-	return blockInit && blockInit( block );
-}
-
-async function assertNoErrorInEditor() {
-	const errorDisplayed = await gEditorComponent.errorDisplayed();
-	assert.strictEqual( errorDisplayed, false, 'The block errored in the editor!' );
-}
-
-async function assertNoInvalidBlocksInEditor() {
-	assert.strictEqual( await gEditorComponent.hasInvalidBlocks(), false, 'The block is invalid!' );
-}
-
-/**
- * Re-usable collection of steps for verifying blocks in the editor.
- *
- * @param { Function } blockClass A block class.
- */
-function verifyBlockInEditor( blockClass ) {
-	step( 'Block is displayed in the editor', async function () {
-		const displayed = await gEditorComponent.blockDisplayedInEditor( blockClass.blockName );
-		assert.strictEqual(
-			displayed,
-			true,
-			`The block "${ blockClass.blockName }" was not found in the editor`
-		);
-	} );
-
-	step( 'Block does not error in the editor', async function () {
-		await assertNoErrorInEditor();
-	} );
-
-	step( 'Blocks do not invalidate', async function () {
-		await assertNoInvalidBlocksInEditor();
-	} );
-}
-
-/**
- * Re-usable collection of steps for verifying blocks in the frontend/published page.
- *
- * @param { Function } blockClass A block class.
- */
-function verifyBlockInPublishedPage( blockClass ) {
-	step( 'Publish page', async function () {
-		await gEditorComponent.publish( { visit: true } );
-	} );
-
-	/**
-	 * This is a temporary hack for this changeset to skip checking some blocks in the frontend until
-	 * they are properly setup (which is done in subsequent PRs). Some blocks will not appear if not
-	 * properly configured/filled with sample attributes or assets. This guard and comment will
-	 * eventually be removed.
-	 */
-	if ( ! [ YoutubeBlockComponent, SlideshowBlockComponent ].includes( blockClass ) ) {
-		step( 'Block is displayed in the published page', async function () {
-			await driverHelper.waitTillPresentAndDisplayed( driver, blockClass.blockFrontendSelector );
 		} );
+	} )
+	.set( YoutubeBlockComponent, async ( block ) => {
+		await block.embed( 'https://www.youtube.com/watch?v=FhMO5QnRNvo' );
+	} )
+	.set( DynamicSeparatorBlockComponent, async ( block ) => {
+		await block.resizeBy( 150 );
+	} )
+	.set( SlideshowBlockComponent, async ( block ) => {
+		await block.uploadImages( sampleImages );
+	} )
+	.set( GalleryMasonryBlockComponent, async ( block ) => {
+		await block.uploadImages( sampleImages );
+	} );
+
+/**
+ * Wrapper that provides an uniform API for creating blocks on the page. It uses
+ * the `inits` dictionary defined in this module. If an entry is not found for
+ * the passed `Block`, it fall-backs to just inserting the block on the page.
+ *
+ * @param {Function} Block A block class.
+ */
+async function insertBlock( Block ) {
+	const block = await editor.insertBlock( Block );
+	const blockInit = blockInits.get( Block );
+
+	if ( blockInit ) {
+		await blockInit( block );
 	}
 }
 
+/**
+ * Starts a new post in the editor. User must be logged-in.
+ *
+ * @param {string} siteURL URL of the site to start a new post on.
+ * @returns {object} Instance of the GutenbergEditorComponent.
+ */
 async function startNewPost( siteURL ) {
 	await ReaderPage.Visit( driver );
 	await NavBarComponent.Expect( driver );
@@ -159,14 +110,59 @@ async function startNewPost( siteURL ) {
 	const navbarComponent = await NavBarComponent.Expect( driver );
 	await navbarComponent.clickCreateNewPost( { siteURL } );
 
-	gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-	await gEditorComponent.initEditor();
+	const gutenbergEditorComponent = await GutenbergEditorComponent.Expect( driver );
+	await gutenbergEditorComponent.initEditor();
+
+	return gutenbergEditorComponent;
+}
+
+/**
+ * Re-usable collection of steps for verifying blocks in the editor.
+ *
+ * @param {Function} Block A block class.
+ */
+function verifyBlockInEditor( Block ) {
+	step( 'Block is displayed in the editor', async function () {
+		const blockDisplayed = await editor.blockDisplayedInEditor( Block.blockName );
+		assert( blockDisplayed, `The block "${ Block.blockName }" was not found in the editor.` );
+	} );
+
+	step( 'Block does not error in the editor', async function () {
+		const errorDisplayed = await editor.errorDisplayed();
+		assert( ! errorDisplayed, `The block "${ Block.blockName }" errored in the editor.` );
+	} );
+
+	step( 'Block does not invalidate', async function () {
+		const hasInvalidBlocks = await editor.hasInvalidBlocks();
+		assert( ! hasInvalidBlocks, `The block "${ Block.blockName }" is invalid.` );
+	} );
+}
+
+/**
+ * Re-usable collection of steps for verifying blocks in the frontend/published page.
+ *
+ * @param {Function} Block A block class.
+ */
+function verifyBlockInPublishedPage( Block ) {
+	step( 'Publish page', async function () {
+		await editor.publish( { visit: true } );
+	} );
+
+	/**
+	 * This is a temporary hack for this changeset to skip checking some blocks in
+	 * the frontend until they are properly setup (which is done in subsequent
+	 * PRs). Some blocks will not appear if not properly configured/filled with
+	 * sample attributes or assets. This guard and comment will eventually be
+	 * removed.
+	 */
+	if ( ! [ YoutubeBlockComponent, SlideshowBlockComponent ].includes( Block ) ) {
+		step( 'Block is displayed in the published page', async function () {
+			await driverHelper.waitTillPresentAndDisplayed( driver, Block.blockFrontendSelector );
+		} );
+	}
 }
 
 describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ screenSize })`, function () {
-	const username = 'gutenbergUpgradeUser';
-	const siteName = 'e2egbupgradehever';
-
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
 			this.timeout( startBrowserTimeoutMS );
@@ -178,7 +174,7 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 	} );
 
 	after( async function () {
-		if ( process.env.GUTENBERG_EDGE === 'true' ) {
+		if ( sampleImages && sampleImages.length ) {
 			await Promise.all(
 				sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
 			);
@@ -186,6 +182,7 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 	} );
 
 	this.timeout( mochaTimeOut );
+
 	[
 		BlogPostsBlockComponent,
 		ContactFormBlockComponent,
@@ -199,8 +196,10 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 		TiledGalleryBlockComponent,
 		YoutubeBlockComponent,
 		PremiumContentBlockComponent,
-	].forEach( ( blockClass ) => {
-		describe( `Test the ${ blockClass.blockName } block: @parallel`, function () {
+	].forEach( ( Block ) => {
+		describe( `Test the "${ Block.blockName }" block: @parallel`, function () {
+			const username = 'gutenbergUpgradeUser';
+			const siteName = 'e2egbupgradehever';
 			let currentGutenbergBlocksCode;
 
 			describe( `Test the block on a non-edge site`, function () {
@@ -208,34 +207,35 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 					const siteURL = `${ siteName }.wordpress.com`;
 					const loginFlow = new LoginFlow( driver, username );
 
-					await loginFlow.login( siteURL, true );
-					await startNewPost( siteURL );
+					await loginFlow.login();
+					editor = await startNewPost( siteURL );
 				} );
 
-				step( `Insert and configure`, async function () {
-					await insertBlock( blockClass );
+				step( `Insert and configure the block`, async function () {
+					await insertBlock( Block );
 				} );
 
-				verifyBlockInEditor( blockClass );
+				verifyBlockInEditor( Block );
 
 				step( 'Copy the markup for the block', async function () {
-					currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
+					currentGutenbergBlocksCode = await editor.getBlocksCode();
 				} );
 
-				verifyBlockInPublishedPage( blockClass );
+				verifyBlockInPublishedPage( Block );
 			} );
 
 			describe( `Test the same block on a corresponding edge site`, function () {
-				step( `Start new post`, async function () {
+				step( `Start a new post`, async function () {
 					await startNewPost( `${ siteName }edge.wordpress.com` );
 				} );
 
-				step( 'Load block via markup copied from non-edge site', async function () {
-					await gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
+				step( 'Load the block via markup copied from the non-edge site', async function () {
+					await editor.setBlocksCode( currentGutenbergBlocksCode );
 				} );
 
-				verifyBlockInEditor( blockClass );
-				verifyBlockInPublishedPage( blockClass );
+				verifyBlockInEditor( Block );
+
+				verifyBlockInPublishedPage( Block );
 			} );
 		} );
 	} );
