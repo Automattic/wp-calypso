@@ -44,7 +44,9 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 
 	const domainSuggestion = useDomainSuggestions( domainName, 1, undefined, undefined, {
 		include_wordpressdotcom: false,
-		include_dotblogsubdomain: true,
+		include_dotblogsubdomain: domainName?.includes( '.blog' ),
+		exact_sld_matches_only: true,
+		include_registered: true,
 	} )?.allDomainSuggestions?.[ 0 ];
 
 	return domainSuggestion;
