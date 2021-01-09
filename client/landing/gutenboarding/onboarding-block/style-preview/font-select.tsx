@@ -8,12 +8,12 @@ import classnames from 'classnames';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import { useIsAnchorFm } from '../../path';
+import { useFontPairings } from '../../fonts';
 
 /**
  * Internal dependencies
  */
-import { fontPairings, getFontTitle, FontPair, anchorFmFontPairings } from '../../constants';
+import { getFontTitle, FontPair } from '../../constants';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 const FontSelect: React.FunctionComponent = () => {
@@ -58,11 +58,7 @@ const FontSelect: React.FunctionComponent = () => {
 		__( 'Select fonts' )
 	);
 
-	const isAnchorFmSignup = useIsAnchorFm();
-
-	const effectiveFontPairings = isAnchorFmSignup
-		? [ ...fontPairings, ...anchorFmFontPairings ]
-		: fontPairings;
+	const effectiveFontPairings = useFontPairings();
 
 	const fontPairingsFilter = ( pair: FontPair ): boolean => {
 		if ( ! selectedDesignDefaultFonts ) {
