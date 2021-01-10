@@ -32,7 +32,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getPlan } from 'calypso/lib/plans';
+import { getPlan, isWpComPlan } from 'calypso/lib/plans';
 import getIntervalTypeForTerm from 'calypso/lib/plans/get-interval-type-for-term';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -108,7 +108,6 @@ class Plans extends React.Component {
 			canAccessPlans,
 			customerType,
 			isWPForTeamsSite,
-			hasWpcomMonthlyPlan,
 			showTreatmentPlansReorderTest,
 		} = this.props;
 
