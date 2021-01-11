@@ -241,12 +241,14 @@ export class PluginsList extends React.Component {
 			.map( ( p ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
 					const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
-					site.plugin = p;
-					return site;
+					return {
+						site,
+						plugin: p,
+					};
 				} );
-			} ) // list of plugins -> list of list of sites
-			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
-			.forEach( ( site ) => action( site.ID, site.plugin ) );
+			} ) // list of plugins -> list of plugin+site objects
+			.reduce( flattenArrays, [] ) // flatten the list into one big list of plugin+site objects
+			.forEach( ( { plugin, site } ) => action( site.ID, plugin ) );
 	}
 
 	getSitePlugin = ( plugin, siteId ) => {
