@@ -50,6 +50,7 @@ const options = {
 	jetpack_research: 'jetpack_research',
 	jetpack_promotion: 'jetpack_promotion',
 	jetpack_news: 'jetpack_news',
+	jetpack_reports: 'jetpack_reports',
 };
 
 class WPCOMNotifications extends React.Component {
@@ -170,6 +171,13 @@ class WPCOMNotifications extends React.Component {
 							isEnabled={ get( settings, options.jetpack_news ) }
 							title={ translate( 'Newsletter' ) }
 							description={ translate( 'Jetpack news, announcements, and product spotlights.' ) }
+						/>
+
+						<EmailCategory
+							name={ options.jetpack_reports }
+							isEnabled={ get( settings, options.jetpack_reports ) }
+							title={ translate( 'Reports' ) }
+							description={ translate( 'Reports on your own site and its performance.' ) }
 						/>
 					</>
 				) : (
