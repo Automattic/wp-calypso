@@ -2,10 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -36,27 +34,14 @@ import FormattedHeader from 'calypso/components/formatted-header';
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:me:profile' );
-
-/* eslint-disable react/prefer-es6-class */
-const Profile = createReactClass( {
-	displayName: 'Profile',
-
-	componentDidMount() {
-		debug( this.displayName + ' component is mounted.' );
-	},
-
-	componentWillUnmount() {
-		debug( this.displayName + ' component is unmounting.' );
-	},
-
+class Profile extends React.Component {
 	getClickHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	}
 
 	getFocusHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	},
+	}
 
 	render() {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
@@ -170,9 +155,12 @@ const Profile = createReactClass( {
 				<ProfileLinks />
 			</Main>
 		);
-	},
-} );
+	}
+}
 
-const connectComponent = connect( null, { recordGoogleEvent } );
-
-export default flowRight( connectComponent, protectForm, localize, withFormBase )( Profile );
+export default compose(
+	connect( null, { recordGoogleEvent } ),
+	protectForm,
+	localize,
+	withFormBase
+)( Profile );
