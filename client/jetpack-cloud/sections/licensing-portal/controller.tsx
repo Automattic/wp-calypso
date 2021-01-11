@@ -13,7 +13,6 @@ import { getActivePartnerKey } from 'calypso/state/licensing-portal/selectors';
 import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import LicensingPortalSidebar from 'calypso/jetpack-cloud/sections/licensing-portal/sidebar';
-import InspectLicense from 'calypso/jetpack-cloud/sections/licensing-portal/inspect-license';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/licensing-portal/select-partner-key';
 
 export function partnerKeyContext( context: PageJS.Context, next: () => any ) {
@@ -27,7 +26,7 @@ export function partnerKeyContext( context: PageJS.Context, next: () => any ) {
 export function licensingPortalContext( context: PageJS.Context, next: () => any ) {
 	context.header = <Header />;
 	context.secondary = <LicensingPortalSidebar path={ context.path } />;
-	context.primary = <InspectLicense />;
+	context.primary = <div>WIP: Licesing Portal Goes Here</div>;
 	context.footer = <JetpackComFooter />;
 	next();
 }

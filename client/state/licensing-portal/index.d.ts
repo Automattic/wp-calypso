@@ -25,16 +25,8 @@ export interface PartnersState {
 	error: string;
 }
 
-export interface InspectLicenseState {
-	licenseKey: string;
-	isInspecting: boolean;
-	error: string;
-	result: string;
-}
-
 export interface LicensingPortalState {
 	partners: PartnersState;
-	inspectLicense: InspectLicenseState;
 }
 
 export interface LicensingPortalStore {
