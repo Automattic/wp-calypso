@@ -25,6 +25,7 @@ import NoBackupsOnSelectedDate from '../status-card/no-backups-on-selected-date'
  */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
+	useDispatch: jest.fn().mockImplementation( () => {} ),
 	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
 } ) );
 
@@ -32,6 +33,7 @@ jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 
+jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 jest.mock( 'calypso/state/selectors/get-rewind-capabilities' );
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 
@@ -40,6 +42,8 @@ import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
+
+const ARBITRARY_DATE = moment( '2019-01-01' );
 
 describe( 'DailyBackupStatus', () => {
 	const getStatus = ( element ) => shallow( element ).find( 'DailyBackupStatus' ).dive();
@@ -59,7 +63,7 @@ describe( 'DailyBackupStatus', () => {
 	} );
 
 	test( 'shows "no backups yet" when no backup or last available backup date are provided', () => {
-		const status = getStatus( <DailyBackupStatus selectedDate={ {} } /> );
+		const status = getStatus( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } /> );
 		expect( status.type() ).toEqual( NoBackupsYet );
 	} );
 
@@ -83,7 +87,7 @@ describe( 'DailyBackupStatus', () => {
 		// Default mock behavior behaves as if the current site doesn't have Backup Real-time
 		isSuccessfulDailyBackup.mockImplementation( () => false );
 
-		const status = getStatus( <DailyBackupStatus selectedDate={ {} } backup={ {} } /> );
+		const status = getStatus( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );
 		expect( status.type() ).toEqual( BackupFailed );
 	} );
 
@@ -91,7 +95,7 @@ describe( 'DailyBackupStatus', () => {
 		getRewindCapabilities.mockImplementation( () => [ 'backup-realtime' ] );
 		isSuccessfulRealtimeBackup.mockImplementation( () => false );
 
-		const status = getStatus( <DailyBackupStatus selectedDate={ {} } backup={ {} } /> );
+		const status = getStatus( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );
 		expect( status.type() ).toEqual( BackupFailed );
 	} );
 
@@ -99,7 +103,7 @@ describe( 'DailyBackupStatus', () => {
 		// Default mock behavior behaves as if the current site doesn't have Backup Real-time
 		isSuccessfulDailyBackup.mockImplementation( () => true );
 
-		const status = getStatus( <DailyBackupStatus selectedDate={ {} } backup={ {} } /> );
+		const status = getStatus( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );
 		expect( status.type() ).toEqual( BackupSuccessful );
 	} );
 
@@ -107,7 +111,7 @@ describe( 'DailyBackupStatus', () => {
 		getRewindCapabilities.mockImplementation( () => [ 'backup-realtime' ] );
 		isSuccessfulRealtimeBackup.mockImplementation( () => true );
 
-		const status = getStatus( <DailyBackupStatus selectedDate={ {} } backup={ {} } /> );
+		const status = getStatus( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );
 		expect( status.type() ).toEqual( BackupSuccessful );
 	} );
 } );

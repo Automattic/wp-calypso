@@ -184,7 +184,8 @@
 	justify-content: space-between;
 	margin-bottom: 48px;
 
-	&:hover .gridicon {
+	&:hover .gridicon,
+	.gridicon {
 		fill: var( --color-primary );
 	}
 

@@ -227,6 +227,30 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
+	describe( 'isFromJetpackConnectionManager', () => {
+		const isFromJetpackConnectionManager = new JetpackAuthorize().isFromJetpackConnectionManager;
+
+		test( 'is from connection manager', () => {
+			const props = {
+				authQuery: {
+					from: 'connection-ui',
+				},
+			};
+
+			expect( isFromJetpackConnectionManager( props ) ).toBe( true );
+		} );
+
+		test( 'is not from connection manager', () => {
+			const props = {
+				authQuery: {
+					from: 'not-connection-ui',
+				},
+			};
+
+			expect( isFromJetpackConnectionManager( props ) ).toBe( false );
+		} );
+	} );
+
 	describe( 'isFromJetpackBoost', () => {
 		const isFromJetpackBoost = new JetpackAuthorize().isFromJetpackBoost;
 

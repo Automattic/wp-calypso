@@ -50,7 +50,6 @@ describe( 'reducer', () => {
 			'products',
 			'guidedTransfer',
 			'monitor',
-			'vouchers',
 			'requesting',
 			'sharingButtons',
 			'blogStickers',

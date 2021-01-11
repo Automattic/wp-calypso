@@ -451,7 +451,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
-		const pluginId = plugin.id;
+		const pluginId = plugin.id || plugin.slug;
 		const defaultAction = {
 			action: INSTALL_PLUGIN,
 			siteId,
@@ -552,7 +552,7 @@ export function removePlugin( siteId, plugin ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
-		const pluginId = plugin.id;
+		const pluginId = plugin.id || plugin.slug;
 		const defaultAction = {
 			action: REMOVE_PLUGIN,
 			siteId,

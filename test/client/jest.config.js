@@ -1,7 +1,6 @@
 module.exports = {
 	cacheDirectory: '<rootDir>/../.cache/jest',
 	moduleNameMapper: {
-		'^config$': '<rootDir>/server/config/index.js',
 		'^calypso/config$': '<rootDir>/server/config/index.js',
 	},
 	transform: {
@@ -10,7 +9,7 @@ module.exports = {
 			'@automattic/calypso-build/jest/transform/asset.js'
 		),
 	},
-	modulePaths: [ '<rootDir>/../test', '<rootDir>', '<rootDir>/extensions' ],
+	modulePaths: [ '<rootDir>/extensions' ],
 	rootDir: '../../client',
 	resolver: '<rootDir>../test/module-resolver.js',
 	testEnvironment: 'node',

@@ -1,30 +1,33 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import reducer, { settings, unsavedSettings } from '../reducer';
+import reducer, { settings, unsavedSettings, updatingPassword } from '../reducer';
 import {
 	USER_SETTINGS_UPDATE,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
 	USER_SETTINGS_UNSAVED_CLEAR,
+	USER_SETTINGS_SAVE,
+	USER_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'settings', 'unsavedSettings' ] );
+		expect( Object.keys( reducer( undefined, {} ) ).sort() ).toEqual(
+			[ 'settings', 'unsavedSettings', 'updatingPassword' ].sort()
+		);
 	} );
 
 	describe( 'settings', () => {
 		test( 'should default to a `null` value', () => {
 			const state = settings( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should store user settings after initial update', () => {
@@ -33,7 +36,7 @@ describe( 'reducer', () => {
 				settingValues: { foo: 'bar' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
@@ -48,7 +51,7 @@ describe( 'reducer', () => {
 				settingValues: { baz: 'qux' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 				baz: 'qux',
 			} );
@@ -59,7 +62,7 @@ describe( 'reducer', () => {
 		test( 'should default to empty object', () => {
 			const state = unsavedSettings( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store a user settings after it is set', () => {
@@ -69,7 +72,7 @@ describe( 'reducer', () => {
 				value: 'bar',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
@@ -85,7 +88,7 @@ describe( 'reducer', () => {
 				value: 'qux',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 				baz: 'qux',
 			} );
@@ -102,7 +105,7 @@ describe( 'reducer', () => {
 				settingName: 'baz',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
@@ -117,7 +120,7 @@ describe( 'reducer', () => {
 				type: USER_SETTINGS_UNSAVED_CLEAR,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should clear user settings after successful partial save', () => {
@@ -131,9 +134,41 @@ describe( 'reducer', () => {
 				settingNames: [ 'baz' ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
+		} );
+	} );
+
+	describe( 'updatingPassword', () => {
+		test( 'should return `true` if user attempts to change their password', () => {
+			const action = {
+				type: USER_SETTINGS_SAVE,
+				settingsOverride: { password: 'arbitrary-password' },
+			};
+
+			expect( updatingPassword( false, action ) ).toBe( true );
+		} );
+
+		test( "should return `false` if user doesn't attempt to change their password", () => {
+			const action = {
+				type: USER_SETTINGS_SAVE,
+				settingsOverride: { arbitrarySetting: 'arbitrary-setting-value' },
+			};
+
+			expect( updatingPassword( false, action ) ).toBe( false );
+		} );
+
+		test( 'should return `false` if settings update finished (successfully)', () => {
+			const action = { type: USER_SETTINGS_UPDATE };
+
+			expect( updatingPassword( false, action ) ).toBe( false );
+		} );
+
+		test( 'should return `false` if settings update finished (with a failure)', () => {
+			const action = { type: USER_SETTINGS_UPDATE_FAILURE };
+
+			expect( updatingPassword( false, action ) ).toBe( false );
 		} );
 	} );
 } );

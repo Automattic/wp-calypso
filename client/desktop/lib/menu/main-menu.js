@@ -19,6 +19,10 @@ module.exports = function ( app, mainWindow ) {
 			submenu: editMenu,
 		},
 		{
+			label: 'View',
+			submenu: viewMenu,
+		},
+		{
 			label: 'Window',
 			role: 'window',
 			submenu: windowMenu( mainWindow ),
@@ -29,14 +33,6 @@ module.exports = function ( app, mainWindow ) {
 			submenu: helpMenu( mainWindow ),
 		},
 	];
-
-	if ( platform.isOSX() ) {
-		// OS X needs a view menu for 'enter full screen' - insert just after the edit menu
-		menu.splice( 2, 0, {
-			label: 'View',
-			submenu: viewMenu,
-		} );
-	}
 
 	return menu;
 };

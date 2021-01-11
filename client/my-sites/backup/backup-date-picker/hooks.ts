@@ -7,8 +7,9 @@ import { useCallback } from 'react';
 /**
  * Internal dependencies
  */
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useDateWithOffset, useFirstMatchingBackupAttempt } from '../hooks';
+import { useFirstMatchingBackupAttempt } from '../hooks';
 
 type CanGoToDateHook = (
 	selectedDate: Moment,

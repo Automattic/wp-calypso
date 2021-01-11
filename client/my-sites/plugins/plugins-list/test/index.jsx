@@ -34,6 +34,10 @@ describe( 'PluginsList', () => {
 				isPlaceholder: false,
 				pluginUpdateCount: plugins.length,
 				inProgressStatuses: [],
+				pluginsOnSites: {
+					hello: plugins[ 0 ],
+					jetpack: plugins[ 1 ],
+				},
 			};
 		} );
 

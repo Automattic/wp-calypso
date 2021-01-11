@@ -8,10 +8,12 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import {
-	USER_SETTINGS_UPDATE,
+	USER_SETTINGS_SAVE,
 	USER_SETTINGS_UNSAVED_CLEAR,
-	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
+	USER_SETTINGS_UNSAVED_SET,
+	USER_SETTINGS_UPDATE,
+	USER_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -42,7 +44,21 @@ export const unsavedSettings = ( state = {}, action ) => {
 	}
 };
 
+export const updatingPassword = ( state = false, action ) => {
+	switch ( action.type ) {
+		case USER_SETTINGS_SAVE: {
+			return !! action.settingsOverride?.password;
+		}
+		case USER_SETTINGS_UPDATE:
+		case USER_SETTINGS_UPDATE_FAILURE: {
+			return false;
+		}
+	}
+	return state;
+};
+
 export default combineReducers( {
 	settings,
 	unsavedSettings,
+	updatingPassword,
 } );

@@ -16,6 +16,7 @@ import {
 import * as selectors from '../selectors';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
+import { getSite } from 'calypso/state/sites/selectors';
 
 const createError = function ( error, message, name = false ) {
 	const errorObj = new Error( message );
@@ -99,6 +100,10 @@ describe( 'Installed plugin selectors', () => {
 
 	test( 'should contain getSitesWithPlugin method', () => {
 		expect( selectors.getSitesWithPlugin ).to.be.a( 'function' );
+	} );
+
+	test( 'should contain getSiteObjectsWithPlugin method', () => {
+		expect( selectors.getSiteObjectsWithPlugin ).to.be.a( 'function' );
 	} );
 
 	test( 'should contain getSitesWithoutPlugin method', () => {
@@ -264,6 +269,29 @@ describe( 'Installed plugin selectors', () => {
 		test( 'Should get an array of sites with the requested plugin', () => {
 			const siteIds = selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'jetpack' );
 			expect( siteIds ).to.eql( [ 'site.two' ] );
+		} );
+	} );
+
+	describe( 'getSiteObjectsWithPlugin', () => {
+		test( 'Should get an empty array if the requested site is not in the current state', () => {
+			expect(
+				selectors.getSiteObjectsWithPlugin( state, [ 'no.site' ], 'akismet' )
+			).to.have.lengthOf( 0 );
+		} );
+
+		test( "Should get an empty array if the requested plugin doesn't exist on any sites' state", () => {
+			expect(
+				selectors.getSiteObjectsWithPlugin( state, [ 'site.one', 'site.two' ], 'vaultpress' )
+			).to.have.lengthOf( 0 );
+		} );
+
+		test( 'Should get an array of sites with the requested plugin', () => {
+			const siteIds = selectors.getSiteObjectsWithPlugin(
+				state,
+				[ 'site.one', 'site.two' ],
+				'jetpack'
+			);
+			expect( siteIds ).to.eql( [ getSite( state, 'site.two' ) ] );
 		} );
 	} );
 

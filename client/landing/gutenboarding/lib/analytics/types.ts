@@ -36,6 +36,11 @@ export interface OnboardingCompleteParameters {
 	 * Whether the user has a paid plan or other checkout item
 	 */
 	hasCartItems?: boolean;
+
+	/**
+	 * Type of onboarding flow
+	 */
+	flow?: string;
 }
 
 export type TracksAcquireIntentEventProperties = {
