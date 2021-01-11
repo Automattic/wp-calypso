@@ -17,12 +17,12 @@ import {
 	SlotFillProvider,
 	FocusReturnProvider,
 } from '@wordpress/components';
-import { uploadMedia } from '@wordpress/media-utils';
 
 /**
  * Internal dependencies
  */
 import Notices from '../loe-notices';
+import { uploadMedia } from '../../upload-media';
 import './styles.scss';
 
 type Settings = NonNullable< BlockEditorProvider.Props[ 'settings' ] >;

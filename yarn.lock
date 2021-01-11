@@ -4787,6 +4787,13 @@
   dependencies:
     "@babel/runtime" "^7.11.2"
 
+"@wordpress/blob@^2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/blob/-/blob-2.12.0.tgz#8028b223fa2c230a762096fa638f8cca3f161644"
+  integrity sha512-st/5z9MFgRszNGFy33JMtmhhhKVIIQNVVq3bsiiyAZrutM07UzdDgPgqkT6mm9ceCOlMHuCL61TKOz32bO4yDg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 "@wordpress/blob@^2.8.0":
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/@wordpress/blob/-/blob-2.8.0.tgz#5d35d7017d7ea340714de9b54f53ee2656f680f0"
