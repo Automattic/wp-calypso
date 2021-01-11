@@ -7,7 +7,6 @@ import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:account-password' );
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -22,22 +21,24 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import observe from 'calypso/lib/mixins/data-observe';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import { isPendingPasswordChange } from 'calypso/state/user-settings/selectors';
+import { generatePassword } from 'calypso/lib/account-password-data';
+import wp from 'calypso/lib/wp';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const wpcom = wp.undocumented();
+const debug = debugFactory( 'calypso:me:account-password' );
+
 /* eslint-disable react/prefer-es6-class */
 const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',
-
-	mixins: [ observe( 'accountPasswordData' ) ],
 
 	componentDidMount() {
 		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
@@ -50,13 +51,10 @@ const AccountPassword = createReactClass( {
 		}
 	},
 
-	componentWillUnmount() {
-		this.props.accountPasswordData.clearValidatedPassword();
-	},
-
 	getInitialState() {
 		return {
 			password: '',
+			validation: null,
 			pendingValidation: true,
 			isUnsaved: false,
 		};
@@ -64,7 +62,7 @@ const AccountPassword = createReactClass( {
 
 	generateStrongPassword() {
 		this.setState( {
-			password: this.props.accountPasswordData.generate(),
+			password: generatePassword(),
 			pendingValidation: true,
 			isUnsaved: true,
 		} );
@@ -72,13 +70,25 @@ const AccountPassword = createReactClass( {
 	},
 
 	validatePassword() {
+		const password = this.state.password;
 		debug( 'Validating password' );
-		this.props.accountPasswordData.validate(
-			this.state.password,
-			function () {
+
+		if ( '' === password ) {
+			this.setState( { validation: null, pendingValidation: false } );
+			return;
+		}
+
+		wpcom.me().validatePassword( password, ( error, data ) => {
+			if ( error ) {
+				debug( 'Password is not valid. Please try again.' );
 				this.setState( { pendingValidation: false } );
-			}.bind( this )
-		);
+				return;
+			}
+
+			debug( JSON.stringify( this.validatedPassword ) );
+
+			this.setState( { pendingValidation: false, validation: { password, ...data } } );
+		} );
 	},
 
 	handlePasswordChange( event ) {
@@ -113,9 +123,9 @@ const AccountPassword = createReactClass( {
 
 	renderValidationNotices() {
 		const { translate } = this.props;
-		const failure = head( this.props.accountPasswordData.getValidationFailures() );
+		const failure = head( this.state.validation?.test_results.failed );
 
-		if ( this.props.accountPasswordData.passwordValidationSuccess() ) {
+		if ( this.state.validation?.passed ) {
 			return (
 				<FormInputValidation text={ translate( 'Your password is strong enough to be saved.' ) } />
 			);
@@ -128,7 +138,7 @@ const AccountPassword = createReactClass( {
 		const { translate } = this.props;
 		const passwordInputClasses = classNames( {
 			'account-password__password-field': true,
-			'is-error': this.props.accountPasswordData.getValidationFailures().length,
+			'is-error': this.state.validation?.test_results.failed.length,
 		} );
 
 		return (
@@ -162,7 +172,7 @@ const AccountPassword = createReactClass( {
 					<FormButton
 						disabled={
 							this.state.pendingValidation ||
-							this.props.accountPasswordData.passwordValidationFailed() ||
+							! this.state.validation?.passed ||
 							this.props.isPendingPasswordChange
 						}
 						onClick={ this.handleSaveButtonClick }
