@@ -177,7 +177,7 @@ class WPCOMNotifications extends React.Component {
 							name={ options.jetpack_reports }
 							isEnabled={ get( settings, options.jetpack_reports ) }
 							title={ translate( 'Reports' ) }
-							description={ translate( 'Reports on your own site and its performance.' ) }
+							description={ translate( 'Jetpack security and performance reports.' ) }
 						/>
 					</>
 				) : (
