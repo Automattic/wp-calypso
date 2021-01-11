@@ -26,9 +26,9 @@ import GSuiteUserItem from 'calypso/my-sites/email/email-management/gsuite-user-
 import Notice from 'calypso/components/notice';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'calypso/components/section-header';
+import TitanManagementNav from 'calypso/my-sites/email/email-management/titan-management-nav';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
-import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
 
 /**
  * Style dependencies
@@ -93,7 +93,7 @@ class GSuiteUsersCard extends React.Component {
 
 	renderDomain( domain, users ) {
 		if ( hasTitanMailWithUs( domain ) ) {
-			return <TitanControlPanelLoginCard domain={ domain } key={ `titan-${ domain.name }` } />;
+			return <TitanManagementNav domain={ domain } key={ `titan-${ domain.name }` } />;
 		}
 
 		return this.renderDomainWithGSuite( domain.name, users );
