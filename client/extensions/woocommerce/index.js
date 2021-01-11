@@ -12,7 +12,6 @@ import { translate } from 'i18n-calypso';
  */
 import App from './app';
 import Dashboard from './app/dashboard';
-import StoreMoveNoticeView from './app/dashboard/store-move-notice-view';
 import EmptyContent from 'calypso/components/empty-content';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import installActionHandlers from './state/data-layer';
@@ -48,7 +47,7 @@ import './style.scss';
 const getStorePages = () => {
 	const pages = [
 		{
-			container: config.isEnabled( 'woocommerce/store-removed' ) ? StoreMoveNoticeView : Dashboard,
+			container: Dashboard,
 			configKey: 'woocommerce/extension-dashboard',
 			path: '/store/:site',
 		},
