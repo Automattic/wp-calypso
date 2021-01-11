@@ -4,6 +4,7 @@
 import { Tooltip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 import React from 'react';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
@@ -30,7 +31,8 @@ import './style.scss';
 const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
 const DesignSelector: React.FunctionComponent = () => {
-	const { __, i18nLocale } = useI18n();
+	const { __ } = useI18n();
+	const locale = useLocale();
 	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
@@ -88,7 +90,7 @@ const DesignSelector: React.FunctionComponent = () => {
 							>
 								<span className="design-selector__image-frame">
 									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
-										<MshotsImage src={ getDesignImageUrl( design, i18nLocale ) } alt="" />
+										<MshotsImage src={ getDesignImageUrl( design, locale ) } alt="" />
 									) : (
 										<img
 											alt=""
