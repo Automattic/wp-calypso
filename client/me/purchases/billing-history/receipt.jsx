@@ -102,7 +102,6 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 				<div className="billing-history__app-overview">
 					<img src={ transaction.icon } title={ transaction.service } alt={ transaction.service } />
 					<h2>
-						{ ' ' }
 						{ translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}', {
 							components: {
 								link: serviceLink,
@@ -117,10 +116,11 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 								'The {{link}} and {{small}} add html styling and attributes. ' +
 								'Screenshot: https://cloudup.com/isX-WEFYlOs',
 						} ) }
-						<div className="billing-history__transaction-date">
-							{ moment( transaction.date ).format( 'll' ) }
-						</div>
+						<small className="billing-history__organization-address">{ transaction.address }</small>
 					</h2>
+					<span className="billing-history__transaction-date">
+						{ moment( transaction.date ).format( 'll' ) }
+					</span>
 				</div>
 				<ul className="billing-history__receipt-details group">
 					<li>
