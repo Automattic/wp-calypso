@@ -23,8 +23,8 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchasesError,
 } from 'calypso/state/purchases/selectors';
-import notices from 'calypso/notices';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -45,7 +45,7 @@ class SiteTools extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
-			notices.error( this.props.purchasesError );
+			this.props.errorNotice( this.props.purchasesError );
 		}
 	}
 
@@ -175,29 +175,34 @@ class SiteTools extends Component {
 	};
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-	const isAtomic = isSiteAutomatedTransfer( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isVip = isVipSite( state, siteId );
-	const rewindState = getRewindState( state, siteId );
-	const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isVip = isVipSite( state, siteId );
+		const rewindState = getRewindState( state, siteId );
+		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
-	const cloneUrl = `/start/clone-site/${ siteSlug }`;
+		const cloneUrl = `/start/clone-site/${ siteSlug }`;
 
-	return {
-		isAtomic,
-		siteSlug,
-		purchasesError: getPurchasesError( state ),
-		cloneUrl,
-		showChangeAddress: ! isJetpack && ! isVip,
-		showClone: 'active' === rewindState.state && ! isAtomic,
-		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
-		showDeleteContent: ! isJetpack && ! isVip,
-		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
-		showManageConnection: isJetpack && ! isAtomic,
-		siteId,
-		hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
-	};
-} )( localize( SiteTools ) );
+		return {
+			isAtomic,
+			siteSlug,
+			purchasesError: getPurchasesError( state ),
+			cloneUrl,
+			showChangeAddress: ! isJetpack && ! isVip,
+			showClone: 'active' === rewindState.state && ! isAtomic,
+			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
+			showDeleteContent: ! isJetpack && ! isVip,
+			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
+			showManageConnection: isJetpack && ! isAtomic,
+			siteId,
+			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
+		};
+	},
+	{
+		errorNotice,
+	}
+)( localize( SiteTools ) );
