@@ -32,6 +32,7 @@
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": false,
+		"cloudflare": false,
 		"create/persistent-launch-button": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,

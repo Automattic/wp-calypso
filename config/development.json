@@ -35,6 +35,7 @@
 		"automated-transfer": true,
 		"blogger-plan": true,
 		"calypsoify/plugins": true,
+		"cloudflare": true,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management/threaded-view": false,
