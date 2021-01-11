@@ -7,10 +7,10 @@ import { AnyAction } from 'redux';
  * Internal dependencies
  */
 import {
-	JETPACK_LICENSING_PORTAL_PARTNERS_ACTIVE_PARTNER_KEY_UPDATE,
-	JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST,
-	JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST_FAILURE,
-	JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS,
+	JETPACK_PARTNER_PORTAL_PARTNERS_ACTIVE_PARTNER_KEY_UPDATE,
+	JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST,
+	JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_FAILURE,
+	JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 import filter from 'lodash/filter';
@@ -24,11 +24,11 @@ export const initialState = {
 
 export const isFetching = withoutPersistence( ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST:
+		case JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST:
 			return true;
 
-		case JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS:
-		case JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST_FAILURE:
+		case JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS:
+		case JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_FAILURE:
 			return false;
 	}
 
@@ -41,7 +41,7 @@ export const activePartnerKey = withSchemaValidation(
 	},
 	( state = initialState.activePartnerKey, action: AnyAction ) => {
 		switch ( action.type ) {
-			case JETPACK_LICENSING_PORTAL_PARTNERS_ACTIVE_PARTNER_KEY_UPDATE:
+			case JETPACK_PARTNER_PORTAL_PARTNERS_ACTIVE_PARTNER_KEY_UPDATE:
 				return action.partnerKeyId;
 		}
 
@@ -51,7 +51,7 @@ export const activePartnerKey = withSchemaValidation(
 
 export const all = withoutPersistence( ( state = initialState.all, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS:
+		case JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS:
 			// Only store the partners with keys that are not disabled.
 			return filter( action.partners, ( partner ) => {
 				// Strip out disabled keys.
@@ -65,7 +65,7 @@ export const all = withoutPersistence( ( state = initialState.all, action: AnyAc
 
 export const error = withoutPersistence( ( state = initialState.error, action: AnyAction ) => {
 	switch ( action.type ) {
-		case JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST_FAILURE:
+		case JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_FAILURE:
 			return `${ action.error.status }: ${ action.error.message }`;
 	}
 

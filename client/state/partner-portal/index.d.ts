@@ -25,10 +25,10 @@ export interface PartnersState {
 	error: string;
 }
 
-export interface LicensingPortalState {
+export interface PartnerPortalState {
 	partners: PartnersState;
 }
 
-export interface LicensingPortalStore {
-	licensingPortal: LicensingPortalState;
+export interface PartnerPortalStore {
+	partnerPortal: PartnerPortalState;
 }

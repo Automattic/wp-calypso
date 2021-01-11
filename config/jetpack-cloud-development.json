@@ -65,7 +65,7 @@
 		"jetpack-cloud-auth": true,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
-		"jetpack-cloud-licensing-portal": true,
+		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud": true,
 		"scan": true,
 		"jetpack-connect": true

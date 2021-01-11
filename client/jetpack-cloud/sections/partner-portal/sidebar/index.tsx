@@ -32,7 +32,7 @@ interface Props {
 	translate: TranslateType;
 }
 
-class LicensingPortalSidebar extends Component< Props > {
+class PartnerPortalSidebar extends Component< Props > {
 	onNavigate = memoize( ( menuItem ) => () => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
 			menu_item: menuItem,
@@ -50,12 +50,12 @@ class LicensingPortalSidebar extends Component< Props > {
 					<SidebarMenu>
 						<SidebarItem
 							icon="next-page"
-							label={ translate( 'Inspect License', {
+							label={ translate( 'Partner Portal', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
-							link="/licensing-portal"
+							link="/partner-portal"
 							onNavigate={ this.onNavigate }
-							selected={ itemLinkMatches( [ '/licensing-portal' ], path ) }
+							selected={ itemLinkMatches( [ '/partner-portal' ], path ) }
 						/>
 					</SidebarMenu>
 				</SidebarRegion>
@@ -66,4 +66,4 @@ class LicensingPortalSidebar extends Component< Props > {
 
 export default connect( null, {
 	dispatchRecordTracksEvent: recordTracksEvent,
-} )( localize( LicensingPortalSidebar ) );
+} )( localize( PartnerPortalSidebar ) );

@@ -12,13 +12,13 @@ import map from 'lodash/map';
 /**
  * Internal dependencies
  */
-import { setActivePartnerKey } from 'calypso/state/licensing-portal/actions';
+import { setActivePartnerKey } from 'calypso/state/partner-portal/actions';
 import {
 	isFetchingPartners,
 	getAllPartners,
 	hasActivePartnerKey,
-} from 'calypso/state/licensing-portal/selectors';
-import QueryJetpackLicensingPartners from 'calypso/components/data/query-jetpack-licensing-partners';
+} from 'calypso/state/partner-portal/selectors';
+import QueryJetpackPartnerPortalPartners from 'calypso/components/data/query-jetpack-partner-portal-partners';
 import Main from 'calypso/components/main';
 import Spinner from 'calypso/components/spinner';
 
@@ -37,13 +37,13 @@ export default function SelectPartnerKey() {
 	useEffect( () => {
 		if ( hasKey ) {
 			const returnUrl = getQueryArg( window.location.href, 'return' ) as string;
-			page.redirect( returnUrl || '/licensing-portal' );
+			page.redirect( returnUrl || '/partner-portal' );
 		}
 	}, [ hasKey ] );
 
 	return (
 		<>
-			<QueryJetpackLicensingPartners />
+			<QueryJetpackPartnerPortalPartners />
 			<Main className="select-partner-key">
 				{ isFetching && (
 					<Card>

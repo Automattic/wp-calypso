@@ -2555,11 +2555,11 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 };
 
 /**
- * Request all Licensing Partners and their keys for the current WPCOM user.
+ * Request all Partner Portal partners and their keys for the current WPCOM user.
  *
  * @returns {Promise} A promise
  */
-Undocumented.prototype.getJetpackLicensingPartners = function () {
+Undocumented.prototype.getJetpackPartnerPortalPartners = function () {
 	return this.wpcom.req.get( {
 		apiNamespace: 'wpcom/v2',
 		path: '/jetpack-licensing/partners',

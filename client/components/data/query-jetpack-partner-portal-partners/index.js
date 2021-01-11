@@ -7,9 +7,9 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchPartners } from 'calypso/state/licensing-portal/actions';
+import { fetchPartners } from 'calypso/state/partner-portal/actions';
 
-export default function QueryJetpackLicensingPartners() {
+export default function QueryJetpackPartnerPortalPartners() {
 	const dispatch = useDispatch();
 
 	React.useEffect( () => {

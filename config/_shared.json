@@ -139,7 +139,7 @@
 		"jetpack-cloud-settings": false,
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-pricing": false,
-		"jetpack-cloud-licensing-portal": false
+		"jetpack-cloud-partner-portal": false
 	},
 	"site_filter": [],
 	"theme": "default",

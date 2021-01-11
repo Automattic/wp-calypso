@@ -15,12 +15,12 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function () {
-	page( `/licensing-portal/partner-key`, controller.partnerKeyContext, makeLayout, clientRender );
+	page( `/partner-portal/partner-key`, controller.partnerKeyContext, makeLayout, clientRender );
 
 	page(
-		`/licensing-portal`,
+		`/partner-portal`,
 		controller.requirePartnerKeyContext,
-		controller.licensingPortalContext,
+		controller.partnerPortalContext,
 		makeLayout,
 		clientRender
 	);
