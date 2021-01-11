@@ -1,5 +1,4 @@
 const { merge } = require( 'lodash' );
-const path = require( 'path' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
 module.exports = {
@@ -77,8 +76,6 @@ module.exports = {
 			rules: {
 				'import/no-nodejs-modules': 'off',
 				'no-console': 'off',
-				// test/e2e doesn't support package-relative imports
-				'wpcalypso/no-package-relative-imports': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
 					( disabledRules, key ) => ( { ...disabledRules, [ key ]: 'off' } ),
@@ -369,19 +366,6 @@ module.exports = {
 					'site_blacklisted',
 					'blacklisted_domain',
 				],
-			},
-		],
-		'wpcalypso/no-package-relative-imports': [
-			'error',
-			{
-				mappings: [
-					{
-						dir: path.join( __dirname, 'client' ),
-						module: 'calypso',
-					},
-				],
-				warnOnNonLiteralImport: true,
-				automaticExtensions: [ '.js', '.ts', '.json', '.jsx', '.tsx' ],
 			},
 		],
 
