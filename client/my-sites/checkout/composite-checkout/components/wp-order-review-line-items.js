@@ -28,7 +28,6 @@ import {
 import { planMatches, isWpComPlan } from 'calypso/lib/plans';
 import {
 	isMonthly as isMonthlyPlan,
-	GROUP_WPCOM,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 } from 'calypso/lib/plans/constants';
@@ -103,7 +102,6 @@ function WPLineItem( {
 					<LineItemSublabelAndPrice item={ item } />
 					<DomainDiscountCallout item={ item } />
 					<AnnualDiscountCallout item={ item } />
-					<DiscountForFirstYearOnly item={ item } />
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
@@ -615,29 +613,5 @@ function GSuiteDiscountCallout( { item } ) {
 	) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
-	return null;
-}
-function DiscountForFirstYearOnly( { item } ) {
-	const translate = useTranslate();
-	const origCost = item.wpcom_meta.item_original_cost_integer;
-	const cost = item.wpcom_meta.product_cost_integer;
-	if ( origCost <= cost ) {
-		return null;
-	}
-	const isWpcomOneYearPlan = planMatches( item.wpcom_meta.product_slug, {
-		term: TERM_ANNUALLY,
-		group: GROUP_WPCOM,
-	} );
-	if ( isWpcomOneYearPlan ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
-	}
-	const isWpcomTwoYearPlan = planMatches( item.wpcom_meta.product_slug, {
-		term: TERM_BIENNIALLY,
-		group: GROUP_WPCOM,
-	} );
-	if ( isWpcomTwoYearPlan ) {
-		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
-	}
-
 	return null;
 }
