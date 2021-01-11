@@ -19,6 +19,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { __ } from '@wordpress/i18n';
 
 function LaunchWpcomWelcomeTour() {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
@@ -123,7 +124,7 @@ function WelcomeTourMinimized( { onMaximize, setJustMaximized, slideNumber } ) {
 	return (
 		<Button onClick={ handleOnMaximize } className="wpcom-editor-welcome-tour__resume-btn">
 			<Flex gap={ 13 }>
-				<p>Click to resume tutorial</p>
+				<p>{ __( 'Click to resume tutorial', 'full-site-editing' ) }</p>
 				<Icon icon={ maximize } size={ 24 } />
 			</Flex>
 		</Button>
