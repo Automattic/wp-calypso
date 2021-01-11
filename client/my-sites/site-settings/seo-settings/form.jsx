@@ -16,7 +16,6 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import notices from 'calypso/notices';
 import { protectForm } from 'calypso/lib/protect-form';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -38,6 +37,7 @@ import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -116,7 +116,12 @@ export class SeoForm extends React.Component {
 		// save error
 		if ( this.state.isSubmittingForm && nextProps.saveError ) {
 			this.setState( { isSubmittingForm: false } );
-			notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice(
+				translate( 'There was a problem saving your changes. Please, try again.' ),
+				{
+					id: 'seo-settings-form-error',
+				}
+			);
 		}
 
 		// if we are changing sites, everything goes
@@ -190,7 +195,7 @@ export class SeoForm extends React.Component {
 			event.preventDefault();
 		}
 
-		notices.clearNotices( 'notices' );
+		this.props.removeNotice( 'seo-settings-form-error' );
 
 		this.setState( {
 			isSubmittingForm: true,
@@ -511,6 +516,8 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
+	errorNotice,
+	removeNotice,
 	refreshSiteData: requestSite,
 	requestSiteSettings,
 	saveSiteSettings,
