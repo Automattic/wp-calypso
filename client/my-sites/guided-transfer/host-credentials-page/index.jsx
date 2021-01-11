@@ -14,8 +14,6 @@ import ErrorNotice from './error-notice';
 import SiteGround from './siteground';
 import Pressable from './pressable';
 import SectionHeader from 'calypso/components/section-header';
-import { guidedTransferItem } from 'calypso/lib/cart-values/cart-items';
-import { addItem } from 'calypso/lib/cart/actions';
 import page from 'page';
 import { saveHostDetails } from 'calypso/state/sites/guided-transfer/actions';
 import {
@@ -45,8 +43,7 @@ class HostCredentialsPage extends Component {
 	};
 
 	redirectToCart = () => {
-		addItem( guidedTransferItem() );
-		page.redirect( `/checkout/${ this.props.siteSlug }` );
+		page.redirect( `/checkout/${ this.props.siteSlug }/guided_transfer` );
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
