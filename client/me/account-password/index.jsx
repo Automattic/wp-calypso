@@ -5,7 +5,6 @@
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
 import React from 'react';
-import debugFactory from 'debug';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -33,9 +32,7 @@ import wp from 'calypso/lib/wp';
 import './style.scss';
 
 const wpcom = wp.undocumented();
-const debug = debugFactory( 'calypso:me:account-password' );
 
-/* eslint-disable react/prefer-es6-class */
 class AccountPassword extends React.Component {
 	state = {
 		password: '',
@@ -64,31 +61,26 @@ class AccountPassword extends React.Component {
 		this.debouncedPasswordValidate();
 	};
 
-	validatePassword = () => {
+	validatePassword = async () => {
 		const password = this.state.password;
-		debug( 'Validating password' );
 
 		if ( '' === password ) {
 			this.setState( { validation: null, pendingValidation: false } );
 			return;
 		}
 
-		wpcom.me().validatePassword( password, ( error, data ) => {
-			if ( error ) {
-				debug( 'Password is not valid. Please try again.' );
-				this.setState( { pendingValidation: false } );
-				return;
-			}
+		try {
+			const validationResult = await wpcom.me().validatePassword( password );
 
-			debug( JSON.stringify( this.validatedPassword ) );
-
-			this.setState( { pendingValidation: false, validation: { password, ...data } } );
-		} );
+			this.setState( { pendingValidation: false, validation: validationResult } );
+		} catch ( err ) {
+			this.setState( { pendingValidation: false } );
+			return;
+		}
 	};
 
 	handlePasswordChange = ( event ) => {
 		const newPassword = event.currentTarget.value;
-		debug( 'Handle password change has been called.' );
 		this.debouncedPasswordValidate();
 		this.setState( {
 			password: newPassword,
