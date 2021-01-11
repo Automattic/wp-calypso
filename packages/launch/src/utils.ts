@@ -19,7 +19,7 @@ export const isValidSiteTitle = ( title?: string ): boolean =>
 
 export type PlanProduct = {
 	product_id: number;
-	product_slug: string;
+	product_slug: Plans.PlanSlug;
 	extra: {
 		source: string;
 	};

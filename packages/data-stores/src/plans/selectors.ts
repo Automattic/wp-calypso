@@ -30,14 +30,21 @@ export const getDefaultFreePlan = ( _: State, locale: string ): Plan => {
 	return select( STORE_KEY ).getPlansDetails( locale )?.plans[ PLAN_FREE ];
 };
 
-export const getSupportedPlans = ( state: State ): Plan[] => {
-	const supportedPlans: Plan[] = [];
-
-	state.supportedPlanSlugs.forEach( ( slug ) => {
-		if ( slug in state.plans ) {
-			supportedPlans.push( state.plans[ slug ] );
-		}
-	} );
+export const getSupportedPlans = (
+	state: State,
+	billingPeriod: 'ANNUALLY' | 'MONTHLY' = 'ANNUALLY'
+): Plan[] => {
+	const supportedPlans: Plan[] = state.supportedPlanSlugs
+		.map( ( slug ) => state.plans[ slug ] )
+		.filter( Boolean )
+		.filter( ( plan ) => {
+			if ( plan.isFree ) {
+				return true;
+			} else if ( billingPeriod === 'MONTHLY' ) {
+				return plan.billPeriod === 31;
+			}
+			return plan.billPeriod === 365;
+		} );
 
 	return supportedPlans;
 };

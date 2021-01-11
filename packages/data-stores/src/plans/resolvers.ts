@@ -12,10 +12,15 @@ import {
 	currenciesFormats,
 	PLAN_FREE,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_PREMIUM,
+	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
 	plansProductSlugs,
+	billedMonthlySlugs,
 } from './constants';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 
@@ -55,19 +60,28 @@ export function* getPrices( locale = 'en' ) {
 
 	// create a [slug => price] map
 	const prices: Record< string, string > = WPCOMPlans.reduce( ( acc, plan ) => {
-		acc[ plan.product_slug ] = getMonthlyPrice( plan );
+		if ( plan.bill_period === 31 ) {
+			acc[ plan.product_slug ] = plan.formatted_price;
+		} else {
+			// Calculate the monthly price of yearly-billed plans
+			acc[ plan.product_slug ] = getMonthlyPrice( plan );
+		}
 		return acc;
 	}, {} as Record< string, string > );
 
 	yield setPrices( prices );
 }
 
-const mapShortNameToProductSlug: Record< string, string > = {
-	Free: PLAN_FREE,
-	Personal: PLAN_PERSONAL,
-	Premium: PLAN_PREMIUM,
-	Business: PLAN_BUSINESS,
-	eCommerce: PLAN_ECOMMERCE,
+const mapProductSlugToShortName: Record< string, string > = {
+	[ PLAN_FREE ]: 'Free',
+	[ PLAN_PERSONAL ]: 'Personal',
+	[ PLAN_PERSONAL_MONTHLY ]: 'Personal',
+	[ PLAN_PREMIUM ]: 'Premium',
+	[ PLAN_PREMIUM_MONTHLY ]: 'Premium',
+	[ PLAN_BUSINESS ]: 'Business',
+	[ PLAN_BUSINESS_MONTHLY ]: 'Business',
+	[ PLAN_ECOMMERCE ]: 'eCommerce',
+	[ PLAN_ECOMMERCE_MONTHLY ]: 'eCommerce',
 };
 
 export function* getPlansDetails( locale = 'en' ) {
@@ -82,7 +96,6 @@ export function* getPlansDetails( locale = 'en' ) {
 			}
 		);
 
-		const plans: Record< string, Plan > = {};
 		const features: Record< string, PlanFeature > = {};
 
 		rawPlansDetails.features.forEach( ( feature: Record< string, string > ) => {
@@ -94,12 +107,17 @@ export function* getPlansDetails( locale = 'en' ) {
 			};
 		} );
 
-		rawPlansDetails.plans.forEach( ( rawPlan: APIPlanDetail ) => {
+		const plans: Record< string, Plan > = plansProductSlugs.reduce( ( plans, slug ) => {
+			const rawPlan = rawPlansDetails.plans.find(
+				( plan: APIPlanDetail ) =>
+					plan.nonlocalized_short_name === mapProductSlugToShortName[ slug ]
+			);
+
 			const plan: Plan = {
 				title: rawPlan.short_name,
 				description: rawPlan.tagline,
 				productId: rawPlan.products[ 0 ].plan_id,
-				storeSlug: mapShortNameToProductSlug[ rawPlan.nonlocalized_short_name ],
+				storeSlug: slug,
 				features: rawPlan.highlighted_features,
 				pathSlug: rawPlan.nonlocalized_short_name?.toLowerCase(),
 				featuresSlugs: rawPlan.features.reduce(
@@ -107,18 +125,15 @@ export function* getPlansDetails( locale = 'en' ) {
 					{}
 				),
 				storage: rawPlan.storage,
+				isFree: 'Free' === rawPlan.nonlocalized_short_name,
+				isPopular: 'Premium' === rawPlan.nonlocalized_short_name,
+				billPeriod: billedMonthlySlugs.indexOf( slug as never ) > -1 ? 31 : 365,
 			};
 
-			if ( 'Free' === rawPlan.nonlocalized_short_name ) {
-				plan.isFree = true;
-			}
+			plans[ plan.storeSlug ] = plan;
 
-			if ( 'Premium' === rawPlan.nonlocalized_short_name ) {
-				plan.isPopular = true;
-			}
-
-			plans[ mapShortNameToProductSlug[ rawPlan.nonlocalized_short_name ] ] = plan;
-		} );
+			return plans;
+		}, {} as Record< string, Plan > );
 
 		yield setPlans( plans );
 		yield setFeatures( features );
