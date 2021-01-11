@@ -245,6 +245,10 @@ function isAutoRenewing( purchase ) {
 	return 'autoRenewing' === purchase.expiryStatus;
 }
 
+function isAutoRenewDisabled( purchase ) {
+	return 'manualRenew' === purchase.expiryStatus;
+}
+
 /**
  * Checks if a purchase can be cancelled.
  * Returns true for purchases that aren't expired
@@ -748,4 +752,5 @@ export {
 	subscribedWithinPastWeek,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
+	isAutoRenewDisabled,
 };
