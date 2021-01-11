@@ -5,6 +5,7 @@ import { createStripeSetupIntent } from '@automattic/calypso-stripe';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import { makeRedirectResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -101,9 +102,11 @@ export async function assignExistingCardProcessor(
 export async function assignPayPalProcessor( purchase: {
 	id: string;
 } ): Promise< PaymentProcessorResponse > {
-	return wpcomCreatePayPalAgreement( purchase.id, window.location.href, window.location.href ).then(
-		( data ) => {
-			return makeRedirectResponse( data );
-		}
-	);
+	return wpcomCreatePayPalAgreement(
+		purchase.id,
+		addQueryArgs( window.location.href, { success: 'true' } ),
+		window.location.href
+	).then( ( data ) => {
+		return makeRedirectResponse( data );
+	} );
 }
