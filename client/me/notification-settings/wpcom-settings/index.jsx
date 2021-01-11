@@ -50,6 +50,7 @@ const options = {
 	jetpack_research: 'jetpack_research',
 	jetpack_promotion: 'jetpack_promotion',
 	jetpack_news: 'jetpack_news',
+	jetpack_reports: 'jetpack_reports',
 };
 
 class WPCOMNotifications extends React.Component {
