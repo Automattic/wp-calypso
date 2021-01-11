@@ -2,11 +2,12 @@
  * WordPress dependencies
  */
 import { registerPlugin } from '@wordpress/plugins';
-import { Fill } from '@wordpress/components';
+import { Fill, MenuItem } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 const WhatsNew = () => (
 	<Fill name="ToolsMoreMenuGroup">
-		<p>What's New copy 2</p>
+		<MenuItem>{ __( "What's New copy 2", 'full-site-editing' ) }</MenuItem>
 	</Fill>
 );
 
