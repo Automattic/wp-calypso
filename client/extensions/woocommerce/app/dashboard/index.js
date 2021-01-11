@@ -45,6 +45,7 @@ import QuerySettingsGeneral from 'woocommerce/components/query-settings-general'
 import warn from 'calypso/lib/warn';
 import StoreMoveNoticeView from './store-move-notice-view';
 import config from 'calypso/config';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 class Dashboard extends Component {
 	static propTypes = {
@@ -241,16 +242,48 @@ class Dashboard extends Component {
 		return <div>{ manageView }</div>;
 	};
 
+	redirectToWoocommerceSetup = ( site ) => {
+		window.location = site.options.admin_url + 'admin.php?page=wc-admin&path=%2Fsetup-wizard';
+	};
+
 	render() {
-		const { className, finishedInstallOfRequiredPlugins, isSetupComplete, siteId } = this.props;
+		const {
+			className,
+			isSetupComplete,
+			siteId,
+			finishedInstallOfRequiredPlugins,
+			selectedSite,
+			shouldRedirectAfterInstall,
+		} = this.props;
 		const useWideLayout = isSetupComplete ? true : false;
+		const isCalypsoStoreDeprecatedOrRemoved =
+			config.isEnabled( 'woocommerce/store-deprecated' ) ||
+			config.isEnabled( 'woocommerce/store-removed' );
+		const shouldShowStoreNotice = isCalypsoStoreDeprecatedOrRemoved && ! shouldRedirectAfterInstall;
+		const shouldRenderDashboardContents =
+			! config.isEnabled( 'woocommerce/store-removed' ) ||
+			! finishedInstallOfRequiredPlugins ||
+			shouldRedirectAfterInstall;
+
+		if (
+			finishedInstallOfRequiredPlugins &&
+			isCalypsoStoreDeprecatedOrRemoved &&
+			shouldRedirectAfterInstall
+		) {
+			// Redirect to Core UI setup after finish installation.
+			this.redirectToWoocommerceSetup( selectedSite );
+		}
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) } wideLayout={ useWideLayout }>
 				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
-				{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreMoveNoticeView /> }
-				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
-				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
+				{ shouldShowStoreNotice && <StoreMoveNoticeView /> }
+				{ shouldRenderDashboardContents && (
+					<>
+						{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
+						{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
+					</>
+				) }
 			</Main>
 		);
 	}
@@ -278,6 +311,8 @@ function mapStateToProps( state ) {
 	const hasProducts = getCountProducts( state ) > 0;
 
 	const loading = setupChoicesLoading || ! hasCounts || settingsGeneralLoading;
+	const shouldRedirectAfterInstall =
+		'' === get( getCurrentQueryArguments( state ), 'redirect_after_install' );
 
 	return {
 		finishedInitialSetup,
@@ -294,6 +329,7 @@ function mapStateToProps( state ) {
 		setupChoicesLoading,
 		siteId,
 		storeLocation,
+		shouldRedirectAfterInstall,
 	};
 }
 

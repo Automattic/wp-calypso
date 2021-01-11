@@ -54,6 +54,7 @@ import {
 	isJetpackSite,
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
+	getSiteOption,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -715,7 +716,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	woocommerce() {
-		const { site, canUserUseStore } = this.props;
+		const { site, canUserUseStore, siteSuffix, isSiteWpcomStore } = this.props;
 
 		const isCalypsoStoreDeprecatedOrRemoved =
 			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
@@ -730,7 +731,11 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
+		let storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
+		if ( ! isSiteWpcomStore ) {
+			// Navigate to Store UI for installation.
+			storeLink = '/store' + siteSuffix + '?redirect_after_install';
+		}
 
 		return (
 			<SidebarItem
@@ -1150,6 +1155,7 @@ function mapStateToProps( state ) {
 		isWpMobile: isWpMobileApp(), // This doesn't rely on state, but we inject it here for future testability
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		onboardingUrl: getOnboardingUrl( state ),
+		isSiteWpcomStore: getSiteOption( state, siteId, 'is_wpcom_store' ), // 'is_automated_transfer' && 'woocommerce_is_active'
 	};
 }
 
