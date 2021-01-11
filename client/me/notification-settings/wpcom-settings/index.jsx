@@ -171,6 +171,13 @@ class WPCOMNotifications extends React.Component {
 							title={ translate( 'Newsletter' ) }
 							description={ translate( 'Jetpack news, announcements, and product spotlights.' ) }
 						/>
+
+						<EmailCategory
+							name={ options.jetpack_reports }
+							isEnabled={ get( settings, options.jetpack_reports ) }
+							title={ translate( 'Reports' ) }
+							description={ translate( 'Jetpack security and performance reports.' ) }
+						/>
 					</>
 				) : (
 					''
