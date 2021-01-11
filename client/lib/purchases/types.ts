@@ -13,6 +13,25 @@ export interface Purchase {
 	productSlug: string;
 	siteId: number;
 	subscribedDate: string;
+	payment: PurchasePayment;
+}
+
+export interface PurchasePayment {
+	name: string;
+	type: string;
+	countryCode: string;
+	countryName: string;
+	storedDetailsId: string | number;
+	expiryDate?: string; // Only for payment.type === 'paypal_direct'
+	creditCard?: PurchasePaymentCreditCard; // Only for payment.type === 'credit_card'
+}
+
+export interface PurchasePaymentCreditCard {
+	id: number;
+	type: string;
+	processor: string;
+	number: string;
+	expiryDate: string;
 }
 
 export interface MembershipSubscription {
