@@ -35,6 +35,23 @@ import QueryUserSettings from 'calypso/components/data/query-user-settings';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
+const dpaRequestId = 'dpa-request';
+
+function requestDpa() {
+	requestHttpData(
+		dpaRequestId,
+		http( {
+			apiNamespace: 'wpcom/v2',
+			method: 'POST',
+			path: '/me/request-dpa',
+		} ),
+		{
+			freshness: -Infinity, // we want to allow the user to re-request
+			fromApi: () => () => [ [ dpaRequestId, true ] ],
+		}
+	);
+}
+
 class Privacy extends React.Component {
 	componentDidUpdate( oldProps ) {
 		const { dpaRequest, translate } = this.props;
@@ -186,7 +203,7 @@ class Privacy extends React.Component {
 							) }
 						</strong>
 					</p>
-					<Button className="privacy__dpa-request-button" onClick={ this.props.requestDpa }>
+					<Button className="privacy__dpa-request-button" onClick={ requestDpa }>
 						{ translate( 'Request a DPA', {
 							comment:
 								'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
@@ -196,23 +213,6 @@ class Privacy extends React.Component {
 			</Main>
 		);
 	}
-}
-
-const dpaRequestId = 'dpa-request';
-
-function requestDpa() {
-	requestHttpData(
-		dpaRequestId,
-		http( {
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			path: '/me/request-dpa',
-		} ),
-		{
-			freshness: -Infinity, // we want to allow the user to re-request
-			fromApi: () => () => [ [ dpaRequestId, true ] ],
-		}
-	);
 }
 
 const dpaRequestState = ( request ) => {
@@ -239,6 +239,6 @@ export default compose(
 			hasUnsavedUserSettings: hasUnsavedUserSettings( state ),
 			isUpdatingUserSettings: isUpdatingUserSettings( state ),
 		} ),
-		{ requestDpa, successNotice, errorNotice, setUserSetting, saveUserSettings }
+		{ successNotice, errorNotice, setUserSetting, saveUserSettings }
 	)
 )( Privacy );
