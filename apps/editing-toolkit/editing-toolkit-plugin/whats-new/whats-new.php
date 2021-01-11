@@ -24,7 +24,7 @@ class Whats_New {
 	 * Whats_New constructor.
 	 */
 	public function __construct() {
-		add_action( 'enqueue_whats_new_assets', array( $this, 'enqueue_script_and_style' ), 100 );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
 	}
 
 	/**

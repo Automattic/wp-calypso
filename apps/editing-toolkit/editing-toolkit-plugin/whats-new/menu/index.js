@@ -2,12 +2,12 @@
  * WordPress dependencies
  */
 import { registerPlugin } from '@wordpress/plugins';
-import { ToolsMoreMenuGroup } from '@wordpress/edit-post';
+import { Fill } from '@wordpress/components';
 
 const WhatsNew = () => (
-	<ToolsMoreMenuGroup>
+	<Fill name="ToolsMoreMenuGroup">
 		<p>What's New copy 2</p>
-	</ToolsMoreMenuGroup>
+	</Fill>
 );
 
 export default WhatsNew;
