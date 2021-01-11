@@ -15,6 +15,7 @@ import {
 	getName,
 	isExpired,
 	isExpiring,
+	isAutoRenewDisabled,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
@@ -236,8 +237,10 @@ function PaymentInfoBlock( { purchase, translate, moment } ) {
 			return translate( 'Credits' );
 		}
 
-		if ( ( isExpired( purchase ) || isExpiring( purchase ) ) && ! isPaidWithCredits( purchase ) ) {
-			return translate( 'None' );
+		if ( ! isAutoRenewDisabled( purchase ) && ! isPaidWithCredits( purchase ) ) {
+			if ( isExpired( purchase ) || isExpiring( purchase ) ) {
+				return translate( 'None' );
+			}
 		}
 
 		if ( isPaidWithCreditCard( purchase ) ) {
