@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import React from 'react';
@@ -36,12 +35,7 @@ import QueryUserSettings from 'calypso/components/data/query-user-settings';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
-/* eslint-disable react/prefer-es6-class */
-const Privacy = createReactClass( {
-	updateTracksOptOut( isSendingTracksEvents ) {
-		this.props.setUserSetting( TRACKS_OPT_OUT_USER_SETTINGS_KEY, ! isSendingTracksEvents );
-	},
-
+class Privacy extends React.Component {
 	componentDidUpdate( oldProps ) {
 		const { dpaRequest, translate } = this.props;
 		const { dpaRequest: oldDpaRequest } = oldProps;
@@ -63,13 +57,17 @@ const Privacy = createReactClass( {
 					  } )
 			);
 		}
-	},
+	}
 
-	submitForm( event ) {
+	updateTracksOptOut = ( isSendingTracksEvents ) => {
+		this.props.setUserSetting( TRACKS_OPT_OUT_USER_SETTINGS_KEY, ! isSendingTracksEvents );
+	};
+
+	submitForm = ( event ) => {
 		event.preventDefault();
 
 		this.props.saveUserSettings( null, () => this.props.markSaved() );
-	},
+	};
 
 	render() {
 		const {
@@ -197,8 +195,8 @@ const Privacy = createReactClass( {
 				</Card>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 const dpaRequestId = 'dpa-request';
 
