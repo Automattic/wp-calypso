@@ -57,13 +57,13 @@ class Whats_New {
 
 		wp_set_script_translations( 'wpcom-whats-new', 'full-site-editing' );
 
-		$style_path = 'dist/whats-new' . ( is_rtl() ? '.rtl' : '' ) . '.css';
-		wp_enqueue_style(
-			'wpcom-whats-new',
-			plugins_url( $style_path, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . $style_path )
-		);
+		// $style_path = 'dist/whats-new' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		// wp_enqueue_style(
+		// 'wpcom-whats-new',
+		// plugins_url( $style_path, __FILE__ ),
+		// array(),
+		// filemtime( plugin_dir_path( __FILE__ ) . $style_path )
+		// );
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Whats_New', 'init' ) );
