@@ -775,17 +775,6 @@ export function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
-export function fillGoogleAppsRegistrationData( cart, registrationData ) {
-	const googleAppsItems = filter( getAllCartItems( cart ), isGoogleApps );
-	return flow.apply(
-		null,
-		googleAppsItems.map( function ( item ) {
-			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-			return addCartItem( item );
-		} )
-	);
-}
-
 /**
  * Creates a new shopping cart item for Titan Mail Monthly.
  *
