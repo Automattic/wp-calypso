@@ -24,7 +24,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import { isPendingPasswordChange } from 'calypso/state/user-settings/selectors';
-import { generatePassword } from 'calypso/lib/account-password-data';
+import { generatePassword } from 'calypso/lib/generate-password';
 import wp from 'calypso/lib/wp';
 
 /**
