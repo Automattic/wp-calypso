@@ -100,15 +100,15 @@ async function insertBlock( Block ) {
 /**
  * Starts a new post in the editor. User must be logged-in.
  *
- * @param {string} siteURL URL of the site to start a new post on.
+ * @param {object} loginFlow Instance of the LoginFlow helper.
  * @returns {object} Instance of the GutenbergEditorComponent.
  */
-async function startNewPost( siteURL ) {
+async function startNewPost( loginFlow ) {
 	await ReaderPage.Visit( driver );
 	await NavBarComponent.Expect( driver );
 
 	const navbarComponent = await NavBarComponent.Expect( driver );
-	await navbarComponent.clickCreateNewPost( { siteURL } );
+	await navbarComponent.clickCreateNewPost( { siteURL: loginFlow.account.loginURL } );
 
 	const gutenbergEditorComponent = await GutenbergEditorComponent.Expect( driver );
 	await gutenbergEditorComponent.initEditor();
@@ -198,17 +198,14 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 		PremiumContentBlockComponent,
 	].forEach( ( Block ) => {
 		describe( `Test the "${ Block.blockName }" block: @parallel`, function () {
-			const username = 'gutenbergUpgradeUser';
-			const siteName = 'e2egbupgradehever';
 			let currentGutenbergBlocksCode;
 
 			describe( `Test the block on a non-edge site`, function () {
 				step( `Log in and start a new post`, async function () {
-					const siteURL = `${ siteName }.wordpress.com`;
-					const loginFlow = new LoginFlow( driver, username );
+					const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
 
 					await loginFlow.login();
-					editor = await startNewPost( siteURL );
+					editor = await startNewPost( loginFlow );
 				} );
 
 				step( `Insert and configure the block`, async function () {
@@ -226,7 +223,10 @@ describe( `[${ host }] Test Gutenberg upgrade against most popular blocks (${ sc
 
 			describe( `Test the same block on a corresponding edge site`, function () {
 				step( `Start a new post`, async function () {
-					await startNewPost( `${ siteName }edge.wordpress.com` );
+					const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeEdgeUser' );
+
+					// No need to log in again as the edge site is owned by the same user.
+					editor = await startNewPost( loginFlow );
 				} );
 
 				step( 'Load the block via markup copied from the non-edge site', async function () {
