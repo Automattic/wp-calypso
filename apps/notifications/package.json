@@ -36,7 +36,7 @@
 		"prop-types": "^15.7.2",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
-		"react-redux": "^7.2.1",
+		"react-redux": "^7.2.2",
 		"redux": "^4.0.5",
 		"redux-thunk": "^2.3.0",
 		"wpcom": "^6.0.0",
