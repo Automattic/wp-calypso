@@ -15,7 +15,7 @@ exports[`UpworkBanner renders correctly 1`] = `
   <h1
     className="upwork-banner__title"
   >
-    Need an expert to help realize your vision? Hire one!
+    Hire a WordPress.com Expert to Build Your Site
   </h1>
   <p
     className="upwork-banner__description"
