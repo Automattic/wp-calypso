@@ -43,6 +43,7 @@ import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.
 import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
 import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
+import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -102,6 +103,7 @@ class Help extends React.PureComponent {
 				description: this.props.translate(
 					'Have a question or need to change something about a purchase you have made? Learn how.'
 				),
+				image: helpPurchases,
 			},
 		];
 
