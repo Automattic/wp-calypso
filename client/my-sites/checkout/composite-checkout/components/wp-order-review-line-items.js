@@ -446,7 +446,7 @@ function TitanMailMeta( { item, isRenewal } ) {
 	const domainName = item.wpcom_meta?.meta;
 	const translateArgs = {
 		args: {
-			mailboxes: quantity,
+			numberOfMailboxes: quantity,
 			domainName,
 		},
 		count: quantity,
@@ -455,13 +455,13 @@ function TitanMailMeta( { item, isRenewal } ) {
 		<LineItemMeta>
 			{ isRenewal
 				? translate(
-						'%(mailboxes)d mailbox for %(domainName)s',
-						'%(mailboxes)d mailboxes for %(domainName)s',
+						'%(numberOfMailboxes)d mailbox for %(domainName)s',
+						'%(numberOfMailboxes)d mailboxes for %(domainName)s',
 						translateArgs
 				  )
 				: translate(
-						'%(mailboxes)d new mailbox for %(domainName)s',
-						'%(mailboxes)d new mailboxes for %(domainName)s',
+						'%(numberOfMailboxes)d new mailbox for %(domainName)s',
+						'%(numberOfMailboxes)d new mailboxes for %(domainName)s',
 						translateArgs
 				  ) }
 		</LineItemMeta>
