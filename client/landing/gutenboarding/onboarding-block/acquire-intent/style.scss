@@ -57,11 +57,10 @@
 
 	@include break-small {
 		min-width: 300px;
-		max-width: 400px;
 	}
 
 	@include break-medium {
-		max-width: 750px;
+		min-width: 600px;
 	}
 }
 
