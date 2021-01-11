@@ -224,9 +224,7 @@ function PurchaseMetaOwner( { translate, owner } ) {
 	);
 }
 
-function renderPaymentInfo( { purchase, translate, moment } ) {
-	const payment = purchase?.payment;
-
+function PaymentInfoBlock( { purchase, translate, moment } ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return translate( 'Included with plan' );
 	}
@@ -243,21 +241,26 @@ function renderPaymentInfo( { purchase, translate, moment } ) {
 		}
 
 		if ( isPaidWithCreditCard( purchase ) ) {
-			paymentInfo = payment.creditCard.number;
-		} else if ( isPaidWithPayPalDirect( purchase ) ) {
+			paymentInfo = purchase.payment.creditCard.number;
+		}
+
+		if ( isPaidWithPayPalDirect( purchase ) ) {
 			paymentInfo = translate( 'expiring %(cardExpiry)s', {
 				args: {
-					cardExpiry: moment( payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
+					cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 				},
 			} );
 		}
 
-		return (
-			<>
-				<PaymentLogo type={ paymentLogoType( purchase ) } />
-				{ paymentInfo }
-			</>
-		);
+		const logoType = paymentLogoType( purchase );
+		if ( logoType || paymentInfo ) {
+			return (
+				<>
+					<PaymentLogo type={ paymentLogoType( purchase ) } />
+					{ paymentInfo }
+				</>
+			);
+		}
 	}
 
 	return translate( 'None' );
@@ -327,7 +330,7 @@ function PurchaseMetaPaymentDetails( {
 		<span>
 			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
 			<span className="manage-purchase__detail">
-				{ renderPaymentInfo( { purchase, translate, moment } ) }
+				<PaymentInfoBlock purchase={ purchase } translate={ translate } moment={ moment } />
 			</span>
 		</span>
 	);
