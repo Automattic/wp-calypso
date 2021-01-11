@@ -41,6 +41,17 @@ export default function SelectPartnerKey() {
 		}
 	}, [ hasKey ] );
 
+	const keys = map( partners, ( partner ) =>
+		map( partner.keys, ( key ) => (
+			<Card key={ key.id } className="select-partner-key__card">
+				<div className="select-partner-key__key-name">{ key.name }</div>
+				<Button primary onClick={ () => dispatch( setActivePartnerKey( key.id ) ) }>
+					{ translate( 'Use' ) }
+				</Button>
+			</Card>
+		) )
+	);
+
 	return (
 		<>
 			<QueryJetpackPartnerPortalPartners />
@@ -51,16 +62,11 @@ export default function SelectPartnerKey() {
 					</Card>
 				) }
 
-				{ map( partners, ( partner ) =>
-					map( partner.keys, ( key ) => (
-						<Card key={ key.id } className="select-partner-key__card">
-							<div className="select-partner-key__key-name">{ key.name }</div>
-							<Button primary onClick={ () => dispatch( setActivePartnerKey( key.id ) ) }>
-								{ translate( 'Use' ) }
-							</Button>
-						</Card>
-					) )
+				{ ! isFetching && keys.length === 0 && (
+					<Card>{ translate( 'You are not registered as a partner.' ) }</Card>
 				) }
+
+				{ keys }
 			</Main>
 		</>
 	);

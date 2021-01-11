@@ -26,7 +26,7 @@ export function partnerKeyContext( context: PageJS.Context, next: () => any ) {
 export function partnerPortalContext( context: PageJS.Context, next: () => any ) {
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <div>WIP: Licesing Portal Goes Here</div>;
+	context.primary = <div>Welcome to the Partner Portal!</div>;
 	context.footer = <JetpackComFooter />;
 	next();
 }
