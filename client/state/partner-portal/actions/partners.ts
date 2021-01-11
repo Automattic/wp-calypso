@@ -2,6 +2,8 @@
  * External dependencies
  */
 import { Dispatch } from 'redux';
+import flatMap from 'lodash/flatMap';
+import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -41,11 +43,19 @@ export function fetchPartners() {
 			.undocumented()
 			.getJetpackPartnerPortalPartners()
 			.then(
-				( partners: Partner[] ) =>
+				( partners: Partner[] ) => {
 					dispatch( {
 						type: JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS,
 						partners,
-					} ),
+					} );
+
+					// If we only get a single key, auto-select it for the user for simplicity.
+					const keys = flatMap( partners, ( partner ) => map( partner.keys, ( key ) => key.id ) );
+
+					if ( keys.length === 1 ) {
+						setActivePartnerKey( keys[ 0 ] )( dispatch, getState );
+					}
+				},
 				( error: APIError ) => {
 					dispatch( {
 						type: JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_FAILURE,
