@@ -157,6 +157,7 @@ export class ReaderSidebar extends React.Component {
 				<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 				<QueryReaderLists />
 				<QueryReaderTeams />
+				<QueryReaderOrganizations />
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
@@ -167,6 +168,10 @@ export class ReaderSidebar extends React.Component {
 					materialIcon="check_circle"
 					link="/read"
 				/>
+
+				<li>
+					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+				</li>
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
