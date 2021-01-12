@@ -24,8 +24,8 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 		page.redirect( addQueryArgs( urlQueryArgs, `/pricing` ) );
 	}
 
-	if ( pathname === '/pricing' && siteFromUrl ) {
-		page.redirect( addQueryArgs( urlQueryArgs, `/plans/${ siteFromUrl }` ) );
+	if ( /\/(pricing|plans)$/.test( pathname ) && siteFromUrl ) {
+		page.redirect( addQueryArgs( urlQueryArgs, `${ pathname }/${ siteFromUrl }` ) );
 	}
 
 	context.store.dispatch( hideMasterbar() );
