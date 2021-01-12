@@ -7,8 +7,6 @@ import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { find } from 'lodash';
-import { Button } from '@automattic/components';
-import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -22,6 +20,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
+import Cloudflare from './cloudflare';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
@@ -48,7 +47,6 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Banner from 'calypso/components/banner';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo.svg';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -144,8 +142,6 @@ class StatsSite extends Component {
 
 		const query = memoizedQuery( period, endOf );
 
-		const recordCloudflareClick = () => recordTracksEvent( 'calypso_stats_cloudflare_click' );
-
 		// File downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
 			fileDownloadList = (
@@ -192,28 +188,7 @@ class StatsSite extends Component {
 						chartTab={ this.props.chartTab }
 					/>
 
-					{ ! isVip && isAdmin && ! hasWordAds && (
-						<div className="stats__card">
-							<div className="stats__card-text">
-								<h2 className="stats__card-title">
-									{ translate( 'Gain deeper insights with Cloudflare Analytics' ) }
-								</h2>
-								<p className="stats__card-description">
-									{ translate(
-										'Cloudflare Analytics empowers you with deep insights and intelligene to protect and accelerate your site.'
-									) }
-								</p>
-								<Button onClick={ recordCloudflareClick } href="CLOUDFLARELINK" target="_blank">
-									{ translate( 'Learn More' ) }
-								</Button>
-							</div>
-							{ isDesktop() && (
-								<div className="stats__card-illustration">
-									<img src={ cloudflareIllustration } alt="" />
-								</div>
-							) }
-						</div>
-					) }
+					{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
 
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
