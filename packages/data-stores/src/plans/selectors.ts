@@ -8,12 +8,15 @@ import { select } from '@wordpress/data';
  */
 import type { State, PricesMap, DiscountsMap } from './reducer';
 import {
-	DEFAULT_PAID_PLAN,
+	DEFAULT_ANNUAL_PAID_PLAN,
 	PLAN_ECOMMERCE,
 	PLAN_FREE,
 	STORE_KEY,
 	PlanPath,
 	PLAN_ECOMMERCE_MONTHLY,
+	DEFAULT_MONTHLY_PAID_PLAN,
+	billedMonthlySlugs,
+	billedYearlySlugs,
 } from './constants';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
@@ -29,8 +32,14 @@ export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
 	return state.plans[ slug ] ?? undefined;
 };
 
-export const getDefaultPaidPlan = ( _: State, locale: string ): Plan => {
-	return select( STORE_KEY ).getPlansDetails( locale )?.plans[ DEFAULT_PAID_PLAN ];
+export const getDefaultPaidPlan = (
+	_: State,
+	locale: string,
+	billPeriod: 'ANNUALLY' | 'MONTHLY' = 'ANNUALLY'
+): Plan => {
+	return select( STORE_KEY ).getPlansDetails( locale )?.plans[
+		billPeriod === 'ANNUALLY' ? DEFAULT_ANNUAL_PAID_PLAN : DEFAULT_MONTHLY_PAID_PLAN
+	];
 };
 
 export const getDefaultFreePlan = ( _: State, locale: string ): Plan => {
@@ -83,4 +92,22 @@ export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {
 
 export const isPlanFree = ( _: State, planSlug?: PlanSlug ): boolean => {
 	return planSlug === PLAN_FREE;
+};
+
+export const getCorrespondingPlanFromOtherInterval = (
+	state: State,
+	plan: Plan | undefined
+): Plan | undefined => {
+	if ( ! plan ) {
+		return undefined;
+	}
+	if ( plan.isFree ) {
+		return plan;
+	}
+	if ( plan.billPeriod === 'ANNUALLY' ) {
+		const index = billedYearlySlugs.indexOf( plan.storeSlug as never );
+		return getPlanBySlug( state, billedMonthlySlugs[ index ] );
+	}
+	const index = billedMonthlySlugs.indexOf( plan.storeSlug as never );
+	return getPlanBySlug( state, billedYearlySlugs[ index ] );
 };

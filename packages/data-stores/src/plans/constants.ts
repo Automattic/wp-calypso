@@ -15,7 +15,8 @@ export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
 
 export const STORE_KEY = 'automattic/onboard/plans';
 
-export const DEFAULT_PAID_PLAN = PLAN_PREMIUM;
+export const DEFAULT_ANNUAL_PAID_PLAN = PLAN_PREMIUM;
+export const DEFAULT_MONTHLY_PAID_PLAN = PLAN_PREMIUM_MONTHLY;
 interface Currency {
 	format: 'SYMBOL_THEN_AMOUNT' | 'AMOUNT_THEN_SYMBOL';
 	symbol: string;

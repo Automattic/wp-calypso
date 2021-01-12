@@ -6,6 +6,7 @@ import {
 	getSupportedPlans,
 	getPeriodSupportedPlans,
 	getPlansPaths,
+	getCorrespondingPlanFromOtherInterval,
 } from '../selectors';
 import { State } from '../reducer';
 import {
@@ -152,5 +153,33 @@ describe( 'getPlansPaths', () => {
 		const paths = getPlansPaths( DEFAULT_STATE );
 
 		expect( paths.sort() ).toEqual( [ 'free', 'premium', 'premium-monthly' ].sort() );
+	} );
+} );
+
+describe( 'getCorrespondingPlanFromOtherInterval', () => {
+	it( 'should return free plan when passed free plan', () => {
+		const correspondingPlan = getCorrespondingPlanFromOtherInterval(
+			DEFAULT_STATE,
+			DEFAULT_STATE.plans[ PLAN_FREE ]
+		);
+
+		expect( correspondingPlan ).toEqual( DEFAULT_STATE.plans[ PLAN_FREE ] );
+	} );
+	it( 'should return annual premium plan when passed monthly premium plan', () => {
+		const correspondingPlan = getCorrespondingPlanFromOtherInterval(
+			DEFAULT_STATE,
+			DEFAULT_STATE.plans[ PLAN_PREMIUM_MONTHLY ]
+		);
+
+		expect( correspondingPlan ).toEqual( DEFAULT_STATE.plans[ PLAN_PREMIUM ] );
+	} );
+
+	it( 'should return monthly premium plan when passed annual premium plan', () => {
+		const correspondingPlan = getCorrespondingPlanFromOtherInterval(
+			DEFAULT_STATE,
+			DEFAULT_STATE.plans[ PLAN_PREMIUM ]
+		);
+
+		expect( correspondingPlan ).toEqual( DEFAULT_STATE.plans[ PLAN_PREMIUM_MONTHLY ] );
 	} );
 } );
