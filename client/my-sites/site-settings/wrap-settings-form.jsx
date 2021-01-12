@@ -143,9 +143,11 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					case 'wga':
 						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated', { path } );
 						break;
+					case 'cloudflare_analytics':
+						trackTracksEvent( 'calypso_seo_settings_cloudflare_analytics_updated', { path } );
+						break;
 				}
 			} );
-
 			this.submitForm();
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
