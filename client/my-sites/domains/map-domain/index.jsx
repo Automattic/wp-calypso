@@ -37,7 +37,6 @@ export class MapDomain extends Component {
 	static propTypes = {
 		initialQuery: PropTypes.string,
 		query: PropTypes.string,
-		cart: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isSiteUpgradeable: PropTypes.bool,
 		productsList: PropTypes.object.isRequired,
@@ -175,7 +174,6 @@ export class MapDomain extends Component {
 		}
 
 		const {
-			cart,
 			domainsWithPlansOnly,
 			initialQuery,
 			productsList,
@@ -194,7 +192,6 @@ export class MapDomain extends Component {
 				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
 
 				<MapDomainStep
-					cart={ cart }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					products={ productsList }
