@@ -130,11 +130,10 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_MEMBERSHIPS,
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
-	getSignupFeatures: ( _, { isMonthlyPricingTest = false } = {} ) =>
+	getSignupFeatures: () =>
 		compact( [
-			! isMonthlyPricingTest && constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 			constants.FEATURE_FREE_DOMAIN,
-			isMonthlyPricingTest && constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+			constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 			constants.FEATURE_FREE_THEMES,
 		] ),
 	getBlogSignupFeatures: () => [
@@ -287,11 +286,10 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_ADVANCED_DESIGN,
 		constants.FEATURE_13GB_STORAGE,
 	],
-	getSignupFeatures: ( _, { isMonthlyPricingTest = false } = {} ) =>
+	getSignupFeatures: () =>
 		compact( [
-			isMonthlyPricingTest && constants.FEATURE_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_ADVANCED_CUSTOMIZATION,
-			! isMonthlyPricingTest && constants.FEATURE_PREMIUM_THEMES,
 			constants.FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 	getBlogSignupFeatures: () => [

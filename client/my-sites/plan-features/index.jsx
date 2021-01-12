@@ -89,15 +89,7 @@ import './style.scss';
 
 export class PlanFeatures extends Component {
 	render() {
-		const {
-			isInSignup,
-			isMonthlyPricingTest,
-			planProperties,
-			plans,
-			selectedPlan,
-			withScroll,
-			translate,
-		} = this.props;
+		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -107,7 +99,6 @@ export class PlanFeatures extends Component {
 		} );
 		const planWrapperClasses = classNames( {
 			'plans-wrapper': isInSignup,
-			'is-monthly-pricing': isMonthlyPricingTest,
 		} );
 		const mobileView = ! withScroll && (
 			<div className="plan-features__mobile">{ this.renderMobileView() }</div>
@@ -394,7 +385,6 @@ export class PlanFeatures extends Component {
 			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
-			isMonthlyPricingTest,
 			planProperties,
 			selectedPlan,
 			siteType,
@@ -464,7 +454,6 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
-						isMonthlyPricingTest={ isMonthlyPricingTest }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
 						planType={ planName }
@@ -642,9 +631,9 @@ export class PlanFeatures extends Component {
 	}
 
 	renderAnnualPlansFeatureNotice( feature ) {
-		const { translate, isMonthlyPricingTest } = this.props;
+		const { translate, isInSignup } = this.props;
 
-		if ( ! feature.availableOnlyForAnnualPlans || ! isMonthlyPricingTest ) {
+		if ( ! isInSignup || ! feature.availableOnlyForAnnualPlans ) {
 			return null;
 		}
 
@@ -849,7 +838,6 @@ export default connect(
 			visiblePlans,
 			popularPlanSpec,
 			withDiscount,
-			isMonthlyPricingTest,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -929,7 +917,7 @@ export default connect(
 						default:
 							if ( planConstantObj.getSignupFeatures ) {
 								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupFeatures( currentPlan, { isMonthlyPricingTest } )
+									planConstantObj.getSignupFeatures( currentPlan )
 								);
 							}
 					}
@@ -949,7 +937,7 @@ export default connect(
 
 				let annualPricePerMonth = rawPrice;
 				const isMonthlyPlan = isMonthly( plan );
-				if ( isMonthlyPricingTest && isMonthlyPlan ) {
+				if ( isMonthlyPlan ) {
 					// Get annual price per month for comparison
 					const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
 					if ( yearlyPlan ) {

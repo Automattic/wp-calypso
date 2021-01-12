@@ -108,7 +108,6 @@ class Plans extends React.Component {
 			canAccessPlans,
 			customerType,
 			isWPForTeamsSite,
-			hasWpcomMonthlyPlan,
 			showTreatmentPlansReorderTest,
 		} = this.props;
 
@@ -149,7 +148,6 @@ class Plans extends React.Component {
 										displayJetpackPlans={ displayJetpackPlans }
 										hideFreePlan={ true }
 										customerType={ customerType }
-										isMonthlyPricingTest={ hasWpcomMonthlyPlan }
 										intervalType={ this.props.intervalType }
 										selectedFeature={ this.props.selectedFeature }
 										selectedPlan={ this.props.selectedPlan }
@@ -177,11 +175,9 @@ export default connect( ( state ) => {
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
 	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
-	let currentPlanIntervalType = getIntervalTypeForTerm( getPlan( currentPlan?.productSlug )?.term );
-
-	if ( 'BRL' === currentPlan?.currencyCode ) {
-		currentPlanIntervalType = 'yearly';
-	}
+	const currentPlanIntervalType = getIntervalTypeForTerm(
+		getPlan( currentPlan?.productSlug )?.term
+	);
 
 	return {
 		currentPlanIntervalType,
