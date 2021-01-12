@@ -21,5 +21,20 @@ export default () => {
 		express.static( path.resolve( __dirname, '..', '..', '..', 'public', 'service-worker.js' ) )
 	);
 
+	app.use(
+		'/logged-out-editor/service-worker.js',
+		express.static(
+			path.resolve(
+				__dirname,
+				'..',
+				'..',
+				'..',
+				'public',
+				'evergreen',
+				'entry-logged-out-editor-service-worker.js'
+			)
+		)
+	);
+
 	return app;
 };

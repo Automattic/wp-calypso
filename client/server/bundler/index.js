@@ -128,6 +128,7 @@ function middleware( app ) {
 				errorDetails: true,
 				entrypoints: false,
 			},
+			writeToDisk: ( filePath ) => /entry-logged-out-editor-service-worker\.js$/.test( filePath ),
 		} )
 	);
 }

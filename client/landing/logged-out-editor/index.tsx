@@ -39,12 +39,14 @@ window.AppBoot = () => {
 		<StrictMode>
 			<I18nProvider localeData={ localeData }>
 				<LocaleProvider localeSlug={ localeSlug }>
-					<Editor settings={ editorSettings } />
+					<Editor useNetwork settings={ editorSettings } />
 				</LocaleProvider>
 			</I18nProvider>
 		</StrictMode>,
 		document.getElementById( 'wpcom' )
 	);
+
+	setupPwa();
 };
 
 function setupDebugging() {
@@ -59,5 +61,20 @@ function setupDebugging() {
 	}
 	if ( ! debugWindow.wp.data ) {
 		debugWindow.wp.data = require( '@wordpress/data' );
+	}
+}
+
+async function setupPwa() {
+	if ( 'serviceWorker' in navigator ) {
+		try {
+			const reg = await navigator.serviceWorker.register( '/logged-out-editor/service-worker.js', {
+				scope: '/logged-out-editor/',
+			} );
+			// registration worked
+			console.log( 'Registration succeeded. Scope is ' + reg.scope, reg ); // eslint-disable-line no-console
+		} catch ( error ) {
+			// registration failed
+			console.log( 'Registration failed with ' + error ); // eslint-disable-line no-console
+		}
 	}
 }

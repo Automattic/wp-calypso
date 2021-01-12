@@ -5,7 +5,8 @@
 		"noEmit": true,
 		"emitDeclarationOnly": false,
 		"tsBuildInfoFile": null,
-		"importsNotUsedAsValues": "error"
+		"importsNotUsedAsValues": "error",
+		"lib": [ "WebWorker" ]
 	},
 	"files": [ "index.tsx" ],
 	"include": []

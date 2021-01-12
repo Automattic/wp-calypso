@@ -17,6 +17,7 @@ import {
 	SlotFillProvider,
 	FocusReturnProvider,
 } from '@wordpress/components';
+import { uploadMedia as coreUploadMedia } from '@wordpress/media-utils';
 
 /**
  * Internal dependencies
@@ -28,22 +29,31 @@ import './styles.scss';
 type Settings = NonNullable< BlockEditorProvider.Props[ 'settings' ] >;
 
 interface Props {
+	useNetwork: boolean;
 	settings: Settings;
 }
 
-const Editor: FC< Props > = ( { settings: _settings } ) => {
+const Editor: FC< Props > = ( { useNetwork, settings: _settings } ) => {
 	const settings = useMemo(
 		(): Settings => ( {
 			..._settings,
 			mediaUpload( { onError, ...rest } ) {
-				uploadMedia( {
-					wpAllowedMimeTypes: _settings.allowedMimeTypes,
-					onError: ( { message } ) => onError( message ),
-					...rest,
-				} );
+				if ( useNetwork ) {
+					coreUploadMedia( {
+						wpAllowedMimeTypes: _settings.allowedMimeTypes,
+						onError: ( { message } ) => onError( message ),
+						...rest,
+					} );
+				} else {
+					uploadMedia( {
+						wpAllowedMimeTypes: _settings.allowedMimeTypes,
+						onError: ( { message } ) => onError( message ),
+						...rest,
+					} );
+				}
 			},
 		} ),
-		[ _settings ]
+		[ _settings, useNetwork ]
 	);
 
 	const [ blocks, setBlocks ] = useState< BlockInstance[] >( [] );

@@ -398,4 +398,16 @@ const webpackConfig = {
 	externals: [ 'keytar' ],
 };
 
-module.exports = webpackConfig;
+const serviceWorkersConfig = {
+	...webpackConfig,
+	entry: filterEntrypoints( {
+		'entry-logged-out-editor-service-worker': [
+			path.join( __dirname, 'landing', 'logged-out-editor', 'service-worker' ),
+		],
+	} ),
+	target: 'webworker',
+	optimization: {},
+	plugins: [],
+};
+
+module.exports = [ webpackConfig, serviceWorkersConfig ];

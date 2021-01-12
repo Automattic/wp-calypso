@@ -74,6 +74,7 @@
 		"@wordpress/interface": "^0.7.5",
 		"@wordpress/is-shallow-equal": "^2.1.0",
 		"@wordpress/keycodes": "^2.14.0",
+		"@wordpress/media-utils": "^1.19.1",
 		"@wordpress/notices": "^2.8.3",
 		"@wordpress/nux": "^3.20.5",
 		"@wordpress/plugins": "^2.20.3",
