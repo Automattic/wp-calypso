@@ -61,7 +61,7 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 		return (
 			<header className="premium-plan-upgrade-upsell__small-header">
 				<h2 className="premium-plan-upgrade-upsell__title">
-					{ translate( 'This is a special offer' ) }
+					{ translate( 'Hold tight, your site is being upgraded.' ) }
 				</h2>
 			</header>
 		);
