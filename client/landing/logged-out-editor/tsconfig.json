@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"composite": false,
+		"noEmit": true,
+		"emitDeclarationOnly": false,
+		"tsBuildInfoFile": null,
+		"importsNotUsedAsValues": "error",
+		"lib": [ "WebWorker" ]
+	},
+	"files": [ "index.tsx" ],
+	"include": []
+}

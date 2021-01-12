@@ -168,6 +168,7 @@ const webpackConfig = {
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
+		'entry-logged-out-editor': [ path.join( __dirname, 'landing', 'logged-out-editor' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
@@ -397,4 +398,16 @@ const webpackConfig = {
 	externals: [ 'keytar' ],
 };
 
-module.exports = webpackConfig;
+const serviceWorkersConfig = {
+	...webpackConfig,
+	entry: filterEntrypoints( {
+		'entry-logged-out-editor-service-worker': [
+			path.join( __dirname, 'landing', 'logged-out-editor', 'service-worker' ),
+		],
+	} ),
+	target: 'webworker',
+	optimization: {},
+	plugins: [],
+};
+
+module.exports = [ webpackConfig, serviceWorkersConfig ];

@@ -59,5 +59,6 @@ export type __TodoAny__ = any; /* eslint-disable-line @typescript-eslint/no-expl
 declare global {
 	interface Window {
 		AppBoot: () => void;
+		i18nLocaleStrings?: string;
 	}
 }

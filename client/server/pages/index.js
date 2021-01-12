@@ -46,6 +46,7 @@ import analytics from 'calypso/server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import { LOGGED_OUT_EDITOR_SECTION_DEFINITION } from 'calypso/landing/logged-out-editor/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 
 import middlewareBuildTarget from '../middleware/build-target.js';
@@ -736,6 +737,12 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
+
+	handleSectionPath(
+		LOGGED_OUT_EDITOR_SECTION_DEFINITION,
+		'/logged-out-editor',
+		'entry-logged-out-editor'
+	);
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
