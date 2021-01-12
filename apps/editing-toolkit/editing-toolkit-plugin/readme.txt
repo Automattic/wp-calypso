@@ -45,6 +45,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Domain Picker: Added "Use a domain I own" item (https://github.com/Automattic/wp-calypso/pull/48119)
 * Welcome Tour: update copy and add i18n wrappers (https://github.com/Automattic/wp-calypso/pull/48783)
 * Editor welcome tour: Remove editor welcome tour images and replace with images urls from the CDN (https://github.com/Automattic/wp-calypso/pull/48784)
+* Add "Renews at {renewal_price} / year" label to domain picker suggestion items (https://github.com/Automattic/wp-calypso/pull/48669)
+* Payment Methods: add PayPal to change payment method form (https://github.com/Automattic/wp-calypso/pull/48553)
+* eact-i18n: Upgrade @wordpress/hooks dependency version (https://github.com/Automattic/wp-calypso/pull/48664)
 
 = 2.8.17 =
 * Domain Picker: make items keyboard accessible (https://github.com/Automattic/wp-calypso/pull/48172)
