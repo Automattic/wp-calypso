@@ -145,7 +145,6 @@ export class PlansFeaturesMain extends Component {
 			redirectTo,
 			siteId,
 			plansWithScroll,
-			customHeader,
 			isReskinned,
 		} = this.props;
 
@@ -177,7 +176,6 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
-				{ customHeader }
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
@@ -420,7 +418,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { isInSignup, siteId, siteSlug } = this.props;
+		const { isInSignup, siteId, siteSlug, customHeader } = this.props;
 		const basePlansPath = isInSignup ? window.location?.pathname : `/plans/${ siteSlug }`;
 
 		return (
@@ -431,6 +429,7 @@ export class PlansFeaturesMain extends Component {
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 
+				{ customHeader }
 				<PlanTypeSelector { ...this.props } basePlansPath={ basePlansPath } />
 				{ this.getPlanFeatures() }
 				{ this.renderProductsSelector() }

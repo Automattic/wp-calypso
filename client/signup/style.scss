@@ -100,7 +100,7 @@ body.is-section-signup .layout.gravatar {
 			background: var( --color-surface );
 			padding-bottom: 16px;
 			margin-bottom: 24px;
-			border-radius: 6px;
+			border-radius: 6px; /* stylelint-disable-line */
 			@include elevation( 3dp );
 		}
 
@@ -388,11 +388,6 @@ body.is-section-signup.is-new-launch-flow {
 		background: rgba( 248, 248, 248, 0.7 );
 	}
 
-	.plans-wrapper,
-	.plan-features__content {
-		padding: 8px 0 0;
-	}
-
 	.plan-price__integer {
 		font-weight: 600;
 	}
@@ -467,7 +462,7 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 		.signup-header__right {
 			top: 22px;
 			right: 24px;
-			
+
 			.flow-progress-indicator {
 				color: var( --color-text );
 				font-weight: normal;
@@ -493,11 +488,11 @@ body.is-section-signup.is-white-signup .signup.is-onboarding {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.6rem;
+			font-size: 2.6rem; /* stylelint-disable-line */
 
 			@media screen and ( max-width: $breakpoint-mobile ) {
 				max-width: 328px;
-				font-size: 1.6rem;
+				font-size: 1.6rem; /* stylelint-disable-line */
 				text-align: left;
 				padding: 0 16px;
 				margin: 0 auto;
