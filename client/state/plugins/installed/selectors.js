@@ -63,6 +63,10 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
 		( memo, siteId ) => {
+			if ( isRequesting( state, siteId ) ) {
+				return memo;
+			}
+
 			const list = state.plugins.installed.plugins[ siteId ] || [];
 			list.forEach( ( item ) => {
 				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
