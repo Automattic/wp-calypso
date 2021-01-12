@@ -37,6 +37,7 @@ import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'calypso/assets/images/email-providers/titan.svg';
@@ -176,7 +177,8 @@ class EmailProvidersComparison extends React.Component {
 		const { currencyCode, currentUserLocale, titanMailProduct, translate } = this.props;
 		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
 		const billingFrequency =
-			isEnglish || i18n.hasTranslation( 'Annual or monthly billing' )
+			! config.isEnabled( 'titan/phase-2' ) &&
+			( isEnglish || i18n.hasTranslation( 'Annual or monthly billing' ) )
 				? translate( 'Annual or monthly billing' )
 				: translate( 'Monthly billing' );
 
@@ -193,14 +195,28 @@ class EmailProvidersComparison extends React.Component {
 					},
 					comment: '{{price/}} is the formatted price, e.g. $20',
 			  } );
+		const providerTitle = config.isEnabled( 'titan/phase-2' )
+			? translate( 'Email' )
+			: translate( 'Titan Mail' );
+		const providerCtaText = config.isEnabled( 'titan/phase-2' )
+			? translate( 'Add Email' )
+			: translate( 'Add Titan Mail' );
+		const providerEmailLogo = config.isEnabled( 'titan/phase-2' ) ? (
+			<Gridicon
+				className="email-providers-comparison__providers-wordpress-com-email"
+				icon="my-sites"
+			/>
+		) : (
+			{ path: titanLogo }
+		);
 
 		return (
 			<EmailProviderDetails
-				title={ translate( 'Titan Mail' ) }
+				title={ providerTitle }
 				description={ translate(
 					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
 				) }
-				image={ { path: titanLogo } }
+				image={ providerEmailLogo }
 				features={ [
 					billingFrequency,
 					translate( 'Send and receive from your custom domain' ),
@@ -210,7 +226,7 @@ class EmailProvidersComparison extends React.Component {
 					translate( 'Read receipts to track email opens' ),
 				] }
 				formattedPrice={ formattedPrice }
-				buttonLabel={ translate( 'Add Titan Mail' ) }
+				buttonLabel={ providerCtaText }
 				hasPrimaryButton={ true }
 				isButtonBusy={ this.state.isFetchingProvisioningURL }
 				onButtonClick={ this.onAddTitanClick }
