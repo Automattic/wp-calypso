@@ -32,6 +32,13 @@ export class HelpSearch extends React.PureComponent {
 		this.setState( {
 			searchQuery,
 		} );
+
+		if ( isEmpty( searchQuery ) ) {
+			this.props.isSearching( false );
+		} else {
+			this.props.isSearching( true );
+		}
+
 		this.props.recordTracksEvent( 'calypso_help_search', { query: searchQuery } );
 	};
 

@@ -55,6 +55,10 @@ const debug = debugModule( 'calypso:help-search' );
 class Help extends React.PureComponent {
 	static displayName = 'Help';
 
+	state = {
+		isSearching: false,
+	};
+
 	getHelpfulArticles = () => {
 		const helpfulResults = [
 			{
@@ -301,6 +305,11 @@ class Help extends React.PureComponent {
 		</Main>
 	);
 
+	//Callback passed to HelpSearch to check whether we're searching or not
+	isSearching = ( status ) => {
+		this.setState( { isSearching: status } );
+	};
+
 	render() {
 		const { isEmailVerified, userId, isLoading } = this.props;
 
@@ -312,11 +321,15 @@ class Help extends React.PureComponent {
 			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
-				<HelpSearch />
-				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
-				{ this.supportSessionCard() }
-				{ this.getHelpfulArticles() }
-				{ this.getSupportLinks() }
+				<HelpSearch isSearching={ this.isSearching } />
+				{ ! this.state.isSearching && (
+					<div className="help__inner-wrapper">
+						{ ! isEmailVerified && <HelpUnverifiedWarning /> }
+						{ this.supportSessionCard() }
+						{ this.getHelpfulArticles() }
+						{ this.getSupportLinks() }
+					</div>
+				) }
 				{ this.getContactUs() }
 				<QueryConciergeInitial />
 				<QueryUserPurchases userId={ userId } />
