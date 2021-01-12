@@ -460,7 +460,7 @@ function isRechargeable( purchase ) {
 
 /**
  * Checks if a purchase can be canceled and refunded via the WordPress.com API.
- * Purchases usually can be refunded up to 30 days after purchase.
+ * Purchases usually can be refunded up to 14 days after purchase.
  * Domains and domain mappings can be refunded up to 96 hours.
  * Purchases included with plan can't be refunded.
  *

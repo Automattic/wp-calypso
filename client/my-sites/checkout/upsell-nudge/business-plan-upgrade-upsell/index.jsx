@@ -223,7 +223,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 								) }
 							{ ! hasSevenDayRefundPeriod &&
 								translate(
-									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}30-day money-back guarantee{{/b}}.',
+									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}14-day money-back guarantee{{/b}}.',
 									{
 										components: { b: <b /> },
 									}
@@ -249,7 +249,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 								) }
 							{ ! hasSevenDayRefundPeriod &&
 								translate(
-									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have 30 days to evaluate the plan and decide if it’s right for you.',
+									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have 14 days to evaluate the plan and decide if it’s right for you.',
 									{
 										components: {
 											del: <del />,

@@ -142,7 +142,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Can I cancel my subscription?' ) }
 				answer={ translate(
-					'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day' +
+					'Yes. We want you to love everything you do at WordPress.com, so we provide a 14-day' +
 						' refund on all of our plans. {{a}}Manage purchases{{/a}}.',
 					{
 						components: { a: <a href={ purchasesRoot } /> },

@@ -155,11 +155,11 @@ function CheckoutSummaryFeaturesList( props ) {
 
 	let refundText = translate( 'Money back guarantee' );
 	if ( hasDomainsInCart && ! hasPlanInCart ) {
-		refundText = translate( '4 day money back guarantee' );
+		refundText = translate( '4-day money back guarantee' );
 	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
 		refundText = hasMonthlyPlan
-			? translate( '7 day money back guarantee' )
-			: translate( '30 day money back guarantee' );
+			? translate( '7-day money back guarantee' )
+			: translate( '14-day money back guarantee' );
 	}
 
 	return (

@@ -188,7 +188,7 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 						</ul>
 						<p>
 							{ translate(
-								'Try Premium risk-free with our {{strong}}30-day money-back guarantee{{/strong}}. If you don’t love it, you can return to the Personal Plan.',
+								'Try Premium risk-free with our {{strong}}14-day money-back guarantee{{/strong}}. If you don’t love it, you can return to the Personal Plan.',
 								{
 									components: { strong: <strong /> },
 								}

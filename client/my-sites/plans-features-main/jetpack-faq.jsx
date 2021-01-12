@@ -38,7 +38,7 @@ const JetpackFAQ = () => {
 				question={ translate( 'What is the cancellation policy?' ) }
 				answer={ translate(
 					'We want to make sure Jetpack is exactly what you need, so you can request a cancellation' +
-						' within 30 days of purchase and receive a full refund. If there’s something you’d like' +
+						' within 14 days of purchase and receive a full refund. If there’s something you’d like' +
 						' to see changed in Jetpack to better suit your needs, {{helpLink}}please let us know{{/helpLink}}!',
 					{
 						components: { helpLink: getHelpLink( 'cancellation' ) },
