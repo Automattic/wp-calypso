@@ -26,12 +26,12 @@ import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {
