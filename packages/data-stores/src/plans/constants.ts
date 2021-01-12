@@ -37,7 +37,7 @@ export const billedMonthlySlugs = [
 	PLAN_ECOMMERCE_MONTHLY,
 ] as const;
 
-export const plansOrder = [ ...billedYearlySlugs, ...billedMonthlySlugs ];
+export const plansOrder = [ PLAN_FREE, ...billedYearlySlugs, ...billedMonthlySlugs ];
 
 export const plansPaths = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ] as const;
 
