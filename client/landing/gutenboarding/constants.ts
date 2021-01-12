@@ -8,7 +8,6 @@ import type { ValuesType } from 'utility-types';
  *
  */
 export const FLOW_ID = 'gutenboarding';
-export const ANCHOR_FM_FLOW_ID = 'anchor-fm';
 
 const fontTitles: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
