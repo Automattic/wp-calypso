@@ -37,6 +37,7 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import { type as domainTypes, transferStatus, sslStatuses } from 'calypso/lib/domains/constants';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isCancelable } from 'calypso/lib/purchases';
+import { isEnabled } from 'calypso/config';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { getUnmappedUrl } from 'calypso/lib/site/utils';
 import { withoutHttp } from 'calypso/lib/url';
@@ -112,7 +113,9 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				}
 			);
 		} else if ( hasTitanMailWithUs( domain ) ) {
-			navigationDescription = translate( 'Titan Mail' );
+			navigationDescription = isEnabled( 'titan/phase-2' )
+				? translate( 'Email' )
+				: translate( 'Titan Mail' );
 		} else if ( emailForwardsCount > 0 ) {
 			navigationDescription = translate(
 				'%(emailForwardsCount)d forward',
