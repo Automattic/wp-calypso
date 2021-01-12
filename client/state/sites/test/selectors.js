@@ -56,6 +56,19 @@ import {
 import config from 'calypso/config';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
+jest.mock( 'calypso/config', () => {
+	const configMock = () => '';
+	configMock.isEnabled = jest.fn( () => true );
+	return configMock;
+} );
+
+jest.mock( 'calypso/sections-filter', () => {
+	const mock = () => '';
+	mock.isSectionEnabled = jest.fn( () => true );
+	mock.isSectionNameEnabled = jest.fn( () => true );
+	return mock;
+} );
+
 describe( 'selectors', () => {
 	const createStateWithItems = ( items ) =>
 		deepFreeze( {
@@ -3525,6 +3538,10 @@ describe( 'selectors', () => {
 			},
 		} );
 
+		beforeEach( () => {
+			config.isEnabled.mockImplementation( () => true );
+		} );
+
 		test( 'should return true if site is AT and user can manage it', () => {
 			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( true );
 		} );
@@ -3538,13 +3555,13 @@ describe( 'selectors', () => {
 		} );
 
 		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
-			const oldEnabled = config.isEnabled;
-			config.isEnabled = () => true;
 			expect( canCurrentUserUseCalypsoStore( createState( false, false, true ) ) ).toBe( true );
-			config.isEnabled = oldEnabled;
 		} );
 
 		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
+			// Enable all features except for the atomic store flow
+			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
+
 			expect( canCurrentUserUseCalypsoStore( createState( false, false, true ) ) ).toBe( false );
 		} );
 	} );
