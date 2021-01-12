@@ -11,7 +11,7 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 } ) );
 
 describe( 'getPrices', () => {
-	it( 'calls setPrices after fetching prices', () => {
+	it( 'calls setDiscounts and setPrices after fetching prices', () => {
 		const iter = getPrices();
 
 		expect( iter.next().value ).toEqual( {
@@ -28,6 +28,13 @@ describe( 'getPrices', () => {
 				raw_price: 14,
 			},
 		];
+
+		expect( iter.next( planData ).value ).toEqual( {
+			type: 'SET_DISCOUNTS',
+			discounts: {
+				maxDiscount: 0,
+			},
+		} );
 
 		expect( iter.next( planData ).value ).toEqual( {
 			type: 'SET_PRICES',
@@ -54,6 +61,9 @@ describe( 'getPrices', () => {
 				raw_price: 13,
 			},
 		];
+
+		// skip the discounts call
+		iter.next( planData );
 
 		expect( iter.next( planData ).value ).toEqual( {
 			type: 'SET_PRICES',
