@@ -19,6 +19,7 @@ import DomainNotice from 'calypso/my-sites/domains/domain-management/components/
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import { isEnabled } from 'calypso/config';
 import { withoutHttp } from 'calypso/lib/url';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { handleRenewNowClick } from 'calypso/lib/purchases';
@@ -301,7 +302,7 @@ class DomainItem extends PureComponent {
 		}
 
 		if ( hasTitanMailWithUs( domainDetails ) ) {
-			return translate( 'Titan Mail' );
+			return isEnabled( 'titan/phase-2' ) ? translate( 'Email' ) : translate( 'Titan Mail' );
 		}
 
 		if ( domainDetails?.emailForwardsCount > 0 ) {

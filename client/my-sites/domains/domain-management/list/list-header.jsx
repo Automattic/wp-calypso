@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import { CompactCard } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Style dependencies
@@ -27,6 +28,24 @@ class ListHeader extends React.PureComponent {
 		const { headerClasses, translate } = this.props;
 
 		const listHeaderClasses = classNames( 'list-header', headerClasses );
+		const emailPopoverText = isEnabled( 'titan/phase-2' )
+			? translate(
+					'You can receive email using your custom domain by purchasing Email or %(googleMailService)s, or by ' +
+						'setting up email forwarding. Note that email forwarding requires a plan subscription.',
+					{
+						args: { googleMailService: getGoogleMailServiceFamily() },
+						comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+					}
+			  )
+			: translate(
+					'You can receive email using your custom domain by using email forwarding or by ' +
+						'purchasing Titan Mail or %(googleMailService)s. Note that ' +
+						'email forwarding requires a plan subscription.',
+					{
+						args: { googleMailService: getGoogleMailServiceFamily() },
+						comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+					}
+			  );
 
 		return (
 			<CompactCard className={ listHeaderClasses }>
@@ -62,17 +81,7 @@ class ListHeader extends React.PureComponent {
 				</div>
 				<div className="list__domain-email">
 					<span>{ translate( 'Email' ) }</span>
-					<InfoPopover iconSize={ 18 }>
-						{ translate(
-							'You can receive email using your custom domain by using email forwarding or by ' +
-								'purchasing Titan Mail or %(googleMailService)s. Note that ' +
-								'email forwarding requires a plan subscription.',
-							{
-								args: { googleMailService: getGoogleMailServiceFamily() },
-								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-							}
-						) }
-					</InfoPopover>
+					<InfoPopover iconSize={ 18 }>{ emailPopoverText }</InfoPopover>
 				</div>
 				<div className="list__domain-options"></div>
 			</CompactCard>
