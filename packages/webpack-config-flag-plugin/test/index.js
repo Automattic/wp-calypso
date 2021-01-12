@@ -35,6 +35,7 @@ describe( 'webpack-config-flag-plugin', () => {
 				output: {
 					path: buildDirectory,
 					pathinfo: false,
+					globalObject: 'window',
 				},
 				resolve: {
 					extensions: [ '.js' ],
@@ -46,8 +47,9 @@ describe( 'webpack-config-flag-plugin', () => {
 				plugins: [ new ConfigFlagPlugin( { flags: { foo: true } } ) ],
 			};
 
-			webpack( config, ( err ) => {
+			webpack( config, ( err, stats ) => {
 				expect( err ).toBeNull();
+				expect( stats.compilation.errors ).toHaveLength( 0 );
 
 				const outputFile = path.join( buildDirectory, 'main.js' );
 				const outputFileContent = fs.readFileSync( outputFile, 'utf8' );

@@ -19,9 +19,10 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prebuild": "yarn run clean",
-		"build": "calypso-build editor='./src/editor.js' view='./src/view.js' --env.WP"
+		"build": "calypso-build"
 	},
 	"dependencies": {
+		"@automattic/calypso-build": "^7.0.0",
 		"@wordpress/api-fetch": "^3.21.1",
 		"@wordpress/base-styles": "^3.3.0",
 		"@wordpress/block-editor": "^5.2.1",

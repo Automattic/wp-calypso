@@ -20,4 +20,4 @@ if ( ! process.argv.some( ( arg ) => arg.startsWith( '--config' ) ) ) {
 	process.argv.push( '--config', webpackConfig );
 }
 
-require( 'webpack-cli' );
+require( 'webpack-cli/bin/cli' );

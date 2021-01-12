@@ -1,10 +1,21 @@
-const BasicEvaluatedExpression = require( 'webpack/lib/BasicEvaluatedExpression' );
+const BasicEvaluatedExpression = require( 'webpack/lib/javascript/BasicEvaluatedExpression' );
+const {
+	harmonySpecifierTag,
+} = require( 'webpack/lib/dependencies/HarmonyImportDependencyParserPlugin' );
+
+// Checks if the identifier `name` in the current scope points to an imported binding
+const isImport = ( parser, name ) => {
+	if ( ! name ) return false;
+
+	const scoped = parser.scope.definitions.get( name );
+
+	return scoped && scoped.tagInfo && scoped.tagInfo.tag === harmonySpecifierTag;
+};
 
 // Check that the given call expression is `config.isEnabled( 'flag' )` with
 // `config` as the default export or namespace, and return the `flag` literal value.
 const isCallOnDefaultOrNamespace = ( parser, moduleName, expr ) => {
-	return moduleName &&
-		parser.evaluate( moduleName ).identifier === 'imported var' &&
+	return isImport( parser, moduleName ) &&
 		expr.callee.type === 'MemberExpression' &&
 		expr.callee.object.type === 'Identifier' &&
 		expr.callee.object.name === moduleName &&
@@ -19,8 +30,7 @@ const isCallOnDefaultOrNamespace = ( parser, moduleName, expr ) => {
 // Check that the given call expression is `isEnabled( 'flag' )`
 // and return the `flag` literal value.
 const isNamedCall = ( parser, methodName, expr ) => {
-	return methodName &&
-		parser.evaluate( methodName ).identifier === 'imported var' &&
+	return isImport( parser, methodName ) &&
 		expr.callee.type === 'Identifier' &&
 		expr.callee.name === methodName &&
 		expr.arguments.length === 1 &&

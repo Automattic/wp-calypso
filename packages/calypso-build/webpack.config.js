@@ -38,15 +38,15 @@ const cachePath = path.resolve( '.cache' );
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
  *
- * @param  {object}  env                           environment options
- * @param  {object}  argv                          options map
- * @param  {object}  argv.entry                    Entry point(s)
- * @param  {string}  argv.'output-chunk-filename'  Output chunk filename
- * @param  {string}  argv.'output-path'            Output path
- * @param  {string}  argv.'output-filename'        Output filename pattern
- * @param  {string}  argv.'output-library-target'  Output library target
- * @param  {string}  argv.'output-jsonp-function'  Output jsonp function
- * @returns {object}                                webpack config
+ * @param  {object}  env                                 environment options
+ * @param  {object}  argv                                options map
+ * @param  {object}  argv.entry                          Entry point(s)
+ * @param  {string}  argv.'output-chunk-filename'        Output chunk filename
+ * @param  {string}  argv.'output-path'                  Output path
+ * @param  {string}  argv.'output-filename'              Output filename pattern
+ * @param  {string}  argv.'output-library-target'        Output library target
+ * @param  {string}  argv.'output-chunk-loading-global'  Output chunk loading global
+ * @returns {object}                                     webpack config
  */
 function getWebpackConfig(
 	env = {},
@@ -56,8 +56,8 @@ function getWebpackConfig(
 		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-library-target': outputLibraryTarget = 'window',
-		'output-jsonp-function': outputJsonpFunction = 'webpackJsonp',
-	}
+		'output-chunk-loading-global': outputChunkLoadingGlobal = 'webpackChunkwebpack',
+	} = {}
 ) {
 	const workerCount = 1;
 
@@ -85,20 +85,18 @@ function getWebpackConfig(
 		bail: ! isDevelopment,
 		entry,
 		mode: isDevelopment ? 'development' : 'production',
-		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
+		devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
 		output: {
 			chunkFilename: outputChunkFilename,
 			path: outputPath,
 			filename: outputFilename,
 			libraryTarget: outputLibraryTarget,
-			jsonpFunction: outputJsonpFunction,
+			chunkLoadingGlobal: outputChunkLoadingGlobal,
 		},
 		optimization: {
 			minimize: ! isDevelopment,
 			minimizer: Minify( {
-				cache: path.resolve( cachePath, 'terser' ),
 				parallel: workerCount,
-				sourceMap: Boolean( process.env.SOURCEMAP ),
 				extractComments: false,
 				terserOptions: {
 					ecma: 5,

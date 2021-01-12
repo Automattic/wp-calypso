@@ -2,6 +2,8 @@
  * External Dependencies
  */
 const { builtinModules } = require( 'module' );
+const { join } = require( 'path' );
+const ExternalModule = require( 'webpack' ).ExternalModule;
 
 function getModule( request ) {
 	const parts = request.split( '/' );
@@ -25,7 +27,7 @@ module.exports = class ExternalModulesWriter {
 			const externalModules = new Set();
 
 			for ( const module of compilation.modules ) {
-				if ( ! module.external ) {
+				if ( ! ( module instanceof ExternalModule ) ) {
 					continue;
 				}
 
@@ -45,9 +47,9 @@ module.exports = class ExternalModulesWriter {
 			}
 
 			const json = JSON.stringify( Array.from( externalModules ), null, 2 );
-			const { mkdirp, writeFile, join } = compiler.outputFileSystem;
+			const { mkdir, writeFile } = compiler.outputFileSystem;
 			const { path, filename } = this.options;
-			mkdirp( path, ( err ) => {
+			mkdir( path, { recursive: true }, ( err ) => {
 				if ( err ) {
 					return callback( err );
 				}
