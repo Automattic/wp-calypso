@@ -1,5 +1,11 @@
+@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' ); // Used for switch-sites icon.
+
 // Menu links
 .sidebar__jetpack-cloud {
+
+	.current-site__switch-sites .button.is-borderless .gridicon {
+		top: 15px;
+	}
 
 	.sidebar__menu-link {
 		padding-top: 14px;
