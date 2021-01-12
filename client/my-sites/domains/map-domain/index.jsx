@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import { addItem } from 'calypso/lib/cart/actions';
 import wp from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import Notice from 'calypso/components/notice';
@@ -29,6 +29,7 @@ import {
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 const wpcom = wp.undocumented();
 
@@ -45,6 +46,8 @@ export class MapDomain extends Component {
 		selectedSiteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
+
+	isMounted = false;
 
 	state = {
 		errorMessage: null,
@@ -71,14 +74,19 @@ export class MapDomain extends Component {
 	addDomainToCart = ( suggestion ) => {
 		const { selectedSiteSlug } = this.props;
 
-		addItem(
-			domainRegistration( {
-				productSlug: suggestion.product_slug,
-				domain: suggestion.domain_name,
-			} )
-		);
-
-		page( '/checkout/' + selectedSiteSlug );
+		this.props
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes(
+					domainRegistration( {
+						productSlug: suggestion.product_slug,
+						domain: suggestion.domain_name,
+					} ),
+					this.props.productsList
+				),
+			] )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + selectedSiteSlug );
+			} );
 	};
 
 	handleRegisterDomain = ( suggestion ) => {
@@ -119,6 +127,14 @@ export class MapDomain extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
+	}
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
 	}
 
 	checkSiteIsUpgradeable( props ) {
@@ -199,4 +215,4 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
-} ) )( localize( MapDomain ) );
+} ) )( withShoppingCart( localize( MapDomain ) ) );
