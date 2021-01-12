@@ -73,7 +73,7 @@ export class MapDomain extends Component {
 	addDomainToCart = ( suggestion ) => {
 		const { selectedSiteSlug } = this.props;
 
-		this.props
+		this.props.shoppingCartManager
 			.addProductsToCart( [
 				fillInSingleCartItemAttributes(
 					domainRegistration( {
