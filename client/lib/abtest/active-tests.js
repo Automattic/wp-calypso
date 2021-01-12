@@ -65,15 +65,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	freePlansDomainUpsell: {
-		datestamp: '20201210',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	newUsersWithFreePlan: {
 		datestamp: '20210107',
 		variations: {
