@@ -2,12 +2,9 @@
  * Internal dependencies
  */
 import { createMedia, readMedia } from './media';
+import { oembedProxy } from './oembed';
 
 self.addEventListener( 'fetch', ( event: FetchEvent ) => {
-	if ( ! /\/wp\/v2\//.test( event.request.url ) ) {
-		return;
-	}
-
 	const { url, method } = event.request;
 	const { pathname } = new URL( url );
 
@@ -17,8 +14,13 @@ self.addEventListener( 'fetch', ( event: FetchEvent ) => {
 	} else if ( /^\/wp\/v2\/media\/\d+$/.test( pathname ) && method === 'GET' ) {
 		event.respondWith( readMedia( event.request ) );
 		return;
+	} else if ( /^\/oembed\/1\.0\/proxy$/.test( pathname ) && method === 'GET' ) {
+		event.respondWith( oembedProxy( event.request ) );
+		return;
 	}
 
 	// Log an unimplemented endpoints
-	console.log( 'WORKER: Missing API endpoint intercept', event.request ); // eslint-disable-line no-console
+	if ( /\/wp\//.test( event.request.url ) || /\/oembed\//.test( event.request.url ) ) {
+		console.log( 'WORKER: Missing API endpoint intercept', event.request ); // eslint-disable-line no-console
+	}
 } );
