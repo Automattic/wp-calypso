@@ -2,7 +2,8 @@
  * External dependencies
  */
 
-import { isEmpty, keys, mapValues, noop } from 'lodash';
+import { isEmpty, mapValues, noop } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,10 +12,15 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { updateUserSettings, clearUnsavedUserSettings } from 'calypso/state/user-settings/actions';
+import {
+	clearUnsavedUserSettings,
+	updateUserSettings,
+	updateUserSettingsFailure,
+} from 'calypso/state/user-settings/actions';
 import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /*
  * Decodes entities in those specific user settings properties
@@ -66,13 +72,33 @@ export function saveUserSettings( action ) {
 		}
 	};
 }
+
+export function saveUserSettingsFailure( { settingsOverride }, error ) {
+	if ( settingsOverride?.password ) {
+		return [
+			errorNotice( translate( 'There was a problem saving your password. Please, try again.' ), {
+				id: 'update-settings-password-failure',
+			} ),
+			updateUserSettingsFailure( settingsOverride, error ),
+		];
+	}
+
+	return updateUserSettingsFailure( settingsOverride, error );
+}
+
 /*
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
 export const finishUserSettingsSave = ( { settingsOverride }, data ) => ( dispatch ) => {
 	dispatch( updateUserSettings( fromApi( data ) ) );
-	dispatch( clearUnsavedUserSettings( settingsOverride ? keys( settingsOverride ) : null ) );
+	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
+
+	if ( settingsOverride?.password ) {
+		// Since changing a user's password invalidates the session, we reload.
+		window.location = window.location.pathname + '?updated=password';
+		return;
+	}
 	// Refetch the user data after saving user settings
 	// The require() trick is used to avoid excessive mocking in unit tests.
 	// TODO: Replace it with standard 'import' when the `lib/user` module is Reduxized
@@ -94,7 +120,7 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 		dispatchRequest( {
 			fetch: saveUserSettings,
 			onSuccess: finishUserSettingsSave,
-			onError: noop,
+			onError: saveUserSettingsFailure,
 			fromApi,
 		} ),
 	],

@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import notices from 'calypso/notices';
 import { connect } from 'react-redux';
 import { get, includes, isString, omit, partial, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -22,6 +20,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -78,7 +77,12 @@ class SiteVerification extends Component {
 		// save error
 		if ( this.state.isSubmittingForm && nextProps.saveError ) {
 			this.setState( { isSubmittingForm: false } );
-			notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice(
+				translate( 'There was a problem saving your changes. Please, try again.' ),
+				{
+					id: 'site-verification-settings-error',
+				}
+			);
 		}
 
 		// if we are changing sites, everything goes
@@ -211,7 +215,7 @@ class SiteVerification extends Component {
 			event.preventDefault();
 		}
 
-		notices.clearNotices( 'notices' );
+		this.props.removeNotice( 'site-verification-settings-error' );
 
 		const verificationCodes = {
 			google: this.state.googleCode,
@@ -227,7 +231,9 @@ class SiteVerification extends Component {
 
 		this.setState( { invalidCodes } );
 		if ( invalidCodes.length > 0 ) {
-			notices.error( translate( 'Invalid site verification tag entered.' ) );
+			this.props.errorNotice( translate( 'Invalid site verification tag entered.' ), {
+				id: 'site-verification-settings-error',
+			} );
 			return;
 		}
 
@@ -440,6 +446,8 @@ export default connect(
 		};
 	},
 	{
+		errorNotice,
+		removeNotice,
 		requestSite,
 		requestSiteSettings,
 		saveSiteSettings,

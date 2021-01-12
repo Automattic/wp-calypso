@@ -1,6 +1,6 @@
 module.exports = {
 	cacheDirectory: '<rootDir>/../.cache/jest',
-	modulePaths: [ '<rootDir>/../test', '<rootDir>/server', '<rootDir>', '<rootDir>/extensions' ],
+	modulePaths: [ '<rootDir>/extensions' ],
 	rootDir: '../../client',
 	roots: [ '<rootDir>/server' ],
 	testEnvironment: 'node',

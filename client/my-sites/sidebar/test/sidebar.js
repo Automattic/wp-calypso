@@ -223,7 +223,9 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <WooCommerce /> );
 			expect( wrapper.html() ).not.toEqual( null );
-			expect( wrapper.props().link ).toEqual( 'http://test.com/wp-admin/admin.php?page=wc-admin' );
+			expect( wrapper.props().link ).toEqual(
+				'http://test.com/wp-admin/admin.php?page=wc-admin&from-calypso'
+			);
 		} );
 
 		test( 'Should return WooCommerce menu item linking to Store UI dashboard if site has Business plan, WooCommerce plugin not installed yet, and user can use store', () => {

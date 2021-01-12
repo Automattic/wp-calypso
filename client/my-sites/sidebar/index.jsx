@@ -699,6 +699,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackStoreClick }
 				materialIcon="shopping_cart"
 				forceInternalLink
+				className="sidebar__store"
 			>
 				{ isCalypsoStoreDeprecatedOrRemoved && isBusiness( site.plan ) && (
 					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
@@ -731,7 +732,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
+		let storeLink = site.options.admin_url + 'admin.php?page=wc-admin&from-calypso';
 		if ( ! isSiteWpcomStore ) {
 			// Navigate to Store UI for installation.
 			storeLink = '/store' + siteSuffix + '?redirect_after_install';

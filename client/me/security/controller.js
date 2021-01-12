@@ -8,7 +8,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import userSettings from 'calypso/lib/user-settings';
 import PasswordComponent from 'calypso/me/security/main';
 import accountPasswordData from 'calypso/lib/account-password-data';
@@ -17,18 +16,20 @@ import ConnectedAppsComponent from 'calypso/me/connected-applications';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
 import SecurityCheckupComponent from 'calypso/me/security-checkup';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
+import { successNotice } from 'calypso/state/notices/actions';
 
 export function password( context, next ) {
 	if ( context.query && context.query.updated === 'password' ) {
-		notices.success( i18n.translate( 'Your password was saved successfully.' ), {
-			persistent: true,
-		} );
+		context.store.dispatch(
+			successNotice( i18n.translate( 'Your password was saved successfully.' ), {
+				displayOnNextPage: true,
+			} )
+		);
 
 		page.replace( window.location.pathname );
 	}
 
 	context.primary = React.createElement( PasswordComponent, {
-		userSettings: userSettings,
 		path: context.path,
 		accountPasswordData: accountPasswordData,
 	} );
