@@ -75,7 +75,11 @@ export const getPlansPaths = ( state: State ): string[] => {
 
 export const getPrices = ( state: State, _: string ): PricesMap => state.prices;
 
-export const getDiscounts = ( state: State ): DiscountsMap => state.discounts;
+export const getDiscounts = ( state: State ): DiscountsMap => {
+	// call getPrices to trigger the resolver in case someone only wants to get the discounts
+	select( STORE_KEY ).getPrices( '' );
+	return state.discounts;
+};
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {
 	return planSlug === PLAN_ECOMMERCE || planSlug === PLAN_ECOMMERCE_MONTHLY;
