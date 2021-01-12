@@ -6,14 +6,14 @@ import './public-path';
  */
 import { __ } from '@wordpress/i18n';
 
-import welcome from './images/welcome.png';
-import allBlocks from './images/all_blocks.gif';
-import addBlock from './images/add_block.gif';
-import makeBold from './images/make_bold.gif';
-import undo from './images/undo.gif';
-import moveBlock from './images/move_block.gif';
-import finish from './images/finish.png';
-import moreOptions from './images/more_options.gif';
+const addBlock = 'https://s0.wp.com/i/editor-welcome-tour/slide-add-block.gif';
+const allBlocks = 'https://s0.wp.com/i/editor-welcome-tour/slide-all-blocks.gif';
+const finish = 'https://s0.wp.com/i/editor-welcome-tour/slide-finish.png';
+const makeBold = 'https://s0.wp.com/i/editor-welcome-tour/slide-make-bold.gif';
+const moreOptions = 'https://s0.wp.com/i/editor-welcome-tour/slide-more-options.gif';
+const moveBlock = 'https://s0.wp.com/i/editor-welcome-tour/slide-move-block.gif';
+const undo = 'https://s0.wp.com/i/editor-welcome-tour/slide-undo.gif';
+const welcome = 'https://s0.wp.com/i/editor-welcome-tour/slide-welcome.png';
 
 /**
  * This function returns a collection of NUX Tour slide data
