@@ -205,7 +205,7 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( 'Should return WooCommerce menu item if site has Business plan and user can use store', () => {
+		test( 'Should return WooCommerce menu item redirecting to WooCommerce if site has Business plan and user can use store', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseStore: true,
 				...defaultProps,
@@ -217,12 +217,34 @@ describe( 'MySitesSidebar', () => {
 						product_slug: 'business-bundle',
 					},
 				},
+				isSiteWpcomStore: true,
 			} );
 			const WooCommerce = () => Sidebar.woocommerce();
 
 			const wrapper = shallow( <WooCommerce /> );
 			expect( wrapper.html() ).not.toEqual( null );
 			expect( wrapper.props().link ).toEqual( 'http://test.com/wp-admin/admin.php?page=wc-admin' );
+		} );
+
+		test( 'Should return WooCommerce menu item linking to Store UI dashboard if site has Business plan, WooCommerce plugin not installed yet, and user can use store', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseStore: true,
+				...defaultProps,
+				site: {
+					options: {
+						admin_url: 'http://test.com/wp-admin/',
+					},
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
+				isSiteWpcomStore: false,
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).not.toEqual( null );
+			expect( wrapper.props().link ).toEqual( '/store/mysite.com?redirect_after_install' );
 		} );
 	} );
 
