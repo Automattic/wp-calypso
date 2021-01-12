@@ -15,7 +15,7 @@ import {
 	setLocaleData,
 } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { createHooks, addAction as globalAddAction } from '@wordpress/hooks';
+import { createHooks } from '@wordpress/hooks';
 import type { addFilter, removeFilter, hasFilter, applyFilters } from '@wordpress/hooks';
 
 /**
@@ -50,15 +50,7 @@ interface I18nFilters {
 
 export const I18nProvider: React.FunctionComponent< Props > = ( { children, localeData } ) => {
 	const hooks = React.useMemo( () => createHooks(), [] );
-	const {
-		addAction,
-		removeAction,
-		doAction,
-		addFilter,
-		removeFilter,
-		hasFilter,
-		applyFilters,
-	} = hooks;
+	const { addAction, removeAction, addFilter, removeFilter, hasFilter, applyFilters } = hooks;
 	const [ filters, setFilters ] = React.useState( {
 		addFilter,
 		removeFilter,
@@ -67,20 +59,6 @@ export const I18nProvider: React.FunctionComponent< Props > = ( { children, loca
 	} );
 
 	React.useEffect( () => {
-		/**
-		 * Transmits internal hooks from the shared instance to the private one
-		 * due to a problem in with private hooks instances in @wordpress/hooks.
-		 *
-		 * @see  https://github.com/WordPress/gutenberg/pull/26498
-		 * @todo Remove when issue gets fixed in @wordpress/hooks.
-		 */
-		globalAddAction( 'hookAdded', 'a8c/react-i18n/transmit-internal-hooks', ( ...args ) => {
-			doAction( 'hookAdded', ...args );
-		} );
-		globalAddAction( 'hookRemoved', 'a8c/react-i18n/transmit-internal-hooks', ( ...args ) => {
-			doAction( 'hookRemoved', ...args );
-		} );
-
 		addAction( 'hookAdded', 'a8c/react-i18n/filters', () => {
 			setFilters( { addFilter, removeFilter, hasFilter, applyFilters } );
 			return () => removeAction( 'hookAdded', 'a8c/react-i18n/filters' );
@@ -150,7 +128,10 @@ function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filte
 	}
 
 	return ( ...args: ( string | number )[] ) => {
-		const filteredArguments = applyFilters( 'preTranslation', args, fnName, filters );
+		const filteredArguments = applyFilters( 'preTranslation', args, fnName, filters ) as (
+			| string
+			| number
+		 )[];
 
 		return applyFilters(
 			'postTranslation',
