@@ -21,7 +21,6 @@ export interface Plan {
 	isFree?: boolean;
 	featuresSlugs?: Record< string, boolean >;
 	storage?: string;
-	billPeriod?: 31 | 365;
 }
 
 /**

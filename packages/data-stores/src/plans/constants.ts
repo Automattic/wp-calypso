@@ -47,17 +47,7 @@ export const billedMonthlySlugs = [
 	PLAN_ECOMMERCE_MONTHLY,
 ] as const;
 
-export const plansPaths = [
-	'free',
-	'personal',
-	'premium',
-	'business',
-	'ecommerce',
-	'personal-monthly',
-	'premium-monthly',
-	'business-monthly',
-	'ecommerce-monthly',
-] as const;
+export const plansPaths = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ] as const;
 
 export type PlanPath = typeof plansPaths[ number ];
 

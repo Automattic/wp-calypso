@@ -155,7 +155,6 @@ export function* getPlansDetails( locale = 'en' ) {
 				storage: rawPlan.storage,
 				isFree: 'Free' === rawPlan.nonlocalized_short_name,
 				isPopular: 'Premium' === rawPlan.nonlocalized_short_name,
-				billPeriod: billedMonthlySlugs.indexOf( slug as never ) > -1 ? 31 : 365,
 			};
 
 			plans[ slug ] = plan;

@@ -14,6 +14,8 @@ import {
 	STORE_KEY,
 	PlanPath,
 	PLAN_ECOMMERCE_MONTHLY,
+	billedMonthlySlugs,
+	billedYearlySlugs,
 } from './constants';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
@@ -53,9 +55,9 @@ export const getPeriodSupportedPlans = (
 		if ( plan.isFree ) {
 			return true;
 		} else if ( billingPeriod === 'MONTHLY' ) {
-			return plan.billPeriod === 31;
+			return billedMonthlySlugs.indexOf( plan.storeSlug as never ) > -1;
 		}
-		return plan.billPeriod === 365;
+		return billedYearlySlugs.indexOf( plan.storeSlug as never ) > -1;
 	} );
 
 	return supportedPlans;
