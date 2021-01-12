@@ -154,7 +154,7 @@
 		"signup/wpforteams": true,
 		"site-indicator": true,
 		"support-user": true,
-		"titan/iframe-control-panel": true,
+		"titan/phase-2": true,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
