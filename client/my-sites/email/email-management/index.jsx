@@ -34,7 +34,11 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import EmptyContent from 'calypso/components/empty-content';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
-import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
+import {
+	emailManagement,
+	emailManagementForwarding,
+	isUnderEmailManagementAll,
+} from 'calypso/my-sites/email/paths';
 import {
 	getSelectedDomain,
 	isMappedDomain,
@@ -272,8 +276,14 @@ class EmailManagement extends React.Component {
 	goToEditOrList = () => {
 		const { selectedDomainName, selectedSiteSlug, currentRoute, previousRoute } = this.props;
 		const domainPath = domainManagementEdit( selectedSiteSlug, selectedDomainName, currentRoute );
+		const emailPath = emailManagement( selectedSiteSlug );
 
-		if ( selectedDomainName && previousRoute.startsWith( domainPath ) ) {
+		if (
+			selectedDomainName &&
+			( previousRoute.startsWith( domainPath ) ||
+				currentRoute.startsWith( emailPath ) ||
+				isUnderEmailManagementAll( currentRoute ) )
+		) {
 			page( domainPath );
 		} else {
 			page( domainManagementList( selectedSiteSlug, currentRoute ) );
