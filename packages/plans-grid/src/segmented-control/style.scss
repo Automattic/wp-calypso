@@ -1,0 +1,111 @@
+/**
+ * Segmented Control
+ *
+ */
+
+.segmented-control {
+	display: flex;
+	margin: 0;
+	border-radius: 2px;
+	background-color: var( --color-surface );
+	list-style: none;
+}
+
+.segmented-control__item {
+	flex: 1 1 auto;
+	cursor: pointer;
+
+	&:first-of-type .segmented-control__link {
+		border-top-left-radius: 2px;
+		border-bottom-left-radius: 2px;
+	}
+
+	&:last-of-type .segmented-control__link {
+		border-right: solid 1px var( --color-neutral-10 );
+		border-top-right-radius: 2px;
+		border-bottom-right-radius: 2px;
+	}
+
+	&.is-selected + .segmented-control__item .segmented-control__link {
+		border-left-color: var( --color-neutral-70 );
+	}
+}
+
+.segmented-control__link {
+	display: block;
+	padding: 8px 12px;
+	border: solid 1px var( --color-neutral-10 );
+	border-right: none;
+	font-size: $font-body-small;
+	line-height: 18px;
+	color: var( --color-text-subtle );
+	text-align: center;
+	transition: color 0.1s linear, background-color 0.1s linear;
+
+	&:focus {
+		color: var( --color-neutral-70 );
+		outline: none;
+		background-color: var( --color-neutral-0 );
+	}
+}
+
+.segmented-control__item.is-selected .segmented-control__link {
+	border-color: var( --color-neutral-70 );
+	color: var( --color-neutral-70 );
+}
+
+.notouch .segmented-control__link:hover {
+	color: var( --color-neutral-70 );
+	background-color: var( --color-neutral-0 );
+}
+
+.segmented-control__text {
+	display: block;
+	max-width: 100%;
+	color: inherit;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.segmented-control.is-compact {
+	.segmented-control__link {
+		font-size: $font-body-small;
+		padding: 4px 8px;
+	}
+}
+
+//Primary variation
+.segmented-control.is-primary {
+	.segmented-control__item {
+		&.is-selected {
+			.segmented-control__link {
+				border-color: var( --color-primary );
+				background-color: var( --color-primary );
+				color: var( --color-text-inverted );
+
+				&:focus {
+					background-color: var( --color-primary-dark );
+					border-color: var( --color-primary-dark );
+				}
+			}
+
+			+ .segmented-control__item .segmented-control__link {
+				border-left-color: var( --color-primary );
+			}
+		}
+	}
+
+	.segmented-control__link:focus {
+		background-color: var( --color-neutral-0 );
+	}
+}
+
+.notouch .segmented-control.is-primary {
+	.segmented-control__link:hover {
+		background-color: var( --color-neutral-0 );
+	}
+	.segmented-control__item.is-selected .segmented-control__link:hover {
+		background-color: var( --color-primary-light );
+	}
+}
