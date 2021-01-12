@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 // plans constants
 export const PLAN_FREE = 'free_plan';
 export const PLAN_PERSONAL = 'personal-bundle';
@@ -37,13 +38,16 @@ export const billedMonthlySlugs = [
 	PLAN_ECOMMERCE_MONTHLY,
 ] as const;
 
-export const plansOrder = [ PLAN_FREE, ...billedYearlySlugs, ...billedMonthlySlugs ];
+export const plansOrder = {
+	MONTHLY: billedYearlySlugs,
+	ANNUALLY: billedMonthlySlugs,
+};
 
 export const plansPaths = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ] as const;
 
 export type PlanPath = typeof plansPaths[ number ];
 
-export const plansProductSlugs = [ PLAN_FREE, ...plansOrder ];
+export const plansProductSlugs = [ PLAN_FREE, ...billedYearlySlugs, ...billedMonthlySlugs ];
 
 // salvaged from https://opengrok.a8c.com/source/raw/trunk/wp-content/admin-plugins/wpcom-billing/store-price.php
 // with html entities resolved to symbols

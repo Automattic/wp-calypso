@@ -50,6 +50,7 @@ export function useSelectedPlan(): Plan {
 	const recommendedPlanSlug = useSelect( ( select ) =>
 		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
 	);
+
 	const recommendedPlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug )
 	);
@@ -78,7 +79,7 @@ export function useNewSiteVisibility(): Site.Visibility {
 	return Site.Visibility.PublicNotIndexed;
 }
 
-export function useShouldRedirectToEditorAfterCheckout() {
+export function useShouldRedirectToEditorAfterCheckout(): boolean {
 	// The ecommerce plan follows another flow, so we shouldn't interrupt
 	// it by trying to redirect to the editor.
 	const currentSlug = useSelectedPlan()?.storeSlug;
