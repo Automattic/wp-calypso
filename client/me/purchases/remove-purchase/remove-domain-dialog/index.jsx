@@ -21,6 +21,7 @@ import { getName } from 'calypso/lib/purchases';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import { isEnabled } from 'calypso/config';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {
@@ -52,12 +53,15 @@ class RemoveDomainDialog extends Component {
 						components: { strong: <strong /> },
 					}
 				) }
-				{ hasTitanWithUs &&
-					' ' +
-						translate(
+				{ hasTitanWithUs && ' ' + isEnabled( 'titan/phase-2' )
+					? translate(
 							'You also have an active Titan Mail subscription for this domain, and your emails will stop ' +
 								'working if you delete your domain.'
-						) }
+					  )
+					: translate(
+							'You also have an active Email subscription for this domain, and your emails will stop ' +
+								'working if you delete your domain.'
+					  ) }
 			</p>
 		);
 	}
