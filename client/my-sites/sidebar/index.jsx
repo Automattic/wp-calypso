@@ -731,7 +731,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
+		const storeLink = site.options.admin_url + 'admin.php?page=wc-admin&from-calypso';
 
 		return (
 			<SidebarItem
