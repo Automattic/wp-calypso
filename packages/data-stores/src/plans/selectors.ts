@@ -7,7 +7,14 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import type { State, PricesMap } from './reducer';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY, PlanPath } from './constants';
+import {
+	DEFAULT_PAID_PLAN,
+	PLAN_ECOMMERCE,
+	PLAN_FREE,
+	STORE_KEY,
+	PlanPath,
+	PLAN_ECOMMERCE_MONTHLY,
+} from './constants';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
 // Some of these selectors require unused parameters because those
@@ -30,21 +37,26 @@ export const getDefaultFreePlan = ( _: State, locale: string ): Plan => {
 	return select( STORE_KEY ).getPlansDetails( locale )?.plans[ PLAN_FREE ];
 };
 
-export const getSupportedPlans = (
+export const getSupportedPlans = ( state: State ): Plan[] => {
+	const supportedPlans: Plan[] = state.supportedPlanSlugs
+		.map( ( slug ) => state.plans[ slug ] )
+		.filter( Boolean );
+
+	return supportedPlans;
+};
+
+export const getPeriodSupportedPlans = (
 	state: State,
 	billingPeriod: 'ANNUALLY' | 'MONTHLY' = 'ANNUALLY'
 ): Plan[] => {
-	const supportedPlans: Plan[] = state.supportedPlanSlugs
-		.map( ( slug ) => state.plans[ slug ] )
-		.filter( Boolean )
-		.filter( ( plan ) => {
-			if ( plan.isFree ) {
-				return true;
-			} else if ( billingPeriod === 'MONTHLY' ) {
-				return plan.billPeriod === 31;
-			}
-			return plan.billPeriod === 365;
-		} );
+	const supportedPlans: Plan[] = getSupportedPlans( state ).filter( ( plan ) => {
+		if ( plan.isFree ) {
+			return true;
+		} else if ( billingPeriod === 'MONTHLY' ) {
+			return plan.billPeriod === 31;
+		}
+		return plan.billPeriod === 365;
+	} );
 
 	return supportedPlans;
 };
@@ -62,7 +74,7 @@ export const getPlansPaths = ( state: State ): string[] => {
 export const getPrices = ( state: State, _: string ): PricesMap => state.prices;
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {
-	return planSlug === PLAN_ECOMMERCE;
+	return planSlug === PLAN_ECOMMERCE || planSlug === PLAN_ECOMMERCE_MONTHLY;
 };
 
 export const isPlanFree = ( _: State, planSlug?: PlanSlug ): boolean => {

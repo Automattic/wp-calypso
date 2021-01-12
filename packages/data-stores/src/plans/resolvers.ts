@@ -113,6 +113,10 @@ export function* getPlansDetails( locale = 'en' ) {
 					plan.nonlocalized_short_name === mapProductSlugToShortName[ slug ]
 			);
 
+			if ( ! rawPlan ) {
+				return plans;
+			}
+
 			const plan: Plan = {
 				title: rawPlan.short_name,
 				description: rawPlan.tagline,
@@ -130,7 +134,7 @@ export function* getPlansDetails( locale = 'en' ) {
 				billPeriod: billedMonthlySlugs.indexOf( slug as never ) > -1 ? 31 : 365,
 			};
 
-			plans[ plan.storeSlug ] = plan;
+			plans[ slug ] = plan;
 
 			return plans;
 		}, {} as Record< string, Plan > );

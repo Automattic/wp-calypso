@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { getPlanByPath, getSupportedPlans, getPlansPaths } from '../selectors';
+import {
+	getPlanByPath,
+	getSupportedPlans,
+	getPeriodSupportedPlans,
+	getPlansPaths,
+} from '../selectors';
 import { State } from '../reducer';
 import {
 	PLAN_BUSINESS,
@@ -9,6 +14,7 @@ import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
+	PLAN_PREMIUM_MONTHLY,
 } from '../constants';
 
 const DEFAULT_PRICES_STATE = {
@@ -20,7 +26,7 @@ const DEFAULT_PRICES_STATE = {
 };
 
 const DEFAULT_STATE: State = {
-	supportedPlanSlugs: [ PLAN_FREE, PLAN_PREMIUM ],
+	supportedPlanSlugs: [ PLAN_FREE, PLAN_PREMIUM, PLAN_PREMIUM_MONTHLY ],
 	plans: {
 		[ PLAN_FREE ]: {
 			title: 'free plan',
@@ -29,6 +35,7 @@ const DEFAULT_STATE: State = {
 			storeSlug: PLAN_FREE,
 			pathSlug: 'free',
 			features: [],
+			isFree: true,
 		},
 		[ PLAN_PREMIUM ]: {
 			title: 'premium plan',
@@ -37,6 +44,16 @@ const DEFAULT_STATE: State = {
 			storeSlug: PLAN_PREMIUM,
 			pathSlug: 'premium',
 			features: [],
+			billPeriod: 365,
+		},
+		[ PLAN_PREMIUM_MONTHLY ]: {
+			title: 'premium plan',
+			description: 'it is premium',
+			productId: 3,
+			storeSlug: PLAN_PREMIUM_MONTHLY,
+			pathSlug: 'premium-monthly',
+			features: [],
+			billPeriod: 31,
 		},
 	},
 	prices: DEFAULT_PRICES_STATE,
@@ -58,6 +75,40 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		expect( supportedPlans ).toEqual( [ DEFAULT_STATE.plans[ PLAN_FREE ] ] );
+	} );
+} );
+
+describe( 'getPeriodSupportedPlans', () => {
+	it( 'always includes free plan - default period value (annually)', () => {
+		const supportedPlans = getPeriodSupportedPlans( DEFAULT_STATE );
+
+		expect( supportedPlans ).toContain( DEFAULT_STATE.plans[ PLAN_FREE ] );
+	} );
+	it( 'always includes free plan - annually', () => {
+		const supportedPlans = getPeriodSupportedPlans( DEFAULT_STATE, 'ANNUALLY' );
+
+		expect( supportedPlans ).toContain( DEFAULT_STATE.plans[ PLAN_FREE ] );
+	} );
+	it( 'always includes free plan - monthly', () => {
+		const supportedPlans = getPeriodSupportedPlans( DEFAULT_STATE, 'MONTHLY' );
+
+		expect( supportedPlans ).toContain( DEFAULT_STATE.plans[ PLAN_FREE ] );
+	} );
+
+	it( 'only includes monthly plans for MONTHLY period', () => {
+		const supportedPlans = getPeriodSupportedPlans( DEFAULT_STATE, 'MONTHLY' );
+		expect( supportedPlans ).toEqual( [
+			DEFAULT_STATE.plans[ PLAN_FREE ],
+			DEFAULT_STATE.plans[ PLAN_PREMIUM_MONTHLY ],
+		] );
+	} );
+
+	it( 'only includes monthly plans for ANNUAL period', () => {
+		const supportedPlans = getPeriodSupportedPlans( DEFAULT_STATE, 'ANNUALLY' );
+		expect( supportedPlans ).toEqual( [
+			DEFAULT_STATE.plans[ PLAN_FREE ],
+			DEFAULT_STATE.plans[ PLAN_PREMIUM ],
+		] );
 	} );
 } );
 
@@ -99,6 +150,6 @@ describe( 'getPlansPaths', () => {
 	it( 'returns the paths of supported plans', () => {
 		const paths = getPlansPaths( DEFAULT_STATE );
 
-		expect( paths.sort() ).toEqual( [ 'free', 'premium' ].sort() );
+		expect( paths.sort() ).toEqual( [ 'free', 'premium', 'premium-monthly' ].sort() );
 	} );
 } );

@@ -47,11 +47,15 @@ describe( 'Plans reducer', () => {
 			const state = reducer( undefined, { type: 'DUMMY' } );
 			expect( state.supportedPlanSlugs.sort() ).toEqual(
 				[
+					'business-bundle',
+					'business-bundle-monthly',
+					'ecommerce-bundle',
+					'ecommerce-bundle-monthly',
 					'free_plan',
 					'personal-bundle',
+					'personal-bundle-monthly',
 					'value_bundle',
-					'business-bundle',
-					'ecommerce-bundle',
+					'value_bundle_monthly',
 				].sort()
 			);
 		} );
