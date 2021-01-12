@@ -68,10 +68,7 @@ const PlanDetails: React.FunctionComponent = () => {
 					disabledPlans={
 						hasPaidDomain
 							? {
-									[ Plans.PLAN_FREE ]: __(
-										'Not available with custom domain',
-										__i18n_text_domain__
-									),
+									[ Plans.PLAN_FREE ]: __( 'Unavailable with domain', __i18n_text_domain__ ),
 							  }
 							: undefined
 					}
