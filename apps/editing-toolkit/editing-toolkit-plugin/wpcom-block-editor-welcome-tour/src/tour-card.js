@@ -19,6 +19,7 @@ import { close } from '@wordpress/icons';
 import { useEffect } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { __ } from '@wordpress/i18n';
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
 const useEffectOnlyOnce = ( func ) => useEffect( func, [] );
@@ -59,7 +60,7 @@ function WelcomeTourCard( {
 				slideNumber={ cardIndex + 1 }
 			/>
 			<CardMedia>
-				<img alt="Editor Welcome Tour" src={ imgSrc } />
+				<img alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) } src={ imgSrc } />
 			</CardMedia>
 			<CardBody>
 				<h2 className="welcome-tour-card__heading">{ heading }</h2>
@@ -103,11 +104,11 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 			<div>
 				{ cardIndex === 0 ? (
 					<Button isTertiary={ true } onClick={ () => onDismiss( 'no-thanks-btn' ) }>
-						No thanks
+						{ __( 'Skip', 'full-site-editing' ) }
 					</Button>
 				) : (
 					<Button isTertiary={ true } onClick={ () => setCurrentCardIndex( cardIndex - 1 ) }>
-						Back
+						{ __( 'Back', 'full-site-editing' ) }
 					</Button>
 				) }
 
@@ -116,7 +117,9 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 					isPrimary={ true }
 					onClick={ () => setCurrentCardIndex( cardIndex + 1 ) }
 				>
-					{ cardIndex === 0 ? "Let's start" : 'Next' }
+					{ cardIndex === 0
+						? __( 'Start Tour', 'full-site-editing' )
+						: __( 'Next', 'full-site-editing' ) }
 				</Button>
 			</div>
 		</>
@@ -136,7 +139,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
 				<Button
-					aria-label="Minimize Tour"
+					aria-label={ __( 'Minimize Tour', 'full-site-editing' ) }
 					isPrimary
 					className="welcome-tour-card__minimize-icon"
 					icon={ minimize }
@@ -144,7 +147,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 					onClick={ handleOnMinimize }
 				></Button>
 				<Button
-					aria-label="Close Tour"
+					aria-label={ __( 'Close Tour', 'full-site-editing' ) }
 					isPrimary
 					icon={ close }
 					iconSize={ 24 }
@@ -180,7 +183,7 @@ function TourRating() {
 			<p className="welcome-tour__end-text">Did you find this guide helpful?</p>
 			<div>
 				<Button
-					aria-label="Rate thumbs up"
+					aria-label={ __( 'Rate thumbs up', 'full-site-editing' ) }
 					className={ classNames( 'welcome-tour__end-icon', {
 						active: tourRating === 'thumbs-up',
 					} ) }
@@ -190,7 +193,7 @@ function TourRating() {
 					iconSize={ 24 }
 				/>
 				<Button
-					aria-label="Rate thumbs down"
+					aria-label={ __( 'Rate thumbs down', 'full-site-editing' ) }
 					className={ classNames( 'welcome-tour__end-icon', {
 						active: tourRating === 'thumbs-down',
 					} ) }

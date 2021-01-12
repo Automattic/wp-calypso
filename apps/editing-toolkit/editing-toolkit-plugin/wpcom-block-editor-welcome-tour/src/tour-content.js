@@ -66,19 +66,13 @@ function getTourContent() {
 		},
 		{
 			heading: __( 'Undo any mistake', 'full-site-editing' ),
-			description: __(
-				"Simply click the Undo button if you've made a mistake.",
-				'full-site-editing'
-			),
+			description: __( "Click the Undo button if you've made a mistake.", 'full-site-editing' ),
 			imgSrc: undo,
 			animation: 'undo-button',
 		},
 		{
 			heading: __( 'Drag & drop', 'full-site-editing' ),
-			description: __(
-				'To move blocks around simply click and drag the handle around.',
-				'full-site-editing'
-			),
+			description: __( 'To move blocks around click and drag the handle.', 'full-site-editing' ),
 			imgSrc: moveBlock,
 			animation: 'undo-button',
 		},
