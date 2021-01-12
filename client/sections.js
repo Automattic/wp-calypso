@@ -473,6 +473,12 @@ const sections = [
 		module: 'calypso/my-sites/jetpack-search',
 		group: 'sites',
 	},
+	{
+		name: 'jetpack-cloud-partner-portal',
+		paths: [ '/partner-portal' ],
+		module: 'calypso/jetpack-cloud/sections/partner-portal',
+		group: 'jetpack-cloud',
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {

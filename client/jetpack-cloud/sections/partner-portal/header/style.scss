@@ -1,0 +1,22 @@
+.header {
+	text-align: center;
+}
+
+.header__main-title {
+	h1 {
+		font-size: 2.5em;
+		font-weight: 600;
+
+		margin: 1.5em auto 0.25em;
+	}
+}
+
+/* I5 specifics */
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing
+	.header.i5
+	.header__main-title
+	.formatted-header__title {
+	font-size: 2rem;
+	font-weight: 700;
+	letter-spacing: -1px;
+}

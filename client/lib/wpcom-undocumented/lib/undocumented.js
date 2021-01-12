@@ -2595,4 +2595,16 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 	return request();
 };
 
+/**
+ * Request all Partner Portal partners and their keys for the current WPCOM user.
+ *
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.getJetpackPartnerPortalPartners = function () {
+	return this.wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: '/jetpack-licensing/partners',
+	} );
+};
+
 export default Undocumented;
