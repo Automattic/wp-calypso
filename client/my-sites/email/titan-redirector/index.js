@@ -12,7 +12,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	page(
-		paths.emailManagementTitanExternal( ':environment', ':orderId', ':linkType' ),
+		paths.emailManagementTitanExternal( ':mode' ),
 		controller.emailTitanAddMailboxes,
 		makeLayout,
 		clientRender

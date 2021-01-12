@@ -12,9 +12,9 @@ export default {
 	emailTitanAddMailboxes( pageContext, next ) {
 		pageContext.primary = (
 			<TitanRedirector
-				environment={ pageContext.params.environment }
-				linkType={ pageContext.params.linkType }
-				orderId={ pageContext.params.orderId }
+				mode={ pageContext.params.mode }
+				jwt={ pageContext.query.jwt }
+				redirectUrl={ pageContext.query.redirect_url }
 			/>
 		);
 

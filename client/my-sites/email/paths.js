@@ -89,6 +89,6 @@ export function isUnderEmailManagementAll( path ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
 
-export function emailManagementTitanExternal( environment, orderId, action ) {
-	return '/titan/' + environment + '/' + orderId + '/' + action;
+export function emailManagementTitanExternal( mode ) {
+	return '/titan/' + mode;
 }
