@@ -1,6 +1,12 @@
 @import '~@wordpress/base-styles/colors';
 @import '~@wordpress/base-styles/variables';
 
+// TODO: These colors used to be in @wordpress/base-styles.
+// Replace them with colors from the updated standard palette.
+$nav-item-selected-background-color: #40464d; // former $dark-gray-600
+$nav-item-label-background-color: #555d66; // former $dark-gray-500
+$nav-item-untitled-text-color: #b5bcc2; // former $light-gray-800
+
 .wpcom-block-editor-nav-item {
 	display: flex;
 	flex-direction: row;
@@ -27,10 +33,10 @@
 	}
 
 	&.is-selected {
-		background: $gray-400;
+		background: $nav-item-selected-background-color;
 
 		.wpcom-block-editor-nav-item__label {
-			background: $gray-700;
+			background: $nav-item-label-background-color;
 		}
 	}
 }
@@ -43,7 +49,7 @@
 
 	&.is-untitled {
 		font-style: italic;
-		color: $gray-600;
+		color: $nav-item-untitled-text-color;
 	}
 }
 
@@ -51,7 +57,7 @@
 	display: inline-block;
 	padding: 4px;
 	border-radius: $radius-block-ui;
-	background: $gray-700;
+	background: $nav-item-label-background-color;
 	font-weight: 600;
 	margin-left: 4px;
 }

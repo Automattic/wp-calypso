@@ -7,6 +7,8 @@ $sidebar-width: 272px;
 $sidebar-transition-period: 100ms;
 $sidebar-background-color: #23282e; // WP-admin gray to match the close button background color
 $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the close button background hover color
+$sidebar-untitled-text-color: #b5bcc2; // former $light-gray-800
+$sidebar-button-text-color: #a2aab2; // former $light-gray-900
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
 	position: fixed;
@@ -90,7 +92,7 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 
 	a,
 	a.is-untitled {
-		color: $gray-600;
+		color: $sidebar-untitled-text-color;
 
 		&:active,
 		&:focus,
@@ -155,7 +157,7 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 	}
 
 	a {
-		color: $gray-600;
+		color: $sidebar-button-text-color;
 	}
 
 	.is-selected {
@@ -173,7 +175,7 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
-	border-top: 1px solid $gray-600;
+	border-top: 1px solid $sidebar-button-text-color;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
