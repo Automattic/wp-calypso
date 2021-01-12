@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { find } from 'lodash';
+import { Button } from '@automattic/components';
+import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -46,6 +48,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Banner from 'calypso/components/banner';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo.svg';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -84,7 +87,6 @@ const CHARTS = [
 ];
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
-
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -142,6 +144,8 @@ class StatsSite extends Component {
 
 		const query = memoizedQuery( period, endOf );
 
+		const recordCloudflareClick = () => recordTracksEvent( 'calypso_stats_cloudflare_click' );
+
 		// File downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
 			fileDownloadList = (
@@ -187,22 +191,30 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
+
 					{ ! isVip && isAdmin && ! hasWordAds && (
-						<Banner
-							className="stats__upsell-nudge"
-							icon="star"
-							title={ translate( 'Start earning money now' ) }
-							description={ translate(
-								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
+						<div className="stats__card">
+							<div className="stats__card-text">
+								<h2 className="stats__card-title">
+									{ translate( 'Gain deeper insights with Cloudflare Analytics' ) }
+								</h2>
+								<p className="stats__card-description">
+									{ translate(
+										'Cloudflare Analytics empowers you with deep insights and intelligene to protect and accelerate your site.'
+									) }
+								</p>
+								<Button onClick={ recordCloudflareClick } href="CLOUDFLARELINK" target="_blank">
+									{ translate( 'Learn More' ) }
+								</Button>
+							</div>
+							{ isDesktop() && (
+								<div className="stats__card-illustration">
+									<img src={ cloudflareIllustration } alt="" />
+								</div>
 							) }
-							href={ `/earn/${ slug }` }
-							event="stats_earn_nudge"
-							tracksImpressionName="calypso_upgrade_nudge_impression"
-							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
-							jetpack={ false }
-						/>
+						</div>
 					) }
+
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
 							date={ date }
@@ -282,6 +294,22 @@ class StatsSite extends Component {
 							/>
 						</div>
 					</div>
+					{ ! isVip && isAdmin && ! hasWordAds && (
+						<Banner
+							className="stats__upsell-nudge"
+							icon="star"
+							title={ translate( 'Start earning money now' ) }
+							description={ translate(
+								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
+							) }
+							href={ `/earn/${ slug }` }
+							event="stats_earn_nudge"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
+							jetpack={ false }
+						/>
+					) }
 				</div>
 				<JetpackColophon />
 			</>
