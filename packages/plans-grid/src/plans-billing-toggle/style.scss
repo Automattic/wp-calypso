@@ -1,0 +1,54 @@
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/z-index';
+@import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+@import '../variables';
+
+.plans-billing-toggle {
+	border: 0;
+	display: inline-block;
+	padding: 0;
+	margin: 0;
+
+	&__legend {
+		@include onboarding-screen-reader-text();
+	}
+
+	&__wrapper {
+		// Todo: reuse variables
+		background: #f2f2f2;
+		border-radius: 6px;
+		height: auto;
+		overflow: hidden;
+	}
+
+	&__input {
+		@include onboarding-screen-reader-text();
+	}
+
+	&__label {
+		background-color: transparent;
+		border: 1px solid transparent;
+		border-radius: 5px;
+		// Todo: reuse variables
+		color: #212121;
+
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		height: 32px;
+		min-width: 102px;
+		margin: 2px;
+		padding: 0 16px;
+	}
+
+	&__input:checked + &__label {
+		background-color: #fff;
+		border-color: rgba( 0, 0, 0, 0.04 );
+		// box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
+	}
+}
