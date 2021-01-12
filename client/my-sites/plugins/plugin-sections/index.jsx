@@ -107,6 +107,13 @@ class PluginSections extends React.Component {
 					textOnly: true,
 				} ),
 			},
+			{
+				key: 'faq',
+				title: this.props.translate( 'Support', {
+					context: 'Navigation item',
+					textOnly: true,
+				} ),
+			},
 		];
 	};
 
