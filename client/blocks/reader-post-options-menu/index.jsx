@@ -8,9 +8,6 @@ import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /**
  * Internal dependencies
@@ -40,6 +37,9 @@ import {
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /**
  * Style dependencies
