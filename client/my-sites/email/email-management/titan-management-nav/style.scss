@@ -1,3 +1,7 @@
 .titan-management-nav .vertical-nav {
 	margin-top: 0;
+
+	.vertical-nav-item span {
+		color: var( --color-neutral-90 );
+	}
 }
