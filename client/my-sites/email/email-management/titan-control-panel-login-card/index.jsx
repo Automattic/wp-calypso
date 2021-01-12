@@ -78,25 +78,35 @@ class TitanControlPanelLoginCard extends React.Component {
 			},
 			comment: '%(domainName)s is a domain name, e.g. example.com',
 		};
+		const sectionHeaderLabel = isEnabled( 'titan/phase-2' )
+			? translate( 'Email: %(domainName)s', translateArgs )
+			: translate( 'Titan Mail: %(domainName)s', translateArgs );
+		const buttonCtaText = isEnabled( 'titan/phase-2' )
+			? translate( 'Log in to the Email control panel' )
+			: translate( "Log in to Titan's control panel" );
+		const cardText = isEnabled( 'titan/phase-2' )
+			? translate(
+					'Go to the Email control panel to manage email for %(domainName)s.',
+					translateArgs
+			  )
+			: translate(
+					"Go to Titan's control panel to manage email for %(domainName)s.",
+					translateArgs
+			  );
 
 		return (
 			<div className="titan-control-panel-login-card">
-				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) }>
+				<SectionHeader label={ sectionHeaderLabel }>
 					<Button
 						primary
 						compact
 						busy={ this.state.isFetchingAutoLoginLink }
 						onClick={ this.onLogInClick }
 					>
-						{ translate( "Log in to Titan's control panel" ) }
+						{ buttonCtaText }
 					</Button>
 				</SectionHeader>
-				<CompactCard>
-					{ translate(
-						"Go to Titan's control panel to manage email for %(domainName)s.",
-						translateArgs
-					) }
-				</CompactCard>
+				<CompactCard>{ cardText }</CompactCard>
 			</div>
 		);
 	}
@@ -109,10 +119,13 @@ class TitanControlPanelLoginCard extends React.Component {
 			},
 			comment: '%(domainName)s is a domain name, e.g. example.com',
 		};
+		const sectionHeaderLabel = isEnabled( 'titan/phase-2' )
+			? translate( 'Email: %(domainName)s', translateArgs )
+			: translate( 'Titan Mail: %(domainName)s', translateArgs );
 
 		return (
 			<div className="titan-control-panel-login-card">
-				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) } />
+				<SectionHeader label={ sectionHeaderLabel } />
 				<CompactCard>
 					{ this.state.iframeURL ? (
 						<iframe
