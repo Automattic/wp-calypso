@@ -23,17 +23,6 @@ interface Currency {
 	decimal: number;
 }
 
-export const plansOrder = [
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_PERSONAL_MONTHLY,
-	PLAN_PREMIUM_MONTHLY,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_ECOMMERCE_MONTHLY,
-];
-
 export const billedYearlySlugs = [
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
@@ -48,21 +37,13 @@ export const billedMonthlySlugs = [
 	PLAN_ECOMMERCE_MONTHLY,
 ] as const;
 
+export const plansOrder = [ ...billedYearlySlugs, ...billedMonthlySlugs ];
+
 export const plansPaths = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ] as const;
 
 export type PlanPath = typeof plansPaths[ number ];
 
-export const plansProductSlugs = [
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_PERSONAL_MONTHLY,
-	PLAN_PREMIUM_MONTHLY,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_ECOMMERCE_MONTHLY,
-];
+export const plansProductSlugs = [ PLAN_FREE, ...plansOrder ];
 
 // salvaged from https://opengrok.a8c.com/source/raw/trunk/wp-content/admin-plugins/wpcom-billing/store-price.php
 // with html entities resolved to symbols

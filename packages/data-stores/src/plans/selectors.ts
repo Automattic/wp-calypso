@@ -80,9 +80,9 @@ export const getPlansPaths = ( state: State ): string[] => {
 
 export const getPrices = ( state: State, _: string ): PricesMap => state.prices;
 
-export const getDiscounts = ( state: State ): DiscountsMap => {
+export const getDiscounts = ( state: State, locale: string ): DiscountsMap => {
 	// call getPrices to trigger the resolver in case someone only wants to get the discounts
-	select( STORE_KEY ).getPrices( '' );
+	select( STORE_KEY ).getPrices( locale );
 	return state.discounts;
 };
 
