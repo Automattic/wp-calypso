@@ -167,7 +167,7 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
 			this.timeout( startBrowserTimeoutMS );
 			driver = await driverManager.startBrowser();
-			sampleImages = times( 5, () => mediaHelper.createFile() );
+			sampleImages = times( 3, () => mediaHelper.createFile() );
 		} else {
 			this.skip();
 		}
