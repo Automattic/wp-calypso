@@ -32,7 +32,9 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 	);
 
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
-	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
+	const supportedPlans = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPeriodSupportedPlans( 'ANNUALLY' )
+	);
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4, 5 ];

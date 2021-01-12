@@ -6,7 +6,7 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { State, PricesMap } from './reducer';
+import type { State, PricesMap, DiscountsMap } from './reducer';
 import {
 	DEFAULT_PAID_PLAN,
 	PLAN_ECOMMERCE,
@@ -72,6 +72,8 @@ export const getPlansPaths = ( state: State ): string[] => {
 };
 
 export const getPrices = ( state: State, _: string ): PricesMap => state.prices;
+
+export const getDiscounts = ( state: State ): DiscountsMap => state.discounts;
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {
 	return planSlug === PLAN_ECOMMERCE || planSlug === PLAN_ECOMMERCE_MONTHLY;

@@ -49,7 +49,10 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
+	const supportedPlans = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPeriodSupportedPlans( 'ANNUALLY' )
+	);
+
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
 
 	const isLoading = ! supportedPlans?.length;

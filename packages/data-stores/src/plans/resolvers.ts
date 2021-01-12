@@ -6,8 +6,9 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { setFeatures, setFeaturesByType, setPlans, setPrices } from './actions';
+import { setDiscounts, setFeatures, setFeaturesByType, setPlans, setPrices } from './actions';
 import type { APIPlan, APIPlanDetail, PlanSlug, PlanFeature, Plan } from './types';
+import type { DiscountsMap } from './reducer';
 import {
 	currenciesFormats,
 	PLAN_FREE,
@@ -21,6 +22,7 @@ import {
 	PLAN_ECOMMERCE_MONTHLY,
 	plansProductSlugs,
 	billedMonthlySlugs,
+	billedYearlySlugs,
 } from './constants';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 
@@ -47,7 +49,7 @@ function getMonthlyPrice( plan: APIPlan ) {
 }
 
 export function* getPrices( locale = 'en' ) {
-	const plans = yield wpcomRequest( {
+	const plans: APIPlan[] = yield wpcomRequest( {
 		path: '/plans',
 		query: stringify( { locale } ),
 		apiVersion: '1.5',
@@ -69,6 +71,28 @@ export function* getPrices( locale = 'en' ) {
 		return acc;
 	}, {} as Record< string, string > );
 
+	// create a [slug => discount] map
+	const discounts: DiscountsMap = { maxDiscount: 0 };
+
+	for ( let i = 0; i < billedYearlySlugs.length; i++ ) {
+		const annualSlug = billedYearlySlugs[ i ];
+		const monthlySlug = billedMonthlySlugs[ i ];
+		const annualPlan = plans.find( ( { product_slug } ) => product_slug === annualSlug );
+		const monthlyPlan = plans.find( ( { product_slug } ) => product_slug === monthlySlug );
+
+		if ( annualPlan && monthlyPlan ) {
+			const annualCostIfPaidMonthly = monthlyPlan.raw_price * 12;
+			const annualCostIfPaidAnnually = annualPlan.raw_price;
+			const discount = Math.round(
+				100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly )
+			);
+			discounts[ annualSlug ] = discount;
+			discounts[ monthlySlug ] = discount;
+			discounts.maxDiscount = Math.max( discounts.maxDiscount, discount );
+		}
+	}
+
+	yield setDiscounts( discounts );
 	yield setPrices( prices );
 }
 

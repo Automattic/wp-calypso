@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import type { DiscountsMap, PricesMap } from './reducer';
 import type { Plan, PlanFeature, PlanFeatureType } from './types';
 
 export const setFeatures = ( features: Record< string, PlanFeature > ) => {
@@ -24,10 +25,17 @@ export const setPlans = ( plans: Record< string, Plan > ) => {
 	};
 };
 
-export const setPrices = ( prices: Record< string, string > ) => {
+export const setPrices = ( prices: PricesMap ) => {
 	return {
 		type: 'SET_PRICES' as const,
 		prices,
+	};
+};
+
+export const setDiscounts = ( discounts: DiscountsMap ) => {
+	return {
+		type: 'SET_DISCOUNTS' as const,
+		discounts,
 	};
 };
 
@@ -41,6 +49,7 @@ export type PlanAction = ReturnType<
 	| typeof setFeatures
 	| typeof setFeaturesByType
 	| typeof setPlans
+	| typeof setDiscounts
 	| typeof setPrices
 	| typeof resetPlan
 >;

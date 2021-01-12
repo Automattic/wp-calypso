@@ -33,6 +33,13 @@ export const plansOrder = [
 	PLAN_ECOMMERCE_MONTHLY,
 ];
 
+export const billedYearlySlugs = [
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+] as const;
+
 export const billedMonthlySlugs = [
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PREMIUM_MONTHLY,
