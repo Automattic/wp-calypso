@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.17
+Stable tag: 2.8.18
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,12 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.18 =
+* Focused Launch: Debounce domain search for focused launch on key press (https://github.com/Automattic/wp-calypso/pull/48535)
+* Domain Picker: Added "Use a domain I own" item (https://github.com/Automattic/wp-calypso/pull/48119)
+* Welcome Tour: update copy and add i18n wrappers (https://github.com/Automattic/wp-calypso/pull/48783)
+* Editor welcome tour: Remove editor welcome tour images and replace with images urls from the CDN (https://github.com/Automattic/wp-calypso/pull/48784)
 
 = 2.8.17 =
 * Domain Picker: make items keyboard accessible (https://github.com/Automattic/wp-calypso/pull/48172)

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-editing-toolkit",
-	"version": "2.8.17",
+	"version": "2.8.18",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
