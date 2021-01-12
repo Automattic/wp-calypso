@@ -698,6 +698,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackStoreClick }
 				materialIcon="shopping_cart"
 				forceInternalLink
+				className="sidebar__store"
 			>
 				{ isCalypsoStoreDeprecatedOrRemoved && isBusiness( site.plan ) && (
 					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
