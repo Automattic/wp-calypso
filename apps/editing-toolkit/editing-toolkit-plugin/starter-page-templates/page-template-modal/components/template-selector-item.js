@@ -45,7 +45,7 @@ const TemplateSelectorItem = ( props ) => {
 
 		setTimeout( () => {
 			img.src = img.src + '&reload=1';
-		}, 3000 );
+		}, 10000 );
 	};
 
 	const innerPreview =
