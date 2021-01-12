@@ -39,6 +39,15 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	const secondaryElHeight = secondaryEl?.scrollHeight;
 	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
 
+	if (
+		secondaryEl === undefined ||
+		secondaryEl === null ||
+		secondaryElHeight === undefined ||
+		masterbarHeight === undefined
+	) {
+		return;
+	}
+
 	// Check whether we need to adjust content height so that scroll events are triggered.
 	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
 	if ( content && contentHeight && masterbarHeight && secondaryElHeight ) {
@@ -56,13 +65,8 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 		}
 	}
 
-	if (
-		secondaryEl !== undefined &&
-		secondaryEl !== null &&
-		secondaryElHeight !== undefined &&
-		masterbarHeight !== undefined &&
-		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
-	) {
+	if ( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) {
+		// Only run when sidebar & masterbar are taller than window height OR we have a resize event
 		// Throttle scroll event
 		window.requestAnimationFrame( function () {
 			const maxScroll = secondaryElHeight + masterbarHeight - windowHeight; // Max sidebar inner scroll.
