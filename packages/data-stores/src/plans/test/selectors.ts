@@ -27,6 +27,7 @@ const DEFAULT_PRICES_STATE = {
 
 const DEFAULT_STATE: State = {
 	supportedPlanSlugs: [ PLAN_FREE, PLAN_PREMIUM, PLAN_PREMIUM_MONTHLY ],
+	discounts: { maxDiscount: 0 },
 	plans: {
 		[ PLAN_FREE ]: {
 			title: 'free plan',
@@ -44,7 +45,7 @@ const DEFAULT_STATE: State = {
 			storeSlug: PLAN_PREMIUM,
 			pathSlug: 'premium',
 			features: [],
-			billPeriod: 365,
+			billPeriod: 'ANNUALLY',
 		},
 		[ PLAN_PREMIUM_MONTHLY ]: {
 			title: 'premium plan',
@@ -53,7 +54,7 @@ const DEFAULT_STATE: State = {
 			storeSlug: PLAN_PREMIUM_MONTHLY,
 			pathSlug: 'premium-monthly',
 			features: [],
-			billPeriod: 31,
+			billPeriod: 'MONTHLY',
 		},
 	},
 	prices: DEFAULT_PRICES_STATE,
@@ -103,7 +104,7 @@ describe( 'getPeriodSupportedPlans', () => {
 		] );
 	} );
 
-	it( 'only includes monthly plans for ANNUAL period', () => {
+	it( 'only includes yearly plans for ANNUAL period', () => {
 		const supportedPlans = getPeriodSupportedPlans( DEFAULT_STATE, 'ANNUALLY' );
 		expect( supportedPlans ).toEqual( [
 			DEFAULT_STATE.plans[ PLAN_FREE ],

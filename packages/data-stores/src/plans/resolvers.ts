@@ -155,6 +155,8 @@ export function* getPlansDetails( locale = 'en' ) {
 				storage: rawPlan.storage,
 				isFree: 'Free' === rawPlan.nonlocalized_short_name,
 				isPopular: 'Premium' === rawPlan.nonlocalized_short_name,
+				// useful to detect when the selected plan's period doesn't match the preferred interval
+				billPeriod: billedMonthlySlugs.indexOf( slug as never ) > -1 ? 'MONTHLY' : 'ANNUALLY',
 			};
 
 			plans[ slug ] = plan;
