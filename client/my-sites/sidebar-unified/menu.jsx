@@ -28,6 +28,7 @@ import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import { isExternal } from 'calypso/lib/url';
 import { externalRedirect } from 'calypso/lib/route/path';
 import { itemLinkMatches } from '../sidebar/utils';
+import { isWithinBreakpoint } from '@automattic/viewport';
 
 export const MySitesSidebarUnifiedMenu = ( {
 	count,
@@ -64,18 +65,23 @@ export const MySitesSidebarUnifiedMenu = ( {
 		<li>
 			<ExpandableSidebarMenu
 				onClick={ () => {
-					if ( link ) {
-						if ( isExternal( link ) ) {
-							// If the URL is external, page() will fail to replace state between different domains.
-							externalRedirect( link );
-							return;
-						}
+					if ( isExternal( link ) ) {
+						// If the URL is external, page() will fail to replace state between different domains.
+						externalRedirect( link );
+						return;
+					}
+
+					if ( isWithinBreakpoint( '>660px' ) ) {
+						// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
 						page( link );
+
+						if ( ! sidebarCollapsed ) {
+							// Keep only current submenu open.
+							reduxDispatch( collapseAllMySitesSidebarSections() );
+						}
 					}
-					if ( ! sidebarCollapsed ) {
-						reduxDispatch( collapseAllMySitesSidebarSections() );
-						reduxDispatch( toggleSection( sectionId ) );
-					}
+
+					reduxDispatch( toggleSection( sectionId ) );
 				} }
 				expanded={ ! sidebarCollapsed && isExpanded }
 				title={ title }
