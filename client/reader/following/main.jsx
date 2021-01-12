@@ -6,7 +6,8 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { flatMap, trim } from 'lodash';
 import { connect, useDispatch } from 'react-redux';
-import config from 'calypso/config';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 /**
  * Internal dependencies
@@ -50,7 +51,7 @@ const FollowingStream = ( props ) => {
 			', ',
 		] ).slice( 0, -1 );
 	const placeholderText = getSearchPlaceholderText();
-	const { translate } = props;
+	const { translate, teams } = props;
 	const dispatch = useDispatch();
 	const markAllAsSeen = ( feedsInfo ) => {
 		const { feedIds, feedUrls } = feedsInfo;
@@ -71,7 +72,7 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
-				{ config.isEnabled( 'reader/seen-posts' ) && (
+				{ isEligibleForUnseen( teams ) && (
 					<Button
 						compact
 						onClick={ () => markAllAsSeen( props.feedsInfo ) }
@@ -90,5 +91,6 @@ const FollowingStream = ( props ) => {
 };
 
 export default connect( ( state ) => ( {
+	teams: getReaderTeams( state ),
 	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );
