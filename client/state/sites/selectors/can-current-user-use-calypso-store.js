@@ -17,7 +17,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * @returns {?boolean}        Whether site is previewable
  */
 export default function canCurrentUserUseCalypsoStore( state, siteId = null ) {
-	if ( ! config.isEnabled( 'woocommerce/extension-dashboard' ) ) {
+	if (
+		config.isEnabled( 'woocommerce/store-removed' ) ||
+		! config.isEnabled( 'woocommerce/extension-dashboard' )
+	) {
 		return false;
 	}
 

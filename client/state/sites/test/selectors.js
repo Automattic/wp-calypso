@@ -3539,8 +3539,8 @@ describe( 'selectors', () => {
 		} );
 
 		beforeEach( () => {
-			// TODO: disable store removed
-			config.isEnabled.mockImplementation( () => true );
+			// Enable all features except for store removal
+			config.isEnabled.mockImplementation( ( feature ) => feature !== 'woocommerce/store-removed' );
 		} );
 
 		test( 'should return true if site is AT and user can manage it', () => {
@@ -3575,7 +3575,12 @@ describe( 'selectors', () => {
 			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( false );
 		} );
 
-		// TODO: test if store removed
+		test( 'should return false if store is removed', () => {
+			// Enable all features, including store removal
+			config.isEnabled.mockImplementation( () => true );
+
+			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( false );
+		} );
 	} );
 
 	describe( 'canCurrentUserUseAds()', () => {
