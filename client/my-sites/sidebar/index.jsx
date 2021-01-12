@@ -666,7 +666,7 @@ export class MySitesSidebar extends Component {
 		const isCalypsoStoreDeprecatedOrRemoved =
 			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site || ! canUserUseCalypsoStore ) {
+		if ( ! site || ! canUserUseCalypsoStore ) {
 			return null;
 		}
 

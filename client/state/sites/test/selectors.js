@@ -3539,6 +3539,7 @@ describe( 'selectors', () => {
 		} );
 
 		beforeEach( () => {
+			// TODO: disable store removed
 			config.isEnabled.mockImplementation( () => true );
 		} );
 
@@ -3564,6 +3565,17 @@ describe( 'selectors', () => {
 
 			expect( canCurrentUserUseCalypsoStore( createState( false, false, true ) ) ).toBe( false );
 		} );
+
+		test( 'should return false if extension dashboard is not enabled', () => {
+			// Enable all features except for the extension dashboard
+			config.isEnabled.mockImplementation(
+				( feature ) => feature !== 'woocommerce/extension-dashboard'
+			);
+
+			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( false );
+		} );
+
+		// TODO: test if store removed
 	} );
 
 	describe( 'canCurrentUserUseAds()', () => {
