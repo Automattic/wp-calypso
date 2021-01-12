@@ -37,7 +37,6 @@
 		"gdpr-banner": true,
 		"google-my-business": false,
 		"help": true,
-		"help/courses": true,
 		"inline-help": true,
 		"ive/use-external-assignment": false,
 		"jetpack/concierge-sessions": false,

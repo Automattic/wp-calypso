@@ -77,7 +77,6 @@
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/show-vertical-input": false,
 		"help": true,
-		"help/courses": true,
 		"home/layout-dev": true,
 		"inline-help": true,
 		"i18n/community-translator": false,
