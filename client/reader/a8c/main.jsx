@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
-import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -16,9 +15,11 @@ import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { SECTION_A8C_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 const A8CFollowing = ( props ) => {
-	const { translate } = props;
+	const { translate, teams } = props;
 	const dispatch = useDispatch();
 
 	const markAllAsSeen = ( feedsInfo ) => {
@@ -29,7 +30,7 @@ const A8CFollowing = ( props ) => {
 	return (
 		<Stream { ...props } shouldCombineCards={ false }>
 			<SectionHeader label={ translate( 'Followed A8C Sites' ) }>
-				{ config.isEnabled( 'reader/seen-posts' ) && (
+				{ isEligibleForUnseen( teams ) && (
 					<Button
 						compact
 						onClick={ () => markAllAsSeen( props.feedsInfo ) }
@@ -44,5 +45,6 @@ const A8CFollowing = ( props ) => {
 };
 
 export default connect( ( state ) => ( {
+	teams: getReaderTeams( state ),
 	feedsInfo: getReaderOrganizationFeedsInfo( state, AUTOMATTIC_ORG_ID ),
 } ) )( localize( A8CFollowing ) );

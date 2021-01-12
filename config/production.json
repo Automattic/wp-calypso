@@ -115,7 +115,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/seen-posts": false,
+		"reader/seen-posts": true,
 		"reader/user-mention-suggestions": false,
 		"republicize": true,
 		"rum-tracking/logstash": true,

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import config from 'calypso/config';
 
 /**
  * Internal Dependencies
@@ -15,7 +14,12 @@ import { Card } from '@automattic/components';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import HeaderBack from 'calypso/reader/header-back';
-import { getSiteDescription, getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
+import {
+	getSiteDescription,
+	getSiteName,
+	getSiteUrl,
+	isEligibleForUnseen,
+} from 'calypso/reader/get-helpers';
 import SiteIcon from 'calypso/blocks/site-icon';
 import BlogStickers from 'calypso/blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
@@ -25,6 +29,10 @@ import { isFollowing } from 'calypso/state/reader/follows/selectors';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import Gridicon from 'calypso/components/gridicon';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /**
  * Style dependencies
@@ -60,7 +68,16 @@ class FeedHeader extends Component {
 	};
 
 	render() {
-		const { site, feed, showBack, translate, following, isEmailBlocked } = this.props;
+		const {
+			site,
+			feed,
+			showBack,
+			translate,
+			following,
+			isEmailBlocked,
+			teams,
+			isWPForTeams,
+		} = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
 		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
 		const description = getSiteDescription( { site, feed } );
@@ -76,6 +93,7 @@ class FeedHeader extends Component {
 		return (
 			<div className={ classes }>
 				<QueryUserSettings />
+				<QueryReaderTeams />
 				<div className="reader-feed-header__back-and-follow">
 					{ showBack && <HeaderBack /> }
 					<div className="reader-feed-header__follow">
@@ -102,7 +120,7 @@ class FeedHeader extends Component {
 								</div>
 							) }
 
-							{ config.isEnabled( 'reader/seen-posts' ) && feed && (
+							{ isEligibleForUnseen( teams, isWPForTeams ) && feed && (
 								<button
 									onClick={ this.markAllAsSeen }
 									className="reader-feed-header__seen-button"
@@ -152,6 +170,10 @@ class FeedHeader extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
+		isWPForTeams:
+			isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
+			isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
+		teams: getReaderTeams( state ),
 		following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 	} ),

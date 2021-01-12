@@ -24,11 +24,14 @@ import FollowButton from 'calypso/reader/follow-button';
 import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {
@@ -203,6 +206,10 @@ function mapStateToProps( st, ownProps ) {
 		const postKeys = combinedCardPostKeyToKeys( ownProps.postKey, memoized );
 
 		return {
+			isWPForTeams:
+				isFeedWPForTeams( state, ownProps.postKey.feedId ) ||
+				isSiteWPForTeams( state, ownProps.postKey.blogId ),
+			teams: getReaderTeams( state ),
 			posts: getPostsByKeys( state, postKeys ),
 			postKeys,
 		};

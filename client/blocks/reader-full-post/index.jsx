@@ -36,7 +36,7 @@ import {
 import Comments from 'calypso/blocks/comments';
 import scrollTo from 'calypso/lib/scroll-to';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { getSiteName } from 'calypso/reader/get-helpers';
+import { getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import {
@@ -79,6 +79,10 @@ import {
 } from 'calypso/state/reader/seen-posts/actions';
 import Gridicon from 'calypso/components/gridicon';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /**
  * Style dependencies
@@ -255,7 +259,7 @@ export class FullPostView extends React.Component {
 	};
 
 	attemptToSendPageView = () => {
-		const { post, site } = this.props;
+		const { post, site, teams, isWPForTeams } = this.props;
 
 		if (
 			post &&
@@ -273,7 +277,9 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			config.isEnabled( 'reader/seen-posts' ) && this.markAsSeen();
+			if ( isEligibleForUnseen( teams, isWPForTeams ) ) {
+				this.markAsSeen();
+			}
 
 			recordTrackForPost(
 				'calypso_reader_article_opened',
@@ -362,7 +368,18 @@ export class FullPostView extends React.Component {
 	};
 
 	render() {
-		const { post, site, feed, referralPost, referral, blogId, feedId, postId } = this.props;
+		const {
+			post,
+			site,
+			feed,
+			referralPost,
+			referral,
+			blogId,
+			feedId,
+			postId,
+			teams,
+			isWPForTeams,
+		} = this.props;
 
 		if ( post.is_error ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
@@ -411,6 +428,7 @@ export class FullPostView extends React.Component {
 				) }
 				{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 				{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
+				<QueryReaderTeams />
 				<BackButton onClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
@@ -461,7 +479,7 @@ export class FullPostView extends React.Component {
 								/>
 							) }
 
-							{ config.isEnabled( 'reader/seen-posts' ) && this.renderMarkAsSenButton() }
+							{ isEligibleForUnseen( teams, isWPForTeams ) && this.renderMarkAsSenButton() }
 						</div>
 					</div>
 					<Emojify>
@@ -574,6 +592,8 @@ export default connect(
 		const { site_ID: siteId, is_external: isExternal } = post;
 
 		const props = {
+			isWPForTeams: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+			teams: getReaderTeams( state ),
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,

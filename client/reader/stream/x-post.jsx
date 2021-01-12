@@ -21,7 +21,10 @@ import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import Emojify from 'calypso/components/emojify';
 import { getUrlParts } from 'calypso/lib/url';
-import config from 'calypso/config';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -162,12 +165,12 @@ class CrossPost extends PureComponent {
 	};
 
 	render() {
-		const { post, postKey, site, feed, translate } = this.props;
+		const { post, postKey, site, feed, translate, teams, isWPForTeams } = this.props;
 		const { blogId: siteId, feedId } = postKey;
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
 
-		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
+		const isSeen = isEligibleForUnseen( teams, isWPForTeams ) && !! post.is_seen;
 		const articleClasses = classnames( {
 			reader__card: true,
 			'is-x-post': true,
@@ -229,6 +232,8 @@ export default connect( ( state, ownProps ) => {
 		feed = site && site.feed_ID ? getFeed( state, site.feed_ID ) : undefined;
 	}
 	return {
+		isWPForTeams: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+		teams: getReaderTeams( state ),
 		feed,
 		site,
 	};

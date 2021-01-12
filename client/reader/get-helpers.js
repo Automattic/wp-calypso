@@ -10,6 +10,8 @@ import { trim } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 import { getUrlParts } from 'calypso/lib/url';
+import config from 'calypso/config';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.
@@ -91,4 +93,28 @@ export const getSiteAuthorName = ( site ) => {
 			trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
 
 	return decodeEntities( authorFullName );
+};
+
+/**
+ * Check if user is eligible to use seen posts feature (unseen counts and mark as seen)
+ *
+ * @param {Array} teams list of reader teams
+ * @param {boolean} isWPForTeams id if exists
+ *
+ * @returns {boolean} whether or not the user can use the feature for the given site
+ */
+export const isEligibleForUnseen = ( teams, isWPForTeams = false ) => {
+	if ( ! config.isEnabled( 'reader/seen-posts' ) ) {
+		return false;
+	}
+
+	if ( isAutomatticTeamMember( teams ) ) {
+		return true;
+	} else if ( isWPForTeams ) {
+		// For now disable it even for p2 sites if the user is not an automattician
+		// return true;
+		return false;
+	}
+
+	return false;
 };

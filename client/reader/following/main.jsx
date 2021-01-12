@@ -6,7 +6,6 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { initial, flatMap, trim } from 'lodash';
 import { connect, useDispatch } from 'react-redux';
-import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -26,6 +25,8 @@ import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import FollowingVoteBanner from './vote-banner';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 /**
  * Style dependencies
@@ -52,7 +53,7 @@ const FollowingStream = ( props ) => {
 			] )
 		);
 	const placeholderText = getSearchPlaceholderText();
-	const { translate } = props;
+	const { translate, teams } = props;
 	const dispatch = useDispatch();
 	const voteBanner = <FollowingVoteBanner />;
 	const markAllAsSeen = ( feedsInfo ) => {
@@ -74,7 +75,7 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
-				{ config.isEnabled( 'reader/seen-posts' ) && (
+				{ isEligibleForUnseen( teams ) && (
 					<Button
 						compact
 						onClick={ () => markAllAsSeen( props.feedsInfo ) }
@@ -93,5 +94,6 @@ const FollowingStream = ( props ) => {
 };
 
 export default connect( ( state ) => ( {
+	teams: getReaderTeams( state ),
 	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );
