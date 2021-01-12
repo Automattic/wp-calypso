@@ -34,6 +34,7 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasTitanMailWithUs, getMaxTitanMailboxCount } from 'calypso/lib/titan';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Style dependencies
@@ -122,9 +123,11 @@ class TitanMailQuantitySelection extends React.Component {
 						'domains have forwards:',
 					{
 						args: {
-							productName: translate( 'Titan Mail' ),
+							productName: isEnabled( 'titan/phase-2' )
+								? translate( 'Email' )
+								: translate( 'Titan Mail' ),
 						},
-						comment: '%(productName)s is the name of the product, e.g. Titan Mail',
+						comment: '%(productName)s is the name of the product, e.g. Titan Mail or Email',
 					}
 				) }
 				<ul>
@@ -195,7 +198,7 @@ class TitanMailQuantitySelection extends React.Component {
 						onClick={ this.goToEmail }
 						selectedDomainName={ selectedDomainName }
 					>
-						{ translate( 'Titan Mail' ) }
+						{ isEnabled( 'titan/phase-2' ) ? translate( 'Email' ) : translate( 'Titan Mail' ) }
 					</DomainManagementHeader>
 
 					{ this.renderForwardsNotice() }
