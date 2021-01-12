@@ -110,9 +110,9 @@ const mapDomain = ( context, next ) => {
 		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<MapDomain initialQuery={ context.query.initialQuery } />
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
