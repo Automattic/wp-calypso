@@ -86,6 +86,18 @@ button.action_buttons__button.components-button {
 		}
 	}
 
+	&.action-buttons__arrow {
+		text-decoration: underline;
+		// stylelint-disable-next-line scales/font-weight
+		font-weight: 500;
+		color: var( --mainColor );
+
+		svg {
+			// the svg has 5 empty pixels on the left
+			margin-left: -5px;
+		}
+	}
+
 	@include break-small {
 		min-width: 160px;
 	}

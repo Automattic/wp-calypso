@@ -8,6 +8,7 @@ interface LaunchContext {
 	siteId: number;
 	redirectTo: ( url: string ) => void;
 	openCheckout: ( siteSlug: string, isEcommerce?: boolean ) => void;
+	getCurrentLaunchFlowUrl: () => string | undefined;
 	flow: string;
 }
 
@@ -16,9 +17,18 @@ const defaultRedirectTo = ( url: string ) => {
 	window.location.href = url;
 };
 
+const defaultCurrentLaunchFlowUrl = (): string | undefined => {
+	try {
+		return window.location.href;
+	} catch ( err ) {
+		return undefined;
+	}
+};
+
 const LaunchContext = React.createContext< LaunchContext >( {
 	siteId: 0,
 	redirectTo: defaultRedirectTo,
+	getCurrentLaunchFlowUrl: defaultCurrentLaunchFlowUrl,
 	openCheckout: ( siteSlug, isEcommerce ) => {
 		defaultRedirectTo(
 			addQueryArgs( `/checkout/${ siteSlug }`, {

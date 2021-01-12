@@ -97,6 +97,10 @@ $accent-blue: #117ac9;
 		outline: none;
 	}
 
+	&.contains-link {
+		cursor: default;
+	}
+
 	&.type-individual-item {
 		min-height: 64px;
 		border-width: 2px;
@@ -113,16 +117,19 @@ $accent-blue: #117ac9;
 		cursor: default;
 	}
 
-	&.type-individual-item,
-	&:first-of-type {
-		border-top-left-radius: 5px; /* stylelint-disable-line scales/radii */
-		border-top-right-radius: 5px; /* stylelint-disable-line scales/radii */
-	}
-
-	&.type-individual-item,
-	&:last-of-type {
-		border-bottom-left-radius: 5px; /* stylelint-disable-line scales/radii */
-		border-bottom-right-radius: 5px; /* stylelint-disable-line scales/radii */
+	.domain-picker__sugggested-items-container & {
+		// use first-child and last-child selectors because placeholders / suggested items are different types (div/label)
+		&.type-individual-item,
+		&:first-child {
+			border-top-left-radius: 5px; /* stylelint-disable-line scales/radii */
+			border-top-right-radius: 5px; /* stylelint-disable-line scales/radii */
+		}
+	
+		&.type-individual-item,
+		&:last-child {
+			border-bottom-left-radius: 5px; /* stylelint-disable-line scales/radii */
+			border-bottom-right-radius: 5px; /* stylelint-disable-line scales/radii */
+		}
 	}
 
 	& + & {
@@ -274,6 +281,11 @@ $accent-blue: #117ac9;
 		// margin isnt applied if hstsRequired is truthy as InfoTooltip component
 		// provides equal spacing between this and the recommended badge.
 		margin-right: 10px;
+	}
+
+	&.with-bold-text {
+		// stylelint-disable-next-line scales/font-weight
+		font-weight: 500;
 	}
 }
 
@@ -475,7 +487,8 @@ $accent-blue: #117ac9;
 	padding-right: 30px;
 }
 
-.domain-picker__change-subdomain-tip {
+.domain-picker__change-subdomain-tip,
+.domain-picker__item-tip {
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-40 );
 }
