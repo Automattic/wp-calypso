@@ -14,7 +14,7 @@ import { get, isEmpty } from 'lodash';
 import HeaderCake from 'calypso/components/header-cake';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
-import { domainRegistration, domainMapping } from 'calypso/lib/cart-values/cart-items';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addItem } from 'calypso/lib/cart/actions';
 import wp from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -110,9 +110,7 @@ export class MapDomain extends Component {
 			return;
 		}
 
-		addItem( domainMapping( { domain } ) );
-
-		page( '/checkout/' + selectedSiteSlug );
+		page( '/checkout/' + selectedSiteSlug + '/domain-mapping:' + domain );
 	};
 
 	UNSAFE_componentWillMount() {
