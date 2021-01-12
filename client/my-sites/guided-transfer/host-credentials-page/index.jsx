@@ -46,8 +46,8 @@ class HostCredentialsPage extends Component {
 		page.redirect( `/checkout/${ this.props.siteSlug }/guided_transfer` );
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isAwaitingPurchase ) {
+	componentDidUpdate() {
+		if ( this.props.isAwaitingPurchase ) {
 			this.redirectToCart();
 		}
 	}
