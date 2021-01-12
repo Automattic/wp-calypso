@@ -92,7 +92,7 @@ export const cancelImport = ( siteId, importerId ) => async ( dispatch ) => {
 	dispatch( receiveImporterStatus( data ) );
 };
 
-export const fetchState = ( siteId ) => async ( dispatch ) => {
+export const fetchImporterState = ( siteId ) => async ( dispatch ) => {
 	const data = await wpcom.fetchImporterState( siteId );
 	dispatch( receiveImporterStatus( data ) );
 };

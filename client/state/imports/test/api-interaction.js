@@ -9,7 +9,7 @@ import thunk from 'redux-thunk';
  * Internal dependencies
  */
 import imports from 'calypso/state/imports/reducer';
-import { fetchState, lockImport } from 'calypso/state/imports/actions';
+import { fetchImporterState, lockImport } from 'calypso/state/imports/actions';
 import {
 	isImporterStatusHydrated,
 	getImporterStatus,
@@ -36,7 +36,7 @@ describe( 'Importer store', () => {
 			const store = createReduxStore();
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( false );
 			queuePayload( 'no-imports' );
-			await store.dispatch( fetchState( testSiteId ) );
+			await store.dispatch( fetchImporterState( testSiteId ) );
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( true );
 			expect( getImporterStatusForSiteId( store.getState(), 0 ) ).toEqual( [] );
 		} );
@@ -45,7 +45,7 @@ describe( 'Importer store', () => {
 			const store = createReduxStore();
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( false );
 			queuePayload( 'defunct-importer' );
-			await store.dispatch( fetchState( testSiteId ) );
+			await store.dispatch( fetchImporterState( testSiteId ) );
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( true );
 			expect( getImporterStatusForSiteId( store.getState(), 0 ) ).toEqual( [] );
 		} );
@@ -54,7 +54,7 @@ describe( 'Importer store', () => {
 			const store = createReduxStore();
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( false );
 			queuePayload( 'expired-importer' );
-			await store.dispatch( fetchState( testSiteId ) );
+			await store.dispatch( fetchImporterState( testSiteId ) );
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( true );
 			expect( getImporterStatusForSiteId( store.getState(), 0 ) ).toEqual( [] );
 		} );
@@ -64,7 +64,7 @@ describe( 'Importer store', () => {
 			const testImporterId = 'runningImporter';
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( false );
 			queuePayload( 'running-importer' );
-			await store.dispatch( fetchState( testSiteId ) );
+			await store.dispatch( fetchImporterState( testSiteId ) );
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( true );
 			expect( getImporterStatus( store.getState(), testImporterId )?.importerState ).toBe(
 				appStates.IMPORTING
@@ -76,7 +76,7 @@ describe( 'Importer store', () => {
 			const testImporterId = 'runningImporter';
 			queuePayload( 'running-importer' );
 			store.dispatch( lockImport( testImporterId ) );
-			await store.dispatch( fetchState( testSiteId ) );
+			await store.dispatch( fetchImporterState( testSiteId ) );
 			expect( isImporterStatusHydrated( store.getState() ) ).toBe( true );
 			expect( getImporterStatusForSiteId( store.getState(), 0 ) ).toEqual( [] );
 		} );

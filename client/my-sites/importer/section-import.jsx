@@ -22,7 +22,7 @@ import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import WixImporter from 'calypso/my-sites/importer/importer-wix';
 import GoDaddyGoCentralImporter from 'calypso/my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
-import { fetchState, startImport } from 'calypso/state/imports/actions';
+import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
 import { appStates } from 'calypso/state/imports/constants';
 import {
@@ -244,7 +244,7 @@ class SectionImport extends Component {
 	}
 
 	updateFromAPI = () => {
-		this.props.siteId && this.props.fetchState( this.props.siteId );
+		this.props.siteId && this.props.fetchImporterState( this.props.siteId );
 	};
 
 	renderImportersList() {
@@ -319,5 +319,5 @@ export default connect(
 			isImporterStatusHydrated: isImporterStatusHydrated( state ),
 		};
 	},
-	{ recordTracksEvent, startImport, fetchState }
+	{ recordTracksEvent, startImport, fetchImporterState }
 )( localize( SectionImport ) );
