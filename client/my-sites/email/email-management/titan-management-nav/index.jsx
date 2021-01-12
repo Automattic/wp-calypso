@@ -132,10 +132,13 @@ class TitanManagementNav extends React.Component {
 			},
 			comment: '%(domainName)s is a domain name, e.g. example.com',
 		};
+		const headerLabel = isEnabled( 'titan/phase-2' )
+			? translate( 'Email: %(domainName)s', translateArgs )
+			: translate( 'Titan Mail: %(domainName)s', translateArgs );
 
 		return (
 			<div className="titan-management-nav">
-				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) } />
+				<SectionHeader label={ headerLabel } />
 				<VerticalNav>
 					{ this.renderTitanManagementLink() }
 					{ this.renderPurchaseManagementLink() }
