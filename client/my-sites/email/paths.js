@@ -88,3 +88,7 @@ export function emailManagementEdit( siteName, domainName, slug, relativeTo = nu
 export function isUnderEmailManagementAll( path ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
+
+export function emailManagementTitanExternal( environment, orderId, action ) {
+	return '/titan/' + environment + '/' + orderId + '/' + action;
+}
