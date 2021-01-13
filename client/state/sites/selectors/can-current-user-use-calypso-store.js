@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @returns {?boolean}        Whether site is previewable
+ * @returns {?boolean}        Whether current user can use the Calypso-based Store
  */
 export default function canCurrentUserUseCalypsoStore( state, siteId = null ) {
 	if (
