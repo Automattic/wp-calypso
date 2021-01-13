@@ -76,8 +76,6 @@ export const getPlanByPath = ( state: State, path?: PlanPath ): Plan | undefined
 	return path ? getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path ) : undefined;
 };
 
-export const getPlansDetails = ( state: State, _: string ): State => state;
-
 export const getPlansPaths = ( state: State ): string[] => {
 	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
 };

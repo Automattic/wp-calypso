@@ -12,6 +12,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
+import { usePlansBillingPeriod } from './use-plans-billing-period';
 
 import type { Plan } from '../stores/plans';
 
@@ -40,15 +41,16 @@ export function usePlanFromPath(): Plan | undefined {
 }
 
 export function useSelectedPlan(): Plan {
+	const billingPeriod = usePlansBillingPeriod();
 	const locale = useLocale();
 	// Pre-load the plans details to ensure the plans are fetched early from the API endpoint.
-	useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails( locale ) );
+	useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans( locale, billingPeriod ) );
 
 	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 	const selectedPlan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 
 	const recommendedPlanSlug = useSelect( ( select ) =>
-		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
+		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures, billingPeriod )
 	);
 
 	const recommendedPlan = useSelect( ( select ) =>

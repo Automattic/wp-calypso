@@ -27,10 +27,8 @@ type Props = {
 const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) => {
 	const { __ } = useI18n();
 
-	const { features, featuresByType, plans } = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlansDetails( locale )
-	);
-
+	const features = useSelect( ( select ) => select( PLANS_STORE ).getFeatures() );
+	const featuresByType = useSelect( ( select ) => select( PLANS_STORE ).getFeaturesByType() );
 	const supportedPlans = useSelect( ( select ) =>
 		select( PLANS_STORE ).getSupportedPlans( locale, 'ANNUALLY' )
 	);
@@ -82,10 +80,10 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 									<th>{ features[ feature ].name }</th>
 									{ supportedPlans.map( ( plan, j ) =>
 										feature === 'storage' ? (
-											<td key={ j }>{ plans[ plan.storeSlug ][ feature ] }</td>
+											<td key={ j }>{ plan.storage }</td>
 										) : (
 											<td key={ j }>
-												{ plans[ plan.storeSlug ].featuresSlugs?.[ feature ] ? (
+												{ plan.featuresSlugs?.[ feature ] ? (
 													<>
 														{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 														<span className="hidden">
