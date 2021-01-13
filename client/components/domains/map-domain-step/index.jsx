@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes, noop, get } from 'lodash';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -120,7 +121,8 @@ class MapDomainStep extends React.Component {
 							onClick={ this.recordInputFocus }
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
-						<button
+						<Button
+							busy={ this.state.isPendingSubmit }
 							disabled={ ! getTld( searchQuery ) || this.state.isPendingSubmit }
 							className="map-domain-step__go button is-primary"
 							onClick={ this.recordGoButtonClick }
@@ -128,7 +130,7 @@ class MapDomainStep extends React.Component {
 							{ translate( 'Add', {
 								context: 'Upgrades: Label for mapping an existing domain',
 							} ) }
-						</button>
+						</Button>
 					</div>
 
 					{ this.domainRegistrationUpsell() }
