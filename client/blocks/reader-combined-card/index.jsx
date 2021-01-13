@@ -24,6 +24,9 @@ import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /**
  * Style dependencies
@@ -203,6 +206,10 @@ function mapStateToProps( st, ownProps ) {
 		const postKeys = combinedCardPostKeyToKeys( ownProps.postKey, memoized );
 
 		return {
+			isWPForTeams:
+				isFeedWPForTeams( state, ownProps.postKey.feedId ) ||
+				isSiteWPForTeams( state, ownProps.postKey.blogId ),
+			teams: getReaderTeams( state ),
 			posts: getPostsByKeys( state, postKeys ),
 			postKeys,
 		};

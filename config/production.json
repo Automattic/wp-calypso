@@ -118,7 +118,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/seen-posts": false,
+		"reader/seen-posts": true,
 		"republicize": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
