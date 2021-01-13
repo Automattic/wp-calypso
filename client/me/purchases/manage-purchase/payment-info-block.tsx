@@ -8,8 +8,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import {
-	isExpired,
-	isExpiring,
 	isAutoRenewDisabled,
 	isIncludedWithPlan,
 	isPaidWithCreditCard,
@@ -33,14 +31,6 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 	if ( hasPaymentMethod( purchase ) ) {
 		if ( isPaidWithCredits( purchase ) ) {
 			return <PaymentInfoBlockWrapper>{ translate( 'Credits' ) }</PaymentInfoBlockWrapper>;
-		}
-
-		if ( isExpired( purchase ) ) {
-			return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
-		}
-
-		if ( isExpiring( purchase ) && ! isAutoRenewDisabled( purchase ) ) {
-			return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 		}
 
 		const logoType = paymentLogoType( purchase );
