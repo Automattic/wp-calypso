@@ -12,6 +12,7 @@ import { isDesktop } from '@automattic/viewport';
  */
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo.svg';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
@@ -26,29 +27,26 @@ const Cloudflare = () => {
 	return (
 		<>
 			<SettingsSectionHeader title={ translate( 'Cloudflare CDN' ) } />
-
 			<Card>
-				<div>
-					<p>
-						{ translate(
-							'Use the Cloudflare global server network to optimize your site content and create a faster experience for your users regardless of their device or location.'
-						) }
-					</p>
+				<div className="site-settings__cloudflare">
+					<div className="site-settings__cloudflare-text">
+						<p>
+							{ translate(
+								'Use the Cloudflare global server network to optimize your site content and create a faster experience for your users regardless of their device or location.'
+							) }
+						</p>
 
-					<Button
-						primary
-						onClick={ recordClick }
-						href="https://www.CLOUDFLARELINK.com"
-						target="_blank"
-					>
-						{ translate( 'Learn more' ) }
-					</Button>
-				</div>
-				{ isDesktop() && (
-					<div className="stats__card-illustration">
-						<img src={ cloudflareIllustration } alt="" />
+						<Button onClick={ recordClick } href="https://www.CLOUDFLARELINK.com" target="_blank">
+							{ translate( 'Learn more' ) }
+						</Button>
 					</div>
-				) }
+
+					{ isDesktop() && (
+						<div className="site-settings__cloudflare-illustration">
+							<img src={ cloudflareIllustration } alt="" />
+						</div>
+					) }
+				</div>
 			</Card>
 		</>
 	);
