@@ -72,9 +72,9 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 function PaymentInfoBlockWrapper( { children }: { children: React.ReactNode } ) {
 	const translate = useTranslate();
 	return (
-		<span>
+		<aside aria-label={ String( translate( 'Payment method' ) ) }>
 			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
 			<span className="manage-purchase__detail">{ children }</span>
-		</span>
+		</aside>
 	);
 }
