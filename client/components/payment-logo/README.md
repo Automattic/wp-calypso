@@ -65,3 +65,4 @@ import PaymentLogo from 'calypso/components/payment-logo';
   - `unionpay`
   - `visa`
 - `isCompact` (optional) – Boolean that determines if the compact PayPal logo is rendered.
+- `disabled` (optional) – Boolean that determines if the logo is rendered in grayscale.
