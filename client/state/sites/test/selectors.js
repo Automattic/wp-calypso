@@ -39,6 +39,7 @@ import {
 	canCurrentUserUseCustomerHome,
 	canCurrentUserUseAnyWooCommerceBasedStore,
 	canCurrentUserUseCalypsoStore,
+	canCurrentUserUseWooCommerceCoreStore,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
@@ -56,6 +57,7 @@ import {
 } from '../selectors';
 import config from 'calypso/config';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from 'calypso/lib/plans/constants';
 
 jest.mock( 'calypso/config', () => {
 	const configMock = () => '';
@@ -3643,6 +3645,111 @@ describe( 'selectors', () => {
 			config.isEnabled.mockImplementation( () => true );
 
 			expect( canCurrentUserUseCalypsoStore( createState( true, true, false ) ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'canCurrentUserUseWooCommerceCoreStore()', () => {
+		const createState = (
+			manage_options,
+			is_automated_transfer,
+			has_pending_automated_transfer,
+			product_slug
+		) => ( {
+			ui: {
+				selectedSiteId: 1,
+			},
+			currentUser: {
+				capabilities: {
+					1: {
+						manage_options,
+					},
+				},
+			},
+			sites: {
+				items: {
+					1: {
+						options: {
+							is_automated_transfer,
+							has_pending_automated_transfer,
+						},
+						plan: {
+							product_slug,
+						},
+					},
+				},
+				plans: {
+					1: {
+						data: {
+							0: {
+								currentPlan: true,
+								productSlug: product_slug,
+								subscribedDate: '2020-12-11T18:26:52+00:00',
+							},
+						},
+					},
+				},
+			},
+		} );
+
+		beforeEach( () => {
+			// Enable all features
+			config.isEnabled.mockImplementation( () => true );
+		} );
+
+		test( 'should return true if site is AT and user can manage it', () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_ECOMMERCE ) )
+			).toBe( true );
+		} );
+
+		test( 'should return false if site is not AT and user can manage it', () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, false, false, PLAN_ECOMMERCE ) )
+			).toBe( false );
+		} );
+
+		test( "should return false if site is AT and user can't manage it", () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( false, true, false, PLAN_ECOMMERCE ) )
+			).toBe( false );
+		} );
+
+		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
+			).toBe( true );
+		} );
+
+		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
+			// Enable all features except for the atomic store flow
+			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
+
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
+			).toBe( false );
+		} );
+
+		test( 'should return false if site is not eCommerce or Business', () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_FREE ) )
+			).toBe( false );
+		} );
+
+		test( 'should return false if site is Business and Store is not deprecated', () => {
+			// Enable all features except for store deprecation
+			config.isEnabled.mockImplementation(
+				( feature ) => feature !== 'woocommerce/store-deprecated'
+			);
+
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
+			).toBe( false );
+		} );
+
+		test( 'should return true if site is Business and Store is deprecated', () => {
+			expect(
+				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
+			).toBe( true );
 		} );
 	} );
 
