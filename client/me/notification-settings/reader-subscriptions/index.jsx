@@ -2,10 +2,9 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,17 +30,14 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import FormattedHeader from 'calypso/components/formatted-header';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 
-/* eslint-disable react/prefer-es6-class */
-const NotificationSubscriptions = createReactClass( {
-	displayName: 'NotificationSubscriptions',
-
+class NotificationSubscriptions extends React.Component {
 	handleClickEvent( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	}
 
 	handleFocusEvent( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	},
+	}
 
 	handleCheckboxEvent( action ) {
 		return ( event ) => {
@@ -50,7 +46,7 @@ const NotificationSubscriptions = createReactClass( {
 
 			this.props.recordGoogleEvent( 'Me', eventAction, 'checked', optionValue );
 		};
-	},
+	}
 
 	getDeliveryHourLabel( hour ) {
 		return this.props.translate( '%(fromHour)s - %(toHour)s', {
@@ -64,7 +60,7 @@ const NotificationSubscriptions = createReactClass( {
 					.format( 'LT' ),
 			},
 		} );
-	},
+	}
 
 	render() {
 		return (
@@ -247,13 +243,11 @@ const NotificationSubscriptions = createReactClass( {
 				</Card>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
-const connectComponent = connect( null, { recordGoogleEvent } );
-
-export default flowRight(
-	connectComponent,
+export default compose(
+	connect( null, { recordGoogleEvent } ),
 	localize,
 	protectForm,
 	withLocalizedMoment,
