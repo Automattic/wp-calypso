@@ -277,4 +277,25 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/de/support/reader/#blocking-sites'
 		);
 	} );
+
+	test( 'Contact Support', () => {
+		// Assumes logged-in, these URLs should not be modified.
+		expect( localizeUrl( 'https://wordpress.com/help/contact', 'en' ) ).toEqual(
+			'https://wordpress.com/help/contact/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/help/contact', 'de' ) ).toEqual(
+			'https://wordpress.com/help/contact/'
+		);
+		// When logged-out, use localized URLs.
+		expect( localizeUrl( 'https://wordpress.com/help/contact', 'en', false ) ).toEqual(
+			'https://wordpress.com/support/contact/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/help/contact', 'de', false ) ).toEqual(
+			'https://wordpress.com/de/support/contact/'
+		);
+		// pl is not a supportSiteLocale:
+		expect( localizeUrl( 'https://wordpress.com/help/contact', 'pl', false ) ).toEqual(
+			'https://wordpress.com/support/contact/'
+		);
+	} );
 } );
