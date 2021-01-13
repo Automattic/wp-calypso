@@ -1,10 +1,4 @@
-@import '~@wordpress/base-styles/mixins';
-@import '~@wordpress/base-styles/variables';
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/z-index';
 @import '~@automattic/typography/styles/variables';
-@import '~@automattic/onboarding/styles/variables';
-@import '~@automattic/onboarding/styles/mixins';
 @import '../variables';
 
 .plans-interval-toggle {
@@ -64,7 +58,7 @@
 		padding: 0 16px;
 
 		font-family: $default-font;
-		font-size: 0.875rem;
+		font-size: $font-body-small;
 		font-weight: 500; /* stylelint-disable-line scales/font-weight */
 		letter-spacing: 0.16px;
 		color: var( --studio-gray-90 );
@@ -99,7 +93,7 @@
 		color: var( --studio-white );
 
 		font-family: $default-font;
-		font-size: 0.75rem;
+		font-size: $font-body-extra-small;
 		// Needed as otherwise it inherits `nowrap`
 		// from the segmented control parent element.
 		white-space: normal;
