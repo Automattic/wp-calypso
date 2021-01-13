@@ -193,7 +193,7 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 		RatingStarBlockComponent,
 		SlideshowBlockComponent,
 		SubscriptionsBlockComponent,
-		TiledGalleryBlockComponent,
+		// TiledGalleryBlockComponent,
 		// YoutubeBlockComponent,
 		// PremiumContentBlockComponent,
 	].forEach( ( Block ) => {
