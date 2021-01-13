@@ -87,6 +87,41 @@ class StoreSidebar extends Component {
 		}, this );
 	};
 
+	shouldShowAllSidebarItems = () => {
+		const {
+			finishedAddressSetup,
+			hasProducts,
+			path,
+			settingsGeneralLoaded,
+			siteSuffix,
+			storeLocation,
+			isStoreRemoved,
+			shouldRedirectAfterInstall,
+		} = this.props;
+
+		// Show all items if: we're not on the dashboard, we have finished setup, or we have products.
+		const notOnDashboard = 0 !== path.indexOf( '/store' + siteSuffix );
+		let showAllSidebarItems = notOnDashboard || finishedAddressSetup || hasProducts;
+
+		// Don't show all the sidebar items if we don't know what country the store is in
+		if ( showAllSidebarItems ) {
+			if ( ! settingsGeneralLoaded ) {
+				showAllSidebarItems = false;
+			} else {
+				const storeCountry = get( storeLocation, 'country' );
+				showAllSidebarItems = isStoreManagementSupportedInCalypsoForCountry( storeCountry );
+			}
+
+			// Don't show sidebar items if store's removed & user is going to redirect
+			// to WooCommerce after installation
+			if ( isStoreRemoved && shouldRedirectAfterInstall ) {
+				showAllSidebarItems = false;
+			}
+		}
+
+		return showAllSidebarItems;
+	};
+
 	dashboard = () => {
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store' + siteSuffix;
@@ -262,41 +297,8 @@ class StoreSidebar extends Component {
 	};
 
 	render = () => {
-		const {
-			allRequiredPluginsActive,
-			finishedAddressSetup,
-			hasProducts,
-			path,
-			pluginsLoaded,
-			settingsGeneralLoaded,
-			site,
-			siteId,
-			siteSuffix,
-			storeLocation,
-			isStoreRemoved,
-			shouldRedirectAfterInstall,
-		} = this.props;
-
-		// Show all items if: we're not on the dashboard, we have finished setup, or we have products.
-		const notOnDashboard = 0 !== path.indexOf( '/store' + siteSuffix );
-		let showAllSidebarItems = notOnDashboard || finishedAddressSetup || hasProducts;
-
-		// Don't show all the sidebar items if we don't know what country the store is in
-		if ( showAllSidebarItems ) {
-			if ( ! settingsGeneralLoaded ) {
-				showAllSidebarItems = false;
-			} else {
-				const storeCountry = get( storeLocation, 'country' );
-				showAllSidebarItems = isStoreManagementSupportedInCalypsoForCountry( storeCountry );
-			}
-
-			// Don't show sidebar items if store's removed & user is going to redirect
-			// to WooCommerce after installation
-			if ( isStoreRemoved && shouldRedirectAfterInstall ) {
-				showAllSidebarItems = false;
-			}
-		}
-
+		const { allRequiredPluginsActive, pluginsLoaded, site, siteId } = this.props;
+		const showAllSidebarItems = this.shouldShowAllSidebarItems();
 		const shouldLoadSettings = pluginsLoaded && allRequiredPluginsActive;
 
 		return (
