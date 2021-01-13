@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import classnames from 'classnames';
+import config from 'calypso/config';
 
 /**
  * Style dependencies
@@ -108,6 +109,7 @@ class Dialog extends Component {
 		const backdropClassName = classnames( baseClassName + '__backdrop', {
 			'is-full-screen': isFullScreen,
 			'is-hidden': ! isBackdropVisible,
+			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const contentClassName = classnames( baseClassName + '__content', className );
