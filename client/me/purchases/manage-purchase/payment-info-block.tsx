@@ -66,6 +66,12 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 				</PaymentInfoBlockWrapper>
 			);
 		}
+
+		return (
+			<PaymentInfoBlockWrapper>
+				<PaymentLogo type={ logoType } disabled={ isAutoRenewDisabled( purchase ) } />
+			</PaymentInfoBlockWrapper>
+		);
 	}
 
 	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
