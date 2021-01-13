@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import i18n from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
-import i18n from 'i18n-calypso';
 
 export function getTitanProductName() {
 	if ( isEnabled( 'titan/phase-2' ) ) {
