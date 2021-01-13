@@ -150,19 +150,6 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
-		const availablePlans = this.isDisplayingPlansNeededForFeature()
-			? visiblePlans.filter( ( plan ) => {
-					if ( isEcommercePlan( selectedPlan ) ) {
-						return isEcommercePlan( plan );
-					}
-					if ( isBusinessPlan( selectedPlan ) ) {
-						return isBusinessPlan( plan ) || isEcommercePlan( plan );
-					}
-					if ( isPremiumPlan( selectedPlan ) ) {
-						return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
-					}
-			  } )
-			: visiblePlans;
 
 		return (
 			<div
@@ -189,7 +176,7 @@ export class PlansFeaturesMain extends Component {
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }
-					visiblePlans={ availablePlans }
+					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
@@ -198,7 +185,7 @@ export class PlansFeaturesMain extends Component {
 					popularPlanSpec={ getPopularPlanSpec( {
 						customerType,
 						isJetpack,
-						availablePlans,
+						availablePlans: visiblePlans,
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
@@ -305,11 +292,31 @@ export class PlansFeaturesMain extends Component {
 		return ! hidePersonalPlan;
 	}
 
-	getVisiblePlansForPlanFeatures( plans ) {
-		const { displayJetpackPlans, customerType, plansWithScroll, withWPPlanTabs } = this.props;
+	getVisiblePlansForPlanFeatures( availablePlans ) {
+		const {
+			displayJetpackPlans,
+			customerType,
+			selectedPlan,
+			plansWithScroll,
+			withWPPlanTabs,
+		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
+
+		const plans = this.isDisplayingPlansNeededForFeature()
+			? availablePlans.filter( ( plan ) => {
+					if ( isEcommercePlan( selectedPlan ) ) {
+						return isEcommercePlan( plan );
+					}
+					if ( isBusinessPlan( selectedPlan ) ) {
+						return isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+					if ( isPremiumPlan( selectedPlan ) ) {
+						return isPremiumPlan( plan ) || isBusinessPlan( plan ) || isEcommercePlan( plan );
+					}
+			  } )
+			: availablePlans;
 
 		if ( displayJetpackPlans ) {
 			return plans;
@@ -420,6 +427,8 @@ export class PlansFeaturesMain extends Component {
 	render() {
 		const { isInSignup, siteId, siteSlug, customHeader } = this.props;
 		const basePlansPath = isInSignup ? window.location?.pathname : `/plans/${ siteSlug }`;
+		const plans = this.getPlansForPlanFeatures();
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
 		return (
 			<div className="plans-features-main">
@@ -430,7 +439,11 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 
 				{ customHeader }
-				<PlanTypeSelector { ...this.props } basePlansPath={ basePlansPath } />
+				<PlanTypeSelector
+					{ ...this.props }
+					plans={ visiblePlans }
+					basePlansPath={ basePlansPath }
+				/>
 				{ this.getPlanFeatures() }
 				{ this.renderProductsSelector() }
 				{ this.mayRenderFAQ() }
