@@ -8,7 +8,9 @@ import {
 	getPlansPaths,
 	getCorrespondingPlanFromOtherInterval,
 } from '../selectors';
+
 import { State } from '../reducer';
+
 import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,

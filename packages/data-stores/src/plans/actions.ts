@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import type { DiscountsMap, PricesMap } from './reducer';
-import type { Plan, PlanFeature, PlanFeatureType } from './types';
+import type { Plan, PlanFeature, PlanFeatureType, DiscountsMap, PricesMap } from './types';
 
 export const setFeatures = ( features: Record< string, PlanFeature > ) => {
 	return {

@@ -10,6 +10,13 @@ export type PlanAction = {
 	slug?: string;
 };
 
+export type PricesMap = {
+	[ slug in PlanSlug ]: string;
+};
+
+export type DiscountsMap = {
+	[ slug in PlanSlug ]: number | undefined;
+} & { maxDiscount: number };
 export interface Plan {
 	title: string;
 	description: string;

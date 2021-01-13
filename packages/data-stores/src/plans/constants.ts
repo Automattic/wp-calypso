@@ -41,7 +41,7 @@ export const billedMonthlySlugs = [
 export const plansOrder = {
 	MONTHLY: billedYearlySlugs,
 	ANNUALLY: billedMonthlySlugs,
-};
+} as const;
 
 export const plansPaths = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ] as const;
 

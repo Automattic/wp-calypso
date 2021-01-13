@@ -20,15 +20,7 @@ import {
 	PLAN_ECOMMERCE_MONTHLY,
 } from './constants';
 import type { PlanAction } from './actions';
-import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
-
-export type PricesMap = {
-	[ slug in PlanSlug ]: string;
-};
-
-export type DiscountsMap = {
-	[ slug in PlanSlug ]: number;
-} & { maxDiscount: number };
+import type { Plan, PlanFeature, PlanFeatureType, PricesMap, DiscountsMap } from './types';
 
 const DEFAULT_PRICES_STATE: PricesMap = {
 	[ PLAN_FREE ]: '',

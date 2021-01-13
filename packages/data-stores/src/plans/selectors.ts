@@ -6,7 +6,8 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { State, PricesMap, DiscountsMap } from './reducer';
+import type { PricesMap, DiscountsMap } from './types';
+import type { State } from './reducer';
 import {
 	DEFAULT_ANNUAL_PAID_PLAN,
 	PLAN_ECOMMERCE,
@@ -35,7 +36,7 @@ export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
 export const getDefaultPaidPlan = (
 	_: State,
 	locale: string,
-	billPeriod: 'ANNUALLY' | 'MONTHLY' = 'ANNUALLY'
+	billPeriod: Plan[ 'billPeriod' ] = 'ANNUALLY'
 ): Plan => {
 	return select( STORE_KEY ).getPlansDetails( locale )?.plans[
 		billPeriod === 'ANNUALLY' ? DEFAULT_ANNUAL_PAID_PLAN : DEFAULT_MONTHLY_PAID_PLAN
@@ -56,7 +57,7 @@ export const getSupportedPlans = ( state: State ): Plan[] => {
 
 export const getPeriodSupportedPlans = (
 	state: State,
-	billingPeriod: 'ANNUALLY' | 'MONTHLY' = 'ANNUALLY'
+	billingPeriod: Plan[ 'billPeriod' ] = 'ANNUALLY'
 ): Plan[] => {
 	const supportedPlans: Plan[] = getSupportedPlans( state ).filter( ( plan ) => {
 		if ( plan.isFree || billingPeriod === plan.billPeriod ) {

@@ -8,7 +8,7 @@ import { stringify } from 'qs';
  */
 import { setDiscounts, setFeatures, setFeaturesByType, setPlans, setPrices } from './actions';
 import type { APIPlan, APIPlanDetail, PlanSlug, PlanFeature, Plan } from './types';
-import type { DiscountsMap } from './reducer';
+import type { DiscountsMap, PricesMap } from './types';
 import {
 	currenciesFormats,
 	PLAN_FREE,
@@ -61,7 +61,7 @@ export function* getPrices( locale = 'en' ) {
 	);
 
 	// create a [slug => price] map
-	const prices: Record< string, string > = WPCOMPlans.reduce( ( acc, plan ) => {
+	const prices = WPCOMPlans.reduce( ( acc, plan ) => {
 		if ( plan.bill_period === 31 ) {
 			acc[ plan.product_slug ] = plan.formatted_price;
 		} else {
@@ -69,7 +69,7 @@ export function* getPrices( locale = 'en' ) {
 			acc[ plan.product_slug ] = getMonthlyPrice( plan );
 		}
 		return acc;
-	}, {} as Record< string, string > );
+	}, {} as PricesMap );
 
 	// create a [slug => discount] map
 	const discounts: DiscountsMap = { maxDiscount: 0 };
