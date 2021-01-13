@@ -10,8 +10,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import SegmentedControl from '../segmented-control';
 
 /**
