@@ -81,6 +81,17 @@ describe( 'PaymentInfoBlock', () => {
 			}
 		);
 
+		it( 'renders PayPal logo when the purchase has PayPal as the payment method', () => {
+			const purchase = {
+				expiryStatus,
+				payment: {
+					type: 'paypal',
+				},
+			};
+			render( <PaymentInfoBlock purchase={ purchase } /> );
+			expect( screen.getByLabelText( 'PayPal' ) ).toBeInTheDocument();
+		} );
+
 		it( 'renders "None" when the purchase has an expired credit card as the payment method', () => {
 			const expiryDate = new Date();
 			expiryDate.setDate( expiryDate.getDate() - 365 );
