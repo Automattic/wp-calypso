@@ -1,0 +1,87 @@
+{
+	"build": "release",
+	"calypso_config": "desktop",
+	"server_port": 41050,
+	"server_url": "http://127.0.0.1",
+	"server_host": "127.0.0.1",
+	"wordpress_host": "wordpress.com",
+	"debug": false,
+	"appName": "WordPress.com",
+	"appPathName": "WordPress.com",
+	"mainWindow": {
+		"acceptFirstMouse": false,
+		"frame": true,
+		"height": 800,
+		"minHeight": 450,
+		"minWidth": 350,
+		"title": "WordPress.com",
+		"useContentSize": true,
+		"width": 900,
+		"webPreferences": {
+			"contextIsolation": true,
+			"enableRemoteModule": false,
+			"nodeIntegration": false,
+			"overlayScrollbars": false
+		}
+	},
+	"preferencesWindow": {
+		"acceptFirstMouse": true,
+		"center": true,
+		"fullscreen": false,
+		"height": 375,
+		"resizable": false,
+		"skipTaskbar": true,
+		"title": "Preferences",
+		"useContentSize": true,
+		"width": 480,
+		"wpDragAndDropDisabled": true
+	},
+	"aboutWindow": {
+		"acceptFirstMouse": true,
+		"center": true,
+		"fullscreen": false,
+		"height": 260,
+		"resizable": false,
+		"skipTaskbar": true,
+		"title": "About WordPress.com",
+		"useContentSize": true,
+		"width": 300,
+		"wpDragAndDropDisabled": true
+	},
+	"secretWindow": {
+		"acceptFirstMouse": true,
+		"center": true,
+		"frame": false,
+		"fullscreen": false,
+		"height": "full",
+		"resizable": false,
+		"skipTaskbar": true,
+		"transparent": true,
+		"width": "full",
+		"webPreferences": {
+			"contextIsolation": true,
+			"enableRemoteModule": false,
+			"nodeIntegration": false
+		},
+		"wpDragAndDropDisabled": true
+	},
+	"crash_reporter": false,
+	"updater": {
+		"downloadUrl": "https://apps.wordpress.com/desktop/",
+		"apiUrl": "https://api.github.com/repos/Automattic/wp-calypso/releases",
+		"delay": 2000,
+		"interval": 43200000
+	},
+	"settings_filename": "settings.json",
+	"default_settings": {
+		"notification-badge": true,
+		"notification-bounce": false,
+		"release-channel": "stable",
+		"proxy-type": "",
+		"proxy-url": "socks5://localhost",
+		"proxy-port": "8080",
+		"proxy-pac": "",
+		"spellcheck-enabled": false,
+		"wpDragAndDropDisabled": true
+	}
+}
