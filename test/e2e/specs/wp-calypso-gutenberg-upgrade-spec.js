@@ -184,18 +184,18 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 	this.timeout( mochaTimeOut );
 
 	[
-		BlogPostsBlockComponent,
-		ContactFormBlockComponent,
-		ContactInfoBlockComponent,
-		DynamicSeparatorBlockComponent,
+		// BlogPostsBlockComponent,
+		// ContactFormBlockComponent,
+		// ContactInfoBlockComponent,
+		// DynamicSeparatorBlockComponent,
 		GalleryMasonryBlockComponent,
-		LayoutGridBlockComponent,
-		RatingStarBlockComponent,
-		SlideshowBlockComponent,
-		SubscriptionsBlockComponent,
-		TiledGalleryBlockComponent,
-		YoutubeBlockComponent,
-		PremiumContentBlockComponent,
+		// LayoutGridBlockComponent,
+		// RatingStarBlockComponent,
+		// SlideshowBlockComponent,
+		// SubscriptionsBlockComponent,
+		// TiledGalleryBlockComponent,
+		// YoutubeBlockComponent,
+		// PremiumContentBlockComponent,
 	].forEach( ( Block ) => {
 		describe( `${ Block.blockName } @parallel`, function () {
 			let currentGutenbergBlocksCode;
