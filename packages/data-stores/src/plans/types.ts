@@ -29,13 +29,16 @@ export interface Plan {
 	featuresSlugs?: Record< string, boolean >;
 	storage?: string;
 	billPeriod?: 'MONTHLY' | 'ANNUALLY';
+	rawPrice: number;
+	price: string;
+	annualDiscount?: number;
 }
 
 /**
  * types of an item from https://public-api.wordpress.com/rest/v1.5/plans response
  * can be super useful later
  */
-export interface APIPlan {
+export interface PricedAPIPlan {
 	product_id: number;
 	product_name: string;
 	meta: Record< string, unknown >;
@@ -102,16 +105,6 @@ export type APIPlanProduct = {
 	plan_id: number;
 };
 
-export type APIPlanDetail = {
-	short_name: string;
-	tagline: string;
-	products: Array< APIPlanProduct >;
-	nonlocalized_short_name: string;
-	highlighted_features: Array< string >;
-	features: Array< string >;
-	storage?: string;
-};
-
 export type PlanFeature = {
 	id?: string;
 	description?: string;
@@ -125,3 +118,42 @@ export type PlanFeatureType = {
 	name: string;
 	features: Array< string >;
 };
+
+export interface APIPlanDetail {
+	support_priority: number;
+	support_name: string;
+	groups: string[];
+	products: [
+		{
+			plan_id: number;
+		}
+	];
+	name: string;
+	short_name: string;
+	nonlocalized_short_name: string;
+	tagline: string;
+	description: string;
+	features: string[];
+	highlighted_features: string[];
+	storage: string;
+	icon: string;
+}
+
+export interface FeaturesByType {
+	id: string;
+	name: string;
+	features: string[];
+}
+
+export interface Feature {
+	id: string;
+	name: string;
+	description: string;
+	type: string;
+}
+
+export interface DetailsAPIResponse {
+	plans: APIPlanDetail[];
+	features_by_type: FeaturesByType[];
+	features: Feature[];
+}

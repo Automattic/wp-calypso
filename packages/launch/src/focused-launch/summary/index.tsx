@@ -285,7 +285,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const selectedPaidPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getPaidPlan() );
 
-	const { defaultPaidPlan, defaultFreePlan, planPrices } = usePlans();
+	const { defaultPaidPlan, defaultFreePlan } = usePlans();
 
 	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
@@ -403,7 +403,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											</TrailingContentSide>
 										) : (
 											<TrailingContentSide nodeType="PRICE">
-												<span>{ planPrices[ plan.storeSlug ] }</span>
+												<span>{ plan.price }</span>
 												<span>
 													{
 														// translators: /mo is short for "per-month"

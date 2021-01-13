@@ -45,9 +45,9 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	defaultAllPlansExpanded = false,
 } ) => {
 	const supportedPlans = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPeriodSupportedPlans( 'ANNUALLY' )
+		select( PLANS_STORE ).getSupportedPlans( locale, 'ANNUALLY' )
 	);
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
+
 	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
 
 	return (
@@ -66,7 +66,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							features={ plan.features ?? [] }
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }
-							price={ prices[ plan.storeSlug ] }
+							price={ plan.price }
 							name={ plan?.title.toString() }
 							isSelected={ plan.storeSlug === selectedPlanSlug }
 							onSelect={ onPlanSelect }

@@ -31,9 +31,8 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 		select( PLANS_STORE ).getPlansDetails( locale )
 	);
 
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
 	const supportedPlans = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPeriodSupportedPlans( 'ANNUALLY' )
+		select( PLANS_STORE ).getSupportedPlans( locale, 'ANNUALLY' )
 	);
 
 	const isLoading = ! supportedPlans?.length;
@@ -123,9 +122,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 										<span className="plans-details__placeholder">{ '' }</span>
 									</td>
 							  ) )
-							: supportedPlans.map( ( plan ) => (
-									<td key={ plan.storeSlug }>{ prices[ plan.storeSlug ] }</td>
-							  ) ) }
+							: supportedPlans.map( ( plan ) => <td key={ plan.storeSlug }>{ plan.price }</td> ) }
 					</tr>
 
 					<tr className="plans-details__feature-row" key="cta">

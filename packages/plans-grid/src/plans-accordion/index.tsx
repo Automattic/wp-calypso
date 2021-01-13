@@ -50,18 +50,18 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	const { __ } = useI18n();
 
 	const supportedPlans = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPeriodSupportedPlans( 'ANNUALLY' )
+		select( PLANS_STORE ).getSupportedPlans( locale, 'ANNUALLY' )
 	);
-
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4 ];
 
 	// Primary plan
-	const popularPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan( locale ) );
+	const popularPlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getDefaultPaidPlan( locale, 'ANNUALLY' )
+	);
 	const recommendedPlanSlug = useSelect( ( select ) =>
-		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
+		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures, 'ANNUALLY' )
 	);
 
 	const recommendedPlan = useSelect( ( select ) =>
@@ -115,7 +115,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 								name={ primaryPlan?.title.toString() }
 								description={ primaryPlan?.description.toString() }
 								features={ primaryPlan.features ?? [] }
-								price={ prices[ primaryPlan.storeSlug ] }
+								price={ primaryPlan.price }
 								domain={ currentDomain }
 								badge={ badge }
 								isFree={ primaryPlan.isFree }
@@ -150,7 +150,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 								name={ plan?.title.toString() }
 								description={ plan?.description.toString() }
 								features={ plan.features ?? [] }
-								price={ prices[ plan.storeSlug ] }
+								price={ plan.price }
 								domain={ currentDomain }
 								isFree={ plan.isFree }
 								isOpen={

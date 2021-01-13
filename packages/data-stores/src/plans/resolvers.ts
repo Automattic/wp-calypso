@@ -6,20 +6,19 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { setDiscounts, setFeatures, setFeaturesByType, setPlans, setPrices } from './actions';
-import type { APIPlan, APIPlanDetail, PlanSlug, PlanFeature, Plan } from './types';
-import type { DiscountsMap, PricesMap } from './types';
+import { setFeatures, setFeaturesByType, setPlans } from './actions';
+import type {
+	PricedAPIPlan,
+	APIPlanDetail,
+	PlanSlug,
+	Plan,
+	DetailsAPIResponse,
+	PlanFeature,
+} from './types';
 import {
 	currenciesFormats,
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_MONTHLY,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_ECOMMERCE,
-	PLAN_ECOMMERCE_MONTHLY,
 	plansProductSlugs,
 	billedMonthlySlugs,
 	billedYearlySlugs,
@@ -32,7 +31,7 @@ import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
  *
  * @param plan the plan object
  */
-function getMonthlyPrice( plan: APIPlan ) {
+function getMonthlyPrice( plan: PricedAPIPlan ) {
 	const currency = currenciesFormats[ plan.currency_code ];
 	let price: number | string = plan.raw_price / 12;
 
@@ -48,127 +47,83 @@ function getMonthlyPrice( plan: APIPlan ) {
 	return `${ currency.symbol }${ price }`;
 }
 
-export function* getPrices( locale = 'en' ) {
-	const plans: APIPlan[] = yield wpcomRequest( {
+export function* getSupportedPlans( locale = 'en' ) {
+	const planPrices: PricedAPIPlan[] = yield wpcomRequest( {
 		path: '/plans',
 		query: stringify( { locale } ),
 		apiVersion: '1.5',
 	} );
 
-	// filter for supported plans
-	const WPCOMPlans: APIPlan[] = plans.filter(
-		( plan: APIPlan ) => -1 !== plansProductSlugs.indexOf( plan.product_slug as PlanSlug )
-	);
-
-	// create a [slug => price] map
-	const prices = WPCOMPlans.reduce( ( acc, plan ) => {
-		if ( plan.bill_period === 31 ) {
-			acc[ plan.product_slug ] = plan.formatted_price;
-		} else {
-			// Calculate the monthly price of yearly-billed plans
-			acc[ plan.product_slug ] = getMonthlyPrice( plan );
+	const { body: plansFeatures } = ( yield fetchAndParse(
+		`https://public-api.wordpress.com/wpcom/v2/plans/details?locale=${ encodeURIComponent(
+			locale
+		) }`,
+		{
+			mode: 'cors',
+			credentials: 'omit',
 		}
-		return acc;
-	}, {} as PricesMap );
+	) ) as { body: DetailsAPIResponse };
 
-	// create a [slug => discount] map
-	const discounts: DiscountsMap = { maxDiscount: 0 };
+	const plans = plansProductSlugs.reduce( ( plans, slug ) => {
+		const pricedPlan = planPrices.find(
+			( pricedPlan ) => pricedPlan.product_slug === slug
+		) as PricedAPIPlan;
+
+		// each details objects has a products[] array containing all the plans' ID it includes
+		// find the right details object using this array
+		const {
+			features: planFeaturesSlugs,
+			...planDetails
+		} = plansFeatures.plans.find( ( planDetails ) =>
+			planDetails.products.find( ( product ) => product.plan_id === pricedPlan?.product_id )
+		) as APIPlanDetail;
+
+		plans[ slug ] = {
+			description: planDetails.tagline,
+			features: planDetails.highlighted_features,
+			storage: planDetails.storage,
+			title: pricedPlan.product_name_short,
+			productId: pricedPlan.product_id,
+			storeSlug: slug,
+			pathSlug: pricedPlan.path_slug,
+			featuresSlugs: planFeaturesSlugs.reduce( ( slugs, slug ) => {
+				slugs[ slug ] = true;
+				return slugs;
+			}, {} as Record< string, boolean > ),
+			isFree: pricedPlan.raw_price === 0,
+			isPopular: slug === PLAN_PREMIUM || slug === PLAN_PREMIUM_MONTHLY,
+			// useful to detect when the selected plan's period doesn't match the preferred interval
+			billPeriod: pricedPlan?.bill_period === 31 ? 'MONTHLY' : 'ANNUALLY',
+			rawPrice: pricedPlan.raw_price,
+			price:
+				pricedPlan?.bill_period === 31 ? pricedPlan.formatted_price : getMonthlyPrice( pricedPlan ),
+		};
+
+		return plans;
+	}, {} as Record< PlanSlug, Plan > );
 
 	for ( let i = 0; i < billedYearlySlugs.length; i++ ) {
-		const annualSlug = billedYearlySlugs[ i ];
-		const monthlySlug = billedMonthlySlugs[ i ];
-		const annualPlan = plans.find( ( { product_slug } ) => product_slug === annualSlug );
-		const monthlyPlan = plans.find( ( { product_slug } ) => product_slug === monthlySlug );
+		const annualPlan = plans[ billedYearlySlugs[ i ] ];
+		const monthlyPlan = plans[ billedMonthlySlugs[ i ] ];
 
-		if ( annualPlan && monthlyPlan ) {
-			const annualCostIfPaidMonthly = monthlyPlan.raw_price * 12;
-			const annualCostIfPaidAnnually = annualPlan.raw_price;
-			const discount = Math.round(
-				100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly )
-			);
-			discounts[ annualSlug ] = discount;
-			discounts[ monthlySlug ] = discount;
-			discounts.maxDiscount = Math.max( discounts.maxDiscount, discount );
-		}
+		const annualCostIfPaidMonthly = monthlyPlan.rawPrice * 12;
+		const annualCostIfPaidAnnually = annualPlan.rawPrice;
+		const discount = Math.round( 100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly ) );
+		plans[ billedYearlySlugs[ i ] ].annualDiscount = discount;
+		plans[ billedYearlySlugs[ i ] ].annualDiscount = discount;
 	}
 
-	yield setDiscounts( discounts );
-	yield setPrices( prices );
-}
+	const features = plansFeatures.features.reduce( ( features, feature ) => {
+		features[ feature.id ] = {
+			id: feature.id,
+			name: feature.name,
+			description: feature.description,
+			type: feature.type ?? 'checkbox',
+		};
+		return features;
+	}, {} as Record< string, PlanFeature > );
 
-const mapProductSlugToShortName: Record< string, string > = {
-	[ PLAN_FREE ]: 'Free',
-	[ PLAN_PERSONAL ]: 'Personal',
-	[ PLAN_PERSONAL_MONTHLY ]: 'Personal',
-	[ PLAN_PREMIUM ]: 'Premium',
-	[ PLAN_PREMIUM_MONTHLY ]: 'Premium',
-	[ PLAN_BUSINESS ]: 'Business',
-	[ PLAN_BUSINESS_MONTHLY ]: 'Business',
-	[ PLAN_ECOMMERCE ]: 'eCommerce',
-	[ PLAN_ECOMMERCE_MONTHLY ]: 'eCommerce',
-};
-
-export function* getPlansDetails( locale = 'en' ) {
-	try {
-		const { body: rawPlansDetails } = yield fetchAndParse(
-			`https://public-api.wordpress.com/wpcom/v2/plans/details?locale=${ encodeURIComponent(
-				locale
-			) }`,
-			{
-				mode: 'cors',
-				credentials: 'omit',
-			}
-		);
-
-		const features: Record< string, PlanFeature > = {};
-
-		rawPlansDetails.features.forEach( ( feature: Record< string, string > ) => {
-			features[ feature.id ] = {
-				id: feature.id,
-				name: feature.name,
-				description: feature.description,
-				type: feature.type ?? 'checkbox',
-			};
-		} );
-
-		const plans: Record< string, Plan > = plansProductSlugs.reduce( ( plans, slug ) => {
-			const rawPlan = rawPlansDetails.plans.find(
-				( plan: APIPlanDetail ) =>
-					plan.nonlocalized_short_name === mapProductSlugToShortName[ slug ]
-			);
-
-			if ( ! rawPlan ) {
-				return plans;
-			}
-
-			const plan: Plan = {
-				title: rawPlan.short_name,
-				description: rawPlan.tagline,
-				productId: rawPlan.products[ 0 ].plan_id,
-				storeSlug: slug,
-				features: rawPlan.highlighted_features,
-				pathSlug: rawPlan.nonlocalized_short_name?.toLowerCase(),
-				featuresSlugs: rawPlan.features.reduce(
-					( acc: Record< string, boolean >, cur: string ) => ( { ...acc, [ cur ]: true } ),
-					{}
-				),
-				storage: rawPlan.storage,
-				isFree: 'Free' === rawPlan.nonlocalized_short_name,
-				isPopular: 'Premium' === rawPlan.nonlocalized_short_name,
-				// useful to detect when the selected plan's period doesn't match the preferred interval
-				billPeriod: billedMonthlySlugs.indexOf( slug as never ) > -1 ? 'MONTHLY' : 'ANNUALLY',
-			};
-
-			plans[ slug ] = plan;
-
-			return plans;
-		}, {} as Record< string, Plan > );
-
-		yield setPlans( plans );
-		yield setFeatures( features );
-		yield setFeaturesByType( rawPlansDetails.features_by_type );
-	} catch ( err ) {
-		// TODO: Add error handling
-		return;
-	}
+	yield setFeatures( features );
+	yield setFeaturesByType( plansFeatures.features_by_type );
+	yield setPlans( plans );
 }

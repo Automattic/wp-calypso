@@ -6,7 +6,6 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { PricesMap, DiscountsMap } from './types';
 import type { State } from './reducer';
 import {
 	DEFAULT_ANNUAL_PAID_PLAN,
@@ -37,34 +36,38 @@ export const getDefaultPaidPlan = (
 	_: State,
 	locale: string,
 	billPeriod: Plan[ 'billPeriod' ] = 'ANNUALLY'
-): Plan => {
-	return select( STORE_KEY ).getPlansDetails( locale )?.plans[
-		billPeriod === 'ANNUALLY' ? DEFAULT_ANNUAL_PAID_PLAN : DEFAULT_MONTHLY_PAID_PLAN
-	];
+): Plan | undefined => {
+	const targetSlug =
+		billPeriod === 'ANNUALLY' ? DEFAULT_ANNUAL_PAID_PLAN : DEFAULT_MONTHLY_PAID_PLAN;
+
+	return select( STORE_KEY )
+		.getSupportedPlans( locale )
+		.find( ( plan ) => plan.storeSlug === targetSlug );
 };
 
-export const getDefaultFreePlan = ( _: State, locale: string ): Plan => {
-	return select( STORE_KEY ).getPlansDetails( locale )?.plans[ PLAN_FREE ];
+export const getDefaultFreePlan = ( _: State, locale: string ): Plan | undefined => {
+	return select( STORE_KEY )
+		.getSupportedPlans( locale )
+		.find( ( plan ) => plan.storeSlug === PLAN_FREE );
 };
 
-export const getSupportedPlans = ( state: State ): Plan[] => {
-	const supportedPlans: Plan[] = state.supportedPlanSlugs
+export const getSupportedPlans = (
+	state: State,
+	locale?: string,
+	billingPeriod?: Plan[ 'billPeriod' ] | undefined
+): Plan[] => {
+	let supportedPlans: Plan[] = Object.keys( state.plans )
 		.map( ( slug ) => state.plans[ slug ] )
 		.filter( Boolean );
 
-	return supportedPlans;
-};
-
-export const getPeriodSupportedPlans = (
-	state: State,
-	billingPeriod: Plan[ 'billPeriod' ] = 'ANNUALLY'
-): Plan[] => {
-	const supportedPlans: Plan[] = getSupportedPlans( state ).filter( ( plan ) => {
-		if ( plan.isFree || billingPeriod === plan.billPeriod ) {
-			return true;
-		}
-		return false;
-	} );
+	if ( billingPeriod ) {
+		supportedPlans = supportedPlans.filter( ( plan ) => {
+			if ( plan.isFree || billingPeriod === plan.billPeriod ) {
+				return true;
+			}
+			return false;
+		} );
+	}
 
 	return supportedPlans;
 };
@@ -77,14 +80,6 @@ export const getPlansDetails = ( state: State, _: string ): State => state;
 
 export const getPlansPaths = ( state: State ): string[] => {
 	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
-};
-
-export const getPrices = ( state: State, _: string ): PricesMap => state.prices;
-
-export const getDiscounts = ( state: State, locale: string ): DiscountsMap => {
-	// call getPrices to trigger the resolver in case someone only wants to get the discounts
-	select( STORE_KEY ).getPrices( locale );
-	return state.discounts;
 };
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {
