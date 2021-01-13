@@ -164,7 +164,8 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': isAutomatticTeamMember( this.props.teams ),
+			'is-nav-unification':
+				isAutomatticTeamMember( this.props.teams ) && config.isEnabled( 'nav-unification' ),
 		} );
 
 		const optionalBodyProps = () => {
@@ -178,13 +179,6 @@ class Layout extends Component {
 		};
 
 		const { shouldShowAppBanner } = this.props;
-
-		if ( isAutomatticTeamMember( this.props.teams ) ) {
-			config.enable( 'nav-unification' );
-		} else {
-			config.disable( 'nav-unification' );
-		}
-
 		return (
 			<div className={ sectionClass }>
 				<QueryExperiments />
