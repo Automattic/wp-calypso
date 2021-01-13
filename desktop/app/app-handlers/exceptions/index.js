@@ -6,9 +6,9 @@ const { app, dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const crashTracker = require( 'calypso/desktop/lib/crash-tracker' );
-const system = require( 'calypso/desktop/lib/system' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:exceptions', {
+const crashTracker = require( 'app/lib/crash-tracker' );
+const system = require( 'app/lib/system' );
+const log = require( 'app/lib/logger' )( 'desktop:exceptions', {
 	handleExceptions: true,
 } );
 

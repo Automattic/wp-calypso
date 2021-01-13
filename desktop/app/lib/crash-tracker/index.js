@@ -8,9 +8,9 @@ const path = require( 'path' );
 /**
  * Internal dependencies
  */
-const config = require( 'calypso/desktop/lib/config' );
-const system = require( 'calypso/desktop/lib/system' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:crash-tracker' );
+const config = require( 'app/lib/config' );
+const system = require( 'app/lib/system' );
+const log = require( 'app/lib/logger' )( 'desktop:crash-tracker' );
 
 function finished( error, response, cb ) {
 	if ( error ) {

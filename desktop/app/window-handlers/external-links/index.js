@@ -7,11 +7,11 @@ const { URL, format } = require( 'url' );
 /**
  * Internal dependencies
  */
-const Config = require( 'calypso/desktop/lib/config' );
+const Config = require( 'app/lib/config' );
 const { handleJetpackEnableSSO, handleUndefined } = require( './editor' );
 const openInBrowser = require( './open-in-browser' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:external-links' );
-const platform = require( 'calypso/desktop/lib/platform' );
+const log = require( 'app/lib/logger' )( 'desktop:external-links' );
+const platform = require( 'app/lib/platform' );
 
 /**
  * Module variables

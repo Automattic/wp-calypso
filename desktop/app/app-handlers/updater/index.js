@@ -6,12 +6,12 @@ const { app } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const platform = require( 'calypso/desktop/lib/platform' );
-const Config = require( 'calypso/desktop/lib/config' );
-const settings = require( 'calypso/desktop/lib/settings' );
+const platform = require( 'app/lib/platform' );
+const Config = require( 'app/lib/config' );
+const settings = require( 'app/lib/settings' );
 const AutoUpdater = require( './auto-updater' );
 const ManualUpdater = require( './manual-updater' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:updater' );
+const log = require( 'app/lib/logger' )( 'desktop:updater' );
 
 let updater = false;
 

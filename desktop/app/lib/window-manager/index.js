@@ -26,7 +26,7 @@ app.on( 'ready', () => {
 /**
  * Internal dependencies
  */
-const Config = require( 'calypso/desktop/lib/config' );
+const Config = require( 'app/lib/config' );
 
 /**
  * Module variables

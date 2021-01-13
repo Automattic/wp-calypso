@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 require( './env' ); // Must come first to setup the environment
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:index' );
+const log = require( 'app/lib/logger' )( 'desktop:index' );
 
 module.exports = function ( finished_cb ) {
 	log.info( 'Starting app handlers' );
@@ -18,7 +18,7 @@ module.exports = function ( finished_cb ) {
 	log.info( 'Waiting for app window to load' );
 
 	// Start the main window
-	require( './server' )( function ( mainWindow ) {
+	require( './mainWindow' )( function ( mainWindow ) {
 		log.info( 'Starting window handlers' );
 
 		// Stuff that needs a mainWindow handle

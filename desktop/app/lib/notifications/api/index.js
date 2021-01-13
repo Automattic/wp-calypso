@@ -7,9 +7,9 @@ const EventEmitter = require( 'events' ).EventEmitter;
 /*
  * Internal dependencies
  */
-const state = require( 'calypso/desktop/lib/state' );
+const state = require( 'app/lib/state' );
 const { fetchNote, markReadStatus } = require( './notes' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:notifications:api' );
+const log = require( 'app/lib/logger' )( 'desktop:notifications:api' );
 
 /*
  * Module constants

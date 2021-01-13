@@ -58,7 +58,7 @@ if ( Settings.isDebug() ) {
  * These setup things for Calypso. We have to do them inside the app as we can't set any env variables in the packaged release
  * This has to come after the DEBUG_* variables
  */
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:boot' );
+const log = require( 'app/lib/logger' )( 'desktop:boot' );
 log.info( `Booting ${ config.appPathName + ' v' + config.version }` );
 log.info( `App Path: ${ app.getAppPath() }` );
 log.info( `App Data: ${ app.getPath( 'userData' ) }` );

@@ -6,15 +6,15 @@ const { dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const ipc = require( 'calypso/desktop/lib/calypso-commands' );
-const Config = require( 'calypso/desktop/lib/config' );
-const Settings = require( 'calypso/desktop/lib/settings' );
-const WindowManager = require( 'calypso/desktop/lib/window-manager' );
-const platform = require( 'calypso/desktop/lib/platform' );
-const AppQuit = require( 'calypso/desktop/lib/app-quit' );
+const ipc = require( 'app/lib/calypso-commands' );
+const Config = require( 'app/lib/config' );
+const Settings = require( 'app/lib/settings' );
+const WindowManager = require( 'app/lib/window-manager' );
+const platform = require( 'app/lib/platform' );
+const AppQuit = require( 'app/lib/app-quit' );
 const debugMenu = require( './debug-menu' );
-const { getUpdater } = require( 'calypso/desktop/app-handlers/updater' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:menu' );
+const { getUpdater } = require( 'app/app-handlers/updater' );
+const log = require( 'app/lib/logger' )( 'desktop:menu' );
 
 /**
  * Module variables

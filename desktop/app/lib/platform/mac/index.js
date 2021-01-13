@@ -6,9 +6,9 @@ const { app, Menu } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const appQuit = require( 'calypso/desktop/lib/app-quit' );
-const menuSetter = require( 'calypso/desktop/lib/menu-setter' );
-const log = require( 'calypso/desktop/lib/logger' )( 'platform:mac' );
+const appQuit = require( 'app/lib/app-quit' );
+const menuSetter = require( 'app/lib/menu-setter' );
+const log = require( 'app/lib/logger' )( 'platform:mac' );
 
 function MacPlatform( mainWindow ) {
 	this.window = mainWindow;

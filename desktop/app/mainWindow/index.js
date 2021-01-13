@@ -8,15 +8,14 @@ const path = require( 'path' );
 /**
  * Internal dependencies
  */
-const Config = require( 'calypso/desktop/lib/config' );
-const { start } = require( './server' );
-const Settings = require( 'calypso/desktop/lib/settings' );
-const settingConstants = require( 'calypso/desktop/lib/settings/constants' );
-const cookieAuth = require( 'calypso/desktop/lib/cookie-auth' );
-const appInstance = require( 'calypso/desktop/lib/app-instance' );
-const platform = require( 'calypso/desktop/lib/platform' );
-const System = require( 'calypso/desktop/lib/system' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:runapp' );
+const Config = require( 'app/lib/config' );
+const Settings = require( 'app/lib/settings' );
+const settingConstants = require( 'app/lib/settings/constants' );
+const cookieAuth = require( 'app/lib/cookie-auth' );
+const appInstance = require( 'app/lib/app-instance' );
+const platform = require( 'app/lib/platform' );
+const System = require( 'app/lib/system' );
+const log = require( 'app/lib/logger' )( 'desktop:runapp' );
 
 /**
  * Module variables
@@ -24,16 +23,8 @@ const log = require( 'calypso/desktop/lib/logger' )( 'desktop:runapp' );
 let mainWindow = null;
 
 function showAppWindow() {
-	const preloadFile = path.resolve(
-		path.join( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' )
-	);
-	let appUrl = Config.server_url + ':' + Config.server_port;
-	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
-
-	if ( lastLocation && isValidLastLocation( lastLocation ) ) {
-		appUrl += lastLocation;
-	}
-
+	const preloadFile = path.resolve( path.join( __dirname, '..', 'public_desktop', 'preload.js' ) );
+	const appUrl = Settings.getSetting( settingConstants.LAST_LOCATION );
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
@@ -48,15 +39,11 @@ function showAppWindow() {
 	mainWindow = new BrowserWindow( config );
 
 	cookieAuth( mainWindow, function () {
-		mainWindow.webContents.send( 'cookie-auth-complete' );
+		// no-op
 	} );
 
 	mainWindow.webContents.on( 'did-finish-load', function () {
 		mainWindow.webContents.send( 'app-config', System.getDetails() );
-
-		ipc.on( 'mce-contextmenu', function ( ev ) {
-			mainWindow.webContents.send( 'mce-contextmenu', ev );
-		} );
 	} );
 
 	mainWindow.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
@@ -105,9 +92,7 @@ function showAppWindow() {
 	mainWindow.on( 'close', function () {
 		const currentURL = mainWindow.webContents.getURL();
 		const parsedURL = url.parse( currentURL );
-		if ( isValidLastLocation( parsedURL.pathname ) ) {
-			Settings.saveSetting( settingConstants.LAST_LOCATION, parsedURL.pathname );
-		}
+		Settings.saveSetting( settingConstants.LAST_LOCATION, parsedURL.href );
 	} );
 
 	mainWindow.on( 'closed', function () {
@@ -118,33 +103,6 @@ function showAppWindow() {
 	platform.setMainWindow( mainWindow );
 
 	return mainWindow;
-}
-
-function startServer( started_cb ) {
-	log.info( 'App is ready, starting server' );
-
-	start( app, function () {
-		started_cb( showAppWindow() );
-	} );
-}
-
-function isValidLastLocation( loc ) {
-	const invalids = [
-		'/desktop/', // Page shown when no Electron
-		'/start', // Don't attempt to resume the signup flow
-	];
-
-	if ( typeof loc !== 'string' ) {
-		return false;
-	}
-
-	for ( const s of invalids ) {
-		if ( loc.startsWith( s ) ) {
-			return false;
-		}
-	}
-
-	return true;
 }
 
 module.exports = function ( started_cb ) {

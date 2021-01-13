@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-const ipc = require( 'calypso/desktop/lib/calypso-commands' );
+const ipc = require( 'app/lib/calypso-commands' );
 
 module.exports = function ( mainWindow, status ) {
 	status = status === 'enabled' ? true : false;

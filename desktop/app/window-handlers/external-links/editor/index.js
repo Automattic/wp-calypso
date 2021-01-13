@@ -8,11 +8,11 @@ const { dialog, ipcMain: ipc } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const Settings = require( 'calypso/desktop/lib/settings' );
+const Settings = require( 'app/lib/settings' );
 const openInBrowser = require( '../open-in-browser' );
-const { showMySites } = require( 'calypso/desktop/lib/calypso-commands' );
-const settingConstants = require( 'calypso/desktop/lib/settings/constants' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:external-links:handle-jetpack' );
+const { showMySites } = require( 'app/lib/calypso-commands' );
+const settingConstants = require( 'app/lib/settings/constants' );
+const log = require( 'app/lib/logger' )( 'desktop:external-links:handle-jetpack' );
 
 /**
  * Module variables

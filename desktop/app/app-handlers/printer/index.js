@@ -6,7 +6,7 @@ const { BrowserWindow, ipcMain: ipc } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:printer' );
+const log = require( 'app/lib/logger' )( 'desktop:printer' );
 
 module.exports = function () {
 	ipc.on( 'print', function ( event, title, contents ) {

@@ -44,7 +44,7 @@ module.exports = function ( mainWindow ) {
 
 			const menuItems = [ selectAll, cut, copy, paste ];
 
-			if ( params?.dictionarySuggestions?.length > 0 ) {
+			if ( params && params.dictionarySuggestions && params.dictionarySuggestions.length > 0 ) {
 				menu.append( new MenuItem( { type: 'separator' } ) );
 			}
 

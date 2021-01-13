@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:ipc' );
+const log = require( 'app/lib/logger' )( 'desktop:ipc' );
 
 module.exports = {
 	showMySites: function ( mainWindow ) {

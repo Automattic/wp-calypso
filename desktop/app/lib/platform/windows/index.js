@@ -7,12 +7,12 @@ const { Tray, Menu, app } = require( 'electron' );
  * Internal dependencies
  */
 const windowsTrayMenu = require( './tray-menu' );
-const Settings = require( 'calypso/desktop/lib/settings' );
-const appQuit = require( 'calypso/desktop/lib/app-quit' );
-const platform = require( 'calypso/desktop/lib/platform' );
-const menuSetter = require( 'calypso/desktop/lib/menu-setter' );
-const assets = require( 'calypso/desktop/lib/assets' );
-const log = require( 'calypso/desktop/lib/logger' )( 'platform:windows' );
+const Settings = require( 'app/lib/settings' );
+const appQuit = require( 'app/lib/app-quit' );
+const platform = require( 'app/lib/platform' );
+const menuSetter = require( 'app/lib/menu-setter' );
+const assets = require( 'app/lib/assets' );
+const log = require( 'app/lib/logger' )( 'platform:windows' );
 
 /**
  * Module variables
