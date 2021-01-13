@@ -53,6 +53,7 @@ import {
 	isBusiness,
 	isSiteRedirect,
 	isTheme,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 import { isExternal } from 'calypso/lib/url';
 import JetpackPlanDetails from './jetpack-plan-details';
@@ -537,6 +538,8 @@ export class CheckoutThankYou extends React.Component {
 				return [ SiteRedirectDetails, ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
 			} else if ( purchases.some( isDomainTransfer ) ) {
 				return [ false, ...findPurchaseAndDomain( purchases, isDomainTransfer ) ];
+			} else if ( purchases.some( isTitanMail ) ) {
+				return [ false, ...findPurchaseAndDomain( purchases, isTitanMail ) ];
 			} else if ( purchases.some( isChargeback ) ) {
 				return [ ChargebackDetails, find( purchases, isChargeback ) ];
 			} else if ( purchases.some( isGuidedTransfer ) ) {
