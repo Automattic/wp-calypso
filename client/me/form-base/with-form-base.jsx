@@ -8,17 +8,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import {
-	setUserSetting,
 	clearUnsavedUserSettings,
+	setUserSetting,
 	saveUserSettings,
 } from 'calypso/state/user-settings/actions';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const withFormBase = ( WrappedComponent ) => {
 	class EnhancedComponent extends React.Component {
