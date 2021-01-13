@@ -174,6 +174,7 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean } >`
 
 	> .segmented-control {
 		margin: 0 auto 0;
+		border: solid 1px var( --color-neutral-10 );
 
 		@media screen and ( max-width: 960px ) {
 			margin-bottom: ${ ( { showingMonthly } ) => ( showingMonthly ? '65px' : 0 ) };
@@ -195,6 +196,10 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean } >`
 
 		&:last-of-type {
 			padding-right: var( --item-padding );
+		}
+
+		&:last-of-type .segmented-control__link {
+			border-right: none;
 		}
 	}
 
