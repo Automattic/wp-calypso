@@ -13,7 +13,6 @@ import debugFactory from 'debug';
 import PlansTable from '../plans-table';
 import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
-import PlansIntervalToggle, { BillingIntervalType } from '../plans-interval-toggle';
 import type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
 
 /**
@@ -65,21 +64,9 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 	isAccordion && debug( 'PlansGrid accordion version is active' );
 
-	const [ billingInterval, setBillingInterval ] = React.useState< BillingIntervalType >( 'yearly' );
-
 	return (
 		<div className="plans-grid">
 			{ header && <div className="plans-grid__header">{ header }</div> }
-
-			<PlansIntervalToggle
-				intervalType={ billingInterval }
-				onChange={ ( selectedInterval ) => {
-					setBillingInterval( selectedInterval );
-					console.log( `Toggle updated! New value: ${ selectedInterval }` );
-				} }
-				maxSavingsPerc={ 14 }
-				className="plans-grid__toggle"
-			/>
 
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
