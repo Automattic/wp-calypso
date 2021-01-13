@@ -63,11 +63,15 @@ function getSiteDestination( dependencies ) {
 }
 
 function getRedirectDestination( dependencies ) {
-	if (
-		dependencies.oauth2_redirect &&
-		new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
-	) {
-		return dependencies.oauth2_redirect;
+	try {
+		if (
+			dependencies.oauth2_redirect &&
+			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
+		) {
+			return dependencies.oauth2_redirect;
+		}
+	} catch {
+		return '/';
 	}
 
 	return '/';

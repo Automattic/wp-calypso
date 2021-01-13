@@ -205,8 +205,12 @@ export class UserStep extends Component {
 	};
 
 	isOauth2RedirectValid( oauth2Redirect ) {
-		const url = new URL( oauth2Redirect );
-		return url.host === 'public-api.wordpress.com';
+		try {
+			const url = new URL( oauth2Redirect );
+			return url.host === 'public-api.wordpress.com';
+		} catch {
+			return false;
+		}
 	}
 
 	submit = ( data ) => {
