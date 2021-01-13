@@ -24,7 +24,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'settings', () => {
-		test( 'should default to a `null` value', () => {
+		test( 'should default to an empty object', () => {
 			const state = settings( undefined, {} );
 
 			expect( state ).toEqual( {} );
