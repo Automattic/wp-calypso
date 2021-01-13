@@ -296,7 +296,7 @@
 		"webpack": "^4.44.2",
 		"webpack-bundle-analyzer": "^3.7.0",
 		"webpack-cli": "^3.3.12",
-		"webpack-dev-server": "^3.11.0",
+		"webpack-dev-server": "^3.11.2",
 		"webpack-sources": "^2.0.1",
 		"whybundled": "^1.4.2",
 		"wpcom": "^6.0.0",
