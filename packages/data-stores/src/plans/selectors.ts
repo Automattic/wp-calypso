@@ -53,7 +53,7 @@ export const getDefaultFreePlan = ( _: State, locale: string ): Plan | undefined
 
 export const getSupportedPlans = (
 	state: State,
-	locale?: string,
+	_locale?: string,
 	billingPeriod?: Plan[ 'billPeriod' ] | undefined
 ): Plan[] => {
 	let supportedPlans: Plan[] = Object.keys( state.plans )
