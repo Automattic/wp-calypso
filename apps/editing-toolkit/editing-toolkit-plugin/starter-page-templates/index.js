@@ -23,6 +23,7 @@ const {
 	screenAction,
 	theme,
 	isFrontPage,
+	locale,
 	hideFrontPageTitle,
 } = window.starterPageTemplatesConfig;
 
@@ -36,6 +37,7 @@ const templatesPluginSharedProps = {
 	theme,
 	vertical,
 	isFrontPage,
+	locale,
 	hidePageTitle: Boolean( isFrontPage && hideFrontPageTitle ),
 };
 

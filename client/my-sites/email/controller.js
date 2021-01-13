@@ -13,6 +13,7 @@ import { emailManagementAddGSuiteUsers } from 'calypso/my-sites/email/paths';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import TitanMailQuantitySelection from 'calypso/my-sites/email/titan-mail-quantity-selection';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
@@ -40,6 +41,12 @@ export default {
 				/>
 			</CalypsoShoppingCartProvider>
 		);
+
+		next();
+	},
+
+	emailManagementManageTitanAccount( pageContext, next ) {
+		pageContext.primary = <TitanManagementIframe domainName={ pageContext.params.domain } />;
 
 		next();
 	},

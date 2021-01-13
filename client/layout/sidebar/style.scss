@@ -38,6 +38,13 @@
 	li {
 		list-style: none;
 	}
+
+	.count {
+		margin-left: 8px;
+		background-color: var( --color-sidebar-menu-hover-background );
+		border-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
+	}
 }
 
 // This button is hidden until focused. It allows screen-readers
@@ -141,22 +148,6 @@
 		}
 	}
 
-	.count {
-		margin-left: 8px;
-		color: var( --color-sidebar-menu-hover-text );
-		background-color: var( --color-sidebar-menu-hover-background );
-		border-color: var( --color-sidebar-menu-hover-background );
-		line-height: 0;
-		padding: 8px 6px;
-		position: absolute;
-		top: 9px;
-
-		// No positioning necessary for submenu items.
-		.sidebar__menu-item--child & {
-			top: 6px;
-		}
-	}
-
 	.badge {
 		margin: -7px 0 -8px;
 	}
@@ -233,6 +224,12 @@
 			.sidebar__expandable-arrow {
 				fill: var( --color-sidebar-menu-hover-text );
 			}
+
+			.count {
+				background-color: transparent;
+				border-color: var( --color-sidebar-menu-selected-text );
+				color: var( --color-sidebar-menu-selected-text );
+			}
 		}
 	}
 
@@ -252,6 +249,11 @@
 	&.is-toggle-open {
 		.sidebar__expandable-arrow {
 			transform: rotate( 180deg );
+		}
+		.count {
+			background-color: transparent;
+			border-color: var( --color-sidebar-menu-selected-text );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 	}
 }
