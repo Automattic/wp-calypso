@@ -8,7 +8,10 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, fetchingItems } from '../reducer';
-import { PLUGINS_WPORG_PLUGIN_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'calypso/state/action-types';
+import {
+	PLUGINS_WPORG_PLUGIN_RECEIVE,
+	PLUGINS_WPORG_PLUGIN_REQUEST,
+} from 'calypso/state/action-types';
 
 describe( 'wporg reducer', () => {
 	describe( 'items', () => {
@@ -43,7 +46,7 @@ describe( 'wporg reducer', () => {
 	describe( 'fetchingItems', () => {
 		test( 'should track when fetches start', () => {
 			const state = fetchingItems( undefined, {
-				type: FETCH_WPORG_PLUGIN_DATA,
+				type: PLUGINS_WPORG_PLUGIN_REQUEST,
 				pluginSlug: 'akismet',
 			} );
 			expect( state ).to.deep.equal( { akismet: true } );
@@ -51,7 +54,7 @@ describe( 'wporg reducer', () => {
 		test( 'keeps track of multiple plugins', () => {
 			const originalState = deepFreeze( { akismet: true } );
 			const state = fetchingItems( originalState, {
-				type: FETCH_WPORG_PLUGIN_DATA,
+				type: PLUGINS_WPORG_PLUGIN_REQUEST,
 				pluginSlug: 'dolly',
 			} );
 			expect( state ).to.deep.equal( { akismet: true, dolly: true } );

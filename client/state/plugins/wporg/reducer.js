@@ -2,7 +2,10 @@
  * Internal dependencies
  */
 
-import { PLUGINS_WPORG_PLUGIN_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'calypso/state/action-types';
+import {
+	PLUGINS_WPORG_PLUGIN_RECEIVE,
+	PLUGINS_WPORG_PLUGIN_REQUEST,
+} from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
@@ -13,7 +16,7 @@ function updatePluginState( state = {}, pluginSlug, attributes ) {
 
 export function fetchingItems( state = {}, action ) {
 	switch ( action.type ) {
-		case FETCH_WPORG_PLUGIN_DATA:
+		case PLUGINS_WPORG_PLUGIN_REQUEST:
 			return Object.assign( {}, state, { [ action.pluginSlug ]: true } );
 		case PLUGINS_WPORG_PLUGIN_RECEIVE:
 			return Object.assign( {}, state, { [ action.pluginSlug ]: false } );
