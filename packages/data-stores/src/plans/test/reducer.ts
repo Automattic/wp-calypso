@@ -2,65 +2,10 @@
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { setPrices, setPlans, setFeaturesByType, setFeatures } from '../actions';
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-} from '../constants';
+import { setPlans, setFeaturesByType, setFeatures } from '../actions';
+import { PLAN_FREE, PLAN_PREMIUM } from '../constants';
 
 describe( 'Plans reducer', () => {
-	describe( 'Prices', () => {
-		it( 'defaults to no price info', () => {
-			const { prices } = reducer( undefined, { type: 'DUMMY' } );
-			expect( prices[ PLAN_FREE ] ).toBe( '' );
-			expect( prices[ PLAN_PERSONAL ] ).toBe( '' );
-			expect( prices[ PLAN_PREMIUM ] ).toBe( '' );
-			expect( prices[ PLAN_BUSINESS ] ).toBe( '' );
-			expect( prices[ PLAN_ECOMMERCE ] ).toBe( '' );
-		} );
-
-		it( 'replaces old prices with new prices', () => {
-			const state = reducer(
-				undefined,
-				setPrices( {
-					[ PLAN_PERSONAL ]: '$1',
-					[ PLAN_PREMIUM ]: '$3',
-				} )
-			);
-			const { prices } = reducer(
-				state,
-				setPrices( {
-					[ PLAN_PERSONAL ]: '$2',
-				} )
-			);
-
-			expect( prices[ PLAN_PERSONAL ] ).toBe( '$2' );
-			expect( prices[ PLAN_PREMIUM ] ).toBeUndefined();
-		} );
-	} );
-
-	describe( 'Supported Plan Slugs', () => {
-		it( 'defaults to a list of supported plans', () => {
-			const state = reducer( undefined, { type: 'DUMMY' } );
-			expect( state.supportedPlanSlugs.sort() ).toEqual(
-				[
-					'business-bundle',
-					'business-bundle-monthly',
-					'ecommerce-bundle',
-					'ecommerce-bundle-monthly',
-					'free_plan',
-					'personal-bundle',
-					'personal-bundle-monthly',
-					'value_bundle',
-					'value_bundle_monthly',
-				].sort()
-			);
-		} );
-	} );
-
 	describe( 'Plans', () => {
 		it( 'defaults to no plans info', () => {
 			const { plans } = reducer( undefined, { type: 'DUMMY' } );
@@ -78,6 +23,8 @@ describe( 'Plans reducer', () => {
 						storeSlug: PLAN_FREE,
 						pathSlug: 'free',
 						features: [],
+						price: '0',
+						rawPrice: 0,
 					},
 					[ PLAN_PREMIUM ]: {
 						title: 'premium',
@@ -86,6 +33,8 @@ describe( 'Plans reducer', () => {
 						storeSlug: PLAN_PREMIUM,
 						pathSlug: 'premium',
 						features: [],
+						price: '1',
+						rawPrice: 1,
 					},
 				} )
 			);
@@ -99,6 +48,8 @@ describe( 'Plans reducer', () => {
 						storeSlug: PLAN_FREE,
 						pathSlug: 'free',
 						features: [],
+						price: '0',
+						rawPrice: 0,
 					},
 				} )
 			);

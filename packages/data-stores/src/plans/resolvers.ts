@@ -69,13 +69,17 @@ export function* getSupportedPlans( locale = 'en' ) {
 			( pricedPlan ) => pricedPlan.product_slug === slug
 		) as PricedAPIPlan;
 
-		// each details objects has a products[] array containing all the plans' ID it includes
-		// find the right details object using this array
+		if ( ! pricedPlan ) {
+			return plans;
+		}
+
+		// each details objects has a products[] array containing all the plans' ID it covers
+		// Here we find the right details object using this product id array
 		const {
 			features: planFeaturesSlugs,
 			...planDetails
 		} = plansFeatures.plans.find( ( planDetails ) =>
-			planDetails.products.find( ( product ) => product.plan_id === pricedPlan?.product_id )
+			planDetails.products.find( ( product ) => product.plan_id === pricedPlan.product_id )
 		) as APIPlanDetail;
 
 		plans[ slug ] = {
@@ -93,7 +97,7 @@ export function* getSupportedPlans( locale = 'en' ) {
 			isFree: pricedPlan.raw_price === 0,
 			isPopular: slug === PLAN_PREMIUM || slug === PLAN_PREMIUM_MONTHLY,
 			// useful to detect when the selected plan's period doesn't match the preferred interval
-			billPeriod: pricedPlan?.bill_period === 31 ? 'MONTHLY' : 'ANNUALLY',
+			billPeriod: pricedPlan.bill_period === 31 ? 'MONTHLY' : 'ANNUALLY',
 			rawPrice: pricedPlan.raw_price,
 			price:
 				pricedPlan?.bill_period === 31 ? pricedPlan.formatted_price : getMonthlyPrice( pricedPlan ),
@@ -106,11 +110,15 @@ export function* getSupportedPlans( locale = 'en' ) {
 		const annualPlan = plans[ billedYearlySlugs[ i ] ];
 		const monthlyPlan = plans[ billedMonthlySlugs[ i ] ];
 
-		const annualCostIfPaidMonthly = monthlyPlan.rawPrice * 12;
-		const annualCostIfPaidAnnually = annualPlan.rawPrice;
-		const discount = Math.round( 100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly ) );
-		plans[ billedYearlySlugs[ i ] ].annualDiscount = discount;
-		plans[ billedYearlySlugs[ i ] ].annualDiscount = discount;
+		if ( annualPlan && monthlyPlan ) {
+			const annualCostIfPaidMonthly = monthlyPlan.rawPrice * 12;
+			const annualCostIfPaidAnnually = annualPlan.rawPrice;
+			const discount = Math.round(
+				100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly )
+			);
+			plans[ billedYearlySlugs[ i ] ].annualDiscount = discount;
+			plans[ billedYearlySlugs[ i ] ].annualDiscount = discount;
+		}
 	}
 
 	const features = plansFeatures.features.reduce( ( features, feature ) => {
