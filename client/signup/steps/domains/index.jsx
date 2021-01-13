@@ -537,17 +537,19 @@ class DomainsStep extends React.Component {
 
 		return (
 			<div className="domains__step-section-wrapper" key="mappingForm">
-				<MapDomainStep
-					analyticsSection={ this.getAnalyticsSection() }
-					initialState={ initialState }
-					path={ this.props.path }
-					onRegisterDomain={ this.handleAddDomain }
-					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
-					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					products={ this.props.productsList }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-				/>
+				<CalypsoShoppingCartProvider>
+					<MapDomainStep
+						analyticsSection={ this.getAnalyticsSection() }
+						initialState={ initialState }
+						path={ this.props.path }
+						onRegisterDomain={ this.handleAddDomain }
+						onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
+						onSave={ this.handleSave.bind( this, 'mappingForm' ) }
+						products={ this.props.productsList }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						initialQuery={ initialQuery }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};

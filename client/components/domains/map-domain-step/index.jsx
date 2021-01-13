@@ -7,6 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes, noop, get } from 'lodash';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -176,7 +177,7 @@ class MapDomainStep extends React.Component {
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					cart={ this.props.cart }
-					isCartPendingUpdate={ this.props.cart.hasPendingServerUpdates }
+					isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 					onButtonClick={ this.registerSuggestedDomain }
 				/>
 			</div>
@@ -273,4 +274,4 @@ export default connect(
 		recordInputFocusInMapDomain,
 		recordGoButtonClickInMapDomain,
 	}
-)( localize( MapDomainStep ) );
+)( withShoppingCart( localize( MapDomainStep ) ) );
