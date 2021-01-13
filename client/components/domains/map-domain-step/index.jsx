@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes, noop, get } from 'lodash';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -58,6 +59,7 @@ class MapDomainStep extends React.Component {
 	state = {
 		...this.props.initialState,
 		searchQuery: this.props.initialQuery,
+		isPendingSubmit: false,
 	};
 
 	componentWillUnmount() {
@@ -119,15 +121,16 @@ class MapDomainStep extends React.Component {
 							onClick={ this.recordInputFocus }
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
-						<button
-							disabled={ ! getTld( searchQuery ) }
+						<Button
+							busy={ this.state.isPendingSubmit }
+							disabled={ ! getTld( searchQuery ) || this.state.isPendingSubmit }
 							className="map-domain-step__go button is-primary"
-							onClick={ this.recordGoButtonClick }
+							onClick={ this.handleAddButtonClick }
 						>
 							{ translate( 'Add', {
 								context: 'Upgrades: Label for mapping an existing domain',
 							} ) }
-						</button>
+						</Button>
 					</div>
 
 					{ this.domainRegistrationUpsell() }
@@ -208,12 +211,17 @@ class MapDomainStep extends React.Component {
 		this.setState( { searchQuery: event.target.value } );
 	};
 
+	handleAddButtonClick = ( event ) => {
+		this.recordGoButtonClick();
+		this.handleFormSubmit( event );
+	};
+
 	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
 		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
-		this.setState( { suggestion: null, notice: null } );
+		this.setState( { suggestion: null, notice: null, isPendingSubmit: true } );
 
 		checkDomainAvailability(
 			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
@@ -230,7 +238,7 @@ class MapDomainStep extends React.Component {
 				} = domainAvailability;
 
 				if ( status === AVAILABLE ) {
-					this.setState( { suggestion: result } );
+					this.setState( { suggestion: result, isPendingSubmit: false } );
 					return;
 				}
 
@@ -238,6 +246,7 @@ class MapDomainStep extends React.Component {
 					! includes( [ AVAILABILITY_CHECK_ERROR, NOT_REGISTRABLE ], status ) &&
 					includes( [ MAPPABLE, UNKNOWN ], mappableStatus )
 				) {
+					// No need to disable isPendingSubmit because this handler should perform a redirect
 					this.props.onMapDomain( domain );
 					return;
 				}
@@ -254,7 +263,7 @@ class MapDomainStep extends React.Component {
 					site,
 					maintenanceEndTime,
 				} );
-				this.setState( { notice: message, noticeSeverity: severity } );
+				this.setState( { notice: message, noticeSeverity: severity, isPendingSubmit: false } );
 			}
 		);
 	};
