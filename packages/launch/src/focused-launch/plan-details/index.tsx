@@ -49,7 +49,7 @@ const PlanDetails: React.FunctionComponent = () => {
 				<Title tagName="h2">{ __( 'Select a plan', __i18n_text_domain__ ) }</Title>
 				<SubTitle tagName="h3">
 					{ __(
-						"There's no risk, you can cancel for a full refund within 30 days.",
+						"There's no risk, you can cancel for a full refund within 14 days.",
 						__i18n_text_domain__
 					) }
 				</SubTitle>
