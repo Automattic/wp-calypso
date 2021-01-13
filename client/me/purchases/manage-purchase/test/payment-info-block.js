@@ -53,6 +53,34 @@ describe( 'PaymentInfoBlock', () => {
 		} );
 	} );
 
+	it( 'renders "None" when the purchase has an expired credit card as the payment method', () => {
+		const expiryDate = new Date();
+		expiryDate.setDate( expiryDate.getDate() - 365 );
+		const purchase = {
+			expiryStatus: 'expired',
+			payment: {
+				type: 'credit_card',
+				creditCard: { number: '1234', expiryDate, type: 'mastercard' },
+			},
+		};
+		render( <PaymentInfoBlock purchase={ purchase } /> );
+		expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+	} );
+
+	it( 'renders "None" when the purchase has an nearly-expiring credit card as the payment method', () => {
+		const expiryDate = new Date();
+		expiryDate.setDate( expiryDate.getDate() - 365 );
+		const purchase = {
+			expiryStatus: 'expiring',
+			payment: {
+				type: 'credit_card',
+				creditCard: { number: '1234', expiryDate, type: 'mastercard' },
+			},
+		};
+		render( <PaymentInfoBlock purchase={ purchase } /> );
+		expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+	} );
+
 	describe( 'when the purchase has PayPal Direct as the payment method', () => {
 		const expiryDate = new Date();
 		expiryDate.setDate( expiryDate.getDate() + 365 );
