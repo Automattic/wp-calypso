@@ -45,7 +45,6 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import Experiment from 'calypso/components/experiment';
-import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 /**
  * Style dependencies
@@ -163,7 +162,7 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': this.props.navUnificationVariation === 'treatment',
+			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const optionalBodyProps = () => {
@@ -175,12 +174,6 @@ class Layout extends Component {
 
 			return optionalProps;
 		};
-
-		if ( this.props.navUnificationVariation === 'treatment' ) {
-			config.enable( 'nav-unification' );
-		} else {
-			config.disable( 'nav-unification' );
-		}
 
 		const { shouldShowAppBanner } = this.props;
 		return (
@@ -332,7 +325,6 @@ export default compose(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
-			navUnificationVariation: getVariationForUser( state, 'nav_unification_v2' ),
 		};
 	} )
 )( Layout );

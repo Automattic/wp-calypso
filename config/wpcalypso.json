@@ -113,7 +113,7 @@
 		"memberships": true,
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
-		"nav-unification": false,
+		"nav-unification": true,
 		"network-connection": true,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,

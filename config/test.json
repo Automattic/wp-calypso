@@ -83,7 +83,7 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"memberships": true,
-		"nav-unification": false,
+		"nav-unification": true,
 		"network-connection": true,
 		"perfmon": false,
 		"plans/personal-plan": true,
