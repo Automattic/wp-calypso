@@ -42,9 +42,7 @@
 	},
 	"devDependencies": {
 		"@storybook/addon-actions": "^6.1.10",
-		"enzyme": "^3.11.0",
-		"react-docgen-typescript-loader": "^3.7.2",
-		"ts-loader": "^8.0.8"
+		"enzyme": "^3.11.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
