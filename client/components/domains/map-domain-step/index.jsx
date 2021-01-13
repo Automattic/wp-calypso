@@ -125,7 +125,7 @@ class MapDomainStep extends React.Component {
 							busy={ this.state.isPendingSubmit }
 							disabled={ ! getTld( searchQuery ) || this.state.isPendingSubmit }
 							className="map-domain-step__go button is-primary"
-							onClick={ this.recordGoButtonClick }
+							onClick={ this.handleAddButtonClick }
 						>
 							{ translate( 'Add', {
 								context: 'Upgrades: Label for mapping an existing domain',
@@ -209,6 +209,11 @@ class MapDomainStep extends React.Component {
 
 	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: event.target.value } );
+	};
+
+	handleAddButtonClick = ( event ) => {
+		this.recordGoButtonClick();
+		this.handleFormSubmit( event );
 	};
 
 	handleFormSubmit = ( event ) => {
