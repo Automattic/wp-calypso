@@ -20,7 +20,7 @@ import config from 'calypso/config';
 import './style.scss';
 
 function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
-	if ( config.isEnabled( 'nav-unification' ) ) {
+	if ( config.isEnabled( 'nav-unification' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
 		return null;
 	}
 
