@@ -524,7 +524,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			clickHandler = this.visitDomain;
 		} else if ( isTrafficGuidePurchase ) {
 			clickHandler = this.downloadTrafficGuideHandler;
-		} else if ( isTitanMail( primaryPurchase ) || isGoogleApps( primaryPurchase ) ) {
+		} else if ( isTitanMail( primaryPurchase ) ) {
 			clickHandler = this.visitEmailManagement;
 		}
 
