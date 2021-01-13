@@ -74,6 +74,10 @@ class Privacy extends React.Component {
 					  } )
 			);
 		}
+
+		if ( oldProps.hasUnsavedUserSettings && ! this.props.hasUnsavedUserSettings ) {
+			this.props.markSaved();
+		}
 	}
 
 	updateTracksOptOut = ( isSendingTracksEvents ) => {
@@ -83,7 +87,7 @@ class Privacy extends React.Component {
 	submitForm = ( event ) => {
 		event.preventDefault();
 
-		this.props.saveUserSettings( null, () => this.props.markSaved() );
+		this.props.saveUserSettings();
 	};
 
 	render() {
