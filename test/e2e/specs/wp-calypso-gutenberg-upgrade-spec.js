@@ -162,7 +162,7 @@ function verifyBlockInPublishedPage( Block ) {
 	}
 }
 
-describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popular blocks:`, function () {
+describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popular blocks: @parallel`, function () {
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
 			this.timeout( startBrowserTimeoutMS );
@@ -184,20 +184,20 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 	this.timeout( mochaTimeOut );
 
 	[
-		// BlogPostsBlockComponent,
-		// ContactFormBlockComponent,
-		// ContactInfoBlockComponent,
-		// DynamicSeparatorBlockComponent,
-		// GalleryMasonryBlockComponent,
-		// LayoutGridBlockComponent,
-		// RatingStarBlockComponent,
-		// SlideshowBlockComponent,
+		BlogPostsBlockComponent,
+		ContactFormBlockComponent,
+		ContactInfoBlockComponent,
+		DynamicSeparatorBlockComponent,
+		GalleryMasonryBlockComponent,
+		LayoutGridBlockComponent,
+		RatingStarBlockComponent,
+		SlideshowBlockComponent,
 		SubscriptionsBlockComponent,
 		TiledGalleryBlockComponent,
 		YoutubeBlockComponent,
 		PremiumContentBlockComponent,
 	].forEach( ( Block ) => {
-		describe( `${ Block.blockName } @parallel`, function () {
+		describe( `${ Block.blockName }`, function () {
 			let currentGutenbergBlocksCode;
 
 			describe( `Test the block on a non-edge site`, function () {
