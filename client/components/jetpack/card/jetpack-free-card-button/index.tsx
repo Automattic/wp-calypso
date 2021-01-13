@@ -36,6 +36,7 @@ const JetpackFreeCardButton: FC< JetpackFreeCardButtonProps > = ( {
 	urlQueryArgs,
 } ) => {
 	const translate = useTranslate();
+	const isSiteinContext = !! siteId;
 	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
 	const onClickTrack = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
 		site_id: siteId || undefined,
@@ -43,9 +44,10 @@ const JetpackFreeCardButton: FC< JetpackFreeCardButtonProps > = ( {
 
 	// Jetpack Connect flow uses `url` instead of `site` as the query parameter for a site URL
 	const { site: url, ...restQueryArgs } = urlQueryArgs;
-	const startHref = isJetpackCloud()
-		? addQueryArgs( { url, ...restQueryArgs }, `https://wordpress.com${ JPC_PATH_BASE }` )
-		: wpAdminUrl || JPC_PATH_BASE;
+	const startHref =
+		isJetpackCloud() && ! isSiteinContext
+			? addQueryArgs( { url, ...restQueryArgs }, `https://wordpress.com${ JPC_PATH_BASE }` )
+			: wpAdminUrl || JPC_PATH_BASE;
 	return (
 		<Button primary={ primary } className={ className } href={ startHref } onClick={ onClickTrack }>
 			{ label || translate( 'Start for free' ) }
