@@ -48,7 +48,7 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		if ( isPaidWithCreditCard( purchase ) ) {
 			return (
 				<PaymentInfoBlockWrapper>
-					<PaymentLogo type={ logoType } />
+					<PaymentLogo type={ logoType } disabled={ isAutoRenewDisabled( purchase ) } />
 					{ purchase.payment.creditCard?.number ?? '' }
 				</PaymentInfoBlockWrapper>
 			);
@@ -57,7 +57,7 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		if ( isPaidWithPayPalDirect( purchase ) ) {
 			return (
 				<PaymentInfoBlockWrapper>
-					<PaymentLogo type={ logoType } />
+					<PaymentLogo type={ logoType } disabled={ isAutoRenewDisabled( purchase ) } />
 					{ translate( 'expiring %(cardExpiry)s', {
 						args: {
 							cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
