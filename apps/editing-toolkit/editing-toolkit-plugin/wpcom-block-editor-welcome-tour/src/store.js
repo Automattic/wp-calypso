@@ -12,6 +12,14 @@ const isNuxEnabledReducer = ( state = undefined, action ) => {
 			return state;
 	}
 };
+const isTourManuallyOpenedReducer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN':
+			return action.isTourManuallyOpened;
+		default:
+			return state;
+	}
+};
 
 // TODO: next PR convert file to Typescript to ensure control of tourRating values: null, 'thumbs-up' 'thumbs-down'
 const tourRatingReducer = ( state = undefined, action ) => {
@@ -25,6 +33,7 @@ const tourRatingReducer = ( state = undefined, action ) => {
 
 const reducer = combineReducers( {
 	isNuxEnabled: isNuxEnabledReducer,
+	isTourManuallyOpened: isTourManuallyOpenedReducer,
 	tourRating: tourRatingReducer,
 } );
 
@@ -45,16 +54,16 @@ const actions = {
 	setTourRating: ( tourRating ) => {
 		return { type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING', tourRating };
 	},
-	toggleWpcomTourManualOpenStatus: ( isTourManuallyOpen ) => {
+	setTourOpenStatus: ( { isTourManuallyOpened } ) => {
 		return {
-			type: 'WPCOM_BLOCK_EDITOR_TOGGLE_TOUR_MANUALLY_OPEN',
-			isManuallyOpen,
+			type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN',
+			isTourManuallyOpened,
 		};
 	},
 };
 
 const selectors = {
-	isWpcomTourManuallyOpen: ( state ) => state.isTourManuallyOpen,
+	isTourManuallyOpened: ( state ) => state.isTourManuallyOpened,
 	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
 	tourRating: ( state ) => state.tourRating,
 };
