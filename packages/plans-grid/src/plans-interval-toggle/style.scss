@@ -70,3 +70,43 @@
 		color: var( --studio-gray-90 );
 	}
 }
+
+.components-popover.plans-interval-toggle__popover {
+	&--mobile {
+		display: block;
+
+		@include break-medium {
+			display: none;
+		}
+	}
+
+	// `data-y-axis` needed to override original popover styles
+	&--desktop[data-y-axis='middle'] {
+		display: none;
+
+		// when `data-y-axis='middle'`, the default `display` value is `flex` instead of `block`
+		@include break-medium {
+			display: flex;
+		}
+	}
+
+	.components-popover__content {
+		max-width: 210px;
+		padding: 8px 10px;
+
+		background-color: var( --studio-gray-100 );
+		border-color: var( --studio-gray-100 );
+		color: var( --studio-white );
+
+		font-family: $default-font;
+		font-size: 0.75rem;
+		// Needed as otherwise it inherits `nowrap`
+		// from the segmented control parent element.
+		white-space: normal;
+	}
+
+	&:not( .is-without-arrow )::before,
+	&:not( .is-without-arrow )::after {
+		border-color: var( --studio-gray-100 );
+	}
+}
