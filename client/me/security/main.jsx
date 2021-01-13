@@ -74,7 +74,6 @@ class Security extends React.Component {
 					</p>
 
 					<AccountPassword
-						accountPasswordData={ this.props.accountPasswordData }
 						autocomplete="new-password"
 						// Hint to LastPass not to attempt autofill
 						data-lpignore="true"
