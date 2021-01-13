@@ -61,7 +61,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 	};
 
 	const handleTodoistClick = () => {
-		recordTracksEvent( 'calypso_marketing_business_todois_button_click' );
+		recordTracksEvent( 'calypso_marketing_business_todoist_button_click' );
 	};
 
 	const handleBenchClick = () => {
@@ -69,11 +69,11 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTrac
 	};
 
 	const handleStreakClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_streak_button_click' );
+		recordTracksEvent( 'calypso_marketing_business_streak_button_click' );
 	};
 
 	const handleBillcomClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_billcom_button_click' );
+		recordTracksEvent( 'calypso_marketing_business_billcom_button_click' );
 	};
 
 	return (
