@@ -18,8 +18,8 @@ import type { PlanProduct } from '../utils';
 export function usePlans(
 	billingPeriod: Plans.Plan[ 'billPeriod' ] = 'ANNUALLY'
 ): {
-	defaultPaidPlan: Plans.Plan;
-	defaultFreePlan: Plans.Plan;
+	defaultPaidPlan: Plans.Plan | undefined;
+	defaultFreePlan: Plans.Plan | undefined;
 } {
 	const locale = useLocale();
 
@@ -29,8 +29,6 @@ export function usePlans(
 	const defaultFreePlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getDefaultFreePlan( locale )
 	);
-
-	debugger
 
 	return { defaultPaidPlan, defaultFreePlan };
 }
