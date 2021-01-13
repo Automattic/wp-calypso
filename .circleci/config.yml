@@ -18,7 +18,7 @@ references:
       NODE_OPTIONS: --max-old-space-size=3072
       npm_config_cache: /home/circleci/.cache/yarn
       YARN_CACHE_FOLDER: /home/circleci/.cache/yarn
-      CHROME_VERSION: 84.0.4147.135-1
+      CHROME_VERSION: 87.0.4280.141-1
   desktop_defaults: &desktop_defaults
     working_directory: ~/wp-calypso
 

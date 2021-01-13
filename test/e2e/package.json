@@ -26,7 +26,7 @@
 		"@xmpp/plugins": "^0.3.0",
 		"asana-phrase": "^0.0.8",
 		"cached-path-relative": ">=1.0.2",
-		"chromedriver": "^87.0.0",
+		"chromedriver": "^87.0.5",
 		"concurrently": "^3.6.1",
 		"config": "^1.28.0",
 		"cryptiles": ">=4.1.2",

@@ -101,7 +101,7 @@ FROM ci-desktop as ci-e2e
 
 # This chrome image is the latest version that accepts SameSite=None
 # test/e2e/test/mocha.env.js will install a compatible chromedriver
-ENV CHROME_VERSION="84.0.4147.135-1"
+ENV CHROME_VERSION="87.0.4280.141-1"
 ENV DETECT_CHROMEDRIVER_VERSION=true
 
 RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
