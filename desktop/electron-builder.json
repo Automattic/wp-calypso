@@ -12,8 +12,6 @@
 		"build/*.desktop.js",
 		"build/assets-*.json",
 		"public_desktop",
-		"public/**/*",
-		"public/**/*.css.map",
 		"config/*.json"
 	],
 	"mac": {
