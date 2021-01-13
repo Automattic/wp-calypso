@@ -77,7 +77,7 @@ export function saveUserSettingsFailure( { settingsOverride }, error ) {
 	if ( settingsOverride?.password ) {
 		return [
 			errorNotice( translate( 'There was a problem saving your password. Please, try again.' ), {
-				id: 'update-settings-password-failure',
+				id: 'save-user-settings',
 			} ),
 			updateUserSettingsFailure( settingsOverride, error ),
 		];
@@ -85,7 +85,7 @@ export function saveUserSettingsFailure( { settingsOverride }, error ) {
 
 	return [
 		errorNotice( error.message || translate( 'There was a problem saving your changes.' ), {
-			id: 'save-user-settings-failure',
+			id: 'save-user-settings',
 		} ),
 		updateUserSettingsFailure( settingsOverride, error ),
 	];
@@ -117,7 +117,7 @@ export const finishUserSettingsSave = ( { settingsOverride, onSuccess }, data ) 
 
 	dispatch(
 		successNotice( translate( 'Settings saved successfully!' ), {
-			id: 'save-user-settings-success',
+			id: 'save-user-settings',
 		} )
 	);
 };
