@@ -1,22 +1,19 @@
-/**
- * External dependencies
- */
+// inspired from https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
+const randomInt = ( lower, upper ) => Math.floor( lower + Math.random() * ( upper - lower + 1 ) );
 
-import { random, sample } from 'lodash';
+// inspired from https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_sample
+const sample = ( arr ) =>
+	arr.length ? arr[ Math.floor( Math.random() * arr.length ) ] : undefined;
 
-export const LETTER_CHARSETS = {
-	lowerChars: 'abcdefghjkmnpqrstuvwxyz'.split( '' ),
-	upperChars: 'ABCDEFGHJKMNPQRSTUVWXYZ'.split( '' ),
-};
+const LETTER_CHARSETS = [
+	'abcdefghjkmnpqrstuvwxyz'.split( '' ),
+	'ABCDEFGHJKMNPQRSTUVWXYZ'.split( '' ),
+];
 
-export const CHARSETS = {
-	...LETTER_CHARSETS,
-	digitChars: '23456789'.split( '' ),
-	specialChars: '!@#$%^&*'.split( '' ),
-};
+const CHARSETS = [ ...LETTER_CHARSETS, '23456789'.split( '' ), '!@#$%^&*'.split( '' ) ];
 
 export const generatePassword = function () {
-	const length = random( 12, 35 );
+	const length = randomInt( 12, 35 );
 	const chars = Object.keys( CHARSETS ).map( ( charset ) => {
 		return sample( CHARSETS[ charset ] );
 	} );
