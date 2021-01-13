@@ -217,7 +217,7 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
-		"woocommerce/store-deprecated": false,
+		"woocommerce/store-deprecated": true,
 		"woocommerce/store-removed": false,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
