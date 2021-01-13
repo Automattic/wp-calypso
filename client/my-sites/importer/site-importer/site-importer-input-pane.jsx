@@ -33,7 +33,7 @@ import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-ac
 import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { appStates } from 'calypso/state/imports/constants';
-import { cancelImport, setUploadStartState } from 'calypso/lib/importer/actions';
+import { cancelImport, setUploadStartState } from 'calypso/state/imports/actions';
 import {
 	getError,
 	getImportData,
@@ -91,7 +91,7 @@ class SiteImporterInputPane extends React.Component {
 		} = this.props;
 
 		if ( ! includes( [ appStates.UPLOAD_SUCCESS ], importerState ) ) {
-			cancelImport( siteId, importerId );
+			this.props.cancelImport( siteId, importerId );
 			this.resetImport();
 		}
 	}
@@ -189,7 +189,7 @@ class SiteImporterInputPane extends React.Component {
 	importSite = () => {
 		// To track an "upload start"
 		const { importerId } = this.props.importerStatus;
-		setUploadStartState( importerId, this.props.validatedSiteUrl );
+		this.props.setUploadStartState( importerId, this.props.validatedSiteUrl );
 
 		this.props.importSite( {
 			engine: this.props.importData.engine,
@@ -305,6 +305,8 @@ export default flowRight(
 			resetSiteImporterImport,
 			clearSiteImporterImport,
 			setValidationError,
+			cancelImport,
+			setUploadStartState,
 		}
 	),
 	localize

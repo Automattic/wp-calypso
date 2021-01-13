@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { find } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { appStates } from 'calypso/state/imports/constants';
@@ -30,11 +24,11 @@ const importerStateMap = [
 ];
 
 function apiToAppState( state ) {
-	return find( importerStateMap, ( [ , api ] ) => api === state )[ 0 ];
+	return importerStateMap.find( ( [ , api ] ) => api === state )[ 0 ];
 }
 
 function appStateToApi( state ) {
-	return find( importerStateMap, ( [ appState ] ) => appState === state )[ 1 ];
+	return importerStateMap.find( ( [ appState ] ) => appState === state )[ 1 ];
 }
 
 function generateSourceAuthorIds( customData ) {
@@ -54,15 +48,12 @@ function replaceUserInfoWithIds( customData ) {
 		return customData;
 	}
 
-	return Object.assign( {}, customData, {
+	return {
+		...customData,
 		sourceAuthors: customData.sourceAuthors.map( ( author ) =>
-			author.mappedTo
-				? Object.assign( {}, author, {
-						mappedTo: author.mappedTo.ID,
-				  } )
-				: author
+			author.mappedTo ? { ...author, mappedTo: author.mappedTo.ID } : author
 		),
-	} );
+	};
 }
 
 export function fromApi( state ) {
@@ -90,12 +81,12 @@ export function fromApi( state ) {
 export function toApi( state ) {
 	const { importerId, site, type, importerState, customData, progress = undefined } = state;
 
-	return Object.assign(
-		{},
-		{ importerId, progress },
-		{ importStatus: appStateToApi( importerState ) },
-		site && site.ID ? { siteId: site.ID } : {},
-		type && { type: type.replace( 'importer-type-', '' ) },
-		customData ? { customData: replaceUserInfoWithIds( customData ) } : {}
-	);
+	return {
+		importerId,
+		progress,
+		importStatus: appStateToApi( importerState ),
+		...( site && site.ID && { siteId: site.ID } ),
+		...( type && { type: type.replace( 'importer-type-', '' ) } ),
+		...( customData && { customData: replaceUserInfoWithIds( customData ) } ),
+	};
 }

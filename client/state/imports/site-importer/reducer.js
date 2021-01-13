@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	SITE_IMPORTER_IMPORT_FAILURE,
 	SITE_IMPORTER_IMPORT_RESET,
@@ -26,7 +26,7 @@ const DEFAULT_ERROR_STATE = {
 const DEFAULT_IMPORT_STAGE = 'idle';
 const DEFAULT_IMPORT_DATA = {};
 
-const isLoading = withoutPersistence( ( state = false, action ) => {
+const isLoading = ( state = false, action ) => {
 	switch ( action.type ) {
 		case SITE_IMPORTER_IMPORT_FAILURE:
 			return false;
@@ -45,9 +45,9 @@ const isLoading = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const error = withoutPersistence( ( state = DEFAULT_ERROR_STATE, action ) => {
+const error = ( state = DEFAULT_ERROR_STATE, action ) => {
 	switch ( action.type ) {
 		case SITE_IMPORTER_IMPORT_SUCCESS:
 			return DEFAULT_ERROR_STATE;
@@ -89,9 +89,9 @@ const error = withoutPersistence( ( state = DEFAULT_ERROR_STATE, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const importStage = withoutPersistence( ( state = DEFAULT_IMPORT_STAGE, action ) => {
+const importStage = ( state = DEFAULT_IMPORT_STAGE, action ) => {
 	switch ( action.type ) {
 		case SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS:
 			return 'importable';
@@ -100,9 +100,9 @@ const importStage = withoutPersistence( ( state = DEFAULT_IMPORT_STAGE, action )
 	}
 
 	return state;
-} );
+};
 
-const importData = withoutPersistence( ( state = DEFAULT_IMPORT_DATA, action ) => {
+const importData = ( state = DEFAULT_IMPORT_DATA, action ) => {
 	switch ( action.type ) {
 		case SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS: {
 			const { response } = action;
@@ -119,9 +119,9 @@ const importData = withoutPersistence( ( state = DEFAULT_IMPORT_DATA, action ) =
 	}
 
 	return state;
-} );
+};
 
-const validatedSiteUrl = withoutPersistence( ( state = '', action ) => {
+const validatedSiteUrl = ( state = '', action ) => {
 	switch ( action.type ) {
 		case SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS: {
 			const { response } = action;
@@ -130,7 +130,7 @@ const validatedSiteUrl = withoutPersistence( ( state = '', action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	isLoading,
