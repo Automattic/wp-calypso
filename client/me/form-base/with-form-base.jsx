@@ -24,9 +24,11 @@ const withFormBase = ( WrappedComponent ) => {
 	class EnhancedComponent extends React.Component {
 		static displayName = `withFormBase(${ WrappedComponent.displayName || WrappedComponent.name })`;
 
-		state = {
-			redirect: false,
-		};
+		componentDidUpdate( prevProps ) {
+			if ( prevProps.hasUnsavedUserSettings && ! this.props.hasUnsavedUserSettings ) {
+				this.props.markSaved?.();
+			}
+		}
 
 		componentWillUnmount() {
 			// Silently clean up unsavedSettings before unmounting
