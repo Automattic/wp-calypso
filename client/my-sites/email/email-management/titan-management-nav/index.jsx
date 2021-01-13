@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
 import {
 	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
@@ -24,6 +23,11 @@ import { isEnabled } from 'calypso/config';
 import SectionHeader from 'calypso/components/section-header';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+
+/**
+ * Style
+ */
+import './style.scss';
 
 class TitanManagementNav extends React.Component {
 	static propTypes = {
@@ -128,16 +132,15 @@ class TitanManagementNav extends React.Component {
 			},
 			comment: '%(domainName)s is a domain name, e.g. example.com',
 		};
+
 		return (
-			<div>
+			<div className="titan-management-nav">
 				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) } />
-				<CompactCard>
-					<VerticalNav>
-						{ this.renderTitanManagementLink() }
-						{ this.renderPurchaseManagementLink() }
-						{ this.renderAddMailboxesLink() }
-					</VerticalNav>
-				</CompactCard>
+				<VerticalNav>
+					{ this.renderTitanManagementLink() }
+					{ this.renderPurchaseManagementLink() }
+					{ this.renderAddMailboxesLink() }
+				</VerticalNav>
 			</div>
 		);
 	}
