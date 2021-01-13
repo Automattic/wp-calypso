@@ -46,7 +46,7 @@ const withFormBase = ( WrappedComponent ) => {
 
 		toggleSetting = ( event ) => {
 			const { name } = event.currentTarget;
-			this.props.setUserSetting( name, ! this.props.userSettings[ name ] );
+			this.props.setUserSetting( name, ! this.getSetting( name ) );
 		};
 
 		updateSetting = ( event ) => {
@@ -67,6 +67,7 @@ const withFormBase = ( WrappedComponent ) => {
 			updateSetting: this.updateSetting,
 			submitForm: this.submitForm,
 			hasUnsavedUserSettings: this.props.hasUnsavedUserSettings,
+			isUpdatingUserSettings: this.props.isUpdatingUserSettings,
 		} );
 
 		render() {
