@@ -43,7 +43,6 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": false,
 		"help": true,
-		"help/courses": true,
 		"inline-help": true,
 		"ive/use-external-assignment": false,
 		"jetpack/api-cache": true,
