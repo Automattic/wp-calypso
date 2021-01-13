@@ -4,7 +4,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
+import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -26,22 +27,29 @@ const Cloudflare = () => {
 		<>
 			<SettingsSectionHeader title={ translate( 'Cloudflare CDN' ) } />
 
-			<CompactCard>
-				<p>
-					{ translate(
-						'Use the Cloudflare global server network to optimize your site content and create a faster experience for your users regardless of their device or location.'
-					) }
-				</p>
+			<Card>
+				<div>
+					<p>
+						{ translate(
+							'Use the Cloudflare global server network to optimize your site content and create a faster experience for your users regardless of their device or location.'
+						) }
+					</p>
 
-				<Button
-					primary
-					onClick={ recordClick }
-					href="https://www.CLOUDFLARELINK.com"
-					target="_blank"
-				>
-					{ translate( 'Learn more' ) }
-				</Button>
-			</CompactCard>
+					<Button
+						primary
+						onClick={ recordClick }
+						href="https://www.CLOUDFLARELINK.com"
+						target="_blank"
+					>
+						{ translate( 'Learn more' ) }
+					</Button>
+				</div>
+				{ isDesktop() && (
+					<div className="stats__card-illustration">
+						<img src={ cloudflareIllustration } alt="" />
+					</div>
+				) }
+			</Card>
 		</>
 	);
 };

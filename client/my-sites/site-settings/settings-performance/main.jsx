@@ -72,6 +72,8 @@ class SiteSettingsPerformance extends Component {
 					fields={ fields }
 				/>
 
+				<Cloudflare />
+
 				{ siteIsJetpack && (
 					<Fragment>
 						<QueryJetpackModules siteId={ siteId } />
@@ -122,8 +124,6 @@ class SiteSettingsPerformance extends Component {
 						fields={ fields }
 					/>
 				) }
-
-				<Cloudflare />
 			</Main>
 		);
 	}
