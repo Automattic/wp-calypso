@@ -45,9 +45,16 @@ const actions = {
 	setTourRating: ( tourRating ) => {
 		return { type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING', tourRating };
 	},
+	toggleWpcomTourManualOpenStatus: ( isTourManuallyOpen ) => {
+		return {
+			type: 'WPCOM_BLOCK_EDITOR_TOGGLE_TOUR_MANUALLY_OPEN',
+			isManuallyOpen,
+		};
+	},
 };
 
 const selectors = {
+	isWpcomTourManuallyOpen: ( state ) => state.isTourManuallyOpen,
 	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
 	tourRating: ( state ) => state.tourRating,
 };

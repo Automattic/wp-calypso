@@ -22,5 +22,6 @@ subscribe( () => {
 	if ( select( 'core/edit-post' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
 		dispatch( 'automattic/nux' ).setWpcomNuxStatus( { isNuxEnabled: true } );
+		dispatch( 'automattic/nux' ).toggleWpcomTourManualOpenStatus( { isTourManuallyOpen: true } );
 	}
 } );
