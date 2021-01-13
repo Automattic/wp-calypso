@@ -3,6 +3,9 @@
  */
 import config from 'calypso/config';
 import canCurrentUserUseAnyWooCommerceBasedStore from 'calypso/state/sites/selectors/can-current-user-use-any-woocommerce-based-store';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { STORE_DEPRECATION_START_DATE } from 'calypso/lib/plans/constants';
 
 /**
  * Returns true if current user can see and use the Calypso-based Store option in menu
@@ -19,5 +22,16 @@ export default function canCurrentUserUseCalypsoStore( state, siteId = null ) {
 		return false;
 	}
 
-	return canCurrentUserUseAnyWooCommerceBasedStore( state, siteId );
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const currentPlan = getCurrentPlan( state, siteId );
+	const subscribedDate = new Date( currentPlan.subscribedDate );
+	const subscribedBeforeDeprecation = subscribedDate < STORE_DEPRECATION_START_DATE;
+
+	return (
+		canCurrentUserUseAnyWooCommerceBasedStore( state, siteId ) &&
+		( config.isEnabled( 'woocommerce/store-deprecated' ) ? subscribedBeforeDeprecation : true )
+	);
 }
