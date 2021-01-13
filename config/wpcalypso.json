@@ -187,6 +187,8 @@
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
 		"woocommerce/store-on-non-atomic-sites": true,
+		"woocommerce/store-deprecated": true,
+		"woocommerce/store-removed": false,
 		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
