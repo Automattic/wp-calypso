@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import { CompactCard } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
-import { isEnabled } from 'calypso/config';
+import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 
 /**
  * Style dependencies
@@ -28,24 +28,6 @@ class ListHeader extends React.PureComponent {
 		const { headerClasses, translate } = this.props;
 
 		const listHeaderClasses = classNames( 'list-header', headerClasses );
-		const emailPopoverText = isEnabled( 'titan/phase-2' )
-			? translate(
-					'You can receive email using your custom domain by purchasing Email or %(googleMailService)s, or by ' +
-						'setting up email forwarding. Note that email forwarding requires a plan subscription.',
-					{
-						args: { googleMailService: getGoogleMailServiceFamily() },
-						comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-					}
-			  )
-			: translate(
-					'You can receive email using your custom domain by using email forwarding or by ' +
-						'purchasing Titan Mail or %(googleMailService)s. Note that ' +
-						'email forwarding requires a plan subscription.',
-					{
-						args: { googleMailService: getGoogleMailServiceFamily() },
-						comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-					}
-			  );
 
 		return (
 			<CompactCard className={ listHeaderClasses }>
@@ -81,7 +63,20 @@ class ListHeader extends React.PureComponent {
 				</div>
 				<div className="list__domain-email">
 					<span>{ translate( 'Email' ) }</span>
-					<InfoPopover iconSize={ 18 }>{ emailPopoverText }</InfoPopover>
+					<InfoPopover iconSize={ 18 }>
+						{ translate(
+							'You can receive email using your custom domain by purchasing %(titanMailService)s or %(googleMailService)s, or by ' +
+								'setting up email forwarding. Note that email forwarding requires a plan subscription.',
+							{
+								args: {
+									googleMailService: getGoogleMailServiceFamily(),
+									titanMailService: getTitanProductName(),
+								},
+								comment:
+									'%(googleMailService)s can be either "G Suite" or "Google Workspace"; %(titanMailService)s can be either "Email" or "Titan Mail"',
+							}
+						) }
+					</InfoPopover>
 				</div>
 				<div className="list__domain-options"></div>
 			</CompactCard>
