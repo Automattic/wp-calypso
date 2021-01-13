@@ -8,13 +8,13 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, fetchingItems } from '../reducer';
-import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'calypso/state/action-types';
+import { PLUGINS_WPORG_PLUGIN_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'calypso/state/action-types';
 
 describe( 'wporg reducer', () => {
 	describe( 'items', () => {
 		test( 'should store plugin', () => {
 			const state = items( undefined, {
-				type: WPORG_PLUGIN_DATA_RECEIVE,
+				type: PLUGINS_WPORG_PLUGIN_RECEIVE,
 				pluginSlug: 'akismet',
 				data: { name: 'Akismet' },
 			} );
@@ -22,7 +22,7 @@ describe( 'wporg reducer', () => {
 		} );
 		test( 'should store plugin without data', () => {
 			const state = items( undefined, {
-				type: WPORG_PLUGIN_DATA_RECEIVE,
+				type: PLUGINS_WPORG_PLUGIN_RECEIVE,
 				pluginSlug: 'dolly',
 			} );
 			expect( state ).to.deep.equal( { dolly: { wporg: false, fetched: false } } );
@@ -30,7 +30,7 @@ describe( 'wporg reducer', () => {
 		test( 'should store multiple plugins', () => {
 			const originalState = deepFreeze( { dolly: { wporg: false, fetched: false } } );
 			const state = items( originalState, {
-				type: WPORG_PLUGIN_DATA_RECEIVE,
+				type: PLUGINS_WPORG_PLUGIN_RECEIVE,
 				pluginSlug: 'akismet',
 				data: { name: 'Akismet' },
 			} );
@@ -59,7 +59,7 @@ describe( 'wporg reducer', () => {
 		test( 'should track when fetches end', () => {
 			const originalState = deepFreeze( { akismet: true } );
 			const state = fetchingItems( originalState, {
-				type: WPORG_PLUGIN_DATA_RECEIVE,
+				type: PLUGINS_WPORG_PLUGIN_RECEIVE,
 				pluginSlug: 'akismet',
 			} );
 			expect( state ).to.deep.equal( { akismet: false } );
@@ -67,7 +67,7 @@ describe( 'wporg reducer', () => {
 		test( 'should track when fetches end for many plugins', () => {
 			const originalState = deepFreeze( { akismet: true } );
 			const state = fetchingItems( originalState, {
-				type: WPORG_PLUGIN_DATA_RECEIVE,
+				type: PLUGINS_WPORG_PLUGIN_RECEIVE,
 				pluginSlug: 'dolly',
 			} );
 			expect( state ).to.deep.equal( { akismet: true, dolly: false } );
