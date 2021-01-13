@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-import type { TranslateResult } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -23,53 +22,59 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-export default function PaymentInfoBlock( {
-	purchase,
-}: {
-	purchase: Purchase;
-} ): JSX.Element | TranslateResult {
+export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } ): JSX.Element {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	if ( isIncludedWithPlan( purchase ) ) {
-		return translate( 'Included with plan' );
+		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
 	}
 
 	if ( hasPaymentMethod( purchase ) ) {
-		let paymentInfo = null;
-
 		if ( isPaidWithCredits( purchase ) ) {
-			return translate( 'Credits' );
+			return <PaymentInfoBlockWrapper>{ translate( 'Credits' ) }</PaymentInfoBlockWrapper>;
 		}
 
 		if ( ! isAutoRenewDisabled( purchase ) && ! isPaidWithCredits( purchase ) ) {
 			if ( isExpired( purchase ) || isExpiring( purchase ) ) {
-				return translate( 'None' );
+				return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 			}
 		}
 
+		const logoType = paymentLogoType( purchase );
+
 		if ( isPaidWithCreditCard( purchase ) ) {
-			paymentInfo = purchase.payment.creditCard?.number;
+			return (
+				<PaymentInfoBlockWrapper>
+					<PaymentLogo type={ logoType } />
+					{ purchase.payment.creditCard?.number ?? '' }
+				</PaymentInfoBlockWrapper>
+			);
 		}
 
 		if ( isPaidWithPayPalDirect( purchase ) ) {
-			paymentInfo = translate( 'expiring %(cardExpiry)s', {
-				args: {
-					cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
-				},
-			} );
-		}
-
-		const logoType = paymentLogoType( purchase );
-		if ( logoType || paymentInfo ) {
 			return (
-				<>
-					<PaymentLogo type={ paymentLogoType( purchase ) } />
-					{ paymentInfo }
-				</>
+				<PaymentInfoBlockWrapper>
+					<PaymentLogo type={ logoType } />
+					{ translate( 'expiring %(cardExpiry)s', {
+						args: {
+							cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
+						},
+					} ) }
+				</PaymentInfoBlockWrapper>
 			);
 		}
 	}
 
-	return translate( 'None' );
+	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
+}
+
+function PaymentInfoBlockWrapper( { children }: { children: React.ReactNode } ) {
+	const translate = useTranslate();
+	return (
+		<span>
+			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
+			<span className="manage-purchase__detail">{ children }</span>
+		</span>
+	);
 }
