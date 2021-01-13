@@ -7,9 +7,18 @@
 @import '~@wordpress/block-editor/src/style.scss';
 @import '~@wordpress/format-library/src/style.scss';
 
+@import '~@wordpress/block-editor/build-style/style.css';
+
 @import '~@wordpress/block-library/build-style/style.css';
 @import '~@wordpress/block-library/build-style/editor.css';
 @import '~@wordpress/block-library/build-style/theme.css';
+
+// Gutenberg default typography
+html,
+body {
+	font-family: $default-font;
+	font-size: $font-body;
+}
 
 .is-section-logged-out-editor {
 	@include reset;
