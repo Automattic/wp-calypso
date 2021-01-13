@@ -115,7 +115,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 						{ createInterpolateElement(
 							/* translators: pressing <Link> will redirect user to plan selection step */
 							__(
-								'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 30-day full-refunds, guaranteed.',
+								'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 14-day full-refunds, guaranteed.',
 								'full-site-editing'
 							),
 							{
