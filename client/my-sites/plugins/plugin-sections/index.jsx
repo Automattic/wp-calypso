@@ -25,6 +25,11 @@ import './style.scss';
 class PluginSections extends React.Component {
 	static displayName = 'PluginSections';
 
+	constructor( props ) {
+		super( props );
+		this.descriptionContent = React.createRef();
+	}
+
 	state = {
 		selectedSection: false,
 		readMore: false,
@@ -46,8 +51,8 @@ class PluginSections extends React.Component {
 	}
 
 	calculateDescriptionHeight() {
-		if ( this.refs.content ) {
-			const node = this.refs.content;
+		if ( this.descriptionContent ) {
+			const node = this.descriptionContent.current;
 			if ( node && node.offsetHeight && node.offsetHeight !== this.state.descriptionHeight ) {
 				this.setState( { descriptionHeight: node.offsetHeight } );
 			}
@@ -109,7 +114,7 @@ class PluginSections extends React.Component {
 			},
 			{
 				key: 'faq',
-				title: this.props.translate( 'Support', {
+				title: this.props.translate( 'FAQs', {
 					context: 'Navigation item',
 					textOnly: true,
 				} ),
@@ -212,7 +217,7 @@ class PluginSections extends React.Component {
 				</div>
 				<Card>
 					<div
-						ref="content"
+						ref={ this.descriptionContent }
 						className={ contentClasses }
 						// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
 						dangerouslySetInnerHTML={ {
