@@ -92,7 +92,7 @@ describe( 'PaymentInfoBlock', () => {
 			expect( screen.getByLabelText( 'PayPal' ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders "None" when the purchase has an expired credit card as the payment method', () => {
+		it( 'renders the card when the purchase has an expired credit card as the payment method', () => {
 			const expiryDate = new Date();
 			expiryDate.setDate( expiryDate.getDate() - 365 );
 			const purchase = {
@@ -103,10 +103,10 @@ describe( 'PaymentInfoBlock', () => {
 				},
 			};
 			render( <PaymentInfoBlock purchase={ purchase } /> );
-			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
 		} );
 
-		it( 'renders "None" when the purchase has an nearly-expiring credit card as the payment method', () => {
+		it( 'renders the card when the purchase has an nearly-expiring credit card as the payment method', () => {
 			const expiryDate = new Date();
 			expiryDate.setDate( expiryDate.getDate() - 365 );
 			const purchase = {
@@ -117,7 +117,7 @@ describe( 'PaymentInfoBlock', () => {
 				},
 			};
 			render( <PaymentInfoBlock purchase={ purchase } /> );
-			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
 		} );
 
 		describe( 'when the purchase has PayPal Direct as the payment method', () => {
