@@ -4,7 +4,12 @@
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { JETPACK_RESET_PLANS, JETPACK_SECURITY_PLANS } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
-import { SELECTOR_PLANS_ALT_V1, SELECTOR_PLANS_ALT_V2, SELECTOR_PLANS_I5 } from '../constants';
+import {
+	SELECTOR_PLANS_ALT_V1,
+	SELECTOR_PLANS_ALT_V2,
+	SELECTOR_PLANS_I5,
+	SELECTOR_PLANS_SPP,
+} from '../constants';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
@@ -27,6 +32,7 @@ export const getPlansToDisplay = ( {
 			[ Iterations.V1 ]: SELECTOR_PLANS_ALT_V1,
 			[ Iterations.V2 ]: SELECTOR_PLANS_ALT_V2,
 			[ Iterations.I5 ]: SELECTOR_PLANS_I5,
+			[ Iterations.SPP ]: SELECTOR_PLANS_SPP,
 		}[ iteration ] || [];
 	const currentPlanTerms = currentPlanSlug
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]

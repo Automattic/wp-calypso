@@ -1021,7 +1021,10 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
 		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
 		getIcon: () => 'lock',
-		getTitle: () => i18n.translate( 'All Security Daily features' ),
+		getTitle: () =>
+			( {
+				spp: i18n.translate( 'All Jetpack Security features' ),
+			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'All Security Daily features' ) ),
 		isPlan: true,
 	},
 
@@ -1075,6 +1078,7 @@ export const FEATURES_LIST = {
 		getTitle: () =>
 			( {
 				i5: i18n.translate( 'Backup (real-time, off-site)' ),
+				spp: i18n.translate( 'Backup (real-time, off-site)' ),
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated real-time site backups' ) ),
 	},
 
@@ -1106,6 +1110,7 @@ export const FEATURES_LIST = {
 					},
 				} ),
 				i5: i18n.translate( 'All Backup Daily features' ),
+				spp: i18n.translate( 'All Jetpack Backup features' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
 				components: {
@@ -1207,6 +1212,7 @@ export const FEATURES_LIST = {
 		getTitle: () =>
 			( {
 				i5: i18n.translate( 'Scan (daily, automated)' ),
+				spp: i18n.translate( 'Scan (daily, automated)' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
 				components: {
@@ -1235,6 +1241,7 @@ export const FEATURES_LIST = {
 		getTitle: () =>
 			( {
 				i5: i18n.translate( 'Scan (real-time, automated)' ),
+				spp: i18n.translate( 'Scan (real-time, automated)' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
 				components: {
@@ -1258,7 +1265,13 @@ export const FEATURES_LIST = {
 		getTitle: () =>
 			( {
 				i5: i18n.translate( 'Anti-spam ' ),
+				spp: i18n.translate( 'Anti-spam' ),
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated spam protection' ) ),
+	},
+
+	[ constants.FEATURE_AUTOMATED_SPAM_PROTECTION_V2 ]: {
+		getSlug: () => constants.FEATURE_AUTOMATED_SPAM_PROTECTION_V2,
+		getTitle: () => i18n.translate( 'Automated spam protection' ),
 	},
 
 	[ constants.FEATURE_PRODUCT_ANTISPAM_V2 ]: {
@@ -1339,6 +1352,7 @@ export const FEATURES_LIST = {
 					},
 				} ),
 				i5: i18n.translate( 'Site Search: up to 100k records' ),
+				spp: i18n.translate( 'Site Search: up to 100k records' ),
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Search: up to 100k records' ) ),
 
 		getDescription: () =>
@@ -1371,14 +1385,15 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_CRM_V2,
 		getIcon: () => ( getJetpackCROActiveVersion() === 'v2' ? 'multiple-users' : null ),
 		getTitle: () =>
-			getJetpackCROActiveVersion() === 'v2'
-				? i18n.translate( 'Jetpack CRM {{strong}}{{em}}Entrepreneur{{/em}}{{/strong}}', {
-						components: {
-							em: <em />,
-							strong: <strong />,
-						},
-				  } )
-				: i18n.translate( 'CRM: Entrepreneur bundle' ),
+			( {
+				v2: i18n.translate( 'Jetpack CRM {{strong}}{{em}}Entrepreneur{{/em}}{{/strong}}', {
+					components: {
+						em: <em />,
+						strong: <strong />,
+					},
+				} ),
+				spp: i18n.translate( 'CRM: Entrepreneur' ),
+			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'CRM: Entrepreneur bundle' ) ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
@@ -1511,6 +1526,7 @@ export const FEATURES_LIST = {
 		getTitle: () =>
 			( {
 				i5: i18n.translate( 'One-click restores' ),
+				spp: i18n.translate( 'One-click restores' ),
 			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'One-click restores from desktop or mobile' ) ),
 	},

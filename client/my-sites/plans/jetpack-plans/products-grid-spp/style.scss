@@ -1,0 +1,86 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.products-grid-spp__section {
+	margin-bottom: 70px;
+	padding-left: 20px;
+	padding-right: 20px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.products-grid-spp__section:first-of-type > .products-grid-spp__section-title {
+	margin-bottom: 15px;
+}
+
+.products-grid-spp__section-title {
+	margin-top: 36px;
+	margin-bottom: 20px;
+
+	font-size: 2rem;
+	font-weight: 700;
+	letter-spacing: -1px;
+	text-align: center;
+
+	@include break-small {
+		margin-top: 40px;
+		margin-bottom: 40px;
+
+		font-size: 2.25rem;
+	}
+}
+
+.products-grid-spp__plan-grid,
+.products-grid-spp__product-grid {
+	margin: 0;
+
+	list-style-type: none;
+
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+	grid-gap: 24px 16px;
+}
+
+.products-grid-spp__plan-grid:not( .is-wrapping ) {
+	grid-gap: 24px 0;
+
+	// Considering there are 3 plans
+	> li {
+		&:first-child {
+			position: relative;
+			left: 8px;
+		}
+
+		&:last-child {
+			position: relative;
+			left: -8px;
+		}
+	}
+}
+
+.products-grid-spp__product-grid {
+	> li {
+		height: 100%;
+	}
+}
+
+.products-grid-spp__filter-bar {
+	height: 63px;
+	margin-bottom: 70px;
+
+	@include break-small {
+		margin-bottom: 50px;
+	}
+}
+
+.products-grid-spp__free {
+	margin-top: 32px;
+	display: flex;
+}
+
+.products-grid-spp__more.is-detached {
+	margin-top: 48px;
+}

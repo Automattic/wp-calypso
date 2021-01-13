@@ -3,7 +3,7 @@
  */
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
-const VERSIONS = [ 'v1', 'v2', 'i5' ];
+const VERSIONS = [ 'v1', 'v2', 'i5', 'spp' ];
 const DEFAULT_VERSION = 'i5';
 
 /**

@@ -69,6 +69,17 @@ const PRODUCT_POSITION_IN_GRID_I5: Record< string, number > = {
 	...setProductsInPosition( JETPACK_CRM_PRODUCTS, 80 ),
 };
 
+const PRODUCT_POSITION_IN_GRID_SPP: Record< string, number > = {
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: 1,
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: 1,
+	[ PLAN_JETPACK_SECURITY_DAILY ]: 10,
+	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: 10,
+	...setProductsInPosition( JETPACK_COMPLETE_PLANS, 20 ),
+	...setProductsInPosition( JETPACK_ANTI_SPAM_PRODUCTS, 50 ),
+	...setProductsInPosition( JETPACK_SCAN_PRODUCTS, 60 ),
+	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 70 ),
+};
+
 export function getProductPosition( slug: JetpackPlanSlugs | JetpackProductSlug ): number {
 	switch ( getJetpackCROActiveVersion() ) {
 		case 'v1':
@@ -77,6 +88,8 @@ export function getProductPosition( slug: JetpackPlanSlugs | JetpackProductSlug 
 			return PRODUCT_POSITION_IN_GRID_V2[ slug ];
 		case 'i5':
 			return PRODUCT_POSITION_IN_GRID_I5[ slug ];
+		case 'spp':
+			return PRODUCT_POSITION_IN_GRID_SPP[ slug ];
 		default:
 			return 100;
 	}
