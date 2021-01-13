@@ -51,7 +51,7 @@ const ALT_TEXT = {
 	netbanking: 'Net Banking',
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
-	placeholder: '',
+	placeholder: 'Payment logo',
 	unionpay: 'UnionPay',
 	visa: 'Visa',
 	wechat: i18n.translate( 'WeChat Pay', {
