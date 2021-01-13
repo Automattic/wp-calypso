@@ -9,11 +9,14 @@ import {
 	requestUserSettings,
 	storeFetchedUserSettings,
 	fromApi,
-	saveUserSettings,
-	finishUserSettingsSave,
+	userSettingsSave,
+	userSettingsSaveSuccess,
 } from '../';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { updateUserSettings, clearUnsavedUserSettings } from 'calypso/state/user-settings/actions';
+import {
+	saveUserSettingsSuccess,
+	clearUnsavedUserSettings,
+} from 'calypso/state/user-settings/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 
 describe( 'wpcom-api', () => {
@@ -44,7 +47,7 @@ describe( 'wpcom-api', () => {
 				} );
 
 				expect( result ).toEqual(
-					updateUserSettings( {
+					saveUserSettingsSuccess( {
 						language: 'qix',
 					} )
 				);
@@ -63,7 +66,7 @@ describe( 'wpcom-api', () => {
 				);
 
 				expect( result ).toEqual(
-					updateUserSettings( {
+					saveUserSettingsSuccess( {
 						display_name: 'baz & qix',
 						description: 'foo & bar',
 						user_URL: 'http://example.com?a=b&c=d',
@@ -74,7 +77,7 @@ describe( 'wpcom-api', () => {
 	} );
 
 	describe( 'user settings save', () => {
-		describe( '#saveUserSettings', () => {
+		describe( '#userSettingsSave', () => {
 			test( 'should dispatch POST request to me/settings using unsavedSettings from state', () => {
 				const dispatch = jest.fn();
 				const getState = () => ( {
@@ -85,7 +88,7 @@ describe( 'wpcom-api', () => {
 				} );
 				const action = { type: 'DUMMY' };
 
-				saveUserSettings( action, null )( dispatch, getState );
+				userSettingsSave( action, null )( dispatch, getState );
 
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
 				expect( dispatch ).toHaveBeenCalledWith(
@@ -109,7 +112,7 @@ describe( 'wpcom-api', () => {
 					settingsOverride: { foo: 'baz' },
 				};
 
-				saveUserSettings( action, null )( dispatch, getState );
+				userSettingsSave( action, null )( dispatch, getState );
 
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
 				expect( dispatch ).toHaveBeenCalledWith(
@@ -135,31 +138,31 @@ describe( 'wpcom-api', () => {
 				} );
 				const action = { type: 'DUMMY' };
 
-				saveUserSettings( action, null )( dispatch, getState );
+				userSettingsSave( action, null )( dispatch, getState );
 
 				expect( dispatch ).not.toHaveBeenCalled();
 			} );
 		} );
 
-		describe( '#finishUserSettingsSave', () => {
+		describe( '#userSettingsSaveSuccess', () => {
 			test( 'should dispatch user settings update and clear all unsaved settings on full save', () => {
 				const dispatch = jest.fn();
 				const action = { type: 'DUMMY' };
 
-				finishUserSettingsSave( action, {
+				userSettingsSaveSuccess( action, {
 					language: 'qix',
 				} )( dispatch );
 
 				expect( dispatch ).toHaveBeenCalledTimes( 3 );
 				expect( dispatch ).toHaveBeenCalledWith(
-					updateUserSettings( {
+					saveUserSettingsSuccess( {
 						language: 'qix',
 					} )
 				);
 				expect( dispatch ).toHaveBeenCalledWith( clearUnsavedUserSettings() );
 				expect( dispatch ).toHaveBeenCalledWith(
 					successNotice( 'Settings saved successfully!', {
-						id: 'save-user-settings-success',
+						id: 'save-user-settings',
 					} )
 				);
 			} );
@@ -171,18 +174,18 @@ describe( 'wpcom-api', () => {
 				};
 				const action = { type: 'DUMMY', settingsOverride: data };
 
-				finishUserSettingsSave( action, data )( dispatch );
+				userSettingsSaveSuccess( action, data )( dispatch );
 
 				expect( dispatch ).toHaveBeenCalledTimes( 3 );
 				expect( dispatch ).toHaveBeenCalledWith(
-					updateUserSettings( {
+					saveUserSettingsSuccess( {
 						language: 'qix',
 					} )
 				);
 				expect( dispatch ).toHaveBeenCalledWith( clearUnsavedUserSettings( [ 'language' ] ) );
 				expect( dispatch ).toHaveBeenCalledWith(
 					successNotice( 'Settings saved successfully!', {
-						id: 'save-user-settings-success',
+						id: 'save-user-settings',
 					} )
 				);
 			} );
@@ -191,14 +194,14 @@ describe( 'wpcom-api', () => {
 				const dispatch = jest.fn();
 				const action = { type: 'DUMMY' };
 
-				finishUserSettingsSave( action, {
+				userSettingsSaveSuccess( action, {
 					display_name: 'baz &amp; qix',
 					description: 'foo &amp; bar',
 					user_URL: 'http://example.com?a=b&amp;c=d',
 				} )( dispatch );
 
 				expect( dispatch ).toHaveBeenCalledWith(
-					updateUserSettings( {
+					saveUserSettingsSuccess( {
 						display_name: 'baz & qix',
 						description: 'foo & bar',
 						user_URL: 'http://example.com?a=b&c=d',
