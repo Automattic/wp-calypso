@@ -18,6 +18,7 @@ import {
 	fetchTitanIframeURL,
 } from 'calypso/my-sites/email/email-management/titan-functions';
 import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
+import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 
 /**
  * Style dependencies
@@ -75,24 +76,19 @@ class TitanControlPanelLoginCard extends React.Component {
 		const translateArgs = {
 			args: {
 				domainName: domain.name,
+				productName: getTitanProductName(),
 			},
-			comment: '%(domainName)s is a domain name, e.g. example.com',
+			comment:
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either Email or Titan Mail',
 		};
-		const sectionHeaderLabel = isEnabled( 'titan/phase-2' )
-			? translate( 'Email: %(domainName)s', translateArgs )
-			: translate( 'Titan Mail: %(domainName)s', translateArgs );
+		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
 		const buttonCtaText = isEnabled( 'titan/phase-2' )
 			? translate( 'Log in to the Email control panel' )
 			: translate( "Log in to Titan's control panel" );
-		const cardText = isEnabled( 'titan/phase-2' )
-			? translate(
-					'Go to the Email control panel to manage email for %(domainName)s.',
-					translateArgs
-			  )
-			: translate(
-					"Go to Titan's control panel to manage email for %(domainName)s.",
-					translateArgs
-			  );
+		const cardText = translate(
+			'Go to the %(productName)s control panel to manage email for %(domainName)s.',
+			translateArgs
+		);
 
 		return (
 			<div className="titan-control-panel-login-card">
@@ -116,12 +112,12 @@ class TitanControlPanelLoginCard extends React.Component {
 		const translateArgs = {
 			args: {
 				domainName: domain.name,
+				productName: getTitanProductName(),
 			},
-			comment: '%(domainName)s is a domain name, e.g. example.com',
+			comment:
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either Email or Titan Mail',
 		};
-		const sectionHeaderLabel = isEnabled( 'titan/phase-2' )
-			? translate( 'Email: %(domainName)s', translateArgs )
-			: translate( 'Titan Mail: %(domainName)s', translateArgs );
+		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
 
 		return (
 			<div className="titan-control-panel-login-card">
