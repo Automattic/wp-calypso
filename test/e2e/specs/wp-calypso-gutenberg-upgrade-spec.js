@@ -188,14 +188,14 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 		// ContactFormBlockComponent,
 		// ContactInfoBlockComponent,
 		// DynamicSeparatorBlockComponent,
-		GalleryMasonryBlockComponent,
-		LayoutGridBlockComponent,
-		RatingStarBlockComponent,
-		SlideshowBlockComponent,
+		// GalleryMasonryBlockComponent,
+		// LayoutGridBlockComponent,
+		// RatingStarBlockComponent,
+		// SlideshowBlockComponent,
 		SubscriptionsBlockComponent,
-		// TiledGalleryBlockComponent,
-		// YoutubeBlockComponent,
-		// PremiumContentBlockComponent,
+		TiledGalleryBlockComponent,
+		YoutubeBlockComponent,
+		PremiumContentBlockComponent,
 	].forEach( ( Block ) => {
 		describe( `${ Block.blockName } @parallel`, function () {
 			let currentGutenbergBlocksCode;
