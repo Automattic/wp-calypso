@@ -12,7 +12,6 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
 import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
 import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
@@ -372,11 +371,7 @@ class ThemeShowcase extends React.Component {
 										'These themes offer more power and flexibility, but can be harder to setup and customize.'
 									) }
 								</p>
-								{ showBanners &&
-									abtest &&
-									abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-										<UpworkBanner location={ 'theme-banner' } />
-									) }
+								{ showBanners && <UpworkBanner location={ 'theme-banner' } /> }
 							</>
 						) }
 						<QueryThemeFilters />
