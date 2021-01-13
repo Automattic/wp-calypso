@@ -368,7 +368,8 @@ export class UserStep extends Component {
 		if (
 			this.props.oauth2Signup &&
 			this.props.initialContext &&
-			this.props.initialContext.query.oauth2_redirect
+			this.props.initialContext.query.oauth2_redirect &&
+			this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect )
 		) {
 			return this.props.initialContext.query.oauth2_redirect;
 		}

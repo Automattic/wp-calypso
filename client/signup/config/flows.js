@@ -65,7 +65,7 @@ function getSiteDestination( dependencies ) {
 function getRedirectDestination( dependencies ) {
 	if (
 		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
+		new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
 	) {
 		return dependencies.oauth2_redirect;
 	}
