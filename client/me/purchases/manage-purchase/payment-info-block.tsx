@@ -35,10 +35,12 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 			return <PaymentInfoBlockWrapper>{ translate( 'Credits' ) }</PaymentInfoBlockWrapper>;
 		}
 
-		if ( ! isAutoRenewDisabled( purchase ) && ! isPaidWithCredits( purchase ) ) {
-			if ( isExpired( purchase ) || isExpiring( purchase ) ) {
-				return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
-			}
+		if ( isExpired( purchase ) ) {
+			return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
+		}
+
+		if ( isExpiring( purchase ) && ! isAutoRenewDisabled( purchase ) ) {
+			return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 		}
 
 		const logoType = paymentLogoType( purchase );
