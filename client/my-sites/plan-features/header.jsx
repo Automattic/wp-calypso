@@ -225,7 +225,7 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		if ( isInSignup && ! isMonthlyPlan ) {
-			return translate( 'billed annually' );
+			return translate( 'per month, billed annually' );
 		}
 
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
