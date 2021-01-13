@@ -17,7 +17,9 @@ import SegmentedControl from '../segmented-control';
  */
 import './style.scss';
 
-export type BillingIntervalType = 'yearly' | 'monthly';
+// TODO: import this type directly from plans data-store once
+// https://github.com/Automattic/wp-calypso/pull/48790 is merged
+export type BillingIntervalType = 'MONTHLY' | 'ANNUALLY';
 
 export const PopupMessages: React.FunctionComponent = ( { children } ) => {
 	const variants: Record< string, React.ComponentProps< typeof Popover >[ 'position' ] > = {
@@ -63,24 +65,24 @@ const PlansIntervalToggle: React.FunctionComponent< ToggleHostProps > = ( {
 		<div
 			className={ classNames(
 				'plans-interval-toggle',
-				{ 'plans-interval-toggle--monthly': intervalType === 'monthly' },
+				{ 'plans-interval-toggle--monthly': intervalType === 'MONTHLY' },
 				className
 			) }
 		>
 			<SegmentedControl>
 				<SegmentedControl.Item
-					selected={ intervalType === 'monthly' }
-					onClick={ () => onChange( 'monthly' ) }
+					selected={ intervalType === 'MONTHLY' }
+					onClick={ () => onChange( 'MONTHLY' ) }
 				>
 					{ __( 'Monthly', __i18n_text_domain__ ) }
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
-					selected={ intervalType === 'yearly' }
-					onClick={ () => onChange( 'yearly' ) }
+					selected={ intervalType === 'ANNUALLY' }
+					onClick={ () => onChange( 'ANNUALLY' ) }
 				>
 					{ __( 'Annually', __i18n_text_domain__ ) }
-					{ intervalType === 'monthly' && (
+					{ intervalType === 'MONTHLY' && (
 						<PopupMessages>
 							{ sprintf(
 								// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
