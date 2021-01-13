@@ -78,6 +78,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 					console.log( `Toggle updated! New value: ${ selectedInterval }` );
 				} }
 				maxSavingsPerc={ 14 }
+				className="plans-grid__toggle"
 			/>
 
 			<div className="plans-grid__table">

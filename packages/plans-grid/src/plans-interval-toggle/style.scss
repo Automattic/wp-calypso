@@ -6,3 +6,67 @@
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 @import '../variables';
+
+.plans-interval-toggle {
+	display: flex;
+	justify-content: center;
+
+	.segmented-control {
+		-webkit-tap-highlight-color: transparent;
+
+		background-color: #f2f2f2;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		height: auto;
+		overflow: hidden;
+	}
+
+	&--monthly .segmented-control {
+		// Make space for popover on mobile
+		margin-bottom: 60px;
+
+		@include break-medium {
+			margin-bottom: 0;
+		}
+	}
+
+	.segmented-control__item .segmented-control__link {
+		border-radius: 5px; /* stylelint-disable-line scales/radii */
+		margin: 2px;
+		padding: 0;
+	}
+
+	.segmented-control__item:not( .is-selected ) .segmented-control__link {
+		background-color: transparent;
+		border: 0.5px solid transparent;
+	}
+
+	.segmented-control__item.is-selected .segmented-control__link {
+		background-color: var( --studio-white );
+		border: 1px solid #f5f5f5;
+		box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
+	}
+
+	.segmented-control__item:not( .is-selected ) .segmented-control__link,
+	.segmented-control__item.is-selected .segmented-control__link {
+		&:focus,
+		&:hover {
+			border-color: var( --studio-gray-10 );
+		}
+	}
+
+	.segmented-control__text {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+
+		height: 32px;
+		min-width: 102px;
+		padding: 0 16px;
+
+		font-family: $default-font;
+		font-size: 0.875rem;
+		font-weight: 500; /* stylelint-disable-line scales/font-weight */
+		letter-spacing: 0.16px;
+		color: var( --studio-gray-90 );
+	}
+}

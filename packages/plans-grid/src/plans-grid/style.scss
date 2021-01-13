@@ -20,6 +20,14 @@
 	align-items: center;
 }
 
+.plans-grid__toggle {
+	margin: -24px 0 32px;
+
+	@include break-medium {
+		margin-bottom: 40px;
+	}
+}
+
 .plans-grid__details {
 	margin-top: 70px;
 }
