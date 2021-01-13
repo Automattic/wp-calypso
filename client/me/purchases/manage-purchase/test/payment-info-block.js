@@ -58,6 +58,29 @@ describe( 'PaymentInfoBlock', () => {
 			} );
 		} );
 
+		it(
+			autoRenewStatus === 'enabled'
+				? 'does not render disabled payment logo'
+				: 'renders disabled payment logo',
+			() => {
+				const expiryDate = new Date();
+				expiryDate.setDate( expiryDate.getDate() + 365 );
+				const purchase = {
+					expiryStatus,
+					payment: {
+						type: 'credit_card',
+						creditCard: { number: '1234', expiryDate, type: 'mastercard' },
+					},
+				};
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				if ( expiryStatus === 'manualRenew' ) {
+					expect( screen.getByLabelText( 'Mastercard' ) ).toHaveClass( 'disabled' );
+				} else {
+					expect( screen.getByLabelText( 'Mastercard' ) ).not.toHaveClass( 'disabled' );
+				}
+			}
+		);
+
 		it( 'renders "None" when the purchase has an expired credit card as the payment method', () => {
 			const expiryDate = new Date();
 			expiryDate.setDate( expiryDate.getDate() - 365 );
