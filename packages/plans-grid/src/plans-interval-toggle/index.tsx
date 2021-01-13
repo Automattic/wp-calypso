@@ -83,6 +83,7 @@ const PlansIntervalToggle: React.FunctionComponent< ToggleHostProps > = ( {
 					{ intervalType === 'monthly' && (
 						<PopupMessages>
 							{ sprintf(
+								// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
 								__(
 									'Save up to %s%% by paying annually and get a free domain for one year',
 									__i18n_text_domain__
