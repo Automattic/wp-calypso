@@ -49,8 +49,9 @@ class PartnerPortalSidebar extends Component< Props > {
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarItem
-							icon="next-page"
-							label={ translate( 'Partner Portal', {
+							materialIcon="vpn_key"
+							materialIconStyle="filled"
+							label={ translate( 'Licenses', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
 							link="/partner-portal"
