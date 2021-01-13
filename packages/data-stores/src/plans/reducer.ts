@@ -8,7 +8,7 @@ import { combineReducers } from '@wordpress/data';
  * Internal dependencies
  */
 import type { PlanAction } from './actions';
-import type { Plan, PlanFeature, PlanFeatureType } from './types';
+import type { Plan, PlanFeature, FeaturesByType } from './types';
 
 export const features: Reducer< Record< string, PlanFeature >, PlanAction > = (
 	state = {},
@@ -22,7 +22,7 @@ export const features: Reducer< Record< string, PlanFeature >, PlanAction > = (
 	}
 };
 
-export const featuresByType: Reducer< Array< PlanFeatureType >, PlanAction > = (
+export const featuresByType: Reducer< Array< FeaturesByType >, PlanAction > = (
 	state = [],
 	action
 ) => {

@@ -9,14 +9,6 @@ export type PlanAction = {
 	type: string;
 	slug?: string;
 };
-
-export type PricesMap = {
-	[ slug in PlanSlug ]: string;
-};
-
-export type DiscountsMap = {
-	[ slug in PlanSlug ]: number | undefined;
-} & { maxDiscount: number };
 export interface Plan {
 	title: string;
 	description: string;
@@ -101,10 +93,6 @@ export interface PricedAPIPlan {
 	currency_code: string;
 }
 
-export type APIPlanProduct = {
-	plan_id: number;
-};
-
 export type PlanFeature = {
 	id?: string;
 	description?: string;
@@ -112,13 +100,6 @@ export type PlanFeature = {
 	type?: string;
 	data?: Array< boolean | string >;
 };
-
-export type PlanFeatureType = {
-	id: string;
-	name: string;
-	features: Array< string >;
-};
-
 export interface APIPlanDetail {
 	support_priority: number;
 	support_name: string;

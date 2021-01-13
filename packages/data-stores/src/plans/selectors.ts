@@ -18,7 +18,7 @@ import {
 	billedMonthlySlugs,
 	billedYearlySlugs,
 } from './constants';
-import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
+import type { Plan, PlanFeature, FeaturesByType, PlanSlug } from './types';
 
 // Some of these selectors require unused parameters because those
 // params are used by the associated resolver.
@@ -26,7 +26,7 @@ import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
 export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
 
-export const getFeaturesByType = ( state: State ): Array< PlanFeatureType > => state.featuresByType;
+export const getFeaturesByType = ( state: State ): Array< FeaturesByType > => state.featuresByType;
 
 export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
 	return state.plans[ slug ] ?? undefined;
