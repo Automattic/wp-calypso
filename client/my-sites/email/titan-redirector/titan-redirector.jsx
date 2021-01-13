@@ -17,6 +17,11 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { emailManagementNewTitanAccount } from 'calypso/my-sites/email/paths';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { SUPPORT_ROOT } from 'calypso/lib/url/support';
+import { addQueryArgs } from 'calypso/lib/route';
+import { login } from 'calypso/lib/paths';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 class TitanRedirector extends Component {
 	state = {
@@ -62,20 +67,22 @@ class TitanRedirector extends Component {
 	}
 
 	render() {
-		const { translate, isLoggedIn, siteSlugs } = this.props;
+		const { translate, isLoggedIn, siteSlugs, currentQuery, currentRoute } = this.props;
 		const { loaded, hasError, error, action, domain, blogId, subscriptionId } = this.state;
 
 		if ( ! isLoggedIn ) {
+			const redirectTo = currentQuery ? addQueryArgs( currentQuery, currentRoute ) : currentRoute;
 			return (
 				<EmptyContent
 					title={ translate( 'You need to be logged in WordPress.com to open this page' ) }
-					action={ 'whaat' }
+					action={ translate( 'Log In' ) }
+					actionURL={ login( { redirectTo } ) }
 				/>
 			);
 		}
 
 		if ( ! loaded ) {
-			return <EmptyContent title={ translate( 'Loading…' ) } />;
+			return <EmptyContent title={ translate( 'Redirecting…' ) } />;
 		}
 
 		if ( loaded && hasError ) {
@@ -83,12 +90,21 @@ class TitanRedirector extends Component {
 				<EmptyContent
 					title={ translate( 'An error occurred when decoding your request' ) }
 					line={ error }
+					action={ translate( 'Contact support' ) }
+					actionURL={ SUPPORT_ROOT }
 				/>
 			);
 		}
 
 		if ( ! subscriptionId || ! blogId ) {
-			return <EmptyContent title={ translate( 'No subscription found' ) } />;
+			return (
+				<EmptyContent
+					title={ translate( 'No subscription found' ) }
+					line={ translate( 'Are you logged in with the appropriate user?' ) }
+					action={ translate( 'Contact support' ) }
+					actionURL={ SUPPORT_ROOT }
+				/>
+			);
 		}
 
 		const siteSlug = siteSlugs[ blogId ];
@@ -107,22 +123,18 @@ class TitanRedirector extends Component {
 		if ( ! redirectURL ) {
 			return (
 				<EmptyContent
-					title={ translate( 'There is a problem with this page' ) }
-					line={ translate( 'Please contact our support team' ) }
+					title={ translate( 'Unknown request' ) }
+					line={ translate(
+						"We received a request for %(action)s but we don't know how to handle that",
+						{ args: { action } }
+					) }
+					action={ translate( 'Contact support' ) }
+					actionURL={ SUPPORT_ROOT }
 				/>
 			);
 		}
 
-		return (
-			<div>
-				You'll be redirected to: <a href={ redirectURL }>{ redirectURL }</a>
-			</div>
-		);
-
-		// eslint-disable-next-line no-constant-condition,no-unreachable
-		if ( false ) {
-			page.redirect( redirectURL );
-		}
+		page.redirect( redirectURL );
 	}
 }
 
@@ -137,5 +149,7 @@ export default connect( ( state ) => {
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		siteSlugs: fromPairs( siteSlugPairs ),
+		currentQuery: getCurrentQueryArguments( state ),
+		currentRoute: getCurrentRoute( state ),
 	};
 } )( localize( TitanRedirector ) );
