@@ -40,13 +40,13 @@ const withFormBase = ( WrappedComponent ) => {
 		};
 
 		getSetting = ( settingName ) => {
-			const { _unsavedUserSettings, _userSettings } = this.props;
-			return _unsavedUserSettings[ settingName ] ?? _userSettings[ settingName ] ?? '';
+			const { unsavedUserSettings, userSettings } = this.props;
+			return unsavedUserSettings[ settingName ] ?? userSettings[ settingName ] ?? '';
 		};
 
 		toggleSetting = ( event ) => {
 			const { name } = event.currentTarget;
-			this.props.setUserSetting( name, ! this.props._userSettings[ name ] );
+			this.props.setUserSetting( name, ! this.props.userSettings[ name ] );
 		};
 
 		updateSetting = ( event ) => {
@@ -81,12 +81,18 @@ const withFormBase = ( WrappedComponent ) => {
 
 	return connect(
 		( state ) => ( {
-			_userSettings: getUserSettings( state ),
-			_unsavedUserSettings: getUnsavedUserSettings( state ),
+			userSettings: getUserSettings( state ),
+			unsavedUserSettings: getUnsavedUserSettings( state ),
 			hasUnsavedUserSettings: hasUnsavedUserSettings( state ),
 			isUpdatingUserSettings: isUpdatingUserSettings( state ),
 		} ),
-		{ errorNotice, successNotice, setUserSetting, clearUnsavedUserSettings, saveUserSettings }
+		{
+			clearUnsavedUserSettings,
+			errorNotice,
+			saveUserSettings,
+			setUserSetting,
+			successNotice,
+		}
 	)( localize( EnhancedComponent ) );
 };
 
