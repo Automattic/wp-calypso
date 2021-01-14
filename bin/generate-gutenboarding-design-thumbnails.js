@@ -24,7 +24,10 @@ const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
 const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
-const screenshotsPath = './static/images/design-screenshots'; // Folder to store output images
+const screenshotsBasePath = './static/images/design-screenshots'; // Folder to store output images
+
+const config = require( '../client/server/config/index.js' );
+const mag16 = config( 'magnificent_non_en_locales' ) || [];
 
 // image output variables
 const captureMaxHeight = 2200; // Cap long pages to  this pixel height when capturing
@@ -34,6 +37,10 @@ const viewportScaleFactor = 2; // Browser pixel density for capturing the screen
 const viewportWidth = 1280; // Browser width for capturing the screenshot
 
 const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
+
+const localeSlugs = ( process.argv[ 2 ] || '' )
+	.split( ',' )
+	.filter( ( potentialSlug ) => mag16.includes( potentialSlug ) );
 
 const getDesignUrl = ( design ) => {
 	return wpUrl.addQueryArgs(
@@ -59,10 +66,14 @@ async function run() {
 		return;
 	}
 	console.log( `Processing ${ designs.featured.length } designs...` );
+	console.log( `for each of ${ localeSlugs.join( ', ' ) } (${ localeSlugs.length } locales)...` );
 
+	// ( localeSlugs || [ '' ] ).forEach( async ( locale ) =>
 	await Promise.all(
 		designs.featured.map( async ( design ) => {
 			const url = getDesignUrl( design );
+			const locale = 'es';
+			const screenshotsPath = locale ? `${ screenshotsBasePath }/${ locale }` : screenshotsBasePath;
 			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }`;
 
 			// Fix `reynolds_rockfield2_rockfield.jpg` first section becoming super tall
@@ -94,33 +105,40 @@ async function run() {
 					);
 					process.exit( 1 );
 				}
+				console.log( 'screenshot error:', e );
 			}
 
 			[ 'webp', 'jpg' ].forEach( async ( extension ) => {
-				let image = await sharp( screenshot );
 				console.log( `Resizing and saving to ${ file }.${ extension }` );
-				return await image
-					.metadata()
-					.then( ( metadata ) => {
-						image = image
-							.extract( {
-								// Ensure we're not extracting taller area than screenshot actaully is
-								height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
-								left: 0,
-								top: 0,
-								width: metadata.width,
-							} )
-							.resize( outputWidth );
-						if ( extension === 'webp' ) {
-							image = image.webp(); // default quality is 80
-						} else {
-							image = image.jpeg( { quality: 72 } );
-						}
-						image.toFile( `${ file }.${ extension }` );
-					} )
-					.catch( ( error ) => console.log( error ) );
+				let image = await sharp( screenshot ).catch( ( error ) =>
+					console.log( 'sharp error: ', error )
+				);
+				return (
+					image &&
+					( await image
+						.metadata()
+						.then( ( metadata ) => {
+							image = image
+								.extract( {
+									// Ensure we're not extracting taller area than screenshot actaully is
+									height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
+									left: 0,
+									top: 0,
+									width: metadata.width,
+								} )
+								.resize( outputWidth );
+							if ( extension === 'webp' ) {
+								image = image.webp(); // default quality is 80
+							} else {
+								image = image.jpeg( { quality: 72 } );
+							}
+							image.toFile( `${ file }.${ extension }` );
+						} )
+						.catch( ( error ) => console.log( error ) ) )
+				);
 			} );
 		} )
+		// )
 	);
 
 	console.log( 'Done!' );
