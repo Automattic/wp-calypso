@@ -18,7 +18,7 @@ import { useI18n } from '@automattic/react-i18n';
 import Header from './components/header';
 import SignupForm from './components/signup-form';
 import { name, settings } from './onboarding-block';
-import { fontPairings, getFontTitle } from './constants';
+import { FontPair, getFontTitle } from './constants';
 import useOnSiteCreation from './hooks/use-on-site-creation';
 import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 import useSignup from './hooks/use-signup';
@@ -26,6 +26,7 @@ import useOnSignup from './hooks/use-on-signup';
 import useOnLogin from './hooks/use-on-login';
 import useSiteTitle from './hooks/use-site-title';
 import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
+import { useFontPairings } from '../gutenboarding/fonts';
 
 import './style.scss';
 
@@ -40,11 +41,12 @@ const Gutenboard: React.FunctionComponent = () => {
 	useTrackOnboardingStart();
 	useSiteTitle();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
+	const effectiveFontPairings = useFontPairings();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
 	React.useEffect( () => {
-		fontPairings.forEach( ( { base, headings } ) => {
+		effectiveFontPairings.forEach( ( { base, headings }: FontPair ) => {
 			const linkBase = document.createElement( 'link' );
 			const linkHeadings = document.createElement( 'link' );
 

@@ -8,7 +8,6 @@ import type { ValuesType } from 'utility-types';
  *
  */
 export const FLOW_ID = 'gutenboarding';
-export const ANCHOR_FM_FLOW_ID = 'anchor-fm';
 
 const fontTitles: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
@@ -45,6 +44,22 @@ export const fontPairings = [
 	{
 		headings: 'Space Mono',
 		base: 'Roboto',
+	},
+] as const;
+
+/**
+ * Pairings of fontFamilies for AnchorFM onboarding
+ *
+ * To get the name of the font for display, use `getFontTitle( fontName )`.
+ */
+export const anchorFmFontPairings = [
+	{
+		headings: 'Roboto',
+		base: 'Roboto',
+	},
+	{
+		headings: 'Raleway',
+		base: 'Cabin',
 	},
 ] as const;
 
