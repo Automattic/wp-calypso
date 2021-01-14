@@ -81,6 +81,33 @@ describe( 'PaymentInfoBlock', () => {
 			}
 		);
 
+		it(
+			autoRenewStatus === 'enabled'
+				? 'does not render "this payment method will not be billed"'
+				: 'renders "this payment method will not be billed"',
+			() => {
+				const expiryDate = new Date();
+				expiryDate.setDate( expiryDate.getDate() + 365 );
+				const purchase = {
+					expiryStatus,
+					payment: {
+						type: 'credit_card',
+						creditCard: { number: '1234', expiryDate, type: 'mastercard' },
+					},
+				};
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				if ( expiryStatus === 'manualRenew' ) {
+					expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+						'this payment method will not be billed'
+					);
+				} else {
+					expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
+						'this payment method will not be billed'
+					);
+				}
+			}
+		);
+
 		it( 'renders PayPal logo when the purchase has PayPal as the payment method', () => {
 			const purchase = {
 				expiryStatus,
