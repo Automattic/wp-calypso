@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, partialRight, pick } from 'lodash';
 
@@ -31,62 +31,64 @@ import './style.scss';
 
 const validateTrackingId = ( code ) => ! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i ); // @TODO: how are cloudflare tracking IDs formatted?
 
-export class CloudflareAnalyticsSettings extends Component {
-	state = {
-		isCodeValid: true,
-		loggedCloudflareAnalyticsModified: false,
-	};
+export function CloudflareAnalyticsSettings( {
+	fields,
+	updateFields,
+	isRequestingSettings,
+	isSavingSettings,
+	enableForm,
+	eventTracker,
+	handleSubmitForm,
+	path,
+	translate,
+	trackTracksEvent,
+	uniqueEventTracker,
+	site,
+} ) {
+	const [ isCodeValid, setIsCodeValid ] = useState( true );
+	const [ loggedCloudflareAnalyticsModified, setLoggedCloudflareAnalyticsModified ] = useState(
+		false
+	);
+	const isSubmitButtonDisabled =
+		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
 
-	handleFieldChange = ( key, value ) => {
-		const { fields, updateFields } = this.props;
+	const handleFieldChange = ( key, value ) => {
 		const updatedCloudflareFields = Object.assign( {}, fields.cloudflare || {}, {
 			[ key ]: value,
 		} );
 		updateFields( { cloudflare: updatedCloudflareFields } );
 	};
 
-	handleCodeChange = ( event ) => {
+	const handleCodeChange = ( event ) => {
 		const code = event.target.value.trim();
-
-		this.setState( {
-			isCodeValid: validateTrackingId( code ),
-		} );
-		this.handleFieldChange( 'code', code );
+		setIsCodeValid( validateTrackingId( code ) );
+		handleFieldChange( 'code', code );
 	};
 
-	isSubmitButtonDisabled() {
-		const { isRequestingSettings, isSavingSettings } = this.props;
-		return (
-			isRequestingSettings ||
-			isSavingSettings ||
-			! this.state.isCodeValid ||
-			! this.props.enableForm
-		);
-	}
+	const handleFieldFocus = () => {
+		trackTracksEvent( 'calypso_cloudflare_analytics_key_field_focused', { path } );
+		eventTracker( 'Focused Analytics Key Field' )();
+	};
 
-	form() {
-		const {
-			enableForm,
-			eventTracker,
-			fields,
-			handleSubmitForm,
-			isRequestingSettings,
-			isSavingSettings,
-			path,
-			translate,
-			trackTracksEvent,
-			uniqueEventTracker,
-		} = this.props;
+	const handleFieldKeypress = () => {
+		if ( ! loggedCloudflareAnalyticsModified ) {
+			trackTracksEvent( 'calypso_cloudflare_analytics_key_field_modified', { path } );
+			setLoggedCloudflareAnalyticsModified( true );
+		}
+		uniqueEventTracker( 'Typed In Analytics Key Field' )();
+	};
+
+	const renderForm = () => {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 		const analyticsSupportUrl = 'https://wordpress.com/support/CLOUDFLARE_SUPPORT_URL/'; // TODO: add support link
 
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
 				<SettingsSectionHeader
-					disabled={ this.isSubmitButtonDisabled() }
+					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
-					showButton={ true }
+					showButton
 					title={ translate( 'Cloudflare Analytics' ) }
 				/>
 
@@ -116,25 +118,16 @@ export class CloudflareAnalyticsSettings extends Component {
 							name="cloudflareCode"
 							id="cloudflareCode"
 							value={ fields.cloudflare ? fields.cloudflare.code : '' }
-							onChange={ this.handleCodeChange }
+							onChange={ handleCodeChange }
 							placeholder={ placeholderText }
 							disabled={ isRequestingSettings || ! enableForm }
-							onFocus={ () => {
-								trackTracksEvent( 'calypso_cloudflare_analytics_key_field_focused', { path } );
-								eventTracker( 'Focused Analytics Key Field' )();
-							} }
-							onKeyPress={ () => {
-								if ( ! this.state.loggedCloudflareAnalyticsModified ) {
-									trackTracksEvent( 'calypso_cloudflare_analytics_key_field_modified', { path } );
-									this.setState( { loggedCloudflareAnalyticsModified: true } );
-								}
-								uniqueEventTracker( 'Typed In Analytics Key Field' )();
-							} }
-							isError={ ! this.state.isCodeValid }
+							onFocus={ handleFieldFocus }
+							onKeyPress={ handleFieldKeypress }
+							isError={ ! isCodeValid }
 						/>
-						{ ! this.state.isCodeValid && (
+						{ ! isCodeValid && (
 							<FormTextValidation
-								isError={ true }
+								isError
 								text={ translate( 'Invalid Cloudflare Analytics ID.' ) }
 							/>
 						) }
@@ -155,16 +148,14 @@ export class CloudflareAnalyticsSettings extends Component {
 				</Card>
 			</form>
 		);
-	}
+	};
 
-	render() {
-		// we need to check that site has loaded first... a placeholder would be better,
-		// but returning null is better than a fatal error for now
-		if ( ! this.props.site ) {
-			return null;
-		}
-		return this.form();
+	// we need to check that site has loaded first... a placeholder would be better,
+	// but returning null is better than a fatal error for now
+	if ( ! site ) {
+		return null;
 	}
+	return renderForm();
 }
 
 const mapStateToProps = ( state ) => {
