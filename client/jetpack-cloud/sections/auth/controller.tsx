@@ -36,6 +36,7 @@ export const connect: PageJS.Callback = ( context, next ) => {
 			client_id: config( 'oauth_client_id' ),
 			redirect_uri: redirectUri,
 			scope: 'global',
+			action: 'oauth2-auth',
 		};
 
 		const authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }`;
