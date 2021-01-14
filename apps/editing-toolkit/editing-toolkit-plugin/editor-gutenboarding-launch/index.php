@@ -9,7 +9,7 @@
  * @package A8C\FSE
  */
 
-namespace A8C\FSE\EditorGutenboardingLaunchButton;
+namespace A8C\FSE;
 
 /**
  * Enqueue assets
@@ -20,26 +20,6 @@ function enqueue_script_and_style() {
 		return;
 	}
 
-	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.asset.php';
-	$script_dependencies = isset( $asset_file['dependences'] ) ? $asset_file['dependencies'] : array();
-	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.js' );
-	$style_version       = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.css' );
-
-	wp_enqueue_script(
-		'a8c-fse-editor-gutenboarding-launch-script',
-		plugins_url( 'dist/editor-gutenboarding-launch.js', __FILE__ ),
-		$script_dependencies,
-		$script_version,
-		true
-	);
-
-	wp_set_script_translations( 'a8c-fse-editor-gutenboarding-launch-script', 'full-site-editing' );
-
-	wp_enqueue_style(
-		'a8c-fse-editor-gutenboarding-launch-style',
-		plugins_url( 'dist/editor-gutenboarding-launch.css', __FILE__ ),
-		array(),
-		$style_version
-	);
+	enqueue_webpack_assets( 'editor-gutenboarding-launch' );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );

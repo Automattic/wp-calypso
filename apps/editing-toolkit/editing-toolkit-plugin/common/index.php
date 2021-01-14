@@ -11,11 +11,13 @@
 
 namespace A8C\FSE\Common;
 
+use function A8C\FSE\enqueue_webpack_assets;
+
 /**
  * Register data stores that may be useful for a variety of concerns
  */
 function register_data_stores() {
-	$path         = plugin_dir_path( __FILE__ ) . 'dist/data_stores.js';
+	$path         = dirname( __DIR__ ) . 'dist/data_stores.js';
 	$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/data-stores.asset.php';
 	$asset        = file_exists( $asset_file ) ? require $asset_file : null;
 	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
@@ -117,26 +119,7 @@ function enqueue_script_and_style() {
 	if ( ! should_load_assets() ) {
 		return;
 	}
-
-	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/common.asset.php';
-	$script_dependencies = $asset_file['dependencies'];
-	wp_enqueue_script(
-		'a8c-fse-common-script',
-		plugins_url( 'dist/common.js', __FILE__ ),
-		is_array( $script_dependencies ) ? $script_dependencies : array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/common.js' ),
-		true
-	);
-
-	$style_file = is_rtl()
-		? 'common.rtl.css'
-		: 'common.css';
-	wp_enqueue_style(
-		'a8c-fse-common-style',
-		plugins_url( 'dist/' . $style_file, __FILE__ ),
-		'wp-edit-post',
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-	);
+	enqueue_webpack_assets( 'common' );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
 

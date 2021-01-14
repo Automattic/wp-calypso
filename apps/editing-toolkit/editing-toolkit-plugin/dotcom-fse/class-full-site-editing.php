@@ -115,18 +115,10 @@ class Full_Site_Editing {
 	 * Enqueue assets.
 	 */
 	public function enqueue_script_and_style() {
-		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/dotcom-fse.asset.php';
-		$script_dependencies = $asset_file['dependencies'];
-		wp_enqueue_script(
-			'a8c-full-site-editing-script',
-			plugins_url( 'dist/dotcom-fse.js', __FILE__ ),
-			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/dotcom-fse.js' ),
-			true
-		);
+		$script_name = enqueue_webpack_assets( 'dotcom-fse' );
 
 		wp_localize_script(
-			'a8c-full-site-editing-script',
+			$script_name,
 			'fullSiteEditing',
 			array(
 				'editorPostType'      => get_current_screen()->post_type,
@@ -134,16 +126,6 @@ class Full_Site_Editing {
 				'closeButtonUrl'      => esc_url( $this->get_close_button_url() ),
 				'editTemplateBaseUrl' => esc_url( $this->get_edit_template_base_url() ),
 			)
-		);
-
-		$style_file = is_rtl()
-			? 'dotcom-fse.rtl.css'
-			: 'dotcom-fse.css';
-		wp_enqueue_style(
-			'a8c-full-site-editing-style',
-			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			'wp-edit-post',
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
 		);
 	}
 
