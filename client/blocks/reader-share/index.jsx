@@ -179,6 +179,7 @@ class ReaderShare extends React.Component {
 			},
 			[
 				<Button
+					aria-label={ translate( 'Share post' ) }
 					key="button"
 					ref={ this.shareButton }
 					className={ buttonClasses }
