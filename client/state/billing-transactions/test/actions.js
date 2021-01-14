@@ -50,7 +50,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/billing-history' )
+					.get( '/rest/v1.3/me/billing-history' )
 					.reply( 200, successResponse );
 			} );
 
@@ -88,7 +88,7 @@ describe( 'actions', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/billing-history' )
+					.get( '/rest/v1.3/me/billing-history' )
 					.reply( 403, {
 						error: 'authorization_required',
 						message,
