@@ -26,12 +26,12 @@
 		"test:e2e": "npx wp-scripts test-e2e --wordpress-base-url='http://localhost:4013' --colors",
 		"test:e2e:watch": "npm run test-e2e -- --watch",
 		"test:php": "npx wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist'",
-		"clean": "npx rimraf dist editing-toolkit-plugin/*/dist",
+		"clean": "npx rimraf dist editing-toolkit-plugin/dist editing-toolkit-plugin/*/dist",
 		"prebuild": "yarn run clean",
 		"predev": "yarn run clean",
 		"sync:newspack-blocks": "./bin/sync-newspack-blocks.sh",
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
-		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./editing-toolkit-plugin/*/dist/*.js"
+		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./editing-toolkit-plugin/dist/*.js"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
@@ -101,5 +101,16 @@
 		"@wordpress/eslint-plugin": "^7.1.0",
 		"babel-jest": "^26.3.0",
 		"webpack": "^4.44.2"
-	}
+	},
+	"additionalSources": [
+		"common/data-stores",
+		"newspack-blocks/blog-posts-block-editor",
+		"newspack-blocks/blog-posts-block-view",
+		"newspack-blocks/carousel-block-editor",
+		"newspack-blocks/carousel-block-view"
+	],
+	"excludedSources": [
+		"e2e-test-helpers",
+		"block-helpers"
+	]
 }
