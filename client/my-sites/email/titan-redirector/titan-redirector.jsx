@@ -129,6 +129,7 @@ class TitanRedirector extends Component {
 		let redirectURL;
 
 		switch ( action ) {
+			case 'renewOrder':
 			case 'billing':
 				redirectURL = getManagePurchaseUrlFor( siteSlug, subscriptionId );
 				break;
