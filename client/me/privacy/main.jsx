@@ -23,8 +23,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import SectionHeader from 'calypso/components/section-header';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { requestHttpData, getHttpData } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import FormattedHeader from 'calypso/components/formatted-header';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
@@ -32,25 +31,11 @@ import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/ac
 import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { requestDpa } from 'calypso/state/data-getters';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
 const dpaRequestId = 'dpa-request';
-
-function requestDpa() {
-	requestHttpData(
-		dpaRequestId,
-		http( {
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			path: '/me/request-dpa',
-		} ),
-		{
-			freshness: -Infinity, // we want to allow the user to re-request
-			fromApi: () => () => [ [ dpaRequestId, true ] ],
-		}
-	);
-}
 
 class Privacy extends React.Component {
 	componentDidUpdate( oldProps ) {
@@ -207,7 +192,10 @@ class Privacy extends React.Component {
 							) }
 						</strong>
 					</p>
-					<Button className="privacy__dpa-request-button" onClick={ requestDpa }>
+					<Button
+						className="privacy__dpa-request-button"
+						onClick={ () => requestDpa( dpaRequestId ) }
+					>
 						{ translate( 'Request a DPA', {
 							comment:
 								'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
