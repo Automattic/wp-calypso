@@ -21,6 +21,10 @@ export default function canCurrentUserUseWooCommerceCoreStore( state, siteId = n
 
 	const currentPlan = getCurrentPlan( state, siteId );
 
+	if ( ! currentPlan ) {
+		return false;
+	}
+
 	return (
 		canCurrentUserUseAnyWooCommerceBasedStore( state, siteId ) &&
 		( isEcommercePlan( currentPlan.productSlug ) ||

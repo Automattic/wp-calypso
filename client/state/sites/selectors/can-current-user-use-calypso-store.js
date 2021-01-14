@@ -27,6 +27,11 @@ export default function canCurrentUserUseCalypsoStore( state, siteId = null ) {
 	}
 
 	const currentPlan = getCurrentPlan( state, siteId );
+
+	if ( ! currentPlan ) {
+		return false;
+	}
+
 	const subscribedDate = new Date( currentPlan.subscribedDate );
 	const subscribedBeforeDeprecation = subscribedDate < STORE_DEPRECATION_START_DATE;
 
