@@ -1,29 +1,56 @@
 .license-list {
 	&__item {
 		display: grid;
-		grid-template-columns: 1fr 128px 128px 128px 30px;
+		grid-template-columns: 1fr 128px 128px 128px 36px;
 		align-items: center;
 
 		> * + * {
 			margin-left: 28px;
+			text-align: right;
 		}
 
 		> *:last-child {
 			margin-left: 12px;
 		}
-	}
 
-	&__item-title {
-		padding: 0;
-		margin: 0;
-		font-size: 1.25rem;
-		font-weight: normal;
+		&--header {
+			h2 {
+				font-size: 0.875rem;
+				line-height: 1.25rem;
+				font-weight: 600;
+				color: var( --studio-gray-70 );
+			}
+		}
 	}
 }
 
 .license-preview {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	color: var( --studio-gray-70 );
+
+	// Matching bottom margin of Card component.
+	&--is-open {
+		margin-top: 10px;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			margin-top: 16px;
+		}
+	}
+
+	&__domain {
+		padding: 0;
+		margin: 0 0 4px;
+		font-size: 1.25rem;
+		font-weight: normal;
+		line-height: 1.75rem;
+		color: var( --studio-gray-100 );
+	}
+
 	&__copy-license-key {
 		&.button {
+			font-weight: 600;
+			color: var( --studio-gray-80 );
 			border-color: var( --color-text-subtle );
 		}
 	}
@@ -47,8 +74,7 @@
 
 	&__license-key {
 		padding: 6px;
-		font-size: 0.75rem;
-		line-height: 14px;
+		font-size: 0.875rem;
 		background: var( --studio-gray-0 );
 		color: var( --studio-gray-70 );
 	}
