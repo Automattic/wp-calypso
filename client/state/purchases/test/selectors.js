@@ -121,6 +121,7 @@ describe( 'selectors', () => {
 				tagLine: undefined,
 				taxAmount: undefined,
 				taxText: undefined,
+				titanMaximumMailboxCount: null,
 				userId: NaN,
 			} );
 		} );
