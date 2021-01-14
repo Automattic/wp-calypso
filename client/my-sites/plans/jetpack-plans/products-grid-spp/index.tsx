@@ -197,11 +197,9 @@ const ProductsGridSpp: React.FC< ProductsGridProps > = ( {
 				</ul>
 				<div className="products-grid-spp__free">
 					{ ( isInConnectFlow || ( isInJetpackCloud && ! isUrlSiteConnected ) ) && (
-						<>
-							<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-							<JetpackCrmFreeCardSPP siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-						</>
+						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 					) }
+					<JetpackCrmFreeCardSPP siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 				</div>
 			</section>
 			{ ! isJetpackCloud() && <StoreFooter /> }
