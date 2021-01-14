@@ -22,6 +22,7 @@ import {
 	plansProductSlugs,
 	billedMonthlySlugs,
 	billedYearlySlugs,
+	PLAN_FREE,
 } from './constants';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 
@@ -97,15 +98,19 @@ export function* getSupportedPlans( locale = 'en' ) {
 			isFree: pricedPlan.raw_price === 0,
 			isPopular: slug === PLAN_PREMIUM || slug === PLAN_PREMIUM_MONTHLY,
 			// useful to detect when the selected plan's period doesn't match the preferred interval
-			billPeriod: pricedPlan.bill_period === 31 ? 'MONTHLY' : 'ANNUALLY',
 			rawPrice: pricedPlan.raw_price,
 			price:
 				pricedPlan?.bill_period === 31 ? pricedPlan.formatted_price : getMonthlyPrice( pricedPlan ),
 		};
+		// only add billPeriod for paid plans
+		if ( slug !== PLAN_FREE ) {
+			plans[ slug ].billPeriod = pricedPlan.bill_period === 31 ? 'MONTHLY' : 'ANNUALLY';
+		}
 
 		return plans;
 	}, {} as Record< PlanSlug, Plan > );
 
+	// calculate discounts
 	for ( let i = 0; i < billedYearlySlugs.length; i++ ) {
 		const annualPlan = plans[ billedYearlySlugs[ i ] ];
 		const monthlyPlan = plans[ billedMonthlySlugs[ i ] ];

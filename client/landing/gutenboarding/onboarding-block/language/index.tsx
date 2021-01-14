@@ -76,7 +76,7 @@ const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 						languageGroups={ createLanguageGroups( __ ) }
 						languages={ languages }
 						onSelectLanguage={ ( language ) => {
-							// Invalidate the resolution cache for getPrices and getSupportedPlans
+							// Invalidate the resolution cache for getSupportedPlans
 							// when the locale changes, to force the data for the plans grid
 							// to be fetched again, fresh from the plans/details and plans endpoints.
 							invalidateResolution( PLANS_STORE, 'getSupportedPlans', [
