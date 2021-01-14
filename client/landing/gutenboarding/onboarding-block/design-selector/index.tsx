@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import React from 'react';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ const makeOptionId = ( { slug }: Design ): string => `design-selector__option-na
 const DesignSelector: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goBack, goNext } = useStepNavigation();
+	const locale = useLocale();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
 	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
@@ -88,7 +90,7 @@ const DesignSelector: React.FunctionComponent = () => {
 									<img
 										alt=""
 										aria-labelledby={ makeOptionId( design ) }
-										src={ getDesignImageUrl( design ) }
+										src={ getDesignImageUrl( design, locale ) }
 									/>
 								</span>
 								<span className="design-selector__option-overlay">

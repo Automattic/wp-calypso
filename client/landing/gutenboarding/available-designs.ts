@@ -6,7 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { isEnabled } from '../../config';
+import config, { isEnabled } from '../../config';
 import type { Design } from './stores/onboard/types';
 const availableDesignsConfig = require( './available-designs-config.json' );
 
@@ -28,14 +28,16 @@ function getCanUseWebP() {
 
 const canUseWebP = getCanUseWebP();
 
-export const getDesignImageUrl = ( design: Design ) => {
+export const getDesignImageUrl = ( design: Design, localeSlug = null ) => {
 	// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
 	// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
 	// https://github.com/Automattic/mShots/issues/16
 	// https://github.com/Automattic/wp-calypso/issues/40564
 	if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
 		// When we update the static images, bump the version for cache busting
-		return `/calypso/images/design-screenshots/${ design.slug }_${ design.template }_${
+		const previewDir = `/calypso/images/design-screenshots`
+			+ ( localeSlug && localeSlug ? '/' + localeSlug  : '' );
+		return `${ previewDir }/${ design.slug }_${ design.template }_${
 			design.theme
 		}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
 	}
