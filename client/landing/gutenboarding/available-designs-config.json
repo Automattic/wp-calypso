@@ -293,7 +293,7 @@
 			"title": "Gilbert",
 			"slug": "gilbert",
 			"template": "gilbert",
-			"theme": "gilbert",
+			"theme": "spearhead",
 			"fonts": {
 				"headings": "Chivo",
 				"base": "Open Sans"
@@ -306,7 +306,7 @@
 			"title": "Riley",
 			"slug": "riley",
 			"template": "riley",
-			"theme": "riley",
+			"theme": "spearhead",
 			"fonts": {
 				"headings": "Fira Sans",
 				"base": "Fira Sans"
