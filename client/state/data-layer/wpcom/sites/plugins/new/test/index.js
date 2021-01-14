@@ -68,7 +68,7 @@ describe( 'uploadComplete', () => {
 			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
 			action: INSTALL_PLUGIN,
 			siteId,
-			pluginId,
+			pluginId: SUCCESS_RESPONSE.id,
 			data: SUCCESS_RESPONSE,
 		} );
 	} );
