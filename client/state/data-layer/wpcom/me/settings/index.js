@@ -95,9 +95,7 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const userSettingsSaveSuccess = ( { settingsOverride, onSuccess }, data ) => (
-	dispatch
-) => {
+export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => ( dispatch ) => {
 	dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
 
@@ -112,13 +110,6 @@ export const userSettingsSaveSuccess = ( { settingsOverride, onSuccess }, data )
 	const userLibModule = require( 'calypso/lib/user' );
 	const userLib = userLibModule.default ? userLibModule.default : userLibModule; // TODO: delete line after removing add-module-exports.
 	userLib().fetch();
-
-	/* @TODO this workaround was introduced as part of the reduxification efforts
-	   of the `lib/user-settings` flux store and should be removed after the flux
-	   store is gone eventually */
-	if ( onSuccess && typeof onSuccess === 'function' ) {
-		onSuccess( data );
-	}
 
 	dispatch(
 		successNotice( translate( 'Settings saved successfully!' ), {

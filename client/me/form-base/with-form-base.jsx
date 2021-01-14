@@ -57,7 +57,7 @@ const withFormBase = ( WrappedComponent ) => {
 		submitForm = ( event ) => {
 			event.preventDefault();
 
-			this.props.saveUserSettings( null, () => this.props.markSaved?.() );
+			this.props.saveUserSettings();
 		};
 
 		getFormBaseProps = () => ( {
