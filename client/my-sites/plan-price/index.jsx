@@ -26,6 +26,7 @@ export class PlanPrice extends Component {
 			original,
 			discounted,
 			className,
+			displayFlatPrice,
 			isInSignup,
 			isOnSale,
 			taxText,
@@ -62,7 +63,7 @@ export class PlanPrice extends Component {
 			return priceObj.price.integer;
 		};
 
-		if ( isInSignup ) {
+		if ( displayFlatPrice ) {
 			const smallerPrice = renderPrice( priceRange[ 0 ] );
 			const higherPrice = priceRange[ 1 ] && renderPrice( priceRange[ 1 ] );
 
