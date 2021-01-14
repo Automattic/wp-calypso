@@ -854,7 +854,7 @@ Undocumented.prototype.getSiteProducts = function ( siteDomain, fn ) {
 Undocumented.prototype.billingHistory = function ( fn ) {
 	return this._sendRequest(
 		{
-			path: '/me/billing-history/',
+			path: '/me/billing-history',
 			method: 'get',
 			apiVersion: '1.3',
 		},
