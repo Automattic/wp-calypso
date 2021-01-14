@@ -14,7 +14,7 @@ import type { Viewport } from './types';
 import { useFontPairings } from '../../fonts';
 import type { FontPair } from '../../constants';
 
-function getFontsLoadingHTML( effectiveFontPairings: FontPair[] ) {
+function getFontsLoadingHTML( effectiveFontPairings: readonly FontPair[] ) {
 	const baseURL = 'https://fonts.googleapis.com/css2';
 
 	// matrix: regular,bold * regular,italic
