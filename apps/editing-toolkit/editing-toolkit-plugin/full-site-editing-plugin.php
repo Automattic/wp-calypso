@@ -40,6 +40,54 @@ define( 'PLUGIN_VERSION', '2.9' );
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
+
+/**
+ * Use this function to enqueue webpack-generated assets for your module.
+ *
+ * For example, calling `enqueue_webpack_assets( "block-patterns" )` will enqueue
+ * the scripts and styles with a basename of "block-patterns" from the "dist"
+ * directory.
+ *
+ * By default "wp_enqueue_script"'s `in_footer` argument is true. Change it by
+ * including `'in_footer' => false` in the $options array.
+ *
+ * @param {string} $filename The name of the script + style to enqueue, without
+ *                           extensions or paths (E.g. "block-patterns").
+ * @param {array}  $options  Options to pass in. Currently supports 'in_footer'
+ *                           for wp_enqueue_script.
+ */
+function enqueue_webpack_assets( $filename, $options = array() ) {
+	$asset_file = include plugin_dir_path( __FILE__ ) . "dist/$name.asset.php";
+
+	$script_dependencies = isset( $asset_file['dependences'] ) ? $asset_file['dependencies'] : array();
+	$script_path         = "dist/$filename.js";
+
+	if ( file_exists( __DIR__ . $script_path ) ) {
+		$script_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_path );
+		wp_enqueue_script(
+			$filename,
+			plugins_url( $script_path, __FILE__ ),
+			$script_dependencies,
+			$script_version,
+			isset( $options['in_footer'] ) ? isset( $options['in_footer'] ) : true
+		);
+		wp_set_script_translations( $filename, 'full-site-editing' );
+	}
+
+	$style_ext  = is_rtl() ? $filename . '.rtl.css' : $filename . '.css';
+	$style_path = "dist/$style_ext";
+
+	if ( file_exists( __DIR__ . $style_path ) ) {
+		$style_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $style_path );
+		wp_enqueue_style(
+			$filename,
+			plugins_url( $style_path, __FILE__ ),
+			array(),
+			$style_version
+		);
+	}
+}
+
 /**
  * Load dotcom-FSE.
  */
