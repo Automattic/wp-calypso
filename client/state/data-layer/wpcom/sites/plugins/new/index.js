@@ -9,10 +9,7 @@ import { find, includes } from 'lodash';
  * Internal dependencies
  */
 import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
-import {
-	INSTALL_PLUGIN,
-	PLUGIN_UPLOAD as PLUGIN_UPLOAD_ACTION,
-} from 'calypso/lib/plugins/constants';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import {
 	completePluginUpload,
 	pluginUploadError,
@@ -22,8 +19,6 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSite } from 'calypso/state/sites/selectors';
-import Dispatcher from 'calypso/dispatcher';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
@@ -69,10 +64,8 @@ const showErrorNotice = ( error ) => {
 	return errorNotice( translate( 'Problem installing the plugin.' ) );
 };
 
-export const uploadComplete = ( { siteId }, data ) => ( dispatch, getState ) => {
+export const uploadComplete = ( { siteId }, data ) => ( dispatch ) => {
 	const { slug: pluginId } = data;
-	const state = getState();
-	const site = getSite( state, siteId );
 
 	dispatch(
 		recordTracksEvent( 'calypso_plugin_upload_complete', {
@@ -88,18 +81,6 @@ export const uploadComplete = ( { siteId }, data ) => ( dispatch, getState ) => 
 		action: INSTALL_PLUGIN,
 		siteId,
 		pluginId: data.id,
-		data,
-	} );
-
-	/*
-	 * Adding plugin to legacy flux store provides data for plugin page
-	 * and displays a success message.
-	 */
-	Dispatcher.handleServerAction( {
-		type: 'RECEIVE_INSTALLED_PLUGIN',
-		action: PLUGIN_UPLOAD_ACTION,
-		site,
-		plugin: data,
 		data,
 	} );
 };
