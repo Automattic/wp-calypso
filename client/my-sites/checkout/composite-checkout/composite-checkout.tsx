@@ -24,7 +24,6 @@ import { useStripe } from '@automattic/calypso-stripe';
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
-import notices from 'calypso/notices';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -33,6 +32,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import { getPlan } from 'calypso/lib/plans';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
@@ -152,31 +152,41 @@ export default function CompositeCheckout( {
 		( error ) => {
 			debug( 'error', error );
 			const message = error && error.toString ? error.toString() : error;
-			notices.error( message || translate( 'An error occurred during your purchase.' ) );
+			reduxDispatch(
+				errorNotice( message || translate( 'An error occurred during your purchase.' ) )
+			);
 		},
-		[ translate ]
+		[ reduxDispatch, translate ]
 	);
 
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
 			debug( 'error', error );
 			const message = error && error.toString ? error.toString() : error;
-			notices.error( message || translate( 'An error occurred during your purchase.' ), {
-				duration: 5000,
-			} );
+			reduxDispatch(
+				errorNotice( message || translate( 'An error occurred during your purchase.' ), {
+					duration: 5000,
+				} )
+			);
 		},
-		[ translate ]
+		[ reduxDispatch, translate ]
 	);
 
-	const showInfoMessage = useCallback( ( message ) => {
-		debug( 'info', message );
-		notices.info( message );
-	}, [] );
+	const showInfoMessage = useCallback(
+		( message ) => {
+			debug( 'info', message );
+			reduxDispatch( infoNotice( message ) );
+		},
+		[ reduxDispatch ]
+	);
 
-	const showSuccessMessage = useCallback( ( message ) => {
-		debug( 'success', message );
-		notices.success( message );
-	}, [] );
+	const showSuccessMessage = useCallback(
+		( message ) => {
+			debug( 'success', message );
+			reduxDispatch( successNotice( message ) );
+		},
+		[ reduxDispatch ]
+	);
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
@@ -279,7 +289,7 @@ export default function CompositeCheckout( {
 	} );
 
 	// Display errors. Note that we display all errors if any of them change,
-	// because notices.error() otherwise will remove the previously displayed
+	// because errorNotice() otherwise will remove the previously displayed
 	// errors.
 	const errorsToDisplay = [
 		cartLoadingError,
@@ -287,7 +297,9 @@ export default function CompositeCheckout( {
 		cartProductPrepError,
 	].filter( doesValueExist );
 	useActOnceOnStrings( errorsToDisplay, () => {
-		notices.error( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) );
+		reduxDispatch(
+			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
+		);
 	} );
 
 	const isFullCredits =
