@@ -25,10 +25,13 @@ export default function canCurrentUserUseWooCommerceCoreStore( state, siteId = n
 		return false;
 	}
 
+	const isCalypsoStoreDeprecatedOrRemoved =
+		config.isEnabled( 'woocommerce/store-deprecated' ) ||
+		config.isEnabled( 'woocommerce/store-removed' );
+
 	return (
 		canCurrentUserUseAnyWooCommerceBasedStore( state, siteId ) &&
 		( isEcommercePlan( currentPlan.productSlug ) ||
-			( isBusinessPlan( currentPlan.productSlug ) &&
-				config.isEnabled( 'woocommerce/store-deprecated' ) ) )
+			( isBusinessPlan( currentPlan.productSlug ) && isCalypsoStoreDeprecatedOrRemoved ) )
 	);
 }
