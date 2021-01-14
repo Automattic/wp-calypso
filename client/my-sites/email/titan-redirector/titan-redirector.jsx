@@ -16,12 +16,13 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { emailManagementNewTitanAccount } from 'calypso/my-sites/email/paths';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { addQueryArgs } from 'calypso/lib/route';
 import { login } from 'calypso/lib/paths';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import QuerySites from 'calypso/components/data/query-sites';
 
 class TitanRedirector extends Component {
 	state = {
@@ -43,7 +44,7 @@ class TitanRedirector extends Component {
 		}
 
 		wp.undocumented()
-			.getTitanIncomingURL( mode, jwt )
+			.getTitanDetailsForIncomingRedirect( mode, jwt )
 			.then(
 				( data ) => {
 					this.setState( {
@@ -67,8 +68,15 @@ class TitanRedirector extends Component {
 	}
 
 	render() {
-		const { translate, isLoggedIn, siteSlugs, currentQuery, currentRoute } = this.props;
-		const { loaded, hasError, error, action, domain, blogId, subscriptionId } = this.state;
+		const {
+			translate,
+			isLoggedIn,
+			siteSlugs,
+			currentQuery,
+			currentRoute,
+			hasAllSitesLoaded,
+		} = this.props;
+		const { loaded, hasError, action, domain, blogId, subscriptionId } = this.state;
 
 		if ( ! isLoggedIn ) {
 			const redirectTo = currentQuery ? addQueryArgs( currentQuery, currentRoute ) : currentRoute;
@@ -81,15 +89,22 @@ class TitanRedirector extends Component {
 			);
 		}
 
-		if ( ! loaded ) {
-			return <EmptyContent title={ translate( 'Redirecting…' ) } />;
+		if ( ! loaded || ! hasAllSitesLoaded ) {
+			return (
+				<React.Fragment>
+					{ ! hasAllSitesLoaded && <QuerySites allSites={ true } /> }
+					<EmptyContent title={ translate( 'Redirecting…' ) } />
+				</React.Fragment>
+			);
 		}
 
 		if ( loaded && hasError ) {
 			return (
 				<EmptyContent
-					title={ translate( 'An error occurred when decoding your request' ) }
-					line={ error }
+					title={ translate( "We couldn't process your link" ) }
+					line={ translate(
+						"We can't work out where this link is supposed to go. Can you check the website that sent you?"
+					) }
 					action={ translate( 'Contact support' ) }
 					actionURL={ SUPPORT_ROOT }
 				/>
@@ -99,8 +114,10 @@ class TitanRedirector extends Component {
 		if ( ! subscriptionId || ! blogId ) {
 			return (
 				<EmptyContent
-					title={ translate( 'No subscription found' ) }
-					line={ translate( 'Are you logged in with the appropriate user?' ) }
+					title={ translate( "We couldn't locate your account details" ) }
+					line={ translate(
+						'Please check that you purchased the Email subscription, as only the original purchaser can manage billing and add more accounts'
+					) }
 					action={ translate( 'Contact support' ) }
 					actionURL={ SUPPORT_ROOT }
 				/>
@@ -123,7 +140,7 @@ class TitanRedirector extends Component {
 		if ( ! redirectURL ) {
 			return (
 				<EmptyContent
-					title={ translate( 'Unknown request' ) }
+					title={ translate( 'Unexpected request' ) }
 					line={ translate(
 						"We received a request for %(action)s but we don't know how to handle that",
 						{ args: { action } }
@@ -151,5 +168,6 @@ export default connect( ( state ) => {
 		siteSlugs: fromPairs( siteSlugPairs ),
 		currentQuery: getCurrentQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),
+		hasAllSitesLoaded: hasAllSitesList( state ),
 	};
 } )( localize( TitanRedirector ) );
