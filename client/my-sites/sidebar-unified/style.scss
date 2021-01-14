@@ -364,6 +364,10 @@ $font-size: rem( 14px );
 		}
 
 		// client/blocks/upsell-nudge/style.scss
+		.upsell-nudge.banner.card.is-compact {
+			margin: 8px 3px 7px;
+		}
+
 		.current-site__notices > a::before {
 			content: '\f534';
 			font-family: 'dashicons';
