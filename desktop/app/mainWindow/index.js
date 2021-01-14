@@ -3,6 +3,7 @@
  */
 const url = require( 'url' );
 const path = require( 'path' );
+const { ipcMain: ipc } = require( 'electron' );
 const { BrowserWindow, app } = require( 'electron' );
 
 /**
@@ -82,6 +83,14 @@ function createAppWindow() {
 	require( '../window-handlers/window-saver' )( mainWindow );
 	require( '../window-handlers/debug-tools' )( mainWindow );
 	require( '../window-handlers/spellcheck' )( mainWindow );
+
+	ipc.handle( 'get-config', () => {
+		return Config.toRenderer();
+	} );
+
+	ipc.handle( 'get-settings', () => {
+		return Settings.toRenderer();
+	} );
 
 	return mainWindow;
 }

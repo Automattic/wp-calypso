@@ -90,9 +90,7 @@ async function openWindow( windowName ) {
 			await windows[ windowName ].handle.webContents.session.setProxy( {
 				proxyRules: 'direct://',
 			} );
-			windows[ windowName ].handle.loadURL(
-				Config.server_url + ':' + Config.server_port + '/desktop/' + settings.file
-			);
+			windows[ windowName ].handle.loadURL( `file://${ preloadDirectory }/${ settings.file }` );
 
 			windows[ windowName ].handle.on( 'closed', function () {
 				windows[ windowName ].handle = null;
