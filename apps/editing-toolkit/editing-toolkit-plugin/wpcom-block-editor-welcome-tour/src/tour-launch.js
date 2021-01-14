@@ -81,7 +81,8 @@ function WelcomeTourFrame() {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
-	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
+
+	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
 
 	const dismissWpcomNuxTour = ( source ) => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
@@ -89,8 +90,8 @@ function WelcomeTourFrame() {
 			slide_number: currentCardIndex + 1,
 			action: source,
 		} );
-
 		setWpcomNuxStatus( { isNuxEnabled: false } );
+		setTourOpenStatus( { isTourManuallyOpened: false } );
 	};
 
 	// Preload card images
