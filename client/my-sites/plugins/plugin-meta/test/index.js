@@ -36,7 +36,6 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/lib/translator-jumpstart', () => ( {} ) );
 jest.mock( 'calypso/lib/plugins/wporg-data/actions', () => ( {} ) );
 jest.mock( 'calypso/lib/plugins/wporg-data/list-store', () => ( {
-	getShortList: () => {},
 	getFullList: () => {},
 	getSearchList: () => {},
 	on: () => {},
