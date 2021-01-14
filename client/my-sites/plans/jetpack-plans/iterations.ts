@@ -4,7 +4,7 @@
 import ProductsGridAlt from './products-grid-alt';
 import ProductsGridAlt2 from './products-grid-alt-2';
 import ProductsGridI5 from './products-grid-i5';
-import ProductsGridSpp from './products-grid-spp';
+import ProductsGridSpp from './spp/products-grid-spp';
 import JetpackFAQ from 'calypso/my-sites/plans-features-main/jetpack-faq';
 import JetpackFAQi5 from 'calypso/my-sites/plans-features-main/jetpack-faq-i5';
 import { getJetpackCROActiveVersion as getIteration } from 'calypso/my-sites/plans/jetpack-plans/abtest';
