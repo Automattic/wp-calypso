@@ -65,7 +65,7 @@ function WpcomNux() {
 				is_manually_opened: isGuideManuallyOpened,
 			} );
 		}
-	}, [ isWpcomNuxEnabled, isSPTOpen ] );
+	}, [ isWpcomNuxEnabled, isSPTOpen, isGuideManuallyOpened ] );
 
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
