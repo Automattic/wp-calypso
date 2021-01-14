@@ -65,7 +65,7 @@ function premium_content_block_init() {
 function premium_content_block_enqueue_block_editor_assets() {
 	wp_register_script(
 		'premium-content-editor',
-		PREMIUM_CONTENT__URL_PATH . '/dist/premium-content.js',
+		dirname( __DIR__ ) . '/dist/premium-content.js',
 		PREMIUM_CONTENT__ASSET_DEPENDENCIES,
 		PREMIUM_CONTENT__ASSET_VERSION,
 		false
@@ -126,7 +126,7 @@ function register_blocks() {
 	register_block_type(
 		'premium-content/container',
 		array(
-			'editor_script'   => 'premium-content-editor',
+			'editor_script'   => 'a8c-etk-content-editor',
 			'editor_style'    => 'premium-content-editor',
 			'style'           => 'premium-content-frontend',
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_container_render',

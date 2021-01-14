@@ -42,32 +42,12 @@ class WPCOM_Block_Editor_Welcome_Tour {
 	 * Enqueue block editor assets.
 	 */
 	public function enqueue_script_and_style() {
-		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/wpcom-block-editor-welcome-tour.asset.php';
-		$script_dependencies = $asset_file['dependencies'];
-		$version             = $asset_file['version'];
-
-		wp_enqueue_script(
-			'wpcom-block-editor-welcome-tour-script',
-			plugins_url( 'dist/wpcom-block-editor-welcome-tour.js', __FILE__ ),
-			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			$version,
-			true
-		);
+		$asset = enqueue_webpack_assets( 'wpcom-block-editor-welcome-tour' );
 
 		wp_localize_script(
-			'wpcom-block-editor-welcome-tour-script',
+			$asset['script_name'],
 			'wpcomBlockEditorWelcomeTourAssetsUrl',
-			plugins_url( 'dist/', __FILE__ )
-		);
-
-		wp_set_script_translations( 'wpcom-block-editor-welcome-tour-script', 'full-site-editing' );
-
-		$style_path = 'dist/wpcom-block-editor-welcome-tour' . ( is_rtl() ? '.rtl' : '' ) . '.css';
-		wp_enqueue_style(
-			'wpcom-block-editor-welcome-tour-style',
-			plugins_url( $style_path, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . $style_path )
+			$asset['asset_dir_url']
 		);
 	}
 

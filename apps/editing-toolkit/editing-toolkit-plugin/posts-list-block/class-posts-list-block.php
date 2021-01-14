@@ -55,18 +55,7 @@ class Posts_List_Block {
 		if ( ! has_block( 'a8c/posts-list' ) ) {
 			return;
 		}
-
-		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.asset.php';
-		$script_dependencies = $asset_file['dependencies'];
-		wp_enqueue_script(
-			'a8c-posts-list-script',
-			plugins_url( 'dist/posts-list-block.js', __FILE__ ),
-			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.js' ),
-			true
-		);
-
-		wp_set_script_translations( 'a8c-posts-list-script', 'full-site-editing' );
+		enqueue_webpack_assets( 'posts-list-block', array( 'exclude_style' => true ) );
 	}
 
 	/**
@@ -77,15 +66,7 @@ class Posts_List_Block {
 			return;
 		}
 
-		$style_file = is_rtl()
-			? 'posts-list-block.rtl.css'
-			: 'posts-list-block.css';
-		wp_enqueue_style(
-			'posts-list-block-style',
-			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-		);
+		enqueue_webpack_assets( 'posts-list-block', array( 'exclude_script' => true ) );
 	}
 
 	/**

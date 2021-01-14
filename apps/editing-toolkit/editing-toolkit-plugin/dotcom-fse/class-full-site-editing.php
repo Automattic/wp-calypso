@@ -115,10 +115,10 @@ class Full_Site_Editing {
 	 * Enqueue assets.
 	 */
 	public function enqueue_script_and_style() {
-		$script_name = enqueue_webpack_assets( 'dotcom-fse' );
+		$asset = enqueue_webpack_assets( 'dotcom-fse' );
 
 		wp_localize_script(
-			$script_name,
+			$asset['script_name'],
 			'fullSiteEditing',
 			array(
 				'editorPostType'      => get_current_screen()->post_type,

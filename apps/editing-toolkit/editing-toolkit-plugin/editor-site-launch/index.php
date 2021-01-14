@@ -21,10 +21,10 @@ function enqueue_script_and_style() {
 	if ( ! \A8C\FSE\Common\is_block_editor_screen() ) {
 		return;
 	}
-	$script_name = enqueue_webpack_assets( 'editor-site-launch' );
+	$asset = enqueue_webpack_assets( 'editor-site-launch' );
 
 	wp_localize_script(
-		$script_name,
+		$asset['script_name'],
 		'wpcomEditorSiteLaunch',
 		array(
 			'locale' => determine_locale(),

@@ -321,39 +321,16 @@ class Global_Styles {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/global-styles.asset.php';
-		$asset        = file_exists( $asset_file )
-			? require $asset_file
-			: null;
-		$dependencies = isset( $asset['dependencies'] ) ?
-			$asset['dependencies'] :
-			array();
-		$version      = isset( $asset['version'] ) ?
-			$asset['version'] :
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.js' );
+		$asset = \A8C\FSE\enqueue_webpack_assets( 'global-styles' );
 
-		wp_enqueue_script(
-			'jetpack-global-styles-editor-script',
-			plugins_url( 'dist/global-styles.js', __FILE__ ),
-			$dependencies,
-			$version,
-			true
-		);
-		wp_set_script_translations( 'jetpack-global-styles-editor-script', 'full-site-editing' );
 		wp_localize_script(
-			'jetpack-global-styles-editor-script',
+			$asset['script_name'],
 			'JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS',
 			array(
 				'PLUGIN_NAME' => $this->plugin_name,
 				'REST_PATH'   => $this->rest_path_client,
 				'STORE_NAME'  => $this->redux_store_name,
 			)
-		);
-		wp_enqueue_style(
-			'jetpack-global-styles-editor-style',
-			plugins_url( 'dist/global-styles.css', __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.css' )
 		);
 	}
 

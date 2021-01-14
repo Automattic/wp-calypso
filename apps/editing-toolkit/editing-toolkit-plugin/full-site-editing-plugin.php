@@ -40,7 +40,6 @@ define( 'PLUGIN_VERSION', '2.9' );
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
-
 /**
  * Use this function to enqueue webpack-generated assets for your module.
  *
@@ -55,7 +54,8 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
  *                           extensions or paths (E.g. "block-patterns").
  * @param {array}  $options  Options to pass in. Currently supports 'in_footer'
  *                           for wp_enqueue_script.
- * @return {string} The name of the script/style with prefixes applied. (Note: styles and scripts have the same name for the same module.)
+ * @return {array} Details about the script: the final `asset_name` (e.g. "a8c-etk-block-patterns")
+ *                 and the `asset_dir_url` (using `plugins_url`).
  */
 function enqueue_webpack_assets( $filename, $options = array() ) {
 	$filename   = basename( $filename );
@@ -65,7 +65,8 @@ function enqueue_webpack_assets( $filename, $options = array() ) {
 	$script_dependencies = isset( $asset_file['dependences'] ) ? $asset_file['dependencies'] : array();
 	$script_path         = "dist/$filename.js";
 
-	if ( file_exists( __DIR__ . $script_path ) ) {
+	$exclude_script = isset( $options['exclude_script'] ) && $options['exclude_script'];
+	if ( ! $exclude_script && file_exists( __DIR__ . $script_path ) ) {
 		$script_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_path );
 		wp_enqueue_script(
 			$asset_name,
@@ -80,7 +81,8 @@ function enqueue_webpack_assets( $filename, $options = array() ) {
 	$style_ext  = is_rtl() ? $filename . '.rtl.css' : $filename . '.css';
 	$style_path = "dist/$style_ext";
 
-	if ( file_exists( __DIR__ . $style_path ) ) {
+	$exclude_style = isset( $options['exclude_style'] ) && $options['exclude_style'];
+	if ( ! $exclude_style && file_exists( __DIR__ . $style_path ) ) {
 		$style_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $style_path );
 		wp_enqueue_style(
 			$asset_name,
@@ -89,7 +91,11 @@ function enqueue_webpack_assets( $filename, $options = array() ) {
 			$style_version
 		);
 	}
-	return $asset_name;
+
+	return array(
+		'asset_name'    => $asset_name,
+		'asset_dir_url' => plugins_url( 'dist/' ),
+	);
 }
 
 /**
