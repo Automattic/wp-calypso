@@ -7,6 +7,7 @@ describe( 'isJetpackSecondarySiteSlug', () => {
 	test( 'should return true if the argument is a secondary site slug', () => {
 		expect( isJetpackSecondarySiteSlug( 'example.com::test' ) ).toBe( true );
 		expect( isJetpackSecondarySiteSlug( 'past-rat.jurassic.ninja::test' ) ).toBe( true );
+		expect( isJetpackSecondarySiteSlug( 'past-rat.jurassic.ninja::test-123' ) ).toBe( true );
 	} );
 
 	test( 'should return false otherwise', () => {
