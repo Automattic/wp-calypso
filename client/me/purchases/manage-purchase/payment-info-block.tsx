@@ -25,19 +25,27 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 	const moment = useLocalizedMoment();
 
 	if ( isIncludedWithPlan( purchase ) ) {
-		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
+		return (
+			<PaymentInfoBlockWrapper purchase={ purchase }>
+				{ translate( 'Included with plan' ) }
+			</PaymentInfoBlockWrapper>
+		);
 	}
 
 	if ( hasPaymentMethod( purchase ) ) {
 		if ( isPaidWithCredits( purchase ) ) {
-			return <PaymentInfoBlockWrapper>{ translate( 'Credits' ) }</PaymentInfoBlockWrapper>;
+			return (
+				<PaymentInfoBlockWrapper purchase={ purchase }>
+					{ translate( 'Credits' ) }
+				</PaymentInfoBlockWrapper>
+			);
 		}
 
 		const logoType = paymentLogoType( purchase );
 
 		if ( isPaidWithCreditCard( purchase ) ) {
 			return (
-				<PaymentInfoBlockWrapper>
+				<PaymentInfoBlockWrapper purchase={ purchase }>
 					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
 					{ purchase.payment.creditCard?.number ?? '' }
 				</PaymentInfoBlockWrapper>
@@ -46,7 +54,7 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 
 		if ( isPaidWithPayPalDirect( purchase ) ) {
 			return (
-				<PaymentInfoBlockWrapper>
+				<PaymentInfoBlockWrapper purchase={ purchase }>
 					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
 					{ translate( 'expiring %(cardExpiry)s', {
 						args: {
@@ -58,20 +66,35 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		}
 
 		return (
-			<PaymentInfoBlockWrapper>
+			<PaymentInfoBlockWrapper purchase={ purchase }>
 				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
 			</PaymentInfoBlockWrapper>
 		);
 	}
 
-	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
+	return (
+		<PaymentInfoBlockWrapper purchase={ purchase }>{ translate( 'None' ) }</PaymentInfoBlockWrapper>
+	);
 }
 
-function PaymentInfoBlockWrapper( { children }: { children: React.ReactNode } ) {
+function PaymentInfoBlockWrapper( {
+	children,
+	purchase,
+}: {
+	children: React.ReactNode;
+	purchase: Purchase;
+} ) {
 	const translate = useTranslate();
 	return (
 		<aside aria-label={ String( translate( 'Payment method' ) ) }>
-			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
+			<em className="manage-purchase__detail-label">
+				<span>{ translate( 'Payment method' ) }</span>
+				{ isExpiring( purchase ) && (
+					<div className="manage-purchase__detail-label-subtitle">
+						{ translate( '(this payment method will not be billed)' ) }
+					</div>
+				) }
+			</em>
 			<span className="manage-purchase__detail">{ children }</span>
 		</aside>
 	);
