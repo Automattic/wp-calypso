@@ -17,7 +17,8 @@ import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import Experiment from 'calypso/components/experiment';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-i5';
+import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-spp';
+import JetpackCrmFreeCardSPP from 'calypso/components/jetpack/card/jetpack-crm-free-card-spp';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -119,11 +120,11 @@ const ProductsGridSpp: React.FC< ProductsGridProps > = ( {
 				if ( firstChild instanceof HTMLElement ) {
 					const itemCount = Math.round( grid.offsetWidth / firstChild.offsetWidth );
 
-					setPlanRowWrapping( itemCount < sortedPlans.length );
+					setPlanRowWrapping( itemCount < popularProducts.length );
 				}
 			}
 		}
-	}, [ planGridRef, sortedPlans ] );
+	}, [ planGridRef, popularProducts ] );
 
 	useEffect( () => {
 		onResize();
@@ -196,7 +197,10 @@ const ProductsGridSpp: React.FC< ProductsGridProps > = ( {
 				</ul>
 				<div className="products-grid-spp__free">
 					{ ( isInConnectFlow || ( isInJetpackCloud && ! isUrlSiteConnected ) ) && (
-						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+						<>
+							<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+							<JetpackCrmFreeCardSPP siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+						</>
 					) }
 				</div>
 			</section>

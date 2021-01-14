@@ -78,7 +78,9 @@
 
 .products-grid-spp__free {
 	margin-top: 32px;
-	display: flex;
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+	grid-gap: 24px 16px;
 }
 
 .products-grid-spp__more.is-detached {

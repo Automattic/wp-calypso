@@ -1,0 +1,89 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.jetpack-crm-free-card-spp {
+	padding: 24px 32px;
+
+	@include break-small {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.jetpack-crm-free-card-spp__title {
+	color: var( --studio-gray-100 );
+
+	font-size: 1.875rem;
+	font-weight: 700;
+	margin: 12px 0 20px;
+}
+
+.jetpack-crm-free-card-spp__subheadline {
+	color: var( --studio-gray-60 );
+	min-height: 72px;
+}
+
+.jetpack-crm-free-card-spp__button.button {
+	display: block;
+
+	width: 100%;
+	margin: 24px 0;
+
+	color: var( --studio-jetpack-green-40 );
+	border: solid 2px currentColor;
+	border-radius: 4px;
+
+	font-size: 1rem;
+	font-weight: 700;
+
+	@include break-large {
+		margin-bottom: 0;
+	}
+}
+
+.jetpack-crm-free-card-spp__features-list {
+	margin: 28px 0 0;
+
+	color: var( --studio-gray-100 );
+	list-style-type: none;
+
+	> li {
+		display: flex;
+		justify-content: flex-start;
+
+		margin: 12px 0;
+
+		fill: var( --studio-jetpack-green-40 );
+	}
+
+	@include break-small {
+		flex: 1;
+
+		margin-top: 0;
+		padding-left: 28px;
+	}
+
+	@include break-large {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		flex: 2 1;
+
+		padding-left: 0;
+
+		> li {
+			width: 50%;
+			margin: 0;
+		}
+	}
+}
+
+.jetpack-crm-free-card-spp__features-list .gridicon {
+	margin-right: 12px;
+
+	color: var( --studio-jetpack-green-40 );
+}
+
+.jetpack-crm-free-card-spp__features-text {
+	flex: 1;
+}
