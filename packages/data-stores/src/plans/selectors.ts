@@ -18,6 +18,7 @@ import {
 	billedMonthlySlugs,
 	billedYearlySlugs,
 } from './constants';
+import deprecate from '@wordpress/deprecated';
 import type { Plan, PlanFeature, FeaturesByType, PlanSlug } from './types';
 
 // Some of these selectors require unused parameters because those
@@ -70,6 +71,24 @@ export const getSupportedPlans = (
 	}
 
 	return supportedPlans;
+};
+
+/**
+ * @deprecated  getPrices is deprecated, please use plan.price directly
+ *
+ * @param _state the state
+ * @param _locale the locale
+ */
+export const getPrices = ( _state: State, _locale: string ): Record< PlanSlug, string > => {
+	deprecate( 'getPrices', {
+		alternative: 'plan.price directly',
+	} );
+	return select( STORE_KEY )
+		.getSupportedPlans()
+		.reduce( ( prices, plan ) => {
+			prices[ plan.storeSlug ] = plan.price;
+			return prices;
+		}, {} as Record< PlanSlug, string > );
 };
 
 export const getPlanByPath = ( state: State, path?: PlanPath ): Plan | undefined => {

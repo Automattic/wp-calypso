@@ -26,7 +26,7 @@ import {
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import { LAUNCH_STORE } from '../../stores';
+import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
 
 import './styles.scss';
 
@@ -35,6 +35,9 @@ const TickIcon = <Icon icon={ check } size={ 17 } />;
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
+	const planPrices = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPrices( window.wpcomEditorSiteLaunch?.locale || 'en' )
+	);
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
 	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
@@ -101,7 +104,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 			{ plan && ! plan?.isFree ? (
 				<>
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
-					{ __( 'Plan subscription', 'full-site-editing' ) }: { plan.price }{ ' ' }
+					{ __( 'Plan subscription', 'full-site-editing' ) }: { planPrices[ plan.storeSlug ] }{ ' ' }
 					{ __( 'per month, billed yearly', 'full-site-editing' ) }
 				</>
 			) : (
