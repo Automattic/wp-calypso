@@ -92,7 +92,7 @@ describe( 'PaymentInfoBlock', () => {
 			expect( screen.getByLabelText( 'PayPal' ) ).toBeInTheDocument();
 		} );
 
-		it( 'renders the card when the purchase has an expired credit card as the payment method', () => {
+		it( 'renders the card when the purchase is expired and has a credit card as the payment method', () => {
 			const expiryDate = new Date();
 			expiryDate.setDate( expiryDate.getDate() - 365 );
 			const purchase = {
@@ -106,7 +106,7 @@ describe( 'PaymentInfoBlock', () => {
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
 		} );
 
-		it( 'renders the card when the purchase has an nearly-expiring credit card as the payment method', () => {
+		it( 'renders the card when the purchase has nearly expired and has a credit card as the payment method', () => {
 			const expiryDate = new Date();
 			expiryDate.setDate( expiryDate.getDate() - 365 );
 			const purchase = {
