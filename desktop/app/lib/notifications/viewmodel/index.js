@@ -7,7 +7,7 @@ const EventEmitter = require( 'events' ).EventEmitter;
 /*
  * Internal dependencies
  */
-const WPNotificationsAPI = require( 'app/lib/notifications/api' );
+const WPNotificationsAPI = require( '../../../lib/notifications/api' );
 
 // Parses raw note data from the API into a notification for display,
 // and exposes handlers for actions performed by the user.

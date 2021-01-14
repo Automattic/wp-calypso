@@ -6,8 +6,8 @@ const { app } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const platform = require( 'app/lib/platform' );
-const log = require( 'app/lib/logger' )( 'desktop:app-instance' );
+const platform = require( '../../lib/platform' );
+const log = require( '../../lib/logger' )( 'desktop:app-instance' );
 
 function AppInstance() {}
 

@@ -6,9 +6,9 @@ const { app, Menu } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const appQuit = require( 'app/lib/app-quit' );
-const menuSetter = require( 'app/lib/menu-setter' );
-const log = require( 'app/lib/logger' )( 'platform:mac' );
+const appQuit = require( '../../../lib/app-quit' );
+const menuSetter = require( '../../../lib/menu-setter' );
+const log = require( '../../../lib/logger' )( 'platform:mac' );
 
 function MacPlatform( mainWindow ) {
 	this.window = mainWindow;

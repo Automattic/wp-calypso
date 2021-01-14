@@ -7,11 +7,11 @@ const { app, ipcMain: ipc } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const menu = require( 'app/lib/menu' );
-const state = require( 'app/lib/state' );
-const platform = require( 'app/lib/platform' );
-const log = require( 'app/lib/logger' )( 'desktop:login' );
-const WPNotificationsAPI = require( 'app/lib/notifications/api' );
+const menu = require( '../../lib/menu' );
+const state = require( '../../lib/state' );
+const platform = require( '../../lib/platform' );
+const log = require( '../../lib/logger' )( 'desktop:login' );
+const WPNotificationsAPI = require( '../../lib/notifications/api' );
 
 module.exports = function ( mainWindow ) {
 	menu.set( app, mainWindow );

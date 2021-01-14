@@ -7,11 +7,11 @@ const os = require( 'os' ); // eslint-disable-line import/no-nodejs-modules
 /**
  * Internal dependencies
  */
-const Platform = require( 'app/lib/platform' );
-const config = require( 'app/lib/config' );
-const SettingsFile = require( 'app/lib/settings/settings-file' );
+const Platform = require( '../../lib/platform' );
+const config = require( '../../lib/config' );
+const SettingsFile = require( '../../lib/settings/settings-file' );
 const APPS_DIRECTORY = '/Applications';
-const log = require( 'app/lib/logger' )( 'desktop:system' );
+const log = require( '../../lib/logger' )( 'desktop:system' );
 
 function isPinned() {
 	if ( Platform.isOSX() ) {

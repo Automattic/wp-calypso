@@ -5,7 +5,7 @@ const electron = require( 'electron' );
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
 const path = require( 'path' );
-const preloadDirectory = path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop' );
+const preloadDirectory = path.resolve( __dirname, '..', '..', '..', 'public_desktop' );
 
 // HACK(sendhilp, 9/6/2016): The reason for this strange importing is there seems to be a
 // bug post Electron 1.1.1 in which attempting to access electron.screen
@@ -26,7 +26,7 @@ app.on( 'ready', () => {
 /**
  * Internal dependencies
  */
-const Config = require( 'app/lib/config' );
+const Config = require( '../../lib/config' );
 
 /**
  * Module variables

@@ -1,7 +1,7 @@
 /*
  * Internal dependencies
  */
-const state = require( 'app/lib/state' );
+const state = require( '../../../lib/state' );
 const handler = require( 'wpcom-xhr-request' );
 
 const promiseTimeout = function ( ms, promise ) {

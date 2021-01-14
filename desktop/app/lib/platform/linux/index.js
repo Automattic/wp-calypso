@@ -6,7 +6,7 @@ const { app } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const log = require( 'app/lib/logger' )( 'platform:linux' );
+const log = require( '../../../lib/logger' )( 'platform:linux' );
 
 function LinuxPlatform( mainWindow ) {
 	this.window = mainWindow;

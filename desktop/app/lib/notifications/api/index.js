@@ -7,9 +7,9 @@ const EventEmitter = require( 'events' ).EventEmitter;
 /*
  * Internal dependencies
  */
-const state = require( 'app/lib/state' );
+const state = require( '../../../lib/state' );
 const { fetchNote, markReadStatus } = require( './notes' );
-const log = require( 'app/lib/logger' )( 'desktop:notifications:api' );
+const log = require( '../../../lib/logger' )( 'desktop:notifications:api' );
 
 /*
  * Module constants

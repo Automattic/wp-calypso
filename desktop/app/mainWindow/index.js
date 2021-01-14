@@ -1,30 +1,33 @@
 /**
  * External Dependencies
  */
-const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
 const url = require( 'url' );
 const path = require( 'path' );
+const { BrowserWindow, app } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const Config = require( 'app/lib/config' );
-const Settings = require( 'app/lib/settings' );
-const settingConstants = require( 'app/lib/settings/constants' );
-const cookieAuth = require( 'app/lib/cookie-auth' );
-const appInstance = require( 'app/lib/app-instance' );
-const platform = require( 'app/lib/platform' );
-const System = require( 'app/lib/system' );
-const log = require( 'app/lib/logger' )( 'desktop:runapp' );
+const Config = require( '../lib/config' );
+const Settings = require( '../lib/settings' );
+const settingConstants = require( '../lib/settings/constants' );
+const appInstance = require( '../lib/app-instance' );
+const platform = require( '../lib/platform' );
+const System = require( '../lib/system' );
+const log = require( '../lib/logger' )( 'desktop:runapp' );
 
 /**
  * Module variables
  */
 let mainWindow = null;
 
-function showAppWindow() {
-	const preloadFile = path.resolve( path.join( __dirname, '..', 'public_desktop', 'preload.js' ) );
-	const appUrl = Settings.getSetting( settingConstants.LAST_LOCATION );
+function createAppWindow() {
+	const preloadFile = path.resolve(
+		path.join( __dirname, '..', '..', 'public_desktop', 'preload.js' )
+	);
+
+	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+	const appUrl = lastLocation.startsWith( 'https' ) ? lastLocation : 'https://wordpress.com';
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
@@ -38,20 +41,14 @@ function showAppWindow() {
 
 	mainWindow = new BrowserWindow( config );
 
-	cookieAuth( mainWindow, function () {
-		// no-op
-	} );
+	// // TODO: cookies
 
 	mainWindow.webContents.on( 'did-finish-load', function () {
 		mainWindow.webContents.send( 'app-config', System.getDetails() );
 	} );
 
 	mainWindow.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
-		if (
-			details.resourceType === 'script' &&
-			details.url.startsWith( 'http://' ) &&
-			! details.url.startsWith( Config.server_url + ':' + Config.server_port + '/' )
-		) {
+		if ( details.resourceType === 'script' && details.url.startsWith( 'http://' ) ) {
 			log.info(
 				'Redirecting http request ' + details.url + ' to ' + details.url.replace( 'http', 'https' )
 			);
@@ -61,31 +58,7 @@ function showAppWindow() {
 		}
 	} );
 
-	mainWindow.webContents.session.webRequest.onHeadersReceived( function ( details, callback ) {
-		// always allow previews to be loaded in iframes
-		if ( details.resourceType === 'subFrame' ) {
-			const headers = Object.assign( {}, details.responseHeaders );
-			Object.keys( headers ).forEach( function ( name ) {
-				if ( name.toLowerCase() === 'x-frame-options' ) {
-					delete headers[ name ];
-				}
-			} );
-			callback( {
-				cancel: false,
-				responseHeaders: headers,
-			} );
-			return;
-		}
-		callback( { cancel: false } );
-	} );
-
-	ipc.handle( 'get-config', () => {
-		return Config.toRenderer();
-	} );
-
-	ipc.handle( 'get-settings', () => {
-		return Settings.toRenderer();
-	} );
+	// TODO: make settings and config available to Renderer
 
 	mainWindow.loadURL( appUrl );
 
@@ -102,29 +75,19 @@ function showAppWindow() {
 
 	platform.setMainWindow( mainWindow );
 
+	require( '../window-handlers/failed-to-load' )( mainWindow );
+	require( '../window-handlers/login-status' )( mainWindow );
+	require( '../window-handlers/notifications' )( mainWindow );
+	require( '../window-handlers/external-links' )( mainWindow );
+	require( '../window-handlers/window-saver' )( mainWindow );
+	require( '../window-handlers/debug-tools' )( mainWindow );
+	require( '../window-handlers/spellcheck' )( mainWindow );
+
 	return mainWindow;
 }
 
-module.exports = function ( started_cb ) {
-	log.info( 'Checking for other instances' );
-	let boot;
-
+module.exports = function () {
 	if ( appInstance.isSingleInstance() ) {
-		if ( 'development' === process.env.NODE_ENV ) {
-			log.debug( 'Dev mode: skipping server initialization' );
-
-			boot = () => started_cb( showAppWindow() );
-		} else {
-			boot = () => startServer( started_cb );
-		}
-
-		log.info( 'No other instances, waiting for app ready' );
-
-		// Start the app window
-		if ( app.isReady() ) {
-			boot();
-		} else {
-			app.on( 'ready', boot );
-		}
+		app.on( 'ready', createAppWindow );
 	}
 };

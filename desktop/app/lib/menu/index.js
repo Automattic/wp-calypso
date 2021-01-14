@@ -7,8 +7,8 @@ const { Menu } = require( 'electron' );
  * Internal dependencies
  */
 const template = require( './main-menu' );
-const menuSetter = require( 'app/lib/menu-setter' );
-const log = require( 'app/lib/logger' )( 'desktop:menu' );
+const menuSetter = require( '../../lib/menu-setter' );
+const log = require( '../../lib/logger' )( 'desktop:menu' );
 
 /**
  * Module variables

@@ -7,9 +7,9 @@ const { EventEmitter } = require( 'events' );
 /**
  * Internal dependencies
  */
-const platform = require( 'app/lib/platform' );
-const config = require( 'app/lib/config' );
-const log = require( 'app/lib/logger' )( 'desktop:updater' );
+const platform = require( '../../lib/platform' );
+const config = require( '../../lib/config' );
+const log = require( '../../lib/logger' )( 'desktop:updater' );
 
 class Updater extends EventEmitter {
 	constructor( options ) {

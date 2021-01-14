@@ -7,11 +7,11 @@ const { app, dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const state = require( 'app/lib/state' );
-const config = require( 'app/lib/config' );
-const system = require( 'app/lib/system' );
-const { zipContents } = require( 'app/lib/archiver' );
-const log = require( 'app/lib/logger' )( 'desktop:get-logs' );
+const state = require( '../../lib/state' );
+const config = require( '../../lib/config' );
+const system = require( '../../lib/system' );
+const { zipContents } = require( '../../lib/archiver' );
+const log = require( '../../lib/logger' )( 'desktop:get-logs' );
 
 /**
  * Module variables

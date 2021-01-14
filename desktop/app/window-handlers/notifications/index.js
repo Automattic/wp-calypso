@@ -8,10 +8,10 @@ const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs
 /**
  * Internal dependencies
  */
-const Settings = require( 'app/lib/settings' );
-const Platform = require( 'app/lib/platform' );
-const ViewModel = require( 'app/lib/notifications/viewmodel' );
-const log = require( 'app/lib/logger' )( 'desktop:notifications' );
+const Settings = require( '../../lib/settings' );
+const Platform = require( '../../lib/platform' );
+const ViewModel = require( '../../lib/notifications/viewmodel' );
+const log = require( '../../lib/logger' )( 'desktop:notifications' );
 
 /**
  *

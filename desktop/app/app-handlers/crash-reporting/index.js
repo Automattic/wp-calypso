@@ -6,8 +6,8 @@ const { app, crashReporter } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const Config = require( 'app/lib/config' );
-const log = require( 'app/lib/logger' )( 'desktop:crash-reporting' );
+const Config = require( '../../lib/config' );
+const log = require( '../../lib/logger' )( 'desktop:crash-reporting' );
 
 module.exports = function () {
 	if ( Config.crash_reporter.electron ) {

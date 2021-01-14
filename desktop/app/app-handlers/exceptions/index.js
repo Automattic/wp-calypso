@@ -6,9 +6,9 @@ const { app, dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const crashTracker = require( 'app/lib/crash-tracker' );
-const system = require( 'app/lib/system' );
-const log = require( 'app/lib/logger' )( 'desktop:exceptions', {
+const crashTracker = require( '../../lib/crash-tracker' );
+const system = require( '../../lib/system' );
+const log = require( '../../lib/logger' )( 'desktop:exceptions', {
 	handleExceptions: true,
 } );
 

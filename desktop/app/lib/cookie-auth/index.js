@@ -8,7 +8,7 @@ const url = require( 'url' );
 /**
  * Internal Dependencies
  */
-const log = require( 'app/lib/logger' )( 'cookie-auth' );
+const log = require( '../../lib/logger' )( 'cookie-auth' );
 
 /**
  * Module variables

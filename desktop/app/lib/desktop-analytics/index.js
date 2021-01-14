@@ -1,4 +1,4 @@
-const log = require( 'app/lib/logger' )( 'desktop:analytics' );
+const log = require( '../../lib/logger' )( 'desktop:analytics' );
 const fetch = require( 'electron-fetch' ).default;
 
 function buildQuerystring( group, name ) {
@@ -17,7 +17,7 @@ function buildQuerystring( group, name ) {
 	return uriComponent;
 }
 
-export async function bumpStat( group, name ) {
+async function bumpStat( group, name ) {
 	if ( 'object' === typeof group ) {
 		log.info( 'Bumping stats ', group );
 	} else {
@@ -38,7 +38,7 @@ export async function bumpStat( group, name ) {
 // Get analytics conform version string
 // version string needs to be formatted without `.`
 // Replaces `beta` with `b` as stats key and value is limited to 32 chars
-export function sanitizeVersion( version ) {
+function sanitizeVersion( version ) {
 	return version.replace( /\./g, '-' ).replace( 'beta', 'b' );
 }
 
@@ -49,7 +49,7 @@ const PLATFORMS = {
 };
 
 // Get analytics conform platform string
-export function getPlatform( platform ) {
+function getPlatform( platform ) {
 	return PLATFORMS[ platform ];
 }
 
@@ -62,3 +62,9 @@ function checkLength( key, val ) {
 		log.warn( `bumpStat() value '${ val }' is longer than 32 chars` );
 	}
 }
+
+module.exports = {
+	getPlatform,
+	sanitizeVersion,
+	bumpStat,
+};

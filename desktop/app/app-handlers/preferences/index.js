@@ -6,8 +6,8 @@ const { dialog, ipcMain: ipc } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const log = require( 'app/lib/logger' )( 'preferences' );
-const Settings = require( 'app/lib/settings' );
+const log = require( '../../lib/logger' )( 'preferences' );
+const Settings = require( '../../lib/settings' );
 
 function promptForRestart( title, message ) {
 	// Warn user they need to restart the app

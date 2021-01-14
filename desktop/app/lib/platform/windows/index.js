@@ -7,12 +7,12 @@ const { Tray, Menu, app } = require( 'electron' );
  * Internal dependencies
  */
 const windowsTrayMenu = require( './tray-menu' );
-const Settings = require( 'app/lib/settings' );
-const appQuit = require( 'app/lib/app-quit' );
-const platform = require( 'app/lib/platform' );
-const menuSetter = require( 'app/lib/menu-setter' );
-const assets = require( 'app/lib/assets' );
-const log = require( 'app/lib/logger' )( 'platform:windows' );
+const Settings = require( '../../../lib/settings' );
+const appQuit = require( '../../../lib/app-quit' );
+const platform = require( '../../../lib/platform' );
+const menuSetter = require( '../../../lib/menu-setter' );
+const assets = require( '../../../lib/assets' );
+const log = require( '../../../lib/logger' )( 'platform:windows' );
 
 /**
  * Module variables

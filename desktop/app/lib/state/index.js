@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-const keychain = require( 'app/lib/keychain' );
+const keychain = require( '../../lib/keychain' );
 
 /**
  * Module variables
