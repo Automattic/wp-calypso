@@ -152,6 +152,8 @@ class TitanRedirector extends Component {
 		}
 
 		page.redirect( redirectURL );
+
+		return null;
 	}
 }
 

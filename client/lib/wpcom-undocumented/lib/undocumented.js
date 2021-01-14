@@ -778,7 +778,7 @@ Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
 Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/titan/${ encodeURIComponent( mode ) }`,
+			path: `/titan/redirect-info/${ encodeURIComponent( mode ) }`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{ jwt },
