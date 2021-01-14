@@ -62,7 +62,7 @@ function enqueue_style( $filename ) {
  * Enqueue script for the Block Inserter modifications.
  */
 function enqueue_block_inserter_modifications() {
-	enqueue_script( 'contextual-tips', true );
-	enqueue_style( 'contextual-tips', false );
+	enqueue_script( 'block-inserter-modifications', true );
+	enqueue_style( 'block-inserter-modifications', false );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_block_inserter_modifications', 0 );
