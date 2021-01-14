@@ -53,9 +53,8 @@ function getBlockedPurchaseErrorMessage( { translate, selectedSiteSlug } ) {
 				a: (
 					<a
 						href={
-							'https://wordpress.com/error-report/' + selectedSiteSlug
-								? '?url=payment@' + selectedSiteSlug
-								: ''
+							'https://wordpress.com/error-report/' +
+							( selectedSiteSlug ? '?url=payment@' + selectedSiteSlug : '' )
 						}
 						target="_blank"
 						rel="noopener noreferrer"
