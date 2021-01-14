@@ -100,6 +100,19 @@
 	}
 }
 
+.jetpack-product-card-i5__you-own-this {
+	margin-top: -18px;
+	margin-bottom: 31px;
+
+	padding-top: 6px;
+	padding-bottom: 6px;
+
+	border-radius: 4px;
+
+	text-align: center;
+	background-color: rgba( var( --color-success-10-rgb ), 0.1 );
+}
+
 .jetpack-product-card-i5__price {
 	display: flex;
 	align-items: center;
