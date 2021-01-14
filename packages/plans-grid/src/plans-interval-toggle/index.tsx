@@ -74,14 +74,18 @@ const PlansIntervalToggle: React.FunctionComponent< ToggleHostProps > = ( {
 					selected={ intervalType === 'MONTHLY' }
 					onClick={ () => onChange( 'MONTHLY' ) }
 				>
-					{ __( 'Monthly', __i18n_text_domain__ ) }
+					<span className="plans-interval-toggle__label">
+						{ __( 'Monthly', __i18n_text_domain__ ) }
+					</span>
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
 					selected={ intervalType === 'ANNUALLY' }
 					onClick={ () => onChange( 'ANNUALLY' ) }
 				>
-					{ __( 'Annually', __i18n_text_domain__ ) }
+					<span className="plans-interval-toggle__label">
+						{ __( 'Annually', __i18n_text_domain__ ) }
+					</span>
 					{ intervalType === 'MONTHLY' && (
 						<PopupMessages>
 							{ sprintf(

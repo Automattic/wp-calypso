@@ -49,6 +49,14 @@
 	}
 
 	.segmented-control__text {
+		font-family: $default-font;
+		font-size: $font-body-small;
+		font-weight: 500; /* stylelint-disable-line scales/font-weight */
+		letter-spacing: 0.16px;
+		color: var( --studio-gray-90 );
+	}
+
+	&__label {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -56,12 +64,6 @@
 		height: 32px;
 		min-width: 102px;
 		padding: 0 16px;
-
-		font-family: $default-font;
-		font-size: $font-body-small;
-		font-weight: 500; /* stylelint-disable-line scales/font-weight */
-		letter-spacing: 0.16px;
-		color: var( --studio-gray-90 );
 	}
 }
 
