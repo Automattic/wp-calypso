@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import {
-	isAutoRenewDisabled,
+	isExpiring,
 	isIncludedWithPlan,
 	isPaidWithCreditCard,
 	isPaidWithCredits,
@@ -38,7 +38,7 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		if ( isPaidWithCreditCard( purchase ) ) {
 			return (
 				<PaymentInfoBlockWrapper>
-					<PaymentLogo type={ logoType } disabled={ isAutoRenewDisabled( purchase ) } />
+					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
 					{ purchase.payment.creditCard?.number ?? '' }
 				</PaymentInfoBlockWrapper>
 			);
@@ -47,7 +47,7 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		if ( isPaidWithPayPalDirect( purchase ) ) {
 			return (
 				<PaymentInfoBlockWrapper>
-					<PaymentLogo type={ logoType } disabled={ isAutoRenewDisabled( purchase ) } />
+					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
 					{ translate( 'expiring %(cardExpiry)s', {
 						args: {
 							cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
@@ -59,7 +59,7 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 
 		return (
 			<PaymentInfoBlockWrapper>
-				<PaymentLogo type={ logoType } disabled={ isAutoRenewDisabled( purchase ) } />
+				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
 			</PaymentInfoBlockWrapper>
 		);
 	}
