@@ -33,9 +33,12 @@ function WpcomNux() {
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 		site: select( 'automattic/site' ).getSite( window._currentSiteId ),
 	} ) );
+	const isGuideManuallyOpened = useSelect( ( select ) =>
+		select( 'automattic/nux' ).isGuideManuallyOpened()
+	);
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
-	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
+	const { setWpcomNuxStatus, setGuideOpenStatus } = useDispatch( 'automattic/nux' );
 
 	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
 	useEffect( () => {
@@ -59,6 +62,7 @@ function WpcomNux() {
 		if ( isWpcomNuxEnabled && ! isSPTOpen ) {
 			recordTracksEvent( 'calypso_editor_wpcom_nux_open', {
 				is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+				is_manually_opened: isGuideManuallyOpened,
 			} );
 		}
 	}, [ isWpcomNuxEnabled, isSPTOpen ] );
@@ -72,6 +76,7 @@ function WpcomNux() {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 		} );
 		setWpcomNuxStatus( { isNuxEnabled: false } );
+		setGuideOpenStatus( { isGuideManuallyOpened: false } );
 	};
 
 	const isPodcastingSite = !! site?.options?.anchor_podcast;
