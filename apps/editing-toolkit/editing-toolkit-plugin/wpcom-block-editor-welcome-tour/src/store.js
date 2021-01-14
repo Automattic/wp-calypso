@@ -38,6 +38,8 @@ const reducer = combineReducers( {
 } );
 
 const actions = {
+	// TODO: Clarify variable naming of nux vs tour for consistency and to better reflect terminology in core
+	// isFeatureActive instead of isNuxEnabled would match core nad make this logic easier to understand.
 	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
 		if ( ! bypassApi ) {
 			apiFetch( {
