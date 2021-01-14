@@ -12,6 +12,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { STORE_KEY } from '../../stores/onboard';
 import type { Viewport } from './types';
 import { useFontPairings } from '../../fonts';
+import type { FontPair } from '../../constants';
 
 function getFontsLoadingHTML( effectiveFontPairings ) {
 	const baseURL = 'https://fonts.googleapis.com/css2';
@@ -36,7 +37,7 @@ function getFontsLoadingHTML( effectiveFontPairings ) {
 
 	// Chrome doesn't load the fonts in memory until they're actually used,
 	// this keeps the fonts used and ready in memory.
-	const fontsHolders = effectiveFontPairings.reduce( ( acc, pairing ) => {
+	const fontsHolders = ( effectiveFontPairings as FontPair[] ).reduce( ( acc, pairing ) => {
 		Object.values( pairing ).forEach( ( font ) => {
 			const fontHolder = document.createElement( 'div' );
 			fontHolder.style.fontFamily = font;

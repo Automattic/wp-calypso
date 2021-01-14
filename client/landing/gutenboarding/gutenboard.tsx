@@ -18,7 +18,7 @@ import { useI18n } from '@automattic/react-i18n';
 import Header from './components/header';
 import SignupForm from './components/signup-form';
 import { name, settings } from './onboarding-block';
-import { getFontTitle } from './constants';
+import { FontPair, getFontTitle } from './constants';
 import useOnSiteCreation from './hooks/use-on-site-creation';
 import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 import useSignup from './hooks/use-signup';
@@ -46,7 +46,7 @@ const Gutenboard: React.FunctionComponent = () => {
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
 	React.useEffect( () => {
-		effectiveFontPairings.forEach( ( { base, headings } ) => {
+		effectiveFontPairings.forEach( ( { base, headings }: FontPair ) => {
 			const linkBase = document.createElement( 'link' );
 			const linkHeadings = document.createElement( 'link' );
 

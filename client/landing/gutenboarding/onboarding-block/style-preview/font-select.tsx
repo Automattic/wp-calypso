@@ -86,30 +86,33 @@ const FontSelect: React.FunctionComponent = () => {
 					>
 						<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 					</Button>
-					{ effectiveFontPairings.filter( fontPairingsFilter ).map( ( fontPair ) => {
-						// Font pairs are objects, we need `isShallowEqual` as we can't guarantee referential equality
-						// (E.g. if `selectedFonts` is coming from persisted state)
-						const isSelected = !! selectedFonts && isShallowEqual( fontPair, selectedFonts );
-						const { headings, base } = fontPair;
+					{ /* https://github.com/microsoft/TypeScript/issues/36390 */ }
+					{ ( effectiveFontPairings as FontPair[] )
+						.filter( fontPairingsFilter )
+						.map( ( fontPair ) => {
+							// Font pairs are objects, we need `isShallowEqual` as we can't guarantee referential equality
+							// (E.g. if `selectedFonts` is coming from persisted state)
+							const isSelected = !! selectedFonts && isShallowEqual( fontPair, selectedFonts );
+							const { headings, base } = fontPair;
 
-						return (
-							<Button
-								className={ classnames( 'style-preview__font-option', {
-									'is-selected': isSelected,
-								} ) }
-								onClick={ () => setFonts( fontPair ) }
-								key={ headings + base }
-							>
-								<span className="style-preview__font-option-contents">
-									<span style={ { fontFamily: headings, fontWeight: 700 } }>
-										{ getFontTitle( headings ) }
+							return (
+								<Button
+									className={ classnames( 'style-preview__font-option', {
+										'is-selected': isSelected,
+									} ) }
+									onClick={ () => setFonts( fontPair ) }
+									key={ headings + base }
+								>
+									<span className="style-preview__font-option-contents">
+										<span style={ { fontFamily: headings, fontWeight: 700 } }>
+											{ getFontTitle( headings ) }
+										</span>
+										&nbsp;/&nbsp;
+										<span style={ { fontFamily: base } }>{ getFontTitle( base ) }</span>
 									</span>
-									&nbsp;/&nbsp;
-									<span style={ { fontFamily: base } }>{ getFontTitle( base ) }</span>
-								</span>
-							</Button>
-						);
-					} ) }
+								</Button>
+							);
+						} ) }
 				</div>
 				<div className="style-preview__font-options-mobile">
 					<Button
@@ -146,34 +149,36 @@ const FontSelect: React.FunctionComponent = () => {
 						>
 							<span className="style-preview__font-option-contents">{ defaultFontOption }</span>
 						</Button>
-						{ effectiveFontPairings.filter( fontPairingsFilter ).map( ( fontPair ) => {
-							// Font pairs are objects, we need `isShallowEqual` as we can't guarantee referential equality
-							// (E.g. if `selectedFonts` is coming from persisted state)
-							const isSelected = !! selectedFonts && isShallowEqual( fontPair, selectedFonts );
-							const { headings, base } = fontPair;
+						{ ( effectiveFontPairings as FontPair[] )
+							.filter( fontPairingsFilter )
+							.map( ( fontPair ) => {
+								// Font pairs are objects, we need `isShallowEqual` as we can't guarantee referential equality
+								// (E.g. if `selectedFonts` is coming from persisted state)
+								const isSelected = !! selectedFonts && isShallowEqual( fontPair, selectedFonts );
+								const { headings, base } = fontPair;
 
-							return (
-								<Button
-									className={ classnames(
-										'style-preview__font-option',
-										'style-preview__font-option-mobile',
-										{
-											'is-selected-dropdown-option': isSelected,
-										}
-									) }
-									onClick={ () => setFontsAndClose( fontPair ) }
-									key={ headings + base }
-								>
-									<span className="style-preview__font-option-contents">
-										<span style={ { fontFamily: headings, fontWeight: 700 } }>
-											{ getFontTitle( headings ) }
+								return (
+									<Button
+										className={ classnames(
+											'style-preview__font-option',
+											'style-preview__font-option-mobile',
+											{
+												'is-selected-dropdown-option': isSelected,
+											}
+										) }
+										onClick={ () => setFontsAndClose( fontPair ) }
+										key={ headings + base }
+									>
+										<span className="style-preview__font-option-contents">
+											<span style={ { fontFamily: headings, fontWeight: 700 } }>
+												{ getFontTitle( headings ) }
+											</span>
+											&nbsp;/&nbsp;
+											<span style={ { fontFamily: base } }>{ getFontTitle( base ) }</span>
 										</span>
-										&nbsp;/&nbsp;
-										<span style={ { fontFamily: base } }>{ getFontTitle( base ) }</span>
-									</span>
-								</Button>
-							);
-						} ) }
+									</Button>
+								);
+							} ) }
 					</div>
 				</div>
 			</div>
