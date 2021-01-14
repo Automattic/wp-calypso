@@ -23,8 +23,9 @@ class ConciergeRefundPolicy extends React.Component {
 
 	renderPolicy = () => {
 		const message = this.props.translate(
-			'You understand that {{refundsSupportPage}}Quick Start Session refunds{{/refundsSupportPage}} are limited to 14 days from the date of purchase.',
+			'You understand that {{refundsSupportPage}}Quick Start Session refunds{{/refundsSupportPage}} are limited to %(days)d days from the date of purchase.',
 			{
+				args: { days: 14 },
 				components: {
 					refundsSupportPage: (
 						<a
