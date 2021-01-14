@@ -32,7 +32,7 @@
 		"@babel/runtime": "^7.12.5",
 		"classnames": "^2.2.6",
 		"gridicons": "^3.3.1",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.20",
 		"prop-types": "^15.7.2",
 		"react-modal": "^3.8.1"
 	},
