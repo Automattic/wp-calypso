@@ -5,7 +5,7 @@ import * as React from 'react';
 import classnames from 'classnames';
 import { ThemeProvider } from 'emotion-theming';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
@@ -113,10 +113,13 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 					<p>{ __( 'Plan subscription: Free forever', 'full-site-editing' ) }</p>
 					<Tip>
 						{ createInterpolateElement(
-							/* translators: pressing <Link> will redirect user to plan selection step */
-							__(
-								'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer 14-day full-refunds, guaranteed.',
-								'full-site-editing'
+							sprintf(
+								/* translators: pressing <Link> will redirect user to plan selection step; %1$d is the number of days */
+								__(
+									'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer %1$d-day full-refunds, guaranteed.',
+									'full-site-editing'
+								),
+								14
 							),
 							{
 								Link: <Button isLink onClick={ () => setStep( LaunchStep.Plan ) } />,
