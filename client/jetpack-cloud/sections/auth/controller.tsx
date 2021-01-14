@@ -22,6 +22,14 @@ import { authTokenRedirectPath } from './paths';
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';
 const debug = debugFactory( 'calypso:jetpack-cloud-connect' );
 
+interface OAuth2Params {
+	response_type: 'token';
+	client_id: string;
+	redirect_uri: string;
+	scope: 'global';
+	action?: string;
+}
+
 export const connect: PageJS.Callback = ( context, next ) => {
 	if ( config.isEnabled( 'oauth' ) && config( 'oauth_client_id' ) ) {
 		const protocol = window.location.protocol;
@@ -31,13 +39,16 @@ export const connect: PageJS.Callback = ( context, next ) => {
 			? `${ protocol }//${ host }:${ port }${ authTokenRedirectPath() }`
 			: `${ protocol }//${ host }${ authTokenRedirectPath() }`;
 
-		const params = {
+		const params: OAuth2Params = {
 			response_type: 'token',
 			client_id: config( 'oauth_client_id' ),
 			redirect_uri: redirectUri,
 			scope: 'global',
-			action: 'oauth2-auth',
 		};
+
+		if ( config.isEnabled( 'oauth_implicit_authorization' ) ) {
+			params.action = 'oauth2-auth';
+		}
 
 		const authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }`;
 		debug( `authUrl: ${ authUrl }` );
