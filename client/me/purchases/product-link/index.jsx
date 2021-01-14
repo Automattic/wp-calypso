@@ -20,6 +20,7 @@ import {
 	isPlan,
 	isSiteRedirect,
 	isTheme,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
@@ -41,7 +42,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 		text = i18n.translate( 'Domain Settings' );
 	}
 
-	if ( isGoogleApps( purchase ) ) {
+	if ( isGoogleApps( purchase ) || isTitanMail( purchase ) ) {
 		url = emailManagement( selectedSite.slug, purchase.meta );
 		text = i18n.translate( 'Email Settings' );
 	}
