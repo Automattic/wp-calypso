@@ -55,7 +55,7 @@ class Posts_List_Block {
 		if ( ! has_block( 'a8c/posts-list' ) ) {
 			return;
 		}
-		enqueue_webpack_assets( 'posts-list-block', array( 'exclude_style' => true ) );
+		use_webpack_assets( 'posts-list-block', array( 'exclude_style' => true ) );
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Posts_List_Block {
 			return;
 		}
 
-		enqueue_webpack_assets( 'posts-list-block', array( 'exclude_script' => true ) );
+		use_webpack_assets( 'posts-list-block', array( 'exclude_script' => true ) );
 	}
 
 	/**

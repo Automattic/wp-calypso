@@ -43,7 +43,7 @@ class Block_Patterns_Modifications {
 	 * Enqueue block editor assets.
 	 */
 	public function enqueue_script_and_style() {
-		enqueue_webpack_assets( 'block-patterns' );
+		use_webpack_assets( 'block-patterns' );
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Block_Patterns_Modifications', 'init' ) );

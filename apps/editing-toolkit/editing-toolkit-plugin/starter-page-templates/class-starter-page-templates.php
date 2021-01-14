@@ -40,7 +40,6 @@ class Starter_Page_Templates {
 			)
 		);
 
-		add_action( 'init', array( $this, 'register_scripts' ) );
 		add_action( 'init', array( $this, 'register_meta_field' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
@@ -59,19 +58,6 @@ class Starter_Page_Templates {
 		}
 
 		return self::$instance;
-	}
-
-	/**
-	 * Register block editor scripts.
-	 */
-	public function register_scripts() {
-		wp_register_script(
-			'starter-page-templates',
-			plugins_url( 'dist/starter-page-templates.js', __FILE__ ),
-			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.js' ),
-			true
-		);
 	}
 
 	/**
@@ -147,8 +133,7 @@ class Starter_Page_Templates {
 			return;
 		}
 
-		wp_enqueue_script( 'starter-page-templates' );
-		wp_set_script_translations( 'starter-page-templates', 'full-site-editing' );
+		$asset = use_webpack_assets( 'starter-page-templates' );
 
 		$default_templates = array(
 			array(
@@ -181,19 +166,7 @@ class Starter_Page_Templates {
 			)
 		);
 
-		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
-
-		// Enqueue styles.
-		$style_file = is_rtl()
-			? 'starter-page-templates.rtl.css'
-			: 'starter-page-templates.css';
-
-		wp_enqueue_style(
-			'starter-page-templates',
-			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-		);
+		wp_localize_script( $asset['asset_name'], 'starterPageTemplatesConfig', $config );
 	}
 
 	/**

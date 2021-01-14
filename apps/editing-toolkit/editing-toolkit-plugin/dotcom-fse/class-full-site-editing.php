@@ -115,7 +115,7 @@ class Full_Site_Editing {
 	 * Enqueue assets.
 	 */
 	public function enqueue_script_and_style() {
-		$asset = enqueue_webpack_assets( 'dotcom-fse' );
+		$asset = use_webpack_assets( 'dotcom-fse' );
 
 		wp_localize_script(
 			$asset['script_name'],

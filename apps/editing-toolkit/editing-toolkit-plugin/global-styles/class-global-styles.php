@@ -321,7 +321,7 @@ class Global_Styles {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		$asset = \A8C\FSE\enqueue_webpack_assets( 'global-styles' );
+		$asset = \A8C\FSE\use_webpack_assets( 'global-styles' );
 
 		wp_localize_script(
 			$asset['script_name'],

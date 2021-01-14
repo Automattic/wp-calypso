@@ -11,7 +11,7 @@
 
 namespace A8C\FSE\EditorSiteLaunch;
 
-use function A8C\FSE\enqueue_webpack_assets;
+use function A8C\FSE\use_webpack_assets;
 
 /**
  * Enqueue assets
@@ -21,7 +21,7 @@ function enqueue_script_and_style() {
 	if ( ! \A8C\FSE\Common\is_block_editor_screen() ) {
 		return;
 	}
-	$asset = enqueue_webpack_assets( 'editor-site-launch' );
+	$asset = use_webpack_assets( 'editor-site-launch' );
 
 	wp_localize_script(
 		$asset['script_name'],

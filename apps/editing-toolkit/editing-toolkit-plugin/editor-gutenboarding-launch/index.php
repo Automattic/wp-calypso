@@ -20,6 +20,6 @@ function enqueue_script_and_style() {
 		return;
 	}
 
-	enqueue_webpack_assets( 'editor-gutenboarding-launch' );
+	use_webpack_assets( 'editor-gutenboarding-launch' );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );

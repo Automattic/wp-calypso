@@ -43,7 +43,7 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
 /**
  * Use this function to enqueue webpack-generated assets for your module.
  *
- * For example, calling `enqueue_webpack_assets( "block-patterns" )` will enqueue
+ * For example, calling `use_webpack_assets( "block-patterns" )` will enqueue
  * the scripts and styles with a basename of "block-patterns" from the "dist"
  * directory.
  *
@@ -53,27 +53,29 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
  * @param {string} $filename The name of the script + style to enqueue, without
  *                           extensions or paths (E.g. "block-patterns").
  * @param {array}  $options  Options to pass in. Currently supports 'in_footer'
- *                           for wp_enqueue_script.
+ *                           for wp_enqueue_script. TODO.
  * @return {array} Details about the script: the final `asset_name` (e.g. "a8c-etk-block-patterns")
- *                 and the `asset_dir_url` (using `plugins_url`).
+ *                 and the `asset_dir_url` (using `plugins_url`). TODO
  */
-function enqueue_webpack_assets( $filename, $options = array() ) {
-	$filename   = basename( $filename );
-	$asset_name = "a8c-etk-$filename";
-	$asset_file = include plugin_dir_path( __FILE__ ) . "dist/$filename.asset.php";
+function use_webpack_assets( $filename, $options = array() ) {
+	$filename      = basename( $filename );
+	$asset_name    = "a8c-etk-$filename";
+	$asset_file    = include plugin_dir_path( __FILE__ ) . "dist/$filename.asset.php";
+	$register_only = isset( $options['register_only'] ) && $options['register_only'];
 
 	$script_dependencies = isset( $asset_file['dependences'] ) ? $asset_file['dependencies'] : array();
 	$script_path         = "dist/$filename.js";
 
 	$exclude_script = isset( $options['exclude_script'] ) && $options['exclude_script'];
 	if ( ! $exclude_script && file_exists( __DIR__ . $script_path ) ) {
-		$script_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_path );
-		wp_enqueue_script(
+		$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_path );
+		$enqueue_or_register = $register_only ? 'wp_register_script' : 'wp_enqueue_script';
+		$enqueue_or_register(
 			$asset_name,
 			plugins_url( $script_path, __FILE__ ),
 			$script_dependencies,
 			$script_version,
-			isset( $options['in_footer'] ) ? isset( $options['in_footer'] ) : true
+			isset( $options['in_footer'] ) ? $options['in_footer'] : true
 		);
 		wp_set_script_translations( $asset_name, 'full-site-editing' );
 	}
@@ -83,8 +85,9 @@ function enqueue_webpack_assets( $filename, $options = array() ) {
 
 	$exclude_style = isset( $options['exclude_style'] ) && $options['exclude_style'];
 	if ( ! $exclude_style && file_exists( __DIR__ . $style_path ) ) {
-		$style_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $style_path );
-		wp_enqueue_style(
+		$style_version       = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $style_path );
+		$enqueue_or_register = $register_only ? 'wp_register_style' : 'wp_enqueue_style';
+		$enqueue_or_register(
 			$asset_name,
 			plugins_url( $style_path, __FILE__ ),
 			array(),

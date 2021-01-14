@@ -42,7 +42,7 @@ class WPCOM_Block_Editor_Welcome_Tour {
 	 * Enqueue block editor assets.
 	 */
 	public function enqueue_script_and_style() {
-		$asset = enqueue_webpack_assets( 'wpcom-block-editor-welcome-tour' );
+		$asset = use_webpack_assets( 'wpcom-block-editor-welcome-tour' );
 
 		wp_localize_script(
 			$asset['script_name'],

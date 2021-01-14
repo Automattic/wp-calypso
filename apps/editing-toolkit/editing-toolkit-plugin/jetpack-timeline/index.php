@@ -9,39 +9,16 @@
 add_action(
 	'init',
 	function() {
-		$asset_file   = __DIR__ . '/dist/jetpack-timleine.asset.php';
-		$asset        = file_exists( $asset_file ) ? require $asset_file : null;
-		$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
-		$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( __DIR__ . '/index.js' );
-
-		// Block JS.
-		wp_register_script(
-			'jetpack-timeline',
-			plugins_url( 'dist/jetpack-timeline.js', __FILE__ ),
-			$dependencies,
-			$version,
-			true
-		);
-
-		$style_file = is_rtl()
-		? 'jetpack-timeline.rtl.css'
-		: 'jetpack-timeline.css';
-
-		wp_register_style(
-			'jetpack-timeline',
-			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-		);
+		\A8C\FSE\use_webpack_assets( 'jetpack-timeline', array( 'register_only' => true ) );
 
 		// Register block.
 		register_block_type(
 			'jetpack/timeline',
 			array(
-				'editor_script'   => 'jetpack-timeline',
-				'editor_style'    => 'jetpack-timeline',
-				'render_callback' => function( $attribs, $content ) {
-					wp_enqueue_style( 'jetpack-timeline' );
+				'editor_script'   => 'a8c-etk-jetpack-timeline',
+				'editor_style'    => 'a8c-etk-jetpack-timeline',
+				'render_callback' => function( $attribs, $content ) { // phpcs:ignore
+					wp_enqueue_style( 'a8c-etk-jetpack-timeline' );
 					return $content;
 				},
 			)
@@ -58,9 +35,6 @@ add_action(
 			10,
 			2
 		);
-
-		wp_set_script_translations( 'jetpack-timeline', 'full-site-editing' );
-
 	}
 );
 

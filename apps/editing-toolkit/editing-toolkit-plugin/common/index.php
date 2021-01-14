@@ -11,25 +11,11 @@
 
 namespace A8C\FSE\Common;
 
-use function A8C\FSE\enqueue_webpack_assets;
-
 /**
  * Register data stores that may be useful for a variety of concerns
  */
 function register_data_stores() {
-	$path         = dirname( __DIR__ ) . 'dist/data_stores.js';
-	$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/data-stores.asset.php';
-	$asset        = file_exists( $asset_file ) ? require $asset_file : null;
-	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
-	$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( $path );
-
-	wp_register_script(
-		'a8c-fse-common-data-stores',
-		plugins_url( 'dist/data-stores.js', __FILE__ ),
-		$dependencies,
-		$version,
-		true
-	);
+	\A8C\FSE\use_webpack_assets( 'data-stores', array( 'register_only' => true ) );
 }
 add_action( 'init', __NAMESPACE__ . '\register_data_stores' );
 
@@ -119,7 +105,7 @@ function enqueue_script_and_style() {
 	if ( ! should_load_assets() ) {
 		return;
 	}
-	enqueue_webpack_assets( 'common' );
+	\A8C\FSE\use_webpack_assets( 'common' );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
 
