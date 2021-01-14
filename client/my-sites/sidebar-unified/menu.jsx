@@ -65,13 +65,13 @@ export const MySitesSidebarUnifiedMenu = ( {
 		<li>
 			<ExpandableSidebarMenu
 				onClick={ () => {
-					if ( isExternal( link ) ) {
-						// If the URL is external, page() will fail to replace state between different domains.
-						externalRedirect( link );
-						return;
-					}
-
 					if ( isWithinBreakpoint( '>660px' ) ) {
+						if ( isExternal( link ) ) {
+							// If the URL is external, page() will fail to replace state between different domains.
+							externalRedirect( link );
+							return;
+						}
+
 						// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
 						page( link );
 
