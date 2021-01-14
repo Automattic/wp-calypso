@@ -31,14 +31,16 @@ const LaunchSidebar: React.FunctionComponent = () => {
 	return (
 		<div className="nux-launch-sidebar">
 			<div className="nux-launch-sidebar__header">
-				<Title>{ __( "You're almost there!", 'full-site-editing' ) }</Title>
+				<Title>{ __( "You're almost there2!", 'full-site-editing' ) }</Title>
 				<SubTitle>
+					<div>This is my subtitle.</div>
 					{ __(
 						'Complete the following steps to launch your site. Your site will remain private until you Launch.',
 						'full-site-editing'
 					) }
 				</SubTitle>
 			</div>
+			<div>Just test whatever.</div>
 			<div className="nux-launch-sidebar__body">
 				<LaunchMenu onMenuItemClick={ handleMenuItemClick } />
 			</div>
