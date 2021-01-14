@@ -232,7 +232,7 @@ class NotificationSubscriptions extends React.Component {
 
 						<FormButton
 							isSubmitting={ this.props.isUpdatingUserSettings }
-							disabled={ this.props.getDisabledState() }
+							disabled={ this.props.isUpdatingUserSettings || ! this.props.hasUnsavedUserSettings }
 							onClick={ this.handleClickEvent( 'Save Notification Settings Button' ) }
 						>
 							{ this.props.isUpdatingUserSettings
