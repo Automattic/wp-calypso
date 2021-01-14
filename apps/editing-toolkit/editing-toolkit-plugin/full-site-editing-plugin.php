@@ -55,9 +55,12 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
  *                           extensions or paths (E.g. "block-patterns").
  * @param {array}  $options  Options to pass in. Currently supports 'in_footer'
  *                           for wp_enqueue_script.
+ * @return {string} The name of the script/style with prefixes applied. (Note: styles and scripts have the same name for the same module.)
  */
 function enqueue_webpack_assets( $filename, $options = array() ) {
-	$asset_file = include plugin_dir_path( __FILE__ ) . "dist/$name.asset.php";
+	$filename   = basename( $filename );
+	$asset_name = "a8c-etk-$filename";
+	$asset_file = include plugin_dir_path( __FILE__ ) . "dist/$filename.asset.php";
 
 	$script_dependencies = isset( $asset_file['dependences'] ) ? $asset_file['dependencies'] : array();
 	$script_path         = "dist/$filename.js";
@@ -65,13 +68,13 @@ function enqueue_webpack_assets( $filename, $options = array() ) {
 	if ( file_exists( __DIR__ . $script_path ) ) {
 		$script_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_path );
 		wp_enqueue_script(
-			$filename,
+			$asset_name,
 			plugins_url( $script_path, __FILE__ ),
 			$script_dependencies,
 			$script_version,
 			isset( $options['in_footer'] ) ? isset( $options['in_footer'] ) : true
 		);
-		wp_set_script_translations( $filename, 'full-site-editing' );
+		wp_set_script_translations( $asset_name, 'full-site-editing' );
 	}
 
 	$style_ext  = is_rtl() ? $filename . '.rtl.css' : $filename . '.css';
@@ -80,12 +83,13 @@ function enqueue_webpack_assets( $filename, $options = array() ) {
 	if ( file_exists( __DIR__ . $style_path ) ) {
 		$style_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $style_path );
 		wp_enqueue_style(
-			$filename,
+			$asset_name,
 			plugins_url( $style_path, __FILE__ ),
 			array(),
 			$style_version
 		);
 	}
+	return $asset_name;
 }
 
 /**
