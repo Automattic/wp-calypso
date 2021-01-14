@@ -26,6 +26,7 @@ function LaunchWpcomWelcomeTour() {
 	const isWpcomNuxEnabled = useSelect( ( select ) =>
 		select( 'automattic/nux' ).isWpcomNuxEnabled()
 	);
+	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// Preload first card image (others preloaded after NUX status confirmed)
@@ -43,6 +44,11 @@ function LaunchWpcomWelcomeTour() {
 		};
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
+
+	// Hide editor sidebar first time user sees the editor
+	useEffect( () => {
+		isWpcomNuxEnabled && closeGeneralSidebar();
+	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
 
 	useEffect( () => {
 		if ( ! isWpcomNuxEnabled ) {
