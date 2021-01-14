@@ -41,6 +41,7 @@ import {
 import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 
 class DomainItem extends PureComponent {
@@ -301,7 +302,7 @@ class DomainItem extends PureComponent {
 		}
 
 		if ( hasTitanMailWithUs( domainDetails ) ) {
-			return translate( 'Titan Mail' );
+			return getTitanProductName();
 		}
 
 		if ( domainDetails?.emailForwardsCount > 0 ) {

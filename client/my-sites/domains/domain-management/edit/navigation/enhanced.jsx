@@ -43,6 +43,7 @@ import { withoutHttp } from 'calypso/lib/url';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -112,7 +113,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				}
 			);
 		} else if ( hasTitanMailWithUs( domain ) ) {
-			navigationDescription = translate( 'Titan Mail' );
+			navigationDescription = getTitanProductName();
 		} else if ( emailForwardsCount > 0 ) {
 			navigationDescription = translate(
 				'%(emailForwardsCount)d forward',

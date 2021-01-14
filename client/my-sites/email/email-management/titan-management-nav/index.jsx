@@ -23,6 +23,7 @@ import { isEnabled } from 'calypso/config';
 import SectionHeader from 'calypso/components/section-header';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 
 /**
  * Style
@@ -126,16 +127,17 @@ class TitanManagementNav extends React.Component {
 
 	render() {
 		const { domain, translate } = this.props;
-		const translateArgs = {
+		const headerLabel = translate( '%(productName)s: %(domainName)s', {
 			args: {
 				domainName: domain.name,
+				productName: getTitanProductName(),
 			},
-			comment: '%(domainName)s is a domain name, e.g. example.com',
-		};
-
+			comment:
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either "Email" or "Titan Mail"',
+		} );
 		return (
 			<div className="titan-management-nav">
-				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) } />
+				<SectionHeader label={ headerLabel } />
 				<VerticalNav>
 					{ this.renderTitanManagementLink() }
 					{ this.renderPurchaseManagementLink() }

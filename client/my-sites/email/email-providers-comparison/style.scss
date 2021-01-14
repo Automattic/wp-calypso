@@ -8,6 +8,10 @@
 		width: calc( 33% - 0.5em );
 		margin: 8px 0;
 
+		.email-providers-comparison__providers-wordpress-com-email {
+			color: var( --color-wordpress-com );
+		}
+
 		&.no-gsuite {
 			width: calc( 50% - 0.5em );
 		}

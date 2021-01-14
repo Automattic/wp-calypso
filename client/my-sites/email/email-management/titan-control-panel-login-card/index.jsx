@@ -18,6 +18,7 @@ import {
 	fetchTitanIframeURL,
 } from 'calypso/my-sites/email/email-management/titan-functions';
 import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
+import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 
 /**
  * Style dependencies
@@ -75,28 +76,33 @@ class TitanControlPanelLoginCard extends React.Component {
 		const translateArgs = {
 			args: {
 				domainName: domain.name,
+				productName: getTitanProductName(),
 			},
-			comment: '%(domainName)s is a domain name, e.g. example.com',
+			comment:
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either Email or Titan Mail',
 		};
+		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
+		const buttonCtaText = isEnabled( 'titan/phase-2' )
+			? translate( 'Log in to the Email control panel' )
+			: translate( "Log in to Titan's control panel" );
+		const cardText = translate(
+			'Go to the %(productName)s control panel to manage email for %(domainName)s.',
+			translateArgs
+		);
 
 		return (
 			<div className="titan-control-panel-login-card">
-				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) }>
+				<SectionHeader label={ sectionHeaderLabel }>
 					<Button
 						primary
 						compact
 						busy={ this.state.isFetchingAutoLoginLink }
 						onClick={ this.onLogInClick }
 					>
-						{ translate( "Log in to Titan's control panel" ) }
+						{ buttonCtaText }
 					</Button>
 				</SectionHeader>
-				<CompactCard>
-					{ translate(
-						"Go to Titan's control panel to manage email for %(domainName)s.",
-						translateArgs
-					) }
-				</CompactCard>
+				<CompactCard>{ cardText }</CompactCard>
 			</div>
 		);
 	}
@@ -106,13 +112,16 @@ class TitanControlPanelLoginCard extends React.Component {
 		const translateArgs = {
 			args: {
 				domainName: domain.name,
+				productName: getTitanProductName(),
 			},
-			comment: '%(domainName)s is a domain name, e.g. example.com',
+			comment:
+				'%(domainName)s is a domain name, e.g. example.com; %(productName)s is the product name, either Email or Titan Mail',
 		};
+		const sectionHeaderLabel = translate( '%(productName)s: %(domainName)s', translateArgs );
 
 		return (
 			<div className="titan-control-panel-login-card">
-				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) } />
+				<SectionHeader label={ sectionHeaderLabel } />
 				<CompactCard>
 					{ this.state.iframeURL ? (
 						<iframe
