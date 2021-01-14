@@ -22,7 +22,6 @@ export const requestBillingTransactions = () => {
 
 		return wp
 			.undocumented()
-			.me()
 			.billingHistory()
 			.then( ( { billing_history, upcoming_charges } ) => {
 				dispatch( {
