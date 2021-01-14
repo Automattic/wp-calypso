@@ -57,6 +57,11 @@ describe( 'MySitesSidebar', () => {
 				isSiteAutomatedTransfer: false,
 				canUserUpgradeSite: true,
 				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
 			} );
 			const Store = () => Sidebar.store();
 
@@ -83,6 +88,7 @@ describe( 'MySitesSidebar', () => {
 		test( 'Should return Calypsoified store menu item if user can use store on this site and the site is an ecommerce plan', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseCalypsoStore: true,
+				canUserUseWooCommerceCoreStore: true,
 				...defaultProps,
 				site: {
 					options: {
@@ -105,6 +111,11 @@ describe( 'MySitesSidebar', () => {
 				canUserUseCalypsoStore: false,
 				canUserUpgradeSite: true,
 				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
 			} );
 			const Store = () => Sidebar.store();
 
@@ -112,12 +123,17 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( "Should return null if user who can't upgrade  user can not use store on this site (control a/b group)", () => {
+		test( "Should return null if user who can't upgrade user can not use store on this site (control a/b group)", () => {
 			abtest.mockImplementation( () => 'control' );
 			const Sidebar = new MySitesSidebar( {
 				canUserUseCalypsoStore: false,
 				canUserUpgradeSite: true,
 				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
 			} );
 			const Store = () => Sidebar.store();
 
@@ -161,6 +177,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return null item if site has Personal plan', () => {
 			const Sidebar = new MySitesSidebar( {
+				canUserUseWooCommerceCoreStore: false,
 				...defaultProps,
 				site: {
 					plan: {
