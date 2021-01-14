@@ -13,7 +13,7 @@ import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { addQueryArgs } from 'calypso/lib/route';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts, isJetpackSecondarySiteSlug } from 'calypso/lib/url';
 import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
 
 /**
@@ -38,12 +38,17 @@ const JetpackFreeCardButton: FC< JetpackFreeCardButtonProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
+	const { site } = urlQueryArgs;
 
 	// If the user is not logged in and there is a site in the URL, we need to construct
 	// the URL to wp-admin from the `site` query parameter
-	const wpAdminUrlFromQuery = urlQueryArgs.site
+	const wpAdminUrlFromQuery = site
 		? getUrlFromParts( {
-				...getUrlParts( `https://${ urlQueryArgs.site }/wp-admin/admin.php` ),
+				...getUrlParts(
+					`https://${
+						isJetpackSecondarySiteSlug( site ) ? site.replace( '::', '/' ) : site
+					}/wp-admin/admin.php`
+				),
 				search: '?page=jetpack',
 				hash: '/my-plan',
 		  } ).href
@@ -55,7 +60,7 @@ const JetpackFreeCardButton: FC< JetpackFreeCardButtonProps > = ( {
 
 	// `siteId` is going to be null if the user is not logged in, so we need to check
 	// if there is a site in the URL also
-	const isSiteinContext = siteId || urlQueryArgs.site;
+	const isSiteinContext = siteId || site;
 
 	// Jetpack Connect flow uses `url` instead of `site` as the query parameter for a site URL
 	const { site: url, ...restQueryArgs } = urlQueryArgs;
