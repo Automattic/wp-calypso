@@ -2,10 +2,29 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { registerStore } from '@wordpress/data';
+import { combineReducers, registerStore } from '@wordpress/data';
 
-const reducer = ( state = {}, { type, isNuxEnabled } ) =>
-	'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS' === type ? { ...state, isNuxEnabled } : state;
+const isNuxEnabledReducer = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS':
+			return action.isNuxEnabled;
+		default:
+			return state;
+	}
+};
+const isGuideManuallyOpenedReducer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_BLOCK_EDITOR_SET_GUIDE_OPEN':
+			return action.isGuideManuallyOpened;
+		default:
+			return state;
+	}
+};
+
+const reducer = combineReducers( {
+	isNuxEnabled: isNuxEnabledReducer,
+	isGuideManuallyOpened: isGuideManuallyOpenedReducer,
+} );
 
 const actions = {
 	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
@@ -21,9 +40,16 @@ const actions = {
 			isNuxEnabled,
 		};
 	},
+	setGuideOpenStatus: ( { isGuideManuallyOpened } ) => {
+		return {
+			type: 'WPCOM_BLOCK_EDITOR_SET_GUIDE_OPEN',
+			isGuideManuallyOpened,
+		};
+	},
 };
 
 const selectors = {
+	isGuideManuallyOpened: ( state ) => state.isGuideManuallyOpened,
 	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
 };
 
