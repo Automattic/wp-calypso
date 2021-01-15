@@ -29,17 +29,26 @@
 		padding: 0;
 	}
 
+	.segmented-control__item {
+		margin: 0;
+	}
+
+	// Link in the non-selected <li>
 	.segmented-control__item:not( .is-selected ) .segmented-control__link {
 		background-color: transparent;
 		border: 0.5px solid transparent;
+		box-shadow: none;
 	}
 
+	// Link in the selected <li>
 	.segmented-control__item.is-selected .segmented-control__link {
 		background-color: var( --studio-white );
-		border: 1px solid #f5f5f5;
+		border: 0.5px solid #f5f5f5;
 		box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
 	}
 
+	// Link in all <li>s
+	// (CSS selector specificity is required to override original component's styles)
 	.segmented-control__item:not( .is-selected ) .segmented-control__link,
 	.segmented-control__item.is-selected .segmented-control__link {
 		&:focus,
