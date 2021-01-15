@@ -21,7 +21,10 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
-import { isFetchingPluginsList } from 'calypso/state/plugins/wporg/selectors';
+import {
+	getNextPluginsListPage,
+	isFetchingPluginsList,
+} from 'calypso/state/plugins/wporg/selectors';
 
 import 'calypso/state/plugins/init';
 
@@ -167,5 +170,18 @@ export function fetchPluginsList( category, page, searchTerm ) {
 				} );
 			}
 		);
+	};
+}
+
+export function fetchPluginsCategoryNextPage( category ) {
+	return ( dispatch, getState ) => {
+		const state = getState();
+
+		// Bail if we are currently fetching this plugins list
+		const nextPage = getNextPluginsListPage( state, category );
+		if ( ! nextPage ) {
+			return;
+		}
+		dispatch( fetchPluginsList( category, nextPage, undefined ) );
 	};
 }
