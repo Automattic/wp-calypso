@@ -645,7 +645,7 @@ export function buildCardFeaturesFromItem(
 			return buildCardFeaturesFromFeatureKeys( features, options );
 		}
 	} else if ( isFunction( item.getFeatures ) ) {
-		const features = item.getFeatures();
+		const features = item.getFeatures( getJetpackCROActiveVersion() );
 
 		if ( features ) {
 			return buildCardFeaturesFromFeatureKeys( features, options );

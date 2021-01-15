@@ -1262,11 +1262,11 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => constants.FEATURE_ANTISPAM_V2,
-		getTitle: ( variation ) =>
+		getTitle: () =>
 			( {
 				i5: i18n.translate( 'Anti-spam ' ),
 				spp: i18n.translate( 'Anti-spam' ),
-			}[ variation ] || i18n.translate( 'Automated spam protection' ) ),
+			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated spam protection' ) ),
 	},
 
 	[ constants.FEATURE_AUTOMATED_SPAM_PROTECTION_V2 ]: {
