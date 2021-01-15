@@ -13,6 +13,7 @@ import type { DomainSuggestions } from '@automattic/data-stores';
  * Internal dependencies
  */
 import '../types-patch';
+import type { BillingIntervalType } from '../plans-interval-toggle';
 
 /**
  * Style dependencies
@@ -27,60 +28,94 @@ const ChevronDown = (
 	</svg>
 );
 
+const DomainFeatureAnnualDiscountNudge: React.FunctionComponent< {
+	billingInterval: BillingIntervalType;
+	__: typeof import('@wordpress/i18n').__;
+} > = ( { billingInterval, __ } ) => (
+	<span
+		className="plans-feature-list__domain-summary-nudge"
+		aria-label={
+			billingInterval === 'ANNUALLY'
+				? __( 'Included with annual plans', __i18n_text_domain__ )
+				: __( 'Only included with annual plans', __i18n_text_domain__ )
+		}
+	>
+		{ __( 'Included with annual plans', __i18n_text_domain__ ) }
+	</span>
+);
+
 function domainMessageStateMachine(
 	isFreePlan: boolean,
 	domain: DomainSuggestions.DomainSuggestion | undefined,
+	billingInterval: BillingIntervalType,
 	__: typeof import('@wordpress/i18n').__
 ) {
+	const commonOuterClassName = 'plans-feature-list__domain-summary';
+	const billingPeriodNudgeClassName =
+		billingInterval === 'ANNUALLY'
+			? 'plans-feature-list__domain-summary--nudge-enabled'
+			: 'plans-feature-list__domain-summary--nudge-disabled';
+
 	const states = {
 		NO_DOMAIN: {
 			FREE_PLAN: null,
 			PAID_PLAN: {
-				className: 'plans-feature-list__domain-summary is-cta',
+				className: classnames( commonOuterClassName, billingPeriodNudgeClassName, 'is-cta' ),
 				icon: TickIcon,
 				// translators: %s is a domain name eg: example.com is included
 				domainMessage: (
-					<>
-						{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) } { ChevronDown }
-					</>
+					<span>
+						<DomainFeatureAnnualDiscountNudge billingInterval={ billingInterval } __={ __ } />
+						<span className="plans-feature-list__domain-summary-message">
+							{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) } { ChevronDown }
+						</span>
+					</span>
 				),
 			},
 		},
 		FREE_DOMAIN: {
 			FREE_PLAN: null,
 			PAID_PLAN: {
-				className: 'plans-feature-list__domain-summary is-cta',
+				className: classnames( commonOuterClassName, billingPeriodNudgeClassName, 'is-cta' ),
 				icon: TickIcon,
 				// translators: %s is a domain name eg: example.com is included
 				domainMessage: (
-					<>
-						{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) } { ChevronDown }
-					</>
+					<span>
+						<DomainFeatureAnnualDiscountNudge billingInterval={ billingInterval } __={ __ } />
+						<span className="plans-feature-list__domain-summary-message">
+							{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) } { ChevronDown }
+						</span>
+					</span>
 				),
 			},
 		},
 		PAID_DOMAIN: {
 			FREE_PLAN: {
-				className: 'plans-feature-list__domain-summary is-free',
+				className: classnames( commonOuterClassName, billingPeriodNudgeClassName, 'is-free' ),
 				icon: CrossIcon,
 				// translators: <url /> is a domain name eg: example.com is not included
 				domainMessage: (
 					<span>
-						{ createInterpolateElement( __( '<url /> is not included', __i18n_text_domain__ ), {
-							url: <span className="plans-feature-list__item-url">{ domain?.domain_name }</span>,
-						} ) }
+						<span className="plans-feature-list__domain-summary-message">
+							{ createInterpolateElement( __( '<url /> is not included', __i18n_text_domain__ ), {
+								url: <span className="plans-feature-list__item-url">{ domain?.domain_name }</span>,
+							} ) }
+						</span>
 					</span>
 				),
 			},
 			PAID_PLAN: {
-				className: 'plans-feature-list__domain-summary is-picked',
+				className: classnames( commonOuterClassName, billingPeriodNudgeClassName, 'is-picked' ),
 				icon: TickIcon,
 				// translators: <url /> is a domain name eg: example.com is included
 				domainMessage: (
 					<span>
-						{ createInterpolateElement( __( '<url /> is included', __i18n_text_domain__ ), {
-							url: <span className="plans-feature-list__item-url">{ domain?.domain_name }</span>,
-						} ) }
+						<DomainFeatureAnnualDiscountNudge billingInterval={ billingInterval } __={ __ } />
+						<span className="plans-feature-list__domain-summary-message">
+							{ createInterpolateElement( __( '<url /> is included', __i18n_text_domain__ ), {
+								url: <span className="plans-feature-list__item-url">{ domain?.domain_name }</span>,
+							} ) }
+						</span>
 					</span>
 				),
 			},
@@ -94,6 +129,7 @@ function domainMessageStateMachine(
 
 export interface Props {
 	features: Array< string >;
+	billingInterval: BillingIntervalType;
 	domain?: DomainSuggestions.DomainSuggestion;
 	isFree?: boolean;
 	isOpen?: boolean;
@@ -105,6 +141,7 @@ export interface Props {
 const PlansFeatureList: React.FunctionComponent< Props > = ( {
 	features,
 	domain,
+	billingInterval,
 	isFree = false,
 	isOpen = false,
 	onPickDomain,
@@ -113,7 +150,7 @@ const PlansFeatureList: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
+	const domainMessage = domainMessageStateMachine( isFree, domain, billingInterval, __ );
 
 	return (
 		<div className="plans-feature-list" hidden={ ! isOpen }>

@@ -13,6 +13,7 @@ import { useSelect } from '@wordpress/data';
  */
 import PlansFeatureList from '../plans-feature-list';
 import useBillingPeriod from '../hooks/use-billing-period';
+import type { BillingIntervalType } from '../plans-interval-toggle';
 
 /**
  * Style dependencies
@@ -33,6 +34,7 @@ export interface Props {
 	name: string;
 	description: string;
 	features: Array< string >;
+	billingInterval: BillingIntervalType;
 	domain?: DomainSuggestions.DomainSuggestion;
 	badge?: string;
 	isFree?: boolean;
@@ -50,6 +52,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	name,
 	description,
 	features,
+	billingInterval,
 	domain,
 	badge,
 	isFree = false,
@@ -140,6 +143,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<PlansFeatureList
 						features={ features }
+						billingInterval={ billingInterval }
 						domain={ domain }
 						isFree={ isFree }
 						isOpen={ isOpen }

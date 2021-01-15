@@ -137,6 +137,28 @@ ul.plans-feature-list__item-group {
 			margin-left: 8px;
 		}
 	}
+
+	// Nudge message for annual month displayed as the first item
+	// of the feature list, together with domain message
+	&-nudge {
+		display: block;
+		text-transform: uppercase;
+		font-size: 10px; /* stylelint-disable-line scales/font-size */
+		letter-spacing: 0.02em;
+		line-height: 1.3;
+	}
+
+	&--nudge-enabled &-nudge {
+		color: var( --color-success );
+	}
+
+	&--nudge-disabled &-nudge {
+		color: var( --color-error );
+	}
+
+	&--nudge-disabled &-message {
+		text-decoration: line-through;
+	}
 }
 
 .plans-feature-list__placeholder {
