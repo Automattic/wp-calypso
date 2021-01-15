@@ -104,7 +104,6 @@ function ChangePaymentMethod( props ) {
 				<Column type="main">
 					{ isEnabled( 'purchases/new-payment-methods' ) ? (
 						<PaymentMethodSelector
-							currentlyAssignedPaymentMethodId={ currentPaymentMethodId }
 							purchase={ props.purchase }
 							successCallback={ successCallback }
 							siteSlug={ props.siteSlug }
