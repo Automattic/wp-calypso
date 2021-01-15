@@ -127,6 +127,10 @@ const oauthTokenMiddleware = () => {
 			'/connect',
 		];
 
+		if ( config.isEnabled( 'jetpack-cloud/login' ) ) {
+			loggedOutRoutes.push( '/log-in' );
+		}
+
 		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
 			loggedOutRoutes.push( '/jetpack/connect', '/plans' );
 		}
