@@ -16,6 +16,7 @@ import type {
 	CustomTagLinesMap,
 	DisabledPlansMap,
 } from './types';
+import type { BillingIntervalType } from '../plans-interval-toggle';
 
 /**
  * Style dependencies
@@ -34,6 +35,8 @@ export interface Props {
 	popularBadgeVariation: PopularBadgeVariation;
 	customTagLines?: CustomTagLinesMap;
 	defaultAllPlansExpanded?: boolean;
+	billingInterval: BillingIntervalType;
+	onMaxMonhtlyDiscountPercentageChange: ( perc: number | undefined ) => void;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {

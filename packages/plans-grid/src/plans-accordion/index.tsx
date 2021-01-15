@@ -13,6 +13,7 @@ import { Icon } from '@wordpress/icons';
  */
 import PlanItem from '../plans-accordion-item';
 import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
+import type { BillingIntervalType } from '../plans-interval-toggle';
 import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../constants';
 import type { DisabledPlansMap } from 'src/plans-table/types';
 
@@ -37,6 +38,8 @@ export interface Props {
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: DisabledPlansMap;
 	locale: string;
+	billingInterval: BillingIntervalType;
+	onMaxMonhtlyDiscountPercentageChange: ( perc: number | undefined ) => void;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
