@@ -35,3 +35,13 @@ export function isFetchingPluginsList( state, category, searchTerm ) {
 
 	return false;
 }
+
+export function getNextPluginsListPage( state, category ) {
+	const pagination = state.plugins.wporg.listsPagination.category?.[ category ];
+
+	if ( pagination && pagination.pages > pagination.page ) {
+		return pagination.page + 1;
+	}
+
+	return null;
+}
