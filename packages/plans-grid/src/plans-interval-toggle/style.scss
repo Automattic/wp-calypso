@@ -96,8 +96,11 @@
 	}
 
 	.components-popover__content {
-		max-width: 210px;
 		padding: 8px 10px;
+		min-width: auto;
+		// Target width is 210px, but there's a 10px padding and 1px border on both sides
+		width: 210px + 2 * ( 10px + 1px );
+		box-sizing: border-box;
 
 		background-color: var( --studio-gray-100 );
 		border-color: var( --studio-gray-100 );
@@ -105,13 +108,36 @@
 
 		font-family: $default-font;
 		font-size: $font-body-extra-small;
+		font-weight: 400;
+		text-align: left;
 		// Needed as otherwise it inherits `nowrap`
 		// from the segmented control parent element.
 		white-space: normal;
 	}
 
-	&:not( .is-without-arrow )::before,
-	&:not( .is-without-arrow )::after {
-		border-color: var( --studio-gray-100 );
+	// All following code is needed to override the popover's arrow fill color
+	// While still keeping it in the shape of a triangle (hence the transparent borders)
+	&:not( .is-without-arrow ) {
+		&::before,
+		&::after {
+			border-color: var( --studio-gray-100 );
+		}
+
+		&[data-y-axis='top'],
+		&[data-y-axis='bottom'] {
+			&::before,
+			&::after {
+				border-left-color: transparent;
+				border-right-color: transparent;
+			}
+		}
+
+		&[data-y-axis='middle'] {
+			&::before,
+			&::after {
+				border-bottom-color: transparent;
+				border-top-color: transparent;
+			}
+		}
 	}
 }
