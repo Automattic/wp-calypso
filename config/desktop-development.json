@@ -96,7 +96,7 @@
 		"me/my-profile": true,
 		"me/next-steps": true,
 		"me/notifications": true,
-		"nav-unification": true,
+		"nav-unification": false,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
 		"paladin": true,

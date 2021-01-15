@@ -105,7 +105,7 @@
 		"memberships": true,
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
-		"nav-unification": true,
+		"nav-unification": false,
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
 		"p2/p2-plus": true,
