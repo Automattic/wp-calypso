@@ -28,9 +28,9 @@ export function isFetched( state, pluginSlug ) {
 
 export function isFetchingPluginsList( state, category, searchTerm ) {
 	if ( category ) {
-		return !! state.plugins.wporg.fetchingLists.category[ category ];
+		return !! state.plugins.wporg.fetchingLists.category?.[ category ];
 	} else if ( searchTerm ) {
-		return !! state.plugins.wporg.fetchingLists.search[ searchTerm ];
+		return !! state.plugins.wporg.fetchingLists.search?.[ searchTerm ];
 	}
 
 	return false;
