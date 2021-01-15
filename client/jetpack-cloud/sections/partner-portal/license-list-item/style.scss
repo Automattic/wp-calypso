@@ -1,0 +1,23 @@
+.license-list-item {
+	display: grid;
+	grid-template-columns: 1fr 128px 128px 128px 128px 36px;
+	align-items: center;
+
+	> * + * {
+		margin-left: 28px;
+		text-align: right;
+	}
+
+	> *:last-child {
+		margin-left: 12px;
+	}
+
+	&--header {
+		h2 {
+			font-size: 0.875rem;
+			line-height: 1.25rem;
+			font-weight: 600;
+			color: var( --studio-gray-70 );
+		}
+	}
+}

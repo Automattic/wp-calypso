@@ -1,0 +1,72 @@
+.license-preview {
+	margin: 0;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	color: var( --studio-gray-70 );
+	transition: margin 0.2s ease;
+
+	// Matching bottom margin of Card component.
+	&--is-open {
+		margin-top: 10px;
+		margin-bottom: 10px;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+	}
+
+	&__card {
+		&--is-detached {
+			border-left: 3px solid var( --studio-orange-40 );
+		}
+
+		&--is-revoked {
+			border-left: 3px solid var( --studio-red-60 );
+		}
+	}
+
+	&__no-value {
+		position: relative;
+		top: 3px;
+	}
+
+	&__domain {
+		padding: 0;
+		margin: 0 0 4px;
+		font-size: 1.25rem;
+		font-weight: normal;
+		line-height: 1.75rem;
+		color: var( --studio-gray-100 );
+
+		span + span {
+			margin-left: 12px;
+		}
+	}
+
+	&__tag {
+		font-size: 0.875rem;
+
+		&--is-detached {
+			color: var( --studio-orange-40 );
+		}
+
+		&--is-revoked {
+			color: var( --studio-red-60 );
+		}
+
+		svg {
+			position: relative;
+			top: 3px;
+			margin-right: 4px;
+		}
+	}
+
+	&__copy-license-key {
+		&.button {
+			font-weight: 600;
+			color: var( --studio-gray-80 );
+			border-color: var( --color-text-subtle );
+		}
+	}
+}

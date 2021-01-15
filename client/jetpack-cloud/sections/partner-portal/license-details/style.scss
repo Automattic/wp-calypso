@@ -1,0 +1,46 @@
+.license-details {
+	margin: 0;
+
+	&__list {
+		display: grid;
+		grid-template-columns: 50% 50%;
+		row-gap: 32px;
+		padding: 0;
+		margin: 0;
+		list-style-type: none;
+	}
+
+	&__list-item {
+		&--wide {
+			grid-column-start: span 2;
+		}
+	}
+
+	&__license-key {
+		padding: 6px;
+		font-size: 0.875rem;
+		background: var( --studio-gray-0 );
+		color: var( --studio-gray-70 );
+	}
+
+	&__clipboard-button {
+		margin-left: 8px;
+
+		// Overpower specificity of the button component styles.
+		&.button.button {
+			color: var( --studio-gray-70 );
+		}
+	}
+
+	&__label {
+		margin-bottom: 8px;
+		font-size: 1rem;
+		font-weight: bold;
+	}
+
+	&__actions {
+		margin-top: 42px;
+		display: flex;
+		justify-content: flex-end;
+	}
+}
