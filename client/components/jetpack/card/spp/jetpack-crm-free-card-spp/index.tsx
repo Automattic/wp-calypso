@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import React, { FC, useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
@@ -11,16 +12,21 @@ import JetpackProductCardFeatures from 'calypso/components/jetpack/card/jetpack-
 import JetpackFreeCardButton from 'calypso/components/jetpack/card/jetpack-free-card-button';
 
 /**
- * Type dependencies
- */
-import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/types';
-
-/**
  * Style dependencies
  */
 import './style.scss';
 
-const JetpackCrmFreeCardSPP: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => {
+type JetpackCrmFreeProps = {
+	className?: string;
+	urlQueryArgs: QueryArgs;
+	siteId: number | null;
+};
+
+const JetpackCrmFreeCardSPP: FC< JetpackCrmFreeProps > = ( {
+	className,
+	siteId,
+	urlQueryArgs,
+} ) => {
 	const translate = useTranslate();
 
 	const crmFreeFeatures = useMemo(
@@ -38,7 +44,7 @@ const JetpackCrmFreeCardSPP: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs }
 
 	return (
 		<div
-			className="jetpack-crm-free-card-spp jetpack-product-card-i5"
+			className={ classnames( className, 'jetpack-crm-free-card-spp', 'jetpack-product-card-i5' ) }
 			data-e2e-product-slug="crm-free"
 		>
 			<header className="jetpack-crm-free-card-spp__header">
@@ -52,7 +58,10 @@ const JetpackCrmFreeCardSPP: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs }
 					urlQueryArgs={ urlQueryArgs }
 				/>
 			</header>
-			<JetpackProductCardFeatures features={ crmFreeFeatures } />
+			<JetpackProductCardFeatures
+				className="jetpack-crm-free-card-spp__features"
+				features={ crmFreeFeatures }
+			/>
 		</div>
 	);
 };

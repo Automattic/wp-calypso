@@ -7,6 +7,11 @@
 	@include break-small {
 		display: flex;
 		flex-direction: column;
+
+		&.is-full-width {
+			flex-direction: row;
+			padding-bottom: 32px;
+		}
 	}
 }
 
@@ -20,7 +25,13 @@
 
 .jetpack-crm-free-card-spp__subheadline {
 	color: var( --studio-gray-60 );
-	min-height: 72px;
+	min-height: 48px;
+	margin-bottom: 32px;
+}
+
+.jetpack-crm-free-card-spp.is-full-width
+.jetpack-crm-free-card-spp__subheadline {
+	min-height: auto;
 }
 
 .jetpack-crm-free-card-spp__button.button {
@@ -36,41 +47,24 @@
 	font-size: 1rem;
 	font-weight: 700;
 
-	@include break-large {
+	@include break-small {
 		margin-bottom: 0;
 	}
 }
 
-.jetpack-crm-free-card-spp__features-list {
-	margin: 28px 0 0;
-
-	color: var( --studio-gray-100 );
-	list-style-type: none;
-
-	> li {
-		display: flex;
-		justify-content: flex-start;
-
-		margin: 12px 0;
-
-		fill: var( --studio-jetpack-green-40 );
+.jetpack-crm-free-card-spp.is-full-width
+.jetpack-crm-free-card-spp__button.button {
+	@include break-medium {
+		max-width: 210px;
 	}
+}
 
+.jetpack-crm-free-card-spp__features {
 	@include break-small {
-		flex: 1;
-
 		margin-top: 0;
-		padding-left: 28px;
 	}
 
 	@include break-large {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		flex: 2 1;
-
-		padding-left: 0;
-
 		> li {
 			width: 50%;
 			margin: 0;
@@ -78,12 +72,28 @@
 	}
 }
 
-.jetpack-crm-free-card-spp__features-list .gridicon {
-	margin-right: 12px;
+.jetpack-crm-free-card-spp.is-full-width
+.jetpack-crm-free-card-spp__features {
+	display: flex;
+	align-items: flex-end;
 
-	color: var( --studio-jetpack-green-40 );
-}
+	margin-block-end: 0;
 
-.jetpack-crm-free-card-spp__features-text {
-	flex: 1;
+	.jetpack-product-card-i5__features-list {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.jetpack-product-card-i5__features-item:last-child {
+		margin-bottom: 0;
+	}
+
+	@include break-small {
+		padding-left: 28px;
+	}
+
+	@include break-large {
+		margin-inline-start: auto;
+		margin-inline-end: auto;
+	}
 }

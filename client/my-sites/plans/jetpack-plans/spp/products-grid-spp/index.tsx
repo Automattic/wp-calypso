@@ -143,6 +143,8 @@ const ProductsGridSpp: React.FC< ProductsGridProps > = ( {
 		return () => window.removeEventListener( 'resize', onResize );
 	}, [ onResize ] );
 
+	const showJetpackFree = isInConnectFlow || ( isInJetpackCloud && ! isUrlSiteConnected );
+
 	return (
 		<Experiment name={ SWITCH_PLAN_SIDES_EXPERIMENT }>
 			<section className="products-grid-spp__section">
@@ -206,10 +208,12 @@ const ProductsGridSpp: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="products-grid-spp__free">
-					{ ( isInConnectFlow || ( isInJetpackCloud && ! isUrlSiteConnected ) ) && (
-						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-					) }
-					<JetpackCrmFreeCardSPP siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+					{ showJetpackFree && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
+					<JetpackCrmFreeCardSPP
+						className={ classNames( { 'is-full-width': ! showJetpackFree } ) }
+						siteId={ siteId }
+						urlQueryArgs={ urlQueryArgs }
+					/>
 				</div>
 			</section>
 			{ ! isJetpackCloud() && <StoreFooter /> }
