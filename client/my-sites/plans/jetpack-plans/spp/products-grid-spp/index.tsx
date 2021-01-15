@@ -185,7 +185,7 @@ const ProductsGridSpp: React.FC< ProductsGridProps > = ( {
 				>
 					<MoreInfoBox
 						headline={ translate( 'Need more info?' ) }
-						buttonLabel={ translate( 'Compare all product bundles' ) }
+						buttonLabel={ translate( 'Compare all' ) }
 						onButtonClick={ scrollToComparison }
 					/>
 				</div>
