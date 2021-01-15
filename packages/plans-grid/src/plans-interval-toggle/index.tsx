@@ -49,14 +49,14 @@ export const PopupMessages: React.FunctionComponent = ( { children } ) => {
 interface PlansIntervalToggleProps {
 	intervalType: BillingIntervalType;
 	onChange: ( selectedValue: BillingIntervalType ) => void;
-	maxSavingsPerc?: number;
+	maxMonhtlyDiscountPercentage?: number;
 	className?: string;
 }
 
 const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > = ( {
 	onChange,
 	intervalType,
-	maxSavingsPerc,
+	maxMonhtlyDiscountPercentage,
 	className = '',
 } ) => {
 	const { __ } = useI18n();
@@ -86,7 +86,7 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					<span className="plans-interval-toggle__label">
 						{ __( 'Annually', __i18n_text_domain__ ) }
 					</span>
-					{ intervalType === 'MONTHLY' && typeof maxSavingsPerc !== undefined && (
+					{ intervalType === 'MONTHLY' && typeof maxMonhtlyDiscountPercentage !== undefined && (
 						<PopupMessages>
 							{ sprintf(
 								// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
@@ -94,7 +94,7 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 									'Save up to %s%% by paying annually and get a free domain for one year',
 									__i18n_text_domain__
 								),
-								maxSavingsPerc
+								maxMonhtlyDiscountPercentage
 							) }
 						</PopupMessages>
 					) }
