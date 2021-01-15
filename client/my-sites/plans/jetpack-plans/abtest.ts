@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { abtest } from 'calypso/lib/abtest';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 const VERSIONS = [ 'v1', 'v2', 'i5', 'spp' ];
@@ -12,17 +13,25 @@ const DEFAULT_VERSION = 'i5';
  * @returns {string}  The name of the active test.
  */
 export const getJetpackCROActiveVersion = (): string => {
-	let version;
-
-	if ( 'undefined' !== typeof window ) {
-		const versionQuery = getUrlParts( window.location.href ).searchParams?.get(
+	// If we see a query parameter, obey that,
+	// regardless of any active A/B test value
+	if ( typeof window !== 'undefined' ) {
+		const iterationQuery = getUrlParts( window.location.href ).searchParams?.get(
 			'cloud-pricing-page'
 		);
 
-		if ( versionQuery && VERSIONS.includes( versionQuery ) ) {
-			version = versionQuery;
+		if ( iterationQuery && VERSIONS.includes( iterationQuery ) ) {
+			return iterationQuery;
 		}
 	}
 
-	return version || DEFAULT_VERSION;
+	// Otherwise, check for the assigned A/B test value
+	const variant = abtest( 'jetpackSimplifyPricingPage' );
+
+	switch ( variant ) {
+		case 'test':
+			return 'spp';
+		default:
+			return DEFAULT_VERSION;
+	}
 };
