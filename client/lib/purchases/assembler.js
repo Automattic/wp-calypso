@@ -71,7 +71,7 @@ function createPurchaseObject( purchase ) {
 		tagLine: purchase.tag_line,
 		taxAmount: purchase.tax_amount,
 		taxText: purchase.tax_text,
-		titanMaximumMailboxCount: purchase.titan_maximum_mailbox_count || null,
+		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
 	};
 

@@ -121,7 +121,7 @@ describe( 'selectors', () => {
 				tagLine: undefined,
 				taxAmount: undefined,
 				taxText: undefined,
-				titanMaximumMailboxCount: null,
+				purchaseRenewalQuantity: null,
 				userId: NaN,
 			} );
 		} );

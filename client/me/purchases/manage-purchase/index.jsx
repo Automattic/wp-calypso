@@ -523,14 +523,14 @@ class ManagePurchase extends Component {
 				},
 			} );
 
-			if ( purchase.titanMaximumMailboxCount ) {
+			if ( purchase.purchaseRenewalQuantity ) {
 				description = translate(
 					'%(mailboxCount)d mailbox for %(domain)s',
 					'%(mailboxCount)d mailboxes for %(domain)s',
 					{
-						count: purchase.titanMaximumMailboxCount,
+						count: purchase.purchaseRenewalQuantity,
 						args: {
-							mailboxCount: purchase.titanMaximumMailboxCount,
+							mailboxCount: purchase.purchaseRenewalQuantity,
 							domain: purchase.meta,
 						},
 					}
