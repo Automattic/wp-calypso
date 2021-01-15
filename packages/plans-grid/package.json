@@ -39,7 +39,7 @@
 		"@wordpress/icons": "^2.4.0",
 		"@wordpress/primitives": "^1.7.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.20",
 		"tslib": "^1.10.0",
 		"uuid": "^7.0.2",
 		"debug": "^4.1.1"

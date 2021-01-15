@@ -30,7 +30,7 @@
 		"create-react-class": "^15.6.3",
 		"debug": "^4.1.1",
 		"i18n-calypso": "^5.0.0",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.20",
 		"moment": "^2.26.0",
 		"page": "^1.11.5",
 		"prop-types": "^15.7.2",
