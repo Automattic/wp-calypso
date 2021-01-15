@@ -13,6 +13,11 @@
  * GENERATE THUMBNAILS:
  *
  * `node ./bin/generate-gutenboarding-design-thumbnails.js`
+ * or
+ * `node ./bin/generate-gutenboarding-design-thumbnails.js all`
+ * `node ./bin/generate-gutenboarding-design-thumbnails.js mag16`
+ * `node ./bin/generate-gutenboarding-design-thumbnails.js es`
+ * `node ./bin/generate-gutenboarding-design-thumbnails.js fr,de,zh-cn`
  *
  * We should bump the version query param on the image src to cache bust the images too in client/landing/gutenboarding/available-designs.ts
  *
@@ -38,11 +43,24 @@ const viewportWidth = 1280; // Browser width for capturing the screenshot
 
 const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
 
-const localeSlugs = ( process.argv[ 2 ] || '' )
+const inputSlugs = ( process.argv[ 2 ] || '' )
 	.split( ',' )
 	.filter( ( potentialSlug ) => mag16.includes( potentialSlug ) );
 
-const getDesignUrl = ( design ) => {
+// For convenience:
+// replace an 'all' input with the mag 16
+// accept an empty locale input and replacefor convenience
+const specialCaseArguments = {
+	all: [ '', ...config( 'magnificent_non_en_locales' ) ],
+	en: [ '' ],
+	mag16: config( 'magnificent_non_en_locales' ),
+};
+
+const localeSlugs = inputSlugs.length
+	? specialCaseArguments[ inputSlugs[ 0 ] ] || inputSlugs
+	: [ '' ];
+
+const getDesignUrl = ( design, language = 'en' ) => {
 	return wpUrl.addQueryArgs(
 		`${ designsEndpoint }${ encodeURIComponent( design.theme ) }/${ encodeURIComponent(
 			design.template
@@ -51,6 +69,7 @@ const getDesignUrl = ( design ) => {
 			font_base: design.fonts.base,
 			font_headings: design.fonts.headings,
 			site_title: design.title,
+			...( language && language !== 'en' && { language } ),
 		}
 	);
 };
@@ -68,11 +87,15 @@ async function run() {
 	console.log( `Processing ${ designs.featured.length } designs...` );
 	console.log( `for each of ${ localeSlugs.join( ', ' ) } (${ localeSlugs.length } locales)...` );
 
-	// ( localeSlugs || [ '' ] ).forEach( async ( locale ) =>
-	await Promise.all(
-		designs.featured.map( async ( design ) => {
-			const url = getDesignUrl( design );
-			const locale = 'es';
+	// If we run even 2 capture-website/puppeteer/chromium instances
+	// concurrently things get very unstable, so we're going to use a good
+	// old-fashioned for loop to keep things serialized.
+	for ( let ii = 0; ii < localeSlugs.length; ii++ ) {
+		const locale = localeSlugs[ ii ];
+		for ( let i = 0; i < designs.featured.length; i++ ) {
+			const design = designs.featured[ i ];
+
+			const url = getDesignUrl( design, locale );
 			const screenshotsPath = locale ? `${ screenshotsBasePath }/${ locale }` : screenshotsBasePath;
 			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }`;
 
@@ -110,9 +133,8 @@ async function run() {
 
 			[ 'webp', 'jpg' ].forEach( async ( extension ) => {
 				console.log( `Resizing and saving to ${ file }.${ extension }` );
-				let image = await sharp( screenshot ).catch( ( error ) =>
-					console.log( 'sharp error: ', error )
-				);
+				let image = await sharp( screenshot );
+
 				return (
 					image &&
 					( await image
@@ -137,9 +159,8 @@ async function run() {
 						.catch( ( error ) => console.log( error ) ) )
 				);
 			} );
-		} )
-		// )
-	);
+		}
+	}
 
 	console.log( 'Done!' );
 }
