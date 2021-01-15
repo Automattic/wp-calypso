@@ -25,6 +25,7 @@
  *
  */
 
+const fs = require( 'fs' );
 const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
@@ -92,11 +93,12 @@ async function run() {
 	// old-fashioned for loop to keep things serialized.
 	for ( let ii = 0; ii < localeSlugs.length; ii++ ) {
 		const locale = localeSlugs[ ii ];
+		const screenshotsPath = locale ? `${ screenshotsBasePath }/${ locale }` : screenshotsBasePath;
+		fs.mkdirSync( screenshotsPath, { recursive: true } );
 		for ( let i = 0; i < designs.featured.length; i++ ) {
 			const design = designs.featured[ i ];
 
 			const url = getDesignUrl( design, locale );
-			const screenshotsPath = locale ? `${ screenshotsBasePath }/${ locale }` : screenshotsBasePath;
 			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }`;
 
 			// Fix `reynolds_rockfield2_rockfield.jpg` first section becoming super tall
