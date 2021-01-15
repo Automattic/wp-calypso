@@ -42,7 +42,7 @@ function premium_content_block_init() {
 	register_blocks();
 	load_translations();
 
-	$asset_path = PREMIUM_CONTENT__PLUGIN_DIR . '/dist/premium-content.asset.php';
+	$asset_path = dirname( __DIR__ ) . '/dist/premium-content.asset.php';
 	if ( ! file_exists( $asset_path ) ) {
 		throw new RuntimeException(
 			'You need to run `npm start` or `npm run build` for the "create-block/premium-content" block first.'
