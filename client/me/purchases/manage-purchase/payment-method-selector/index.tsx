@@ -42,13 +42,11 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import './style.scss';
 
 export default function PaymentMethodSelector( {
-	currentlyAssignedPaymentMethodId,
 	purchase,
 	successCallback,
 	siteSlug,
 	apiParams,
 }: {
-	currentlyAssignedPaymentMethodId: string;
 	purchase: Purchase;
 	successCallback: () => void;
 	siteSlug: string;
@@ -57,6 +55,7 @@ export default function PaymentMethodSelector( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
+	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase.payment );
 	const paymentMethods = useCreateAssignablePaymentMethods( currentlyAssignedPaymentMethodId );
 
 	const showErrorMessage = useCallback( ( error ) => {
