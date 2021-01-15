@@ -32,21 +32,6 @@ export const getFeatures = ( state: State ): Record< string, PlanFeature > => st
 
 export const getFeaturesByType = ( state: State ): Array< FeaturesByType > => state.featuresByType;
 
-/*
-export const getPlanByStoreSlug = ( _state: State, slug: StorePlanSlug ): Plan | undefined => {
-	if ( slug ) {
-		return undefined;
-	}
-	const planProduct = select( STORE_KEY )
-		.getPlansProducts()
-		.find( ( product ) => product.storeSlug === slug );
-
-	return select( STORE_KEY )
-		.getSupportedPlans()
-		.find( ( plan ) => plan.periodAgnosticSlug === planProduct?.periodAgnosticSlug );
-};
-*/
-
 export const getPlanByProductId = (
 	_state: State,
 	productId: number | undefined

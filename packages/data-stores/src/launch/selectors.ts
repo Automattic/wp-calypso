@@ -38,7 +38,7 @@ export const getPaidPlanProductId = ( state: State ): number | undefined => {
 	const productId = state.planProductId;
 	const isFree = select( PLANS_STORE ).isPlanProductFree( productId );
 
-	return productId && isFree ? state.planProductId : undefined;
+	return productId && ! isFree ? state.planProductId : undefined;
 };
 
 // Check if a domain has been explicitly selected (including free subdomain)

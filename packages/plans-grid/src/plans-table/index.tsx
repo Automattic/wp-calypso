@@ -74,9 +74,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }
 							name={ plan?.title.toString() }
-							isSelected={
-								!! selectedPlanProductId && plan.productIds.indexOf( selectedPlanProductId ) > -1
-							}
+							isSelected={ plan.productIds.indexOf( selectedPlanProductId as never ) > -1 }
 							onSelect={ onPlanSelect }
 							onPickDomainClick={ onPickDomainClick }
 							onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }

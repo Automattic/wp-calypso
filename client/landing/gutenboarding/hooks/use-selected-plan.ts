@@ -32,20 +32,22 @@ export function usePlanFromPath(): Plan | undefined {
 	] );
 
 	// don't return Free plan if any feature is currently selected
-	if ( isPlanFree( planFromPath?.storeSlug ) && selectedFeatures.length ) {
+	if ( isPlanFree( planFromPath?.periodAgnosticSlug ) && selectedFeatures.length ) {
 		return;
 	}
 
 	return planFromPath;
 }
 
-export function useSelectedPlan(): Plan {
+export function useSelectedPlan(): Plan | undefined {
 	const locale = useLocale();
 	// Pre-load the plans details to ensure the plans are fetched early from the API endpoint.
 	useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans( locale ) );
 
 	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
-	const selectedPlan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getPlanProductId()
+	);
 
 	const recommendedPlanSlug = useSelect( ( select ) =>
 		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
@@ -53,6 +55,10 @@ export function useSelectedPlan(): Plan {
 
 	const recommendedPlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug )
+	);
+
+	const selectedPlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId )
 	);
 
 	const planFromPath = usePlanFromPath();
@@ -67,7 +73,7 @@ export function useSelectedPlan(): Plan {
 }
 
 export function useNewSiteVisibility(): Site.Visibility {
-	const currentSlug = useSelectedPlan()?.storeSlug;
+	const currentSlug = useSelectedPlan()?.periodAgnosticSlug;
 	const isEcommerce = useSelect( ( select ) =>
 		select( PLANS_STORE ).isPlanEcommerce( currentSlug )
 	);
@@ -82,6 +88,6 @@ export function useNewSiteVisibility(): Site.Visibility {
 export function useShouldRedirectToEditorAfterCheckout(): boolean {
 	// The ecommerce plan follows another flow, so we shouldn't interrupt
 	// it by trying to redirect to the editor.
-	const currentSlug = useSelectedPlan()?.storeSlug;
+	const currentSlug = useSelectedPlan()?.periodAgnosticSlug;
 	return ! useSelect( ( select ) => select( PLANS_STORE ).isPlanEcommerce( currentSlug ) );
 }

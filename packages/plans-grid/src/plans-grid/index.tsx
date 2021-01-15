@@ -32,7 +32,7 @@ const debug = debugFactory( 'plans-grid' );
 export interface Props {
 	header?: React.ReactElement;
 	selectedFeatures?: FeatureId[];
-	currentPlanProductId?: number | undefined;
+	currentPlanProductId: number | undefined;
 	onPlanSelect: ( planProductId: number | undefined ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;

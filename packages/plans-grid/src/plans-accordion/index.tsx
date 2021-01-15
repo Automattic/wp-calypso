@@ -161,9 +161,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 									openPlans.indexOf( plan.periodAgnosticSlug ) > -1 &&
 									! disabledPlans?.[ plan.periodAgnosticSlug ]
 								}
-								isSelected={
-									!! selectedPlanProductId && plan.productIds.indexOf( selectedPlanProductId ) > -1
-								}
+								isSelected={ plan.productIds.indexOf( selectedPlanProductId as never ) > -1 }
 								onSelect={ onPlanSelect }
 								onPickDomainClick={ onPickDomainClick }
 								onToggle={ handleToggle }

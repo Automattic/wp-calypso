@@ -25,6 +25,7 @@ const PlanDetails: React.FunctionComponent = () => {
 	const selectedPlanProductId = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getSelectedPlanProductId()
 	);
+
 	const history = useHistory();
 
 	const { updatePlan } = useDispatch( LAUNCH_STORE );
@@ -34,7 +35,6 @@ const PlanDetails: React.FunctionComponent = () => {
 	const goBack = () => {
 		history.goBack();
 	};
-
 	const handleSelect = ( planProductId: number | undefined ) => {
 		updatePlan( planProductId );
 		goBack();

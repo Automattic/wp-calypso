@@ -11,6 +11,7 @@ import wp from '../../../lib/wp';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
+import { PLANS_STORE } from '../stores/plans';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
@@ -64,6 +65,12 @@ export default function useOnSiteCreation(): void {
 	const selectedPlan = useSelectedPlan();
 	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getPlanProductId()
+	);
+	const planProductSource = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProductById( selectedPlanProductId )
+	);
 
 	const isAnchorFmSignup = useIsAnchorFm();
 	const flow = useOnboardingFlow();
@@ -84,8 +91,8 @@ export default function useOnSiteCreation(): void {
 
 			if ( selectedPlan && ! selectedPlan?.isFree ) {
 				const planProduct = {
-					product_id: selectedPlan.productId,
-					product_slug: selectedPlan.storeSlug,
+					product_id: planProductSource?.productId,
+					product_slug: planProductSource?.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
