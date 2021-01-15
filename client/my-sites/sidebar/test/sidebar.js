@@ -96,9 +96,7 @@ describe( 'MySitesSidebar', () => {
 			const Store = () => Sidebar.store();
 
 			const wrapper = shallow( <Store /> );
-			expect( wrapper.props().link ).toEqual(
-				'http://test.com/wp-admin/admin.php?page=wc-admin&calypsoify=1'
-			);
+			expect( wrapper.props().link ).toEqual( 'http://test.com/wp-admin/admin.php?page=wc-admin' );
 		} );
 
 		test( 'Should return null item if user who can upgrade can not use store on this site (control a/b group)', () => {
