@@ -38,6 +38,7 @@ import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
+import { PLANS_STORE } from '@automattic/data-stores/src/launch/constants';
 
 const bulb = (
 	<SVG viewBox="0 0 24 24">
@@ -279,11 +280,25 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	hasPaidDomain = false,
 	selectedPaidDomain = false,
 } ) => {
-	const { setPlan } = useDispatch( LAUNCH_STORE );
+	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
+	const billingPeriod = 'ANNUALLY';
 
-	const selectedPaidPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getPaidPlan() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getSelectedPlanProductId()
+	);
+
+	const selectedPaidPlanProductId = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getPaidPlanProductId()
+	);
+
+	const selectedPlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId )
+	);
+
+	const selectedPaidPlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanByProductId( selectedPaidPlanProductId )
+	);
 
 	const { defaultPaidPlan, defaultFreePlan } = usePlans();
 
@@ -294,19 +309,26 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		if (
 			selectedPaidPlan &&
 			defaultPaidPlan &&
-			selectedPaidPlan.storeSlug !== defaultPaidPlan.storeSlug
+			selectedPaidPlan.periodAgnosticSlug !== defaultPaidPlan.periodAgnosticSlug
 		) {
 			setNonDefaultPaidPlan( selectedPaidPlan );
 		}
 	}, [ selectedPaidPlan, defaultPaidPlan, nonDefaultPaidPlan ] );
 
-	const isPlanSelected = ( plan: Plan ) => plan && plan.storeSlug === selectedPlan?.storeSlug;
+	const isPlanSelected = ( plan: Plan ) =>
+		plan && plan.periodAgnosticSlug === selectedPlan?.periodAgnosticSlug;
 
 	const { sitePlan } = useSite();
 
 	const allAvailablePlans: ( Plan | undefined )[] = nonDefaultPaidPlan
 		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
 		: [ defaultPaidPlan, defaultFreePlan ];
+
+	const allAvailablePlansProducts = useSelect( ( select ) => {
+		return allAvailablePlans.map( ( plan ) =>
+			select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, billingPeriod )
+		);
+	} );
 
 	return (
 		<SummaryStep
@@ -380,9 +402,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 									<FocusedLaunchSummaryItem key={ index } isLoading />
 								) : (
 									<FocusedLaunchSummaryItem
-										key={ plan.storeSlug }
+										key={ plan.periodAgnosticSlug }
 										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-										onClick={ () => setPlan( plan ) }
+										/* this must be fixed. the first product id represents the annual version of the plan */
+										onClick={ () =>
+											setPlanProductId( allAvailablePlansProducts[ index ]?.productId )
+										}
 										isSelected={ isPlanSelected( plan ) }
 										readOnly={ plan.isFree && ( hasPaidDomain || selectedPaidDomain ) }
 									>
@@ -403,7 +428,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											</TrailingContentSide>
 										) : (
 											<TrailingContentSide nodeType="PRICE">
-												<span>{ plan.price }</span>
+												<span>{ allAvailablePlansProducts[ index ]?.price }</span>
 												<span>
 													{
 														// translators: /mo is short for "per-month"
@@ -475,12 +500,24 @@ type StepIndexRenderFunction = ( renderOptions: {
 } ) => React.ReactNode;
 
 const Summary: React.FunctionComponent = () => {
-	const [ hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlan ] = useSelect(
-		( select ) => {
-			const { isSiteTitleStepVisible, domain, plan } = select( LAUNCH_STORE ).getState();
+	const [
+		hasSelectedDomain,
+		isSiteTitleStepVisible,
+		selectedDomain,
+		selectedPlanProductId,
+	] = useSelect( ( select ) => {
+		const { isSiteTitleStepVisible, domain, planProductId } = select( LAUNCH_STORE ).getState();
 
-			return [ select( LAUNCH_STORE ).hasSelectedDomain(), isSiteTitleStepVisible, domain, plan ];
-		}
+		return [
+			select( LAUNCH_STORE ).hasSelectedDomain(),
+			isSiteTitleStepVisible,
+			domain,
+			planProductId,
+		];
+	} );
+
+	const isSelectedPlanFree = useSelect( ( select ) =>
+		select( PLANS_STORE ).isPlanProductFree( selectedPlanProductId )
 	);
 
 	const { launchSite } = useDispatch( SITE_STORE );
@@ -513,7 +550,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const handleLaunch = () => {
 		launchSite( siteId );
-		if ( selectedDomain || ( selectedPlan && ! selectedPlan?.isFree ) ) {
+		if ( selectedDomain || ! isSelectedPlanFree ) {
 			goToCheckout();
 		}
 	};
@@ -562,7 +599,7 @@ const Summary: React.FunctionComponent = () => {
 		/>
 	);
 
-	const isPlansStepHighlighted = !! hasSelectedDomain || !! selectedPlan;
+	const isPlansStepHighlighted = !! hasSelectedDomain || !! selectedPlanProductId;
 
 	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<PlanStep
@@ -592,7 +629,7 @@ const Summary: React.FunctionComponent = () => {
 	 * - there is a purchased or selected plan
 	 */
 	const isReadyToLaunch =
-		title && ( hasPaidDomain || hasSelectedDomain ) && ( hasPaidPlan || selectedPlan );
+		title && ( hasPaidDomain || hasSelectedDomain ) && ( hasPaidPlan || selectedPlanProductId );
 
 	return (
 		<div className="focused-launch-container">

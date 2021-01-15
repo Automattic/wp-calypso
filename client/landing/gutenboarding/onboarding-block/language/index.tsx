@@ -21,7 +21,6 @@ import { I18N_STORE } from '../../stores/i18n';
 import { PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
 import { Step, usePath } from '../../path';
-import { usePlansBillingPeriod } from '../../hooks/use-plans-billing-period';
 import type { StepNameType } from '../../path';
 
 /**
@@ -37,8 +36,6 @@ interface Props {
 
 const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 	const { __ } = useI18n();
-
-	const plansBillingPeriod = usePlansBillingPeriod();
 
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
@@ -79,10 +76,7 @@ const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 							// Invalidate the resolution cache for getSupportedPlans
 							// when the locale changes, to force the data for the plans grid
 							// to be fetched again, fresh from the plans/details and plans endpoints.
-							invalidateResolution( PLANS_STORE, 'getSupportedPlans', [
-								language.langSlug,
-								plansBillingPeriod,
-							] );
+							invalidateResolution( PLANS_STORE, 'getSupportedPlans', [ language.langSlug ] );
 							changeLocale( language.langSlug );
 							goBack( language.langSlug );
 						} }

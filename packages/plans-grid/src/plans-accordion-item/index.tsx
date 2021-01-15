@@ -5,17 +5,20 @@ import React from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
 import { NextButton } from '@automattic/onboarding';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
+import useBillingPeriod from '../hooks/use-billing-period';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { PLANS_STORE } from '@automattic/data-stores/src/launch/constants';
 
 const ChevronDown = (
 	<svg width="8" viewBox="0 0 8 4">
@@ -26,10 +29,9 @@ const ChevronDown = (
 const SPACE_BAR_KEYCODE = 32;
 
 export interface Props {
-	slug: string;
+	slug: Plans.PlanSlug;
 	name: string;
 	description: string;
-	price: string;
 	features: Array< string >;
 	domain?: DomainSuggestions.DomainSuggestion;
 	badge?: string;
@@ -37,9 +39,9 @@ export interface Props {
 	isOpen?: boolean;
 	isPrimary?: boolean;
 	isSelected?: boolean;
-	onSelect: ( slug: string ) => void;
+	onSelect: ( productId: number | undefined ) => void;
 	onPickDomainClick?: () => void;
-	onToggle?: ( slug: string, isOpen: boolean ) => void;
+	onToggle?: ( slug: Plans.PlanSlug, isOpen: boolean ) => void;
 	disabledLabel?: string;
 }
 
@@ -47,7 +49,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
 	name,
 	description,
-	price,
 	features,
 	domain,
 	badge,
@@ -60,6 +61,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	disabledLabel,
 } ) => {
 	const { __ } = useI18n();
+
+	const billingPeriod = useBillingPeriod();
+	const planProduct = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
+	);
 
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0\u00A0';
@@ -98,11 +104,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						<div className="plans-accordion-item__price">
 							<div
 								className={ classNames( 'plans-accordion-item__price-amount', {
-									'is-loading': ! price,
+									'is-loading': ! planProduct?.price,
 								} ) }
 							>
-								{ price || nbsp }
-								{ price && (
+								{ planProduct?.price || nbsp }
+								{ planProduct?.price && (
 									<span>
 										{
 											// translators: /mo is short for "per-month"
@@ -126,7 +132,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						<NextButton
 							data-e2e-button={ isFree ? 'freePlan' : 'paidPlan' }
 							onClick={ () => {
-								onSelect( slug );
+								onSelect( planProduct?.productId );
 							} }
 						>
 							{ __( 'Select', __i18n_text_domain__ ) }

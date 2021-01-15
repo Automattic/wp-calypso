@@ -1,9 +1,11 @@
 /**
  * Internal dependencies
  */
-import type { plansProductSlugs } from './constants';
+import type { plansProductSlugs, plansOrder, plansPaths } from './constants';
 
-export type PlanSlug = typeof plansProductSlugs[ number ];
+export type StorePlanSlug = typeof plansProductSlugs[ number ];
+export type PlanSlug = typeof plansOrder[ number ];
+export type PlanPath = typeof plansPaths[ number ];
 
 export type PlanAction = {
 	type: string;
@@ -12,18 +14,24 @@ export type PlanAction = {
 export interface Plan {
 	title: string;
 	description: string;
-	productId: number;
-	storeSlug: PlanSlug;
-	pathSlug: string;
 	features: string[];
 	isPopular?: boolean;
 	isFree?: boolean;
 	featuresSlugs?: Record< string, boolean >;
 	storage?: string;
-	billPeriod?: 'MONTHLY' | 'ANNUALLY';
-	rawPrice: number;
+	periodAgnosticSlug: PlanSlug;
+	productIds: number[];
+}
+
+export interface PlanProduct {
+	billingPeriod: 'MONTHLY' | 'ANNUALLY';
 	price: string;
+	rawPrice: number;
+	productId: number;
+	storeSlug: StorePlanSlug;
 	annualDiscount?: number;
+	periodAgnosticSlug: PlanSlug;
+	pathSlug: PlanPath;
 }
 
 /**
@@ -71,8 +79,8 @@ export interface PricedAPIPlan {
 		5: number;
 		6: number;
 	};
-	path_slug: string;
-	product_slug: string;
+	path_slug: PlanPath;
+	product_slug: StorePlanSlug;
 	description: string;
 	cost: number;
 	bill_period: number;
@@ -111,7 +119,7 @@ export interface APIPlanDetail {
 	];
 	name: string;
 	short_name: string;
-	nonlocalized_short_name: string;
+	nonlocalized_short_name: PlanSlug;
 	tagline: string;
 	description: string;
 	features: string[];

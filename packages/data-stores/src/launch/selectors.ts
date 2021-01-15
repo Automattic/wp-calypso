@@ -7,12 +7,11 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { LaunchSequence, LaunchStep } from './data';
-import { STORE_KEY as LAUNCH_STORE } from './constants';
+import { PLANS_STORE, STORE_KEY as LAUNCH_STORE } from './constants';
 
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
 import type * as DomainSuggestions from '../domain-suggestions';
-import type * as Plans from '../plans';
 
 export const getLaunchSequence = (): typeof LaunchSequence => LaunchSequence;
 export const getLaunchStep = (): typeof LaunchStep => LaunchStep;
@@ -26,7 +25,7 @@ export const hasPaidDomain = ( state: State ): boolean => {
 };
 export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSuggestion | undefined =>
 	state.domain;
-export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state.plan;
+export const getSelectedPlanProductId = ( state: State ): number | undefined => state.planProductId;
 
 /**
  * Returns the last paid plan the user has picked.
@@ -35,8 +34,12 @@ export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state
  *
  * @param state State
  */
-export const getPaidPlan = ( state: State ): Plans.Plan | undefined =>
-	state.plan && ! state.plan?.isFree ? state.plan : undefined;
+export const getPaidPlanProductId = ( state: State ): number | undefined => {
+	const productId = state.planProductId;
+	const isFree = select( PLANS_STORE ).isPlanProductFree( productId );
+
+	return productId && isFree ? state.planProductId : undefined;
+};
 
 // Check if a domain has been explicitly selected (including free subdomain)
 
@@ -53,7 +56,7 @@ export const hasSelectedDomain = ( state: State ): boolean =>
 // Warning: because it's using getEntityRecord it works only inside the editor
 export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean => {
 	if ( step === LaunchStep.Plan ) {
-		return !! getSelectedPlan( state );
+		return !! getSelectedPlanProductId( state );
 	}
 	if ( step === LaunchStep.Name ) {
 		const site: { title?: string } | undefined = select( 'core' ).getEntityRecord(

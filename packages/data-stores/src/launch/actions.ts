@@ -2,13 +2,10 @@
  * External dependencies
  */
 import type * as DomainSuggestions from '../domain-suggestions';
-import type * as Plans from '../plans';
-import { select } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
-import { PLANS_STORE } from './constants';
 import type { LaunchStepType } from './types';
 
 export const setSidebarFullscreen = () =>
@@ -55,21 +52,20 @@ export const setDomainSearch = ( domainSearch: string ) =>
 		domainSearch,
 	} as const );
 
-export const setPlan = ( plan: Plans.Plan ) =>
+export const setPlanProductId = ( planProductId: number | undefined ) =>
 	( {
-		type: 'SET_PLAN',
-		plan,
+		type: 'SET_PLAN_PRODUCT_ID',
+		planProductId,
 	} as const );
 
-export const unsetPlan = () =>
+export const unsetPlanProductId = () =>
 	( {
-		type: 'UNSET_PLAN',
+		type: 'UNSET_PLAN_PRODUCT_ID',
 	} as const );
 
 /* eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types */
-export function* updatePlan( planSlug: Plans.PlanSlug ) {
-	const plan: Plans.Plan = yield select( PLANS_STORE, 'getPlanBySlug', planSlug );
-	yield setPlan( plan );
+export function* updatePlan( planProductId: number | undefined ) {
+	yield setPlanProductId( planProductId );
 }
 
 export const openSidebar = () =>
@@ -139,10 +135,10 @@ export type LaunchAction = ReturnType<
 	| typeof setDomain
 	| typeof confirmDomainSelection
 	| typeof setDomainSearch
-	| typeof setPlan
+	| typeof setPlanProductId
 	| typeof openFocusedLaunch
 	| typeof closeFocusedLaunch
-	| typeof unsetPlan
+	| typeof unsetPlanProductId
 	| typeof openSidebar
 	| typeof closeSidebar
 	| typeof enableExperimental

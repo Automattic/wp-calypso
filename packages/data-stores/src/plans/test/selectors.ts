@@ -65,7 +65,7 @@ describe( 'getSupportedPlans', () => {
 		expect( supportedPlans ).toContain( DEFAULT_STATE.plans[ PLAN_FREE ] );
 	} );
 	it( 'always includes free plan - annually', () => {
-		const supportedPlans = getSupportedPlans( DEFAULT_STATE, '', 'ANNUALLY' );
+		const supportedPlans = getSupportedPlans( DEFAULT_STATE, '' );
 
 		expect( supportedPlans ).toContain( DEFAULT_STATE.plans[ PLAN_FREE ] );
 	} );
@@ -79,7 +79,7 @@ describe( 'getSupportedPlans', () => {
 	} );
 
 	it( 'only includes yearly plans for ANNUAL period', () => {
-		const supportedPlans = getSupportedPlans( DEFAULT_STATE, '', 'ANNUALLY' );
+		const supportedPlans = getSupportedPlans( DEFAULT_STATE, '' );
 		expect( supportedPlans ).toEqual( [
 			DEFAULT_STATE.plans[ PLAN_FREE ],
 			DEFAULT_STATE.plans[ PLAN_PREMIUM ],

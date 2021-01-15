@@ -8,18 +8,21 @@ import { select } from '@wordpress/data';
  */
 import type { State } from './reducer';
 import {
-	DEFAULT_ANNUAL_PAID_PLAN,
-	PLAN_ECOMMERCE,
-	PLAN_FREE,
+	DEFAULT_PAID_PLAN,
+	TIMELESS_PLAN_ECOMMERCE,
+	TIMELESS_PLAN_FREE,
 	STORE_KEY,
-	PlanPath,
-	PLAN_ECOMMERCE_MONTHLY,
-	DEFAULT_MONTHLY_PAID_PLAN,
-	billedMonthlySlugs,
-	billedYearlySlugs,
 } from './constants';
 import deprecate from '@wordpress/deprecated';
-import type { Plan, PlanFeature, FeaturesByType, PlanSlug } from './types';
+import type {
+	Plan,
+	PlanFeature,
+	FeaturesByType,
+	PlanProduct,
+	PlanPath,
+	PlanSlug,
+	StorePlanSlug,
+} from './types';
 
 // Some of these selectors require unused parameters because those
 // params are used by the associated resolver.
@@ -29,48 +32,77 @@ export const getFeatures = ( state: State ): Record< string, PlanFeature > => st
 
 export const getFeaturesByType = ( state: State ): Array< FeaturesByType > => state.featuresByType;
 
-export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
-	return state.plans[ slug ] ?? undefined;
-};
-
-export const getDefaultPaidPlan = (
-	_: State,
-	locale: string,
-	billPeriod: Plan[ 'billPeriod' ] = 'ANNUALLY'
-): Plan | undefined => {
-	const targetSlug =
-		billPeriod === 'ANNUALLY' ? DEFAULT_ANNUAL_PAID_PLAN : DEFAULT_MONTHLY_PAID_PLAN;
+/*
+export const getPlanByStoreSlug = ( _state: State, slug: StorePlanSlug ): Plan | undefined => {
+	if ( slug ) {
+		return undefined;
+	}
+	const planProduct = select( STORE_KEY )
+		.getPlansProducts()
+		.find( ( product ) => product.storeSlug === slug );
 
 	return select( STORE_KEY )
+		.getSupportedPlans()
+		.find( ( plan ) => plan.periodAgnosticSlug === planProduct?.periodAgnosticSlug );
+};
+*/
+
+export const getPlanByProductId = (
+	_state: State,
+	productId: number | undefined
+): Plan | undefined => {
+	if ( ! productId ) {
+		return undefined;
+	}
+
+	return select( STORE_KEY )
+		.getSupportedPlans()
+		.find( ( plan ) => plan.productIds.indexOf( productId ) > -1 );
+};
+
+export const getPlanProductById = (
+	_state: State,
+	productId: number | undefined
+): PlanProduct | undefined => {
+	if ( ! productId ) {
+		return undefined;
+	}
+
+	return select( STORE_KEY )
+		.getPlansProducts()
+		.find( ( product ) => product.productId === productId );
+};
+
+export const getPlanByPeriodAgnosticSlug = (
+	_state: State,
+	slug: PlanSlug | undefined
+): Plan | undefined => {
+	if ( ! slug ) {
+		return undefined;
+	}
+	return select( STORE_KEY )
+		.getSupportedPlans()
+		.find( ( plan ) => plan.periodAgnosticSlug === slug );
+};
+
+export const getDefaultPaidPlan = ( _: State, locale: string ): Plan | undefined => {
+	return select( STORE_KEY )
 		.getSupportedPlans( locale )
-		.find( ( plan ) => plan.storeSlug === targetSlug );
+		.find( ( plan ) => plan.periodAgnosticSlug === DEFAULT_PAID_PLAN );
 };
 
 export const getDefaultFreePlan = ( _: State, locale: string ): Plan | undefined => {
 	return select( STORE_KEY )
 		.getSupportedPlans( locale )
-		.find( ( plan ) => plan.storeSlug === PLAN_FREE );
+		.find( ( plan ) => plan.periodAgnosticSlug === TIMELESS_PLAN_FREE );
 };
 
-export const getSupportedPlans = (
-	state: State,
-	_locale?: string,
-	billingPeriod?: Plan[ 'billPeriod' ] | undefined
-): Plan[] => {
-	let supportedPlans: Plan[] = Object.keys( state.plans )
-		.map( ( slug ) => state.plans[ slug ] )
-		.filter( Boolean );
+export const getSupportedPlans = ( state: State, _locale?: string ): Plan[] => {
+	return state.plans;
+};
 
-	if ( billingPeriod ) {
-		supportedPlans = supportedPlans.filter( ( plan ) => {
-			if ( plan.isFree || billingPeriod === plan.billPeriod ) {
-				return true;
-			}
-			return false;
-		} );
-	}
-
-	return supportedPlans;
+export const getPlansProducts = ( state: State, _locale?: string ): PlanProduct[] => {
+	return state.planProducts;
 };
 
 /**
@@ -79,34 +111,63 @@ export const getSupportedPlans = (
  * @param _state the state
  * @param _locale the locale
  */
-export const getPrices = ( _state: State, _locale: string ): Record< PlanSlug, string > => {
+export const getPrices = ( _state: State, _locale: string ): Record< StorePlanSlug, string > => {
 	deprecate( 'getPrices', {
-		alternative: 'plan.price directly',
+		alternative: 'getPlanProduct().price',
 	} );
 	return select( STORE_KEY )
-		.getSupportedPlans()
+		.getPlansProducts()
 		.reduce( ( prices, plan ) => {
 			prices[ plan.storeSlug ] = plan.price;
 			return prices;
-		}, {} as Record< PlanSlug, string > );
+		}, {} as Record< StorePlanSlug, string > );
 };
 
-export const getPlanByPath = ( state: State, path?: PlanPath ): Plan | undefined => {
-	return path ? getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path ) : undefined;
+export const getPlanByPath = ( _state: State, path?: PlanPath ): Plan | undefined => {
+	if ( ! path ) {
+		return undefined;
+	}
+	const planProduct = select( STORE_KEY )
+		.getPlansProducts()
+		.find( ( product ) => product.pathSlug === path );
+
+	return select( STORE_KEY )
+		.getSupportedPlans()
+		.find( ( plan ) => plan.periodAgnosticSlug === planProduct?.periodAgnosticSlug );
 };
 
-export const getPlansPaths = ( state: State ): string[] => {
-	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
+export const getPlanProduct = (
+	_state: State,
+	periodAgnosticSlug: string | undefined,
+	billingPeriod: PlanProduct[ 'billingPeriod' ] | undefined
+): PlanProduct | undefined => {
+	if ( ! periodAgnosticSlug || ! billingPeriod ) {
+		return undefined;
+	}
+	const products = select( STORE_KEY ).getPlansProducts();
+	if ( periodAgnosticSlug === TIMELESS_PLAN_FREE ) {
+		return products.find( ( product ) => product.periodAgnosticSlug === periodAgnosticSlug );
+	}
+	const planProduct = products.find(
+		( product ) =>
+			product.billingPeriod === billingPeriod && product.periodAgnosticSlug === periodAgnosticSlug
+	);
+	return planProduct;
 };
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {
-	return planSlug === PLAN_ECOMMERCE || planSlug === PLAN_ECOMMERCE_MONTHLY;
+	return planSlug === TIMELESS_PLAN_ECOMMERCE;
 };
 
 export const isPlanFree = ( _: State, planSlug?: PlanSlug ): boolean => {
-	return planSlug === PLAN_FREE;
+	return planSlug === TIMELESS_PLAN_FREE;
 };
 
+export const isPlanProductFree = ( _: State, planProductId?: number | undefined ): boolean => {
+	return planProductId === 1;
+};
+
+/*
 export const getCorrespondingPlanFromOtherInterval = (
 	state: State,
 	plan: Plan | undefined
@@ -118,9 +179,10 @@ export const getCorrespondingPlanFromOtherInterval = (
 		return plan;
 	}
 	if ( plan.billPeriod === 'ANNUALLY' ) {
-		const index = billedYearlySlugs.indexOf( plan.storeSlug as never );
-		return getPlanBySlug( state, billedMonthlySlugs[ index ] );
+		const index = annualSlugs.indexOf( plan.storeSlug as never );
+		return getPlanBySlug( state, monthlySlugs[ index ] );
 	}
-	const index = billedMonthlySlugs.indexOf( plan.storeSlug as never );
-	return getPlanBySlug( state, billedYearlySlugs[ index ] );
+	const index = monthlySlugs.indexOf( plan.storeSlug as never );
+	return getPlanBySlug( state, annualSlugs[ index ] );
 };
+*/

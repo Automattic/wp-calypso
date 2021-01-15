@@ -6,7 +6,6 @@
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { useHistory } from 'react-router-dom';
@@ -23,7 +22,9 @@ import './style.scss';
 const PlanDetails: React.FunctionComponent = () => {
 	const locale = useLocale();
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getSelectedPlanProductId()
+	);
 	const history = useHistory();
 
 	const { updatePlan } = useDispatch( LAUNCH_STORE );
@@ -34,8 +35,8 @@ const PlanDetails: React.FunctionComponent = () => {
 		history.goBack();
 	};
 
-	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
-		updatePlan( planSlug );
+	const handleSelect = ( planProductId: number | undefined ) => {
+		updatePlan( planProductId );
 		goBack();
 	};
 
@@ -57,18 +58,18 @@ const PlanDetails: React.FunctionComponent = () => {
 				<PlansGrid
 					currentDomain={ domain }
 					onPlanSelect={ handleSelect }
-					currentPlan={ selectedPlan }
+					currentPlanProductId={ selectedPlanProductId }
 					onPickDomainClick={ goBack }
 					customTagLines={ {
-						free_plan: __( 'Best for getting started', __i18n_text_domain__ ),
-						'business-bundle': __( 'Best for small businesses', __i18n_text_domain__ ),
+						Free: __( 'Best for getting started', __i18n_text_domain__ ) as string,
+						Business: __( 'Best for small businesses', __i18n_text_domain__ ) as string,
 					} }
 					showPlanTaglines
 					popularBadgeVariation="NEXT_TO_NAME"
 					disabledPlans={
 						hasPaidDomain
 							? {
-									[ Plans.PLAN_FREE ]: __( 'Unavailable with domain', __i18n_text_domain__ ),
+									[ 'Free' ]: __( 'Unavailable with domain', __i18n_text_domain__ ),
 							  }
 							: undefined
 					}

@@ -10,7 +10,7 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE, SITE_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE, DOMAIN_SUGGESTIONS_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { isDomainProduct } from '../utils';
 import type { DomainProduct } from '../utils';
@@ -63,17 +63,24 @@ type DomainSelection = {
 };
 
 export function useDomainSelection(): DomainSelection {
-	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
-	const { domain: selectedDomain, plan, confirmedDomainSelection } = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getState()
+	const { setDomain, unsetDomain, unsetPlanProductId, confirmDomainSelection } = useDispatch(
+		LAUNCH_STORE
+	);
+	const {
+		domain: selectedDomain,
+		planProductId,
+		confirmedDomainSelection,
+	} = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const isPlanFree = useSelect( ( select ) =>
+		select( PLANS_STORE ).isPlanProductFree( planProductId )
 	);
 	const { siteSubdomain, hasPaidDomain, sitePrimaryDomain } = useSiteDomains();
 
 	function onDomainSelect( suggestion: DomainSuggestions.DomainSuggestion ) {
 		confirmDomainSelection();
 		setDomain( suggestion );
-		if ( plan?.isFree ) {
-			unsetPlan();
+		if ( isPlanFree ) {
+			unsetPlanProductId();
 		}
 	}
 

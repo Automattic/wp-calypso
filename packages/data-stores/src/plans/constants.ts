@@ -14,40 +14,41 @@ export const PLAN_PREMIUM_MONTHLY = 'value_bundle_monthly';
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
 
+export const TIMELESS_PLAN_FREE = 'Free';
+export const TIMELESS_PLAN_PERSONAL = 'Personal';
+export const TIMELESS_PLAN_PREMIUM = 'Premium';
+export const TIMELESS_PLAN_BUSINESS = 'Business';
+export const TIMELESS_PLAN_ECOMMERCE = 'Ecommerce';
+
 export const STORE_KEY = 'automattic/onboard/plans';
 
-export const DEFAULT_ANNUAL_PAID_PLAN = PLAN_PREMIUM;
-export const DEFAULT_MONTHLY_PAID_PLAN = PLAN_PREMIUM_MONTHLY;
+export const DEFAULT_PAID_PLAN = TIMELESS_PLAN_PREMIUM;
 interface Currency {
 	format: 'SYMBOL_THEN_AMOUNT' | 'AMOUNT_THEN_SYMBOL';
 	symbol: string;
 	decimal: number;
 }
 
-export const billedYearlySlugs = [
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-] as const;
+export const annualSlugs = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] as const;
 
-export const billedMonthlySlugs = [
+export const monthlySlugs = [
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 ] as const;
 
-export const plansOrder = {
-	MONTHLY: billedYearlySlugs,
-	ANNUALLY: billedMonthlySlugs,
-} as const;
+export const plansOrder = [
+	TIMELESS_PLAN_FREE,
+	TIMELESS_PLAN_PERSONAL,
+	TIMELESS_PLAN_PREMIUM,
+	TIMELESS_PLAN_BUSINESS,
+	TIMELESS_PLAN_ECOMMERCE,
+] as const;
 
 export const plansPaths = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ] as const;
 
-export type PlanPath = typeof plansPaths[ number ];
-
-export const plansProductSlugs = [ PLAN_FREE, ...billedYearlySlugs, ...billedMonthlySlugs ];
+export const plansProductSlugs = [ PLAN_FREE, ...annualSlugs, ...monthlySlugs ] as const;
 
 // salvaged from https://opengrok.a8c.com/source/raw/trunk/wp-content/admin-plugins/wpcom-billing/store-price.php
 // with html entities resolved to symbols

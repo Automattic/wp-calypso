@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-import type { Plans, DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { Plans as PlansStore } from '@automattic/data-stores';
 
@@ -19,19 +19,11 @@ export const isValidSiteTitle = ( title?: string ): boolean =>
 
 export type PlanProduct = {
 	product_id: number;
-	product_slug: Plans.PlanSlug;
+	product_slug: string;
 	extra: {
 		source: string;
 	};
 };
-
-export const getPlanProduct = ( plan: Plans.Plan, flow: string ): PlanProduct => ( {
-	product_id: plan.productId,
-	product_slug: plan.storeSlug,
-	extra: {
-		source: flow,
-	},
-} );
 
 export type DomainProduct = {
 	meta: string;

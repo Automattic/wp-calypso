@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import type { Plans, DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
+import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import debugFactory from 'debug';
 
@@ -13,14 +13,18 @@ import debugFactory from 'debug';
 import PlansTable from '../plans-table';
 import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
-import type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
+import type {
+	CTAVariation,
+	CustomTagLinesMap,
+	DisabledPlansMap,
+	PopularBadgeVariation,
+} from '../plans-table/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type PlansSlug = Plans.PlanSlug;
 type FeatureId = WPCOMFeatures.FeatureId;
 
 const debug = debugFactory( 'plans-grid' );
@@ -28,11 +32,11 @@ const debug = debugFactory( 'plans-grid' );
 export interface Props {
 	header?: React.ReactElement;
 	selectedFeatures?: FeatureId[];
-	currentPlan?: Plans.Plan;
-	onPlanSelect: ( plan: PlansSlug ) => void;
+	currentPlanProductId?: number | undefined;
+	onPlanSelect: ( planProductId: number | undefined ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
-	disabledPlans?: { [ planSlug: string ]: string };
+	disabledPlans?: DisabledPlansMap;
 	isAccordion?: boolean;
 	locale: string;
 	showPlanTaglines?: boolean;
@@ -46,7 +50,7 @@ export interface Props {
 const PlansGrid: React.FunctionComponent< Props > = ( {
 	header,
 	selectedFeatures,
-	currentPlan,
+	currentPlanProductId,
 	currentDomain,
 	onPlanSelect,
 	onPickDomainClick,
@@ -73,7 +77,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 					{ isAccordion ? (
 						<PlansAccordion
 							selectedFeatures={ selectedFeatures }
-							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
+							selectedPlanProductId={ currentPlanProductId }
 							onPlanSelect={ onPlanSelect }
 							currentDomain={ currentDomain }
 							onPickDomainClick={ onPickDomainClick }
@@ -84,7 +88,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						<PlansTable
 							popularBadgeVariation={ popularBadgeVariation }
 							CTAVariation={ CTAVariation }
-							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
+							selectedPlanProductId={ currentPlanProductId }
 							onPlanSelect={ onPlanSelect }
 							customTagLines={ customTagLines }
 							currentDomain={ currentDomain }

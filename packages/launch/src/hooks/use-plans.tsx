@@ -15,17 +15,16 @@ import LaunchContext from '../context';
 import { isPlanProduct } from '../utils';
 import type { PlanProduct } from '../utils';
 
-export function usePlans(
-	billingPeriod: Plans.Plan[ 'billPeriod' ] = 'ANNUALLY'
-): {
+export function usePlans(): {
 	defaultPaidPlan: Plans.Plan | undefined;
 	defaultFreePlan: Plans.Plan | undefined;
 } {
 	const locale = useLocale();
 
 	const defaultPaidPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getDefaultPaidPlan( locale, billingPeriod )
+		select( PLANS_STORE ).getDefaultPaidPlan( locale )
 	);
+
 	const defaultFreePlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getDefaultFreePlan( locale )
 	);
@@ -54,14 +53,10 @@ export function usePlanProductFromCart(): PlanProduct | undefined {
 	return planProductFromCart;
 }
 
-export function usePlanFromCart(): Plans.Plan | undefined {
+export function usePlanProductIdFromCart(): number | undefined {
 	const planProductFromCart = usePlanProductFromCart();
 
-	const planSlug = planProductFromCart?.product_slug;
+	const planProductId = planProductFromCart?.product_id;
 
-	const plan = useSelect( ( select ) =>
-		planSlug ? select( PLANS_STORE ).getPlanBySlug( planSlug ) : undefined
-	);
-
-	return plan;
+	return planProductId;
 }

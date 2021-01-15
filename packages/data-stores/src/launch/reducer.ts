@@ -4,7 +4,6 @@
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 import type * as DomainSuggestions from '../domain-suggestions';
-import type * as Plans from '../plans';
 
 /**
  * Internal dependencies
@@ -54,11 +53,11 @@ const confirmedDomainSelection: Reducer< boolean, LaunchAction > = ( state = fal
 	return state;
 };
 
-const plan: Reducer< Plans.Plan | undefined, LaunchAction > = ( state, action ) => {
-	if ( action.type === 'SET_PLAN' ) {
-		return action.plan;
+const planProductId: Reducer< number | undefined, LaunchAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
+		return action.planProductId;
 	}
-	if ( action.type === 'UNSET_PLAN' ) {
+	if ( action.type === 'UNSET_PLAN_PRODUCT_ID' ) {
 		return undefined;
 	}
 	return state;
@@ -161,7 +160,7 @@ const reducer = combineReducers( {
 	domain,
 	confirmedDomainSelection,
 	domainSearch,
-	plan,
+	planProductId,
 	isSidebarOpen,
 	isSidebarFullscreen,
 	isExperimental,

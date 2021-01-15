@@ -14,6 +14,7 @@ import { Icon } from '@wordpress/icons';
 import PlanItem from '../plans-accordion-item';
 import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
 import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../constants';
+import type { DisabledPlansMap } from 'src/plans-table/types';
 
 /**
  * Style dependencies
@@ -30,17 +31,17 @@ const tip = (
 
 export interface Props {
 	selectedFeatures?: FeatureId[];
-	selectedPlanSlug: Plans.PlanSlug;
-	onPlanSelect: ( planSlug: string ) => void;
+	selectedPlanProductId: number | undefined;
+	onPlanSelect: ( planProductId: number | undefined ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
-	disabledPlans?: { [ planSlug: string ]: string };
+	disabledPlans?: DisabledPlansMap;
 	locale: string;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
 	selectedFeatures = [],
-	selectedPlanSlug,
+	selectedPlanProductId,
 	onPlanSelect,
 	onPickDomainClick,
 	currentDomain,
@@ -50,43 +51,45 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	const { __ } = useI18n();
 
 	const supportedPlans = useSelect( ( select ) =>
-		select( PLANS_STORE ).getSupportedPlans( locale, 'ANNUALLY' )
+		select( PLANS_STORE ).getSupportedPlans( locale )
 	);
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4 ];
 
 	// Primary plan
-	const popularPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getDefaultPaidPlan( locale, 'ANNUALLY' )
-	);
+	const popularPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan( locale ) );
 	const recommendedPlanSlug = useSelect( ( select ) =>
-		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures, 'ANNUALLY' )
+		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
 	);
 
 	const recommendedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug )
+		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug )
 	);
+
 	const primaryPlan = recommendedPlan || popularPlan;
+
 	const badge = recommendedPlan
 		? __( 'Recommended for you', __i18n_text_domain__ )
 		: __( 'Popular', __i18n_text_domain__ );
 
 	// Other plans
-	const otherPlans = supportedPlans.filter( ( plan ) => plan.storeSlug !== primaryPlan.storeSlug );
+	const otherPlans = supportedPlans.filter(
+		( plan ) => plan.periodAgnosticSlug !== primaryPlan?.periodAgnosticSlug
+	);
 
 	// Handle toggling of all plan items
-	const defaultOpenPlans = [ primaryPlan?.storeSlug ];
+	const defaultOpenPlans = [ primaryPlan?.periodAgnosticSlug ];
 	const [ openPlans, setOpenPlans ] = useState( defaultOpenPlans );
 	const allPlansOpened = isLoading ? false : openPlans.length >= supportedPlans.length;
 
-	const handleToggle = ( slug: string, isOpen: boolean ) => {
+	const handleToggle = ( slug: Plans.PlanSlug, isOpen: boolean ) => {
 		setOpenPlans( isOpen ? [ ...openPlans, slug ] : openPlans.filter( ( s ) => s !== slug ) );
 	};
 
 	const handleToggleAll = () => {
 		setOpenPlans(
-			allPlansOpened ? defaultOpenPlans : supportedPlans.map( ( plan ) => plan.storeSlug )
+			allPlansOpened ? defaultOpenPlans : supportedPlans.map( ( plan ) => plan.periodAgnosticSlug )
 		);
 	};
 
@@ -110,18 +113,20 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 								</div>
 							) }
 							<PlanItem
-								key={ primaryPlan.storeSlug }
-								slug={ primaryPlan.storeSlug }
+								key={ primaryPlan.periodAgnosticSlug }
+								slug={ primaryPlan.periodAgnosticSlug }
 								name={ primaryPlan?.title.toString() }
 								description={ primaryPlan?.description.toString() }
 								features={ primaryPlan.features ?? [] }
-								price={ primaryPlan.price }
 								domain={ currentDomain }
 								badge={ badge }
 								isFree={ primaryPlan.isFree }
 								isOpen
 								isPrimary
-								isSelected={ primaryPlan.storeSlug === selectedPlanSlug }
+								isSelected={
+									!! selectedPlanProductId &&
+									primaryPlan.productIds.indexOf( selectedPlanProductId ) > -1
+								}
 								onSelect={ onPlanSelect }
 								onPickDomainClick={ onPickDomainClick }
 							></PlanItem>
@@ -145,22 +150,24 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 					  ) )
 					: otherPlans.map( ( plan ) => (
 							<PlanItem
-								key={ plan.storeSlug }
-								slug={ plan.storeSlug }
+								key={ plan.periodAgnosticSlug }
+								slug={ plan.periodAgnosticSlug }
 								name={ plan?.title.toString() }
 								description={ plan?.description.toString() }
 								features={ plan.features ?? [] }
-								price={ plan.price }
 								domain={ currentDomain }
 								isFree={ plan.isFree }
 								isOpen={
-									openPlans.indexOf( plan.storeSlug ) > -1 && ! disabledPlans?.[ plan.storeSlug ]
+									openPlans.indexOf( plan.periodAgnosticSlug ) > -1 &&
+									! disabledPlans?.[ plan.periodAgnosticSlug ]
 								}
-								isSelected={ plan.storeSlug === selectedPlanSlug }
+								isSelected={
+									!! selectedPlanProductId && plan.productIds.indexOf( selectedPlanProductId ) > -1
+								}
 								onSelect={ onPlanSelect }
 								onPickDomainClick={ onPickDomainClick }
 								onToggle={ handleToggle }
-								disabledLabel={ disabledPlans?.[ plan.storeSlug ] }
+								disabledLabel={ disabledPlans?.[ plan.periodAgnosticSlug ] }
 							></PlanItem>
 					  ) ) }
 			</div>

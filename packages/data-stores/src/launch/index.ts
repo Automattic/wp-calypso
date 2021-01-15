@@ -32,7 +32,7 @@ export function register(): typeof STORE_KEY {
 			persist: [
 				'domain',
 				'domainSearch',
-				'plan',
+				'planProductId',
 				'confirmedDomainSelection',
 				'isExperimental',
 				'isSiteTitleStepVisible',
