@@ -27,7 +27,6 @@ import {
 	useSite,
 	usePlans,
 	useCart,
-	usePlanFromCart,
 } from '../../hooks';
 import FocusedLaunchSummaryItem, {
 	LeadingContentSide,
@@ -491,7 +490,6 @@ const Summary: React.FunctionComponent = () => {
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
-	const hasPlanInCart = usePlanFromCart();
 
 	const { siteId, redirectTo } = React.useContext( LaunchContext );
 
@@ -543,7 +541,7 @@ const Summary: React.FunctionComponent = () => {
 	);
 
 	const isDomainStepHighlighted =
-		!! hasPlanInCart || !! hasSelectedDomain || isValidSiteTitle( title );
+		!! selectedPlan || !! hasSelectedDomain || isValidSiteTitle( title );
 
 	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
