@@ -101,7 +101,7 @@ function getPrettyErrorMessages( messages, { translate, selectedSiteSlug } ) {
 
 			case 'invalid-product-multisite':
 				return Object.assign( error, {
-					message: getInvalidMultisitePurchaseErrorMessage( { translate, ...error } ),
+					message: getInvalidMultisitePurchaseErrorMessage( { translate, message: error.message } ),
 				} );
 
 			default:
