@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import qs from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -53,6 +54,14 @@ class MasterbarLoggedIn extends React.Component {
 		hasUnseen: PropTypes.bool,
 	};
 
+	componentDidMount() {
+		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
+		const qryString = qs.parse( document.location.search.replace( /^\?/, '' ) );
+		if ( qryString?.openSidebar === 'true' ) {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		}
+	}
+
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 		if ( ! config.isEnabled( 'nav-unification' ) ) {
@@ -60,6 +69,7 @@ class MasterbarLoggedIn extends React.Component {
 		} else if ( 'sites' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
 			// when my-sites is not focused or sidebar is open, focus to my-sites' content. Else, open my-sites' sidebar.
 			this.props.setNextLayoutFocus( 'content' );
+			this.props.setNextLayoutFocus( 'sidebar' );
 		} else {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
@@ -107,6 +117,7 @@ class MasterbarLoggedIn extends React.Component {
 		} else if ( 'reader' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
 			// when reader is not focused or sidebar is open, focus to reader's content. Else, open reader's sidebar.
 			this.props.setNextLayoutFocus( 'content' );
+			this.props.setNextLayoutFocus( 'sidebar' );
 		} else {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
@@ -118,6 +129,7 @@ class MasterbarLoggedIn extends React.Component {
 			if ( 'me' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
 				// when me is not focused or sidebar is open, focus to me's content. Else, open me's sidebar.
 				this.props.setNextLayoutFocus( 'content' );
+				this.props.setNextLayoutFocus( 'sidebar' );
 			} else {
 				this.props.setNextLayoutFocus( 'sidebar' );
 			}
