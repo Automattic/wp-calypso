@@ -68,6 +68,7 @@
 		"@wordpress/editor": "^9.20.6",
 		"@wordpress/element": "^2.16.0",
 		"@wordpress/format-library": "^1.22.6",
+		"@wordpress/hooks": "^2.9.0",
 		"@wordpress/i18n": "^3.14.0",
 		"@wordpress/icons": "^2.4.0",
 		"@wordpress/interface": "^0.7.5",

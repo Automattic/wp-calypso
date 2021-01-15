@@ -184,7 +184,10 @@ class PostCommentForm extends React.Component {
 				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
 					<AutoDirection>
-						<PostCommentFormTextarea onChange={ this.handleTextChange } />
+						<PostCommentFormTextarea
+							onChange={ this.handleTextChange }
+							siteId={ this.props.post.site_ID }
+						/>
 					</AutoDirection>
 					<Button
 						className={ buttonClasses }

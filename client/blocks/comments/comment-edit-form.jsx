@@ -140,19 +140,13 @@ class PostCommentForm extends Component {
 			'is-visible': this.state.haveFocus || this.hasCommentText(),
 		} );
 
-		const isReply = !! this.props.parentCommentId;
 		return (
 			<form className="comments__edit-form">
 				<FormFieldset>
 					<AutoDirection>
 						<PostCommentFormTextarea
-							value={ this.state.commentText }
-							onKeyUp={ this.handleKeyUp }
-							onKeyDown={ this.handleKeyDown }
-							onFocus={ this.handleFocus }
-							onBlur={ this.handleBlur }
 							onChange={ this.handleTextChange }
-							enableAutoFocus={ isReply }
+							siteId={ this.props.post.site_ID }
 						/>
 					</AutoDirection>
 					<button
