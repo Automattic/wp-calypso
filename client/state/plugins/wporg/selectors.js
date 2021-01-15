@@ -25,3 +25,13 @@ export function isFetched( state, pluginSlug ) {
 	// we assume we are still launching the fetch action, so it's true
 	return plugin ? !! plugin.fetched : false;
 }
+
+export function isFetchingPluginsList( state, category, searchTerm ) {
+	if ( category ) {
+		return !! state.plugins.wporg.fetchingLists.category[ category ];
+	} else if ( searchTerm ) {
+		return !! state.plugins.wporg.fetchingLists.search[ searchTerm ];
+	}
+
+	return false;
+}

@@ -21,6 +21,7 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
+import { isFetchingPluginsList } from 'calypso/state/plugins/wporg/selectors';
 
 import 'calypso/state/plugins/init';
 
@@ -87,8 +88,11 @@ function receivePluginsList( category, page, searchTerm, data, error, pagination
  * @returns {Function} Action thunk
  */
 export function fetchPluginsList( category, page, searchTerm ) {
-	return ( dispatch ) => {
-		// @TODO: Implement a fetching check here
+	return ( dispatch, getState ) => {
+		// Bail if we are currently fetching this plugins list
+		if ( isFetchingPluginsList( getState(), category, searchTerm ) ) {
+			return;
+		}
 
 		dispatch( {
 			type: PLUGINS_WPORG_LIST_REQUEST,
