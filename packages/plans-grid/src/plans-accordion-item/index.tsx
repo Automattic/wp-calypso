@@ -156,7 +156,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<div
 						className={ classNames( 'plans-accordion-item__actions', {
-							'plans-accordion-item__actions--reduced-margin': ! isFree,
+							'plans-accordion-item__actions--paid-plan-margin': ! isFree,
 						} ) }
 						hidden={ ! isOpen }
 					>

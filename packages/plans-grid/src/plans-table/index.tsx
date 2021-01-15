@@ -46,6 +46,8 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	currentDomain,
 	disabledPlans,
 	locale,
+	billingInterval,
+	onMaxMonhtlyDiscountPercentageChange,
 	showTaglines = false,
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
@@ -57,6 +59,14 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	);
 
 	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
+
+	// TODO: replace tempDiscountPlaceholder with a call to the new data-store selector
+	// to get the annually vs monthly discount for each plan
+	// TODO: when discounts data updates, call onMaxMonhtlyDiscountPercentageChange prop
+	const tempDiscountPlaceholder = 43;
+	React.useEffect( () => {
+		onMaxMonhtlyDiscountPercentageChange( tempDiscountPlaceholder );
+	}, [ onMaxMonhtlyDiscountPercentageChange, tempDiscountPlaceholder ] );
 
 	return (
 		<div className="plans-table">
@@ -74,6 +84,8 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							}
 							CTAVariation={ CTAVariation }
 							features={ plan.features ?? [] }
+							billingInterval={ billingInterval }
+							annuallyDiscountPercentage={ tempDiscountPlaceholder }
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }
 							name={ plan?.title.toString() }
