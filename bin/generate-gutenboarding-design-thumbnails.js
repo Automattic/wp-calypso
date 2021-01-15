@@ -124,7 +124,7 @@ async function run() {
 					e.message.includes( 'Run "npm install" or "yarn install" to download a browser binary.' )
 				) {
 					console.error(
-						'\n\nPlease run `node ./bin/install-gutenboarding-design-thumbnails-dependencies.js` to install the dependencies for this script and then try again.'
+						'\n\nPlease run `PUPPETEER_SKIP_DOWNLOAD= yarn install` to install the chromium binaries required for this script and then try again.'
 					);
 					process.exit( 1 );
 				}
