@@ -24,7 +24,7 @@ function enqueue_script_and_style() {
 	$asset = use_webpack_assets( 'editor-site-launch' );
 
 	wp_localize_script(
-		$asset['script_name'],
+		$asset['asset_handle'],
 		'wpcomEditorSiteLaunch',
 		array(
 			'locale' => determine_locale(),

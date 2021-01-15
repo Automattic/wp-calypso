@@ -166,7 +166,7 @@ class Starter_Page_Templates {
 			)
 		);
 
-		wp_localize_script( $asset['asset_name'], 'starterPageTemplatesConfig', $config );
+		wp_localize_script( $asset['asset_handle'], 'starterPageTemplatesConfig', $config );
 	}
 
 	/**

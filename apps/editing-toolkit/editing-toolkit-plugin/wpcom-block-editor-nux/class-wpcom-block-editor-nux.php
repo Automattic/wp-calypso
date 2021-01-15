@@ -45,7 +45,7 @@ class WPCOM_Block_Editor_NUX {
 		$asset = use_webpack_assets( 'wpcom-block-editor-nux' );
 
 		wp_localize_script(
-			$asset['script_name'],
+			$asset['asset_handle'],
 			'wpcomBlockEditorNuxAssetsUrl',
 			$asset['asset_dir_url']
 		);

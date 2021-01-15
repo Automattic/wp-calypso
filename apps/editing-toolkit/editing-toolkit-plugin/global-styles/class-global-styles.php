@@ -324,7 +324,7 @@ class Global_Styles {
 		$asset = \A8C\FSE\use_webpack_assets( 'global-styles' );
 
 		wp_localize_script(
-			$asset['script_name'],
+			$asset['asset_handle'],
 			'JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS',
 			array(
 				'PLUGIN_NAME' => $this->plugin_name,

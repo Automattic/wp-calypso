@@ -45,7 +45,7 @@ class WPCOM_Block_Editor_Welcome_Tour {
 		$asset = use_webpack_assets( 'wpcom-block-editor-welcome-tour' );
 
 		wp_localize_script(
-			$asset['script_name'],
+			$asset['asset_handle'],
 			'wpcomBlockEditorWelcomeTourAssetsUrl',
 			$asset['asset_dir_url']
 		);

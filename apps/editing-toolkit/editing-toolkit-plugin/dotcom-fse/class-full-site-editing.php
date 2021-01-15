@@ -118,7 +118,7 @@ class Full_Site_Editing {
 		$asset = use_webpack_assets( 'dotcom-fse' );
 
 		wp_localize_script(
-			$asset['script_name'],
+			$asset['asset_handle'],
 			'fullSiteEditing',
 			array(
 				'editorPostType'      => get_current_screen()->post_type,
