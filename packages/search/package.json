@@ -34,7 +34,7 @@
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/icons": "^2.4.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.20",
 		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {
