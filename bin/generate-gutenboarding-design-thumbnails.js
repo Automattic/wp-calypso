@@ -113,12 +113,18 @@ async function run() {
 			let screenshot;
 			try {
 				screenshot = await captureWebsite.buffer( url, {
-					fullPage: true,
-					height: viewportHeight,
+					// fullPage: true,
 					scaleFactor: viewportScaleFactor,
+					width: viewportWidth,
+					height: viewportHeight,
 					styles,
 					type: 'png',
-					width: viewportWidth,
+					clip: {
+						x: 0,
+						y: 0,
+						width: viewportWidth,
+						height: 3072,
+					},
 				} );
 			} catch ( e ) {
 				if (
