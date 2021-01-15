@@ -14,7 +14,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import connectUserMentions from 'calypso/blocks/user-mentions/connect';
 
-import addAutocompleters from './autocompleters';
+import getAddAutocompleters from './autocompleters';
 
 const allowedBlocks = [
 	'core/paragraph',
@@ -30,11 +30,13 @@ const allowedBlocks = [
 
 const BlockEditor = ( { onChange, suggestions } ) => {
 	useEffect( () => {
-		addFilter(
-			'editor.Autocomplete.completers',
-			'readerComments/autocompleters/users',
-			addAutocompleters( suggestions )
-		);
+		getAddAutocompleters( suggestions ).then( ( addAutoCompleters ) => {
+			addFilter(
+				'editor.Autocomplete.completers',
+				'readerComments/autocompleters/users',
+				addAutoCompleters
+			);
+		} );
 	}, [ suggestions ] );
 	return (
 		<>

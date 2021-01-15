@@ -1,0 +1,20 @@
+.autocompleters {
+    &__xpost {
+        &-no-avatar {
+            display: inline-block;
+            width: 24px;
+        }
+
+        &-site-name {
+            padding-left: 1rem;
+            width: 10rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &-site-url {
+            padding-left: 1rem;
+        }
+    }
+}
