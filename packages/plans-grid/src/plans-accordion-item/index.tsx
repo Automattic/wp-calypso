@@ -36,6 +36,7 @@ export interface Props {
 	description: string;
 	features: Array< string >;
 	billingInterval: BillingIntervalType;
+	annuallyDiscountPercentage: number;
 	domain?: DomainSuggestions.DomainSuggestion;
 	badge?: string;
 	isFree?: boolean;
@@ -54,6 +55,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	description,
 	features,
 	billingInterval,
+	annuallyDiscountPercentage,
 	domain,
 	badge,
 	isFree = false,
@@ -129,17 +131,35 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 										? createInterpolateElement(
 												__( 'per month, billed as <price /> annually', __i18n_text_domain__ ),
 												// TODO: NEEDS THE ANNUAL PRICE FROM DATA-STORE
-												{ price: <>{ price }</> }
+												{ price: <>{ planProduct?.price }</> }
 										  )
 										: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
 							</div>
+							{ ! isFree && (
+								<div
+									className={ classNames( 'plans-accordion-item__price-discount', {
+										'plans-accordion-item__price-discount--disabled':
+											billingInterval !== 'ANNUALLY',
+									} ) }
+								>
+									{ createInterpolateElement(
+										__( 'Save <discountPercentage />% by paying annually', __i18n_text_domain__ ),
+										{ discountPercentage: <>{ annuallyDiscountPercentage }</> }
+									) }
+								</div>
+							) }
 						</div>
 						<div className="plans-accordion-item__disabled-label">{ disabledLabel }</div>
 						{ ! isOpen && (
 							<div className="plans-accordion-item__dropdown-chevron">{ ChevronDown }</div>
 						) }
 					</div>
-					<div className="plans-accordion-item__actions" hidden={ ! isOpen }>
+					<div
+						className={ classNames( 'plans-accordion-item__actions', {
+							'plans-accordion-item__actions--reduced-margin': ! isFree,
+						} ) }
+						hidden={ ! isOpen }
+					>
 						<NextButton
 							data-e2e-button={ isFree ? 'freePlan' : 'paidPlan' }
 							onClick={ () => {

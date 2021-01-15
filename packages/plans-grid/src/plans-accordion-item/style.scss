@@ -243,9 +243,38 @@ ul.plans-accordion-item__feature-item-group {
 	font-size: $font-body-extra-small;
 	line-height: 1.5;
 	color: var( --studio-gray-40 );
+	margin-bottom: 8px;
 
 	.plans-accordion-item:not( .is-open ) & {
 		display: none;
+	}
+
+	@include break-small {
+		margin-bottom: 12px;
+		text-align: right;
+	}
+}
+
+.plans-accordion-item__price-discount {
+	display: block;
+	font-size: $font-body-small;
+	font-weight: 600;
+	line-height: 1.3;
+	letter-spacing: 0.2px;
+	text-transform: uppercase;
+	color: var( --color-success );
+
+	&--disabled {
+		color: var( --studio-gray-40 );
+		text-decoration: line-through;
+	}
+
+	.plans-accordion-item:not( .is-open ) & {
+		display: none;
+	}
+
+	@include break-small {
+		text-align: right;
 	}
 }
 
@@ -254,6 +283,14 @@ ul.plans-accordion-item__feature-item-group {
 
 	@include break-small {
 		margin-top: 24px;
+	}
+
+	&--paid-plan-margin {
+		margin-top: 20px;
+
+		@include break-small {
+			margin-top: -10px;
+		}
 	}
 }
 
