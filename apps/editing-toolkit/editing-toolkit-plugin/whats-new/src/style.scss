@@ -1,0 +1,163 @@
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/z-index';
+
+.wpcom-editor-whats-new-frame {
+	background-color: $white;
+	border-radius: 2px;
+	bottom: 44px;
+	display: inline;
+	left: 16px;
+	position: fixed;
+}
+
+.whats-new-card__heading {
+	font-size: 1.125rem; /* stylelint-disable-line */
+	margin: 0.5rem 0;
+}
+
+.whats-new-card__description {
+	font-size: 0.875rem;
+	line-height: 1.5rem;
+	margin: 0;
+
+	.components-button {
+		height: auto;
+		line-height: 1;
+		text-decoration: underline;
+		padding: 0 0 0 4px;
+	}
+}
+
+.wpcom-editor-whats-new__resume-btn {
+	border-radius: 2px;
+	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
+		0 1px 1px rgba( 0, 0, 0, 0.08 );
+	background-color: $white;
+	color: $black;
+
+	&.components-button {
+		height: 44px;
+	}
+}
+
+.wpcom-editor-whats-new-card-frame {
+	position: relative;
+
+	.components-guide__page-control {
+		bottom: 0;
+		left: $grid-unit-20;
+		margin: 0;
+		position: absolute;
+
+		li {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.whats-new-card {
+	width: 400px;
+
+	&.whats-new-card.is-elevated {
+		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
+	}
+
+	&.components-card {
+		border: none;
+		border-radius: 4px;
+	}
+
+	.components-card__body {
+		min-height: 114px;
+	}
+
+	.components-card__body,
+	.components-card__footer {
+		border-top: none;
+		padding: $grid-unit-20 !important;
+	}
+
+	.components-card__footer {
+		.whats-new__end-text {
+			color: $gray-600;
+			font-size: 0.875rem;
+			font-style: italic;
+		}
+
+		.whats-new__end-icon.components-button.has-icon {
+			background-color: #f6f7f7;
+			border-radius: 50%;
+			color: $gray-600;
+			margin-left: 8px;
+
+			path {
+				fill: $gray-600;
+			}
+
+			&.active {
+				background-color: $black;
+				opacity: 1;
+
+				path {
+					fill: $white;
+				}
+			}
+		}
+	}
+
+	.components-card__media {
+		min-height: 260px;
+	}
+
+	.components-guide__page-control {
+		margin: 0;
+
+		.components-button {
+			min-width: auto;
+			&.has-icon {
+				padding: 3px;
+			}
+		}
+
+		li {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.whats-new-card__minimize-icon svg {
+	position: relative;
+	left: -2px;
+}
+
+.whats-new-card__overlay-controls {
+	left: 0;
+	padding: $grid-unit-15;
+	position: absolute;
+	right: 0;
+
+	.components-button {
+		width: 32px;
+		min-width: 32px;
+		height: 32px;
+		background: $dark-gray-700;
+		opacity: 0;
+		transition: opacity 200ms;
+	}
+}
+
+.wpcom-editor-whats-new-frame:hover .whats-new-card__overlay-controls .components-button {
+	opacity: 0.7;
+}
+
+.wpcom-editor-whats-new-frame .whats-new-card__overlay-controls .components-button:hover {
+	opacity: 0.9;
+}
+
+.whats-new-card__next-btn {
+	margin-left: $grid-unit-15;
+	justify-content: center;
+	min-width: 85px;
+}
