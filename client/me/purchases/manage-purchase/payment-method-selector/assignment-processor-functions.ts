@@ -17,6 +17,7 @@ import {
 	updateCreditCard,
 	getInitializedFields,
 } from 'calypso/me/purchases/components/payment-method-form/helpers';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = (
@@ -38,7 +39,7 @@ export async function assignNewCardProcessor(
 		stripe,
 		stripeConfiguration,
 	}: {
-		purchase: { id: string };
+		purchase: Purchase;
 		translate: ReturnType< typeof useTranslate >;
 		siteSlug: string;
 		apiParams: unknown;
@@ -91,19 +92,19 @@ export async function assignNewCardProcessor(
 }
 
 export async function assignExistingCardProcessor(
-	purchase: { id: string },
+	purchaseId: string,
 	{ storedDetailsId }: { storedDetailsId: string }
 ): Promise< PaymentProcessorResponse > {
-	return wpcomAssignPaymentMethod( purchase.id, storedDetailsId ).then( ( data ) => {
+	return wpcomAssignPaymentMethod( purchaseId, storedDetailsId ).then( ( data ) => {
 		return makeSuccessResponse( data );
 	} );
 }
 
-export async function assignPayPalProcessor( purchase: {
-	id: string;
-} ): Promise< PaymentProcessorResponse > {
+export async function assignPayPalProcessor(
+	purchaseId: string
+): Promise< PaymentProcessorResponse > {
 	return wpcomCreatePayPalAgreement(
-		purchase.id,
+		purchaseId,
 		addQueryArgs( window.location.href, { success: 'true' } ),
 		window.location.href
 	).then( ( data ) => {
