@@ -13,49 +13,59 @@ import { translatedEbanxError } from 'calypso/lib/checkout/processor-specific';
 const debug = debugFactory( 'calypso:store-transactions' );
 const wpcom = wp.undocumented();
 
+const promisifiedEbanxConfiguration = ( data ) => {
+	return new Promise( ( resolve, reject ) => {
+		wpcom.ebanxConfiguration( data, ( configError, configuration ) => {
+			if ( configError ) {
+				return reject( configError );
+			}
+			resolve( configuration );
+		} );
+	} );
+};
+
+const promisifiedCreateEbanxToken = ( ebanx, parameters ) => {
+	return new Promise( ( resolve ) => {
+		ebanx.card.createToken( parameters, function ( ebanxResponse ) {
+			resolve( ebanxResponse );
+		} );
+	} );
+};
+
+const promisifiedEbanxDeviceFingerprint = ( ebanx ) => {
+	return new Promise( ( resolve ) => {
+		ebanx.deviceFingerprint.setup( function ( deviceId ) {
+			resolve( deviceId );
+		} );
+	} );
+};
+
 export async function createEbanxToken( requestType, cardDetails ) {
 	debug( 'creating token with ebanx' );
 
-	return new Promise( function ( resolve, reject ) {
-		wpcom.ebanxConfiguration(
-			{
-				request_type: requestType,
-			},
-			function ( configError, configuration ) {
-				if ( configError ) {
-					reject( configError );
-				}
+	const configuration = await promisifiedEbanxConfiguration( { request_type: requestType } );
+	const ebanx = await paymentGatewayLoader.ready( configuration.js_url, 'EBANX', false );
 
-				return paymentGatewayLoader
-					.ready( configuration.js_url, 'EBANX', false )
-					.then( ( Ebanx ) => {
-						Ebanx.config.setMode( configuration.environment );
-						Ebanx.config.setPublishableKey( configuration.public_key );
-						Ebanx.config.setCountry( cardDetails.country.toLowerCase() );
+	ebanx.config.setMode( configuration.environment );
+	ebanx.config.setPublishableKey( configuration.public_key );
+	ebanx.config.setCountry( cardDetails.country.toLowerCase() );
 
-						const parameters = getEbanxParameters( cardDetails );
-						Ebanx.card.createToken( parameters, function ( ebanxResponse ) {
-							Ebanx.deviceFingerprint.setup( function ( deviceId ) {
-								ebanxResponse.data.deviceId = deviceId;
-								return createTokenCallback( ebanxResponse, resolve, reject );
-							} );
-						} );
-					} )
-					.catch( ( loaderError ) => {
-						reject( loaderError );
-					} );
-			}
-		);
-	} );
+	const parameters = getEbanxParameters( cardDetails );
+	const ebanxResponse = await promisifiedCreateEbanxToken( ebanx, parameters );
+	debug( 'ebanx token creation response', ebanxResponse );
 
-	function createTokenCallback( ebanxResponse, resolve, reject ) {
-		if ( ebanxResponse.error.hasOwnProperty( 'err' ) ) {
-			return reject( translatedEbanxError( ebanxResponse.error.err ) );
-		}
+	const deviceId = await promisifiedEbanxDeviceFingerprint( ebanx );
+	ebanxResponse.data.deviceId = deviceId;
+	const validatedData = await validateAndNormalizeEbanxResponse( ebanxResponse );
+	return validatedData;
+}
 
-		ebanxResponse.data.paymentMethod = 'WPCOM_Billing_Ebanx';
-		return resolve( ebanxResponse.data );
+async function validateAndNormalizeEbanxResponse( ebanxResponse ) {
+	if ( ebanxResponse.error.hasOwnProperty( 'err' ) ) {
+		throw new Error( translatedEbanxError( ebanxResponse.error.err ) );
 	}
+	ebanxResponse.data.paymentMethod = 'WPCOM_Billing_Ebanx';
+	return ebanxResponse.data;
 }
 
 function getEbanxParameters( cardDetails ) {
