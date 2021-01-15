@@ -604,6 +604,7 @@ function creditCardHasAlreadyExpired( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
 	return (
+		creditCard &&
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
 		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( moment.now(), 'months' )
