@@ -46,7 +46,8 @@
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
-		"@wordpress/base-styles": "^2.0.1"
+		"@wordpress/base-styles": "^2.0.1",
+		"prop-types": "^15.7.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.22.3",
