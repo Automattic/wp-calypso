@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { createInterpolateElement } from '@wordpress/element';
 import { NextButton } from '@automattic/onboarding';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
@@ -121,9 +122,16 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								) }
 							</div>
 							<div className="plans-accordion-item__price-note">
-								{ isFree
-									? __( 'free forever', __i18n_text_domain__ )
-									: __( 'billed annually', __i18n_text_domain__ ) }
+								{ isFree && __( 'free forever', __i18n_text_domain__ ) }
+
+								{ ! isFree &&
+									( billingInterval === 'ANNUALLY'
+										? createInterpolateElement(
+												__( 'per month, billed as <price /> annually', __i18n_text_domain__ ),
+												// TODO: NEEDS THE ANNUAL PRICE FROM DATA-STORE
+												{ price: <>{ price }</> }
+										  )
+										: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
 							</div>
 						</div>
 						<div className="plans-accordion-item__disabled-label">{ disabledLabel }</div>
