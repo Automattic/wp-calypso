@@ -261,10 +261,6 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {
-		return;
-	}
-
 	if ( ! $current_screen->is_block_editor ) {
 		return;
 	}
