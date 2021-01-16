@@ -6,7 +6,6 @@ const { dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const ipc = require( '../../lib/calypso-commands' );
 const Config = require( '../../lib/config' );
 const Settings = require( '../../lib/settings' );
 const WindowManager = require( '../../lib/window-manager' );
@@ -38,9 +37,10 @@ module.exports = function ( app, mainWindow ) {
 			requiresUser: true,
 			enabled: false,
 			id: 'loggedin',
-			click: function () {
+			click: async function () {
 				mainWindow.show();
-				ipc.signOut( mainWindow );
+				await mainWindow.webContents.session.clearStorageData();
+				mainWindow.webContents.loadURL( 'https://www.wordpress.com/login ' );
 			},
 		},
 		{

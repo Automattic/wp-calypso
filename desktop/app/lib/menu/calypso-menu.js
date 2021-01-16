@@ -1,8 +1,3 @@
-/**
- * Internal dependencies
- */
-const ipc = require( '../../lib/calypso-commands' );
-
 module.exports = function ( mainWindow, status ) {
 	status = status === 'enabled' ? true : false;
 
@@ -14,7 +9,7 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+1',
 			click: function () {
 				mainWindow.show();
-				ipc.showMySites( mainWindow );
+				mainWindow.webContents.loadURL( 'https://www.wordpress.com' );
 			},
 		},
 		{
@@ -24,7 +19,7 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+2',
 			click: function () {
 				mainWindow.show();
-				ipc.showReader( mainWindow );
+				mainWindow.webContents.loadURL( 'https://www.wordpress.com/read' );
 			},
 		},
 		{
@@ -34,7 +29,7 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+3',
 			click: function () {
 				mainWindow.show();
-				ipc.showProfile( mainWindow );
+				mainWindow.webContents.loadURL( 'https://www.wordpress.com/me' );
 			},
 		},
 		{
@@ -44,7 +39,7 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+4',
 			click: function () {
 				mainWindow.show();
-				ipc.toggleNotifications( mainWindow );
+				// TODO: -- temporarily disable
 			},
 		},
 		{
@@ -54,7 +49,7 @@ module.exports = function ( mainWindow, status ) {
 			accelerator: 'CmdOrCtrl+N',
 			click: function () {
 				mainWindow.show();
-				ipc.newPost( mainWindow );
+				// TODO
 			},
 		},
 	];

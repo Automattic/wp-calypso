@@ -16,6 +16,7 @@ const appInstance = require( '../lib/app-instance' );
 const platform = require( '../lib/platform' );
 const System = require( '../lib/system' );
 const log = require( '../lib/logger' )( 'desktop:runapp' );
+const SessionManager = require( '../lib/cookie-auth' );
 
 /**
  * Module variables
@@ -28,7 +29,10 @@ function createAppWindow() {
 	);
 
 	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
-	const appUrl = lastLocation.startsWith( 'https' ) ? lastLocation : 'https://wordpress.com';
+	let appUrl = 'https://www.wordpress.com';
+	if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
+		appUrl = lastLocation;
+	}
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
@@ -41,8 +45,6 @@ function createAppWindow() {
 	config.webPreferences.preload = preloadFile;
 
 	mainWindow = new BrowserWindow( config );
-
-	// // TODO: cookies
 
 	mainWindow.webContents.on( 'did-finish-load', function () {
 		mainWindow.webContents.send( 'app-config', System.getDetails() );
@@ -59,7 +61,7 @@ function createAppWindow() {
 		}
 	} );
 
-	// TODO: make settings and config available to Renderer
+	SessionManager.init( mainWindow );
 
 	mainWindow.loadURL( appUrl );
 

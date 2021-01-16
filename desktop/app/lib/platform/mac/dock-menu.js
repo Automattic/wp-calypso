@@ -1,24 +1,23 @@
 /**
- * External Dependencies
- */
-const ipc = require( '../../../lib/calypso-commands' );
-
-/**
  * Internal dependencies
  */
 const calypsoMenu = require( '../../../lib/menu/calypso-menu' );
 
 module.exports = function ( app, mainWindow ) {
-	return calypsoMenu( mainWindow ).concat(
+	const enabled = 'enabled';
+
+	return calypsoMenu( mainWindow, enabled ).concat(
 		{
 			type: 'separator',
 		},
 		{
 			label: 'Sign out',
 			requiresUser: true,
-			enabled: false,
-			click: function () {
-				ipc.signOut( mainWindow );
+			enabled: true,
+			click: async function () {
+				mainWindow.show();
+				await mainWindow.webContents.session.clearStorageData();
+				mainWindow.webContents.loadURL( 'https://www.wordpress.com/login ' );
 			},
 		}
 	);

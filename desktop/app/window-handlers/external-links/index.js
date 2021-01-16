@@ -38,6 +38,15 @@ module.exports = function ( mainWindow ) {
 
 	webContents.on( 'will-navigate', async function ( event, url ) {
 		const parsedUrl = new URL( url );
+		// By default, user may be directed to /?apppromo on logout.
+		// Navigate to /login instead.
+		if ( url === 'https://wordpress.com/?apppromo' ) {
+			log.info( 'Redirecting to wordress.com/login' );
+
+			event.preventDefault();
+			webContents.loadURL( 'https://wwww.wordpress.com/login' );
+			return;
+		}
 		log.info( `Navigating to URL: '${ parsedUrl }'` );
 	} );
 
