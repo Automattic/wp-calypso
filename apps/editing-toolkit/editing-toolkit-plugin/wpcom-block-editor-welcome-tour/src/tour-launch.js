@@ -23,17 +23,16 @@ import { __ } from '@wordpress/i18n';
 
 function LaunchWpcomWelcomeTour() {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
+	const { isWpcomNuxEnabled, isSPTOpen, isTourManuallyOpened } = useSelect( ( select ) => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		// Handle the case where SPT is initialized and open
 		isSPTOpen:
 			select( 'automattic/starter-page-layouts' ) &&
 			select( 'automattic/starter-page-layouts' ).isOpen(),
+		isTourManuallyOpened: select( 'automattic/nux' ).isTourManuallyOpened(),
 	} ) );
+
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
-	const isTourManuallyOpened = useSelect( ( select ) =>
-		select( 'automattic/nux' ).isTourManuallyOpened()
-	);
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// Preload first card image (others preloaded after NUX status confirmed)

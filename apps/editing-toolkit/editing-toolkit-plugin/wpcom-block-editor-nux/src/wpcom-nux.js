@@ -26,16 +26,14 @@ import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
 
 function WpcomNux() {
-	const { isWpcomNuxEnabled, isSPTOpen, site } = useSelect( ( select ) => ( {
+	const { isWpcomNuxEnabled, isSPTOpen, site, isGuideManuallyOpened } = useSelect( ( select ) => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		isSPTOpen:
 			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 		site: select( 'automattic/site' ).getSite( window._currentSiteId ),
+		isGuideManuallyOpened: select( 'automattic/nux' ).isGuideManuallyOpened(),
 	} ) );
-	const isGuideManuallyOpened = useSelect( ( select ) =>
-		select( 'automattic/nux' ).isGuideManuallyOpened()
-	);
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
 	const { setWpcomNuxStatus, setGuideOpenStatus } = useDispatch( 'automattic/nux' );
