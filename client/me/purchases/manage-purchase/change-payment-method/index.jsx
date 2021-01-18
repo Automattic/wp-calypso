@@ -40,6 +40,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { concatTitle } from 'calypso/lib/react-helpers';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
+import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
 
 import 'calypso/me/purchases/components/payment-method-form/style.scss';
 
@@ -60,6 +61,7 @@ function ChangePaymentMethod( props ) {
 
 	const currentPaymentMethodId = getPaymentMethodIdFromPayment( props.payment );
 	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
+	const paymentMethods = useCreateAssignablePaymentMethods( currentPaymentMethodId );
 
 	if ( isDataLoading ) {
 		return (
@@ -105,6 +107,7 @@ function ChangePaymentMethod( props ) {
 					{ isEnabled( 'purchases/new-payment-methods' ) ? (
 						<PaymentMethodSelector
 							purchase={ props.purchase }
+							paymentMethods={ paymentMethods }
 							successCallback={ successCallback }
 							siteSlug={ props.siteSlug }
 							apiParams={ { purchaseId: props.purchase.id } }
