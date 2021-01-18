@@ -13,7 +13,7 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { PLANS_STORE, SITE_STORE } from '../stores';
 import LaunchContext from '../context';
 import { isPlanProduct } from '../utils';
-import type { PlanProduct } from '../utils';
+import type { PlanProductForFlow } from '../utils';
 
 export function usePlans(): {
 	defaultPaidPlan: Plans.Plan | undefined;
@@ -32,13 +32,13 @@ export function usePlans(): {
 	return { defaultPaidPlan, defaultFreePlan };
 }
 
-export function usePlanProductFromCart(): PlanProduct | undefined {
+export function usePlanProductFromCart(): PlanProductForFlow | undefined {
 	const { siteId } = React.useContext( LaunchContext );
 	const { getCart } = useDispatch( SITE_STORE );
 
-	const [ planProductFromCart, setPlanProductFromCart ] = React.useState< PlanProduct | undefined >(
-		undefined
-	);
+	const [ planProductFromCart, setPlanProductFromCart ] = React.useState<
+		PlanProductForFlow | undefined
+	>( undefined );
 
 	React.useEffect( () => {
 		( async function () {

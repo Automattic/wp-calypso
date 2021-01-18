@@ -17,13 +17,24 @@ export const isDefaultSiteTitle = ( {
 export const isValidSiteTitle = ( title?: string ): boolean =>
 	title !== '' && ! isDefaultSiteTitle( { currentSiteTitle: title } );
 
-export type PlanProduct = {
+export type PlanProductForFlow = {
 	product_id: number;
 	product_slug: string;
 	extra: {
 		source: string;
 	};
 };
+
+export const getPlanProductForFlow = (
+	plan: PlansStore.PlanProduct,
+	flow: string
+): PlanProductForFlow => ( {
+	product_id: plan.productId,
+	product_slug: plan.storeSlug,
+	extra: {
+		source: flow,
+	},
+} );
 
 export type DomainProduct = {
 	meta: string;

@@ -52,41 +52,6 @@ const DEFAULT_STATE: State = {
 	featuresByType: [],
 };
 
-describe( 'getSupportedPlans', () => {
-	it( 'Should return all plans if no period is defined', () => {
-		const supportedPlans = getSupportedPlans( DEFAULT_STATE );
-
-		expect( supportedPlans ).toEqual( Object.values( DEFAULT_STATE.plans ) );
-	} );
-
-	it( 'always includes free plan - monthly', () => {
-		const supportedPlans = getSupportedPlans( DEFAULT_STATE, '', 'MONTHLY' );
-
-		expect( supportedPlans ).toContain( DEFAULT_STATE.plans[ PLAN_FREE ] );
-	} );
-	it( 'always includes free plan - annually', () => {
-		const supportedPlans = getSupportedPlans( DEFAULT_STATE, '' );
-
-		expect( supportedPlans ).toContain( DEFAULT_STATE.plans[ PLAN_FREE ] );
-	} );
-
-	it( 'only includes monthly plans for MONTHLY period', () => {
-		const supportedPlans = getSupportedPlans( DEFAULT_STATE, '', 'MONTHLY' );
-		expect( supportedPlans ).toEqual( [
-			DEFAULT_STATE.plans[ PLAN_FREE ],
-			DEFAULT_STATE.plans[ PLAN_PREMIUM_MONTHLY ],
-		] );
-	} );
-
-	it( 'only includes yearly plans for ANNUAL period', () => {
-		const supportedPlans = getSupportedPlans( DEFAULT_STATE, '' );
-		expect( supportedPlans ).toEqual( [
-			DEFAULT_STATE.plans[ PLAN_FREE ],
-			DEFAULT_STATE.plans[ PLAN_PREMIUM ],
-		] );
-	} );
-} );
-
 describe( 'getPlanByPath', () => {
 	it( 'returns undefined when the path is missing', () => {
 		const plan = getPlanByPath( DEFAULT_STATE, '' );

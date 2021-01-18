@@ -64,8 +64,9 @@ export const unsetPlanProductId = () =>
 	} as const );
 
 /* eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types */
-export function* updatePlan( planProductId: number | undefined ) {
-	yield setPlanProductId( planProductId );
+export function updatePlan( planProductId: number | undefined ) {
+	// keep updatePlan for backwards compat
+	return setPlanProductId( planProductId );
 }
 
 export const openSidebar = () =>

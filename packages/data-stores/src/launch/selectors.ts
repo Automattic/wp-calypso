@@ -12,6 +12,7 @@ import { PLANS_STORE, STORE_KEY as LAUNCH_STORE } from './constants';
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
 import type * as DomainSuggestions from '../domain-suggestions';
+import type { Plan } from '../plans';
 
 export const getLaunchSequence = (): typeof LaunchSequence => LaunchSequence;
 export const getLaunchStep = (): typeof LaunchStep => LaunchStep;
@@ -27,8 +28,11 @@ export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSugge
 	state.domain;
 export const getSelectedPlanProductId = ( state: State ): number | undefined => state.planProductId;
 
+export const getSelectedPlan = ( state: State ): Plan | undefined =>
+	select( PLANS_STORE ).getPlanByProductId( state.planProductId );
+
 /**
- * Returns the last paid plan the user has picked.
+ * Returns the product id of the the last paid plan the user had picked.
  * If they revert to a free plan,
  * this is useful if you want to recommend their once-picked paid plan
  *

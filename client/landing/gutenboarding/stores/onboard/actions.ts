@@ -211,8 +211,9 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
-export function* updatePlan( planProductId: number ) {
-	yield setPlanProductId( planProductId );
+export function updatePlan( planProductId: number ) {
+	// keep updatePlan for backwards compat
+	return setPlanProductId( planProductId );
 }
 
 export const startOnboarding = () => ( {

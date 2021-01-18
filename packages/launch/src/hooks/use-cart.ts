@@ -9,7 +9,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
  */
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
-import { getDomainProduct } from '../utils';
+import { getDomainProduct, getPlanProductForFlow } from '../utils';
 import { useSiteDomains } from '../hooks';
 
 export function useCart(): { goToCheckout: () => Promise< void > } {
@@ -18,7 +18,7 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 	const { planProductId, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 
 	const planProduct = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanProductById( planProductId )
+		select( PLANS_STORE ).getPlanProductById( planProductId as number )
 	);
 
 	const plan = useSelect( ( select ) => select( PLANS_STORE ).getPlanByProductId( planProductId ) );
@@ -26,6 +26,7 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 	const isEcommercePlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).isPlanEcommerce( plan?.periodAgnosticSlug )
 	);
+
 	const { siteSubdomain } = useSiteDomains();
 
 	const { getCart, setCart } = useDispatch( SITE_STORE );
@@ -33,12 +34,13 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 	const goToCheckout = async () => {
 		// setting the cart with Launch products can be extracted
 		// to an action creator on the Launch data-store
-		const domainProduct = domain && getDomainProduct( domain, flow );
+		const domainProductForFlow = domain && getDomainProduct( domain, flow );
+		const planProductForFlow = planProduct && getPlanProductForFlow( planProduct, flow );
 
 		const cart = await getCart( siteId );
 		await setCart( siteId, {
 			...cart,
-			products: [ planProduct, domainProduct ],
+			products: [ planProductForFlow, domainProductForFlow ],
 		} );
 
 		// open checkout modal or redirect to /checkout only after the cart is updated
