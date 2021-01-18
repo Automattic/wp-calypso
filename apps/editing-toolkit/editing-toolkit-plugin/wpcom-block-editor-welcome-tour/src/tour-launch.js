@@ -23,13 +23,16 @@ import { __ } from '@wordpress/i18n';
 
 function LaunchWpcomWelcomeTour() {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const isWpcomNuxEnabled = useSelect( ( select ) =>
-		select( 'automattic/nux' ).isWpcomNuxEnabled()
-	);
+	const { isWpcomNuxEnabled, isSPTOpen, isTourManuallyOpened } = useSelect( ( select ) => ( {
+		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
+		// Handle the case where SPT is initialized and open
+		isSPTOpen:
+			select( 'automattic/starter-page-layouts' ) &&
+			select( 'automattic/starter-page-layouts' ).isOpen(),
+		isTourManuallyOpened: select( 'automattic/nux' ).isTourManuallyOpened(),
+	} ) );
+
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
-	const isTourManuallyOpened = useSelect( ( select ) =>
-		select( 'automattic/nux' ).isTourManuallyOpened()
-	);
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// Preload first card image (others preloaded after NUX status confirmed)
@@ -54,12 +57,13 @@ function LaunchWpcomWelcomeTour() {
 	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
 
 	useEffect( () => {
-		if ( ! isWpcomNuxEnabled ) {
+		if ( ! isWpcomNuxEnabled && ! isSPTOpen ) {
 			return;
 		}
 		portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
 		document.body.appendChild( portalParent );
 
+		// Track opening of the Welcome Guide
 		recordTracksEvent( 'calypso_editor_wpcom_tour_open', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			is_manually_opened: isTourManuallyOpened,
@@ -67,9 +71,9 @@ function LaunchWpcomWelcomeTour() {
 		return () => {
 			document.body.removeChild( portalParent );
 		};
-	}, [ isTourManuallyOpened, isWpcomNuxEnabled, portalParent ] );
+	}, [ isSPTOpen, isTourManuallyOpened, isWpcomNuxEnabled, portalParent ] );
 
-	if ( ! isWpcomNuxEnabled ) {
+	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
 	}
 
