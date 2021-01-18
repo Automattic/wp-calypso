@@ -3,14 +3,14 @@
  */
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { connect } from 'react-redux';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -32,6 +32,8 @@ import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import { isEnabled } from 'calypso/config';
 import { concatTitle } from 'calypso/lib/react-helpers';
+import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
+import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
 
 function AddPaymentMethod( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
@@ -40,9 +42,24 @@ function AddPaymentMethod( props ) {
 		? titles.addPaymentMethod
 		: titles.addCreditCard;
 
+	const translate = useTranslate();
+	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+	const stripeMethod = useCreateCreditCard( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		shouldUseEbanx: false,
+		shouldShowTaxFields: true,
+		activePayButtonText: translate( 'Save card' ),
+	} );
+
+	const paymentMethods = useMemo( () => [ stripeMethod ], [ stripeMethod ] );
+
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
 		page( props.purchaseListUrl );
+		return null;
 	}
 
 	if ( isDataLoading ) {
@@ -54,11 +71,6 @@ function AddPaymentMethod( props ) {
 			</Fragment>
 		);
 	}
-
-	const recordFormSubmitEvent = () =>
-		void props.recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-			product_slug: props.purchase.productSlug,
-		} );
 
 	const successCallback = () => {
 		const { id } = props.purchase;
@@ -87,19 +99,13 @@ function AddPaymentMethod( props ) {
 
 			<Layout>
 				<Column type="main">
-					<StripeHookProvider
-						locale={ props.locale }
-						configurationArgs={ { needs_intent: true } }
-						fetchStripeConfiguration={ getStripeConfiguration }
-					>
-						<PaymentMethodForm
-							apiParams={ { purchaseId: props.purchase.id } }
-							purchase={ props.purchase }
-							recordFormSubmitEvent={ recordFormSubmitEvent }
-							siteSlug={ props.siteSlug }
-							successCallback={ successCallback }
-						/>
-					</StripeHookProvider>
+					<PaymentMethodSelector
+						purchase={ props.purchase }
+						paymentMethods={ paymentMethods }
+						successCallback={ successCallback }
+						siteSlug={ props.siteSlug }
+						apiParams={ { purchaseId: props.purchase.id } }
+					/>
 				</Column>
 				<Column type="sidebar">
 					<PaymentMethodSidebar purchase={ props.purchase } />
@@ -133,6 +139,18 @@ const mapStateToProps = ( state, { purchaseId } ) => ( {
 	locale: getCurrentUserLocale( state ),
 } );
 
+function AddPaymentMethodWrapper( props ) {
+	return (
+		<StripeHookProvider
+			locale={ props.locale }
+			configurationArgs={ { needs_intent: true } }
+			fetchStripeConfiguration={ getStripeConfiguration }
+		>
+			<AddPaymentMethod { ...props } />
+		</StripeHookProvider>
+	);
+}
+
 export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )(
-	AddPaymentMethod
+	AddPaymentMethodWrapper
 );
