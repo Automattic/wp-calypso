@@ -18,11 +18,11 @@ export interface Purchase {
 }
 
 export interface PurchasePayment {
-	name: string;
-	type: string;
-	countryCode: string;
-	countryName: string;
-	storedDetailsId: string | number;
+	name: string | undefined;
+	type: string | undefined;
+	countryCode: string | undefined;
+	countryName: string | undefined;
+	storedDetailsId: string | number | undefined;
 	expiryDate?: string; // Only for payment.type === 'paypal_direct'
 	creditCard?: PurchasePaymentCreditCard; // Only for payment.type === 'credit_card'
 }
