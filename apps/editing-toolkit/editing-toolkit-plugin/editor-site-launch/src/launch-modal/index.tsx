@@ -33,6 +33,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
 
 	const { launchSite } = useDispatch( SITE_STORE );
+	const { savePost } = useDispatch( 'core/editor' );
 
 	const handleLaunch = React.useCallback( () => {
 		launchSite( siteId );
@@ -41,7 +42,14 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 
 	React.useEffect( () => {
 		if ( ! isLaunching && isLaunchImmediately ) {
-			handleLaunch();
+			setIsLaunching( true );
+			savePost();
+
+			// Delay handleLaunch() to allow for the save to complete;
+			// without it, you'll get the browser beforeunload message popup
+			setTimeout( () => {
+				handleLaunch();
+			}, 2000 );
 		}
 	}, [ isLaunching, isLaunchImmediately, handleLaunch ] );
 
