@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import PlanRenewalMessage from '../../plan-renewal-message';
 import useItemPrice from '../../use-item-price';
 import { productAboveButtonText, productButtonLabel, productTooltip } from '../../utils';
-import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card-i5';
+import JetpackProductCard from 'calypso/components/jetpack/card/i5/jetpack-product-card-i5';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';

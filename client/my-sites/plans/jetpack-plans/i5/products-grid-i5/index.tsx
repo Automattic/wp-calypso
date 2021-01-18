@@ -21,7 +21,7 @@ import {
 } from '../../product-grid/utils';
 import useGetPlansGridProducts from '../../use-get-plans-grid-products';
 import Experiment from 'calypso/components/experiment';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-i5';
+import JetpackFreeCard from 'calypso/components/jetpack/card/i5/jetpack-free-card-i5';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,

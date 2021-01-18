@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import JetpackProductCardFeatures from 'calypso/components/jetpack/card/jetpack-product-card-i5/features';
+import JetpackProductCardFeatures from 'calypso/components/jetpack/card/i5/jetpack-product-card-i5/features';
 import JetpackFreeCardButton from 'calypso/components/jetpack/card/jetpack-free-card-button';
 
 /**
