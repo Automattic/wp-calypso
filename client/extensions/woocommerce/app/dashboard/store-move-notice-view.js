@@ -62,7 +62,7 @@ class StoreMoveNoticeView extends Component {
 							}
 						) }
 				</p>
-				<Button primary href={ site.URL + '/wp-admin/admin.php?page=wc-admin' }>
+				<Button primary href={ site.URL + '/wp-admin/admin.php?page=wc-admin&from-calypso' }>
 					{ translate( 'Go to WooCommerce Home' ) }
 				</Button>
 			</Card>
