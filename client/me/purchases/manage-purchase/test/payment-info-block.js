@@ -18,22 +18,54 @@ describe( 'PaymentInfoBlock', () => {
 		[ 'enabled', undefined ],
 		[ 'disabled', 'manualRenew' ],
 	] )( 'when auto-renew is %s', ( autoRenewStatus, expiryStatus ) => {
-		it( 'renders "Credits" when the purchase was paid with credits', () => {
+		describe( 'when the purchase has credits as the payment method', () => {
 			const purchase = { expiryStatus, payment: { type: 'credits' } };
-			render( <PaymentInfoBlock purchase={ purchase } /> );
-			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'Credits' );
+
+			it( 'renders "Credits"', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'Credits' );
+			} );
+
+			it( 'does not render "will not be billed"', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
+					'will not be billed'
+				);
+			} );
 		} );
 
-		it( 'renders "Included with plan" when the purchase is bundled', () => {
+		describe( 'when the purchase has included-with-plan as the payment method', () => {
 			const purchase = { expiryStatus: 'included' };
-			render( <PaymentInfoBlock purchase={ purchase } /> );
-			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'Included with plan' );
+
+			it( 'renders "Included with plan"', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+					'Included with plan'
+				);
+			} );
+
+			it( 'does not render "will not be billed"', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
+					'will not be billed'
+				);
+			} );
 		} );
 
-		it( 'renders "None" when the purchase has no payment method', () => {
+		describe( 'when the purchase has no payment method', () => {
 			const purchase = {};
-			render( <PaymentInfoBlock purchase={ purchase } /> );
-			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+
+			it( 'renders "None" when the purchase has no payment method', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+			} );
+
+			it( 'does not render "will not be billed"', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
+					'will not be billed'
+				);
+			} );
 		} );
 
 		describe( 'when the purchase has a credit card as the payment method', () => {
@@ -56,6 +88,24 @@ describe( 'PaymentInfoBlock', () => {
 				render( <PaymentInfoBlock purchase={ purchase } /> );
 				expect( screen.getByLabelText( 'Mastercard' ) ).toBeInTheDocument();
 			} );
+
+			it(
+				autoRenewStatus === 'enabled'
+					? 'does not render "will not be billed"'
+					: 'renders "will not be billed"',
+				() => {
+					render( <PaymentInfoBlock purchase={ purchase } /> );
+					if ( expiryStatus === 'manualRenew' ) {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+							'will not be billed'
+						);
+					} else {
+						expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
+							'will not be billed'
+						);
+					}
+				}
+			);
 		} );
 
 		it(
@@ -81,42 +131,36 @@ describe( 'PaymentInfoBlock', () => {
 			}
 		);
 
-		it(
-			autoRenewStatus === 'enabled'
-				? 'does not render "will not be billed"'
-				: 'renders "will not be billed"',
-			() => {
-				const expiryDate = new Date();
-				expiryDate.setDate( expiryDate.getDate() + 365 );
-				const purchase = {
-					expiryStatus,
-					payment: {
-						type: 'credit_card',
-						creditCard: { number: '1234', expiryDate, type: 'mastercard' },
-					},
-				};
-				render( <PaymentInfoBlock purchase={ purchase } /> );
-				if ( expiryStatus === 'manualRenew' ) {
-					expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
-						'will not be billed'
-					);
-				} else {
-					expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
-						'will not be billed'
-					);
-				}
-			}
-		);
-
-		it( 'renders PayPal logo when the purchase has PayPal as the payment method', () => {
+		describe( 'when the purchase has PayPal as the payment method', () => {
 			const purchase = {
 				expiryStatus,
 				payment: {
 					type: 'paypal',
 				},
 			};
-			render( <PaymentInfoBlock purchase={ purchase } /> );
-			expect( screen.getByLabelText( 'PayPal' ) ).toBeInTheDocument();
+
+			it( 'renders PayPal logo', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'PayPal' ) ).toBeInTheDocument();
+			} );
+
+			it(
+				autoRenewStatus === 'enabled'
+					? 'does not render "will not be billed"'
+					: 'renders "will not be billed"',
+				() => {
+					render( <PaymentInfoBlock purchase={ purchase } /> );
+					if ( expiryStatus === 'manualRenew' ) {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+							'will not be billed'
+						);
+					} else {
+						expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
+							'will not be billed'
+						);
+					}
+				}
+			);
 		} );
 
 		it( 'renders the card when the purchase is expired and has a credit card as the payment method', () => {
@@ -171,6 +215,24 @@ describe( 'PaymentInfoBlock', () => {
 				render( <PaymentInfoBlock purchase={ purchase } /> );
 				expect( screen.getByLabelText( 'Payment logo' ) ).toBeInTheDocument();
 			} );
+
+			it(
+				autoRenewStatus === 'enabled'
+					? 'does not render "will not be billed"'
+					: 'renders "will not be billed"',
+				() => {
+					render( <PaymentInfoBlock purchase={ purchase } /> );
+					if ( expiryStatus === 'manualRenew' ) {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+							'will not be billed'
+						);
+					} else {
+						expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
+							'will not be billed'
+						);
+					}
+				}
+			);
 		} );
 	} );
 } );
