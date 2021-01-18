@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import {
 	isExpiring,
+	isRechargeable,
 	isIncludedWithPlan,
 	isPaidWithCreditCard,
 	isPaidWithCredits,
@@ -28,37 +29,46 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
 	}
 
-	if ( hasPaymentMethod( purchase ) ) {
-		if ( isPaidWithCredits( purchase ) ) {
-			return <PaymentInfoBlockWrapper>{ translate( 'Credits' ) }</PaymentInfoBlockWrapper>;
-		}
+	if ( hasPaymentMethod( purchase ) && isPaidWithCredits( purchase ) ) {
+		return <PaymentInfoBlockWrapper>{ translate( 'Credits' ) }</PaymentInfoBlockWrapper>;
+	}
 
+	if (
+		hasPaymentMethod( purchase ) &&
+		isPaidWithCreditCard( purchase ) &&
+		isRechargeable( purchase )
+	) {
 		const logoType = paymentLogoType( purchase );
+		return (
+			<PaymentInfoBlockWrapper
+				willNotBeBilled={ !! ( isExpiring( purchase ) && purchase.payment.creditCard ) }
+			>
+				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+				{ purchase.payment.creditCard?.number ?? '' }
+			</PaymentInfoBlockWrapper>
+		);
+	}
 
-		if ( isPaidWithCreditCard( purchase ) ) {
-			return (
-				<PaymentInfoBlockWrapper
-					willNotBeBilled={ !! ( isExpiring( purchase ) && purchase.payment.creditCard ) }
-				>
-					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
-					{ purchase.payment.creditCard?.number ?? '' }
-				</PaymentInfoBlockWrapper>
-			);
-		}
+	if (
+		hasPaymentMethod( purchase ) &&
+		isPaidWithPayPalDirect( purchase ) &&
+		isRechargeable( purchase )
+	) {
+		const logoType = paymentLogoType( purchase );
+		return (
+			<PaymentInfoBlockWrapper willNotBeBilled={ isExpiring( purchase ) }>
+				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+				{ translate( 'expiring %(cardExpiry)s', {
+					args: {
+						cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
+					},
+				} ) }
+			</PaymentInfoBlockWrapper>
+		);
+	}
 
-		if ( isPaidWithPayPalDirect( purchase ) ) {
-			return (
-				<PaymentInfoBlockWrapper willNotBeBilled={ isExpiring( purchase ) }>
-					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
-					{ translate( 'expiring %(cardExpiry)s', {
-						args: {
-							cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
-						},
-					} ) }
-				</PaymentInfoBlockWrapper>
-			);
-		}
-
+	if ( hasPaymentMethod( purchase ) && isRechargeable( purchase ) ) {
+		const logoType = paymentLogoType( purchase );
 		return (
 			<PaymentInfoBlockWrapper willNotBeBilled={ isExpiring( purchase ) }>
 				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
