@@ -15,6 +15,7 @@ import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-lis
 import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 /**
  * Style dependencies
@@ -24,7 +25,8 @@ import './style.scss';
 class Security2faBackupCodes extends React.Component {
 	constructor( props ) {
 		super( props );
-		const printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
+
+		const printed = this.props.printed;
 
 		this.state = {
 			printed,
@@ -112,7 +114,6 @@ class Security2faBackupCodes extends React.Component {
 			<Security2faBackupCodesList
 				backupCodes={ this.state.backupCodes }
 				onNextStep={ this.onNextStep }
-				userSettings={ this.props.userSettings }
 				showList
 			/>
 		);
@@ -158,6 +159,11 @@ class Security2faBackupCodes extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( Security2faBackupCodes ) );
+export default connect(
+	( state ) => ( {
+		printed: getUserSetting( state, 'two_step_backup_codes_printed' ),
+	} ),
+	{
+		recordGoogleEvent,
+	}
+)( localize( Security2faBackupCodes ) );
