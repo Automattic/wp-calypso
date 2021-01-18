@@ -12,7 +12,7 @@ import {
 	STATE_ATTACHED,
 	STATE_DETACHED,
 	STATE_REVOKED,
-	getLicenseDominantState,
+	getLicenseState,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { Button } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -49,7 +49,8 @@ export default function LicensePreview( {
 }: Props ) {
 	const translate = useTranslate();
 	const [ isOpen, setOpen ] = useState( false );
-	const dominantState = getLicenseDominantState( attachedOn, revokedOn );
+	const licenseState = getLicenseState( attachedOn, revokedOn );
+	const showDomain = domain && [ STATE_ATTACHED, STATE_REVOKED ].indexOf( licenseState ) !== -1;
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -65,25 +66,22 @@ export default function LicensePreview( {
 			<LicenseListItem
 				className={ classnames( {
 					'license-preview__card': true,
-					'license-preview__card--is-detached': dominantState === STATE_DETACHED,
-					'license-preview__card--is-revoked': dominantState === STATE_REVOKED,
+					'license-preview__card--is-detached': licenseState === STATE_DETACHED,
+					'license-preview__card--is-revoked': licenseState === STATE_REVOKED,
 				} ) }
 			>
 				<div>
 					<h3 className="license-preview__domain">
-						{ domain &&
-							( dominantState === STATE_ATTACHED || dominantState === STATE_REVOKED ) && (
-								<span>{ domain }</span>
-							) }
+						{ showDomain && <span>{ domain }</span> }
 
-						{ dominantState === STATE_DETACHED && (
+						{ licenseState === STATE_DETACHED && (
 							<span className="license-preview__tag license-preview__tag--is-detached">
 								<Gridicon icon="info-outline" size={ 18 } />
 								{ translate( 'Detached' ) }
 							</span>
 						) }
 
-						{ dominantState === STATE_REVOKED && (
+						{ licenseState === STATE_REVOKED && (
 							<span className="license-preview__tag license-preview__tag--is-revoked">
 								<Gridicon icon="block" size={ 18 } />
 								{ translate( 'Revoked' ) }
@@ -99,27 +97,27 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					{ dominantState === STATE_ATTACHED && (
+					{ licenseState === STATE_ATTACHED && (
 						<FormattedDate date={ attachedOn } format="YYYY-MM-DD" />
 					) }
 
-					{ dominantState !== STATE_ATTACHED && (
+					{ licenseState !== STATE_ATTACHED && (
 						<Gridicon icon="minus" className="license-preview__no-value" />
 					) }
 				</div>
 
 				<div>
-					{ dominantState === STATE_REVOKED && (
+					{ licenseState === STATE_REVOKED && (
 						<FormattedDate date={ revokedOn } format="YYYY-MM-DD" />
 					) }
 
-					{ dominantState !== STATE_REVOKED && (
+					{ licenseState !== STATE_REVOKED && (
 						<Gridicon icon="minus" className="license-preview__no-value" />
 					) }
 				</div>
 
 				<div>
-					{ dominantState === STATE_DETACHED && (
+					{ licenseState === STATE_DETACHED && (
 						<ClipboardButton
 							text={ licenseKey }
 							className="license-preview__copy-license-key"

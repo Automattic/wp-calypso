@@ -11,7 +11,7 @@ import {
 	STATE_ATTACHED,
 	STATE_DETACHED,
 	STATE_REVOKED,
-	getLicenseDominantState,
+	getLicenseState,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { Button, Card } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -41,7 +41,7 @@ export default function LicenseDetails( {
 	blogId,
 }: Props ) {
 	const translate = useTranslate();
-	const dominantState = getLicenseDominantState( attachedOn, revokedOn );
+	const licenseState = getLicenseState( attachedOn, revokedOn );
 
 	return (
 		<Card className="license-details">
@@ -66,21 +66,21 @@ export default function LicenseDetails( {
 					<FormattedDate date={ issuedOn } format="LLL" />
 				</li>
 
-				{ dominantState === STATE_ATTACHED && (
+				{ licenseState === STATE_ATTACHED && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Attached on' ) }</h4>
 						<FormattedDate date={ attachedOn } format="LLL" />
 					</li>
 				) }
 
-				{ dominantState === STATE_DETACHED && (
+				{ licenseState === STATE_DETACHED && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Attached on' ) }</h4>
 						<Gridicon icon="minus" />
 					</li>
 				) }
 
-				{ dominantState === STATE_REVOKED && (
+				{ licenseState === STATE_REVOKED && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Revoked on' ) }</h4>
 						<FormattedDate date={ revokedOn } format="LLL" />

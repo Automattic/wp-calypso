@@ -24,6 +24,8 @@
 	}
 
 	&__clipboard-button {
+		position: relative;
+		top: -2px;
 		margin-left: 8px;
 
 		// Overpower specificity of the button component styles.

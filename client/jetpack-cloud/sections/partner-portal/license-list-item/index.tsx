@@ -29,7 +29,7 @@ export default function LicenseListItem( {
 			<div
 				className={ classnames( {
 					'license-list-item': true,
-					'license-list-item--header': !! header,
+					'license-list-item--header': header,
 				} ) }
 			>
 				{ children }
