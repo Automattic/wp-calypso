@@ -60,6 +60,7 @@ import {
 	getProductPriceTierList,
 } from 'calypso/state/products-list/selectors';
 import { getPriceTierForUnits } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import isWpComProductRenewal from 'calypso/my-sites/checkout/composite-checkout/lib/is-wpcom-product-renewal';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -480,17 +481,27 @@ function returnModalCopyForProduct(
 ): ModalCopy {
 	const productType =
 		isPlan( product ) && hasDomainsInCart ? 'plan with dependencies' : product.product_slug;
-	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isPwpoUser );
+	const isRenewal = isWpComProductRenewal( product );
+	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isPwpoUser, isRenewal );
 }
 
 function returnModalCopy(
 	productType: string,
 	translate: ReturnType< typeof useTranslate >,
 	createUserAndSiteBeforeTransaction: boolean,
-	isPwpoUser: boolean
+	isPwpoUser: boolean,
+	isRenewal: boolean = false,
 ): ModalCopy {
 	switch ( productType ) {
 		case 'plan with dependencies': {
+			if ( isRenewal ) {
+				return {
+					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
+					description: String( translate(
+						'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
+					) ),
+				};
+			}
 			const title = String( translate( 'You are about to remove your plan from the cart' ) );
 			let description = '';
 
@@ -514,6 +525,15 @@ function returnModalCopy(
 			return { title, description };
 		}
 		case 'plan':
+			if ( isRenewal ) {
+				return {
+					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
+					description: String( translate(
+						'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. We will then take you back to your site.'
+					) ),
+				};
+			}
+
 			return {
 				title: String( translate( 'You are about to remove your plan from the cart' ) ),
 				description: String(
@@ -525,6 +545,15 @@ function returnModalCopy(
 				),
 			};
 		case 'domain':
+			if ( isRenewal ) {
+				return {
+					title: String( translate( 'You are about to remove your domain renewal from the cart' ) ),
+					description: String( translate(
+						'When you press Continue, we will remove your domain renewal from the cart and your domain will keep its current expiry date.'
+					) ),
+				};
+			}
+
 			return {
 				title: String( translate( 'You are about to remove your domain from the cart' ) ),
 				description: String(
@@ -541,6 +570,15 @@ function returnModalCopy(
 				),
 			};
 		default:
+			if ( isRenewal ) {
+				return {
+					title: String( translate( 'You are about to remove your renewal from the cart' ) ),
+					description: String( translate(
+						'When you press Continue, we will remove your renewal from the cart and your product will keep its current expiry date.'
+					) ),
+				};
+			}
+
 			return {
 				title: String( translate( 'You are about to remove your product from the cart' ) ),
 				description: String(
@@ -841,7 +879,7 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	const isRenewal = product?.extra?.purchaseType === 'renewal';
+	const isRenewal = isWpComProductRenewal( product );
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && product && ! isRenewal;
 
