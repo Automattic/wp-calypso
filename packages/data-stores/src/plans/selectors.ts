@@ -116,6 +116,10 @@ export const getPlanByPath = ( _state: State, path?: PlanPath ): Plan | undefine
 		.getPlansProducts()
 		.find( ( product ) => product.pathSlug === path );
 
+	if ( ! planProduct ) {
+		return undefined;
+	}
+
 	return select( STORE_KEY )
 		.getSupportedPlans()
 		.find( ( plan ) => plan.periodAgnosticSlug === planProduct?.periodAgnosticSlug );

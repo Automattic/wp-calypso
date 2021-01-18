@@ -2,60 +2,142 @@
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { setPlans, setFeaturesByType, setFeatures } from '../actions';
+import { setPlans, setFeaturesByType, setFeatures, setPlanProducts } from '../actions';
 import { PLAN_FREE, PLAN_PREMIUM } from '../constants';
+
+/*
+{
+	plans: [
+		{
+			title: 'free plan',
+			description: 'it is free',
+			features: [],
+			isFree: true,
+			isPopular: false,
+			periodAgnosticSlug: 'Free',
+			productIds: [ 1 ],
+		},
+		{
+			title: 'premium plan',
+			description: 'it is premium',
+			features: [],
+			isPopular: true,
+			periodAgnosticSlug: 'Premium',
+			productIds: [ 2, 3 ],
+		},
+	],
+	planProducts: [
+		{
+			productId: 1,
+			price: '0',
+			rawPrice: 0,
+			billingPeriod: 'ANNUALLY',
+			pathSlug: 'free',
+			annualDiscount: 0,
+			storeSlug: 'free_plan',
+			periodAgnosticSlug: 'Free',
+		},
+		{
+			productId: 2,
+			price: '0',
+			rawPrice: 0,
+			billingPeriod: 'MONTHLY',
+			pathSlug: 'premium',
+			annualDiscount: 0,
+			storeSlug: 'value_bundle_monthly',
+			periodAgnosticSlug: 'Premium',
+		},
+		{
+			productId: 3,
+			price: '0',
+			rawPrice: 0,
+			billingPeriod: 'ANNUALLY',
+			pathSlug: 'premium',
+			annualDiscount: 0,
+			storeSlug: 'value_bundle',
+			periodAgnosticSlug: 'Premium',
+		},
+	],
+	features: {},
+	featuresByType: [],
+}
+*/
 
 describe( 'Plans reducer', () => {
 	describe( 'Plans', () => {
 		it( 'defaults to no plans info', () => {
 			const { plans } = reducer( undefined, { type: 'DUMMY' } );
-			expect( plans ).toEqual( {} );
+			expect( plans ).toEqual( [] );
 		} );
 
 		it( 'replaces old plans with new plans', () => {
-			const state = reducer(
+			let state = reducer(
 				undefined,
-				setPlans( {
-					[ PLAN_FREE ]: {
-						title: 'free',
-						description: 'description',
-						productId: 1,
-						storeSlug: PLAN_FREE,
-						pathSlug: 'free',
+				setPlans( [
+					{
+						title: 'free plan',
+						description: 'it is free',
 						features: [],
-						price: '0',
-						rawPrice: 0,
+						isFree: true,
+						isPopular: false,
+						periodAgnosticSlug: 'Free',
+						productIds: [ 1 ],
 					},
-					[ PLAN_PREMIUM ]: {
-						title: 'premium',
-						description: 'description',
-						productId: 1,
-						storeSlug: PLAN_PREMIUM,
-						pathSlug: 'premium',
-						features: [],
-						price: '1',
-						rawPrice: 1,
-					},
-				} )
-			);
-			const { plans } = reducer(
-				state,
-				setPlans( {
-					[ PLAN_FREE ]: {
-						title: 'new free',
-						description: 'description',
-						productId: 1,
-						storeSlug: PLAN_FREE,
-						pathSlug: 'free',
-						features: [],
-						price: '0',
-						rawPrice: 0,
-					},
-				} )
+				] )
 			);
 
-			expect( plans[ PLAN_FREE ].title ).toBe( 'new free' );
-			expect( plans[ PLAN_PREMIUM ] ).toBeUndefined();
+			state = reducer(
+				state,
+				setPlanProducts( [
+					{
+						productId: 1,
+						price: '0',
+						rawPrice: 0,
+						billingPeriod: 'ANNUALLY',
+						pathSlug: 'free',
+						annualDiscount: 0,
+						storeSlug: 'free_plan',
+						periodAgnosticSlug: 'Free',
+					},
+					{
+						productId: 2,
+						price: '0',
+						rawPrice: 0,
+						billingPeriod: 'MONTHLY',
+						pathSlug: 'premium',
+						annualDiscount: 0,
+						storeSlug: 'value_bundle_monthly',
+						periodAgnosticSlug: 'Premium',
+					},
+					{
+						productId: 3,
+						price: '0',
+						rawPrice: 0,
+						billingPeriod: 'ANNUALLY',
+						pathSlug: 'premium',
+						annualDiscount: 0,
+						storeSlug: 'value_bundle',
+						periodAgnosticSlug: 'Premium',
+					},
+				] )
+			);
+
+			const { plans } = reducer(
+				state,
+				setPlans( [
+					{
+						title: 'new free',
+						description: 'it is free',
+						features: [],
+						isPopular: true,
+						periodAgnosticSlug: 'Free',
+						productIds: [ 1 ],
+					},
+				] )
+			);
+
+			expect( plans[ 0 ].title ).toBe( 'new free' );
+			expect( plans[ 1 ] ).toBeUndefined();
 		} );
 	} );
 

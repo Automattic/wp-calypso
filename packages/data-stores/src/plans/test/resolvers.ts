@@ -93,7 +93,63 @@ describe( 'getSupportedPlans', () => {
 			},
 		} );
 
+		// setPlans call
 		expect( iter.next( { body: planDetailedData } ).value ).toEqual( {
+			type: 'SET_PLANS',
+			plans: [
+				{
+					description: undefined,
+					features: undefined,
+					featuresSlugs: {
+						'custom-domain': true,
+					},
+					isFree: false,
+					isPopular: false,
+					periodAgnosticSlug: undefined,
+					productIds: [ 1, 2, 3 ],
+					storage: undefined,
+					title: undefined,
+				},
+			],
+		} );
+
+		// setPlanProducts call
+		expect( iter.next().value ).toEqual( {
+			products: [
+				{
+					billingPeriod: 'ANNUALLY',
+					pathSlug: undefined,
+					periodAgnosticSlug: undefined,
+					price: '1₹',
+					productId: 1,
+					rawPrice: 13,
+					storeSlug: 'free_plan',
+				},
+				{
+					annualDiscount: 92,
+					billingPeriod: 'ANNUALLY',
+					pathSlug: undefined,
+					periodAgnosticSlug: undefined,
+					price: '1₹',
+					productId: 2,
+					rawPrice: 13,
+					storeSlug: 'value_bundle',
+				},
+				{
+					annualDiscount: 92,
+					billingPeriod: 'ANNUALLY',
+					pathSlug: undefined,
+					periodAgnosticSlug: undefined,
+					price: '1₹',
+					productId: 3,
+					rawPrice: 13,
+					storeSlug: 'value_bundle_monthly',
+				},
+			],
+			type: 'SET_PLAN_PRODUCTS',
+		} );
+
+		expect( iter.next().value ).toEqual( {
 			type: 'SET_FEATURES',
 			features: {
 				'custom-domain': {
@@ -104,18 +160,10 @@ describe( 'getSupportedPlans', () => {
 				},
 			},
 		} );
+
 		expect( iter.next().value ).toEqual( {
 			type: 'SET_FEATURES_BY_TYPE',
 			featuresByType: [ { id: 'general', name: null, features: [ 'custom-domain' ] } ],
 		} );
-
-		const actionPlans = iter.next().value;
-
-		expect( actionPlans ).toHaveProperty( 'type', 'SET_PLANS' );
-		expect( Object.keys( actionPlans.plans ) ).toEqual( [
-			PLAN_FREE,
-			PLAN_PREMIUM,
-			PLAN_PREMIUM_MONTHLY,
-		] );
 	} );
 } );

@@ -74,16 +74,20 @@ export function* getSupportedPlans( locale = 'en' ) {
 		};
 	} );
 
-	const planProducts: PlanProduct[] = plansProductSlugs.map( ( slug ) => {
+	const planProducts: PlanProduct[] = plansProductSlugs.reduce( ( plans, slug ) => {
 		const planProduct = pricedPlans.find(
 			( pricedPlan ) => pricedPlan.product_slug === slug
 		) as PricedAPIPlan;
+
+		if ( ! planProduct ) {
+			return plans;
+		}
 
 		const periodAgnosticPlan = periodAgnosticPlans.find(
 			( plan ) => plan.productIds.indexOf( planProduct.product_id ) > -1
 		) as Plan;
 
-		return {
+		plans.push( {
 			productId: planProduct.product_id,
 			billingPeriod: planProduct.bill_period === 31 ? 'MONTHLY' : 'ANNUALLY',
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
@@ -94,8 +98,9 @@ export function* getSupportedPlans( locale = 'en' ) {
 				planProduct?.bill_period === 31 || planProduct.raw_price === 0
 					? planProduct.formatted_price
 					: getMonthlyPrice( planProduct ),
-		};
-	} );
+		} );
+		return plans;
+	}, [] as PlanProduct[] );
 
 	// calculate discounts
 	for ( let i = 0; i < annualSlugs.length; i++ ) {
