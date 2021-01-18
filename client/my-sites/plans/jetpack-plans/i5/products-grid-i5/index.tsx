@@ -10,12 +10,16 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { SWITCH_PLAN_SIDES_EXPERIMENT, SWITCH_PLAN_SIDES_TREATMENT } from '../experiments';
-import PlansFilterBarI5 from '../i5/plans-filter-bar-i5';
-import ProductCardI5 from '../i5/product-card-i5';
-import { getProductPosition } from '../product-grid/products-order';
-import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
-import useGetPlansGridProducts from '../use-get-plans-grid-products';
+import { SWITCH_PLAN_SIDES_EXPERIMENT, SWITCH_PLAN_SIDES_TREATMENT } from '../../experiments';
+import PlansFilterBarI5 from '../plans-filter-bar-i5';
+import ProductCardI5 from '../product-card-i5';
+import { getProductPosition } from '../../product-grid/products-order';
+import {
+	getPlansToDisplay,
+	getProductsToDisplay,
+	isConnectionFlow,
+} from '../../product-grid/utils';
+import useGetPlansGridProducts from '../../use-get-plans-grid-products';
 import Experiment from 'calypso/components/experiment';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-i5';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -27,13 +31,13 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors
 import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import MoreInfoBox from '../more-info-box';
+import MoreInfoBox from '../../more-info-box';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 
 /**
  * Type dependencies
  */
-import type { ProductsGridProps, SelectorProduct } from '../types';
+import type { ProductsGridProps, SelectorProduct } from '../../types';
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
 import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
 

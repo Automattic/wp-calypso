@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import ProductsGridI5 from './products-grid-i5';
+import ProductsGridI5 from './i5/products-grid-i5';
 import ProductsGridSpp from './spp/products-grid-spp';
 import JetpackFAQi5 from 'calypso/my-sites/plans-features-main/jetpack-faq-i5';
 import { getJetpackCROActiveVersion as getIteration } from 'calypso/my-sites/plans/jetpack-plans/abtest';
