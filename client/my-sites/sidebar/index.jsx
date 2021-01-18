@@ -690,7 +690,13 @@ export class MySitesSidebar extends Component {
 			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
 			{
 				components: {
-					link: <a href="https://wordpress.com/support/store/" rel="noreferrer" target="_blank" />,
+					link: (
+						<a
+							href="https://wordpress.com/support/?page_id=177856"
+							rel="noreferrer"
+							target="_blank"
+						/>
+					),
 				},
 			}
 		);
