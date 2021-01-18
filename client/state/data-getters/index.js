@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { omit, isArray, isUndefined, sortBy } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -281,3 +282,18 @@ export const requestSiteAlerts = ( siteId ) => {
 		}
 	);
 };
+
+export function requestDpa( requestId ) {
+	requestHttpData(
+		requestId,
+		http( {
+			apiNamespace: 'wpcom/v2',
+			method: 'POST',
+			path: '/me/request-dpa',
+		} ),
+		{
+			freshness: -Infinity, // we want to allow the user to re-request
+			fromApi: () => () => [ [ requestId, true ] ],
+		}
+	);
+}

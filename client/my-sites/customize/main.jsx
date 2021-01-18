@@ -27,9 +27,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import wpcom from 'calypso/lib/wp';
-import { addItem } from 'calypso/lib/cart/actions';
 import { trackClick } from 'calypso/my-sites/themes/helpers';
-import { themeItem } from 'calypso/lib/cart-values/cart-items';
 import { getUrlParts } from 'calypso/lib/url';
 
 /**
@@ -317,9 +315,8 @@ class Customize extends React.Component {
 					break;
 				case 'purchased': {
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
-					addItem( themeItem( themeSlug, 'customizer' ) );
 					trackClick( 'customizer', 'purchase' );
-					page( '/checkout/' + site.slug );
+					page( '/checkout/' + site.slug + '/theme:' + themeSlug );
 					break;
 				}
 				case 'navigateTo': {

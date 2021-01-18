@@ -10,6 +10,7 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'calypso/config';
 import Main from 'calypso/components/main';
 import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -17,6 +18,7 @@ import SeoSettingsMain from 'calypso/my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'calypso/my-sites/site-settings/seo-settings/help';
 import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-verification';
 import AnalyticsSettings from 'calypso/my-sites/site-settings/form-analytics';
+import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/cloudflare-analytics';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
 import JetpackAds from 'calypso/my-sites/site-settings/jetpack-ads';
@@ -78,6 +80,7 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 		) }
+		{ isAdmin && config.isEnabled( 'cloudflare' ) && <CloudflareAnalyticsSettings /> }
 
 		{ isJetpackAdmin && (
 			<JetpackSiteStats

@@ -53,7 +53,9 @@ import {
 	getSite,
 	isJetpackSite,
 	canCurrentUserUseEarn,
-	canCurrentUserUseStore,
+	getSiteOption,
+	canCurrentUserUseCalypsoStore,
+	canCurrentUserUseWooCommerceCoreStore,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -661,25 +663,27 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { translate, site, siteSuffix, canUserUseStore } = this.props;
-		const isCalypsoStoreDeprecatedOrRemoved =
-			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
+		const {
+			translate,
+			site,
+			siteSuffix,
+			canUserUseCalypsoStore,
+			canUserUseWooCommerceCoreStore,
+		} = this.props;
 
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
-			return null;
-		}
-
-		if ( ! canUserUseStore ) {
-			return null;
-		}
-
-		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! site ) {
 			return null;
 		}
 
 		let storeLink = '/store' + siteSuffix;
-		if ( isEcommerce( site.plan ) ) {
-			storeLink = site.options.admin_url + 'admin.php?page=wc-admin&calypsoify=1';
+		if ( isEcommerce( site.plan ) && canUserUseWooCommerceCoreStore ) {
+			// Eventually, the plan is to have the WooCommerce Core menu item labelled the same
+			// for both Business and eCommerce users. But, for now, we want to continue to
+			// use the "Store" label for eCommerce users because that is what they are used to.
+			// So, we'll just continue to change the link here as we have been doing.
+			storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
+		} else if ( ! canUserUseCalypsoStore ) {
+			return null;
 		}
 
 		const infoCopy = translate(
@@ -690,6 +694,7 @@ export class MySitesSidebar extends Component {
 				},
 			}
 		);
+		const isCalypsoStoreDeprecated = isEnabled( 'woocommerce/store-deprecated' );
 
 		return (
 			<SidebarItem
@@ -700,7 +705,7 @@ export class MySitesSidebar extends Component {
 				forceInternalLink
 				className="sidebar__store"
 			>
-				{ isCalypsoStoreDeprecatedOrRemoved && isBusiness( site.plan ) && (
+				{ isCalypsoStoreDeprecated && isBusiness( site.plan ) && (
 					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
 						{ infoCopy }
 					</InfoPopover>
@@ -716,22 +721,31 @@ export class MySitesSidebar extends Component {
 	};
 
 	woocommerce() {
-		const { site, canUserUseStore } = this.props;
+		const { site, canUserUseWooCommerceCoreStore, siteSuffix, isSiteWpcomStore } = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
 
 		const isCalypsoStoreDeprecatedOrRemoved =
 			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 
 		if (
-			! isEnabled( 'woocommerce/extension-dashboard' ) ||
 			! isCalypsoStoreDeprecatedOrRemoved ||
-			! site ||
 			! isBusiness( site.plan ) ||
-			! canUserUseStore
+			! canUserUseWooCommerceCoreStore
 		) {
+			// Right now, we only use the "WooCommerce" label for Business plan sites.
+			// eCommerce sites continue to use the "Store" label for now
+			// (see handling in `store()` above.
 			return null;
 		}
 
-		const storeLink = site.options.admin_url + 'admin.php?page=wc-admin&from-calypso';
+		let storeLink = site.options.admin_url + 'admin.php?page=wc-admin&from-calypso';
+		if ( ! isSiteWpcomStore ) {
+			// Navigate to Store UI for installation.
+			storeLink = '/store' + siteSuffix + '?redirect_after_install';
+		}
 
 		return (
 			<SidebarItem
@@ -1107,7 +1121,8 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseStore: canCurrentUserUseStore( state, siteId ),
+		canUserUseCalypsoStore: canCurrentUserUseCalypsoStore( state, siteId ),
+		canUserUseWooCommerceCoreStore: canCurrentUserUseWooCommerceCoreStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		currentUser,
@@ -1151,6 +1166,7 @@ function mapStateToProps( state ) {
 		isWpMobile: isWpMobileApp(), // This doesn't rely on state, but we inject it here for future testability
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		onboardingUrl: getOnboardingUrl( state ),
+		isSiteWpcomStore: getSiteOption( state, siteId, 'is_wpcom_store' ), // 'is_automated_transfer' && 'woocommerce_is_active'
 	};
 }
 

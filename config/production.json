@@ -46,7 +46,6 @@
 		"gutenboarding/new-launch-mobile": true,
 		"happychat": true,
 		"help": true,
-		"help/courses": true,
 		"inline-help": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,

@@ -17,7 +17,7 @@ import { Card } from '@automattic/components';
 import ImporterHeader from '../importer-header';
 import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';
-import { startImport } from 'calypso/lib/importer/actions';
+import { startImport } from 'calypso/state/imports/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
@@ -74,7 +74,7 @@ class SiteImporter extends React.PureComponent {
 			site: { ID: siteId },
 		} = this.props;
 
-		startImport( siteId, type );
+		this.props.startImport( siteId, type );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
@@ -84,10 +84,9 @@ class SiteImporter extends React.PureComponent {
 
 	render() {
 		const { title, icon, description, uploadDescription } = this.props.importerData;
-		const site = this.props.site;
-		const state = this.props.importerStatus;
-		const isEnabled = appStates.DISABLED !== state.importerState;
-		const showStart = includes( compactStates, state.importerState );
+		const { importerStatus } = this.props;
+		const isEnabled = appStates.DISABLED !== importerStatus.importerState;
+		const showStart = includes( compactStates, importerStatus.importerState );
 		const cardClasses = classNames( 'importer__site-importer-card', {
 			'is-compact': showStart,
 			'is-disabled': ! isEnabled,
@@ -101,22 +100,24 @@ class SiteImporter extends React.PureComponent {
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
 				<ImporterHeader
-					importerStatus={ state }
-					{ ...{ icon, title, description, isEnabled, site } }
+					importerStatus={ importerStatus }
+					icon={ icon }
+					title={ title }
+					description={ description }
 				/>
-				{ includes( importingStates, state.importerState ) && (
+				{ includes( importingStates, importerStatus.importerState ) && (
 					<ImportingPane
 						{ ...this.props }
-						importerStatus={ state }
+						importerStatus={ importerStatus }
 						sourceType={ title }
 						site={ this.props.site }
 					/>
 				) }
-				{ includes( uploadingStates, state.importerState ) && (
+				{ includes( uploadingStates, importerStatus.importerState ) && (
 					<SiteImporterInputPane
 						{ ...this.props }
 						description={ uploadDescription }
-						importerStatus={ state }
+						importerStatus={ importerStatus }
 						onStartImport={ this.validateSite }
 						isEnabled={ isEnabled }
 					/>
@@ -126,4 +127,4 @@ class SiteImporter extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( SiteImporter );
+export default connect( null, { recordTracksEvent, startImport } )( SiteImporter );

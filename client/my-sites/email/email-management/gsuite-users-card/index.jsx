@@ -23,12 +23,14 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import GSuiteUserItem from 'calypso/my-sites/email/email-management/gsuite-user-item';
+import { isEnabled } from 'calypso/config';
 import Notice from 'calypso/components/notice';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'calypso/components/section-header';
+import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
+import TitanManagementNav from 'calypso/my-sites/email/email-management/titan-management-nav';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
-import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
 
 /**
  * Style dependencies
@@ -93,7 +95,11 @@ class GSuiteUsersCard extends React.Component {
 
 	renderDomain( domain, users ) {
 		if ( hasTitanMailWithUs( domain ) ) {
-			return <TitanControlPanelLoginCard domain={ domain } key={ `titan-${ domain.name }` } />;
+			const domainKey = `titan-${ domain.name }`;
+			if ( isEnabled( 'titan/phase-2' ) ) {
+				return <TitanManagementNav domain={ domain } key={ domainKey } />;
+			}
+			return <TitanControlPanelLoginCard domain={ domain } key={ domainKey } />;
 		}
 
 		return this.renderDomainWithGSuite( domain.name, users );

@@ -10,7 +10,6 @@ import i18n from 'i18n-calypso';
  */
 import userSettings from 'calypso/lib/user-settings';
 import PasswordComponent from 'calypso/me/security/main';
-import accountPasswordData from 'calypso/lib/account-password-data';
 import SocialLoginComponent from 'calypso/me/social-login';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
@@ -31,7 +30,6 @@ export function password( context, next ) {
 
 	context.primary = React.createElement( PasswordComponent, {
 		path: context.path,
-		accountPasswordData: accountPasswordData,
 	} );
 	next();
 }

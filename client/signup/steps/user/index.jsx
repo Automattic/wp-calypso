@@ -25,6 +25,7 @@ import {
 	getPreviousStepName,
 	getStepUrl,
 } from 'calypso/signup/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -203,6 +204,15 @@ export class UserStep extends Component {
 		} );
 	};
 
+	isOauth2RedirectValid( oauth2Redirect ) {
+		try {
+			const url = new URL( oauth2Redirect );
+			return url.host === 'public-api.wordpress.com';
+		} catch {
+			return false;
+		}
+	}
+
 	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
@@ -276,6 +286,15 @@ export class UserStep extends Component {
 	 * @param {object} userData     (Optional) extra user information that can be used to create a new account
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
+		const { translate } = this.props;
+
+		if ( ! this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect ) ) {
+			this.props.errorNotice(
+				translate( 'An unexpected error occurred. Please try again later.' )
+			);
+			return;
+		}
+
 		this.submit( {
 			service,
 			access_token,
@@ -353,7 +372,8 @@ export class UserStep extends Component {
 		if (
 			this.props.oauth2Signup &&
 			this.props.initialContext &&
-			this.props.initialContext.query.oauth2_redirect
+			this.props.initialContext.query.oauth2_redirect &&
+			this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect )
 		) {
 			return this.props.initialContext.query.oauth2_redirect;
 		}
@@ -464,6 +484,7 @@ export default connect(
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{
+		errorNotice,
 		recordTracksEvent,
 		fetchOAuth2ClientData,
 		saveSignupStep,

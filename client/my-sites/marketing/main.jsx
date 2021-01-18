@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -84,8 +85,8 @@ export const Sharing = ( {
 	}
 
 	// Include Business Tools link if a site is selected and the
-	// required Jetpack module is active
-	if ( showBusinessTools ) {
+	// site is not VIP
+	if ( ! isVip && showBusinessTools ) {
 		filters.push( {
 			id: 'business-buttons',
 			route: '/marketing/business-tools' + pathSuffix,
@@ -149,6 +150,7 @@ Sharing.propTypes = {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 
@@ -156,7 +158,7 @@ export default connect( ( state ) => {
 		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,
-		showBusinessTools: !! siteId && canManageOptions && ! isJetpack,
+		showBusinessTools: ( !! siteId && canManageOptions && ! isJetpack ) || isAtomic,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

@@ -36,10 +36,6 @@ describe( 'WPORG Plugins Lists Store', () => {
 		assert.isFunction( PluginsListsStore.emitChange );
 	} );
 
-	test( 'Store should have method getShortList', () => {
-		assert.isFunction( PluginsListsStore.getShortList );
-	} );
-
 	test( 'Store should have method getFullList', () => {
 		assert.isFunction( PluginsListsStore.getFullList );
 	} );
@@ -56,31 +52,6 @@ describe( 'WPORG Plugins Lists Store', () => {
 	test( 'should return the content of a list when requested', () => {
 		pluginsList = PluginsListsStore.getFullList( 'popular' );
 		assert.isDefined( pluginsList.list );
-	} );
-
-	describe( 'short lists', () => {
-		test( 'should be empty if the list has not been fetched yet', () => {
-			const newPlugins = PluginsListsStore.getShortList( 'new' );
-			assert.lengthOf( newPlugins.list, 0 );
-		} );
-
-		test( 'should return a list of plugins if the list has been fetched already', () => {
-			Dispatcher.handleServerAction( actionsData.fetchedNewPluginsList );
-			const newPlugins = PluginsListsStore.getShortList( 'new' );
-			assert.isArray( newPlugins.list );
-			assert.lengthOf( newPlugins.list, 1 );
-		} );
-
-		test( 'should not fetch from wporg if the category list is already in store', () => {
-			Dispatcher.handleServerAction( actionsData.fetchedPopularPluginsList );
-			PluginsListsStore.getShortList( 'popular' );
-			assert.isFalse( actionsSpies.fetchPluginsList.called );
-		} );
-
-		test( 'should fetch from wporg if the category list is not already in store', () => {
-			PluginsListsStore.getShortList( 'popular' );
-			assert.isTrue( actionsSpies.fetchPluginsList.called );
-		} );
 	} );
 
 	describe( 'Full lists', () => {

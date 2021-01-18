@@ -516,6 +516,26 @@ class ManagePurchase extends Component {
 				'Transfers an existing domain from another provider to WordPress.com, ' +
 					'helping you manage your site and domain in one place.'
 			);
+		} else if ( isTitanMail( purchase ) ) {
+			description = translate( 'Email for %(domain)s', {
+				args: {
+					domain: purchase.meta,
+				},
+			} );
+
+			if ( purchase.purchaseRenewalQuantity ) {
+				description = translate(
+					'%(mailboxCount)d mailbox for %(domain)s',
+					'%(mailboxCount)d mailboxes for %(domain)s',
+					{
+						count: purchase.purchaseRenewalQuantity,
+						args: {
+							mailboxCount: purchase.purchaseRenewalQuantity,
+							domain: purchase.meta,
+						},
+					}
+				);
+			}
 		}
 
 		const registrationAgreementUrl = getDomainRegistrationAgreementUrl( purchase );

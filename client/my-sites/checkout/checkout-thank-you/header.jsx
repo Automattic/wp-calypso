@@ -20,6 +20,7 @@ import {
 	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 import {
 	isGSuiteExtraLicenseProductSlug,
@@ -39,6 +40,7 @@ import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgr
 import { Button } from '@automattic/components';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
+import { emailManagementEdit } from 'calypso/my-sites/email/paths';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -218,6 +220,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
+		if ( isTitanMail( primaryPurchase ) ) {
+			return preventWidows(
+				translate( 'You will receive an email confirmation shortly for your purchase.' )
+			);
+		}
+
 		if ( isGuidedTransfer( primaryPurchase ) ) {
 			if ( typeof primaryPurchase.meta === 'string' ) {
 				return translate(
@@ -326,6 +334,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = selectedSite.URL;
 	};
 
+	visitEmailManagement = ( event ) => {
+		event.preventDefault();
+		const { primaryPurchase, selectedSite } = this.props;
+		page( emailManagementEdit( selectedSite.slug, primaryPurchase.meta ) );
+	};
+
 	visitSiteHostingSettings = ( event ) => {
 		event.preventDefault();
 
@@ -425,7 +439,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 				: translate( 'Manage domains' );
 		}
 
-		if ( isGoogleApps( primaryPurchase ) ) {
+		if ( isGoogleApps( primaryPurchase ) || isTitanMail( primaryPurchase ) ) {
 			return translate( 'Manage email' );
 		}
 
@@ -510,6 +524,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 			clickHandler = this.visitDomain;
 		} else if ( isTrafficGuidePurchase ) {
 			clickHandler = this.downloadTrafficGuideHandler;
+		} else if ( isTitanMail( primaryPurchase ) ) {
+			clickHandler = this.visitEmailManagement;
 		}
 
 		return (

@@ -48,6 +48,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
  * Style dependencies
  */
 import './style.scss';
+import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
 
 const A8CConversationsIcon = () => (
 	<svg

@@ -8,31 +8,31 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { settings, unsavedSettings, updatingPassword } from '../reducer';
 import {
-	USER_SETTINGS_UPDATE,
+	USER_SETTINGS_SAVE_SUCCCESS,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_SAVE,
-	USER_SETTINGS_UPDATE_FAILURE,
+	USER_SETTINGS_SAVE_FAILURE,
 } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( reducer( undefined, {} ) ).sort() ).toEqual(
-			[ 'settings', 'unsavedSettings', 'updatingPassword' ].sort()
+			[ 'settings', 'unsavedSettings', 'updatingPassword', 'updating' ].sort()
 		);
 	} );
 
 	describe( 'settings', () => {
-		test( 'should default to a `null` value', () => {
+		test( 'should default to an empty object', () => {
 			const state = settings( undefined, {} );
 
-			expect( state ).toBeNull();
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store user settings after initial update', () => {
 			const state = settings( null, {
-				type: USER_SETTINGS_UPDATE,
+				type: USER_SETTINGS_SAVE_SUCCCESS,
 				settingValues: { foo: 'bar' },
 			} );
 
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = settings( original, {
-				type: USER_SETTINGS_UPDATE,
+				type: USER_SETTINGS_SAVE_SUCCCESS,
 				settingValues: { baz: 'qux' },
 			} );
 
@@ -160,13 +160,13 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should return `false` if settings update finished (successfully)', () => {
-			const action = { type: USER_SETTINGS_UPDATE };
+			const action = { type: USER_SETTINGS_SAVE_SUCCCESS };
 
 			expect( updatingPassword( false, action ) ).toBe( false );
 		} );
 
 		test( 'should return `false` if settings update finished (with a failure)', () => {
-			const action = { type: USER_SETTINGS_UPDATE_FAILURE };
+			const action = { type: USER_SETTINGS_SAVE_FAILURE };
 
 			expect( updatingPassword( false, action ) ).toBe( false );
 		} );

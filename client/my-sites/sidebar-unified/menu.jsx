@@ -30,6 +30,7 @@ import { externalRedirect } from 'calypso/lib/route/path';
 import { itemLinkMatches } from '../sidebar/utils';
 
 export const MySitesSidebarUnifiedMenu = ( {
+	count,
 	slug,
 	title,
 	icon,
@@ -80,6 +81,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
 				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
+				count={ count }
 			>
 				{ children.map( ( item ) => {
 					const isSelected = selectedMenuItem?.url === item.url;
@@ -99,6 +101,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 };
 
 MySitesSidebarUnifiedMenu.propTypes = {
+	count: PropTypes.number,
 	path: PropTypes.string,
 	slug: PropTypes.string,
 	title: PropTypes.string,

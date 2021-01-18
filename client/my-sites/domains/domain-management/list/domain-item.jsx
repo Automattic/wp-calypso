@@ -41,6 +41,7 @@ import {
 import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getMaxTitanMailboxCount } from 'calypso/lib/titan/get-max-titan-mailbox-count';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 
 class DomainItem extends PureComponent {
@@ -64,6 +65,7 @@ class DomainItem extends PureComponent {
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
 		enableSelection: PropTypes.bool,
+		isChecked: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -73,6 +75,7 @@ class DomainItem extends PureComponent {
 		onToggle: null,
 		isLoadingDomainDetails: false,
 		isBusy: false,
+		isChecked: false,
 	};
 
 	handleClick = ( e ) => {
@@ -301,7 +304,14 @@ class DomainItem extends PureComponent {
 		}
 
 		if ( hasTitanMailWithUs( domainDetails ) ) {
-			return translate( 'Titan Mail' );
+			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
+			return translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
+				args: {
+					titanMailboxCount,
+				},
+				count: titanMailboxCount,
+				comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
+			} );
 		}
 
 		if ( domainDetails?.emailForwardsCount > 0 ) {
@@ -422,7 +432,14 @@ class DomainItem extends PureComponent {
 	}
 
 	render() {
-		const { domain, domainDetails, isManagingAllSites, showCheckbox, enableSelection } = this.props;
+		const {
+			domain,
+			domainDetails,
+			isChecked,
+			isManagingAllSites,
+			showCheckbox,
+			enableSelection,
+		} = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
@@ -442,7 +459,11 @@ class DomainItem extends PureComponent {
 					/>
 				) }
 				{ enableSelection && (
-					<FormRadio className="domain-item__checkbox" onClick={ this.onSelect } />
+					<FormRadio
+						className="domain-item__checkbox"
+						checked={ isChecked }
+						onClick={ this.onSelect }
+					/>
 				) }
 				<div className="list__domain-link">
 					<div className="domain-item__status">

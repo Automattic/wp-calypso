@@ -71,6 +71,7 @@ function createPurchaseObject( purchase ) {
 		tagLine: purchase.tag_line,
 		taxAmount: purchase.tax_amount,
 		taxText: purchase.tax_text,
+		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
 	};
 

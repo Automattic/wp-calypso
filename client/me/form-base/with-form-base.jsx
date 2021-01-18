@@ -8,96 +8,56 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import user from 'calypso/lib/user';
-import userSettings from 'calypso/lib/user-settings';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import {
+	clearUnsavedUserSettings,
+	setUserSetting,
+	saveUserSettings,
+} from 'calypso/state/user-settings/actions';
+import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const withFormBase = ( WrappedComponent ) => {
 	class EnhancedComponent extends React.Component {
 		static displayName = `withFormBase(${ WrappedComponent.displayName || WrappedComponent.name })`;
 
-		state = {
-			redirect: false,
-			submittingForm: false,
-			showNotice: false,
-		};
-
-		componentDidMount() {
-			userSettings.getSettings();
+		componentDidUpdate( prevProps ) {
+			if ( prevProps.hasUnsavedUserSettings && ! this.props.hasUnsavedUserSettings ) {
+				this.props.markSaved?.();
+			}
 		}
 
 		componentWillUnmount() {
 			// Silently clean up unsavedSettings before unmounting
-			userSettings.unsavedSettings = {};
-		}
-
-		componentDidUpdate() {
-			this.showNotice();
+			this.props.clearUnsavedUserSettings();
 		}
 
 		getDisabledState = () => {
-			return this.state.submittingForm;
+			return this.props.isUpdatingUserSettings;
 		};
 
-		showNotice() {
-			if ( userSettings.initialized && this.state.showNotice ) {
-				this.props.successNotice( this.props.translate( 'Settings saved successfully!' ), {
-					id: 'form-base',
-				} );
-				this.state.showNotice = false;
-			}
-		}
-
 		getSetting = ( settingName ) => {
-			return userSettings.getSetting( settingName ) || '';
+			const { unsavedUserSettings, userSettings } = this.props;
+			return unsavedUserSettings[ settingName ] ?? userSettings[ settingName ] ?? '';
 		};
 
 		toggleSetting = ( event ) => {
 			const { name } = event.currentTarget;
-			userSettings.updateSetting( name, ! this.getSetting( name ) );
+			this.props.setUserSetting( name, ! this.getSetting( name ) );
 		};
 
 		updateSetting = ( event ) => {
 			const { name, value } = event.currentTarget;
-			userSettings.updateSetting( name, value );
+			this.props.setUserSetting( name, value );
 		};
 
 		submitForm = ( event ) => {
 			event.preventDefault();
 
-			this.setState( { submittingForm: true } );
-			userSettings.saveSettings(
-				function ( error ) {
-					if ( error ) {
-						// handle error case here
-						if ( error.message ) {
-							this.props.errorNotice( error.message, { id: 'form-base' } );
-						} else {
-							this.props.errorNotice(
-								this.props.translate( 'There was a problem saving your changes.' ),
-								{ id: 'form-base' }
-							);
-						}
-						this.setState( { submittingForm: false } );
-					} else {
-						this.props.markSaved && this.props.markSaved();
-
-						if ( this.state && this.state.redirect ) {
-							user()
-								.clear()
-								.then( () => {
-									// Sometimes changes in settings require a url refresh to update the UI.
-									// For example when the user changes the language.
-									window.location = this.state.redirect + '?updated=success';
-								} );
-							return;
-						}
-						// if we set submittingForm too soon the UI updates before the response is handled
-						this.setState( { showNotice: true, submittingForm: false } );
-						this.showNotice();
-					}
-				}.bind( this )
-			);
+			this.props.saveUserSettings();
 		};
 
 		getFormBaseProps = () => ( {
@@ -106,15 +66,35 @@ const withFormBase = ( WrappedComponent ) => {
 			toggleSetting: this.toggleSetting,
 			updateSetting: this.updateSetting,
 			submitForm: this.submitForm,
-			formState: this.state,
+			hasUnsavedUserSettings: this.props.hasUnsavedUserSettings,
+			isUpdatingUserSettings: this.props.isUpdatingUserSettings,
 		} );
 
 		render() {
-			return <WrappedComponent { ...this.props } { ...this.getFormBaseProps() } />;
+			return (
+				<>
+					<QueryUserSettings />
+					<WrappedComponent { ...this.props } { ...this.getFormBaseProps() } />
+				</>
+			);
 		}
 	}
 
-	return connect( null, { errorNotice, successNotice } )( localize( EnhancedComponent ) );
+	return connect(
+		( state ) => ( {
+			userSettings: getUserSettings( state ),
+			unsavedUserSettings: getUnsavedUserSettings( state ),
+			hasUnsavedUserSettings: hasUnsavedUserSettings( state ),
+			isUpdatingUserSettings: isUpdatingUserSettings( state ),
+		} ),
+		{
+			clearUnsavedUserSettings,
+			errorNotice,
+			saveUserSettings,
+			setUserSetting,
+			successNotice,
+		}
+	)( localize( EnhancedComponent ) );
 };
 
 export default withFormBase;

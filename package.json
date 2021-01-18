@@ -50,7 +50,7 @@
 		]
 	},
 	"engines": {
-		"node": "^v12.19.1",
+		"node": "^v12.20.1",
 		"yarn": "^1.22.10"
 	},
 	"scripts": {
@@ -181,7 +181,7 @@
 		"@types/debug": "^4.1.5",
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/jest": "^25.2.3",
-		"@types/lodash": "^4.14.158",
+		"@types/lodash": "^4.14.167",
 		"@types/page": "^1.8.0",
 		"@types/qs": "^6.9.4",
 		"@types/react": "^16.9.43",
@@ -217,10 +217,10 @@
 		"babel-jest": "^26.3.0",
 		"babel-plugin-dynamic-import-node": "^2.3.0",
 		"babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-		"browserslist": "^4.12.0",
+		"browserslist": "^4.16.0",
 		"calypso": "^0.17.0",
 		"calypso-codemods": "^0.1.6",
-		"caniuse-lite": "^1.0.30001041",
+		"caniuse-lite": "^1.0.30001173",
 		"capture-website": "^1.0.0",
 		"chai": "^4.2.0",
 		"chai-enzyme": "^1.0.0-beta.1",
@@ -263,7 +263,7 @@
 		"jest-junit": "^9.0.0",
 		"lerna": "^3.20.2",
 		"loader-utils": "^1.2.3",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.20",
 		"lunr": "^2.3.8",
 		"mixedindentlint": "^1.2.0",
 		"mkdirp": "^1.0.4",

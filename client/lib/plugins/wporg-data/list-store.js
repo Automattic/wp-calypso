@@ -11,7 +11,6 @@ import Dispatcher from 'calypso/dispatcher';
 import emitter from 'calypso/lib/mixins/emitter';
 import PluginsDataActions from './actions';
 
-let _shortLists = {};
 let _fullLists = {};
 let _fetching = {};
 let _currentSearchTerm = null;
@@ -24,7 +23,6 @@ function appendPage( category, page, list ) {
 
 function update( category, page, list ) {
 	if ( ! page || page === _DEFAULT_FIRST_PAGE ) {
-		_shortLists[ category ] = clone( list.slice( 0, 6 ) );
 		_fullLists[ category ] = clone( list );
 	} else {
 		appendPage( category, page, list );
@@ -32,16 +30,6 @@ function update( category, page, list ) {
 }
 
 const PluginsListsStore = {
-	getShortList: function ( category ) {
-		if ( ! _shortLists[ category ] && ! _fetching[ category ] ) {
-			PluginsDataActions.fetchPluginsList( category, _DEFAULT_FIRST_PAGE );
-		}
-		return {
-			fetching: !! _fetching[ category ],
-			list: _shortLists[ category ] || [],
-		};
-	},
-
 	getFullList: function ( category ) {
 		if ( ! _fullLists[ category ] ) {
 			PluginsDataActions.fetchPluginsList( category, _DEFAULT_FIRST_PAGE );
@@ -100,7 +88,6 @@ PluginsListsStore.dispatchToken = Dispatcher.register( function ( payload ) {
 			}
 			break;
 		case 'RESET_WPORG_PLUGINS_LIST':
-			_shortLists = {};
 			_fullLists = {};
 			_fetching = {};
 			_currentSearchTerm = null;

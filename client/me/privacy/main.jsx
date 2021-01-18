@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { withLocalizeUrl } from '@automattic/i18n-utils';
@@ -19,40 +17,27 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormToggle from 'calypso/components/forms/form-toggle';
 import Main from 'calypso/components/main';
-import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SectionHeader from 'calypso/components/section-header';
-import formBase from 'calypso/me/form-base';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { requestHttpData, getHttpData } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import FormattedHeader from 'calypso/components/formatted-header';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
+import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
+import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { requestDpa } from 'calypso/state/data-getters';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
-/* eslint-disable react/prefer-es6-class */
-const Privacy = createReactClass( {
-	/**
-	 * `formBase` is used for `getDisabledState` and `submitForm`
-	 * `observe` is used to trigger a re-render on userSettings changes
-	 */
-	mixins: [ formBase, observe( 'userSettings' ) ],
+const dpaRequestId = 'dpa-request';
 
-	propTypes: {
-		userSettings: PropTypes.object.isRequired,
-	},
-
-	updateTracksOptOut( isSendingTracksEvents ) {
-		this.props.userSettings.updateSetting(
-			TRACKS_OPT_OUT_USER_SETTINGS_KEY,
-			! isSendingTracksEvents
-		);
-	},
-
+class Privacy extends React.Component {
 	componentDidUpdate( oldProps ) {
 		const { dpaRequest, translate } = this.props;
 		const { dpaRequest: oldDpaRequest } = oldProps;
@@ -74,16 +59,34 @@ const Privacy = createReactClass( {
 					  } )
 			);
 		}
-	},
+
+		if ( oldProps.hasUnsavedUserSettings && ! this.props.hasUnsavedUserSettings ) {
+			this.props.markSaved();
+		}
+	}
+
+	updateTracksOptOut = ( isSendingTracksEvents ) => {
+		this.props.setUserSetting( TRACKS_OPT_OUT_USER_SETTINGS_KEY, ! isSendingTracksEvents );
+	};
+
+	submitForm = ( event ) => {
+		event.preventDefault();
+
+		this.props.saveUserSettings();
+	};
 
 	render() {
-		const { markChanged, translate, userSettings, localizeUrl } = this.props;
+		const {
+			markChanged,
+			translate,
+			/* eslint-disable no-shadow */
+			hasUnsavedUserSettings,
+			isUpdatingUserSettings,
+			/* eslint-enable no-shadow */
+			localizeUrl,
+		} = this.props;
 
-		const isSubmitButtonDisabled = ! userSettings.hasUnsavedSettings() || this.getDisabledState();
-
-		const isSendingTracksEvent = ! this.props.userSettings.getSetting(
-			TRACKS_OPT_OUT_USER_SETTINGS_KEY
-		);
+		const isSubmitButtonDisabled = ! hasUnsavedUserSettings || isUpdatingUserSettings;
 
 		const cookiePolicyLink = (
 			<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies' ) } target="_blank" />
@@ -94,6 +97,7 @@ const Privacy = createReactClass( {
 
 		return (
 			<Main className="privacy is-wide-layout">
+				<QueryUserSettings />
 				<PageViewTracker path="/me/privacy" title="Me > Privacy" />
 				<DocumentHead title={ translate( 'Privacy Settings' ) } />
 				<MeSidebarNavigation />
@@ -132,7 +136,7 @@ const Privacy = createReactClass( {
 							<hr />
 							<FormToggle
 								id="tracks_opt_out"
-								checked={ isSendingTracksEvent }
+								checked={ ! this.props.tracksOptOut }
 								onChange={ this.updateTracksOptOut }
 							>
 								{ translate(
@@ -148,11 +152,8 @@ const Privacy = createReactClass( {
 							</FormToggle>
 						</FormFieldset>
 
-						<FormButton
-							isSubmitting={ this.state.submittingForm }
-							disabled={ isSubmitButtonDisabled }
-						>
-							{ this.state.submittingForm
+						<FormButton isSubmitting={ isUpdatingUserSettings } disabled={ isSubmitButtonDisabled }>
+							{ isUpdatingUserSettings
 								? translate( 'Saving…' )
 								: translate( 'Save privacy settings' ) }
 						</FormButton>
@@ -191,7 +192,10 @@ const Privacy = createReactClass( {
 							) }
 						</strong>
 					</p>
-					<Button className="privacy__dpa-request-button" onClick={ this.props.requestDpa }>
+					<Button
+						className="privacy__dpa-request-button"
+						onClick={ () => requestDpa( dpaRequestId ) }
+					>
 						{ translate( 'Request a DPA', {
 							comment:
 								'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',
@@ -200,24 +204,9 @@ const Privacy = createReactClass( {
 				</Card>
 			</Main>
 		);
-	},
-} );
-
-const dpaRequestId = 'dpa-request';
-function requestDpa() {
-	requestHttpData(
-		dpaRequestId,
-		http( {
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			path: '/me/request-dpa',
-		} ),
-		{
-			freshness: -Infinity, // we want to allow the user to re-request
-			fromApi: () => () => [ [ dpaRequestId, true ] ],
-		}
-	);
+	}
 }
+
 const dpaRequestState = ( request ) => {
 	switch ( request.state ) {
 		case 'pending':
@@ -236,13 +225,12 @@ export default compose(
 	withLocalizeUrl,
 	protectForm,
 	connect(
-		() => ( {
+		( state ) => ( {
 			dpaRequest: dpaRequestState( getHttpData( dpaRequestId ) ),
+			tracksOptOut: getUserSetting( state, TRACKS_OPT_OUT_USER_SETTINGS_KEY ) ?? true,
+			hasUnsavedUserSettings: hasUnsavedUserSettings( state ),
+			isUpdatingUserSettings: isUpdatingUserSettings( state ),
 		} ),
-		( dispatch ) => ( {
-			requestDpa,
-			successNotice: ( message ) => dispatch( successNotice( message ) ),
-			errorNotice: ( message ) => dispatch( errorNotice( message ) ),
-		} )
+		{ successNotice, errorNotice, setUserSetting, saveUserSettings }
 	)
 )( Privacy );

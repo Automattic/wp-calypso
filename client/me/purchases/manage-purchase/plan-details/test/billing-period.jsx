@@ -11,8 +11,6 @@ import { translate } from 'i18n-calypso';
  */
 import { PlanBillingPeriod } from '../billing-period';
 import page from 'page';
-import { planItem } from 'calypso/lib/cart-values/cart-items';
-import { addItem } from 'calypso/lib/cart/actions';
 
 const props = {
 	purchase: {
@@ -59,9 +57,7 @@ describe( 'PlanBillingPeriod', () => {
 		it( 'should upgrade to a yearly plan when the button is clicked', () => {
 			const wrapper = shallow( <PlanBillingPeriod { ...props } /> );
 			wrapper.find( 'Button' ).simulate( 'click' );
-			expect( planItem ).toHaveBeenCalledWith( 'jetpack_premium' );
-			expect( addItem ).toHaveBeenCalled();
-			expect( page ).toHaveBeenCalledWith( '/checkout/site.com' );
+			expect( page ).toHaveBeenCalledWith( '/checkout/site.com/jetpack_premium' );
 		} );
 
 		describe( 'a disconnected site', () => {

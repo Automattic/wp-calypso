@@ -11,7 +11,7 @@ import type { ValuesType } from 'utility-types';
  * Internal dependencies
  */
 import config from 'calypso/config';
-import { FLOW_ID, ANCHOR_FM_FLOW_ID } from '../gutenboarding/constants';
+import { FLOW_ID } from '../gutenboarding/constants';
 
 type PlanPath = Plans.PlanPath;
 
@@ -118,7 +118,7 @@ export function useIsAnchorFm(): boolean {
 
 export function useOnboardingFlow(): string {
 	if ( useIsAnchorFm() ) {
-		return ANCHOR_FM_FLOW_ID;
+		return 'anchor-fm';
 	}
 	return FLOW_ID;
 }

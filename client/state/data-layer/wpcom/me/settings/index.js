@@ -14,13 +14,13 @@ import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-set
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	clearUnsavedUserSettings,
-	updateUserSettings,
-	updateUserSettingsFailure,
+	saveUserSettingsSuccess,
+	saveUserSettingsFailure,
 } from 'calypso/state/user-settings/actions';
 import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /*
  * Decodes entities in those specific user settings properties
@@ -48,12 +48,12 @@ export const requestUserSettings = ( action ) =>
 /*
  * Store the fetched user settings to Redux state
  */
-export const storeFetchedUserSettings = ( action, data ) => updateUserSettings( data );
+export const storeFetchedUserSettings = ( action, data ) => saveUserSettingsSuccess( data );
 
 /*
  * Post settings to WordPress.com API at /me/settings endpoint
  */
-export function saveUserSettings( action ) {
+export function userSettingsSave( action ) {
 	return ( dispatch, getState ) => {
 		const { settingsOverride } = action;
 		const settings = settingsOverride || getUnsavedUserSettings( getState() );
@@ -73,25 +73,30 @@ export function saveUserSettings( action ) {
 	};
 }
 
-export function saveUserSettingsFailure( { settingsOverride }, error ) {
+export function userSettingsSaveFailure( { settingsOverride }, error ) {
 	if ( settingsOverride?.password ) {
 		return [
 			errorNotice( translate( 'There was a problem saving your password. Please, try again.' ), {
-				id: 'update-settings-password-failure',
+				id: 'save-user-settings',
 			} ),
-			updateUserSettingsFailure( settingsOverride, error ),
+			saveUserSettingsFailure( settingsOverride, error ),
 		];
 	}
 
-	return updateUserSettingsFailure( settingsOverride, error );
+	return [
+		errorNotice( error.message || translate( 'There was a problem saving your changes.' ), {
+			id: 'save-user-settings',
+		} ),
+		saveUserSettingsFailure( settingsOverride, error ),
+	];
 }
 
 /*
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const finishUserSettingsSave = ( { settingsOverride }, data ) => ( dispatch ) => {
-	dispatch( updateUserSettings( fromApi( data ) ) );
+export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => ( dispatch ) => {
+	dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
 
 	if ( settingsOverride?.password ) {
@@ -105,6 +110,12 @@ export const finishUserSettingsSave = ( { settingsOverride }, data ) => ( dispat
 	const userLibModule = require( 'calypso/lib/user' );
 	const userLib = userLibModule.default ? userLibModule.default : userLibModule; // TODO: delete line after removing add-module-exports.
 	userLib().fetch();
+
+	dispatch(
+		successNotice( translate( 'Settings saved successfully!' ), {
+			id: 'save-user-settings',
+		} )
+	);
 };
 
 registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
@@ -118,9 +129,9 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 	],
 	[ USER_SETTINGS_SAVE ]: [
 		dispatchRequest( {
-			fetch: saveUserSettings,
-			onSuccess: finishUserSettingsSave,
-			onError: saveUserSettingsFailure,
+			fetch: userSettingsSave,
+			onSuccess: userSettingsSaveSuccess,
+			onError: userSettingsSaveFailure,
 			fromApi,
 		} ),
 	],

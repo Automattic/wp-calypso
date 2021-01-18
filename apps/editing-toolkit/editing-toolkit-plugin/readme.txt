@@ -1,9 +1,9 @@
 === WordPress.com Editing Toolkit ===
 Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
 Tags: block, blocks, editor, gutenberg, page
-Requires at least: 5.0
-Tested up to: 5.5
-Stable tag: 2.8.17
+Requires at least: 5.5
+Tested up to: 5.6
+Stable tag: 2.11
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,21 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.11 =
+* Welcome Guide (Tour & NUX modal): add flag to track if guide is opened manually via MoreMenu
+* Welcome Tour: adjust z-index to show above editor side nav
+* Welcome Tour: prevent showing on Start Page Layout selection page
+
+= 2.10 =
+* Fix issue where block patterns did not load.
+
+= 2.9 =
+* Template Selector: Use patterns API
+* Focused Launch: Debounce domain search for focused launch on key press.
+* Domain Picker: Added "Use a domain I own" item.
+* Welcome Tour: update copy and add i18n wrappers.
+* Remove editor welcome tour images and replace with urls to those same.
 
 = 2.8.17 =
 * Domain Picker: make items keyboard accessible (https://github.com/Automattic/wp-calypso/pull/48172)

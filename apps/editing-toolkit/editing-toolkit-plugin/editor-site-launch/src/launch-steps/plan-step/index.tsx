@@ -60,10 +60,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 					disabledPlans={
 						hasPaidDomain
 							? {
-									[ Plans.PLAN_FREE ]: __(
-										'Not available with custom domain',
-										'full-site-editing'
-									),
+									[ Plans.PLAN_FREE ]: __( 'Unavailable with domain', 'full-site-editing' ),
 							  }
 							: undefined
 					}

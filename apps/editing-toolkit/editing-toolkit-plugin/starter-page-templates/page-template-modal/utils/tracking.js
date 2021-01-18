@@ -21,12 +21,10 @@ export const initializeWithIdentity = ( identity ) => {
 /**
  * Track a view of the layout selector.
  *
- * @param {string} segment_id Segment ID.
- * @param {string} vertical_id Vertical ID.
  * @param {string} source Source triggering the view.
  * @returns {void}
  */
-export const trackView = ( segment_id, vertical_id, source ) => {
+export const trackView = ( source ) => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -35,8 +33,6 @@ export const trackView = ( segment_id, vertical_id, source ) => {
 		'a8c_full_site_editing_template_selector_view',
 		{
 			blog_id: tracksIdentity.blogid,
-			segment_id,
-			vertical_id,
 			source,
 		},
 	] );
@@ -45,11 +41,9 @@ export const trackView = ( segment_id, vertical_id, source ) => {
 /**
  * Track closing of the layout selector.
  *
- * @param {string} segment_id Segment ID.
- * @param {string} vertical_id Vertical ID.
  * @returns {void}
  */
-export const trackDismiss = ( segment_id, vertical_id ) => {
+export const trackDismiss = () => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -58,8 +52,6 @@ export const trackDismiss = ( segment_id, vertical_id ) => {
 		'a8c_full_site_editing_template_selector_dismiss',
 		{
 			blog_id: tracksIdentity.blogid,
-			segment_id,
-			vertical_id,
 		},
 	] );
 };
@@ -67,12 +59,10 @@ export const trackDismiss = ( segment_id, vertical_id ) => {
 /**
  * Track layout selection.
  *
- * @param {string} segment_id Segment ID.
- * @param {string} vertical_id Vertical ID.
  * @param {string} template Template slug.
  * @returns {void}
  */
-export const trackSelection = ( segment_id, vertical_id, template ) => {
+export const trackSelection = ( template ) => {
 	if ( ! tracksIdentity ) {
 		return;
 	}
@@ -81,8 +71,6 @@ export const trackSelection = ( segment_id, vertical_id, template ) => {
 		'a8c_full_site_editing_template_selector_template_selected',
 		{
 			blog_id: tracksIdentity.blogid,
-			segment_id,
-			vertical_id,
 			template,
 		},
 	] );
