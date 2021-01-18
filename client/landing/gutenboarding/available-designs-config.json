@@ -293,7 +293,7 @@
 			"title": "Gilbert",
 			"slug": "gilbert",
 			"template": "gilbert",
-			"theme": "gilbert",
+			"theme": "spearhead",
 			"fonts": {
 				"headings": "Roboto",
 				"base": "Roboto"
@@ -306,7 +306,7 @@
 			"title": "Riley",
 			"slug": "riley",
 			"template": "riley",
-			"theme": "riley",
+			"theme": "spearhead",
 			"fonts": {
 				"headings": "Raleway",
 				"base": "Cabin"
