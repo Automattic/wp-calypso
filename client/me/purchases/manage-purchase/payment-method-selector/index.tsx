@@ -29,7 +29,6 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
-import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
 import {
 	assignPayPalProcessor,
 	assignNewCardProcessor,
@@ -43,11 +42,13 @@ import './style.scss';
 
 export default function PaymentMethodSelector( {
 	purchase,
+	paymentMethods,
 	successCallback,
 	siteSlug,
 	apiParams,
 }: {
 	purchase: Purchase;
+	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
 	siteSlug: string;
 	apiParams: Record< string, string | number >;
@@ -56,7 +57,6 @@ export default function PaymentMethodSelector( {
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase.payment );
-	const paymentMethods = useCreateAssignablePaymentMethods( currentlyAssignedPaymentMethodId );
 
 	const showErrorMessage = useCallback( ( error ) => {
 		const message = error?.toString ? error.toString() : error;
