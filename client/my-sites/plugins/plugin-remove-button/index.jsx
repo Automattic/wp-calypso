@@ -164,7 +164,7 @@ class PluginRemoveButton extends React.Component {
 
 	renderButton = () => {
 		const disabledInfo = this.getDisabledInfo();
-		const disabled = !! disabledInfo;
+		const disabled = !! disabledInfo || this.props.disabled;
 		const label = disabled
 			? this.props.translate( 'Removal Disabled', {
 					context:
