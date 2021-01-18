@@ -103,8 +103,8 @@ export default function PaymentMethodSelector( {
 			showSuccessMessage={ showSuccessMessage }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
-				paypal: () => assignPayPalProcessor( String( purchase.id ) ),
-				'existing-card': ( data ) => assignExistingCardProcessor( String( purchase.id ), data ),
+				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),
+				'existing-card': ( data ) => assignExistingCardProcessor( purchase, reduxDispatch, data ),
 				card: ( data ) =>
 					assignNewCardProcessor(
 						{
@@ -114,6 +114,7 @@ export default function PaymentMethodSelector( {
 							apiParams,
 							stripe,
 							stripeConfiguration,
+							reduxDispatch,
 						},
 						data
 					),
