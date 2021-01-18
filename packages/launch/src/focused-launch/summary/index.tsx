@@ -577,7 +577,7 @@ const Summary: React.FunctionComponent = () => {
 	);
 
 	const isDomainStepHighlighted =
-		!! selectedPlan || !! hasSelectedDomain || isValidSiteTitle( title );
+		!! selectedPlanProductId || !! hasSelectedDomain || isValidSiteTitle( title );
 
 	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
