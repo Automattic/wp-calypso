@@ -16,13 +16,13 @@ import { JETPACK_RESET_PLANS_BY_TERM } from 'calypso/lib/plans/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-import useDetectWindowBoundary from '../use-detect-window-boundary';
-import { getHighestAnnualDiscount } from '../utils';
+import useDetectWindowBoundary from '../../use-detect-window-boundary';
+import { getHighestAnnualDiscount } from '../../utils';
 
 /**
  * Type dependencies
  */
-import type { Duration, DurationChangeCallback, ProductType } from '../types';
+import type { Duration, DurationChangeCallback, ProductType } from '../../types';
 
 /**
  * Style dependencies
