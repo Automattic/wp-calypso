@@ -264,13 +264,13 @@ function renderPaymentInfo( { purchase, translate, moment } ) {
 }
 
 function PurchaseMetaPrice( { purchase, translate } ) {
-	const { priceText, currencyCode, productSlug } = purchase;
+	const { priceText, productSlug } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
-			args: { priceText, currencyCode },
+		return translate( '%(priceText)s {{period}}(one-time){{/period}}', {
+			args: { priceText },
 			components: {
 				period: <span className="manage-purchase__time-period" />,
 			},
@@ -297,12 +297,8 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 		period = translate( 'month' );
 	}
 
-	return translate( '%(priceText)s %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
-		args: {
-			priceText,
-			currencyCode,
-			period,
-		},
+	return translate( '%(priceText)s {{period}}/ %(period)s{{/period}}', {
+		args: { priceText, period },
 		components: {
 			period: <span className="manage-purchase__time-period" />,
 		},
