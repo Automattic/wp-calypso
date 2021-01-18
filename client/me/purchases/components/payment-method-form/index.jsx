@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import { Card } from '@automattic/components';
 import {
@@ -21,7 +21,6 @@ import {
 import Gridicon from 'calypso/components/gridicon';
 import CreditCardFormFields from 'calypso/components/credit-card-form-fields';
 import FormButton from 'calypso/components/forms/form-button';
-import notices from 'calypso/notices';
 import { validatePaymentDetails } from 'calypso/lib/checkout';
 import ValidationErrorList from './validation-error-list';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
@@ -37,6 +36,7 @@ import {
 	useDebounce,
 	saveOrUpdateCreditCard,
 } from './helpers';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -75,6 +75,7 @@ export function PaymentMethodForm( {
 		)
 	);
 	const [ debouncedFieldErrors, setDebouncedFieldErrors ] = useDebounce( formFieldErrors, 1000 );
+	const reduxDispatch = useDispatch();
 
 	const onFieldChange = ( rawDetails ) => {
 		const newValues = { ...formFieldValues, ...camelCaseFormFields( rawDetails ) };
@@ -141,15 +142,15 @@ export function PaymentMethodForm( {
 			debug( 'Error while submitting', error );
 			setFormSubmitting( false );
 			error && reloadStripeConfiguration && reloadStripeConfiguration();
-			error && displayError( { translate, error } );
+			error && displayError( { translate, error }, reduxDispatch );
 		}
 	};
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			displayError( { translate, error: stripeLoadingError } );
+			displayError( { translate, error: stripeLoadingError }, reduxDispatch );
 		}
-	}, [ stripeLoadingError, translate ] );
+	}, [ stripeLoadingError, translate, reduxDispatch ] );
 
 	const disabled = isStripeLoading || stripeLoadingError;
 
@@ -257,18 +258,23 @@ function StripeError( { translate } ) {
 	);
 }
 
-function displayError( { translate, error } ) {
+function displayError( { translate, error }, reduxDispatch ) {
 	if ( error instanceof StripeSetupIntentError || error instanceof StripeValidationError ) {
-		notices.error( <StripeError translate={ translate } /> );
+		reduxDispatch( errorNotice( <StripeError translate={ translate } /> ) );
 		return;
 	}
 	if ( typeof error.message === 'object' ) {
-		notices.error( <ValidationErrorList messages={ values( error.message ) } /> );
+		reduxDispatch( errorNotice( <ValidationErrorList messages={ values( error.message ) } /> ) );
 		return;
 	}
-	notices.error( error.message );
+	reduxDispatch( errorNotice( error.message ) );
 }
 
-export default connect( ( state ) => ( {
-	countriesList: getCountries( state, 'payments' ),
-} ) )( localize( PaymentMethodForm ) );
+export default connect(
+	( state ) => ( {
+		countriesList: getCountries( state, 'payments' ),
+	} ),
+	{
+		errorNotice,
+	}
+)( localize( PaymentMethodForm ) );
