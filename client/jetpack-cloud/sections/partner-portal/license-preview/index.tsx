@@ -14,7 +14,7 @@ import {
 	STATE_REVOKED,
 	getLicenseDominantState,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import { Button, CompactCard } from '@automattic/components';
+import { Button } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
 import FormattedDate from 'calypso/components/formatted-date';
@@ -62,82 +62,80 @@ export default function LicensePreview( {
 				'license-preview--is-open': isOpen,
 			} ) }
 		>
-			<CompactCard
+			<LicenseListItem
 				className={ classnames( {
 					'license-preview__card': true,
 					'license-preview__card--is-detached': dominantState === STATE_DETACHED,
 					'license-preview__card--is-revoked': dominantState === STATE_REVOKED,
 				} ) }
 			>
-				<LicenseListItem>
-					<div>
-						<h3 className="license-preview__domain">
-							{ domain &&
-								( dominantState === STATE_ATTACHED || dominantState === STATE_REVOKED ) && (
-									<span>{ domain }</span>
-								) }
-
-							{ dominantState === STATE_DETACHED && (
-								<span className="license-preview__tag license-preview__tag--is-detached">
-									<Gridicon icon="info-outline" size={ 18 } />
-									{ translate( 'Detached' ) }
-								</span>
+				<div>
+					<h3 className="license-preview__domain">
+						{ domain &&
+							( dominantState === STATE_ATTACHED || dominantState === STATE_REVOKED ) && (
+								<span>{ domain }</span>
 							) }
 
-							{ dominantState === STATE_REVOKED && (
-								<span className="license-preview__tag license-preview__tag--is-revoked">
-									<Gridicon icon="block" size={ 18 } />
-									{ translate( 'Revoked' ) }
-								</span>
-							) }
-						</h3>
-
-						<span>{ translate( 'Product: %s', { args: [ product ] } ) }</span>
-					</div>
-
-					<div>
-						<FormattedDate date={ issuedOn } format="YYYY-MM-DD" />
-					</div>
-
-					<div>
-						{ dominantState === STATE_ATTACHED && (
-							<FormattedDate date={ attachedOn } format="YYYY-MM-DD" />
-						) }
-
-						{ dominantState !== STATE_ATTACHED && (
-							<Gridicon icon="minus" className="license-preview__no-value" />
-						) }
-					</div>
-
-					<div>
-						{ dominantState === STATE_REVOKED && (
-							<FormattedDate date={ revokedOn } format="YYYY-MM-DD" />
-						) }
-
-						{ dominantState !== STATE_REVOKED && (
-							<Gridicon icon="minus" className="license-preview__no-value" />
-						) }
-					</div>
-
-					<div>
 						{ dominantState === STATE_DETACHED && (
-							<ClipboardButton
-								text={ licenseKey }
-								className="license-preview__copy-license-key"
-								compact
-							>
-								{ translate( 'Copy License' ) }
-							</ClipboardButton>
+							<span className="license-preview__tag license-preview__tag--is-detached">
+								<Gridicon icon="info-outline" size={ 18 } />
+								{ translate( 'Detached' ) }
+							</span>
 						) }
-					</div>
 
-					<div>
-						<Button onClick={ open } borderless>
-							<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
-						</Button>
-					</div>
-				</LicenseListItem>
-			</CompactCard>
+						{ dominantState === STATE_REVOKED && (
+							<span className="license-preview__tag license-preview__tag--is-revoked">
+								<Gridicon icon="block" size={ 18 } />
+								{ translate( 'Revoked' ) }
+							</span>
+						) }
+					</h3>
+
+					<span>{ translate( 'Product: %s', { args: [ product ] } ) }</span>
+				</div>
+
+				<div>
+					<FormattedDate date={ issuedOn } format="YYYY-MM-DD" />
+				</div>
+
+				<div>
+					{ dominantState === STATE_ATTACHED && (
+						<FormattedDate date={ attachedOn } format="YYYY-MM-DD" />
+					) }
+
+					{ dominantState !== STATE_ATTACHED && (
+						<Gridicon icon="minus" className="license-preview__no-value" />
+					) }
+				</div>
+
+				<div>
+					{ dominantState === STATE_REVOKED && (
+						<FormattedDate date={ revokedOn } format="YYYY-MM-DD" />
+					) }
+
+					{ dominantState !== STATE_REVOKED && (
+						<Gridicon icon="minus" className="license-preview__no-value" />
+					) }
+				</div>
+
+				<div>
+					{ dominantState === STATE_DETACHED && (
+						<ClipboardButton
+							text={ licenseKey }
+							className="license-preview__copy-license-key"
+							compact
+						>
+							{ translate( 'Copy License' ) }
+						</ClipboardButton>
+					) }
+				</div>
+
+				<div>
+					<Button onClick={ open } borderless>
+						<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
+					</Button>
+				</div>
+			</LicenseListItem>
 
 			{ isOpen && (
 				<LicenseDetails

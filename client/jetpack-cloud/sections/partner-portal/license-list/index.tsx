@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
-import { CompactCard } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import LicensePreview from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
@@ -66,16 +65,14 @@ export default function LicenseList() {
 
 			<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-			<CompactCard>
-				<LicenseListItem header>
-					<h2>{ translate( 'License state' ) }</h2>
-					<h2>{ translate( 'Issued on' ) }</h2>
-					<h2>{ translate( 'Attached on' ) }</h2>
-					<h2>{ translate( 'Revoked on' ) }</h2>
-					<h2>{ /* Intentionally empty header. */ }</h2>
-					<h2>{ /* Intentionally empty header. */ }</h2>
-				</LicenseListItem>
-			</CompactCard>
+			<LicenseListItem header>
+				<h2>{ translate( 'License state' ) }</h2>
+				<h2>{ translate( 'Issued on' ) }</h2>
+				<h2>{ translate( 'Attached on' ) }</h2>
+				<h2>{ translate( 'Revoked on' ) }</h2>
+				<h2>{ /* Intentionally empty header. */ }</h2>
+				<h2>{ /* Intentionally empty header. */ }</h2>
+			</LicenseListItem>
 
 			{ data.map( ( license ) => (
 				<LicensePreview
