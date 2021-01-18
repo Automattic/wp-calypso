@@ -54,6 +54,20 @@ class MasterbarLoggedIn extends React.Component {
 		hasUnseen: PropTypes.bool,
 	};
 
+	handleLayoutFocus = ( currentSection ) => {
+		if ( ! config.isEnabled( 'nav-unification' ) ) {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		} else if ( currentSection !== this.props.section ) {
+			// When current section is not focused then open the sidebar.
+			this.props.setNextLayoutFocus( 'sidebar' );
+		} else {
+			// When current section is focused then open or close the sidebar depending on current state.
+			'sidebar' === this.props.currentLayoutFocus
+				? this.props.setNextLayoutFocus( 'content' )
+				: this.props.setNextLayoutFocus( 'sidebar' );
+		}
+	};
+
 	componentDidMount() {
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
 		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
@@ -64,15 +78,7 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
-		if ( ! config.isEnabled( 'nav-unification' ) ) {
-			this.props.setNextLayoutFocus( 'sidebar' );
-		} else if ( 'sites' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
-			// when my-sites is not focused or sidebar is open, focus to my-sites' content. Else, open my-sites' sidebar.
-			this.props.setNextLayoutFocus( 'content' );
-			this.props.setNextLayoutFocus( 'sidebar' );
-		} else {
-			this.props.setNextLayoutFocus( 'sidebar' );
-		}
+		this.handleLayoutFocus( 'sites' );
 
 		/**
 		 * Site Migration: Reset a failed migration when clicking on My Sites
@@ -112,28 +118,12 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickReader = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
-		if ( ! config.isEnabled( 'nav-unification' ) ) {
-			this.props.setNextLayoutFocus( 'content' );
-		} else if ( 'reader' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
-			// when reader is not focused or sidebar is open, focus to reader's content. Else, open reader's sidebar.
-			this.props.setNextLayoutFocus( 'content' );
-			this.props.setNextLayoutFocus( 'sidebar' );
-		} else {
-			this.props.setNextLayoutFocus( 'sidebar' );
-		}
+		this.handleLayoutFocus( 'reader' );
 	};
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
-		if ( config.isEnabled( 'nav-unification' ) ) {
-			if ( 'me' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
-				// when me is not focused or sidebar is open, focus to me's content. Else, open me's sidebar.
-				this.props.setNextLayoutFocus( 'content' );
-				this.props.setNextLayoutFocus( 'sidebar' );
-			} else {
-				this.props.setNextLayoutFocus( 'sidebar' );
-			}
-		}
+		this.handleLayoutFocus( 'me' );
 	};
 
 	preloadMySites = () => {
