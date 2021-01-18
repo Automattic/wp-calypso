@@ -49,16 +49,18 @@ export default function LicenseDetails( {
 				<li className="license-details__list-item license-details__list-item--wide">
 					<h4 className="license-details__label">{ translate( 'License code' ) }</h4>
 
-					<code className="license-details__license-key">{ licenseKey }</code>
+					<div className="license-details__license-key-row">
+						<code className="license-details__license-key">{ licenseKey }</code>
 
-					<ClipboardButton
-						text={ licenseKey }
-						className="license-details__clipboard-button"
-						borderless
-						compact
-					>
-						<Gridicon icon="clipboard" />
-					</ClipboardButton>
+						<ClipboardButton
+							text={ licenseKey }
+							className="license-details__clipboard-button"
+							borderless
+							compact
+						>
+							<Gridicon icon="clipboard" />
+						</ClipboardButton>
+					</div>
 				</li>
 
 				<li className="license-details__list-item">

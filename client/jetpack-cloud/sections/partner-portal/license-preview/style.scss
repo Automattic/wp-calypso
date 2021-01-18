@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/_breakpoints.scss';
+@import '~@wordpress/base-styles/_mixins.scss';
+
 .license-preview {
 	margin: 0;
 	font-size: 0.875rem;
@@ -38,13 +41,27 @@
 		font-weight: normal;
 		line-height: 1.75rem;
 		color: var( --studio-gray-100 );
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 
 		span + span {
 			margin-left: 12px;
+
+			@include break-xlarge() {
+				display: block;
+				margin-left: 0;
+			}
+
+			@include break-wide() {
+				display: inline;
+				margin-left: 12px;
+			}
 		}
 	}
 
 	&__tag {
+		white-space: nowrap;
 		font-size: 0.875rem;
 
 		&--is-detached {
@@ -62,11 +79,34 @@
 		}
 	}
 
+	&__product {
+		span {
+			display: none;
+
+			@include break-wide() {
+				display: inline;
+			}
+		}
+	}
+
+	&__label {
+		font-weight: 600;
+		white-space: nowrap;
+
+		@include break-xlarge() {
+			display: none;
+		}
+	}
+
 	&__copy-license-key {
 		&.button {
 			font-weight: 600;
 			color: var( --studio-gray-80 );
 			border-color: var( --color-text-subtle );
 		}
+	}
+
+	&__toggle {
+		padding: 0;
 	}
 }

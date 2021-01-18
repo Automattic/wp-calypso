@@ -70,8 +70,8 @@ export default function LicenseList() {
 				<h2>{ translate( 'Issued on' ) }</h2>
 				<h2>{ translate( 'Attached on' ) }</h2>
 				<h2>{ translate( 'Revoked on' ) }</h2>
-				<h2>{ /* Intentionally empty header. */ }</h2>
-				<h2>{ /* Intentionally empty header. */ }</h2>
+				<div>{ /* Intentionally empty header. */ }</div>
+				<div>{ /* Intentionally empty header. */ }</div>
 			</LicenseListItem>
 
 			{ data.map( ( license ) => (

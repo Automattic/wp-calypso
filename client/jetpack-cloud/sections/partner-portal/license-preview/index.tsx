@@ -89,14 +89,21 @@ export default function LicensePreview( {
 						) }
 					</h3>
 
-					<span>{ translate( 'Product: %s', { args: [ product ] } ) }</span>
+					<span className="license-preview__product">
+						<span>{ translate( 'Product:' ) } </span>
+						{ product }
+					</span>
 				</div>
 
 				<div>
+					<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
+
 					<FormattedDate date={ issuedOn } format="YYYY-MM-DD" />
 				</div>
 
 				<div>
+					<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
+
 					{ licenseState === STATE_ATTACHED && (
 						<FormattedDate date={ attachedOn } format="YYYY-MM-DD" />
 					) }
@@ -107,6 +114,8 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
+					<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
+
 					{ licenseState === STATE_REVOKED && (
 						<FormattedDate date={ revokedOn } format="YYYY-MM-DD" />
 					) }
@@ -129,7 +138,7 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
-					<Button onClick={ open } borderless>
+					<Button onClick={ open } className="license-preview__toggle" borderless>
 						<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
 					</Button>
 				</div>
