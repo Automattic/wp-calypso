@@ -126,12 +126,7 @@ class TwoStep extends Component {
 			return <Security2faSetup onFinished={ this.onSetupFinished } />;
 		}
 
-		return (
-			<Security2faDisable
-				userSettings={ this.props.userSettings }
-				onFinished={ this.onDisableFinished }
-			/>
-		);
+		return <Security2faDisable onFinished={ this.onDisableFinished } />;
 	};
 
 	renderApplicationPasswords = () => {
