@@ -281,6 +281,7 @@ export const FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT = 'product-scan-v2-no-slideout'
 export const FEATURE_PRODUCT_SCAN_DAILY_V2 = 'product-scan-daily-v2';
 export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = 'product-scan-realtime-v2';
 export const FEATURE_ANTISPAM_V2 = 'antispam-v2';
+export const FEATURE_AUTOMATED_SPAM_PROTECTION_V2 = 'automated-spam-protection-v2';
 export const FEATURE_PRODUCT_ANTISPAM_V2 = 'product-antispam-v2';
 export const FEATURE_ACTIVITY_LOG_V2 = 'activity-log-v2';
 export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = 'activity-log-1-year-v2';

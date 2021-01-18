@@ -24,6 +24,7 @@ import {
 	FEATURE_INSTANT_EMAIL_V2,
 	FEATURE_SEARCH_V2,
 	FEATURE_ANTISPAM_V2,
+	FEATURE_AUTOMATED_SPAM_PROTECTION_V2,
 	FEATURE_AKISMET_V2,
 	FEATURE_SPAM_BLOCK_V2,
 	FEATURE_ADVANCED_STATS_V2,
@@ -108,12 +109,15 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 		type: constants.PRODUCT_JETPACK_SCAN,
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
-		getFeatures: (): string[] => [
-			FEATURE_SCAN_V2,
-			FEATURE_ONE_CLICK_FIX_V2,
-			FEATURE_INSTANT_EMAIL_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
-		],
+		getFeatures: ( variant: string ): string[] =>
+			( {
+				spp: [ FEATURE_SCAN_V2, FEATURE_ONE_CLICK_FIX_V2, FEATURE_INSTANT_EMAIL_V2 ],
+			}[ variant ] || [
+				FEATURE_SCAN_V2,
+				FEATURE_ONE_CLICK_FIX_V2,
+				FEATURE_INSTANT_EMAIL_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			] ),
 	},
 	[ constants.PRODUCT_JETPACK_SCAN_MONTHLY ]: {
 		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_SCAN_MONTHLY ],
@@ -121,12 +125,15 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 		type: constants.PRODUCT_JETPACK_SCAN,
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
-		getFeatures: (): string[] => [
-			FEATURE_SCAN_V2,
-			FEATURE_ONE_CLICK_FIX_V2,
-			FEATURE_INSTANT_EMAIL_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
-		],
+		getFeatures: ( variant: string ): string[] =>
+			( {
+				spp: [ FEATURE_SCAN_V2, FEATURE_ONE_CLICK_FIX_V2, FEATURE_INSTANT_EMAIL_V2 ],
+			}[ variant ] || [
+				FEATURE_SCAN_V2,
+				FEATURE_ONE_CLICK_FIX_V2,
+				FEATURE_INSTANT_EMAIL_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			] ),
 	},
 	[ constants.PRODUCT_JETPACK_SEARCH ]: {
 		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_SEARCH ],
@@ -134,13 +141,16 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 		type: constants.PRODUCT_JETPACK_SEARCH,
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
-		getFeatures: (): string[] => [
-			FEATURE_SEARCH_V2,
-			FEATURE_FILTERING_V2,
-			FEATURE_LANGUAGE_SUPPORT_V2,
-			FEATURE_SPELLING_CORRECTION_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
-		],
+		getFeatures: ( variant: string ): string[] =>
+			( {
+				spp: [ FEATURE_SEARCH_V2, FEATURE_FILTERING_V2, FEATURE_LANGUAGE_SUPPORT_V2 ],
+			}[ variant ] || [
+				FEATURE_SEARCH_V2,
+				FEATURE_FILTERING_V2,
+				FEATURE_LANGUAGE_SUPPORT_V2,
+				FEATURE_SPELLING_CORRECTION_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			] ),
 	},
 	[ constants.PRODUCT_JETPACK_SEARCH_MONTHLY ]: {
 		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_SEARCH_MONTHLY ],
@@ -148,13 +158,16 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 		type: constants.PRODUCT_JETPACK_SEARCH,
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
-		getFeatures: (): string[] => [
-			FEATURE_SEARCH_V2,
-			FEATURE_FILTERING_V2,
-			FEATURE_LANGUAGE_SUPPORT_V2,
-			FEATURE_SPELLING_CORRECTION_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
-		],
+		getFeatures: ( variant: string ): string[] =>
+			( {
+				spp: [ FEATURE_SEARCH_V2, FEATURE_FILTERING_V2, FEATURE_LANGUAGE_SUPPORT_V2 ],
+			}[ variant ] || [
+				FEATURE_SEARCH_V2,
+				FEATURE_FILTERING_V2,
+				FEATURE_LANGUAGE_SUPPORT_V2,
+				FEATURE_SPELLING_CORRECTION_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			] ),
 	},
 	[ constants.PRODUCT_JETPACK_ANTI_SPAM ]: {
 		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_ANTI_SPAM ],
@@ -162,13 +175,16 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 		type: constants.PRODUCT_JETPACK_ANTI_SPAM,
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
-		getFeatures: (): string[] => [
-			FEATURE_ANTISPAM_V2,
-			FEATURE_AKISMET_V2,
-			FEATURE_SPAM_BLOCK_V2,
-			FEATURE_ADVANCED_STATS_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
-		],
+		getFeatures: ( variant: string ): string[] =>
+			( {
+				spp: [ FEATURE_AUTOMATED_SPAM_PROTECTION_V2, FEATURE_AKISMET_V2, FEATURE_SPAM_BLOCK_V2 ],
+			}[ variant ] || [
+				FEATURE_ANTISPAM_V2,
+				FEATURE_AKISMET_V2,
+				FEATURE_SPAM_BLOCK_V2,
+				FEATURE_ADVANCED_STATS_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			] ),
 	},
 	[ constants.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: {
 		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ],
@@ -176,13 +192,16 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 		type: constants.PRODUCT_JETPACK_ANTI_SPAM,
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
-		getFeatures: (): string[] => [
-			FEATURE_ANTISPAM_V2,
-			FEATURE_AKISMET_V2,
-			FEATURE_SPAM_BLOCK_V2,
-			FEATURE_ADVANCED_STATS_V2,
-			FEATURE_PRIORITY_SUPPORT_V2,
-		],
+		getFeatures: ( variant: string ): string[] =>
+			( {
+				spp: [ FEATURE_AUTOMATED_SPAM_PROTECTION_V2, FEATURE_AKISMET_V2, FEATURE_SPAM_BLOCK_V2 ],
+			}[ variant ] || [
+				FEATURE_ANTISPAM_V2,
+				FEATURE_AKISMET_V2,
+				FEATURE_SPAM_BLOCK_V2,
+				FEATURE_ADVANCED_STATS_V2,
+				FEATURE_PRIORITY_SUPPORT_V2,
+			] ),
 	},
 };
 
