@@ -160,7 +160,7 @@ class TwoStep extends Component {
 			return null;
 		}
 
-		return <Security2faBackupCodes userSettings={ this.props.userSettings } />;
+		return <Security2faBackupCodes />;
 	};
 
 	render() {
