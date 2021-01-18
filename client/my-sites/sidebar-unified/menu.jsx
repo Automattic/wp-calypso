@@ -28,7 +28,6 @@ import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import { isExternal } from 'calypso/lib/url';
 import { externalRedirect } from 'calypso/lib/route/path';
 import { itemLinkMatches } from '../sidebar/utils';
-import { isWithinBreakpoint } from '@automattic/viewport';
 
 export const MySitesSidebarUnifiedMenu = ( {
 	count,
@@ -65,7 +64,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 		<li>
 			<ExpandableSidebarMenu
 				onClick={ () => {
-					if ( isWithinBreakpoint( '>660px' ) ) {
+					// @automattic/viewport doesn't have a breakpoint for medium (782px)
+					if ( window.innerWidth > 782 ) {
 						if ( isExternal( link ) ) {
 							// If the URL is external, page() will fail to replace state between different domains.
 							externalRedirect( link );
