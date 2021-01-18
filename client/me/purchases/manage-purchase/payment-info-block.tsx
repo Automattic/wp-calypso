@@ -38,7 +38,7 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		if ( isPaidWithCreditCard( purchase ) ) {
 			return (
 				<PaymentInfoBlockWrapper
-					willNotBeBilled={ isExpiring( purchase ) && purchase.payment.creditCard }
+					willNotBeBilled={ !! ( isExpiring( purchase ) && purchase.payment.creditCard ) }
 				>
 					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
 					{ purchase.payment.creditCard?.number ?? '' }
