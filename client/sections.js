@@ -222,6 +222,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'titan-links',
+		paths: [ '/titan' ],
+		module: 'calypso/my-sites/email/titan-redirector',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'email',
 		paths: [ '/email' ],
 		module: 'calypso/my-sites/email',

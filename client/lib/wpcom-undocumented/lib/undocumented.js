@@ -775,6 +775,17 @@ Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
 	);
 };
 
+Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/titan/redirect-info/${ encodeURIComponent( mode ) }`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ jwt },
+		fn
+	);
+};
+
 /**
  * Retrieves the auto login link to Titan's control panel.
  *
