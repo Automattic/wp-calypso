@@ -12,7 +12,14 @@ import { localize } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isDomainRegistration, isPlan } from 'calypso/lib/products-values';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
+import {
+	isDomainRegistration,
+	isGoogleApps,
+	isPlan,
+	isTitanMail,
+} from 'calypso/lib/products-values';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';
@@ -50,6 +57,10 @@ class AutoRenewDisablingDialog extends Component {
 
 		if ( isPlan( purchase ) ) {
 			return 'plan';
+		}
+
+		if ( isTitanMail( purchase ) || isGoogleApps( purchase ) ) {
+			return 'email';
 		}
 
 		return null;
@@ -109,6 +120,25 @@ class AutoRenewDisablingDialog extends Component {
 						comment:
 							'%(planName)s is the name of a WordPress.com plan, e.g. Personal, Premium, Business. ' +
 							'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
+							'%(expiryDate)s is a date string, e.g. May 14, 2020',
+					}
+				);
+			case 'email':
+				return translate(
+					'By canceling auto-renewal, your %(emailProductName)s subscription for %(domainName)s will expire on %(expiryDate)s. ' +
+						'After it expires, you will not be able to send and receive emails for this domain. ' +
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
+					{
+						args: {
+							domainName: purchase.meta,
+							emailProductName: isTitanMail( purchase )
+								? getTitanProductName()
+								: getGoogleMailServiceFamily(),
+							expiryDate,
+						},
+						comment:
+							'%(emailProductName)s is the name of an email product, e.g. Email, Titan Mail, Google Workspace. ' +
+							'%(domainName)s is a domain name, e.g. example.com. ' +
 							'%(expiryDate)s is a date string, e.g. May 14, 2020',
 					}
 				);
