@@ -1148,7 +1148,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Use the Calypso Media Modal: @parallel', function () {
+	describe.skip( 'Use the Calypso Media Modal: @parallel', function () {
 		let fileDetails;
 
 		// Create image file for upload
