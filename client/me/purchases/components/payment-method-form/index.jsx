@@ -23,7 +23,7 @@ import CreditCardFormFields from 'calypso/components/credit-card-form-fields';
 import FormButton from 'calypso/components/forms/form-button';
 import notices from 'calypso/notices';
 import { validatePaymentDetails } from 'calypso/lib/checkout';
-import ValidationErrorList from 'calypso/notices/validation-error-list';
+import ValidationErrorList from './validation-error-list';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
 import getCountries from 'calypso/state/selectors/get-countries';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
