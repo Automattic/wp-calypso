@@ -29,7 +29,7 @@ import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudfla
  */
 import './style.scss';
 
-const validateTrackingId = ( code ) => ! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i ); // @TODO: how are cloudflare tracking IDs formatted?
+const validateTrackingId = ( code ) => ! code || code.match( /^[a-fA-F0-9]+$/i );
 
 export function CloudflareAnalyticsSettings( {
 	fields,
@@ -51,12 +51,11 @@ export function CloudflareAnalyticsSettings( {
 	);
 	const isSubmitButtonDisabled =
 		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
-
 	const handleFieldChange = ( key, value ) => {
 		const updatedCloudflareFields = Object.assign( {}, fields.cloudflare || {}, {
 			[ key ]: value,
 		} );
-		updateFields( { cloudflare: updatedCloudflareFields } );
+		updateFields( { cloudflare_analytics: updatedCloudflareFields } );
 	};
 
 	const handleCodeChange = ( event ) => {
@@ -117,7 +116,7 @@ export function CloudflareAnalyticsSettings( {
 						<FormTextInput
 							name="cloudflareCode"
 							id="cloudflareCode"
-							value={ fields.cloudflare ? fields.cloudflare.code : '' }
+							value={ fields.cloudflare_analytics ? fields.cloudflare_analytics.code : '' }
 							onChange={ handleCodeChange }
 							placeholder={ placeholderText }
 							disabled={ isRequestingSettings || ! enableForm }
@@ -181,7 +180,7 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps, null, { pure: false } );
 
-const getFormSettings = partialRight( pick, [ 'cloudflare' ] );
+const getFormSettings = partialRight( pick, [ 'cloudflare_analytics' ] );
 
 export default flowRight(
 	connectComponent,
