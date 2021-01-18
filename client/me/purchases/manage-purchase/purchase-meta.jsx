@@ -51,6 +51,7 @@ import { canEditPaymentDetails } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 
 export default function PurchaseMeta( {
 	purchaseId = false,
@@ -289,6 +290,10 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 				period = translate( 'month' );
 				break;
 		}
+	}
+
+	if ( productSlug === TITAN_MAIL_MONTHLY_SLUG ) {
+		period = translate( 'month' );
 	}
 
 	return translate( '%(priceText)s %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
