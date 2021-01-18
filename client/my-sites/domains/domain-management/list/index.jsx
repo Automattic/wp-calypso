@@ -432,6 +432,8 @@ export class List extends React.Component {
 			hasSingleSite,
 		} = this.props;
 
+		const { changePrimaryDomainModeEnabled, primaryDomainIndex, settingPrimaryDomain } = this.state;
+
 		const domains =
 			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
 				? this.filterOutWpcomDomains( this.props.domains )
@@ -445,13 +447,14 @@ export class List extends React.Component {
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
-				onClick={ this.state.settingPrimaryDomain ? noop : this.goToEditDomainRoot }
-				isBusy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
+				onClick={ settingPrimaryDomain ? noop : this.goToEditDomainRoot }
+				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
+				isChecked={ changePrimaryDomainModeEnabled && index === primaryDomainIndex }
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
 				} ) }
-				disabled={ this.state.settingPrimaryDomain || this.state.changePrimaryDomainModeEnabled }
-				enableSelection={ this.state.changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
+				disabled={ settingPrimaryDomain || changePrimaryDomainModeEnabled }
+				enableSelection={ changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
 				selectionIndex={ index }
 				onMakePrimaryClick={ this.handleUpdatePrimaryDomainOptionClick }
 				onSelect={ this.handleUpdatePrimaryDomain }

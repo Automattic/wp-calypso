@@ -133,43 +133,6 @@
 	}
 }
 
-.domain-management-list-item__content {
-	display: flex;
-	justify-content: space-between;
-
-	@include breakpoint-deprecated( '<960px' ) {
-		justify-content: flex-start;
-		flex-direction: column;
-	}
-}
-
-input[type='radio'].domain-management-list-item__radio {
-	margin-left: -8px;
-	margin-right: 12px;
-	margin-top: 19px;
-}
-
-.domain-management-list-item__spinner {
-	float: right;
-	margin-top: 12px;
-}
-
-.domain-management-list-item__busy-message {
-	text-transform: uppercase;
-	color: var( --color-neutral-50 );
-	font-weight: 600;
-	font-size: $font-body-extra-small;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	margin-top: 5px;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		float: right;
-		margin-top: -11px;
-		margin-right: 15px;
-	}
-}
-
 .list-all__container .list-all__site {
 	margin-bottom: 10px;
 }
@@ -362,6 +325,7 @@ input[type='radio'].domain-management-list-item__radio {
 	.domain-item__busy-message {
 		font-size: $font-body-small;
 		margin-left: auto;
+		margin-right: 5px;
 	}
 
 	.domain-item__upsell {
