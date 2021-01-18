@@ -121,6 +121,7 @@ describe( 'selectors', () => {
 				tagLine: undefined,
 				taxAmount: undefined,
 				taxText: undefined,
+				purchaseRenewalQuantity: null,
 				userId: NaN,
 			} );
 		} );
