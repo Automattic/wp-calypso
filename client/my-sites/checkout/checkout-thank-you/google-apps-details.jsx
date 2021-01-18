@@ -12,13 +12,14 @@ import PurchaseDetail from 'calypso/components/purchase-detail';
 import { useSelector } from 'react-redux';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { isGoogleApps } from 'calypso/lib/products-values';
-import { isGSuiteExtraLicenseProductSlug } from 'calypso/lib/gsuite';
+import { getGoogleMailServiceFamily, isGSuiteExtraLicenseProductSlug } from 'calypso/lib/gsuite';
 
 const GoogleAppsDetails = ( { purchases } ) => {
 	const email = useSelector( getCurrentUserEmail );
 
 	const purchase = purchases.find( isGoogleApps );
 	const productName = purchase.productName;
+	const productFamily = getGoogleMailServiceFamily( purchase.productSlug );
 
 	if ( isGSuiteExtraLicenseProductSlug( purchase.productSlug ) ) {
 		return (
@@ -62,23 +63,26 @@ const GoogleAppsDetails = ( { purchases } ) => {
 					args: {
 						productName,
 					},
+					comment:
+						'%(productName)s can be "G Suite", "G Suite Business" or "Google Workspace Business Starter"',
 				}
 			) }
 			description={
 				<div>
 					<p>
 						{ i18n.translate(
-							'We are setting up your new %(productName)s account but {{strong}}this process can take several ' +
+							'We are setting up your new %(productFamily)s account but {{strong}}this process can take several ' +
 								'minutes{{/strong}}. We will email you at %(email)s with login information once it is ' +
-								'ready, so you can start using your new professional email addresses and other %(productName)s apps.',
+								'ready, so you can start using your new professional email addresses and other %(productFamily)s apps.',
 							{
 								components: {
 									strong: <strong />,
 								},
 								args: {
 									email,
-									productName,
+									productFamily,
 								},
+								comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
 							}
 						) }
 					</p>
@@ -102,10 +106,11 @@ const GoogleAppsDetails = ( { purchases } ) => {
 					</p>
 				</div>
 			}
-			buttonText={ i18n.translate( 'Learn more about %(productName)s', {
+			buttonText={ i18n.translate( 'Learn more about %(productFamily)s', {
 				args: {
-					productName,
+					productFamily,
 				},
+				comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
 			} ) }
 			href={ GOOGLE_APPS_LEARNING_CENTER }
 			target="_blank"
