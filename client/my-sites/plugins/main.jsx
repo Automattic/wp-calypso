@@ -45,6 +45,7 @@ import {
 import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { Button } from '@automattic/components';
 import { isEnabled } from 'calypso/config';
+import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -462,10 +463,8 @@ export default flow(
 			const sites = getSelectedOrAllSitesWithPlugins( state );
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
-			/* eslint-disable wpcalypso/redux-no-bound-selectors */
-			const visibleSiteIds =
-				sites?.filter( ( site ) => site.visible )?.map( ( site ) => site.ID ) ?? [];
-			const siteIds = sites?.map( ( site ) => site.ID ) ?? [];
+			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
+			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
 
 			return {
