@@ -45,6 +45,7 @@ let driver;
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
+	await driver.sleep( Math.random() * Math.floor( 5000 ) );
 } );
 
 describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, function () {
