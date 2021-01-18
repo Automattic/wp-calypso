@@ -46,7 +46,7 @@
 		"@babel/preset-env": "^7.12.1",
 		"@babel/preset-react": "^7.12.5",
 		"@babel/preset-typescript": "^7.12.1",
-		"@types/webpack-env": "^1.15.2",
+		"@types/webpack-env": "^1.16.0",
 		"@wordpress/babel-plugin-import-jsx-pragma": "^2.7.0",
 		"@wordpress/browserslist-config": "^2.7.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^2.8.0",
