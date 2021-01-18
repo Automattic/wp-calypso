@@ -99,6 +99,14 @@ class Security2faSMSSettings extends React.Component {
 			return;
 		}
 
+		if (
+			phoneNumber.countryCode === this.props.userSettings.two_step_sms_country &&
+			phoneNumber.phoneNumber === this.props.userSettings.two_step_sms_phone_number
+		) {
+			this.onSubmitResponse();
+			return;
+		}
+
 		try {
 			await this.props.saveTwoStepSMSSettings( phoneNumber.countryCode, phoneNumber.phoneNumber );
 			this.onSubmitResponse();
