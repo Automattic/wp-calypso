@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { Placeholder, Spinner, ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { Disabled, Placeholder, Spinner, ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { BlockControls } from '@wordpress/block-editor';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
@@ -454,6 +454,29 @@ function getConnectUrl( props, connectURL ) {
 	return addQueryArgs( connectURL, { state: window.btoa( JSON.stringify( decodedState ) ) } );
 }
 
+function MaybeDisabledEdit( props ) {
+	// The block transformations menu renders a block preview popover using real blocks
+	// for transformation. The block previews do not play nicely with useEffect and
+	// updating content after a resolved API call. To disarm the block preview, we can
+	// check to see if the block is being rendered within a Disabled context, and set
+	// the isPreview flag accordingly.
+	return (
+		<Disabled.Consumer>
+			{ ( isDisabled ) => {
+				return (
+					<Edit
+						{ ...props }
+						attributes={ {
+							...props.attributes,
+							isPreview: isDisabled || props.attributes?.isPreview,
+						} }
+					/>
+				);
+			} }
+		</Disabled.Consumer>
+	);
+}
+
 export default compose( [
 	withSelect( ( select ) => {
 		const { getCurrentPostId } = select( 'core/editor' );
@@ -479,4 +502,4 @@ export default compose( [
 			createSuccessNotice: notices.createSuccessNotice,
 		};
 	} ),
-] )( Edit );
+] )( MaybeDisabledEdit );
