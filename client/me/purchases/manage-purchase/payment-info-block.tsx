@@ -91,7 +91,7 @@ function PaymentInfoBlockWrapper( {
 				<span>{ translate( 'Payment method' ) }</span>
 				{ isExpiring( purchase ) && (
 					<div className="manage-purchase__detail-label-subtitle">
-						{ translate( '(this payment method will not be billed)' ) }
+						{ translate( '(this will not be billed)' ) }
 					</div>
 				) }
 			</em>
