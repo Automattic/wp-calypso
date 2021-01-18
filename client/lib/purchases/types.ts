@@ -1,9 +1,10 @@
-// TODO: complete
+// TODO: complete this type
 export interface Purchase {
 	id: number;
 	saleAmount?: number;
 	amount: number;
 	meta?: string;
+	isRechargeable: boolean;
 	isDomainRegistration?: boolean;
 	productName: string;
 	currencyCode: string;
