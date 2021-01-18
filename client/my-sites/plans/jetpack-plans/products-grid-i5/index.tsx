@@ -11,8 +11,8 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { SWITCH_PLAN_SIDES_EXPERIMENT, SWITCH_PLAN_SIDES_TREATMENT } from '../experiments';
-import PlansFilterBarI5 from '../plans-filter-bar-i5';
-import ProductCardI5 from '../product-card-i5';
+import PlansFilterBarI5 from '../i5/plans-filter-bar-i5';
+import ProductCardI5 from '../i5/product-card-i5';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';

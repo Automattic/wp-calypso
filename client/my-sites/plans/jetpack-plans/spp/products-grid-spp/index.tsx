@@ -15,7 +15,7 @@ import {
 	SWITCH_PLAN_SIDES_TREATMENT,
 } from 'calypso/my-sites/plans/jetpack-plans/experiments';
 import PlansFilterBarI5 from 'calypso/my-sites/plans/jetpack-plans/i5/plans-filter-bar-i5';
-import ProductCardI5 from 'calypso/my-sites/plans/jetpack-plans/product-card-i5';
+import ProductCardI5 from 'calypso/my-sites/plans/jetpack-plans/i5/product-card-i5';
 import { getProductPosition } from 'calypso/my-sites/plans/jetpack-plans/product-grid/products-order';
 import {
 	getPlansToDisplay,

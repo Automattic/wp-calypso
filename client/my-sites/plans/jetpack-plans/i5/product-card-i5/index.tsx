@@ -8,9 +8,9 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PlanRenewalMessage from '../plan-renewal-message';
-import useItemPrice from '../use-item-price';
-import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
+import PlanRenewalMessage from '../../plan-renewal-message';
+import useItemPrice from '../../use-item-price';
+import { productAboveButtonText, productButtonLabel, productTooltip } from '../../utils';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card-i5';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from 'calypso/lib/plans';
@@ -26,7 +26,7 @@ import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors'
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, SelectorProduct, SiteProduct } from '../types';
+import type { Duration, PurchaseCallback, SelectorProduct, SiteProduct } from '../../types';
 
 interface ProductCardProps {
 	item: SelectorProduct;
