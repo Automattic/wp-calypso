@@ -83,8 +83,8 @@ describe( 'PaymentInfoBlock', () => {
 
 		it(
 			autoRenewStatus === 'enabled'
-				? 'does not render "this payment method will not be billed"'
-				: 'renders "this payment method will not be billed"',
+				? 'does not render "will not be billed"'
+				: 'renders "will not be billed"',
 			() => {
 				const expiryDate = new Date();
 				expiryDate.setDate( expiryDate.getDate() + 365 );
@@ -98,11 +98,11 @@ describe( 'PaymentInfoBlock', () => {
 				render( <PaymentInfoBlock purchase={ purchase } /> );
 				if ( expiryStatus === 'manualRenew' ) {
 					expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
-						'this payment method will not be billed'
+						'will not be billed'
 					);
 				} else {
 					expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
-						'this payment method will not be billed'
+						'will not be billed'
 					);
 				}
 			}
