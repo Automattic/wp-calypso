@@ -7,6 +7,7 @@ import { makeRedirectResponse, makeSuccessResponse } from '@automattic/composite
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -18,6 +19,7 @@ import {
 	getInitializedFields,
 } from 'calypso/me/purchases/components/payment-method-form/helpers';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = (
@@ -38,6 +40,7 @@ export async function assignNewCardProcessor(
 		apiParams,
 		stripe,
 		stripeConfiguration,
+		reduxDispatch,
 	}: {
 		purchase: Purchase;
 		translate: ReturnType< typeof useTranslate >;
@@ -45,9 +48,12 @@ export async function assignNewCardProcessor(
 		apiParams: unknown;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
+		reduxDispatch: ReturnType< typeof useDispatch >;
 	},
 	{ name, countryCode, postalCode }: { name: string; countryCode: string; postalCode: string }
 ): Promise< PaymentProcessorResponse > {
+	recordFormSubmitEvent( { reduxDispatch, purchase } );
+
 	const createStripeSetupIntentAsync = async ( paymentDetails: {
 		country: string;
 		'postal-code': string | number;
@@ -95,22 +101,40 @@ export async function assignNewCardProcessor(
 }
 
 export async function assignExistingCardProcessor(
-	purchaseId: string,
+	purchase: Purchase,
+	reduxDispatch: ReturnType< typeof useDispatch >,
 	{ storedDetailsId }: { storedDetailsId: string }
 ): Promise< PaymentProcessorResponse > {
-	return wpcomAssignPaymentMethod( purchaseId, storedDetailsId ).then( ( data ) => {
+	recordFormSubmitEvent( { reduxDispatch, purchase } );
+	return wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId ).then( ( data ) => {
 		return makeSuccessResponse( data );
 	} );
 }
 
 export async function assignPayPalProcessor(
-	purchaseId: string
+	purchase: Purchase,
+	reduxDispatch: ReturnType< typeof useDispatch >
 ): Promise< PaymentProcessorResponse > {
+	recordFormSubmitEvent( { reduxDispatch, purchase } );
 	return wpcomCreatePayPalAgreement(
-		purchaseId,
+		String( purchase.id ),
 		addQueryArgs( window.location.href, { success: 'true' } ),
 		window.location.href
 	).then( ( data ) => {
 		return makeRedirectResponse( data );
 	} );
+}
+
+function recordFormSubmitEvent( {
+	reduxDispatch,
+	purchase,
+}: {
+	reduxDispatch: ReturnType< typeof useDispatch >;
+	purchase: Purchase;
+} ) {
+	reduxDispatch(
+		recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
+			product_slug: purchase.productSlug,
+		} )
+	);
 }
