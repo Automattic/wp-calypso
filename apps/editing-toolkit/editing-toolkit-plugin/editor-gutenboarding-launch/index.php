@@ -20,18 +20,25 @@ function enqueue_script_and_style() {
 		return;
 	}
 
+	$obj = apply_filters( 'a8c_enable_focused_launch_flow', true );
+
+	// Decide which launch script to load
+	$script_name = $obj['isFocusedLaunch'] ? 'focused-launch' : 'step-by-step';
+
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.asset.php';
-	$script_dependencies = isset( $asset_file['dependences'] ) ? $asset_file['dependencies'] : array();
-	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.js' );
+	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
+	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $script_name . '.js' );
 	$style_version       = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-gutenboarding-launch.css' );
 
 	wp_enqueue_script(
 		'a8c-fse-editor-gutenboarding-launch-script',
-		plugins_url( 'dist/editor-gutenboarding-launch.js', __FILE__ ),
+		plugins_url( 'dist/' . $script_name . '.js', __FILE__ ),
 		$script_dependencies,
 		$script_version,
 		true
 	);
+
+	var_dump($script_name);
 
 	wp_set_script_translations( 'a8c-fse-editor-gutenboarding-launch-script', 'full-site-editing' );
 

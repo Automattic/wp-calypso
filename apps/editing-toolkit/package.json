@@ -25,10 +25,15 @@
 		"common": "calypso-build --env source='common','common/data-stores'",
 		"dev:common": "yarn run common",
 		"build:common": "NODE_ENV=production yarn run common",
-		"editor-gutenboarding-launch": "calypso-build --env source='editor-gutenboarding-launch'",
+
+		"editor-gutenboarding-launch": "npm-run-all --parallel editor-gutenboarding-launch-*",
+		"editor-gutenboarding-launch-step-by-step": "calypso-build --source='editor-gutenboarding-launch'",
+		"editor-gutenboarding-launch-focused": "calypso-build --source='editor-gutenboarding-launch/focused-launch'",
 		"dev:editor-gutenboarding-launch": "yarn run editor-gutenboarding-launch",
 		"build:editor-gutenboarding-launch": "NODE_ENV=production yarn run editor-gutenboarding-launch",
-		"editor-site-launch": "calypso-build --env source='editor-site-launch'",
+
+
+		"editor-site-launch": "calypso-build --source='editor-site-launch'",
 		"dev:editor-site-launch": "yarn run editor-site-launch",
 		"build:editor-site-launch": "NODE_ENV=production yarn run editor-site-launch",
 		"newspack-blocks": "npm run sync:newspack-blocks -- --nodemodules && npm-run-all --parallel newspack-blocks-*",
