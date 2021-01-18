@@ -2,10 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -21,7 +19,6 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SectionHeader from 'calypso/components/section-header';
@@ -37,33 +34,17 @@ import FormattedHeader from 'calypso/components/formatted-header';
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:me:profile' );
-
-/* eslint-disable react/prefer-es6-class */
-const Profile = createReactClass( {
-	displayName: 'Profile',
-
-	mixins: [ observe( 'userSettings' ) ],
-
-	componentDidMount() {
-		debug( this.displayName + ' component is mounted.' );
-	},
-
-	componentWillUnmount() {
-		debug( this.displayName + ' component is unmounting.' );
-	},
-
+class Profile extends React.Component {
 	getClickHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	}
 
 	getFocusHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	},
+	}
 
 	render() {
-		const gravatarProfileLink =
-			'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
+		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
 
 		return (
 			<Main className="profile is-wide-layout">
@@ -160,12 +141,10 @@ const Profile = createReactClass( {
 
 						<p className="profile__submit-button-wrapper">
 							<FormButton
-								disabled={
-									! this.props.userSettings.hasUnsavedSettings() || this.props.getDisabledState()
-								}
+								disabled={ ! this.props.hasUnsavedUserSettings || this.props.getDisabledState() }
 								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
 							>
-								{ this.props.formState.submittingForm
+								{ this.props.getDisabledState()
 									? this.props.translate( 'Saving…' )
 									: this.props.translate( 'Save profile details' ) }
 							</FormButton>
@@ -176,9 +155,12 @@ const Profile = createReactClass( {
 				<ProfileLinks />
 			</Main>
 		);
-	},
-} );
+	}
+}
 
-const connectComponent = connect( null, { recordGoogleEvent } );
-
-export default flowRight( connectComponent, protectForm, localize, withFormBase )( Profile );
+export default compose(
+	connect( null, { recordGoogleEvent } ),
+	protectForm,
+	localize,
+	withFormBase
+)( Profile );

@@ -27,14 +27,12 @@ export default function () {
 		);
 	}
 
-	if ( config.isEnabled( 'help/courses' ) ) {
-		page(
-			'/help/courses',
-			helpController.loggedOut,
-			sidebar,
-			helpController.courses,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/help/courses',
+		helpController.loggedOut,
+		sidebar,
+		helpController.courses,
+		makeLayout,
+		clientRender
+	);
 }

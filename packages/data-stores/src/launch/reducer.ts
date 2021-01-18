@@ -20,6 +20,13 @@ const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name,
 	return state;
 };
 
+const siteTitle: Reducer< string | undefined, LaunchAction > = ( state = undefined, action ) => {
+	if ( action.type === 'SET_SITE_TITLE' ) {
+		return action.title;
+	}
+	return state;
+};
+
 const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, LaunchAction > = (
 	state,
 	action
@@ -150,6 +157,7 @@ const shouldDisplaySuccessView: Reducer< boolean, LaunchAction > = ( state = fal
 
 const reducer = combineReducers( {
 	step,
+	siteTitle,
 	domain,
 	confirmedDomainSelection,
 	domainSearch,

@@ -12,7 +12,6 @@ import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
 import monitor from './monitor/reducer';
-import vouchers from './vouchers/reducer';
 import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import blogStickers from './blog-stickers/reducer';
@@ -390,7 +389,6 @@ export default combineReducers( {
 	products,
 	guidedTransfer,
 	monitor,
-	vouchers,
 	requesting,
 	sharingButtons,
 	blogStickers,

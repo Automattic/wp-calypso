@@ -76,9 +76,6 @@ function getExternals() {
 		// to the path of the `build/server.js` bundle.
 		{
 			// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
-			'webpack.config': {
-				commonjs: '../client/webpack.config.js',
-			},
 			'calypso/webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
@@ -135,10 +132,9 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'calypso:src', 'module', 'main' ],
-		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
+		modules: [ path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
 			'calypso/config': 'calypso/server/config',
-			config: 'calypso/server/config',
 		},
 	},
 	node: {
@@ -168,10 +164,6 @@ const webpackConfig = {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
 		new webpack.NormalModuleReplacementPlugin(
-			/^my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
 			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
 			'calypso/components/empty-component'
 		), // Depends on BOM
@@ -182,7 +174,6 @@ const webpackConfig = {
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' ),
 		new webpack.NormalModuleReplacementPlugin( /^calypso[/\\]lib[/\\]desktop$/, 'lodash/noop' )
 	);
 }

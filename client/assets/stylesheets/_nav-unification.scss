@@ -10,7 +10,7 @@
  * IMPORTANT: When adding to this file please also add the source file in a comment.
  */
 
-.is-nav-unification {
+.theme-default .is-nav-unification { // excludes theme-jetpack-cloud.
 	// breakpoint used in wp-admin
 	@media only screen and ( min-width: 782px ) {
 		// client/assets/stylesheets/shared/_variables.scss

@@ -74,6 +74,7 @@ import {
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
@@ -410,6 +411,7 @@ class ManagePurchase extends Component {
 			isAtomicSite &&
 			isSubscription( purchase ) &&
 			! isGoogleApps( purchase ) &&
+			! isTitanMail( purchase ) &&
 			! isJetpackSearch( purchase )
 		) {
 			text = translate( 'Contact Support to Cancel your Subscription' );

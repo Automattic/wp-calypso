@@ -39,14 +39,15 @@
 		"@wordpress/icons": "^2.4.0",
 		"@wordpress/primitives": "^1.7.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.20",
 		"tslib": "^1.10.0",
 		"uuid": "^7.0.2",
 		"debug": "^4.1.1"
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
-		"@wordpress/base-styles": "^2.0.1"
+		"@wordpress/base-styles": "^2.0.1",
+		"prop-types": "^15.7.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.22.3",

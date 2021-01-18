@@ -32,7 +32,7 @@
 		"@babel/runtime": "^7.12.5",
 		"classnames": "^2.2.6",
 		"gridicons": "^3.3.1",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.20",
 		"prop-types": "^15.7.2",
 		"react-modal": "^3.8.1"
 	},
@@ -42,9 +42,7 @@
 	},
 	"devDependencies": {
 		"@storybook/addon-actions": "^6.1.10",
-		"enzyme": "^3.11.0",
-		"react-docgen-typescript-loader": "^3.7.2",
-		"ts-loader": "^8.0.8"
+		"enzyme": "^3.11.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",

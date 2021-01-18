@@ -19,7 +19,12 @@ import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from './translate-payment-method-names';
-import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
+import {
+	isPlan,
+	isDomainTransferProduct,
+	isDomainProduct,
+	isDotComPlan,
+} from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
 import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
@@ -202,33 +207,13 @@ function translateReponseCartProductToWPCOMCartItem(
 	} = serverCartItem;
 
 	let label = product_name || '';
-	let sublabel;
-	if ( isPlan( serverCartItem ) ) {
-		if ( isRenewal( serverCartItem ) ) {
-			sublabel = String( translate( 'Plan Renewal' ) );
-		} else {
-			sublabel = String( translate( 'Plan Subscription' ) );
-		}
-	} else if ( 'premium_theme' === product_slug || 'concierge-session' === product_slug ) {
-		sublabel = '';
-	} else if (
-		meta &&
+	const sublabel = String( getSublabel( serverCartItem ) );
+
+	if (
+		serverCartItem.meta &&
 		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
 	) {
 		label = meta;
-		if ( isRenewal( serverCartItem ) && product_name ) {
-			sublabel = String(
-				translate( '%(productName)s Renewal', { args: { productName: product_name } } )
-			);
-		}
-		if ( isRenewal( serverCartItem ) && ! product_name ) {
-			sublabel = String( translate( 'Renewal' ) );
-		}
-		if ( ! isRenewal( serverCartItem ) ) {
-			sublabel = product_name || '';
-		}
-	} else if ( isRenewal( serverCartItem ) ) {
-		sublabel = String( translate( 'Renewal' ) );
 	}
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
@@ -427,4 +412,45 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 function getCouponIdFromProducts( items: WPCOMCartItem[] ): string | undefined {
 	const couponItem = items.find( ( item ) => item.type === 'coupon' );
 	return couponItem?.wpcom_meta?.couponCode;
+}
+
+function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
+	const isRenewalItem = isRenewal( serverCartItem );
+	const { meta, product_name: productName } = serverCartItem;
+
+	if ( isDotComPlan( serverCartItem ) ) {
+		if ( isRenewalItem ) {
+			return translate( 'Plan Renewal' );
+		}
+
+		switch ( serverCartItem.months_per_bill_period ) {
+			case 1:
+				return translate( 'Monthly subscription' );
+			case 12:
+				return translate( 'One year subscription' );
+			case 24:
+				return translate( 'Two year subscription' );
+			default:
+				return translate( 'Plan Subscription' );
+		}
+	}
+
+	if ( isPlan( serverCartItem ) ) {
+		return isRenewalItem ? translate( 'Plan Renewal' ) : translate( 'Plan Subscription' );
+	}
+
+	if (
+		meta &&
+		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
+	) {
+		if ( ! isRenewalItem ) {
+			return productName || '';
+		}
+
+		if ( productName ) {
+			return translate( '%(productName)s Renewal', { args: { productName } } );
+		}
+	}
+
+	return isRenewalItem ? translate( 'Renewal' ) : '';
 }

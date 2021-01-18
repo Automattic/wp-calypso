@@ -12,7 +12,7 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { PluginsList } from '..';
-import { sites } from './fixtures';
+import { sites, sitesObject } from './fixtures';
 
 describe( 'PluginsList', () => {
 	describe( 'rendering bulk actions', () => {
@@ -22,8 +22,8 @@ describe( 'PluginsList', () => {
 
 		beforeAll( () => {
 			plugins = [
-				{ sites, slug: 'hello', name: 'Hello Dolly' },
-				{ sites, slug: 'jetpack', name: 'Jetpack' },
+				{ sites: sitesObject, slug: 'hello', name: 'Hello Dolly' },
+				{ sites: sitesObject, slug: 'jetpack', name: 'Jetpack' },
 			];
 
 			props = {
@@ -38,6 +38,7 @@ describe( 'PluginsList', () => {
 					hello: plugins[ 0 ],
 					jetpack: plugins[ 1 ],
 				},
+				allSites: sites,
 			};
 		} );
 

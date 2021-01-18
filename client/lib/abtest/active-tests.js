@@ -19,14 +19,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	builderReferralThemesBanner: {
-		datestamp: '20181218',
-		variations: {
-			builderReferralBanner: 25,
-			original: 75,
-		},
-		defaultVariation: 'original',
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -64,15 +56,6 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-	},
-	freePlansDomainUpsell: {
-		datestamp: '20201210',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
 	},
 	newUsersWithFreePlan: {
 		datestamp: '20210107',

@@ -42,8 +42,10 @@ const ExpandableSidebarHeading = ( {
 				/>
 			) }
 			{ undefined !== customIcon && customIcon }
-			<span className="sidebar__expandable-title">{ title }</span>
-			{ undefined !== count && <Count count={ count } /> }
+			<span className="sidebar__expandable-title">
+				{ title }
+				{ undefined !== count && <Count count={ count } /> }
+			</span>
 			<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
 		</SidebarHeading>
 	);

@@ -60,6 +60,7 @@ import {
 	isVideoPress,
 	isConciergeSession,
 	isTrafficGuide,
+	isTitanMail,
 	isMonthly,
 } from 'calypso/lib/products-values';
 import sortProducts from 'calypso/lib/products-values/sort';
@@ -775,17 +776,6 @@ export function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
-export function fillGoogleAppsRegistrationData( cart, registrationData ) {
-	const googleAppsItems = filter( getAllCartItems( cart ), isGoogleApps );
-	return flow.apply(
-		null,
-		googleAppsItems.map( function ( item ) {
-			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-			return addCartItem( item );
-		} )
-	);
-}
-
 /**
  * Creates a new shopping cart item for Titan Mail Monthly.
  *
@@ -793,10 +783,13 @@ export function fillGoogleAppsRegistrationData( cart, registrationData ) {
  * @returns {CartItemValue} the new item as `CartItemValue` object
  */
 export function titanMailMonthly( properties ) {
-	return assign( domainItem( TITAN_MAIL_MONTHLY_SLUG, properties.domain, properties.source ), {
-		quantity: properties.quantity,
-		extra: properties.extra,
-	} );
+	return assign(
+		domainItem( TITAN_MAIL_MONTHLY_SLUG, properties.meta ?? properties.domain, properties.source ),
+		{
+			quantity: properties.quantity,
+			extra: properties.extra,
+		}
+	);
 }
 
 /**
@@ -987,6 +980,10 @@ export function getRenewalItemFromProduct( product, properties ) {
 
 	if ( isGoogleApps( product ) ) {
 		cartItem = googleApps( product );
+	}
+
+	if ( isTitanMail( product ) ) {
+		cartItem = titanMailMonthly( product );
 	}
 
 	if ( isSiteRedirect( product ) ) {

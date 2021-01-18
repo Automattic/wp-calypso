@@ -19,12 +19,14 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useDomainSearch, useDomainSelection, useSiteDomains } from '../../hooks';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 import GoBackButton from '../go-back-button';
+import LaunchContext from '../../context';
 
 import './style.scss';
 
 const ANALYTICS_UI_LOCATION = 'domain_step';
 
 const DomainDetails: React.FunctionComponent = () => {
+	const { getCurrentLaunchFlowUrl, redirectTo } = React.useContext( LaunchContext );
 	const locale = useLocale();
 
 	const { siteSubdomain } = useSiteDomains();
@@ -34,6 +36,12 @@ const DomainDetails: React.FunctionComponent = () => {
 
 	const goBack = () => {
 		history.goBack();
+	};
+
+	const launchFlowUrl = getCurrentLaunchFlowUrl();
+	const redirectToUseDomainFlow = (): void => {
+		const useYourDomainUrl = `/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSubdomain?.domain }&source=${ launchFlowUrl }`;
+		redirectTo( useYourDomainUrl );
 	};
 
 	const handleSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
@@ -79,6 +87,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					segregateFreeAndPaid
 					locale={ locale }
 					itemType={ ITEM_TYPE_BUTTON }
+					onUseYourDomainClick={ redirectToUseDomainFlow }
 				/>
 			</div>
 		</div>

@@ -63,6 +63,10 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
 		( memo, siteId ) => {
+			if ( isRequesting( state, siteId ) ) {
+				return memo;
+			}
+
 			const list = state.plugins.installed.plugins[ siteId ] || [];
 			list.forEach( ( item ) => {
 				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
@@ -118,6 +122,11 @@ export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	} );
 
 	return sortBy( pluginSites, ( siteId ) => getSiteTitle( state, siteId ).toLowerCase() );
+}
+
+export function getSiteObjectsWithPlugin( state, siteIds, pluginSlug ) {
+	const siteIdsWithPlugin = getSitesWithPlugin( state, siteIds, pluginSlug );
+	return siteIdsWithPlugin.map( ( siteId ) => getSite( state, siteId ) );
 }
 
 export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {

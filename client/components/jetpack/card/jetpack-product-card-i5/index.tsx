@@ -34,7 +34,7 @@ type OwnProps = {
 	productName: TranslateResult;
 	headingLevel?: number;
 	description?: ReactNode;
-	currencyCode: string | null;
+	currencyCode?: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
 	billingTerm: Duration;
@@ -46,8 +46,11 @@ type OwnProps = {
 	isOwned?: boolean;
 	isDeprecated?: boolean;
 	isAligned?: boolean;
+	isDisabled?: boolean;
+	disabledMessage?: TranslateResult | null;
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
+	aboveButtonText?: TranslateResult | ReactNode;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -71,8 +74,11 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	isDeprecated,
 	isAligned,
 	features,
+	isDisabled,
+	disabledMessage,
 	displayFrom,
 	tooltipText,
+	aboveButtonText = null,
 }: Props ) => {
 	const translate = useTranslate();
 	const isDiscounted = isFinite( discountedPrice );
@@ -83,6 +89,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	return (
 		<div
 			className={ classNames( 'jetpack-product-card-i5', {
+				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
 				'is-aligned': isAligned,
@@ -129,10 +136,17 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 						</>
 					) }
 				</div>
+				{ aboveButtonText && (
+					<p className="jetpack-product-card-i5__above-button">{ aboveButtonText }</p>
+				) }
+				{ isDisabled && disabledMessage && (
+					<p className="jetpack-product-card-i5__disabled-message">{ disabledMessage }</p>
+				) }
 				<Button
 					primary={ buttonPrimary }
 					className="jetpack-product-card-i5__button"
 					onClick={ onButtonClick }
+					disabled={ isDisabled }
 				>
 					{ buttonLabel }
 				</Button>

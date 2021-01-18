@@ -28,7 +28,6 @@ import {
 import { planMatches, isWpComPlan } from 'calypso/lib/plans';
 import {
 	isMonthly as isMonthlyPlan,
-	GROUP_WPCOM,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 } from 'calypso/lib/plans/constants';
@@ -53,7 +52,6 @@ function WPLineItem( {
 	onChangePlanLength,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
-	isMonthlyPricingTest,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -86,15 +84,6 @@ function WPLineItem( {
 
 	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
 
-	// Unless a user in the monthly pricing test, reset the related monthly plan costs
-	if ( ! isMonthlyPricingTest && item.wpcom_meta ) {
-		item.wpcom_meta = {
-			...item.wpcom_meta,
-			related_monthly_plan_cost_display: '',
-			related_monthly_plan_cost_integer: 0,
-		};
-	}
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -110,14 +99,13 @@ function WPLineItem( {
 			</span>
 			{ item.sublabel && (
 				<LineItemMeta>
-					<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
+					<LineItemSublabelAndPrice item={ item } />
 					<DomainDiscountCallout item={ item } />
-					{ isMonthlyPricingTest && <AnnualDiscountCallout item={ item } /> }
-					<DiscountForFirstYearOnly item={ item } />
+					<AnnualDiscountCallout item={ item } />
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
-			{ isTitanMail && <TitanMailMeta item={ item } /> }
+			{ isTitanMail && <TitanMailMeta item={ item } isRenewal={ isRenewal } /> }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
@@ -168,7 +156,6 @@ function WPLineItem( {
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
 					isDisabled={ isDisabled }
-					isMonthlyPricingTest={ isMonthlyPricingTest }
 				/>
 			) }
 		</div>
@@ -192,7 +179,6 @@ WPLineItem.propTypes = {
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
-	isMonthlyPricingTest: PropTypes.bool,
 };
 
 function LineItemPrice( { item, isSummary } ) {
@@ -349,7 +335,6 @@ export function WPOrderReviewLineItems( {
 	getItemVariants,
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
-	isMonthlyPricingTest,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -374,7 +359,6 @@ export function WPOrderReviewLineItems( {
 								onChangePlanLength={ onChangePlanLength }
 								isSummary={ isSummary }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-								isMonthlyPricingTest={ isMonthlyPricingTest }
 							/>
 						</WPOrderReviewListItem>
 					);
@@ -398,7 +382,6 @@ WPOrderReviewLineItems.propTypes = {
 	),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
-	isMonthlyPricingTest: PropTypes.bool,
 };
 
 const WPOrderReviewList = styled.ul`
@@ -440,23 +423,30 @@ function GSuiteUsersList( { item } ) {
 	);
 }
 
-function TitanMailMeta( { item } ) {
+function TitanMailMeta( { item, isRenewal } ) {
 	const translate = useTranslate();
 	const quantity = item.wpcom_meta?.extra?.new_quantity ?? 1;
 	const domainName = item.wpcom_meta?.meta;
+	const translateArgs = {
+		args: {
+			numberOfMailboxes: quantity,
+			domainName,
+		},
+		count: quantity,
+	};
 	return (
 		<LineItemMeta>
-			{ translate(
-				'%(mailboxes)d new mailbox for %(domainName)s',
-				'%(mailboxes)d new mailboxes for %(domainName)s',
-				{
-					args: {
-						mailboxes: quantity,
-						domainName,
-					},
-					count: quantity,
-				}
-			) }
+			{ isRenewal
+				? translate(
+						'%(numberOfMailboxes)d mailbox for %(domainName)s',
+						'%(numberOfMailboxes)d mailboxes for %(domainName)s',
+						translateArgs
+				  )
+				: translate(
+						'%(numberOfMailboxes)d new mailbox for %(domainName)s',
+						'%(numberOfMailboxes)d new mailboxes for %(domainName)s',
+						translateArgs
+				  ) }
 		</LineItemMeta>
 	);
 }
@@ -530,7 +520,7 @@ function shouldLineItemBeShownWhenStepInactive( item ) {
 	return ! itemTypesToIgnore.includes( item.type );
 }
 
-function LineItemSublabelAndPrice( { item, isMonthlyPricingTest = false } ) {
+function LineItemSublabelAndPrice( { item } ) {
 	const translate = useTranslate();
 	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
 	const isDomainMap = item.type === 'domain_map';
@@ -540,18 +530,7 @@ function LineItemSublabelAndPrice( { item, isMonthlyPricingTest = false } ) {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
-		if ( isMonthlyPricingTest ) {
-			return translate( '%(sublabel)s: %(monthlyPrice)s /month × %(monthsPerBillPeriod)s', {
-				args: {
-					sublabel: item.sublabel,
-					monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
-					monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
-				},
-				comment: 'product type and monthly breakdown of total cost, separated by a colon',
-			} );
-		}
-
-		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
+		return translate( '%(sublabel)s: %(monthlyPrice)s /month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: item.sublabel,
 				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
@@ -562,7 +541,7 @@ function LineItemSublabelAndPrice( { item, isMonthlyPricingTest = false } ) {
 	}
 
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period === 1 ) {
-		if ( isMonthlyPricingTest ) {
+		if ( isWpComPlan( productSlug ) ) {
 			return translate( 'Monthly subscription' );
 		}
 
@@ -641,29 +620,5 @@ function GSuiteDiscountCallout( { item } ) {
 	) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
-	return null;
-}
-function DiscountForFirstYearOnly( { item } ) {
-	const translate = useTranslate();
-	const origCost = item.wpcom_meta.item_original_cost_integer;
-	const cost = item.wpcom_meta.product_cost_integer;
-	if ( origCost <= cost ) {
-		return null;
-	}
-	const isWpcomOneYearPlan = planMatches( item.wpcom_meta.product_slug, {
-		term: TERM_ANNUALLY,
-		group: GROUP_WPCOM,
-	} );
-	if ( isWpcomOneYearPlan ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
-	}
-	const isWpcomTwoYearPlan = planMatches( item.wpcom_meta.product_slug, {
-		term: TERM_BIENNIALLY,
-		group: GROUP_WPCOM,
-	} );
-	if ( isWpcomTwoYearPlan ) {
-		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
-	}
-
 	return null;
 }

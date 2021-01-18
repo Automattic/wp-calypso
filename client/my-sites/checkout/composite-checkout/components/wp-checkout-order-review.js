@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
@@ -15,10 +14,6 @@ import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
-import { isWpComPlan, getBillingMonthsForPlan, isWpComFreePlan } from 'calypso/lib/plans';
-import { isMonthly } from 'calypso/lib/plans/constants';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -31,7 +26,6 @@ export default function WPCheckoutOrderReview( {
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
-	siteId,
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -46,26 +40,6 @@ export default function WPCheckoutOrderReview( {
 		setCouponFieldVisible( false );
 	};
 
-	const hasDotcomPlan = Boolean(
-		items.find( ( { wpcom_meta } ) => isWpComPlan( wpcom_meta?.product_slug ) )
-	);
-	const hasRenewal = Boolean(
-		items.find( ( { wpcom_meta } ) => 'renewal' === wpcom_meta?.extra?.purchaseType )
-	);
-	const currentPlanProductSlug = useSelector(
-		( state ) => siteId && getCurrentPlan( state, siteId )
-	)?.productSlug;
-	const hasFreeOrMonthlySubscription =
-		currentPlanProductSlug &&
-		( isWpComFreePlan( currentPlanProductSlug ) || isMonthly( currentPlanProductSlug ) );
-	const isMonthlyPricingTest =
-		useSelector( isTreatmentInMonthlyPricingTest ) &&
-		hasDotcomPlan &&
-		! hasRenewal &&
-		hasFreeOrMonthlySubscription;
-	const itemsForMonthlyPricing =
-		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
-
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
@@ -76,14 +50,13 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
-					items={ itemsForMonthlyPricing || items }
+					items={ items }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					isMonthlyPricingTest={ isMonthlyPricingTest }
 				/>
 			</WPOrderReviewSection>
 
@@ -146,31 +119,6 @@ function CouponFieldArea( {
 			</CouponEnableButton>
 		</CouponLinkWrapper>
 	);
-}
-
-/*
- * WARNING:
- * Please update item's sublabel in the `translateReponseCartProductToWPCOMCartItem` function
- * when the treatment is rolled out as a winner.
- */
-function overrideItemSublabel( item, translate ) {
-	if ( item?.type !== 'plan' || ! isWpComPlan( item?.wpcom_meta?.product_slug ) ) {
-		return item;
-	}
-
-	const billingMonths = getBillingMonthsForPlan( item?.wpcom_meta?.product_slug );
-
-	let sublabel = translate( 'Monthly subscription' );
-	if ( billingMonths === 12 ) {
-		sublabel = translate( 'One year subscription' );
-	} else if ( billingMonths === 24 ) {
-		sublabel = translate( 'Two year subscription' );
-	}
-
-	return {
-		...item,
-		sublabel,
-	};
 }
 
 const DomainURL = styled.div`

@@ -5,13 +5,13 @@ import { findKey } from 'lodash';
 import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { Plans } from '@automattic/data-stores';
 import languages from '@automattic/languages';
-
 import type { ValuesType } from 'utility-types';
 
 /**
  * Internal dependencies
  */
 import config from 'calypso/config';
+import { FLOW_ID } from '../gutenboarding/constants';
 
 type PlanPath = Plans.PlanPath;
 
@@ -114,6 +114,13 @@ export function useNewQueryParam() {
 export function useIsAnchorFm(): boolean {
 	const { anchorFmPodcastId } = useAnchorFmParams();
 	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
+}
+
+export function useOnboardingFlow(): string {
+	if ( useIsAnchorFm() ) {
+		return 'anchor-fm';
+	}
+	return FLOW_ID;
 }
 
 export interface AnchorFmParams {

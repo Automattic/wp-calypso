@@ -953,6 +953,31 @@ Undocumented.prototype.assignPaymentMethod = function ( subscriptionId, stored_d
 };
 
 /**
+ * Returns a PayPal Express URL to redirect to for confirming the creation of a billing agreement.
+ *
+ * @param {string} subscription_id The subscription ID (a.k.a. purchase ID) to assign the billing agreement to after it is created
+ * @param {string} success_url The URL to return the user to for a successful billing agreement creation
+ * @param {string} cancel_url The URL to return the user to if they cancel the billing agreement creation
+ * @param {Function} [fn] The callback function
+ */
+Undocumented.prototype.createPayPalAgreement = function (
+	subscription_id,
+	success_url,
+	cancel_url,
+	fn
+) {
+	debug( '/payment-methods/create-paypal-agreement', { subscription_id, success_url, cancel_url } );
+	return this.wpcom.req.post(
+		{
+			path: '/payment-methods/create-paypal-agreement',
+			body: { subscription_id, success_url, cancel_url },
+			apiVersion: '1',
+		},
+		fn
+	);
+};
+
+/**
  * Return a list of third-party services that WordPress.com can integrate with for a specific site
  *
  * @param {number|string} siteId The site ID or domain
@@ -2568,6 +2593,18 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 		} );
 
 	return request();
+};
+
+/**
+ * Request all Partner Portal partners and their keys for the current WPCOM user.
+ *
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.getJetpackPartnerPortalPartners = function () {
+	return this.wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: '/jetpack-licensing/partners',
+	} );
 };
 
 export default Undocumented;

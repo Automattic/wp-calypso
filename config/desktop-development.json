@@ -22,6 +22,7 @@
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": false,
+		"cloudflare": false,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management/threaded-view": false,
@@ -42,7 +43,6 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": false,
 		"help": true,
-		"help/courses": true,
 		"inline-help": true,
 		"ive/use-external-assignment": false,
 		"jetpack/api-cache": true,
@@ -154,6 +154,8 @@
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
+		"woocommerce/store-deprecated": true,
+		"woocommerce/store-removed": false,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
 	}

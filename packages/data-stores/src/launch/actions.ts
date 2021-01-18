@@ -27,6 +27,12 @@ export const setStep = ( step: LaunchStepType ) =>
 		step,
 	} as const );
 
+export const setSiteTitle = ( title: string ) =>
+	( {
+		type: 'SET_SITE_TITLE',
+		title,
+	} as const );
+
 export const setDomain = ( domain: DomainSuggestions.DomainSuggestion ) =>
 	( {
 		type: 'SET_DOMAIN',
@@ -127,6 +133,7 @@ export const disablePersistentSuccessView = () =>
 	} as const );
 
 export type LaunchAction = ReturnType<
+	| typeof setSiteTitle
 	| typeof unsetDomain
 	| typeof setStep
 	| typeof setDomain

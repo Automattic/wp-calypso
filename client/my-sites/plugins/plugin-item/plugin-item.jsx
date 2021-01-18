@@ -157,7 +157,7 @@ class PluginItem extends Component {
 			);
 		}
 
-		const updated_versions = this.props.plugin.sites
+		const updated_versions = sites
 			.map( ( site ) => {
 				const sitePlugin = pluginsOnSites?.sites[ site.ID ];
 				return sitePlugin?.update?.new_version;
@@ -176,10 +176,10 @@ class PluginItem extends Component {
 		);
 	}
 
-	hasUpdate( pluginData ) {
-		const { pluginsOnSites } = this.props;
+	hasUpdate() {
+		const { pluginsOnSites, sites } = this.props;
 
-		return pluginData.sites.some( ( site ) => {
+		return sites.some( ( site ) => {
 			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
 			return sitePlugin?.update && site.canUpdateFiles;
 		} );
@@ -201,7 +201,7 @@ class PluginItem extends Component {
 			);
 		}
 
-		if ( this.hasUpdate( pluginData ) ) {
+		if ( this.hasUpdate() ) {
 			return this.renderUpdateFlag();
 		}
 
@@ -329,9 +329,9 @@ class PluginItem extends Component {
 
 export default connect( ( state, { plugin, sites } ) => {
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const siteIds = sites.map( ( site ) => site.ID );
+	const siteIds = sites?.map( ( site ) => site.ID );
 
 	return {
-		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
+		pluginsOnSites: getPluginOnSites( state, siteIds, plugin?.slug ),
 	};
 } )( localize( withLocalizedMoment( PluginItem ) ) );

@@ -36,6 +36,7 @@ import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
  * Style dependencies
  */
 import './style.scss';
+import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
 
 class MeSidebar extends React.Component {
 	onNavigate = () => {

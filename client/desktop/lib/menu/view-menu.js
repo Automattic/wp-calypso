@@ -14,7 +14,7 @@ const menuItems = [];
 menuItems.push(
 	{
 		label: 'Toggle Full Screen',
-		accelerator: platform.isOSX() ? 'Command+Ctrl+F' : undefined,
+		accelerator: platform.isOSX() ? 'Command+Ctrl+F' : 'Ctrl+Alt+F',
 		fullscreen: true,
 		click: function () {
 			const focusedWindow = BrowserWindow.getFocusedWindow();

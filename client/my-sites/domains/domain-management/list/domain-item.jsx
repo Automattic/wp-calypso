@@ -41,6 +41,7 @@ import {
 import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getMaxTitanMailboxCount } from 'calypso/lib/titan/get-max-titan-mailbox-count';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 
 class DomainItem extends PureComponent {
@@ -301,7 +302,14 @@ class DomainItem extends PureComponent {
 		}
 
 		if ( hasTitanMailWithUs( domainDetails ) ) {
-			return translate( 'Titan Mail' );
+			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
+			return translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
+				args: {
+					titanMailboxCount,
+				},
+				count: titanMailboxCount,
+				comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
+			} );
 		}
 
 		if ( domainDetails?.emailForwardsCount > 0 ) {

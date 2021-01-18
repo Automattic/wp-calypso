@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';
@@ -13,6 +13,7 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal dependencies
  */
+import getSites from 'calypso/state/selectors/get-sites';
 import SectionHeader from 'calypso/components/section-header';
 import ButtonGroup from 'calypso/components/button-group';
 import { Button } from '@automattic/components';
@@ -109,8 +110,11 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	canUpdatePlugins() {
-		return this.props.selected.some( ( plugin ) =>
-			plugin.sites.some( ( site ) => site.canUpdateFiles )
+		const { selected, allSites } = this.props;
+		return selected.some( ( plugin ) =>
+			Object.values( allSites )
+				.filter( ( { ID } ) => plugin.sites.hasOwnProperty( ID ) )
+				.some( ( site ) => site.canUpdateFiles )
 		);
 	}
 
@@ -376,4 +380,6 @@ export class PluginsListHeader extends PureComponent {
 	}
 }
 
-export default localize( PluginsListHeader );
+export default connect( ( state ) => ( {
+	allSites: getSites( state ),
+} ) )( localize( PluginsListHeader ) );

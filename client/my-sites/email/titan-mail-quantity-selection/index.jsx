@@ -31,9 +31,14 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Notice from 'calypso/components/notice';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { hasTitanMailWithUs, getMaxTitanMailboxCount } from 'calypso/lib/titan';
+import {
+	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 
 /**
  * Style dependencies
@@ -122,9 +127,9 @@ class TitanMailQuantitySelection extends React.Component {
 						'domains have forwards:',
 					{
 						args: {
-							productName: translate( 'Titan Mail' ),
+							productName: getTitanProductName(),
 						},
-						comment: '%(productName)s is the name of the product, e.g. Titan Mail',
+						comment: '%(productName)s is the name of the product, e.g. Titan Mail or Email',
 					}
 				) }
 				<ul>
@@ -136,8 +141,74 @@ class TitanMailQuantitySelection extends React.Component {
 		) : null;
 	}
 
+	renderCurrentMailboxCounts() {
+		const { selectedDomain, translate } = this.props;
+		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
+			return null;
+		}
+
+		const purchasedMailboxCount = getMaxTitanMailboxCount( selectedDomain );
+		if ( purchasedMailboxCount < 1 ) {
+			return null;
+		}
+
+		const configuredMailboxCount = getConfiguredTitanMailboxCount( selectedDomain );
+		if ( configuredMailboxCount >= purchasedMailboxCount ) {
+			return (
+				<span>
+					{ translate(
+						'You currently have %(mailboxCount)d mailbox for this domain',
+						'You currently have %(mailboxCount)d mailboxes for this domain',
+						{
+							args: {
+								mailboxCount: configuredMailboxCount,
+							},
+							count: configuredMailboxCount,
+							comment:
+								'%(mailboxCount)d is the number of email mailboxes the user has for a domain name',
+						}
+					) }
+				</span>
+			);
+		}
+
+		const unusedMailboxCount = purchasedMailboxCount - configuredMailboxCount;
+		return (
+			<React.Fragment>
+				<span>
+					{ translate(
+						'You have already bought %(mailboxCount)d mailbox for this domain',
+						'You have already bought %(mailboxCount)d mailboxes for this domain',
+						{
+							args: {
+								mailboxCount: purchasedMailboxCount,
+							},
+							count: purchasedMailboxCount,
+							comment:
+								'%(mailboxCount)d is the number of email mailboxes the user has bought for the domain',
+						}
+					) }
+				</span>
+				<span>
+					{ translate(
+						'You still have %(unusedMailboxCount)d unused mailbox',
+						'You still have %(unusedMailboxCount)d unused mailboxes',
+						{
+							args: {
+								unusedMailboxCount,
+							},
+							count: unusedMailboxCount,
+							comment:
+								'%(unusedMailboxCount)d is the number of unused mailboxes that the user has paid for but is not using',
+						}
+					) }
+				</span>
+			</React.Fragment>
+		);
+	}
+
 	renderForm() {
-		const { isLoadingDomains, translate } = this.props;
+		const { isLoadingDomains, selectedDomainName, translate } = this.props;
 
 		if ( isLoadingDomains ) {
 			return <AddEmailAddressesCardPlaceholder />;
@@ -148,6 +219,20 @@ class TitanMailQuantitySelection extends React.Component {
 				<SectionHeader label={ translate( 'Choose Mailbox Quantity' ) } />
 
 				<Card>
+					<div className="titan-mail-quantity-selection__domain-info">
+						{ translate( "You're adding mailboxes for {{strong}}%(domainName)s{{/strong}}", {
+							args: {
+								domainName: selectedDomainName,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment: '%(domainName)s is a domain name',
+						} ) }
+					</div>
+					<div className="titan-mail-quantity-selection__mailbox-info">
+						{ this.renderCurrentMailboxCounts() }
+					</div>
 					<div>
 						<FormLabel>{ translate( 'Number of new mailboxes to add' ) }</FormLabel>
 						<FormTextInput
@@ -195,7 +280,14 @@ class TitanMailQuantitySelection extends React.Component {
 						onClick={ this.goToEmail }
 						selectedDomainName={ selectedDomainName }
 					>
-						{ translate( 'Titan Mail' ) }
+						{ translate( '%(productName)s: %(domainName)s', {
+							args: {
+								domainName: selectedDomainName,
+								productName: getTitanProductName(),
+							},
+							comment:
+								'%(productName)s is the name of the product, either "Email" or "Titan Mail"; %(domainName)s is the name of a domain',
+						} ) }
 					</DomainManagementHeader>
 
 					{ this.renderForwardsNotice() }
@@ -218,6 +310,7 @@ export default connect(
 			selectedDomainName: ownProps.selectedDomainName,
 		} );
 		return {
+			selectedDomain,
 			selectedSite,
 			isLoadingDomains,
 			currentRoute: getCurrentRoute( state ),

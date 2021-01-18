@@ -8,6 +8,7 @@ interface CalypsoifyWindow extends Window {
 	currentSiteId?: number;
 	calypsoifyGutenberg?: {
 		isSiteUnlaunched?: boolean;
+		currentCalypsoUrl?: string;
 		isFocusedLaunchFlow?: boolean;
 		[ key: string ]: unknown;
 	};
@@ -22,6 +23,14 @@ export const redirectToWpcomPath = ( url: string ) => {
 	const origin = 'https://wordpress.com';
 	const path = url.startsWith( '/' ) ? url : `/${ url }`;
 	redirectParentWindow( `${ origin }${ path }` );
+};
+
+export const getCurrentLaunchFlowUrl = (): string | undefined => {
+	try {
+		return window?.calypsoifyGutenberg?.currentCalypsoUrl;
+	} catch ( err ) {
+		return window.location.href;
+	}
 };
 
 export const openCheckout = ( siteSlug: string, isEcommerce = false ): void => {

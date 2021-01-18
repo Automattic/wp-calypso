@@ -32,6 +32,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
@@ -84,6 +85,41 @@ class StoreSidebar extends Component {
 		return paths.some( function ( path ) {
 			return path === this.props.path || 0 === this.props.path.indexOf( path + '/' );
 		}, this );
+	};
+
+	shouldShowAllSidebarItems = () => {
+		const {
+			finishedAddressSetup,
+			hasProducts,
+			path,
+			settingsGeneralLoaded,
+			siteSuffix,
+			storeLocation,
+			isStoreRemoved,
+			shouldRedirectAfterInstall,
+		} = this.props;
+
+		// Show all items if: we're not on the dashboard, we have finished setup, or we have products.
+		const notOnDashboard = 0 !== path.indexOf( '/store' + siteSuffix );
+		let showAllSidebarItems = notOnDashboard || finishedAddressSetup || hasProducts;
+
+		// Don't show all the sidebar items if we don't know what country the store is in
+		if ( showAllSidebarItems ) {
+			if ( ! settingsGeneralLoaded ) {
+				showAllSidebarItems = false;
+			} else {
+				const storeCountry = get( storeLocation, 'country' );
+				showAllSidebarItems = isStoreManagementSupportedInCalypsoForCountry( storeCountry );
+			}
+
+			// Don't show sidebar items if store's removed & user is going to redirect
+			// to WooCommerce after installation
+			if ( isStoreRemoved && shouldRedirectAfterInstall ) {
+				showAllSidebarItems = false;
+			}
+		}
+
+		return showAllSidebarItems;
 	};
 
 	dashboard = () => {
@@ -261,33 +297,8 @@ class StoreSidebar extends Component {
 	};
 
 	render = () => {
-		const {
-			allRequiredPluginsActive,
-			finishedAddressSetup,
-			hasProducts,
-			path,
-			pluginsLoaded,
-			settingsGeneralLoaded,
-			site,
-			siteId,
-			siteSuffix,
-			storeLocation,
-		} = this.props;
-
-		// Show all items if: we're not on the dashboard, we have finished setup, or we have products.
-		const notOnDashboard = 0 !== path.indexOf( '/store' + siteSuffix );
-		let showAllSidebarItems = notOnDashboard || finishedAddressSetup || hasProducts;
-
-		// Don't show all the sidebar items if we don't know what country the store is in
-		if ( showAllSidebarItems ) {
-			if ( ! settingsGeneralLoaded ) {
-				showAllSidebarItems = false;
-			} else {
-				const storeCountry = get( storeLocation, 'country' );
-				showAllSidebarItems = isStoreManagementSupportedInCalypsoForCountry( storeCountry );
-			}
-		}
-
+		const { allRequiredPluginsActive, pluginsLoaded, site, siteId } = this.props;
+		const showAllSidebarItems = this.shouldShowAllSidebarItems();
 		const shouldLoadSettings = pluginsLoaded && allRequiredPluginsActive;
 
 		return (
@@ -321,6 +332,8 @@ function mapStateToProps( state ) {
 	const pluginsLoaded = arePluginsLoaded( state, siteId );
 	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
 	const isStoreRemoved = config.isEnabled( 'woocommerce/store-removed' );
+	const shouldRedirectAfterInstall =
+		'' === get( getCurrentQueryArguments( state ), 'redirect_after_install' );
 
 	return {
 		allRequiredPluginsActive,
@@ -336,6 +349,7 @@ function mapStateToProps( state ) {
 		siteSuffix: site ? '/' + site.slug : '',
 		storeLocation,
 		isStoreRemoved,
+		shouldRedirectAfterInstall,
 	};
 }
 

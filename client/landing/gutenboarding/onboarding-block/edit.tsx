@@ -48,11 +48,21 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const currentStep = useCurrentStep();
 	const previousStep = usePrevious( currentStep );
 
-	const { pathname, state: locationState = {} } = useLocation< GutenLocationStateType >();
+	const { state: locationState = {} } = useLocation< GutenLocationStateType >();
 
-	React.useEffect( () => {
-		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
-	}, [ pathname ] );
+	React.useLayoutEffect( () => {
+		// Runs some navigation related side-effects when the step changes
+		// We only want to run when a real transition happens:
+		// - not on first load when `previousStep === undefined` and,
+		// - during an intermediate state when `previousStep === currentStep`
+		if ( previousStep && previousStep !== currentStep ) {
+			setTimeout( () => window.scrollTo( 0, 0 ), 0 );
+
+			if ( window.getSelection && window.getSelection()?.empty ) {
+				window.getSelection()?.empty();
+			}
+		}
+	}, [ currentStep, previousStep ] );
 
 	// makePathWithState( path: StepType ) - A wrapper around makePath() that preserves location state.
 	// This uses makePath() to generate a string path, then transforms that

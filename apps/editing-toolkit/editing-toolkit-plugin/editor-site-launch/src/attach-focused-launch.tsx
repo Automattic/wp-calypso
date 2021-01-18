@@ -10,7 +10,7 @@ import FocusedLaunchModal from '@automattic/launch';
  * Internal dependencies
  */
 import { LAUNCH_STORE, SITE_STORE } from './stores';
-import { openCheckout, redirectToWpcomPath } from './utils';
+import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,6 +45,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				openCheckout={ openCheckout }
 				redirectTo={ redirectToWpcomPath }
 				siteId={ currentSiteId }
+				getCurrentLaunchFlowUrl={ getCurrentLaunchFlowUrl }
 			/>
 		) : null;
 	},

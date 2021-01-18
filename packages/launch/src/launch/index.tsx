@@ -23,6 +23,7 @@ interface Props {
 	siteId: number;
 	openCheckout: ( siteSlug: string, isEcommerce?: boolean ) => void;
 	redirectTo: ( path: string ) => void;
+	getCurrentLaunchFlowUrl: () => string | undefined;
 }
 
 const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
@@ -30,6 +31,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	siteId,
 	openCheckout,
 	redirectTo,
+	getCurrentLaunchFlowUrl,
 } ) => {
 	const {
 		isModalDismissible,
@@ -59,7 +61,13 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 			>
 				<div className="launch__focused-modal-body">
 					<LaunchContext.Provider
-						value={ { siteId, redirectTo, openCheckout, flow: FOCUSED_LAUNCH_FLOW_ID } }
+						value={ {
+							siteId,
+							redirectTo,
+							openCheckout,
+							flow: FOCUSED_LAUNCH_FLOW_ID,
+							getCurrentLaunchFlowUrl,
+						} }
 					>
 						<FocusedLaunch />
 					</LaunchContext.Provider>

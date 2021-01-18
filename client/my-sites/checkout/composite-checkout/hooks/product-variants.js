@@ -13,7 +13,7 @@ import debugFactory from 'debug';
  */
 import { requestPlans } from 'calypso/state/plans/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
-import { getPlan, findPlansKeys, isWpComFreePlan } from 'calypso/lib/plans';
+import { getPlan, findPlansKeys, isWpComPlan } from 'calypso/lib/plans';
 import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -22,8 +22,6 @@ import {
 	TERM_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -32,10 +30,6 @@ export function useProductVariants( { siteId, productSlug } ) {
 	const reduxDispatch = useDispatch();
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
-
-	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, siteId ) );
-	const shouldOverride =
-		useSelector( isTreatmentInMonthlyPricingTest ) && isWpComFreePlan( currentPlan?.productSlug );
 
 	const productsWithPrices = useSelector( ( state ) => {
 		return computeProductsWithPrices(
@@ -60,61 +54,51 @@ export function useProductVariants( { siteId, productSlug } ) {
 		}
 	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
+	const getproductVariant = ( variant ) => {
+		return {
+			variantLabel: getTermText( variant.plan.term, translate ),
+			variantDetails: <VariantPrice variant={ variant } />,
+			productSlug: variant.planSlug,
+			productId: variant.product.product_id,
+		};
+	};
+
 	return ( anyProductSlug ) => {
 		if ( anyProductSlug !== productSlug ) {
 			return [];
 		}
 
-		/*
-		 * WARNING:
-		 * The prices should be processed on the server-side when we roll out the treatment as winner.
-		 */
-		return productsWithPrices.map(
-			overridePriceForMonthlyPricingTest(
-				( variant ) => ( {
-					variantLabel: getTermText( variant.plan.term, translate ),
-					variantDetails: <VariantPrice variant={ variant } />,
-					productSlug: variant.planSlug,
-					productId: variant.product.product_id,
-				} ),
-				shouldOverride
-			)
-		);
+		if ( ! isWpComPlan( productSlug ) ) {
+			return productsWithPrices.map( getproductVariant );
+		}
+
+		return replaceFullPriceWithMonthlyCost( productsWithPrices ).map( getproductVariant );
 	};
 }
 
-/*
- * WARNING:
- * The prices should be processed on the server-side when we roll out the treatment as winner.
- */
-function overridePriceForMonthlyPricingTest( callback, override ) {
-	if ( ! override ) {
-		return callback;
+function replaceFullPriceWithMonthlyCost( products ) {
+	const monthlyPlan = products.filter( ( product ) => product.plan?.term === TERM_MONTHLY )?.[ 0 ];
+
+	if ( ! monthlyPlan ) {
+		return products;
 	}
 
-	return ( originalVariant, _, productsWithPrices ) => {
-		const plan = originalVariant.plan;
+	const monthlyPlanPrice = monthlyPlan.priceFinal || monthlyPlan.priceFull;
 
-		if ( ! plan || plan?.term === TERM_MONTHLY || plan?.group !== GROUP_WPCOM ) {
-			return callback( originalVariant );
+	return products.map( ( product ) => {
+		const planTerm = product.plan?.term;
+		if ( planTerm === TERM_MONTHLY ) {
+			return product;
 		}
 
-		const monthlyPlan = productsWithPrices.filter(
-			( product ) => product.plan?.term === TERM_MONTHLY
-		)?.[ 0 ];
-		if ( ! monthlyPlan ) {
-			return callback( originalVariant );
-		}
-
-		const monthlyPlanPrice = monthlyPlan.priceFinal || monthlyPlan.priceFull;
-		const months = plan.term === TERM_ANNUALLY ? 12 : 24;
+		const months = planTerm === TERM_ANNUALLY ? 12 : 24;
 		const priceFullBeforeDiscount = monthlyPlanPrice * months;
 
-		return callback( {
-			...originalVariant,
+		return {
+			...product,
 			priceFullBeforeDiscount,
-		} );
-	};
+		};
+	} );
 }
 
 function VariantPrice( { variant } ) {

@@ -43,7 +43,9 @@
 		"@testing-library/react": "^10.0.5",
 		"@wordpress/base-styles": "^2.0.1",
 		"copyfiles": "^2.3.0",
-		"history": "^5.0.0"
+		"history": "^5.0.0",
+		"react": "^16.12.0",
+		"react-dom": "^16.12.0"
 	},
 	"peerDependencies": {
 		"react": "^16.8"

@@ -8,7 +8,6 @@ import { noop, truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
-import config from 'calypso/config';
 
 /**
  * Internal Dependencies
@@ -37,6 +36,10 @@ import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expande
  * Style dependencies
  */
 import './style.scss';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {
@@ -130,9 +133,11 @@ class ReaderPostCard extends React.Component {
 			isExpanded,
 			expandCard,
 			compact,
+			teams,
+			isWPForTeams,
 		} = this.props;
 
-		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
+		const isSeen = isEligibleForUnseen( teams, isWPForTeams ) && !! post.is_seen;
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
@@ -279,6 +284,10 @@ class ReaderPostCard extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
+		isWPForTeams:
+			isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
+			isFeedWPForTeams( state, ownProps.postKey.feedId ),
+		teams: getReaderTeams( state ),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
 	{ expandCard: expandCardAction }

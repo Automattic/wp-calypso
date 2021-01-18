@@ -12,7 +12,8 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	USER_SETTINGS_REQUEST,
 	USER_SETTINGS_SAVE,
-	USER_SETTINGS_UPDATE,
+	USER_SETTINGS_SAVE_SUCCCESS,
+	USER_SETTINGS_SAVE_FAILURE,
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
@@ -48,9 +49,15 @@ export const saveUserSettings = ( settingsOverride ) => ( {
  * @param  {object} settingValues Setting values (the subset of keys to be updated)
  * @returns {object}               Action object
  */
-export const updateUserSettings = ( settingValues ) => ( {
-	type: USER_SETTINGS_UPDATE,
+export const saveUserSettingsSuccess = ( settingValues ) => ( {
+	type: USER_SETTINGS_SAVE_SUCCCESS,
 	settingValues,
+} );
+
+export const saveUserSettingsFailure = ( settingsOverride, error ) => ( {
+	type: USER_SETTINGS_SAVE_FAILURE,
+	settingsOverride,
+	error,
 } );
 
 export const cancelPendingEmailChange = () => ( {

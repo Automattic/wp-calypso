@@ -7,6 +7,7 @@
 	background: var( --color-surface );
 	border: 1px solid var( --color-border-subtle );
 	border-radius: ( 2px * 4 );
+	border-radius: ( 2px * 4 );
 	box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 );
 
 	&.is-featured.is-aligned {
@@ -81,6 +82,10 @@
 	em {
 		font-style: normal;
 	}
+
+	.is-disabled & {
+		opacity: 0.4;
+	}
 }
 
 .jetpack-product-card-i5__description {
@@ -88,6 +93,10 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		min-height: 108px;
+	}
+
+	.is-disabled & {
+		opacity: 0.4;
 	}
 }
 
@@ -99,6 +108,10 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: -40px;
+	}
+
+	.is-disabled & {
+		opacity: 0.4;
 	}
 }
 
@@ -144,6 +157,7 @@
 
 .jetpack-product-card-i5__price-tooltip {
 	color: var( --studio-gray-40 );
+	margin-bottom: 0.875rem;
 }
 
 .jetpack-product-card-i5__price-tooltip.popover .popover__inner {
@@ -155,6 +169,19 @@
 
 .jetpack-product-card-i5__expiration-date {
 	color: var( --studio-pink-50 );
+}
+
+.jetpack-product-card-i5__above-button {
+	color: var( --studio-gray-40 );
+	font-size: 0.875rem;
+	line-height: 1.2;
+}
+
+.jetpack-product-card-i5__disabled-message {
+	color: var( --color-accent );
+
+	text-align: center;
+	font-weight: 600;
 }
 
 .jetpack-product-card-i5__button {
@@ -173,6 +200,10 @@
 
 .jetpack-product-card-i5__features {
 	margin-bottom: 10px;
+
+	.is-disabled & {
+		opacity: 0.4;
+	}
 }
 
 .jetpack-product-card-i5__features-list {

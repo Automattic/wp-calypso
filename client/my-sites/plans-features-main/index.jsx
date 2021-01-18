@@ -74,7 +74,6 @@ import { getTld } from 'calypso/lib/domains';
 import { isDiscountActive } from 'calypso/state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import { getABTestVariation } from 'calypso/lib/abtest';
-import FreePlanBanner from './free-plan-banner';
 import PlanTypeSelector from './plan-type-selector';
 
 /**
@@ -138,7 +137,6 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
-			isMonthlyPricingTest,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -147,11 +145,10 @@ export class PlansFeaturesMain extends Component {
 			redirectTo,
 			siteId,
 			plansWithScroll,
-			customHeader,
 			isReskinned,
 		} = this.props;
 
-		const plans = this.getPlansForPlanFeatures( { isMonthlyPricingTest } );
+		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		const availablePlans = this.isDisplayingPlansNeededForFeature()
 			? visiblePlans.filter( ( plan ) => {
@@ -179,7 +176,6 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
 			>
-				{ customHeader }
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					basePlansPath={ basePlansPath }
@@ -206,13 +202,12 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
-					isMonthlyPricingTest={ isMonthlyPricingTest && isInSignup }
 				/>
 			</div>
 		);
 	}
 
-	getPlansForPlanFeatures( { isMonthlyPricingTest } = {} ) {
+	getPlansForPlanFeatures() {
 		const {
 			displayJetpackPlans,
 			intervalType,
@@ -242,14 +237,6 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
-
-		// In WPCOM, only the business plan is available in monthly term
-		// For any other plan, switch to annually.
-		const businessPlanTerm = term;
-		if ( group === GROUP_WPCOM && term === TERM_MONTHLY && ! isMonthlyPricingTest ) {
-			term = TERM_ANNUALLY;
-		}
-
 		const plansFromProps = this.getPlansFromProps( group, term );
 
 		let plans;
@@ -269,7 +256,7 @@ export class PlansFeaturesMain extends Component {
 				hideBloggerPlan ? null : findPlansKeys( { group, term, type: TYPE_BLOGGER } )?.[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
-				findPlansKeys( { group, term: businessPlanTerm, type: TYPE_BUSINESS } )[ 0 ],
+				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_ECOMMERCE } )[ 0 ],
 			].filter( ( el ) => el !== null );
 		}
@@ -431,15 +418,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const {
-			hideFreePlan,
-			isInSignup,
-			siteId,
-			siteSlug,
-			plansWithScroll,
-			isMonthlyPricingTest,
-		} = this.props;
-		const shouldHideFreePlanBanner = hideFreePlan || ! plansWithScroll;
+		const { isInSignup, siteId, siteSlug, customHeader } = this.props;
 		const basePlansPath = isInSignup ? window.location?.pathname : `/plans/${ siteSlug }`;
 
 		return (
@@ -450,16 +429,9 @@ export class PlansFeaturesMain extends Component {
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 
-				<PlanTypeSelector
-					{ ...this.props }
-					basePlansPath={ basePlansPath }
-					isMonthlyPricingTest={ isMonthlyPricingTest && isInSignup }
-				/>
-				<FreePlanBanner
-					{ ...this.props }
-					hidden={ isMonthlyPricingTest || shouldHideFreePlanBanner }
-				/>
-				{ this.getPlanFeatures( { isMonthlyPricingTest } ) }
+				{ customHeader }
+				<PlanTypeSelector { ...this.props } basePlansPath={ basePlansPath } />
+				{ this.getPlanFeatures() }
 				{ this.renderProductsSelector() }
 				{ this.mayRenderFAQ() }
 			</div>
@@ -503,7 +475,6 @@ PlansFeaturesMain.propTypes = {
 	planTypes: PropTypes.array,
 	customHeader: PropTypes.node,
 	isReskinned: PropTypes.bool,
-	isMonthlyPricingTest: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -519,7 +490,6 @@ PlansFeaturesMain.defaultProps = {
 	withWPPlanTabs: false,
 	plansWithScroll: false,
 	isReskinned: false,
-	isMonthlyPricingTest: false,
 };
 
 export default connect(

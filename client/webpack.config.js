@@ -274,7 +274,6 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
-		modules: [ __dirname, 'node_modules' ],
 		alias: Object.assign(
 			{
 				debug: path.resolve( __dirname, '../node_modules/debug' ),
@@ -354,7 +353,6 @@ const webpackConfig = {
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 		...( ! config.isEnabled( 'desktop' )
 			? [
-					new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
 					new webpack.NormalModuleReplacementPlugin(
 						/^calypso[/\\]lib[/\\]desktop$/,
 						'lodash/noop'
@@ -382,10 +380,6 @@ const webpackConfig = {
 		 */
 		...( browserslistEnv === 'evergreen'
 			? [
-					new webpack.NormalModuleReplacementPlugin(
-						/^lib[/\\]local-storage-polyfill$/,
-						'lodash-es/noop'
-					),
 					new webpack.NormalModuleReplacementPlugin(
 						/^calypso[/\\]lib[/\\]local-storage-polyfill$/,
 						'lodash-es/noop'

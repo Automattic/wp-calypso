@@ -13,6 +13,7 @@ import React, { FunctionComponent, useMemo, useState, useEffect } from 'react';
 import { Button, Card } from '@automattic/components';
 import { ConnectionStatus, StatusState } from './connection-status';
 import { FormMode, FormState, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate } from './form';
+import Verification from './verification';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -23,6 +24,7 @@ import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentia
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
+import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import Gridicon from 'calypso/components/gridicon';
 import HostSelection from './host-selection';
 import Main from 'calypso/components/main';
@@ -64,9 +66,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			show: 'onComplete',
 		},
 		translate( 'Credentials' ),
-		translate( 'Saved' ),
-		// TODO: moved Verification to future work
-		// translate( 'Verification' ),
+		translate( 'Verification' ),
 		translate( 'Connected' ),
 	];
 
@@ -111,17 +111,12 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	}, [ hasCredentials, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
-		if ( statusState === StatusState.Connected ) {
-			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
-			// Verification pushed to future
-		} /* else if ( 'pending' === formSubmissionStatus ) {
-			return State.Verification;
-		} */ else if (
-			undefined === host
-		) {
-			return Step.HostSelection;
-		} else if ( 'pending' === formSubmissionStatus ) {
+		if ( 'unsubmitted' !== formSubmissionStatus ) {
 			return Step.Verification;
+		} else if ( statusState === StatusState.Connected ) {
+			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
+		} else if ( undefined === host ) {
+			return Step.HostSelection;
 		}
 		return Step.Credentials;
 	}, [ action, formSubmissionStatus, host, statusState ] );
@@ -150,7 +145,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	// if a new error occurs from a form submission add that to the errors
 	useEffect( () => {
 		if ( null !== formSubmissionError ) {
-			switch ( formSubmissionError.code ) {
+			switch ( formSubmissionError.wpcomError?.code ) {
 				case 'invalid_wordpress_path':
 					setFormErrors( {
 						path: {
@@ -218,7 +213,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			return;
 		}
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
-		dispatch( updateCredentials( siteId, { role, ...formState }, true ) );
+		dispatch( updateCredentials( siteId, { role, ...formState }, true, false ) );
 	};
 
 	const disableForm = 'pending' === formSubmissionStatus;
@@ -229,7 +224,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				compact
 				borderless
 				disabled={ disableForm }
-				href={ settingsPath( siteSlug ?? undefined ) }
+				href={ settingsPath( siteSlug || undefined ) }
 				onClick={ () => {
 					dispatch(
 						recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_switch_host', { host } )
@@ -252,7 +247,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const renderConnectedButtons = () => (
 		<>
 			<Button scary disabled={ disableForm } onClick={ handleDeleteCredentials }>
-				{ translate( 'Delete Credentials' ) }
+				{ translate( 'Delete credentials' ) }
 			</Button>
 			<Button
 				onClick={ handleUpdateCredentials }
@@ -287,8 +282,24 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			case Step.HostSelection:
 				return <HostSelection />;
 			case Step.Credentials:
-			case Step.Verification:
 				return renderCredentialsForm( false );
+			case Step.Verification:
+				return (
+					<Verification
+						onFinishUp={ () => {
+							dispatch( {
+								type: JETPACK_CREDENTIALS_UPDATE_RESET,
+								siteId,
+							} );
+						} }
+						onReview={ () => {
+							dispatch( {
+								type: JETPACK_CREDENTIALS_UPDATE_RESET,
+								siteId,
+							} );
+						} }
+					/>
+				);
 			case Step.Connected:
 				return (
 					<div>

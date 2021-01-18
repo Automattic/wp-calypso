@@ -3,14 +3,25 @@
 	bottom: -10px;
 	left: 14px;
 	z-index: z-index( 'root', '.plan-pill' );
-	
+
 	padding: 4px;
 	border-radius: 2px;
 	background: var( --color-accent );
-	
+
 	font-size: $font-body-extra-small;
 	text-align: center;
 	line-height: 1;
 	color: var( --color-text-inverted );
 	text-transform: uppercase;
+}
+
+.plan-pill.is-in-signup {
+	top: 10px;
+	bottom: unset;
+	right: 14px;
+	left: unset;
+	text-transform: none;
+	padding: 4px 10px;
+	border-radius: 10px; /* stylelint-disable-line */
+	background-color: var( --color-neutral-100 );
 }

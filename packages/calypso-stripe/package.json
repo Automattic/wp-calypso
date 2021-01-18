@@ -40,6 +40,7 @@
 		"@automattic/load-script": "^1.0.0",
 		"debug": "^4.1.1",
 		"react": "^16.12.0",
+		"react-dom": "^16.12.0",
 		"react-stripe-elements": "^4.0.2"
 	},
 	"devDependencies": {

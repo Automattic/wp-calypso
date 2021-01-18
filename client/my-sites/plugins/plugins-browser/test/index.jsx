@@ -8,7 +8,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/lib/plugins/wporg-data/list-store', () => ( {
-	getShortList: () => {},
 	getFullList: () => {},
 	getSearchList: () => {},
 	on: () => {},
