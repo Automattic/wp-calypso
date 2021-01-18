@@ -19,7 +19,7 @@ describe( 'PaymentInfoBlock', () => {
 		[ 'disabled', 'manualRenew' ],
 	] )( 'when auto-renew is %s', ( autoRenewStatus, expiryStatus ) => {
 		describe( 'when the purchase has credits as the payment method', () => {
-			const purchase = { expiryStatus, payment: { type: 'credits' } };
+			const purchase = { expiryStatus, payment: { type: 'credits' }, isRechargeable: false };
 
 			it( 'renders "Credits"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } /> );
@@ -55,7 +55,23 @@ describe( 'PaymentInfoBlock', () => {
 		describe( 'when the purchase has no payment method', () => {
 			const purchase = {};
 
-			it( 'renders "None" when the purchase has no payment method', () => {
+			it( 'renders "None"', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+			} );
+
+			it( 'does not render "will not be billed"', () => {
+				render( <PaymentInfoBlock purchase={ purchase } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).not.toHaveTextContent(
+					'will not be billed'
+				);
+			} );
+		} );
+
+		describe( 'when the purchase a non-rechargable payment method', () => {
+			const purchase = { expiryStatus, payment: { type: 'ideal' }, isRechargeable: false };
+
+			it( 'renders "None"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } /> );
 				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
 			} );
@@ -77,6 +93,7 @@ describe( 'PaymentInfoBlock', () => {
 					type: 'credit_card',
 					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
 				},
+				isRechargeable: true,
 			};
 
 			it( 'renders the credit card last4', () => {
@@ -121,6 +138,7 @@ describe( 'PaymentInfoBlock', () => {
 						type: 'credit_card',
 						creditCard: { number: '1234', expiryDate, type: 'mastercard' },
 					},
+					isRechargeable: true,
 				};
 				render( <PaymentInfoBlock purchase={ purchase } /> );
 				if ( expiryStatus === 'manualRenew' ) {
@@ -137,6 +155,7 @@ describe( 'PaymentInfoBlock', () => {
 				payment: {
 					type: 'paypal',
 				},
+				isRechargeable: true,
 			};
 
 			it( 'renders PayPal logo', () => {
@@ -172,6 +191,7 @@ describe( 'PaymentInfoBlock', () => {
 					type: 'credit_card',
 					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
 				},
+				isRechargeable: true,
 			};
 			render( <PaymentInfoBlock purchase={ purchase } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -186,6 +206,7 @@ describe( 'PaymentInfoBlock', () => {
 					type: 'credit_card',
 					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
 				},
+				isRechargeable: true,
 			};
 			render( <PaymentInfoBlock purchase={ purchase } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -200,6 +221,7 @@ describe( 'PaymentInfoBlock', () => {
 					type: 'paypal_direct',
 					expiryDate,
 				},
+				isRechargeable: true,
 			};
 
 			it( 'renders the expiration date', () => {
