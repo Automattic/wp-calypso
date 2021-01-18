@@ -43,8 +43,8 @@ export async function assignNewCardProcessor(
 		translate: ReturnType< typeof useTranslate >;
 		siteSlug: string;
 		apiParams: unknown;
-		stripe: Stripe;
-		stripeConfiguration: StripeConfiguration;
+		stripe: Stripe | null;
+		stripeConfiguration: StripeConfiguration | null;
 	},
 	{ name, countryCode, postalCode }: { name: string; countryCode: string; postalCode: string }
 ): Promise< PaymentProcessorResponse > {
@@ -60,6 +60,9 @@ export async function assignNewCardProcessor(
 				postal_code: zip,
 			},
 		};
+		if ( ! stripe || ! stripeConfiguration ) {
+			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
+		}
 		return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
 	};
 
