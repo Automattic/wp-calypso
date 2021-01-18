@@ -36,7 +36,7 @@ const config = require( '../client/server/config/index.js' );
 const mag16 = config( 'magnificent_non_en_locales' ) || [];
 
 // image output variables
-const captureMaxHeight = 2200; // Cap long pages to  this pixel height when capturing
+const captureMaxHeight = 3072; // Cap long pages to  this pixel height when capturing
 const outputWidth = 900; // Outputted file width
 const viewportHeight = 800; // Browser height for capturing the screenshot
 const viewportScaleFactor = 2; // Browser pixel density for capturing the screenshot
@@ -119,12 +119,8 @@ async function run() {
 					height: viewportHeight,
 					styles,
 					type: 'png',
-					clip: {
-						x: 0,
-						y: 0,
-						width: viewportWidth,
-						height: 3072,
-					},
+					// generate appropriate clip parameters
+					element: '#page',
 				} );
 			} catch ( e ) {
 				if (
