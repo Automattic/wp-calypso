@@ -19,7 +19,7 @@ import LanguagePicker from 'calypso/components/language-picker';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { protectForm } from 'calypso/lib/protect-form';
 import formBase from 'calypso/me/form-base';
-import config from 'calypso/config';
+import config, { isEnabled } from 'calypso/config';
 import languages from '@automattic/languages';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { Card, Button } from '@automattic/components';
@@ -709,7 +709,13 @@ const Account = createReactClass( {
 						<FormLabel id="account__color_scheme" htmlFor="color_scheme">
 							{ translate( 'Dashboard color scheme' ) }
 						</FormLabel>
-						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
+						<ColorSchemePicker
+							temporarySelection
+							defaultSelection={
+								isEnabled( 'nav-unification' ) ? 'classic-dark' : 'classic-bright'
+							}
+							onSelection={ this.updateColorScheme }
+						/>
 					</FormFieldset>
 				) }
 
