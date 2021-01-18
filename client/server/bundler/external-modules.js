@@ -26,24 +26,37 @@ module.exports = class ExternalModulesWriter {
 		compiler.hooks.emit.tapAsync( 'ExternalModulesWriter', ( compilation, callback ) => {
 			const externalModules = new Set();
 
-			for ( const module of compilation.modules ) {
+			function processModule( module ) {
+				// Descend into submodules of a `ConcatenatedModule` instance
+				if ( module.modules ) {
+					for ( const subModule of module.modules ) {
+						processModule( subModule );
+					}
+
+					return;
+				}
+
 				if ( ! ( module instanceof ExternalModule ) ) {
-					continue;
+					return;
 				}
 
 				const requestModule = getModule( module.userRequest );
 
 				// native Node.js module, not in node_modules
 				if ( builtinModules.includes( requestModule ) ) {
-					continue;
+					return;
 				}
 
 				// loading local file by relative path, not in node_modules
 				if ( requestModule.startsWith( './' ) || requestModule.startsWith( '../' ) ) {
-					continue;
+					return;
 				}
 
 				externalModules.add( requestModule );
+			}
+
+			for ( const module of compilation.modules ) {
+				processModule( module );
 			}
 
 			const json = JSON.stringify( Array.from( externalModules ), null, 2 );
