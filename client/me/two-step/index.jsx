@@ -123,12 +123,7 @@ class TwoStep extends Component {
 		}
 
 		if ( this.state.doingSetup ) {
-			return (
-				<Security2faSetup
-					userSettings={ this.props.userSettings }
-					onFinished={ this.onSetupFinished }
-				/>
-			);
+			return <Security2faSetup onFinished={ this.onSetupFinished } />;
 		}
 
 		return (
