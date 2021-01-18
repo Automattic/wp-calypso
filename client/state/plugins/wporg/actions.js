@@ -66,6 +66,18 @@ export function fetchPluginData( pluginSlug ) {
 	};
 }
 
+/**
+ * Helper thunk for receiving a specific data or retrieve error of plugins list.
+ * Handles plugin list normalization internally.
+ *
+ * @param {string} category   Plugin category
+ * @param {number} page       Page (1-based)
+ * @param {string} searchTerm Search term
+ * @param {Array}  data       List of found plugins, not defined if there was an error
+ * @param {object} error      Error object, undefined if the plugins were fetched successfully
+ * @param {object} pagination Paginatioin data, as retrieved from the API response.
+ * @returns {Function} Action thunk
+ */
 function receivePluginsList( category, page, searchTerm, data, error, pagination = null ) {
 	return ( dispatch ) =>
 		dispatch( {
@@ -80,6 +92,8 @@ function receivePluginsList( category, page, searchTerm, data, error, pagination
 }
 
 /**
+ * Retrieve a list of pliugins, identified by category and page number, or a search term.
+ *
  * WP.org plugins can be filtered either by category or search term.
  * Pagination is supported only for category queries.
  * Category can be one of "featured", "popular", "new", "beta" or "recommended".
@@ -173,6 +187,13 @@ export function fetchPluginsList( category, page, searchTerm ) {
 	};
 }
 
+/**
+ * Retrieve the next page of plugins for the specified category.
+ * Pagination is currently supported only for category queries in the API.
+ *
+ * @param {string} category   Plugin category
+ * @returns {Function} Action thunk
+ */
 export function fetchPluginsCategoryNextPage( category ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
