@@ -54,7 +54,7 @@ registerPlugin( 'a8c-editor-site-launch', {
 						getCurrentLaunchFlowUrl,
 					} }
 				>
-					<LaunchModal onClose={ closeSidebar } />
+					<LaunchModal onClose={ closeSidebar } isLaunchImmediately />
 				</LaunchContext.Provider>
 			</LocaleProvider>
 		);

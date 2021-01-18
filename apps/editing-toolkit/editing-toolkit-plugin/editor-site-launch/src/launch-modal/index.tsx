@@ -21,9 +21,10 @@ import './styles.scss';
 
 interface Props {
 	onClose: () => void;
+	isLaunchImmediately?: boolean;
 }
 
-const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
+const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmediately } ) => {
 	const { siteId } = React.useContext( LaunchContext );
 
 	const { step: currentStep, isSidebarFullscreen } = useSelect( ( select ) =>
@@ -33,10 +34,16 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 
 	const { launchSite } = useDispatch( SITE_STORE );
 
-	const handleLaunch = () => {
+	const handleLaunch = React.useCallback( () => {
 		launchSite( siteId );
 		setIsLaunching( true );
-	};
+	}, [ launchSite, setIsLaunching, siteId ] );
+
+	React.useEffect( () => {
+		if ( ! isLaunching && isLaunchImmediately ) {
+			handleLaunch();
+		}
+	}, [ isLaunching, isLaunchImmediately, handleLaunch ] );
 
 	// handle redirects to checkout / my home after launch
 	useOnLaunch();
