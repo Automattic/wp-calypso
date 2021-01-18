@@ -53,7 +53,7 @@ describe( 'PaymentInfoBlock', () => {
 		} );
 
 		describe( 'when the purchase has no payment method', () => {
-			const purchase = {};
+			const purchase = { expiryStatus, isRechargeable: false, payment: {} };
 
 			it( 'renders "None"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } /> );
