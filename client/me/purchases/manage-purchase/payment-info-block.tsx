@@ -87,14 +87,12 @@ function PaymentInfoBlockWrapper( {
 	const translate = useTranslate();
 	return (
 		<aside aria-label={ String( translate( 'Payment method' ) ) }>
-			<em className="manage-purchase__detail-label">
-				<span>{ translate( 'Payment method' ) }</span>
-				{ isExpiring( purchase ) && (
-					<div className="manage-purchase__detail-label-subtitle">
-						{ translate( '(this will not be billed)' ) }
-					</div>
-				) }
-			</em>
+			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
+			{ isExpiring( purchase ) && (
+				<div className="manage-purchase__detail-label-subtitle">
+					{ translate( '(this will not be billed)' ) }
+				</div>
+			) }
 			<span className="manage-purchase__detail">{ children }</span>
 		</aside>
 	);
