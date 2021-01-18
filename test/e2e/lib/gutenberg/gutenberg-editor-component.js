@@ -50,6 +50,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.explicitWaitMS,
 			'Could not locate the editor iFrame.'
 		);
+		await this.driver.sleep( 2000 );
 	}
 
 	async _postInit() {
