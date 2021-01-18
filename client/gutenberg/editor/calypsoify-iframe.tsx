@@ -867,7 +867,7 @@ const mapStateToProps = (
 		),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
-		anchorFmPodcastId: getSiteOption( state, siteId, 'anchor_fm_podcast_id' ),
+		anchorFmPodcastId: getSiteOption( state, siteId, 'anchor_podcast' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
 		parentPostId,
