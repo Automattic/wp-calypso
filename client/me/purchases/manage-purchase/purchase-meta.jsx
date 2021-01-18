@@ -269,6 +269,7 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+		// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10")
 		return translate( '%(priceText)s {{period}}(one-time){{/period}}', {
 			args: { priceText },
 			components: {
@@ -297,6 +298,7 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 		period = translate( 'month' );
 	}
 
+	// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
 	return translate( '%(priceText)s {{period}}/ %(period)s{{/period}}', {
 		args: { priceText, period },
 		components: {
