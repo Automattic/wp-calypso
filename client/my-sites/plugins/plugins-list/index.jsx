@@ -32,7 +32,7 @@ import {
 } from 'calypso/state/plugins/installed/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
-	getPluginOnSites,
+	getPluginsOnSites,
 	getPluginStatusesByType,
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
@@ -591,17 +591,9 @@ export default connect(
 	( state, { plugins } ) => {
 		const selectedSite = getSelectedSite( state );
 
-		/* eslint-disable wpcalypso/redux-no-bound-selectors */
-		const pluginsOnSites = Object.values( plugins ).reduce( ( acc, plugin ) => {
-			const siteIds = Object.keys( plugin.sites );
-			acc[ plugin.slug ] = getPluginOnSites( state, siteIds, plugin.slug );
-			return acc;
-		}, {} );
-		/* eslint-enable wpcalypso/redux-no-bound-selectors */
-
 		return {
 			allSites: getSites( state ),
-			pluginsOnSites,
+			pluginsOnSites: getPluginsOnSites( state, plugins ),
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
