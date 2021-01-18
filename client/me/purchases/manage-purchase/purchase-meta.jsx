@@ -36,6 +36,7 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
+	isTitanMail,
 	getProductFromSlug,
 } from 'calypso/lib/products-values';
 import { getPlan } from 'calypso/lib/plans';
@@ -427,7 +428,10 @@ function PurchaseMetaExpiration( {
 	}
 
 	if (
-		( isDomainRegistration( purchase ) || isPlan( purchase ) || isGoogleApps( purchase ) ) &&
+		( isDomainRegistration( purchase ) ||
+			isPlan( purchase ) ||
+			isGoogleApps( purchase ) ||
+			isTitanMail( purchase ) ) &&
 		! isExpired( purchase )
 	) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
