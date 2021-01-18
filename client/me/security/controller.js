@@ -8,7 +8,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import userSettings from 'calypso/lib/user-settings';
 import PasswordComponent from 'calypso/me/security/main';
 import SocialLoginComponent from 'calypso/me/social-login';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
@@ -38,7 +37,6 @@ export function twoStep( context, next ) {
 	const TwoStepComponent = require( 'calypso/me/two-step' ).default;
 
 	context.primary = React.createElement( TwoStepComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
