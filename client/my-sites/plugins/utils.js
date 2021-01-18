@@ -22,3 +22,7 @@ export function getExtensionSettingsPath( plugin ) {
 
 	return get( section, 'settings_path' );
 }
+
+export function siteObjectsToSiteIds( sites ) {
+	return sites?.map( ( site ) => site.ID ) ?? [];
+}

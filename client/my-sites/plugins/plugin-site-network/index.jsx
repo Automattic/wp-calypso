@@ -24,6 +24,7 @@ import {
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -164,8 +165,7 @@ class PluginSiteNetwork extends React.Component {
 }
 
 export default connect( ( state, { plugin, secondarySites, site } ) => {
-	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const secondarySiteIds = secondarySites.map( ( secSite ) => secSite.ID );
+	const secondarySiteIds = siteObjectsToSiteIds( secondarySites );
 
 	return {
 		pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),

@@ -27,6 +27,7 @@ import {
 	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -328,8 +329,7 @@ class PluginItem extends Component {
 }
 
 export default connect( ( state, { plugin, sites } ) => {
-	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const siteIds = sites?.map( ( site ) => site.ID );
+	const siteIds = siteObjectsToSiteIds( sites );
 
 	return {
 		pluginsOnSites: getPluginOnSites( state, siteIds, plugin?.slug ),

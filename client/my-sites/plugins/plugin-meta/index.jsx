@@ -31,7 +31,7 @@ import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 import PluginInformation from 'calypso/my-sites/plugins/plugin-information';
 import WpcomPluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button-wpcom';
 import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-transfer';
-import { getExtensionSettingsPath } from 'calypso/my-sites/plugins/utils';
+import { getExtensionSettingsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
@@ -617,8 +617,7 @@ export class PluginMeta extends Component {
 const mapStateToProps = ( state, { plugin, sites } ) => {
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
-	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const siteIds = sites.map( ( site ) => site.ID );
+	const siteIds = siteObjectsToSiteIds( sites );
 
 	return {
 		disabledActivation: isPluginActionInProgress(
