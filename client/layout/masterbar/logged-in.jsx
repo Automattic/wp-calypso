@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import qs from 'qs';
+import { parse } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -56,7 +56,7 @@ class MasterbarLoggedIn extends React.Component {
 
 	componentDidMount() {
 		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
-		const qryString = qs.parse( document.location.search.replace( /^\?/, '' ) );
+		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
 		if ( qryString?.openSidebar === 'true' ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
