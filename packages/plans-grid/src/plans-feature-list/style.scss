@@ -49,12 +49,16 @@ ul.plans-feature-list__item-group {
 	}
 
 	&--disabled-message {
-		font-weight: bold;
 		color: var( --studio-orange-40 );
 
 		& > svg path {
-			fill: var( --studio-orange-40 );
-			stroke: var( --studio-orange-40 );
+			fill: currentColor;
+			stroke: currentColor;
+		}
+
+		& > span {
+			font-weight: bold;
+			text-decoration: line-through;
 		}
 	}
 }
