@@ -270,11 +270,6 @@ function displayError( { translate, error }, reduxDispatch ) {
 	reduxDispatch( errorNotice( error.message ) );
 }
 
-export default connect(
-	( state ) => ( {
-		countriesList: getCountries( state, 'payments' ),
-	} ),
-	{
-		errorNotice,
-	}
-)( localize( PaymentMethodForm ) );
+export default connect( ( state ) => ( {
+	countriesList: getCountries( state, 'payments' ),
+} ) )( localize( PaymentMethodForm ) );
