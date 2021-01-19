@@ -9,7 +9,6 @@ import { includes, some } from 'lodash';
  * Internal Dependencies
  */
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
-import notices from 'calypso/notices';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginEligibility from './plugin-eligibility';
@@ -125,15 +124,12 @@ export function plugins( context, next ) {
 	const basePath = sectionify( context.path ).replace( '/' + filter, '' );
 
 	context.params.pluginFilter = filter;
-	notices.clearNotices( 'notices' );
 	renderPluginList( context, basePath );
 	next();
 }
 
 function plugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
-
-	notices.clearNotices( 'notices' );
 	renderSinglePlugin( context, siteUrl );
 	next();
 }
