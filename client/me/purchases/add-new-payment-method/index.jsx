@@ -26,6 +26,7 @@ import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method
 import { isEnabled } from 'calypso/config';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
+import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 
 function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );
@@ -44,7 +45,11 @@ function AddNewPaymentMethod() {
 		shouldShowTaxFields: true,
 		activePayButtonText: translate( 'Save card' ),
 	} );
-	const paymentMethodList = useMemo( () => [ stripeMethod ], [ stripeMethod ] );
+	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( Boolean ), [ stripeMethod ] );
+
+	if ( paymentMethodList.length === 0 ) {
+		return <PaymentMethodLoader title={ addPaymentMethodTitle } />;
+	}
 
 	return (
 		<Main className="add-new-payment-method is-wide-layout">
