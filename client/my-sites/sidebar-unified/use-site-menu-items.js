@@ -3,7 +3,6 @@
  */
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import buildFallbackResponse from './fallback-data.js';
 
 /**
  * Internal dependencies
@@ -13,7 +12,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import allSitesMenuStaticData from './all-sites-menu-static-data.js';
+import buildFallbackResponse from './static-data/fallback-menu';
+import allSitesMenu from './static-data/all-sites-menu';
 
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
@@ -25,11 +25,11 @@ const useSiteMenuItems = () => {
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 
 	useEffect( () => {
-		if ( selectedSiteId !== null ) {
+		if ( null !== selectedSiteId && null !== siteDomain ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
 			dispatch( fetchPlugins( [ selectedSiteId ] ) );
 		}
-	}, [ dispatch, selectedSiteId ] );
+	}, [ dispatch, selectedSiteId, siteDomain ] );
 
 	/**
 	 * As a general rule we allow fallback data to remain as static as possible.
@@ -51,7 +51,7 @@ const useSiteMenuItems = () => {
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
 	if ( ! siteDomain ) {
-		return allSitesMenuStaticData();
+		return allSitesMenu();
 	}
 
 	/**
