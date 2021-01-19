@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { createStripeSetupIntent } from '@automattic/calypso-stripe';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { Stripe, StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import { makeRedirectResponse, makeSuccessResponse } from '@automattic/composite-checkout';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import { addQueryArgs } from '@wordpress/url';
@@ -13,12 +13,7 @@ import { useDispatch } from 'react-redux';
  * Internal Dependencies
  */
 import wp from 'calypso/lib/wp';
-import {
-	getTokenForSavingCard,
-	updateCreditCard,
-	saveCreditCard,
-	getInitializedFields,
-} from 'calypso/me/purchases/components/payment-method-form/helpers';
+import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -37,14 +32,12 @@ export async function assignNewCardProcessor(
 	{
 		purchase,
 		translate,
-		siteSlug,
 		stripe,
 		stripeConfiguration,
 		reduxDispatch,
 	}: {
 		purchase: Purchase | undefined;
 		translate: ReturnType< typeof useTranslate >;
-		siteSlug?: string;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
 		reduxDispatch: ReturnType< typeof useDispatch >;
@@ -56,46 +49,31 @@ export async function assignNewCardProcessor(
 	if ( ! isNewCardDataValid( submitData ) ) {
 		throw new Error( 'Credit Card data is missing name, country, or postal code' );
 	}
+	if ( ! stripe || ! stripeConfiguration ) {
+		throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
+	}
+
 	const { name, countryCode, postalCode } = submitData;
-	const createStripeSetupIntentAsync = async ( paymentDetails: {
-		country: string;
-		'postal-code': string | number;
-	} ) => {
-		const { country, 'postal-code': zip } = paymentDetails;
-		const paymentDetailsForStripe = {
-			name,
-			address: {
-				country: country,
-				postal_code: zip,
-			},
-		};
-		if ( ! stripe || ! stripeConfiguration ) {
-			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
-		}
-		return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
-	};
 
-	const formFieldValues = getInitializedFields( {
+	const formFieldValues = {
 		country: countryCode,
-		postalCode,
+		postal_code: postalCode,
 		name,
-	} );
-
-	const token = await getTokenForSavingCard( {
+	};
+	const tokenResponse = await createStripeSetupIntentAsync(
 		formFieldValues,
-		createCardToken: createStripeSetupIntentAsync,
-		parseTokenFromResponse: ( response: { payment_method: string } ) => response.payment_method,
-		translate,
-	} );
+		stripe,
+		stripeConfiguration
+	);
+	const token = tokenResponse.payment_method;
+	if ( ! token ) {
+		throw new Error( String( translate( 'Failed to add card.' ) ) );
+	}
 
-	if ( purchase && siteSlug ) {
+	if ( purchase ) {
 		const result = await updateCreditCard( {
-			formFieldValues,
-			apiParams: { purchaseId: purchase.id },
 			purchase,
-			siteSlug,
 			token,
-			translate,
 			stripeConfiguration,
 		} );
 
@@ -104,12 +82,33 @@ export async function assignNewCardProcessor(
 
 	const result = await saveCreditCard( {
 		token,
-		translate,
 		stripeConfiguration,
-		formFieldValues,
 	} );
 
 	return makeSuccessResponse( result );
+}
+
+async function createStripeSetupIntentAsync(
+	{
+		name,
+		country,
+		postal_code,
+	}: {
+		name: string;
+		country: string;
+		postal_code: string | number;
+	},
+	stripe: Stripe,
+	stripeConfiguration: StripeConfiguration
+): Promise< StripeSetupIntent > {
+	const paymentDetailsForStripe = {
+		name,
+		address: {
+			country,
+			postal_code,
+		},
+	};
+	return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
 }
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
