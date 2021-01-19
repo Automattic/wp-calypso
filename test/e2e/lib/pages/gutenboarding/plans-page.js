@@ -22,6 +22,7 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 	async expandAllPlans() {
 		const toggleAllPlansSelector = By.css( 'button.plans-accordion__toggle-all-button' );
+		await driverHelper.scrollIntoView( this.driver, toggleAllPlansSelector );
 		return await driverHelper.clickWhenClickable( this.driver, toggleAllPlansSelector );
 	}
 
