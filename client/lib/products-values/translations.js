@@ -106,16 +106,16 @@ export const getJetpackProductsDisplayNames = () => {
 			i5: translate( 'Site Search' ),
 			spp: translate( 'Site Search' ),
 		}[ currentCROvariant ] || translate( 'Jetpack Search' );
-      
+
 	const scan =
 		{
 			i5: translate( 'Scan' ),
 			spp: translate( 'Scan' ),
 		}[ currentCROvariant ] || translate( 'Jetpack Scan' );
-      
-  const scanRealtime = (
+
+	const scanRealtime = (
 		<>
-			{ ( currentCROvariant === 'i5' || currentCROvariant === 'spp' )
+			{ currentCROvariant === 'i5' || currentCROvariant === 'spp'
 				? translate( 'Scan {{em}}Real-Time{{/em}}', {
 						components: {
 							em: <em />,
@@ -128,7 +128,7 @@ export const getJetpackProductsDisplayNames = () => {
 				  } ) }
 		</>
 	);
-    
+
 	const antiSpam = {
 		i5: translate( 'Anti-spam' ),
 		spp: translate( 'Anti-Spam' ),
