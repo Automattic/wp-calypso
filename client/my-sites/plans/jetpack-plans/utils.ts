@@ -710,9 +710,9 @@ export function checkout(
 }
 
 /**
- * Returns an absolute or relative URL to manage a site purchase.
+ * Redirects users to the appropriate URL to manage a site purchase.
  * On cloud.jetpack.com, the URL will point to wordpress.com. In any other case,
- * it will return a relative path to the site purchase.
+ * it will point to a relative path to the site purchase.
  *
  * @param {string} siteSlug Selected site
  * @param {number} purchaseId Id of a purchase
