@@ -122,7 +122,6 @@ class SignupForm extends Component {
 	};
 
 	state = {
-		notice: null,
 		submitting: false,
 		focusPassword: false,
 		focusUsername: false,
@@ -331,8 +330,6 @@ class SignupForm extends Component {
 	handleChangeEvent = ( event ) => {
 		const name = event.target.name;
 		const value = event.target.value;
-
-		this.setState( { notice: null } );
 
 		this.formStateController.handleFieldChange( {
 			name: name,
@@ -670,7 +667,6 @@ class SignupForm extends Component {
 					value={ formState.getFieldValue( this.state.form, 'email' ) }
 					onBlur={ this.handleBlur }
 					onChange={ ( value ) => {
-						this.setState( { notice: null } );
 						this.formStateController.handleFieldChange( {
 							name: 'email',
 							value,
@@ -693,7 +689,6 @@ class SignupForm extends Component {
 							value={ formState.getFieldValue( this.state.form, 'username' ) }
 							onBlur={ this.handleBlur }
 							onChange={ ( value ) => {
-								this.setState( { notice: null } );
 								this.formStateController.handleFieldChange( {
 									name: 'username',
 									value,
@@ -777,9 +772,6 @@ class SignupForm extends Component {
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ] );
-		}
-		if ( this.state.notice ) {
-			return this.globalNotice( this.state.notice );
 		}
 		if ( this.userCreationComplete() ) {
 			return (
