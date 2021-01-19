@@ -81,7 +81,8 @@ export const getProductsToDisplay = ( {
 	purchasedProducts: ( SelectorProduct | null )[];
 	includedInPlanProducts: ( SelectorProduct | null )[];
 } ): SelectorProduct[] => {
-	const purchasedSlugs = purchasedProducts?.map( ( p ) => p?.productSlug ) || [];
+	const purchasedSlugs =
+		purchasedProducts?.map( ( p ) => p?.productSlug )?.filter( ( slug ) => slug ) || [];
 
 	// Products that have not been directly purchased must honor the current filter
 	// selection since they exist in both monthly and yearly version.
