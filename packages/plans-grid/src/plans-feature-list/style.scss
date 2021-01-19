@@ -37,6 +37,13 @@ ul.plans-feature-list__item-group {
 	margin: 4px 0;
 	color: $gray-700;
 
+	align-self: flex-end;
+	@media ( min-width: $break-mobile ) {
+		@supports ( display: grid ) {
+			align-items: end;
+		}
+	}
+
 	svg {
 		margin-right: 1px;
 		vertical-align: middle;
