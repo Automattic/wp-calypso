@@ -45,12 +45,11 @@ export default function PaymentMethodSelector( {
 	paymentMethods,
 	successCallback,
 	siteSlug,
-	apiParams,
 }: {
 	purchase?: Purchase;
 	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
-	siteSlug: string;
+	siteSlug?: string;
 	apiParams?: Record< string, string | number >;
 } ): JSX.Element {
 	const translate = useTranslate();
@@ -102,7 +101,6 @@ export default function PaymentMethodSelector( {
 							purchase,
 							translate,
 							siteSlug,
-							apiParams,
 							stripe,
 							stripeConfiguration,
 							reduxDispatch,

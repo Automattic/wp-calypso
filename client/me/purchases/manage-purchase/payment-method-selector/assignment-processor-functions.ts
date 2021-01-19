@@ -16,6 +16,7 @@ import wp from 'calypso/lib/wp';
 import {
 	getTokenForSavingCard,
 	updateCreditCard,
+	saveCreditCard,
 	getInitializedFields,
 } from 'calypso/me/purchases/components/payment-method-form/helpers';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -37,15 +38,13 @@ export async function assignNewCardProcessor(
 		purchase,
 		translate,
 		siteSlug,
-		apiParams,
 		stripe,
 		stripeConfiguration,
 		reduxDispatch,
 	}: {
 		purchase: Purchase | undefined;
 		translate: ReturnType< typeof useTranslate >;
-		siteSlug: string;
-		apiParams: unknown;
+		siteSlug?: string;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
 		reduxDispatch: ReturnType< typeof useDispatch >;
@@ -82,28 +81,35 @@ export async function assignNewCardProcessor(
 		name,
 	} );
 
-	// FIXME: Add code to save new card if purchase is not set
-
-	return getTokenForSavingCard( {
+	const token = await getTokenForSavingCard( {
 		formFieldValues,
 		createCardToken: createStripeSetupIntentAsync,
 		parseTokenFromResponse: ( response: { payment_method: string } ) => response.payment_method,
 		translate,
-	} )
-		.then( ( token ) =>
-			updateCreditCard( {
-				formFieldValues,
-				apiParams,
-				purchase,
-				siteSlug,
-				token,
-				translate,
-				stripeConfiguration,
-			} )
-		)
-		.then( ( data ) => {
-			return makeSuccessResponse( data );
+	} );
+
+	if ( purchase && siteSlug ) {
+		const result = await updateCreditCard( {
+			formFieldValues,
+			apiParams: { purchaseId: purchase.id },
+			purchase,
+			siteSlug,
+			token,
+			translate,
+			stripeConfiguration,
 		} );
+
+		return makeSuccessResponse( result );
+	}
+
+	const result = await saveCreditCard( {
+		token,
+		translate,
+		stripeConfiguration,
+		formFieldValues,
+	} );
+
+	return makeSuccessResponse( result );
 }
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
