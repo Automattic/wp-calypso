@@ -36,6 +36,7 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
+	isTitanMail,
 	getProductFromSlug,
 } from 'calypso/lib/products-values';
 import { getPlan } from 'calypso/lib/plans';
@@ -263,13 +264,14 @@ function renderPaymentInfo( { purchase, translate, moment } ) {
 }
 
 function PurchaseMetaPrice( { purchase, translate } ) {
-	const { priceText, currencyCode, productSlug } = purchase;
+	const { priceText, productSlug } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
-			args: { priceText, currencyCode },
+		// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10")
+		return translate( '%(priceText)s {{period}}(one-time){{/period}}', {
+			args: { priceText },
 			components: {
 				period: <span className="manage-purchase__time-period" />,
 			},
@@ -296,12 +298,9 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 		period = translate( 'month' );
 	}
 
-	return translate( '%(priceText)s %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
-		args: {
-			priceText,
-			currencyCode,
-			period,
-		},
+	// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
+	return translate( '%(priceText)s {{period}}/ %(period)s{{/period}}', {
+		args: { priceText, period },
 		components: {
 			period: <span className="manage-purchase__time-period" />,
 		},
@@ -427,7 +426,10 @@ function PurchaseMetaExpiration( {
 	}
 
 	if (
-		( isDomainRegistration( purchase ) || isPlan( purchase ) || isGoogleApps( purchase ) ) &&
+		( isDomainRegistration( purchase ) ||
+			isPlan( purchase ) ||
+			isGoogleApps( purchase ) ||
+			isTitanMail( purchase ) ) &&
 		! isExpired( purchase )
 	) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;

@@ -88,7 +88,11 @@ class TitanManagementNav extends React.Component {
 		if ( ! externalManagementUrl || isFetchingExternalManagementUrl ) {
 			return <VerticalNavItem isPlaceholder={ true } />;
 		}
-		return <VerticalNavItem path={ externalManagementUrl }>{ linkTitle }</VerticalNavItem>;
+		return (
+			<VerticalNavItem path={ externalManagementUrl } external={ true }>
+				{ linkTitle }
+			</VerticalNavItem>
+		);
 	};
 
 	renderPurchaseManagementLink = () => {

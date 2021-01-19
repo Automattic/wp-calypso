@@ -5,7 +5,6 @@ import { getThemeCustomizeUrl, isThemeActive } from 'calypso/state/themes/select
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 /**
  * Returns the URL for opening customizing the given site in either the block editor with
@@ -24,11 +23,11 @@ export default function getCustomizeOrEditFrontPageUrl( state, themeId, siteId )
 	const shouldUseGutenberg =
 		shouldCustomizeHomepageWithGutenberg( state, siteId ) ||
 		isSiteUsingFullSiteEditing( state, siteId );
-	const isAtomic = isSiteAtomic( state, siteId );
+	const frontPageEditorUrl = getFrontPageEditorUrl( state, siteId );
 
-	// If the theme is not active, use the other function to preview customization with the theme.
-	if ( ! isAtomic && shouldUseGutenberg && isThemeActive( state, themeId, siteId ) ) {
-		return getFrontPageEditorUrl( state, siteId );
+	// If the theme is not active or getFrontPageEditorUrl has returned 'false', use the other function to preview customization with the theme.
+	if ( frontPageEditorUrl && shouldUseGutenberg && isThemeActive( state, themeId, siteId ) ) {
+		return frontPageEditorUrl;
 	}
 
 	return getThemeCustomizeUrl( state, themeId, siteId );

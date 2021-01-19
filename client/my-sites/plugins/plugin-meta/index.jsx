@@ -45,9 +45,32 @@ import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/sele
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
-import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPluginOnSites,
+	isPluginActionInProgress,
+} from 'calypso/state/plugins/installed/selectors';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	REMOVE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
+
+const activationPreventionActions = [
+	ENABLE_AUTOUPDATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	REMOVE_PLUGIN,
+];
+const autoupdatePreventionActions = [ ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN, REMOVE_PLUGIN ];
+const removalPreventionActions = [
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+];
 
 /**
  * Style dependencies
@@ -179,6 +202,7 @@ export class PluginMeta extends Component {
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
 						isMock={ this.props.isMock }
+						disabled={ this.props.disabledActivation }
 					/>
 				) }
 				{ canToggleAutoupdate && (
@@ -187,6 +211,7 @@ export class PluginMeta extends Component {
 						site={ this.props.selectedSite }
 						wporg={ this.props.plugin.wporg }
 						isMock={ this.props.isMock }
+						disabled={ this.props.disabledAutoupdate }
 					/>
 				) }
 				{ canRemove && (
@@ -194,6 +219,7 @@ export class PluginMeta extends Component {
 						plugin={ this.props.plugin }
 						site={ this.props.selectedSite }
 						isMock={ this.props.isMock }
+						disabled={ this.props.disabledRemoval }
 					/>
 				) }
 			</div>
@@ -595,6 +621,19 @@ const mapStateToProps = ( state, { plugin, sites } ) => {
 	const siteIds = sites.map( ( site ) => site.ID );
 
 	return {
+		disabledActivation: isPluginActionInProgress(
+			state,
+			siteId,
+			plugin.id,
+			activationPreventionActions
+		),
+		disabledAutoupdate: isPluginActionInProgress(
+			state,
+			siteId,
+			plugin.id,
+			autoupdatePreventionActions
+		),
+		disabledRemoval: isPluginActionInProgress( state, siteId, plugin.id, removalPreventionActions ),
 		atEnabled: isATEnabled( selectedSite ),
 		isTransferring: isAutomatedTransferActive( state, siteId ),
 		automatedTransferSite: isSiteAutomatedTransfer( state, siteId ),

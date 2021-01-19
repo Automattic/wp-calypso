@@ -50,6 +50,8 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// Directly and indirectly owned products
 	const ownedProducts = [ ...purchasedProducts, ...includedInPlanProducts ];
 
+	const currentCROvariant = getJetpackCROActiveVersion();
+
 	// If Jetpack Search is directly or indirectly owned, continue, otherwise make it available.
 	if (
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
@@ -59,6 +61,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	// Include Jetpack CRM
 	if (
+		currentCROvariant !== 'spp' &&
 		! ownedProducts.some( ( ownedProduct ) =>
 			[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
 		)
@@ -67,7 +70,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	const backupProductsToShow = [];
-	const currentCROvariant = getJetpackCROActiveVersion();
 	// In v1, we show the Backup product the site owns or Jetpack Backup Daily.
 	if ( currentCROvariant === 'v1' ) {
 		if (
@@ -95,6 +97,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		}
 
 		if (
+			currentCROvariant !== 'spp' &&
 			! ownedProducts.some( ( ownedProduct ) =>
 				[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
 					ownedProduct

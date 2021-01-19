@@ -38,16 +38,29 @@ const JetpackFreeCardButton: FC< JetpackFreeCardButtonProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
+	const { site } = urlQueryArgs;
 
 	// If the user is not logged in and there is a site in the URL, we need to construct
 	// the URL to wp-admin from the `site` query parameter
-	const wpAdminUrlFromQuery = urlQueryArgs.site
-		? getUrlFromParts( {
-				...getUrlParts( `https://${ urlQueryArgs.site }/wp-admin/admin.php` ),
+	let jetpackAdminUrlFromQuery;
+
+	if ( site ) {
+		let wpAdminUrlFromQuery;
+
+		// Ensure that URL is valid
+		try {
+			// Slugs of secondary sites of a multisites network follow this syntax: example.net::second-site
+			wpAdminUrlFromQuery = new URL( `https://${ site.replace( '::', '/' ) }/wp-admin/admin.php` );
+		} catch ( e ) {}
+
+		if ( wpAdminUrlFromQuery ) {
+			jetpackAdminUrlFromQuery = getUrlFromParts( {
+				...getUrlParts( wpAdminUrlFromQuery.href ),
 				search: '?page=jetpack',
 				hash: '/my-plan',
-		  } ).href
-		: null;
+			} ).href;
+		}
+	}
 
 	const onClickTrack = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
 		site_id: siteId || undefined,
@@ -55,14 +68,14 @@ const JetpackFreeCardButton: FC< JetpackFreeCardButtonProps > = ( {
 
 	// `siteId` is going to be null if the user is not logged in, so we need to check
 	// if there is a site in the URL also
-	const isSiteinContext = siteId || urlQueryArgs.site;
+	const isSiteinContext = siteId || site;
 
 	// Jetpack Connect flow uses `url` instead of `site` as the query parameter for a site URL
 	const { site: url, ...restQueryArgs } = urlQueryArgs;
 	const startHref =
 		isJetpackCloud() && ! isSiteinContext
 			? addQueryArgs( { url, ...restQueryArgs }, `https://wordpress.com${ JPC_PATH_BASE }` )
-			: wpAdminUrl || wpAdminUrlFromQuery || JPC_PATH_BASE;
+			: wpAdminUrl || jetpackAdminUrlFromQuery || JPC_PATH_BASE;
 	return (
 		<Button primary={ primary } className={ className } href={ startHref } onClick={ onClickTrack }>
 			{ label || translate( 'Start for free' ) }

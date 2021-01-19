@@ -113,7 +113,7 @@ export function durationToString( duration: Duration ): DurationString {
 }
 
 export function durationToText( duration: Duration ): TranslateResult {
-	if ( 'i5' === getJetpackCROActiveVersion() ) {
+	if ( [ 'i5', 'spp' ].includes( getJetpackCROActiveVersion() ) ) {
 		return duration === TERM_MONTHLY
 			? translate( 'per month{{br/}}billed monthly', { components: { br: createElement( 'br' ) } } )
 			: translate( 'per month{{br/}}billed yearly', { components: { br: createElement( 'br' ) } } );
@@ -645,7 +645,7 @@ export function buildCardFeaturesFromItem(
 			return buildCardFeaturesFromFeatureKeys( features, options );
 		}
 	} else if ( isFunction( item.getFeatures ) ) {
-		const features = item.getFeatures();
+		const features = item.getFeatures( getJetpackCROActiveVersion() );
 
 		if ( features ) {
 			return buildCardFeaturesFromFeatureKeys( features, options );

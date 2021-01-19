@@ -32,10 +32,6 @@ import {
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITES_DELETE_REQUEST_SUCCESS,
 	INVITES_DELETE_REQUEST_FAILURE,
-	JETPACK_MODULE_ACTIVATE_SUCCESS,
-	JETPACK_MODULE_DEACTIVATE_SUCCESS,
-	JETPACK_MODULE_ACTIVATE_FAILURE,
-	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTION_DELETE_FAILURE,
 	POST_DELETE_FAILURE,
@@ -68,7 +64,6 @@ import {
 	onAccountRecoveryPhoneValidationSuccess,
 	onAccountRecoveryPhoneValidationFailed,
 } from './account-recovery';
-import { onJetpackModuleActivationActionMessage } from './jetpack-modules';
 
 /**
  * Handlers
@@ -318,10 +313,6 @@ export const handlers = {
 	[ INVITES_DELETE_REQUEST_SUCCESS ]: onDeleteInvitesSuccess,
 	[ INVITES_DELETE_REQUEST_FAILURE ]: onDeleteInvitesFailure,
 	[ INVITE_RESEND_REQUEST_FAILURE ]: onInviteResendRequestFailure,
-	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
-	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
-	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
-	[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
 	[ KEYRING_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
 	[ KEYRING_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
 	[ POST_DELETE_FAILURE ]: onPostDeleteFailure,

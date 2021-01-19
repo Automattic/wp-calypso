@@ -152,7 +152,7 @@
 	},
 	"devDependencies": {
 		"@babel/preset-typescript": "^7.12.1",
-		"@types/wordpress__plugins": "^2.3.6",
+		"@types/wordpress__plugins": "^2.3.7",
 		"@wordpress/eslint-plugin": "^7.1.0",
 		"babel-jest": "^26.3.0",
 		"webpack": "^4.44.2"

@@ -1,0 +1,99 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.jetpack-crm-free-card-spp {
+	padding: 24px 32px;
+
+	@include break-small {
+		display: flex;
+		flex-direction: column;
+
+		&.is-full-width {
+			flex-direction: row;
+			padding-bottom: 32px;
+		}
+	}
+}
+
+.jetpack-crm-free-card-spp__title {
+	color: var( --studio-gray-100 );
+
+	font-size: 1.875rem;
+	font-weight: 700;
+	margin: 12px 0 20px;
+}
+
+.jetpack-crm-free-card-spp__subheadline {
+	color: var( --studio-gray-60 );
+	min-height: 48px;
+	margin-bottom: 32px;
+}
+
+.jetpack-crm-free-card-spp.is-full-width
+.jetpack-crm-free-card-spp__subheadline {
+	min-height: auto;
+}
+
+.jetpack-crm-free-card-spp__button.button {
+	display: block;
+
+	width: 100%;
+	margin: 24px 0;
+
+	color: var( --color-accent );
+	border: solid 2px currentColor;
+	border-radius: 4px;
+
+	font-size: 1rem;
+	font-weight: 700;
+
+	@include break-small {
+		margin-bottom: 0;
+	}
+}
+
+.jetpack-crm-free-card-spp.is-full-width
+.jetpack-crm-free-card-spp__button.button {
+	@include break-medium {
+		max-width: 210px;
+	}
+}
+
+.jetpack-crm-free-card-spp__features {
+	@include break-small {
+		margin-top: 0;
+	}
+
+	@include break-large {
+		> li {
+			width: 50%;
+			margin: 0;
+		}
+	}
+}
+
+.jetpack-crm-free-card-spp.is-full-width
+.jetpack-crm-free-card-spp__features {
+	display: flex;
+	align-items: flex-end;
+
+	margin-block-end: 0;
+
+	.jetpack-product-card-i5__features-list {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.jetpack-product-card-i5__features-item:last-child {
+		margin-bottom: 0;
+	}
+
+	@include break-small {
+		padding-left: 28px;
+	}
+
+	@include break-large {
+		margin-inline-start: auto;
+		margin-inline-end: auto;
+	}
+}

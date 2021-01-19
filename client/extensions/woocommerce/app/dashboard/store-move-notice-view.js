@@ -48,7 +48,9 @@ class StoreMoveNoticeView extends Component {
 							'We’re rolling your favorite Store features into WooCommerce in February. {{link}}Learn more{{/link}} about this streamlined, commerce-focused navigation experience, designed to help you save time and access your favorite extensions faster.',
 							{
 								components: {
-									link: <a href="https://wordpress.com/support/store/" />,
+									link: (
+										<a href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/" />
+									),
 								},
 							}
 						) }
@@ -57,7 +59,9 @@ class StoreMoveNoticeView extends Component {
 							'We’ve rolled your favorite Store functions into WooCommerce. {{link}}Learn more{{/link}} about how this streamlined, commerce-focused navigation experience can help you save time and access your favorite extensions faster.',
 							{
 								components: {
-									link: <a href="https://wordpress.com/support/store/" />,
+									link: (
+										<a href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/" />
+									),
 								},
 							}
 						) }

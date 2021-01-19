@@ -111,9 +111,7 @@ export const isEligibleForUnseen = ( teams, isWPForTeams = false ) => {
 	if ( isAutomatticTeamMember( teams ) ) {
 		return true;
 	} else if ( isWPForTeams ) {
-		// For now disable it even for p2 sites if the user is not an automattician
-		// return true;
-		return false;
+		return true;
 	}
 
 	return false;

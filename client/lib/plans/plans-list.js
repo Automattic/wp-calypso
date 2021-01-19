@@ -393,13 +393,16 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_DAILY,
 	getTitle: () =>
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Jetpack Security {{em}}Daily{{/em}}', { components: { em: <em /> } } )
-			: translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+		( {
+			v2: translate( 'Jetpack Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+			spp: translate( 'Jetpack Security' ),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ) ),
 	getButtonLabel: () =>
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Get Security {{em}}Daily{{/em}}', { components: { em: <em /> } } )
-			: undefined,
+		( {
+			v2: translate( 'Get Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+			spp: translate( 'Get Jetpack Security' ),
+		}[ getJetpackCROActiveVersion() ] || undefined ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),
@@ -409,6 +412,9 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 				'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
 			),
 			i5: translate(
+				'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
+			),
+			spp: translate(
 				'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
 			),
 		}[ getJetpackCROActiveVersion() ] ||
@@ -441,6 +447,12 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 				constants.FEATURE_SITE_MONETIZATION_V2,
 			],
 			i5: [
+				constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+				constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
+				constants.FEATURE_ANTISPAM_V2,
+				constants.FEATURE_VIDEO_HOSTING_V2,
+			],
+			spp: [
 				constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 				constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 				constants.FEATURE_ANTISPAM_V2,
@@ -603,6 +615,13 @@ const getPlanJetpackCompleteDetails = () => ( {
 				constants.FEATURE_PRODUCT_SEARCH_V2,
 			],
 			i5: [
+				constants.FEATURE_PLAN_SECURITY_DAILY,
+				constants.FEATURE_BACKUP_REALTIME_V2,
+				constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
+				constants.FEATURE_CRM_V2,
+				constants.FEATURE_PRODUCT_SEARCH_V2,
+			],
+			spp: [
 				constants.FEATURE_PLAN_SECURITY_DAILY,
 				constants.FEATURE_BACKUP_REALTIME_V2,
 				constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,

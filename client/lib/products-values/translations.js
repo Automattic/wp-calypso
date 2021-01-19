@@ -60,21 +60,31 @@ export const getJetpackProductsShortNames = () => {
 
 export const getJetpackProductsDisplayNames = () => {
 	const currentCROvariant = getJetpackCROActiveVersion();
-	const backupDaily = (
-		<>
-			{ currentCROvariant === 'v2'
-				? translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } )
-				: translate( 'Backup {{em}}Daily{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } ) }
-		</>
-	);
+	let backupDaily;
+	if ( currentCROvariant === 'v2' ) {
+		backupDaily = (
+			<>
+				{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
+					components: {
+						em: <em />,
+					},
+				} ) }
+			</>
+		);
+	} else if ( currentCROvariant === 'spp' ) {
+		backupDaily = <>{ translate( 'Jetpack Backup' ) }</>;
+	} else {
+		backupDaily = (
+			<>
+				{ translate( 'Backup {{em}}Daily{{/em}}', {
+					components: {
+						em: <em />,
+					},
+				} ) }
+			</>
+		);
+	}
+
 	const backupRealtime = (
 		<>
 			{ currentCROvariant === 'v2'
@@ -94,11 +104,18 @@ export const getJetpackProductsDisplayNames = () => {
 		{
 			v2: translate( 'Jetpack Site Search' ),
 			i5: translate( 'Site Search' ),
+			spp: translate( 'Site Search' ),
 		}[ currentCROvariant ] || translate( 'Jetpack Search' );
-	const scan = currentCROvariant === 'i5' ? translate( 'Scan' ) : translate( 'Jetpack Scan' );
-	const scanRealtime = (
+      
+	const scan =
+		{
+			i5: translate( 'Scan' ),
+			spp: translate( 'Scan' ),
+		}[ currentCROvariant ] || translate( 'Jetpack Scan' );
+      
+  const scanRealtime = (
 		<>
-			{ currentCROvariant === 'i5'
+			{ ( currentCROvariant === 'i5' || currentCROvariant === 'spp' )
 				? translate( 'Scan {{em}}Real-Time{{/em}}', {
 						components: {
 							em: <em />,
@@ -111,12 +128,11 @@ export const getJetpackProductsDisplayNames = () => {
 				  } ) }
 		</>
 	);
-	const antiSpam =
-		currentCROvariant === 'i5' ? (
-			translate( 'Anti-spam' )
-		) : (
-			<>{ translate( 'Jetpack Anti-spam' ) }</>
-		);
+    
+	const antiSpam = {
+		i5: translate( 'Anti-spam' ),
+		spp: translate( 'Anti-Spam' ),
+	}[ getJetpackCROActiveVersion() ] || <>{ translate( 'Jetpack Anti-spam' ) }</>;
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -140,11 +156,13 @@ export const getJetpackProductsCallToAction = () => {
 	const currentCROvariant = getJetpackCROActiveVersion();
 	const backupDaily = (
 		<>
-			{ translate( 'Get Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
+			{ currentCROvariant === 'spp'
+				? translate( 'Get Jetpack Backup' )
+				: translate( 'Get Backup {{em}}Daily{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ) }
 		</>
 	);
 	const backupRealtime = (
@@ -160,13 +178,15 @@ export const getJetpackProductsCallToAction = () => {
 		{
 			v1: translate( 'Get Jetpack Search' ),
 			i5: translate( 'Get Site Search' ),
+			spp: translate( 'Get Site Search' ),
 		}[ currentCROvariant ] || translate( 'Get Search' );
 	const scan =
 		currentCROvariant === 'v1' ? translate( 'Get Jetpack Scan' ) : translate( 'Get Scan' );
 	const antiSpam =
-		currentCROvariant === 'v1'
-			? translate( 'Get Jetpack Anti-spam' )
-			: translate( 'Get Anti-spam' );
+		{
+			v1: translate( 'Get Jetpack Anti-spam' ),
+			spp: translate( 'Get Anti-Spam' ),
+		}[ currentCROvariant ] || translate( 'Get Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -242,6 +262,9 @@ export const getJetpackProductsDescriptions = () => {
 			i5: translate(
 				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
 			),
+			spp: translate(
+				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
+			),
 		}[ getJetpackCROActiveVersion() ] ||
 		translate( 'Never lose a word, image, page, or time worrying about your site.' );
 	const backupRealtimeDescription = translate(
@@ -250,6 +273,9 @@ export const getJetpackProductsDescriptions = () => {
 	const searchDescription =
 		{
 			i5: translate(
+				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
+			),
+			spp: translate(
 				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
 			),
 		}[ getJetpackCROActiveVersion() ] ||
@@ -261,6 +287,9 @@ export const getJetpackProductsDescriptions = () => {
 	const antiSpamDescription =
 		{
 			i5: translate(
+				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
+			),
+			spp: translate(
 				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
 			),
 		}[ getJetpackCROActiveVersion() ] ||
