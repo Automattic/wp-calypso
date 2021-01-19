@@ -3954,12 +3954,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/lodash@*":
-  version "4.14.167"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.167.tgz#ce7d78553e3c886d4ea643c37ec7edc20f16765e"
-  integrity sha512-w7tQPjARrvdeBkX/Rwg95S592JwxqOjmms3zWQ0XZgSyxSLdzWaYH3vErBhdVS/lRBX7F8aBYcYJYTr5TMGOzw==
-
-"@types/lodash@^4.14.168":
+"@types/lodash@*", "@types/lodash@^4.14.168":
   version "4.14.168"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
   integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
@@ -4294,21 +4289,7 @@
     "@types/wordpress__data" "*"
     "@wordpress/element" "^2.14.0"
 
-"@types/wordpress__components@*":
-  version "9.8.5"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__components/-/wordpress__components-9.8.5.tgz#9779945a5a32d7ef12899ea20153ff2fb2a3b68c"
-  integrity sha512-7pHY2t8ITVvtJhwkzwtO/9AQbMLVRQRPDqMLLI8drYXoqrz462tPB1kwH3ySByuinT1TlNuezGU9AGm3NYOb4w==
-  dependencies:
-    "@types/react" "*"
-    "@types/tinycolor2" "*"
-    "@types/wordpress__components" "*"
-    "@types/wordpress__notices" "*"
-    "@types/wordpress__rich-text" "*"
-    "@wordpress/element" "^2.14.0"
-    downshift "^4.0.5"
-    re-resizable "^4.7.1"
-
-"@types/wordpress__components@^9.8.6":
+"@types/wordpress__components@*", "@types/wordpress__components@^9.8.6":
   version "9.8.6"
   resolved "https://registry.yarnpkg.com/@types/wordpress__components/-/wordpress__components-9.8.6.tgz#80bfe11d815f910fe1efc53034e20970fdb0bd1d"
   integrity sha512-K/GR3L9uaLqbgcnPfFEi8dpeJPdMaeR3t7mTrOvQkMH5Lgnr+5ifmalhBaw/EPtjfPyv9tyYPvBPUOsIwYQdcw==
