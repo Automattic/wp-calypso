@@ -52,7 +52,7 @@ const useSiteMenuItems = () => {
 	 * browser storage APIs.
 	 */
 	const fallbackDataOverides = {
-		siteDomain,
+		...( siteDomain ? siteDomain : [] ), // Do not provide a siteDomain if it is null.
 		shouldShowWooCommerce,
 		shouldShowThemes,
 	};
