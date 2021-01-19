@@ -51,7 +51,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 				handleLaunch();
 			}, 2000 );
 		}
-	}, [ isLaunching, isLaunchImmediately, handleLaunch ] );
+	}, [ isLaunching, isLaunchImmediately, handleLaunch, savePost ] );
 
 	// handle redirects to checkout / my home after launch
 	useOnLaunch();
