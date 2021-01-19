@@ -210,7 +210,9 @@ export class PlanFeaturesHeader extends Component {
 	getPerMonthDescription() {
 		const {
 			discountPrice,
+			fullRawPrice,
 			rawPrice,
+			currencyCode,
 			translate,
 			planType,
 			currentSitePlan,
@@ -229,6 +231,16 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
+			if (
+				! isInSignup &&
+				! isMonthlyPlan &&
+				planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } )
+			) {
+				const price = formatCurrency( fullRawPrice, currencyCode, { stripZeros: true } );
+				return translate( 'Per month, %(price)s billed yearly', {
+					args: { price: price },
+				} );
+			}
 			return null;
 		}
 		if ( ! planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) ) {

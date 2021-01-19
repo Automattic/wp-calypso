@@ -318,9 +318,13 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				rawPrice,
+				fullRawPrice,
+				discountPrice,
+				annualPricePerMonth,
+				isMonthlyPlan,
 			} = properties;
-			const { rawPrice, discountPrice } = properties;
-			const { annualPricePerMonth, isMonthlyPlan } = properties;
+
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -334,6 +338,7 @@ export class PlanFeatures extends Component {
 						title={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
+						fullRawPrice={ fullRawPrice }
 						discountPrice={ discountPrice }
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
 						hideMonthly={ hideMonthly }
@@ -406,6 +411,7 @@ export class PlanFeatures extends Component {
 				isPlaceholder,
 				hideMonthly,
 				rawPrice,
+				fullRawPrice,
 			} = properties;
 			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
@@ -450,6 +456,7 @@ export class PlanFeatures extends Component {
 						current={ current }
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
+						fullRawPrice={ fullRawPrice }
 						hideMonthly={ hideMonthly }
 						isInSignup={ isInSignup }
 						isJetpack={ isJetpack }
@@ -934,6 +941,9 @@ export default connect(
 				const discountPrice = siteId
 					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+				const fullRawPrice = siteId
+					? getSitePlanRawPrice( state, selectedSiteId, plan )
+					: getPlanRawPrice( state, planProductId );
 
 				let annualPricePerMonth = rawPrice;
 				const isMonthlyPlan = isMonthly( plan );
@@ -977,6 +987,7 @@ export default connect(
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,
+					fullRawPrice,
 					isLandingPage,
 					isPlaceholder,
 					planConstantObj,
