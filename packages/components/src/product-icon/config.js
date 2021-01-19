@@ -100,7 +100,12 @@ export const iconToProductSlugMap = {
 		'jetpack_backup_realtime_v2_dark',
 		'jetpack_backup_realtime_monthly_v2_dark',
 	],
-	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
+	'jetpack-scan': [
+		'jetpack_scan',
+		'jetpack_scan_monthly',
+		'jetpack_scan_realtime',
+		'jetpack_scan_realtime_monthly',
+	],
 	'jetpack-scan-v2': [
 		'jetpack_scan_v2',
 		'jetpack_scan_monthly_v2',

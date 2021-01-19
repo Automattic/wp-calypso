@@ -12,6 +12,8 @@ export type JetpackProductSlug =
 	| typeof constants.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
 	| typeof constants.PRODUCT_JETPACK_SCAN
 	| typeof constants.PRODUCT_JETPACK_SCAN_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_SCAN_REALTIME
+	| typeof constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY
 	| typeof constants.PRODUCT_JETPACK_SEARCH
 	| typeof constants.PRODUCT_JETPACK_SEARCH_MONTHLY
 	| typeof constants.PRODUCT_JETPACK_ANTI_SPAM
