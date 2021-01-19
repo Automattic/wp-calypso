@@ -10,8 +10,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import { getPlan } from 'calypso/lib/plans';
 import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
@@ -28,6 +28,7 @@ import {
 } from 'calypso/lib/products-values';
 import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
 import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -148,11 +149,11 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	} );
 
 	if ( ! renewItem.extra.purchaseId ) {
-		notices.error( 'Could not find purchase id for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find purchase id for renewal.' ) );
 		throw new Error( 'Could not find purchase id for renewal.' );
 	}
 	if ( ! renewItem.product_slug ) {
-		notices.error( 'Could not find product slug for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find product slug for renewal.' ) );
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
@@ -194,7 +195,7 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
 	if ( purchaseIds.length === 0 ) {
-		notices.error( 'Could not find product slug or purchase id for renewal.' );
+		reduxDispatch( errorNotice( 'Could not find product slug or purchase id for renewal.' ) );
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
 
