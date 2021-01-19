@@ -32,7 +32,7 @@ const A8CFollowing = ( props ) => {
 	return (
 		<Stream { ...props } shouldCombineCards={ false }>
 			<SectionHeader label={ translate( 'Followed A8C Sites' ) }>
-				{ isEligibleForUnseen( teams ) && (
+				{ isEligibleForUnseen( { teams, isFollowingItem: true } ) && (
 					<Button
 						compact
 						onClick={ () => markAllAsSeen( props.feedsInfo ) }

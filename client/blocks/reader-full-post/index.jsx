@@ -88,6 +88,7 @@ import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
  * Style dependencies
  */
 import './style.scss';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -95,6 +96,9 @@ export class FullPostView extends React.Component {
 		onClose: PropTypes.func.isRequired,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
+		isFollowingItem: PropTypes.bool,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -259,7 +263,7 @@ export class FullPostView extends React.Component {
 	};
 
 	attemptToSendPageView = () => {
-		const { post, site, teams, isWPForTeams } = this.props;
+		const { post, site, teams, isWPForTeamsItem, isFollowingItem } = this.props;
 
 		if (
 			post &&
@@ -277,7 +281,7 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( isEligibleForUnseen( teams, isWPForTeams ) ) {
+			if ( isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) ) {
 				this.markAsSeen();
 			}
 
@@ -378,7 +382,8 @@ export class FullPostView extends React.Component {
 			feedId,
 			postId,
 			teams,
-			isWPForTeams,
+			isWPForTeamsItem,
+			isFollowingItem,
 		} = this.props;
 
 		if ( post.is_error ) {
@@ -479,7 +484,8 @@ export class FullPostView extends React.Component {
 								/>
 							) }
 
-							{ isEligibleForUnseen( teams, isWPForTeams ) && this.renderMarkAsSenButton() }
+							{ isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) &&
+								this.renderMarkAsSenButton() }
 						</div>
 					</div>
 					<Emojify>
@@ -592,7 +598,8 @@ export default connect(
 		const { site_ID: siteId, is_external: isExternal } = post;
 
 		const props = {
-			isWPForTeams: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+			isFollowingItem: isFollowing( state, { blogId, feedId } ),
+			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
 			teams: getReaderTeams( state ),
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),

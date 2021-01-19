@@ -28,7 +28,8 @@ import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
-		isWPForTeams: PropTypes.bool,
+		isFollowingItem: PropTypes.bool,
+		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 		post: PropTypes.object,
 		streamUrl: PropTypes.string,
@@ -80,7 +81,16 @@ class ReaderCombinedCardPost extends React.Component {
 	};
 
 	render() {
-		const { post, streamUrl, isDiscover, isSelected, postKey, teams, isWPForTeams } = this.props;
+		const {
+			post,
+			streamUrl,
+			isDiscover,
+			isSelected,
+			postKey,
+			teams,
+			isFollowingItem,
+			isWPForTeamsItem,
+		} = this.props;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 
 		if ( isLoading ) {
@@ -116,7 +126,8 @@ class ReaderCombinedCardPost extends React.Component {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
 
-		const isSeen = isEligibleForUnseen( teams, isWPForTeams ) && !! post.is_seen;
+		const isSeen =
+			isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) && !! post.is_seen;
 		const classes = classnames( {
 			'reader-combined-card__post': true,
 			'is-selected': isSelected,
