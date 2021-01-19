@@ -38,6 +38,7 @@ const receiveChannels = [
 	'page-reader',
 	'request-site',
 	'request-user-login-status',
+	'say-hello',
 	'signout',
 	'toggle-notification-bar',
 ];
