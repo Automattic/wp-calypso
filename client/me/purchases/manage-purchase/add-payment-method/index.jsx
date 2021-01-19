@@ -103,8 +103,6 @@ function AddPaymentMethod( props ) {
 						purchase={ props.purchase }
 						paymentMethods={ paymentMethods }
 						successCallback={ successCallback }
-						siteSlug={ props.siteSlug }
-						apiParams={ { purchaseId: props.purchase.id } }
 					/>
 				</Column>
 				<Column type="sidebar">
