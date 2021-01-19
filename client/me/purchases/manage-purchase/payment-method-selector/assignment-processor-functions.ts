@@ -170,8 +170,10 @@ function recordFormSubmitEvent( {
 	purchase?: Purchase | undefined;
 } ) {
 	reduxDispatch(
-		recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-			product_slug: purchase?.productSlug ?? '',
-		} )
+		purchase?.productSlug
+			? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
+					product_slug: purchase.productSlug,
+			  } )
+			: recordTracksEvent( 'calypso_add_credit_card_form_submit' )
 	);
 }
