@@ -23,7 +23,6 @@ import Notice from 'calypso/components/notice';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Gridicon from 'calypso/components/gridicon';
 import {
 	useHandleRedirectChangeError,
@@ -44,13 +43,10 @@ export default function PaymentMethodSelector( {
 	purchase,
 	paymentMethods,
 	successCallback,
-	siteSlug,
 }: {
 	purchase?: Purchase;
 	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
-	siteSlug?: string;
-	apiParams?: Record< string, string | number >;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
@@ -89,13 +85,13 @@ export default function PaymentMethodSelector( {
 		);
 	} );
 	useHandleRedirectChangeComplete( () => {
-		onChangeComplete( { successCallback, translate, showSuccessMessage, reduxDispatch } );
+		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
 	} );
 
 	return (
 		<CheckoutProvider
 			onPaymentComplete={ () =>
-				onChangeComplete( { successCallback, translate, showSuccessMessage, reduxDispatch } )
+				onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } )
 			}
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
@@ -109,7 +105,6 @@ export default function PaymentMethodSelector( {
 						{
 							purchase,
 							translate,
-							siteSlug,
 							stripe,
 							stripeConfiguration,
 							reduxDispatch,
@@ -158,19 +153,22 @@ function getInitiallySelectedPaymentMethodId(
 	return currentlyAssignedPaymentMethodId;
 }
 
-function onChangeComplete( {
+function onPaymentSelectComplete( {
 	successCallback,
 	translate,
 	showSuccessMessage,
-	reduxDispatch,
+	purchase,
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
-	reduxDispatch: ReturnType< typeof useDispatch >;
+	purchase?: Purchase | undefined;
 } ) {
-	reduxDispatch( recordTracksEvent( 'calypso_purchases_save_new_payment_method' ) );
-	showSuccessMessage( translate( 'Your payment method has been set.' ) );
+	if ( purchase ) {
+		showSuccessMessage( translate( 'Your payment method has been set.' ) );
+	} else {
+		showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
+	}
 	successCallback();
 }
 
