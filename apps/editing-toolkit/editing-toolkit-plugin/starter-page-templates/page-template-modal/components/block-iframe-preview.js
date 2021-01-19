@@ -170,6 +170,13 @@ const BlockFramePreview = ( {
 			 */
 			iframeRef.current.contentDocument.head.innerHTML +=
 				'<style>.editor-post-title .editor-post-title__input { height: auto !important; }</style>';
+
+			// Prevent links and buttons from being clicked. This is applied within
+			// the iframe, because if we targeted the iframe itself it would prevent
+			// scrolling the iframe in Firefox.
+			iframeRef.current.contentDocument.head.innerHTML +=
+				'<style>a, button { pointer-events: none; }</style>';
+
 			rescale();
 		}, 0 );
 	}, [ setTimeout, bodyClassName, rescale ] );
