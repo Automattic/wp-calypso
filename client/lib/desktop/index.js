@@ -63,6 +63,7 @@ const Desktop = {
 		window.electron.receive( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
 		window.electron.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
 		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
+		window.electron.receive( 'say-hello', this.sayHello );
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
@@ -302,6 +303,10 @@ const Desktop = {
 
 	print: function ( title, html ) {
 		window.electron.send( 'print', title, html );
+	},
+
+	sayHello: function () {
+		debug( 'Main process said hello! ' );
 	},
 };
 

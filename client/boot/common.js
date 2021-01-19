@@ -58,6 +58,8 @@ import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso' );
 
+const isDesktop = typeof window.electron === 'object';
+
 const setupContextMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
@@ -117,7 +119,7 @@ const setupContextMiddleware = ( reduxStore ) => {
 };
 
 const oauthTokenMiddleware = () => {
-	if ( config.isEnabled( 'oauth' ) ) {
+	if ( isDesktop || config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [
 			'/oauth-login',
 			'/oauth',
@@ -146,7 +148,6 @@ const oauthTokenMiddleware = () => {
 				! isValidSection &&
 				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
 			) {
-				const isDesktop = [ 'desktop', 'desktop-development' ].includes( config( 'env_id' ) );
 				const redirectPath = isDesktop || isJetpackCloud() ? config( 'login_url' ) : '/authorize';
 
 				const currentPath = window.location.pathname;
@@ -381,7 +382,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
+	if ( isDesktop ) {
 		require( 'calypso/lib/desktop' ).default.init();
 	}
 
