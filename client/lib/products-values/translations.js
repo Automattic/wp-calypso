@@ -104,7 +104,7 @@ export const getJetpackProductsDisplayNames = () => {
 	const antiSpam = {
 		i5: translate( 'Anti-spam' ),
 		spp: translate( 'Anti-Spam' ),
-	}[ getJetpackCROActiveVersion() ] || <>{ translate( 'Jetpack Anti-spam' ) }</>;
+	}[ currentCROvariant ] || <>{ translate( 'Jetpack Anti-spam' ) }</>;
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -227,6 +227,8 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
+	const currentCROvariant = getJetpackCROActiveVersion();
+
 	const backupDailyDescription =
 		{
 			i5: translate(
@@ -235,7 +237,7 @@ export const getJetpackProductsDescriptions = () => {
 			spp: translate(
 				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
 			),
-		}[ getJetpackCROActiveVersion() ] ||
+		}[ currentCROvariant ] ||
 		translate( 'Never lose a word, image, page, or time worrying about your site.' );
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
@@ -248,7 +250,7 @@ export const getJetpackProductsDescriptions = () => {
 			spp: translate(
 				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
 			),
-		}[ getJetpackCROActiveVersion() ] ||
+		}[ currentCROvariant ] ||
 		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
 
 	const scanDescription = translate(
@@ -262,7 +264,7 @@ export const getJetpackProductsDescriptions = () => {
 			spp: translate(
 				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
 			),
-		}[ getJetpackCROActiveVersion() ] ||
+		}[ currentCROvariant ] ||
 		translate(
 			'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
 		);
