@@ -2,7 +2,7 @@
 	"mocha_tests": [ "specs" ],
 	"mocha_args": "-R spec-junit-reporter",
 	"max_test_attempts": 3,
-	"max_workers": 7,
+	"max_workers": 5,
 	"suiteTag": "parallel;signup",
 	"sauce": false,
 	"framework": "testarmada-magellan-mocha-plugin",
