@@ -42,7 +42,7 @@ export async function assignNewCardProcessor(
 		stripeConfiguration,
 		reduxDispatch,
 	}: {
-		purchase: Purchase;
+		purchase: Purchase | undefined;
 		translate: ReturnType< typeof useTranslate >;
 		siteSlug: string;
 		apiParams: unknown;
@@ -50,10 +50,14 @@ export async function assignNewCardProcessor(
 		stripeConfiguration: StripeConfiguration | null;
 		reduxDispatch: ReturnType< typeof useDispatch >;
 	},
-	{ name, countryCode, postalCode }: { name: string; countryCode: string; postalCode: string }
+	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
 	recordFormSubmitEvent( { reduxDispatch, purchase } );
 
+	if ( ! isNewCardDataValid( submitData ) ) {
+		throw new Error( 'Credit Card data is missing name, country, or postal code' );
+	}
+	const { name, countryCode, postalCode } = submitData;
 	const createStripeSetupIntentAsync = async ( paymentDetails: {
 		country: string;
 		'postal-code': string | number;
@@ -78,6 +82,8 @@ export async function assignNewCardProcessor(
 		name,
 	} );
 
+	// FIXME: Add code to save new card if purchase is not set
+
 	return getTokenForSavingCard( {
 		formFieldValues,
 		createCardToken: createStripeSetupIntentAsync,
@@ -100,21 +106,52 @@ export async function assignNewCardProcessor(
 		} );
 }
 
+function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
+	const newCardData = data as NewCardSubmitData;
+	return !! ( newCardData.name && newCardData.countryCode && newCardData.postalCode );
+}
+
+interface NewCardSubmitData {
+	name: string;
+	countryCode: string;
+	postalCode: string;
+}
+
 export async function assignExistingCardProcessor(
-	purchase: Purchase,
+	purchase: Purchase | undefined,
 	reduxDispatch: ReturnType< typeof useDispatch >,
-	{ storedDetailsId }: { storedDetailsId: string }
+	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
 	recordFormSubmitEvent( { reduxDispatch, purchase } );
+
+	if ( ! isValidExistingCardData( submitData ) ) {
+		throw new Error( 'Credit card data is missing stored details id' );
+	}
+	const { storedDetailsId } = submitData;
+	if ( ! purchase ) {
+		throw new Error( 'Cannot assign PayPal payment method without a purchase' );
+	}
 	return wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId ).then( ( data ) => {
 		return makeSuccessResponse( data );
 	} );
 }
 
+function isValidExistingCardData( data: unknown ): data is ExistingCardSubmitData {
+	const existingCardData = data as ExistingCardSubmitData;
+	return !! existingCardData.storedDetailsId;
+}
+
+interface ExistingCardSubmitData {
+	storedDetailsId: string;
+}
+
 export async function assignPayPalProcessor(
-	purchase: Purchase,
+	purchase: Purchase | undefined,
 	reduxDispatch: ReturnType< typeof useDispatch >
 ): Promise< PaymentProcessorResponse > {
+	if ( ! purchase ) {
+		throw new Error( 'Cannot assign PayPal payment method without a purchase' );
+	}
 	recordFormSubmitEvent( { reduxDispatch, purchase } );
 	return wpcomCreatePayPalAgreement(
 		String( purchase.id ),
@@ -130,11 +167,11 @@ function recordFormSubmitEvent( {
 	purchase,
 }: {
 	reduxDispatch: ReturnType< typeof useDispatch >;
-	purchase: Purchase;
+	purchase?: Purchase | undefined;
 } ) {
 	reduxDispatch(
 		recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-			product_slug: purchase.productSlug,
+			product_slug: purchase?.productSlug ?? '',
 		} )
 	);
 }
