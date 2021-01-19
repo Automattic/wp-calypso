@@ -18,14 +18,10 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-	isPaidWithCredits,
 	cardProcessorSupportsUpdates,
-	isPaidWithPayPalDirect,
 	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
-	paymentLogoType,
-	hasPaymentMethod,
 	isRenewable,
 } from 'calypso/lib/purchases';
 import {
@@ -44,7 +40,6 @@ import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import AutoRenewToggle from './auto-renew-toggle';
-import PaymentLogo from 'calypso/components/payment-logo';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import UserItem from 'calypso/components/user';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -53,6 +48,7 @@ import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import PaymentInfoBlock from './payment-info-block';
 
 export default function PurchaseMeta( {
 	purchaseId = false,
@@ -62,7 +58,6 @@ export default function PurchaseMeta( {
 	getManagePurchaseUrlFor = managePurchase,
 } ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const site = useSelector( ( state ) => getSite( state, purchase?.siteId ) ) || null;
@@ -80,29 +75,25 @@ export default function PurchaseMeta( {
 	return (
 		<>
 			<ul className="manage-purchase__meta">
-				<PurchaseMetaOwner translate={ translate } owner={ owner } />
+				<PurchaseMetaOwner owner={ owner } />
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
 					<span className="manage-purchase__detail">
-						<PurchaseMetaPrice purchase={ purchase } translate={ translate } />
+						<PurchaseMetaPrice purchase={ purchase } />
 					</span>
 				</li>
 				<PurchaseMetaExpiration
 					purchase={ purchase }
 					site={ site }
 					siteSlug={ siteSlug }
-					translate={ translate }
-					moment={ moment }
 					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
 				<PurchaseMetaPaymentDetails
 					purchase={ purchase }
-					translate={ translate }
 					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					siteSlug={ siteSlug }
 					site={ site }
-					moment={ moment }
 				/>
 			</ul>
 			<RenewErrorMessage purchase={ purchase } translate={ translate } site={ site } />
@@ -209,7 +200,8 @@ function PurchaseMetaPlaceholder() {
 	);
 }
 
-function PurchaseMetaOwner( { translate, owner } ) {
+function PurchaseMetaOwner( { owner } ) {
+	const translate = useTranslate();
 	if ( ! owner ) {
 		return null;
 	}
@@ -224,46 +216,8 @@ function PurchaseMetaOwner( { translate, owner } ) {
 	);
 }
 
-function renderPaymentInfo( { purchase, translate, moment } ) {
-	const payment = purchase?.payment;
-
-	if ( isIncludedWithPlan( purchase ) ) {
-		return translate( 'Included with plan' );
-	}
-
-	if ( hasPaymentMethod( purchase ) ) {
-		let paymentInfo = null;
-
-		if ( isPaidWithCredits( purchase ) ) {
-			return translate( 'Credits' );
-		}
-
-		if ( ( isExpired( purchase ) || isExpiring( purchase ) ) && ! isPaidWithCredits( purchase ) ) {
-			return translate( 'None' );
-		}
-
-		if ( isPaidWithCreditCard( purchase ) ) {
-			paymentInfo = payment.creditCard.number;
-		} else if ( isPaidWithPayPalDirect( purchase ) ) {
-			paymentInfo = translate( 'expiring %(cardExpiry)s', {
-				args: {
-					cardExpiry: moment( payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
-				},
-			} );
-		}
-
-		return (
-			<>
-				<PaymentLogo type={ paymentLogoType( purchase ) } />
-				{ paymentInfo }
-			</>
-		);
-	}
-
-	return translate( 'None' );
-}
-
-function PurchaseMetaPrice( { purchase, translate } ) {
+function PurchaseMetaPrice( { purchase } ) {
+	const translate = useTranslate();
 	const { priceText, productSlug } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
@@ -307,14 +261,7 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 	} );
 }
 
-function PurchaseMetaPaymentDetails( {
-	purchase,
-	translate,
-	getChangePaymentMethodUrlFor,
-	siteSlug,
-	site,
-	moment,
-} ) {
+function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, siteSlug, site } ) {
 	const handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
@@ -323,14 +270,7 @@ function PurchaseMetaPaymentDetails( {
 		return null;
 	}
 
-	const paymentDetails = (
-		<span>
-			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-			<span className="manage-purchase__detail">
-				{ renderPaymentInfo( { purchase, translate, moment } ) }
-			</span>
-		</span>
-	);
+	const paymentDetails = <PaymentInfoBlock purchase={ purchase } />;
 
 	if (
 		! canEditPaymentDetails( purchase ) ||
@@ -411,11 +351,11 @@ function PurchaseMetaExpiration( {
 	purchase,
 	site,
 	siteSlug,
-	translate,
-	moment,
 	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor,
 } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
 	const hideAutoRenew =
