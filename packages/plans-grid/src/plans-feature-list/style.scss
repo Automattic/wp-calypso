@@ -22,150 +22,130 @@ ul.plans-feature-list__item-group {
 				grid-template-columns: repeat( auto-fill, minmax( 300px, 1fr ) );
 			}
 		}
-
-		.plans-feature-list__item {
-			margin-right: 10px;
-		}
 	}
 }
 
+// <li>
 .plans-feature-list__item {
 	flex: 300px 0 1;
-	font-size: $font-body-small;
-	line-height: 20px;
-	letter-spacing: 0.2px;
 	margin: 4px 0;
-	color: $gray-700;
 
-	align-self: flex-end;
-	@media ( min-width: $break-mobile ) {
-		@supports ( display: grid ) {
-			align-items: end;
-		}
-	}
+	.plans-feature-list__item-group--columns & {
+		margin-right: 10px;
+		align-self: flex-end;
 
-	svg {
-		margin-right: 1px;
-		vertical-align: middle;
-	}
-
-	// the tick
-	& > svg path {
-		fill: var( --studio-green-40 );
-		stroke: var( --studio-green-40 );
-	}
-
-	&--disabled-message {
-		color: var( --studio-orange-40 );
-
-		& > svg path {
-			fill: currentColor;
-			stroke: currentColor;
-		}
-
-		& > span {
-			font-weight: bold;
-			text-decoration: line-through;
+		@media ( min-width: $break-mobile ) {
+			@supports ( display: grid ) {
+				align-self: end;
+			}
 		}
 	}
 }
 
-.plans-feature-list__domain-summary {
+// Content wrapper. Can be a <button> in case of the domain feature item
+.plans-feature-list__item-content-wrapper,
+.plans-feature-list__item-content-wrapper.components-button.is-link {
+	display: flex;
+	align-items: center;
+
 	font-size: $font-body-small;
-	line-height: 22px;
-	margin-top: 10px;
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: 0.2px;
+	color: var( --studio-gray-70 );
 
-	// overwrite button styles
-	&.components-button.is-link {
-		text-decoration: none;
-		font-size: $font-body-small;
+	&.plans-feature-list__item-content-wrapper--domain-button {
 		color: var( --studio-blue-40 );
+		font-weight: 700;
 		padding: 0;
-		display: flex;
+		text-decoration: none;
 
-		&.is-free {
-			font-weight: bold;
-			color: var( --studio-orange-40 );
-			text-decoration: line-through; // the tick
+		&:hover,
+		&:focus {
+			color: var( --studio-blue-30 );
+		}
 
-			svg path {
-				fill: var( --studio-orange-40 );
-				stroke: var( --studio-orange-40 );
+		.plans-accordion & {
+			color: var( --studio-gray-70 );
+
+			&:hover,
+			&:focus {
+				color: var( --studio-gray-50 );
 			}
 		}
-		& > svg {
-			flex-shrink: 0;
+
+		&.is-unavailable,
+		.plans-accordion &.is-unavailable {
+			color: var( --studio-orange-40 );
+			text-decoration: line-through;
+
+			&:hover,
+			&:focus {
+				color: var( --studio-orange-30 );
+			}
 		}
 	}
+}
 
-	.plans-feature-list__item-url {
-		word-break: break-all;
+// SVG used as the bullet icon
+.plans-feature-list__item-bullet-icon {
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin-right: 6px;
+
+	color: var( --studio-gray-100 );
+
+	.plans-accordion & {
+		color: var( --studio-green-40 );
 	}
 
-	// the tick
-	svg:first-child {
-		// we use a margin because there is a space,
-		// the strike-through will look dirty over it
-		margin-right: 5px;
-		vertical-align: middle;
+	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable &,
+	.plans-feature-list__item--disabled-message & {
+		color: var( --studio-orange-40 );
 	}
 
-	svg:first-child path {
-		fill: var( --studio-green-40 );
+	&,
+	path {
+		fill: currentColor;
+		stroke: currentColor;
+	}
+}
 
-		// to make the tick thicker
-		stroke: var( --studio-green-40 );
+// Wrapper for the feature item's text content
+.plans-feature-list__item-text {
+	flex-grow: 1;
+	flex-shrink: 0;
+}
+
+// Optional text informing the user that a specific feature is only available with the annual version of a plan
+.plans-feature-list__item-annual-nudge {
+	display: block;
+	text-transform: uppercase;
+	font-size: 10px; /* stylelint-disable-line scales/font-size */
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1;
+	margin-bottom: 2px;
+
+	.plans-feature-list__item--requires-annual-enabled & {
+		color: var( --studio-green-40 );
 	}
 
-	&.is-picked {
-		font-weight: bold;
+	.plans-feature-list__item--requires-annual-disabled & {
+		color: var( --studio-red-40 );
 	}
+}
 
-	&.is-cta {
-		font-weight: bold;
-		padding: 0;
-
-		// overwrite button styles
-		&.components-button.is-link {
-			color: var( --studio-blue-40 );
-		}
-
-		// the tick
-		svg:first-child path {
-			fill: var( --studio-green-40 );
-			stroke: var( --studio-green-40 );
-			margin-top: 5px;
-		}
-
-		// the chevron
-		svg:last-child {
-			fill: var( --studio-blue-40 );
-			stroke: var( --studio-blue-40 );
-			margin-left: 8px;
-		}
-	}
-
-	// Nudge message for annual month displayed as the first item
-	// of the feature list, together with domain message
-	&-nudge {
-		display: block;
-		text-transform: uppercase;
-		font-size: 10px; /* stylelint-disable-line scales/font-size */
-		letter-spacing: 0.02em;
-		line-height: 1.3;
-	}
-
-	&--nudge-enabled &-nudge {
-		color: var( --color-success );
-	}
-
-	&--nudge-disabled &-nudge {
-		color: var( --color-error );
-	}
-
-	&--nudge-disabled &-message {
+// The text describing the feature
+.plans-feature-list__item-description {
+	.plans-feature-list__item--disabled-message &,
+	.plans-feature-list__item--requires-annual-disabled & {
 		text-decoration: line-through;
 	}
+}
+
+.plans-feature-list__item-url {
+	word-break: break-all;
 }
 
 .plans-feature-list__placeholder {

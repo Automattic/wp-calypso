@@ -24,22 +24,6 @@
 		color: var( --studio-gray-100 );
 	}
 
-	// in this variation, ticks are black-ish
-	.plans-feature-list__item,
-	.plans-feature-list__domain-summary {
-		& > svg path {
-			fill: var( --studio-gray-100 );
-			stroke: var( --studio-gray-100 );
-		}
-
-		&--disabled-message {
-			& > svg path {
-				fill: currentColor;
-				stroke: currentColor;
-			}
-		}
-	}
-
 	@media ( min-width: $break-mobile ) {
 		// to collapse double borders into one
 		+ .plan-item {
