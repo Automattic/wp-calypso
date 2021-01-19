@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import debugFactory from 'debug';
 import { Card } from '@automattic/components';
 import {
@@ -47,7 +47,6 @@ const debug = debugFactory( 'calypso:credit-card-form' );
 
 export function PaymentMethodForm( {
 	apiParams = {},
-	countriesList,
 	initialValues = undefined,
 	purchase = undefined,
 	recordFormSubmitEvent,
@@ -75,6 +74,7 @@ export function PaymentMethodForm( {
 		)
 	);
 	const [ debouncedFieldErrors, setDebouncedFieldErrors ] = useDebounce( formFieldErrors, 1000 );
+	const countriesList = useSelector( ( state ) => getCountries( state, 'payments' ) );
 	const reduxDispatch = useDispatch();
 
 	const onFieldChange = ( rawDetails ) => {
@@ -192,7 +192,6 @@ export function PaymentMethodForm( {
 
 PaymentMethodForm.propTypes = {
 	apiParams: PropTypes.object,
-	countriesList: PropTypes.array.isRequired,
 	initialValues: PropTypes.object,
 	purchase: PropTypes.object,
 	recordFormSubmitEvent: PropTypes.func.isRequired,
@@ -270,6 +269,4 @@ function displayError( { translate, error, reduxDispatch } ) {
 	reduxDispatch( errorNotice( error.message ) );
 }
 
-export default connect( ( state ) => ( {
-	countriesList: getCountries( state, 'payments' ),
-} ) )( localize( PaymentMethodForm ) );
+export default localize( PaymentMethodForm );
