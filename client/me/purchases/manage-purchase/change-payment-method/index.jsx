@@ -110,7 +110,6 @@ function ChangePaymentMethod( props ) {
 							paymentMethods={ paymentMethods }
 							successCallback={ successCallback }
 							siteSlug={ props.siteSlug }
-							apiParams={ { purchaseId: props.purchase.id } }
 						/>
 					) : (
 						<PaymentMethodForm
