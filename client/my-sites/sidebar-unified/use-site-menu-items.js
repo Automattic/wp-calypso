@@ -13,6 +13,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import allSitesMenuStaticData from './all-sites-menu-static-data.js';
 
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
@@ -47,12 +48,19 @@ const useSiteMenuItems = () => {
 	);
 
 	/**
+	 * When no site domain is provided, lets show only menu items that support all sites screens.
+	 */
+	if ( ! siteDomain ) {
+		return allSitesMenuStaticData();
+	}
+
+	/**
 	 * Overides for the static fallback data which will be displayed if/when there are
 	 * no menu items in the API response or the API response has yet to be cached in
 	 * browser storage APIs.
 	 */
 	const fallbackDataOverides = {
-		...( siteDomain ? siteDomain : [] ), // Do not provide a siteDomain if it is null.
+		siteDomain,
 		shouldShowWooCommerce,
 		shouldShowThemes,
 	};
