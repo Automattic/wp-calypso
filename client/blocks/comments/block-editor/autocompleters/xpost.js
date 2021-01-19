@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -33,22 +34,23 @@ export default async () => ( {
 	getOptionKeywords( p2 ) {
 		return [ p2.title, p2.subdomain ];
 	},
-	getOptionLabel( p2 ) {
+	getOptionLabel( site ) {
+		const { subdomain, title, blavatar } = site;
+		const url = blavatar.replace( /.*?src=["'](.*?)["'].*/, '$1' );
+
 		return [
-			<span key="url" className="autocompleters__xpost-site-url">
-				+{ p2.subdomain }
+			<span key="slug" className="editor-autocompleters__site-slug">
+				+{ subdomain }
 			</span>,
-			<span key="name" className="autocompleters__xpost-site-name">
-				{ p2.title }
+			<span key="name" className="editor-autocompleters__site-name">
+				{ title }{ ' ' }
+				<img
+					key="blavatar"
+					className="editor-autocompleters__site-blavatar"
+					alt={ title }
+					src={ url }
+				/>
 			</span>,
-			<img
-				key="avatar"
-				className="autocompleters__xpost-site-avatar"
-				alt=""
-				height="24"
-				width="24"
-				src={ p2.blavatar }
-			/>,
 		];
 	},
 	getOptionCompletion( site ) {

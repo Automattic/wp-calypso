@@ -95,3 +95,8 @@
 		}
 	}
 }
+
+/* @wordpress/components Autocompleter overrides */
+.components-autocomplete__result.components-button.is-selected {
+	box-shadow: 0 0 0 2px var( --color-accent );
+}

@@ -21,11 +21,13 @@
 // @wordpress/components stylesheet
 @import '~@wordpress/components/build-style/style.css';
 
-// Overrides for @wordpress/components
-@import './_wp-components-overrides.scss';
 // Stylesheets required for the block editor
+@import '~@wordpress/editor/build-style/style.css';
 @import '~@wordpress/block-editor/build-style/style.css';
 @import '~@wordpress/block-library/build-style/style.css';
 @import '~@wordpress/block-library/build-style/editor.css';
 @import '~@wordpress/block-library/build-style/theme.css';
 @import '~@wordpress/format-library/build-style/style.css';
+
+// Overrides for @wordpress/components
+@import './_wp-components-overrides.scss';

@@ -19,10 +19,8 @@ import getAddAutocompleters from './autocompleters';
 const allowedBlocks = [
 	'core/paragraph',
 	'core/heading',
-	'core/image',
 	'core/list',
 	'core/code',
-	'core/video',
 	'core/table',
 	'core/quote',
 	'core/separator',
@@ -33,7 +31,7 @@ const BlockEditor = ( { onChange, suggestions } ) => {
 		getAddAutocompleters( suggestions ).then( ( addAutoCompleters ) => {
 			addFilter(
 				'editor.Autocomplete.completers',
-				'readerComments/autocompleters/users',
+				'readerComments/autocompleters',
 				addAutoCompleters
 			);
 		} );

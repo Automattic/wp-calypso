@@ -1,20 +1,35 @@
-.autocompleters {
-    &__xpost {
-        &-no-avatar {
-            display: inline-block;
-            width: 24px;
-        }
+.editor-autocompleters__tags,
+.editor-autocompleters__xpost {
+	justify-content: space-between;
+}
 
-        &-site-name {
-            padding-left: 1rem;
-            width: 10rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+.editor-autocompleters__site-slug {
+	color: var( --color-accent );
+	padding-right: 10px;
+}
 
-        &-site-url {
-            padding-left: 1rem;
-        }
-    }
+.editor-autocompleters__site-name {
+	display: flex;
+	align-items: center;
+	min-width: 230px;
+	justify-content: space-between;
+}
+
+.editor-autocompleters__site-blavatar {
+	width: 24px;
+    height: 24px;
+}
+
+.editor-autocompleters__site-blavatar {
+    padding-left: 5px;
+}
+
+.editor-autocompleters__tag-slug {
+	text-align: left;
+}
+
+.editor-autocompleters__user {
+	&:hover .editor-autocompleters__user-slug {
+		color: var( --color-accent );
+	}
 }
