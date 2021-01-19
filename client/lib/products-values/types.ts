@@ -48,7 +48,7 @@ export type ProductTranslations = {
 	optionActionButtonNames?: () => Record< ProductSlug, TranslateResult >;
 	optionDisplayNames: () => Record< ProductSlug, TranslateResult >;
 	optionDescriptions: () => Record< ProductSlug, TranslateResult >;
-	optionShortNamesCallback?: ( arg0: object ) => TranslateResult;
-	optionsLabelCallback?: ( arg0: object ) => TranslateResult;
+	optionShortNamesCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
+	optionsLabelCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
 	optionsLabel: TranslateResult;
 };
