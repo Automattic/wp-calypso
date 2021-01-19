@@ -25,7 +25,7 @@ const useSiteMenuItems = () => {
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 
 	useEffect( () => {
-		if ( null !== selectedSiteId && null !== siteDomain ) {
+		if ( selectedSiteId && siteDomain ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
 			dispatch( fetchPlugins( [ selectedSiteId ] ) );
 		}
