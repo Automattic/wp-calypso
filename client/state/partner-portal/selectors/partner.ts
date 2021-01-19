@@ -2,19 +2,20 @@
  * External dependencies
  */
 import find from 'lodash/find';
+import flatMap from 'lodash/flatMap';
 
 /**
  * Internal dependencies
  */
-import { Partner, PartnerKey, PartnerPortalStore } from 'calypso/state/partner-portal';
+import { PartnerPortalStore } from 'calypso/state/partner-portal';
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
-export function getActivePartnerKeyId( state: PartnerPortalStore ): number {
+export function getActivePartnerKeyId( state: PartnerPortalStore ) {
 	return state.partnerPortal.partner.activePartnerKey;
 }
 
-export function getActivePartnerKey( state: PartnerPortalStore ): PartnerKey | null {
+export function getActivePartnerKey( state: PartnerPortalStore ) {
 	const partner = getCurrentPartner( state );
 
 	if ( ! partner ) {
@@ -22,23 +23,23 @@ export function getActivePartnerKey( state: PartnerPortalStore ): PartnerKey | n
 	}
 
 	const keyId = getActivePartnerKeyId( state );
-	const partnerKey = find( partner.keys, ( key ) => key.id === keyId ) || null;
+	const partnerKey = find( partner.keys, ( key ) => key.id === keyId );
 
 	return partnerKey;
 }
 
-export function hasActivePartnerKey( state: PartnerPortalStore ): boolean {
+export function hasActivePartnerKey( state: PartnerPortalStore ) {
 	return !! getActivePartnerKey( state );
 }
 
-export function isFetchingPartner( state: PartnerPortalStore ): boolean {
+export function isFetchingPartner( state: PartnerPortalStore ) {
 	return state.partnerPortal.partner.isFetching;
 }
 
-export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
+export function getCurrentPartner( state: PartnerPortalStore ) {
 	return state.partnerPortal.partner.current;
 }
 
-export function getPartnerRequestError( state: PartnerPortalStore ): string {
+export function getPartnerRequestError( state: PartnerPortalStore ) {
 	return state.partnerPortal.partner.error;
 }
