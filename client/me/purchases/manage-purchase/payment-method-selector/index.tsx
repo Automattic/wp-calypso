@@ -47,16 +47,16 @@ export default function PaymentMethodSelector( {
 	siteSlug,
 	apiParams,
 }: {
-	purchase: Purchase;
+	purchase?: Purchase;
 	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
 	siteSlug: string;
-	apiParams: Record< string, string | number >;
+	apiParams?: Record< string, string | number >;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
-	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase.payment );
+	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
 	const showErrorMessage = useCallback(
 		( error ) => {
@@ -108,7 +108,7 @@ export default function PaymentMethodSelector( {
 				card: ( data ) =>
 					assignNewCardProcessor(
 						{
-							purchase: purchase,
+							purchase,
 							translate,
 							siteSlug,
 							apiParams,
@@ -127,7 +127,7 @@ export default function PaymentMethodSelector( {
 		>
 			<Card className="payment-method-selector__content">
 				<QueryPaymentCountries />
-				{ currentPaymentMethodNotAvailable && (
+				{ currentPaymentMethodNotAvailable && purchase && (
 					<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
 				) }
 				<CheckoutPaymentMethods className="payment-method-selector__list" isComplete={ false } />
