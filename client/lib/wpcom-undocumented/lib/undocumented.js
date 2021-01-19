@@ -2607,15 +2607,21 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 };
 
 /**
- * Request all Partner Portal partners and their keys for the current WPCOM user.
+ * Request the Partner Portal partner and it's keys for the current WPCOM user.
  *
  * @returns {Promise} A promise
  */
-Undocumented.prototype.getJetpackPartnerPortalPartners = function () {
-	return this.wpcom.req.get( {
-		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/partners',
-	} );
+Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
+	return this.wpcom.req
+		.get( {
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-licensing/partner',
+		} )
+		.then( ( partner ) => {
+			// Only pass active keys.
+			partner.keys = partner.keys.filter( ( key ) => key.disabled_on === null );
+			return partner;
+		} );
 };
 
 export default Undocumented;

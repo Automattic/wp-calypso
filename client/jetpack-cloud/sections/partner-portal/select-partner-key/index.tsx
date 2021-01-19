@@ -7,18 +7,20 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { getQueryArg } from '@wordpress/url';
 import page from 'page';
-import map from 'lodash/map';
+// import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { Partner, PartnerKey } from 'calypso/state/partner-portal';
 import { setActivePartnerKey } from 'calypso/state/partner-portal/actions';
 import {
-	isFetchingPartners,
-	getAllPartners,
+	isFetchingPartner,
+	getCurrentPartner,
 	hasActivePartnerKey,
 } from 'calypso/state/partner-portal/selectors';
-import QueryJetpackPartnerPortalPartners from 'calypso/components/data/query-jetpack-partner-portal-partners';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import Spinner from 'calypso/components/spinner';
 
@@ -29,10 +31,11 @@ import './style.scss';
 
 export default function SelectPartnerKey() {
 	const translate = useTranslate();
-	const hasKey = useSelector( hasActivePartnerKey );
-	const isFetching = useSelector( isFetchingPartners );
-	const partners = useSelector( getAllPartners );
 	const dispatch = useDispatch();
+	const hasKey = useSelector( hasActivePartnerKey ) as boolean;
+	const isFetching = useSelector( isFetchingPartner ) as boolean;
+	const partner = useSelector( getCurrentPartner ) as Partner | null;
+	const keys = get( partner, 'keys', [] ) as PartnerKey[];
 
 	useEffect( () => {
 		if ( hasKey ) {
@@ -41,20 +44,9 @@ export default function SelectPartnerKey() {
 		}
 	}, [ hasKey ] );
 
-	const keys = map( partners, ( partner ) =>
-		map( partner.keys, ( key ) => (
-			<Card key={ key.id } className="select-partner-key__card">
-				<div className="select-partner-key__key-name">{ key.name }</div>
-				<Button primary onClick={ () => dispatch( setActivePartnerKey( key.id ) ) }>
-					{ translate( 'Use' ) }
-				</Button>
-			</Card>
-		) )
-	);
-
 	return (
 		<>
-			<QueryJetpackPartnerPortalPartners />
+			<QueryJetpackPartnerPortalPartner />
 			<Main className="select-partner-key">
 				{ isFetching && (
 					<Card>
@@ -66,7 +58,14 @@ export default function SelectPartnerKey() {
 					<Card>{ translate( 'You are not registered as a partner.' ) }</Card>
 				) }
 
-				{ keys }
+				{ keys.map( ( key ) => (
+					<Card key={ key.id } className="select-partner-key__card">
+						<div className="select-partner-key__key-name">{ key.name }</div>
+						<Button primary onClick={ () => dispatch( setActivePartnerKey( key.id ) ) }>
+							{ translate( 'Use' ) }
+						</Button>
+					</Card>
+				) ) }
 			</Main>
 		</>
 	);

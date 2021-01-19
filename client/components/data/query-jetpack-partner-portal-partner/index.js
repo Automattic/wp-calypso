@@ -7,13 +7,13 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchPartners } from 'calypso/state/partner-portal/actions';
+import { fetchPartner } from 'calypso/state/partner-portal/actions';
 
-export default function QueryJetpackPartnerPortalPartners() {
+export default function QueryJetpackPartnerPortalPartner() {
 	const dispatch = useDispatch();
 
 	React.useEffect( () => {
-		dispatch( fetchPartners() );
+		dispatch( fetchPartner() );
 	}, [] );
 
 	return null;

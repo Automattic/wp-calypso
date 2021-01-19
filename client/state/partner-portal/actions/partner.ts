@@ -9,12 +9,12 @@ import map from 'lodash/map';
  * Internal dependencies
  */
 import {
-	JETPACK_PARTNER_PORTAL_PARTNERS_ACTIVE_PARTNER_KEY_UPDATE,
-	JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST,
-	JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_FAILURE,
-	JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS,
+	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
+	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
+	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE,
+	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { isFetchingPartners } from 'calypso/state/partner-portal/selectors';
+import { isFetchingPartner } from 'calypso/state/partner-portal/selectors';
 import wpcom from 'calypso/lib/wp';
 import { APIError, Partner } from 'calypso/state/partner-portal';
 
@@ -23,34 +23,34 @@ import 'calypso/state/partner-portal/init';
 
 export function setActivePartnerKey( partnerKeyId: number ) {
 	return ( dispatch: Dispatch, getState: () => any ) => {
-		if ( isFetchingPartners( getState() ) ) {
+		if ( isFetchingPartner( getState() ) ) {
 			return;
 		}
 
-		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNERS_ACTIVE_PARTNER_KEY_UPDATE, partnerKeyId } );
+		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE, partnerKeyId } );
 	};
 }
 
-export function fetchPartners() {
+export function fetchPartner() {
 	return ( dispatch: Dispatch, getState: () => any ) => {
-		if ( isFetchingPartners( getState() ) ) {
+		if ( isFetchingPartner( getState() ) ) {
 			return;
 		}
 
-		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST } );
+		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } );
 
 		wpcom
 			.undocumented()
-			.getJetpackPartnerPortalPartners()
+			.getJetpackPartnerPortalPartner()
 			.then(
-				( partners: Partner[] ) => {
+				( partner: Partner ) => {
 					dispatch( {
-						type: JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS,
-						partners,
+						type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
+						partner,
 					} );
 
 					// If we only get a single key, auto-select it for the user for simplicity.
-					const keys = flatMap( partners, ( partner ) => map( partner.keys, ( key ) => key.id ) );
+					const keys = partner.keys.map( ( key ) => key.id );
 
 					if ( keys.length === 1 ) {
 						setActivePartnerKey( keys[ 0 ] )( dispatch, getState );
@@ -58,7 +58,7 @@ export function fetchPartners() {
 				},
 				( error: APIError ) => {
 					dispatch( {
-						type: JETPACK_PARTNER_PORTAL_PARTNERS_ALL_REQUEST_FAILURE,
+						type: JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE,
 						error: {
 							status: error.status,
 							code: error.code || '',
