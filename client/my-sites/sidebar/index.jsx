@@ -692,7 +692,7 @@ export class MySitesSidebar extends Component {
 				components: {
 					link: (
 						<a
-							href="https://wordpress.com/support/?page_id=177856"
+							href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
 							rel="noreferrer"
 							target="_blank"
 						/>
