@@ -40,8 +40,8 @@ export async function saveOrUpdateCreditCard( {
 		return saveCreditCard( {
 			token,
 			translate,
-			saveStoredCard,
 			stripeConfiguration,
+			formFieldValues,
 		} );
 	}
 
@@ -71,11 +71,10 @@ export async function getTokenForSavingCard( {
 	return token;
 }
 
-async function saveCreditCard( { token, translate, saveStoredCard, stripeConfiguration } ) {
-	const additionalData = stripeConfiguration
-		? { payment_partner: stripeConfiguration.processor_id }
-		: {};
-	await saveStoredCard( { token, additionalData } );
+export async function saveCreditCard( { token, translate, stripeConfiguration, formFieldValues } ) {
+	const cardDetails = kebabCaseFormFields( formFieldValues );
+	const additionalData = getParamsForApi( cardDetails, token, stripeConfiguration );
+	await wpcom.me().storedCardAdd( token, additionalData );
 	recordTracksEvent( 'calypso_purchases_add_new_payment_method' );
 	notices.success( translate( 'Card added successfully' ), {
 		persistent: true,
