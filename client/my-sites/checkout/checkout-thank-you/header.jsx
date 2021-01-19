@@ -22,6 +22,7 @@ import {
 	isSiteRedirect,
 	isTitanMail,
 } from 'calypso/lib/products-values';
+import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
@@ -41,6 +42,7 @@ import { Button } from '@automattic/components';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { emailManagementEdit } from 'calypso/my-sites/email/paths';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -539,8 +541,19 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	render() {
-		const { isDataLoaded, isSimplified, hasFailedPurchases, primaryPurchase } = this.props;
-		const classes = { 'is-placeholder': ! isDataLoaded };
+		const {
+			isDataLoaded,
+			isPendingDomainUpdateForTitan,
+			isSimplified,
+			hasFailedPurchases,
+			primaryPurchase,
+			selectedSite,
+		} = this.props;
+		const classes = {
+			'is-placeholder':
+				! isDataLoaded ||
+				( primaryPurchase && isTitanMail( primaryPurchase ) && isPendingDomainUpdateForTitan ),
+		};
 
 		let svg = 'thank-you.svg';
 		if ( hasFailedPurchases ) {
@@ -569,7 +582,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 						) : (
 							<h2 className="checkout-thank-you__header-text">{ this.getText() }</h2>
 						) }
-
+						{ primaryPurchase && selectedSite?.ID && isTitanMail( primaryPurchase ) && (
+							<QuerySiteDomains siteId={ selectedSite.ID } />
+						) }
 						{ this.props.children }
 
 						{ this.getButtons() }
@@ -618,11 +633,22 @@ export class CheckoutThankYouHeader extends PureComponent {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
-		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
-		siteAdminUrl: getSiteAdminUrl( state, ownProps.selectedSite?.ID ),
-	} ),
+	( state, ownProps ) => {
+		let isPendingDomainUpdateForTitan = false;
+		if (
+			ownProps.primaryPurchase &&
+			ownProps.selectedSite?.ID &&
+			isTitanMail( ownProps.primaryPurchase )
+		) {
+			isPendingDomainUpdateForTitan = isRequestingSiteDomains( state, ownProps.selectedSite.ID );
+		}
+		return {
+			upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
+			isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
+			isPendingDomainUpdateForTitan,
+			siteAdminUrl: getSiteAdminUrl( state, ownProps.selectedSite?.ID ),
+		};
+	},
 	{
 		recordStartTransferClickInThankYou,
 		recordTracksEvent,
