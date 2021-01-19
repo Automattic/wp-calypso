@@ -322,18 +322,20 @@ export function useCreateExistingCards( { storedCards, activePayButtonText = und
 		);
 	} );
 	const existingCardMethods = useMemo( () => {
-		return memoizedStoredCards.map( ( storedDetails ) =>
-			createExistingCardMethod( {
-				id: `existingCard-${ storedDetails.stored_details_id }`,
-				cardholderName: storedDetails.name,
-				cardExpiry: storedDetails.expiry,
-				brand: storedDetails.card_type,
-				last4: storedDetails.card,
-				storedDetailsId: storedDetails.stored_details_id,
-				paymentMethodToken: storedDetails.mp_ref,
-				paymentPartnerProcessorId: storedDetails.payment_partner,
-				activePayButtonText,
-			} )
+		return (
+			memoizedStoredCards?.map( ( storedDetails ) =>
+				createExistingCardMethod( {
+					id: `existingCard-${ storedDetails.stored_details_id }`,
+					cardholderName: storedDetails.name,
+					cardExpiry: storedDetails.expiry,
+					brand: storedDetails.card_type,
+					last4: storedDetails.card,
+					storedDetailsId: storedDetails.stored_details_id,
+					paymentMethodToken: storedDetails.mp_ref,
+					paymentPartnerProcessorId: storedDetails.payment_partner,
+					activePayButtonText,
+				} )
+			) ?? []
 		);
 	}, [ memoizedStoredCards, activePayButtonText ] );
 	return existingCardMethods;
