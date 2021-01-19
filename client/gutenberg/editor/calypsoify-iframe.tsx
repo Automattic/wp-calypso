@@ -377,8 +377,6 @@ class CalypsoifyIframe extends Component<
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding';
 			const isGutenboardingAnchorFm = !! this.props.anchorFmPodcastId;
-			// eslint-disable-next-line no-console
-			console.log( 'from calypsoify iframe', { isGutenboarding, isGutenboardingAnchorFm } );
 			const isSiteUnlaunched = this.props.isSiteUnlaunched;
 			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' ); // TODO: remove after ETK 2.8.6 is released
