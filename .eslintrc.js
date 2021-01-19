@@ -45,7 +45,7 @@ module.exports = {
 		{
 			files: [ 'packages/**/*' ],
 			rules: {
-				// These two rules are to ensure packages don't import form calypso by accident to avoid circular deps.
+				// These two rules are to ensure packages don't import from calypso by accident to avoid circular deps.
 				'no-restricted-imports': [
 					'error',
 					{
