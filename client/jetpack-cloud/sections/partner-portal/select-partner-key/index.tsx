@@ -7,8 +7,7 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { getQueryArg } from '@wordpress/url';
 import page from 'page';
-// import get from 'lodash/get';
-import { get } from 'lodash';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies

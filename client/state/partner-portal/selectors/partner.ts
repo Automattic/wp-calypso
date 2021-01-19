@@ -2,7 +2,6 @@
  * External dependencies
  */
 import find from 'lodash/find';
-import flatMap from 'lodash/flatMap';
 
 /**
  * Internal dependencies
