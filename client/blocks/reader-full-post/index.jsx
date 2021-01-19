@@ -83,12 +83,12 @@ import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 export class FullPostView extends React.Component {
 	static propTypes = {

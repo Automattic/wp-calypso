@@ -40,12 +40,12 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
