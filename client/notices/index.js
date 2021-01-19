@@ -205,24 +205,6 @@ const notices = {
 		list[ container ] = [];
 		list.emit( 'change' );
 	},
-
-	getStatusHelper: function ( noticeObject ) {
-		if ( noticeObject.error ) {
-			return 'is-error';
-		}
-
-		if ( noticeObject.warning ) {
-			return 'is-warning';
-		}
-
-		if ( noticeObject.info ) {
-			return 'is-info';
-		}
-
-		if ( noticeObject.success ) {
-			return 'is-success';
-		}
-	},
 };
 
 export default notices;
