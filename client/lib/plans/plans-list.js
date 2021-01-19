@@ -74,7 +74,6 @@ const getPlanBloggerDetails = () => ( {
 		constants.FEATURE_BASIC_DESIGN,
 		constants.FEATURE_6GB_STORAGE,
 		constants.FEATURE_NO_ADS,
-		constants.FEATURE_MEMBERSHIPS,
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
 	getSignupFeatures: () => [
