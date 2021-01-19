@@ -41,11 +41,7 @@ export class ReaderSidebarFollowedSites extends Component {
 
 	renderAll() {
 		const { path, translate, sites } = this.props;
-		// have a selector
-		const sum = sites.reduce( ( acc, item ) => {
-			acc = acc + item.unseen_count;
-			return acc;
-		}, 0 );
+		const sum = sites.reduce( ( acc, { unseen_count } ) => acc + ( unseen_count | 0 ), 0 );
 		return (
 			<SidebarItem
 				className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
