@@ -75,8 +75,8 @@ describe( 'WPorg Selectors', () => {
 	} );
 
 	describe( 'isFetching', () => {
-		test( 'Should get `true` if the requested plugin is not in the current state', () => {
-			expect( isFetching( state, 'no.test' ) ).toBe( true );
+		test( 'Should get `false` if the requested plugin is not in the current state', () => {
+			expect( isFetching( state, 'no.test' ) ).toBe( false );
 		} );
 
 		test( 'Should get `false` if the requested plugin is not being fetched', () => {

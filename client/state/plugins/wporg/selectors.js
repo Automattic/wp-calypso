@@ -13,16 +13,11 @@ export function getPlugin( state, pluginSlug ) {
 }
 
 export function isFetching( state, pluginSlug ) {
-	// if the `isFetching` attribute doesn't exist yet,
-	// we assume we are still launching the fetch action, so it's true
-	const status = state?.plugins.wporg.fetchingItems[ pluginSlug ];
-	return status === undefined ? true : status;
+	return state?.plugins.wporg.fetchingItems[ pluginSlug ] ?? false;
 }
 
 export function isFetched( state, pluginSlug ) {
 	const plugin = getPlugin( state, pluginSlug );
-	// if the plugin or the `isFetching` attribute doesn't exist yet,
-	// we assume we are still launching the fetch action, so it's true
 	return plugin ? !! plugin.fetched : false;
 }
 
