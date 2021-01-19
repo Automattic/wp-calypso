@@ -1,7 +1,7 @@
 #!/bin/bash
 MAGELLAN=./node_modules/.bin/magellan
 MOCHA_ARGS=""
-WORKERS=5
+WORKERS=6
 GRUNT=./node_modules/.bin/grunt
 REPORTER=""
 PARALLEL=0
