@@ -8,7 +8,14 @@ import { useLocale } from '@automattic/i18n-utils';
 /**
  * Internal dependencies
  */
-import { GutenLocationStateType, Step, usePath, useCurrentStep, useAnchorFmParams } from '../path';
+import {
+	GutenLocationStateType,
+	Step,
+	usePath,
+	useCurrentStep,
+	useAnchorFmParams,
+	useOnboardingFlow,
+} from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility } from './use-selected-plan';
@@ -36,7 +43,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
-
+	const flow = useOnboardingFlow();
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const newSiteVisibility = useNewSiteVisibility();
 	const { onSignupDialogOpen } = useSignup();
@@ -50,6 +57,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 				anchorFmPodcastId,
 				anchorFmEpisodeId,
 				anchorFmSpotifyShowUrl,
+				flow,
 			} );
 		}
 		// Adding a newUser check works for Anchor.fm flow.  Without it, we ask for login twice.
@@ -62,6 +70,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 				anchorFmPodcastId,
 				anchorFmEpisodeId,
 				anchorFmSpotifyShowUrl,
+				flow,
 			} );
 		}
 		return onSignupDialogOpen();

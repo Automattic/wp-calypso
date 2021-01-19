@@ -22,6 +22,7 @@ import { SITE_STORE } from '../site';
 import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
+import { FLOW_ID } from '../../constants';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -44,6 +45,7 @@ export interface CreateSiteActionParameters {
 	anchorFmPodcastId: string | null;
 	anchorFmEpisodeId: string | null;
 	anchorFmSpotifyShowUrl: string | null;
+	flow?: string;
 }
 
 export function* createSite( {
@@ -54,6 +56,7 @@ export function* createSite( {
 	anchorFmPodcastId = null,
 	anchorFmEpisodeId = null,
 	anchorFmSpotifyShowUrl = null,
+	flow = FLOW_ID,
 }: CreateSiteActionParameters ) {
 	const {
 		domain,
@@ -86,7 +89,7 @@ export function* createSite( {
 				title: blogTitle,
 			},
 			lang_id: lang_id,
-			site_creation_flow: 'gutenboarding',
+			site_creation_flow: flow,
 			enable_fse: shouldEnableFse,
 			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
 			timezone_string: guessTimezone(),
