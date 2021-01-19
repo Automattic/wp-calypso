@@ -1269,11 +1269,6 @@ export const FEATURES_LIST = {
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated spam protection' ) ),
 	},
 
-	[ constants.FEATURE_AUTOMATED_SPAM_PROTECTION_V2 ]: {
-		getSlug: () => constants.FEATURE_AUTOMATED_SPAM_PROTECTION_V2,
-		getTitle: () => i18n.translate( 'Automated spam protection' ),
-	},
-
 	[ constants.FEATURE_PRODUCT_ANTISPAM_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_ANTISPAM_V2,
 		getIcon: () => 'bug',
@@ -1392,7 +1387,6 @@ export const FEATURES_LIST = {
 						strong: <strong />,
 					},
 				} ),
-				spp: i18n.translate( 'CRM: Entrepreneur' ),
 			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'CRM: Entrepreneur bundle' ) ),
 		getDescription: () =>
 			i18n.translate(

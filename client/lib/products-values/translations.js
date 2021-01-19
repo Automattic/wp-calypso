@@ -245,6 +245,9 @@ export const getJetpackProductsDescriptions = () => {
 			i5: translate(
 				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
 			),
+			spp: translate(
+				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
+			),
 		}[ getJetpackCROActiveVersion() ] ||
 		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
 
