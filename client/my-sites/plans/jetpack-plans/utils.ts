@@ -717,12 +717,13 @@ export function checkout(
  * @param {string} siteSlug Selected site
  * @param {number} purchaseId Id of a purchase
  */
-export function manageSitePurchase( siteSlug: string, purchaseId: number ): string {
+export function manageSitePurchase( siteSlug: string, purchaseId: number ): void {
 	const relativePath = managePurchase( siteSlug, purchaseId );
 	if ( isJetpackCloud() ) {
-		return `https://wordpress.com${ relativePath }`;
+		window.location.href = `https://wordpress.com${ relativePath }`;
+	} else {
+		page.redirect( relativePath );
 	}
-	return relativePath;
 }
 
 /**

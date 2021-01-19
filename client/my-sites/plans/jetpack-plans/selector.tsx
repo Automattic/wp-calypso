@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -107,7 +106,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					duration: currentDuration,
 				} )
 			);
-			page( manageSitePurchase( siteSlug, purchase.id ) );
+			manageSitePurchase( siteSlug, purchase.id );
 			return;
 		}
 
