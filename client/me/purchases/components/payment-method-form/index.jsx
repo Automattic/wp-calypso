@@ -142,13 +142,13 @@ export function PaymentMethodForm( {
 			debug( 'Error while submitting', error );
 			setFormSubmitting( false );
 			error && reloadStripeConfiguration && reloadStripeConfiguration();
-			error && displayError( { translate, error }, reduxDispatch );
+			error && displayError( { translate, error, reduxDispatch } );
 		}
 	};
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			displayError( { translate, error: stripeLoadingError }, reduxDispatch );
+			displayError( { translate, error: stripeLoadingError, reduxDispatch } );
 		}
 	}, [ stripeLoadingError, translate, reduxDispatch ] );
 
@@ -258,7 +258,7 @@ function StripeError( { translate } ) {
 	);
 }
 
-function displayError( { translate, error }, reduxDispatch ) {
+function displayError( { translate, error, reduxDispatch } ) {
 	if ( error instanceof StripeSetupIntentError || error instanceof StripeValidationError ) {
 		reduxDispatch( errorNotice( <StripeError translate={ translate } /> ) );
 		return;
