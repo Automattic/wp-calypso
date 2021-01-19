@@ -18,7 +18,6 @@ import { connect } from 'react-redux';
 import LanguagePicker from 'calypso/components/language-picker';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { protectForm } from 'calypso/lib/protect-form';
-import formBase from 'calypso/me/form-base';
 import config, { isEnabled } from '@automattic/calypso-config';
 import languages from '@automattic/languages';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
@@ -39,7 +38,6 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import observe from 'calypso/lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
 import Main from 'calypso/components/main';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
@@ -62,6 +60,13 @@ import {
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import user from 'calypso/lib/user';
+import withFormBase from 'calypso/me/form-base/with-form-base';
+import {
+	clearUnsavedUserSettings,
+	setUserSetting,
+	cancelPendingEmailChange,
+} from 'calypso/state/user-settings/actions';
+import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 
 /**
  * Style dependencies
@@ -82,9 +87,6 @@ const USERNAME_MIN_LENGTH = 4;
 const Account = createReactClass( {
 	displayName: 'Account',
 
-	// form-base mixin is needed for getDisabledState() (and possibly other uses?)
-	mixins: [ formBase, observe( 'userSettings' ) ],
-
 	propTypes: {
 		userSettings: PropTypes.object.isRequired,
 		showNoticeInitially: PropTypes.bool,
@@ -93,7 +95,7 @@ const Account = createReactClass( {
 	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.clearUsernameValidation();
-		this.props.userSettings.removeUnsavedSetting( 'user_login' );
+		this.props.clearUnsavedUserSettings( 'user_login' );
 	},
 
 	componentDidMount() {
@@ -106,15 +108,15 @@ const Account = createReactClass( {
 	},
 
 	getUserSetting( settingName ) {
-		return this.props.userSettings.getSetting( settingName );
+		return this.props.getSetting( settingName );
 	},
 
 	getUserOriginalSetting( settingName ) {
-		return this.props.userSettings.getOriginalSetting( settingName );
+		return this.props.getOriginalSetting( settingName );
 	},
 
 	updateUserSetting( settingName, value ) {
-		this.props.userSettings.updateSetting( settingName, value );
+		this.props.setUserSetting( settingName, value );
 	},
 
 	updateUserSettingInput( event ) {
@@ -277,7 +279,7 @@ const Account = createReactClass( {
 					<FormCheckbox
 						checked={ this.getUserSetting( ENABLE_TRANSLATOR_KEY ) }
 						onChange={ this.updateCommunityTranslatorSetting }
-						disabled={ this.getDisabledState() }
+						disabled={ this.props.getDisabledState() }
 						id={ ENABLE_TRANSLATOR_KEY }
 						name={ ENABLE_TRANSLATOR_KEY }
 						onClick={ this.getCheckboxHandler( 'Community Translator' ) }
@@ -331,8 +333,8 @@ const Account = createReactClass( {
 	},
 
 	cancelEmailChange() {
-		const { translate, userSettings } = this.props;
-		userSettings.cancelPendingEmailChange( ( error, response ) => {
+		// @TODO handle email change in user settings redux data layer
+		this.props.cancelPendingEmailChange(/*( error, response ) => {
 			if ( error ) {
 				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
 				this.props.errorNotice(
@@ -342,7 +344,7 @@ const Account = createReactClass( {
 				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
 				this.props.successNotice( translate( 'The email change has been successfully canceled.' ) );
 			}
-		} );
+		}*/);
 	},
 
 	handleRadioChange( event ) {
@@ -428,9 +430,9 @@ const Account = createReactClass( {
 		} );
 
 		this.clearUsernameValidation();
-		this.props.userSettings.removeUnsavedSetting( 'user_login' );
+		this.props.clearUnsavedUserSettings( 'user_login' );
 
-		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
+		if ( ! this.props.hasUnsavedUserSettings ) {
 			this.props.markSaved();
 		}
 	},
@@ -499,7 +501,7 @@ const Account = createReactClass( {
 	},
 
 	hasPendingEmailChange() {
-		return this.props.userSettings.isPendingEmailChange();
+		return this.props.isPendingEmailChange;
 	},
 
 	renderPendingEmailChange() {
@@ -528,9 +530,9 @@ const Account = createReactClass( {
 	},
 
 	renderUsernameValidation() {
-		const { translate, userSettings } = this.props;
+		const { translate } = this.props;
 
-		if ( ! userSettings.isSettingUnsaved( 'user_login' ) ) {
+		if ( ! this.props.hasUnsavedUserSetting( 'user_login' ) ) {
 			return null;
 		}
 
@@ -599,9 +601,9 @@ const Account = createReactClass( {
 	},
 
 	renderEmailValidation() {
-		const { translate, userSettings } = this.props;
+		const { translate } = this.props;
 
-		if ( ! userSettings.isSettingUnsaved( 'user_email' ) ) {
+		if ( ! this.props.hasUnsavedUserSetting( 'user_email' ) ) {
 			return null;
 		}
 
@@ -627,11 +629,11 @@ const Account = createReactClass( {
 	 * These form fields are displayed when there is not a username change in progress.
 	 */
 	renderAccountFields() {
-		const { translate, userSettings } = this.props;
+		const { translate } = this.props;
 
 		const isSubmitButtonDisabled =
-			! userSettings.hasUnsavedSettings() ||
-			this.getDisabledState() ||
+			! this.props.hasUnsavedUserSettings ||
+			this.props.getDisabledState() ||
 			this.hasEmailValidationError();
 
 		return (
@@ -639,7 +641,7 @@ const Account = createReactClass( {
 				<FormFieldset>
 					<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
+						disabled={ this.props.getDisabledState() || this.hasPendingEmailChange() }
 						id="user_email"
 						name="user_email"
 						isError={ !! this.state.emailValidationError }
@@ -662,7 +664,7 @@ const Account = createReactClass( {
 				<FormFieldset>
 					<FormLabel htmlFor="user_URL">{ translate( 'Web address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() }
+						disabled={ this.props.getDisabledState() }
 						id="user_URL"
 						name="user_URL"
 						type="url"
@@ -680,7 +682,7 @@ const Account = createReactClass( {
 						{ translate( 'Interface language' ) }
 					</FormLabel>
 					<LanguagePicker
-						disabled={ this.getDisabledState() }
+						disabled={ this.props.getDisabledState() }
 						languages={ languages }
 						onClick={ this.getClickHandler( 'Interface Language Field' ) }
 						valueKey="langSlug"
@@ -879,9 +881,9 @@ const Account = createReactClass( {
 	},
 
 	render() {
-		const { markChanged, translate, userSettings } = this.props;
+		const { markChanged, translate } = this.props;
 		// Is a username change in progress?
-		const renderUsernameForm = userSettings.isSettingUnsaved( 'user_login' );
+		const renderUsernameForm = this.props.hasUnsavedUserSetting( 'user_login' );
 
 		return (
 			<Main className="account is-wide-layout">
@@ -891,7 +893,7 @@ const Account = createReactClass( {
 				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
 
 				<Card className="account__settings">
-					<form onChange={ markChanged } onSubmit={ this.submitForm }>
+					<form onChange={ markChanged } onSubmit={ this.props.submitForm }>
 						<FormFieldset>
 							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
 							<FormTextInput
@@ -900,7 +902,8 @@ const Account = createReactClass( {
 								autoCorrect="off"
 								className="account__username"
 								disabled={
-									this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' )
+									this.props.getDisabledState() ||
+									! this.getUserSetting( 'user_login_can_be_changed' )
 								}
 								id="user_login"
 								name="user_login"
@@ -941,10 +944,21 @@ export default compose(
 			currentUserName: getCurrentUserName( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
+			isPendingEmailChange: isPendingEmailChange( state ),
 		} ),
-		{ bumpStat, errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
+		{
+			bumpStat,
+			errorNotice,
+			recordGoogleEvent,
+			recordTracksEvent,
+			successNotice,
+			clearUnsavedUserSettings,
+			setUserSetting,
+			cancelPendingEmailChange,
+		}
 	),
 	localize,
 	withLocalizedMoment,
-	protectForm
+	protectForm,
+	withFormBase
 )( Account );
