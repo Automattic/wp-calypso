@@ -7,7 +7,14 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import { setFeatures, setFeaturesByType, setPlanProducts, setPlans } from './actions';
-import type { PricedAPIPlan, Plan, DetailsAPIResponse, PlanFeature, PlanProduct } from './types';
+import type {
+	PricedAPIPlan,
+	Plan,
+	DetailsAPIResponse,
+	PlanFeature,
+	PlanProduct,
+	Feature,
+} from './types';
 import {
 	currenciesFormats,
 	TIMELESS_PLAN_FREE,
@@ -17,6 +24,8 @@ import {
 	annualSlugs,
 } from './constants';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
+
+const MONTHLY_PLAN_BILLING_PERIOD = 31;
 
 /**
  * Calculates the monthly price of a plan
@@ -38,6 +47,73 @@ function getMonthlyPrice( plan: PricedAPIPlan ) {
 	}
 	// else
 	return `${ currency.symbol }${ price }`;
+}
+
+function calculateDiscounts( planProducts: PlanProduct[] ) {
+	// calculate discounts
+	for ( let i = 0; i < annualSlugs.length; i++ ) {
+		const annualPlan = planProducts.find( ( plan ) => plan.storeSlug === annualSlugs[ i ] );
+		const monthlyPlan = planProducts.find( ( plan ) => plan.storeSlug === monthlySlugs[ i ] );
+
+		if ( annualPlan && monthlyPlan ) {
+			const annualCostIfPaidMonthly = monthlyPlan.rawPrice * 12;
+			const annualCostIfPaidAnnually = annualPlan.rawPrice;
+			const discount = Math.round(
+				100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly )
+			);
+			annualPlan.annualDiscount = discount;
+			monthlyPlan.annualDiscount = discount;
+		}
+	}
+}
+
+function processFeatures( features: Feature[] ) {
+	return features.reduce( ( features, feature ) => {
+		features[ feature.id ] = {
+			id: feature.id,
+			name: feature.name,
+			description: feature.description,
+			type: feature.type ?? 'checkbox',
+		};
+		return features;
+	}, {} as Record< string, PlanFeature > );
+}
+
+function normalizePlanProducts(
+	pricedPlans: PricedAPIPlan[],
+	periodAgnosticPlans: Plan[]
+): PlanProduct[] {
+	const plansProducts: PlanProduct[] = plansProductSlugs.reduce( ( plans, slug ) => {
+		const planProduct = pricedPlans.find(
+			( pricedPlan ) => pricedPlan.product_slug === slug
+		) as PricedAPIPlan;
+
+		if ( ! planProduct ) {
+			return plans;
+		}
+
+		const periodAgnosticPlan = periodAgnosticPlans.find(
+			( plan ) => plan.productIds.indexOf( planProduct.product_id ) > -1
+		) as Plan;
+
+		plans.push( {
+			productId: planProduct.product_id,
+			billingPeriod:
+				planProduct.bill_period === MONTHLY_PLAN_BILLING_PERIOD ? 'MONTHLY' : 'ANNUALLY',
+			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
+			storeSlug: planProduct.product_slug,
+			rawPrice: planProduct.raw_price,
+			pathSlug: planProduct.path_slug,
+			price:
+				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0
+					? planProduct.formatted_price
+					: getMonthlyPrice( planProduct ),
+		} );
+		return plans;
+	}, [] as PlanProduct[] );
+
+	calculateDiscounts( plansProducts );
+	return plansProducts;
 }
 
 export function* getSupportedPlans( locale = 'en' ) {
@@ -74,59 +150,8 @@ export function* getSupportedPlans( locale = 'en' ) {
 		};
 	} );
 
-	const planProducts: PlanProduct[] = plansProductSlugs.reduce( ( plans, slug ) => {
-		const planProduct = pricedPlans.find(
-			( pricedPlan ) => pricedPlan.product_slug === slug
-		) as PricedAPIPlan;
-
-		if ( ! planProduct ) {
-			return plans;
-		}
-
-		const periodAgnosticPlan = periodAgnosticPlans.find(
-			( plan ) => plan.productIds.indexOf( planProduct.product_id ) > -1
-		) as Plan;
-
-		plans.push( {
-			productId: planProduct.product_id,
-			billingPeriod: planProduct.bill_period === 31 ? 'MONTHLY' : 'ANNUALLY',
-			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
-			storeSlug: planProduct.product_slug,
-			rawPrice: planProduct.raw_price,
-			pathSlug: planProduct.path_slug,
-			price:
-				planProduct?.bill_period === 31 || planProduct.raw_price === 0
-					? planProduct.formatted_price
-					: getMonthlyPrice( planProduct ),
-		} );
-		return plans;
-	}, [] as PlanProduct[] );
-
-	// calculate discounts
-	for ( let i = 0; i < annualSlugs.length; i++ ) {
-		const annualPlan = planProducts.find( ( plan ) => plan.storeSlug === annualSlugs[ i ] );
-		const monthlyPlan = planProducts.find( ( plan ) => plan.storeSlug === monthlySlugs[ i ] );
-
-		if ( annualPlan && monthlyPlan ) {
-			const annualCostIfPaidMonthly = monthlyPlan.rawPrice * 12;
-			const annualCostIfPaidAnnually = annualPlan.rawPrice;
-			const discount = Math.round(
-				100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly )
-			);
-			annualPlan.annualDiscount = discount;
-			monthlyPlan.annualDiscount = discount;
-		}
-	}
-
-	const features = plansFeatures.features.reduce( ( features, feature ) => {
-		features[ feature.id ] = {
-			id: feature.id,
-			name: feature.name,
-			description: feature.description,
-			type: feature.type ?? 'checkbox',
-		};
-		return features;
-	}, {} as Record< string, PlanFeature > );
+	const planProducts = normalizePlanProducts( pricedPlans, periodAgnosticPlans );
+	const features = processFeatures( plansFeatures.features );
 
 	yield setPlans( periodAgnosticPlans );
 	yield setPlanProducts( planProducts );
