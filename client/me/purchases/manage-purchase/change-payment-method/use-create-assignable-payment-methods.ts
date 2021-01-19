@@ -40,10 +40,7 @@ export default function useCreateAssignablePaymentMethods(
 				: translate( 'PayPal' ),
 	} );
 
-	// getStoredCards always returns a new array, but we need a memoized version
-	// to pass to useCreateExistingCards, which has storedCards as a data dependency.
-	const rawStoredCards = useSelector( getStoredCards );
-	const storedCards = useMemo( () => rawStoredCards, [] ); // eslint-disable-line
+	const storedCards = useSelector( getStoredCards );
 	const existingCardMethods = useCreateExistingCards( {
 		storedCards,
 		activePayButtonText: translate( 'Use this card' ),
