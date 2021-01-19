@@ -9,7 +9,6 @@ import i18n, { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import * as constants from './constants';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
@@ -392,21 +391,20 @@ const getPlanBusinessDetails = () => ( {
 const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_DAILY,
-	getTitle: () =>
+	getTitle: ( variation ) =>
 		( {
 			v2: translate( 'Jetpack Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
 			spp: translate( 'Jetpack Security' ),
-		}[ getJetpackCROActiveVersion() ] ||
-		translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ) ),
-	getButtonLabel: () =>
+		}[ variation ] || translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ) ),
+	getButtonLabel: ( variation ) =>
 		( {
 			v2: translate( 'Get Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
 			spp: translate( 'Get Jetpack Security' ),
-		}[ getJetpackCROActiveVersion() ] || undefined ),
+		}[ variation ] || undefined ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),
-	getDescription: () =>
+	getDescription: ( variation ) =>
 		( {
 			v2: translate(
 				'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
@@ -417,25 +415,19 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 			spp: translate(
 				'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
 			),
-		}[ getJetpackCROActiveVersion() ] ||
+		}[ variation ] ||
 		translate(
 			'Enjoy the peace of mind of complete site protection. ' +
 				'Great for brochure sites, restaurants, blogs, and resume sites.'
 		) ),
 
-	getTagline: () => {
-		if ( getJetpackCROActiveVersion() === 'v1' ) {
-			return translate( 'Backup, Scan, and Anti-spam in one package' );
-		}
-
-		if ( getJetpackCROActiveVersion() === 'v2' ) {
-			return translate( 'Essential WordPress protection' );
-		}
-
-		return translate( 'Best for sites with occasional updates' );
-	},
+	getTagline: ( variation ) =>
+		( {
+			v1: translate( 'Backup, Scan, and Anti-spam in one package' ),
+			v2: translate( 'Essential WordPress protection' ),
+		}[ variation ] || translate( 'Best for sites with occasional updates' ) ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () =>
+	getPlanCardFeatures: ( variation ) =>
 		( {
 			v2: [
 				constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
@@ -458,7 +450,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 				constants.FEATURE_ANTISPAM_V2,
 				constants.FEATURE_VIDEO_HOSTING_V2,
 			],
-		}[ getJetpackCROActiveVersion() ] || {
+		}[ variation ] || {
 			[ constants.FEATURE_CATEGORY_SECURITY ]: [
 				constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 				constants.FEATURE_PRODUCT_SCAN_V2,
@@ -496,14 +488,15 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_REALTIME,
-	getTitle: () =>
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Jetpack Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } )
-			: translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
-	getButtonLabel: () =>
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Get Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } )
-			: undefined,
+	getTitle: ( variation ) =>
+		( {
+			v2: translate( 'Jetpack Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+		}[ variation ] ||
+		translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ) ),
+	getButtonLabel: ( variation ) =>
+		( { v2: translate( 'Get Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ) }[
+			variation
+		] || undefined ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -512,7 +505,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 			constants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 			...constants.JETPACK_LEGACY_PLANS,
 		].includes( plan ),
-	getDescription: () =>
+	getDescription: ( variation ) =>
 		( {
 			v2: translate(
 				'Get next level protection. Includes all essential security tools, but with on-demand scan, real time backup & more.'
@@ -520,17 +513,17 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 			i5: translate(
 				'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
 			),
-		}[ getJetpackCROActiveVersion() ] ||
+		}[ variation ] ||
 		translate(
 			'Additional security for sites with 24/7 activity. ' +
 				'Recommended for eCommerce stores, news organizations, and online forums.'
 		) ),
-	getTagline: () =>
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Always on protection, backs up as you edit' )
-			: translate( 'Best for sites with frequent updates' ),
+	getTagline: ( variation ) =>
+		( {
+			v2: translate( 'Always on protection, backs up as you edit' ),
+		}[ variation ] || translate( 'Best for sites with frequent updates' ) ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () =>
+	getPlanCardFeatures: ( variation ) =>
 		( {
 			v2: [
 				constants.FEATURE_PLAN_SECURITY_DAILY,
@@ -545,7 +538,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 				constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 				constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 			],
-		}[ getJetpackCROActiveVersion() ] || {
+		}[ variation ] || {
 			[ constants.FEATURE_CATEGORY_SECURITY ]: [
 				constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 				constants.FEATURE_PRODUCT_SCAN_V2,
@@ -590,10 +583,8 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 const getPlanJetpackCompleteDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_ALL,
-	getTitle: () =>
-		getJetpackCROActiveVersion() === 'i5'
-			? translate( 'Complete' )
-			: translate( 'Jetpack Complete' ),
+	getTitle: ( variation ) =>
+		( { i5: translate( 'Complete' ) }[ variation ] || translate( 'Jetpack Complete' ) ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -607,7 +598,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () =>
+	getPlanCardFeatures: ( variation ) =>
 		( {
 			v2: [
 				constants.FEATURE_PLAN_SECURITY_REALTIME,
@@ -628,7 +619,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 				constants.FEATURE_CRM_V2,
 				constants.FEATURE_PRODUCT_SEARCH_V2,
 			],
-		}[ getJetpackCROActiveVersion() ] || {
+		}[ variation ] || {
 			[ constants.FEATURE_CATEGORY_SECURITY ]: [
 				[
 					constants.FEATURE_SECURITY_REALTIME_V2,
