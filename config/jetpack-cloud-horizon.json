@@ -51,6 +51,7 @@
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
+		"login/wp-login": true,
 		"oauth": true,
 		"oauth_implicit_authorization": true,
 		"purchases/new-payment-methods": true,
