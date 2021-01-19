@@ -6,8 +6,10 @@
 	"hostname": "cloud.jetpack.com",
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
-	"login_url": "https://wordpress.com/wp-login.php",
-	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
+	"wpcom_signup_id": "39911",
+	"wpcom_signup_key": "cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8",
+	"login_url": "/connect",
+	"logout_url": "https://jetpack.com",
 	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
 	"site_name": "Jetpack.com",
 	"meta": [
@@ -24,6 +26,7 @@
 			"content": "https://i1.wp.com/s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png?ssl=1"
 		}
 	],
+	"oauth_client_id": 69040,
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
@@ -33,6 +36,7 @@
 		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": true,
+		"jetpack-cloud/login": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/backups-restore": true,
 		"jetpack/scan-product": true,
@@ -47,8 +51,10 @@
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
-		"oauth": false,
+		"oauth": true,
+		"oauth_implicit_authorization": true,
 		"purchases/new-payment-methods": true,
+		"realtime-site-count": true,
 		"site-indicator": false,
 		"support-user": true,
 		"upgrades/redirect-payments": true
@@ -58,7 +64,7 @@
 		"activity": true,
 		"backup": true,
 		"checkout": true,
-		"jetpack-cloud-auth": false,
+		"jetpack-cloud-auth": true,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud": true,
@@ -67,5 +73,7 @@
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
+	"restricted_me_access": false,
+	"theme_color": "#2fb41f",
 	"olark_chat_identity": "5581-687-10-4070"
 }
