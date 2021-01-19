@@ -1,6 +1,5 @@
 require:
   - 'esm'
-  - 'test/mocha.env.js'
   - 'mocha-steps'
 file:
   - 'lib/before.js'
