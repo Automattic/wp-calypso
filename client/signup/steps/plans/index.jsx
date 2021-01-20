@@ -36,7 +36,6 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
  */
 import './style.scss';
 import { Experiment } from 'calypso/components/experiment';
-// eslint-disable-next-line
 import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { isTabletResolution } from '@automattic/viewport';
@@ -324,7 +323,8 @@ export default connect(
 		isLoadingExperiment: isLoading( state ),
 		/* To be uncommented once designs for experiment are finalized
 		 * */
-		isInVerticalScrollingPlansExperiment: true, //'treatment' === getVariationForUser( state, 'vertical_scrolling_plans' ),
+		isInVerticalScrollingPlansExperiment:
+			'treatment' === getVariationForUser( state, 'vertical_scrolling_plans' ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
