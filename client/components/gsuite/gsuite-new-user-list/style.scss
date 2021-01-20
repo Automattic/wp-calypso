@@ -6,6 +6,7 @@
 
 .gsuite-new-user-list__new-user-remove-user-button {
 	display: none; // TODO: Fix button displayed in the middle of form (see 1165571745647867-as-1198174007918339)
+	overflow: unset; // Prevents ellipsis from appearing because of a right margin applied on the gridicon
 
 	@include breakpoint-deprecated( '>800px' ) {
 		display: block;
