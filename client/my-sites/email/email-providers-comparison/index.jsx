@@ -43,7 +43,7 @@ import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'calypso/assets/images/email-providers/titan.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
-import googleWorkspaceLogo from 'calypso/assets/images/email-providers/google-workspace.svg';
+import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
 import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
@@ -258,7 +258,7 @@ class EmailProvidersComparison extends React.Component {
 			description = translate(
 				'The best way to create, communicate, and collaborate. An integrated workspace that is simple and easy to use.'
 			);
-			logo = googleWorkspaceLogo;
+			logo = googleWorkspaceIcon;
 			buttonLabel = translate( 'Add %(googleMailService)s', {
 				args: {
 					googleMailService: getGoogleMailServiceFamily(),

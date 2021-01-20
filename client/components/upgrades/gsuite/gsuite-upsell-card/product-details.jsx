@@ -9,8 +9,10 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'calypso/config';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import googleWorkspaceLogo from 'calypso/assets/images/email-providers/google-workspace/logo.svg';
 import GSuitePrice from 'calypso/components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'calypso/components/gsuite/gsuite-features/compact';
 import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
@@ -22,10 +24,11 @@ function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlu
 		<div className="gsuite-upsell-card__product-details">
 			<div className="gsuite-upsell-card__product-intro">
 				<div className="gsuite-upsell-card__product-presentation">
-					<div className="gsuite-upsell-card__product-name">
-						{ /* Intentionally not translated as it is a brand name and Google keeps it in English */ }
+					{ config.isEnabled( 'google-workspace-migration' ) ? (
+						<img src={ googleWorkspaceLogo } alt="Google Workspace" />
+					) : (
 						<span className="gsuite-upsell-card__product-logo">G Suite</span>
-					</div>
+					) }
 
 					<p>
 						{ translate(
