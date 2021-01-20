@@ -23,6 +23,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -35,7 +36,6 @@ import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
-import notices from 'calypso/notices';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import getCountries from 'calypso/state/selectors/get-countries';
 import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
@@ -272,7 +272,7 @@ export class ContactDetailsFormFields extends Component {
 					comment: 'Validation error when filling out domain checkout contact details form',
 				}
 			);
-			notices.error( noticeMessage );
+			this.props.errorNotice( noticeMessage );
 			throw new Error(
 				`Cannot focus() on invalid form element in domain details checkout form with name: '${ firstErrorName }'`
 			);
@@ -569,17 +569,22 @@ export class ContactDetailsFormFields extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
-	const contactDetails = props.contactDetails;
-	const countryCode = contactDetails.countryCode;
+export default connect(
+	( state, props ) => {
+		const contactDetails = props.contactDetails;
+		const countryCode = contactDetails.countryCode;
 
-	const hasCountryStates =
-		contactDetails && contactDetails.countryCode
-			? ! isEmpty( getCountryStates( state, contactDetails.countryCode ) )
-			: false;
-	return {
-		countryCode,
-		countriesList: getCountries( state, 'domains' ),
-		hasCountryStates,
-	};
-} )( localize( ContactDetailsFormFields ) );
+		const hasCountryStates =
+			contactDetails && contactDetails.countryCode
+				? ! isEmpty( getCountryStates( state, contactDetails.countryCode ) )
+				: false;
+		return {
+			countryCode,
+			countriesList: getCountries( state, 'domains' ),
+			hasCountryStates,
+		};
+	},
+	{
+		errorNotice,
+	}
+)( localize( ContactDetailsFormFields ) );
