@@ -1,60 +1,36 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
-import { combineReducers, registerStore } from '@wordpress/data';
+import { createReduxStore, register } from '@wordpress/data';
 
-const isNuxEnabledReducer = ( state = undefined, action ) => {
-	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS':
-			return action.isNuxEnabled;
-		default:
-			return state;
-	}
+const DEFAULT_STATE = {
+	whatsNew: false,
 };
-
-// TODO: next PR convert file to Typescript to ensure control of tourRating values: null, 'thumbs-up' 'thumbs-down'
-const tourRatingReducer = ( state = undefined, action ) => {
-	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING':
-			return action.tourRating;
-		default:
-			return state;
-	}
-};
-
-const reducer = combineReducers( {
-	isNuxEnabled: isNuxEnabledReducer,
-	tourRating: tourRatingReducer,
-} );
 
 const actions = {
-	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
-		if ( ! bypassApi ) {
-			apiFetch( {
-				path: '/wpcom/v2/block-editor/nux',
-				method: 'POST',
-				data: { isNuxEnabled },
-			} );
-		}
+	toggleWhatsNew() {
 		return {
-			type: 'WPCOM_BLOCK_EDITOR_NUX_SET_STATUS',
-			isNuxEnabled,
+			type: 'TOGGLE_FEATURE',
 		};
 	},
-	setTourRating: ( tourRating ) => {
-		return { type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING', tourRating };
+};
+
+const store = createReduxStore( 'whats-new', {
+	reducer( state = DEFAULT_STATE, action ) {
+		switch ( action.type ) {
+			case 'TOGGLE_FEATURE':
+				return {
+					whatsNew: ! state.whatsNew,
+				};
+		}
+		return state;
 	},
-};
-
-const selectors = {
-	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
-	tourRating: ( state ) => state.tourRating,
-};
-
-registerStore( 'automattic/nux', {
-	reducer,
 	actions,
-	selectors,
-	persist: true,
+	selectors: {
+		isWhatsNewActive( state ) {
+			return state.whatsNew;
+		},
+	},
 } );
+
+register( store );

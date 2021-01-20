@@ -1,163 +1,192 @@
-@import '~@wordpress/base-styles/colors';
-@import '~@wordpress/base-styles/mixins';
-@import '~@wordpress/base-styles/variables';
-@import '~@wordpress/base-styles/z-index';
+// @TODO: remove the ignore rule and replace font sizes accordingly
+/* stylelint-disable scales/font-size */
 
-.wpcom-editor-whats-new-frame {
-	background-color: $white;
-	border-radius: 2px;
-	bottom: 44px;
-	display: inline;
-	left: 16px;
-	position: fixed;
-}
+@import '~@automattic/typography/styles/fonts';
+@import '~@automattic/onboarding/styles/mixins';
 
-.whats-new-card__heading {
-	font-size: 1.125rem; /* stylelint-disable-line */
-	margin: 0.5rem 0;
-}
+$wpcom-modal-breakpoint: 660px;
 
-.whats-new-card__description {
-	font-size: 0.875rem;
-	line-height: 1.5rem;
-	margin: 0;
+$wpcom-modal-padding-v: 40px;
+$wpcom-modal-padding-h: 50px;
+$wpcom-modal-content-min-height: 350px;
+$wpcom-modal-footer-padding-v: 20px;
+$wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
-	.components-button {
-		height: auto;
-		line-height: 1;
-		text-decoration: underline;
-		padding: 0 0 0 4px;
+// Core modal style overrides
+.whats-new {
+	&.components-modal__frame {
+		overflow: visible;
+		height: 65vh;
+		top: calc( 17.5vh - #{$wpcom-modal-footer-height / 2} );
+
+		@media ( max-width: $wpcom-modal-breakpoint ) {
+			width: 90vw;
+			min-width: 90vw;
+			left: 5vw;
+			right: 5vw;
+		}
+
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			width: 720px;
+			height: $wpcom-modal-content-min-height;
+			top: calc( 50% - #{$wpcom-modal-footer-height / 2} );
+		}
 	}
-}
 
-.wpcom-editor-whats-new__resume-btn {
-	border-radius: 2px;
-	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
-		0 1px 1px rgba( 0, 0, 0, 0.08 );
-	background-color: $white;
-	color: $black;
-
-	&.components-button {
-		height: 44px;
+	.components-modal__header {
+		display: none;
 	}
-}
 
-.wpcom-editor-whats-new-card-frame {
-	position: relative;
+	.components-guide__container {
+		margin-top: 0;
+	}
 
-	.components-guide__page-control {
-		bottom: 0;
-		left: $grid-unit-20;
-		margin: 0;
+	.components-guide__footer {
 		position: absolute;
+		width: 100%;
+		height: $wpcom-modal-footer-height;
+		bottom: $wpcom-modal-footer-height * -1;
+		left: 0;
+		padding: $wpcom-modal-footer-padding-v 0;
+		margin: 0;
+		display: flex;
+		justify-content: center;
+		background: white;
+		border-top: 1px solid #dcdcde;
 
-		li {
-			margin-bottom: 0;
-		}
-	}
-}
-
-.whats-new-card {
-	width: 400px;
-
-	&.whats-new-card.is-elevated {
-		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
-	}
-
-	&.components-card {
-		border: none;
-		border-radius: 4px;
-	}
-
-	.components-card__body {
-		min-height: 114px;
-	}
-
-	.components-card__body,
-	.components-card__footer {
-		border-top: none;
-		padding: $grid-unit-20 !important;
-	}
-
-	.components-card__footer {
-		.whats-new__end-text {
-			color: $gray-600;
-			font-size: 0.875rem;
-			font-style: italic;
-		}
-
-		.whats-new__end-icon.components-button.has-icon {
-			background-color: #f6f7f7;
-			border-radius: 50%;
-			color: $gray-600;
-			margin-left: 8px;
-
-			path {
-				fill: $gray-600;
-			}
-
-			&.active {
-				background-color: $black;
-				opacity: 1;
-
-				path {
-					fill: $white;
-				}
-			}
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			border-top: none;
 		}
 	}
 
-	.components-card__media {
-		min-height: 260px;
+	.components-guide__page {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		justify-content: start;
 	}
 
 	.components-guide__page-control {
-		margin: 0;
+		position: relative;
+		height: 0;
+		top: 100%;
+		overflow: visible;
+		margin: 0 auto;
+		z-index: 2;
 
-		.components-button {
-			min-width: auto;
-			&.has-icon {
-				padding: 3px;
-			}
+		&::before {
+			display: inline-block;
+			content: '';
+			height: $wpcom-modal-footer-height;
+			vertical-align: middle;
 		}
 
 		li {
+			vertical-align: middle;
 			margin-bottom: 0;
+		}
+
+		// Temporarily disable dots on mobile as alignment is wonky.
+		display: none;
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			display: block;
 		}
 	}
 }
 
-.whats-new-card__minimize-icon svg {
-	position: relative;
-	left: -2px;
-}
+.whats-new__page {
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: flex-end;
+	background: white;
+	width: 100%;
+	height: 100%;
 
-.whats-new-card__overlay-controls {
-	left: 0;
-	padding: $grid-unit-15;
-	position: absolute;
-	right: 0;
-
-	.components-button {
-		width: 32px;
-		min-width: 32px;
-		height: 32px;
-		background: $dark-gray-700;
-		opacity: 0;
-		transition: opacity 200ms;
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		flex-direction: row;
+		justify-content: flex-start;
+		position: absolute;
+		min-height: $wpcom-modal-content-min-height;
+		bottom: 0;
 	}
 }
 
-.wpcom-editor-whats-new-frame:hover .whats-new-card__overlay-controls .components-button {
-	opacity: 0.7;
+.whats-new__text,
+.whats-new__visual {
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		flex: 1 0 50%;
+		min-width: 290px;
+	}
 }
 
-.wpcom-editor-whats-new-frame .whats-new-card__overlay-controls .components-button:hover {
-	opacity: 0.9;
+.whats-new__text {
+	padding: 0 25px 25px;
+	height: 60%;
+
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		height: auto;
+		padding: $wpcom-modal-padding-v $wpcom-modal-padding-h;
+	}
+}
+.whats-new__visual {
+	height: 40%;
+	background: #1581d8;
+	text-align: center;
+
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		height: auto;
+	}
 }
 
-.whats-new-card__next-btn {
-	margin-left: $grid-unit-15;
-	justify-content: center;
-	min-width: 85px;
+.whats-new__heading {
+	@include onboarding-font-recoleta;
+	/* Gray / Gray 90 */
+	color: #1d2327;
+
+	font-size: 32px;
+	line-height: 1.19;
+
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		font-size: 42px;
+	}
+
+	// TODO: remove this hack once the welcome editor deals better with
+	// overflowing text
+	body.locale-de & {
+		font-size: 24px;
+
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			font-size: 28px;
+		}
+	}
+}
+
+.whats-new__description {
+	font-size: 15px;
+	line-height: 22px;
+
+	/* Gray / Gray 60 */
+	color: #50575e;
+
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		font-size: 17px;
+		line-height: 26px;
+	}
+}
+
+.whats-new__image {
+	max-width: 100%;
+	height: auto;
+	flex: 1;
+	align-self: center;
+
+	&.align-bottom {
+		align-self: flex-end;
+	}
+
+	max-height: 100%;
+
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		max-height: none;
+	}
 }
