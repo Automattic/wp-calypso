@@ -2,16 +2,18 @@
  * External dependencies
  */
 import React from 'react';
+import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, close } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import { PLANS_STORE } from '../constants';
 import useBillingPeriod from '../hooks/use-billing-period';
+import type { BillingIntervalType } from '../plans-interval-toggle';
 
 /**
  * Style dependencies
@@ -19,15 +21,22 @@ import useBillingPeriod from '../hooks/use-billing-period';
 import './style.scss';
 
 const TickIcon = <Icon icon={ check } size={ 25 } />;
+const CrossIcon = <Icon icon={ close } size={ 25 } />;
 
 type Props = {
 	onSelect: ( planProductId: number | undefined ) => void;
+	billingInterval: BillingIntervalType;
 	locale: string;
 };
 
-const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) => {
+const PlansDetails: React.FunctionComponent< Props > = ( {
+	onSelect,
+	locale,
+	billingInterval,
+} ) => {
 	const { __ } = useI18n();
 
+	// TODO: put all selectors into one `useSelect` call
 	const features = useSelect( ( select ) => select( PLANS_STORE ).getFeatures() );
 	const featuresByType = useSelect( ( select ) => select( PLANS_STORE ).getFeaturesByType() );
 	const supportedPlans = useSelect( ( select ) =>
@@ -86,8 +95,32 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 								</tr>
 							) }
 							{ featureType.features?.map( ( feature: string, i ) => (
-								<tr className="plans-details__feature-row" key={ i }>
-									<th>{ features[ feature ].name }</th>
+								<tr
+									className={ classnames( 'plans-details__feature-row', {
+										'plans-details__feature-row--enabled':
+											features[ feature ].requiresAnnuallyBilledPlan &&
+											billingInterval === 'ANNUALLY',
+										'plans-details__feature-row--disabled':
+											features[ feature ].requiresAnnuallyBilledPlan &&
+											billingInterval !== 'ANNUALLY',
+									} ) }
+									key={ i }
+								>
+									<th>
+										{ features[ feature ].requiresAnnuallyBilledPlan && (
+											<span
+												className="plans-details__feature-annual-nudge"
+												aria-label={
+													billingInterval === 'ANNUALLY'
+														? __( 'Included with annual plans', __i18n_text_domain__ )
+														: __( 'Only included with annual plans', __i18n_text_domain__ )
+												}
+											>
+												{ __( 'Included with annual plans', __i18n_text_domain__ ) }
+											</span>
+										) }
+										<span>{ features[ feature ].name }</span>
+									</th>
 									{ supportedPlans.map( ( plan, j ) =>
 										feature === 'storage' ? (
 											<td key={ j }>{ plan.storage }</td>
@@ -95,11 +128,24 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 											<td key={ j }>
 												{ plan.featuresSlugs?.[ feature ] ? (
 													<>
-														{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-														<span className="hidden">
-															{ __( 'Available', __i18n_text_domain__ ) }
-														</span>
-														{ TickIcon }
+														{ features[ feature ].requiresAnnuallyBilledPlan &&
+														billingInterval !== 'ANNUALLY' ? (
+															<>
+																{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+																<span className="hidden">
+																	{ __( 'Unavailable', __i18n_text_domain__ ) }
+																</span>
+																{ CrossIcon }
+															</>
+														) : (
+															<>
+																{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+																<span className="hidden">
+																	{ __( 'Available', __i18n_text_domain__ ) }
+																</span>
+																{ TickIcon }
+															</>
+														) }
 													</>
 												) : (
 													<>

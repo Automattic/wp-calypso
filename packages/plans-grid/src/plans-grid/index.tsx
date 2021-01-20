@@ -127,7 +127,11 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						<Title tagName="h2">{ __( 'Detailed comparison', __i18n_text_domain__ ) }</Title>
 					</div>
 					<div className="plans-grid__details-container">
-						<PlansDetails onSelect={ onPlanSelect } locale={ locale } />
+						<PlansDetails
+							onSelect={ onPlanSelect }
+							locale={ locale }
+							billingInterval={ billingInterval }
+						/>
 					</div>
 				</div>
 			) }
