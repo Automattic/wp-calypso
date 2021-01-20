@@ -67,6 +67,7 @@ Note: the above usage is more easily accomplished using the hooks and higher-ord
 
 - '<480px'
 - '<660px'
+- '<782px'
 - '<800px'
 - '<960px'
 - '<1040px'
@@ -74,6 +75,7 @@ Note: the above usage is more easily accomplished using the hooks and higher-ord
 - '<1400px'
 - '>480px'
 - '>660px'
+- '>782px'
 - '>800px'
 - '>960px'
 - '>1040px'
