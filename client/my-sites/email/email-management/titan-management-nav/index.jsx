@@ -14,7 +14,7 @@ import {
 	emailManagementNewTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
-import { errorNotice, warningNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -127,7 +127,6 @@ export default connect(
 	( dispatch ) => {
 		return {
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
-			warningNotice: ( text, options ) => dispatch( warningNotice( text, options ) ),
 		};
 	}
 )( localize( TitanManagementNav ) );
