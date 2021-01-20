@@ -76,19 +76,18 @@ export function fetchPluginData( pluginSlug ) {
  * @param {Array}  data       List of found plugins, not defined if there was an error
  * @param {object} error      Error object, undefined if the plugins were fetched successfully
  * @param {object} pagination Paginatioin data, as retrieved from the API response.
- * @returns {Function} Action thunk
+ * @returns {object}          Action object
  */
 function receivePluginsList( category, page, searchTerm, data, error, pagination = null ) {
-	return ( dispatch ) =>
-		dispatch( {
-			type: PLUGINS_WPORG_LIST_RECEIVE,
-			category,
-			page,
-			searchTerm,
-			data: normalizePluginsList( data ),
-			pagination,
-			error,
-		} );
+	return {
+		type: PLUGINS_WPORG_LIST_RECEIVE,
+		category,
+		page,
+		searchTerm,
+		data: normalizePluginsList( data ),
+		pagination,
+		error,
+	};
 }
 
 /**
