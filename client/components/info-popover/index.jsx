@@ -116,7 +116,7 @@ export default class InfoPopover extends Component {
 			}
 
 			this.setState( { showPopover: false }, this.recordStats );
-		}, 100 );
+		}, 250 );
 	};
 
 	handleOnMouseEnterPopover = () => {
