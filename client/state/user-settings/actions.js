@@ -3,7 +3,7 @@
  */
 
 import debugFactory from 'debug';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -106,6 +106,27 @@ export const removeUnsavedUserSetting = ( settingName ) => ( {
 } );
 
 /**
+ * Checks if an incoming change to settings.language is a change to the existing settings
+ * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
+ *
+ * @param  {string}  languageSettingValue the newly-set language slug string.
+ * @param  {object}  settings user settings object.
+ * @returns {boolean} if the language setting has been changed.
+ */
+function hasLanguageChanged( languageSettingValue, settings = {} ) {
+	if ( ! languageSettingValue ) {
+		return false;
+	}
+	// if there is a saved variant we know that the user is changing back to the root language === setting hasn't changed
+	// but if settings.locale_variant is not empty then we assume the user is trying to switch back to the root
+	return (
+		( languageSettingValue === settings.language && isEmpty( settings.locale_variant ) ) ||
+		//if the incoming language code is the variant itself === setting hasn't changed
+		languageSettingValue === settings.locale_variant
+	);
+}
+
+/**
  * Handles the storage and removal of changed setting that are pending
  * being saved to the WPCOM API.
  *
@@ -135,7 +156,10 @@ export function setUserSetting( settingName, value ) {
 		 * user_login is a special case since the logic for validating and saving a username
 		 * is more complicated.
 		 */
-		if ( originalSetting === value && 'user_login' !== settingKey ) {
+		if (
+			( originalSetting === value && 'user_login' !== settingKey && 'language' !== settingKey ) ||
+			( 'language' === settingName && hasLanguageChanged( value, settings ) )
+		) {
 			debug( 'Removing ' + settingKey + ' from changed settings.' );
 			dispatch( removeUnsavedUserSetting( settingKey ) );
 		} else {
