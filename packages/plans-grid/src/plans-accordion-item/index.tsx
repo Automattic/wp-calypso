@@ -4,7 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
-import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { NextButton } from '@automattic/onboarding';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
@@ -128,10 +128,10 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 								{ ! isFree &&
 									( billingInterval === 'ANNUALLY'
-										? createInterpolateElement(
-												__( 'per month, billed as <price /> annually', __i18n_text_domain__ ),
+										? sprintf(
+												__( 'per month, billed as %s annually', __i18n_text_domain__ ),
 												// TODO: NEEDS THE ANNUAL PRICE FROM DATA-STORE
-												{ price: <>{ planProduct?.price }</> }
+												planProduct?.price
 										  )
 										: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
 							</div>
@@ -142,9 +142,10 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 											billingInterval !== 'ANNUALLY',
 									} ) }
 								>
-									{ createInterpolateElement(
-										__( 'Save <discountPercentage />% by paying annually', __i18n_text_domain__ ),
-										{ discountPercentage: <>{ annuallyDiscountPercentage }</> }
+									{ sprintf(
+										// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
+										__( 'Save %s%% by paying annually', __i18n_text_domain__ ),
+										annuallyDiscountPercentage
 									) }
 								</div>
 							) }
