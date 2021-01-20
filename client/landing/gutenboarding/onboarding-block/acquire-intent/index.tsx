@@ -19,7 +19,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
 import { isGoodDefaultDomainQuery } from '../../lib/is-good-default-domain-query';
-
+import { prefetchDesignThumbs } from '../../available-designs';
 /**
  * Style dependencies
  */
@@ -55,6 +55,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 		selected_vertical_label: getSelectedVertical()?.label,
 		has_selected_site_title: hasSiteTitle(),
 	} ) );
+
+	React.useEffect( prefetchDesignThumbs, [] );
 
 	const handleSkip = () => {
 		skipSiteVertical();
