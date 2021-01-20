@@ -27,7 +27,6 @@ const EXPERIMENTAL_FEATURES = {
 	'@wordpress/date': [ '__experimentalGetSettings' ],
 	'@wordpress/components': [ '__experimentalNavigationBackButton' ],
 	'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
-	'@wordpress/edit-site': [ '__experimentalMainDashboardButton' ],
 };
 
 /**
