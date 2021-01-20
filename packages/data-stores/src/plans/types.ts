@@ -110,6 +110,7 @@ export type PlanFeature = {
 	id?: string;
 	description?: string;
 	name: string;
+	requiresAnnuallyBilledPlan: boolean;
 	type?: string;
 	data?: Array< boolean | string >;
 };

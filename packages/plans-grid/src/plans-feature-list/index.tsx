@@ -7,13 +7,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import '../types-patch';
 import type { BillingIntervalType } from '../plans-interval-toggle';
+import { PLANS_STORE } from '../constants';
 
 /**
  * Style dependencies
@@ -27,6 +29,21 @@ interface FeatureListItemContentWrapperProps {
 interface FeatureListIconProps {
 	className: string;
 }
+
+const doesFeatureRequireAnnuallyBilledPlan = (
+	featuresDetails: Record< string, Plans.PlanFeature >,
+	featureName: string
+): boolean => {
+	const matchedFeatureId = Object.keys( featuresDetails ).find(
+		( featureId ) => featuresDetails[ featureId ].name === featureName
+	);
+
+	if ( matchedFeatureId ) {
+		return featuresDetails[ matchedFeatureId ].requiresAnnuallyBilledPlan;
+	}
+
+	return false;
+};
 
 const TickIcon: React.FunctionComponent< FeatureListIconProps > = ( { className } ) => (
 	// @TODO: Fix TypeScript error about className
@@ -205,6 +222,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const domainFeatureItem = computeDomainFeatureItem( isFreePlan, domain, billingInterval, __ );
+	const featuresDetails = useSelect( ( select ) => select( PLANS_STORE ).getFeatures() );
 
 	const featureItems: FeatureListItem[] = [];
 
@@ -234,20 +252,20 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 	}
 
 	// Remaining features from data-store
-	// @TODO: move out to data-store
-	// Remaining feature items are coming from the APIs
-	const augmentedApiFeatures = features.map( ( feature, index ) => ( {
-		feature,
-		requiresAnnuallyBilledPlan: index === 2,
-	} ) );
-	augmentedApiFeatures.forEach( ( { feature, requiresAnnuallyBilledPlan } ) =>
-		featureItems.push( {
-			bulletIcon:
-				requiresAnnuallyBilledPlan && billingInterval === 'MONTHLY' ? CrossIcon : TickIcon,
-			textNode: <>{ feature }</>,
-			requiresAnnuallyBilledPlan,
-		} )
-	);
+	// @TODO: potentially refactor and move to data-store
+	features
+		.map( ( feature ) => ( {
+			feature,
+			requiresAnnuallyBilledPlan: doesFeatureRequireAnnuallyBilledPlan( featuresDetails, feature ),
+		} ) )
+		.forEach( ( { feature, requiresAnnuallyBilledPlan } ) =>
+			featureItems.push( {
+				bulletIcon:
+					requiresAnnuallyBilledPlan && billingInterval === 'MONTHLY' ? CrossIcon : TickIcon,
+				textNode: <>{ feature }</>,
+				requiresAnnuallyBilledPlan,
+			} )
+		);
 
 	return (
 		<div className="plans-feature-list" hidden={ ! isOpen }>
