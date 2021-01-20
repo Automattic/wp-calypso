@@ -3,23 +3,23 @@
  */
 import { doAction, hasAction } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
+import { FOCUSED_LAUNCH_FLOW } from './constants';
 
 interface CalypsoifyWindow extends Window {
 	currentSiteId?: number;
 	calypsoifyGutenberg?: {
 		isSiteUnlaunched?: boolean;
 		currentCalypsoUrl?: string;
-		isFocusedLaunchFlow?: boolean;
 		[ key: string ]: unknown;
 	};
 }
 declare const window: CalypsoifyWindow;
 
-export const redirectParentWindow = ( url: string ) => {
+export const redirectParentWindow = ( url: string ): void => {
 	window.top.location.href = url;
 };
 
-export const redirectToWpcomPath = ( url: string ) => {
+export const redirectToWpcomPath = ( url: string ): void => {
 	const origin = 'https://wordpress.com';
 	const path = url.startsWith( '/' ) ? url : `/${ url }`;
 	redirectParentWindow( `${ origin }${ path }` );
@@ -35,7 +35,7 @@ export const getCurrentLaunchFlowUrl = (): string | undefined => {
 
 export const openCheckout = ( siteSlug: string, isEcommerce = false ): void => {
 	const HOOK_OPEN_CHECKOUT_MODAL = 'a8c.wpcom-block-editor.openCheckoutModal';
-	const isFocusedLaunchFlow = window?.calypsoifyGutenberg?.isFocusedLaunchFlow;
+	const isFocusedLaunchFlow = window?.wpcomEditorSiteLaunch?.launchFlow === FOCUSED_LAUNCH_FLOW;
 
 	// only in focused launch, open checkout modal assuming the cart is already updated
 	if ( hasAction( HOOK_OPEN_CHECKOUT_MODAL ) && isFocusedLaunchFlow ) {
