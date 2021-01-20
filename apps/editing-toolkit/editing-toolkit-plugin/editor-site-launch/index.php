@@ -13,6 +13,8 @@ namespace A8C\FSE\EditorSiteLaunch;
 
 /**
  * Enqueue launch button assets
+ *
+ * @param array $site_launch_options Site launch options.
  */
 function enqueue_launch_button_script_and_style( $site_launch_options ) {
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/launch-button.asset.php';
@@ -37,7 +39,7 @@ function enqueue_launch_button_script_and_style( $site_launch_options ) {
 		$style_version
 	);
 
-	// Pass site launch options here
+	// Pass site launch options to client side here.
 	// This is accessible via window.wpcomEditorSiteLaunch.
 	wp_localize_script(
 		'a8c-fse-editor-site-launch-button-script',
@@ -53,6 +55,8 @@ function enqueue_launch_button_script_and_style( $site_launch_options ) {
 
 /**
  * Enqueue launch flow assets
+ *
+ * @param array $site_launch_options Site launch options.
  */
 function enqueue_launch_flow_script_and_style( $site_launch_options ) {
 
@@ -107,7 +111,7 @@ function enqueue_script_and_style() {
 		return;
 	}
 
-	// Get site launch options
+	// Get site launch options.
 	$site_launch_options = apply_filters( 'a8c_enable_editor_site_launch', false );
 
 	// If no site launch options, skip.
@@ -116,10 +120,7 @@ function enqueue_script_and_style() {
 		return;
 	}
 
-	// Launch Button
 	enqueue_launch_button_script_and_style( $site_launch_options );
-
-	// Launch Flow
 	enqueue_launch_flow_script_and_style( $site_launch_options );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
