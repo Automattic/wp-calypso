@@ -1,6 +1,5 @@
 /**
  * Internal dependencies
  */
-import './src/menu';
+import './src/whats-new';
 import './src/store';
-import './src/whats-new-launch';

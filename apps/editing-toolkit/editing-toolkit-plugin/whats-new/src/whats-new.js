@@ -5,21 +5,18 @@ import './public-path';
  * WordPress dependencies
  */
 import { registerPlugin } from '@wordpress/plugins';
-import { Fill, MenuItem, Guide, GuidePage } from '@wordpress/components';
+import { Fill, Guide, GuidePage, MenuItem } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
-const paymentsImage = 'https://s0.wp.com/i/whats-new/payments.png';
-const whatsappImage = 'https://s0.wp.com/i/whats-new/whatsapp.png';
-// import paymentsImage from './images/payments.png';
-// import whatsappImage from './images/whatsapp.png';
-// import WhatsNew from './whats-new-launch'
+import paymentsImage from './images/payments.png';
+import whatsappImage from './images/whatsapp.png';
 
 function WhatsNewMenuItem() {
 	const { toggleWhatsNew } = useDispatch( 'whats-new' );
@@ -58,18 +55,23 @@ function getWhatsNewPages() {
 	return [
 		{
 			imgSrc: paymentsImage,
-			heading: __( 'Welcome to the block editor', 'full-site-editing' ),
+			heading: __( 'Use payments features to make money', 'full-site-editing' ),
 			description: __(
-				'In the WordPress editor, each paragraph, image, or video is presented as a distinct “block” of content.',
+				'You can process payments on your website for just about anything. With Payments, Premium Content, and Donations blocks, it takes just minutes to get setup to collect payments from your visitors. Available for with any paid plan. Get started with payments today.',
 				'full-site-editing'
 			),
 		},
 		{
 			imgSrc: whatsappImage,
-			heading: __( 'Make each block your own', 'full-site-editing' ),
-			description: __(
-				'Each block comes with its own set of controls for changing things like color, width, and alignment. These will show and hide automatically when you have a block selected.',
-				'full-site-editing'
+			heading: __( 'Let your visitors message you on WhatsApp', 'full-site-editing' ),
+			description: sprintf(
+				/* translators: the embed is a link */
+				__(
+					'Connect and communicate with your website’s visitors with the new %1$sWhatsApp block%2$s. With a single click, your website’s visitors can ask questions or message you for whatever reason. Available with Premium, Business, and eCommerce plans.',
+					'full-site-editing'
+				),
+				"<a href='https://wordpress.com/support/wordpress-editor/blocks/whatsapp-button-block/' target='_blank' rel='noreferrer'>",
+				'</a>'
 			),
 		},
 	];

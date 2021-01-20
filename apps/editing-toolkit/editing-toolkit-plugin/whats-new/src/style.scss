@@ -114,7 +114,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .whats-new__text,
 .whats-new__visual {
 	@media ( min-width: $wpcom-modal-breakpoint ) {
-		flex: 1 0 50%;
+		flex: 1 auto;
 		min-width: 290px;
 	}
 }
@@ -130,6 +130,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 }
 .whats-new__visual {
 	height: 40%;
+	padding: 25px;
 	background: #1581d8;
 	text-align: center;
 

@@ -21,7 +21,7 @@ class Whats_New {
 	private static $instance = null;
 
 	/**
-	 * Whats_New constructor.
+	 * WPCOM_Whats_New constructor.
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
@@ -48,22 +48,28 @@ class Whats_New {
 		$version             = $asset_file['version'];
 
 		wp_enqueue_script(
-			'wpcom-whats-new',
+			'whats-new-script',
 			plugins_url( 'dist/whats-new.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true
 		);
 
-		wp_set_script_translations( 'wpcom-whats-new', 'full-site-editing' );
+		wp_localize_script(
+			'whats-new-script',
+			'whatsNewAssetsUrl',
+			plugins_url( 'dist/', __FILE__ )
+		);
 
-		// $style_path = 'dist/whats-new' . ( is_rtl() ? '.rtl' : '' ) . '.css';
-		// wp_enqueue_style(
-		// 'wpcom-whats-new',
-		// plugins_url( $style_path, __FILE__ ),
-		// array(),
-		// filemtime( plugin_dir_path( __FILE__ ) . $style_path )
-		// );
+		wp_set_script_translations( 'whats-new-script', 'full-site-editing' );
+
+		$style_path = 'dist/whats-new' . ( is_rtl() ? '.rtl' : '' ) . '.css';
+		wp_enqueue_style(
+			'whats-new-style',
+			plugins_url( $style_path, __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path( __FILE__ ) . $style_path )
+		);
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Whats_New', 'init' ) );
