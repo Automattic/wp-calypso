@@ -91,8 +91,8 @@ export class HelpSearch extends React.PureComponent {
 		}
 
 		const forumBaseUrl = helpLinks.wordpress_forum_links_localized
-			? localizeUrl( 'https://en.forums.wordpress.com/' )
-			: 'https://en.forums.wordpress.com/';
+			? localizeUrl( 'https://wordpress.com/forums' )
+			: 'https://wordpress.com/forums';
 
 		return (
 			<div>
@@ -108,7 +108,7 @@ export class HelpSearch extends React.PureComponent {
 					header={ translate( 'Community Answers' ) }
 					helpLinks={ helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links }
 					iconTypeDescription="comment"
-					searchLink={ `${ forumBaseUrl }/search/${ searchQuery }` }
+					searchLink={ `${ forumBaseUrl }?s=${ searchQuery }` }
 				/>
 				<HelpResults
 					footer={ translate( 'See more from Jetpack Documentation…' ) }
