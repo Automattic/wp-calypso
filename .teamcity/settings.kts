@@ -910,10 +910,10 @@ object RunCanaryE2eTests : BuildType({
 
 				# Collect results
 				mkdir -p reports
-				find test/e2e/temp -path '*/reports/*' -print0 | xargs -0 mv -t reports
+				find test/e2e/temp -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
 
 				mkdir -p screenshots
-				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -0 mv -t screenshots
+				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
 				mkdir -p logs
 				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
@@ -922,6 +922,12 @@ object RunCanaryE2eTests : BuildType({
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID%"
 		}
+	}
+
+	feature {
+		type = "xml-report-plugin"
+		param("xmlReportParsing.reportType", "junit")
+		param("xmlReportParsing.reportDirs", "test/e2e/reports/*.xml")
 	}
 
 	failureConditions {
