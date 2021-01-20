@@ -91,11 +91,17 @@ export const getProductsToDisplay = ( {
 		.filter( ( product ): product is SelectorProduct => product?.term === duration )
 		// Remove duplicates (only happens if the site somehow has the same product
 		// both purchased and included in a plan, very unlikely)
-		.filter(
-			( product ) =>
-				! purchasedSlugs.includes( product.productSlug ) &&
-				! purchasedSlugs.includes( product.monthlyProductSlug )
-		);
+		.filter( ( product ) => {
+			if ( product.productSlug && purchasedSlugs.includes( product.productSlug ) ) {
+				return false;
+			}
+
+			if ( product.monthlyProductSlug && purchasedSlugs.includes( product.monthlyProductSlug ) ) {
+				return false;
+			}
+
+			return true;
+		} );
 	return (
 		[ ...purchasedProducts, ...filteredProducts ]
 			// Make sure we don't allow any null or invalid products
