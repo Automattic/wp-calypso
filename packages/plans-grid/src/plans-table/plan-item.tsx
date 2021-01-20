@@ -72,7 +72,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	domain,
 	features,
 	billingInterval,
-	// annuallyDiscountPercentage,
+	annuallyDiscountPercentage,
 	onSelect,
 	onPickDomainClick,
 	onToggleExpandAll,
@@ -149,9 +149,34 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<div hidden={ ! isOpen }>
 						<div className="plan-item__price-note">
-							{ isFree
-								? __( 'free forever', __i18n_text_domain__ )
-								: __( 'per month, billed yearly', __i18n_text_domain__ ) }
+							{ isFree && __( 'free forever', __i18n_text_domain__ ) }
+							{ ! isFree &&
+								( billingInterval === 'ANNUALLY'
+									? sprintf(
+											__( 'per month, billed as %s annually', __i18n_text_domain__ ),
+											// TODO: NEEDS THE ANNUAL PRICE FROM DATA-STORE
+											price
+									  )
+									: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
+						</div>
+
+						{ /*
+							For the free plan, the following div is still rendered invisibile
+							and ignored by screen readers (via aria-hidden) to ensure the same
+							vertical spacing as the rest of the plan cards
+						 */ }
+						<div
+							className={ classNames( 'plan-item__price-discount', {
+								'plan-item__price-discount--disabled': billingInterval !== 'ANNUALLY',
+								'plan-item__price-discount--hidden': isFree,
+							} ) }
+							aria-hidden={ isFree ? 'true' : 'false' }
+						>
+							{ sprintf(
+								// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
+								__( 'Save %s%% by paying annually', __i18n_text_domain__ ),
+								annuallyDiscountPercentage
+							) }
 						</div>
 
 						<div className="plan-item__actions">
