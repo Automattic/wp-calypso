@@ -48,13 +48,12 @@ import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
-import { withIsAnchorFmSignup } from 'calypso/landing/gutenboarding/components/path';
+import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
 class Login extends Component {
 	static propTypes = {
 		disableAutoFocus: PropTypes.bool,
@@ -536,6 +535,9 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isAnchorFmSignup: getIsAnchorFmSignup(
+			get( getCurrentQueryArguments( state ), 'redirect_to' )
+		),
 	} ),
 	{
 		rebootAfterLogin,
@@ -552,4 +554,4 @@ export default connect(
 				showGlobalNotices: true,
 			} ),
 	} )
-)( localize( withIsAnchorFmSignup( Login ) ) );
+)( localize( Login ) );
