@@ -2,10 +2,18 @@
 @import '../variables.scss';
 
 .plans-feature-list {
-	margin-top: 24px;
+	margin-top: 16px;
 
 	@include break-small {
-		margin-top: 36px;
+		margin-top: 24px;
+	}
+
+	.plans-accordion & {
+		margin-top: 24px;
+
+		@include break-small {
+			margin-top: 36px;
+		}
 	}
 }
 
@@ -129,7 +137,7 @@ ul.plans-feature-list__item-group {
 	margin-bottom: 2px;
 
 	.plans-feature-list__item--requires-annual-enabled & {
-		color: var( --studio-green-40 );
+		color: var( --studio-green-60 );
 	}
 
 	.plans-feature-list__item--requires-annual-disabled & {
