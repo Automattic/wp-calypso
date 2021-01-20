@@ -25,7 +25,7 @@ import { useIsAnchorFm } from '../path';
  */
 
 export default function useSignup() {
-	const { showSignupDialog } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const showSignupDialog = useSelect( ( select ) => select( ONBOARD_STORE ).showSignupDialog() );
 	const { setShowSignupDialog } = useDispatch( ONBOARD_STORE );
 	const isAnchorFmSignup = useIsAnchorFm();
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );

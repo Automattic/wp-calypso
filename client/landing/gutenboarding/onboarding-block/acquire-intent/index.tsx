@@ -27,12 +27,12 @@ import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const {
-		getSelectedVertical,
-		getSelectedSiteTitle,
-		wasVerticalSkipped,
-		hasSiteTitle,
-	} = useSelect( ( select ) => select( STORE_KEY ) );
+	const { siteVertical, siteTitle, wasVerticalSkipped, hasSiteTitle } = useSelect( ( select ) => ( {
+		siteVertical: select( STORE_KEY ).getSelectedVertical(),
+		siteTitle: select( STORE_KEY ).getSelectedSiteTitle(),
+		wasVerticalSkipped: select( STORE_KEY ).wasVerticalSkipped(),
+		hasSiteTitle: select( STORE_KEY ).hasSiteTitle(),
+	} ) );
 
 	const siteTitleRef = React.useRef< HTMLInputElement >();
 
@@ -44,16 +44,12 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const { goNext } = useStepNavigation();
 
-	const showSiteTitleAndNext = !! (
-		getSelectedVertical() ||
-		hasSiteTitle() ||
-		wasVerticalSkipped()
-	);
+	const showSiteTitleAndNext = !! ( siteVertical || hasSiteTitle || wasVerticalSkipped );
 
 	useTrackStep( 'IntentGathering', () => ( {
-		selected_vertical_slug: getSelectedVertical()?.slug,
-		selected_vertical_label: getSelectedVertical()?.label,
-		has_selected_site_title: hasSiteTitle(),
+		selected_vertical_slug: siteVertical?.slug,
+		selected_vertical_label: siteVertical?.label,
+		has_selected_site_title: hasSiteTitle,
 	} ) );
 
 	const handleSkip = () => {
@@ -71,8 +67,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	const handleSiteTitleSubmit = () => {
-		if ( hasSiteTitle() && isGoodDefaultDomainQuery( getSelectedSiteTitle() ) ) {
-			setDomainSearch( getSelectedSiteTitle() );
+		if ( hasSiteTitle && isGoodDefaultDomainQuery( siteTitle ) ) {
+			setDomainSearch( siteTitle );
 		}
 		goNext();
 	};
@@ -88,7 +84,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const siteTitleInput = showSiteTitleAndNext && (
 		<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
 	);
-	const nextStepButton = hasSiteTitle() ? (
+	const nextStepButton = hasSiteTitle ? (
 		<NextButton onClick={ handleSiteTitleSubmit }>{ __( 'Continue' ) }</NextButton>
 	) : (
 		<SkipButton onClick={ handleSiteTitleSkip }>{ __( 'Skip for now' ) }</SkipButton>
@@ -99,8 +95,6 @@ const AcquireIntent: React.FunctionComponent = () => {
 			{ __( 'I donʼt know' ) }
 		</SkipButton>
 	);
-
-	const siteVertical = getSelectedVertical();
 
 	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
 
@@ -125,7 +119,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 						) ) }
 					{ ! isMobile && (
 						<>
-							{ ! wasVerticalSkipped() && verticalSelect }
+							{ ! wasVerticalSkipped && verticalSelect }
 							{ siteTitleInput }
 						</>
 					) }

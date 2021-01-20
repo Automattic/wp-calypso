@@ -60,7 +60,7 @@ const VerticalSelect: React.FunctionComponent< Props > = ( { onNext } ) => {
 			} ) )
 	);
 
-	const { siteVertical } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const siteVertical = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedVertical() );
 	const { setSiteVertical, resetSiteVertical } = useDispatch( ONBOARD_STORE );
 	const isMobile = useViewportMatch( 'small', '<' );
 

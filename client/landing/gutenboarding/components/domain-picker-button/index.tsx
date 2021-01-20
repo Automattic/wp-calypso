@@ -26,9 +26,12 @@ const DomainPickerButton: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const makePath = usePath();
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
-	);
+	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) => ( {
+		domain: select( ONBOARD_STORE ).getSelectedDomain(),
+		selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
+		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+		siteVertical: select( ONBOARD_STORE ).getSelectedVertical(),
+	} ) );
 
 	// Use site title or vertical as search query for a domain suggestion
 	const suggestionQuery = siteTitle || siteVertical?.label || '';
