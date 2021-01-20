@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
 import './style.scss';
 import paymentsImage from './images/payments.png';
 import whatsappImage from './images/whatsapp.png';
+import blockPatternsImage from './images/block-patterns.png';
 
 function WhatsNewMenuItem() {
 	const { toggleWhatsNew } = useDispatch( 'whats-new' );
@@ -54,11 +55,58 @@ function WhatsNewMenuItem() {
 function getWhatsNewPages() {
 	return [
 		{
+			imgSrc: blockPatternsImage,
+			heading: __( 'New Block Patterns', 'full-site-editing' ),
+			description: createInterpolateElement(
+				/* translators: the embed is a link */
+				__(
+					'Easily add patterns in the editor to save time configuring and designing. There are hundreds of pre-made patterns for buttons, headers, galleries, and more available via the + button inserter at the top left of all pages and posts. <Link>Learn more about block patterns</Link>.',
+					'full-site-editing'
+				),
+				{
+					Link: (
+						<a
+							href="https://wordpress.com/support/block-pattern/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+				}
+			),
+		},
+		{
 			imgSrc: paymentsImage,
 			heading: __( 'Use payments features to make money', 'full-site-editing' ),
-			description: __(
-				'You can process payments on your website for just about anything. With Payments, Premium Content, and Donations blocks, it takes just minutes to get setup to collect payments from your visitors. Available for with any paid plan. Get started with payments today.',
-				'full-site-editing'
+			description: createInterpolateElement(
+				/* translators: the embed is a link */
+				__(
+					'You can process payments on your website for just about anything. With <Link1>Payments</Link1>, <Link2>Premium Content</Link2>, and <Link3>Donations blocks</Link3>, it takes just minutes to get setup to collect payments from your visitors. Available for with any paid plan. <Link4>Get started with payments today</Link4>.',
+					'full-site-editing'
+				),
+				{
+					Link1: (
+						<a
+							href="https://wordpress.com/support/wordpress-editor/blocks/payments/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					Link2: (
+						<a
+							href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					Link3: (
+						<a
+							href="https://wordpress.com/support/wordpress-editor/blocks/donations/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					Link4: <a href="http://wordpress.com/earn" target="_blank" rel="noreferrer" />,
+				}
 			),
 		},
 		{
@@ -72,9 +120,10 @@ function getWhatsNewPages() {
 				),
 				{
 					Link: (
-						<ExternalLink
+						<a
 							href="https://wordpress.com/support/wordpress-editor/blocks/whatsapp-button-block/"
-							icon={ true }
+							target="_blank"
+							rel="noreferrer"
 						/>
 					),
 				}

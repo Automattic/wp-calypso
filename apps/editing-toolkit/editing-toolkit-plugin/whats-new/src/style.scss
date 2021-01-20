@@ -144,11 +144,11 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	/* Gray / Gray 90 */
 	color: #1d2327;
 
-	font-size: 32px;
+	font-size: 24px;
 	line-height: 1.19;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
-		font-size: 42px;
+		font-size: 24px;
 	}
 
 	// TODO: remove this hack once the welcome editor deals better with
