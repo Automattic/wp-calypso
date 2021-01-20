@@ -28,7 +28,7 @@
 		"editor-gutenboarding-launch": "calypso-build --env source='editor-gutenboarding-launch'",
 		"dev:editor-gutenboarding-launch": "yarn run editor-gutenboarding-launch",
 		"build:editor-gutenboarding-launch": "NODE_ENV=production yarn run editor-gutenboarding-launch",
-		"editor-header-buttons": "calypso-build --env source='editor-header-buttons'",
+		"editor-header-buttons": "calypso-build --env --source='editor-header-buttons'",
 		"build:editor-header-buttons": "NODE_ENV=production yarn run editor-header-buttons",
 		"dev:editor-header-buttons": "yarn run editor-header-buttons",
 		"editor-site-launch": "calypso-build --env source='editor-site-launch'",
@@ -129,6 +129,10 @@
 		"@wordpress/html-entities": "*",
 		"@wordpress/i18n": "*",
 		"@wordpress/icons": "*",
+<<<<<<< HEAD
+=======
+		"@wordpress/interface": "^1.0.0",
+>>>>>>> Hide desktop icons and show mobile alternatives within the editors header
 		"@wordpress/keycodes": "*",
 		"@wordpress/nux": "^3.24.1",
 		"@wordpress/plugins": "*",

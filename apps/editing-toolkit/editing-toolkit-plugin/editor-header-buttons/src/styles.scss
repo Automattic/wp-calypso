@@ -1,0 +1,9 @@
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+
+.editor-header-buttons {
+	@include break-medium {
+		display: none;
+	}
+}

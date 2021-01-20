@@ -141,6 +141,15 @@ function load_common_module() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
 
 /**
+ *  Sigh: load_header_buttons
+ */
+function load_header_buttons() {
+	require_once __DIR__ . '/editor-header-buttons/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_header_buttons' );
+
+
+/**
  * Sigh: load_editor_site_launch
  */
 function load_editor_site_launch() {
