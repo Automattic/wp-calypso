@@ -175,7 +175,7 @@ const BlockFramePreview = ( {
 			// the iframe, because if we targeted the iframe itself it would prevent
 			// scrolling the iframe in Firefox.
 			iframeRef.current.contentDocument.head.innerHTML +=
-				'<style>a, button { pointer-events: none; }</style>';
+				'<style>a, button, .wp-block-button, .wp-block-button__link { pointer-events: none; cursor: default; }</style>';
 
 			rescale();
 		}, 0 );
