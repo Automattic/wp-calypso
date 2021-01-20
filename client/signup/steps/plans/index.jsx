@@ -39,21 +39,15 @@ import { Experiment } from 'calypso/components/experiment';
 // eslint-disable-next-line
 import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
 import PulsingDot from 'calypso/components/pulsing-dot';
-
-function isMobileResolution() {
-	if ( typeof window === 'object' ) {
-		return window.innerWidth < 1040;
-	}
-	return false;
-}
+import { isTabletResolution } from '@automattic/viewport';
 
 export class PlansStep extends Component {
 	state = {
-		plansWithScroll: ! isMobileResolution(),
+		plansWithScroll: ! isTabletResolution(),
 	};
 
 	windowResize = () => {
-		this.setState( { plansWithScroll: ! isMobileResolution() } );
+		this.setState( { plansWithScroll: ! isTabletResolution() } );
 	};
 
 	componentWillUnmount() {

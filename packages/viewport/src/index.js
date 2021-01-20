@@ -189,3 +189,40 @@ export function subscribeIsDesktop( listener ) {
 export function getWindowInnerWidth() {
 	return isServer ? SERVER_WIDTH : window.innerWidth;
 }
+
+/******************************************/
+/*       Vertical Scroll Experiment       */
+/******************************************/
+
+//TODO: To be refactored using above constants and helper methods
+
+export const DEVICE_MOBILE = 'MOBILE';
+export const DEVICE_TABLET = 'TABLET';
+export const DEVICE_DESKTOP = 'DESKTOP';
+export function resolveDeviceTypeByViewPort() {
+	let deviceType;
+	if ( isMobileResolution() ) {
+		deviceType = DEVICE_MOBILE;
+	} else if ( isTabletResolution() ) {
+		deviceType = DEVICE_TABLET;
+	} else {
+		deviceType = DEVICE_DESKTOP;
+	}
+	return deviceType;
+}
+
+export function isMobileResolution() {
+	if ( typeof window === 'object' ) {
+		return window.innerWidth < 480;
+	}
+	return false;
+}
+
+export function isTabletResolution() {
+	if ( typeof window === 'object' ) {
+		return window.innerWidth < 1040;
+	}
+	return false;
+}
+
+/******************************************/
