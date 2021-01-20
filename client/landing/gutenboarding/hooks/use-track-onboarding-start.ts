@@ -18,7 +18,9 @@ import { useOnboardingFlow } from '../path';
 
 export default function useTrackOnboardingStart() {
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const { hasOnboardingStarted } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const hasOnboardingStarted = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).hasOnboardingStarted()
+	);
 	const { startOnboarding } = useDispatch( ONBOARD_STORE );
 	const flow = useOnboardingFlow();
 
