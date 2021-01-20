@@ -34,7 +34,9 @@
 	}
 
 	// Link in the non-selected <li>
-	.segmented-control__item:not( .is-selected ) .segmented-control__link {
+	// The double .segmented-control__item class is a CSS hack to increase
+	// specificity and override the default component's styles
+	.segmented-control__item.segmented-control__item:not( .is-selected ) .segmented-control__link {
 		background-color: transparent;
 		border: 0.5px solid transparent;
 		box-shadow: none;
