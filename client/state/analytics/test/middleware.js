@@ -101,6 +101,7 @@ describe( 'middleware', () => {
 			dispatch( recordTracksEvent( 'test', { name: 'value' } ) );
 
 			expect( mockTracks ).to.have.been.calledWithExactly( 'recordTracksEvent', 'test', {
+				device_type: 'DESKTOP',
 				name: 'value',
 			} );
 		} );

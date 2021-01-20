@@ -321,8 +321,6 @@ export default connect(
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 		isLoadingExperiment: isLoading( state ),
-		/* To be uncommented once designs for experiment are finalized
-		 * */
 		isInVerticalScrollingPlansExperiment:
 			'treatment' === getVariationForUser( state, 'vertical_scrolling_plans' ),
 	} ),

@@ -433,6 +433,7 @@ describe( 'actions', () => {
 							payload: {
 								name: 'calypso_themeshowcase_theme_activate',
 								properties: {
+									device_type: 'DESKTOP',
 									previous_theme: 'twentyfifteen',
 									purchased: false,
 									search_taxonomies: '',
