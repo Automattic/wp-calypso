@@ -52,9 +52,8 @@ project {
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		text("env.E2E_WORKERS", "7", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
+		text("E2E_WORKERS", "16", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
 		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
-		password("env.CONFIG_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", label = "Config key", description = "Key used to decrypt config")
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		param("teamcity.git.fetchAllHeads", "true")
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
@@ -62,6 +61,7 @@ project {
 		text("docker_image_e2e", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker e2e image", description = "Docker image used to run e2e tests", allowEmpty = true)
 		text("calypso.run_full_eslint", "false", label = "Run full eslint", description = "True will lint all files, empty/false will lint only changed files", allowEmpty = true)
 		text("env.DOCKER_BUILDKIT", "1", label = "Enable Docker BuildKit", description = "Enables BuildKit (faster image generation). Values 0 or 1", allowEmpty = true)
+		password("CONFIG_E2E_ENCRYPTION_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", display = ParameterDisplay.HIDDEN)
 	}
 
 	features {
@@ -803,6 +803,12 @@ object RunCanaryE2eTests : BuildType({
 	name = "Canary e2e tests"
 	description = "Run canary e2e tests"
 
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
 	vcs {
 		root(WpCalypso)
 		cleanCheckout = true
@@ -832,6 +838,94 @@ object RunCanaryE2eTests : BuildType({
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID%"
 		}
+		script {
+			name = "Run e2e tests: Canary (mobile, desktop)"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export LIVEBRANCHES=true
+				export NODE_CONFIG_ENV=test
+				export MAGELLANDEBUG=false
+
+				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
+				MAX_LOOP=10
+				COUNTER=0
+
+				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
+				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
+					COUNTER=${'$'}((COUNTER+1))
+					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
+					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
+
+					# 202 means the image is being downloaded, retry in a few seconds
+					if [[ "${'$'}{HTTP_STATUS}" -eq "202" ]]; then
+						sleep 5
+						continue
+					fi
+
+					break
+				done
+
+				if [[ -z "${'$'}URL" ]]; then
+					echo "Can't redirect to ${'$'}{IMAGE_URL}" >&2
+					echo "Curl response: ${'$'}{REDIRECT}" >&2
+					exit 1
+				fi
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				# Start framebuffer
+				Xvfb ${'$'}{DISPLAY} -screen 0 1440x1000x24 &
+
+				# Run the test
+				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
+		}
+		script {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+				set -x
+
+				# Collect results
+				mkdir -p reports
+				find test/e2e/temp -path '*/reports/*' -print0 | xargs -0 mv -t reports
+
+				mkdir -p screenshots
+				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
 	}
 
 	dependencies {
