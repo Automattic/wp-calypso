@@ -54,6 +54,7 @@ import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
  * Style dependencies
  */
 import './style.scss';
+
 class Login extends Component {
 	static propTypes = {
 		disableAutoFocus: PropTypes.bool,
