@@ -23,7 +23,6 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
-import notices from 'calypso/notices';
 import config from 'calypso/config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -57,7 +56,7 @@ import {
 	emailManagementNewGSuiteAccount,
 } from 'calypso/my-sites/email/paths';
 import SitesComponent from 'calypso/my-sites/sites';
-import { warningNotice } from 'calypso/state/notices/actions';
+import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import EmptyContentComponent from 'calypso/components/empty-content';
@@ -480,9 +479,11 @@ export function navigation( context, next ) {
  */
 export function sites( context, next ) {
 	if ( context.query.verified === '1' ) {
-		notices.success(
-			i18n.translate(
-				"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
+		context.store.dispatch(
+			successNotice(
+				i18n.translate(
+					"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
+				)
 			)
 		);
 	}
