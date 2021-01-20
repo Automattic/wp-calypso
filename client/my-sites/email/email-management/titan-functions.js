@@ -13,6 +13,7 @@ export const fetchTitanAutoLoginURL = ( orderId ) => {
 			resolve( {
 				error: serverError?.message,
 				loginURL: serverError ? null : result.auto_login_url,
+				expiryTimestamp: serverError ? null : result.expiry_timestamp,
 			} );
 		} );
 	} );
@@ -24,6 +25,7 @@ export const fetchTitanIframeURL = ( orderId ) => {
 			resolve( {
 				error: serverError?.message,
 				iframeURL: serverError ? null : result.iframe_url,
+				expiryTimestamp: serverError ? null : result.expiry_timestamp,
 			} );
 		} );
 	} );

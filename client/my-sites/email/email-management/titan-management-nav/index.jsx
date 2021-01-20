@@ -13,7 +13,7 @@ import {
 	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
 } from 'calypso/my-sites/email/paths';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, warningNotice } from 'calypso/state/notices/actions';
 import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -39,6 +39,7 @@ class TitanManagementNav extends React.Component {
 		super( props );
 		this.state = {
 			isFetchingExternalManagementUrl: this.shouldFetchControlPanelLink(),
+			externalManagementExpiryTimestamp: 0,
 			externalManagementUrl: '',
 		};
 	}
@@ -51,9 +52,43 @@ class TitanManagementNav extends React.Component {
 		this._mounted = true;
 
 		if ( this.shouldFetchControlPanelLink() ) {
-			const { domain, translate } = this.props;
+			this.updateTitanAutoLoginURL();
+		}
+	}
 
-			fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
+	componentWillUnmount() {
+		this._mounted = false;
+	}
+
+	handleExternalLoginClick( evt ) {
+		const { externalManagementExpiryTimestamp, externalManagementUrl } = this.state;
+		const { translate } = this.props;
+
+		// If have more than 1 second before the token expires, just launch the URL
+		if ( externalManagementExpiryTimestamp > Date.now() - 1000 ) {
+			window.open( externalManagementUrl );
+			return;
+		}
+		// The token is about to expire, so we need to do a few things:
+		// 1. Prevent the <a> handling from happening -- we need a new URL before we can open the link
+		// 2. Trigger a fetch for an updated link (we should show a placeholder while the fetch is in progress)
+		// 3. Show a warning to the user so they know they need to click the link again with the updated URL
+		// Note that we can't launch the URL from this code, as Chrome doesn't allow window.open() calls to be delayed after a click.
+		evt.preventDefault();
+		this.updateTitanAutoLoginURL( () => {
+			this.props.warningNotice(
+				translate(
+					'We had a small problem opening the email management page. Please click the link again.'
+				)
+			);
+		} );
+	}
+
+	updateTitanAutoLoginURL( onUpdateComplete ) {
+		const { domain, translate } = this.props;
+
+		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then(
+			( { error, expiryTimestamp, loginURL } ) => {
 				if ( this._mounted ) {
 					this.setState( { isFetchingExternalManagementUrl: false } );
 				}
@@ -62,14 +97,16 @@ class TitanManagementNav extends React.Component {
 						error ?? translate( 'An unknown error occurred. Please try again later.' )
 					);
 				} else if ( this._mounted ) {
-					this.setState( { externalManagementUrl: loginURL } );
+					this.setState( {
+						externalManagementExpiryTimestamp: expiryTimestamp,
+						externalManagementUrl: loginURL,
+					} );
+					if ( onUpdateComplete ) {
+						onUpdateComplete();
+					}
 				}
-			} );
-		}
-	}
-
-	componentWillUnmount() {
-		this._mounted = false;
+			}
+		);
 	}
 
 	renderTitanManagementLink = () => {
@@ -89,7 +126,11 @@ class TitanManagementNav extends React.Component {
 			return <VerticalNavItem isPlaceholder={ true } />;
 		}
 		return (
-			<VerticalNavItem path={ externalManagementUrl } external={ true }>
+			<VerticalNavItem
+				path={ externalManagementUrl }
+				onClick={ ( evt ) => this.handleExternalLoginClick( evt ) }
+				external={ true }
+			>
 				{ linkTitle }
 			</VerticalNavItem>
 		);
@@ -162,6 +203,7 @@ export default connect(
 	( dispatch ) => {
 		return {
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+			warningNotice: ( text, options ) => dispatch( warningNotice( text, options ) ),
 		};
 	}
 )( localize( TitanManagementNav ) );
