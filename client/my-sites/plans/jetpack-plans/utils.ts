@@ -59,6 +59,7 @@ import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-j
 import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
 import config from 'calypso/config';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -705,6 +706,23 @@ export function checkout(
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
 		page.redirect( addQueryArgs( urlQueryArgs, path ) );
+	}
+}
+
+/**
+ * Redirects users to the appropriate URL to manage a site purchase.
+ * On cloud.jetpack.com, the URL will point to wordpress.com. In any other case,
+ * it will point to a relative path to the site purchase.
+ *
+ * @param {string} siteSlug Selected site
+ * @param {number} purchaseId Id of a purchase
+ */
+export function manageSitePurchase( siteSlug: string, purchaseId: number ): void {
+	const relativePath = managePurchase( siteSlug, purchaseId );
+	if ( isJetpackCloud() ) {
+		window.location.href = `https://wordpress.com${ relativePath }`;
+	} else {
+		page.redirect( relativePath );
 	}
 }
 
