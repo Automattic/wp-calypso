@@ -116,8 +116,10 @@ export const removeUnsavedUserSetting = ( settingName ) => ( {
 export function setUserSetting( settingName, value ) {
 	return ( dispatch, getState ) => {
 		const settings = getUserSettings( getState() );
+		const settingKey = Array.isArray( settingName ) ? settingName : settingName.split( '.' );
+		const originalSetting = get( settings, settingKey );
 
-		if ( get( settings, settingName ) === undefined ) {
+		if ( originalSetting === undefined ) {
 			debug( settingName + ' does not exist in user-settings data module.' );
 			return false;
 		}
@@ -127,11 +129,11 @@ export function setUserSetting( settingName, value ) {
 		 * user_login is a special case since the logic for validating and saving a username
 		 * is more complicated.
 		 */
-		if ( settings[ settingName ] === value && 'user_login' !== settingName ) {
-			debug( 'Removing ' + settingName + ' from changed settings.' );
-			dispatch( removeUnsavedUserSetting( settingName ) );
+		if ( originalSetting === value && 'user_login' !== settingKey ) {
+			debug( 'Removing ' + settingKey + ' from changed settings.' );
+			dispatch( removeUnsavedUserSetting( settingKey ) );
 		} else {
-			dispatch( setUnsavedUserSetting( settingName, value ) );
+			dispatch( setUnsavedUserSetting( settingKey, value ) );
 		}
 
 		return true;
