@@ -60,8 +60,10 @@ export interface Props {
 	popularBadgeVariation?: PopularBadgeVariation;
 }
 
-// NOTE: this component is used by PlansAccordion and contains some duplicated code from plans-table/plans-item.tsx
-// TODO: keep only this component when it can support also being used in PlansTable
+// NOTE: there is some duplicate markup between this plan item (used in the
+// 'table' version of the plans grid) and the accortion plan item (used in the
+// 'accordion' version of the plans grid). Ideally the code should be refactored
+// to use the same markup, with just different styles
 
 const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
