@@ -12,6 +12,93 @@
 namespace A8C\FSE\EditorSiteLaunch;
 
 /**
+ * Enqueue launch button assets
+ */
+function enqueue_launch_button_script_and_style( $site_launch_options ) {
+	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/launch-button.asset.php';
+	$script_file         = 'dist/launch-button.js';
+	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
+	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_file );
+
+	wp_enqueue_script(
+		'a8c-fse-editor-site-launch-button-script',
+		plugins_url( $script_file, __FILE__ ),
+		$script_dependencies,
+		$script_version,
+		true
+	);
+
+	$style_file    = 'dist/launch-button' . ( is_rtl() ? '.rtl.css' : '.css' );
+	$style_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $style_file );
+	wp_enqueue_style(
+		'a8c-fse-editor-site-launch-button-style',
+		plugins_url( $style_file, __FILE__ ),
+		array(),
+		$style_version
+	);
+
+	// Pass site launch options here
+	// This is accessible via window.wpcomEditorSiteLaunch.
+	wp_localize_script(
+		'a8c-fse-editor-site-launch-button-script',
+		'wpcomEditorSiteLaunch',
+		array(
+			'siteSlug'   => $site_launch_options['site_slug'],
+			'launchUrl'  => $site_launch_options['launch_url'],
+			'launchFlow' => $site_launch_options['launch_flow'],
+			'locale'     => determine_locale(),
+		)
+	);
+}
+
+/**
+ * Enqueue launch flow assets
+ */
+function enqueue_launch_flow_script_and_style( $site_launch_options ) {
+
+	$launch_flow = $site_launch_options['launch_flow'];
+
+	// Determine script name by launch flow.
+	// We are avoiding string concatenation for security reasons.
+	switch ( $launch_flow ) {
+		case 'step-by-step':
+			$script_name = 'step-by-step-launch';
+			break;
+		case 'focused':
+			$script_name = 'focused-launch';
+			break;
+		default:
+			// For redirect or invalid flows, skip & exit early.
+			return;
+	}
+
+	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/' . $script_name . '.asset.php';
+	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
+	$script_file         = 'dist/' . $script_name . '.js';
+	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_file );
+
+	wp_enqueue_script(
+		'a8c-fse-editor-site-launch-script',
+		plugins_url( $script_file, __FILE__ ),
+		$script_dependencies,
+		$script_version,
+		true
+	);
+
+	wp_set_script_translations( 'a8c-fse-editor-site-launch-script', 'full-site-editing' );
+
+	$style_file    = 'dist/' . $script_name . ( is_rtl() ? '.rtl.css' : '.css' );
+	$style_version = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $style_file );
+
+	wp_enqueue_style(
+		'a8c-fse-editor-site-launch-style',
+		plugins_url( $style_file, __FILE__ ),
+		array(),
+		$style_version
+	);
+}
+
+/**
  * Enqueue assets
  */
 function enqueue_script_and_style() {
@@ -20,38 +107,19 @@ function enqueue_script_and_style() {
 		return;
 	}
 
-	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/editor-site-launch.asset.php';
-	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
-	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-site-launch.js' );
-	$style_version       = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/editor-site-launch.css' );
+	// Get site launch options
+	$site_launch_options = apply_filters( 'a8c_enable_editor_site_launch', false );
 
-	wp_enqueue_script(
-		'a8c-fse-editor-site-launch-script',
-		plugins_url( 'dist/editor-site-launch.js', __FILE__ ),
-		$script_dependencies,
-		$script_version,
-		true
-	);
+	// If no site launch options, skip.
+	// This could mean site is already launched or editing toolkit plugin is running on non-wpcom sites.
+	if ( false === $site_launch_options ) {
+		return;
+	}
 
-	wp_set_script_translations( 'a8c-fse-editor-site-launch-script', 'full-site-editing' );
+	// Launch Button
+	enqueue_launch_button_script_and_style( $site_launch_options );
 
-	wp_localize_script(
-		'a8c-fse-editor-site-launch-script',
-		'wpcomEditorSiteLaunch',
-		array(
-			'locale' => determine_locale(),
-		)
-	);
-
-	$style_file = is_rtl()
-		? 'editor-site-launch.rtl.css'
-		: 'editor-site-launch.css';
-
-	wp_enqueue_style(
-		'a8c-fse-editor-site-launch-style',
-		plugins_url( 'dist/' . $style_file, __FILE__ ),
-		array(),
-		$style_version
-	);
+	// Launch Flow
+	enqueue_launch_flow_script_and_style( $site_launch_options );
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );

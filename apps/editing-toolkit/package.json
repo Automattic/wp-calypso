@@ -33,7 +33,10 @@
 		"build:editor-gutenboarding-launch": "NODE_ENV=production yarn run editor-gutenboarding-launch",
 
 
-		"editor-site-launch": "calypso-build --source='editor-site-launch'",
+		"editor-site-launch": "npm-run-all --parallel editor-site-launch-*",
+		"editor-site-launch-button": "calypso-build --source='editor-site-launch/launch-button'",
+		"editor-site-launch-step-by-step": "calypso-build --source='editor-site-launch/step-by-step-launch'",
+		"editor-site-launch-focused": "calypso-build --source='editor-site-launch/focused-launch'",
 		"dev:editor-site-launch": "yarn run editor-site-launch",
 		"build:editor-site-launch": "NODE_ENV=production yarn run editor-site-launch",
 		"newspack-blocks": "npm run sync:newspack-blocks -- --nodemodules && npm-run-all --parallel newspack-blocks-*",
