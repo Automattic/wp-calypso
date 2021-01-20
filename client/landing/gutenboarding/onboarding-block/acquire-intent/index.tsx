@@ -59,7 +59,9 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const locale = useLocale();
 	React.useEffect( () => {
-		prefetchDesignThumbs( locale );
+		if ( config.isEnabled( 'gutenboarding/mshot-preview' ) ) {
+			prefetchDesignThumbs( locale );
+		}
 	}, [ locale ] );
 
 	const handleSkip = () => {
