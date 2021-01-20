@@ -12,6 +12,7 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
+import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -64,8 +65,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 		<li>
 			<ExpandableSidebarMenu
 				onClick={ () => {
-					// @automattic/viewport doesn't have a breakpoint for medium (782px)
-					if ( window.innerWidth > 782 ) {
+					if ( isWithinBreakpoint( '>782px' ) ) {
 						if ( isExternal( link ) ) {
 							// If the URL is external, page() will fail to replace state between different domains.
 							externalRedirect( link );
