@@ -64,6 +64,22 @@
 	}
 }
 
+.plugin-sections__support {
+	margin-bottom: 16px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var( --color-border-subtle );
+	font-size: $font-body-small;
+
+	h3 {
+		font-weight: bold;
+		margin-bottom: 16px;
+	}
+
+	span {
+		font-weight: bold;
+	}
+}
+
 .plugin-sections__read-more {
 	text-align: center;
 }

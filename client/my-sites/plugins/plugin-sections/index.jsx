@@ -16,6 +16,8 @@ import { Card } from '@automattic/components';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
+import ExternalLink from 'calypso/components/external-link';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 
 /**
  * Style dependencies
@@ -122,6 +124,49 @@ class PluginSections extends React.Component {
 		];
 	};
 
+	getWpcomSupportContent = () => {
+		const supportedAuthors = [ 'Automattic', 'WooCommerce' ];
+		const { translate, plugin } = this.props;
+
+		if ( supportedAuthors.indexOf( plugin.author_name ) > -1 ) {
+			return;
+		}
+
+		const linkToAuthor = (
+			<ExternalLink href={ safeProtocolUrl( plugin.author_url ) } target="_blank">
+				{ plugin.author_url }
+			</ExternalLink>
+		);
+
+		const linkToSupportForum = (
+			<ExternalLink
+				href={ safeProtocolUrl( 'https://wordpress.org/support/plugin/' + plugin.slug ) }
+				target="_blank"
+			>
+				{ 'https://wordpress.org/support/plugin/' + plugin.slug }
+			</ExternalLink>
+		);
+
+		return (
+			<div className="plugin-sections__support">
+				<h3>{ translate( 'Support' ) }</h3>
+				<p>
+					{ translate(
+						'Support for this plugin is provided by the plugin author. You may find additional documentation at the following websites:'
+					) }
+				</p>
+				<ul>
+					<li>
+						<span>{ translate( 'Author website:' ) }</span> { linkToAuthor }
+					</li>
+					<li>
+						<span>{ translate( 'Support forum:' ) }</span> { linkToSupportForum }
+					</li>
+				</ul>
+			</div>
+		);
+	};
+
 	getSelected = () => {
 		return this.state.selectedSection || this.getDefaultSection();
 	};
@@ -216,6 +261,7 @@ class PluginSections extends React.Component {
 					</SectionNav>
 				</div>
 				<Card>
+					{ 'faq' === this.getSelected() && this.props.isWpcom && this.getWpcomSupportContent() }
 					<div
 						ref={ this.descriptionContent }
 						className={ contentClasses }
