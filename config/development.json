@@ -39,8 +39,6 @@
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management/threaded-view": false,
-		"create/focused-launch-flow": false,
-		"create/focused-launch-flow-calypso": false,
 		"create/persistent-launch-button": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
