@@ -14,6 +14,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
@@ -117,7 +119,10 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	if (
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_SCAN_PRODUCTS.includes( ownedProduct ) )
 	) {
-		availableProducts = [ ...availableProducts, ...JETPACK_SCAN_PRODUCTS ];
+		availableProducts = [
+			...availableProducts,
+			...[ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ],
+		];
 	}
 
 	// If Jetpack Anti-spam is directly or indirectly owned, continue, otherwise make it available.

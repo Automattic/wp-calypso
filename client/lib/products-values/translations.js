@@ -37,12 +37,22 @@ export const getJetpackProductsShortNames = () => {
 				},
 			}
 		),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: translate( 'Scan {{em}}Real-time{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
 	};
@@ -96,11 +106,29 @@ export const getJetpackProductsDisplayNames = () => {
 			i5: translate( 'Site Search' ),
 			spp: translate( 'Site Search' ),
 		}[ currentCROvariant ] || translate( 'Jetpack Search' );
+
 	const scan =
 		{
 			i5: translate( 'Scan' ),
 			spp: translate( 'Scan' ),
 		}[ currentCROvariant ] || translate( 'Jetpack Scan' );
+
+	const scanRealtime = (
+		<>
+			{ currentCROvariant === 'i5' || currentCROvariant === 'spp'
+				? translate( 'Scan {{em}}Real-Time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } )
+				: translate( 'Jetpack Scan {{em}}Real-Time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ) }
+		</>
+	);
+
 	const antiSpam = {
 		i5: translate( 'Anti-spam' ),
 		spp: translate( 'Anti-Spam' ),
@@ -117,6 +145,8 @@ export const getJetpackProductsDisplayNames = () => {
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scan,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -276,6 +306,8 @@ export const getJetpackProductsDescriptions = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDescription,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: scanDescription,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
 	};

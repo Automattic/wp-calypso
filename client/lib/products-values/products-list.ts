@@ -128,6 +128,33 @@ export const JETPACK_PRODUCTS_LIST: Record< JetpackProductSlug, Product > = {
 			FEATURE_PRIORITY_SUPPORT_V2,
 		],
 	},
+	// SCAN_REALTIME is not publically offered as an individual add-on product at this time
+	[ constants.PRODUCT_JETPACK_SCAN_REALTIME ]: {
+		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_SCAN_REALTIME ],
+		product_slug: constants.PRODUCT_JETPACK_SCAN_REALTIME,
+		type: constants.PRODUCT_JETPACK_SCAN_REALTIME,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		getFeatures: (): string[] => [
+			FEATURE_SCAN_V2,
+			FEATURE_ONE_CLICK_FIX_V2,
+			FEATURE_INSTANT_EMAIL_V2,
+			FEATURE_PRIORITY_SUPPORT_V2,
+		],
+	},
+	[ constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: {
+		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ],
+		product_slug: constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
+		type: constants.PRODUCT_JETPACK_SCAN_REALTIME,
+		term: TERM_MONTHLY,
+		bill_period: PLAN_MONTHLY_PERIOD,
+		getFeatures: (): string[] => [
+			FEATURE_SCAN_V2,
+			FEATURE_ONE_CLICK_FIX_V2,
+			FEATURE_INSTANT_EMAIL_V2,
+			FEATURE_PRIORITY_SUPPORT_V2,
+		],
+	},
 	[ constants.PRODUCT_JETPACK_SEARCH ]: {
 		product_name: PRODUCT_SHORT_NAMES[ constants.PRODUCT_JETPACK_SEARCH ],
 		product_slug: constants.PRODUCT_JETPACK_SEARCH,
