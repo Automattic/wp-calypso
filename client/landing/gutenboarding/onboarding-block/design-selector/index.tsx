@@ -16,8 +16,8 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import Badge from '../../components/badge';
-import MshotsImage from '../../components/mshots-image';
-import { getDesignImageUrl } from '../../available-designs';
+import MShotsImage from '../../components/mshots-image';
+import { getDesignImageUrl, getDesignUrl } from '../../available-designs';
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import type { Design } from '../../stores/onboard/types';
 import { useIsAnchorFm } from '../../path';
@@ -89,8 +89,18 @@ const DesignSelector: React.FunctionComponent = () => {
 								} }
 							>
 								<span className="design-selector__image-frame">
+									{
+										// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
+										// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
+										// https://github.com/Automattic/mShots/issues/16
+										// https://github.com/Automattic/wp-calypso/issues/40564
+									 }
 									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
-										<MshotsImage src={ getDesignImageUrl( design, locale ) } alt="" />
+										<MShotsImage
+											url={ getDesignUrl( design, locale ) }
+											aria-labelledby={ makeOptionId( design ) }
+											alt=""
+										/>
 									) : (
 										<img
 											alt=""

@@ -1,66 +1,68 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React, { useState } from 'react';
 import classnames from 'classnames';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-interface Props {
-	src: string;
+interface MShotsImageProps {
+	url: string;
 	alt: string;
+	'aria-labelledby': string;
 }
 
-const MshotsImage: React.FunctionComponent< Props > = ( { src, alt } ) => {
-	const [ resolvedUrl, setResolvedUrl ] = React.useState< string | undefined >();
+export function mshotsUrl( url: string, count = 0 ): string {
+	const mshotsUrl = 'https://s0.wp.com/mshots/v1/';
+	const mShotsParams = {
+		// viewport size (how much of the source page to capture)
+		vpw: 1200,
+		vph: 3072,
+		// size of the resulting image
+		w: 700,
+		h: 1800,
+	};
+	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( url ), {
+		...mShotsParams,
+		// this doesn't seem to work:
+		// requeue: true, // Uncomment this line to force the screenshots to be regenerated
+		count,
+	} );
+	return mshotsRequest;
+}
+
+const MShotsImage = ( {
+	url,
+	'aria-labelledby': labelledby,
+	alt,
+}: MShotsImageProps ): JSX.Element => {
 	const [ count, setCount ] = React.useState( 0 );
-	const [ isVisible, setIsVisible ] = React.useState( false );
-
-	const placeholderUrl = 'https://s0.wp.com/mshots/v1/default';
-	const mShotsEndpointUrl = src;
-
-	React.useEffect( () => {
-		async function fetchMshots() {
-			const response = await window.fetch( mShotsEndpointUrl, {
-				method: 'GET',
-				mode: 'cors',
-				cache: 'no-cache',
-			} );
-
-			if (
-				response.ok &&
-				response.headers.get( 'Content-Type' ) === 'image/jpeg' &&
-				response.url !== placeholderUrl
-			) {
-				setResolvedUrl( mShotsEndpointUrl );
-			}
-
-			if ( response.url === placeholderUrl ) {
-				const id = setTimeout( () => setCount( count + 1 ), 1000 );
-				return () => clearTimeout( id );
-			}
-		}
-		fetchMshots();
-	}, [ mShotsEndpointUrl, count ] );
-
+	const [ visible, setVisible ] = useState( false );
 	return (
 		<div className="mshots-image__container">
-			{ ( ! resolvedUrl || ! isVisible ) && <div className="mshots-image__loader"></div> }
-			{ resolvedUrl && (
-				<img
-					className={ classnames( 'mshots-image', {
-						'mshots-image-visible': isVisible,
-					} ) }
-					src={ resolvedUrl }
-					alt={ alt }
-					onLoad={ () => setIsVisible( true ) }
-				/>
-			) }
+			{ ! visible && <div className="mshots-image__loader"></div> }
+			<img
+				className={ classnames( 'mshots-image' ) }
+				style={ { opacity: visible ? 1 : 0 } }
+				alt={ alt }
+				aria-labelledby={ labelledby }
+				src={ mshotsUrl( url, count ) }
+				onLoad={ ( e ) => {
+					// Test against mshots h value
+					if ( e.currentTarget.naturalHeight !== 1800 ) {
+						// Triggers a target.src change
+						setTimeout( () => setCount( count + 1 ), 1000 );
+					} else {
+						setVisible( true );
+					}
+				} }
+			/>
 		</div>
 	);
 };
 
-export default MshotsImage;
+export default MShotsImage;

@@ -7,6 +7,7 @@ import { addQueryArgs } from '@wordpress/url';
  * Internal dependencies
  */
 import { isEnabled } from '../../config';
+import { mshotsUrl } from './components/mshots-image';
 import type { Design } from './stores/onboard/types';
 const availableDesignsConfig = require( './available-designs-config.json' );
 
@@ -26,57 +27,35 @@ function getCanUseWebP() {
 	return false;
 }
 
-const canUseWebP = getCanUseWebP();
+export const getDesignUrl = ( design: Design, locale: string ): string => {
+	const theme = encodeURIComponent( design.theme );
+	const template = encodeURIComponent( design.template );
 
-export const getDesignImageUrl = ( design: Design, locale = 'en' ): string => {
-	// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
-	// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
-	// https://github.com/Automattic/mShots/issues/16
-	// https://github.com/Automattic/wp-calypso/issues/40564
-
-	if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
-		// When we update the static images, bump the version for cache busting
-		return `/calypso/images/design-screenshots/${ design.slug }_${ design.template }_${
-			design.theme
-		}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
-	}
-
-	const mshotsUrl = 'https://s0.wp.com/mshots/v1/';
-	const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
-	const previewUrl = addQueryArgs(
-		`${ designsEndpoint }${ encodeURIComponent( design.theme ) }/${ encodeURIComponent(
-			design.template
-		) }`,
+	return addQueryArgs(
+		`https://public-api.wordpress.com/rest/v1/template/demo/${ theme }/${ template }`,
 		{
 			font_headings: design.fonts.headings,
 			font_base: design.fonts.base,
 			site_title: design.title,
-			viewport_height: 700,
+			viewport_height: 700, // todo: this is part of the issue with rockfield, a value of 3072 here fixes the background image
 			language: locale,
 		}
 	);
-	const mShotsParams = {
-		// viewport size (how much of the source page to capture)
-		vpw: 1200,
-		vph: 3072,
-		// size of the resulting image
-		w: 700,
-		h: 1800,
-	};
-	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( previewUrl ), {
-		...mShotsParams,
-		// requeue: true, // Uncomment this line to force the screenshots to be regenerated
-	} );
-	return mshotsRequest;
 };
 
-/**
- * Asynchronously load available design images
- */
-export function prefetchDesignThumbs() {
+const canUseWebP = getCanUseWebP();
+
+export const getDesignImageUrl = ( design: Design ): string => {
+	return `/calypso/images/design-screenshots/${ design.slug }_${ design.template }_${
+		design.theme
+	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
+};
+
+// Asynchronously load available design images
+export function prefetchDesignThumbs( locale: string ): void {
 	if ( typeof window !== 'undefined' ) {
 		getAvailableDesigns().featured.forEach( ( design: Design ) => {
-			const href = getDesignImageUrl( design );
+			const href = mshotsUrl( getDesignUrl( design, locale ) );
 			const link = document.createElement( 'link' );
 			link.rel = 'prefetch';
 			link.as = 'image';
@@ -90,7 +69,7 @@ export function prefetchDesignThumbs() {
 export function getAvailableDesigns(
 	includeAlphaDesigns: boolean = isEnabled( 'gutenboarding/alpha-templates' ),
 	useFseDesigns: boolean = isEnabled( 'gutenboarding/site-editor' )
-) {
+): AvailableDesigns {
 	let designs = availableDesigns;
 
 	if ( ! includeAlphaDesigns ) {
