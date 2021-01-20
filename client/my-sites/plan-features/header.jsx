@@ -223,31 +223,31 @@ export class PlanFeaturesHeader extends Component {
 			isBillingTimeframeVariation,
 		} = this.props;
 
+		const isAnnualWpcomPlan = planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } );
 		if ( isInSignup && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
+		const fullPrice = formatCurrency( fullRawPrice, currencyCode, { stripZeros: true } );
 		if ( isInSignup && ! isMonthlyPlan ) {
+			if ( isAnnualWpcomPlan && isBillingTimeframeVariation ) {
+				return translate( '%(fullPrice)s billed annually', {
+					args: { fullPrice },
+				} );
+			}
 			return translate( 'billed annually' );
 		}
 
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
-			if (
-				! isInSignup &&
-				! isMonthlyPlan &&
-				planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } )
-			) {
-				if ( isBillingTimeframeVariation ) {
-					const price = formatCurrency( fullRawPrice, currencyCode, { stripZeros: true } );
-					return translate( 'Per month, %(price)s billed yearly', {
-						args: { price: price },
-					} );
-				}
+			if ( isAnnualWpcomPlan && isBillingTimeframeVariation ) {
+				return translate( 'Per month, %(fullPrice)s billed yearly', {
+					args: { fullPrice },
+				} );
 			}
 			return null;
 		}
-		if ( ! planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) ) {
+		if ( ! isAnnualWpcomPlan ) {
 			return null;
 		}
 		if ( ! currentSitePlan || ! isFreePlan( currentSitePlan.productSlug ) ) {
