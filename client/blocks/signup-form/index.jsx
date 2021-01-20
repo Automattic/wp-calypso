@@ -40,7 +40,6 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormButton from 'calypso/components/forms/form-button';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import notices from 'calypso/notices';
 import Notice from 'calypso/components/notice';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import { login } from 'calypso/lib/paths';
@@ -122,7 +121,6 @@ class SignupForm extends Component {
 	};
 
 	state = {
-		notice: null,
 		submitting: false,
 		focusPassword: false,
 		focusUsername: false,
@@ -332,8 +330,6 @@ class SignupForm extends Component {
 		const name = event.target.name;
 		const value = event.target.value;
 
-		this.setState( { notice: null } );
-
 		this.formStateController.handleFieldChange( {
 			name: name,
 			value: value,
@@ -446,12 +442,12 @@ class SignupForm extends Component {
 		return notice.message;
 	}
 
-	globalNotice( notice ) {
+	globalNotice( notice, status ) {
 		return (
 			<Notice
 				className="signup-form__notice"
 				showDismiss={ false }
-				status={ notices.getStatusHelper( notice ) }
+				status={ status }
 				text={ this.getNoticeMessageWithLogin( notice ) }
 			/>
 		);
@@ -670,7 +666,6 @@ class SignupForm extends Component {
 					value={ formState.getFieldValue( this.state.form, 'email' ) }
 					onBlur={ this.handleBlur }
 					onChange={ ( value ) => {
-						this.setState( { notice: null } );
 						this.formStateController.handleFieldChange( {
 							name: 'email',
 							value,
@@ -693,7 +688,6 @@ class SignupForm extends Component {
 							value={ formState.getFieldValue( this.state.form, 'username' ) }
 							onBlur={ this.handleBlur }
 							onChange={ ( value ) => {
-								this.setState( { notice: null } );
 								this.formStateController.handleFieldChange( {
 									name: 'username',
 									value,
@@ -776,20 +770,20 @@ class SignupForm extends Component {
 
 	getNotice() {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
-			return this.globalNotice( this.props.step.errors[ 0 ] );
-		}
-		if ( this.state.notice ) {
-			return this.globalNotice( this.state.notice );
+			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
 		if ( this.userCreationComplete() ) {
 			return (
 				<TrackRender eventName="calypso_signup_account_already_created_show">
-					{ this.globalNotice( {
-						info: true,
-						message: this.props.translate(
-							'Your account has already been created. You can change your email, username, and password later.'
-						),
-					} ) }
+					{ this.globalNotice(
+						{
+							info: true,
+							message: this.props.translate(
+								'Your account has already been created. You can change your email, username, and password later.'
+							),
+						},
+						'is-info'
+					) }
 				</TrackRender>
 			);
 		}

@@ -18,7 +18,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import notices from 'calypso/notices';
 import {
 	domainManagementSiteRedirect,
 	domainManagementRedirectSettings,
@@ -109,6 +108,16 @@ class SiteRedirect extends React.Component {
 		this.props.recordLocationFocus( this.props.selectedDomainName );
 	};
 
+	getNoticeStatus( notice ) {
+		if ( notice?.error ) {
+			return 'is-error';
+		}
+		if ( notice?.success ) {
+			return 'is-success';
+		}
+		return 'is-info';
+	}
+
 	render() {
 		const { location, translate } = this.props;
 		const { isUpdating, notice } = location;
@@ -126,7 +135,7 @@ class SiteRedirect extends React.Component {
 					{ notice && (
 						<Notice
 							onDismissClick={ this.closeRedirectNotice }
-							status={ notices.getStatusHelper( notice ) }
+							status={ this.getNoticeStatus( notice ) }
 							text={ notice.text }
 						/>
 					) }
