@@ -381,9 +381,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'calypso/lib/desktop' ).default.init();
-	}
+	require( 'calypso/lib/desktop' ).default.init();
 
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&
