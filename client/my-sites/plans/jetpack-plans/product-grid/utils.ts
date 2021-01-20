@@ -81,7 +81,8 @@ export const getProductsToDisplay = ( {
 	purchasedProducts: ( SelectorProduct | null )[];
 	includedInPlanProducts: ( SelectorProduct | null )[];
 } ): SelectorProduct[] => {
-	const purchasedSlugs = purchasedProducts?.map( ( p ) => p?.productSlug ) || [];
+	const purchasedSlugs =
+		purchasedProducts?.map( ( p ) => p?.productSlug )?.filter( ( slug ) => slug ) || [];
 
 	// Products that have not been directly purchased must honor the current filter
 	// selection since they exist in both monthly and yearly version.
@@ -90,7 +91,17 @@ export const getProductsToDisplay = ( {
 		.filter( ( product ): product is SelectorProduct => product?.term === duration )
 		// Remove duplicates (only happens if the site somehow has the same product
 		// both purchased and included in a plan, very unlikely)
-		.filter( ( product ) => ! purchasedSlugs.includes( product.productSlug ) );
+		.filter( ( product ) => {
+			if ( product.productSlug && purchasedSlugs.includes( product.productSlug ) ) {
+				return false;
+			}
+
+			if ( product.monthlyProductSlug && purchasedSlugs.includes( product.monthlyProductSlug ) ) {
+				return false;
+			}
+
+			return true;
+		} );
 	return (
 		[ ...purchasedProducts, ...filteredProducts ]
 			// Make sure we don't allow any null or invalid products
