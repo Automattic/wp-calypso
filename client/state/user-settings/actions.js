@@ -119,7 +119,13 @@ export function setUserSetting( settingName, value ) {
 		const settingKey = Array.isArray( settingName ) ? settingName : settingName.split( '.' );
 		const originalSetting = get( settings, settingKey );
 
-		if ( originalSetting === undefined ) {
+		/*
+		 * Exclude `colorScheme` from this condition.
+		 * This is a workaround that allows us to use `setUserSetting()` without an
+		 * existing value. Without this workaround the save button wouldn't become active.
+		 * @TODO: the API should provide a default value, which would make this line obsolete
+		 */
+		if ( originalSetting === undefined && settingName !== 'calypso_preferences.colorScheme' ) {
 			debug( settingName + ' does not exist in user-settings data module.' );
 			return false;
 		}

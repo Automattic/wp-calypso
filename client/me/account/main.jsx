@@ -9,7 +9,7 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
-import { debounce, flowRight as compose, get, has, map, size, update } from 'lodash';
+import { debounce, flowRight as compose, get, has, map, size } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -162,14 +162,9 @@ const Account = createReactClass( {
 	},
 
 	updateColorScheme( colorScheme ) {
-		// Set a fallback color scheme if no default value is provided by the API.
-		// This is a workaround that allows us to use userSettings.updateSetting() without an
-		// existing value. Without this workaround the save button wouldn't become active.
-		// TODO: the API should provide a default value, which would make this line obsolete
-		update( this.props.userSettings.settings, colorSchemeKey, ( value ) => value || 'default' );
-
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
+
 		this.updateUserSetting( colorSchemeKey, colorScheme );
 	},
 
