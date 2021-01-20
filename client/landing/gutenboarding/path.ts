@@ -112,8 +112,13 @@ export function useNewQueryParam() {
 }
 
 export function useIsAnchorFm(): boolean {
-	const { anchorFmPodcastId } = useAnchorFmParams();
-	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
+	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
+	return Boolean(
+		anchorFmPodcastId &&
+			anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) &&
+			anchorFmEpisodeId &&
+			anchorFmSpotifyShowUrl
+	);
 }
 
 export function useOnboardingFlow(): string {
