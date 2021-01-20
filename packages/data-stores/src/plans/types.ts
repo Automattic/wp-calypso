@@ -32,6 +32,11 @@ export interface PlanProduct {
 	annualDiscount?: number;
 	periodAgnosticSlug: PlanSlug;
 	pathSlug: PlanPath;
+	/** Useful for two cases:
+	 * 1) to show how much we bill the users for annual plans ($8/mo billed $96)
+	 * 2) to show how much a monthly plan would cost in a year (billed 12$/mo costs $144/yr)
+	 *  */
+	annualPrice: string;
 }
 
 /**
@@ -83,7 +88,7 @@ export interface PricedAPIPlan {
 	product_slug: StorePlanSlug;
 	description: string;
 	cost: number;
-	bill_period: number;
+	bill_period: 31 | 365;
 	product_type: string;
 	available: string;
 	multi: number;

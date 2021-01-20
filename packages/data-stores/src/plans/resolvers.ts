@@ -29,13 +29,34 @@ const MONTHLY_PLAN_BILLING_PERIOD = 31;
 
 /**
  * Calculates the monthly price of a plan
- * All supported plans are priced yearly
+ * Annual plans are only priced yearly
  *
  * @param plan the plan object
  */
 function getMonthlyPrice( plan: PricedAPIPlan ) {
 	const currency = currenciesFormats[ plan.currency_code ];
 	let price: number | string = plan.raw_price / 12;
+
+	// if the number isn't an integer, follow the API rule for rounding it
+	if ( ! Number.isInteger( price ) ) {
+		price = price.toFixed( currency.decimal );
+	}
+
+	if ( currency.format === 'AMOUNT_THEN_SYMBOL' ) {
+		return `${ price }${ currency.symbol }`;
+	}
+	// else
+	return `${ currency.symbol }${ price }`;
+}
+
+/**
+ * Calculates the yearly price of a monthly plan
+ *
+ * @param plan the plan object
+ */
+function getAnnualPrice( plan: PricedAPIPlan ) {
+	const currency = currenciesFormats[ plan.currency_code ];
+	let price: number | string = plan.raw_price * 12;
 
 	// if the number isn't an integer, follow the API rule for rounding it
 	if ( ! Number.isInteger( price ) ) {
@@ -108,10 +129,13 @@ function normalizePlanProducts(
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0
 					? planProduct.formatted_price
 					: getMonthlyPrice( planProduct ),
+			annualPrice:
+				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD
+					? getAnnualPrice( planProduct )
+					: planProduct.formatted_price,
 		} );
 		return plans;
 	}, [] as PlanProduct[] );
-
 	calculateDiscounts( plansProducts );
 	return plansProducts;
 }
