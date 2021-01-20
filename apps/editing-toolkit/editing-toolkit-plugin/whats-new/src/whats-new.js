@@ -5,11 +5,11 @@ import './public-path';
  * WordPress dependencies
  */
 import { registerPlugin } from '@wordpress/plugins';
-import { Fill, Guide, GuidePage, MenuItem } from '@wordpress/components';
+import { ExternalLink, Fill, Guide, GuidePage, MenuItem } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { useEffect, createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -64,14 +64,20 @@ function getWhatsNewPages() {
 		{
 			imgSrc: whatsappImage,
 			heading: __( 'Let your visitors message you on WhatsApp', 'full-site-editing' ),
-			description: sprintf(
+			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'Connect and communicate with your website’s visitors with the new %1$sWhatsApp block%2$s. With a single click, your website’s visitors can ask questions or message you for whatever reason. Available with Premium, Business, and eCommerce plans.',
+					'Connect and communicate with your website’s visitors with the new <Link>WhatsApp block</Link>. With a single click, your website’s visitors can ask questions or message you for whatever reason. Available with Premium, Business, and eCommerce plans.',
 					'full-site-editing'
 				),
-				"<a href='https://wordpress.com/support/wordpress-editor/blocks/whatsapp-button-block/' target='_blank' rel='noreferrer'>",
-				'</a>'
+				{
+					Link: (
+						<ExternalLink
+							href="https://wordpress.com/support/wordpress-editor/blocks/whatsapp-button-block/"
+							icon={ true }
+						/>
+					),
+				}
 			),
 		},
 	];
