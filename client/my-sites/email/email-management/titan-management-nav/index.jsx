@@ -12,13 +12,12 @@ import { connect } from 'react-redux';
 import {
 	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
+	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { errorNotice, warningNotice } from 'calypso/state/notices/actions';
-import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
 import { isEnabled } from 'calypso/config';
 import SectionHeader from 'calypso/components/section-header';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -35,80 +34,6 @@ class TitanManagementNav extends React.Component {
 		domain: PropTypes.object.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			isFetchingExternalManagementUrl: this.shouldFetchControlPanelLink(),
-			externalManagementExpiryTimestamp: 0,
-			externalManagementUrl: '',
-		};
-	}
-
-	shouldFetchControlPanelLink() {
-		return ! isEnabled( 'titan/iframe-control-panel' );
-	}
-
-	componentDidMount() {
-		this._mounted = true;
-
-		if ( this.shouldFetchControlPanelLink() ) {
-			this.updateTitanAutoLoginURL();
-		}
-	}
-
-	componentWillUnmount() {
-		this._mounted = false;
-	}
-
-	handleExternalLoginClick( evt ) {
-		const { externalManagementExpiryTimestamp, externalManagementUrl } = this.state;
-		const { translate } = this.props;
-
-		// If have more than 1 second before the token expires, just launch the URL
-		if ( externalManagementExpiryTimestamp > Date.now() - 1000 ) {
-			window.open( externalManagementUrl );
-			return;
-		}
-		// The token is about to expire, so we need to do a few things:
-		// 1. Prevent the <a> handling from happening -- we need a new URL before we can open the link
-		// 2. Trigger a fetch for an updated link (we should show a placeholder while the fetch is in progress)
-		// 3. Show a warning to the user so they know they need to click the link again with the updated URL
-		// Note that we can't launch the URL from this code, as Chrome doesn't allow window.open() calls to be delayed after a click.
-		evt.preventDefault();
-		this.updateTitanAutoLoginURL( () => {
-			this.props.warningNotice(
-				translate(
-					'We had a small problem opening the email management page. Please click the link again.'
-				)
-			);
-		} );
-	}
-
-	updateTitanAutoLoginURL( onUpdateComplete ) {
-		const { domain, translate } = this.props;
-
-		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then(
-			( { error, expiryTimestamp, loginURL } ) => {
-				if ( this._mounted ) {
-					this.setState( { isFetchingExternalManagementUrl: false } );
-				}
-				if ( error ) {
-					this.props.errorNotice(
-						error ?? translate( 'An unknown error occurred. Please try again later.' )
-					);
-				} else if ( this._mounted ) {
-					this.setState( {
-						externalManagementExpiryTimestamp: expiryTimestamp,
-						externalManagementUrl: loginURL,
-					} );
-					if ( onUpdateComplete ) {
-						onUpdateComplete();
-					}
-				}
-			}
-		);
-	}
-
 	renderTitanManagementLink = () => {
 		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
 		const linkTitle = translate( 'Manage your email settings and accounts' );
@@ -121,14 +46,13 @@ class TitanManagementNav extends React.Component {
 				</VerticalNavItem>
 			);
 		}
-		const { externalManagementUrl, isFetchingExternalManagementUrl } = this.state;
-		if ( ! externalManagementUrl || isFetchingExternalManagementUrl ) {
-			return <VerticalNavItem isPlaceholder={ true } />;
-		}
 		return (
 			<VerticalNavItem
-				path={ externalManagementUrl }
-				onClick={ ( evt ) => this.handleExternalLoginClick( evt ) }
+				path={ emailManagementTitanControlPanelRedirect(
+					selectedSiteSlug,
+					domain.name,
+					currentRoute
+				) }
 				external={ true }
 			>
 				{ linkTitle }
