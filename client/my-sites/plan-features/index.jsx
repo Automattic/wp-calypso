@@ -81,6 +81,7 @@ import {
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import Experiment from 'calypso/components/experiment';
 
 /**
  * Style dependencies
@@ -119,6 +120,7 @@ export class PlanFeatures extends Component {
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
+				<Experiment name="detailed_billing_timeframe_en" />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">

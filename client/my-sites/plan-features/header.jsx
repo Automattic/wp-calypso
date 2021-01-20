@@ -33,6 +33,7 @@ import { getPlanBySlug } from 'calypso/state/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { planLevelsMatch } from 'calypso/lib/plans/index';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
@@ -219,6 +220,7 @@ export class PlanFeaturesHeader extends Component {
 			annualPricePerMonth,
 			isInSignup,
 			isMonthlyPlan,
+			isBillingTimeframeVariation,
 		} = this.props;
 
 		if ( isInSignup && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
@@ -236,10 +238,12 @@ export class PlanFeaturesHeader extends Component {
 				! isMonthlyPlan &&
 				planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } )
 			) {
-				const price = formatCurrency( fullRawPrice, currencyCode, { stripZeros: true } );
-				return translate( 'Per month, %(price)s billed yearly', {
-					args: { price: price },
-				} );
+				if ( isBillingTimeframeVariation ) {
+					const price = formatCurrency( fullRawPrice, currencyCode, { stripZeros: true } );
+					return translate( 'Per month, %(price)s billed yearly', {
+						args: { price: price },
+					} );
+				}
 			}
 			return null;
 		}
@@ -515,6 +519,8 @@ export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	const isYearly = !! relatedMonthlyPlan;
+	const isBillingTimeframeVariation =
+		'treatment' === getVariationForUser( state, 'detailed_billing_timeframe_en' );
 
 	return {
 		currentSitePlan,
@@ -522,5 +528,6 @@ export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),
+		isBillingTimeframeVariation,
 	};
 } )( localize( PlanFeaturesHeader ) );
