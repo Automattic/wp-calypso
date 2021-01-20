@@ -7,6 +7,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { SkipButton, NextButton } from '@automattic/onboarding';
 import config from 'calypso/config';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -56,7 +57,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 		has_selected_site_title: hasSiteTitle(),
 	} ) );
 
-	React.useEffect( prefetchDesignThumbs, [] );
+	const locale = useLocale();
+	React.useEffect( () => {
+		prefetchDesignThumbs( locale );
+	}, [ locale ] );
 
 	const handleSkip = () => {
 		skipSiteVertical();
