@@ -20,13 +20,13 @@ import useTyper from '../../hooks/use-typer';
 import { useIsAnchorFm } from '../../path';
 
 interface Props {
-	onSubmit: () => void;
+	onSubmit: ( siteTitle: string ) => void;
 	inputRef: React.MutableRefObject< HTMLInputElement | undefined >;
 }
 
 const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) => {
 	const { __, _x } = useI18n();
-	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const siteTitle = useSelect( ( select ) => select( STORE_KEY ).getSelectedSiteTitle() );
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
@@ -76,7 +76,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		// hitting 'Enter' when focused on the input field should direct to next step.
 		e.preventDefault();
-		onSubmit();
+		onSubmit( siteTitle );
 	};
 
 	const handleBlur = () => {
@@ -112,20 +112,15 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 				{ inputLabel }
 			</label>
 			<div className="site-title__input-wrapper">
-				{ /* Adding key makes it more performant
-					because without it the element is recreated
-					for every letter in the typing animation
-					*/ }
 				<AcquireIntentTextInput
 					ref={ inputRef as React.MutableRefObject< HTMLInputElement | null > }
-					key="site-title__input"
 					onChange={ setSiteTitle }
 					onFocus={ handleFocus }
 					onBlur={ handleBlur }
 					value={ siteTitle }
 					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					placeholder={ placeHolder }
-				></AcquireIntentTextInput>
+				/>
 				<p className="site-title__input-hint">
 					<Icon icon={ tip } size={ 18 } />
 					{ /* translators: The "it" here refers to the site title. */ }

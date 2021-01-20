@@ -23,14 +23,28 @@ import Link from '../link';
  */
 import './style.scss';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const SiteTitle: React.FunctionComponent = () => {
+	const { __ } = useI18n();
+	const currentStep = useCurrentStep();
+	// CreateSite step clears state before redirecting, don't show the default text in this case
+	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
+	const siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
+
+	return (
+		<div className="gutenboarding__header-site-title">
+			{ siteTitle ? siteTitle : siteTitleDefault }
+		</div>
+	);
+};
+
 const Header: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const currentStep = useCurrentStep();
 	const isAnchorFmSignup = useIsAnchorFm();
 	const makePath = usePath();
-
-	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	// steps (including modals) where we show Domains button
 	const showDomainsButton =
@@ -44,12 +58,7 @@ const Header: React.FunctionComponent = () => {
 	// locale button is hidden on AnchorFM flavored gutenboarding
 	const showLocaleButton = ! isAnchorFmSignup;
 
-	// CreateSite step clears state before redirecting, don't show the default text in this case
-	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
-
 	const homeLink = '/';
-
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 	const changeLocaleButton = () => {
 		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
@@ -81,9 +90,7 @@ const Header: React.FunctionComponent = () => {
 					</Button>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
-					<div className="gutenboarding__header-site-title">
-						{ siteTitle ? siteTitle : siteTitleDefault }
-					</div>
+					<SiteTitle />
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
 					{ showDomainsButton && <DomainPickerButton /> }

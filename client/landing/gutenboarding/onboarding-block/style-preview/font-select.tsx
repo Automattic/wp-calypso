@@ -18,15 +18,16 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { selectedDesign, selectedFonts } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
-	);
-	const { getRandomizedDesigns } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { selectedDesign, selectedFonts, randomizedDesigns } = useSelect( ( select ) => ( {
+		selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
+		selectedFonts: select( ONBOARD_STORE ).getSelectedFonts(),
+		randomizedDesigns: select( ONBOARD_STORE ).getRandomizedDesigns(),
+	} ) );
 	const { setFonts } = useDispatch( ONBOARD_STORE );
 	const [ isOpen, setIsOpen ] = React.useState( false );
 
 	// TODO: Add font loading for unknown fonts
-	const selectedDesignDefaultFonts = getRandomizedDesigns().featured.find(
+	const selectedDesignDefaultFonts = randomizedDesigns.featured.find(
 		( design ) => design.slug === selectedDesign?.slug
 	)?.fonts;
 

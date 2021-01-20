@@ -32,14 +32,16 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
-	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
-		select( ONBOARD_STORE )
-	);
+	const { selectedDesign, hasPaidDesign, randomizedDesigns } = useSelect( ( select ) => ( {
+		selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
+		hasPaidDesign: select( ONBOARD_STORE ).hasPaidDesign(),
+		randomizedDesigns: select( ONBOARD_STORE ).getRandomizedDesigns(),
+	} ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	useTrackStep( 'DesignSelection', () => ( {
-		selected_design: getSelectedDesign()?.slug,
-		is_selected_design_premium: hasPaidDesign(),
+		selected_design: selectedDesign?.slug,
+		is_selected_design_premium: hasPaidDesign,
 	} ) );
 
 	return (
@@ -63,8 +65,8 @@ const DesignSelector: React.FunctionComponent = () => {
 				<div
 					className={ isAnchorFmSignup ? 'design-selector__grid-minimal' : 'design-selector__grid' }
 				>
-					{ getRandomizedDesigns()
-						.featured.filter(
+					{ randomizedDesigns.featured
+						.filter(
 							( design ) =>
 								// TODO Add finalized design templates to client/landing/gutenboarding/available-designs-config.json
 								// along with is_anchorfm prop

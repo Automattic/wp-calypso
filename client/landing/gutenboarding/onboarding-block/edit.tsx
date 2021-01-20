@@ -37,10 +37,15 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { selectedDesign, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
-	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
-	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
+	const { hasSelectedDesign, hasSiteTitle, isRedirecting } = useSelect( ( select ) => ( {
+		hasSelectedDesign: !! select( STORE_KEY ).getSelectedDesign(),
+		hasSiteTitle: !! select( STORE_KEY ).getSelectedSiteTitle(),
+		isRedirecting: select( STORE_KEY ).getIsRedirecting(),
+	} ) );
+	const { isCreatingSite, newSiteError } = useSelect( ( select ) => ( {
+		isCreatingSite: select( SITE_STORE ).isFetchingSite(),
+		newSiteError: select( SITE_STORE ).getNewSiteError(),
+	} ) );
 	const shouldTriggerCreate = useNewQueryParam();
 	const isAnchorFmSignup = useIsAnchorFm();
 
@@ -77,13 +82,9 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		[ makePath, locationState ]
 	);
 
-	const canUseDesignStep = React.useCallback( (): boolean => {
-		return !! siteTitle;
-	}, [ siteTitle ] );
+	const canUseDesignStep = React.useCallback( () => hasSiteTitle, [ hasSiteTitle ] );
 
-	const canUseStyleStep = React.useCallback( (): boolean => {
-		return !! selectedDesign;
-	}, [ selectedDesign ] );
+	const canUseStyleStep = React.useCallback( () => hasSelectedDesign, [ hasSelectedDesign ] );
 
 	const canUseCreateSiteStep = React.useCallback( (): boolean => {
 		return isCreatingSite || isRedirecting;

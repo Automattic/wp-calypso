@@ -26,9 +26,12 @@ const DomainPickerButton: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const makePath = usePath();
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
-	);
+	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) => ( {
+		domain: select( ONBOARD_STORE ).getSelectedDomain(),
+		selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
+		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+		siteVertical: select( ONBOARD_STORE ).getSelectedVertical(),
+	} ) );
 
 	// Use site title or vertical as search query for a domain suggestion
 	const suggestionQuery = siteTitle || siteVertical?.label || '';
@@ -38,18 +41,22 @@ const DomainPickerButton: React.FunctionComponent = () => {
 		( select ) => {
 			// Get suggestion only if the query is valid and if there isn't a selected domain
 			if ( domain || ! isValidQuery ) {
-				return;
+				return null;
 			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( suggestionQuery, {
-				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
-				include_wordpressdotcom: false,
-				include_dotblogsubdomain: false,
-				quantity: 1, // this will give the recommended domain only
-				locale,
-			} );
+			const domainSuggestions = select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions(
+				suggestionQuery,
+				{
+					// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
+					include_wordpressdotcom: false,
+					include_dotblogsubdomain: false,
+					quantity: 1, // this will give the recommended domain only
+					locale,
+				}
+			);
+			return domainSuggestions?.[ 0 ] ?? null;
 		},
-		[ suggestionQuery ]
-	)?.[ 0 ];
+		[ suggestionQuery, locale ]
+	);
 
 	const isLoadingSuggestion = ! domain && ! domainSuggestion && isValidQuery;
 

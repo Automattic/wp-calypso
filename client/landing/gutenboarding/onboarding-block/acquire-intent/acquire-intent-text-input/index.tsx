@@ -71,9 +71,8 @@ const AcquireIntentTextInput: React.FunctionComponent< Props > = ( {
 	return (
 		<div className="acquire-intent-text-input__wrapper">
 			<input
-				key="acquire-intent__input"
 				className={ classnames( 'acquire-intent-text-input__input', {
-					'is-empty': ! ( value as string ).length,
+					'is-empty': ! value.length,
 				} ) }
 				id={ id }
 				ref={ ref }
@@ -91,7 +90,7 @@ const AcquireIntentTextInput: React.FunctionComponent< Props > = ( {
 			/>
 			<div
 				className={ classnames( 'acquire-intent-text-input__underline', {
-					'is-empty': ! ( value as string ).length,
+					'is-empty': ! value.length,
 				} ) }
 				style={ { width: underlineWidth || '100%' } }
 			></div>
