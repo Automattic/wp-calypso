@@ -63,6 +63,7 @@ const FeatureAnnualDiscountNudge: React.FunctionComponent< {
 function computeDomainFeatureItem(
 	isFreePlan: boolean,
 	domain: DomainSuggestions.DomainSuggestion | undefined,
+	billingInterval: BillingIntervalType,
 	__: typeof import('@wordpress/i18n').__
 ) {
 	const commonWrapperClassName = 'plans-feature-list__item-content-wrapper--domain-button';
@@ -72,7 +73,7 @@ function computeDomainFeatureItem(
 			FREE_PLAN: null,
 			PAID_PLAN: {
 				wrapperClassName: commonWrapperClassName,
-				bulletIcon: TickIcon,
+				bulletIcon: billingInterval === 'ANNUALLY' ? TickIcon : CrossIcon,
 				// actionIcon: ChevronDown,
 				requiresAnnuallyBilledPlan: true,
 				// translators: %s is a domain name eg: example.com is included
@@ -83,7 +84,7 @@ function computeDomainFeatureItem(
 			FREE_PLAN: null,
 			PAID_PLAN: {
 				wrapperClassName: commonWrapperClassName,
-				bulletIcon: TickIcon,
+				bulletIcon: billingInterval === 'ANNUALLY' ? TickIcon : CrossIcon,
 				// actionIcon: ChevronDown,
 				requiresAnnuallyBilledPlan: true,
 				// translators: %s is a domain name eg: example.com is included
@@ -107,7 +108,7 @@ function computeDomainFeatureItem(
 			},
 			PAID_PLAN: {
 				wrapperClassName: commonWrapperClassName,
-				bulletIcon: TickIcon,
+				bulletIcon: billingInterval === 'ANNUALLY' ? TickIcon : CrossIcon,
 				// actionIcon: undefined,
 				requiresAnnuallyBilledPlan: true,
 				// translators: <url /> is a domain name eg: example.com is included
@@ -201,7 +202,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 	multiColumn = false,
 } ) => {
 	const { __ } = useI18n();
-	const domainFeatureItem = computeDomainFeatureItem( isFreePlan, domain, __ );
+	const domainFeatureItem = computeDomainFeatureItem( isFreePlan, domain, billingInterval, __ );
 
 	const featureItems: FeatureListItem[] = [];
 
@@ -230,6 +231,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 		} );
 	}
 
+	// Remaining features from data-store
 	// @TODO: move out to data-store
 	// Remaining feature items are coming from the APIs
 	const augmentedApiFeatures = features.map( ( feature, index ) => ( {
@@ -238,7 +240,8 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 	} ) );
 	augmentedApiFeatures.forEach( ( { feature, requiresAnnuallyBilledPlan } ) =>
 		featureItems.push( {
-			bulletIcon: TickIcon,
+			bulletIcon:
+				requiresAnnuallyBilledPlan && billingInterval === 'MONTHLY' ? CrossIcon : TickIcon,
 			textNode: <>{ feature }</>,
 			requiresAnnuallyBilledPlan,
 		} )

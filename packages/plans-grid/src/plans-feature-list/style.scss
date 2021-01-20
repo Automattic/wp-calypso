@@ -100,7 +100,8 @@ ul.plans-feature-list__item-group {
 	}
 
 	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable &,
-	.plans-feature-list__item--disabled-message & {
+	.plans-feature-list__item--disabled-message &,
+	.plans-feature-list__item--requires-annual-disabled & {
 		color: var( --studio-orange-40 );
 	}
 
@@ -132,7 +133,7 @@ ul.plans-feature-list__item-group {
 	}
 
 	.plans-feature-list__item--requires-annual-disabled & {
-		color: var( --studio-red-40 );
+		color: var( --studio-orange-40 );
 	}
 }
 
