@@ -25,14 +25,6 @@
 		"common": "calypso-build --env source='common','common/data-stores'",
 		"dev:common": "yarn run common",
 		"build:common": "NODE_ENV=production yarn run common",
-
-		"editor-gutenboarding-launch": "npm-run-all --parallel editor-gutenboarding-launch-*",
-		"editor-gutenboarding-launch-step-by-step": "calypso-build --source='editor-gutenboarding-launch'",
-		"editor-gutenboarding-launch-focused": "calypso-build --source='editor-gutenboarding-launch/focused-launch'",
-		"dev:editor-gutenboarding-launch": "yarn run editor-gutenboarding-launch",
-		"build:editor-gutenboarding-launch": "NODE_ENV=production yarn run editor-gutenboarding-launch",
-
-
 		"editor-site-launch": "npm-run-all --parallel editor-site-launch-*",
 		"editor-site-launch-button": "calypso-build --source='editor-site-launch/launch-button'",
 		"editor-site-launch-step-by-step": "calypso-build --source='editor-site-launch/step-by-step-launch'",
