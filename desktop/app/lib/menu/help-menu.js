@@ -62,5 +62,12 @@ module.exports = function ( mainWindow ) {
 				zipLogs( mainWindow );
 			},
 		},
+		{
+			label: 'Say Hello',
+			click: function () {
+				log.info( "User selected 'say hello'..." );
+				mainWindow.webContents.send( 'say-hello' );
+			},
+		},
 	] );
 };

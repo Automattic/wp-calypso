@@ -22,6 +22,11 @@ if ( 'undefined' === typeof window || ! window.configData ) {
 
 const configData = window.configData;
 
+if ( typeof window.electron === 'object' ) {
+	configData.features.desktop = true;
+	// TODO: load other desktop features
+}
+
 // calypso.live matches
 // hash-abcd1234.calypso.live matches
 // calypso.live.com doesn't match

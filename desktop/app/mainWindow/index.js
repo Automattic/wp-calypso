@@ -28,11 +28,10 @@ function createAppWindow() {
 		path.join( __dirname, '..', '..', 'public_desktop', 'preload.js' )
 	);
 
-	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
-	let appUrl = 'https://www.wordpress.com';
-	if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
-		appUrl = lastLocation;
-	}
+	// const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+	// const appUrl = 'https://www.wordpress.com';
+	// Note https should be enabled against localhost Calypso instance on port 443.
+	const appUrl = 'https://www.wordpress.com:443';
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
@@ -92,6 +91,10 @@ function createAppWindow() {
 
 	ipc.handle( 'get-settings', () => {
 		return Settings.toRenderer();
+	} );
+
+	ipc.on( 'said-hello', () => {
+		log.info( 'Renderer process said hello' );
 	} );
 
 	return mainWindow;

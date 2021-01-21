@@ -14,6 +14,7 @@ const sendChannels = [
 	'user-login-status',
 	'view-post-clicked',
 	'print',
+	'said-hello',
 	'secrets',
 	'toggle-dev-tools',
 ];

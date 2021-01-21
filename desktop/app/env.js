@@ -62,6 +62,8 @@ log.info( `App Path: ${ app.getAppPath() }` );
 log.info( `App Data: ${ app.getPath( 'userData' ) }` );
 log.info( 'Settings:', Settings._getAll() );
 
+app.commandLine.appendSwitch( 'allow-insecure-localhost', 'true' );
+
 if ( Settings.getSetting( 'proxy-type' ) === '' ) {
 	log.info( 'Proxy: none' );
 	app.commandLine.appendSwitch( 'no-proxy-server' );

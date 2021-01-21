@@ -58,8 +58,6 @@ import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso' );
 
-const isDesktop = typeof window.electron === 'object';
-
 const setupContextMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
@@ -119,7 +117,7 @@ const setupContextMiddleware = ( reduxStore ) => {
 };
 
 const oauthTokenMiddleware = () => {
-	if ( isDesktop || config.isEnabled( 'oauth' ) ) {
+	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [
 			'/oauth-login',
 			'/oauth',
@@ -148,7 +146,8 @@ const oauthTokenMiddleware = () => {
 				! isValidSection &&
 				! ( isJetpackCloud() && inJetpackCloudOAuthOverride() )
 			) {
-				const redirectPath = isDesktop || isJetpackCloud() ? config( 'login_url' ) : '/authorize';
+				const redirectPath =
+					config.isEnabled( 'desktop' ) || isJetpackCloud() ? config( 'login_url' ) : '/authorize';
 
 				const currentPath = window.location.pathname;
 				// In the context of Jetpack Cloud, if the user isn't authorized, we want
@@ -382,9 +381,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	if ( isDesktop ) {
-		require( 'calypso/lib/desktop' ).default.init();
-	}
+	window.electron?.receive( 'say-hello', () => {
+		window.electron?.send( 'said-hello' );
+	} );
 
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&

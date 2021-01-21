@@ -34,11 +34,14 @@ import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/noti
  */
 const debug = debugFactory( 'calypso:desktop' );
 
-const Desktop = {
+let Desktop;
+
+// eslint-disable-next-line prefer-const
+Desktop = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 */
-	init: async function () {
+	initialize: async function () {
 		debug( 'Registering IPC listeners' );
 
 		// Register IPC listeners
@@ -306,7 +309,7 @@ const Desktop = {
 	},
 
 	sayHello: function () {
-		debug( 'Main process said hello! ' );
+		window.electron.send( 'said-hello' );
 	},
 };
 
