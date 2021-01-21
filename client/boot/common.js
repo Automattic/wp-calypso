@@ -381,9 +381,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	window.electron?.receive( 'say-hello', () => {
-		window.electron?.send( 'said-hello' );
-	} );
+	require( 'calypso/lib/desktop' ).default.initialize();
 
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&

@@ -351,14 +351,6 @@ const webpackConfig = {
 			} ),
 		new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-		...( ! config.isEnabled( 'desktop' )
-			? [
-					new webpack.NormalModuleReplacementPlugin(
-						/^calypso[/\\]lib[/\\]desktop$/,
-						'lodash/noop'
-					),
-			  ]
-			: [] ),
 		/*
 		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
 		 */

@@ -45,28 +45,28 @@ Desktop = {
 		debug( 'Registering IPC listeners' );
 
 		// Register IPC listeners
-		window.electron.receive( 'page-my-sites', this.onShowMySites.bind( this ) );
-		window.electron.receive( 'page-reader', this.onShowReader.bind( this ) );
-		window.electron.receive( 'page-profile', this.onShowProfile.bind( this ) );
-		window.electron.receive( 'new-post', this.onNewPost.bind( this ) );
-		window.electron.receive( 'signout', this.onSignout.bind( this ) );
-		window.electron.receive( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
-		window.electron.receive(
+		window.electron?.receive( 'page-my-sites', this.onShowMySites.bind( this ) );
+		window.electron?.receive( 'page-reader', this.onShowReader.bind( this ) );
+		window.electron?.receive( 'page-profile', this.onShowProfile.bind( this ) );
+		window.electron?.receive( 'new-post', this.onNewPost.bind( this ) );
+		window.electron?.receive( 'signout', this.onSignout.bind( this ) );
+		window.electron?.receive( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
+		window.electron?.receive(
 			'notifications-panel-show',
 			this.onNotificationsPanelShow.bind( this )
 		);
-		window.electron.receive(
+		window.electron?.receive(
 			'notifications-panel-refresh',
 			this.onNotificationsPanelRefresh.bind( this )
 		);
-		window.electron.receive( 'notification-clicked', this.onNotificationClicked.bind( this ) );
-		window.electron.receive( 'page-help', this.onShowHelp.bind( this ) );
-		window.electron.receive( 'navigate', this.onNavigate.bind( this ) );
-		window.electron.receive( 'request-site', this.onRequestSite.bind( this ) );
-		window.electron.receive( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
-		window.electron.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
-		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
-		window.electron.receive( 'say-hello', this.sayHello );
+		window.electron?.receive( 'notification-clicked', this.onNotificationClicked.bind( this ) );
+		window.electron?.receive( 'page-help', this.onShowHelp.bind( this ) );
+		window.electron?.receive( 'navigate', this.onNavigate.bind( this ) );
+		window.electron?.receive( 'request-site', this.onRequestSite.bind( this ) );
+		window.electron?.receive( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
+		window.electron?.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
+		window.electron?.receive( 'request-user-login-status', this.sendUserLoginStatus );
+		window.electron?.receive( 'say-hello', this.sayHello );
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
@@ -117,7 +117,7 @@ Desktop = {
 		const unseenCount = store.get( 'wpnotes_unseen_count' );
 		if ( unseenCount !== null ) {
 			debug( `Sending unseen count: ${ unseenCount }` );
-			window.electron.send( 'unread-notices-count', unseenCount );
+			window.electron?.send( 'unread-notices-count', unseenCount );
 		}
 	},
 
@@ -125,7 +125,7 @@ Desktop = {
 	onUnseenCountUpdated: function ( event ) {
 		const { unseenCount } = event.detail;
 		debug( `Sending unseen count: ${ unseenCount }` );
-		window.electron.send( 'unread-notices-count', unseenCount );
+		window.electron?.send( 'unread-notices-count', unseenCount );
 	},
 
 	onNotificationClicked: function ( notification ) {
@@ -153,7 +153,7 @@ Desktop = {
 
 		debug( 'Sending logged-in = ' + status );
 
-		window.electron.send(
+		window.electron?.send(
 			'user-login-status',
 			status,
 			{ id: user().data.ID },
@@ -235,7 +235,7 @@ Desktop = {
 			canUserManageOptions,
 		};
 
-		window.electron.send( 'cannot-use-editor', payload );
+		window.electron?.send( 'cannot-use-editor', payload );
 	},
 
 	// window event
@@ -243,7 +243,7 @@ Desktop = {
 		const { url } = event.detail;
 		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
 
-		window.electron.send( 'view-post-clicked', url );
+		window.electron?.send( 'view-post-clicked', url );
 	},
 
 	onActivateJetpackSiteModule: function ( info ) {
@@ -260,7 +260,7 @@ Desktop = {
 			if ( Number( siteId ) !== Number( responseSiteId ) ) {
 				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
 			}
-			window.electron.send( 'enable-site-option-response', { status, siteId, error } );
+			window.electron?.send( 'enable-site-option-response', { status, siteId, error } );
 		}
 		window.addEventListener(
 			response,
@@ -283,7 +283,7 @@ Desktop = {
 			if ( Number( siteId ) !== Number( responseSiteId ) ) {
 				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
 			}
-			window.electron.send( 'request-site-response', { siteId, status, error } );
+			window.electron?.send( 'request-site-response', { siteId, status, error } );
 		}
 		window.addEventListener( response, onDidRequestSite.bind( onDidRequestSite ) );
 
@@ -305,11 +305,11 @@ Desktop = {
 	},
 
 	print: function ( title, html ) {
-		window.electron.send( 'print', title, html );
+		window.electron?.send( 'print', title, html );
 	},
 
 	sayHello: function () {
-		window.electron.send( 'said-hello' );
+		window.electron?.send( 'said-hello' );
 	},
 };
 
