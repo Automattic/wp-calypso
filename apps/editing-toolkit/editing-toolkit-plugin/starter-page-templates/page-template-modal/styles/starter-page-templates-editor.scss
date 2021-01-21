@@ -324,12 +324,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 
 			.template-selector-preview__empty-state {
 				position: absolute;
-				width: 100%;
-				text-align: center;
 				height: 50px;
 				line-height: 50px;
 				top: 50%;
-				margin: -25px 0 0;
+				left: 50%;
+				transform: translate( -50%, -50% );
 			}
 		}
 	}
