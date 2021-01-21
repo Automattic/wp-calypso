@@ -51,6 +51,8 @@ $plans-accordion-item-border-color: var( --studio-gray-5 );
 
 		@include break-small {
 			border-top-width: 1px;
+			border-top-left-radius: $plans-accordion-item-border-radius;
+			border-top-right-radius: $plans-accordion-item-border-radius;
 		}
 	}
 
