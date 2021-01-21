@@ -246,6 +246,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	if ( persistentSelectedDomain ) {
 		placeholdersCount += 1;
 	}
+	// If onUseYourDomainClick is defined, UseYourDomainItem will appended to the list of options
+	if ( onUseYourDomainClick ) {
+		placeholdersCount += 1;
+	}
 	// If existingSubdomain is defined, it will be rendered separately with its own placeholder
 	if ( existingSubdomain ) {
 		placeholdersCount -= 1;
@@ -394,7 +398,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 												times( placeholdersCount, ( i ) => (
 													<SuggestionItemPlaceholder type={ itemType } key={ i } />
 												) ) }
-											{ onUseYourDomainClick && (
+											{ onUseYourDomainClick && !! domainSuggestions && (
 												<UseYourDomainItem onClick={ onUseYourDomainClick } />
 											) }
 										</ItemGrouper>
