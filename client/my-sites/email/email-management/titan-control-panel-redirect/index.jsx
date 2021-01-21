@@ -60,6 +60,7 @@ class TitanControlPanelRedirect extends React.Component {
 
 		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
 			if ( error ) {
+				this._fetchTriggered = false;
 				this.props.errorNotice(
 					error ?? translate( 'An unknown error occurred. Please try again later.' )
 				);
