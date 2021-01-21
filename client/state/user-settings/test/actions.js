@@ -24,9 +24,8 @@ describe( 'actions', () => {
 				},
 			} );
 
-			const result = setUserSetting( 'foo', 'qix' )( dispatch, getState );
+			setUserSetting( 'foo', 'qix' )( dispatch, getState );
 
-			expect( result ).to.be.true;
 			expect( dispatch ).to.have.been.calledWith( {
 				type: USER_SETTINGS_UNSAVED_SET,
 				settingName: [ 'foo' ],
@@ -43,9 +42,8 @@ describe( 'actions', () => {
 				},
 			} );
 
-			const result = setUserSetting( 'foo', 'bar' )( dispatch, getState );
+			setUserSetting( 'foo', 'bar' )( dispatch, getState );
 
-			expect( result ).to.be.true;
 			expect( dispatch ).to.have.been.calledWith( {
 				type: USER_SETTINGS_UNSAVED_REMOVE,
 				settingName: [ 'foo' ],
