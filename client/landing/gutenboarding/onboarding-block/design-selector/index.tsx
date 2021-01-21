@@ -89,12 +89,6 @@ const DesignSelector: React.FunctionComponent = () => {
 								} }
 							>
 								<span className="design-selector__image-frame">
-									{
-										// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
-										// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
-										// https://github.com/Automattic/mShots/issues/16
-										// https://github.com/Automattic/wp-calypso/issues/40564
-									 }
 									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
 										<MShotsImage
 											url={ getDesignUrl( design, locale ) }

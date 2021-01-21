@@ -7,7 +7,6 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { SkipButton, NextButton } from '@automattic/onboarding';
 import config from 'calypso/config';
-import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -20,7 +19,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
 import { isGoodDefaultDomainQuery } from '../../lib/is-good-default-domain-query';
-import { prefetchDesignThumbs } from '../../available-designs';
+
 /**
  * Style dependencies
  */
@@ -56,13 +55,6 @@ const AcquireIntent: React.FunctionComponent = () => {
 		selected_vertical_label: getSelectedVertical()?.label,
 		has_selected_site_title: hasSiteTitle(),
 	} ) );
-
-	const locale = useLocale();
-	React.useEffect( () => {
-		if ( config.isEnabled( 'gutenboarding/mshot-preview' ) ) {
-			prefetchDesignThumbs( locale );
-		}
-	}, [ locale ] );
 
 	const handleSkip = () => {
 		skipSiteVertical();
