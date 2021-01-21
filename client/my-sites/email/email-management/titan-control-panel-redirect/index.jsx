@@ -26,10 +26,13 @@ import titanFullLogo from 'calypso/assets/images/email-providers/titan/titan-ful
 
 class TitanControlPanelRedirect extends React.Component {
 	static propTypes = {
-		domain: PropTypes.object,
+		// Props
 		domainName: PropTypes.string.isRequired,
-		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
+
+		// Connected props derived from the props above
+		domain: PropTypes.object,
+		siteId: PropTypes.number,
 	};
 
 	componentDidMount() {
