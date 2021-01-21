@@ -2,5 +2,6 @@
 	.empty-content__illustration {
 		/* Convert image to 70% grey */
 		filter: invert( 0.3 );
+		max-height: 120px;
 	}
 }
