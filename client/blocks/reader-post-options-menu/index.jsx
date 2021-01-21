@@ -40,6 +40,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 /**
  * Style dependencies
@@ -59,6 +60,9 @@ class ReaderPostOptionsMenu extends React.Component {
 		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
 		posts: PropTypes.array,
+		isWPForTeamsItem: PropTypes.bool,
+		isFollowingItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -247,7 +251,17 @@ class ReaderPostOptionsMenu extends React.Component {
 	};
 
 	render() {
-		const { post, site, feed, teams, translate, position, posts, isWPForTeams } = this.props;
+		const {
+			post,
+			site,
+			feed,
+			teams,
+			translate,
+			position,
+			posts,
+			isWPForTeamsItem,
+			isFollowingItem,
+		} = this.props;
 
 		if ( ! post ) {
 			return null;
@@ -309,14 +323,14 @@ class ReaderPostOptionsMenu extends React.Component {
 						/>
 					) }
 
-					{ isEligibleForUnseen( teams, isWPForTeams ) && post.is_seen && (
+					{ isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) && post.is_seen && (
 						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible" itemComponent={ 'a' }>
 							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
 							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
 						</PopoverMenuItem>
 					) }
 
-					{ isEligibleForUnseen( teams, isWPForTeams ) && ! post.is_seen && (
+					{ isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) && ! post.is_seen && (
 						<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
 							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
 							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
@@ -368,7 +382,8 @@ export default connect(
 		const siteId = is_external ? null : site_ID;
 
 		return Object.assign(
-			{ isWPForTeams: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
+			{ isFollowingItem: isFollowing( state, { blogId: siteId, feedId } ) },
+			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
 			{ teams: getReaderTeams( state ) },
 			feedId > 0 && { feed: getFeed( state, feedId ) },
 			siteId > 0 && { site: getSite( state, siteId ) }

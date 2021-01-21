@@ -40,6 +40,7 @@ import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {
@@ -57,6 +58,9 @@ class ReaderPostCard extends React.Component {
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
+		isFollowingItem: PropTypes.bool,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -134,10 +138,12 @@ class ReaderPostCard extends React.Component {
 			expandCard,
 			compact,
 			teams,
-			isWPForTeams,
+			isWPForTeamsItem,
+			isFollowingItem,
 		} = this.props;
 
-		const isSeen = isEligibleForUnseen( teams, isWPForTeams ) && !! post.is_seen;
+		const isSeen =
+			isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) && !! post.is_seen;
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
@@ -284,7 +290,11 @@ class ReaderPostCard extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isWPForTeams:
+		isFollowingItem: isFollowing( state, {
+			blogId: ownProps.postKey.blogId,
+			feedId: ownProps.postKey.feedId,
+		} ),
+		isWPForTeamsItem:
 			isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
 			isFeedWPForTeams( state, ownProps.postKey.feedId ),
 		teams: getReaderTeams( state ),
