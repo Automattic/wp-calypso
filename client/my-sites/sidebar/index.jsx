@@ -759,6 +759,7 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
+				className="sidebar__woocommerce-menu-item"
 				label="WooCommerce"
 				link={ storeLink }
 				onNavigate={ this.trackWooCommerceClick }
