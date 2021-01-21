@@ -97,10 +97,6 @@ $accent-blue: #117ac9;
 		outline: none;
 	}
 
-	&.contains-link {
-		cursor: default;
-	}
-
 	&.type-individual-item {
 		min-height: 64px;
 		border-width: 2px;
@@ -124,7 +120,7 @@ $accent-blue: #117ac9;
 			border-top-left-radius: 5px; /* stylelint-disable-line scales/radii */
 			border-top-right-radius: 5px; /* stylelint-disable-line scales/radii */
 		}
-	
+
 		&.type-individual-item,
 		&:last-child {
 			border-bottom-left-radius: 5px; /* stylelint-disable-line scales/radii */
@@ -145,7 +141,7 @@ $accent-blue: #117ac9;
 	}
 
 	// animate the added domains after you click expand
-	@for $i from 7 through 14 {
+	@for $i from 8 through 14 {
 		&:nth-child( #{$i} ) {
 			transform: translateY( 20px );
 			opacity: 0;
