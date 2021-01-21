@@ -129,6 +129,7 @@ ul.plans-feature-list__item-group {
 .plans-feature-list__item-text {
 	flex-grow: 1;
 	flex-shrink: 0;
+	max-width: 100%;
 
 	// Makes the tick/cross icon align better with the text
 	margin-bottom: 1px;
