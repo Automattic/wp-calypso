@@ -528,7 +528,7 @@ class Account extends React.Component {
 	submitForm = ( event ) => {
 		event.preventDefault();
 
-		this.props.saveUserSettings();
+		this.props.saveUserSettings( null, this.state.redirect );
 	};
 
 	renderPendingEmailChange() {

@@ -101,7 +101,9 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => ( dispatch ) => {
+export const userSettingsSaveSuccess = ( { settingsOverride, redirectTo }, data ) => async (
+	dispatch
+) => {
 	dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
 	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
 
@@ -110,11 +112,18 @@ export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => ( dispa
 		window.location = window.location.pathname + '?updated=password';
 		return;
 	}
+
+	const userLibModule = require( 'calypso/lib/user' );
+	const userLib = userLibModule.default ? userLibModule.default : userLibModule; // TODO: delete line after removing add-module-exports.
+
+	if ( redirectTo ) {
+		await userLib().clear();
+		window.location = window.location.pathname + '?updated=success';
+		return;
+	}
 	// Refetch the user data after saving user settings
 	// The require() trick is used to avoid excessive mocking in unit tests.
 	// TODO: Replace it with standard 'import' when the `lib/user` module is Reduxized
-	const userLibModule = require( 'calypso/lib/user' );
-	const userLib = userLibModule.default ? userLibModule.default : userLibModule; // TODO: delete line after removing add-module-exports.
 	userLib().fetch();
 
 	dispatch(
