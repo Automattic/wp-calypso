@@ -157,7 +157,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									? sprintf(
 											__( 'per month, billed as %s annually', __i18n_text_domain__ ),
 											// TODO: NEEDS THE ANNUAL PRICE FROM DATA-STORE
-											price
+											planProduct?.price
 									  )
 									: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
 						</div>
