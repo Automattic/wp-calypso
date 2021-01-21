@@ -67,6 +67,7 @@ ul.plans-feature-list__item-group {
 		font-weight: 700;
 		padding: 0;
 		text-decoration: none;
+		cursor: pointer;
 
 		&:hover,
 		&:focus {
@@ -75,6 +76,10 @@ ul.plans-feature-list__item-group {
 
 		.plans-accordion & {
 			color: var( --studio-gray-70 );
+
+			&.is-cta {
+				color: var( --studio-gray-100 );
+			}
 
 			&:hover,
 			&:focus {
@@ -147,8 +152,18 @@ ul.plans-feature-list__item-group {
 
 // The text describing the feature
 .plans-feature-list__item-description {
+	.plans-feature-list__item-content-wrapper--domain-button.is-cta & {
+		text-decoration: underline;
+	}
+
 	.plans-feature-list__item--disabled-message &,
-	.plans-feature-list__item--requires-annual-disabled & {
+	.plans-feature-list__item--disabled-message
+		.plans-feature-list__item-content-wrapper--domain-button.is-cta
+		&,
+	.plans-feature-list__item--requires-annual-disabled &,
+	.plans-feature-list__item--requires-annual-disabled
+		.plans-feature-list__item-content-wrapper--domain-button.is-cta
+		& {
 		text-decoration: line-through;
 	}
 }

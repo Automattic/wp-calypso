@@ -91,7 +91,7 @@ function computeDomainFeatureItem(
 		NO_DOMAIN: {
 			FREE_PLAN: null,
 			PAID_PLAN: {
-				wrapperClassName: commonWrapperClassName,
+				wrapperClassName: classnames( commonWrapperClassName, 'is-cta' ),
 				bulletIcon: billingInterval === 'ANNUALLY' ? TickIcon : CrossIcon,
 				// actionIcon: ChevronDown,
 				requiresAnnuallyBilledPlan: true,
@@ -102,7 +102,7 @@ function computeDomainFeatureItem(
 		FREE_DOMAIN: {
 			FREE_PLAN: null,
 			PAID_PLAN: {
-				wrapperClassName: commonWrapperClassName,
+				wrapperClassName: classnames( commonWrapperClassName, 'is-cta' ),
 				bulletIcon: billingInterval === 'ANNUALLY' ? TickIcon : CrossIcon,
 				// actionIcon: ChevronDown,
 				requiresAnnuallyBilledPlan: true,
