@@ -259,6 +259,14 @@ export default class LoginFlow {
 		return await StoreDashboardPage.Expect( this.driver );
 	}
 
+	async loginAndAccessStoreDirectly() {
+		await this.loginAndSelectMySite();
+		const siteURL = ( await this.driver.getCurrentUrl() ).split( 'home/' )[ 1 ];
+		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
+		await this.driver.get( dataHelper.getCalypsoURL( `store/${ siteURL }` ) );
+		return await StoreDashboardPage.Expect( this.driver );
+	}
+
 	async loginAndSelectWPAdmin() {
 		await this.loginAndSelectMySite();
 		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
