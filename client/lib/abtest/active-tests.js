@@ -69,7 +69,7 @@ export default {
 		allowExistingUsers: false,
 	},
 	jetpackSimplifyPricingPage: {
-		datestamp: '20210118',
+		datestamp: '20210121',
 		variations: {
 			test: 50,
 			control: 50,
