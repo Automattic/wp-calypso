@@ -45,7 +45,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
-	const { siteTitle, siteVertical } = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+	const { siteTitle, siteVertical } = useSelect( ( select ) => ( {
+		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+		siteVertical: select( ONBOARD_STORE ).getSelectedVertical(),
+	} ) );
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 	const currentStep = useCurrentStep();

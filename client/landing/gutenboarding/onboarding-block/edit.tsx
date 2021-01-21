@@ -37,7 +37,10 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { selectedDesign, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { selectedDesign, siteTitle } = useSelect( ( select ) => ( {
+		selectedDesign: select( STORE_KEY ).getSelectedDesign(),
+		siteTitle: select( STORE_KEY ).getSelectedSiteTitle(),
+	} ) );
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );

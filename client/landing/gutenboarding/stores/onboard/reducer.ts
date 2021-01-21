@@ -214,6 +214,17 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const siteTitleHistory: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_TITLE' ) {
+		const bit = ':' + action.siteTitle.length;
+		return state.endsWith( bit ) ? state : state + bit;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return state + ':R';
+	}
+	return state;
+};
+
 const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SITE_VERTICAL' ) {
 		return action.siteVertical;
@@ -257,6 +268,7 @@ const reducer = combineReducers( {
 	selectedDesign,
 	selectedSite,
 	siteTitle,
+	siteTitleHistory,
 	siteVertical,
 	showSignupDialog,
 	plan,

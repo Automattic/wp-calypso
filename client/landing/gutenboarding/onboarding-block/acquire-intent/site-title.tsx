@@ -26,7 +26,10 @@ interface Props {
 
 const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) => {
 	const { __, _x } = useI18n();
-	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { siteTitle, siteTitleHistory } = useSelect( ( select ) => ( {
+		siteTitle: select( STORE_KEY ).getSelectedSiteTitle(),
+		siteTitleHistory: select( STORE_KEY ).getSiteTitleHistory(),
+	} ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
@@ -99,9 +102,10 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		inputLabel = __( 'My site is called' );
 	}
 
-	const placeHolder = useTyper( siteTitleExamples, ! siteTitle, {
-		delayBetweenCharacters: 70,
-	} );
+	const placeHolder = 'Killing Me Softly';
+	// useTyper( siteTitleExamples, ! siteTitle, {
+	// 	delayBetweenCharacters: 70,
+	// } );
 
 	return (
 		<form
@@ -112,25 +116,21 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 				{ inputLabel }
 			</label>
 			<div className="site-title__input-wrapper">
-				{ /* Adding key makes it more performant
-					because without it the element is recreated
-					for every letter in the typing animation
-					*/ }
 				<AcquireIntentTextInput
 					ref={ inputRef as React.MutableRefObject< HTMLInputElement | null > }
-					key="site-title__input"
 					onChange={ setSiteTitle }
 					onFocus={ handleFocus }
 					onBlur={ handleBlur }
 					value={ siteTitle }
 					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					placeholder={ placeHolder }
-				></AcquireIntentTextInput>
+				/>
 				<p className="site-title__input-hint">
 					<Icon icon={ tip } size={ 18 } />
 					{ /* translators: The "it" here refers to the site title. */ }
 					<span>{ __( "Don't worry, you can change it later." ) }</span>
 				</p>
+				<p className="site-title__input-hint">{ siteTitleHistory }</p>
 			</div>
 		</form>
 	);

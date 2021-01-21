@@ -8,7 +8,7 @@ import {
 	Plans,
 	WPCOMFeatures,
 } from '@automattic/data-stores';
-import { dispatch, select } from '@wordpress/data-controls';
+import { controls } from '@wordpress/data';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import { __ } from '@wordpress/i18n';
@@ -20,7 +20,6 @@ import type { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
 import { PLANS_STORE } from '../plans';
-import type { State } from '.';
 import type { FontPair } from '../../constants';
 
 type CreateSiteParams = Site.CreateSiteParams;
@@ -30,6 +29,13 @@ type Language = {
 	value: number;
 };
 type FeatureId = WPCOMFeatures.FeatureId;
+
+declare module '@wordpress/data' {
+	export const controls: {
+		select: ( store: string, selector: string, ...args: any[] ) => any;
+		dispatch: ( store: string, action: string, ...args: any[] ) => any;
+	};
+}
 
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
@@ -55,14 +61,12 @@ export function* createSite( {
 	anchorFmEpisodeId = null,
 	anchorFmSpotifyShowUrl = null,
 }: CreateSiteActionParameters ) {
-	const {
-		domain,
-		selectedDesign,
-		selectedFonts,
-		siteTitle,
-		siteVertical,
-		selectedFeatures,
-	}: State = yield select( ONBOARD_STORE, 'getState' );
+	const domain = yield controls.select( ONBOARD_STORE, 'getSelectedDomain' );
+	const selectedDesign = yield controls.select( ONBOARD_STORE, 'getSelectedDesign' );
+	const selectedFonts = yield controls.select( ONBOARD_STORE, 'getSelectedFonts' );
+	const siteTitle = yield controls.select( ONBOARD_STORE, 'getSelectedSiteTitle' );
+	const siteVertical = yield controls.select( ONBOARD_STORE, 'getSelectedVertical' );
+	const selectedFeatures = yield controls.select( ONBOARD_STORE, 'getSelectedFeatures' );
 
 	const shouldEnableFse = !! selectedDesign?.is_fse;
 	const siteUrl = domain?.domain_name || siteTitle || username;
@@ -110,7 +114,7 @@ export function* createSite( {
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-	const success = yield dispatch( SITE_STORE, 'createSite', params );
+	const success = yield controls.dispatch( SITE_STORE, 'createSite', params );
 
 	return success;
 }
@@ -214,7 +218,7 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 } );
 
 export function* updatePlan( planSlug: Plans.PlanSlug ) {
-	const plan: Plans.Plan = yield select( PLANS_STORE, 'getPlanBySlug', planSlug );
+	const plan: Plans.Plan = yield controls.select( PLANS_STORE, 'getPlanBySlug', planSlug );
 	yield setPlan( plan );
 }
 

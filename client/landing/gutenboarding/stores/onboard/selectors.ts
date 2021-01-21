@@ -13,8 +13,8 @@ export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
+export const getSiteTitleHistory = ( state: State ) => state.siteTitleHistory;
 export const getSelectedVertical = ( state: State ) => state.siteVertical;
-export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {
 		return false;
@@ -27,7 +27,11 @@ export const hasPaidDomain = ( state: State ): boolean => {
 	}
 	return ! state.domain.is_free;
 };
+export const hasOnboardingStarted = ( state: State ) => state.hasOnboardingStarted;
 export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 1; // for valid domain results, we need at least 2 characters
+export const hasUsedPlansStep = ( state: State ) => state.hasUsedPlansStep;
+export const hasUsedDomainsStep = ( state: State ) => state.hasUsedDomainsStep;
+export const showSignupDialog = ( state: State ) => state.showSignupDialog;
 export const wasVerticalSkipped = ( state: State ): boolean => state.wasVerticalSkipped;
 
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
