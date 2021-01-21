@@ -7,28 +7,8 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	plansProductSlugs,
-} from './constants';
 import type { PlanAction } from './actions';
-import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
-
-export type PricesMap = {
-	[ slug in PlanSlug ]: string;
-};
-
-const DEFAULT_PRICES_STATE: PricesMap = {
-	[ PLAN_FREE ]: '',
-	[ PLAN_PERSONAL ]: '',
-	[ PLAN_PREMIUM ]: '',
-	[ PLAN_BUSINESS ]: '',
-	[ PLAN_ECOMMERCE ]: '',
-};
+import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
 
 export const features: Reducer< Record< string, PlanFeature >, PlanAction > = (
 	state = {},
@@ -42,7 +22,7 @@ export const features: Reducer< Record< string, PlanFeature >, PlanAction > = (
 	}
 };
 
-export const featuresByType: Reducer< Array< PlanFeatureType >, PlanAction > = (
+export const featuresByType: Reducer< Array< FeaturesByType >, PlanAction > = (
 	state = [],
 	action
 ) => {
@@ -54,7 +34,7 @@ export const featuresByType: Reducer< Array< PlanFeatureType >, PlanAction > = (
 	}
 };
 
-export const plans: Reducer< Record< string, Plan >, PlanAction > = ( state = {}, action ) => {
+export const plans: Reducer< Plan[], PlanAction > = ( state = [], action ) => {
 	switch ( action.type ) {
 		case 'SET_PLANS':
 			return action.plans;
@@ -63,23 +43,10 @@ export const plans: Reducer< Record< string, Plan >, PlanAction > = ( state = {}
 	}
 };
 
-export const prices: Reducer< PricesMap, PlanAction > = (
-	state = DEFAULT_PRICES_STATE,
-	action: PlanAction
-) => {
+export const planProducts: Reducer< PlanProduct[], PlanAction > = ( state = [], action ) => {
 	switch ( action.type ) {
-		case 'SET_PRICES':
-			return action.prices;
-		default:
-			return state;
-	}
-};
-
-export const supportedPlanSlugs: Reducer< string[], PlanAction > = (
-	state = plansProductSlugs,
-	action: PlanAction
-) => {
-	switch ( action.type ) {
+		case 'SET_PLAN_PRODUCTS':
+			return action.products;
 		default:
 			return state;
 	}
@@ -88,9 +55,8 @@ export const supportedPlanSlugs: Reducer< string[], PlanAction > = (
 const reducer = combineReducers( {
 	features,
 	featuresByType,
+	planProducts,
 	plans,
-	prices,
-	supportedPlanSlugs,
 } );
 
 export type State = ReturnType< typeof reducer >;

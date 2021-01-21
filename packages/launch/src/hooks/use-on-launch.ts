@@ -7,7 +7,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
+import { LAUNCH_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { useCart, useSiteDomains } from '../hooks';
 import { useSite } from './';
@@ -16,7 +16,10 @@ import { useSite } from './';
 export const useOnLaunch = () => {
 	const { siteId, redirectTo } = React.useContext( LaunchContext );
 
-	const { plan } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { planProductId } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const isPlanFree = useSelect( ( select ) =>
+		select( PLANS_STORE ).isPlanProductFree( planProductId )
+	);
 
 	const { isSiteLaunched } = useSite();
 	const { siteSubdomain } = useSiteDomains();
@@ -25,7 +28,7 @@ export const useOnLaunch = () => {
 	React.useEffect( () => {
 		if ( isSiteLaunched ) {
 			// if a paid plan is selected, set cart and redirect to /checkout
-			if ( plan && ! plan?.isFree ) {
+			if ( ! isPlanFree ) {
 				goToCheckout();
 				return;
 			}

@@ -31,7 +31,7 @@ registerStore< State >( STORE_KEY, {
 		'hasUsedPlansStep',
 		'isExperimental',
 		'pageLayouts',
-		'plan',
+		'planProductId',
 		'randomizedDesigns',
 		'selectedDesign',
 		'selectedFeatures',

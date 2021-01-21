@@ -11,6 +11,7 @@ import { Icon, check } from '@wordpress/icons';
  * Internal dependencies
  */
 import { PLANS_STORE } from '../constants';
+import useBillingPeriod from '../hooks/use-billing-period';
 
 /**
  * Style dependencies
@@ -20,19 +21,25 @@ import './style.scss';
 const TickIcon = <Icon icon={ check } size={ 25 } />;
 
 type Props = {
-	onSelect: ( storeSlug: string ) => void;
+	onSelect: ( planProductId: number | undefined ) => void;
 	locale: string;
 };
 
 const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) => {
 	const { __ } = useI18n();
 
-	const { features, featuresByType, plans } = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlansDetails( locale )
+	const features = useSelect( ( select ) => select( PLANS_STORE ).getFeatures() );
+	const featuresByType = useSelect( ( select ) => select( PLANS_STORE ).getFeaturesByType() );
+	const supportedPlans = useSelect( ( select ) =>
+		select( PLANS_STORE ).getSupportedPlans( locale )
 	);
 
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
-	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
+	const billingPeriod = useBillingPeriod();
+	const planProducts = useSelect( ( select ) =>
+		supportedPlans.map( ( plan ) =>
+			select( PLANS_STORE ).getPlanProduct( plan.periodAgnosticSlug, billingPeriod )
+		)
+	);
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4, 5 ];
@@ -49,7 +56,9 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 										<span className="plans-details__placeholder">{ '' }</span>
 									</th>
 							  ) )
-							: supportedPlans.map( ( plan ) => <th key={ plan.storeSlug }>{ plan.title }</th> ) }
+							: supportedPlans.map( ( plan ) => (
+									<th key={ plan.periodAgnosticSlug }>{ plan.title }</th>
+							  ) ) }
 					</tr>
 				</thead>
 
@@ -81,10 +90,10 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 									<th>{ features[ feature ].name }</th>
 									{ supportedPlans.map( ( plan, j ) =>
 										feature === 'storage' ? (
-											<td key={ j }>{ plans[ plan.storeSlug ][ feature ] }</td>
+											<td key={ j }>{ plan.storage }</td>
 										) : (
 											<td key={ j }>
-												{ plans[ plan.storeSlug ].featuresSlugs?.[ feature ] ? (
+												{ plan.featuresSlugs?.[ feature ] ? (
 													<>
 														{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 														<span className="hidden">
@@ -121,8 +130,8 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 										<span className="plans-details__placeholder">{ '' }</span>
 									</td>
 							  ) )
-							: supportedPlans.map( ( plan ) => (
-									<td key={ plan.storeSlug }>{ prices[ plan.storeSlug ] }</td>
+							: supportedPlans.map( ( plan, i ) => (
+									<td key={ plan.periodAgnosticSlug }>{ planProducts[ i ]?.price }</td>
 							  ) ) }
 					</tr>
 
@@ -138,12 +147,12 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) 
 										</Button>{ ' ' }
 									</td>
 							  ) )
-							: supportedPlans.map( ( plan ) => (
-									<td key={ plan.storeSlug }>
+							: supportedPlans.map( ( plan, i ) => (
+									<td key={ plan.periodAgnosticSlug }>
 										<Button
 											className="plans-details__select-button"
 											onClick={ () => {
-												onSelect( plan.storeSlug );
+												onSelect( planProducts[ i ]?.productId );
 											} }
 											isPrimary
 										>

@@ -15,8 +15,8 @@ import * as resolvers from './resolvers';
 import { controls } from '../wpcom-request-controls';
 
 export type { State };
-export type { Plan, PlanSlug } from './types';
-export type { PlanPath } from './constants';
+export type { Plan, PlanSlug, PlanProduct } from './types';
+export type { PlanPath } from './types';
 
 // plansPaths is used to construct the route that accepts plan slugs like (/beginner, /business, etc..)
 export {
@@ -26,6 +26,14 @@ export {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	plansPaths,
+} from './constants';
+
+export {
+	TIMELESS_PLAN_FREE,
+	TIMELESS_PLAN_PERSONAL,
+	TIMELESS_PLAN_PREMIUM,
+	TIMELESS_PLAN_BUSINESS,
+	TIMELESS_PLAN_ECOMMERCE,
 } from './constants';
 
 let isRegistered = false;

@@ -5,7 +5,6 @@ import {
 	DomainSuggestions,
 	Site,
 	VerticalsTemplates,
-	Plans,
 	WPCOMFeatures,
 } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
@@ -19,7 +18,6 @@ import { __ } from '@wordpress/i18n';
 import type { Design, SiteVertical } from './types';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
-import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
 
@@ -169,9 +167,9 @@ export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 	isRedirecting,
 } );
 
-export const setPlan = ( plan: Plans.Plan ) => ( {
-	type: 'SET_PLAN' as const,
-	plan,
+export const setPlanProductId = ( planProductId: number | undefined ) => ( {
+	type: 'SET_PLAN_PRODUCT_ID' as const,
+	planProductId,
 } );
 
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
@@ -213,9 +211,9 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
-export function* updatePlan( planSlug: Plans.PlanSlug ) {
-	const plan: Plans.Plan = yield select( PLANS_STORE, 'getPlanBySlug', planSlug );
-	yield setPlan( plan );
+export function updatePlan( planProductId: number ) {
+	// keep updatePlan for backwards compat
+	return setPlanProductId( planProductId );
 }
 
 export const startOnboarding = () => ( {
@@ -235,7 +233,7 @@ export type OnboardAction = ReturnType<
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
 	| typeof setIsRedirecting
-	| typeof setPlan
+	| typeof setPlanProductId
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
