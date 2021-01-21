@@ -34,7 +34,7 @@
 	"dependencies": {
 		"@wordpress/compose": "1.x.x - 3.x.x",
 		"@wordpress/hooks": "^2.11.0",
-		"@wordpress/i18n": "^3.14.0",
+		"@wordpress/i18n": "^3.17.0",
 		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {

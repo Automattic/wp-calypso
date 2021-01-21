@@ -39,9 +39,9 @@
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/shopping-cart": "^1.0.0",
-		"@wordpress/components": "^10.0.5",
-		"@wordpress/icons": "^2.4.0",
-		"@wordpress/url": "^2.17.0",
+		"@wordpress/components": "^12.0.2",
+		"@wordpress/icons": "^2.9.0",
+		"@wordpress/url": "^2.21.1",
 		"classnames": "^2.2.6",
 		"react-router-dom": "^5.1.2",
 		"use-debounce": "^3.1.0"
@@ -49,15 +49,15 @@
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
 		"@testing-library/react": "^10.0.5",
-		"@wordpress/base-styles": "^2.0.1",
+		"@wordpress/base-styles": "^3.3.1",
 		"copyfiles": "^2.3.0",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.22.3",
-		"@wordpress/element": "^2.16.0",
-		"@wordpress/i18n": "^3.14.0",
+		"@wordpress/data": "^4.26.2",
+		"@wordpress/element": "^2.19.0",
+		"@wordpress/i18n": "^3.17.0",
 		"react": "^16.8"
 	},
 	"private": true
