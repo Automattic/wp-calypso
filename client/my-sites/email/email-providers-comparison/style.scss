@@ -16,6 +16,10 @@
 			width: calc( 50% - 0.5em );
 		}
 
+		&.titan .titan-powered-by-logo {
+			filter: invert( 0.3 );
+		}
+
 		@include breakpoint-deprecated( '<1040px' ) {
 			&,
 			&.no-gsuite {

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -41,6 +42,7 @@ import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'calypso/assets/images/email-providers/titan.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/powered-by-titan.svg';
 import googleWorkspaceLogo from 'calypso/assets/images/email-providers/google-workspace.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
@@ -211,6 +213,7 @@ class EmailProvidersComparison extends React.Component {
 		) : (
 			{ path: titanLogo }
 		);
+		const trailingImageUrl = config.isEnabled( 'titan/phase-2' ) ? poweredByTitanLogo : null;
 
 		return (
 			<EmailProviderDetails
@@ -232,7 +235,10 @@ class EmailProvidersComparison extends React.Component {
 				hasPrimaryButton={ true }
 				isButtonBusy={ this.state.isFetchingProvisioningURL }
 				onButtonClick={ this.onAddTitanClick }
-				className={ className }
+				className={ classNames( className, 'titan' ) }
+				trailingImageClassName="titan-powered-by-logo"
+				trailingImageTitle={ translate( 'Powered by Titan' ) }
+				trailingImageUrl={ trailingImageUrl }
 			/>
 		);
 	}
