@@ -47,6 +47,7 @@
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
+		"nav-unification": false,
 		"oauth": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,

@@ -50,6 +50,7 @@
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
+		"nav-unification": false,
 		"oauth": true,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
