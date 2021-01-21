@@ -23,7 +23,9 @@
 		}
 	}
 
-	.segmented-control__item .segmented-control__link {
+	.segmented-control__item .segmented-control__link,
+	.segmented-control__item:first-of-type .segmented-control__link,
+	.segmented-control__item:last-of-type .segmented-control__link {
 		border-radius: 5px; /* stylelint-disable-line scales/radii */
 		margin: 2px;
 		padding: 0;
