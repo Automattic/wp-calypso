@@ -36,5 +36,8 @@
 		"@romainberger/css-diff": "^1.0.3",
 		"async": "^2.0.0",
 		"rtlcss": "^3.1.2"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

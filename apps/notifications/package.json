@@ -50,5 +50,8 @@
 		"postcss": "^8.2.6",
 		"webpack": "^5.54.0",
 		"webpack-dev-server": "^3.11.2"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

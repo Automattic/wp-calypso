@@ -81,5 +81,8 @@
 		"testarmada-magellan-local-executor": "^2.0.3",
 		"xml2json-command": "^0.0.3",
 		"xmpp.js": "^0.3.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

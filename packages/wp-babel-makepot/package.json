@@ -40,5 +40,8 @@
 		"jest": "^27.0.6",
 		"react": "^17.0.2",
 		"rimraf": "^3.0.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

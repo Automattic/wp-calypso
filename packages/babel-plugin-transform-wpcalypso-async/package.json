@@ -15,5 +15,8 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.15.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

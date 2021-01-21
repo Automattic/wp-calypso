@@ -21,5 +21,8 @@
 	},
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

@@ -65,5 +65,8 @@
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.0.5"
 	},
-	"private": true
+	"private": true,
+	"volta": {
+		"extends": "../../package.json"
+	}
 }

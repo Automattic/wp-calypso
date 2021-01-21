@@ -31,5 +31,8 @@
 		"clean": "yarn build --clean && npx rimraf dist",
 		"build": "tsc --build ./tsconfig.json",
 		"test": "yarn jest"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

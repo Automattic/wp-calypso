@@ -27,5 +27,8 @@
 	"scripts": {
 		"clean": "yarn build --clean && npx rimraf dist",
 		"build": "tsc --build ./tsconfig.json"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

@@ -46,5 +46,8 @@
 		"chai": "^4.3.4",
 		"typescript": "^4.4.3"
 	},
-	"private": true
+	"private": true,
+	"volta": {
+		"extends": "../../package.json"
+	}
 }

@@ -49,5 +49,8 @@
 	},
 	"devDependencies": {
 		"chai": "^4.3.4"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

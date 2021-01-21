@@ -49,5 +49,8 @@
 		"webpack-cli": "^4.8.0",
 		"wpcom-oauth-cors": "^1.0.2-beta",
 		"wpcom-proxy-request": "^6.0.0"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

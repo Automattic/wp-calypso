@@ -28,5 +28,8 @@
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "^2.0.0",
 		"typescript": "^4.4.3"
+	},
+	"volta": {
+		"extends": "../../package.json"
 	}
 }

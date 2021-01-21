@@ -59,5 +59,8 @@
 	"peerDependencies": {
 		"@emotion/react": "^11.4.1"
 	},
-	"private": true
+	"private": true,
+	"volta": {
+		"extends": "../../package.json"
+	}
 }
