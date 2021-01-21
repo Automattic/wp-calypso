@@ -419,7 +419,7 @@ function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.Transla
 	const isRenewalItem = isRenewal( serverCartItem );
 	const { meta, product_name: productName } = serverCartItem;
 
-	if ( isDotComPlan( serverCartItem ) || isTitanMail( serverCartItem ) ) {
+	if ( isDotComPlan( serverCartItem ) || ( ! isRenewalItem && isTitanMail( serverCartItem ) ) ) {
 		if ( isRenewalItem ) {
 			return translate( 'Plan Renewal' );
 		}
