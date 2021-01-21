@@ -6,13 +6,18 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'calypso/state/reader/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
-		case READER_TEAMS_RECEIVE: {
+		case TEAMS_RECEIVE: {
 			if ( action.error ) {
 				return state;
 			}
@@ -25,16 +30,18 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
 
 export const isRequesting = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
-		case READER_TEAMS_REQUEST:
+		case TEAMS_REQUEST:
 			return true;
-		case READER_TEAMS_RECEIVE:
+		case TEAMS_RECEIVE:
 			return false;
 	}
 
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	isRequesting,
 } );
+
+export default withStorageKey( 'teams', combinedReducer );

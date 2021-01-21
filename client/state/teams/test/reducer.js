@@ -8,7 +8,7 @@ import deepfreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, isRequesting } from '../reducer';
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'calypso/state/reader/action-types';
+import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
 import { DESERIALIZE } from 'calypso/state/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 				items(
 					{},
 					{
-						type: READER_TEAMS_RECEIVE,
+						type: TEAMS_RECEIVE,
 						payload: { teams: [ TEAM1 ] },
 					}
 				)
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 				items(
 					{},
 					{
-						type: READER_TEAMS_RECEIVE,
+						type: TEAMS_RECEIVE,
 						payload: { teams: [ TEAM1, TEAM2 ] },
 					}
 				)
@@ -58,7 +58,7 @@ describe( 'reducer', () => {
 			const initialState = deepfreeze( {} );
 			expect(
 				items( initialState, {
-					type: READER_TEAMS_RECEIVE,
+					type: TEAMS_RECEIVE,
 					payload: { some: 'error' },
 					error: true,
 				} )
@@ -84,7 +84,7 @@ describe( 'reducer', () => {
 		test( 'requesting teams should set requesting to true', () => {
 			expect(
 				isRequesting( false, {
-					type: READER_TEAMS_REQUEST,
+					type: TEAMS_REQUEST,
 				} )
 			).to.equal( true );
 		} );
@@ -92,7 +92,7 @@ describe( 'reducer', () => {
 		test( 'successful request should set requesting to false', () => {
 			expect(
 				isRequesting( true, {
-					type: READER_TEAMS_RECEIVE,
+					type: TEAMS_RECEIVE,
 					teams: [ {}, {}, {} ],
 				} )
 			).to.equal( false );
@@ -101,7 +101,7 @@ describe( 'reducer', () => {
 		test( 'failed request should set requesting to false', () => {
 			expect(
 				isRequesting( true, {
-					type: READER_TEAMS_RECEIVE,
+					type: TEAMS_RECEIVE,
 					error: new Error( 'test error' ),
 				} )
 			).to.equal( false );

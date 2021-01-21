@@ -25,7 +25,7 @@ import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';

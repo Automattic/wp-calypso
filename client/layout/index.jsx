@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -46,7 +45,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import Experiment from 'calypso/components/experiment';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 
 /**

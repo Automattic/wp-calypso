@@ -25,7 +25,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 /**

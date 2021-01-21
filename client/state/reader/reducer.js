@@ -16,7 +16,6 @@ import siteDismissals from './site-dismissals/reducer';
 import sites from './sites/reducer';
 import streams from './streams/reducer';
 import tags from './tags/reducer';
-import teams from './teams/reducer';
 import thumbnails from './thumbnails/reducer';
 import viewing from './viewing/reducer';
 import organizations from './organizations/reducer';
@@ -35,7 +34,6 @@ const combinedReducer = combineReducers( {
 	sites,
 	streams,
 	tags,
-	teams,
 	thumbnails,
 	viewing,
 	organizations,
