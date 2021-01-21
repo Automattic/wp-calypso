@@ -155,8 +155,10 @@ export function setUserSetting( settingName, value ) {
 
 		/*
 		 * If the two match, we don't consider the setting "changed".
-		 * user_login is a special case since the logic for validating and saving a username
-		 * is more complicated.
+		 * `user_login` is a special case since the logic for validating and saving a username
+		 * is more complicated. `language` is a special case since we have to check for changes
+		 * to locale_variant this might be easier if we tracked the lang_id instead as we do in
+		 * client/my-sites/site-settings/form-general.jsx
 		 */
 		if (
 			( originalSetting === value && 'user_login' !== settingKey && 'language' !== settingKey ) ||
@@ -167,7 +169,5 @@ export function setUserSetting( settingName, value ) {
 		} else {
 			dispatch( setUnsavedUserSetting( settingKey, value ) );
 		}
-
-		return true;
 	};
 }

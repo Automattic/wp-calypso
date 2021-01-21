@@ -123,23 +123,14 @@ class Account extends React.Component {
 	}
 
 	getUserSetting( settingName ) {
-		// @TODO make it so we can handle nested values as well like
-		// `settingName = [ 'calypso_preferences', 'colorScheme' ] for
-		// `userSettings.calypso_preferences.colorScheme`
 		return this.props.unsavedUserSettings[ settingName ] ?? this.props.userSettings[ settingName ];
 	}
 
 	getUserOriginalSetting( settingName ) {
-		// @TODO make it so we can handle nested values as well like
-		// `settingName = [ 'calypso_preferences', 'colorScheme' ] for
-		// `userSettings.calypso_preferences.colorScheme`
 		return this.props.userSettings[ settingName ];
 	}
 
 	hasUnsavedUserSetting( settingName ) {
-		// @TODO make it so we can handle nested values as well like
-		// `settingName = [ 'calypso_preferences', 'colorScheme' ] for
-		// `userSettings.calypso_preferences.colorScheme`
 		return !! this.props.unsavedUserSettings[ settingName ];
 	}
 
