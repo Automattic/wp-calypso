@@ -185,8 +185,8 @@ $accent-blue: #117ac9;
 
 			&::after {
 				content: '';
-				width: $radio-button-size - 2 * $border-width;
-				height: $radio-button-size - 2 * $border-width;
+				width: 100%;
+				height: 100%;
 				border: 2px solid white;
 				border-radius: 50%;
 				position: absolute;
