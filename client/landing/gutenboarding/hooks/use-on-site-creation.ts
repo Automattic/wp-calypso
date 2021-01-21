@@ -57,7 +57,7 @@ interface Cart {
  **/
 
 export default function useOnSiteCreation(): void {
-	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );

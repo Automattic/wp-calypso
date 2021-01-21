@@ -30,7 +30,7 @@ const Header: React.FunctionComponent = () => {
 	const isAnchorFmSignup = useIsAnchorFm();
 	const makePath = usePath();
 
-	const siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
+	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	// steps (including modals) where we show Domains button
 	const showDomainsButton =

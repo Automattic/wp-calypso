@@ -42,11 +42,9 @@ export default function useSteps(): Array< StepType > {
 
 	// Logic necessary to skip Domains or Plans steps
 	// General rule: if a step has been used already, don't remove it.
-	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) => ( {
-		domain: select( ONBOARD_STORE ).getSelectedDomain(),
-		hasUsedDomainsStep: select( ONBOARD_STORE ).hasUsedDomainsStep(),
-		hasUsedPlansStep: select( ONBOARD_STORE ).hasUsedPlansStep(),
-	} ) );
+	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getState()
+	);
 	const plan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 	const hasPlanFromPath = !! usePlanFromPath();
 
