@@ -2,6 +2,19 @@
 	"extends": "@automattic/calypso-build/tsconfig",
 	"exclude": [ "node_modules" ],
 	"compilerOptions": {
-		"allowJs": true
+		"target": "ES5",
+		"lib": [ "DOM", "ES2015", "ScriptHost" ],
+		"module": "ESNEXT",
+		"allowJs": true,
+		"checkJs": true,
+		"jsx": "preserve",
+
+		"strict": true,
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": [],
+
+		"noEmitHelpers": true,
+		"importHelpers": true
 	}
 }
