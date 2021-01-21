@@ -16,7 +16,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"bundle": "calypso-build --env.WP",
+		"bundle": "calypso-build --env WP",
 		"build:dev": "npm run bundle --",
 		"build:prod": "NODE_ENV=production yarn run bundle --",
 		"build": "npm-run-all --parallel \"build:* -- {@}\" --",
@@ -50,8 +50,8 @@
 		"tinymce": "^4.9.6"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^6.1.0",
-		"@wordpress/dependency-extraction-webpack-plugin": "^2.8.0",
+		"@automattic/calypso-build": "^7.0.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^2.9.0",
 		"enzyme": "^3.11.0",
 		"npm-run-all": "^4.1.5"
 	}

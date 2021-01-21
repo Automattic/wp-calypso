@@ -28,7 +28,7 @@ Object.assign( AssetsWriter.prototype, {
 	apply: function ( compiler ) {
 		const self = this;
 
-		compiler.hooks.afterEmit.tapAsync( 'AssetsWriter', ( compilation, callback ) => {
+		compiler.hooks.emit.tapAsync( 'AssetsWriter', ( compilation, callback ) => {
 			this.createOutputStream();
 			const stats = compilation.getStats().toJson( {
 				hash: true,
@@ -73,9 +73,9 @@ Object.assign( AssetsWriter.prototype, {
 				assets: _.reject(
 					entry.assets,
 					( asset ) =>
-						asset.startsWith( this.options.manifestFile ) ||
-						asset.startsWith( this.options.runtimeFile )
-				).map( fixupPath ),
+						asset.name.startsWith( this.options.manifestFile ) ||
+						asset.name.startsWith( this.options.runtimeFile )
+				).map( ( asset ) => fixupPath( asset.name ) ),
 			} ) );
 
 			statsToOutput.assetsByChunkName = _.mapValues( stats.assetsByChunkName, ( asset ) =>
