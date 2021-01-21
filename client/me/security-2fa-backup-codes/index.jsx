@@ -26,7 +26,7 @@ class Security2faBackupCodes extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		const printed = this.props.printed;
+		const printed = this.props.backupCodesPrinted;
 
 		this.state = {
 			printed,
@@ -161,7 +161,7 @@ class Security2faBackupCodes extends React.Component {
 
 export default connect(
 	( state ) => ( {
-		printed: getUserSetting( state, 'two_step_backup_codes_printed' ),
+		backupCodesPrinted: getUserSetting( state, 'two_step_backup_codes_printed' ),
 	} ),
 	{
 		recordGoogleEvent,
