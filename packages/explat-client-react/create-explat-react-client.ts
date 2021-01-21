@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { ExperimentAssignment } from './types'
-import { ExPlatClient } from './create-explat-client'
+import { ExperimentAssignment } from 'explat-client/src/types'
+import { ExPlatClient } from 'explat-client/src/create-explat-client'
 
 interface ExPlatReactClient {
     /**

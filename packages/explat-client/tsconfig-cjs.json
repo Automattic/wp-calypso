@@ -1,0 +1,11 @@
+{
+	"extends": "./tsconfig",
+	"compilerOptions": {
+		"module": "commonjs",
+		"declaration": false,
+		"declarationDir": null,
+		"outDir": "dist/cjs",
+		"composite": false,
+		"incremental": true
+	}
+}
