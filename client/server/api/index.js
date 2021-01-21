@@ -20,7 +20,7 @@ export default function api() {
 		response.json( { version } );
 	} );
 
-	if ( config.isEnabled( 'oauth' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
+	if ( config.isEnabled( 'oauth' ) ) {
 		oauth( app );
 	}
 
