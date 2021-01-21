@@ -34,7 +34,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe.skip( 'Gutenboarding: (' + screenSize + ')', function () {
+describe( 'Gutenboarding: (' + screenSize + ')', function () {
 	this.timeout( mochaTimeOut );
 	describe( 'Create new site as existing user @parallel @canary', function () {
 		const siteTitle = dataHelper.randomPhrase();
