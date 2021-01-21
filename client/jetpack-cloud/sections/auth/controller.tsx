@@ -69,6 +69,10 @@ export const tokenRedirect: PageJS.Callback = ( context, next ) => {
 		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 	}
 
+	next();
+};
+
+export const userInitialize: PageJS.Callback = ( context, next ) => {
 	context.primary = <GetToken />;
 
 	// Fetch user and redirect to / on success.
