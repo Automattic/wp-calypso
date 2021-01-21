@@ -29,8 +29,8 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
+		"@automattic/components": "^1.0.0-alpha.3",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@automattic/search": "^1.0.0",
 		"@babel/runtime": "^7.12.5",
 		"@wordpress/base-styles": "^3.3.0",
 		"@wordpress/components": "^12.0.1",

@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import Search from '@automattic/search';
+import { Search } from '@automattic/components';
 
 /**
  * WordPress dependencies

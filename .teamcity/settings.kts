@@ -526,29 +526,6 @@ object RunAllUnitTests : BuildType({
 			dockerImage = "%docker_image%"
 			dockerRunParameters = "-u %env.UID%"
 		}
-		script {
-			name = "Build search storybook"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
-				export NODE_ENV="production"
-
-				yarn search:storybook:start --ci --smoke-test
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
-		}
 	}
 
 	triggers {

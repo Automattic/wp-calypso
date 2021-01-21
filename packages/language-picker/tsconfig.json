@@ -31,5 +31,5 @@
 		"composite": true
 	},
 	"include": [ "src" ],
-	"references": [ { "path": "../search" } ]
+	"references": [ { "path": "../components" } ]
 }

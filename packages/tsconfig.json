@@ -17,7 +17,6 @@
 		{ "path": "./onboarding" },
 		{ "path": "./plans-grid" },
 		{ "path": "./react-i18n" },
-		{ "path": "./search" },
 		{ "path": "./shopping-cart" }
 	]
 }

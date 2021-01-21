@@ -8,3 +8,4 @@ export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';
 export { default as Suggestions } from './suggestions';
+export { default as Search } from './search';
