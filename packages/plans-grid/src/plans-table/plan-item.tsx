@@ -7,7 +7,7 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import type { CTAVariation, PopularBadgeVariation } from './types';
 import { useSelect } from '@wordpress/data';
 
@@ -15,8 +15,6 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
-import useBillingPeriod from '../hooks/use-billing-period';
-import type { BillingIntervalType } from '../plans-interval-toggle';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
@@ -45,7 +43,7 @@ export interface Props {
 	name: string;
 	tagline?: string | false;
 	features: Array< string >;
-	billingInterval: BillingIntervalType;
+	billingPeriod: Plans.PlanBillingPeriod;
 	annuallyDiscountPercentage: number;
 	domain?: DomainSuggestions.DomainSuggestion;
 	isPopular?: boolean;
@@ -73,7 +71,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	isFree = false,
 	domain,
 	features,
-	billingInterval,
+	billingPeriod,
 	annuallyDiscountPercentage,
 	onSelect,
 	onPickDomainClick,
@@ -85,7 +83,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const billingPeriod = useBillingPeriod();
 	const planProduct = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
 	);
@@ -153,7 +150,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						<div className="plan-item__price-note">
 							{ isFree && __( 'free forever', __i18n_text_domain__ ) }
 							{ ! isFree &&
-								( billingInterval === 'ANNUALLY'
+								( billingPeriod === 'ANNUALLY'
 									? sprintf(
 											__( 'per month, billed as %s annually', __i18n_text_domain__ ),
 											// TODO: NEEDS THE ANNUAL PRICE FROM DATA-STORE
@@ -169,7 +166,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						 */ }
 						<div
 							className={ classNames( 'plan-item__price-discount', {
-								'plan-item__price-discount--disabled': billingInterval !== 'ANNUALLY',
+								'plan-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
 								'plan-item__price-discount--hidden': isFree,
 							} ) }
 							aria-hidden={ isFree ? 'true' : 'false' }
@@ -227,7 +224,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								disabledLabel &&
 								sprintf( __( '%s is not included', __i18n_text_domain__ ), domain?.domain_name )
 							}
-							billingInterval={ billingInterval }
+							billingPeriod={ billingPeriod }
 						/>
 					</div>
 				</div>

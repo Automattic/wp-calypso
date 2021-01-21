@@ -7,6 +7,8 @@ export type StorePlanSlug = typeof plansProductSlugs[ number ];
 export type PlanSlug = typeof plansOrder[ number ];
 export type PlanPath = typeof plansPaths[ number ];
 
+export type PlanBillingPeriod = 'MONTHLY' | 'ANNUALLY';
+
 export type PlanAction = {
 	type: string;
 	slug?: string;
@@ -24,7 +26,7 @@ export interface Plan {
 }
 
 export interface PlanProduct {
-	billingPeriod: 'MONTHLY' | 'ANNUALLY';
+	billingPeriod: PlanBillingPeriod;
 	price: string;
 	rawPrice: number;
 	productId: number;

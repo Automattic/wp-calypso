@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import { useSelect } from '@wordpress/data';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import type {
 	CustomTagLinesMap,
 	DisabledPlansMap,
 } from './types';
-import type { BillingIntervalType } from '../plans-interval-toggle';
 
 /**
  * Style dependencies
@@ -35,7 +34,7 @@ export interface Props {
 	popularBadgeVariation: PopularBadgeVariation;
 	customTagLines?: CustomTagLinesMap;
 	defaultAllPlansExpanded?: boolean;
-	billingInterval: BillingIntervalType;
+	billingPeriod: Plans.PlanBillingPeriod;
 	onMaxMonhtlyDiscountPercentageChange: ( perc: number | undefined ) => void;
 }
 
@@ -46,7 +45,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	currentDomain,
 	disabledPlans,
 	locale,
-	billingInterval,
+	billingPeriod,
 	onMaxMonhtlyDiscountPercentageChange,
 	showTaglines = false,
 	CTAVariation = 'NORMAL',
@@ -84,7 +83,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							}
 							CTAVariation={ CTAVariation }
 							features={ plan.features ?? [] }
-							billingInterval={ billingInterval }
+							billingPeriod={ billingPeriod }
 							annuallyDiscountPercentage={ tempDiscountPlaceholder }
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }

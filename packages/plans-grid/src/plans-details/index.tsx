@@ -7,13 +7,12 @@ import { useI18n } from '@automattic/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
+import type { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import { PLANS_STORE } from '../constants';
-import useBillingPeriod from '../hooks/use-billing-period';
-import type { BillingIntervalType } from '../plans-interval-toggle';
 
 /**
  * Style dependencies
@@ -25,15 +24,11 @@ const CrossIcon = <Icon icon={ close } size={ 25 } />;
 
 type Props = {
 	onSelect: ( planProductId: number | undefined ) => void;
-	billingInterval: BillingIntervalType;
+	billingPeriod: Plans.PlanBillingPeriod;
 	locale: string;
 };
 
-const PlansDetails: React.FunctionComponent< Props > = ( {
-	onSelect,
-	locale,
-	billingInterval,
-} ) => {
+const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, billingPeriod } ) => {
 	const { __ } = useI18n();
 
 	// TODO: put all selectors into one `useSelect` call
@@ -43,7 +38,6 @@ const PlansDetails: React.FunctionComponent< Props > = ( {
 		select( PLANS_STORE ).getSupportedPlans( locale )
 	);
 
-	const billingPeriod = useBillingPeriod();
 	const planProducts = useSelect( ( select ) =>
 		supportedPlans.map( ( plan ) =>
 			select( PLANS_STORE ).getPlanProduct( plan.periodAgnosticSlug, billingPeriod )
@@ -99,10 +93,10 @@ const PlansDetails: React.FunctionComponent< Props > = ( {
 									className={ classnames( 'plans-details__feature-row', {
 										'plans-details__feature-row--enabled':
 											features[ feature ].requiresAnnuallyBilledPlan &&
-											billingInterval === 'ANNUALLY',
+											billingPeriod === 'ANNUALLY',
 										'plans-details__feature-row--disabled':
 											features[ feature ].requiresAnnuallyBilledPlan &&
-											billingInterval !== 'ANNUALLY',
+											billingPeriod !== 'ANNUALLY',
 									} ) }
 									key={ i }
 								>
@@ -111,7 +105,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( {
 											<span
 												className="plans-details__feature-annual-nudge"
 												aria-label={
-													billingInterval === 'ANNUALLY'
+													billingPeriod === 'ANNUALLY'
 														? __( 'Included with annual plans', __i18n_text_domain__ )
 														: __( 'Only included with annual plans', __i18n_text_domain__ )
 												}
@@ -129,7 +123,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( {
 												{ plan.featuresSlugs?.[ feature ] ? (
 													<>
 														{ features[ feature ].requiresAnnuallyBilledPlan &&
-														billingInterval !== 'ANNUALLY' ? (
+														billingPeriod !== 'ANNUALLY' ? (
 															<>
 																{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 																<span className="hidden">

@@ -14,7 +14,6 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import '../types-patch';
-import type { BillingIntervalType } from '../plans-interval-toggle';
 import { PLANS_STORE } from '../constants';
 
 /**
@@ -64,13 +63,13 @@ const DefaultFeatureListItemContentWrapper: React.FunctionComponent< FeatureList
 } ) => <span className={ className }>{ children }</span>;
 
 const FeatureAnnualDiscountNudge: React.FunctionComponent< {
-	billingInterval: BillingIntervalType;
+	billingPeriod: Plans.PlanBillingPeriod;
 	__: typeof import('@wordpress/i18n').__;
-} > = ( { billingInterval, __ } ) => (
+} > = ( { billingPeriod, __ } ) => (
 	<span
 		className="plans-feature-list__item-annual-nudge"
 		aria-label={
-			billingInterval === 'ANNUALLY'
+			billingPeriod === 'ANNUALLY'
 				? __( 'Included with annual plans', __i18n_text_domain__ )
 				: __( 'Only included with annual plans', __i18n_text_domain__ )
 		}
@@ -82,7 +81,7 @@ const FeatureAnnualDiscountNudge: React.FunctionComponent< {
 function computeDomainFeatureItem(
 	isFreePlan: boolean,
 	domain: DomainSuggestions.DomainSuggestion | undefined,
-	billingInterval: BillingIntervalType,
+	billingPeriod: Plans.PlanBillingPeriod,
 	__: typeof import('@wordpress/i18n').__
 ) {
 	const commonWrapperClassName = 'plans-feature-list__item-content-wrapper--domain-button';
@@ -92,7 +91,7 @@ function computeDomainFeatureItem(
 			FREE_PLAN: null,
 			PAID_PLAN: {
 				wrapperClassName: classnames( commonWrapperClassName, 'is-cta' ),
-				bulletIcon: billingInterval === 'ANNUALLY' ? TickIcon : CrossIcon,
+				bulletIcon: billingPeriod === 'ANNUALLY' ? TickIcon : CrossIcon,
 				// actionIcon: ChevronDown,
 				requiresAnnuallyBilledPlan: true,
 				// translators: %s is a domain name eg: example.com is included
@@ -103,7 +102,7 @@ function computeDomainFeatureItem(
 			FREE_PLAN: null,
 			PAID_PLAN: {
 				wrapperClassName: classnames( commonWrapperClassName, 'is-cta' ),
-				bulletIcon: billingInterval === 'ANNUALLY' ? TickIcon : CrossIcon,
+				bulletIcon: billingPeriod === 'ANNUALLY' ? TickIcon : CrossIcon,
 				// actionIcon: ChevronDown,
 				requiresAnnuallyBilledPlan: true,
 				// translators: %s is a domain name eg: example.com is included
@@ -127,7 +126,7 @@ function computeDomainFeatureItem(
 			},
 			PAID_PLAN: {
 				wrapperClassName: commonWrapperClassName,
-				bulletIcon: billingInterval === 'ANNUALLY' ? TickIcon : CrossIcon,
+				bulletIcon: billingPeriod === 'ANNUALLY' ? TickIcon : CrossIcon,
 				// actionIcon: undefined,
 				requiresAnnuallyBilledPlan: true,
 				// translators: <url /> is a domain name eg: example.com is included
@@ -157,7 +156,7 @@ type FeatureListItem = {
 };
 
 interface FeatureListItemProps extends FeatureListItem {
-	billingInterval: BillingIntervalType;
+	billingPeriod: Plans.PlanBillingPeriod;
 }
 
 const PlansFeatureListItem: React.FunctionComponent< FeatureListItemProps > = (
@@ -167,7 +166,7 @@ const PlansFeatureListItem: React.FunctionComponent< FeatureListItemProps > = (
 		requiresAnnuallyBilledPlan,
 		contentWrapperNode: ItemWrapper = DefaultFeatureListItemContentWrapper,
 		listItemExtraClassName,
-		billingInterval,
+		billingPeriod,
 	},
 	index
 ) => {
@@ -179,9 +178,9 @@ const PlansFeatureListItem: React.FunctionComponent< FeatureListItemProps > = (
 				'plans-feature-list__item',
 				{
 					'plans-feature-list__item--requires-annual-enabled':
-						requiresAnnuallyBilledPlan && billingInterval === 'ANNUALLY',
+						requiresAnnuallyBilledPlan && billingPeriod === 'ANNUALLY',
 					'plans-feature-list__item--requires-annual-disabled':
-						requiresAnnuallyBilledPlan && billingInterval !== 'ANNUALLY',
+						requiresAnnuallyBilledPlan && billingPeriod !== 'ANNUALLY',
 				},
 				listItemExtraClassName
 			) }
@@ -190,7 +189,7 @@ const PlansFeatureListItem: React.FunctionComponent< FeatureListItemProps > = (
 				<BulletIcon className="plans-feature-list__item-bullet-icon" />
 				<span className="plans-feature-list__item-text">
 					{ requiresAnnuallyBilledPlan && (
-						<FeatureAnnualDiscountNudge billingInterval={ billingInterval } __={ __ } />
+						<FeatureAnnualDiscountNudge billingPeriod={ billingPeriod } __={ __ } />
 					) }
 					<span className="plans-feature-list__item-description">{ textNode }</span>
 				</span>
@@ -201,7 +200,7 @@ const PlansFeatureListItem: React.FunctionComponent< FeatureListItemProps > = (
 
 export interface PlansFeatureListProps {
 	features: Array< string >;
-	billingInterval: BillingIntervalType;
+	billingPeriod: Plans.PlanBillingPeriod;
 	domain?: DomainSuggestions.DomainSuggestion;
 	isFree?: boolean;
 	isOpen?: boolean;
@@ -213,7 +212,7 @@ export interface PlansFeatureListProps {
 const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 	features,
 	domain,
-	billingInterval,
+	billingPeriod,
 	isFree: isFreePlan = false,
 	isOpen = false,
 	onPickDomain,
@@ -221,7 +220,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 	multiColumn = false,
 } ) => {
 	const { __ } = useI18n();
-	const domainFeatureItem = computeDomainFeatureItem( isFreePlan, domain, billingInterval, __ );
+	const domainFeatureItem = computeDomainFeatureItem( isFreePlan, domain, billingPeriod, __ );
 	const featuresDetails = useSelect( ( select ) => select( PLANS_STORE ).getFeatures() );
 
 	const featureItems: FeatureListItem[] = [];
@@ -261,7 +260,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 		.forEach( ( { feature, requiresAnnuallyBilledPlan } ) =>
 			featureItems.push( {
 				bulletIcon:
-					requiresAnnuallyBilledPlan && billingInterval === 'MONTHLY' ? CrossIcon : TickIcon,
+					requiresAnnuallyBilledPlan && billingPeriod === 'MONTHLY' ? CrossIcon : TickIcon,
 				textNode: <>{ feature }</>,
 				requiresAnnuallyBilledPlan,
 			} )
@@ -277,7 +276,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 				{ featureItems.map( ( featureItemData, index ) => (
 					<PlansFeatureListItem
 						{ ...featureItemData }
-						billingInterval={ billingInterval }
+						billingPeriod={ billingPeriod }
 						key={ index }
 					/>
 				) ) }

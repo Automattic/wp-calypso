@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
+import type { DomainSuggestions, WPCOMFeatures, Plans } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import debugFactory from 'debug';
 
@@ -19,7 +19,7 @@ import type {
 	DisabledPlansMap,
 	PopularBadgeVariation,
 } from '../plans-table/types';
-import PlansIntervalToggle, { BillingIntervalType } from '../plans-interval-toggle';
+import PlansIntervalToggle from '../plans-interval-toggle';
 
 /**
  * Style dependencies
@@ -67,7 +67,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const [ billingInterval, setBillingInterval ] = React.useState< BillingIntervalType >(
+	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >(
 		'ANNUALLY'
 	);
 
@@ -82,8 +82,8 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 			{ header && <div className="plans-grid__header">{ header }</div> }
 
 			<PlansIntervalToggle
-				intervalType={ billingInterval }
-				onChange={ setBillingInterval }
+				intervalType={ billingPeriod }
+				onChange={ setBillingPeriod }
 				maxMonhtlyDiscountPercentage={ maxMonhtlyDiscountPercentage }
 				className="plans-grid__toggle"
 			/>
@@ -99,7 +99,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							onPickDomainClick={ onPickDomainClick }
 							disabledPlans={ disabledPlans }
 							locale={ locale }
-							billingInterval={ billingInterval }
+							billingPeriod={ billingPeriod }
 							onMaxMonhtlyDiscountPercentageChange={ setMaxMonhtlyDiscountPercentage }
 						></PlansAccordion>
 					) : (
@@ -115,7 +115,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							locale={ locale }
 							showTaglines={ showPlanTaglines }
 							defaultAllPlansExpanded={ defaultAllPlansExpanded }
-							billingInterval={ billingInterval }
+							billingPeriod={ billingPeriod }
 							onMaxMonhtlyDiscountPercentageChange={ setMaxMonhtlyDiscountPercentage }
 						></PlansTable>
 					) }
@@ -130,7 +130,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						<PlansDetails
 							onSelect={ onPlanSelect }
 							locale={ locale }
-							billingInterval={ billingInterval }
+							billingPeriod={ billingPeriod }
 						/>
 					</div>
 				</div>

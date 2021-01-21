@@ -13,8 +13,6 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
-import useBillingPeriod from '../hooks/use-billing-period';
-import type { BillingIntervalType } from '../plans-interval-toggle';
 
 /**
  * Style dependencies
@@ -35,7 +33,7 @@ export interface Props {
 	name: string;
 	description: string;
 	features: Array< string >;
-	billingInterval: BillingIntervalType;
+	billingPeriod: Plans.PlanBillingPeriod;
 	annuallyDiscountPercentage: number;
 	domain?: DomainSuggestions.DomainSuggestion;
 	badge?: string;
@@ -54,7 +52,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	name,
 	description,
 	features,
-	billingInterval,
+	billingPeriod,
 	annuallyDiscountPercentage,
 	domain,
 	badge,
@@ -68,7 +66,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const billingPeriod = useBillingPeriod();
 	const planProduct = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
 	);
@@ -127,7 +124,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								{ isFree && __( 'free forever', __i18n_text_domain__ ) }
 
 								{ ! isFree &&
-									( billingInterval === 'ANNUALLY'
+									( billingPeriod === 'ANNUALLY'
 										? sprintf(
 												__( 'per month, billed as %s annually', __i18n_text_domain__ ),
 												// TODO: NEEDS THE ANNUAL PRICE FROM DATA-STORE
@@ -138,8 +135,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							{ ! isFree && (
 								<div
 									className={ classNames( 'plans-accordion-item__price-discount', {
-										'plans-accordion-item__price-discount--disabled':
-											billingInterval !== 'ANNUALLY',
+										'plans-accordion-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
 									} ) }
 								>
 									{ sprintf(
@@ -172,7 +168,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<PlansFeatureList
 						features={ features }
-						billingInterval={ billingInterval }
+						billingPeriod={ billingPeriod }
 						domain={ domain }
 						isFree={ isFree }
 						isOpen={ isOpen }
