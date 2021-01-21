@@ -1,6 +1,6 @@
 import { ExperimentAssignment } from '../types';
 
-function isObject( x: unknown ): x is object {
+function isObject( x: unknown ): x is Record< string, unknown > {
 	return typeof x === 'object' && x !== null;
 }
 
@@ -25,9 +25,9 @@ function isExperimentAssignment(
 }
 
 /**
- * Basic validation of ExperimentAssignmentInternal
+ * Basic validation of ExperimentAssignment
  *
- * Throws if invalid, returns the experimentAssignmentInternal if valid.
+ * Throws if invalid, returns the experimentAssignment if valid.
  *
  * @param experimentAssignment
  */

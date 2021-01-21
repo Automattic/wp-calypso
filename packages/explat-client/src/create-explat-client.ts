@@ -56,32 +56,21 @@ export default function createExPlatClient(
 		ttl: 0,
 	} );
 
-	let lastRetrievedAllTimestamp = 0;
-	let lastTTLAll = 0;
 	/**
-	 * This function fetchs or starts assignment on all experiment assignments and returns them as a promise.
-	 *
-	 * It is wrapped in a asyncOneAtATime so there will only be one instance of it running at a time,
-	 * it's return will be shared among the callers.
+	 * We have a Async One At A Time ExperimentAssignment fetch for each experiment (memoization over createAOAATExperimentAssignmentFetch).
+	 * This allows multiple calls to occur with only one request behind them.
 	 */
-	const asyncOAATFetchAllExperimentAssignmentsAndStore = Timing.asyncOneAtATime( async () => {
-		// If we have fetched recently enough we don't do anything
-		// This is necessary for experiments that don't exist.
-		// It can be removed if we move to singular-assignment-fetching
-		const now = Timing.monotonicNow();
-		if ( now < lastRetrievedAllTimestamp + lastTTLAll * Timing.MILLISECONDS_PER_SECOND ) {
-			return null;
-		}
-
-		const [ experimentAssignments, ttl ] = await Request.fetchAllExperimentAssignments(
+	const experimentNameToAOAATExperimentAssignmentFetchAndStore: Record<string, ReturnType<typeof createAOAATExperimentAssignmentFetchAndStore>> = {}
+	const createAOAATExperimentAssignmentFetchAndStore = (experimentName) => Timing.asyncOneAtATime( async () => {
+		const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
 			makeRequest,
+			experimentName,
 			getAnonId()
 		);
-		lastRetrievedAllTimestamp = now;
-		lastTTLAll = ttl;
-		experimentAssignments.map( State.storeExperimentAssignment );
-		return experimentAssignments;
+		State.storeExperimentAssignment(fetchedExperimentAssignment);
+		return fetchedExperimentAssignment;
 	} );
+
 
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
@@ -99,21 +88,14 @@ export default function createExPlatClient(
 				}
 
 				// TODO: Don't refetch on global
-				const fetchedExperimentAssignments = await Timing.timeoutPromise(
-					asyncOAATFetchAllExperimentAssignmentsAndStore(),
+				if (experimentNameToAOAATExperimentAssignmentFetchAndStore[experimentName] === undefined) {
+					experimentNameToAOAATExperimentAssignmentFetchAndStore[experimentName]
+						= createAOAATExperimentAssignmentFetchAndStore(experimentName)
+				}
+				const fetchedExperimentAssignment = await Timing.timeoutPromise(
+					experimentNameToAOAATExperimentAssignmentFetchAndStore[experimentName](),
 					EXPERIMENT_FETCH_TIMEOUT
 				);
-				const fetchedExperimentAssignment =
-					fetchedExperimentAssignments &&
-					fetchedExperimentAssignments.find(
-						( experimentAssignment ) => experimentAssignment.experimentName === experimentName
-					);
-				if ( fetchedExperimentAssignment ) {
-					if ( ! ExperimentAssignments.isAlive( fetchedExperimentAssignment ) ) {
-						throw new Error( `Newly fetched experiment isn't alive, something must be wrong.` );
-					}
-					return fetchedExperimentAssignment;
-				}
 
 				return createNullExperimentAssignment();
 			} catch ( e ) {
@@ -125,7 +107,6 @@ export default function createExPlatClient(
 				return createNullExperimentAssignment();
 			}
 		},
-
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {
 			if ( Validation.isName( experimentName ) ) {
 				throw new Error( `Invalid experimentName: ${ experimentName }` );
