@@ -124,7 +124,7 @@ class SinglePlugin extends React.Component {
 	}
 
 	pluginExists( plugin ) {
-		if ( this.isFetching() ) {
+		if ( this.isFetching() || ! this.isFetched() ) {
 			return 'unknown';
 		}
 		if ( plugin && plugin.fetched ) {
