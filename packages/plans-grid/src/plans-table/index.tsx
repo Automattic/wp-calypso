@@ -2,20 +2,19 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import { useSelect } from '@wordpress/data';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import PlanItem from './plan-item';
-import { PLANS_STORE } from '../constants';
 import type {
 	CTAVariation,
 	PopularBadgeVariation,
 	CustomTagLinesMap,
 	DisabledPlansMap,
 } from './types';
+import { useSupportedPlans } from '../hooks';
 
 /**
  * Style dependencies
@@ -53,16 +52,13 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	customTagLines,
 	defaultAllPlansExpanded = false,
 } ) => {
-	const supportedPlans = useSelect( ( select ) =>
-		select( PLANS_STORE ).getSupportedPlans( locale )
-	);
-
-	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
+	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
 
 	React.useEffect( () => {
-		// Get all products, calculate max perc
-		onMaxMonhtlyDiscountPercentageChange( 43 );
-	}, [ onMaxMonhtlyDiscountPercentageChange, supportedPlans ] );
+		onMaxMonhtlyDiscountPercentageChange( maxAnnualDiscount );
+	}, [ onMaxMonhtlyDiscountPercentageChange, maxAnnualDiscount ] );
+
+	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
 
 	return (
 		<div className="plans-table">

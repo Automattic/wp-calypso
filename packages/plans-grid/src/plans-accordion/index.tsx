@@ -15,6 +15,7 @@ import PlanItem from '../plans-accordion-item';
 import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
 import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../constants';
 import type { DisabledPlansMap } from 'src/plans-table/types';
+import { useSupportedPlans } from '../hooks';
 
 /**
  * Style dependencies
@@ -54,14 +55,11 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const supportedPlans = useSelect( ( select ) =>
-		select( PLANS_STORE ).getSupportedPlans( locale )
-	);
+	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
 
 	React.useEffect( () => {
-		// Get all products, calculate max perc
-		onMaxMonhtlyDiscountPercentageChange( 43 );
-	}, [ onMaxMonhtlyDiscountPercentageChange, supportedPlans ] );
+		onMaxMonhtlyDiscountPercentageChange( maxAnnualDiscount );
+	}, [ onMaxMonhtlyDiscountPercentageChange, maxAnnualDiscount ] );
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4 ];
@@ -100,10 +98,6 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 		setOpenPlans(
 			allPlansOpened ? defaultOpenPlans : supportedPlans.map( ( plan ) => plan.periodAgnosticSlug )
 		);
-	};
-
-	const onAnnualDiscountChange = ( plan: Plans.Plan, discount: number | undefined ) => {
-		console.log( plan, discount );
 	};
 
 	return (
