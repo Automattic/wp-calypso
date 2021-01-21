@@ -71,6 +71,7 @@ const AcquireIntentTextInput: React.FunctionComponent< Props > = ( {
 	return (
 		<div className="acquire-intent-text-input__wrapper">
 			<input
+				key="acquire-intent__input"
 				className={ classnames( 'acquire-intent-text-input__input', {
 					'is-empty': ! ( value as string ).length,
 				} ) }
