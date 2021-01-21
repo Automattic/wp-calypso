@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, castArray, debounce, noop } from 'lodash';
+import { get, castArray, debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -112,19 +112,22 @@ const BlockLayoutPreview = ( {
 
 	// Scroll the preview to the top when the blocks change.
 	useEffect( () => {
-		const templatePreivew = document.querySelector( '.template-selector-preview' );
-		if ( ! templatePreivew ) {
+		const templatePreview = document.querySelector( '.template-selector-preview' );
+		if ( ! templatePreview ) {
 			return;
 		}
 
 		// scroll to top when blocks changes.
-		templatePreivew.scrollTop = 0;
+		templatePreview.scrollTop = 0;
 	}, [ recomputeBlockListKey ] );
 
 	// Handling windows resize event.
 	useEffect( () => {
 		const refreshPreview = debounce( rescale, DEBOUNCE_TIMEOUT );
 		window.addEventListener( 'resize', refreshPreview );
+
+		// Call once initially to ensure layouts are set to the correct scale at the outset.
+		rescale();
 
 		return () => {
 			window.removeEventListener( 'resize', refreshPreview );
