@@ -841,6 +841,10 @@ export function hasGoogleApps( cart ) {
 	return some( getAllCartItems( cart ), isGoogleApps );
 }
 
+export function hasTitanMail( cart ) {
+	return some( getAllCartItems( cart ), isTitanMail );
+}
+
 export function customDesignItem() {
 	return {
 		product_slug: 'custom-design',
