@@ -46,6 +46,7 @@ import warn from 'calypso/lib/warn';
 import StoreMoveNoticeView from './store-move-notice-view';
 import config from 'calypso/config';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 
 class Dashboard extends Component {
 	static propTypes = {
@@ -171,6 +172,7 @@ class Dashboard extends Component {
 			storeLocation,
 			shouldRedirectAfterInstall,
 			isCalypsoStoreDeprecatedOrRemoved,
+			isSiteWpcomStore,
 		} = this.props;
 
 		const adminURL = get( selectedSite, 'options.admin_url', '' );
@@ -193,8 +195,18 @@ class Dashboard extends Component {
 			isCalypsoStoreDeprecatedOrRemoved &&
 			shouldRedirectAfterInstall
 		) {
-			// Redirect to Core UI setup after finish installation.
-			this.redirectToWoocommerceSetup( selectedSite );
+			// Redirect to Core UI setup after finish installation if store is
+			// installed on this site. This check is needed because of an edge
+			// case where on a site where WooCommerce was installed then
+			// removed, then shouldRedirectAfterInstall is always true because
+			// the site option still includes WooCommerce - it isn't removed on
+			// plugin removal. See
+			// /client/extensions/woocommerce/state/sites/setup-choices/selectors.js
+			// in getFinishedInstallOfRequiredPlugins().
+			if ( isSiteWpcomStore ) {
+				this.redirectToWoocommerceSetup( selectedSite );
+			}
+
 			return <RequiredPluginsInstallView site={ selectedSite } />;
 		}
 
@@ -317,6 +329,8 @@ function mapStateToProps( state ) {
 		config.isEnabled( 'woocommerce/store-deprecated' ) ||
 		config.isEnabled( 'woocommerce/store-removed' );
 
+	const isSiteWpcomStore = getSiteOption( state, siteId, 'is_wpcom_store' );
+
 	return {
 		finishedInitialSetup,
 		finishedInstallOfRequiredPlugins,
@@ -334,6 +348,7 @@ function mapStateToProps( state ) {
 		storeLocation,
 		shouldRedirectAfterInstall,
 		isCalypsoStoreDeprecatedOrRemoved,
+		isSiteWpcomStore,
 	};
 }
 
