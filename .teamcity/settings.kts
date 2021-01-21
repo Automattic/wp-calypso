@@ -924,10 +924,32 @@ object RunCanaryE2eTests : BuildType({
 		}
 	}
 
-	feature {
-		type = "xml-report-plugin"
-		param("xmlReportParsing.reportType", "junit")
-		param("xmlReportParsing.reportDirs", "test/e2e/reports/*.xml")
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "junit")
+			param("xmlReportParsing.reportDirs", "test/e2e/reports/*.xml")
+		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
 	}
 
 	failureConditions {
