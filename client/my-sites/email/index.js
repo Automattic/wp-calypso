@@ -117,7 +117,7 @@ export default function () {
 			paths.emailManagementTitanControlPanelRedirect( ':site', ':domain' ),
 		],
 		// Note that we don't have the commonHandlers here, as we want to avoid the nav bar etc
-		handlers: [ controller.emailManageMentTitanControlPanelRedirect, makeLayout, clientRender ],
+		handlers: [ controller.emailManagementTitanControlPanelRedirect, makeLayout, clientRender ],
 	} );
 
 	registerMultiPage( {

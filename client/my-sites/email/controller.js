@@ -62,7 +62,7 @@ export default {
 		next();
 	},
 
-	emailManageMentTitanControlPanelRedirect( pageContext, next ) {
+	emailManagementTitanControlPanelRedirect( pageContext, next ) {
 		pageContext.primary = (
 			<TitanControlPanelRedirect
 				domainName={ pageContext.params.domain }
