@@ -18,11 +18,6 @@ import { getCurrentUserCurrencyCode, getCurrentUserId } from 'calypso/state/curr
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import Experiment, {
-	DefaultVariation,
-	LoadingVariations,
-	Variation,
-} from 'calypso/components/experiment';
 import { isTrafficGuide } from 'calypso/lib/products-values';
 import { WPCOM_TRAFFIC_GUIDE } from 'calypso/lib/products-values/constants';
 
@@ -100,7 +95,7 @@ const SalesPage = ( { translate } ) => {
 		</p>
 	);
 
-	const defaultVariation = () => (
+	return (
 		<>
 			<h1 className="ultimate-traffic-guide__header">
 				{ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
@@ -193,91 +188,6 @@ const SalesPage = ( { translate } ) => {
 			) }
 
 			{ cta() }
-		</>
-	);
-
-	const treatmentVariation = () => (
-		<>
-			<h1 className="ultimate-traffic-guide__header">
-				{ translate(
-					'Discover the most important traffic secrets used by our most successful customers'
-				) }
-			</h1>
-			<h2 className="ultimate-traffic-guide__sub-header">
-				{ translate( 'Claim your copy of the Ultimate Traffic Guide today' ) }
-			</h2>
-			<p>
-				{ translate(
-					'Do you want more traffic to your website?' +
-						' Of course you do, who builds a website and doesn’t want traffic?' +
-						' You’ve time building your website and you’ve just realized that “if you build it, they will come” does not always apply.'
-				) }
-			</p>
-			<p>
-				{ translate(
-					'Our marketing team developed The Ultimate Traffic Guide to help WordPress.com users learn some of the same tactics and strategies our most successful customers use to build their audiences. ' +
-						'This easy-to-follow and beginner-friendly guide reveals today’s best strategies and tactics for attracting more visitors.'
-				) }
-			</p>
-			<p>
-				{ translate( 'Here are just some of the topics we cover in The Ultimate Traffic Guide:' ) }
-			</p>
-			<ul>
-				<li>
-					{ translate(
-						'{{b}}Use Your Traffic to Build Even More Traffic{{/b}} The Ultimate Traffic Guide covers how to use your own site stats to further increase your traffic, keep visitors on your site longer, and convert traffic into qualified leads.',
-						{
-							components: { b: <b /> },
-						}
-					) }
-				</li>
-				<li>
-					{ translate(
-						'{{b}}Leverage Social Media to Expand Your Reach{{/b}} Know where your ideal audience spends time and learn how to leverage those social channels to increase traffic.',
-						{
-							components: { b: <b /> },
-						}
-					) }
-				</li>
-				<li>
-					{ translate(
-						'{{b}}Keeping the Engagement Going{{/b}} we’ll share how to choose the right newsletter service, write compelling content, build your list, and monitor key performance indicators to manage the critical ongoing relationship with your site visitors.',
-						{
-							components: { b: <b /> },
-						}
-					) }
-				</li>
-			</ul>
-			<p>
-				{ translate(
-					'You’re going to want to print out all 96 pages of the Ultimate Traffic Guide and keep it by your desk, because you’re going to consult this guide often.'
-				) }
-			</p>
-			{ isLoading ? (
-				<Placeholder />
-			) : (
-				<p>
-					{ translate(
-						'Similar resources are valued up to %(referenceCost)s, but this amazing resource is available to our users at %(cost)s.',
-						{
-							args: { cost: displayCost, referenceCost: displayReferenceCost },
-						}
-					) }
-				</p>
-			) }
-			{ cta() }
-		</>
-	);
-
-	return (
-		<>
-			<Experiment name="traffic_guide_copy_test_v2">
-				<DefaultVariation>{ defaultVariation() }</DefaultVariation>
-				<Variation name="treatment">{ treatmentVariation() }</Variation>
-				<LoadingVariations>
-					<Placeholder num={ 5 } />
-				</LoadingVariations>
-			</Experiment>
 		</>
 	);
 };
