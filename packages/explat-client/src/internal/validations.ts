@@ -1,17 +1,26 @@
+/**
+ * Internal dependencies
+ */
 import { ExperimentAssignment } from '../types';
 
-function isObject( x: unknown ): x is Record< string, unknown > {
+export function isObject( x: unknown ): x is Record< string, unknown > {
 	return typeof x === 'object' && x !== null;
 }
 
 /**
  * Test if a piece of data is a valid name
- * @param name
+ *
+ * @param name The data to test
  */
 export function isName( name: unknown ): name is string {
 	return typeof name === 'string' && name !== '';
 }
 
+/**
+ * Test if a piece of data is a valid experimentAssignment
+ *
+ * @param experimentAssignment The data to test
+ */
 function isExperimentAssignment(
 	experimentAssignment: unknown
 ): experimentAssignment is ExperimentAssignment {
@@ -26,10 +35,9 @@ function isExperimentAssignment(
 
 /**
  * Basic validation of ExperimentAssignment
- *
  * Throws if invalid, returns the experimentAssignment if valid.
  *
- * @param experimentAssignment
+ * @param experimentAssignment The data to validate
  */
 export function validateExperimentAssignment(
 	experimentAssignment: unknown

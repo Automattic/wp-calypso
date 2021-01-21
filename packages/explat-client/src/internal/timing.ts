@@ -5,7 +5,7 @@ let lastNow = Date.now();
  * Returns the time in miliseconds.
  * A strictly increasing version of Date.now()
  */
-export function monotonicNow() {
+export function monotonicNow(): number {
 	const maybeNow = Date.now();
 
 	lastNow = lastNow < maybeNow ? maybeNow : lastNow + 1;
@@ -13,25 +13,22 @@ export function monotonicNow() {
 	return lastNow;
 }
 
-export function createUnresolvingPromise< T >() {
-	return new Promise< T >( ( res ) => {} );
+export function createUnresolvingPromise< T >(): Promise< T > {
+	return new Promise< T >( () => {
+		return;
+	} );
 }
 
 /**
  * Timeouts a promise. Returns timeoutValue in event of timeout.
  *
- * @param promise
- * @param ms
- * @param timeoutValue
+ * @param promise The promise to timeout
+ * @param ms The timeout time in milliseconds
  */
-export function timeoutPromise< T, TimeoutValue = null >(
-	promise: Promise< T >,
-	ms: number,
-	timeoutValue: TimeoutValue = null
-): Promise< T | TimeoutValue > {
+export function timeoutPromise< T >( promise: Promise< T >, ms: number ): Promise< T | null > {
 	return Promise.race( [
 		promise,
-		new Promise< TimeoutValue >( ( res ) => setTimeout( () => res( timeoutValue ), ms ) ),
+		new Promise< null >( ( res ) => setTimeout( () => res( null ), ms ) ),
 	] );
 }
 

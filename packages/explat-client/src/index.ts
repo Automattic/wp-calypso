@@ -1,9 +1,7 @@
-import { ExperimentAssignment } from './types'
-import createExPlatClient from './create-explat-client'
-import createExPlatReactClient from './create-explat-react-client'
+/**
+ * Internal dependencies
+ */
+import { ExperimentAssignment } from './types';
+import createExPlatClient from './create-explat-client';
 
-export { 
-    createExPlatClient,
-    createExPlatReactClient,
-    ExperimentAssignment,
-}
+export { createExPlatClient, ExperimentAssignment };

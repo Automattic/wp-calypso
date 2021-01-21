@@ -1,4 +1,7 @@
-import { MakeRequest, GetAnonId, LogError, ExperimentAssignment } from './types';
+/**
+ * Internal dependencies
+ */
+import { ExperimentAssignment, Config } from './types';
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import * as Request from './internal/requests';
 import * as State from './internal/state';
@@ -14,21 +17,21 @@ export interface ExPlatClient {
 	/**
 	 * Loads and returns an Experiment Assignment Promise, starting an assignment if necessary.
 	 *
-	 * Call as many times as you like, it will only make one request at a time and
+	 * Call as many times as you like, it will only make one request at a time (per experiment) and
 	 * will only trigger a request when the assignment TTL is expired.
-	 * 
+	 *
 	 * Will never throw in production, it will return the default assignment.
 	 * It should not be run on the server but it won't crash anything.
 	 *
-	 * @param experimentName
+	 * @param experimentName The experiment's name
 	 */
 	loadExperimentAssignment: ( experimentName: string ) => Promise< ExperimentAssignment >;
 
 	/**
 	 * Get an already loaded Experiment Assignment, will throw if there is an error, e.g. if it hasn't been loaded.
-	 * 
+	 *
 	 * Make sure loadExperimentAssignment has been called before calling this function.
-	 * 
+	 *
 	 */
 	dangerouslyGetExperimentAssignment: ( experimentName: string ) => ExperimentAssignment;
 }
@@ -36,16 +39,9 @@ export interface ExPlatClient {
 /**
  * Create an ExPlat Client
  *
- * @param makeRequest Modelled off of Calypso/state/data-layer/wpcom-http, a simple abstraction over an http request.
- * @param getAnonId
+ * @param config Configuration object
  */
-export default function createExPlatClient(
-    // TODO: Switch this to an object argument containing these
-	makeRequest: MakeRequest,
-	getAnonId: GetAnonId,
-	logError: LogError,
-	isDevelopmentMode: boolean
-): ExPlatClient {
+export default function createExPlatClient( config: Config ): ExPlatClient {
 	/**
 	 * The null experiment assignment we return when we can't retrieve one.
 	 */
@@ -57,20 +53,25 @@ export default function createExPlatClient(
 	} );
 
 	/**
-	 * We have a Async One At A Time ExperimentAssignment fetch for each experiment (memoization over createAOAATExperimentAssignmentFetch).
+	 * We have a Async One At A Time (AOAAT) ExperimentAssignment fetch for each experiment (memoization over createAOAATExperimentAssignmentFetch).
 	 * This allows multiple calls to occur with only one request behind them.
+	 *
+	 * @param experimentName The experiment's name
 	 */
-	const experimentNameToAOAATExperimentAssignmentFetchAndStore: Record<string, ReturnType<typeof createAOAATExperimentAssignmentFetchAndStore>> = {}
-	const createAOAATExperimentAssignmentFetchAndStore = (experimentName) => Timing.asyncOneAtATime( async () => {
-		const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
-			makeRequest,
-			experimentName,
-			getAnonId()
-		);
-		State.storeExperimentAssignment(fetchedExperimentAssignment);
-		return fetchedExperimentAssignment;
-	} );
-
+	const createAOAATExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
+		Timing.asyncOneAtATime( async () => {
+			const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
+				config.makeRequest,
+				experimentName,
+				config.getAnonId()
+			);
+			State.storeExperimentAssignment( fetchedExperimentAssignment );
+			return fetchedExperimentAssignment;
+		} );
+	const experimentNameToAOAATExperimentAssignmentFetchAndStore: Record<
+		string,
+		ReturnType< typeof createAOAATExperimentAssignmentFetchAndStore >
+	> = {};
 
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
@@ -87,22 +88,28 @@ export default function createExPlatClient(
 					return storedExperimentAssignment;
 				}
 
-				// TODO: Don't refetch on global
-				if (experimentNameToAOAATExperimentAssignmentFetchAndStore[experimentName] === undefined) {
-					experimentNameToAOAATExperimentAssignmentFetchAndStore[experimentName]
-						= createAOAATExperimentAssignmentFetchAndStore(experimentName)
+				if (
+					experimentNameToAOAATExperimentAssignmentFetchAndStore[ experimentName ] === undefined
+				) {
+					experimentNameToAOAATExperimentAssignmentFetchAndStore[
+						experimentName
+					] = createAOAATExperimentAssignmentFetchAndStore( experimentName );
 				}
+				// TODO: Move timeout within AOAAT
 				const fetchedExperimentAssignment = await Timing.timeoutPromise(
-					experimentNameToAOAATExperimentAssignmentFetchAndStore[experimentName](),
+					experimentNameToAOAATExperimentAssignmentFetchAndStore[ experimentName ](),
 					EXPERIMENT_FETCH_TIMEOUT
 				);
+				if ( ! fetchedExperimentAssignment ) {
+					return createNullExperimentAssignment();
+				}
 
-				return createNullExperimentAssignment();
+				return fetchedExperimentAssignment;
 			} catch ( e ) {
-				if ( isDevelopmentMode ) {
+				if ( config.isDevelopmentMode ) {
 					throw e;
 				} else {
-					logError( e.message );
+					config.logError( e.message );
 				}
 				return createNullExperimentAssignment();
 			}
@@ -114,17 +121,23 @@ export default function createExPlatClient(
 
 			const storedExperimentAssignment = State.retrieveExperimentAssignment( experimentName );
 			if ( ! storedExperimentAssignment ) {
-				throw new Error(`Trying to dangerously get an ExperimentAssignment that hasn't loaded, are you sure you have loaded this experiment?`);
+				throw new Error(
+					`Trying to dangerously get an ExperimentAssignment that hasn't loaded, are you sure you have loaded this experiment?`
+				);
 			}
 
-			if ( 
+			if (
 				storedExperimentAssignment &&
 				! ExperimentAssignments.isAlive( storedExperimentAssignment )
 			) {
-				if ( isDevelopmentMode ) {
-					throw new Error(`Trying to dangerously get an ExperimentAssignment that has loaded but has since expired`);
+				if ( config.isDevelopmentMode ) {
+					throw new Error(
+						`Trying to dangerously get an ExperimentAssignment that has loaded but has since expired`
+					);
 				} else {
-					logError(`Dangerously getting an ExperimentAssignment that has loaded but has since expired.`);
+					config.logError(
+						`Dangerously getting an ExperimentAssignment that has loaded but has since expired.`
+					);
 				}
 			}
 

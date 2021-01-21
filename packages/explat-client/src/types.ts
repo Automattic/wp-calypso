@@ -26,8 +26,8 @@ export interface MakeRequest {
 		apiNamespace: 'wpcom';
 		method: 'GET';
 		path: string;
-		query: Record< string, string >;
-	} ): Promise< any >;
+		query: Record< string, string | undefined >;
+	} ): Promise< unknown >;
 }
 
 export interface GetAnonId {
@@ -36,4 +36,11 @@ export interface GetAnonId {
 
 export interface LogError {
 	( errorMessage: string ): void;
+}
+
+export interface Config {
+	makeRequest: MakeRequest;
+	getAnonId: GetAnonId;
+	logError: LogError;
+	isDevelopmentMode: boolean;
 }
