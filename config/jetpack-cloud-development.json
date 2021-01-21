@@ -8,7 +8,7 @@
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
 	"rtl": false,
-	"login_url": "/connect",
+	"login_url": "/oauth-login",
 	"logout_url": "https://jetpack.com",
 	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
 	"site_name": "Jetpack: WordPress Security, Backups, Speed, & Growth",
@@ -61,6 +61,7 @@
 	"enable_all_sections": false,
 	"sections": {
 		"activity": true,
+		"auth": true,
 		"backup": true,
 		"checkout": true,
 		"jetpack-cloud-auth": true,
