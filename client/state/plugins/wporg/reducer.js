@@ -75,27 +75,29 @@ export function lists( state = {}, action ) {
 	const { category, data, searchTerm, type } = action;
 	switch ( type ) {
 		case PLUGINS_WPORG_LIST_RECEIVE:
-			if ( data ) {
-				// We only need lists by category and search terms.
-				if ( category ) {
-					const prevCategoryState = state.category?.[ category ] ?? [];
-					return {
-						...state,
-						category: {
-							...state.category,
-							[ category ]: [ ...prevCategoryState, ...data ],
-						},
-					};
-				} else if ( searchTerm ) {
-					const prevSearchState = state.search?.[ searchTerm ] ?? [];
-					return {
-						...state,
-						search: {
-							...state.search,
-							[ searchTerm ]: [ ...prevSearchState, ...data ],
-						},
-					};
-				}
+			if ( ! data ) {
+				return state;
+			}
+
+			// We only need lists by category and search terms.
+			if ( category ) {
+				const prevCategoryState = state.category?.[ category ] ?? [];
+				return {
+					...state,
+					category: {
+						...state.category,
+						[ category ]: [ ...prevCategoryState, ...data ],
+					},
+				};
+			} else if ( searchTerm ) {
+				const prevSearchState = state.search?.[ searchTerm ] ?? [];
+				return {
+					...state,
+					search: {
+						...state.search,
+						[ searchTerm ]: [ ...prevSearchState, ...data ],
+					},
+				};
 			}
 		default:
 			return state;
