@@ -2,10 +2,10 @@
 import './public-path';
 
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { registerPlugin } from '@wordpress/plugins';
-import { ExternalLink, Fill, Guide, GuidePage, MenuItem } from '@wordpress/components';
+import { Fill, Guide, GuidePage, MenuItem } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect, createInterpolateElement } from '@wordpress/element';
@@ -23,6 +23,13 @@ function WhatsNewMenuItem() {
 	const { toggleWhatsNew } = useDispatch( 'whats-new' );
 	const isActive = useSelect( ( select ) => select( 'whats-new' ).isWhatsNewActive() );
 	const whatsNewPages = getWhatsNewPages();
+
+	// Record Tracks event if user opens What's New
+	useEffect( () => {
+		if ( isActive ) {
+			recordTracksEvent( 'calypso_editor_whats_new_open' );
+		}
+	}, [ isActive ] );
 
 	return (
 		<>
@@ -60,7 +67,7 @@ function getWhatsNewPages() {
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'Easily add patterns in the editor to save time configuring and designing. There are hundreds of pre-made patterns for buttons, headers, galleries, and more available via the + button inserter at the top left of all pages and posts. <Link>Learn more about block patterns</Link>.',
+					'<p>Easily add patterns in the editor to save time configuring and designing.</p> <p>There are hundreds of pre-made patterns for buttons, headers, galleries, and more available via the + button inserter at the top left of all pages and posts.</p> <p><Link>Learn more about block patterns</Link>.</p>',
 					'full-site-editing'
 				),
 				{
@@ -71,6 +78,7 @@ function getWhatsNewPages() {
 							rel="noreferrer"
 						/>
 					),
+					p: <p />,
 				}
 			),
 		},
@@ -80,7 +88,7 @@ function getWhatsNewPages() {
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'You can process payments on your website for just about anything. With <Link1>Payments</Link1>, <Link2>Premium Content</Link2>, and <Link3>Donations blocks</Link3>, it takes just minutes to get setup to collect payments from your visitors. Available for with any paid plan. <Link4>Get started with payments today</Link4>.',
+					'<p>You can process payments for just about anything on your website.</p><p>With the <Link1>Payments</Link1>, <Link2>Premium Content</Link2>, and <Link3>Donations blocks</Link3>, it takes just minutes to get set up to collect payments from your visitors. Available with any paid plan.</p><p><Link4>Get started with payments today</Link4>.</p>',
 					'full-site-editing'
 				),
 				{
@@ -106,6 +114,7 @@ function getWhatsNewPages() {
 						/>
 					),
 					Link4: <a href="http://wordpress.com/earn" target="_blank" rel="noreferrer" />,
+					p: <p />,
 				}
 			),
 		},
@@ -115,7 +124,7 @@ function getWhatsNewPages() {
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'Connect and communicate with your website’s visitors with the new <Link>WhatsApp block</Link>. With a single click, your website’s visitors can ask questions or message you for whatever reason. Available with Premium, Business, and eCommerce plans.',
+					'<p>Connect and communicate with your website’s visitors with the new <Link>WhatsApp block</Link>.</p><p>With a single click, your visitors can ask questions or message you for whatever reason. Available with Premium, Business, and eCommerce plans.</p>',
 					'full-site-editing'
 				),
 				{
@@ -126,6 +135,7 @@ function getWhatsNewPages() {
 							rel="noreferrer"
 						/>
 					),
+					p: <p />,
 				}
 			),
 		},
@@ -141,10 +151,9 @@ function WhatsNewPage( {
 	imgSrc,
 } ) {
 	useEffect( () => {
-		recordTracksEvent( 'calypso_editor_wpcom_nux_slide_view', {
+		recordTracksEvent( 'calypso_editor_whats_new_slide_view', {
 			slide_number: pageNumber,
 			is_last_slide: isLastPage,
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
