@@ -89,6 +89,15 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
 		];
 	}
 
+	if ( false === settingsOverride?.user_email_change_pending ) {
+		return [
+			errorNotice(
+				translate( 'There was a problem canceling the email change. Please, try again.' )
+			),
+			saveUserSettingsFailure( settingsOverride, error ),
+		];
+	}
+
 	return [
 		errorNotice( error.message || translate( 'There was a problem saving your changes.' ), {
 			id: 'save-user-settings',
@@ -113,6 +122,8 @@ export const userSettingsSaveSuccess = ( { settingsOverride, redirectTo }, data 
 		return;
 	}
 
+	// The require() trick is used to avoid excessive mocking in unit tests.
+	// TODO: Replace it with standard 'import' when the `lib/user` module is Reduxized
 	const userLibModule = require( 'calypso/lib/user' );
 	const userLib = userLibModule.default ? userLibModule.default : userLibModule; // TODO: delete line after removing add-module-exports.
 
@@ -121,10 +132,14 @@ export const userSettingsSaveSuccess = ( { settingsOverride, redirectTo }, data 
 		window.location = window.location.pathname + '?updated=success';
 		return;
 	}
+
 	// Refetch the user data after saving user settings
-	// The require() trick is used to avoid excessive mocking in unit tests.
-	// TODO: Replace it with standard 'import' when the `lib/user` module is Reduxized
 	userLib().fetch();
+
+	if ( false === settingsOverride?.user_email_change_pending ) {
+		dispatch( successNotice( translate( 'The email change has been successfully canceled.' ) ) );
+		return;
+	}
 
 	dispatch(
 		successNotice( translate( 'Settings saved successfully!' ), {

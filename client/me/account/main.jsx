@@ -343,18 +343,7 @@ class Account extends React.Component {
 	}
 
 	cancelEmailChange = () => {
-		// @TODO handle email change in user settings redux data layer
-		this.props.cancelPendingEmailChange(/*( error, response ) => {
-			if ( error ) {
-				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
-				this.props.errorNotice(
-					translate( 'There was a problem canceling the email change. Please, try again.' )
-				);
-			} else {
-				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
-				this.props.successNotice( translate( 'The email change has been successfully canceled.' ) );
-			}
-		}*/);
+		this.props.cancelPendingEmailChange();
 	};
 
 	handleRadioChange( event ) {
