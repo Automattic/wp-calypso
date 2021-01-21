@@ -16,13 +16,13 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QuerySites from 'calypso/components/data/query-sites';
 
 /**
  * Style and image dependencies
  */
 import './style.scss';
 import titanFullLogo from 'calypso/assets/images/email-providers/titan-full.svg';
-import QuerySites from 'calypso/components/data/query-sites';
 
 class TitanControlPanelRedirect extends React.Component {
 	static propTypes = {
