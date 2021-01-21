@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import store from 'store';
 import debugFactory from 'debug';
 
 /**
@@ -23,6 +24,7 @@ import Notice from 'calypso/components/notice';
 import SelfHostedInstructions from './self-hosted-instructions';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import * as OAuthToken from 'calypso/lib/oauth-token';
 import { errorTypes, makeAuthRequest, bumpStats } from './login-request';
@@ -81,7 +83,13 @@ export class Auth extends Component {
 
 		OAuthToken.setToken( response.body.access_token );
 
-		document.location.replace( '/' );
+		if ( isJetpackCloud() ) {
+			store.set( 'wpcom_token', response.body.access_token );
+			// On Jetpack cloud, we need to immediately fetch the user
+			window.location.href = '/connect/oauth/initialize';
+		} else {
+			document.location.replace( '/' );
+		}
 	};
 
 	submitForm = async ( event ) => {
