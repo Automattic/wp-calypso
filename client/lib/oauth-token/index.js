@@ -29,13 +29,13 @@ export function getToken() {
 
 export function setToken( token ) {
 	// TODO: Support secure cookies if this is ever used outside of the desktop app
-	document.cookie = cookie.serialize( TOKEN_NAME, token, { maxAge: MAX_AGE } );
+	document.cookie = cookie.serialize( TOKEN_NAME, token, { maxAge: MAX_AGE, path: '/' } );
 }
 
 export function clearToken() {
 	const cookies = cookie.parse( document.cookie );
 
 	if ( typeof cookies[ TOKEN_NAME ] !== 'undefined' ) {
-		document.cookie = cookie.serialize( TOKEN_NAME, false, { maxAge: -1 } );
+		document.cookie = cookie.serialize( TOKEN_NAME, false, { maxAge: -1, path: '/' } );
 	}
 }
