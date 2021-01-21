@@ -315,5 +315,10 @@
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1",
 		"@types/react": "^17.0.24"
 	},
-	"packageManager": "yarn@3.0.0"
+	"packageManager": "yarn@3.0.0",
+	"volta": {
+		"node": "14.16.1",
+		"yarn": "1.22.10",
+		"npm": "7.11.1"
+	}
 }
