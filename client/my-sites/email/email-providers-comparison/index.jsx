@@ -42,7 +42,7 @@ import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'calypso/assets/images/email-providers/titan.svg';
-import poweredByTitanLogo from 'calypso/assets/images/email-providers/powered-by-titan.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import googleWorkspaceLogo from 'calypso/assets/images/email-providers/google-workspace.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
