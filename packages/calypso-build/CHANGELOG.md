@@ -2,6 +2,8 @@
 
 ## trunk
 
+- Do not remove translator comments from build.
+
 ## 6.5.0
 
 - Added `corejs`, `debug`, and `useBuiltIns` options to the `babel/default` preset.

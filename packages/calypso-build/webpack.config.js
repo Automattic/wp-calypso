@@ -104,6 +104,9 @@ function getWebpackConfig(
 					ecma: 5,
 					safari10: true,
 					mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
+					format: {
+						comments: /translators:/i,
+					},
 				},
 			} ),
 		},
