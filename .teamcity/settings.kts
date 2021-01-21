@@ -928,7 +928,7 @@ object RunCanaryE2eTests : BuildType({
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "test/e2e/reports/*.xml")
+			param("xmlReportParsing.reportDirs", "reports/*.xml")
 		}
 		perfmon {
 		}
