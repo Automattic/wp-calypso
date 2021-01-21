@@ -4,17 +4,17 @@
 import Debug from 'debug';
 import page from 'page';
 import React from 'react';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { startJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
-import { translate } from 'i18n-calypso';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import Landing from './sections/landing';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 
 const debug = new Debug( 'calypso:jetpack-cloud:controller' );
 
@@ -34,8 +34,9 @@ const redirectToPrimarySiteLanding = ( context ) => {
 	debug( 'controller: redirectToPrimarySiteLanding', context );
 	const state = context.store.getState();
 	const currentUser = getCurrentUser( state );
+	const isPrimarySiteJetpackSite = getPrimarySiteIsJetpack( state );
 
-	isJetpackSite( state, currentUser.primary_blog )
+	isPrimarySiteJetpackSite
 		? page( `/landing/${ currentUser.primarySiteSlug }` )
 		: page( `/landing` );
 };
