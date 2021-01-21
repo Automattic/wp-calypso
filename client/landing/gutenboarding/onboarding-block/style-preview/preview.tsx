@@ -58,9 +58,11 @@ interface Props {
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const language = useLocale();
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
-	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
-	);
+	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) => ( {
+		selectedDesign: select( STORE_KEY ).getSelectedDesign(),
+		selectedFonts: select( STORE_KEY ).getSelectedFonts(),
+		siteTitle: select( STORE_KEY ).getSelectedSiteTitle(),
+	} ) );
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
 	const effectiveFontPairings = useFontPairings();

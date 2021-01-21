@@ -377,7 +377,7 @@ module.exports = {
 			{
 				'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
 				'@wordpress/date': [ '__experimentalGetSettings' ],
-				'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
+				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [ '__experimentalNavigationBackButton' ],
 			},
 		],

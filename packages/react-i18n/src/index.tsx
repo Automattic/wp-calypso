@@ -111,6 +111,8 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
 	};
 }, 'withI18n' );
 
+type TranslationFunction = '__' | '_n' | '_nx' | '_x';
+
 /**
  * Bind an I18n function to its instance
  *
@@ -119,7 +121,11 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
  * @param filters Make context filters instance
  * @returns Bound I18n function with applied transformation hooks
  */
-function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filters: I18nFilters ) {
+function bindI18nFunction< T extends TranslationFunction >(
+	i18n: I18n,
+	fnName: T,
+	filters: I18nFilters
+): I18n[ T ] {
 	const translateFn = i18n[ fnName ];
 	const { hasFilter, applyFilters } = filters;
 
@@ -127,20 +133,22 @@ function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filte
 		return translateFn;
 	}
 
-	return ( ...args: ( string | number )[] ) => {
-		const filteredArguments = applyFilters( 'preTranslation', args, fnName, filters ) as (
-			| string
-			| number
-		 )[];
+	return ( ( ( ...args: Parameters< I18n[ T ] > ): ReturnType< I18n[ T ] > => {
+		const filteredArguments: Parameters< I18n[ T ] > = applyFilters(
+			'preTranslation',
+			args,
+			fnName,
+			filters
+		) as Parameters< I18n[ T ] >;
 
 		return applyFilters(
 			'postTranslation',
-			translateFn( ...filteredArguments ),
+			( translateFn as any )( ...filteredArguments ),
 			filteredArguments,
 			fnName,
 			filters
-		);
-	};
+		) as any;
+	} ) as unknown ) as I18n[ T ];
 }
 
 const CONTEXT_DELIMETER = '\u0004';

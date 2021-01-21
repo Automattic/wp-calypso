@@ -7,7 +7,7 @@ import * as React from 'react';
 import { useLocale } from '@automattic/i18n-utils';
 
 export const WindowLocaleEffectManager: React.FunctionComponent = () => {
-	const { __, isRTL } = useI18n();
+	const { __, _x, isRTL } = useI18n();
 	const locale = useLocale();
 
 	// Some languages may need to set an html lang attribute that is different from their slug
@@ -29,7 +29,7 @@ export const WindowLocaleEffectManager: React.FunctionComponent = () => {
 	// But because isRTL is defined in the `@wordpress/i18n` package, our `./bin/build-languages.js` script
 	// does not know to include `ltr` in `./calypso-strings.pot`.
 	// see https://github.com/Automattic/wp-calypso/pull/43132#discussion_r448537345
-	__( 'ltr', { context: 'text direction' } );
+	_x( 'ltr', 'text direction' );
 
 	const isRtl = isRTL();
 

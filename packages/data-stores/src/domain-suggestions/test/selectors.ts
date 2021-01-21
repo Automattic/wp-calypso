@@ -76,6 +76,8 @@ describe( 'getDomainSuggestions', () => {
 		// First call returns undefined
 		expect( select( store ).getDomainSuggestions( query, options ) ).toEqual( undefined );
 
+		await listenForStateUpdate();
+
 		// Status should be pending while we wait for the response
 		expect( select( store ).getDomainState() ).toEqual( DataStatus.Pending );
 

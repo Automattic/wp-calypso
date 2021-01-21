@@ -17,6 +17,23 @@ const translate = ( x ) => x;
 const requestSftpUsers = ( x ) => x;
 
 describe( 'SftpCard', () => {
+	beforeAll( () => {
+		// Mock the missing `window.matchMedia` function that's not even in JSDOM
+		Object.defineProperty( window, 'matchMedia', {
+			writable: true,
+			value: jest.fn().mockImplementation( ( query ) => ( {
+				matches: false,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(), // deprecated
+				removeListener: jest.fn(), // deprecated
+				addEventListener: jest.fn(),
+				removeEventListener: jest.fn(),
+				dispatchEvent: jest.fn(),
+			} ) ),
+		} );
+	} );
+
 	describe( 'Sftp Questions', () => {
 		it( 'should display sftp questions if no sftp username', () => {
 			const wrapper = shallow( <SftpCard translate={ translate } /> );
