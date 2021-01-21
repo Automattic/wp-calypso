@@ -171,7 +171,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							{ sprintf(
 								// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
 								__( 'Save %s%% by paying annually', __i18n_text_domain__ ),
-								planProduct?.annualDiscount
+								planProduct?.annualDiscount ?? 0
 							) }
 						</div>
 

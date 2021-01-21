@@ -262,6 +262,10 @@
 		text-decoration: line-through;
 	}
 
+	&--hidden {
+		visibility: hidden;
+	}
+
 	.plan-item:not( .is-open ) & {
 		display: none;
 	}
