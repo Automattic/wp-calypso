@@ -16,6 +16,33 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 dispatch( fetchPluginData( 'akismet' ) );
 ```
 
+### `fetchPluginsList( category: String, page: Number, searchTerm: String )`
+
+Fetches the list of plugins by category or search term from the WP.org plugins API. 
+Please note that because of API limitations, WP.org plugins can be filtered either by category or search term, but not both at the same time.
+Pagination is supported only for category queries. Category can be one of `featured`, `popular`, `new`, `beta` or `recommended`.
+Search term is an open text field, and you can search single terms like "security" or "enhancement".
+
+```js
+import { fetchPluginsList } from 'calypso/state/plugins/wporg/actions';
+
+// Fetch the first page of plugins from the "Popular" category
+dispatch( fetchPluginsList( 'popular', 1 ) );
+
+// Fetch the list of plugins that match the search term "security".
+dispatch( fetchPluginsList( undefined, undefined, 'security' ) );
+```
+
+### `fetchPluginsCategoryNextPage( category: String )`
+
+Fetches the next page of plugins for a certain category if the last page hasn't been reached yet.
+
+```js
+import { fetchPluginsCategoryNextPage } from 'calypso/state/plugins/wporg/actions';
+
+dispatch( fetchPluginsCategoryNextPage( 'popular' ) );
+```
+
 ## Reducer
 
 Data from the aforementioned actions is added to the global state tree, under `plugins.wporg`, with the following structure:
