@@ -6,7 +6,9 @@ const EventEmitter = require( 'events' ).EventEmitter;
 /**
  * Internal Dependencies
  */
+const keychain = require( '../../lib/keychain' );
 const log = require( '../../lib/logger' )( 'desktop:session' );
+const WPNotificationsAPI = require( '../../lib/notifications/api' );
 
 /*
  * Module constants
@@ -23,35 +25,62 @@ class SessionManager extends EventEmitter {
 		this.loggedIn = false;
 		this.window = window;
 
-		// check for existing auth
-		const wordpress_logged_in = await getAuthCookie( window );
-		if ( wordpress_logged_in ) {
+		// Check for existing cookies
+		const wordpress_logged_in = await getCookie(
+			window,
+			'https://public-api.wordpress.com',
+			'wordpress_logged_in'
+		);
+		if ( wordpress_logged_in && ! this.loggedIn ) {
 			log.info( `Got 'wordpress_logged_in' cookie, emitting 'logged-in' event...` );
 
 			this.loggedIn = true;
 			this.emit( 'logged-in', wordpress_logged_in );
-			log.info( `Logged in with cookie 'wordpress_logged_in': `, wordpress_logged_in );
+			log.debug( `Logged in with cookie 'wordpress_logged_in': `, wordpress_logged_in );
 		}
 
-		this.window.webContents.session.cookies.on( 'changed', ( _, cookie, reason, removed ) => {
-			if ( cookie.name === 'wordpress_logged_in' && cookie.domain === '.wordpress.com' ) {
-				if ( removed ) {
-					log.info( `'wordpress_logged_in' cookie was removed, emitting 'logged-out' event...` );
+		const wp_api_sec = await getCookie( window, 'https://public-api.wordpress.com', 'wp_api_sec' );
+		if ( this.loggedIn && wp_api_sec ) {
+			await keychainWrite( 'wp_api_sec', wp_api_sec.value );
+			WPNotificationsAPI.connect( wp_api_sec.value );
+		}
 
-					if ( this.loggedIn ) {
+		// Listen for auth events
+		this.window.webContents.session.cookies.on(
+			'changed',
+			async ( _, cookie, _reason, removed ) => {
+				// Listen for logged in/out events
+				if ( cookie.name === 'wordpress_logged_in' && cookie.domain === '.wordpress.com' ) {
+					if ( removed && this.loggedIn ) {
+						log.info( `'wordpress_logged_in' cookie was removed, emitting 'logged-out' event...` );
+
 						this.loggedIn = false;
 						this.emit( 'logged-out' );
+						keychain.clear();
+					} else {
+						log.info( `Got 'wordpress_logged_in' cookie, emitting 'logged-in' event...` );
+
+						this.loggedIn = true;
+
+						this.emit( 'logged-in', { wordpress_logged_in: wordpress_logged_in } );
+						log.debug( `Logged in with cookie 'wordpress_logged_in': `, wordpress_logged_in );
 					}
-				} else {
-					log.info( `Got 'wordpress_logged_in' cookie, emitting 'logged-in' event...` );
 
-					this.loggedIn = true;
-
-					this.emit( 'logged-in', { wordpress_logged_in: wordpress_logged_in } );
-					log.debug( `Logged in with cookie 'wordpress_logged_in': `, wordpress_logged_in );
+					// Listen for wp_api_sec cookie (Pinghub)
+					if (
+						cookie.name === 'wp_api_sec' &&
+						cookie.domain === 'https://public-api.wordpress.com'
+					) {
+						if ( removed ) {
+							WPNotificationsAPI.disconnect();
+						} else if ( this.loggedIn ) {
+							await keychainWrite( 'wp_api_sec', cookie.value );
+							WPNotificationsAPI.connect( cookie.value );
+						}
+					}
 				}
 			}
-		} );
+		);
 	}
 
 	isLoggedIn() {
@@ -59,10 +88,10 @@ class SessionManager extends EventEmitter {
 	}
 }
 
-async function getAuthCookie( window ) {
+async function getCookie( window, cookieDomain, cookieName ) {
 	let cookies = await window.webContents.session.cookies.get( {
-		url: 'https://public-api.wordpress.com',
-		name: 'wordpress_logged_in',
+		url: cookieDomain,
+		name: cookieName,
 	} );
 	if ( cookies ) {
 		if ( ! Array.isArray( cookies ) ) {
@@ -71,6 +100,17 @@ async function getAuthCookie( window ) {
 		return cookies[ 0 ];
 	}
 	return null;
+}
+
+async function keychainWrite( key, value ) {
+	let success = false;
+	try {
+		await keychain.write( key, value );
+		success = true;
+	} catch ( e ) {
+		log.error( 'Failed to write to keychain: ', e );
+	}
+	return success;
 }
 
 module.exports = new SessionManager();

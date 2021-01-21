@@ -7,7 +7,7 @@ const EventEmitter = require( 'events' ).EventEmitter;
 /*
  * Internal dependencies
  */
-const state = require( '../../../lib/state' );
+const keychain = require( '../../../lib/keychain' );
 const { fetchNote, markReadStatus } = require( './notes' );
 const log = require( '../../../lib/logger' )( 'desktop:notifications:api' );
 
@@ -25,7 +25,6 @@ class WPNotificationsAPI extends EventEmitter {
 		clearTimeout( this.pingTimeout );
 
 		this.pingTimeout = setTimeout( () => {
-			// TODO: Add Retry attempts
 			log.info( 'Websock heartbeat timed out, attempting to reconnect...' );
 			this.ws.terminate();
 			this.connect();
@@ -33,11 +32,14 @@ class WPNotificationsAPI extends EventEmitter {
 		}, pingMs + 1000 );
 	}
 
-	async connect() {
-		const token = state.getUser().token;
+	async connect( cookie ) {
+		// If a cookie value was not explicitly passed in, let's try to fetch it from the keychain
+		if ( ! cookie ) {
+			cookie = await keychain.fetch( 'wp_api_sec' );
+		}
 
-		if ( ! token ) {
-			log.info( 'Failed to initialize websocket: token is NULL' );
+		if ( ! cookie ) {
+			log.info( 'Failed to initialize websocket: missing wp_api_sec cookie' );
 			this.ws = null;
 			return;
 		}
@@ -47,7 +49,8 @@ class WPNotificationsAPI extends EventEmitter {
 			[],
 			{
 				headers: {
-					Authorization: `Bearer ${ token }`,
+					Origin: `https://public-api.wordpress.com`,
+					Cookie: `wp_api_sec=${ decodeURIComponent( cookie ) }`,
 				},
 			}
 		);
