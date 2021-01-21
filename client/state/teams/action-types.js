@@ -1,0 +1,2 @@
+export const TEAMS_RECEIVE = 'TEAMS_RECEIVE';
+export const TEAMS_REQUEST = 'TEAMS_REQUEST';

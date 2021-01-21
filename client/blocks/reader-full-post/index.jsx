@@ -79,7 +79,7 @@ import {
 } from 'calypso/state/reader/seen-posts/actions';
 import Gridicon from 'calypso/components/gridicon';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';

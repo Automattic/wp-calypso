@@ -37,7 +37,7 @@ import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expande
  */
 import './style.scss';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import { isFollowing } from 'calypso/state/reader/follows/selectors';

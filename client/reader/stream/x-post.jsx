@@ -22,7 +22,7 @@ import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import Emojify from 'calypso/components/emojify';
 import { getUrlParts } from 'calypso/lib/url';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import { isFollowing } from 'calypso/state/reader/follows/selectors';

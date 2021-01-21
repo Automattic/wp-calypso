@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'calypso/state/reader/init';
+import 'calypso/state/teams/init';
 
 /**
  * Returns all of the reader teams for a user
@@ -12,5 +12,5 @@ import 'calypso/state/reader/init';
  */
 
 export default function getReaderTeams( state ) {
-	return state.reader.teams.items;
+	return state.teams.items;
 }
