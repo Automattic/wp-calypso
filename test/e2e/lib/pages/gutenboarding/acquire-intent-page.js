@@ -17,7 +17,12 @@ export default class AcquireIntentPage extends AsyncBaseContainer {
 
 	async enterSiteTitle( siteTitle ) {
 		const siteTitleSelector = By.css( '.acquire-intent-text-input__input' );
-		return await driverHelper.setWhenSettable( this.driver, siteTitleSelector, siteTitle, { pauseBetweenKeysMS: 10 } );
+		return await driverHelper.setWhenSettable(
+			this.driver,
+			siteTitleSelector,
+			siteTitle,
+			{ pauseBetweenKeysMS: 10 }
+		);
 	}
 
 	async goToNextStep() {
