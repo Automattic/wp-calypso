@@ -30,6 +30,13 @@ type Language = {
 };
 type FeatureId = WPCOMFeatures.FeatureId;
 
+declare module '@wordpress/data' {
+	export const controls: {
+		select: ( store: string, selector: string, ...args: any[] ) => any;
+		dispatch: ( store: string, action: string, ...args: any[] ) => any;
+	};
+}
+
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,

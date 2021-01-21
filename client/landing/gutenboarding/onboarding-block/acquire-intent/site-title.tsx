@@ -26,7 +26,10 @@ interface Props {
 
 const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) => {
 	const { __, _x } = useI18n();
-	const siteTitle = useSelect( ( select ) => select( STORE_KEY ).getSelectedSiteTitle() );
+	const { siteTitle, siteTitleHistory } = useSelect( ( select ) => ( {
+		siteTitle: select( STORE_KEY ).getSelectedSiteTitle(),
+		siteTitleHistory: select( STORE_KEY ).getSiteTitleHistory(),
+	} ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
@@ -126,6 +129,7 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 					{ /* translators: The "it" here refers to the site title. */ }
 					<span>{ __( "Don't worry, you can change it later." ) }</span>
 				</p>
+				<p className="site-title__input-hint">{ siteTitleHistory }</p>
 			</div>
 		</form>
 	);
