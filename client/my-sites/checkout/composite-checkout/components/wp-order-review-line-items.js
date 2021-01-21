@@ -92,7 +92,7 @@ function WPLineItem( {
 			data-product-type={ item.type }
 		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ item.label } { isTitanMail && <>(Monthly)</> }
+				{ item.label }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice item={ item } isSummary={ isSummary } />
