@@ -157,6 +157,7 @@ describe( 'getSupportedPlans', () => {
 					name: undefined,
 					description: undefined,
 					type: 'checkbox',
+					requiresAnnuallyBilledPlan: true,
 				},
 			},
 		} );
