@@ -275,7 +275,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	right: $preview-right-margin;
 	background: $template-selector-empty-background;
 	border-radius: 2px;
-	overflow: hidden;
+	overflow-y: scroll;
 	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ),
 		0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
 		0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
@@ -382,7 +382,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
-.block-iframe-preview {
+.spt-block-layout-preview {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -395,10 +395,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	// Fallback viewport width.
 	// Used when BlockFramePreview's viewportWidth prop is undefined.
 	// Can be overridden through more specific CSS.
-	width: 1440px;
+	width: 100%;
 }
 
-.block-iframe-preview-body {
+.spt-block-layout-preview-body {
 	margin: 0;
 	padding: 0;
 	overflow-x: hidden;
@@ -471,7 +471,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	// Tweak template title (post-title) component.
-	.block-iframe-preview__template-title {
+	.spt-block-layout-preview__template-title {
 		padding-top: 20px;
 	}
 

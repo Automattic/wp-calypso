@@ -24,7 +24,7 @@ export default function ( { blocks, settings, hidePageTitle, recomputeBlockListK
 		<BlockEditorProvider value={ blocks } settings={ settings }>
 			<Disabled key={ recomputeBlockListKey }>
 				{ ! hidePageTitle && (
-					<div className="block-iframe-preview__template-title edit-post-visual-editor__post-title-wrapper">
+					<div className="spt-block-layout-preview__template-title edit-post-visual-editor__post-title-wrapper">
 						<PostTitle />
 					</div>
 				) }

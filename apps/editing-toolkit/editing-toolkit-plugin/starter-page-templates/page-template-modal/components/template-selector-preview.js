@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import BlockIframePreview from './block-iframe-preview';
+import BlockLayoutPreview from './block-layout-preview';
 
 const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 	const noBlocks = ! blocks.length;
@@ -21,10 +21,9 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 				</div>
 			) }
 
-			{ /* Always render preview iframe to ensure it's ready to populate with Blocks. */
-			/* Without this some browsers will experience a noticavle delay
-			/* before Blocks are populated into the iframe. */ }
-			<BlockIframePreview blocks={ blocks } viewportWidth={ viewportWidth } title={ title } />
+			{ ! noBlocks && (
+				<BlockLayoutPreview blocks={ blocks } viewportWidth={ viewportWidth } title={ title } />
+			) }
 		</div>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
