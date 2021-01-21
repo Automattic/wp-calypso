@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,10 +44,6 @@ const withFormBase = ( WrappedComponent ) => {
 			return unsavedUserSettings[ settingName ] ?? userSettings[ settingName ] ?? '';
 		};
 
-		getOriginalSetting = ( settingName ) => {
-			return this.props.userSettings[ settingName ];
-		};
-
 		toggleSetting = ( event ) => {
 			const { name } = event.currentTarget;
 			this.props.setUserSetting( name, ! this.getSetting( name ) );
@@ -57,10 +52,6 @@ const withFormBase = ( WrappedComponent ) => {
 		updateSetting = ( event ) => {
 			const { name, value } = event.currentTarget;
 			this.props.setUserSetting( name, value );
-		};
-
-		hasUnsavedUserSetting = ( settingName ) => {
-			return has( this.props.unsavedUserSettings, settingName );
 		};
 
 		submitForm = ( event ) => {
@@ -72,11 +63,9 @@ const withFormBase = ( WrappedComponent ) => {
 		getFormBaseProps = () => ( {
 			getDisabledState: this.getDisabledState,
 			getSetting: this.getSetting,
-			getOriginalSetting: this.getOriginalSetting,
 			toggleSetting: this.toggleSetting,
 			updateSetting: this.updateSetting,
 			submitForm: this.submitForm,
-			hasUnsavedUserSetting: this.hasUnsavedUserSetting,
 			hasUnsavedUserSettings: this.props.hasUnsavedUserSettings,
 			isUpdatingUserSettings: this.props.isUpdatingUserSettings,
 		} );
