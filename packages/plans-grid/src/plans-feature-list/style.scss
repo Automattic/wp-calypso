@@ -54,7 +54,7 @@ ul.plans-feature-list__item-group {
 .plans-feature-list__item-content-wrapper,
 .plans-feature-list__item-content-wrapper.components-button.is-link {
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 
 	font-size: $font-body-small;
 	font-weight: 400;
@@ -129,6 +129,9 @@ ul.plans-feature-list__item-group {
 .plans-feature-list__item-text {
 	flex-grow: 1;
 	flex-shrink: 0;
+
+	// Makes the tick/cross icon align better with the text
+	margin-bottom: 1px;
 }
 
 // Optional text informing the user that a specific feature is only available with the annual version of a plan
