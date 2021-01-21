@@ -13,7 +13,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
 import { getTitanMailOrderId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -32,23 +32,38 @@ class TitanControlPanelRedirect extends React.Component {
 		siteSlug: PropTypes.string.isRequired,
 	};
 
-	componentDidUpdate( prevProps ) {
-		const { domain, isFetchingSiteDomains, translate } = this.props;
+	componentDidMount() {
+		this._fetchTriggered = false;
+	}
 
-		// Make sure we fetch the redirect after we've finished fetching site domains
-		if ( prevProps.isFetchingSiteDomains && ! isFetchingSiteDomains ) {
-			if ( domain && hasTitanMailWithUs( domain ) ) {
-				fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
-					if ( error ) {
-						this.props.errorNotice(
-							error ?? translate( 'An unknown error occurred. Please try again later.' )
-						);
-					} else {
-						window.location = loginURL;
-					}
-				} );
-			}
+	componentDidUpdate() {
+		const { domain } = this.props;
+
+		// Make sure we fetch the redirect after we have the domain in hand
+		// fetchAndLoadControlPanelUrl() includes a check to navigate only once
+		if ( domain && hasTitanMailWithUs( domain ) ) {
+			this.fetchAndLoadControlPanelUrl();
 		}
+	}
+
+	fetchAndLoadControlPanelUrl() {
+		// Protect against making multiple network requests
+		if ( this._fetchTriggered ) {
+			return;
+		}
+
+		this._fetchTriggered = true;
+		const { domain, translate } = this.props;
+
+		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
+			if ( error ) {
+				this.props.errorNotice(
+					error ?? translate( 'An unknown error occurred. Please try again later.' )
+				);
+			} else {
+				window.location = loginURL;
+			}
+		} );
 	}
 
 	render() {
@@ -74,7 +89,6 @@ export default connect( ( state, ownProps ) => {
 			selectedDomainName: ownProps.domainName,
 			isSiteRedirect: false,
 		} ),
-		isFetchingSiteDomains: isRequestingSiteDomains( state, siteId ),
 		siteId,
 	};
 } )( localize( TitanControlPanelRedirect ) );
