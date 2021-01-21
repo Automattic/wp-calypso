@@ -34,7 +34,6 @@ export interface Props {
 	description: string;
 	features: Array< string >;
 	billingPeriod: Plans.PlanBillingPeriod;
-	annuallyDiscountPercentage: number;
 	domain?: DomainSuggestions.DomainSuggestion;
 	badge?: string;
 	isFree?: boolean;
@@ -53,7 +52,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	description,
 	features,
 	billingPeriod,
-	annuallyDiscountPercentage,
 	domain,
 	badge,
 	isFree = false,
@@ -140,7 +138,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									{ sprintf(
 										// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
 										__( 'Save %s%% by paying annually', __i18n_text_domain__ ),
-										annuallyDiscountPercentage
+										planProduct?.annualDiscount
 									) }
 								</div>
 							) }
