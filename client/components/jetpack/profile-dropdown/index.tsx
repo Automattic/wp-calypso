@@ -13,6 +13,7 @@ import Gravatar from 'calypso/components/gravatar';
 import userUtilities from 'calypso/lib/user/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { clearToken } from 'calypso/lib/oauth-token';
 
 /**
  * Style dependencies
@@ -28,7 +29,7 @@ import './style.scss';
  */
 const useCallIfOutOfContext = (
 	ref: React.MutableRefObject< null | HTMLElement >,
-	callback: Function
+	callback: () => void
 ) => {
 	const handleEscape = React.useCallback(
 		( event: KeyboardEvent ) => {
@@ -61,7 +62,7 @@ const useCallIfOutOfContext = (
 
 interface Props {
 	isOpen: boolean;
-	close: Function;
+	close: () => void;
 }
 
 const ProfileDropdown: React.FC< Props > = ( { isOpen, close } ) => {
@@ -70,6 +71,7 @@ const ProfileDropdown: React.FC< Props > = ( { isOpen, close } ) => {
 	const logOut = ( e: MouseEvent ) => {
 		e.preventDefault();
 		e.stopPropagation();
+		clearToken();
 		userUtilities.logout();
 	};
 	const trackedLogOut = useTrackCallback( logOut, 'calypso_jetpack_settings_masterbar_logout' );
