@@ -86,10 +86,9 @@ class TitanControlPanelRedirect extends React.Component {
 export default connect( ( state, ownProps ) => {
 	const site = getSiteBySlug( state, ownProps.siteSlug );
 	const siteId = site?.ID;
-	const siteDomains = getDomainsBySiteId( state, siteId );
 	return {
 		domain: getSelectedDomain( {
-			domains: siteDomains,
+			domains: getDomainsBySiteId( state, siteId ),
 			selectedDomainName: ownProps.domainName,
 			isSiteRedirect: false,
 		} ),
