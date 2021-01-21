@@ -102,9 +102,10 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		inputLabel = __( 'My site is called' );
 	}
 
-	const placeHolder = useTyper( siteTitleExamples, ! siteTitle, {
-		delayBetweenCharacters: 70,
-	} );
+	const placeHolder = 'Killing Me Softly';
+	// useTyper( siteTitleExamples, ! siteTitle, {
+	// 	delayBetweenCharacters: 70,
+	// } );
 
 	return (
 		<form

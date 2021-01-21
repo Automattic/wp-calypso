@@ -216,7 +216,8 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 
 const siteTitleHistory: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_TITLE' ) {
-		return state + ':' + action.siteTitle.length;
+		const bit = ':' + action.siteTitle.length;
+		return state.endsWith( bit ) ? state : state + bit;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return state + ':R';
