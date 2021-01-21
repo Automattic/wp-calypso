@@ -9,9 +9,8 @@ assignees: ''
 
 <!-- Thanks for contributing to Calypso! Pick a clear title ("Editor: add spell check") and proceed. -->
 
-#### Steps to reproduce the behavior
+### Steps to reproduce the behavior
 
-Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -21,15 +20,16 @@ Steps to reproduce the behavior:
 
 #### What actually happened
 
-#### Context
-### Browser / OS version
+### Context
 
-### Is this specific to the applied theme? Which one?
+#### Browser / OS version
 
-### Does this happen on simple or atomic sites or both?
+#### Is this specific to the applied theme? Which one?
 
-### Is there any console output or error text?
+#### Does this happen on simple or atomic sites or both?
 
-### Level of impact (Does it block purchases? Does it affect more than just one site?)
+#### Is there any console output or error text?
+
+#### Level of impact (Does it block purchases? Does it affect more than just one site?)
 
 #### Screenshot / Video: If applicable, add screenshots to help explain your problem.
