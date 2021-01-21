@@ -59,13 +59,17 @@ import {
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import user from 'calypso/lib/user';
-import withFormBase from 'calypso/me/form-base/with-form-base';
 import {
 	clearUnsavedUserSettings,
 	setUserSetting,
 	cancelPendingEmailChange,
+	saveUserSettings,
 } from 'calypso/state/user-settings/actions';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
+import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 
 /**
  * Style dependencies
@@ -103,17 +107,40 @@ class Account extends React.Component {
 		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.hasUnsavedUserSettings && ! this.props.hasUnsavedUserSettings ) {
+			this.props.markSaved?.();
+		}
+	}
+
 	componentWillUnmount() {
 		debug( this.constructor.displayName + ' component is unmounting.' );
 		this.props.clearUnsavedUserSettings();
 	}
 
+	getDisabledState() {
+		return this.props.isUpdatingUserSettings;
+	}
+
 	getUserSetting( settingName ) {
-		return this.props.getSetting( settingName );
+		// @TODO make it so we can handle nested values as well like
+		// `settingName = [ 'calypso_preferences', 'colorScheme' ] for
+		// `userSettings.calypso_preferences.colorScheme`
+		return this.props.unsavedUserSettings[ settingName ] ?? this.props.userSettings[ settingName ];
 	}
 
 	getUserOriginalSetting( settingName ) {
-		return this.props.getOriginalSetting( settingName );
+		// @TODO make it so we can handle nested values as well like
+		// `settingName = [ 'calypso_preferences', 'colorScheme' ] for
+		// `userSettings.calypso_preferences.colorScheme`
+		return this.props.userSettings[ settingName ];
+	}
+
+	hasUnsavedUserSetting( settingName ) {
+		// @TODO make it so we can handle nested values as well like
+		// `settingName = [ 'calypso_preferences', 'colorScheme' ] for
+		// `userSettings.calypso_preferences.colorScheme`
+		return !! this.props.unsavedUserSettings[ settingName ];
 	}
 
 	updateUserSetting( settingName, value ) {
@@ -271,7 +298,7 @@ class Account extends React.Component {
 					<FormCheckbox
 						checked={ this.getUserSetting( ENABLE_TRANSLATOR_KEY ) }
 						onChange={ this.updateCommunityTranslatorSetting }
-						disabled={ this.props.getDisabledState() }
+						disabled={ this.getDisabledState() }
 						id={ ENABLE_TRANSLATOR_KEY }
 						name={ ENABLE_TRANSLATOR_KEY }
 						onClick={ this.getCheckboxHandler( 'Community Translator' ) }
@@ -498,6 +525,12 @@ class Account extends React.Component {
 		return this.props.isPendingEmailChange;
 	}
 
+	submitForm = ( event ) => {
+		event.preventDefault();
+
+		this.props.saveUserSettings();
+	};
+
 	renderPendingEmailChange() {
 		const { translate } = this.props;
 
@@ -526,7 +559,7 @@ class Account extends React.Component {
 	renderUsernameValidation() {
 		const { translate } = this.props;
 
-		if ( ! this.props.hasUnsavedUserSetting( 'user_login' ) ) {
+		if ( ! this.hasUnsavedUserSetting( 'user_login' ) ) {
 			return null;
 		}
 
@@ -597,7 +630,7 @@ class Account extends React.Component {
 	renderEmailValidation() {
 		const { translate } = this.props;
 
-		if ( ! this.props.hasUnsavedUserSetting( 'user_email' ) ) {
+		if ( ! this.hasUnsavedUserSetting( 'user_email' ) ) {
 			return null;
 		}
 
@@ -627,7 +660,7 @@ class Account extends React.Component {
 
 		const isSubmitButtonDisabled =
 			! this.props.hasUnsavedUserSettings ||
-			this.props.getDisabledState() ||
+			this.getDisabledState() ||
 			this.hasEmailValidationError();
 
 		return (
@@ -635,7 +668,7 @@ class Account extends React.Component {
 				<FormFieldset>
 					<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.props.getDisabledState() || this.hasPendingEmailChange() }
+						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
 						id="user_email"
 						name="user_email"
 						isError={ !! this.state.emailValidationError }
@@ -658,7 +691,7 @@ class Account extends React.Component {
 				<FormFieldset>
 					<FormLabel htmlFor="user_URL">{ translate( 'Web address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.props.getDisabledState() }
+						disabled={ this.getDisabledState() }
 						id="user_URL"
 						name="user_URL"
 						type="url"
@@ -676,7 +709,7 @@ class Account extends React.Component {
 						{ translate( 'Interface language' ) }
 					</FormLabel>
 					<LanguagePicker
-						disabled={ this.props.getDisabledState() }
+						disabled={ this.getDisabledState() }
 						languages={ languages }
 						onClick={ this.getClickHandler( 'Interface Language Field' ) }
 						valueKey="langSlug"
@@ -877,7 +910,7 @@ class Account extends React.Component {
 	render() {
 		const { markChanged, translate } = this.props;
 		// Is a username change in progress?
-		const renderUsernameForm = this.props.hasUnsavedUserSetting( 'user_login' );
+		const renderUsernameForm = this.hasUnsavedUserSetting( 'user_login' );
 
 		return (
 			<Main className="account is-wide-layout">
@@ -887,7 +920,7 @@ class Account extends React.Component {
 				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
 
 				<Card className="account__settings">
-					<form onChange={ markChanged } onSubmit={ this.props.submitForm }>
+					<form onChange={ markChanged } onSubmit={ this.submitForm }>
 						<FormFieldset>
 							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
 							<FormTextInput
@@ -896,8 +929,7 @@ class Account extends React.Component {
 								autoCorrect="off"
 								className="account__username"
 								disabled={
-									this.props.getDisabledState() ||
-									! this.getUserSetting( 'user_login_can_be_changed' )
+									this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' )
 								}
 								id="user_login"
 								name="user_login"
@@ -939,6 +971,10 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
 			isPendingEmailChange: isPendingEmailChange( state ),
+			unsavedUserSettings: getUnsavedUserSettings( state ),
+			userSettings: getUserSettings( state ),
+			hasUnsavedUserSettings: hasUnsavedUserSettings( state ),
+			isUpdatingUserSettings: isUpdatingUserSettings( state ),
 		} ),
 		{
 			bumpStat,
@@ -949,10 +985,10 @@ export default compose(
 			clearUnsavedUserSettings,
 			setUserSetting,
 			cancelPendingEmailChange,
+			saveUserSettings,
 		}
 	),
 	localize,
 	withLocalizedMoment,
-	protectForm,
-	withFormBase
+	protectForm
 )( Account );
