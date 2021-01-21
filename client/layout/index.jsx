@@ -47,7 +47,7 @@ import QueryExperiments from 'calypso/components/data/query-experiments';
 import Experiment from 'calypso/components/experiment';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+// import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 
 /**
  * Style dependencies
@@ -165,7 +165,7 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': isAutomatticTeamMember( this.props.teams ),
+			'is-nav-unification': false,
 		} );
 
 		const optionalBodyProps = () => {
@@ -180,11 +180,11 @@ class Layout extends Component {
 
 		const { shouldShowAppBanner } = this.props;
 
-		if ( isAutomatticTeamMember( this.props.teams ) ) {
-			config.enable( 'nav-unification' );
-		} else {
-			config.disable( 'nav-unification' );
-		}
+		// if ( isAutomatticTeamMember( this.props.teams ) ) {
+		// 	config.enable( 'nav-unification' );
+		// } else {
+		config.disable( 'nav-unification' );
+		// }
 
 		return (
 			<div className={ sectionClass }>
