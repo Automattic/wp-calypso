@@ -22,7 +22,7 @@ import QuerySites from 'calypso/components/data/query-sites';
  * Style and image dependencies
  */
 import './style.scss';
-import titanFullLogo from 'calypso/assets/images/email-providers/titan-full.svg';
+import titanFullLogo from 'calypso/assets/images/email-providers/titan/titan-full.svg';
 
 class TitanControlPanelRedirect extends React.Component {
 	static propTypes = {
