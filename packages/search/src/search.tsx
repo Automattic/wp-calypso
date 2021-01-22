@@ -79,6 +79,7 @@ type Props = {
 	overlayStyling?: ( search: string ) => React.ReactNode;
 	placeholder?: string;
 	pinned?: boolean;
+	recordEvent?: ( eventName: string ) => void;
 	searching?: boolean;
 	value?: string;
 };
@@ -113,6 +114,7 @@ export class Search extends React.Component< Props, State > {
 		//disable overlay scrolling calculation when no overlay is provided.
 		overlayStyling: undefined,
 		pinned: false,
+		recordEvent: noop,
 		searching: false,
 	};
 
@@ -150,6 +152,7 @@ export class Search extends React.Component< Props, State > {
 		this.props.onSearchOpen?.( event );
 		// prevent outlines around the open icon after being clicked
 		this.openIcon.current?.blur();
+		this.props.recordEvent?.( 'Clicked Open Search' );
 	};
 
 	closeSearch = (
@@ -180,6 +183,8 @@ export class Search extends React.Component< Props, State > {
 		}
 
 		this.props.onSearchClose?.( event );
+
+		this.props.recordEvent?.( 'Clicked Close Search' );
 	};
 
 	closeListener = keyListener( this.closeSearch );
@@ -398,6 +403,8 @@ export class Search extends React.Component< Props, State > {
 				aria-label={ this.props.__( 'Open Search', __i18n_text_domain__ ) }
 			>
 				{ ! this.props.hideOpenIcon && (
+					// `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work)
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					/* @ts-ignore */
 					<Icon icon={ search } className="search-component__open-icon" />
 				) }
@@ -427,6 +434,8 @@ export class Search extends React.Component< Props, State > {
 					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ this.props.__( 'Close Search', __i18n_text_domain__ ) }
 				>
+					{ /* `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work) */ }
+					{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 					{ /* @ts-ignore */ }
 					<Icon icon={ close } className="search-component__close-icon" />
 				</Button>

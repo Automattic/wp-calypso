@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import DocumentHead from 'calypso/components/data/document-head';
-import Search from 'calypso/components/search';
+import Search from '@automattic/search';
 import SectionNav from 'calypso/components/section-nav';
 import MainComponent from 'calypso/components/main';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -46,6 +46,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { isEnabled } from 'calypso/config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -357,7 +358,7 @@ export class PluginsBrowser extends Component {
 				initialValue={ this.props.search }
 				placeholder={ this.props.translate( 'Search Plugins' ) }
 				delaySearch={ true }
-				analyticsGroup="PluginsBrowser"
+				recordEvent={ ( eventName ) => gaRecordEvent( 'PluginsBrowser', eventName ) }
 			/>
 		);
 	}
