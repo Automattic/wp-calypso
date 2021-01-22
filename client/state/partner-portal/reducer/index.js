@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import { combineReducers, withStorageKey } from 'calypso/state/utils';
-import partners from 'calypso/state/partner-portal/reducer/partners';
+import partner from 'calypso/state/partner-portal/reducer/partner';
 
 const combinedReducer = combineReducers( {
-	partners,
+	partner,
 } );
 
 export default withStorageKey( 'partnerPortal', combinedReducer );

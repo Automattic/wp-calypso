@@ -1,4 +1,4 @@
 /**
  * Internal dependencies
  */
-export * from 'calypso/state/partner-portal/selectors/partners';
+export * from 'calypso/state/partner-portal/selectors/partner';
