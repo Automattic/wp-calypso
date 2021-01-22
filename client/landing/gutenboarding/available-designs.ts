@@ -7,7 +7,7 @@ import { addQueryArgs } from '@wordpress/url';
  * Internal dependencies
  */
 import { isEnabled } from '../../config';
-import { mshotsUrl } from './components/mshots-image';
+import { mshotsUrl, MShotsOptions } from './components/mshots-image';
 import type { Design } from './stores/onboard/types';
 const availableDesignsConfig = require( './available-designs-config.json' );
 
@@ -31,16 +31,27 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 
+	// e.g. https://public-api.wordpress.com/rest/v1/template/demo/rockfield/rockfield?font_headings=Playfair%20Display&font_base=Fira%20Sans&site_title=Rockfield&viewport_height=700&language=en
 	return addQueryArgs(
 		`https://public-api.wordpress.com/rest/v1/template/demo/${ theme }/${ template }`,
 		{
 			font_headings: design.fonts.headings,
 			font_base: design.fonts.base,
 			site_title: design.title,
-			viewport_height: 700, // todo: this is part of the issue with rockfield, a value of 3072 here fixes the background image
+			viewport_height: 700,
 			language: locale,
 		}
 	);
+};
+
+// Used for prefetching design screenshots and the real loading in the design-selector
+export const mShotOptions = (): MShotsOptions => {
+	if ( isEnabled( 'gutenboarding/mshot-landscape' ) ) {
+		return { vpw: 1600, vph: 1600, w: 500, h: 500 };
+	} else if ( isEnabled( 'gutenboarding/mshot-portrait' ) ) {
+		return { vpw: 1600, vph: 3000, w: 500, h: 937 };
+	}
+	return { vpw: 1600, vph: 3000, w: 500, h: 937 };
 };
 
 const canUseWebP = getCanUseWebP();
@@ -55,7 +66,7 @@ export const getDesignImageUrl = ( design: Design ): string => {
 export function prefetchDesignThumbs( locale: string ): void {
 	if ( typeof window !== 'undefined' ) {
 		getAvailableDesigns().featured.forEach( ( design: Design ) => {
-			const href = mshotsUrl( getDesignUrl( design, locale ) );
+			const href = mshotsUrl( getDesignUrl( design, locale ), mShotOptions() );
 			const link = document.createElement( 'link' );
 			link.rel = 'prefetch';
 			link.as = 'image';
