@@ -1,5 +1,5 @@
 === WordPress.com Editing Toolkit ===
-Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
+Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
