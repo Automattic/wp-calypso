@@ -181,15 +181,15 @@ export function noSite(
 	const { getState } = context.store;
 	const currentUser = getCurrentUser( getState() ) as UserData;
 
-	if ( 0 === currentUser?.jetpack_site_count ) {
-		// TODO: render no Jetpack sites screen instead
+	if ( 0 === currentUser?.site_count ) {
+		// TODO: use jetpack_site_count and render no Jetpack sites screen instead
 		renderEmptySites( context );
 		recordNoSitesPageView( context, siteFragment );
 		return true;
 	}
 
-	if ( 0 === currentUser?.jetpack_visible_site_count ) {
-		// TODO: render no Jetpack visible sites screen instead
+	if ( 0 === currentUser?.visible_site_count ) {
+		// TODO: use jetpack_visible_site_count and render no Jetpack visible sites screen instead
 		renderNoVisibleSites( context );
 		recordNoVisibleSitesPageView( context, siteFragment );
 		return true;
