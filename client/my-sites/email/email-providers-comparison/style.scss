@@ -19,6 +19,11 @@
 		&.titan {
 			.promo-card__title-badge {
 				background: none;
+				padding: 0;
+
+				img {
+					max-height: 14px;
+				}
 			}
 			.titan-powered-by-logo {
 				filter: invert( 0.3 );
