@@ -12,13 +12,12 @@ import { connect } from 'react-redux';
 import {
 	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
+	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
 import { isEnabled } from 'calypso/config';
 import SectionHeader from 'calypso/components/section-header';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -35,43 +34,6 @@ class TitanManagementNav extends React.Component {
 		domain: PropTypes.object.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			isFetchingExternalManagementUrl: this.shouldFetchControlPanelLink(),
-			externalManagementUrl: '',
-		};
-	}
-
-	shouldFetchControlPanelLink() {
-		return ! isEnabled( 'titan/iframe-control-panel' );
-	}
-
-	componentDidMount() {
-		this._mounted = true;
-
-		if ( this.shouldFetchControlPanelLink() ) {
-			const { domain, translate } = this.props;
-
-			fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
-				if ( this._mounted ) {
-					this.setState( { isFetchingExternalManagementUrl: false } );
-				}
-				if ( error ) {
-					this.props.errorNotice(
-						error ?? translate( 'An unknown error occurred. Please try again later.' )
-					);
-				} else if ( this._mounted ) {
-					this.setState( { externalManagementUrl: loginURL } );
-				}
-			} );
-		}
-	}
-
-	componentWillUnmount() {
-		this._mounted = false;
-	}
-
 	renderTitanManagementLink = () => {
 		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
 		const linkTitle = translate( 'Manage your email settings and accounts' );
@@ -84,12 +46,15 @@ class TitanManagementNav extends React.Component {
 				</VerticalNavItem>
 			);
 		}
-		const { externalManagementUrl, isFetchingExternalManagementUrl } = this.state;
-		if ( ! externalManagementUrl || isFetchingExternalManagementUrl ) {
-			return <VerticalNavItem isPlaceholder={ true } />;
-		}
 		return (
-			<VerticalNavItem path={ externalManagementUrl } external={ true }>
+			<VerticalNavItem
+				path={ emailManagementTitanControlPanelRedirect(
+					selectedSiteSlug,
+					domain.name,
+					currentRoute
+				) }
+				external={ true }
+			>
 				{ linkTitle }
 			</VerticalNavItem>
 		);

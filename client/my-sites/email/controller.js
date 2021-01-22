@@ -13,6 +13,7 @@ import { emailManagementAddGSuiteUsers } from 'calypso/my-sites/email/paths';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import TitanMailQuantitySelection from 'calypso/my-sites/email/titan-mail-quantity-selection';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 
 export default {
@@ -56,6 +57,17 @@ export default {
 			<CalypsoShoppingCartProvider>
 				<TitanMailQuantitySelection selectedDomainName={ pageContext.params.domain } />
 			</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
+	emailManagementTitanControlPanelRedirect( pageContext, next ) {
+		pageContext.primary = (
+			<TitanControlPanelRedirect
+				domainName={ pageContext.params.domain }
+				siteSlug={ pageContext.params.site }
+			/>
 		);
 
 		next();
