@@ -227,7 +227,7 @@ class TitanMailQuantitySelection extends React.Component {
 		}
 		return (
 			costPerAdditionalMailbox.amount === titanMonthlyProduct.cost &&
-			costPerAdditionalMailbox.currency_code === titanMonthlyProduct.currency_code
+			costPerAdditionalMailbox.currency === titanMonthlyProduct.currency_code
 		);
 	}
 
