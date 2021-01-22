@@ -48,13 +48,13 @@ const JetpackFAQi5: React.FC = () => {
 
 				<FoldableFAQ
 					id="faq-1"
-					question={ translate( 'What is the cancellation policy?' ) }
+					question={ translate( 'What is your cancellation policy?' ) }
 					onToggle={ onFaqToggle }
 				>
 					{ translate(
-						'We want to make sure Jetpack is exactly what you need, so you can request a cancellation' +
-							' within 30 days of purchase and receive a full refund. If there’s something you’d like' +
-							' to see changed in Jetpack to better suit your needs, {{helpLink}}please let us know{{/helpLink}}!',
+						'If you are dissatisfied for any reason, we offer full refunds within 14' +
+							' days for yearly plans, and within 7 days for monthly plans. If you' +
+							' have a question about our paid plans, {{helpLink}}please let us know{{/helpLink}}!',
 						{
 							components: { helpLink: getHelpLink( 'cancellation' ) },
 						}
