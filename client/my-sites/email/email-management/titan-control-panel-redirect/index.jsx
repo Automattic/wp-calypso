@@ -9,6 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { Card } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
 import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
 import { getTitanMailOrderId, hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -17,12 +18,13 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
+import Spinner from 'calypso/components/spinner';
 
 /**
  * Style and image dependencies
  */
 import './style.scss';
-import titanFullLogo from 'calypso/assets/images/email-providers/titan/titan-full.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 
 class TitanControlPanelRedirect extends React.Component {
 	static propTypes = {
@@ -77,7 +79,14 @@ class TitanControlPanelRedirect extends React.Component {
 			<div className="titan-control-panel-redirect__main">
 				<QuerySites allSites />
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
-				<EmptyContent illustration={ titanFullLogo } title={ translate( 'Redirecting…' ) } />
+				<EmptyContent illustration="" title="">
+					<Card>
+						<Spinner size={ 40 } />
+						<h1>{ translate( 'Redirecting you to your Email Control Panel' ) }</h1>
+						<hr />
+						<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
+					</Card>
+				</EmptyContent>
 			</div>
 		);
 	}
