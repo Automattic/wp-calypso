@@ -83,7 +83,6 @@ class ReaderShare extends React.Component {
 
 	static defaultProps = {
 		position: 'bottom',
-		tagName: 'li',
 		iconSize: 24,
 	};
 
@@ -169,30 +168,25 @@ class ReaderShare extends React.Component {
 			'is-active': this.state.showingMenu,
 		} );
 
-		return React.createElement(
-			this.props.tagName,
-			{
-				className: 'reader-share',
-				onClick: ( event ) => event.preventDefault(),
-				onTouchStart: preloadEditor,
-				onMouseEnter: preloadEditor,
-			},
-			[
+		return (
+			<div className="reader-share">
 				<Button
 					aria-label={ translate( 'Share post' ) }
-					key="button"
-					ref={ this.shareButton }
-					className={ buttonClasses }
-					onClick={ this.toggle }
 					borderless
+					className={ buttonClasses }
 					compact={ this.props.iconSize === 18 }
+					key="button"
+					onClick={ this.toggle }
+					onMouseEnter={ preloadEditor }
+					onTouchStart={ preloadEditor }
+					ref={ this.shareButton }
 				>
-					<Gridicon icon="share" />
+					<Gridicon aria-hidden="true" icon="share" />
 					<span className="reader-share__button-label">
 						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>
-				</Button>,
-				this.state.showingMenu && (
+				</Button>
+				{ this.state.showingMenu && (
 					<ReaderPopoverMenu
 						key="menu"
 						context={ this.shareButton.current }
@@ -228,8 +222,8 @@ class ReaderShare extends React.Component {
 							/>
 						) }
 					</ReaderPopoverMenu>
-				),
-			]
+				) }
+			</div>
 		);
 	}
 }
