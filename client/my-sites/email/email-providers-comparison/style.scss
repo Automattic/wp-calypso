@@ -16,6 +16,17 @@
 			width: calc( 50% - 0.5em );
 		}
 
+		&.titan {
+			.promo-card__title-badge {
+				background: none;
+				padding: 0;
+
+				img {
+					max-height: 14px;
+				}
+			}
+		}
+
 		@include breakpoint-deprecated( '<1040px' ) {
 			&,
 			&.no-gsuite {
