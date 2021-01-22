@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { isEmpty, mapValues, noop } from 'lodash';
+import { isEmpty, mapValues } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -17,7 +17,11 @@ import {
 	saveUserSettingsSuccess,
 	saveUserSettingsFailure,
 } from 'calypso/state/user-settings/actions';
-import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
+import {
+	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_REQUEST_FAILURE,
+	USER_SETTINGS_SAVE,
+} from 'calypso/state/action-types';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -44,6 +48,8 @@ export const requestUserSettings = ( action ) =>
 		},
 		action
 	);
+
+export const requestUserSettingsFailure = () => ( { type: USER_SETTINGS_REQUEST_FAILURE } );
 
 /*
  * Store the fetched user settings to Redux state
@@ -123,7 +129,7 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 		dispatchRequest( {
 			fetch: requestUserSettings,
 			onSuccess: storeFetchedUserSettings,
-			onError: noop,
+			onError: requestUserSettingsFailure,
 			fromApi,
 		} ),
 	],

@@ -14,6 +14,8 @@ import {
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_SAVE_SUCCCESS,
 	USER_SETTINGS_SAVE_FAILURE,
+	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -42,6 +44,19 @@ export const unsavedSettings = ( state = {}, action ) => {
 		default:
 			return state;
 	}
+};
+
+export const fetching = ( state = false, action ) => {
+	switch ( action.type ) {
+		case USER_SETTINGS_REQUEST: {
+			return true;
+		}
+		case USER_SETTINGS_REQUEST_FAILURE:
+		case USER_SETTINGS_SAVE_SUCCCESS: {
+			return false;
+		}
+	}
+	return state;
 };
 
 export const updatingPassword = ( state = false, action ) => {
@@ -73,6 +88,7 @@ export const updating = ( state = false, action ) => {
 export default combineReducers( {
 	settings,
 	unsavedSettings,
+	fetching,
 	updatingPassword,
 	updating,
 } );
