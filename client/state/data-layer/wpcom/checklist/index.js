@@ -22,6 +22,7 @@ export const CHECKLIST_KNOWN_TASKS = {
 	SITE_LAUNCHED: 'site_launched',
 	FRONT_PAGE_UPDATED: 'front_page_updated',
 	SITE_MENU_UPDATED: 'site_menu_updated',
+	SITE_THEME_SELECTED: 'site_theme_selected',
 	JETPACK_BACKUPS: 'jetpack_backups',
 	JETPACK_MONITOR: 'jetpack_monitor',
 	JETPACK_PLUGIN_UPDATES: 'jetpack_plugin_updates',
