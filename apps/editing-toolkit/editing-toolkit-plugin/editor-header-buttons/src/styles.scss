@@ -7,3 +7,15 @@
 		display: none;
 	}
 }
+
+.interface-pinned-items > button:not(:first-child) {
+	@media ( max-width: $break-medium ) {
+		display: none;
+	}
+}
+
+.edit-post-header__settings > *:not(.editor-header-buttons, .interface-pinned-items, .components-dropdown-menu) {
+	@media ( max-width: $break-medium ) {
+		display: none;
+	}
+}

@@ -5092,7 +5092,16 @@
     turbo-combine-reducers "^1.0.2"
     use-memo-one "^1.1.1"
 
-"@wordpress/date@*", "@wordpress/date@^3.13.0", "@wordpress/date@^3.7.0":
+"@wordpress/date@*", "@wordpress/date@^3.7.0":
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/date/-/date-3.9.0.tgz#d2034952512363d38d4191c3786695905f4b67b1"
+  integrity sha512-V4+k6Ipkm/JX1TzRcwo96v0Lk1m1NGAHwO9JsnUCCXlG1Qxgl+MxRkWpgmUwgdCDjVvevS/4bU+LvndDWQIzVA==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
+    moment "^2.22.1"
+    moment-timezone "^0.5.16"
+
+"@wordpress/date@^3.13.0":
   version "3.13.0"
   resolved "https://registry.yarnpkg.com/@wordpress/date/-/date-3.13.0.tgz#47e601aadb1645f47b427fb6940de21767de4b42"
   integrity sha512-mNN+0NVn1EQtpSk/3fyhuo9cDSrPBsTBdCtmiS3kN8ybkBhqXNTY+HInj0No3ZZ/xii1Hr8xYKm0YijtNtUs9g==
@@ -5295,12 +5304,19 @@
     terminal-link "^2.0.0"
     yargs "^14.0.0"
 
-"@wordpress/escape-html@^1.11.0", "@wordpress/escape-html@^1.8.0":
+"@wordpress/escape-html@^1.11.0":
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/@wordpress/escape-html/-/escape-html-1.11.0.tgz#6e33fc4ab6d36940f62be4f6e58959ee69d301d8"
   integrity sha512-f/jk3SpYRUp04+LzdonNWBpH8jlm8RXGjK2TimfLz+wRFzFFdF7i2dI9GX+4gea/UuV+WtXAWkfARyV0HVDXwQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
+
+"@wordpress/escape-html@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/escape-html/-/escape-html-1.8.0.tgz#07234fc8914c1edb408e194dd19c981f4dcb1117"
+  integrity sha512-z7z+57nm9Dv3Hau0u3+17dJCbpWnh853VBF6JPID7rKnLPw2AOoRJtNHf4gLeBJTrG6M4cC8EG8Flarsuoxb2w==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
 
 "@wordpress/eslint-plugin@^7.3.0":
   version "7.3.0"
@@ -5368,7 +5384,16 @@
     sprintf-js "^1.1.1"
     tannin "^1.2.0"
 
-"@wordpress/icons@*", "@wordpress/icons@^2.9.0":
+"@wordpress/icons@*":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/icons/-/icons-2.0.0.tgz#9a27deb0a629fbe51b5d108de63b21fdd731f205"
+  integrity sha512-+clpVHv6ABqxjTzXinuVfUlQubJ4FbNFkh8mX6KQHVn+i4nLq/3Qy8ktYNGB2fs1ck0c17tfAKG+FEz+E5AF4g==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
+    "@wordpress/element" "^2.14.0"
+    "@wordpress/primitives" "^1.5.0"
+
+"@wordpress/icons@^2.9.0":
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/@wordpress/icons/-/icons-2.9.0.tgz#6a4fb2e0f6a67a836f79050bfcc32489b747b4eb"
   integrity sha512-eQJQIaCLdmdo8iTjequNkB14Fzx3qLRbjzZTk26fnggG41L+uGRblIeheZDcHY/jPKDd2H4+v9c9/0LqfjuPCA==
@@ -5528,6 +5553,15 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@wordpress/element" "^2.19.0"
+    classnames "^2.2.5"
+
+"@wordpress/primitives@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/primitives/-/primitives-1.5.0.tgz#e4ef2b886ab516ca9a4a54468c8243a24aecc5b9"
+  integrity sha512-SHP95z2AwRHN5egYzUdyvefdvescYTpDNHhp2klTPUNLIme3yNCdL43rihYb+cUEZCgVKEod8Y9EIE7xB9g5YQ==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
+    "@wordpress/element" "^2.14.0"
     classnames "^2.2.5"
 
 "@wordpress/priority-queue@^1.10.0":
@@ -18872,6 +18906,13 @@ moment-timezone-data-webpack-plugin@^1.3.0:
   dependencies:
     find-cache-dir "^3.0.0"
     make-dir "^3.0.0"
+
+moment-timezone@^0.5.16:
+  version "0.5.32"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.32.tgz#db7677cc3cc680fd30303ebd90b0da1ca0dfecc2"
+  integrity sha512-Z8QNyuQHQAmWucp8Knmgei8YNo28aLjJq6Ma+jy1ZSpSk5nyfRT8xgUbSQvD2+2UajISfenndwvFuH3NGS+nvA==
+  dependencies:
+    moment ">= 2.9.0"
 
 moment-timezone@^0.5.31:
   version "0.5.31"
