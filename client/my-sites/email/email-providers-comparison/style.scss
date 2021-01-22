@@ -16,8 +16,13 @@
 			width: calc( 50% - 0.5em );
 		}
 
-		&.titan .titan-powered-by-logo {
-			filter: invert( 0.3 );
+		&.titan {
+			.promo-card__title-badge {
+				background: none;
+			}
+			.titan-powered-by-logo {
+				filter: invert( 0.3 );
+			}
 		}
 
 		@include breakpoint-deprecated( '<1040px' ) {
