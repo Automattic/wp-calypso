@@ -150,7 +150,7 @@ class Layout extends Component {
 		// This is temporary helper function until we have rolled out to 100% of customers.
 		const isNavUnificationEnabled = () => {
 			// Having the feature enabled by default in all environments, will let anyone use ?flags=-nav-unification to temporary disable it.
-			if ( ! config.isEnabled( 'nav-unification' ) ) {
+			if ( 'production' !== process.env.NODE_ENV && ! config.isEnabled( 'nav-unification' ) ) {
 				return false;
 			}
 
