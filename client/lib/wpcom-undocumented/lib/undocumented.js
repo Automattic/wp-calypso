@@ -2612,16 +2612,10 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
  * @returns {Promise} A promise
  */
 Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
-	return this.wpcom.req
-		.get( {
-			apiNamespace: 'wpcom/v2',
-			path: '/jetpack-licensing/partner',
-		} )
-		.then( ( partner ) => {
-			// Only pass active keys.
-			partner.keys = partner.keys.filter( ( key ) => key.disabled_on === null );
-			return partner;
-		} );
+	return this.wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: '/jetpack-licensing/partner',
+	} );
 };
 
 export default Undocumented;
