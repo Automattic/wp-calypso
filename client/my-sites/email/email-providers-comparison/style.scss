@@ -25,9 +25,6 @@
 					max-height: 14px;
 				}
 			}
-			.titan-powered-by-logo {
-				filter: invert( 0.3 );
-			}
 		}
 
 		@include breakpoint-deprecated( '<1040px' ) {
