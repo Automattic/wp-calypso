@@ -147,6 +147,23 @@ class Layout extends Component {
 	}
 
 	render() {
+		// This is temporary helper function until we have rolled out to 100% of customers.
+		const isNavUnificationEnabled = () => {
+			// Having the feature enabled by default in all environments, will let anyone use ?flags=-nav-unification to temporary disable it.
+			if ( ! config.isEnabled( 'nav-unification' ) ) {
+				return false;
+			}
+
+			// Leave the feature enabled for all a12s.
+			if ( isAutomatticTeamMember( this.props.teams ) ) {
+				return true;
+			}
+
+			// Disable the feature for all customers.
+			config.disable( 'nav-unification' );
+			return false;
+		};
+
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
@@ -164,8 +181,7 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification':
-				isAutomatticTeamMember( this.props.teams ) && config.isEnabled( 'nav-unification' ),
+			'is-nav-unification': isNavUnificationEnabled(),
 		} );
 
 		const optionalBodyProps = () => {
