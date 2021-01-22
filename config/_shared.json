@@ -24,6 +24,7 @@
 	"i18n_default_locale_slug": "en",
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
+	"oauth_login_url": false,
 	"logout_url": false,
 	"jetpack_connect_url": false,
 	"mc_analytics_enabled": false,
