@@ -4,14 +4,12 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 
 ## Table of contents
 
-- [Pre-requisites](#pre-requisites)
-  - [Install NodeJS](#install-nodejs)
-  - [Install dependencies](#install-dependencies)
-  - [Configuration](docs/config.md#configuration)
-    - [Test Configuration](docs/config.md#test-configuration)
-    - [Config Values](docs/config.md#config-values)
-    - [Standalone Environment Variables](docs/config.md#standalone-environment-variables)
-    - [CircleCI Environment Variables](docs/config.md#circleci-environment-variables)
+- [Setup](docs/setup.md)
+  - [software environment]()
+  - [configuration file]()
+  - [environment variables]()
+  - [branch naming]()
+  - [set up user (optional)]()
 - [Running tests](#running-tests)
   - [How to run tests](docs/running-tests.md)
     - [To run the default specs](docs/running-tests.md#to-run-the-default-specs-in-parallel-in-default-browser-sizes---mobile-and-desktop)
@@ -30,6 +28,7 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
   - [User account requirements](docs/miscellaneous.md#user-account-requirements)
   - [List of wrapper repos & friends](docs/miscellaneous.md#list-of-wrapper-repos--friends)
   - [How to fix the `chromedriver not found` error when running e2e tests locally](docs/miscellaneous.md#how-to-fix-the-chromedriver-not-found-error-when-running-e2e-tests-locally)
+
 
 ## Pre-requisites
 
