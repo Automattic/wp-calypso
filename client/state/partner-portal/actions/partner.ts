@@ -2,8 +2,6 @@
  * External dependencies
  */
 import { Dispatch } from 'redux';
-import flatMap from 'lodash/flatMap';
-import map from 'lodash/map';
 
 /**
  * Internal dependencies
