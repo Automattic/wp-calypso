@@ -5,7 +5,7 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { useHistory } from 'react-router-dom';
@@ -48,9 +48,13 @@ const PlanDetails: React.FunctionComponent = () => {
 			<div className="focused-launch-details__header">
 				<Title tagName="h2">{ __( 'Select a plan', __i18n_text_domain__ ) }</Title>
 				<SubTitle tagName="h3">
-					{ __(
-						"There's no risk, you can cancel for a full refund within 30 days.",
-						__i18n_text_domain__
+					{ sprintf(
+						/* translators: number of days */
+						__(
+							"There's no risk, you can cancel for a full refund within %1$d days.",
+							__i18n_text_domain__
+						),
+						14
 					) }
 				</SubTitle>
 			</div>

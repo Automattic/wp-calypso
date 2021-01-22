@@ -213,56 +213,41 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 							) }
 						</p>
 						<p>
-							{ hasSevenDayRefundPeriod && // @todo - Remove the duplicate translations once the new string is translated
+							{
+								// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 								translate(
 									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
+									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
 									{
-										args: { days: 7 },
+										count: hasSevenDayRefundPeriod ? 7 : 14,
 										components: { b: <b /> },
+										args: { days: hasSevenDayRefundPeriod ? 7 : 14 },
 									}
-								) }
-							{ ! hasSevenDayRefundPeriod &&
-								translate(
-									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}30-day money-back guarantee{{/b}}.',
-									{
-										components: { b: <b /> },
-									}
-								) }
+								)
+							}
 						</p>
 						<p>
-							{ hasSevenDayRefundPeriod &&
+							{
+								// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 								translate(
+									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d day to evaluate the plan and decide if it’s right for you.',
 									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d days to evaluate the plan and decide if it’s right for you.',
 									{
+										count: hasSevenDayRefundPeriod ? 7 : 14,
 										components: {
 											del: <del />,
 											b: <b />,
 										},
 										args: {
-											days: 7,
+											days: hasSevenDayRefundPeriod ? 7 : 14,
 											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
 											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
 												stripZeros: true,
 											} ),
 										},
 									}
-								) }
-							{ ! hasSevenDayRefundPeriod &&
-								translate(
-									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have 30 days to evaluate the plan and decide if it’s right for you.',
-									{
-										components: {
-											del: <del />,
-											b: <b />,
-										},
-										args: {
-											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
-											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-												stripZeros: true,
-											} ),
-										},
-									}
-								) }
+								)
+							}
 						</p>
 						<p>{ translate( 'So are you ready to explore our most powerful plan ever?' ) }</p>
 					</div>

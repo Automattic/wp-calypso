@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
@@ -45,9 +45,13 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 				<div>
 					<Title>{ __( 'Select a plan', 'full-site-editing' ) }</Title>
 					<SubTitle>
-						{ __(
-							'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.',
-							'full-site-editing'
+						{ sprintf(
+							/* translators: number of days */
+							__(
+								'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within %1$d days.',
+								'full-site-editing'
+							),
+							14
 						) }
 					</SubTitle>
 				</div>
