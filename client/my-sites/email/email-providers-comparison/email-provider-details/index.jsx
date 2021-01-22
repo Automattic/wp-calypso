@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
@@ -33,9 +32,6 @@ class EmailProviderDetails extends React.Component {
 		className: PropTypes.string,
 		onButtonClick: PropTypes.func,
 		isButtonBusy: PropTypes.bool,
-		trailingImageClassName: PropTypes.string,
-		trailingImageTitle: PropTypes.string,
-		trailingImageUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -60,9 +56,6 @@ class EmailProviderDetails extends React.Component {
 			hasPrimaryButton,
 			className,
 			isButtonBusy,
-			trailingImageClassName,
-			trailingImageTitle,
-			trailingImageUrl,
 		} = this.props;
 
 		return (
@@ -77,19 +70,7 @@ class EmailProviderDetails extends React.Component {
 				>
 					{ buttonLabel }
 				</Button>
-				<div>
-					{ this.renderFeatures() }
-					{ trailingImageUrl && (
-						<img
-							src={ trailingImageUrl }
-							alt={ trailingImageTitle ?? '' }
-							className={ classNames(
-								'email-provider-details__trailing-logo',
-								trailingImageClassName
-							) }
-						/>
-					) }
-				</div>
+				<div>{ this.renderFeatures() }</div>
 			</PromoCard>
 		);
 	}

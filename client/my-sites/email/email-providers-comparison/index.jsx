@@ -213,7 +213,6 @@ class EmailProvidersComparison extends React.Component {
 		) : (
 			{ path: titanLogo }
 		);
-		const trailingImageUrl = config.isEnabled( 'titan/phase-2' ) ? poweredByTitanLogo : null;
 		const badge = config.isEnabled( 'titan/phase-2' ) ? (
 			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
 		) : null;
@@ -240,9 +239,6 @@ class EmailProvidersComparison extends React.Component {
 				onButtonClick={ this.onAddTitanClick }
 				badge={ badge }
 				className={ classNames( className, 'titan' ) }
-				trailingImageClassName="titan-powered-by-logo"
-				trailingImageTitle={ translate( 'Powered by Titan' ) }
-				trailingImageUrl={ trailingImageUrl }
 			/>
 		);
 	}
