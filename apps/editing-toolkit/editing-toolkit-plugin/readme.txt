@@ -46,6 +46,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Fix bug where premium content popover preview in block transformations menu would freeze the editor (https://github.com/Automattic/wp-calypso/pull/48988)
 * Focused-Launch: fix styling for disabled Free plan card (https://github.com/Automattic/wp-calypso/pull/47796)
 * Update type definitions (https://github.com/Automattic/wp-calypso/pull/46728)
+* Add a basic README.md for the Welcome Tour (https://github.com/Automattic/wp-calypso/pull/48785)
 
 = 2.11 =
 * Welcome Guide (Tour & NUX modal): add flag to track if guide is opened manually via MoreMenu
