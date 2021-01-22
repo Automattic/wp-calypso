@@ -12,6 +12,7 @@ import { flowRight, partialRight, pick } from 'lodash';
  */
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
+import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
 import DocumentHead from 'calypso/components/data/document-head';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
@@ -70,6 +71,8 @@ class SiteSettingsPerformance extends Component {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
+
+				<Cloudflare />
 
 				{ siteIsJetpack && (
 					<Fragment>

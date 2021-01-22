@@ -17,6 +17,7 @@ import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup
 import SiteSetupListEcommerce from 'calypso/my-sites/customer-home/cards/tasks/site-setup-checklist-ecommerce';
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
 import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
+import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
@@ -39,6 +40,7 @@ import {
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
+	TASK_CLOUDFLARE,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -62,6 +64,7 @@ const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE ]: SiteSetupListEcommerce,
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,
+	[ TASK_CLOUDFLARE ]: Cloudflare,
 };
 
 const Primary = ( { cards, trackCards } ) => {
