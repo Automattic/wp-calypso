@@ -205,10 +205,15 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( isGSuiteOrGoogleWorkspaceProductSlug( primaryPurchase.productSlug ) ) {
 			return preventWidows(
 				translate(
-					'Your domain {{strong}}%(domainName)s{{/strong}} will be using G Suite very soon.',
+					'Your domain {{strong}}%(domainName)s{{/strong}} will be using %(productName)s very soon.',
 					{
-						args: { domainName: primaryPurchase.meta },
+						args: {
+							domainName: primaryPurchase.meta,
+							productName: primaryPurchase.productName,
+						},
 						components: { strong: <strong /> },
+						comment:
+							'%(productName)s can be either "G Suite" or "Google Workspace Business Starter"',
 					}
 				)
 			);
