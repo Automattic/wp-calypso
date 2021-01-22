@@ -409,6 +409,11 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 		margin: 0;
 	}
 
+	// Hide page title placeholder.
+	.editor-post-title__input::placeholder {
+		color: transparent !important;
+	}
+
 	// Hide inserter/appender.
 	.block-list-appender,
 	.block-editor-inserter {

@@ -89,25 +89,28 @@ const BlockLayoutPreview = ( {
 	 * See: https://github.com/WordPress/gutenberg/pull/20609/
 	 */
 	useEffect( () => {
-		if ( ! title ) {
-			return;
-		}
+		// Perform update next render, as the post title input field may not yet be available.
+		setTimeout( () => {
+			if ( ! title ) {
+				return;
+			}
 
-		const previewBody = document.querySelector( `.${ className }` );
+			const previewBody = document.querySelector( `.${ className }` );
 
-		if ( ! previewBody ) {
-			return;
-		}
+			if ( ! previewBody ) {
+				return;
+			}
 
-		const templateTitle = previewBody.querySelector(
-			'.editor-post-title .editor-post-title__input'
-		);
+			const templateTitle = previewBody.querySelector(
+				'.editor-post-title .editor-post-title__input'
+			);
 
-		if ( ! templateTitle ) {
-			return;
-		}
+			if ( ! templateTitle ) {
+				return;
+			}
 
-		templateTitle.value = title;
+			templateTitle.value = title;
+		}, 0 );
 	}, [ recomputeBlockListKey ] );
 
 	// Scroll the preview to the top when the blocks change.
