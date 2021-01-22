@@ -150,6 +150,20 @@ object BuildBaseImages : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 		dockerCommand {
+			name = "Build CI wpcom image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-wpcom:latest
+					registry.a8c.com/calypso/ci-wpcom:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-wpcom"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
 			name = "Push images"
 			commandType = push {
 				namesAndTags = """
@@ -161,6 +175,8 @@ object BuildBaseImages : BuildType({
 					registry.a8c.com/calypso/ci-desktop:%build.number%
 					registry.a8c.com/calypso/ci-e2e:latest
 					registry.a8c.com/calypso/ci-e2e:%build.number%
+					registry.a8c.com/calypso/ci-wpcom:latest
+					registry.a8c.com/calypso/ci-wpcom:%build.number%
 				""".trimIndent()
 			}
 		}
