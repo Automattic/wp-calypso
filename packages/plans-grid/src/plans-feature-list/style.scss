@@ -38,6 +38,13 @@ ul.plans-feature-list__item-group {
 	flex: 300px 0 1;
 	margin: 4px 0;
 
+	// If the 'INCLUDED WITH ANNUAL PLANS` text is rendered
+	// the item needs more margin top
+	& + &--requires-annual-enabled,
+	& + &--requires-annual-disabled {
+		margin-top: 8px;
+	}
+
 	.plans-feature-list__item-group--columns & {
 		margin-right: 10px;
 		align-self: flex-end;
