@@ -21,6 +21,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
  * Style dependencies
  */
 import './style.scss';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 const GSuiteUpsellCard = ( {
 	domain,
@@ -30,6 +31,7 @@ const GSuiteUpsellCard = ( {
 	recordTracksEvent,
 } ) => {
 	const [ users, setUsers ] = useState( newUsers( domain ) );
+	const serviceName = getGoogleMailServiceFamily();
 
 	const canContinue = areAllUsersValid( users );
 	const translate = useTranslate();
@@ -85,11 +87,15 @@ const GSuiteUpsellCard = ( {
 			<CompactCard>
 				<header className="gsuite-upsell-card__header">
 					<h2 className="gsuite-upsell-card__title">
-						{ translate( 'Add professional email from G Suite by Google Cloud to %(domain)s', {
-							args: {
-								domain,
-							},
-						} ) }
+						{ translate(
+							'Add professional email from %(serviceName)s by Google Cloud to %(domain)s',
+							{
+								args: {
+									domain,
+									serviceName,
+								},
+							}
+						) }
 					</h2>
 
 					<h5 className="gsuite-upsell-card__no-setup-required">
@@ -119,7 +125,11 @@ const GSuiteUpsellCard = ( {
 							disabled={ ! canContinue }
 							onClick={ handleAddEmailClick }
 						>
-							{ translate( 'Purchase G Suite' ) }
+							{ translate( 'Purchase %(serviceName)s', {
+								args: {
+									serviceName,
+								},
+							} ) }
 						</Button>
 					</div>
 				</GSuiteNewUserList>

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -14,17 +15,23 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import GSuitePrice from 'calypso/components/gsuite/gsuite-price';
 import GSuiteCompactFeatures from 'calypso/components/gsuite/gsuite-features/compact';
 import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import config from 'calypso/config';
 
 function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlug } ) {
 	const translate = useTranslate();
+	const serviceName = getGoogleMailServiceFamily();
+
+	const logoClass = classNames( 'gsuite-upsell-card__product-logo', {
+		'google-workspace': config.isEnabled( 'google-workspace-migration' ),
+	} );
 
 	return (
 		<div className="gsuite-upsell-card__product-details">
 			<div className="gsuite-upsell-card__product-intro">
 				<div className="gsuite-upsell-card__product-presentation">
 					<div className="gsuite-upsell-card__product-name">
-						{ /* Intentionally not translated as it is a brand name and Google keeps it in English */ }
-						<span className="gsuite-upsell-card__product-logo">G Suite</span>
+						<span className={ logoClass }>{ serviceName }</span>
 					</div>
 
 					<p>

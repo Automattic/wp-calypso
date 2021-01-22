@@ -31,6 +31,15 @@
 	text-indent: -999999px;
 	vertical-align: text-top;
 	width: 73px;
+	&.google-workspace {
+		background: url( '/calypso/images/upgrades/google-workspace-logo.svg' ) no-repeat left;
+		background-size: 150px;
+		display: inline-block;
+		height: 19px;
+		text-indent: -999999px;
+		vertical-align: text-top;
+		width: 150px;
+	}
 }
 
 .gsuite-upsell-card__header {
