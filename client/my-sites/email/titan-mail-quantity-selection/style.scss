@@ -6,23 +6,52 @@
 		margin-right: 10px;
 	}
 }
-
 .titan-mail-quantity-selection__divider {
 	margin-top: 1.5em;
+
+	&.titan-mail-quantity-selection__divider-pricing {
+		margin-bottom: 1em;
+	}
 }
 .titan-mail-quantity-selection__domain-info {
 	margin-bottom: 1em;
 }
 .titan-mail-quantity-selection__mailbox-info {
+	margin-bottom: 1em;
+
 	span {
 		display: block;
 		font-size: $font-body-small;
-
-		&:last-child {
-			margin-bottom: 1em;
-		}
 	}
 }
 .titan-mail-quantity-selection__pricing-info {
 	margin-bottom: 1em;
+
+	h3 {
+		font-size: $font-title-small;
+	}
+
+	>span {
+		display: block;
+		margin: 0.25em 0;
+	}
+
+	.titan-mail-quantity-selection__prorating-details {
+		align-items: center;
+		display: flex;
+		font-size: $font-body-small;
+		margin: 0.5em 0;
+
+		&.card {
+			padding: 16px;
+		}
+
+		.gridicon {
+			flex: 36px;
+		}
+
+		span {
+			margin-left: 0.5em;
+		}
+	}
 }

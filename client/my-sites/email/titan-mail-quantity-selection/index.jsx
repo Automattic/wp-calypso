@@ -10,16 +10,16 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
+import { Button, Card, CompactCard } from '@automattic/components';
 import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import formatCurrency from '@automattic/format-currency';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -28,12 +28,16 @@ import {
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Notice from 'calypso/components/notice';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getConfiguredTitanMailboxCount,
+	getTitanExpiryDate,
+	getTitanMailboxPurchaseCost,
+	getTitanMailboxRenewalCost,
 	getMaxTitanMailboxCount,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
@@ -41,6 +45,7 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies
@@ -157,26 +162,28 @@ class TitanMailQuantitySelection extends React.Component {
 		const configuredMailboxCount = getConfiguredTitanMailboxCount( selectedDomain );
 		if ( configuredMailboxCount >= purchasedMailboxCount ) {
 			return (
-				<span>
-					{ translate(
-						'You currently have %(mailboxCount)d mailbox for this domain',
-						'You currently have %(mailboxCount)d mailboxes for this domain',
-						{
-							args: {
-								mailboxCount: configuredMailboxCount,
-							},
-							count: configuredMailboxCount,
-							comment:
-								'%(mailboxCount)d is the number of email mailboxes the user has for a domain name',
-						}
-					) }
-				</span>
+				<CompactCard>
+					<span>
+						{ translate(
+							'You currently have %(mailboxCount)d mailbox for this domain',
+							'You currently have %(mailboxCount)d mailboxes for this domain',
+							{
+								args: {
+									mailboxCount: configuredMailboxCount,
+								},
+								count: configuredMailboxCount,
+								comment:
+									'%(mailboxCount)d is the number of email mailboxes the user has for a domain name',
+							}
+						) }
+					</span>
+				</CompactCard>
 			);
 		}
 
 		const unusedMailboxCount = purchasedMailboxCount - configuredMailboxCount;
 		return (
-			<React.Fragment>
+			<CompactCard>
 				<span>
 					{ translate(
 						'You have already bought %(mailboxCount)d mailbox for this domain',
@@ -205,40 +212,126 @@ class TitanMailQuantitySelection extends React.Component {
 						}
 					) }
 				</span>
-			</React.Fragment>
+			</CompactCard>
+		);
+	}
+
+	doesAdditionalPriceMatchStandardPrice() {
+		const { selectedDomain, titanMonthlyProduct } = this.props;
+		if ( ! selectedDomain || ! hasTitanMailWithUs( selectedDomain ) ) {
+			return true;
+		}
+		const costPerAdditionalMailbox = getTitanMailboxPurchaseCost( selectedDomain );
+		if ( ! costPerAdditionalMailbox ) {
+			return true;
+		}
+		return (
+			costPerAdditionalMailbox.amount === titanMonthlyProduct.cost &&
+			costPerAdditionalMailbox.currency_code === titanMonthlyProduct.currency_code
 		);
 	}
 
 	renderPricingDetails() {
-		const { selectedDomain, titanMonthlyProduct, translate } = this.props;
-		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
+		const { moment, selectedDomain, titanMonthlyProduct, translate } = this.props;
+
+		const pricingTitle = <h3>{ translate( 'Pricing' ) }</h3>;
+		// Handle cases where we're only dealing with the standard price
+		if ( this.doesAdditionalPriceMatchStandardPrice() ) {
 			return (
 				<React.Fragment>
+					{ pricingTitle }
 					<span>
-						{ translate( 'Each mailbox costs {{strong}}%(mailboxPrice)s/month{{/strong}}', {
+						{ translate( 'Each mailbox costs {{strong}}%(price)s/month{{/strong}}', {
 							args: {
-								mailboxPrice: formatCurrency(
-									titanMonthlyProduct.cost,
-									titanMonthlyProduct.currency_code
-								),
+								price: titanMonthlyProduct.cost_display,
 							},
 							components: {
 								strong: <strong />,
 							},
 							comment:
-								'%(mailboxPrice)s is a formatted price for each mailbox, e.g. $3.50 or €3.75',
+								'%(price)s is a formatted price for each mailbox, e.g. $3.50, €3.75, or PLN 3.75',
 						} ) }
 					</span>
 				</React.Fragment>
 			);
 		}
-		return null;
+
+		const purchaseCost = getTitanMailboxPurchaseCost( selectedDomain );
+		const renewalCost = getTitanMailboxRenewalCost( selectedDomain );
+		const expiryDate = getTitanExpiryDate( selectedDomain );
+
+		const prorationMessage =
+			purchaseCost.amount < renewalCost.amount
+				? translate(
+						'Your initial purchase price is less than your standard monthly price of %(price)s per mailbox because ' +
+							"we're only charging you for the remainder of the current month.",
+						{
+							args: {
+								price: renewalCost.text,
+							},
+							comment:
+								'%(price)s is a formatted price for a monthly email mailbox subscription, e.g. $3.50, €3.75, or PLN 4.50',
+						}
+				  )
+				: translate(
+						'Your initial purchase price is more than your standard monthly price of %(price)s per mailbox because ' +
+							"we're charging you for the remainder of the current month plus one or more months of service.",
+						{
+							args: {
+								price: renewalCost.text,
+							},
+							comment:
+								'%(price)s is a formatted price for a monthly email mailbox subscription, e.g. $3.50, €3.75, or PLN 4.50',
+						}
+				  );
+
+		return (
+			<React.Fragment>
+				{ pricingTitle }
+				<span>
+					{ translate(
+						'Each additional mailbox will cost {{strong}}%(price)s{{/strong}} for this purchase',
+						{
+							args: {
+								price: purchaseCost.text,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(price)s is a formatted price for each email mailbox, e.g. $3.50, €3.75, or PLN 4.50',
+						}
+					) }
+				</span>
+				<span>
+					{ translate(
+						'All of your mailboxes are due to renew at {{strong}}%(price)s/mailbox/month{{/strong}} on %(date)s',
+						{
+							args: {
+								date: moment( expiryDate ).format( 'LL' ),
+								price: renewalCost.text,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(price)s is a formatted price for each mailbox, e.g. $3.50, €3.75, or PLN 4.50; ' +
+								'%(date)s is a localized date of the rough form: 17 February 2021',
+						}
+					) }
+				</span>
+				<CompactCard className="titan-mail-quantity-selection__prorating-details">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<span>{ prorationMessage }</span>
+				</CompactCard>
+			</React.Fragment>
+		);
 	}
 
 	renderForm() {
-		const { isLoadingDomains, selectedDomainName, translate } = this.props;
+		const { isLoadingDomains, selectedDomainName, titanMonthlyProduct, translate } = this.props;
 
-		if ( isLoadingDomains ) {
+		if ( isLoadingDomains || ! titanMonthlyProduct ) {
 			return <AddEmailAddressesCardPlaceholder />;
 		}
 
@@ -261,9 +354,6 @@ class TitanMailQuantitySelection extends React.Component {
 					<div className="titan-mail-quantity-selection__mailbox-info">
 						{ this.renderCurrentMailboxCounts() }
 					</div>
-					<div className="titan-mail-quantity-selection__pricing-info">
-						{ this.renderPricingDetails() }
-					</div>
 					<div>
 						<FormLabel>{ translate( 'Number of new mailboxes to add' ) }</FormLabel>
 						<FormTextInput
@@ -274,6 +364,10 @@ class TitanMailQuantitySelection extends React.Component {
 							value={ this.state.quantity }
 							onChange={ this.onQuantityChange }
 						/>
+					</div>
+					<hr className="titan-mail-quantity-selection__divider titan-mail-quantity-selection__divider-pricing" />
+					<div className="titan-mail-quantity-selection__pricing-info">
+						{ this.renderPricingDetails() }
 					</div>
 
 					<hr className="titan-mail-quantity-selection__divider" />
@@ -305,6 +399,7 @@ class TitanMailQuantitySelection extends React.Component {
 
 		return (
 			<>
+				<QueryProductsList />
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				<Main>
 					<DomainManagementHeader
@@ -355,4 +450,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( localize( TitanMailQuantitySelection ) ) );
+)( withShoppingCart( withLocalizedMoment( localize( TitanMailQuantitySelection ) ) ) );
