@@ -15,6 +15,7 @@ import { Card } from '@automattic/components';
 import config from 'calypso/config';
 import DocumentHead from 'calypso/components/data/document-head';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import FormattedHeader from 'calypso/components/formatted-header';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import HeaderCake from 'calypso/components/header-cake';
@@ -37,24 +38,9 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import './style.scss';
 
 class TwoStep extends Component {
-	static displayName = 'TwoStep';
-
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 	};
-
-	state = {
-		initialized: false,
-		doingSetup: false,
-	};
-
-	isInitialized() {
-		return !! this.props.userSettings;
-	}
-
-	isDoingSetup() {
-		return ! this.props.isTwoStepEnabled;
-	}
 
 	onSetupFinished = () => {
 		this.props.fetchUserSettings();
@@ -80,11 +66,11 @@ class TwoStep extends Component {
 	};
 
 	renderTwoStepSection = () => {
-		if ( ! this.isInitialized() ) {
+		if ( this.props.isFetchingUserSettings ) {
 			return this.renderPlaceholders();
 		}
 
-		if ( this.isDoingSetup() ) {
+		if ( ! this.props.isTwoStepEnabled ) {
 			return <Security2faSetup onFinished={ this.onSetupFinished } />;
 		}
 
@@ -92,7 +78,7 @@ class TwoStep extends Component {
 	};
 
 	renderApplicationPasswords = () => {
-		if ( ! this.isInitialized() || this.isDoingSetup() ) {
+		if ( this.props.isFetchingUserSettings || ! this.props.isTwoStepEnabled ) {
 			return null;
 		}
 
@@ -100,7 +86,7 @@ class TwoStep extends Component {
 	};
 
 	render2faKey = () => {
-		if ( ! this.isInitialized() || this.isDoingSetup() ) {
+		if ( this.props.isFetchingUserSettings || ! this.props.isTwoStepEnabled ) {
 			return null;
 		}
 
@@ -108,7 +94,7 @@ class TwoStep extends Component {
 	};
 
 	renderBackupCodes = () => {
-		if ( ! this.isInitialized() || this.isDoingSetup() ) {
+		if ( this.props.isFetchingUserSettings || ! this.props.isTwoStepEnabled ) {
 			return null;
 		}
 
@@ -150,6 +136,7 @@ class TwoStep extends Component {
 
 export default connect(
 	( state ) => ( {
+		isFetchingUserSettings: isFetchingUserSettings( state ),
 		userSettings: getUserSettings( state ),
 		isTwoStepEnabled: isTwoStepEnabled( state ),
 	} ),
