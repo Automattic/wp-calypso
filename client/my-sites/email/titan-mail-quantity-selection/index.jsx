@@ -14,6 +14,7 @@ import { Button, Card } from '@automattic/components';
 import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
+import formatCurrency from '@automattic/format-currency';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { emailManagement } from 'calypso/my-sites/email/paths';
@@ -37,8 +38,9 @@ import {
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 
 /**
  * Style dependencies
@@ -207,6 +209,32 @@ class TitanMailQuantitySelection extends React.Component {
 		);
 	}
 
+	renderPricingDetails() {
+		const { selectedDomain, titanMonthlyProduct, translate } = this.props;
+		if ( ! hasTitanMailWithUs( selectedDomain ) ) {
+			return (
+				<React.Fragment>
+					<span>
+						{ translate( 'Each mailbox costs {{strong}}%(mailboxPrice)s/month{{/strong}}', {
+							args: {
+								mailboxPrice: formatCurrency(
+									titanMonthlyProduct.cost,
+									titanMonthlyProduct.currency_code
+								),
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(mailboxPrice)s is a formatted price for each mailbox, e.g. $3.50 or €3.75',
+						} ) }
+					</span>
+				</React.Fragment>
+			);
+		}
+		return null;
+	}
+
 	renderForm() {
 		const { isLoadingDomains, selectedDomainName, translate } = this.props;
 
@@ -232,6 +260,9 @@ class TitanMailQuantitySelection extends React.Component {
 					</div>
 					<div className="titan-mail-quantity-selection__mailbox-info">
 						{ this.renderCurrentMailboxCounts() }
+					</div>
+					<div className="titan-mail-quantity-selection__pricing-info">
+						{ this.renderPricingDetails() }
 					</div>
 					<div>
 						<FormLabel>{ translate( 'Number of new mailboxes to add' ) }</FormLabel>
@@ -319,6 +350,7 @@ export default connect(
 			maxTitanMailboxCount: hasTitanMailWithUs( selectedDomain )
 				? getMaxTitanMailboxCount( selectedDomain )
 				: 0,
+			titanMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			isSelectedDomainNameValid: !! selectedDomain,
 		};
 	},
