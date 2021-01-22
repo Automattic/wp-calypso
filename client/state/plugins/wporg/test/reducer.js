@@ -194,6 +194,7 @@ describe( 'wporg reducer', () => {
 				{
 					type: PLUGINS_WPORG_LIST_RECEIVE,
 					category: 'popular',
+					page: 2,
 					data: [ { name: 'Jetpack', slug: 'jetpack' } ],
 				}
 			);
@@ -206,7 +207,25 @@ describe( 'wporg reducer', () => {
 				},
 			} );
 		} );
-		test( 'should paginate plugin lists for search terms', () => {
+		test( 'should overwrite plugin lists for categories if first page', () => {
+			const state = lists(
+				{
+					category: { popular: [ { name: 'Akismet', slug: 'akismet' } ] },
+				},
+				{
+					type: PLUGINS_WPORG_LIST_RECEIVE,
+					category: 'popular',
+					page: 1,
+					data: [ { name: 'Jetpack', slug: 'jetpack' } ],
+				}
+			);
+			expect( state ).to.deep.equal( {
+				category: {
+					popular: [ { name: 'Jetpack', slug: 'jetpack' } ],
+				},
+			} );
+		} );
+		test( 'should overwrite plugin lists for search terms', () => {
 			const state = lists(
 				{
 					search: { security: [ { name: 'Akismet', slug: 'akismet' } ] },
@@ -219,10 +238,7 @@ describe( 'wporg reducer', () => {
 			);
 			expect( state ).to.deep.equal( {
 				search: {
-					security: [
-						{ name: 'Akismet', slug: 'akismet' },
-						{ name: 'Jetpack', slug: 'jetpack' },
-					],
+					security: [ { name: 'Jetpack', slug: 'jetpack' } ],
 				},
 			} );
 		} );
