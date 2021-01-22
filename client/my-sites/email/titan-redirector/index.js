@@ -17,4 +17,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+	page( '/titan', controller.emailTitanNotFound, makeLayout, clientRender );
+	page( '/titan/*', controller.emailTitanNotFound, makeLayout, clientRender );
 }
