@@ -21,6 +21,14 @@ export function isFetched( state, pluginSlug ) {
 	return plugin ? !! plugin.fetched : false;
 }
 
+export function getPluginsListByCategory( state, category ) {
+	return state.plugins.wporg.lists.category?.[ category ] ?? [];
+}
+
+export function getPluginsListBySearchTerm( state, searchTerm ) {
+	return state.plugins.wporg.lists.search?.[ searchTerm ] ?? [];
+}
+
 /**
  * WP.org plugins can be filtered either by category or search term.
  * So we can either be fetching by category or by search term.
