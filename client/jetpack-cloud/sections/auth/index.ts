@@ -15,6 +15,9 @@ export default (): void => {
 	if ( config.isEnabled( 'jetpack-cloud' ) ) {
 		page( authConnectPath(), connect, makeLayout, clientRender );
 		page( authTokenRedirectPath(), tokenRedirect, userInitialize, makeLayout, clientRender );
-		page( authUserInitializeRedirectPath(), userInitialize, makeLayout, clientRender );
+
+		if ( config.isEnabled( 'oauth-pass-grant-type' ) ) {
+			page( authUserInitializeRedirectPath(), userInitialize, makeLayout, clientRender );
+		}
 	}
 };
