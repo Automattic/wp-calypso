@@ -151,7 +151,7 @@
 		"whybundled": "whybundled client/stats.json",
 		"prewhybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run -s build-server",
 		"whybundled:server": "whybundled client/stats-server.json",
-		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js --mode development",
+		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js",
 		"components:storybook:start": "start-storybook -c packages/components/.storybook",
 		"search:storybook:start": "start-storybook -c packages/search/.storybook"
 	},
@@ -298,7 +298,7 @@
 		"webpack-bundle-analyzer": "^4.3.0",
 		"webpack-cli": "^4.3.1",
 		"webpack-dev-middleware": "^4.0.2",
-		"webpack-dev-server": "^3.11.0",
+		"webpack-dev-server": "^4.0.0-beta.0",
 		"whybundled": "^1.4.2",
 		"wpcom": "^6.0.0",
 		"yargs": "^15.3.1"
