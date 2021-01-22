@@ -496,13 +496,19 @@ export function itemToSelectorProduct(
 			term: item.term,
 			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
 			features: {
-				items: buildCardFeaturesFromItem( item, {
-					withoutDescription: true,
-					withoutIcon: true,
-				} ),
+				items: buildCardFeaturesFromItem(
+					item,
+					{
+						withoutDescription: true,
+						withoutIcon: true,
+					},
+					currentCROvariant
+				),
 			},
 		};
 	} else if ( objectIsPlan( item ) ) {
+		const currentCROvariant = getJetpackCROActiveVersion();
+
 		const productSlug = item.getStoreSlug();
 		let monthlyProductSlug;
 		let yearlyProductSlug;
@@ -518,17 +524,17 @@ export function itemToSelectorProduct(
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
-			displayName: item.getTitle(),
-			buttonLabel: item.getButtonLabel?.(),
+			displayName: item.getTitle( currentCROvariant ),
+			buttonLabel: item.getButtonLabel?.( currentCROvariant ),
 			type,
 			subtypes: [],
-			shortName: item.getTitle(),
-			tagline: get( item, 'getTagline', () => '' )(),
-			description: item.getDescription(),
+			shortName: item.getTitle( currentCROvariant ),
+			tagline: get( item, 'getTagline', () => '' )( currentCROvariant ),
+			description: item.getDescription( currentCROvariant ),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
-				items: buildCardFeaturesFromItem( item ),
+				items: buildCardFeaturesFromItem( item, undefined, currentCROvariant ),
 				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
@@ -571,15 +577,17 @@ export function buildCardFeatureItemFromFeatureKey(
 	if ( feature ) {
 		return {
 			slug: feature.getSlug(),
-			icon: options?.withoutIcon ? undefined : feature.getIcon?.(),
+			icon: options?.withoutIcon ? undefined : feature.getIcon?.( variation ),
 			text: feature.getTitle( variation ),
 			description: options?.withoutDescription ? undefined : feature.getDescription?.(),
 			subitems: subFeaturesKeys
 				? compact(
-						subFeaturesKeys.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options ) )
+						subFeaturesKeys.map( ( f ) =>
+							buildCardFeatureItemFromFeatureKey( f, options, variation )
+						)
 				  )
 				: undefined,
-			isHighlighted: feature.isProduct || feature.isPlan,
+			isHighlighted: feature.isProduct?.( variation ) || feature.isPlan,
 		};
 	}
 }
@@ -633,27 +641,29 @@ export function buildCardFeaturesFromFeatureKeys(
  *
  * @param {Plan | Product | object} item Product, plan, or object
  * @param {object?} options Options
+ * @param {string?} variation The current A/B test variation
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromItem(
 	item: Plan | Product | Record< string, unknown >,
-	options?: Record< string, unknown >
+	options?: Record< string, unknown >,
+	variation?: string
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
-		const features = item.getPlanCardFeatures?.();
+		const features = item.getPlanCardFeatures?.( variation );
 
 		if ( features ) {
-			return buildCardFeaturesFromFeatureKeys( features, options );
+			return buildCardFeaturesFromFeatureKeys( features, options, variation );
 		}
 	} else if ( isFunction( item.getFeatures ) ) {
-		const features = item.getFeatures( getJetpackCROActiveVersion() );
+		const features = item.getFeatures( variation );
 
 		if ( features ) {
-			return buildCardFeaturesFromFeatureKeys( features, options );
+			return buildCardFeaturesFromFeatureKeys( features, options, variation );
 		}
 	}
 
-	return buildCardFeaturesFromFeatureKeys( item, options );
+	return buildCardFeaturesFromFeatureKeys( item, options, variation );
 }
 
 /**
