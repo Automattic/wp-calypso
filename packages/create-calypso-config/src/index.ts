@@ -1,6 +1,6 @@
-type ConfigValue = string | boolean | number;
+export type ConfigValue = string | boolean | number;
 
-type ConfigData = Record< string, ConfigValue | ConfigValue[] > & {
+export type ConfigData = Record< string, ConfigValue | ConfigValue[] > & {
 	features?: Record< string, boolean >;
 };
 /**
@@ -108,7 +108,7 @@ const disable = ( data: ConfigData ) => ( feature: string ) => {
 	}
 };
 
-interface ConfigApi {
+export interface ConfigApi {
 	( key: string ): boolean | undefined;
 	isEnabled: ( feature: string ) => boolean;
 	enabledFeatures: () => string[];

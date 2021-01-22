@@ -21,6 +21,7 @@
 		"@automattic/color-studio": "^2.3.0",
 		"@automattic/components": "^1.0.0-alpha.1",
 		"@automattic/composite-checkout": "^1.0.0",
+		"@automattic/create-calypso-config": "^1.0.0-alpha.0",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",

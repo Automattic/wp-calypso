@@ -8,6 +8,7 @@
 		{ "path": "./calypso-stripe" },
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },
+		{ "path": "./create-calypso-config" },
 		{ "path": "./data-stores" },
 		{ "path": "./domain-picker" },
 		{ "path": "./i18n-utils" },
