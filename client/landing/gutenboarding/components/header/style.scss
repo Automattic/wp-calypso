@@ -28,7 +28,19 @@ $padding--gutenboarding__header: $grid-unit-10;
 }
 
 .gutenboarding__header-language-section {
-	margin-right: 15px;
+	margin-right: auto;
+
+	@include break-small {
+		margin-right: 15px;
+	}
+}
+
+.gutenboarding__header-site-language-label {
+	display: none;
+
+	@include break-small {
+		display: inline;
+	}
 }
 
 .gutenboarding__header-site-language-badge {
