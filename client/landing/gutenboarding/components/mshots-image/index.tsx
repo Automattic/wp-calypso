@@ -16,16 +16,17 @@ interface MShotsImageProps {
 	'aria-labelledby': string;
 }
 
+const mShotsParams = {
+	// viewport size (how much of the source page to capture)
+	vpw: 1200,
+	vph: 3072,
+	// size of the resulting image
+	w: 700,
+	h: 1800,
+};
+
 export function mshotsUrl( url: string, count = 0 ): string {
 	const mshotsUrl = 'https://s0.wp.com/mshots/v1/';
-	const mShotsParams = {
-		// viewport size (how much of the source page to capture)
-		vpw: 1200,
-		vph: 3072,
-		// size of the resulting image
-		w: 700,
-		h: 1800,
-	};
 	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( url ), {
 		...mShotsParams,
 		// this doesn't seem to work:
@@ -53,9 +54,12 @@ const MShotsImage = ( {
 				src={ mshotsUrl( url, count ) }
 				onLoad={ ( e ) => {
 					// Test against mshots h value
-					if ( e.currentTarget.naturalHeight !== 1800 ) {
-						// Triggers a target.src change
-						setTimeout( () => setCount( count + 1 ), 1000 );
+					if ( e.currentTarget.naturalHeight !== mShotsParams.h ) {
+						// Only refresh 10 times.
+						if ( count < 10 ) {
+							// Triggers a target.src change
+							setTimeout( () => setCount( count + 1 ), 1000 );
+						}
 					} else {
 						setVisible( true );
 					}
