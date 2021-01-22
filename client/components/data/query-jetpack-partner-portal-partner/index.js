@@ -13,7 +13,7 @@ export default function QueryJetpackPartnerPortalPartner() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( fetchPartner() );
+		dispatch( fetchPartner );
 	}, [ dispatch ] );
 
 	return null;
