@@ -1,0 +1,19 @@
+@import '../../mixins.scss';
+
+.mshots-image {
+	opacity: 0;
+	transition: 0.3s opacity;
+}
+
+.mshots-image__loader {
+	@include onboarding-placeholder();
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.mshots-image-visible {
+	opacity: 1;
+}
