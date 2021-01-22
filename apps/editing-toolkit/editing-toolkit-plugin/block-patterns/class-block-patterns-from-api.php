@@ -124,6 +124,8 @@ class Block_Patterns_From_API {
 				add_query_arg(
 					array(
 						'site' => $override_source_site,
+						'tags' => 'pattern',
+						'pattern_meta' => 'is_web',
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
@@ -151,6 +153,7 @@ class Block_Patterns_From_API {
 				add_query_arg(
 					array(
 						'tags' => 'pattern',
+						'pattern_meta' => 'is_web',
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
