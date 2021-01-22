@@ -168,8 +168,11 @@ class ReaderShare extends React.Component {
 			'is-active': this.state.showingMenu,
 		} );
 
+		// The event.preventDefault() on the wrapping div is needed to prevent the
+		// full post opening when a share method is selected in the popover
 		return (
-			<div className="reader-share">
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+			<div className="reader-share" onClick={ ( event ) => event.preventDefault() }>
 				<Button
 					aria-label={ translate( 'Share post' ) }
 					borderless
