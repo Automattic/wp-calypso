@@ -45,15 +45,9 @@ const doesFeatureRequireAnnuallyBilledPlan = (
 };
 
 const TickIcon: React.FunctionComponent< FeatureListIconProps > = ( { className } ) => (
-	// @TODO: Fix TypeScript error about className
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
 	<Icon className={ className } icon={ check } size={ 18 } />
 );
 const CrossIcon: React.FunctionComponent< FeatureListIconProps > = ( { className } ) => (
-	// @TODO: Fix TypeScript error about className
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
 	<Icon className={ className } icon={ close } size={ 18 } />
 );
 
