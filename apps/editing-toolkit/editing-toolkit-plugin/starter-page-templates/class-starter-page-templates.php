@@ -212,8 +212,8 @@ class Starter_Page_Templates {
 			$request_url = esc_url_raw(
 				add_query_arg(
 					array(
-						'site' => $override_source_site,
-						'tags' => 'layout',
+						'site'         => $override_source_site,
+						'tags'         => 'layout',
 						'pattern_meta' => 'is_web',
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_verticals_locale()

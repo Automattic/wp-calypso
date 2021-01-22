@@ -123,8 +123,8 @@ class Block_Patterns_From_API {
 			$request_url = esc_url_raw(
 				add_query_arg(
 					array(
-						'site' => $override_source_site,
-						'tags' => 'pattern',
+						'site'         => $override_source_site,
+						'tags'         => 'pattern',
 						'pattern_meta' => 'is_web',
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
@@ -152,7 +152,7 @@ class Block_Patterns_From_API {
 			$request_url = esc_url_raw(
 				add_query_arg(
 					array(
-						'tags' => 'pattern',
+						'tags'         => 'pattern',
 						'pattern_meta' => 'is_web',
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
