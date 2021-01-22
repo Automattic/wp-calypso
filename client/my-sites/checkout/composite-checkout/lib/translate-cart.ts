@@ -24,6 +24,7 @@ import {
 	isDomainTransferProduct,
 	isDomainProduct,
 	isDotComPlan,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
@@ -418,7 +419,7 @@ function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.Transla
 	const isRenewalItem = isRenewal( serverCartItem );
 	const { meta, product_name: productName } = serverCartItem;
 
-	if ( isDotComPlan( serverCartItem ) ) {
+	if ( isDotComPlan( serverCartItem ) || ( ! isRenewalItem && isTitanMail( serverCartItem ) ) ) {
 		if ( isRenewalItem ) {
 			return translate( 'Plan Renewal' );
 		}
