@@ -64,6 +64,8 @@ export default function useCouponFieldState(
 }
 
 function isCouponValid( coupon: string ) {
-	// TODO: figure out some basic validation here
-	return coupon.match( /^[a-zA-Z0-9_-]+$/ );
+	// Coupon code is case-insensitive and started with an alphabet.
+	// Underscores and hyphens can be included in the coupon code.
+	// Per-user coupons can have a dot followed by 5-6 letter checksum for verification.
+	return coupon.match( /^[a-z][a-z\d_-]+(\.[a-z\d]+)?$/i );
 }
