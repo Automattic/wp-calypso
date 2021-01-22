@@ -197,12 +197,8 @@ class Dashboard extends Component {
 		) {
 			// Redirect to Core UI setup after finish installation if store is
 			// installed on this site. This check is needed because of an edge
-			// case where on a site where WooCommerce was installed then
-			// removed, then shouldRedirectAfterInstall is always true because
-			// the site option still includes WooCommerce - it isn't removed on
-			// plugin removal. See
-			// /client/extensions/woocommerce/state/sites/setup-choices/selectors.js
-			// in getFinishedInstallOfRequiredPlugins().
+			// case where, if WooCommerce was installed then removed, then
+			// shouldRedirectAfterInstall is always true
 			if ( isSiteWpcomStore ) {
 				this.redirectToWoocommerceSetup( selectedSite );
 			}
