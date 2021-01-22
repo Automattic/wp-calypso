@@ -16,7 +16,7 @@ import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import UserItem from 'calypso/components/user';
 import InfiniteList from 'calypso/components/infinite-list';
 import { fetchUsers } from 'calypso/lib/users/actions';
-import Search from 'calypso/components/search';
+import Search from '@automattic/search';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 /**
