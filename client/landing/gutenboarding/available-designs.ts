@@ -28,16 +28,19 @@ function getCanUseWebP() {
 
 const canUseWebP = getCanUseWebP();
 
-export const getDesignImageUrl = ( design: Design ) => {
+export const getDesignImageUrl = ( design: Design, localeSlug = 'en' ) => {
 	// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
 	// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
 	// https://github.com/Automattic/mShots/issues/16
 	// https://github.com/Automattic/wp-calypso/issues/40564
 	if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
 		// When we update the static images, bump the version for cache busting
-		return `/calypso/images/design-screenshots/${ design.slug }_${ design.template }_${
-			design.theme
-		}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
+		const previewDir =
+			`/calypso/images/design-screenshots` +
+			( localeSlug && localeSlug !== 'en' ? '/' + localeSlug : '' );
+		return `${ previewDir }/${ design.slug }_${ design.template }_${ design.theme }.${
+			canUseWebP ? 'webp' : 'jpg'
+		}?v=3`;
 	}
 
 	const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
