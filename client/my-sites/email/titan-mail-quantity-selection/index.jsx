@@ -103,7 +103,18 @@ class TitanMailQuantitySelection extends React.Component {
 			.addProductsToCart( [
 				fillInSingleCartItemAttributes( this.getCartItem(), this.props.productsList ),
 			] )
-			.then( () => this.isMounted && page( '/checkout/' + selectedSite.slug ) );
+			.then( () => {
+				const { errors } = this.props?.cart?.messages;
+				if (
+					errors &&
+					errors.length &&
+					errors.filter( ( error ) => error.code === 'invalid-quantity' ).length
+				) {
+					// Stay on the page as there's an invalid quantity error
+					return;
+				}
+				return this.isMounted && page( '/checkout/' + selectedSite.slug );
+			} );
 	};
 
 	onQuantityChange = ( e ) => {
