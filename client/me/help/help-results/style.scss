@@ -22,12 +22,16 @@
 
 .help-result {
 	&:hover {
+		.help-result__wrapper {
+			background-color: var( --color-primary-0 );
+		}
 		.help-result__title {
 			color: var( --color-primary-dark );
 		}
 
-		.help-result__icon {
+		.help-result__icon-wrapper {
 			fill: var( --color-primary-dark );
+			background-color: var( --color-primary-10 );
 		}
 	}
 }
