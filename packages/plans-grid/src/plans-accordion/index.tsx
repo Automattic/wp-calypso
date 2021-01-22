@@ -42,7 +42,7 @@ export interface Props {
 	onMaxMonhtlyDiscountPercentageChange: ( perc: number | undefined ) => void;
 }
 
-const PlansTable: React.FunctionComponent< Props > = ( {
+const PlansAccordion: React.FunctionComponent< Props > = ( {
 	selectedFeatures = [],
 	selectedPlanProductId,
 	onPlanSelect,
@@ -182,4 +182,4 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	);
 };
 
-export default PlansTable;
+export default PlansAccordion;

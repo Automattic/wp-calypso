@@ -9,6 +9,8 @@ import { stringify } from 'qs';
 import { setFeatures, setFeaturesByType, setPlanProducts, setPlans } from './actions';
 import type {
 	PricedAPIPlan,
+	APIPlanDetail,
+	PlanSimplifiedFeature,
 	Plan,
 	DetailsAPIResponse,
 	PlanFeature,
@@ -89,6 +91,52 @@ function processFeatures( features: Feature[] ) {
 	}, {} as Record< string, PlanFeature > );
 }
 
+function doesFeatureRequireAnnuallyBilledPlan(
+	featureName: string,
+	allFeaturesData: Record< string, PlanFeature >
+): boolean {
+	const matchedFeatureId = Object.keys( allFeaturesData ).find(
+		( featureId ) => allFeaturesData[ featureId ].name === featureName
+	);
+
+	if ( matchedFeatureId ) {
+		return allFeaturesData[ matchedFeatureId ].requiresAnnuallyBilledPlan;
+	}
+
+	return false;
+}
+
+function processPlanFeatures(
+	planData: APIPlanDetail,
+	allFeaturesData: Record< string, PlanFeature >
+): PlanSimplifiedFeature[] {
+	const features: PlanSimplifiedFeature[] = planData.highlighted_features.map(
+		( featureName ) => ( {
+			name: featureName,
+			requiresAnnuallyBilledPlan: doesFeatureRequireAnnuallyBilledPlan(
+				featureName,
+				allFeaturesData
+			),
+		} )
+	);
+
+	// Features requiring an annually billed plan should be first in the array.
+	features.sort( ( a, b ) => {
+		if ( a.requiresAnnuallyBilledPlan === b.requiresAnnuallyBilledPlan ) {
+			// Either they both require an annually billed plan, or they both don't
+			return 0;
+		} else if ( a.requiresAnnuallyBilledPlan ) {
+			// "a" requires an annually billed plan, "b" does not
+			return -1;
+		}
+
+		// By exclusion, "b" requires an annually billed plan, "a" does not
+		return 1;
+	} );
+
+	return features;
+}
+
 function normalizePlanProducts(
 	pricedPlans: PricedAPIPlan[],
 	periodAgnosticPlans: Plan[]
@@ -146,10 +194,12 @@ export function* getSupportedPlans( locale = 'en' ) {
 		}
 	) ) as { body: DetailsAPIResponse };
 
+	const features = processFeatures( plansFeatures.features );
+
 	const periodAgnosticPlans: Plan[] = plansFeatures.plans.map( ( plan ) => {
 		return {
 			description: plan.tagline,
-			features: plan.highlighted_features,
+			features: processPlanFeatures( plan, features ),
 			storage: plan.storage,
 			title: plan.short_name,
 			featuresSlugs: plan.features.reduce( ( slugs, slug ) => {
@@ -164,7 +214,6 @@ export function* getSupportedPlans( locale = 'en' ) {
 	} );
 
 	const planProducts = normalizePlanProducts( pricedPlans, periodAgnosticPlans );
-	const features = processFeatures( plansFeatures.features );
 
 	yield setPlans( periodAgnosticPlans );
 	yield setPlanProducts( planProducts );

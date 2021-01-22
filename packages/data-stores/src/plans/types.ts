@@ -13,10 +13,15 @@ export type PlanAction = {
 	type: string;
 	slug?: string;
 };
+
+export type PlanSimplifiedFeature = {
+	name: string;
+	requiresAnnuallyBilledPlan: boolean;
+};
 export interface Plan {
 	title: string;
 	description: string;
-	features: string[];
+	features: PlanSimplifiedFeature[];
 	isPopular?: boolean;
 	isFree?: boolean;
 	featuresSlugs?: Record< string, boolean >;

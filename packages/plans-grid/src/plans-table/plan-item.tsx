@@ -42,7 +42,7 @@ export interface Props {
 	slug: string;
 	name: string;
 	tagline?: string | false;
-	features: Array< string >;
+	features: Plans.PlanSimplifiedFeature[];
 	billingPeriod: Plans.PlanBillingPeriod;
 	domain?: DomainSuggestions.DomainSuggestion;
 	isPopular?: boolean;

@@ -32,7 +32,7 @@ export interface Props {
 	slug: Plans.PlanSlug;
 	name: string;
 	description: string;
-	features: Array< string >;
+	features: Plans.PlanSimplifiedFeature[];
 	billingPeriod: Plans.PlanBillingPeriod;
 	domain?: DomainSuggestions.DomainSuggestion;
 	badge?: string;
@@ -46,7 +46,7 @@ export interface Props {
 	disabledLabel?: string;
 }
 
-const PlanItem: React.FunctionComponent< Props > = ( {
+const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 	slug,
 	name,
 	description,
@@ -178,4 +178,4 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	);
 };
 
-export default PlanItem;
+export default PlanAccordionItem;

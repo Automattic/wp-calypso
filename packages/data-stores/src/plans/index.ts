@@ -22,6 +22,7 @@ export type {
 	PlanFeature,
 	PlanPath,
 	PlanBillingPeriod,
+	PlanSimplifiedFeature,
 } from './types';
 
 // plansPaths is used to construct the route that accepts plan slugs like (/beginner, /business, etc..)
