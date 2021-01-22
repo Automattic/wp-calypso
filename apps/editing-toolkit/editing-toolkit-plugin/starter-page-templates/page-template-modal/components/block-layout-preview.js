@@ -112,7 +112,7 @@ const BlockLayoutPreview = ( {
 
 	// Scroll the preview to the top when the blocks change.
 	useEffect( () => {
-		const templatePreview = document.querySelector( '.template-selector-preview' );
+		const templatePreview = document.querySelector( `.${ className }` );
 		if ( ! templatePreview ) {
 			return;
 		}
