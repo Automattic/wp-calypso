@@ -6,7 +6,7 @@ $margin-left--gutenboarding__header-section-item: 13px; // matches design
 $padding--gutenboarding__header: $grid-unit-10;
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
-[role=region].gutenboarding__header {
+.gutenboarding__layout .gutenboarding__header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
