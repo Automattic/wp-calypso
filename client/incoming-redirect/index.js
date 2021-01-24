@@ -7,7 +7,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import * as paths from 'calypso/my-sites/email/paths';
+import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
@@ -17,4 +17,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page( paths.incomingRedirectRoot + '/*', controller.notFound, makeLayout, clientRender );
+	page( paths.incomingRedirectRoot, controller.notFound, makeLayout, clientRender );
 }
