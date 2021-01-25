@@ -1171,10 +1171,10 @@ object WPComPlugins_EditorToolKit : BuildType({
                 cd apps/editing-toolkit
 
                 # Update plugin version in the plugin file.
-                sed -i -e "/^\s\* Version:/c\ * Version: $BUILD_NUMBER" -e "/^define( 'PLUGIN_VERSION'/c\define( 'PLUGIN_VERSION', '$BUILD_NUMBER' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
+                sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'PLUGIN_VERSION'/c\define( 'PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
 
                 # Update plugin stable tag in readme.txt.
-                sed -i -e "/^Stable tag:\s/c\Stable tag: $BUILD_NUMBER"./editing-toolkit-plugin/readme.txt
+                sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%"./editing-toolkit-plugin/readme.txt
 
                 yarn build
 
