@@ -1091,6 +1091,12 @@ object WPComPlugins_EditorToolKit : BuildType({
 
     artifactRules = "editing-toolkit.zip"
 
+    buildNumberPattern = "%build.prefix%.%build.counter%"
+
+    params {
+        param("build.prefix", "3")
+    }
+
     vcs {
         root(WpCalypso)
         cleanCheckout = true
@@ -1163,6 +1169,13 @@ object WPComPlugins_EditorToolKit : BuildType({
                 export NODE_ENV="production"
 
                 cd apps/editing-toolkit
+
+                # Update plugin version in the plugin file.
+                sed -i -e "/^\s\* Version:/c\ * Version: $BUILD_NUMBER" -e "/^define( 'PLUGIN_VERSION'/c\define( 'PLUGIN_VERSION', '$BUILD_NUMBER' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
+
+                # Update plugin stable tag in readme.txt.
+                sed -i -e "/^Stable tag:\s/c\Stable tag: $BUILD_NUMBER"./editing-toolkit-plugin/readme.txt
+
                 yarn build
 
                 cd editing-toolkit-plugin/
