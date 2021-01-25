@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { ANALYTICS_EVENT_RECORD, ANALYTICS_PAGE_VIEW_RECORD } from 'calypso/state/action-types';
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 export const recordEvent = ( service, args ) => ( {
 	type: ANALYTICS_EVENT_RECORD,
@@ -19,14 +18,8 @@ export const recordEvent = ( service, args ) => ( {
 export const recordGoogleEvent = ( category, action, label, value ) =>
 	recordEvent( 'ga', { category, action, label, value } );
 
-export const recordTracksEvent = ( name, properties ) => {
-	//Each event is fed a device type property allowing the device focussed analysis of events
-	const finalProperties = {
-		...properties,
-		device_type: resolveDeviceTypeByViewPort(),
-	};
-	return recordEvent( 'tracks', { name, properties: finalProperties } );
-};
+export const recordTracksEvent = ( name, properties ) =>
+	recordEvent( 'tracks', { name, properties } );
 
 export const recordCustomFacebookConversionEvent = ( name, properties ) =>
 	recordEvent( 'fb', { name, properties } );

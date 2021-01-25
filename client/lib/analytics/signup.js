@@ -15,6 +15,7 @@ import {
 	adTrackSignupComplete,
 	adTrackRegistration,
 } from 'calypso/lib/analytics/ad-tracking';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
@@ -66,7 +67,8 @@ export function recordSignupComplete(
 
 	if ( isNew7DUserSite ) {
 		// Tracks
-		recordTracksEvent( 'calypso_new_user_site_creation', { flow } );
+		const device = resolveDeviceTypeByViewPort();
+		recordTracksEvent( 'calypso_new_user_site_creation', { flow, device } );
 
 		// Google Analytics
 		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
@@ -76,7 +78,8 @@ export function recordSignupComplete(
 }
 
 export function recordSignupStep( flow, step ) {
-	recordTracksEvent( 'calypso_signup_step_start', { flow, step } );
+	const device = resolveDeviceTypeByViewPort();
+	recordTracksEvent( 'calypso_signup_step_start', { flow, step, device } );
 }
 
 export function recordSignupInvalidStep( flow, step ) {
@@ -88,9 +91,6 @@ export function recordSignupInvalidStep( flow, step ) {
  *
  * @param {object} param {}
  * @param {object} param.userData User data
- * @param {string} param.userData.ID User id
- * @param {string} param.userData.username Username
- * @param {string} param.userData.email Email
  * @param {string} param.flow Registration flow
  * @param {string} param.type Registration type
  */
@@ -100,7 +100,8 @@ export function recordRegistration( { userData, flow, type } ) {
 	// Tracks user identification
 	identifyUser( userData );
 	// Tracks
-	recordTracksEvent( 'calypso_user_registration_complete', { flow, type } );
+	const device = resolveDeviceTypeByViewPort();
+	recordTracksEvent( 'calypso_user_registration_complete', { flow, type, device } );
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_user_registration_complete' );
 	// Marketing

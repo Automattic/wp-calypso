@@ -301,7 +301,7 @@ export class PlansFeaturesMain extends Component {
 			selectedPlan,
 			plansWithScroll,
 			withWPPlanTabs,
-			showAllPlans,
+			isAllPaidPlansShown,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
@@ -337,15 +337,9 @@ export class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( showAllPlans || ! withWPPlanTabs ) {
+		if ( ! withWPPlanTabs || isAllPaidPlansShown ) {
 			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [
-					TYPE_FREE,
-					TYPE_PERSONAL,
-					TYPE_PREMIUM,
-					TYPE_BUSINESS,
-					TYPE_ECOMMERCE,
-				] )
+				isPlanOneOfType( plan, [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
 			);
 		}
 
@@ -493,7 +487,7 @@ PlansFeaturesMain.propTypes = {
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	withWPPlanTabs: PropTypes.bool,
-	showAllPlans: PropTypes.bool,
+	isAllPaidPlansShown: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
 	customHeader: PropTypes.node,
