@@ -15,7 +15,9 @@ interface Props {
 
 const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 	return (
-		<label className="domain-picker__suggestion-item contains-link">
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
+		/* eslint-disable jsx-a11y/interactive-supports-focus */
+		<div role="button" className="domain-picker__suggestion-item type-link" onClick={ onClick }>
 			<div className="domain-picker__suggestion-item-name">
 				<span className="domain-picker__domain-wrapper with-margin with-bold-text">
 					{ __( 'Already own a domain?', __i18n_text_domain__ ) }
@@ -37,7 +39,7 @@ const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 					__i18n_text_domain__
 				) }
 			</ArrowButton>
-		</label>
+		</div>
 	);
 };
 
