@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import classnames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -45,6 +45,14 @@ const MShotsImage = ( {
 	const [ visible, setVisible ] = useState( false );
 
 	const src = mshotsUrl( url, options, count );
+
+	// Hide the images while they're loading if src changes (e.g. when locale is switched)
+	// tofix: This will hide the default mshot images from view but when the locale picker is closed
+	// the old images are still shown, these are then hidden instantly while the new ones load.
+	// Ideally these would be hidden before the language picker modal is closed/hidden.
+	useLayoutEffect( () => {
+		setVisible( false );
+	}, [ src, setVisible ] );
 
 	return (
 		<div className="mshots-image__container">
