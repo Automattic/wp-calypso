@@ -20,11 +20,22 @@
 	}
 
 	&__card {
-		&--is-detached {
+		// Increased specificity to override card styles.
+		&--is-detached.card.is-compact,
+		&--is-revoked.card.is-compact {
+			// Reduce padding to fit the extra border width on the left so columns are still aligned perfectly.
+			padding-left: 13px;
+
+			@include break-mobile {
+				padding-left: 21px;
+			}
+		}
+
+		&--is-detached.card.is-compact {
 			border-left: 3px solid var( --studio-orange-40 );
 		}
 
-		&--is-revoked {
+		&--is-revoked.card.is-compact {
 			border-left: 3px solid var( --studio-red-60 );
 		}
 	}
