@@ -407,10 +407,12 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
  */
 
 export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null {
+	const iteration = getJetpackCROActiveVersion();
+
 	if ( slugIsSelectorProductSlug( slug ) ) {
-		return OPTIONS_SLUG_MAP[ slug ];
+		return OPTIONS_SLUG_MAP[ slug ]( iteration );
 	} else if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
-		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ];
+		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( iteration );
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
 		return JETPACK_PRODUCTS_LIST[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
