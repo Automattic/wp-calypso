@@ -7,6 +7,7 @@ declare global {
 		wpcomEditorSiteLaunch?: {
 			launchUrl: string;
 			launchFlow: string;
+			isGutenboarding: boolean;
 			locale?: string;
 		};
 		_currentSiteId: number;
