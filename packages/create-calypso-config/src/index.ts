@@ -1,6 +1,6 @@
 export type ConfigValue = string | boolean | number;
 
-export type ConfigData = Record< string, ConfigValue | ConfigValue[] > & {
+export type ConfigData = Record< string, any > & {
 	features?: Record< string, boolean >;
 };
 /**
@@ -26,9 +26,9 @@ export type ConfigData = Record< string, ConfigValue | ConfigValue[] > & {
  * @throws {ReferenceError} when key not defined in the config (NODE_ENV=development only)
  * @returns A function that gets the value of property named by the key
  */
-const config = ( data: ConfigData ) => ( key: string ): ConfigValue | ConfigValue[] | undefined => {
+const config = ( data: ConfigData ) => < T >( key: string ): T | undefined => {
 	if ( key in data ) {
-		return data[ key ];
+		return data[ key ] as T;
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
@@ -109,7 +109,7 @@ const disable = ( data: ConfigData ) => ( feature: string ) => {
 };
 
 export interface ConfigApi {
-	( key: string ): boolean | undefined;
+	< T >( key: string ): T;
 	isEnabled: ( feature: string ) => boolean;
 	enabledFeatures: () => string[];
 	enable: ( feature: string ) => void;
