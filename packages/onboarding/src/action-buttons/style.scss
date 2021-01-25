@@ -92,6 +92,9 @@ button.action_buttons__button.components-button {
 		font-weight: 500;
 		color: var( --mainColor );
 
+		// @TODO: We have to revisit the ArrowButton's padding when we pick up #48568 (https://github.com/Automattic/wp-calypso/issues/48568)
+		padding-left: 0;
+
 		svg {
 			// the svg has 5 empty pixels on the left
 			margin-left: -5px;
