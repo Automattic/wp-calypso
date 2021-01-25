@@ -76,7 +76,7 @@
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/show-vertical-input": false,
 		"gutenboarding/mshot-preview": true,
-		"gutenboarding/mshot-landscape": true,
+		"gutenboarding/landscape-preview": true,
 		"help": true,
 		"home/layout-dev": true,
 		"inline-help": true,

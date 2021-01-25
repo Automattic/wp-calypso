@@ -92,7 +92,7 @@ const DesignSelector: React.FunctionComponent = () => {
 								<span
 									className={ classnames(
 										'design-selector__image-frame',
-										isEnabled( 'gutenboarding/mshot-landscape' )
+										isEnabled( 'gutenboarding/landscape-preview' )
 											? 'design-selector__landscape'
 											: 'design-selector__portrait'
 									) }
