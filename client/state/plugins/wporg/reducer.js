@@ -72,7 +72,7 @@ export function items( state = {}, action ) {
 }
 
 export function lists( state = {}, action ) {
-	const { category, data, searchTerm, type } = action;
+	const { category, data, page, searchTerm, type } = action;
 	switch ( type ) {
 		case PLUGINS_WPORG_LIST_RECEIVE:
 			if ( ! data ) {
@@ -81,7 +81,8 @@ export function lists( state = {}, action ) {
 
 			// We only need lists by category and search terms.
 			if ( category ) {
-				const prevCategoryState = state.category?.[ category ] ?? [];
+				// If this is the first page, reset before appending the data.
+				const prevCategoryState = page > 1 ? state.category?.[ category ] ?? [] : [];
 				return {
 					...state,
 					category: {
@@ -90,12 +91,11 @@ export function lists( state = {}, action ) {
 					},
 				};
 			} else if ( searchTerm ) {
-				const prevSearchState = state.search?.[ searchTerm ] ?? [];
 				return {
 					...state,
 					search: {
 						...state.search,
-						[ searchTerm ]: [ ...prevSearchState, ...data ],
+						[ searchTerm ]: data,
 					},
 				};
 			}
