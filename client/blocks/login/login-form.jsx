@@ -531,7 +531,6 @@ export class LoginForm extends Component {
 							autoCapitalize="off"
 							autoCorrect="off"
 							spellCheck="false"
-							type="email"
 							autoComplete="username"
 							className={ classNames( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
@@ -567,7 +566,6 @@ export class LoginForm extends Component {
 
 							<FormPasswordInput
 								autoCapitalize="off"
-								type="password"
 								autoComplete="current-password"
 								className={ classNames( {
 									'is-error': requestError && requestError.field === 'password',
