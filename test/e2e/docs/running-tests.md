@@ -17,6 +17,7 @@
     - [CircleCI](#circleci)
         - [Canary](#canary)
         - [Full suite](#full-suite)
+        - [Schedule](#schedule)
     - [Sauce Labs](#sauce-labs)
 
 <!-- /TOC -->
@@ -123,26 +124,39 @@ WIP.
 
 ## CircleCI
 
-The `Automattic/wp-calypso` offers two major choices on how to run tests:
+Broadly speaking, `Automattic/wp-calypso` runs two types of test suites:
 
 * canary (limited set)
 * full (full set)
 
+Each suite is also scheduled to execute every _x_ hours at certain times throughout the day.
+
 ### Canary
 
-As of 2021-01-25, canary tests are _automatically_ run on all PRs and merges. 
+As of 2021-01-25, canary tests are triggered _automatically_ on all PRs and merges.
 
 ### Full suite
 
 The following labels provide ability to trigger e2e tests for specific feature(s):
 
-| Label | Target |
+| Label | Target Suite |
 | `[Status] Needs e2e Testing` | Full suite of WordPress.com e2e tests |
 | `[Status] Needs Jetpack e2e Testing` | Full suite of Jetpack e2e tests |
-| `[Status] Needs e2e Testing CoBlocks Edge | Full suite of CoBlocks e2e tests |
-| `[Status] Needs e2e Testing Gutenberg | Full suite of Gutenberg e2e tests |
-| `[Status] Needs e2e Testing horizon | Full mobile & desktop suite of horizon e2e tests |
+| `[Status] Needs e2e Testing CoBlocks Edge` | Full suite of CoBlocks e2e tests |
+| `[Status] Needs e2e Testing Gutenberg` | Full suite of Gutenberg e2e tests |
+| `[Status] Needs e2e Testing horizon` | Full mobile & desktop suite of horizon e2e tests |
 
+### Schedule
+
+_All times are in UTC._
+
+| Suite | When | Time |
+| -- | -- | -- |
+| WordPress.com | Each `wp-calypso` deployment | - |
+| | Every 6 hours | 00:00 |
+| Internet Explorer | ? | ? |
+| Jetpack | Every 12 hours | 01:00 |
+| WooCommerce | Every 12 hours | 11:00 |
 
 ## Sauce Labs
 
