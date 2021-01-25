@@ -2,23 +2,32 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { Button, Card } from '@automattic/components';
-import { isDesktop } from '@automattic/viewport';
+import { CompactCard } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo.svg';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import config from '@automattic/calypso-config';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
+import jetpackIllustration from 'calypso/assets/images/illustrations/jetpack-logo.svg';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const showCloudflare = config.isEnabled( 'cloudflare' );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
+	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
+	const showUpsell = [ 'personal-bundle', 'free_plan' ].includes( sitePlan );
+	const upgradeLink = `/plans/${ siteSlug }?customerType=business`;
 
 	const recordClick = () => {
 		dispatch(
@@ -30,32 +39,64 @@ const Cloudflare = () => {
 		<>
 			{ showCloudflare && (
 				<>
-					<SettingsSectionHeader title={ translate( 'Cloudflare CDN' ) } />
-					<Card>
+					{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
+					<SettingsSectionHeader title={ translate( 'CDN' ) } />
+					<CompactCard>
 						<div className="site-settings__cloudflare">
-							<div className="site-settings__cloudflare-text">
-								<p>
-									{ translate(
-										'Use the Cloudflare global server network to optimize your site content and create a faster experience for your users regardless of their device or location.'
-									) }
-								</p>
-
-								<Button
-									onClick={ recordClick }
-									href="https://www.CLOUDFLARELINK.com"
-									target="_blank"
-								>
-									{ translate( 'Learn more' ) }
-								</Button>
+							<div className="site-settings__cloudflare-illustration">
+								<img src={ jetpackIllustration } alt="" />
 							</div>
-
-							{ isDesktop() && (
-								<div className="site-settings__cloudflare-illustration">
-									<img src={ cloudflareIllustration } alt="" />
-								</div>
-							) }
+							<div className="site-settings__cloudflare-text">
+								<p className="site-settings__cloudflare-title">Jetpack CDN</p>
+								<p>{ translate( 'Comes built-in with WordPress.com Business plans.' ) }</p>
+								<p>
+									<a
+										onClick={ recordClick }
+										href="https://jetpack.com/features/design/content-delivery-network/"
+										target="_blank"
+										rel="noreferrer"
+									>
+										{ translate( 'Learn more' ) }
+									</a>
+								</p>
+							</div>
 						</div>
-					</Card>
+					</CompactCard>
+					<CompactCard>
+						<div className="site-settings__cloudflare">
+							<div className="site-settings__cloudflare-illustration">
+								<img src={ cloudflareIllustration } alt="" />
+							</div>
+							<div className="site-settings__cloudflare-text">
+								<p className="site-settings__cloudflare-title">Cloudflare CDN</p>
+								<p>
+									{ translate( 'An alternative to Jetpack CDN, with security-focused plans.' ) }
+								</p>
+								<p>
+									<a
+										onClick={ recordClick }
+										href="https://www.CLOUDFLARELINK.com"
+										target="_blank"
+										rel="noreferrer"
+									>
+										{ translate( 'Learn more' ) }
+									</a>
+								</p>
+							</div>
+						</div>
+					</CompactCard>
+					{ showUpsell && (
+						<UpsellNudge
+							title={ translate( 'Available with Premium plans or higher' ) }
+							description={ translate(
+								'A CDN (Content Delivery Network) optimizes your content to provide users with the fastest experience.'
+							) }
+							href={ upgradeLink }
+							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge' }
+							showIcon={ true }
+							forceDisplay={ true }
+						/>
+					) }
 				</>
 			) }
 		</>
