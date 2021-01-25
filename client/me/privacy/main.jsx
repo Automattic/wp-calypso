@@ -31,7 +31,7 @@ import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/ac
 import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import { requestDpa } from 'calypso/state/data-getters';
+import requestDpa from 'calypso/state/data-getters/request-dpa';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
