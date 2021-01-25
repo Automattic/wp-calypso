@@ -385,6 +385,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		require( 'calypso/lib/desktop' ).default.init();
 	}
 
+	// temp: test -- will revert
+	window.electron?.receive( 'ping', () => {
+		window.electron?.send( 'pong' );
+	} );
+
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&
 		document.querySelector( '.environment.is-tests' )
