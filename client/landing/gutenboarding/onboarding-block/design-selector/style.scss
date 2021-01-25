@@ -124,24 +124,22 @@
 			width: 100%;
 			height: auto;
 		}
+	}
 
-		&.landscape {
-			padding-top: 65%;
+	.design-selector__landscape {
+		padding-top: 65%;
+
+		img {
+			transition: all 1s;
 		}
 
-		&.portrait {
-			padding-top: 360px / 480px * 200%;
+		img:hover {
+			margin-top: -100px;
 		}
+	}
 
-		&.scrollable {
-			img {
-				transition: all 1s;
-			}
-
-			img:hover {
-				margin-top: -100px;
-			}
-		}
+	.design-selector__portrait {
+		padding-top: 360px / 480px * 200%;
 	}
 
 	.design-selector__option-meta {

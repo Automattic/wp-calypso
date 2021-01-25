@@ -92,8 +92,9 @@ const DesignSelector: React.FunctionComponent = () => {
 								<span
 									className={ classnames(
 										'design-selector__image-frame',
-										isEnabled( 'gutenboarding/mshot-landscape' ) ? 'landscape' : 'portrait',
-										isEnabled( 'gutenboarding/mshot-scrollable' ) ? 'scrollable' : ''
+										isEnabled( 'gutenboarding/mshot-landscape' )
+											? 'design-selector__landscape'
+											: 'design-selector__portrait'
 									) }
 								>
 									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (

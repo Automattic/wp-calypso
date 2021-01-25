@@ -49,8 +49,6 @@ export const mShotOptions = (): MShotsOptions => {
 	// Take care changing these values as animation css in design-selector expect these height values
 	if ( isEnabled( 'gutenboarding/mshot-landscape' ) ) {
 		return { vpw: 1600, vph: 1600, w: 500, h: 500 };
-	} else if ( isEnabled( 'gutenboarding/mshot-portrait' ) ) {
-		return { vpw: 1600, vph: 3000, w: 500, h: 937 };
 	}
 	return { vpw: 1600, vph: 3000, w: 500, h: 937 };
 };
