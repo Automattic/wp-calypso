@@ -243,7 +243,7 @@ class EmailProvidersComparison extends React.Component {
 		);
 	}
 
-	renderGSuiteDetails() {
+	renderGSuiteDetails( className ) {
 		const { currencyCode, gSuiteProduct, translate } = this.props;
 
 		let title = translate( 'G Suite by Google' );
@@ -298,20 +298,25 @@ class EmailProvidersComparison extends React.Component {
 				}
 				buttonLabel={ buttonLabel }
 				onButtonClick={ this.goToAddGSuite }
+				className={ className }
 			/>
 		);
 	}
 
 	render() {
 		const { isGSuiteSupported } = this.props;
-		const cardClassName = isGSuiteSupported ? null : 'no-gsuite';
+		const isTitanSupported = config.isEnabled( 'titan/phase-2' );
+		const cardClassName = classNames( [
+			isGSuiteSupported ? null : 'no-gsuite',
+			isTitanSupported ? null : 'no-titan',
+		] );
 		return (
 			<>
 				{ this.renderHeaderSection() }
 				<div className="email-providers-comparison__providers">
 					{ this.renderForwardingDetails( cardClassName ) }
-					{ this.renderTitanDetails( cardClassName ) }
-					{ isGSuiteSupported && this.renderGSuiteDetails() }
+					{ isTitanSupported && this.renderTitanDetails( cardClassName ) }
+					{ isGSuiteSupported && this.renderGSuiteDetails( cardClassName ) }
 					<TrackComponentView
 						eventName="calypso_email_providers_comparison_page_view"
 						eventProperties={ { is_gsuite_supported: isGSuiteSupported } }
