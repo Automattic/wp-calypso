@@ -5,10 +5,10 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 ## Table of contents
 
 - [Setup](docs/setup.md)
-  - [software environment]()
-  - [configuration file]()
-  - [environment variables]()
-  - [branch naming]()
+  - [software environment](https://github.com/worldomonation/wp-calypso/blob/update/e2e-documentation/test/e2e/docs/setup.md#software-environment)
+  - [configuration file](https://github.com/worldomonation/wp-calypso/blob/update/e2e-documentation/test/e2e/docs/setup.md#configuration)
+  - [environment variables](https://github.com/worldomonation/wp-calypso/blob/update/e2e-documentation/test/e2e/docs/setup.md#environment-variables)
+  - [branch naming](https://github.com/worldomonation/wp-calypso/blob/update/e2e-documentation/test/e2e/docs/setup.md#naming-branches)
   - [set up user (optional)]()
 - [Running tests](#running-tests)
   - [How to run tests](docs/running-tests.md)
