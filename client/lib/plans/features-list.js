@@ -1261,11 +1261,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => constants.FEATURE_ANTISPAM_V2,
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'Anti-spam ' ),
-				spp: i18n.translate( 'Anti-spam' ),
-			}[ variation ] || i18n.translate( 'Automated spam protection' ) ),
+		getTitle: () => i18n.translate( 'Comment and form protection' ),
 	},
 
 	[ constants.FEATURE_PRODUCT_ANTISPAM_V2 ]: {
