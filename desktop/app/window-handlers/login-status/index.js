@@ -7,11 +7,11 @@ const { app, ipcMain: ipc } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const menu = require( 'calypso/desktop/lib/menu' );
-const state = require( 'calypso/desktop/lib/state' );
-const platform = require( 'calypso/desktop/lib/platform' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:login' );
-const WPNotificationsAPI = require( 'calypso/desktop/lib/notifications/api' );
+const menu = require( '../../lib/menu' );
+const state = require( '../../lib/state' );
+const platform = require( '../../lib/platform' );
+const log = require( '../../lib/logger' )( 'desktop:login' );
+const WPNotificationsAPI = require( '../../lib/notifications/api' );
 
 module.exports = function ( mainWindow ) {
 	menu.set( app, mainWindow );

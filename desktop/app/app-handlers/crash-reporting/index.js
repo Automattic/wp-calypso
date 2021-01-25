@@ -6,8 +6,8 @@ const { app, crashReporter } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const Config = require( 'calypso/desktop/lib/config' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:crash-reporting' );
+const Config = require( '../../lib/config' );
+const log = require( '../../lib/logger' )( 'desktop:crash-reporting' );
 
 module.exports = function () {
 	if ( Config.crash_reporter.electron ) {

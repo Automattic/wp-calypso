@@ -1,12 +1,12 @@
 /**
  * External Dependencies
  */
-const ipc = require( 'calypso/desktop/lib/calypso-commands' );
+const ipc = require( '../../../lib/calypso-commands' );
 
 /**
  * Internal dependencies
  */
-const calypsoMenu = require( 'calypso/desktop/lib/menu/calypso-menu' );
+const calypsoMenu = require( '../../../lib/menu/calypso-menu' );
 
 module.exports = function ( app, mainWindow ) {
 	return calypsoMenu( mainWindow ).concat(

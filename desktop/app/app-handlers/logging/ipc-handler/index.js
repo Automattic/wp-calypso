@@ -22,7 +22,7 @@ module.exports = {
 	getLogger: function ( namespace, options ) {
 		let logger = this.loggers[ namespace ];
 		if ( ! logger ) {
-			logger = require( 'calypso/desktop/lib/logger' )( namespace, options );
+			logger = require( '../../../lib/logger' )( namespace, options );
 			this.loggers[ namespace ] = logger;
 		}
 		return logger;

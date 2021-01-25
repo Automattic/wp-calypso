@@ -6,7 +6,7 @@ const editMenu = require( './edit-menu' );
 const viewMenu = require( './view-menu' );
 const windowMenu = require( './window-menu' );
 const helpMenu = require( './help-menu' );
-const platform = require( 'calypso/desktop/lib/platform' );
+const platform = require( '../../lib/platform' );
 
 module.exports = function ( app, mainWindow ) {
 	const menu = [

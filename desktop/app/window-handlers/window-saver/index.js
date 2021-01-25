@@ -6,7 +6,7 @@ const { debounce } = require( 'lodash' );
 /**
  * Internal dependencies
  */
-const Settings = require( 'calypso/desktop/lib/settings' );
+const Settings = require( '../../lib/settings' );
 
 /**
  * Module variables

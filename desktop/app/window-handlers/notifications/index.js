@@ -8,10 +8,10 @@ const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs
 /**
  * Internal dependencies
  */
-const Settings = require( 'calypso/desktop/lib/settings' );
-const Platform = require( 'calypso/desktop/lib/platform' );
-const ViewModel = require( 'calypso/desktop/lib/notifications/viewmodel' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:notifications' );
+const Settings = require( '../../lib/settings' );
+const Platform = require( '../../lib/platform' );
+const ViewModel = require( '../../lib/notifications/viewmodel' );
+const log = require( '../../lib/logger' )( 'desktop:notifications' );
 
 /**
  *

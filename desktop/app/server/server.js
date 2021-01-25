@@ -8,9 +8,9 @@ import portscanner from 'portscanner';
 /**
  * Internal dependencies
  */
-import Config from 'calypso/desktop/lib/config';
-import logFactory from 'calypso/desktop/lib/logger';
-import boot from 'calypso/server/boot';
+import Config from '../lib/config';
+import logFactory from '../lib/logger';
+import boot from '../../../client/server/boot';
 
 const log = logFactory( 'desktop:server' );
 

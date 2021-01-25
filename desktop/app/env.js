@@ -34,8 +34,6 @@ if ( path.extname( apppath ) === '.asar' ) {
 }
 process.chdir( apppath );
 
-process.env.CALYPSO_ENV = config.calypso_config;
-
 // Set app config path
 app.setPath( 'userData', appData );
 
@@ -58,11 +56,10 @@ if ( Settings.isDebug() ) {
  * These setup things for Calypso. We have to do them inside the app as we can't set any env variables in the packaged release
  * This has to come after the DEBUG_* variables
  */
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:boot' );
+const log = require( './lib/logger' )( 'desktop:boot' );
 log.info( `Booting ${ config.appPathName + ' v' + config.version }` );
 log.info( `App Path: ${ app.getAppPath() }` );
 log.info( `App Data: ${ app.getPath( 'userData' ) }` );
-log.info( 'Server: ' + config.server_url + ':' + config.server_port );
 log.info( 'Settings:', Settings._getAll() );
 
 if ( Settings.getSetting( 'proxy-type' ) === '' ) {

@@ -7,16 +7,12 @@ const { autoUpdater } = require( 'electron-updater' );
 /**
  * Internal dependencies
  */
-const AppQuit = require( 'calypso/desktop/lib/app-quit' );
-const Config = require( 'calypso/desktop/lib/config' );
-const debugTools = require( 'calypso/desktop/lib/debug-tools' );
-const {
-	bumpStat,
-	sanitizeVersion,
-	getPlatform,
-} = require( 'calypso/desktop/lib/desktop-analytics' );
-const Updater = require( 'calypso/desktop/lib/updater' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:updater:auto' );
+const AppQuit = require( '../../../lib/app-quit' );
+const Config = require( '../../../lib/config' );
+const debugTools = require( '../../../lib/debug-tools' );
+const { bumpStat, sanitizeVersion, getPlatform } = require( '../../../lib/desktop-analytics' );
+const Updater = require( '../../../lib/updater' );
+const log = require( '../../../lib/logger' )( 'desktop:updater:auto' );
 
 const statsPlatform = getPlatform( process.platform );
 const sanitizedVersion = sanitizeVersion( app.getVersion() );

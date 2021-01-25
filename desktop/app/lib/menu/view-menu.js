@@ -4,7 +4,7 @@ const { BrowserWindow } = require( 'electron' );
  * Internal dependencies
  */
 const debugMenu = require( './debug-menu' );
-const platform = require( 'calypso/desktop/lib/platform' );
+const platform = require( '../../lib/platform' );
 
 /**
  * Module variables

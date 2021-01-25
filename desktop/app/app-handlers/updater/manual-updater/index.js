@@ -9,13 +9,9 @@ const semver = require( 'semver' );
 /**
  * Internal dependencies
  */
-const Updater = require( 'calypso/desktop/lib/updater' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:updater:manual' );
-const {
-	bumpStat,
-	sanitizeVersion,
-	getPlatform,
-} = require( 'calypso/desktop/lib/desktop-analytics' );
+const Updater = require( '../../../lib/updater' );
+const log = require( '../../../lib/logger' )( 'desktop:updater:manual' );
+const { bumpStat, sanitizeVersion, getPlatform } = require( '../../../lib/desktop-analytics' );
 
 const statsPlatform = getPlatform( process.platform );
 const sanitizedVersion = sanitizeVersion( app.getVersion() );

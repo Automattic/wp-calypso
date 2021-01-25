@@ -9,7 +9,7 @@ const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
  * Internal dependencies
  */
 const Config = require( '../config' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:settings' );
+const log = require( '../../lib/logger' )( 'desktop:settings' );
 
 let firstRun = false;
 

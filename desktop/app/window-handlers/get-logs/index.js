@@ -7,11 +7,11 @@ const { app, dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const state = require( 'calypso/desktop/lib/state' );
-const config = require( 'calypso/desktop/lib/config' );
-const system = require( 'calypso/desktop/lib/system' );
-const { zipContents } = require( 'calypso/desktop/lib/archiver' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:get-logs' );
+const state = require( '../../lib/state' );
+const config = require( '../../lib/config' );
+const system = require( '../../lib/system' );
+const { zipContents } = require( '../../lib/archiver' );
+const log = require( '../../lib/logger' )( 'desktop:get-logs' );
 
 /**
  * Module variables

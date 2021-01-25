@@ -6,9 +6,9 @@ const { app, dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const settings = require( 'calypso/desktop/lib/settings' );
-const assets = require( 'calypso/desktop/lib/assets' );
-const log = require( 'calypso/desktop/lib/logger' )( 'desktop:failed-to-load' );
+const settings = require( '../../lib/settings' );
+const assets = require( '../../lib/assets' );
+const log = require( '../../lib/logger' )( 'desktop:failed-to-load' );
 
 /**
  * Module variables
