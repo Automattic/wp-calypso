@@ -68,6 +68,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 
 	const domainSummary = (
 		<div className="nux-launch__summary-item">
+			{ /* TODO: what if the user picks a monthly-billed plan?  */ }
 			{ domain?.domain_name ? (
 				<p>
 					{ __( 'Custom domain', 'full-site-editing' ) }: { domain.domain_name }
