@@ -102,15 +102,23 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			<div>
 				<Title>{ __( 'Select a plan' ) }</Title>
 				<SubTitle>
-					{ sprintf(
-						/* translators: number of days */
-						__(
-							'Pick a plan that’s right for you. There’s no risk, you can cancel for a full refund within %1$d days.'
-						),
-						// Only show a 7-days refund window if billing period is
-						// defined AND is set to monthl (its value starts as undefined)
-						billingPeriod === 'MONTHLY' ? 7 : 14
-					) }
+					{ billingPeriod === 'MONTHLY'
+						? sprintf(
+								/* translators: %1$d is number of days */
+								__(
+									'Pick a plan that’s right for you. There is no risk, you can cancel your monthly plan for a full refund within %1$d days.'
+								),
+								// Monthly-billed plans have a 7-day refund window
+								7
+						  )
+						: sprintf(
+								/* translators: %1$d is number of days */
+								__(
+									'Pick a plan that’s right for you. There is no risk, you can cancel your annual plan for a full refund within %1$d days.'
+								),
+								// Annually-billed plans have a 14-day refund window
+								14
+						  ) }
 				</SubTitle>
 			</div>
 			<ActionButtons>
