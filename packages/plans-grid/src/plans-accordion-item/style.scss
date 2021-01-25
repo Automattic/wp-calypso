@@ -277,6 +277,12 @@ ul.plans-accordion-item__feature-item-group {
 
 	@include break-small {
 		text-align: right;
+		margin-left: auto;
+		max-width: 170px;
+	}
+
+	@include break-large {
+		max-width: none;
 	}
 }
 
