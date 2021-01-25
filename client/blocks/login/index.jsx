@@ -48,6 +48,7 @@ import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
+import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 
 /**
  * Style dependencies
@@ -226,6 +227,7 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
+			isAnchorFmSignup,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -372,6 +374,14 @@ class Login extends Component {
 						darkColorScheme
 					/>
 				</div>
+			);
+		} else if ( isAnchorFmSignup ) {
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate(
+						'Log in to your WordPress.com account to transcribe and save your Anchor.fm podcasts.'
+					) }
+				</p>
 			);
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
@@ -526,6 +536,9 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isAnchorFmSignup: getIsAnchorFmSignup(
+			get( getCurrentQueryArguments( state ), 'redirect_to' )
+		),
 	} ),
 	{
 		rebootAfterLogin,

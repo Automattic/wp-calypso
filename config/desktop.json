@@ -97,6 +97,7 @@
 		"signup/wpcc": true,
 		"signup/wpforteams": true,
 		"site-indicator": true,
+		"titan/phase-2": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": false,

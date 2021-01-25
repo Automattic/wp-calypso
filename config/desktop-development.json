@@ -129,6 +129,7 @@
 		"signup/wpforteams": true,
 		"site-indicator": true,
 		"support-user": true,
+		"titan/phase-2": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,

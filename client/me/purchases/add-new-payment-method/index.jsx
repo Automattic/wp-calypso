@@ -43,9 +43,9 @@ function AddNewPaymentMethod( props ) {
 						? '/me/purchases/add-payment-method'
 						: '/me/purchases/add-credit-card'
 				}
-				title={ concatTitle( titles.purchases, addPaymentMethodTitle ) }
+				title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) }
 			/>
-			<DocumentHead title={ concatTitle( titles.purchases, addPaymentMethodTitle ) } />
+			<DocumentHead title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) } />
 
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake onClick={ goToPaymentMethods }>{ addPaymentMethodTitle }</HeaderCake>

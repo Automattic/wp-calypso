@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { ArrowButton } from '@automattic/onboarding';
 
 /**
@@ -22,12 +22,20 @@ const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 				</span>
 				<div>
 					<span className="domain-picker__item-tip">
-						{ __( "You can use it as your site's address", __i18n_text_domain__ ) }
+						{ _x(
+							"You can use it as your site's address.",
+							'Upgrades: Register domain description',
+							__i18n_text_domain__
+						) }
 					</span>
 				</div>
 			</div>
 			<ArrowButton arrow="right" onClick={ onClick }>
-				{ __( 'Use a domain I own', __i18n_text_domain__ ) }
+				{ _x(
+					'Use a domain I own',
+					'Domain transfer or mapping suggestion button',
+					__i18n_text_domain__
+				) }
 			</ArrowButton>
 		</label>
 	);

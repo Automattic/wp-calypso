@@ -18,6 +18,7 @@ import {
 	pendingPayments,
 	purchasesRoot,
 } from 'calypso/me/purchases/paths.js';
+import titles from 'calypso/me/purchases/titles';
 import SectionNav from 'calypso/components/section-nav';
 import { isEnabled } from 'calypso/config';
 import Search from 'calypso/components/search';
@@ -26,39 +27,30 @@ import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 export default function PurchasesNavigation( { section } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	let text = translate( 'Billing History' );
-
-	if ( section === 'purchases' ) {
-		text = translate( 'Purchases' );
-	} else if ( section === 'pending' ) {
-		text = translate( 'Pending Payments' );
-	} else if ( section === 'payment-methods' ) {
-		text = translate( 'Payment Methods' );
-	}
 
 	return (
-		<SectionNav selectedText={ text }>
+		<SectionNav selectedText={ titles[ section ] }>
 			<NavTabs>
-				<NavItem path={ purchasesRoot } selected={ section === 'purchases' }>
-					{ translate( 'Purchases' ) }
+				<NavItem path={ purchasesRoot } selected={ section === 'activeUpgrades' }>
+					{ titles.activeUpgrades }
 				</NavItem>
 
-				<NavItem path={ billingHistory } selected={ section === 'billing' }>
-					{ translate( 'Billing History' ) }
+				<NavItem path={ billingHistory } selected={ section === 'billingHistory' }>
+					{ titles.billingHistory }
 				</NavItem>
 
-				<NavItem path={ paymentMethods } selected={ section === 'payment-methods' }>
-					{ translate( 'Payment Methods' ) }
+				<NavItem path={ paymentMethods } selected={ section === 'paymentMethods' }>
+					{ titles.paymentMethods }
 				</NavItem>
 
 				{ isEnabled( 'async-payments' ) && (
-					<NavItem path={ pendingPayments } selected={ section === 'pending' }>
-						{ translate( 'Pending Payments' ) }
+					<NavItem path={ pendingPayments } selected={ section === 'pendingPayments' }>
+						{ titles.pendingPayments }
 					</NavItem>
 				) }
 			</NavTabs>
 
-			{ section === 'billing' && (
+			{ section === 'billingHistory' && (
 				<Search
 					pinned
 					fitsContainer

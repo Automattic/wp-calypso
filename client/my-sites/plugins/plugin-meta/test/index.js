@@ -34,12 +34,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/lib/translator-jumpstart', () => ( {} ) );
-jest.mock( 'calypso/lib/plugins/wporg-data/actions', () => ( {} ) );
-jest.mock( 'calypso/lib/plugins/wporg-data/list-store', () => ( {
-	getFullList: () => {},
-	getSearchList: () => {},
-	on: () => {},
-} ) );
 jest.mock( 'calypso/state/guided-tours/selectors', () => ( {} ) );
 jest.mock( 'calypso/my-sites/plugins/utils', () => ( {
 	getExtensionSettingsPath: () => '',

@@ -154,7 +154,7 @@ class MeSidebar extends React.Component {
 						<SidebarItem
 							selected={ selected === 'purchases' }
 							link={ purchasesRoot }
-							label={ translate( 'Manage Purchases' ) }
+							label={ translate( 'Purchases' ) }
 							materialIcon="credit_card"
 							onNavigate={ this.onNavigate }
 							preloadSectionName="purchases"

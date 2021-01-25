@@ -21,7 +21,7 @@ describe( '<UseYourDomainItem />', () => {
 		render( <UseYourDomainItem onClick={ onClick } /> );
 
 		expect( screen.getByText( 'Already own a domain?' ) ).toBeTruthy();
-		expect( screen.getByText( "You can use it as your site's address" ) ).toBeTruthy();
+		expect( screen.getByText( "You can use it as your site's address." ) ).toBeTruthy();
 	} );
 
 	test( 'Component fires onClick callback onClick', () => {

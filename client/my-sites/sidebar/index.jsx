@@ -65,6 +65,7 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
+	collapseMySitesSidebarSection as collapseSection,
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
 } from 'calypso/state/my-sites/sidebar/actions';
@@ -77,7 +78,7 @@ import {
 	SIDEBAR_SECTION_JETPACK,
 	SIDEBAR_SECTION_MANAGE,
 	SIDEBAR_SECTION_SITE,
-	SIDEBAR_SECTION_PLAN,
+	SIDEBAR_SECTION_UPGRADES,
 	SIDEBAR_SECTION_TOOLS,
 } from './constants';
 import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
@@ -109,7 +110,9 @@ export class MySitesSidebar extends Component {
 		sitePlanSlug: PropTypes.string,
 	};
 
-	expandPlanSection = () => this.props.expandSection( SIDEBAR_SECTION_PLAN );
+	collapseManageSection = () => this.props.collapseSection( SIDEBAR_SECTION_MANAGE );
+
+	expandUpgradesSection = () => this.props.expandSection( SIDEBAR_SECTION_UPGRADES );
 
 	expandSiteSection = () => this.props.expandSection( SIDEBAR_SECTION_SITE );
 
@@ -122,6 +125,11 @@ export class MySitesSidebar extends Component {
 	expandJetpackSection = () => this.props.expandSection( SIDEBAR_SECTION_JETPACK );
 
 	toggleSection = memoize( ( id ) => () => this.props.toggleSection( id ) );
+
+	expandDomains = () => {
+		this.collapseManageSection();
+		this.expandUpgradesSection();
+	};
 
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
@@ -523,7 +531,7 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	upgrades() {
+	domains() {
 		const { path, translate, canUserManageOptions } = this.props;
 
 		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
@@ -552,12 +560,12 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackDomainsClick }
 				preloadSectionName="domains"
 				tipTarget="domains"
-				expandSection={ this.expandManageSection }
+				expandSection={ this.expandDomains }
 			/>
 		);
 	}
 
-	planMenu() {
+	upgradesMenu() {
 		const { canUserManageOptions, site, isWpMobile } = this.props;
 
 		if ( ! site ) {
@@ -581,50 +589,42 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
-		const displayPlanName = ! this.props.isJetpack || this.props.isAtomicSite || this.props.isVip;
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li>
-				<ExpandableSidebarMenu
-					onClick={ this.toggleSection( SIDEBAR_SECTION_PLAN ) }
-					expanded={ this.props.isPlanSectionOpen }
-					title={
-						<>
-							<span className="menu-link-text" data-e2e-sidebar="Plan">
-								{ this.props.translate( 'Plan', { context: 'noun' } ) }
-							</span>
-							{ displayPlanName && (
-								<span className="sidebar__menu-link-secondary-text">
-									{ this.props.site?.plan.product_name_short }
-								</span>
-							) }
-						</>
+			<ExpandableSidebarMenu
+				onClick={ this.toggleSection( SIDEBAR_SECTION_UPGRADES ) }
+				expanded={ this.props.isUpgradesSectionOpen }
+				title={ this.props.translate( 'Upgrades', { context: 'noun' } ) }
+				customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
+			>
+				{ this.plans() }
+				{ this.domains() }
+				<SidebarItem
+					label={ this.props.translate( 'Purchases' ) }
+					tipTarget="purchases"
+					selected={ itemLinkMatches( '/purchases', this.props.path ) }
+					link={
+						this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
 					}
-					customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
-				>
-					{ this.plans() }
-					<SidebarItem
-						label={ this.props.translate( 'Billing' ) }
-						tipTarget="purchases"
-						selected={ itemLinkMatches( '/purchases', this.props.path ) }
-						link={
-							this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
-						}
-						onNavigate={ this.trackPurchasesClick }
-						preloadSectionName="site-purchases"
-						forceInternalLink
-						expandSection={ this.expandPlanSection }
-					/>
-				</ExpandableSidebarMenu>
-			</li>
+					onNavigate={ this.trackPurchasesClick }
+					preloadSectionName="site-purchases"
+					forceInternalLink
+					expandSection={ this.expandUpgradesSection }
+				/>
+			</ExpandableSidebarMenu>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	plans() {
-		const { canUserManageOptions, path, site, siteSuffix, translate } = this.props;
+		const {
+			canUserManageOptions,
+			isAtomicSite,
+			isJetpack,
+			isVip,
+			path,
+			site,
+			siteSuffix,
+			translate,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -642,6 +642,9 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
+		const displayPlanName = ! isJetpack || isAtomicSite || isVip;
+
 		return (
 			<SidebarItem
 				label={ translate( 'Plans', { context: 'noun' } ) }
@@ -651,8 +654,14 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackPlanClick }
 				preloadSectionName="plans"
 				forceInternalLink
-				expandSection={ this.expandPlanSection }
-			/>
+				expandSection={ this.expandUpgradesSection }
+			>
+				{ displayPlanName && (
+					<span className="sidebar__menu-link-secondary-text">
+						{ site?.plan.product_name_short }
+					</span>
+				) }
+			</SidebarItem>
 		);
 	}
 
@@ -1017,7 +1026,7 @@ export class MySitesSidebar extends Component {
 				<SidebarMenu>
 					{ this.customerHome() }
 					{ this.stats() }
-					{ this.planMenu() }
+					{ this.upgradesMenu() }
 					{ this.store() }
 					{ this.woocommerce() }
 				</SidebarMenu>
@@ -1073,7 +1082,7 @@ export class MySitesSidebar extends Component {
 						materialIcon="settings"
 					>
 						{ this.hosting() }
-						{ this.upgrades() }
+						{ this.domains() }
 						{ this.users() }
 						{ this.siteSettings() }
 					</ExpandableSidebarMenu>
@@ -1113,7 +1122,7 @@ function mapStateToProps( state ) {
 
 	const isJetpack = isJetpackSite( state, siteId );
 
-	const isPlanSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_PLAN );
+	const isUpgradesSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_UPGRADES );
 	const isSiteSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_SITE );
 	const isDesignSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_DESIGN );
 	const isToolsSectionOpen = isSidebarSectionOpen( state, SIDEBAR_SECTION_TOOLS );
@@ -1142,7 +1151,7 @@ function mapStateToProps( state ) {
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),
-		isPlanSectionOpen,
+		isUpgradesSectionOpen,
 		isSiteSectionOpen,
 		isDesignSectionOpen,
 		isToolsSectionOpen,
@@ -1185,6 +1194,7 @@ export default connect( mapStateToProps, {
 	recordTracksEvent,
 	setLayoutFocus,
 	setNextLayoutFocus,
+	collapseSection,
 	expandSection,
 	toggleSection,
 } )( localize( MySitesSidebar ) );

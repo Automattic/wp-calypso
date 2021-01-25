@@ -42,6 +42,7 @@ project {
 
 	vcsRoot(WpCalypso)
 	subProject(WpDesktop)
+	subProject(WPComPlugins)
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
@@ -150,6 +151,20 @@ object BuildBaseImages : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 		dockerCommand {
+			name = "Build CI wpcom image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-wpcom:latest
+					registry.a8c.com/calypso/ci-wpcom:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-wpcom"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
 			name = "Push images"
 			commandType = push {
 				namesAndTags = """
@@ -161,6 +176,8 @@ object BuildBaseImages : BuildType({
 					registry.a8c.com/calypso/ci-desktop:%build.number%
 					registry.a8c.com/calypso/ci-e2e:latest
 					registry.a8c.com/calypso/ci-e2e:%build.number%
+					registry.a8c.com/calypso/ci-wpcom:latest
+					registry.a8c.com/calypso/ci-wpcom:%build.number%
 				""".trimIndent()
 			}
 		}
@@ -440,33 +457,6 @@ object RunAllUnitTests : BuildType({
 
 				# Run build-tools tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
-		}
-		script {
-			name = "Run unit tests for Editing Toolkit"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				#!/bin/bash
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				set -o errexit
-				set -o nounset
-				set -o pipefail
-
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				unset NODE_ENV
-				unset CALYPSO_ENV
-
-				# Run Editing Toolkit tests
-				cd apps/editing-toolkit
-				JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit" yarn test:js --reporters=default --reporters=jest-junit  --maxWorkers=${'$'}JEST_MAX_WORKERS
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
@@ -1088,3 +1078,100 @@ object WpDesktop_DesktopE2ETests : BuildType({
 	}
 })
 
+object WPComPlugins : Project({
+    name = "WPCom Plugins"
+    buildType(WPComPlugins_EditorToolKit)
+    params {
+        text("docker_image_wpcom", "registry.a8c.com/calypso/ci-wpcom:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+    }
+})
+
+object WPComPlugins_EditorToolKit : BuildType({
+    name = "Editor ToolKit"
+
+    artifactRules = "editing-toolkit.zip"
+
+    vcs {
+        root(WpCalypso)
+        cleanCheckout = true
+    }
+
+    steps {
+        script {
+            name = "Prepare environment"
+            scriptContent = """
+                #!/bin/bash
+
+                # Update node
+                . "${'$'}NVM_DIR/nvm.sh" --no-use
+                nvm install
+
+                set -o errexit
+                set -o nounset
+                set -o pipefail
+
+                # Update composer
+                composer install
+
+                # Install modules
+                yarn install
+            """.trimIndent()
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "%docker_image_wpcom%"
+            dockerRunParameters = "-u %env.UID%"
+        }
+        script {
+            name = "Run tests"
+            executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+            scriptContent = """
+                #!/bin/bash
+
+                # Update node
+                . "${'$'}NVM_DIR/nvm.sh" --no-use
+                nvm install
+
+                set -o errexit
+                set -o nounset
+                set -o pipefail
+
+                export JEST_JUNIT_OUTPUT_NAME="results.xml"
+                export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
+
+                cd apps/editing-toolkit
+                yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
+            """.trimIndent()
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "%docker_image_wpcom%"
+            dockerRunParameters = "-u %env.UID%"
+        }
+        script {
+            name = "Build artifacts"
+            executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+            scriptContent = """
+                #!/bin/bash
+
+                # Update node
+                . "${'$'}NVM_DIR/nvm.sh" --no-use
+                nvm install
+
+                set -o errexit
+                set -o nounset
+                set -o pipefail
+
+                export NODE_ENV="production"
+
+                cd apps/editing-toolkit
+                yarn build
+
+                cd editing-toolkit-plugin/
+                zip -r ../../../editing-toolkit.zip .
+            """.trimIndent()
+            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+            dockerPull = true
+            dockerImage = "%docker_image_wpcom%"
+            dockerRunParameters = "-u %env.UID%"
+        }
+    }
+})
