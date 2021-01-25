@@ -123,21 +123,24 @@
 			margin: 0 auto;
 			width: 100%;
 			height: auto;
-			transition: all 3s;
 		}
-
 
 		&.landscape {
 			padding-top: 65%;
-
-			img:hover {
-				margin-top: -100px;
-			}
-
 		}
 
 		&.portrait {
 			padding-top: 360px / 480px * 200%;
+		}
+
+		&.scrollable {
+			img {
+				transition: all 1s;
+			}
+
+			img:hover {
+				margin-top: -100px;
+			}
 		}
 	}
 

@@ -28,11 +28,12 @@ export function mshotsUrl( url: string, options: MShotsOptions, count = 0 ): str
 	const mshotsUrl = 'https://s0.wp.com/mshots/v1/';
 	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( url ), {
 		...options,
-		// requeue: 'true', // Uncomment this line to force the screenshots to be regenerated
 		count,
 	} );
 	return mshotsRequest;
 }
+
+const MAXTRIES = 10;
 
 const MShotsImage = ( {
 	url,
@@ -42,6 +43,9 @@ const MShotsImage = ( {
 }: MShotsImageProps ): JSX.Element => {
 	const [ count, setCount ] = React.useState( 1 );
 	const [ visible, setVisible ] = useState( false );
+
+	const src = mshotsUrl( url, options, count );
+
 	return (
 		<div className="mshots-image__container">
 			{ ! visible && <div className="mshots-image__loader"></div> }
@@ -50,14 +54,14 @@ const MShotsImage = ( {
 				style={ { opacity: visible ? 1 : 0 } }
 				alt={ alt }
 				aria-labelledby={ labelledby }
-				src={ mshotsUrl( url, options, count ) }
+				src={ src }
 				onLoad={ ( e ) => {
 					// Test mshots h value matches the desired image
 					// The default image (https://s0.wp.com/mshots/v1/default) is around 400x300 px h
 					// but sometimes slightly off (e.g. h: 299.99)
 					if ( e.currentTarget.naturalHeight !== options.h ) {
 						// Only refresh 10 times
-						if ( count < 10 ) {
+						if ( count < MAXTRIES ) {
 							// Triggers a target.src change and image refresh @ 500ms, 1000ms, 1500ms...
 							setTimeout( () => setCount( count + 1 ), count * 500 );
 						}

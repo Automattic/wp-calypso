@@ -46,6 +46,7 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 
 // Used for prefetching design screenshots and the real loading in the design-selector
 export const mShotOptions = (): MShotsOptions => {
+	// Take care changing these values as animation css in design-selector expect these height values
 	if ( isEnabled( 'gutenboarding/mshot-landscape' ) ) {
 		return { vpw: 1600, vph: 1600, w: 500, h: 500 };
 	} else if ( isEnabled( 'gutenboarding/mshot-portrait' ) ) {
