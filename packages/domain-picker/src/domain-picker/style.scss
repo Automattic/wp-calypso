@@ -116,6 +116,7 @@ $accent-blue: #117ac9;
 
 		@include break-medium {
 			flex-direction: initial;
+			align-items: center;
 		}
 	}
 
