@@ -5,18 +5,18 @@ import React, { createRef } from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'calypso/components/async-load';
+import Gridicon from 'calypso/components/gridicon';
 import Popover from 'calypso/components/popover';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import UserItem from 'calypso/components/user';
 import InfiniteList from 'calypso/components/infinite-list';
 import { fetchUsers } from 'calypso/lib/users/actions';
-import Search from '@automattic/search';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 /**
@@ -101,7 +101,8 @@ class AuthorSwitcherShell extends React.Component {
 					ignoreContext={ this.props.ignoreContext }
 				>
 					{ ( this.props.fetchOptions.search || users.length > 10 ) && (
-						<Search
+						<AsyncLoad
+							require="@automattic/search"
 							compact
 							onSearch={ this.onSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
