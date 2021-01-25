@@ -45,19 +45,23 @@ class StoreMoveNoticeView extends Component {
 				<p>
 					{ isStoreDeprecated &&
 						translate(
-							'We’re rolling your favorite Store features into WooCommerce in February. {{link}}Learn more{{/link}} about this streamlined, commerce-focused navigation experience, designed to help you save time and access your favorite extensions faster.',
+							'We’re rolling your favorite Store features into WooCommerce. In addition to Products and Orders, you’ll have top-level access for managing your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what to expect in February.',
 							{
 								components: {
-									link: <a href="https://wordpress.com/support/store/" />,
+									link: (
+										<a href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/" />
+									),
 								},
 							}
 						) }
 					{ isStoreRemoved &&
 						translate(
-							'We’ve rolled your favorite Store functions into WooCommerce. {{link}}Learn more{{/link}} about how this streamlined, commerce-focused navigation experience can help you save time and access your favorite extensions faster.',
+							'We’ve rolled your favorite Store features into WooCommerce. In addition to Products and Orders, you have top-level access for managing your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what has changed.',
 							{
 								components: {
-									link: <a href="https://wordpress.com/support/store/" />,
+									link: (
+										<a href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/" />
+									),
 								},
 							}
 						) }

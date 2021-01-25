@@ -72,7 +72,6 @@ import ReaderImportButton from 'calypso/blocks/reader-import-button/docs/example
 import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane/docs/example';
 import ReaderShare from 'calypso/blocks/reader-share/docs/example';
 import Login from 'calypso/blocks/login/docs/example';
-import LocationSearch from 'calypso/blocks/location-search/docs/example';
 import ConversationCommentList from 'calypso/blocks/conversations/docs/example';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar/docs/example';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/docs/example';
@@ -143,7 +142,6 @@ export default class AppComponents extends React.Component {
 					<VideoEditor readmeFilePath="video-editor" />
 					<LikeButtons readmeFilePath="like-button" />
 					<Login />
-					<LocationSearch readmeFilePath="location-search" />
 					<PostEditButton />
 					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />

@@ -170,7 +170,7 @@ const webpackConfig = {
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
-	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
+	devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
 	output: {
 		path: path.join( outputDir, 'public', extraPath ),
 		pathinfo: false,
@@ -186,7 +186,7 @@ const webpackConfig = {
 		removeEmptyChunks: ! isDesktop,
 		splitChunks: {
 			chunks: 'all',
-			name: !! ( isDevelopment || shouldEmitStats ),
+			...( isDevelopment || shouldEmitStats ? {} : { name: false } ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
@@ -195,13 +195,10 @@ const webpackConfig = {
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
 		minimizer: Minify( {
-			cache: path.resolve( cachePath, 'terser' ),
 			// Desktop: number of workers should *not* exceed # of vCPUs available.
 			// For both medium Machine and Docker images, number of vCPUs == 2.
 			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
 			parallel: isDesktop ? 2 : workerCount,
-			// Desktop: disable sourceMaps for performance
-			sourceMap: isDesktop ? false : Boolean( process.env.SOURCEMAP ),
 			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
 			terserOptions: {
 				...( isDesktop
@@ -286,6 +283,9 @@ const webpackConfig = {
 				// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 				// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 				calypso: __dirname,
+
+				// Node polyfills
+				process: 'process/browser',
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -304,7 +304,7 @@ const webpackConfig = {
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,

@@ -2607,14 +2607,14 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 };
 
 /**
- * Request all Partner Portal partners and their keys for the current WPCOM user.
+ * Request the Partner Portal partner and it's keys for the current WPCOM user.
  *
  * @returns {Promise} A promise
  */
-Undocumented.prototype.getJetpackPartnerPortalPartners = function () {
+Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
 	return this.wpcom.req.get( {
 		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/partners',
+		path: '/jetpack-licensing/partner',
 	} );
 };
 

@@ -37,12 +37,22 @@ export const getJetpackProductsShortNames = () => {
 				},
 			}
 		),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: translate( 'Scan {{em}}Real-time{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
 	};
@@ -50,21 +60,31 @@ export const getJetpackProductsShortNames = () => {
 
 export const getJetpackProductsDisplayNames = () => {
 	const currentCROvariant = getJetpackCROActiveVersion();
-	const backupDaily = (
-		<>
-			{ currentCROvariant === 'v2'
-				? translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } )
-				: translate( 'Backup {{em}}Daily{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } ) }
-		</>
-	);
+	let backupDaily;
+	if ( currentCROvariant === 'v2' ) {
+		backupDaily = (
+			<>
+				{ translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
+					components: {
+						em: <em />,
+					},
+				} ) }
+			</>
+		);
+	} else if ( currentCROvariant === 'spp' ) {
+		backupDaily = <>{ translate( 'Jetpack Backup' ) }</>;
+	} else {
+		backupDaily = (
+			<>
+				{ translate( 'Backup {{em}}Daily{{/em}}', {
+					components: {
+						em: <em />,
+					},
+				} ) }
+			</>
+		);
+	}
+
 	const backupRealtime = (
 		<>
 			{ currentCROvariant === 'v2'
@@ -84,14 +104,35 @@ export const getJetpackProductsDisplayNames = () => {
 		{
 			v2: translate( 'Jetpack Site Search' ),
 			i5: translate( 'Site Search' ),
+			spp: translate( 'Site Search' ),
 		}[ currentCROvariant ] || translate( 'Jetpack Search' );
-	const scan = currentCROvariant === 'i5' ? translate( 'Scan' ) : translate( 'Jetpack Scan' );
-	const antiSpam =
-		currentCROvariant === 'i5' ? (
-			translate( 'Anti-spam' )
-		) : (
-			<>{ translate( 'Jetpack Anti-spam' ) }</>
-		);
+
+	const scan =
+		{
+			i5: translate( 'Scan' ),
+			spp: translate( 'Scan' ),
+		}[ currentCROvariant ] || translate( 'Jetpack Scan' );
+
+	const scanRealtime = (
+		<>
+			{ currentCROvariant === 'i5' || currentCROvariant === 'spp'
+				? translate( 'Scan {{em}}Real-Time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } )
+				: translate( 'Jetpack Scan {{em}}Real-Time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ) }
+		</>
+	);
+
+	const antiSpam = {
+		i5: translate( 'Anti-spam' ),
+		spp: translate( 'Anti-Spam' ),
+	}[ currentCROvariant ] || <>{ translate( 'Jetpack Anti-spam' ) }</>;
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -104,6 +145,8 @@ export const getJetpackProductsDisplayNames = () => {
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scan,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -113,11 +156,13 @@ export const getJetpackProductsCallToAction = () => {
 	const currentCROvariant = getJetpackCROActiveVersion();
 	const backupDaily = (
 		<>
-			{ translate( 'Get Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
+			{ currentCROvariant === 'spp'
+				? translate( 'Get Jetpack Backup' )
+				: translate( 'Get Backup {{em}}Daily{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ) }
 		</>
 	);
 	const backupRealtime = (
@@ -133,13 +178,15 @@ export const getJetpackProductsCallToAction = () => {
 		{
 			v1: translate( 'Get Jetpack Search' ),
 			i5: translate( 'Get Site Search' ),
+			spp: translate( 'Get Site Search' ),
 		}[ currentCROvariant ] || translate( 'Get Search' );
 	const scan =
 		currentCROvariant === 'v1' ? translate( 'Get Jetpack Scan' ) : translate( 'Get Scan' );
 	const antiSpam =
-		currentCROvariant === 'v1'
-			? translate( 'Get Jetpack Anti-spam' )
-			: translate( 'Get Anti-spam' );
+		{
+			v1: translate( 'Get Jetpack Anti-spam' ),
+			spp: translate( 'Get Anti-Spam' ),
+		}[ currentCROvariant ] || translate( 'Get Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -210,12 +257,17 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
+	const currentCROvariant = getJetpackCROActiveVersion();
+
 	const backupDailyDescription =
 		{
 			i5: translate(
 				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
 			),
-		}[ getJetpackCROActiveVersion() ] ||
+			spp: translate(
+				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
+			),
+		}[ currentCROvariant ] ||
 		translate( 'Never lose a word, image, page, or time worrying about your site.' );
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
@@ -225,7 +277,10 @@ export const getJetpackProductsDescriptions = () => {
 			i5: translate(
 				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
 			),
-		}[ getJetpackCROActiveVersion() ] ||
+			spp: translate(
+				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
+			),
+		}[ currentCROvariant ] ||
 		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
 
 	const scanDescription = translate(
@@ -236,7 +291,10 @@ export const getJetpackProductsDescriptions = () => {
 			i5: translate(
 				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
 			),
-		}[ getJetpackCROActiveVersion() ] ||
+			spp: translate(
+				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
+			),
+		}[ currentCROvariant ] ||
 		translate(
 			'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
 		);
@@ -250,6 +308,8 @@ export const getJetpackProductsDescriptions = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDescription,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: scanDescription,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
 	};

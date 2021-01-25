@@ -59,6 +59,7 @@ import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-j
 import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
 import config from 'calypso/config';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -113,7 +114,7 @@ export function durationToString( duration: Duration ): DurationString {
 }
 
 export function durationToText( duration: Duration ): TranslateResult {
-	if ( 'i5' === getJetpackCROActiveVersion() ) {
+	if ( [ 'i5', 'spp' ].includes( getJetpackCROActiveVersion() ) ) {
 		return duration === TERM_MONTHLY
 			? translate( 'per month{{br/}}billed monthly', { components: { br: createElement( 'br' ) } } )
 			: translate( 'per month{{br/}}billed yearly', { components: { br: createElement( 'br' ) } } );
@@ -495,13 +496,19 @@ export function itemToSelectorProduct(
 			term: item.term,
 			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
 			features: {
-				items: buildCardFeaturesFromItem( item, {
-					withoutDescription: true,
-					withoutIcon: true,
-				} ),
+				items: buildCardFeaturesFromItem(
+					item,
+					{
+						withoutDescription: true,
+						withoutIcon: true,
+					},
+					currentCROvariant
+				),
 			},
 		};
 	} else if ( objectIsPlan( item ) ) {
+		const currentCROvariant = getJetpackCROActiveVersion();
+
 		const productSlug = item.getStoreSlug();
 		let monthlyProductSlug;
 		let yearlyProductSlug;
@@ -517,17 +524,17 @@ export function itemToSelectorProduct(
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
-			displayName: item.getTitle(),
-			buttonLabel: item.getButtonLabel?.(),
+			displayName: item.getTitle( currentCROvariant ),
+			buttonLabel: item.getButtonLabel?.( currentCROvariant ),
 			type,
 			subtypes: [],
-			shortName: item.getTitle(),
-			tagline: get( item, 'getTagline', () => '' )(),
-			description: item.getDescription(),
+			shortName: item.getTitle( currentCROvariant ),
+			tagline: get( item, 'getTagline', () => '' )( currentCROvariant ),
+			description: item.getDescription( currentCROvariant ),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
-				items: buildCardFeaturesFromItem( item ),
+				items: buildCardFeaturesFromItem( item, undefined, currentCROvariant ),
 				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
@@ -570,15 +577,17 @@ export function buildCardFeatureItemFromFeatureKey(
 	if ( feature ) {
 		return {
 			slug: feature.getSlug(),
-			icon: options?.withoutIcon ? undefined : feature.getIcon?.(),
+			icon: options?.withoutIcon ? undefined : feature.getIcon?.( variation ),
 			text: feature.getTitle( variation ),
 			description: options?.withoutDescription ? undefined : feature.getDescription?.(),
 			subitems: subFeaturesKeys
 				? compact(
-						subFeaturesKeys.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options ) )
+						subFeaturesKeys.map( ( f ) =>
+							buildCardFeatureItemFromFeatureKey( f, options, variation )
+						)
 				  )
 				: undefined,
-			isHighlighted: feature.isProduct || feature.isPlan,
+			isHighlighted: feature.isProduct?.( variation ) || feature.isPlan,
 		};
 	}
 }
@@ -632,27 +641,29 @@ export function buildCardFeaturesFromFeatureKeys(
  *
  * @param {Plan | Product | object} item Product, plan, or object
  * @param {object?} options Options
+ * @param {string?} variation The current A/B test variation
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromItem(
 	item: Plan | Product | Record< string, unknown >,
-	options?: Record< string, unknown >
+	options?: Record< string, unknown >,
+	variation?: string
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
-		const features = item.getPlanCardFeatures?.();
+		const features = item.getPlanCardFeatures?.( variation );
 
 		if ( features ) {
-			return buildCardFeaturesFromFeatureKeys( features, options );
+			return buildCardFeaturesFromFeatureKeys( features, options, variation );
 		}
 	} else if ( isFunction( item.getFeatures ) ) {
-		const features = item.getFeatures();
+		const features = item.getFeatures( variation );
 
 		if ( features ) {
-			return buildCardFeaturesFromFeatureKeys( features, options );
+			return buildCardFeaturesFromFeatureKeys( features, options, variation );
 		}
 	}
 
-	return buildCardFeaturesFromFeatureKeys( item, options );
+	return buildCardFeaturesFromFeatureKeys( item, options, variation );
 }
 
 /**
@@ -705,6 +716,23 @@ export function checkout(
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
 		page.redirect( addQueryArgs( urlQueryArgs, path ) );
+	}
+}
+
+/**
+ * Redirects users to the appropriate URL to manage a site purchase.
+ * On cloud.jetpack.com, the URL will point to wordpress.com. In any other case,
+ * it will point to a relative path to the site purchase.
+ *
+ * @param {string} siteSlug Selected site
+ * @param {number} purchaseId Id of a purchase
+ */
+export function manageSitePurchase( siteSlug: string, purchaseId: number ): void {
+	const relativePath = managePurchase( siteSlug, purchaseId );
+	if ( isJetpackCloud() ) {
+		window.location.href = `https://wordpress.com${ relativePath }`;
+	} else {
+		page.redirect( relativePath );
 	}
 }
 

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import type { Plan, PlanFeature, PlanFeatureType } from './types';
+import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
 
 export const setFeatures = ( features: Record< string, PlanFeature > ) => {
 	return {
@@ -10,24 +10,24 @@ export const setFeatures = ( features: Record< string, PlanFeature > ) => {
 	};
 };
 
-export const setFeaturesByType = ( featuresByType: Array< PlanFeatureType > ) => {
+export const setFeaturesByType = ( featuresByType: Array< FeaturesByType > ) => {
 	return {
 		type: 'SET_FEATURES_BY_TYPE' as const,
 		featuresByType,
 	};
 };
 
-export const setPlans = ( plans: Record< string, Plan > ) => {
+export const setPlans = ( plans: Plan[] ) => {
 	return {
 		type: 'SET_PLANS' as const,
 		plans,
 	};
 };
 
-export const setPrices = ( prices: Record< string, string > ) => {
+export const setPlanProducts = ( products: PlanProduct[] ) => {
 	return {
-		type: 'SET_PRICES' as const,
-		prices,
+		type: 'SET_PLAN_PRODUCTS' as const,
+		products,
 	};
 };
 
@@ -41,6 +41,6 @@ export type PlanAction = ReturnType<
 	| typeof setFeatures
 	| typeof setFeaturesByType
 	| typeof setPlans
-	| typeof setPrices
 	| typeof resetPlan
+	| typeof setPlanProducts
 >;

@@ -56,7 +56,9 @@ const Header: React.FunctionComponent = () => {
 			return (
 				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
 					<Link to={ makePath( Step.LanguageModal ) }>
-						<span>{ __( 'Site Language' ) } </span>
+						<span className="gutenboarding__header-site-language-label">
+							{ __( 'Site Language' ) }
+						</span>
 						<span className="gutenboarding__header-site-language-badge">{ locale }</span>
 					</Link>
 				</div>

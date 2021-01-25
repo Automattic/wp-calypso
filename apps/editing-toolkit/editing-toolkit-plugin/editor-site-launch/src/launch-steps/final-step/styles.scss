@@ -1,6 +1,10 @@
 @import '~@automattic/typography/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 
+// TODO: This is former dark-gray-500 from @wordpress/base-styles.
+// Replace with a color from the standard palette.
+$nux-text-color: #555d66;
+
 .nux-launch__feature-list {
 	padding: 20px;
 
@@ -10,7 +14,7 @@
 }
 .nux-launch__feature-list-title {
 	margin: 0 0 10px;
-	color: $dark-gray-500;
+	color: $nux-text-color;
 	font-weight: 400;
 }
 ul.nux-launch__feature-item-group {
@@ -22,7 +26,7 @@ ul.nux-launch__feature-item-group {
 	letter-spacing: 0.2px;
 	margin: 4px 0;
 	vertical-align: middle;
-	color: $dark-gray-500;
+	color: $nux-text-color;
 	display: flex;
 	align-items: flex-start;
 

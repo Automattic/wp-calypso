@@ -131,21 +131,25 @@ export const OPTION_PLAN_SECURITY: SelectorProduct = {
 			'Easy-to-use, powerful security tools guard your site, so you can focus on your business.'
 	),
 	features: {
-		items: buildCardFeaturesFromItem( {
-			[ FEATURE_CATEGORY_SECURITY ]: [
-				FEATURE_PRODUCT_BACKUP_V2,
-				FEATURE_PRODUCT_SCAN_V2,
-				FEATURE_PRODUCT_ANTISPAM_V2,
-				FEATURE_ACTIVITY_LOG_V2,
-			],
-			[ FEATURE_CATEGORY_OTHER ]: [
-				FEATURE_VIDEO_HOSTING_V2,
-				FEATURE_SOCIAL_MEDIA_POSTING_V2,
-				FEATURE_COLLECT_PAYMENTS_V2,
-				FEATURE_SITE_MONETIZATION_V2,
-				FEATURE_PRIORITY_SUPPORT_V2,
-			],
-		} ),
+		items: buildCardFeaturesFromItem(
+			{
+				[ FEATURE_CATEGORY_SECURITY ]: [
+					FEATURE_PRODUCT_BACKUP_V2,
+					FEATURE_PRODUCT_SCAN_V2,
+					FEATURE_PRODUCT_ANTISPAM_V2,
+					FEATURE_ACTIVITY_LOG_V2,
+				],
+				[ FEATURE_CATEGORY_OTHER ]: [
+					FEATURE_VIDEO_HOSTING_V2,
+					FEATURE_SOCIAL_MEDIA_POSTING_V2,
+					FEATURE_COLLECT_PAYMENTS_V2,
+					FEATURE_SITE_MONETIZATION_V2,
+					FEATURE_PRIORITY_SUPPORT_V2,
+				],
+			},
+			undefined,
+			getJetpackCROActiveVersion()
+		),
 		more: MORE_FEATURES_LINK,
 	},
 };
@@ -209,7 +213,8 @@ export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 				FEATURE_ACTIVITY_LOG_V2,
 				FEATURE_PRIORITY_SUPPORT_V2,
 			],
-			{ withoutDescription: true, withoutIcon: true }
+			{ withoutDescription: true, withoutIcon: true },
+			getJetpackCROActiveVersion()
 		),
 	},
 };
@@ -297,7 +302,8 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 				FEATURE_CRM_NO_CONTACT_LIMITS,
 				FEATURE_CRM_PRIORITY_SUPPORT,
 			],
-			{ withoutDescription: true, withoutIcon: true }
+			{ withoutDescription: true, withoutIcon: true },
+			getJetpackCROActiveVersion()
 		),
 	},
 	hidePrice: true,
@@ -355,6 +361,13 @@ export const SELECTOR_PLANS_I5 = [
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+];
+
+export const SELECTOR_PLANS_SPP = [
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];

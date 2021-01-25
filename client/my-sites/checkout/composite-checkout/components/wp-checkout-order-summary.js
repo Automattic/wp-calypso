@@ -154,12 +154,24 @@ function CheckoutSummaryFeaturesList( props ) {
 	const { hasMonthlyPlan = false } = props;
 
 	let refundText = translate( 'Money back guarantee' );
+
+	let refundDays = 0;
 	if ( hasDomainsInCart && ! hasPlanInCart ) {
-		refundText = translate( '4 day money back guarantee' );
+		refundDays = 4;
 	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
-		refundText = hasMonthlyPlan
-			? translate( '7 day money back guarantee' )
-			: translate( '30 day money back guarantee' );
+		refundDays = hasMonthlyPlan ? 7 : 14;
+	}
+
+	if ( refundDays !== 0 ) {
+		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
+		refundText = translate(
+			'%(days)d-day money back guarantee',
+			'%(days)d-day money back guarantee',
+			{
+				count: refundDays,
+				args: { days: refundDays },
+			}
+		);
 	}
 
 	return (

@@ -18,15 +18,15 @@ export interface Partner {
 	keys: PartnerKey[];
 }
 
-export interface PartnersState {
+export interface PartnerState {
 	isFetching: boolean;
 	activePartnerKey: number;
-	all: Partner[];
+	current: Partner | null;
 	error: string;
 }
 
 export interface PartnerPortalState {
-	partners: PartnersState;
+	partner: PartnerState;
 }
 
 export interface PartnerPortalStore {

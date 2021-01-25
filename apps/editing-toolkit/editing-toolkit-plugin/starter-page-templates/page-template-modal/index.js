@@ -144,7 +144,7 @@ class PageTemplateModal extends Component {
 	}
 
 	trackCurrentView() {
-		trackView( this.props.isPromptedFromSidebar ? 'sidebar' : 'add-page' );
+		trackView( 'add-page' );
 	}
 
 	static getDefaultSelectedTemplate = ( props ) => {
@@ -231,11 +231,6 @@ class PageTemplateModal extends Component {
 		}
 
 		this.setTemplate( name );
-
-		// Turn off sidebar's instance of modal
-		if ( this.props.isPromptedFromSidebar ) {
-			this.props.toggleTemplateModal();
-		}
 	};
 
 	previewTemplate = ( name ) => {
@@ -436,13 +431,7 @@ class PageTemplateModal extends Component {
 
 	render() {
 		const { previewedTemplate, isLoading } = this.state;
-		const {
-			isPromptedFromSidebar,
-			hidePageTitle,
-			isOpen,
-			currentBlocks,
-			setOpenState,
-		} = this.props;
+		const { hidePageTitle, isOpen, currentBlocks } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
@@ -471,21 +460,12 @@ class PageTemplateModal extends Component {
 				isDismissable={ false }
 				isDismissible={ false }
 			>
-				{ isPromptedFromSidebar ? (
-					<IconButton
-						className="page-template-modal__close-button components-icon-button"
-						onClick={ () => setOpenState( false ) }
-						icon="no-alt"
-						label={ __( 'Close Layout Selector', 'full-site-editing' ) }
-					/>
-				) : (
-					<IconButton
-						className="page-template-modal__close-button components-icon-button"
-						onClick={ this.closeModal }
-						icon="arrow-left-alt2"
-						label={ __( 'Go back', 'full-site-editing' ) }
-					/>
-				) }
+				<IconButton
+					className="page-template-modal__close-button components-icon-button"
+					onClick={ this.closeModal }
+					icon="arrow-left-alt2"
+					label={ __( 'Go back', 'full-site-editing' ) }
+				/>
 
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
@@ -534,11 +514,10 @@ export const PageTemplatesPlugin = compose(
 	withSelect( ( select ) => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
-		const { isOpen, isPromptedFromSidebar } = select( 'automattic/starter-page-layouts' );
+		const { isOpen } = select( 'automattic/starter-page-layouts' );
 		const currentBlocks = select( 'core/editor' ).getBlocks();
 		return {
 			isOpen: isOpen(),
-			isPromptedFromSidebar: isPromptedFromSidebar(),
 			getMeta,
 			_starter_page_template,
 			currentBlocks,

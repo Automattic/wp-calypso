@@ -8,6 +8,7 @@ import { useSelect } from '@wordpress/data';
  */
 import { Step, StepType, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { PLANS_STORE } from '../stores/plans';
 import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
@@ -45,7 +46,8 @@ export default function useSteps(): Array< StepType > {
 	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
-	const plan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
+	const planProductId = useSelect( ( select ) => select( ONBOARD_STORE ).getPlanProductId() );
+	const plan = useSelect( ( select ) => select( PLANS_STORE ).getPlanByProductId( planProductId ) );
 	const hasPlanFromPath = !! usePlanFromPath();
 
 	if ( domain && ! hasUsedDomainsStep ) {

@@ -30,7 +30,7 @@ import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import Gridicon from 'calypso/components/gridicon';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
@@ -46,6 +46,9 @@ class FeedHeader extends Component {
 		feed: PropTypes.object,
 		showBack: PropTypes.bool,
 		streamKey: PropTypes.string,
+		isFollowingItem: PropTypes.bool,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	getFollowerCount = ( feed, site ) => {
@@ -79,7 +82,8 @@ class FeedHeader extends Component {
 			following,
 			isEmailBlocked,
 			teams,
-			isWPForTeams,
+			isFollowingItem,
+			isWPForTeamsItem,
 		} = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
 		const ownerDisplayName = site && ! site.is_multi_author && site.owner && site.owner.name;
@@ -123,7 +127,7 @@ class FeedHeader extends Component {
 								</div>
 							) }
 
-							{ isEligibleForUnseen( teams, isWPForTeams ) && feed && (
+							{ isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) && feed && (
 								<button
 									onClick={ this.markAllAsSeen }
 									className="reader-feed-header__seen-button"
@@ -173,7 +177,11 @@ class FeedHeader extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isWPForTeams:
+		isFollowingItem: isFollowing( state, {
+			blogId: ownProps.site && ownProps.site.ID,
+			feedId: ownProps.feed && ownProps.feed.feed_ID,
+		} ),
+		isWPForTeamsItem:
 			isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
 			isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
 		teams: getReaderTeams( state ),

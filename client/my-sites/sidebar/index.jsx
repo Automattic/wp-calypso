@@ -690,7 +690,13 @@ export class MySitesSidebar extends Component {
 			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
 			{
 				components: {
-					link: <a href="https://wordpress.com/support/store/" rel="noreferrer" target="_blank" />,
+					link: (
+						<a
+							href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
+							rel="noreferrer"
+							target="_blank"
+						/>
+					),
 				},
 			}
 		);
@@ -706,7 +712,11 @@ export class MySitesSidebar extends Component {
 				className="sidebar__store"
 			>
 				{ isCalypsoStoreDeprecated && isBusiness( site.plan ) && (
-					<InfoPopover className="sidebar__store-tooltip" position="bottom right">
+					<InfoPopover
+						className="sidebar__store-tooltip"
+						position="bottom right"
+						showOnHover={ true }
+					>
 						{ infoCopy }
 					</InfoPopover>
 				) }

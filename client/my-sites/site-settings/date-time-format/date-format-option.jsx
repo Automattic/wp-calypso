@@ -13,7 +13,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { defaultDateFormats } from './default-formats';
+import { getDefaultDateFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
 
 export const DateFormatOption = ( {
@@ -27,7 +27,7 @@ export const DateFormatOption = ( {
 } ) => (
 	<FormFieldset>
 		<FormLabel>{ translate( 'Date Format' ) }</FormLabel>
-		{ defaultDateFormats.map( ( format ) => (
+		{ getDefaultDateFormats().map( ( format ) => (
 			<FormLabel key={ format }>
 				<FormRadio
 					checked={ ! isCustom && format === dateFormat }

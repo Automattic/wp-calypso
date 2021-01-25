@@ -1,9 +1,9 @@
 === WordPress.com Editing Toolkit ===
-Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
+Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
-Stable tag: 2.11
+Stable tag: 2.12
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,14 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.12 =
+* Starter page templates: remove sidebar component (#48948)
+* Starter page templates: Prevent links and buttons from being clicked within the layout preview (https://github.com/Automattic/wp-calypso/pull/49024)
+* Fix bug where premium content popover preview in block transformations menu would freeze the editor (https://github.com/Automattic/wp-calypso/pull/48988)
+* Focused-Launch: fix styling for disabled Free plan card (https://github.com/Automattic/wp-calypso/pull/47796)
+* Update type definitions (https://github.com/Automattic/wp-calypso/pull/46728)
+* Add a basic README.md for the Welcome Tour (https://github.com/Automattic/wp-calypso/pull/48785)
 
 = 2.11 =
 * Welcome Guide (Tour & NUX modal): add flag to track if guide is opened manually via MoreMenu

@@ -58,6 +58,14 @@ export function emailManagementNewTitanAccount( siteName, domainName, relativeTo
 	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
 }
 
+export function emailManagementTitanControlPanelRedirect(
+	siteName,
+	domainName,
+	relativeTo = null
+) {
+	return emailManagementEdit( siteName, domainName, 'titan/control-panel', relativeTo );
+}
+
 export function emailManagement( siteName, domainName, relativeTo = null ) {
 	let path;
 
@@ -91,8 +99,4 @@ export function emailManagementEdit( siteName, domainName, slug, relativeTo = nu
 
 export function isUnderEmailManagementAll( path ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
-}
-
-export function emailManagementTitanExternal( mode ) {
-	return '/titan/' + mode;
 }

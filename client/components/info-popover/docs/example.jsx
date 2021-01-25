@@ -40,6 +40,14 @@ class InfoPopoverExample extends React.PureComponent {
 				<InfoPopover id="popover__info-popover-example" position={ this.state.popoverPosition }>
 					Some informational text.
 				</InfoPopover>
+
+				<InfoPopover
+					id="popover__info-popover-example"
+					position={ this.state.popoverPosition }
+					showOnHover={ true }
+				>
+					Shows on hover.
+				</InfoPopover>
 			</div>
 		);
 	}

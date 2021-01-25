@@ -25,6 +25,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
+import { USER_STORE } from '../../stores/user';
 import { FLOW_ID, domainIsAvailableStatus } from '../../constants';
 import waitForDomainAvailability from './wait-for-domain-availability';
 
@@ -50,6 +51,8 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	// using the selector will get the explicit domain search query with site title and vertical as fallbacks
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
+
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const isCheckingDomainAvailability = useSelect( ( select ): boolean =>
 		select( 'core/data' ).isResolving( DOMAIN_SUGGESTIONS_STORE, 'isAvailable', [
@@ -137,6 +140,13 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		} );
 	};
 
+	const handleUseYourDomain = () => {
+		trackEventWithFlow( 'calypso_newsite_use_your_domain_click', {
+			where: isModal ? 'domain_modal' : 'domain_page',
+		} );
+		window.location.href = `/start/domains/use-your-domain?source=${ window.location.href }`;
+	};
+
 	return (
 		<div className="gutenboarding-page domains">
 			<DomainPicker
@@ -150,6 +160,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				onDomainSelect={ onDomainSelect }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
 				locale={ locale }
+				onUseYourDomainClick={ currentUser ? handleUseYourDomain : undefined }
 			/>
 		</div>
 	);

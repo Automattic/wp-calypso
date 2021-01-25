@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,14 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import PlansFilterBar from 'calypso/my-sites/plans/jetpack-plans/plans-filter-bar';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { checkout } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { checkout, manageSitePurchase } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { managePurchase } from 'calypso/me/purchases/paths';
 import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -108,7 +106,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					duration: currentDuration,
 				} )
 			);
-			page( managePurchase( siteSlug, purchase.id ) );
+			manageSitePurchase( siteSlug, purchase.id );
 			return;
 		}
 

@@ -1,33 +1,49 @@
 /**
  * Internal dependencies
  */
-import type { plansProductSlugs } from './constants';
+import type { plansProductSlugs, plansOrder, plansPaths } from './constants';
 
-export type PlanSlug = typeof plansProductSlugs[ number ];
+export type StorePlanSlug = typeof plansProductSlugs[ number ];
+export type PlanSlug = typeof plansOrder[ number ];
+export type PlanPath = typeof plansPaths[ number ];
 
 export type PlanAction = {
 	type: string;
 	slug?: string;
 };
-
 export interface Plan {
 	title: string;
 	description: string;
-	productId: number;
-	storeSlug: PlanSlug;
-	pathSlug: string;
 	features: string[];
 	isPopular?: boolean;
 	isFree?: boolean;
 	featuresSlugs?: Record< string, boolean >;
 	storage?: string;
+	periodAgnosticSlug: PlanSlug;
+	productIds: number[];
+}
+
+export interface PlanProduct {
+	billingPeriod: 'MONTHLY' | 'ANNUALLY';
+	price: string;
+	rawPrice: number;
+	productId: number;
+	storeSlug: StorePlanSlug;
+	annualDiscount?: number;
+	periodAgnosticSlug: PlanSlug;
+	pathSlug: PlanPath;
+	/** Useful for two cases:
+	 * 1) to show how much we bill the users for annual plans ($8/mo billed $96)
+	 * 2) to show how much a monthly plan would cost in a year (billed 12$/mo costs $144/yr)
+	 *  */
+	annualPrice: string;
 }
 
 /**
  * types of an item from https://public-api.wordpress.com/rest/v1.5/plans response
  * can be super useful later
  */
-export interface APIPlan {
+export interface PricedAPIPlan {
 	product_id: number;
 	product_name: string;
 	meta: Record< string, unknown >;
@@ -68,11 +84,11 @@ export interface APIPlan {
 		5: number;
 		6: number;
 	};
-	path_slug: string;
-	product_slug: string;
+	path_slug: PlanPath;
+	product_slug: StorePlanSlug;
 	description: string;
 	cost: number;
-	bill_period: number;
+	bill_period: 31 | 365;
 	product_type: string;
 	available: string;
 	multi: number;
@@ -90,20 +106,6 @@ export interface APIPlan {
 	currency_code: string;
 }
 
-export type APIPlanProduct = {
-	plan_id: number;
-};
-
-export type APIPlanDetail = {
-	short_name: string;
-	tagline: string;
-	products: Array< APIPlanProduct >;
-	nonlocalized_short_name: string;
-	highlighted_features: Array< string >;
-	features: Array< string >;
-	storage?: string;
-};
-
 export type PlanFeature = {
 	id?: string;
 	description?: string;
@@ -111,9 +113,41 @@ export type PlanFeature = {
 	type?: string;
 	data?: Array< boolean | string >;
 };
+export interface APIPlanDetail {
+	support_priority: number;
+	support_name: string;
+	groups: string[];
+	products: [
+		{
+			plan_id: number;
+		}
+	];
+	name: string;
+	short_name: string;
+	nonlocalized_short_name: PlanSlug;
+	tagline: string;
+	description: string;
+	features: string[];
+	highlighted_features: string[];
+	storage: string;
+	icon: string;
+}
 
-export type PlanFeatureType = {
+export interface FeaturesByType {
 	id: string;
 	name: string;
-	features: Array< string >;
-};
+	features: string[];
+}
+
+export interface Feature {
+	id: string;
+	name: string;
+	description: string;
+	type: string;
+}
+
+export interface DetailsAPIResponse {
+	plans: APIPlanDetail[];
+	features_by_type: FeaturesByType[];
+	features: Feature[];
+}

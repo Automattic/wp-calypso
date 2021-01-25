@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-const _ = require( 'lodash' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
@@ -29,17 +28,17 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @see {@link https://webpack.js.org/api/cli/}
  *
  * @param   {object}  env                           environment options
+ * @param   {string}  env.source                    plugin slugs, comma separated list
  * @param   {object}  argv                          options map
- * @param   {string}  argv.source                   plugin slug
  * @param   {string}  argv.entry                    entry path
  * @returns {object}                                webpack config
  */
-function getWebpackConfig( env = {}, argv = {} ) {
+function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	env.WP = true;
 
 	// object provides ability to name the entry point
 	// which enables dynamic file names
-	const sources = _.castArray( argv.source );
+	const sources = env.source.split( ',' );
 
 	// Output path
 	let packageName;

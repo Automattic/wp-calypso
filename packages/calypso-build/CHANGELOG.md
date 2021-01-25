@@ -2,6 +2,14 @@
 
 ## trunk
 
+## 7.0.0
+
+- Breaking: drop support for wepback 4
+- Breaking: renamed option `output-jsonp-function` to `output-chunk-loading-global`
+- Added: support for webpack 5
+- Updated dependencies
+  - @wordpress/dependency-extraction-webpack-plugin to ^2.9.0
+
 ## 6.5.0
 
 - Added `corejs`, `debug`, and `useBuiltIns` options to the `babel/default` preset.

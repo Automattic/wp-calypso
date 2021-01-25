@@ -25,7 +25,11 @@ import { getEligibleEmailForwardingDomain } from 'calypso/lib/domains/email-forw
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import hasLoadedGSuiteUsers from 'calypso/state/selectors/has-loaded-gsuite-users';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import {
+	getDomainsBySiteId,
+	hasLoadedSiteDomains,
+	isRequestingSiteDomains,
+} from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import GSuitePurchaseCta from 'calypso/my-sites/email/gsuite-purchase-cta';
 import GSuiteUsersCard from 'calypso/my-sites/email/email-management/gsuite-users-card';
@@ -132,9 +136,15 @@ class EmailManagement extends React.Component {
 	}
 
 	content() {
-		const { domains, hasGSuiteUsersLoaded, hasSiteDomainsLoaded, selectedDomainName } = this.props;
+		const {
+			domains,
+			hasGSuiteUsersLoaded,
+			hasSiteDomainsLoaded,
+			isFetchingSiteDomains,
+			selectedDomainName,
+		} = this.props;
 
-		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded ) {
+		if ( ! hasGSuiteUsersLoaded || ! hasSiteDomainsLoaded || isFetchingSiteDomains ) {
 			return <Placeholder />;
 		}
 
@@ -301,6 +311,7 @@ export default connect(
 			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 			hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+			isFetchingSiteDomains: isRequestingSiteDomains( state, selectedSiteId ),
 			previousRoute: getPreviousRoute( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),

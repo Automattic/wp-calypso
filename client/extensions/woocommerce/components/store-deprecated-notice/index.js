@@ -22,7 +22,7 @@ class StoreDeprecatedNotice extends Component {
 				) }
 				showDismiss={ false }
 			>
-				<NoticeAction href="https://wordpress.com/support/store/">
+				<NoticeAction href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/">
 					{ translate( 'Learn more' ) }
 				</NoticeAction>
 			</Notice>

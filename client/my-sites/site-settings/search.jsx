@@ -38,6 +38,7 @@ import {
 	isEcommerce,
 	isJetpackSearch,
 } from 'calypso/lib/products-values';
+import { isP2Plus } from 'calypso/lib/products-values/is-p2-plus';
 import { planHasJetpackSearch } from 'calypso/lib/plans';
 import { FEATURE_SEARCH } from 'calypso/lib/plans/constants';
 import {
@@ -220,7 +221,8 @@ class Search extends Component {
 }
 
 const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
-const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
+const checkForSearchProduct = ( purchase ) =>
+	purchase.active && ( isJetpackSearch( purchase ) || isP2Plus( purchase ) );
 export default connect( ( state, { isRequestingSettings } ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );

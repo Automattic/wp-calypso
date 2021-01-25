@@ -47,6 +47,7 @@ project {
 	buildType(CheckCodeStyle)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
+	buildType(RunCanaryE2eTests)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
@@ -56,7 +57,8 @@ project {
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		param("teamcity.git.fetchAllHeads", "true")
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
-		text("docker_image", "registry.a8c.com/calypso/ci:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+		text("docker_image", "registry.a8c.com/calypso/ci:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
+		text("docker_image_e2e", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker e2e image", description = "Docker image used to run e2e tests", allowEmpty = true)
 		text("calypso.run_full_eslint", "false", label = "Run full eslint", description = "True will lint all files, empty/false will lint only changed files", allowEmpty = true)
 	}
 
@@ -817,6 +819,48 @@ object CheckCodeStyleBranch : BuildType({
 		}
 	}
 })
+
+object RunCanaryE2eTests : BuildType({
+	name = "Canary e2e tests"
+	description = "Run canary e2e tests"
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
+
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+		}
+	}
+})
+
 
 object WpCalypso : GitVcsRoot({
 	name = "wp-calypso"

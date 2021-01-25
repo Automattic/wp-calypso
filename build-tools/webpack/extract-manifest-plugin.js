@@ -1,5 +1,5 @@
 const PLUGIN_NAME = 'ExtractManifestPlugin';
-const { ConcatSource } = require( 'webpack-sources' );
+const { ConcatSource } = require( 'webpack' ).sources;
 
 class ExtractManifestPlugin {
 	constructor( options = {} ) {
@@ -54,64 +54,59 @@ class ExtractManifestPlugin {
 			//		window.__WEBPACK_MANIFEST.set('chunkhash', (chunkId) => {1:'abcd1234'}[chunkId]);
 			//
 			// - At runtime, when webpack wants to load the asset for the chunk #1, it will call `jsonpScriptSrc(1)` it will get back `my-name.abcd1234.js`
-			compilation.mainTemplate.hooks.assetPath.tap(
-				PLUGIN_NAME,
-				( filenameExpression, options, assetInfo ) => {
-					// When there is no `chunk.hashWithLength`, this hook has been called to generate the filename of an asset, not an expression.
-					// Return whatever Webpack generates unmodified.
-					if ( ! ( options.chunk && options.chunk.hashWithLength ) ) return filenameExpression;
+			compilation.hooks.assetPath.tap( PLUGIN_NAME, ( filenameExpression, options, assetInfo ) => {
+				// When there is no `chunk.hashWithLength`, this hook has been called to generate the filename of an asset, not an expression.
+				// Return whatever Webpack generates unmodified.
+				if ( ! ( options.chunk && options.chunk.hashWithLength ) ) return filenameExpression;
 
-					// Check we are not calling ourselfs recursively
-					if ( options.skipExtractManifestPlugin ) return filenameExpression;
+				// Check we are not calling ourselfs recursively
+				if ( options.skipExtractManifestPlugin ) return filenameExpression;
 
-					// Capture the initial quote to make sure we are using the right one when concatenating code.
-					const [ , quote = '"' ] = filenameExpression.match( quoteRegex );
+				// Capture the initial quote to make sure we are using the right one when concatenating code.
+				const [ , quote = '"' ] = filenameExpression.match( quoteRegex );
 
-					// For each variable in brackets, generate a map chunkId->value for that variable and store it in a global function
-					return filenameExpression.replace( variableRegex, function ( match, variable ) {
-						// If the variable has been already captured, don't try to generate the value again
-						if ( ! variablesProcessed.has( variable ) ) {
-							// Call webpack again to generate the chunkId->value map for that specific variable.
-							let nameExpression;
-							try {
-								nameExpression = compilation.mainTemplate.getAssetPath(
-									`"[${ variable }]"`,
-									{
-										...options,
-										// Avoid infinite loops
-										skipExtractManifestPlugin: true,
-									},
-									assetInfo
-								);
-							} catch {
-								// Error trying to get webpack to give us the replacement map. Return the original string
-								// without any replacement and let wepback continue doing its work. The worst case secenario is that we
-								// don't replace this variable with a global function, and therefore the chunkId->value map is embeded
-								// directly in the runtime.
-								return match;
-							}
-
-							// `nameExpression` is an expression that assumes `chunkId` exists in the scope (like `({1:'chunk1', 2:'chunk2'}[chunkId])`).
-							// Transform it to a function and add it to the manifest.
-							manifestContent.push(
-								`${ globalManifest }.set('${ variable }', function(chunkId){return ${ nameExpression };});`
+				// For each variable in brackets, generate a map chunkId->value for that variable and store it in a global function
+				return filenameExpression.replace( variableRegex, function ( match, variable ) {
+					// If the variable has been already captured, don't try to generate the value again
+					if ( ! variablesProcessed.has( variable ) ) {
+						// Call webpack again to generate the chunkId->value map for that specific variable.
+						let nameExpression;
+						try {
+							nameExpression = compilation.getAssetPath(
+								`"[${ variable }]"`,
+								{
+									...options,
+									// Avoid infinite loops
+									skipExtractManifestPlugin: true,
+								},
+								assetInfo
 							);
-							variablesProcessed.add( variable );
+						} catch {
+							// Error trying to get webpack to give us the replacement map. Return the original string
+							// without any replacement and let wepback continue doing its work. The worst case secenario is that we
+							// don't replace this variable with a global function, and therefore the chunkId->value map is embeded
+							// directly in the runtime.
+							return match;
 						}
-						// Create an expression that calls the generated manifest function with the chunkId
-						return `${ quote }+${ globalManifest }.get('${ variable }')(chunkId)+${ quote }`;
-					} );
-				}
-			);
+
+						// `nameExpression` is an expression that assumes `chunkId` exists in the scope (like `({1:'chunk1', 2:'chunk2'}[chunkId])`).
+						// Transform it to a function and add it to the manifest.
+						manifestContent.push(
+							`${ globalManifest }.set('${ variable }', function(chunkId){return ${ nameExpression };});`
+						);
+						variablesProcessed.add( variable );
+					}
+					// Create an expression that calls the generated manifest function with the chunkId
+					return `${ quote }+${ globalManifest }.get('${ variable }')(chunkId)+${ quote }`;
+				} );
+			} );
 
 			// When generating the files for the `runtime` chunk, add a second file with the content of the manifest. This will reuse the filename
 			// template and hash for both files (eg: it will generate `runtime.<hash>.js` and `manifest.<hash>.js` and both <hash> will be the same).
 			//
-			// The logic has been copied from webpack/lib/JavascriptModulesPlugin.js
-			compilation.mainTemplate.hooks.renderManifest.tap( PLUGIN_NAME, ( result, options ) => {
+			// The logic has been copied from webpack/lib/javascript/JavascriptModulesPlugin.js
+			compilation.hooks.renderManifest.tap( PLUGIN_NAME, ( result, options ) => {
 				const { chunk, outputOptions } = options;
-				const fullHash = options.fullHash;
-				const useChunkHash = compilation.mainTemplate.useChunkHash( chunk );
 
 				if ( chunk.name === this.options.runtimeChunk ) {
 					// Using unshift so the manifest comes before the runtime, so when the runtime runs, all globals are already in place.
@@ -119,6 +114,8 @@ class ExtractManifestPlugin {
 						render: () => new ConcatSource( ...manifestContent ),
 						filenameTemplate: chunk.filenameTemplate || outputOptions.filename,
 						pathOptions: {
+							hash: options.hash,
+							runtime: chunk.runtime,
 							contentHashType: 'javascript',
 							chunk: {
 								...chunk,
@@ -126,7 +123,7 @@ class ExtractManifestPlugin {
 							},
 						},
 						identifier: `chunk${ chunk.id }-manifest`,
-						hash: useChunkHash ? chunk.hash : fullHash,
+						hash: chunk.contentHash.javascript,
 					} );
 				}
 				return result;

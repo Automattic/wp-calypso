@@ -20,6 +20,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
+import Cloudflare from './cloudflare';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
@@ -84,7 +85,6 @@ const CHARTS = [
 ];
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
-
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -187,22 +187,9 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
-					{ ! isVip && isAdmin && ! hasWordAds && (
-						<Banner
-							className="stats__upsell-nudge"
-							icon="star"
-							title={ translate( 'Start earning money now' ) }
-							description={ translate(
-								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
-							) }
-							href={ `/earn/${ slug }` }
-							event="stats_earn_nudge"
-							tracksImpressionName="calypso_upgrade_nudge_impression"
-							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
-							jetpack={ false }
-						/>
-					) }
+
+					{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
+
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
 							date={ date }
@@ -282,6 +269,22 @@ class StatsSite extends Component {
 							/>
 						</div>
 					</div>
+					{ ! isVip && isAdmin && ! hasWordAds && (
+						<Banner
+							className="stats__upsell-nudge"
+							icon="star"
+							title={ translate( 'Start earning money now' ) }
+							description={ translate(
+								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
+							) }
+							href={ `/earn/${ slug }` }
+							event="stats_earn_nudge"
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
+							jetpack={ false }
+						/>
+					) }
 				</div>
 				<JetpackColophon />
 			</>

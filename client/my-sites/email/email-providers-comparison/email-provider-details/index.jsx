@@ -24,7 +24,7 @@ class EmailProviderDetails extends React.Component {
 		description: PropTypes.string.isRequired,
 		image: PropTypes.object.isRequired,
 		features: PropTypes.arrayOf( PropTypes.string ).isRequired,
-		badge: PropTypes.string,
+		badge: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 		formattedPrice: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 		discount: PropTypes.string,
 		buttonLabel: PropTypes.string,

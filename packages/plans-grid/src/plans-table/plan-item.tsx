@@ -9,14 +9,17 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import type { CTAVariation, PopularBadgeVariation } from './types';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
+import useBillingPeriod from '../hooks/use-billing-period';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
+import { PLANS_STORE } from '../constants';
 
 const ChevronDown = (
 	<svg width="8" viewBox="0 0 8 4">
@@ -39,14 +42,13 @@ const SPACE_BAR_KEYCODE = 32;
 export interface Props {
 	slug: string;
 	name: string;
-	price: string;
 	tagline?: string | false;
 	features: Array< string >;
 	domain?: DomainSuggestions.DomainSuggestion;
 	isPopular?: boolean;
 	isFree?: boolean;
 	isSelected?: boolean;
-	onSelect: ( slug: string ) => void;
+	onSelect: ( planProductId: number | undefined ) => void;
 	onPickDomainClick?: () => void;
 	onToggleExpandAll?: () => void;
 	allPlansExpanded: boolean;
@@ -62,7 +64,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
 	name,
 	tagline,
-	price,
 	isPopular = false,
 	isFree = false,
 	domain,
@@ -76,6 +77,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	popularBadgeVariation = 'ON_TOP',
 } ) => {
 	const { __ } = useI18n();
+
+	const billingPeriod = useBillingPeriod();
+	const planProduct = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
+	);
 
 	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );
 
@@ -126,8 +132,12 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						</div>
 						{ tagline && <p className="plan-item__tagline">{ tagline }</p> }
 						<div className="plan-item__price">
-							<div className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }>
-								{ price || nbsp }
+							<div
+								className={ classNames( 'plan-item__price-amount', {
+									'is-loading': ! planProduct?.price,
+								} ) }
+							>
+								{ planProduct?.price || nbsp }
 							</div>
 						</div>
 						{ ! isOpen && <div className="plan-item__dropdown-chevron">{ ChevronDown }</div> }
@@ -144,7 +154,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								<Button
 									className="plan-item__select-button"
 									onClick={ () => {
-										onSelect( slug );
+										onSelect( planProduct?.productId );
 									} }
 									isPrimary
 									disabled={ !! disabledLabel }
@@ -159,7 +169,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								<Button
 									className="plan-item__select-button full-width"
 									onClick={ () => {
-										onSelect( slug );
+										onSelect( planProduct?.productId );
 									} }
 									isPrimary={ isPopular }
 									disabled={ !! disabledLabel }

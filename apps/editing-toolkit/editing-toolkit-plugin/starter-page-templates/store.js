@@ -15,7 +15,6 @@ const actions = {
 
 const selectors = {
 	isOpen: ( state ) => 'CLOSED' !== state,
-	isPromptedFromSidebar: ( state ) => 'OPEN_FROM_SIDEBAR' === state,
 };
 
 registerStore( 'automattic/starter-page-layouts', {

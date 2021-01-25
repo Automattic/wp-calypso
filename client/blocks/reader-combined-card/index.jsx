@@ -24,9 +24,10 @@ import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 /**
  * Style dependencies
@@ -45,6 +46,9 @@ class ReaderCombinedCardComponent extends React.Component {
 		showFollowButton: PropTypes.bool,
 		followSource: PropTypes.string,
 		blockedSites: PropTypes.array,
+		teams: PropTypes.array,
+		isFollowingItem: PropTypes.bool,
+		isWPForTeamsItem: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -89,6 +93,9 @@ class ReaderCombinedCardComponent extends React.Component {
 			isDiscover,
 			blockedSites,
 			translate,
+			teams,
+			isFollowingItem,
+			isWPForTeamsItem,
 		} = this.props;
 		const feedId = postKey.feedId;
 		const siteId = postKey.blogId;
@@ -148,6 +155,9 @@ class ReaderCombinedCardComponent extends React.Component {
 							isDiscover={ isDiscover }
 							isSelected={ isSelectedPost( post ) }
 							showFeaturedAsset={ mediaCount > 0 }
+							teams={ teams }
+							isFollowingItem={ isFollowingItem }
+							isWPForTeamsItem={ isWPForTeamsItem }
 						/>
 					) ) }
 				</ul>
@@ -206,7 +216,11 @@ function mapStateToProps( st, ownProps ) {
 		const postKeys = combinedCardPostKeyToKeys( ownProps.postKey, memoized );
 
 		return {
-			isWPForTeams:
+			isFollowingItem: isFollowing( state, {
+				blogId: ownProps.postKey.blogId,
+				feedId: ownProps.postKey.feedId,
+			} ),
+			isWPForTeamsItem:
 				isFeedWPForTeams( state, ownProps.postKey.feedId ) ||
 				isSiteWPForTeams( state, ownProps.postKey.blogId ),
 			teams: getReaderTeams( state ),

@@ -29,6 +29,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 /**
  * Style dependencies
@@ -99,8 +100,11 @@ export class GSuiteNudge extends React.Component {
 					properties={ { site: siteSlug, domain, ...( receiptId && { receipt_id: receiptId } ) } }
 				/>
 				<DocumentHead
-					title={ translate( 'Add G Suite < %(siteTitle)s', {
-						args: { siteTitle },
+					title={ translate( 'Add %(googleMailService)s < %(siteTitle)s', {
+						args: {
+							siteTitle,
+							googleMailService: getGoogleMailServiceFamily(),
+						},
 					} ) }
 				/>
 				<QuerySites siteId={ selectedSiteId } />

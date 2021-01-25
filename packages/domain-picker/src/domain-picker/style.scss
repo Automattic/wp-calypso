@@ -13,7 +13,7 @@ $accent-blue: #117ac9;
 		max-width: 320px;
 		font-size: $font-body-small;
 		margin: 10px 0;
-		color: $dark-gray-500;
+		color: $gray-700;
 	}
 
 	@include break-mobile {
@@ -97,10 +97,6 @@ $accent-blue: #117ac9;
 		outline: none;
 	}
 
-	&.contains-link {
-		cursor: default;
-	}
-
 	&.type-individual-item {
 		min-height: 64px;
 		border-width: 2px;
@@ -124,7 +120,7 @@ $accent-blue: #117ac9;
 			border-top-left-radius: 5px; /* stylelint-disable-line scales/radii */
 			border-top-right-radius: 5px; /* stylelint-disable-line scales/radii */
 		}
-	
+
 		&.type-individual-item,
 		&:last-child {
 			border-bottom-left-radius: 5px; /* stylelint-disable-line scales/radii */
@@ -145,7 +141,7 @@ $accent-blue: #117ac9;
 	}
 
 	// animate the added domains after you click expand
-	@for $i from 7 through 14 {
+	@for $i from 8 through 14 {
 		&:nth-child( #{$i} ) {
 			transform: translateY( 20px );
 			opacity: 0;
@@ -185,8 +181,8 @@ $accent-blue: #117ac9;
 
 			&::after {
 				content: '';
-				width: $radio-button-size - 2 * $border-width;
-				height: $radio-button-size - 2 * $border-width;
+				width: 100%;
+				height: 100%;
 				border: 2px solid white;
 				border-radius: 50%;
 				position: absolute;

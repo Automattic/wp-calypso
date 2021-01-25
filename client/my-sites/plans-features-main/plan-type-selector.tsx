@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -16,7 +17,9 @@ import styled from '@emotion/styled';
 import SegmentedControl from 'calypso/components/segmented-control';
 import Popover from 'calypso/components/popover';
 import { addQueryArgs } from 'calypso/lib/url';
-import { plansLink } from 'calypso/lib/plans';
+import { getYearlyPlanByMonthly, isWpComPlan, plansLink } from 'calypso/lib/plans';
+import { isMonthly } from 'calypso/lib/plans/constants';
+import { getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 type Props = {
 	displayJetpackPlans: boolean;
@@ -31,6 +34,7 @@ type Props = {
 	selectedPlan?: string;
 	selectedFeature?: string;
 	isInSignup: boolean;
+	plans: string[];
 };
 
 interface PathArgs {
@@ -95,7 +99,7 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	);
 };
 
-type IntervalTypeProps = Pick< Props, 'intervalType' >;
+type IntervalTypeProps = Pick< Props, 'intervalType' | 'plans' >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
@@ -103,6 +107,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle' );
 	const popupIsVisible = intervalType === 'monthly';
+	const maxDiscount = useMaxDiscount( props.plans );
 
 	return (
 		<IntervalTypeToggleWrapper showingMonthly={ intervalType === 'monthly' }>
@@ -120,7 +125,13 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 				>
 					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
 					<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-						{ translate( 'Save up to 43% by paying annually and get a free domain for one year' ) }
+						{ translate(
+							'Save up to %(maxDiscount)d% by paying annually and get a free domain for one year',
+							{
+								args: { maxDiscount },
+								comment: 'Will be like "Save up to 30% by paying annually..."',
+							}
+						) }
 					</PopupMessages>
 				</SegmentedControl.Item>
 			</SegmentedControl>
@@ -165,6 +176,35 @@ const PlanTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 
 	return null;
 };
+
+function useMaxDiscount( plans: string[] ): number {
+	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
+	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
+	const discounts = useSelector( ( state ) => {
+		return wpcomMonthlyPlans.map( ( planSlug ) => {
+			const monthlyPlan = getPlanBySlug( state, planSlug );
+			const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planSlug ) );
+
+			if ( ! yearlyPlan ) {
+				return 0;
+			}
+
+			const monthlyPlanAnnualCost = getPlanRawPrice( state, monthlyPlan.product_id ) * 12;
+			const yearlyPlanCost = getPlanRawPrice( state, yearlyPlan.product_id );
+
+			return Math.round(
+				( ( monthlyPlanAnnualCost - yearlyPlanCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100
+			);
+		} );
+	} );
+	const currentMaxDiscount = discounts.length ? Math.max( ...discounts ) : 0;
+
+	if ( currentMaxDiscount > 0 && currentMaxDiscount !== maxDiscount ) {
+		setMaxDiscount( currentMaxDiscount );
+	}
+
+	return currentMaxDiscount || maxDiscount;
+}
 
 export default PlanTypeSelector;
 

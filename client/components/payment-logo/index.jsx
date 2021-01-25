@@ -51,7 +51,7 @@ const ALT_TEXT = {
 	netbanking: 'Net Banking',
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
-	placeholder: '',
+	placeholder: 'Payment logo',
 	unionpay: 'UnionPay',
 	visa: 'Visa',
 	wechat: i18n.translate( 'WeChat Pay', {
@@ -68,15 +68,17 @@ class PaymentLogo extends React.Component {
 		type: PropTypes.oneOf( POSSIBLE_TYPES ),
 		altText: PropTypes.string,
 		isCompact: PropTypes.bool,
+		disabled: PropTypes.bool,
 	};
 
 	render() {
-		const { altText, className, isCompact, type } = this.props;
+		const { altText, className, isCompact, type, disabled } = this.props;
 
 		const classes = classNames(
 			'payment-logo',
 			`is-${ type }`,
 			{ 'is-compact': isCompact },
+			{ disabled },
 			className
 		);
 

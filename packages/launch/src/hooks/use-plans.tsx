@@ -13,33 +13,32 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { PLANS_STORE, SITE_STORE } from '../stores';
 import LaunchContext from '../context';
 import { isPlanProduct } from '../utils';
-import type { PlanProduct } from '../utils';
+import type { PlanProductForFlow } from '../utils';
 
 export function usePlans(): {
-	defaultPaidPlan: Plans.Plan;
-	defaultFreePlan: Plans.Plan;
-	planPrices: Record< string, string >;
+	defaultPaidPlan: Plans.Plan | undefined;
+	defaultFreePlan: Plans.Plan | undefined;
 } {
 	const locale = useLocale();
 
 	const defaultPaidPlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getDefaultPaidPlan( locale )
 	);
+
 	const defaultFreePlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getDefaultFreePlan( locale )
 	);
-	const planPrices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( '' ) );
 
-	return { defaultPaidPlan, defaultFreePlan, planPrices };
+	return { defaultPaidPlan, defaultFreePlan };
 }
 
-export function usePlanProductFromCart(): PlanProduct | undefined {
+export function usePlanProductFromCart(): PlanProductForFlow | undefined {
 	const { siteId } = React.useContext( LaunchContext );
 	const { getCart } = useDispatch( SITE_STORE );
 
-	const [ planProductFromCart, setPlanProductFromCart ] = React.useState< PlanProduct | undefined >(
-		undefined
-	);
+	const [ planProductFromCart, setPlanProductFromCart ] = React.useState<
+		PlanProductForFlow | undefined
+	>( undefined );
 
 	React.useEffect( () => {
 		( async function () {
@@ -54,14 +53,10 @@ export function usePlanProductFromCart(): PlanProduct | undefined {
 	return planProductFromCart;
 }
 
-export function usePlanFromCart(): Plans.Plan | undefined {
+export function usePlanProductIdFromCart(): number | undefined {
 	const planProductFromCart = usePlanProductFromCart();
 
-	const planSlug = planProductFromCart?.product_slug;
+	const planProductId = planProductFromCart?.product_id;
 
-	const plan = useSelect( ( select ) =>
-		planSlug ? select( PLANS_STORE ).getPlanBySlug( planSlug ) : undefined
-	);
-
-	return plan;
+	return planProductId;
 }

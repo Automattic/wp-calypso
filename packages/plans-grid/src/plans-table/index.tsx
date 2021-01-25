@@ -10,7 +10,12 @@ import type { DomainSuggestions } from '@automattic/data-stores';
  */
 import PlanItem from './plan-item';
 import { PLANS_STORE } from '../constants';
-import type { CTAVariation, PopularBadgeVariation, CustomTagLinesMap } from './types';
+import type {
+	CTAVariation,
+	PopularBadgeVariation,
+	CustomTagLinesMap,
+	DisabledPlansMap,
+} from './types';
 
 /**
  * Style dependencies
@@ -18,11 +23,11 @@ import type { CTAVariation, PopularBadgeVariation, CustomTagLinesMap } from './t
 import './style.scss';
 
 export interface Props {
-	selectedPlanSlug: string;
-	onPlanSelect: ( planSlug: string ) => void;
+	selectedPlanProductId: number | undefined;
+	onPlanSelect: ( planProductId: number | undefined ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
-	disabledPlans?: { [ planSlug: string ]: string };
+	disabledPlans?: DisabledPlansMap;
 	locale: string;
 	showTaglines?: boolean;
 	CTAVariation?: CTAVariation;
@@ -32,7 +37,7 @@ export interface Props {
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
-	selectedPlanSlug,
+	selectedPlanProductId,
 	onPlanSelect,
 	onPickDomainClick,
 	currentDomain,
@@ -44,8 +49,10 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	customTagLines,
 	defaultAllPlansExpanded = false,
 } ) => {
-	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
+	const supportedPlans = useSelect( ( select ) =>
+		select( PLANS_STORE ).getSupportedPlans( locale )
+	);
+
 	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
 
 	return (
@@ -56,21 +63,22 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 						<PlanItem
 							popularBadgeVariation={ popularBadgeVariation }
 							allPlansExpanded={ allPlansExpanded }
-							key={ plan.storeSlug }
-							slug={ plan.storeSlug }
+							key={ plan.periodAgnosticSlug }
+							slug={ plan.periodAgnosticSlug }
 							domain={ currentDomain }
-							tagline={ ( showTaglines && customTagLines?.[ plan.storeSlug ] ) ?? plan.description }
+							tagline={
+								( showTaglines && customTagLines?.[ plan.periodAgnosticSlug ] ) ?? plan.description
+							}
 							CTAVariation={ CTAVariation }
 							features={ plan.features ?? [] }
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }
-							price={ prices[ plan.storeSlug ] }
 							name={ plan?.title.toString() }
-							isSelected={ plan.storeSlug === selectedPlanSlug }
+							isSelected={ plan.productIds.indexOf( selectedPlanProductId as never ) > -1 }
 							onSelect={ onPlanSelect }
 							onPickDomainClick={ onPickDomainClick }
 							onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
-							disabledLabel={ disabledPlans?.[ plan.storeSlug ] }
+							disabledLabel={ disabledPlans?.[ plan.periodAgnosticSlug ] }
 						></PlanItem>
 					)
 			) }

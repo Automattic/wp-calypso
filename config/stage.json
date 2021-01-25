@@ -154,7 +154,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"upsell/nudge-component": false,
-		"use-translation-chunks": true,
+		"use-translation-chunks": false,
 		"woocommerce/extension-dashboard": true,
 		"woocommerce/extension-dashboard-stats-widget": true,
 		"woocommerce/extension-orders": true,

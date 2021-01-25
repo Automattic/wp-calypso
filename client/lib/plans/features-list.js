@@ -13,7 +13,6 @@ import MaterialIcon from 'calypso/components/material-icon';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 
 export const FEATURE_CATEGORIES = {
 	[ constants.FEATURE_CATEGORY_SECURITY ]: {
@@ -1021,7 +1020,10 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
 		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
 		getIcon: () => 'lock',
-		getTitle: () => i18n.translate( 'All Security Daily features' ),
+		getTitle: ( variation ) =>
+			( {
+				spp: i18n.translate( 'All Jetpack Security features' ),
+			}[ variation ] || i18n.translate( 'All Security Daily features' ) ),
 		isPlan: true,
 	},
 
@@ -1072,10 +1074,11 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
-		getTitle: () =>
+		getTitle: ( variation ) =>
 			( {
 				i5: i18n.translate( 'Backup (real-time, off-site)' ),
-			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated real-time site backups' ) ),
+				spp: i18n.translate( 'Backup (real-time, off-site)' ),
+			}[ variation ] || i18n.translate( 'Automated real-time site backups' ) ),
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_V2 ]: {
@@ -1091,13 +1094,13 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () =>
+		getTitle: ( variation ) =>
 			( {
 				v2: i18n.translate( 'Backup {{strong}}{{em}}Daily{{/em}}{{/strong}}', {
 					components: {
@@ -1106,7 +1109,8 @@ export const FEATURES_LIST = {
 					},
 				} ),
 				i5: i18n.translate( 'All Backup Daily features' ),
-			}[ getJetpackCROActiveVersion() ] ||
+				spp: i18n.translate( 'All Jetpack Backup features' ),
+			}[ variation ] ||
 			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
 				components: {
 					em: <em />,
@@ -1121,13 +1125,13 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () =>
+		getTitle: ( variation ) =>
 			( {
 				v2: i18n.translate( 'Backup {{strong}}{{em}}Real{{nbh/}}time{{/em}}{{/strong}}', {
 					components: {
@@ -1138,7 +1142,7 @@ export const FEATURES_LIST = {
 					comment: '{{nbh}} represents a non breakable hyphen',
 				} ),
 				i5: i18n.translate( 'Backup Real-time (off-site)' ),
-			}[ getJetpackCROActiveVersion() ] ||
+			}[ variation ] ||
 			i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em />,
@@ -1153,7 +1157,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_SCAN_V2 ]: {
@@ -1174,7 +1178,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	/**
@@ -1194,7 +1198,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	// * Scan Daily *
@@ -1204,10 +1208,11 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: () =>
+		getTitle: ( variation ) =>
 			( {
 				i5: i18n.translate( 'Scan (daily, automated)' ),
-			}[ getJetpackCROActiveVersion() ] ||
+				spp: i18n.translate( 'Scan (daily, automated)' ),
+			}[ variation ] ||
 			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
 				components: {
 					em: <em />,
@@ -1222,7 +1227,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	// * Scan Real-time *
@@ -1232,10 +1237,11 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: () =>
+		getTitle: ( variation ) =>
 			( {
 				i5: i18n.translate( 'Scan (real-time, automated)' ),
-			}[ getJetpackCROActiveVersion() ] ||
+				spp: i18n.translate( 'Scan (real-time, automated)' ),
+			}[ variation ] ||
 			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em />,
@@ -1250,15 +1256,16 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => constants.FEATURE_ANTISPAM_V2,
-		getTitle: () =>
+		getTitle: ( variation ) =>
 			( {
 				i5: i18n.translate( 'Anti-spam ' ),
-			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated spam protection' ) ),
+				spp: i18n.translate( 'Anti-spam' ),
+			}[ variation ] || i18n.translate( 'Automated spam protection' ) ),
 	},
 
 	[ constants.FEATURE_PRODUCT_ANTISPAM_V2 ]: {
@@ -1274,7 +1281,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_ACTIVITY_LOG_V2 ]: {
@@ -1329,8 +1336,8 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SEARCH_V2,
-		getIcon: () => ( getJetpackCROActiveVersion() === 'v2' ? 'search' : null ),
-		getTitle: () =>
+		getIcon: ( variation ) => ( variation === 'v2' ? 'search' : null ),
+		getTitle: ( variation ) =>
 			( {
 				v2: i18n.translate( 'Jetpack Search {{strong}}{{em}}Up to 100k records{{/em}}{{/strong}}', {
 					components: {
@@ -1339,7 +1346,8 @@ export const FEATURES_LIST = {
 					},
 				} ),
 				i5: i18n.translate( 'Site Search: up to 100k records' ),
-			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Search: up to 100k records' ) ),
+				spp: i18n.translate( 'Site Search: up to 100k records' ),
+			}[ variation ] || i18n.translate( 'Search: up to 100k records' ) ),
 
 		getDescription: () =>
 			i18n.translate(
@@ -1350,7 +1358,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_VIDEO_HOSTING_V2 ]: {
@@ -1369,16 +1377,16 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CRM_V2 ]: {
 		getSlug: () => constants.FEATURE_CRM_V2,
-		getIcon: () => ( getJetpackCROActiveVersion() === 'v2' ? 'multiple-users' : null ),
-		getTitle: () =>
-			getJetpackCROActiveVersion() === 'v2'
-				? i18n.translate( 'Jetpack CRM {{strong}}{{em}}Entrepreneur{{/em}}{{/strong}}', {
-						components: {
-							em: <em />,
-							strong: <strong />,
-						},
-				  } )
-				: i18n.translate( 'CRM: Entrepreneur bundle' ),
+		getIcon: ( variation ) => ( variation === 'v2' ? 'multiple-users' : null ),
+		getTitle: ( variation ) =>
+			( {
+				v2: i18n.translate( 'Jetpack CRM {{strong}}{{em}}Entrepreneur{{/em}}{{/strong}}', {
+					components: {
+						em: <em />,
+						strong: <strong />,
+					},
+				} ),
+			}[ variation ] || i18n.translate( 'CRM: Entrepreneur bundle' ) ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
@@ -1388,7 +1396,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: getJetpackCROActiveVersion() === 'v2',
+		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_CRM_LEADS_AND_FUNNEL ]: {
@@ -1508,11 +1516,11 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {
 		getSlug: () => constants.FEATURE_ONE_CLICK_RESTORE_V2,
-		getTitle: () =>
+		getTitle: ( variation ) =>
 			( {
 				i5: i18n.translate( 'One-click restores' ),
-			}[ getJetpackCROActiveVersion() ] ||
-			i18n.translate( 'One-click restores from desktop or mobile' ) ),
+				spp: i18n.translate( 'One-click restores' ),
+			}[ variation ] || i18n.translate( 'One-click restores from desktop or mobile' ) ),
 	},
 
 	[ constants.FEATURE_ONE_CLICK_FIX_V2 ]: {

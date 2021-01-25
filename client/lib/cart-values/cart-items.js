@@ -765,9 +765,12 @@ export function googleApps( properties ) {
 			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
 			: GSUITE_BASIC_SLUG );
 
-	const item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
-
-	return assign( item, { extra: { google_apps_users: properties.users } } );
+	return assign( domainItem( productSlug, properties.meta ?? properties.domain ), {
+		extra: { google_apps_users: properties.users },
+		...( productSlug === GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			? { quantity: properties.quantity }
+			: {} ),
+	} );
 }
 
 export function googleAppsExtraLicenses( properties ) {
@@ -836,6 +839,10 @@ export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
 
 export function hasGoogleApps( cart ) {
 	return some( getAllCartItems( cart ), isGoogleApps );
+}
+
+export function hasTitanMail( cart ) {
+	return some( getAllCartItems( cart ), isTitanMail );
 }
 
 export function customDesignItem() {

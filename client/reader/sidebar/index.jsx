@@ -29,7 +29,7 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
-import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import {
 	toggleReaderSidebarLists,
@@ -158,6 +158,7 @@ export class ReaderSidebar extends React.Component {
 				<SidebarHeading>{ translate( 'Streams' ) }</SidebarHeading>
 				<QueryReaderLists />
 				<QueryReaderTeams />
+				<QueryReaderOrganizations />
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
@@ -168,6 +169,10 @@ export class ReaderSidebar extends React.Component {
 					materialIcon="check_circle"
 					link="/read"
 				/>
+
+				<li>
+					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+				</li>
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {

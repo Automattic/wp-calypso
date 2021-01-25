@@ -42,6 +42,7 @@ export default class InfoPopover extends Component {
 			'left',
 			'top left',
 		] ),
+		showOnHover: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -49,6 +50,7 @@ export default class InfoPopover extends Component {
 		icon: 'info-outline',
 		iconSize: 18,
 		position: 'bottom',
+		showOnHover: false,
 	};
 
 	iconRef = React.createRef();
@@ -56,17 +58,24 @@ export default class InfoPopover extends Component {
 	state = { showPopover: false };
 
 	handleClick = ( e ) => {
+		const { onOpen, showOnHover } = this.props;
+		const { showPopover } = this.state;
+
 		e.preventDefault();
 		e.stopPropagation();
+
+		if ( showOnHover ) {
+			return;
+		}
 
 		// There's no "handleOpen" method for us to hook into,
 		// so we check here to see if the intent is to open the popover
 		// and fire onOpen accordingly
-		if ( ! this.state.showPopover ) {
-			this.props.onOpen?.();
+		if ( ! showPopover ) {
+			onOpen?.();
 		}
 
-		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
+		this.setState( { showPopover: ! showPopover }, this.recordStats );
 	};
 
 	handleClose = () => {
@@ -83,6 +92,42 @@ export default class InfoPopover extends Component {
 		}
 	};
 
+	handleOnMouseEnterButton = () => {
+		const { onOpen, showOnHover } = this.props;
+
+		if ( ! showOnHover ) {
+			return;
+		}
+
+		onOpen?.();
+		this.setState( { showPopover: true }, this.recordStats );
+	};
+
+	handleOnMouseLeave = () => {
+		setTimeout( () => {
+			const { showOnHover } = this.props;
+
+			if ( ! showOnHover ) {
+				return;
+			}
+
+			if ( this.inPopover ) {
+				return;
+			}
+
+			this.setState( { showPopover: false }, this.recordStats );
+		}, 250 );
+	};
+
+	handleOnMouseEnterPopover = () => {
+		this.inPopover = true;
+	};
+
+	handleOnMouseLeavePopover = () => {
+		this.inPopover = false;
+		this.handleOnMouseLeave();
+	};
+
 	render() {
 		return (
 			<Fragment>
@@ -92,6 +137,8 @@ export default class InfoPopover extends Component {
 					aria-expanded={ this.state.showPopover }
 					aria-label={ translate( 'More information' ) }
 					onClick={ this.handleClick }
+					onMouseEnter={ this.handleOnMouseEnterButton }
+					onMouseLeave={ this.handleOnMouseLeave }
 					ref={ this.iconRef }
 					className={ classNames( 'info-popover', this.props.className, {
 						'is-active': this.state.showPopover,
@@ -109,6 +156,8 @@ export default class InfoPopover extends Component {
 						position={ this.props.position }
 						onClose={ this.handleClose }
 						className={ classNames( 'info-popover__tooltip', this.props.className ) }
+						onMouseEnter={ this.handleOnMouseEnterPopover }
+						onMouseLeave={ this.handleOnMouseLeavePopover }
 					>
 						{ this.props.children }
 					</Popover>

@@ -3,6 +3,8 @@
 @import '~@wordpress/base-styles/variables';
 @import '~@wordpress/base-styles/z-index';
 
+$welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
+
 .wpcom-editor-welcome-tour-frame {
 	background-color: $white;
 	border-radius: 2px;
@@ -143,7 +145,7 @@
 		width: 32px;
 		min-width: 32px;
 		height: 32px;
-		background: $dark-gray-700;
+		background: $welcome-tour-button-background-color;
 		opacity: 0;
 		transition: opacity 200ms;
 	}

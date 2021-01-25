@@ -346,7 +346,7 @@ export const TYPE_SECURITY_REALTIME = 'TYPE_SECURITY_REALTIME';
 export const TYPE_ALL = 'TYPE_ALL';
 export const TYPE_P2_PLUS = 'TYPE_P2_PLUS';
 
-export const STORE_DEPRECATION_START_DATE = new Date( '2021-01-15T16:00:00+00:00' );
+export const STORE_DEPRECATION_START_DATE = new Date( '2021-01-19T19:30:00+00:00' );
 
 export function isMonthly( plan ) {
 	return WPCOM_MONTHLY_PLANS.includes( plan ) || JETPACK_MONTHLY_PLANS.includes( plan );

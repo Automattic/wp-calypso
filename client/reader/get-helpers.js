@@ -98,23 +98,29 @@ export const getSiteAuthorName = ( site ) => {
 /**
  * Check if user is eligible to use seen posts feature (unseen counts and mark as seen)
  *
- * @param {Array} teams list of reader teams
- * @param {boolean} isWPForTeams id if exists
+ * @param {object} flags eligibility data
+ * @param {Array} flags.teams list of reader teams
+ * @param {boolean} flags.isFollowingItem wether or not is following a blog id
+ * @param {boolean} flags.isWPForTeamsItem id if exists
  *
  * @returns {boolean} whether or not the user can use the feature for the given site
  */
-export const isEligibleForUnseen = ( teams, isWPForTeams = false ) => {
+export const isEligibleForUnseen = ( {
+	teams,
+	isFollowingItem = false,
+	isWPForTeamsItem = false,
+} ) => {
 	if ( ! config.isEnabled( 'reader/seen-posts' ) ) {
+		return false;
+	}
+
+	if ( ! isFollowingItem ) {
 		return false;
 	}
 
 	if ( isAutomatticTeamMember( teams ) ) {
 		return true;
-	} else if ( isWPForTeams ) {
-		// For now disable it even for p2 sites if the user is not an automattician
-		// return true;
-		return false;
 	}
 
-	return false;
+	return isWPForTeamsItem;
 };

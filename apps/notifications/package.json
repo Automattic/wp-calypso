@@ -43,9 +43,9 @@
 		"wpcom-proxy-request": "^6.0.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^6.1.0",
+		"@automattic/calypso-build": "^7.0.0",
 		"enzyme": "^3.11.0",
-		"html-webpack-plugin": "^3.2.0",
-		"webpack": "^4.44.2"
+		"html-webpack-plugin": "^5.0.0-beta.4",
+		"webpack": "^5.13.0"
 	}
 }
