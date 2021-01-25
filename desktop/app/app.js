@@ -4,7 +4,7 @@
 require( './env' ); // Must come first to setup the environment
 const log = require( './lib/logger' )( 'desktop:index' );
 
-module.exports = function ( finished_cb ) {
+module.exports = function () {
 	log.info( 'Starting app handlers' );
 
 	// Stuff that can run before the main window
@@ -18,20 +18,5 @@ module.exports = function ( finished_cb ) {
 	log.info( 'Waiting for app window to load' );
 
 	// Start the main window
-	require( './server' )( function ( mainWindow ) {
-		log.info( 'Starting window handlers' );
-
-		// Stuff that needs a mainWindow handle
-		require( './window-handlers/failed-to-load' )( mainWindow );
-		require( './window-handlers/login-status' )( mainWindow );
-		require( './window-handlers/notifications' )( mainWindow );
-		require( './window-handlers/external-links' )( mainWindow );
-		require( './window-handlers/window-saver' )( mainWindow );
-		require( './window-handlers/debug-tools' )( mainWindow );
-		require( './window-handlers/spellcheck' )( mainWindow );
-
-		if ( typeof finished_cb !== 'undefined' ) {
-			finished_cb( mainWindow );
-		}
-	} );
+	require( './server' )();
 };

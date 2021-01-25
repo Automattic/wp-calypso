@@ -2,16 +2,13 @@
  * External Dependencies
  */
 const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
-const url = require( 'url' );
 const path = require( 'path' );
 
 /**
  * Internal dependencies
  */
 const Config = require( '../lib/config' );
-const { start } = require( './server' );
 const Settings = require( '../lib/settings' );
-const settingConstants = require( '../lib/settings/constants' );
 const cookieAuth = require( '../lib/cookie-auth' );
 const appInstance = require( '../lib/app-instance' );
 const platform = require( '../lib/platform' );
@@ -27,13 +24,12 @@ function showAppWindow() {
 	const preloadFile = path.resolve(
 		path.join( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' )
 	);
-	let appUrl = Config.server_url + ':' + Config.server_port;
-	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
-
-	if ( lastLocation && isValidLastLocation( lastLocation ) ) {
-		appUrl += lastLocation;
-	}
-
+	const appUrl = 'https://www.wordpress.com';
+	// TODO:
+	// - Use BrowserView
+	// - Restore last window location
+	// - Handle migration from prior relative path implementation
+	// - Developer mode with localhost webapp configuration
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
@@ -104,10 +100,8 @@ function showAppWindow() {
 
 	mainWindow.on( 'close', function () {
 		const currentURL = mainWindow.webContents.getURL();
-		const parsedURL = url.parse( currentURL );
-		if ( isValidLastLocation( parsedURL.pathname ) ) {
-			Settings.saveSetting( settingConstants.LAST_LOCATION, parsedURL.pathname );
-		}
+		log.info( `Closing main window, last location: '${ currentURL }'` );
+		// TODO: Save last window location
 	} );
 
 	mainWindow.on( 'closed', function () {
@@ -115,58 +109,21 @@ function showAppWindow() {
 		mainWindow = null;
 	} );
 
+	require( '../window-handlers/failed-to-load' )( mainWindow );
+	require( '../window-handlers/login-status' )( mainWindow );
+	require( '../window-handlers/notifications' )( mainWindow );
+	require( '../window-handlers/external-links' )( mainWindow );
+	require( '../window-handlers/window-saver' )( mainWindow );
+	require( '../window-handlers/debug-tools' )( mainWindow );
+	require( '../window-handlers/spellcheck' )( mainWindow );
+
 	platform.setMainWindow( mainWindow );
 
 	return mainWindow;
 }
 
-function startServer( started_cb ) {
-	log.info( 'App is ready, starting server' );
-
-	start( app, function () {
-		started_cb( showAppWindow() );
-	} );
-}
-
-function isValidLastLocation( loc ) {
-	const invalids = [
-		'/desktop/', // Page shown when no Electron
-		'/start', // Don't attempt to resume the signup flow
-	];
-
-	if ( typeof loc !== 'string' ) {
-		return false;
-	}
-
-	for ( const s of invalids ) {
-		if ( loc.startsWith( s ) ) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-module.exports = function ( started_cb ) {
-	log.info( 'Checking for other instances' );
-	let boot;
-
+module.exports = function () {
 	if ( appInstance.isSingleInstance() ) {
-		if ( 'development' === process.env.NODE_ENV ) {
-			log.debug( 'Dev mode: skipping server initialization' );
-
-			boot = () => started_cb( showAppWindow() );
-		} else {
-			boot = () => startServer( started_cb );
-		}
-
-		log.info( 'No other instances, waiting for app ready' );
-
-		// Start the app window
-		if ( app.isReady() ) {
-			boot();
-		} else {
-			app.on( 'ready', boot );
-		}
+		app.on( 'ready', showAppWindow );
 	}
 };
