@@ -43,23 +43,27 @@ const MShotsImage = ( {
 }: MShotsImageProps ): JSX.Element => {
 	const [ count, setCount ] = React.useState( 1 );
 	const [ visible, setVisible ] = useState( false );
+	const [ opacity, setOpacity ] = useState( 0 );
 
 	const src = mshotsUrl( url, options, count );
 
 	// Hide the images while they're loading if src changes (e.g. when locale is switched)
-	// tofix: This will hide the default mshot images from view but when the locale picker is closed
-	// the old images are still shown, these are then hidden instantly while the new ones load.
-	// Ideally these would be hidden before the language picker modal is closed/hidden.
 	useLayoutEffect( () => {
+		// Opacity is used for fade in on load
+		// Visible is used to hide the image quickly when swapping languages
 		setVisible( false );
-	}, [ src, setVisible ] );
+		setOpacity( 0 );
+	}, [ src, setVisible, setOpacity ] );
 
 	return (
 		<div className="mshots-image__container">
 			{ ! visible && <div className="mshots-image__loader"></div> }
 			<img
-				className={ classnames( 'mshots-image' ) }
-				style={ { opacity: visible ? 1 : 0 } }
+				className={ classnames(
+					'mshots-image',
+					visible ? 'mshots-image-visible' : 'mshots-image-hidden'
+				) }
+				style={ { opacity: opacity } }
 				alt={ alt }
 				aria-labelledby={ labelledby }
 				src={ src }
@@ -74,7 +78,10 @@ const MShotsImage = ( {
 							setTimeout( () => setCount( count + 1 ), count * 500 );
 						}
 					} else {
+						// Show the image / hide loader
 						setVisible( true );
+						// Fade in
+						setOpacity( 1 );
 					}
 				} }
 			/>
