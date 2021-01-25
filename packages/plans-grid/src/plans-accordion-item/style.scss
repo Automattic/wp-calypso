@@ -290,7 +290,9 @@ ul.plans-accordion-item__feature-item-group {
 	&--paid-plan-margin {
 		margin-top: 20px;
 
-		@include break-small {
+		// On small screen there's still a risk that the
+		// .plans-accordion-item__price-discount item overlaps with the action button
+		@include break-medium {
 			margin-top: -10px;
 		}
 	}
