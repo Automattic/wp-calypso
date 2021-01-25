@@ -34,15 +34,22 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >();
 
-	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
-	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
-	const isPlanProductFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanProductFree );
-	const selectedPlanProductId = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getPlanProductId()
-	);
-	const selectedPlanProduct = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanProductById( selectedPlanProductId )
-	);
+	const { domain, selectedFeatures, selectedPlanProductId } = useSelect( ( select ) => {
+		const onboardStore = select( ONBOARD_STORE );
+		return {
+			domain: onboardStore.getSelectedDomain(),
+			selectedFeatures: onboardStore.getSelectedFeatures(),
+			selectedPlanProductId: onboardStore.getPlanProductId(),
+		};
+	} );
+
+	const { isPlanProductFree, selectedPlanProduct } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
+		return {
+			isPlanProductFree: plansStore.isPlanProductFree,
+			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
+		};
+	} );
 
 	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	React.useEffect( () => {
