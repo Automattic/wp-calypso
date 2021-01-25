@@ -43,12 +43,5 @@
 		"react-dom": "^16.12.0",
 		"react-stripe-elements": "^4.0.2"
 	},
-	"devDependencies": {
-		"@automattic/calypso-polyfills": "^1.0.0",
-		"@testing-library/jest-dom": "^5.9.0",
-		"@testing-library/react": "^10.0.5",
-		"cache-loader": "^4.1.0",
-		"webpack": "^4.44.2"
-	},
 	"private": true
 }
