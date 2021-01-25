@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import Dispatcher from 'calypso/dispatcher';
 import wpcom from 'calypso/lib/wp';
 import {
 	fetchPluginInformation,
@@ -104,15 +103,6 @@ export function fetchPluginsList( category, page, searchTerm ) {
 			searchTerm,
 		} );
 
-		// @TODO: Remove when this flux action is completely reduxified
-		Dispatcher.handleViewAction( {
-			type: 'FETCH_WPORG_PLUGINS_LIST',
-			action: 'FETCH_WPORG_PLUGINS_LIST',
-			page,
-			category,
-			searchTerm,
-		} );
-
 		// The "Featured" category is managed by WP.com instead of WP.org
 		if ( 'featured' === category ) {
 			wpcom
@@ -120,29 +110,9 @@ export function fetchPluginsList( category, page, searchTerm ) {
 				.getFeaturedPlugins()
 				.then( ( data ) => {
 					dispatch( receivePluginsList( category, page, searchTerm, data, null ) );
-
-					// @TODO: Remove when this flux action is completely reduxified
-					Dispatcher.handleServerAction( {
-						type: 'RECEIVE_WPORG_PLUGINS_LIST',
-						action: 'FETCH_WPORG_PLUGINS_LIST',
-						page: 1,
-						category: 'featured',
-						data: normalizePluginsList( data ),
-						error: null,
-					} );
 				} )
 				.catch( ( error ) => {
 					dispatch( receivePluginsList( category, page, searchTerm, [], error ) );
-
-					// @TODO: Remove when this flux action is completely reduxified
-					Dispatcher.handleServerAction( {
-						type: 'RECEIVE_WPORG_PLUGINS_LIST',
-						action: 'FETCH_WPORG_PLUGINS_LIST',
-						page: 1,
-						category: 'featured',
-						data: normalizePluginsList( [] ),
-						error: null,
-					} );
 				} );
 			return;
 		}
@@ -158,16 +128,6 @@ export function fetchPluginsList( category, page, searchTerm ) {
 				dispatch(
 					receivePluginsList( category, page, searchTerm, data?.plugins ?? [], error, data?.info )
 				);
-
-				// @TODO: Remove when this flux action is completely reduxified
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_WPORG_PLUGINS_LIST',
-					action: 'FETCH_WPORG_PLUGINS_LIST',
-					page,
-					category,
-					data: data ? normalizePluginsList( data?.plugins ) : null,
-					error,
-				} );
 			}
 		);
 	};
