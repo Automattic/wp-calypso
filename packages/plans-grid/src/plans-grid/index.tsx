@@ -46,6 +46,7 @@ export interface Props {
 	customTagLines?: CustomTagLinesMap;
 	hidePlansComparison?: boolean;
 	defaultAllPlansExpanded?: boolean;
+	onBillingPeriodChange?: ( billingPeriod: Plans.PlanBillingPeriod ) => void;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -64,12 +65,19 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	customTagLines,
 	hidePlansComparison = false,
 	defaultAllPlansExpanded = false,
+	onBillingPeriodChange,
 } ) => {
 	const { __ } = useI18n();
 
 	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >(
 		'ANNUALLY'
 	);
+
+	React.useEffect( () => {
+		if ( onBillingPeriodChange ) {
+			onBillingPeriodChange( billingPeriod );
+		}
+	}, [ billingPeriod, onBillingPeriodChange ] );
 
 	const [ maxMonhtlyDiscountPercentage, setMaxMonhtlyDiscountPercentage ] = React.useState<
 		number | undefined

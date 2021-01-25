@@ -9,6 +9,7 @@ import { useI18n } from '@automattic/react-i18n';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import { useLocale } from '@automattic/i18n-utils';
+import type { Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -30,6 +31,8 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const history = useHistory();
 	const makePath = usePath();
 	const { goBack, goNext } = useStepNavigation();
+
+	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >();
 
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
@@ -97,7 +100,9 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 						__(
 							'Pick a plan that’s right for you. There’s no risk, you can cancel for a full refund within %1$d days.'
 						),
-						14
+						// Only show a 7-days refund window if billing period is
+						// defined AND is set to monthl (its value starts as undefined)
+						billingPeriod === 'MONTHLY' ? 7 : 14
 					) }
 				</SubTitle>
 			</div>
@@ -118,6 +123,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				isAccordion
 				selectedFeatures={ selectedFeatures }
 				locale={ locale }
+				onBillingPeriodChange={ setBillingPeriod }
 			/>
 		</div>
 	);
