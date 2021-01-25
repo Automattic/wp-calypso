@@ -45,10 +45,11 @@ function enqueue_launch_button_script_and_style( $site_launch_options ) {
 		'a8c-fse-editor-site-launch-button-script',
 		'wpcomEditorSiteLaunch',
 		array(
-			'siteSlug'   => $site_launch_options['site_slug'],
-			'launchUrl'  => $site_launch_options['launch_url'],
-			'launchFlow' => $site_launch_options['launch_flow'],
-			'locale'     => determine_locale(),
+			'siteSlug'        => $site_launch_options['site_slug'],
+			'launchUrl'       => $site_launch_options['launch_url'],
+			'launchFlow'      => $site_launch_options['launch_flow'],
+			'isGutenboarding' => $site_launch_options['is_gutenboarding'],
+			'locale'          => determine_locale(),
 		)
 	);
 }

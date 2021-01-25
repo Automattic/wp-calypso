@@ -11,10 +11,17 @@ import '@wordpress/editor';
 /**
  * Internal dependencies
  */
+import { inIframe } from '../../../block-inserter-modifications/contextual-tips/utils';
 import { STEP_BY_STEP_LAUNCH_FLOW, FOCUSED_LAUNCH_FLOW, REDIRECT_LAUNCH_FLOW } from '../constants';
 import './styles.scss';
 
 let handled = false;
+
+const launchFlowTracksSlug: Record< string, string > = {
+	[ STEP_BY_STEP_LAUNCH_FLOW ]: 'gutenboarding-launch',
+	[ FOCUSED_LAUNCH_FLOW ]: 'focused-launch',
+	[ REDIRECT_LAUNCH_FLOW ]: 'launch-site',
+};
 
 domReady( () => {
 	// If site launch options does not exist, stop.
@@ -39,7 +46,7 @@ domReady( () => {
 			return;
 		}
 
-		const { launchUrl, launchFlow } = siteLaunchOptions;
+		const { launchUrl, launchFlow, isGutenboarding } = siteLaunchOptions;
 
 		// Wrap 'Launch' button link to control launch flow.
 		const launchButton = document.createElement( 'a' );
@@ -51,7 +58,9 @@ domReady( () => {
 			e.preventDefault();
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
-				flow: launchFlow,
+				is_new_site: isGutenboarding,
+				launch_flow: launchFlowTracksSlug[ launchFlow ],
+				is_in_editor: inIframe(),
 			} );
 
 			if ( launchFlow === STEP_BY_STEP_LAUNCH_FLOW ) {
