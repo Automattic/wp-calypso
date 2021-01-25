@@ -46,7 +46,6 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { isEnabled } from 'calypso/config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -347,6 +346,8 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
+	recordSearchEvent = ( eventName ) => this.props.recordGoogleEvent( 'PluginsBrowser', eventName );
+
 	getSearchBox() {
 		const { WrappedSearch } = this;
 
@@ -358,7 +359,7 @@ export class PluginsBrowser extends Component {
 				initialValue={ this.props.search }
 				placeholder={ this.props.translate( 'Search Plugins' ) }
 				delaySearch={ true }
-				recordEvent={ ( eventName ) => gaRecordEvent( 'PluginsBrowser', eventName ) }
+				recordEvent={ this.recordSearchEvent }
 			/>
 		);
 	}
