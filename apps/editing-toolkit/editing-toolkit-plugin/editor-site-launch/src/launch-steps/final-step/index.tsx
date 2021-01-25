@@ -114,7 +114,13 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 				<>
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
 					{ __( 'Plan subscription', 'full-site-editing' ) }: { planProduct.price }{ ' ' }
-					{ __( 'per month, billed yearly', 'full-site-editing' ) }
+					{ planProduct.billingPeriod === 'ANNUALLY'
+						? sprintf(
+								// translators: %s is the cost per year (e.g 96$)
+								__( 'per month, billed as %s annually', 'full-site-editing' ),
+								planProduct?.annualPrice
+						  )
+						: __( 'per month, billed monthly', 'full-site-editing' ) }
 				</>
 			) : (
 				<>
@@ -167,11 +173,19 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 										{ __( 'Included in your plan', 'full-site-editing' ) }
 									</h3>
 									<ul className="nux-launch__feature-item-group">
-										{ plan?.features.map( ( feature, i ) => (
-											<li key={ i } className="nux-launch__feature-item">
-												{ TickIcon } { feature }
-											</li>
-										) ) }
+										{ plan?.features
+											// Some features are only available for the
+											// annually-billed version of a plan
+											.filter(
+												( feature ) =>
+													planProduct?.billingPeriod === 'ANNUALLY' ||
+													! feature.requiresAnnuallyBilledPlan
+											)
+											.map( ( feature, i ) => (
+												<li key={ i } className="nux-launch__feature-item">
+													{ TickIcon } { feature.name }
+												</li>
+											) ) }
 									</ul>
 									<p>
 										{ __( 'Questions?', 'full-site-editing' ) }{ ' ' }
