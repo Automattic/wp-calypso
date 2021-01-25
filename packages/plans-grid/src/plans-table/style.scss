@@ -228,7 +228,7 @@
 	}
 }
 
-// it's OK to use $focused-launch-accent-blue variable here because the full-width mode is only used there
+// it's OK to use $onboarding-accent-blue variable here because the full-width mode is only used there
 .plan-item__select-button.components-button.full-width {
 	width: 100%;
 	justify-content: center;
@@ -238,7 +238,7 @@
 	margin-top: 15px;
 
 	&.is-popular {
-		background: $focused-launch-accent-blue;
+		background: $onboarding-accent-blue;
 	}
 
 	&:not( .is-popular ) {
@@ -248,8 +248,8 @@
 	&.is-selected {
 		// popular selected items don't need a blue border
 		&:not( .is-popular ) {
-			border: 1px solid $focused-launch-accent-blue;
-			color: $focused-launch-accent-blue;
+			border: 1px solid $onboarding-accent-blue;
+			color: $onboarding-accent-blue;
 			background: #fafcfe;
 		}
 

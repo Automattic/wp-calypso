@@ -61,15 +61,15 @@
 	}
 
 	&.is-selected {
-		border: 2px solid $focused-launch-accent-blue;
-		color: $focused-launch-accent-blue;
+		border: 2px solid $onboarding-accent-blue;
+		color: $onboarding-accent-blue;
 
 		.focused-launch-summary-item__price-cost {
-			color: $focused-launch-accent-blue;
+			color: $onboarding-accent-blue;
 			opacity: 0.68;
 		}
 		.focused-launch-summary-item__leading-side-label {
-			color: $focused-launch-accent-blue;
+			color: $onboarding-accent-blue;
 		}
 	}
 
@@ -81,7 +81,7 @@
 	&:not( .is-readonly ) {
 		cursor: pointer;
 		&:hover {
-			border: 2px solid $focused-launch-accent-blue;
+			border: 2px solid $onboarding-accent-blue;
 		}
 	}
 
