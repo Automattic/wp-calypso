@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { TASK_CLOUDFLARE } from 'calypso/my-sites/customer-home/cards/constants';
-import growthSummitIllustration from 'calypso/assets/images/customer-home/illustration--growth-summit.svg';
+import growthSummitIllustration from 'calypso/assets/images/customer-home/illustration--task-cloudflare.svg';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
@@ -20,9 +20,9 @@ const Cloudflare = () => {
 		<>
 			{ showCloudflare && (
 				<Task
-					title={ translate( 'Protect and accelerate your site with Cloudflare CDN' ) }
+					title={ translate( 'Boost your site speed and security with Cloudflare CDN' ) }
 					description={ translate(
-						'Optimize and secure your content to create a faster experience for your users regardless of their device or location.'
+						'Create a faster experience for your visitors regardless of their device or location.'
 					) }
 					actionText={ translate( 'Learn more' ) }
 					actionUrl="CLOUDFLAREURL"
