@@ -1,0 +1,21 @@
+.difm-intake__info-illustration {
+	display: block;
+	margin: 0 auto 20px;
+	max-width: 300px;
+}
+.difm-intake__info-link {
+	display: block;
+	margin: 0 auto;
+	width: auto;
+	text-align: center;
+}
+
+.difm-intake__survey {
+    iframe {
+        height: 1500px;
+
+        @include breakpoint-deprecated ( '<480px' ) {
+            height: 1600px;
+        }
+    }
+}
