@@ -43,7 +43,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			};
 
 			fetchWpcomNuxStatus();
-		}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
+		}, [ isWpcomNuxEnabled, setWpcomNuxStatus, setShowWpcomNuxVariant ] );
 
 		if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 			return null;
