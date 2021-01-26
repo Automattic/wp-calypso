@@ -23,7 +23,11 @@ import {
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
-import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
+import {
+	getEligibleGSuiteDomain,
+	getGoogleMailServiceFamily,
+	getGSuiteSupportedDomains,
+} from 'calypso/lib/gsuite';
 import {
 	areAllUsersValid,
 	getItemsForCart,
@@ -199,7 +203,11 @@ class GSuiteAddUsers extends React.Component {
 				{ domainsWithForwards.length ? (
 					<Notice showDismiss={ false } status="is-warning">
 						{ translate(
-							'Please note that email forwards are not compatible with G Suite, and will be disabled once G Suite is added to this domain. The following domains have forwards:'
+							'Please note that email forwards are not compatible with %(productFamily)s, and will be disabled once %(productFamily)s is added to this domain. The following domains have forwards:',
+							{
+								args: { productFamily: getGoogleMailServiceFamily() },
+								comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
+							}
 						) }
 						<ul>
 							{ domainsWithForwards.map( ( domainName ) => {
@@ -261,11 +269,14 @@ class GSuiteAddUsers extends React.Component {
 						onClick={ this.goToEmail }
 						selectedDomainName={ selectedDomainName }
 					>
-						{ translate( 'G Suite' ) }
+						{ getGoogleMailServiceFamily() }
 					</DomainManagementHeader>
 
 					<EmailVerificationGate
-						noticeText={ translate( 'You must verify your email to purchase G Suite.' ) }
+						noticeText={ translate( 'You must verify your email to purchase %(productFamily)s.', {
+							args: { productFamily: getGoogleMailServiceFamily() },
+							comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
+						} ) }
 						noticeStatus="is-info"
 					>
 						{ this.renderAddGSuite() }
