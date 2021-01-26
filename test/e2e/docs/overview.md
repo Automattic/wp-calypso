@@ -10,9 +10,6 @@
     - [Our Goals](#our-goals)
     - [Technology](#technology)
     - [What is tested?](#what-is-tested)
-    - [Test Runs](#test-runs)
-        - [Scheduled](#scheduled)
-        - [On Demand](#on-demand)
 
 <!-- /TOC -->
 
@@ -40,3 +37,5 @@ At the high level, each test file (or `spec`) fall under one of the following fl
 | WordPress.com | `specs/` |
 | Jetpack | `specs-jetpack/` |
 | WooCommerce | `specs-woocommerce/` |
+
+Note that Jetpack and WooCommerce tests test interactions between `wp-calypso` and the respective features.
