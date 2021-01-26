@@ -199,7 +199,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					) }
 				</div>
 			</section>
-			{ ! isJetpackCloud() && <StoreFooter /> }
+			<StoreFooter />
 		</Experiment>
 	);
 };
