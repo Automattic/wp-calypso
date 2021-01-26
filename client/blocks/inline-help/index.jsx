@@ -136,7 +136,6 @@ class InlineHelp extends Component {
 		if ( ! this.props.isInlineHelpVisible ) {
 			return null;
 		}
-
 		const { translate, isPopoverVisible } = this.props;
 		const { showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
