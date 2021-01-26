@@ -79,7 +79,7 @@ interface Props {
 	anchorFmData: {
 		anchor_podcast: string | undefined;
 		anchor_episode: string | undefined;
-		spotify_show_url: string | undefined;
+		spotify_url: string | undefined;
 	};
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;

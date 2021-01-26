@@ -199,8 +199,8 @@ function getPressThisData( query ) {
 }
 
 function getAnchorFmData( query ) {
-	const { anchor_podcast, anchor_episode, spotify_show_url } = query;
-	return { anchor_podcast, anchor_episode, spotify_show_url };
+	const { anchor_podcast, anchor_episode, spotify_url } = query;
+	return { anchor_podcast, anchor_episode, spotify_url };
 }
 
 export const post = ( context, next ) => {

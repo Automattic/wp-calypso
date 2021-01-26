@@ -41,7 +41,7 @@ export interface CreateSiteActionParameters {
 	visibility: number;
 	anchorFmPodcastId: string | null;
 	anchorFmEpisodeId: string | null;
-	anchorFmSpotifyShowUrl: string | null;
+	anchorFmSpotifyUrl: string | null;
 }
 
 export function* createSite( {
@@ -51,7 +51,7 @@ export function* createSite( {
 	visibility = Site.Visibility.PublicNotIndexed,
 	anchorFmPodcastId = null,
 	anchorFmEpisodeId = null,
-	anchorFmSpotifyShowUrl = null,
+	anchorFmSpotifyUrl = null,
 }: CreateSiteActionParameters ) {
 	const {
 		domain,
@@ -102,8 +102,8 @@ export function* createSite( {
 			...( anchorFmEpisodeId && {
 				anchor_fm_episode_id: anchorFmEpisodeId,
 			} ),
-			...( anchorFmSpotifyShowUrl && {
-				anchor_fm_spotify_show_url: anchorFmSpotifyShowUrl,
+			...( anchorFmSpotifyUrl && {
+				anchor_fm_spotify_url: anchorFmSpotifyUrl,
 			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),

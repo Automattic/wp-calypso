@@ -53,7 +53,7 @@ export type StepNameType = keyof typeof Step;
 export interface GutenLocationStateType {
 	anchorFmPodcastId?: string;
 	anchorFmEpisodeId?: string;
-	anchorFmSpotifyShowUrl?: string;
+	anchorFmSpotifyUrl?: string;
 }
 export type GutenLocationStateKeyType = keyof GutenLocationStateType;
 
@@ -126,7 +126,7 @@ export function useOnboardingFlow(): string {
 export interface AnchorFmParams {
 	anchorFmPodcastId: string | null;
 	anchorFmEpisodeId: string | null;
-	anchorFmSpotifyShowUrl: string | null;
+	anchorFmSpotifyUrl: string | null;
 }
 export function useAnchorFmParams(): AnchorFmParams {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
@@ -151,16 +151,16 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
 	const sanitizeShowUrl = ( id: string ) =>
 		id.replace( /[^A-Za-z0-9_.\-~%!*'();:@&=+$,/?#[\]]/g, '' );
-	const anchorFmSpotifyShowUrl = useAnchorParameter( {
-		queryParamName: 'spotify_show_url',
-		locationStateParamName: 'anchorFmSpotifyShowUrl',
+	const anchorFmSpotifyUrl = useAnchorParameter( {
+		queryParamName: 'spotify_url',
+		locationStateParamName: 'anchorFmSpotifyUrl',
 		sanitize: sanitizeShowUrl,
 	} );
 
 	return {
 		anchorFmPodcastId,
 		anchorFmEpisodeId,
-		anchorFmSpotifyShowUrl,
+		anchorFmSpotifyUrl,
 	};
 }
 
