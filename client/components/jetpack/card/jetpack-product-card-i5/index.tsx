@@ -44,6 +44,7 @@ type OwnProps = {
 	expiryDate?: Moment;
 	isFeatured?: boolean;
 	isOwned?: boolean;
+	isIncludedInPlan?: boolean;
 	isDeprecated?: boolean;
 	isAligned?: boolean;
 	isDisabled?: boolean;
@@ -71,6 +72,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	expiryDate,
 	isFeatured,
 	isOwned,
+	isIncludedInPlan,
 	isDeprecated,
 	isAligned,
 	features,
@@ -117,7 +119,12 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 						{ translate( 'You own this product' ) }
 					</p>
 				) }
-				{ ! isOwned && (
+				{ isIncludedInPlan && (
+					<p className="jetpack-product-card-i5__you-own-this">
+						{ translate( 'Part of your current plan' ) }
+					</p>
+				) }
+				{ ! isOwned && ! isIncludedInPlan && (
 					<div className="jetpack-product-card-i5__price">
 						{ currencyCode && originalPrice ? (
 							<>
