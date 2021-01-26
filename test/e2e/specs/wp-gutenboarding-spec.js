@@ -146,7 +146,11 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 	} );
 
-	describe( 'Skip first step in Gutenboarding, select paid design and see Domains page after Style preview @parallel', function () {
+	/**
+	 * Paid "premium" designs are temporarily disabled in the flow.
+	 * See https://github.com/Automattic/wp-calypso/pull/49251
+	 */
+	describe.skip( 'Skip first step in Gutenboarding, select paid design and see Domains page after Style preview @parallel', function () {
 		before( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
 			await NewPage.Visit( driver );
