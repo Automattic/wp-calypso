@@ -91,7 +91,7 @@ function processFeatures( features: Feature[] ) {
 	}, {} as Record< string, PlanFeature > );
 }
 
-function doesFeatureRequireAnnuallyBilledPlan(
+function featureRequiresAnnual(
 	featureName: string,
 	allFeaturesData: Record< string, PlanFeature >
 ): boolean {
@@ -113,10 +113,7 @@ function processPlanFeatures(
 	const features: PlanSimplifiedFeature[] = planData.highlighted_features.map(
 		( featureName ) => ( {
 			name: featureName,
-			requiresAnnuallyBilledPlan: doesFeatureRequireAnnuallyBilledPlan(
-				featureName,
-				allFeaturesData
-			),
+			requiresAnnuallyBilledPlan: featureRequiresAnnual( featureName, allFeaturesData ),
 		} )
 	);
 
