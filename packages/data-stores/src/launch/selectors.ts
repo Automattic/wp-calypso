@@ -91,3 +91,5 @@ export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefin
 	LaunchSequence.find( ( step ) => ! isStepCompleted( state, step ) );
 
 export const getSiteTitle = ( state: State ): string | undefined => state?.siteTitle;
+
+export const getCurrentStep = ( state: State ): string => state.step;
