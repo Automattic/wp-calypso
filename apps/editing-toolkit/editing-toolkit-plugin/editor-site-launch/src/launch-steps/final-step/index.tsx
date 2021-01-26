@@ -33,10 +33,6 @@ import './styles.scss';
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
-	const planPrices = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPrices( window.wpcomEditorSiteLaunch?.locale || 'en' )
-	);
-
 	const { domain, plan, LaunchStep, isStepCompleted, isFlowCompleted, planProductId } = useSelect(
 		( select ) => {
 			const launchStore = select( LAUNCH_STORE );
@@ -117,8 +113,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 			{ plan && planProduct && ! plan.isFree ? (
 				<>
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
-					{ __( 'Plan subscription', 'full-site-editing' ) }:{ ' ' }
-					{ planPrices[ planProduct.storeSlug ] }{ ' ' }
+					{ __( 'Plan subscription', 'full-site-editing' ) }: { planProduct.price }{ ' ' }
 					{ __( 'per month, billed yearly', 'full-site-editing' ) }
 				</>
 			) : (
