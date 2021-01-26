@@ -10,7 +10,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { LAUNCH_STORE } from '../stores';
 import LaunchMenuItem from './item';
-import type { LaunchStepType } from '../../../common/data-stores/launch/types';
+import type { LaunchStepType } from '../../../common/data-stores/launch';
 
 import './styles.scss';
 
@@ -35,7 +35,7 @@ const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => 
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
-	const handleClick = ( step ) => {
+	const handleClick = ( step: string ) => {
 		setStep( step );
 		onMenuItemClick( step );
 	};
