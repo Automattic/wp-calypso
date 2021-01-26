@@ -11,5 +11,8 @@ declare global {
 			locale?: string;
 		};
 		_currentSiteId: number;
+		calypsoifyGutenberg?: {
+			isFocusedLaunchFlow: boolean;
+		};
 	}
 }

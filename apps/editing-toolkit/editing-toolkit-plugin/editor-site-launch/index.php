@@ -72,6 +72,10 @@ function enqueue_launch_flow_script_and_style( $site_launch_options ) {
 		case 'focused-launch':
 			$script_name = 'focused-launch';
 			break;
+		case 'launch-site':
+			// @TODO: this is just temporary for testing via feature flag. Remove it once focused-launch is live
+			$script_name = 'focused-launch';
+			break;
 		default:
 			// For redirect or invalid flows, skip & exit early.
 			return;

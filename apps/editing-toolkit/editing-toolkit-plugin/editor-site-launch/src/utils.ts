@@ -8,6 +8,7 @@ import { FOCUSED_LAUNCH_FLOW } from './constants';
 interface CalypsoifyWindow extends Window {
 	currentSiteId?: number;
 	calypsoifyGutenberg?: {
+		isFocusedLaunchFlow: boolean;
 		isSiteUnlaunched?: boolean;
 		currentCalypsoUrl?: string;
 		[ key: string ]: unknown;
