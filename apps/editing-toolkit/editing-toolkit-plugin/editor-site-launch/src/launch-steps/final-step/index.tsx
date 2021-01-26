@@ -51,13 +51,9 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		}
 	);
 
-	const { planProduct, isPlanFree } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-		return {
-			planProduct: plansStore.getPlanProductById( planProductId ),
-			isPlanFree: plansStore.isPlanProductFree( planProductId ),
-		};
-	} );
+	const planProduct = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProductById( planProductId )
+	);
 
 	const { title } = useTitle();
 	const { siteSubdomain } = useSiteDomains();
@@ -118,7 +114,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 
 	const planSummary = (
 		<div className="nux-launch__summary-item">
-			{ plan && planProduct && ! isPlanFree ? (
+			{ plan && planProduct && ! plan.isFree ? (
 				<>
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
 					{ __( 'Plan subscription', 'full-site-editing' ) }:{ ' ' }
