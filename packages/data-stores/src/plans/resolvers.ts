@@ -16,7 +16,6 @@ import type {
 	Feature,
 } from './types';
 import {
-	currenciesFormats,
 	TIMELESS_PLAN_FREE,
 	TIMELESS_PLAN_PREMIUM,
 	plansProductSlugs,
@@ -24,6 +23,7 @@ import {
 	annualSlugs,
 } from './constants';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
+import formatCurrency from '@automattic/format-currency';
 
 const MONTHLY_PLAN_BILLING_PERIOD = 31;
 
@@ -34,19 +34,7 @@ const MONTHLY_PLAN_BILLING_PERIOD = 31;
  * @param plan the plan object
  */
 function getMonthlyPrice( plan: PricedAPIPlan ) {
-	const currency = currenciesFormats[ plan.currency_code ];
-	let price: number | string = plan.raw_price / 12;
-
-	// if the number isn't an integer, follow the API rule for rounding it
-	if ( ! Number.isInteger( price ) ) {
-		price = price.toFixed( currency.decimal );
-	}
-
-	if ( currency.format === 'AMOUNT_THEN_SYMBOL' ) {
-		return `${ price }${ currency.symbol }`;
-	}
-	// else
-	return `${ currency.symbol }${ price }`;
+	return formatCurrency( plan.raw_price / 12, plan.currency_code ) as string;
 }
 
 /**
@@ -55,19 +43,17 @@ function getMonthlyPrice( plan: PricedAPIPlan ) {
  * @param plan the plan object
  */
 function getAnnualPrice( plan: PricedAPIPlan ) {
-	const currency = currenciesFormats[ plan.currency_code ];
-	let price: number | string = plan.raw_price * 12;
+	return formatCurrency( plan.raw_price * 12, plan.currency_code ) as string;
+}
 
-	// if the number isn't an integer, follow the API rule for rounding it
-	if ( ! Number.isInteger( price ) ) {
-		price = price.toFixed( currency.decimal );
-	}
-
-	if ( currency.format === 'AMOUNT_THEN_SYMBOL' ) {
-		return `${ price }${ currency.symbol }`;
-	}
-	// else
-	return `${ currency.symbol }${ price }`;
+/**
+ * Formats the plan price according to 'format-currency' package rules
+ * We use this for consistency in prices formats across monthly and annual plans
+ *
+ * @param plan the plan object
+ */
+function getFormattedPrice( plan: PricedAPIPlan ) {
+	return formatCurrency( plan.raw_price, plan.currency_code ) as string;
 }
 
 function calculateDiscounts( planProducts: PlanProduct[] ) {
@@ -127,12 +113,12 @@ function normalizePlanProducts(
 			pathSlug: planProduct.path_slug,
 			price:
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0
-					? planProduct.formatted_price
+					? getFormattedPrice( planProduct )
 					: getMonthlyPrice( planProduct ),
 			annualPrice:
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD
 					? getAnnualPrice( planProduct )
-					: planProduct.formatted_price,
+					: getFormattedPrice( planProduct ),
 		} );
 		return plans;
 	}, [] as PlanProduct[] );
