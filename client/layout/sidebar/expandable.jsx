@@ -55,6 +55,7 @@ export const ExpandableSidebarMenu = ( {
 	materialIconStyle,
 	customIcon,
 	children,
+	disableFlyout,
 	...props
 } ) => {
 	let { expanded } = props;
@@ -79,7 +80,7 @@ export const ExpandableSidebarMenu = ( {
 	} );
 
 	const onEnter = () => {
-		if ( expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
+		if ( disableFlyout || expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
 			return;
 		}
 
@@ -87,6 +88,7 @@ export const ExpandableSidebarMenu = ( {
 	};
 
 	const onLeave = () => {
+		// Remove "hovered" state even if menu is expanded.
 		if ( isTouch || ! config.isEnabled( 'nav-unification' ) ) {
 			return;
 		}
@@ -151,6 +153,7 @@ ExpandableSidebarMenu.propTypes = {
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
 	expanded: PropTypes.bool,
+	disableFlyout: PropTypes.bool,
 };
 
 export default ExpandableSidebarMenu;
