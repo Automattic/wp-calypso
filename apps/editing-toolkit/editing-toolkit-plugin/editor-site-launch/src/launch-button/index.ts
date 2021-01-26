@@ -54,7 +54,7 @@ domReady( () => {
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
 				is_new_site: isGutenboarding,
 				launch_flow: launchFlow,
-				is_in_editor: inIframe(),
+				is_in_iframe: inIframe(),
 			} );
 
 			if ( launchFlow === GUTENBOARDING_LAUNCH_FLOW ) {
