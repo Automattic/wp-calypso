@@ -25,6 +25,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
 import isInlineHelpVisible from 'calypso/state/selectors/is-inline-help-visible';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 
 /**
  * Style dependencies
@@ -136,6 +137,11 @@ class InlineHelp extends Component {
 		if ( ! this.props.isInlineHelpVisible ) {
 			return null;
 		}
+
+		if ( isWpMobileApp() ) {
+			return null;
+		}
+
 		const { translate, isPopoverVisible } = this.props;
 		const { showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
