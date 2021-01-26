@@ -13,7 +13,6 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import page from 'page';
 import CustomizerLoadingPanel from 'calypso/my-sites/customize/loading-panel';
 import EmptyContent from 'calypso/components/empty-content';
@@ -44,7 +43,6 @@ class Customize extends React.Component {
 		super( props );
 		this.state = {
 			iframeLoaded: false,
-			errorFromIframe: false,
 			timeoutError: false,
 			returnUrl: undefined,
 		};
@@ -276,19 +274,6 @@ class Customize extends React.Component {
 			switch ( message.command ) {
 				case 'back':
 					debug( 'iframe says it is done', message );
-					if ( message.error ) {
-						this.setState( { errorFromIframe: message.error } );
-						return;
-					}
-					if ( message.warning ) {
-						notices.warning( message.warning, { displayOnNextPage: true } );
-					}
-					if ( message.info ) {
-						notices.info( message.info, { displayOnNextPage: true } );
-					}
-					if ( message.success ) {
-						notices.success( message.success, { displayOnNextPage: true } );
-					}
 					this.goBack();
 					break;
 				case 'saved':
@@ -357,13 +342,6 @@ class Customize extends React.Component {
 				actionCallback: function () {
 					window.location.reload();
 				},
-			} );
-		}
-
-		if ( this.state.errorFromIframe ) {
-			this.cancelWaitingTimer();
-			return this.renderErrorPage( {
-				title: this.state.errorFromIframe,
 			} );
 		}
 
