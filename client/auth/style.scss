@@ -36,6 +36,10 @@
 	justify-content: center;
 	align-content: center;
 	max-width: 100%;
+
+	&.is-jetpack-cloud {
+		background: var( --color-surface-backdrop );
+	}
 }
 
 .auth__content {
@@ -136,6 +140,15 @@
 
 .auth__lost-password a {
 	color: var( --color-neutral-10 );
+
+	.is-jetpack-cloud & {
+		color: var( --color-neutral-50 );
+
+		&:hover,
+		&:active {
+			color: var( --color-accent );
+		}
+	}
 }
 
 .auth__help,
@@ -168,10 +181,21 @@
 	}
 }
 
+.is-jetpack-cloud .auth__links {
+	a, button {
+		color: var( --color-neutral-50 );
+
+		&:hover,
+		&:focus {
+			color: var( --color-accent );
+		}
+	}
+}
+
 .auth__self-hosted-instructions {
 	color: #fff;
 	background: var( --color-primary-dark );
-	border-radius: 8px;
+	border-radius: ( 2px * 4 );
 	padding: 40px;
 	position: absolute;
 	z-index: z-index( 'root', '.auth__self-hosted-instructions' );
