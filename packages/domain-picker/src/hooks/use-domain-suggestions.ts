@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
-import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+import type { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
 import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions/types';
 import { useDebounce } from 'use-debounce';
 
@@ -13,7 +13,6 @@ import { DOMAIN_SUGGESTIONS_STORE, DOMAIN_SEARCH_DEBOUNCE_INTERVAL } from '../co
 
 type DomainSuggestionsResult = {
 	allDomainSuggestions: DomainSuggestion[] | undefined;
-	fallbackDomainSuggestions: DomainSuggestion[] | undefined;
 	errorMessage: string | null;
 	state: DataStatus;
 	retryRequest: () => void;
@@ -54,6 +53,7 @@ export function useDomainSuggestions(
 				quantity: quantity + 1, // increment the count to add the free domain
 				locale,
 				category_slug: domainCategory,
+				fallback_query: fallbackSearchTerm,
 			};
 
 			const allDomainSuggestions = getDomainSuggestions( domainSearch, domainSearchOptions );
@@ -62,14 +62,7 @@ export function useDomainSuggestions(
 
 			const errorMessage = getDomainErrorMessage();
 
-			const hasFallbackSearchTerm = !! fallbackSearchTerm && fallbackSearchTerm.length > 2;
-
-			const fallbackDomainSuggestions =
-				errorMessage === DataStatus.Failure && hasFallbackSearchTerm
-					? getDomainSuggestions( fallbackSearchTerm, domainSearchOptions )
-					: [];
-
-			return { allDomainSuggestions, fallbackDomainSuggestions, state, errorMessage, retryRequest };
+			return { allDomainSuggestions, state, errorMessage, retryRequest };
 		},
 		[ domainSearch, domainCategory, quantity ]
 	);

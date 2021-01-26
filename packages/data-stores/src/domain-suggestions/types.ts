@@ -64,6 +64,11 @@ export interface DomainSuggestionQuery {
 	 * Domain category slug
 	 */
 	category_slug?: string;
+
+	/**
+	 * Fallback domain search term
+	 */
+	fallback_query?: string;
 }
 
 export type DomainName = string;

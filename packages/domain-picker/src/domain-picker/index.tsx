@@ -156,7 +156,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	const {
 		allDomainSuggestions,
-		fallbackDomainSuggestions,
 		errorMessage: domainSuggestionErrorMessage,
 		state: domainSuggestionState,
 		retryRequest: retryDomainSuggestionRequest,
@@ -169,7 +168,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			locale
 		) || {};
 
-	const domainSuggestions = ( allDomainSuggestions || fallbackDomainSuggestions )?.slice(
+	const domainSuggestions = allDomainSuggestions?.slice(
 		existingSubdomain ? 1 : 0,
 		isExpanded ? quantityExpanded : quantity
 	);
