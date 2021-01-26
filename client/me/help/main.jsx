@@ -305,9 +305,10 @@ class Help extends React.PureComponent {
 		</Main>
 	);
 
-	//Callback passed to HelpSearch to check whether we're searching or not
-	isSearching = ( status ) => {
-		this.setState( { isSearching: status } );
+	setIsSearching = ( status ) => {
+		this.setState( {
+			isSearching: status,
+		} );
 	};
 
 	render() {
@@ -321,7 +322,7 @@ class Help extends React.PureComponent {
 			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
-				<HelpSearch isSearching={ this.isSearching } />
+				<HelpSearch onSearch={ this.setIsSearching } />
 				{ ! this.state.isSearching && (
 					<div className="help__inner-wrapper">
 						{ ! isEmailVerified && <HelpUnverifiedWarning /> }
