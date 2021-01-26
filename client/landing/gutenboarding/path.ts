@@ -152,7 +152,7 @@ export function useAnchorFmParams(): AnchorFmParams {
 	const sanitizeShowUrl = ( id: string ) =>
 		id.replace( /[^A-Za-z0-9_.\-~%!*'();:@&=+$,/?#[\]]/g, '' );
 	const anchorFmSpotifyShowUrl = useAnchorParameter( {
-		queryParamName: 'spotify_show_url',
+		queryParamName: 'spotify_url',
 		locationStateParamName: 'anchorFmSpotifyShowUrl',
 		sanitize: sanitizeShowUrl,
 	} );

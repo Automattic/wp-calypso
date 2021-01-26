@@ -103,7 +103,7 @@ export function* createSite( {
 				anchor_fm_episode_id: anchorFmEpisodeId,
 			} ),
 			...( anchorFmSpotifyShowUrl && {
-				anchor_fm_spotify_show_url: anchorFmSpotifyShowUrl,
+				anchor_fm_spotify_url: anchorFmSpotifyShowUrl,
 			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),

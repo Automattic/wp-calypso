@@ -148,7 +148,7 @@ export default function useOnSiteCreation(): void {
 				const params = {
 					anchor_podcast: anchorFmPodcastId,
 					anchor_episode: anchorFmEpisodeId,
-					spotify_show_url: anchorFmSpotifyShowUrl,
+					spotify_url: anchorFmSpotifyShowUrl,
 				};
 				const queryString = Object.keys( params )
 					.filter( ( key ) => params[ key as keyof typeof params ] != null )
