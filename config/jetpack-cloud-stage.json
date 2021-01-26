@@ -48,7 +48,7 @@
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
-		"nav-unification": true,
+		"nav-unification": false,
 		"oauth": true,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
@@ -68,7 +68,9 @@
 		"scan": true,
 		"jetpack-connect": true
 	},
-	"site_filter": [ "jetpack" ],
+	"site_filter": [
+		"jetpack"
+	],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",

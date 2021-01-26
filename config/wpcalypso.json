@@ -15,7 +15,11 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"livechat_support_locales": [ "en", "es", "pt-br" ],
+	"livechat_support_locales": [
+		"en",
+		"es",
+		"pt-br"
+	],
 	"features": {
 		"ad-tracking": false,
 		"anchor-fm-dev": false,
@@ -113,7 +117,7 @@
 		"memberships": true,
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
-		"nav-unification": true,
+		"nav-unification": false,
 		"network-connection": true,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
