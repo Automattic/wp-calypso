@@ -115,7 +115,7 @@ $accent-blue: #117ac9;
 		align-items: flex-start;
 
 		@include break-medium {
-			flex-direction: initial;
+			flex-direction: row;
 			align-items: center;
 		}
 	}
