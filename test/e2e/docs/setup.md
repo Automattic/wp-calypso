@@ -65,24 +65,7 @@ It is also possible to use custom configuration files that are not part of the r
 
 There is a 'standard' configuration already in the GitHub repo under `test/e2e/config/`.
 
-This configuation must be decrypted prior to running any e2e tests. Without the configuration files, tests will not run.
-
-Follow these steps to decrypt the configuration file:
-
-1. obtain the secret key from A8C Secret Store.
-2. set the secret key as an environment variable:
-```
-export CONFIG_KEY='<secret_from_a8c_secret_store>'
-```
-3. set an environment variable that instructs test runner which configuration to load:
-```
-export NODE_CONFIG_ENV='decrypted'
-```
-4. in the `test/e2e` directory, run:
-```
-npm run decryptconfig`
-```
-5. (optional) copy contents of the decrypted config to your local config file (next section).
+This configuation must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
 
 ### Custom configurations
 

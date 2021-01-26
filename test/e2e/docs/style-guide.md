@@ -1,5 +1,20 @@
 # Style Guide
 
+<!-- TOC -->
+
+- [Style Guide](#style-guide)
+    - [Async / Await](#async--await)
+    - [Tags](#tags)
+    - [Page Objects](#page-objects)
+    - [Use of this, const and lets](#use-of-this-const-and-lets)
+    - [Arrow functions](#arrow-functions)
+    - [Default values using destructuring](#default-values-using-destructuring)
+    - [Nesting step blocks](#nesting-step-blocks)
+    - [Catching errors in a step block](#catching-errors-in-a-step-block)
+    - [Waiting for elements](#waiting-for-elements)
+
+<!-- /TOC -->
+
 ## Async / Await
 
 We use async functions and `await` to wait for commands to finish. This lets asynchronous methods execute like synchronous methods.
@@ -28,7 +43,25 @@ async selectContinue() {
 }
 ```
 
-## Constructing page objects
+## Tags
+
+```(javascript)
+describe( "Block under test @parallel", function() {
+  describe( "Test case 1", function() {
+    step( 'Test step 1', function() {
+      ...
+    } )
+    step( 'Test step 2', function() {
+      ...
+    } )
+  } )
+  describe( "Test case 2", function() {
+    ...
+  } )
+} )
+```
+
+## Page Objects
 
 All pages have asynchronous functions. Constructors for pages can't be asynchronous so we never construct a page object directly (using something like `new PageObjectPage(...)`), instead we use the static methods `Expect` and `Visit`, which are on the asyncBaseContainer and hence available for every page, to construct the page object.
 
