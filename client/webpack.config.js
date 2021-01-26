@@ -192,7 +192,7 @@ const webpackConfig = {
 		},
 		runtimeChunk: isDesktop ? false : { name: 'runtime' },
 		moduleIds: 'named',
-		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
+		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
 		minimizer: Minify( {
 			// Desktop: number of workers should *not* exceed # of vCPUs available.
