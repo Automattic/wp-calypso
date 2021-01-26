@@ -15,11 +15,16 @@
 		&.no-gsuite {
 			width: calc( 50% - 0.5em );
 		}
+
 		&.no-titan {
 			width: calc( 50% - 0.5em );
 		}
 
-		&.titan {
+		&.gsuite .action-panel__figure img {
+			max-width: 24px;
+		}
+
+			&.titan {
 			.promo-card__title-badge {
 				background: none;
 				padding: 0;

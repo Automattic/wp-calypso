@@ -298,7 +298,7 @@ class EmailProvidersComparison extends React.Component {
 				}
 				buttonLabel={ buttonLabel }
 				onButtonClick={ this.goToAddGSuite }
-				className={ className }
+				className={ classNames( className, 'gsuite' ) }
 			/>
 		);
 	}
