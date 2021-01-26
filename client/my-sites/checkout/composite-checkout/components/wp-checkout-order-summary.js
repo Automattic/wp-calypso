@@ -395,21 +395,6 @@ const CheckoutSummaryFeatures = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 20px;
 	}
-
-	.payment-chat-button.is-borderless {
-		color: ${ ( props ) => props.theme.colors.textColor };
-		padding: 0;
-
-		svg {
-			margin-right: 4px;
-			width: 20px;
-
-			.rtl & {
-				margin-right: 0;
-				margin-left: 4px;
-			}
-		}
-	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
