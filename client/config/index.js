@@ -7,7 +7,7 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 
-import createConfig from 'calypso/lib/create-config';
+import createConfig from '@automattic/create-calypso-config';
 
 /**
  * Manages config flags for various deployment builds
