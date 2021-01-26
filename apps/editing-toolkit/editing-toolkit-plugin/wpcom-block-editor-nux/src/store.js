@@ -2,7 +2,7 @@
  * External dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { combineReducers, register } from '@wordpress/data';
+import { combineReducers, registerStore } from '@wordpress/data';
 
 const isNuxEnabledReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
@@ -87,7 +87,7 @@ const selectors = {
 	shouldShowWpcomNuxVariant: ( state ) => state.showWpcomNuxVariant,
 };
 
-register( 'automattic/nux', {
+registerStore( 'automattic/nux', {
 	reducer,
 	actions,
 	selectors,

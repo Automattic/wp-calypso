@@ -72,7 +72,6 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 		// Check if we want to show the Welcome Tour variant pbxNRc-Cb-p2
 		// Performing the check here means that we'll only assign a user to an experiment when this API is first called.
 		$welcome_tour_show_variant = ( defined( 'SHOW_WELCOME_TOUR' ) && SHOW_WELCOME_TOUR ) || apply_filters( 'a8c_enable_wpcom_welcome_tour', false );
-		$is_podcast_site           = ! empty( get_blog_option( get_current_blog_id(), 'anchor_podcast' ) );
 
 		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
@@ -81,11 +80,12 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 		} else {
 			$nux_status = get_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', true );
 		}
-		return rest_ensure_response( [
-			'is_nux_enabled'            => $this->is_nux_enabled( $nux_status ),
-			'welcome_tour_show_variant' => $welcome_tour_show_variant,
-			'is_podcast_site'           => $is_podcast_site,
-		] );
+		return rest_ensure_response(
+			array(
+				'is_nux_enabled'            => $this->is_nux_enabled( $nux_status ),
+				'welcome_tour_show_variant' => $welcome_tour_show_variant,
+			)
+		);
 	}
 
 	/**
