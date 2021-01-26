@@ -33,6 +33,7 @@ import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
+	DIFM_UPSELL,
 } from './upsell-nudge';
 
 export function checkout( context, next ) {
@@ -214,6 +215,8 @@ export function upsellNudge( context, next ) {
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
+	} else if ( context.path.includes( 'offer-difm' ) ) {
+		upsellType = DIFM_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
