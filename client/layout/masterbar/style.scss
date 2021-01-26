@@ -1,21 +1,12 @@
 $autobar-height: 20px;
 
-// Used to remove the masterbar.
+// Hide the masterbar on WP Mobile App views.
 .is-mobile-app-view {
-	--masterbar-height: 0;
-
-	.layout__secondary {
-		top: 0;
-	}
-
-	.layout__content {
-		// Adjust the padding as we no longer
-		padding-top: 48px;
-	}
 	.masterbar {
-		display: none; // Hide the masterbar on mobile app views.
+		display: none;
 	}
 }
+
 // The WordPress.com Masterbar
 .masterbar {
 	background: var( --color-masterbar-background );
