@@ -74,11 +74,19 @@ class ExtractManifestPlugin {
 
 				// Capture the initial quote to make sure we are using the right one when concatenating code.
 				const [ , quote = '"' ] = filenameExpression.match( quoteRegex );
+				const contentHashType = options.contentHashType;
 
 				// For each variable in brackets, generate a map chunkId->value for that variable and store it in a global function
 				return filenameExpression.replace( variableRegex, function ( match, variable ) {
+					// Variables like `hash` or `chunkhash` are unique for a given chunk. However, `contenthash` is special because it depends
+					// on the file, and because a chunk can have multiple files associated (eg: .js and .css) a chunk has more than one `contenthash`.
+					// webpack stores those `contenthash` using `contentHashType` as key. We do the same: prepend `contentHashType` to the variable
+					// map so the `contenthash` replacement map for a file doesn't overwrite the `contenthash` map for other files in the same chunk.
+					const namespacedVariable =
+						variable === 'contenthash' ? `${ contentHashType }/${ variable }` : variable;
+
 					// If the variable has been already captured, don't try to generate the value again
-					if ( ! variablesProcessed.has( variable ) ) {
+					if ( ! variablesProcessed.has( namespacedVariable ) ) {
 						// Call webpack again to generate the chunkId->value map for that specific variable.
 						let nameExpression;
 						try {
@@ -102,12 +110,12 @@ class ExtractManifestPlugin {
 						// `nameExpression` is an expression that assumes `chunkId` exists in the scope (like `({1:'chunk1', 2:'chunk2'}[chunkId])`).
 						// Transform it to a function and add it to the manifest.
 						manifestContent.push(
-							`manifest.set('${ variable }', function(chunkId){return ${ nameExpression };});`
+							`manifest.set('${ namespacedVariable }', function(chunkId){return ${ nameExpression };});`
 						);
-						variablesProcessed.add( variable );
+						variablesProcessed.add( namespacedVariable );
 					}
 					// Create an expression that calls the generated manifest function with the chunkId
-					return `${ quote }+${ namespace }.__extracted_manifest().get('${ variable }')(chunkId)+${ quote }`;
+					return `${ quote }+${ namespace }.__extracted_manifest().get('${ namespacedVariable }')(chunkId)+${ quote }`;
 				} );
 			} );
 
