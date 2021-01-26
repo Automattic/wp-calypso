@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 import * as controller from './controller';
 import { login } from 'calypso/lib/paths';

@@ -13,7 +13,7 @@ import store from 'store';
  * Internal dependencies
  */
 import { setupLocale } from './locale';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { ProviderWrappedLayout } from 'calypso/controller';
 import notices from 'calypso/notices';
 import { getToken } from 'calypso/lib/oauth-token';

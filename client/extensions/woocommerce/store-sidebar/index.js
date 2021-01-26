@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';

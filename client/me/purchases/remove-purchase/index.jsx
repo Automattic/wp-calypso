@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Dialog, Button, CompactCard } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';

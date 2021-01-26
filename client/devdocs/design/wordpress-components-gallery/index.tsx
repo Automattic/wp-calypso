@@ -49,7 +49,7 @@ import ToolbarExample from './toolbar';
 import TooltipExample from './tooltip';
 import TreeSelectExample from './tree-select';
 import VisuallyHiddenExample from './visually-hidden';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 
 import './style.scss';

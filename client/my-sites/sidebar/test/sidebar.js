@@ -12,7 +12,7 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { MySitesSidebar } from '..';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { abtest } from 'calypso/lib/abtest';
 
 jest.mock( 'calypso/lib/user', () => () => null );
@@ -30,7 +30,7 @@ jest.mock( 'calypso/my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';
 	configMock.isEnabled = jest.fn( () => true );
 	return configMock;

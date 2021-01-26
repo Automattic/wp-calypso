@@ -38,7 +38,7 @@ jest.mock( 'calypso/lib/i18n-utils', () => {
 	};
 } );
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};
 	fn.isEnabled = ( feature_key ) =>
 		feature_key === 'server-side-rendering' ? mockReturnValues.configServerSideRender : false;

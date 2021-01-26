@@ -11,7 +11,7 @@ import { get, startsWith, flowRight as compose } from 'lodash';
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import notices from 'calypso/notices';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';

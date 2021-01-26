@@ -6,7 +6,7 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
 import { getDoNotTrack } from '@automattic/calypso-analytics';
 import { isE2ETest } from 'calypso/lib/e2e';

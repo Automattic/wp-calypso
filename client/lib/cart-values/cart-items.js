@@ -23,7 +23,7 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,

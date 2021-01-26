@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

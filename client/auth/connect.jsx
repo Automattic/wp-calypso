@@ -9,7 +9,7 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';

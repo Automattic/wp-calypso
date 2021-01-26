@@ -14,7 +14,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { Card } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

@@ -11,7 +11,7 @@ import { stringify } from 'qs';
 import Site from './site';
 import Me from './me';
 import MailingList from './mailing-list';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 

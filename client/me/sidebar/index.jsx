@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import ProfileGravatar from 'calypso/me/profile-gravatar';
 import {
 	addCreditCard,

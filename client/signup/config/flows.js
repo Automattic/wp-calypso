@@ -6,7 +6,7 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import stepConfig from './steps';
 import user from 'calypso/lib/user';
 import { isEcommercePlan } from 'calypso/lib/plans';

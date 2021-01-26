@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } ) => {

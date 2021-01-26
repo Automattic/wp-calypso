@@ -32,7 +32,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 export default class PageList extends Component {
 	static propTypes = {

@@ -31,7 +31,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import { CompactCard, Button } from '@automattic/components';
 import Notice from 'calypso/components/notice';

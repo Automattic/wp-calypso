@@ -15,7 +15,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
 import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
-import { isEnabled } from '../../../../config';
+import { isEnabled } from '@automattic/calypso-config';
 import Link from '../link';
 
 /**

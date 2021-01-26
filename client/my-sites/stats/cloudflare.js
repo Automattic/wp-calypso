@@ -12,7 +12,7 @@ import { isDesktop } from '@automattic/viewport';
  */
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo.svg';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const Cloudflare = () => {
 	const translate = useTranslate();

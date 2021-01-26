@@ -26,7 +26,7 @@ import titles from 'calypso/me/purchases/titles';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';

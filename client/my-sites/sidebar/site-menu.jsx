@@ -7,7 +7,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

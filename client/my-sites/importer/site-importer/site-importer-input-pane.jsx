@@ -12,7 +12,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import { validateImportUrl } from 'calypso/lib/importer/url-validation';
 import TextInput from 'calypso/components/forms/form-text-input';

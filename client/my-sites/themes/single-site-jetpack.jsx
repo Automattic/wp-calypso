@@ -15,7 +15,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import { connectOptions } from './theme-options';

@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';

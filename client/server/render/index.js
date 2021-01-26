@@ -13,7 +13,7 @@ import fs from 'fs';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,

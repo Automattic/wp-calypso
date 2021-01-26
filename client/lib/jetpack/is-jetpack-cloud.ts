@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const jetpackCloudEnvironments = [
 	'jetpack-cloud-development',

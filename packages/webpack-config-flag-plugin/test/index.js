@@ -41,7 +41,7 @@ describe( 'webpack-config-flag-plugin', () => {
 					extensions: [ '.js' ],
 					modules: [ fixturesDirectory ],
 					alias: {
-						'calypso/config': 'config',
+						'@automattic/calypso-config': 'config',
 					},
 				},
 				plugins: [ new ConfigFlagPlugin( { flags: { foo: true } } ) ],

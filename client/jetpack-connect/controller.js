@@ -10,7 +10,7 @@ import { get, some } from 'lodash';
  * Internal Dependencies
  */
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';

@@ -6,7 +6,7 @@ import { every, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	getPlugins,
 	isRequestingForSites,

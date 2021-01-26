@@ -17,7 +17,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import sanitize from 'calypso/server/sanitize';
 import utils from 'calypso/server/bundler/utils';
 import { pathToRegExp } from 'calypso/utils';

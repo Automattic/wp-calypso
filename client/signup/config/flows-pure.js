@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/route';
 
 export function generateFlows( {

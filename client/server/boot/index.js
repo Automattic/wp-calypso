@@ -11,6 +11,7 @@ import userAgent from 'express-useragent';
  * Internal dependencies
  */
 import analytics from 'calypso/server/lib/analytics';
+console.log( '==================HERE==================' );
 import config from 'calypso/server/config';
 import api from 'calypso/server/api';
 import pages from 'calypso/server/pages';

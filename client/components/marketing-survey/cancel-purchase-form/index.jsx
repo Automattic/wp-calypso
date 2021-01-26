@@ -11,7 +11,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { Dialog, Button } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

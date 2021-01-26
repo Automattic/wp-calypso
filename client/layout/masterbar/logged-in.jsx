@@ -16,7 +16,7 @@ import Item from './item';
 import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'calypso/components/gravatar';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { preload } from 'calypso/sections-helper';
 import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';

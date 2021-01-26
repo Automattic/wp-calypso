@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 export function getSocialServiceFromClientId( clientId ) {
 	if ( ! clientId ) {

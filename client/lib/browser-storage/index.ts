@@ -17,7 +17,7 @@ import {
 } from './bypass';
 import { StoredItems } from './types';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const debug = debugFactory( 'calypso:browser-storage' );
 

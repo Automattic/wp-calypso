@@ -25,7 +25,7 @@ import { Button, ScreenReaderText } from '@automattic/components';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import versionCompare from 'calypso/lib/version-compare';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';

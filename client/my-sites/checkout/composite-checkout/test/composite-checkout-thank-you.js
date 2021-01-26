@@ -8,7 +8,7 @@
  * Internal dependencies
  */
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_ECOMMERCE } from '../../../../lib/plans/constants';
 
 let mockGSuiteCountryIsValid = true;
@@ -18,7 +18,7 @@ jest.mock( 'calypso/lib/user', () =>
 	} ) )
 );
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn();
 	return mock;

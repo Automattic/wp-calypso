@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getStatsDefaultSitePage } from 'calypso/lib/route';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import { reduxDispatch, reduxGetState } from 'calypso/lib/redux-bridge';

@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'calypso/config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';

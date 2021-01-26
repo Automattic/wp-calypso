@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

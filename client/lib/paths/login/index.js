@@ -3,7 +3,7 @@
  */
 import { addQueryArgs } from 'calypso/lib/url';
 import { addLocaleToPath, localizeUrl } from 'calypso/lib/i18n-utils';
-import config, { isEnabled } from 'calypso/config';
+import config, { isEnabled } from '@automattic/calypso-config';
 
 export function login( {
 	isJetpack,

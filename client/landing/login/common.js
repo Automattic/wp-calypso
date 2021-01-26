@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { getUrlParts } from 'calypso/lib/url';

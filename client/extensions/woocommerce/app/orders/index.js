@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 

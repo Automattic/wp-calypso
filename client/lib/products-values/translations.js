@@ -7,7 +7,7 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import * as CONSTANTS from './constants.js';
 

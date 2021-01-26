@@ -17,7 +17,7 @@ import {
 import SiftScience from 'calypso/lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import { noSite, siteSelection } from 'calypso/my-sites/controller';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 
 export default function () {

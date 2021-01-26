@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const types = {
 	dp_prompt: 'prompt',

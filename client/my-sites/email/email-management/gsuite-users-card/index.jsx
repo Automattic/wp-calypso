@@ -23,7 +23,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import GSuiteUserItem from 'calypso/my-sites/email/email-management/gsuite-user-item';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import Notice from 'calypso/components/notice';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'calypso/components/section-header';

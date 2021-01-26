@@ -17,7 +17,7 @@ import { Button, ScreenReaderText } from '@automattic/components';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 

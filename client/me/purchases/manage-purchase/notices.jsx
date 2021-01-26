@@ -11,7 +11,7 @@ import { isEmpty, merge, minBy } from 'lodash';
  * Internal Dependencies
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getAddNewPaymentMethodPath } from '../utils';
 import {
 	canExplicitRenew,

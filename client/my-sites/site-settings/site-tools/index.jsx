@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localize } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';

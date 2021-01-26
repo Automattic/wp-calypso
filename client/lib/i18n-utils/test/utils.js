@@ -20,7 +20,7 @@ import {
 	isMagnificentLocale,
 } from 'calypso/lib/i18n-utils';
 
-jest.mock( 'calypso/config', () => ( key ) => {
+jest.mock( '@automattic/calypso-config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'en';
 	}

@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {

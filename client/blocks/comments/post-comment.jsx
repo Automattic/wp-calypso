@@ -12,7 +12,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import TimeSince from 'calypso/components/time-since';
 import Gravatar from 'calypso/components/gravatar';

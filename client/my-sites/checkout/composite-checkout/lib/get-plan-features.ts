@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import {
 	isWpComBusinessPlan,

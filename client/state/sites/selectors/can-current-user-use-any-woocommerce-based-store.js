@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';

@@ -48,7 +48,7 @@ import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 

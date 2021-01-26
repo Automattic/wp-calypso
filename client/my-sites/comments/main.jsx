@@ -20,7 +20,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { preventWidows } from 'calypso/lib/formatting';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { NEWEST_FIRST } from './constants';
 
 /**

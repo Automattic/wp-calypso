@@ -11,7 +11,7 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

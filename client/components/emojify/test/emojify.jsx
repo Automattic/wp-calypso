@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Emojify from '..';
 
 describe( 'Emojify', () => {

@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import googleWorkspaceLogo from 'calypso/assets/images/email-providers/google-workspace/logo.svg';

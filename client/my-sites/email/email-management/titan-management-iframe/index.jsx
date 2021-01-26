@@ -17,7 +17,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import Main from 'calypso/components/main';
 import QueryEmailAccounts from 'calypso/components/data/query-email-accounts';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';

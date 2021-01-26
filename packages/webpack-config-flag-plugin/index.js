@@ -54,7 +54,7 @@ class ConfigFlagPlugin {
 			parser.hooks.import.tap( 'ConfigFlagPlugin', ( statement, source ) => {
 				const currentModule = parser.state.current.resource;
 
-				if ( source === 'config' || source === 'calypso/config' ) {
+				if ( source === 'config' || source === '@automattic/calypso-config' ) {
 					if ( ! statement.specifiers ) return;
 
 					// We have an import of 'config'.

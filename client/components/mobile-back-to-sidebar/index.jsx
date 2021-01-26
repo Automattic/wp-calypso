@@ -9,7 +9,7 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 /**

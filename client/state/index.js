@@ -9,7 +9,7 @@ import dynamicMiddlewares from 'redux-dynamic-middlewares';
  * Internal dependencies
  */
 import initialReducer from './reducer';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Store enhancers

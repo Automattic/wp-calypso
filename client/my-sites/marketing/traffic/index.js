@@ -10,7 +10,7 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Main from 'calypso/components/main';
 import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

@@ -22,7 +22,7 @@ import {
 	isJetpackSite,
 	isSSOEnabled,
 } from 'calypso/state/sites/selectors';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Placeholder } from './placeholder';
 
 import { makeLayout, render } from 'calypso/controller';

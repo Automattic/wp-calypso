@@ -16,7 +16,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import ReadmeViewer from 'calypso/components/readme-viewer';
 import SearchCard from 'calypso/components/search-card';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Docs examples

@@ -22,7 +22,7 @@ import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openThemesShowcase } from 'calypso/state/themes/themes-ui/actions';
 import {

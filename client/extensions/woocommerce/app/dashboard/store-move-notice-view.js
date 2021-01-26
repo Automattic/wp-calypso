@@ -13,7 +13,7 @@ import { localize, translate } from 'i18n-calypso';
 
 import { Card, Button } from '@automattic/components';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Image dependencies

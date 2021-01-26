@@ -17,7 +17,7 @@ import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordAliasInFloodlight } from 'calypso/lib/analytics/ad-tracking';
 
-jest.mock( 'calypso/config', () => require( './mocks/config' ) );
+jest.mock( '@automattic/calypso-config', () => require( './mocks/config' ) );
 jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
 	recordAliasInFloodlight: jest.fn(),

@@ -23,7 +23,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';

@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { CartItem } from '../cart-item';
 import {
 	isPlan,
@@ -41,7 +41,7 @@ const mockPlansModule = () => {
 };
 mockPlansModule();
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};
 	fn.isEnabled = jest.fn( () => null );
 	return fn;

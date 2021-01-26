@@ -7,7 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	login,
 	magicLogin,

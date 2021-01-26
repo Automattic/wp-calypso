@@ -8,7 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config, { isCalypsoLive } from 'calypso/config';
+import config, { isCalypsoLive } from '@automattic/calypso-config';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import { addQueryArgs, externalRedirect, untrailingslashit } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';

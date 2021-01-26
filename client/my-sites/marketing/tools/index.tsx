@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

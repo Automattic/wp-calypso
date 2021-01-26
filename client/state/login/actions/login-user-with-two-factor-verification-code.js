@@ -6,7 +6,7 @@ import { get, replace } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,

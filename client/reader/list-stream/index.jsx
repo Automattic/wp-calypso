@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Stream from 'calypso/reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'calypso/components/data/document-head';

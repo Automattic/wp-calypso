@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import AccountPassword from 'calypso/me/account-password';
 import { Card } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';

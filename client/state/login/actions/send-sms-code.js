@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,

@@ -32,7 +32,7 @@ import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 function useLogBillingHistoryError( message: string ) {
 	const reduxDispatch = useDispatch();

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import DomainOnly from './domain-only';
 import ListItemPlaceholder from './item-placeholder';

@@ -31,7 +31,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 function useLogPurchasesError( message: string ) {
 	const reduxDispatch = useDispatch();

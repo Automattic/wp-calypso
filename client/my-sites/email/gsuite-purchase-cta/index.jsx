@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { emailManagementNewGSuiteAccount } from 'calypso/my-sites/email/paths';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';

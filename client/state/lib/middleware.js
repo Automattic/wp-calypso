@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,

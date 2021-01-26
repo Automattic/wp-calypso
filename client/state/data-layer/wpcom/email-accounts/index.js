@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { convertToCamelCase } from 'calypso/state/data-layer/utils';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { EMAIL_ACCOUNTS_REQUEST } from 'calypso/state/action-types';

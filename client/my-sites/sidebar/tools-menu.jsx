@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SidebarItem from 'calypso/layout/sidebar/item';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import compareProps from 'calypso/lib/compare-props';
 import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';

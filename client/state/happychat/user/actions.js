@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import {
 	HAPPYCHAT_ELIGIBILITY_SET,

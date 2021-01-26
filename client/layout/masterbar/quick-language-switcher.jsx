@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import MasterbarItem from './item';
 import LanguagePickerModal from 'calypso/components/language-picker/modal';
 import languages from '@automattic/languages';

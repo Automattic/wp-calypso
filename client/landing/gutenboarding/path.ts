@@ -10,7 +10,7 @@ import type { ValuesType } from 'utility-types';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { FLOW_ID } from '../gutenboarding/constants';
 
 type PlanPath = Plans.PlanPath;

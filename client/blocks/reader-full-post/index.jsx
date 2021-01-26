@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, startsWith, pickBy } from 'lodash';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

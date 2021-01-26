@@ -5,7 +5,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes, uniq } from 'lodash';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

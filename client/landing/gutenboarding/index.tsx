@@ -5,7 +5,7 @@ import '@automattic/calypso-polyfills';
 import * as React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-import config from '../../config';
+import config from '@automattic/calypso-config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';

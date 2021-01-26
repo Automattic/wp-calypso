@@ -9,7 +9,7 @@ import page from 'page';
 import { accountClose, accountClosed } from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar } from 'calypso/me/controller';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 export default function () {
 	if ( isEnabled( 'me/account-close' ) ) {

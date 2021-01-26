@@ -12,7 +12,7 @@ Those work because Webpack will search for those modules in ./client first, and 
 As an alternative, we can rewrite the above as
 
 ```js
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 ```
 
@@ -39,15 +39,15 @@ const component = <AsyncLoad require="config" />;
 The following patterns are correct
 
 ```jsx
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import * as stats from 'calypso/reader/stats';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export * from 'calypso/components/AppBar';
-const config1 = require( 'calypso/config' );
-const config2 = asyncRequire( 'calypso/config' );
+const config1 = require( '@automattic/calypso-config' );
+const config2 = asyncRequire( '@automattic/calypso-config' );
 
-const component = <AsyncLoad require="calypso/config" />;
+const component = <AsyncLoad require="@automattic/calypso-config" />;
 
 import config3 from './config';
 import config4 from '../../../config';

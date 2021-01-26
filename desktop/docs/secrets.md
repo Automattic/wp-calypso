@@ -32,7 +32,7 @@ In the end, your application details should look similar to:
 ![application details](../.github/images/secrets.png)
 
 After your application is created, copy your client id and client secret, and add a
-`calypso/config/secrets.json` file:
+`@automattic/calypso-config/secrets.json` file:
 
 ```json
 {

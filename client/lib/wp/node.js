@@ -3,7 +3,7 @@
  */
 
 import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { injectLocalization } from './localization';
 import wpSupportWrapper from 'calypso/lib/wp/support';
 import wpcomXhrRequest from 'wpcom-xhr-request';

@@ -34,7 +34,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { WPCC } from 'calypso/lib/url/support';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';

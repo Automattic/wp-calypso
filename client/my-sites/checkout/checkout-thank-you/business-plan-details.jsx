@@ -14,7 +14,7 @@ import i18n from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { isBusiness, isGoogleApps } from 'calypso/lib/products-values';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';

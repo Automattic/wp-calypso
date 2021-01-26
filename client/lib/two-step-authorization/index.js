@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import emitter from 'calypso/lib/mixins/emitter';
 import userSettings from 'calypso/lib/user-settings';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';

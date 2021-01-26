@@ -19,7 +19,7 @@ jest.mock(
 		}
 );
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const mock = jest.fn();
 	mock.isEnabled = jest.fn();
 

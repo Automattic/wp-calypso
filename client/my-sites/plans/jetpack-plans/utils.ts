@@ -58,7 +58,7 @@ import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpac
 import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
 import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';

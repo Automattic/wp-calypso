@@ -4,7 +4,7 @@
 import { isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

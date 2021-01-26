@@ -44,7 +44,7 @@ import StoreLocationSetupView from './setup/store-location';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import warn from 'calypso/lib/warn';
 import StoreMoveNoticeView from './store-move-notice-view';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 class Dashboard extends Component {

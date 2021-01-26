@@ -13,7 +13,7 @@ import { get, omit } from 'lodash';
  */
 import * as helper from '../helper';
 import * as fixtures from './fixtures';
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	return () => require( './fixtures' ).discoverSiteId;
 } );
 jest.mock( 'calypso/lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );

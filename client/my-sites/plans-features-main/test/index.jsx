@@ -8,7 +8,7 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {
 		return [];
 	};

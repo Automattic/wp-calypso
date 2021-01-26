@@ -19,9 +19,9 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn( mockUseSelector ),
 	useDispatch: jest.fn( mockUseDispatch ),
 } ) );
-jest.mock( 'calypso/config', () => ( {
+jest.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: jest.requireActual( 'calypso/config' ),
+	default: jest.requireActual( '@automattic/calypso-config' ),
 	isEnabled: jest.fn( mockIsEnabled ),
 } ) );
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
@@ -40,7 +40,7 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { useCanGoToDate } from '../hooks';
 const realDateNow = Date.now;
 

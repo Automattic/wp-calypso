@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import ExternalLink from 'calypso/components/external-link';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getPostsForQueryIgnoringPage } from 'calypso/state/posts/selectors';

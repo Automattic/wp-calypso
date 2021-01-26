@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 export const getManagePurchaseUrlFor = (
 	targetSiteSlug: string,

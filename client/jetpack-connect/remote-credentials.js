@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, includes } from 'lodash';

@@ -8,7 +8,7 @@ import page from 'page';
  */
 import { siteSelection, sites } from 'calypso/my-sites/controller';
 import { authenticate, post, redirect, siteEditor, exitPost } from './controller';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {

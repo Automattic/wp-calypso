@@ -9,7 +9,7 @@ import { get, some } from 'lodash';
  * Internal Dependencies
  */
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import SearchPurchase from './search';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from '../../jetpack-connect/constants';

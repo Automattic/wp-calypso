@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
  * Internal dependencies
  */
 import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,

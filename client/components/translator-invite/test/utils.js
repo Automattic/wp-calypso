@@ -7,7 +7,7 @@
  */
 import { isDefaultLocale, getCurrentNonDefaultLocale } from '../utils';
 
-jest.mock( 'calypso/config', () => ( key ) => {
+jest.mock( '@automattic/calypso-config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'it';
 	}

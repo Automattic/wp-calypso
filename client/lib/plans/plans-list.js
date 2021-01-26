@@ -8,7 +8,7 @@ import i18n, { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import * as constants from './constants';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );

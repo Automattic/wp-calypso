@@ -18,7 +18,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import SectionHeader from 'calypso/components/section-header';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';

@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
