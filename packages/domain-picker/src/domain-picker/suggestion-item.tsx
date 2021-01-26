@@ -76,41 +76,23 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const [ previousDomain, setPreviousDomain ] = React.useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = React.useState< string | undefined >();
 
+	// translators: 'Default' will be shown next to the standard, free domain
 	const freeDomainLabelDefault = __( 'Default', __i18n_text_domain__ );
 	const freeDomainLabelFree = __( 'Free', __i18n_text_domain__ );
-
-	const firstYearLabel = __( 'Included in paid plans', __i18n_text_domain__ );
-	const firstYearLabelAlt = __( 'Included with annual plans', __i18n_text_domain__ );
-	// translators: text in between the <strong></strong> marks is styled as bold text
-	const firstYearLabelFormatted = __(
-		'<strong>First year included</strong> in paid plans',
-		__i18n_text_domain__
-	);
-
 	const freeDomainLabel =
 		type === ITEM_TYPE_INDIVIDUAL_ITEM ? freeDomainLabelDefault : freeDomainLabelFree;
 
-	const firstYearIncludedInPaidLabel = isMobile
+	const firstYearLabel = __( 'Included in annual plans', __i18n_text_domain__ );
+	// translators: text in between the <strong></strong> marks is styled as bold text
+	const firstYearLabelFormatted = __(
+		'<strong>First year included</strong> in annual plans',
+		__i18n_text_domain__
+	);
+	const paidIncludedDomainLabel = isMobile
 		? firstYearLabel
 		: createInterpolateElement( firstYearLabelFormatted, {
 				strong: <strong />,
 		  } );
-
-	/**
-	 *  IIFE executes immediately after creation, hence it returns the translated values immediately.
-	 * The great advantage is that:
-	 * 1. We don't have to execute it during rendering.
-	 * 2. We don't have to use nested ternaries (which is not allowed by the linter).
-	 * 3. It improves the readability of our code
-	 */
-	const paidIncludedDomainLabel = ( () => {
-		if ( type === ITEM_TYPE_INDIVIDUAL_ITEM ) {
-			return firstYearIncludedInPaidLabel;
-		} else if ( isMobile ) {
-			return freeDomainLabelFree;
-		}
-		return firstYearLabelAlt;
-	} )();
 
 	React.useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.
