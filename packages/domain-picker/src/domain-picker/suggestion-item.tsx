@@ -67,7 +67,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
 
-	const isMobile = useViewportMatch( 'small', '<' );
+	const isMobile = ! useViewportMatch( 'small', '>=' );
 
 	const dotPos = domain.indexOf( '.' );
 	const domainName = domain.slice( 0, dotPos );
