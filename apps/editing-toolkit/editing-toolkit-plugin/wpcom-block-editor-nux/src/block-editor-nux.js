@@ -19,10 +19,13 @@ import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: function WpcomBlockEditorNux() {
-		const { site, isWpcomNuxEnabled, showWpcomNuxVariant } = useSelect( ( select ) => ( {
+		const { site, isWpcomNuxEnabled, showWpcomNuxVariant, isSPTOpen } = useSelect( ( select ) => ( {
 			site: select( 'automattic/site' ).getSite( window._currentSiteId ),
 			isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 			showWpcomNuxVariant: select( 'automattic/nux' ).shouldShowWpcomNuxVariant(),
+			isSPTOpen:
+				select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
+				select( 'automattic/starter-page-layouts' ).isOpen(),
 		} ) );
 
 		const { setWpcomNuxStatus, setShowWpcomNuxVariant } = useDispatch( 'automattic/nux' );
@@ -41,6 +44,10 @@ registerPlugin( 'wpcom-block-editor-nux', {
 
 			fetchWpcomNuxStatus();
 		}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
+
+		if ( ! isWpcomNuxEnabled || isSPTOpen ) {
+			return null;
+		}
 
 		const isPodcastingSite = !! site?.options?.anchor_podcast;
 
