@@ -262,7 +262,7 @@ export function updateRecentSitesPreferences( context ) {
 	const state = context.store.getState();
 
 	if ( hasReceivedRemotePreferences( state ) ) {
-		const siteId = getSelectedSite( state )?.ID;
+		const siteId = getSelectedSiteId( state );
 		const recentSites = getPreference( state, 'recentSites' );
 
 		if ( siteId && siteId !== recentSites[ 0 ] ) {
