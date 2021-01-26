@@ -50,7 +50,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
 	const isMobile = useViewportMatch( 'small', '<' );
-	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
+	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	const closeModal = () => {
@@ -174,7 +174,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		const queryParts = {
 			anchor_podcast: anchorFmPodcastId,
 			anchor_episode: anchorFmEpisodeId,
-			spotify_url: anchorFmSpotifyShowUrl,
+			spotify_url: anchorFmSpotifyUrl,
 		};
 		for ( const [ k, v ] of Object.entries( queryParts ) ) {
 			if ( v ) {

@@ -74,7 +74,7 @@ export default function useOnSiteCreation(): void {
 
 	const isAnchorFmSignup = useIsAnchorFm();
 	const flow = useOnboardingFlow();
-	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
+	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const flowCompleteTrackingParams = {
@@ -148,7 +148,7 @@ export default function useOnSiteCreation(): void {
 				const params = {
 					anchor_podcast: anchorFmPodcastId,
 					anchor_episode: anchorFmEpisodeId,
-					spotify_url: anchorFmSpotifyShowUrl,
+					spotify_url: anchorFmSpotifyUrl,
 				};
 				const queryString = Object.keys( params )
 					.filter( ( key ) => params[ key as keyof typeof params ] != null )
@@ -175,6 +175,6 @@ export default function useOnSiteCreation(): void {
 		isAnchorFmSignup,
 		anchorFmPodcastId,
 		anchorFmEpisodeId,
-		anchorFmSpotifyShowUrl,
+		anchorFmSpotifyUrl,
 	] );
 }
