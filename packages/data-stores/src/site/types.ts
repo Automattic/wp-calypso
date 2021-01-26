@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import type { FeatureId } from '../wpcom-features';
+
 export interface NewSiteBlogDetails {
 	url: string;
 	blogid: number;
@@ -57,7 +62,7 @@ export interface CreateSiteParams {
 		font_headings?: string;
 		font_base?: string;
 		use_patterns?: boolean;
-		selected_features?: string[];
+		selected_features?: FeatureId[];
 		wpcom_public_coming_soon?: number;
 		anchor_fm_podcast_id?: string;
 	};
@@ -82,7 +87,7 @@ export interface SiteDetails {
 	launch_status: string;
 	options: {
 		created_at: string;
-		selected_features?: string[];
+		selected_features?: FeatureId[];
 	};
 	plan?: SiteDetailsPlan;
 }
