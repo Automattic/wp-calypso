@@ -22,7 +22,6 @@ import { chunkCssLinks } from './utils';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
-// import { isWpMobileApp } from 'calypso/server/lib/mobile-app';
 
 class Document extends React.Component {
 	render() {
