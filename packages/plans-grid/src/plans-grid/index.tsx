@@ -79,7 +79,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 		}
 	}, [ billingPeriod, onBillingPeriodChange ] );
 
-	const [ maxMonhtlyDiscountPercentage, setMaxMonhtlyDiscountPercentage ] = React.useState<
+	const [ maxMonthlyDiscountPercentage, setMaxMonthlyDiscountPercentage ] = React.useState<
 		number | undefined
 	>( undefined );
 
@@ -92,7 +92,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 			<PlansIntervalToggle
 				intervalType={ billingPeriod }
 				onChange={ setBillingPeriod }
-				maxMonhtlyDiscountPercentage={ maxMonhtlyDiscountPercentage }
+				maxMonthlyDiscountPercentage={ maxMonthlyDiscountPercentage }
 				className="plans-grid__toggle"
 			/>
 
@@ -108,7 +108,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							disabledPlans={ disabledPlans }
 							locale={ locale }
 							billingPeriod={ billingPeriod }
-							onMaxMonhtlyDiscountPercentageChange={ setMaxMonhtlyDiscountPercentage }
+							onMaxMonthlyDiscountPercentageChange={ setMaxMonthlyDiscountPercentage }
 						></PlansAccordion>
 					) : (
 						<PlansTable
@@ -124,7 +124,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							showTaglines={ showPlanTaglines }
 							defaultAllPlansExpanded={ defaultAllPlansExpanded }
 							billingPeriod={ billingPeriod }
-							onMaxMonhtlyDiscountPercentageChange={ setMaxMonhtlyDiscountPercentage }
+							onMaxMonthlyDiscountPercentageChange={ setMaxMonthlyDiscountPercentage }
 						></PlansTable>
 					) }
 				</div>
