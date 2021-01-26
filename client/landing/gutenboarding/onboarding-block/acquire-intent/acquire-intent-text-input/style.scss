@@ -17,6 +17,8 @@ $placeholder-color: #ccd0d4; // former light-gray-700
 	padding: 0;
 	color: var( --mainColor );
 	caret-color: var( --mainColor );
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	&:focus {
 		box-shadow: none;
