@@ -16,24 +16,20 @@ describe( 'getSupportedPlans', () => {
 
 		const planPriceData = [
 			{
-				// This currency formats the symbol after the number
-				// and rounds to 0 decimal places
 				currency_code: 'INR',
 				product_slug: PLAN_FREE,
 				raw_price: 0,
 				product_id: 1,
 			},
 			{
-				// This currency formats the symbol after the number
-				// and rounds to 0 decimal places
+				// premium plan, billed annually
 				currency_code: 'INR',
 				product_slug: PLAN_PREMIUM,
 				raw_price: 12,
 				product_id: 2,
 			},
 			{
-				// This currency formats the symbol after the number
-				// and rounds to 0 decimal places
+				// premium plan, billed monthly
 				currency_code: 'INR',
 				product_slug: PLAN_PREMIUM_MONTHLY,
 				raw_price: 13,
