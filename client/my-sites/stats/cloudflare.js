@@ -2,52 +2,60 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { Button } from '@automattic/components';
-import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
-import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo.svg';
 import config from '@automattic/calypso-config';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Banner from 'calypso/components/banner';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const showCloudflare = config.isEnabled( 'cloudflare' );
-
-	const recordClick = () => {
-		dispatch(
-			composeAnalytics( recordTracksEvent( 'calypso_performance_settings_cloudflare_click' ) )
-		);
-	};
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
+	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const showUpsell = [ 'personal-bundle', 'free_plan' ].includes( sitePlan );
 
 	return (
 		<>
 			{ showCloudflare && (
-				<div className="stats__card">
-					<div className="stats__card-text">
-						<h2 className="stats__card-title">
-							{ translate( 'Gain deeper insights with Cloudflare Analytics' ) }
-						</h2>
-						<p className="stats__card-description">
-							{ translate(
-								'Cloudflare Analytics empowers you with deep insights and intelligene to protect and accelerate your site.'
+				<>
+					{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
+					{ sitePlan && ! showUpsell && (
+						<Banner
+							title={ translate( 'Discover more stats with Cloudflare Analytics' ) }
+							description={ translate(
+								'Cloudflare Analytics give you deeper insights into your site traffic and performance.'
 							) }
-						</p>
-						<Button onClick={ recordClick } href="CLOUDFLARELINK" target="_blank">
-							{ translate( 'Learn More' ) }
-						</Button>
-					</div>
-					{ isDesktop() && (
-						<div className="stats__card-illustration">
-							<img src={ cloudflareIllustration } alt="" />
-						</div>
+							showIcon={ true }
+							disableCircle={ true }
+							iconPath={ cloudflareIllustration }
+							href="CLOUDFLARELEARNMORELINK"
+							tracksImpressionName="banner_stats_cloudflare"
+							event="calypso_stats_cloudflare_analytics_learn_more"
+						/>
 					) }
-				</div>
+					{ sitePlan && showUpsell && (
+						<UpsellNudge
+							title={ translate( 'Upgrade your plan for even more stats' ) }
+							description={ translate(
+								'Get deeper insights into your site traffic and performance with Cloudflare Analytics.'
+							) }
+							customerType="business"
+							tracksImpressionName="upsell_nudge_stats_cloudflare"
+							event="calypso_stats_cloudflare_analytics_upsell_nudge"
+							showIcon={ true }
+							forceDisplay={ true }
+						/>
+					) }
+				</>
 			) }
 		</>
 	);

@@ -177,6 +177,8 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+				{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
+
 				<div id="my-stats-content">
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
@@ -190,8 +192,6 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
-
-					{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
 
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation

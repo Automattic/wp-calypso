@@ -85,7 +85,7 @@ const Cloudflare = () => {
 							</div>
 						</div>
 					</CompactCard>
-					{ showUpsell && (
+					{ sitePlan && showUpsell && (
 						<UpsellNudge
 							title={ translate( 'Available with Premium plans or higher' ) }
 							description={ translate(
