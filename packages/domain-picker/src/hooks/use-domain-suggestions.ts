@@ -27,7 +27,7 @@ export function useDomainSuggestions(
 ): DomainSuggestionsResult | undefined {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
 
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	// Missing types for invalidateResolutionForStoreSelector
 	// (see packages/data/src/namespace-store/metadata/actions.js#L57)
