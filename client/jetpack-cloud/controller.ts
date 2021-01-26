@@ -138,11 +138,11 @@ const siteSelectionWithoutFragment = ( context: PageJS.Context, next: () => void
  * @param {PageJS.Context} context Route context
  * @param {Function} next Next middleware function
  */
-const siteSelectionWithFragment = (
+const siteSelectionWithFragment = async (
 	siteFragment: string,
 	context: PageJS.Context,
 	next: () => void
-): void => {
+): Promise< void > => {
 	const { getState } = context.store;
 	const siteId = getSiteId( getState(), siteFragment );
 
@@ -151,19 +151,19 @@ const siteSelectionWithFragment = (
 		selectSite( context, siteId );
 		next();
 	} else {
-		fetchSite( context, siteFragment ).then( ( { id } ) => {
-			if ( id ) {
-				selectSite( context, id );
-				next();
-			} else {
-				const allSitesPath = addQueryArgs(
-					{ site: siteFragment },
-					sectionify( context.path, siteFragment )
-				);
+		const { id } = await fetchSite( context, siteFragment );
 
-				page.redirect( allSitesPath );
-			}
-		} );
+		if ( id ) {
+			selectSite( context, id );
+			next();
+		} else {
+			const allSitesPath = addQueryArgs(
+				{ site: siteFragment },
+				sectionify( context.path, siteFragment )
+			);
+
+			page.redirect( allSitesPath );
+		}
 	}
 };
 
