@@ -16,11 +16,14 @@ import { LAUNCH_STORE } from '../../stores';
 import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const [ domain, planProductId, LaunchStep ] = useSelect( ( select ) => [
-		select( LAUNCH_STORE ).getSelectedDomain(),
-		select( LAUNCH_STORE ).getSelectedPlanProductId(),
-		select( LAUNCH_STORE ).getLaunchStep(),
-	] );
+	const { domain, LaunchStep, planProductId } = useSelect( ( select ) => {
+		const launchStore = select( LAUNCH_STORE );
+		return {
+			domain: launchStore.getSelectedDomain(),
+			LaunchStep: launchStore.getLaunchStep(),
+			planProductId: launchStore.getSelectedPlanProductId(),
+		};
+	} );
 
 	const { setPlanProductId, setStep } = useDispatch( LAUNCH_STORE );
 
