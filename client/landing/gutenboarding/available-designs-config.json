@@ -51,7 +51,7 @@
 				"base": "Open Sans"
 			},
 			"categories": [ "featured", "blog" ],
-			"is_premium": true,
+			"is_premium": false,
 			"features": []
 		},
 		{
