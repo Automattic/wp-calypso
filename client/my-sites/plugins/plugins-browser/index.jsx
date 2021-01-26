@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import DocumentHead from 'calypso/components/data/document-head';
-import Search from 'calypso/components/search';
+import Search from '@automattic/search';
 import SectionNav from 'calypso/components/section-nav';
 import MainComponent from 'calypso/components/main';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -268,6 +268,8 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
+	recordSearchEvent = ( eventName ) => this.props.recordGoogleEvent( 'PluginsBrowser', eventName );
+
 	getSearchBox() {
 		const { WrappedSearch } = this;
 
@@ -279,7 +281,7 @@ export class PluginsBrowser extends Component {
 				initialValue={ this.props.search }
 				placeholder={ this.props.translate( 'Search Plugins' ) }
 				delaySearch={ true }
-				analyticsGroup="PluginsBrowser"
+				recordEvent={ this.recordSearchEvent }
 			/>
 		);
 	}
