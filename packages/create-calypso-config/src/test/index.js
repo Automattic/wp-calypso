@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import createConfig from '../';
@@ -15,7 +10,7 @@ describe( 'index', () => {
 		test( 'has to return false when the feature flags are not specified', () => {
 			const result = config.isEnabled( 'flagA' );
 
-			expect( result ).to.be.false;
+			expect( result ).toBe( false );
 		} );
 	} );
 
@@ -32,19 +27,19 @@ describe( 'index', () => {
 		test( 'has to return value of the provided key', () => {
 			const result = config( 'keyA' );
 
-			expect( result ).to.equal( 'value' );
+			expect( result ).toEqual( 'value' );
 		} );
 
 		test( 'has to return false when the provided feature flag is disabled', () => {
 			const result = config.isEnabled( 'flagA' );
 
-			expect( result ).to.be.false;
+			expect( result ).toBe( false );
 		} );
 
 		test( 'has to return false when the provided feature flag is enabled', () => {
 			const result = config.isEnabled( 'flagC' );
 
-			expect( result ).to.be.true;
+			expect( result ).toBe( true );
 		} );
 
 		describe( 'error cases', () => {
@@ -56,7 +51,7 @@ describe( 'index', () => {
 			test( "should throw an error when given key doesn't exist (NODE_ENV == development)", () => {
 				process.env.NODE_ENV = 'development';
 
-				expect( () => config( fakeKey ) ).to.throw( ReferenceError );
+				expect( () => config( fakeKey ) ).toThrowError( ReferenceError );
 			} );
 
 			test( "should not throw an error when given key doesn't exist (NODE_ENV != development)", () => {
@@ -65,8 +60,8 @@ describe( 'index', () => {
 				envs.forEach( ( env ) => {
 					process.env.NODE_ENV = env;
 
-					expect( process.env.NODE_ENV ).to.equal( env );
-					expect( () => config( fakeKey ) ).to.not.throw( Error );
+					expect( process.env.NODE_ENV ).toEqual( env );
+					expect( () => config( fakeKey ) ).not.toThrow( Error );
 				} );
 			} );
 		} );
@@ -91,12 +86,12 @@ describe( 'index', () => {
 
 		describe( 'isEnabled', () => {
 			test( 'it correctly reports status of features', () => {
-				expect( config.isEnabled( 'flagA' ) ).to.be.false;
-				expect( config.isEnabled( 'flagC' ) ).to.be.true;
+				expect( config.isEnabled( 'flagA' ) ).toBe( false );
+				expect( config.isEnabled( 'flagC' ) ).toBe( true );
 			} );
 
 			test( 'it defaults to "false" when feature is not defined', () => {
-				expect( config.isEnabled( 'flagXYZ' ) ).to.be.false;
+				expect( config.isEnabled( 'flagXYZ' ) ).toBe( false );
 			} );
 		} );
 
@@ -104,30 +99,30 @@ describe( 'index', () => {
 			test( 'it can enable features which are not yet set', () => {
 				config.enable( 'flagD' );
 				config.enable( 'flagE' );
-				expect( config.isEnabled( 'flagD' ) ).to.be.true;
-				expect( config.isEnabled( 'flagE' ) ).to.be.true;
+				expect( config.isEnabled( 'flagD' ) ).toBe( true );
+				expect( config.isEnabled( 'flagE' ) ).toBe( true );
 			} );
 
 			test( 'it can toggle existing features to enable them', () => {
 				config.enable( 'flagA' );
-				expect( config.isEnabled( 'flagA' ) ).to.be.true;
+				expect( config.isEnabled( 'flagA' ) ).toBe( true );
 			} );
 		} );
 
 		describe( 'disable', () => {
 			test( 'it can toggle existing features to disable them', () => {
 				config.disable( 'flagC' );
-				expect( config.isEnabled( 'flagC' ) ).to.be.false;
+				expect( config.isEnabled( 'flagC' ) ).toBe( false );
 			} );
 
 			test( 'it retains existing disable setting for features that are already disabled', () => {
 				config.disable( 'flagA' );
-				expect( config.isEnabled( 'flagA' ) ).to.be.false;
+				expect( config.isEnabled( 'flagA' ) ).toBe( false );
 			} );
 
 			test( 'it will handle setting new features to a initial disabled state', () => {
 				config.disable( 'flagZXY' );
-				expect( config.isEnabled( 'flagZXY' ) ).to.be.false;
+				expect( config.isEnabled( 'flagZXY' ) ).toBe( false );
 			} );
 		} );
 	} );

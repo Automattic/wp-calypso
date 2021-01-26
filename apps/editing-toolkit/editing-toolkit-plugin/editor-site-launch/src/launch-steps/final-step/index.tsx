@@ -33,14 +33,23 @@ import './styles.scss';
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
-	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
-	const planPrices = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPrices( window.wpcomEditorSiteLaunch?.locale || 'en' )
+	const { domain, plan, LaunchStep, isStepCompleted, isFlowCompleted, planProductId } = useSelect(
+		( select ) => {
+			const launchStore = select( LAUNCH_STORE );
+			return {
+				domain: launchStore.getSelectedDomain(),
+				plan: launchStore.getSelectedPlan(),
+				LaunchStep: launchStore.getLaunchStep(),
+				isStepCompleted: launchStore.isStepCompleted,
+				isFlowCompleted: launchStore.isFlowCompleted(),
+				planProductId: launchStore.getSelectedPlanProductId(),
+			};
+		}
 	);
-	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
-	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
+
+	const planProduct = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProductById( planProductId )
+	);
 
 	const { title } = useTitle();
 	const { siteSubdomain } = useSiteDomains();
@@ -101,10 +110,10 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 
 	const planSummary = (
 		<div className="nux-launch__summary-item">
-			{ plan && ! plan?.isFree ? (
+			{ plan && planProduct && ! plan.isFree ? (
 				<>
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
-					{ __( 'Plan subscription', 'full-site-editing' ) }: { planPrices[ plan.storeSlug ] }{ ' ' }
+					{ __( 'Plan subscription', 'full-site-editing' ) }: { planProduct.price }{ ' ' }
 					{ __( 'per month, billed yearly', 'full-site-editing' ) }
 				</>
 			) : (

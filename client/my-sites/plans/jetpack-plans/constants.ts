@@ -59,7 +59,6 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_ACTIVITY_LOG,
 } from 'calypso/lib/plans/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { buildCardFeaturesFromItem } from './utils';
 
 /**
@@ -111,61 +110,51 @@ export const PRODUCTS_WITH_OPTIONS = [
 ] as const;
 
 // Jetpack Security
-export const OPTION_PLAN_SECURITY: SelectorProduct = {
-	productSlug: OPTIONS_JETPACK_SECURITY,
-	annualOptionSlug: OPTIONS_JETPACK_SECURITY,
-	monthlyOptionSlug: OPTIONS_JETPACK_SECURITY_MONTHLY,
-	term: TERM_ANNUALLY,
-	type: ITEM_TYPE_BUNDLE,
-	subtypes: [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_REALTIME ],
-	costProductSlug: PLAN_JETPACK_SECURITY_DAILY,
-	monthlyProductSlug: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	iconSlug: 'jetpack_security_v2',
-	displayName: translate( 'Jetpack Security' ),
-	shortName: translate( 'Security', {
-		comment: 'Short name of the Jetpack Security generic plan',
-	} ),
-	tagline: translate( 'Comprehensive WordPress protection' ),
-	description: translate(
-		'Enjoy the peace of mind of complete site security. ' +
-			'Easy-to-use, powerful security tools guard your site, so you can focus on your business.'
-	),
-	features: {
-		items: buildCardFeaturesFromItem(
-			{
-				[ FEATURE_CATEGORY_SECURITY ]: [
-					FEATURE_PRODUCT_BACKUP_V2,
-					FEATURE_PRODUCT_SCAN_V2,
-					FEATURE_PRODUCT_ANTISPAM_V2,
-					FEATURE_ACTIVITY_LOG_V2,
-				],
-				[ FEATURE_CATEGORY_OTHER ]: [
-					FEATURE_VIDEO_HOSTING_V2,
-					FEATURE_SOCIAL_MEDIA_POSTING_V2,
-					FEATURE_COLLECT_PAYMENTS_V2,
-					FEATURE_SITE_MONETIZATION_V2,
-					FEATURE_PRIORITY_SUPPORT_V2,
-				],
-			},
-			undefined,
-			getJetpackCROActiveVersion()
+export const OPTION_PLAN_SECURITY: ( variation: string ) => SelectorProduct = ( variation ) => {
+	const plan = {
+		productSlug: OPTIONS_JETPACK_SECURITY,
+		annualOptionSlug: OPTIONS_JETPACK_SECURITY,
+		monthlyOptionSlug: OPTIONS_JETPACK_SECURITY_MONTHLY,
+		term: TERM_ANNUALLY,
+		type: ITEM_TYPE_BUNDLE,
+		subtypes: [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_REALTIME ],
+		costProductSlug: PLAN_JETPACK_SECURITY_DAILY,
+		monthlyProductSlug: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+		iconSlug: 'jetpack_security_v2',
+		displayName: translate( 'Jetpack Security' ),
+		shortName: translate( 'Security', {
+			comment: 'Short name of the Jetpack Security generic plan',
+		} ),
+		tagline: translate( 'Comprehensive WordPress protection' ),
+		description: translate(
+			'Enjoy the peace of mind of complete site security. ' +
+				'Easy-to-use, powerful security tools guard your site, so you can focus on your business.'
 		),
-		more: MORE_FEATURES_LINK,
-	},
-};
-export const OPTION_PLAN_SECURITY_MONTHLY: SelectorProduct = {
-	...OPTION_PLAN_SECURITY,
-	productSlug: OPTIONS_JETPACK_SECURITY_MONTHLY,
-	term: TERM_MONTHLY,
-	subtypes: [ PLAN_JETPACK_SECURITY_DAILY_MONTHLY, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ],
-	costProductSlug: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-};
+		features: {
+			items: buildCardFeaturesFromItem(
+				{
+					[ FEATURE_CATEGORY_SECURITY ]: [
+						FEATURE_PRODUCT_BACKUP_V2,
+						FEATURE_PRODUCT_SCAN_V2,
+						FEATURE_PRODUCT_ANTISPAM_V2,
+						FEATURE_ACTIVITY_LOG_V2,
+					],
+					[ FEATURE_CATEGORY_OTHER ]: [
+						FEATURE_VIDEO_HOSTING_V2,
+						FEATURE_SOCIAL_MEDIA_POSTING_V2,
+						FEATURE_COLLECT_PAYMENTS_V2,
+						FEATURE_SITE_MONETIZATION_V2,
+						FEATURE_PRIORITY_SUPPORT_V2,
+					],
+				},
+				undefined,
+				variation
+			),
+			more: MORE_FEATURES_LINK,
+		},
+	};
 
-/**
- * Define properties with translatable strings getters.
- */
-[ OPTION_PLAN_SECURITY, OPTION_PLAN_SECURITY_MONTHLY ].forEach( ( target ) => {
-	Object.defineProperties( target, {
+	Object.defineProperties( plan, {
 		displayName: {
 			get: () => translate( 'Jetpack Security' ),
 		},
@@ -184,54 +173,54 @@ export const OPTION_PLAN_SECURITY_MONTHLY: SelectorProduct = {
 				),
 		},
 	} );
+
+	return plan;
+};
+export const OPTION_PLAN_SECURITY_MONTHLY: ( variation: string ) => SelectorProduct = (
+	variation
+) => ( {
+	...OPTION_PLAN_SECURITY( variation ),
+	productSlug: OPTIONS_JETPACK_SECURITY_MONTHLY,
+	term: TERM_MONTHLY,
+	subtypes: [ PLAN_JETPACK_SECURITY_DAILY_MONTHLY, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ],
+	costProductSlug: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } );
 
 // Jetpack Backup
-export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
-	productSlug: OPTIONS_JETPACK_BACKUP,
-	annualOptionSlug: OPTIONS_JETPACK_BACKUP,
-	monthlyOptionSlug: OPTIONS_JETPACK_BACKUP_MONTHLY,
-	term: TERM_ANNUALLY,
-	type: ITEM_TYPE_PRODUCT,
-	subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_REALTIME ],
-	costProductSlug: PRODUCT_JETPACK_BACKUP_DAILY,
-	monthlyProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-	iconSlug: 'jetpack_backup_v2',
-	displayName: translate( 'Jetpack Backup' ),
-	shortName: translate( 'Backup', {
-		comment: 'Short name of the Jetpack Backup generic product',
-	} ),
-	tagline: translate( 'Recommended for all sites' ),
-	description: translate( 'Never lose a word, image, page, or time worrying about your site.' ),
-	buttonLabel: translate( 'Get Backup' ),
-	features: {
-		items: buildCardFeaturesFromItem(
-			[
-				FEATURE_BACKUP_V2,
-				FEATURE_ONE_CLICK_RESTORE_V2,
-				FEATURE_SECURE_STORAGE_V2,
-				FEATURE_ACTIVITY_LOG_V2,
-				FEATURE_PRIORITY_SUPPORT_V2,
-			],
-			{ withoutDescription: true, withoutIcon: true },
-			getJetpackCROActiveVersion()
-		),
-	},
-};
+export const OPTION_PRODUCT_BACKUP: ( variation: string ) => SelectorProduct = ( variation ) => {
+	const plan = {
+		productSlug: OPTIONS_JETPACK_BACKUP,
+		annualOptionSlug: OPTIONS_JETPACK_BACKUP,
+		monthlyOptionSlug: OPTIONS_JETPACK_BACKUP_MONTHLY,
+		term: TERM_ANNUALLY,
+		type: ITEM_TYPE_PRODUCT,
+		subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_REALTIME ],
+		costProductSlug: PRODUCT_JETPACK_BACKUP_DAILY,
+		monthlyProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+		iconSlug: 'jetpack_backup_v2',
+		displayName: translate( 'Jetpack Backup' ),
+		shortName: translate( 'Backup', {
+			comment: 'Short name of the Jetpack Backup generic product',
+		} ),
+		tagline: translate( 'Recommended for all sites' ),
+		description: translate( 'Never lose a word, image, page, or time worrying about your site.' ),
+		buttonLabel: translate( 'Get Backup' ),
+		features: {
+			items: buildCardFeaturesFromItem(
+				[
+					FEATURE_BACKUP_V2,
+					FEATURE_ONE_CLICK_RESTORE_V2,
+					FEATURE_SECURE_STORAGE_V2,
+					FEATURE_ACTIVITY_LOG_V2,
+					FEATURE_PRIORITY_SUPPORT_V2,
+				],
+				{ withoutDescription: true, withoutIcon: true },
+				variation
+			),
+		},
+	};
 
-export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
-	...OPTION_PRODUCT_BACKUP,
-	productSlug: OPTIONS_JETPACK_BACKUP_MONTHLY,
-	term: TERM_MONTHLY,
-	subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ],
-	costProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-};
-
-/**
- * Define properties with translatable strings getters.
- */
-[ OPTION_PRODUCT_BACKUP, OPTION_PRODUCT_BACKUP_MONTHLY ].forEach( ( target ) => {
-	Object.defineProperties( target, {
+	Object.defineProperties( plan, {
 		displayName: {
 			get: () => translate( 'Jetpack Backup' ),
 		},
@@ -247,6 +236,18 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 		},
 		buttonLabel: { get: () => translate( 'Get Backup' ) },
 	} );
+
+	return plan;
+};
+
+export const OPTION_PRODUCT_BACKUP_MONTHLY: ( variation: string ) => SelectorProduct = (
+	variation
+) => ( {
+	...OPTION_PRODUCT_BACKUP( variation ),
+	productSlug: OPTIONS_JETPACK_BACKUP_MONTHLY,
+	term: TERM_MONTHLY,
+	subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ],
+	costProductSlug: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 } );
 
 // Jetpack CRM
@@ -254,16 +255,14 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 const CRM_ENTREPRENEUR_PRICE = 17;
 const CRM_ENTREPRENEUR_CURRENCY = 'USD';
 
-export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
+export const EXTERNAL_PRODUCT_CRM: ( variation: string ) => SelectorProduct = ( variation ) => ( {
 	productSlug: PRODUCT_JETPACK_CRM,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
 	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM,
 	monthlyProductSlug: PRODUCT_JETPACK_CRM,
-	iconSlug: [ 'v1', 'v2' ].includes( getJetpackCROActiveVersion() )
-		? 'jetpack_crm_dark'
-		: 'jetpack_crm',
+	iconSlug: [ 'v1', 'v2' ].includes( variation ) ? 'jetpack_crm_dark' : 'jetpack_crm',
 	displayName:
 		{
 			v2: translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
@@ -272,13 +271,13 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 				},
 			} ),
 			i5: translate( 'CRM Entrepreneur' ),
-		}[ getJetpackCROActiveVersion() ] || translate( 'Jetpack CRM' ),
+		}[ variation ] || translate( 'Jetpack CRM' ),
 
 	shortName:
 		{
 			v2: translate( 'Jetpack CRM ' ),
 			i5: translate( 'CRM Entrepreneur' ),
-		}[ getJetpackCROActiveVersion() ] ||
+		}[ variation ] ||
 		translate( 'CRM', {
 			comment: 'Short name of the Jetpack CRM',
 		} ),
@@ -286,13 +285,12 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
 	// available via the API). Rather like a third-party product.
 	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
-	displayPrice: getJetpackCROActiveVersion() === 'v1' ? undefined : CRM_ENTREPRENEUR_PRICE,
-	displayCurrency: getJetpackCROActiveVersion() === 'v1' ? undefined : CRM_ENTREPRENEUR_CURRENCY,
+	displayPrice: variation === 'v1' ? undefined : CRM_ENTREPRENEUR_PRICE,
+	displayCurrency: variation === 'v1' ? undefined : CRM_ENTREPRENEUR_CURRENCY,
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
-	buttonLabel:
-		getJetpackCROActiveVersion() === 'v1' ? translate( 'Get Jetpack CRM' ) : translate( 'Get CRM' ),
+	buttonLabel: variation === 'v1' ? translate( 'Get Jetpack CRM' ) : translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem(
 			[
@@ -303,24 +301,29 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 				FEATURE_CRM_PRIORITY_SUPPORT,
 			],
 			{ withoutDescription: true, withoutIcon: true },
-			getJetpackCROActiveVersion()
+			variation
 		),
 	},
 	hidePrice: true,
 	externalUrl: 'https://jetpackcrm.com/pricing/',
-};
+} );
 
-export const EXTERNAL_PRODUCT_CRM_MONTHLY: SelectorProduct = {
-	...EXTERNAL_PRODUCT_CRM,
+export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: string ) => SelectorProduct = (
+	variation
+) => ( {
+	...EXTERNAL_PRODUCT_CRM( variation ),
 	productSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 	term: TERM_MONTHLY,
 	displayTerm: TERM_ANNUALLY,
 	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM_MONTHLY,
-};
+} );
 
 // Map slug to objects.
-export const OPTIONS_SLUG_MAP: Record< SelectorProductSlug, SelectorProduct > = {
+export const OPTIONS_SLUG_MAP: Record<
+	SelectorProductSlug,
+	( variation: string ) => SelectorProduct
+> = {
 	[ OPTIONS_JETPACK_SECURITY ]: OPTION_PLAN_SECURITY,
 	[ OPTIONS_JETPACK_SECURITY_MONTHLY ]: OPTION_PLAN_SECURITY_MONTHLY,
 	[ OPTIONS_JETPACK_BACKUP ]: OPTION_PRODUCT_BACKUP,
@@ -331,7 +334,10 @@ export const OPTIONS_SLUG_MAP: Record< SelectorProductSlug, SelectorProduct > = 
 export const EXTERNAL_PRODUCTS_LIST = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
 
 // External Product slugs to SelectorProduct.
-export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, SelectorProduct > = {
+export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
+	string,
+	( variation: string ) => SelectorProduct
+> = {
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
 };

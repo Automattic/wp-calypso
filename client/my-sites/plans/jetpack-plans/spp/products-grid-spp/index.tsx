@@ -216,7 +216,7 @@ const ProductsGridSpp: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</section>
-			{ ! isJetpackCloud() && <StoreFooter /> }
+			<StoreFooter />
 		</Experiment>
 	);
 };

@@ -1,3 +1,8 @@
+export type ConfigValue = string | boolean | number;
+
+export type ConfigData = Record< string, any > & {
+	features?: Record< string, boolean >;
+};
 /**
  * Returns configuration value for given key
  *
@@ -16,16 +21,14 @@
  *
  * The config files are loaded in sequence: _shared.json, {env}.json, {env}.local.json
  *
- *
  * @see server/config/parser.js
+ * @param data Configurat data.
  * @throws {ReferenceError} when key not defined in the config (NODE_ENV=development only)
- * @param {string} key name of the property defined in the config files
- * @returns {*} value of property named by the key
+ * @returns A function that gets the value of property named by the key
  */
-
-const config = ( data ) => ( key ) => {
+const config = ( data: ConfigData ) => < T >( key: string ): T | undefined => {
 	if ( key in data ) {
-		return data[ key ];
+		return data[ key ] as T;
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
@@ -53,34 +56,41 @@ const config = ( data ) => ( key ) => {
 			'color: black' // message
 		);
 	}
+
+	return undefined;
 };
 
 /**
  * Checks whether a specific feature is enabled.
  *
- * @param {object} data the json environment configuration to use for getting config values
- * @returns {(feature: string) => boolean} A function that takes a feature name and returns true when the feature is enabled.
- * @public
+ * @param data the json environment configuration to use for getting config values
+ * @returns A function that takes a feature name and returns true when the feature is enabled.
  */
-const isEnabled = ( data ) => ( /** @type {string} */ feature ) =>
+const isEnabled = ( data: ConfigData ) => ( feature: string ): boolean =>
 	( data.features && !! data.features[ feature ] ) || false;
 
 /**
  * Gets a list of all enabled features.
  *
  * @param data A set of config data (Not used by general users, is pre-filled via currying).
- * @returns {Array} List of enabled features (strings).
+ * @returns List of enabled features (strings).
  */
-const enabledFeatures = ( data ) => () =>
-	Object.keys( data.features ).filter( ( feature ) => !! data.features[ feature ] );
+const enabledFeatures = ( data: ConfigData ) => (): string[] => {
+	if ( ! data.features ) {
+		return [];
+	}
+	return Object.entries( data.features ).reduce(
+		( enabled, [ feature, isEnabled ] ) => ( isEnabled ? [ ...enabled, feature ] : enabled ),
+		[] as string[]
+	);
+};
 
 /**
  * Enables a specific feature.
  *
- * @param {object} data the json environment configuration to use for getting config values
- * @public
+ * @param data the json environment configuration to use for getting config values
  */
-const enable = ( data ) => ( /** @type {string} */ feature ) => {
+const enable = ( data: ConfigData ) => ( feature: string ) => {
 	if ( data.features ) {
 		data.features[ feature ] = true;
 	}
@@ -89,18 +99,25 @@ const enable = ( data ) => ( /** @type {string} */ feature ) => {
 /**
  * Disables a specific feature.
  *
- * @param {object} data the json environment configuration to use for getting config values
- * @public
+ * @param data the json environment configuration to use for getting config values
  */
 
-const disable = ( data ) => ( /** @type {string} */ feature ) => {
+const disable = ( data: ConfigData ) => ( feature: string ) => {
 	if ( data.features ) {
 		data.features[ feature ] = false;
 	}
 };
 
-module.exports = ( data ) => {
-	const configApi = config( data );
+export interface ConfigApi {
+	< T >( key: string ): T;
+	isEnabled: ( feature: string ) => boolean;
+	enabledFeatures: () => string[];
+	enable: ( feature: string ) => void;
+	disable: ( feature: string ) => void;
+}
+
+export default ( data: ConfigData ): ConfigApi => {
+	const configApi = config( data ) as ConfigApi;
 	configApi.isEnabled = isEnabled( data );
 	configApi.enabledFeatures = enabledFeatures( data );
 	configApi.enable = enable( data );

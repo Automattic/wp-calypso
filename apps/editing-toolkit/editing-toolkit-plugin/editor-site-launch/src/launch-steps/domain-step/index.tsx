@@ -2,10 +2,9 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
-import type { DomainSuggestions } from '@automattic/data-stores';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
@@ -19,12 +18,11 @@ import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic
 import { FLOW_ID } from '../../constants';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { plan } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const { currentDomain } = useDomainSelection();
+	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { siteSubdomain } = useSiteDomains();
 	const { domainSearch, setDomainSearch } = useDomainSearch();
 
-	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
+	const { confirmDomainSelection } = useDispatch( LAUNCH_STORE );
 
 	const handleNext = () => {
 		confirmDomainSelection();
@@ -33,18 +31,6 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 
 	const handlePrev = () => {
 		onPrevStep?.();
-	};
-
-	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
-		confirmDomainSelection();
-		setDomain( suggestion );
-		if ( plan?.isFree ) {
-			unsetPlan();
-		}
-	};
-
-	const handleExistingSubdomainSelect = () => {
-		unsetDomain();
 	};
 
 	const trackDomainSearchInteraction = ( query: string ) => {
@@ -76,8 +62,8 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					onDomainSearchBlur={ trackDomainSearchInteraction }
 					currentDomain={ currentDomain || mockDomainSuggestion( siteSubdomain?.domain ) }
 					existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
-					onDomainSelect={ handleDomainSelect }
-					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
+					onDomainSelect={ onDomainSelect }
+					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsUiAlgo="editor_domain_modal"
 					segregateFreeAndPaid
 					locale={ document.documentElement.lang }

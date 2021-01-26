@@ -33,6 +33,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@wordpress/api-fetch": "^3.21.1",
 		"@wordpress/data-controls": "^1.20.1",
 		"@wordpress/deprecated": "^2.11.0",
