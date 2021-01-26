@@ -26,6 +26,8 @@ import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switc
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import ExpiredSwitch from 'calypso/components/jetpack/expired-switch';
+import { JETPACK_BACKUP_PRODUCTS } from 'calypso/lib/products-values/constants';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
 
@@ -112,6 +114,20 @@ export function showUnavailableForMultisites( context, next ) {
 			<WPCOMBackupUpsell reason="multisite_not_supported" />
 		);
 	}
+
+	next();
+}
+
+export function showRenewalPrompt( context, next ) {
+	debug( 'controller: showRenewalPrompt' );
+
+	context.primary = (
+		<ExpiredSwitch
+			mainView={ context.primary }
+			expiredView={ <p>Hello!</p> }
+			productSlugs={ JETPACK_BACKUP_PRODUCTS }
+		/>
+	);
 
 	next();
 }

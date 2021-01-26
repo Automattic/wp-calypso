@@ -8,6 +8,11 @@ import { get } from 'lodash';
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 
+/**
+ * Type dependencies
+ */
+import type { AppState } from 'calypso/types';
+
 export interface SitePlan {
 	expired: boolean;
 	free_trial?: boolean;
@@ -18,6 +23,11 @@ export interface SitePlan {
 	user_is_owner?: boolean;
 }
 
+type RawSiteData = {
+	jetpack: boolean;
+	plan: SitePlan;
+};
+
 /**
  * Returns a site's plan object by site ID.
  *
@@ -27,19 +37,24 @@ export interface SitePlan {
  *
  * @param state Global state tree
  * @param siteId Site ID
+ * @param showExpired Set to true to show expired plans.
  * @returns Site's plan object
  */
-export default function getSitePlan( state, siteId: number | null ): SitePlan | null {
+export default function getSitePlan(
+	state: AppState,
+	siteId: number | null,
+	showExpired = false
+): SitePlan | null {
 	if ( ! siteId ) {
 		return null;
 	}
-	const site = getRawSite( state, siteId );
+	const site = getRawSite( state, siteId ) as RawSiteData | null;
 
 	if ( ! site ) {
 		return null;
 	}
 
-	if ( get( site.plan, 'expired', false ) ) {
+	if ( ! showExpired && get( site.plan, 'expired', false ) ) {
 		if ( site.jetpack ) {
 			return {
 				product_id: 2002,
