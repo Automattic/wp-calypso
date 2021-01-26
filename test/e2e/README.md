@@ -23,45 +23,27 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
         - [Canary](docs/running-tests.md#circleci#canary)
         - [Full suite](docs/running-tests.md#circleci#full-suite)
     - [Sauce Labs](docs/running-tests.md#sauce-labs)
-    
-- [Writing tests](#)
-  - [Gutenberg blocks](docs/gutenberg.md)
+- [Writing tests](docs/writing_tests.md)
+  - [Selector](docs/writing_tests.md#selector)
+      - [How](docs/writing_tests.md#how)
+  - [Component](docs/writing_tests.md#component)
+  - [Page Object Model](docs/writing_tests.md#page-object-model)
+      - [Structure](docs/writing_tests.md#structure)
+      - [Guidelines](docs/writing_tests.md#guidelines)
+  - [Flow](docs/writing_tests.md#flow)
+      - [Structure](docs/writing_tests.md#structure)
+      - [Guidelines](docs/writing_tests.md#guidelines)
 - [Style Guide](docs/style-guide.md)
-- [Other information](#other-information)
-  - [NodeJS Version](docs/miscellaneous.md#nodejs-version)
-  - [Git Pre-Commit Hook](docs/miscellaneous.md#git-pre-commit-hook)
-  - [Launch Logged-In Window](docs/miscellaneous.md#launch-logged-in-window)
-  - [User account requirements](docs/miscellaneous.md#user-account-requirements)
-  - [List of wrapper repos & friends](docs/miscellaneous.md#list-of-wrapper-repos--friends)
-  - [How to fix the `chromedriver not found` error when running e2e tests locally](docs/miscellaneous.md#how-to-fix-the-chromedriver-not-found-error-when-running-e2e-tests-locally)
+  - [Async / Await](docs/style-guide.md#async--await)
+  - [Tags](docs/style-guide.md#tags)
+  - [Page Objects](docs/style-guide.md#page-objects)
+  - [Use of this, const and lets](docs/style-guide.md#use-of-this-const-and-lets)
+  - [Arrow functions](docs/style-guide.md#arrow-functions)
+  - [Default values using destructuring](docs/style-guide.md#default-values-using-destructuring)
+  - [Nesting step blocks](docs/style-guide.md#nesting-step-blocks)
+  - [Catching errors in a step block](docs/style-guide.md#catching-errors-in-a-step-block)
+  - [Waiting for elements](docs/style-guide.md#waiting-for-elements)
+- [Troubleshooting & Debugging](docs/troubleshooting_debugging.md)
+  - [Table of contents](docs/troubleshooting_debugging.md#table-of-contents)
+  - [git pre-commit hook/husky](docs/troubleshooting_debugging.md#git-pre-commit-hookhusky)
 
-
-## Pre-requisites
-
-Make sure you are in the /test/e2e directory
-
-### Install NodeJS
-
-```bash
-brew install node #MacOS
-```
-
-Or use [nvm](https://github.com/creationix/nvm) (Recommended)
-
-### Install dependencies
-
-```bash
-yarn install
-```
-
-### Configuration
-
-See the [configuration documentation](docs/config.md) for details on setting configuration values and environment variables.
-
-## Running tests
-
-See the information on [how to run tests](docs/running-tests.md) where you'll find information on the flags and commands used to run the tests.
-
-## Other information
-
-See the [other information](docs/miscellaneous.md) documentation for other details that may be of interest.

@@ -47,6 +47,12 @@ cd <repo_root>/tests/e2e
 yarn install
 ```
 
+**Alternate Steps**
+
+For those that have freshly pulled the repository and have not installed any dependencies previously (eg. trials engineers) the steps above could result in `git pre-commit hooks` errors that prevent commits.
+
+Follow the instructions [here](docs/troubleshooting_debugging.md#git-pre-commit-hookhusky).
+
 ## Configuration
 
 ### Overview
