@@ -15,6 +15,7 @@ import persistOptions from './persist';
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export type { State };
+export type { LaunchStepType } from './types';
 export { STORE_KEY };
 
 use( plugins.persistence, persistOptions );

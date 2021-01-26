@@ -10,7 +10,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { LAUNCH_STORE } from '../stores';
 import LaunchMenuItem from './item';
-import type { LaunchStepType } from '../../../common/data-stores/launch/types';
+import type { LaunchStepType } from '../../../common/data-stores/launch';
 
 import './styles.scss';
 
@@ -20,11 +20,19 @@ interface Props {
 
 const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => {
 	const { __ } = useI18n();
-	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
-	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
-	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
+
+	const { currentStep, LaunchStep, LaunchSequence, isStepCompleted, isFlowCompleted } = useSelect(
+		( select ) => {
+			const launchStore = select( LAUNCH_STORE );
+			return {
+				currentStep: launchStore.getCurrentStep(),
+				LaunchStep: launchStore.getLaunchStep(),
+				LaunchSequence: launchStore.getLaunchSequence(),
+				isStepCompleted: launchStore.isStepCompleted,
+				isFlowCompleted: launchStore.isFlowCompleted(),
+			};
+		}
+	);
 
 	const LaunchStepMenuItemTitles = {
 		[ LaunchStep.Name ]: __( 'Name your site', 'full-site-editing' ),
@@ -35,7 +43,7 @@ const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => 
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
-	const handleClick = ( step ) => {
+	const handleClick = ( step: string ) => {
 		setStep( step );
 		onMenuItemClick( step );
 	};

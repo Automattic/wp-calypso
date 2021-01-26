@@ -16,9 +16,13 @@ import './styles.scss';
 const LaunchProgress: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 
-	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-
-	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
+	const { currentStep, LaunchSequence } = useSelect( ( select ) => {
+		const launchStore = select( LAUNCH_STORE );
+		return {
+			currentStep: launchStore.getCurrentStep(),
+			LaunchSequence: launchStore.getLaunchSequence(),
+		};
+	} );
 
 	const current = LaunchSequence.indexOf( currentStep ) + 1;
 	const total = LaunchSequence.length;
