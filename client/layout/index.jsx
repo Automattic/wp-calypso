@@ -146,23 +146,30 @@ class Layout extends Component {
 		);
 	}
 
+	// This is temporary helper function until we have rolled out to 100% of customers.
+	isNavUnificationEnabled() {
+		if ( ! this.props.teams.length ) {
+			return;
+		}
+
+		// Having the feature enabled by default in all environments, will let anyone use ?flags=-nav-unification to temporary disable it.
+		// We still have the feature disabled in production as safety mechanism for all customers.
+		if ( 'production' !== process.env.NODE_ENV && ! config.isEnabled( 'nav-unification' ) ) {
+			return;
+		}
+
+		// Leave the feature enabled for all a12s.
+		if ( isAutomatticTeamMember( this.props.teams ) ) {
+			// Force enable even in Production.
+			return config.enable( 'nav-unification' );
+		}
+
+		// Disable the feature for all customers and non a12s accounts.
+		return config.disable( 'nav-unification' );
+	}
+
 	render() {
-		// This is temporary helper function until we have rolled out to 100% of customers.
-		const isNavUnificationEnabled = () => {
-			// Having the feature enabled by default in all environments, will let anyone use ?flags=-nav-unification to temporary disable it.
-			if ( 'production' !== process.env.NODE_ENV && ! config.isEnabled( 'nav-unification' ) ) {
-				return false;
-			}
-
-			// Leave the feature enabled for all a12s.
-			if ( isAutomatticTeamMember( this.props.teams ) ) {
-				return true;
-			}
-
-			// Disable the feature for all customers.
-			config.disable( 'nav-unification' );
-			return false;
-		};
+		this.isNavUnificationEnabled();
 
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
@@ -181,7 +188,7 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': isNavUnificationEnabled(),
+			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const optionalBodyProps = () => {
