@@ -34,6 +34,7 @@ import {
 } from 'calypso/server/render';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
+import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import { createReduxStore } from 'calypso/state';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 import { setStore } from 'calypso/state/redux-store';
@@ -174,6 +175,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isMobileApp: isWpMobileApp( request.useragent.source ),
 		isDebug,
 		staticUrls: staticFilesUrls,
 	};

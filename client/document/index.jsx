@@ -22,7 +22,7 @@ import { chunkCssLinks } from './utils';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
+// import { isWpMobileApp } from 'calypso/server/lib/mobile-app';
 
 class Document extends React.Component {
 	render() {
@@ -123,7 +123,7 @@ class Document extends React.Component {
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 						'is-white-signup': sectionName === 'signup',
-						'is-mobile-app-view': isWpMobileApp(),
+						'is-mobile-app-view': app.isMobileApp,
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
