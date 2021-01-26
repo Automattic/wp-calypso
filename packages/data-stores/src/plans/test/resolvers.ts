@@ -20,7 +20,7 @@ describe( 'getSupportedPlans', () => {
 				// and rounds to 0 decimal places
 				currency_code: 'INR',
 				product_slug: PLAN_FREE,
-				raw_price: 13,
+				raw_price: 0,
 				product_id: 1,
 			},
 			{
@@ -28,7 +28,7 @@ describe( 'getSupportedPlans', () => {
 				// and rounds to 0 decimal places
 				currency_code: 'INR',
 				product_slug: PLAN_PREMIUM,
-				raw_price: 13,
+				raw_price: 12,
 				product_id: 2,
 			},
 			{
@@ -38,6 +38,7 @@ describe( 'getSupportedPlans', () => {
 				product_slug: PLAN_PREMIUM_MONTHLY,
 				raw_price: 13,
 				product_id: 3,
+				bill_period: 31,
 			},
 		];
 
@@ -117,30 +118,33 @@ describe( 'getSupportedPlans', () => {
 		expect( iter.next().value ).toEqual( {
 			products: [
 				{
+					annualPrice: '₹0.00',
 					billingPeriod: 'ANNUALLY',
 					pathSlug: undefined,
 					periodAgnosticSlug: undefined,
-					price: '1₹',
+					price: '₹0.00',
 					productId: 1,
-					rawPrice: 13,
+					rawPrice: 0,
 					storeSlug: 'free_plan',
 				},
 				{
 					annualDiscount: 92,
+					annualPrice: '₹12.00',
 					billingPeriod: 'ANNUALLY',
 					pathSlug: undefined,
 					periodAgnosticSlug: undefined,
-					price: '1₹',
+					price: '₹1.00',
 					productId: 2,
-					rawPrice: 13,
+					rawPrice: 12,
 					storeSlug: 'value_bundle',
 				},
 				{
+					annualPrice: '₹156.00',
 					annualDiscount: 92,
-					billingPeriod: 'ANNUALLY',
+					billingPeriod: 'MONTHLY',
 					pathSlug: undefined,
 					periodAgnosticSlug: undefined,
-					price: '1₹',
+					price: '₹13.00',
 					productId: 3,
 					rawPrice: 13,
 					storeSlug: 'value_bundle_monthly',
