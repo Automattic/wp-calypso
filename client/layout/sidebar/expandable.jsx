@@ -87,7 +87,7 @@ export const ExpandableSidebarMenu = ( {
 	};
 
 	const onLeave = () => {
-		if ( expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
+		if ( isTouch || ! config.isEnabled( 'nav-unification' ) ) {
 			return;
 		}
 
