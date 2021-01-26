@@ -7,7 +7,7 @@ This document will cover the environment setup process to run the `wp-calypso` e
 
 - [Setup](#setup)
     - [Table of contents](#table-of-contents)
-    - [Software environment](#software-environment)
+    - [Software Environment](#software-environment)
         - [Required software](#required-software)
         - [Steps](#steps)
     - [Configuration](#configuration)
@@ -19,7 +19,7 @@ This document will cover the environment setup process to run the `wp-calypso` e
 
 <!-- /TOC -->
 
-## Software environment
+## Software Environment
 
 The following instructions are geared towards macOS users.
 
@@ -94,7 +94,7 @@ For the full list of possible configuration values, please see the following pag
 
 Environment Variables are values that are defined at the system level to serve as configuration for programs.
 
-For e2e tests, the following are required environment variables (see [above](#configuration))
+For e2e tests, the following are required environment variables without which e2e tests will not run locally:
 
 ```
 export CONFIG_KEY='<config_key_from_a8c_store>'

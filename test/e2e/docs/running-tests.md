@@ -133,13 +133,21 @@ Each suite is also scheduled to execute every _x_ hours at certain times through
 
 ### Canary
 
-As of 2021-01-25, canary tests are triggered _automatically_ on all PRs and merges.
+As of 2021-01-25, a variety of canary tests are triggered _automatically_ on all PRs and merges.
+
+These include:
+
+* chrome canary
+* internet explorer
+* safari
+* woocommerce
 
 ### Full suite
 
-The following labels provide ability to trigger e2e tests for specific feature(s):
+The following GitHub labels provide ability to trigger e2e tests for specific feature(s):
 
 | Label | Target Suite |
+| --- | --- |
 | `[Status] Needs e2e Testing` | Full suite of WordPress.com e2e tests |
 | `[Status] Needs Jetpack e2e Testing` | Full suite of Jetpack e2e tests |
 | `[Status] Needs e2e Testing CoBlocks Edge` | Full suite of CoBlocks e2e tests |
