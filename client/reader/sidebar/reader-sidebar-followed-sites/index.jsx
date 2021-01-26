@@ -80,6 +80,7 @@ export class ReaderSidebarFollowedSites extends Component {
 				title={ translate( 'Followed Sites' ) }
 				onClick={ this.props.toggleReaderSidebarFollowing }
 				materialIcon="check_circle"
+				disableFlyout={ true }
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }
