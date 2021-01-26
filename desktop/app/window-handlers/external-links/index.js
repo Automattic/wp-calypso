@@ -21,15 +21,17 @@ const OFFSET_NEW_WINDOW = 50;
 
 // Protocol doesn't matter - only the domain + path is checked
 const ALWAYS_OPEN_IN_APP = [
-	'http://' + Config.server_host,
-	'http://localhost',
-	'http://calypso.localhost:3000/*',
+	'https://wordpress.com/*',
+	'https://www.wordpress.com/*',
 	'https:/public-api.wordpress.com',
 	'https://wordpress.com/wp-login.php',
-	'http://127.0.0.1:41050/*',
 ];
 
 const DONT_OPEN_IN_BROWSER = [ Config.server_url, 'https://public-api.wordpress.com/connect/' ];
+
+const isWordPress = ( url ) => {
+	return url.hostname === 'wordpress.com' || url.hostname === 'www.wordpress.com';
+};
 
 const isWpAdminPostUrl = ( requestUrl ) =>
 	requestUrl.includes( 'wp-admin' ) && requestUrl.includes( 'post' );
@@ -55,6 +57,14 @@ module.exports = function ( mainWindow ) {
 	webContents.on( 'will-navigate', async function ( event, url ) {
 		const parsedUrl = new URL( url );
 		log.info( `Navigating to URL: '${ parsedUrl }'` );
+
+		if ( isWordPress( parsedUrl ) && parsedUrl.search && parsedUrl.search.includes( 'apppromo' ) ) {
+			event.preventDefault();
+			log.info( `Redirecting to 'wordpress.com/log-in'` );
+
+			mainWindow.webContents.loadURL( Config.loginURL );
+			return;
+		}
 
 		for ( let x = 0; x < ALWAYS_OPEN_IN_APP.length; x++ ) {
 			const alwaysOpenUrl = new URL( ALWAYS_OPEN_IN_APP[ x ] );
