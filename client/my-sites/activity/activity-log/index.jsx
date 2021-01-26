@@ -42,7 +42,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { siteHasBackupProductPurchase } from 'calypso/state/purchases/selectors';
+import { siteHasJetpackProductPurchase } from 'calypso/state/purchases/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, getSiteTitle, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -565,7 +565,7 @@ export default connect(
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
-		const siteHasNoLog = siteIsOnFreePlan && ! siteHasBackupProductPurchase( state, siteId );
+		const siteHasNoLog = siteIsOnFreePlan && ! siteHasJetpackProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
