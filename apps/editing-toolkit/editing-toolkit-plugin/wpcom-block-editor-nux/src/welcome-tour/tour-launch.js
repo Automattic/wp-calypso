@@ -1,6 +1,3 @@
-/*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
-import './public-path';
-
 /**
  * Internal dependencies
  */
@@ -147,7 +144,3 @@ function WelcomeTourMinimized( { onMaximize, setJustMaximized, slideNumber } ) {
 }
 
 export default LaunchWpcomWelcomeTour;
-
-registerPlugin( 'wpcom-block-editor-welcome-tour', {
-	render: () => <LaunchWpcomWelcomeTour />,
-} );
