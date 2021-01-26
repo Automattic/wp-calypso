@@ -236,12 +236,17 @@ export class PluginsBrowser extends Component {
 	}
 
 	getRecommendedPluginListView() {
+		const { recommendedPlugins } = this.props;
+		if ( recommendedPlugins && recommendedPlugins.length === 0 ) {
+			return;
+		}
+
 		return (
 			<PluginsBrowserList
 				currentSites={ this.props.sites }
 				expandedListLink={ false }
 				listName="recommended"
-				plugins={ this.props.recommendedPlugins }
+				plugins={ recommendedPlugins }
 				showPlaceholders={ this.props.isRequestingRecommendedPlugins }
 				site={ this.props.siteSlug }
 				size={ SHORT_LIST_LENGTH }
