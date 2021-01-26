@@ -20,7 +20,7 @@ export const useSupportedPlans = (
 				select( PLANS_STORE ).getPlanProduct( plan.periodAgnosticSlug, billingPeriod )
 			)
 			.map( ( planProduct ) => planProduct?.annualDiscount )
-			// ensure that no `undefiend` values are passed on
+			// ensure that no `undefined` values are passed on
 			.filter( ( value ) => !! value ) as number[];
 		return { supportedPlans, annualDiscounts };
 	} );

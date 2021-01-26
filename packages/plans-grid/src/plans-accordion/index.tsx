@@ -39,7 +39,7 @@ export interface Props {
 	disabledPlans?: DisabledPlansMap;
 	locale: string;
 	billingPeriod: Plans.PlanBillingPeriod;
-	onMaxMonhtlyDiscountPercentageChange: ( perc: number | undefined ) => void;
+	onMaxMonthlyDiscountPercentageChange: ( perc: number | undefined ) => void;
 }
 
 const PlansAccordion: React.FunctionComponent< Props > = ( {
@@ -51,15 +51,15 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 	disabledPlans,
 	locale,
 	billingPeriod,
-	onMaxMonhtlyDiscountPercentageChange,
+	onMaxMonthlyDiscountPercentageChange,
 } ) => {
 	const { __ } = useI18n();
 
 	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
 
 	React.useEffect( () => {
-		onMaxMonhtlyDiscountPercentageChange( maxAnnualDiscount );
-	}, [ onMaxMonhtlyDiscountPercentageChange, maxAnnualDiscount ] );
+		onMaxMonthlyDiscountPercentageChange( maxAnnualDiscount );
+	}, [ onMaxMonthlyDiscountPercentageChange, maxAnnualDiscount ] );
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4 ];

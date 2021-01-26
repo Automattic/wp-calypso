@@ -34,7 +34,7 @@ export interface Props {
 	customTagLines?: CustomTagLinesMap;
 	defaultAllPlansExpanded?: boolean;
 	billingPeriod: Plans.PlanBillingPeriod;
-	onMaxMonhtlyDiscountPercentageChange: ( perc: number | undefined ) => void;
+	onMaxMonthlyDiscountPercentageChange: ( perc: number | undefined ) => void;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
@@ -45,7 +45,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	disabledPlans,
 	locale,
 	billingPeriod,
-	onMaxMonhtlyDiscountPercentageChange,
+	onMaxMonthlyDiscountPercentageChange,
 	showTaglines = false,
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
@@ -55,8 +55,8 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
 
 	React.useEffect( () => {
-		onMaxMonhtlyDiscountPercentageChange( maxAnnualDiscount );
-	}, [ onMaxMonhtlyDiscountPercentageChange, maxAnnualDiscount ] );
+		onMaxMonthlyDiscountPercentageChange( maxAnnualDiscount );
+	}, [ onMaxMonthlyDiscountPercentageChange, maxAnnualDiscount ] );
 
 	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
 
