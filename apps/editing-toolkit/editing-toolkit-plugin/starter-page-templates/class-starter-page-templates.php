@@ -204,15 +204,17 @@ class Starter_Page_Templates {
 	public function get_page_templates() {
 		$page_template_data = get_transient( $this->templates_cache_key );
 
+		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
+
 		// Load fresh data if we don't have any or vertical_id doesn't match.
-		if ( false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
-			$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
+		if ( false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) || false !== $override_source_site ) {
 
 			$request_url = esc_url_raw(
 				add_query_arg(
 					array(
-						'site' => $override_source_site,
-						'tags' => 'layout',
+						'site'         => $override_source_site,
+						'tags'         => 'layout',
+						'pattern_meta' => 'is_web',
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_verticals_locale()
 				)
@@ -231,7 +233,11 @@ class Starter_Page_Templates {
 			}
 
 			$page_template_data = json_decode( wp_remote_retrieve_body( $response ), true );
-			set_transient( $this->templates_cache_key, $page_template_data, DAY_IN_SECONDS );
+
+			// Only save to cache if we have not overridden the source site.
+			if ( false === $override_source_site ) {
+				set_transient( $this->templates_cache_key, $page_template_data, DAY_IN_SECONDS );
+			}
 
 			return $page_template_data;
 		}
