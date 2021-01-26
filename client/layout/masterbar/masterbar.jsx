@@ -6,22 +6,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
- * Internal dependencies
- */
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
-
-/**
  * Style dependencies
  */
 import './style.scss';
 
-const Masterbar = ( { children, className } ) => {
-	return isWpMobileApp() ? null : (
-		<header id="header" className={ classNames( 'masterbar', className ) }>
-			{ children }
-		</header>
-	);
-};
+const Masterbar = ( { children, className } ) => (
+	<header id="header" className={ classNames( 'masterbar', className ) }>
+		{ children }
+	</header>
+);
 
 Masterbar.propTypes = {
 	children: PropTypes.node.isRequired,
