@@ -425,7 +425,6 @@ const CheckoutSummaryFeaturesListWrapper = styled.ul`
 `;
 
 const CheckoutSummaryHelpButton = styled.button`
-	margin-top: 16px;
 	text-align: left;
 
 	.rtl & {
@@ -444,16 +443,7 @@ const CheckoutSummaryHelpButton = styled.button`
 `;
 
 const CheckoutSummaryHelpWrapper = styled.div`
-	position: absolute;
-
-	@media screen and ( max-width: 960px ) {
-		position: static;
-		padding: 0 20px 20px;
-
-		> button {
-			margin-top: 0;
-		}
-	}
+	padding: 0 20px 20px;
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
