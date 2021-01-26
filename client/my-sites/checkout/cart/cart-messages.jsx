@@ -2,19 +2,20 @@
  * External dependencies
  */
 import React, { useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getNewMessages } from 'calypso/lib/cart-values';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 
 export default function CartMessages( { cart, isLoadingCart } ) {
 	const previousCart = useRef( null );
+	const reduxDispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
@@ -25,9 +26,10 @@ export default function CartMessages( { cart, isLoadingCart } ) {
 			translate,
 			selectedSiteSlug,
 			previousCart: previousCart.current,
+			reduxDispatch,
 		} );
 		previousCart.current = cart;
-	}, [ cart, isLoadingCart, translate, selectedSiteSlug ] );
+	}, [ cart, isLoadingCart, translate, selectedSiteSlug, reduxDispatch ] );
 
 	return null;
 }
@@ -109,7 +111,14 @@ function getPrettyErrorMessages( messages, { translate, selectedSiteSlug } ) {
 	} );
 }
 
-function displayCartMessages( { cart, isLoadingCart, translate, selectedSiteSlug, previousCart } ) {
+function displayCartMessages( {
+	cart,
+	isLoadingCart,
+	translate,
+	selectedSiteSlug,
+	previousCart,
+	reduxDispatch,
+} ) {
 	const newCart = cart;
 	if ( isLoadingCart ) {
 		return;
@@ -119,20 +128,24 @@ function displayCartMessages( { cart, isLoadingCart, translate, selectedSiteSlug
 	messages.errors = getPrettyErrorMessages( messages.errors, { translate, selectedSiteSlug } );
 
 	if ( messages.errors?.length > 0 ) {
-		notices.error(
-			messages.errors.map( ( error ) => (
-				<p key={ `${ error.code }-${ error.message }` }>{ error.message }</p>
-			) ),
-			{ persistent: true }
+		reduxDispatch(
+			errorNotice(
+				messages.errors.map( ( error ) => (
+					<p key={ `${ error.code }-${ error.message }` }>{ error.message }</p>
+				) ),
+				{ persistent: true }
+			)
 		);
 		return;
 	}
 
 	if ( messages.success?.length > 0 ) {
-		notices.success(
-			messages.success.map( ( success ) => (
-				<p key={ `${ success.code }-${ success.message }` }>{ success.message }</p>
-			) )
+		reduxDispatch(
+			successNotice(
+				messages.success.map( ( success ) => (
+					<p key={ `${ success.code }-${ success.message }` }>{ success.message }</p>
+				) )
+			)
 		);
 		return;
 	}
