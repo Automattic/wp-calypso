@@ -65,14 +65,14 @@ class SiteSettingsPerformance extends Component {
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
+				<Cloudflare />
+
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
-
-				<Cloudflare />
 
 				{ siteIsJetpack && (
 					<Fragment>

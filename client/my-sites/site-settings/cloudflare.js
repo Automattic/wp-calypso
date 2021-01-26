@@ -27,6 +27,7 @@ const Cloudflare = () => {
 	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const showUpsell = [ 'personal-bundle', 'free_plan' ].includes( sitePlan );
+	const showBizUpsell = sitePlan !== 'business-bundle';
 	const upgradeLink = `/plans/${ siteSlug }?customerType=business`;
 
 	const recordClick = () => {
@@ -47,7 +48,7 @@ const Cloudflare = () => {
 								<img src={ jetpackIllustration } alt="" />
 							</div>
 							<div className="site-settings__cloudflare-text">
-								<p className="site-settings__cloudflare-title">Jetpack CDN</p>
+								<p className="site-settings__cloudflare-title">Jetpack Site Accelerator</p>
 								<p>{ translate( 'Comes built-in with WordPress.com Business plans.' ) }</p>
 								<p>
 									<a
@@ -62,6 +63,15 @@ const Cloudflare = () => {
 							</div>
 						</div>
 					</CompactCard>
+					{ sitePlan && showBizUpsell && (
+						<UpsellNudge
+							title={ translate( 'Available on Business plan or higher' ) }
+							href={ upgradeLink }
+							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge' }
+							showIcon={ true }
+							forceDisplay={ true }
+						/>
+					) }
 					<CompactCard>
 						<div className="site-settings__cloudflare">
 							<div className="site-settings__cloudflare-illustration">
@@ -97,6 +107,7 @@ const Cloudflare = () => {
 							forceDisplay={ true }
 						/>
 					) }
+					<div class="site-settings__cloudflare-spacer" />
 				</>
 			) }
 		</>

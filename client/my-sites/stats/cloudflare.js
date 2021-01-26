@@ -40,6 +40,7 @@ const Cloudflare = () => {
 							href="CLOUDFLARELEARNMORELINK"
 							tracksImpressionName="banner_stats_cloudflare"
 							event="calypso_stats_cloudflare_analytics_learn_more"
+							callToAction="Learn more"
 						/>
 					) }
 					{ sitePlan && showUpsell && (
@@ -53,6 +54,7 @@ const Cloudflare = () => {
 							event="calypso_stats_cloudflare_analytics_upsell_nudge"
 							showIcon={ true }
 							forceDisplay={ true }
+							callToAction="Upgrade"
 						/>
 					) }
 				</>
