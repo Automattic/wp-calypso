@@ -7,20 +7,15 @@ import './public-path';
  */
 import { Guide, GuidePage } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-
-/**
- * Internal dependencies
- */
-import WpcomNux from './src/welcome-modal/wpcom-nux';
-import LaunchWpcomWelcomeTour from './src/welcome-tour/tour-launch';
-import { getQueryArg } from '@wordpress/url';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
-// Only register plugin if these features are available.
-// If registered without this check, atomic sites without gutenberg enabled will error when loading the editor.
-// These seem to be the only dependencies here that are not supported there.
+/**
+ * Internal dependencies
+ */
+import WpcomNux from './welcome-modal/wpcom-nux';
+import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: function WpcomBlockEditorNux() {
@@ -48,10 +43,8 @@ registerPlugin( 'wpcom-block-editor-nux', {
 		}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
 		const isPodcastingSite = !! site?.options?.anchor_podcast;
-		const anchorEpisode = getQueryArg( window.location.href, 'anchor_episode' );
-		const showPodcastingTutorial = isPodcastingSite && anchorEpisode;
 
-		if ( showWpcomNuxVariant && ! showPodcastingTutorial ) {
+		if ( showWpcomNuxVariant && ! isPodcastingSite ) {
 			return <LaunchWpcomWelcomeTour />;
 		}
 

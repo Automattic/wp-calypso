@@ -2,12 +2,10 @@
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { registerPlugin } from '@wordpress/plugins';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getQueryArg } from '@wordpress/url';
 
@@ -34,18 +32,6 @@ function WpcomNux() {
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
 	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
-
-	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
-	useEffect( () => {
-		if ( typeof isWpcomNuxEnabled !== 'undefined' ) {
-			return;
-		}
-		const fetchWpcomNuxStatus = async () => {
-			const response = await apiFetch( { path: '/wpcom/v2/block-editor/nux' } );
-			setWpcomNuxStatus( { isNuxEnabled: response.is_nux_enabled, bypassApi: true } );
-		};
-		fetchWpcomNuxStatus();
-	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
 	// Hide editor sidebar first time users sees the editor
 	useEffect( () => {
