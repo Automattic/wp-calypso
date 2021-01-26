@@ -204,6 +204,7 @@
 		"@wordpress/base-styles": "^3.3.0",
 		"@wordpress/components": "^12.0.1",
 		"@wordpress/element": "^2.19.0",
+		"@wordpress/eslint-plugin": "^7.3.0",
 		"@wordpress/i18n": "^3.17.0",
 		"@wordpress/icons": "^2.9.0",
 		"@wordpress/jest-preset-default": "^6.5.0",
