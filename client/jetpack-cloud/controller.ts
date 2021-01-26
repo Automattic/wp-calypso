@@ -63,18 +63,18 @@ const parseSiteFragment = ( context: PageJS.Context ): string | undefined => {
  * Fetch site data.
  *
  * @param {PageJS.Context} context Route context
- * @param {number|string} siteId Site id
+ * @param {number|string} siteIdOrSlug Site id or slug
  * @returns {Promise} Promise that resolves with the site id and slug
  */
 const fetchSite = (
 	context: PageJS.Context,
-	siteId: number | string
+	siteIdOrSlug: number | string
 ): Promise< { id: number | undefined; slug: string | undefined } > => {
 	const { getState, dispatch } = context.store;
 
-	return dispatch( requestSite( siteId ) ).then( () => ( {
-		id: getSiteId( getState(), siteId ),
-		slug: getSiteSlug( getState(), siteId ),
+	return dispatch( requestSite( siteIdOrSlug ) ).then( () => ( {
+		id: getSiteId( getState(), siteIdOrSlug ),
+		slug: getSiteSlug( getState(), siteIdOrSlug ),
 	} ) );
 };
 
