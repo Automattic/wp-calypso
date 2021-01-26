@@ -83,7 +83,11 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					<span className="plans-interval-toggle__label">
 						{ __( 'Annually', __i18n_text_domain__ ) }
 					</span>
-					{ intervalType === 'MONTHLY' && typeof maxMonthlyDiscountPercentage !== undefined && (
+					{ /*
+					 * Check covers both cases of maxMonthlyDiscountPercentage
+					 * not being undefined and not being 0
+					 */ }
+					{ intervalType === 'MONTHLY' && maxMonthlyDiscountPercentage && (
 						<PopupMessages>
 							{ sprintf(
 								// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
