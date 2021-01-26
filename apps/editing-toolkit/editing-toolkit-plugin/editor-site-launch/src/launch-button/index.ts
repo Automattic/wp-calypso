@@ -12,16 +12,10 @@ import '@wordpress/editor';
  * Internal dependencies
  */
 import { inIframe } from '../../../block-inserter-modifications/contextual-tips/utils';
-import { STEP_BY_STEP_LAUNCH_FLOW, FOCUSED_LAUNCH_FLOW, REDIRECT_LAUNCH_FLOW } from '../constants';
+import { GUTENBOARDING_LAUNCH_FLOW, FOCUSED_LAUNCH_FLOW, SITE_LAUNCH_FLOW } from '../constants';
 import './styles.scss';
 
 let handled = false;
-
-const launchFlowTracksSlug: Record< string, string > = {
-	[ STEP_BY_STEP_LAUNCH_FLOW ]: 'gutenboarding-launch',
-	[ FOCUSED_LAUNCH_FLOW ]: 'focused-launch',
-	[ REDIRECT_LAUNCH_FLOW ]: 'launch-site',
-};
 
 domReady( () => {
 	// If site launch options does not exist, stop.
@@ -59,11 +53,11 @@ domReady( () => {
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
 				is_new_site: isGutenboarding,
-				launch_flow: launchFlowTracksSlug[ launchFlow ],
+				launch_flow: launchFlow,
 				is_in_editor: inIframe(),
 			} );
 
-			if ( launchFlow === STEP_BY_STEP_LAUNCH_FLOW ) {
+			if ( launchFlow === GUTENBOARDING_LAUNCH_FLOW ) {
 				dispatch( 'automattic/launch' ).openSidebar();
 			}
 
@@ -71,7 +65,7 @@ domReady( () => {
 				dispatch( 'automattic/launch' ).openFocusedLaunch();
 			}
 
-			if ( launchFlow === REDIRECT_LAUNCH_FLOW ) {
+			if ( launchFlow === SITE_LAUNCH_FLOW ) {
 				// Save post first before redirecting to launch url
 				( async () => {
 					await dispatch( 'core/editor' ).savePost();

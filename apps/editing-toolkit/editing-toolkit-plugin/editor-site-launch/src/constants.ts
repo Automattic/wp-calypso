@@ -1,7 +1,7 @@
 export const FLOW_ID = 'gutenboarding';
-export const STEP_BY_STEP_LAUNCH_FLOW = 'step-by-step';
-export const FOCUSED_LAUNCH_FLOW = 'focused';
-export const REDIRECT_LAUNCH_FLOW = 'redirect';
+export const GUTENBOARDING_LAUNCH_FLOW = 'gutenboarding-launch';
+export const FOCUSED_LAUNCH_FLOW = 'focused-launch';
+export const SITE_LAUNCH_FLOW = 'launch-site';
 declare global {
 	interface Window {
 		wpcomEditorSiteLaunch?: {

@@ -27,7 +27,7 @@
 		"build:common": "NODE_ENV=production yarn run common",
 		"editor-site-launch": "npm-run-all --parallel editor-site-launch-*",
 		"editor-site-launch-button": "calypso-build --env source='editor-site-launch/launch-button'",
-		"editor-site-launch-step-by-step": "calypso-build --env source='editor-site-launch/step-by-step-launch'",
+		"editor-site-launch-gutenboarding": "calypso-build --env source='editor-site-launch/gutenboarding-launch'",
 		"editor-site-launch-focused": "calypso-build --env source='editor-site-launch/focused-launch'",
 		"dev:editor-site-launch": "yarn run editor-site-launch",
 		"build:editor-site-launch": "NODE_ENV=production yarn run editor-site-launch",

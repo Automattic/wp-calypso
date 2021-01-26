@@ -66,10 +66,10 @@ function enqueue_launch_flow_script_and_style( $site_launch_options ) {
 	// Determine script name by launch flow.
 	// We are avoiding string concatenation for security reasons.
 	switch ( $launch_flow ) {
-		case 'step-by-step':
-			$script_name = 'step-by-step-launch';
+		case 'gutenboarding-launch':
+			$script_name = 'gutenboarding-launch';
 			break;
-		case 'focused':
+		case 'focused-launch':
 			$script_name = 'focused-launch';
 			break;
 		default:
