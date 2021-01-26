@@ -121,18 +121,9 @@ function processPlanFeatures(
 	);
 
 	// Features requiring an annually billed plan should be first in the array.
-	features.sort( ( a, b ) => {
-		if ( a.requiresAnnuallyBilledPlan === b.requiresAnnuallyBilledPlan ) {
-			// Either they both require an annually billed plan, or they both don't
-			return 0;
-		} else if ( a.requiresAnnuallyBilledPlan ) {
-			// "a" requires an annually billed plan, "b" does not
-			return -1;
-		}
-
-		// By exclusion, "b" requires an annually billed plan, "a" does not
-		return 1;
-	} );
+	features.sort(
+		( a, b ) => Number( b.requiresAnnuallyBilledPlan ) - Number( a.requiresAnnuallyBilledPlan )
+	);
 
 	return features;
 }
