@@ -16,12 +16,12 @@ import { LAUNCH_STORE } from '../../stores';
 import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { domain, LaunchStep, planProductId } = useSelect( ( select ) => {
+	const { domain, LaunchStep, selectedPlanProductId } = useSelect( ( select ) => {
 		const launchStore = select( LAUNCH_STORE );
 		return {
 			domain: launchStore.getSelectedDomain(),
 			LaunchStep: launchStore.getLaunchStep(),
-			planProductId: launchStore.getSelectedPlanProductId(),
+			selectedPlanProductId: launchStore.getSelectedPlanProductId(),
 		};
 	} );
 
@@ -63,7 +63,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 			</div>
 			<div className="nux-launch-step__body">
 				<PlansGrid
-					currentPlanProductId={ planProductId }
+					currentPlanProductId={ selectedPlanProductId }
 					currentDomain={ domain }
 					onPlanSelect={ handleSelect }
 					onPickDomainClick={ handlePickDomain }
