@@ -45,7 +45,7 @@ exports[`GSuitePurchaseCta renders correctly 1`] = `
             <strong>
               €6,40
             </strong>
-             per user/month
+             /user /month
           </h4>
           <h5
             className="gsuite-price__annual-price"
