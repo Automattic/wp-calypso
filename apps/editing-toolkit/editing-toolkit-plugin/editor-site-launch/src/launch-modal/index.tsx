@@ -41,15 +41,13 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 	}, [ launchSite, setIsLaunching, siteId ] );
 
 	React.useEffect( () => {
+		const asyncSavePost = async () => {
+			await savePost();
+		};
 		if ( ! isLaunching && isLaunchImmediately ) {
 			setIsLaunching( true );
-			savePost();
-
-			// Delay handleLaunch() to allow for the save to complete;
-			// without it, you'll get the browser beforeunload message popup
-			setTimeout( () => {
-				handleLaunch();
-			}, 2000 );
+			asyncSavePost();
+			handleLaunch();
 		}
 	}, [ isLaunching, isLaunchImmediately, handleLaunch, savePost ] );
 
