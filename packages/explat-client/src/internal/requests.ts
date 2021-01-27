@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ExperimentAssignment, MakeRequest } from '../types';
+import { Config, ExperimentAssignment } from '../types';
 import { validateExperimentAssignment } from './validations';
 import { monotonicNow } from './timing';
 import { isObject } from './validations';
@@ -30,21 +30,15 @@ function validateFetchExperimentAssignmentResponse(
 }
 
 export async function fetchExperimentAssignment(
-	makeRequest: MakeRequest,
-	experimentName: string,
-	anonId?: string | null
+	config: Config,
+	experimentName: string
 ): Promise< ExperimentAssignment > {
 	const retrievedTimestamp = monotonicNow();
 
 	const { variations, ttl } = validateFetchExperimentAssignmentResponse(
-		await makeRequest( {
-			apiNamespace: 'wpcom',
-			method: 'GET',
-			path: '/v2/experiments/0.1.0/assignments/calypso',
-			query: {
-				anon_id: anonId ?? undefined,
-				experiment_name: experimentName,
-			},
+		await config.fetchExperimentAssignment( {
+			anonId: config.getAnonId() ?? undefined,
+			experimentName,
 		} )
 	);
 

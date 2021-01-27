@@ -61,9 +61,8 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 	const createAOAATExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
 		Timing.asyncOneAtATime( async () => {
 			const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
-				config.makeRequest,
-				experimentName,
-				config.getAnonId()
+				config,
+				experimentName
 			);
 			State.storeExperimentAssignment( fetchedExperimentAssignment );
 			return fetchedExperimentAssignment;

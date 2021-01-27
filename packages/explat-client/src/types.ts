@@ -21,13 +21,8 @@ export interface ExperimentAssignment {
 
 // ## Abstracting the outside world
 
-export interface MakeRequest {
-	( request: {
-		apiNamespace: 'wpcom';
-		method: 'GET';
-		path: string;
-		query: Record< string, string | undefined >;
-	} ): Promise< unknown >;
+export interface FetchExperimentAssignment {
+	( { experimentName, anonId }: { experimentName: string; anonId?: string } ): Promise< unknown >;
 }
 
 export interface GetAnonId {
@@ -39,7 +34,7 @@ export interface LogError {
 }
 
 export interface Config {
-	makeRequest: MakeRequest;
+	fetchExperimentAssignment: FetchExperimentAssignment;
 	getAnonId: GetAnonId;
 	logError: LogError;
 	isDevelopmentMode: boolean;
