@@ -64,21 +64,21 @@ export default function buildFallbackResponse( {
 			children: [
 				{
 					parent: 'upgrades',
-					slug: 'upgrades',
+					slug: 'Plans',
 					title: translate( 'Plans' ),
 					type: 'submenu-item',
 					url: `/plans/${ siteDomain }`,
 				},
 				{
 					parent: 'upgrades',
-					slug: 'upgrades',
+					slug: 'Purchases',
 					title: translate( 'Purchases' ),
 					type: 'submenu-item',
 					url: `/purchases/subscriptions/${ siteDomain }`,
 				},
 				{
 					parent: 'upgrades',
-					slug: 'upgrades',
+					slug: 'Domains',
 					title: translate( 'Domains' ),
 					type: 'submenu-item',
 					url: `/domains/manage/${ siteDomain }`,
