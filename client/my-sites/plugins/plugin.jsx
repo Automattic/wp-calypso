@@ -48,6 +48,7 @@ import {
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 function goBack() {
 	window.history.back();
@@ -313,9 +314,7 @@ export default connect(
 	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const sites = getSelectedOrAllSitesWithPlugins( state );
-
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		const siteIds = uniq( sites.map( ( site ) => site.ID ) );
+		const siteIds = uniq( siteObjectsToSiteIds( sites ) );
 
 		return {
 			plugin: getPluginOnSites( state, siteIds, props.pluginSlug ),

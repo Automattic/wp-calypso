@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { capitalize, find, flow, isEmpty, some } from 'lodash';
+import { capitalize, find, flow, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -31,6 +31,7 @@ import NoPermissionsError from './no-permissions-error';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import getUpdateableJetpackSites from 'calypso/state/selectors/get-updateable-jetpack-sites';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import {
 	canJetpackSiteUpdateFiles,
@@ -45,6 +46,7 @@ import {
 import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { Button } from '@automattic/components';
 import { isEnabled } from 'calypso/config';
+import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -243,19 +245,13 @@ export class PluginsMain extends Component {
 	}
 
 	getUpdatesTabVisibility() {
-		const { selectedSite } = this.props;
+		const { selectedSite, updateableJetpackSites } = this.props;
 
 		if ( selectedSite ) {
 			return this.props.selectedSiteIsJetpack && this.props.canSelectedJetpackSiteUpdateFiles;
 		}
 
-		return some(
-			this.props.sites,
-			( site ) =>
-				site &&
-				this.props.isJetpackSite( site.ID ) &&
-				this.props.canJetpackSiteUpdateFiles( site.ID )
-		);
+		return updateableJetpackSites.length > 0;
 	}
 
 	shouldShowPluginListPlaceholders() {
@@ -462,10 +458,8 @@ export default flow(
 			const sites = getSelectedOrAllSitesWithPlugins( state );
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
-			/* eslint-disable wpcalypso/redux-no-bound-selectors */
-			const visibleSiteIds =
-				sites?.filter( ( site ) => site.visible )?.map( ( site ) => site.ID ) ?? [];
-			const siteIds = sites?.map( ( site ) => site.ID ) ?? [];
+			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
+			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
 
 			return {
@@ -478,17 +472,13 @@ export default flow(
 				siteIds,
 				canSelectedJetpackSiteUpdateFiles:
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
-				/* eslint-disable wpcalypso/redux-no-bound-selectors */
-				// @TODO: follow up with fixing these functions
-				canJetpackSiteUpdateFiles: ( siteId ) => canJetpackSiteUpdateFiles( state, siteId ),
-				isJetpackSite: ( siteId ) => isJetpackSite( state, siteId ),
-				/* eslint-enable wpcalypso/redux-no-bound-selectors */
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
 				currentPlugins: getPlugins( state, siteIds, filter ),
 				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				requestingPluginsForSites: isRequestingForSites( state, siteIds ),
+				updateableJetpackSites: getUpdateableJetpackSites( state ),
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
 					: canCurrentUserManagePlugins( state ),

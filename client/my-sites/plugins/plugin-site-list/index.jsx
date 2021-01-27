@@ -18,6 +18,7 @@ import {
 	getPluginOnSites,
 	getSiteObjectsWithPlugin,
 } from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -81,8 +82,7 @@ function getSitesWithSecondarySites( state, sites ) {
 }
 
 export default connect( ( state, { plugin, sites } ) => {
-	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const siteIds = sites.map( ( site ) => site.ID );
+	const siteIds = siteObjectsToSiteIds( sites );
 
 	return {
 		sitesWithPlugin: getSiteObjectsWithPlugin( state, siteIds, plugin.slug ),
