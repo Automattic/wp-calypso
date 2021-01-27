@@ -47,6 +47,8 @@ const inputSlugs = ( process.argv[ 2 ] || '' )
 	.split( ',' )
 	.filter( ( potentialSlug ) => mag16.includes( potentialSlug ) );
 
+const themeFilter = typeof process.argv[ 3 ] === 'string' ? RegExp( process.argv[ 3 ] ) : /.*/;
+
 // For convenience:
 // replace an 'all' input with the mag 16
 // accept an empty locale input and replacefor convenience
@@ -119,7 +121,7 @@ async function run() {
 			const fileBase = `${ design.slug }_${ design.template }_${ design.theme }`;
 			// const file = `${ screenshotsPath }/${ fileBase }`;
 
-			if ( ! url.match( /reynolds/ ) ) {
+			if ( ! url.match( themeFilter ) ) {
 				continue;
 			}
 
@@ -192,7 +194,7 @@ async function run() {
 			} catch ( e ) {
 				if (
 					typeof e.message === 'string' &&
-					e.message.includes( 'Run "npm install" or "yarn install" to download a browser binary.' )
+					e.message.includes( 'Could not find browser revision' )
 				) {
 					console.error(
 						'\n\nPlease run `(cd node_modules/puppeteer; PUPPETEER_SKIP_DOWNLOAD= yarn install)` to install the chromium binaries required for this script and then try again.'
