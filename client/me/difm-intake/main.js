@@ -50,7 +50,7 @@ class DifmIntake extends Component {
 
 	renderSurvey() {
 		return (
-			<div class="difm-intake__survey">
+			<div className="difm-intake__survey">
 				<iframe
 					title="DIFM intake survey"
 					scrolling="auto"
