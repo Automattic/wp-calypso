@@ -8,12 +8,14 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { settings, unsavedSettings, updatingPassword } from '../reducer';
 import {
-	USER_SETTINGS_SAVE_SUCCCESS,
-	USER_SETTINGS_UNSAVED_SET,
-	USER_SETTINGS_UNSAVED_REMOVE,
-	USER_SETTINGS_UNSAVED_CLEAR,
+	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_REQUEST_SUCCESS,
 	USER_SETTINGS_SAVE,
 	USER_SETTINGS_SAVE_FAILURE,
+	USER_SETTINGS_SAVE_SUCCCESS,
+	USER_SETTINGS_UNSAVED_CLEAR,
+	USER_SETTINGS_UNSAVED_REMOVE,
+	USER_SETTINGS_UNSAVED_SET,
 } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
@@ -28,6 +30,15 @@ describe( 'reducer', () => {
 			const state = settings( undefined, {} );
 
 			expect( state ).toEqual( {} );
+		} );
+
+		test( 'should store user settings after requested fetch', () => {
+			const state = settings( undefined, {
+				type: USER_SETTINGS_REQUEST_SUCCESS,
+				settingValues: { foo: 'bar' },
+			} );
+
+			expect( state ).toEqual( { foo: 'bar' } );
 		} );
 
 		test( 'should store user settings after initial update', () => {

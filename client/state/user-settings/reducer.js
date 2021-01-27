@@ -16,11 +16,19 @@ import {
 	USER_SETTINGS_SAVE_FAILURE,
 	USER_SETTINGS_REQUEST,
 	USER_SETTINGS_REQUEST_FAILURE,
+	USER_SETTINGS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
-export const settings = ( state = {}, { type, settingValues } ) =>
-	USER_SETTINGS_SAVE_SUCCCESS === type ? { ...state, ...settingValues } : state;
+export const settings = ( state = {}, { type, settingValues } ) => {
+	switch ( type ) {
+		case USER_SETTINGS_REQUEST_SUCCESS:
+		case USER_SETTINGS_SAVE_SUCCCESS: {
+			return { ...state, ...settingValues };
+		}
+	}
+	return state;
+};
 
 export const unsavedSettings = ( state = {}, action ) => {
 	switch ( action.type ) {

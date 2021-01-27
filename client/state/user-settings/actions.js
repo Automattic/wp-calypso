@@ -11,6 +11,8 @@ import { get } from 'lodash';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_REQUEST_FAILURE,
+	USER_SETTINGS_REQUEST_SUCCESS,
 	USER_SETTINGS_SAVE,
 	USER_SETTINGS_SAVE_SUCCCESS,
 	USER_SETTINGS_SAVE_FAILURE,
@@ -30,6 +32,28 @@ const debug = debugFactory( 'calypso:user:settings' );
  */
 export const fetchUserSettings = () => ( {
 	type: USER_SETTINGS_REQUEST,
+} );
+
+/**
+ * Used in signalling that requesting user settings was not successful
+ *
+ * @param {object} error Error object received from the API
+ * @returns {object} Action object
+ */
+export const fetchUserSettingsFailure = ( error ) => ( {
+	type: USER_SETTINGS_REQUEST_FAILURE,
+	error,
+} );
+
+/**
+ * Used in signalling that requesting user settings was successful.
+ *
+ * @param {object} settingValues Object containing fetched user settings
+ * @returns {object} Action object
+ */
+export const fetchUserSettingsSuccess = ( settingValues ) => ( {
+	type: USER_SETTINGS_REQUEST_SUCCESS,
+	settingValues,
 } );
 
 /**

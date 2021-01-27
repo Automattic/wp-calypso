@@ -14,14 +14,12 @@ import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-set
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	clearUnsavedUserSettings,
+	fetchUserSettingsFailure,
+	fetchUserSettingsSuccess,
 	saveUserSettingsSuccess,
 	saveUserSettingsFailure,
 } from 'calypso/state/user-settings/actions';
-import {
-	USER_SETTINGS_REQUEST,
-	USER_SETTINGS_REQUEST_FAILURE,
-	USER_SETTINGS_SAVE,
-} from 'calypso/state/action-types';
+import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -49,7 +47,9 @@ export const requestUserSettings = ( action ) =>
 		action
 	);
 
-export const requestUserSettingsFailure = () => ( { type: USER_SETTINGS_REQUEST_FAILURE } );
+export const requestUserSettingsFailure = ( action, error ) => fetchUserSettingsFailure( error );
+
+export const requestUserSettingsSuccess = ( action, data ) => fetchUserSettingsSuccess( data );
 
 /*
  * Store the fetched user settings to Redux state
@@ -128,7 +128,7 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 	[ USER_SETTINGS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestUserSettings,
-			onSuccess: storeFetchedUserSettings,
+			onSuccess: requestUserSettingsSuccess,
 			onError: requestUserSettingsFailure,
 			fromApi,
 		} ),
