@@ -20,7 +20,7 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 
 jest.mock( 'calypso/lib/wp' );
 jest.mock( 'calypso/reader/stats', () => ( { recordTrack: () => {} } ) );
-jest.mock( 'calypso/lib/warn', () => () => {} );
+jest.mock( '@automattic/warn', () => () => {} );
 
 describe( 'streams', () => {
 	const action = deepfreeze( requestPageAction( { streamKey: 'following', page: 2 } ) );

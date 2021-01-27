@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { trim, isFunction } from 'lodash';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 import debugFactory from 'debug';
 
 /**

@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { uniqueId, get, find } from 'lodash';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 
 /**
  * Internal dependencies

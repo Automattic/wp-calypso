@@ -17,9 +17,9 @@ import {
 	withEnhancers,
 	withStorageKey,
 } from 'calypso/state/utils';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 
-jest.mock( 'calypso/lib/warn', () => jest.fn() );
+jest.mock( '@automattic/warn', () => jest.fn() );
 
 describe( 'utils', () => {
 	beforeEach( () => warn.mockReset() );

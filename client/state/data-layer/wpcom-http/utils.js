@@ -8,7 +8,7 @@ import { get, identity, merge, noop } from 'lodash';
  * Internal dependencies
  */
 import { keyedReducer } from 'calypso/state/utils';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 
 /**
  * Returns response data from an HTTP request success action if available

@@ -44,6 +44,7 @@
 		"@automattic/tree-select": "^1.0.3",
 		"@automattic/viewport": "^1.0.0",
 		"@automattic/viewport-react": "^1.0.0",
+		"@automattic/warn": "^1.0.0-alpha.0",
 		"@automattic/webpack-config-flag-plugin": "^1.0.0",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "^0.0.2",
 		"@automattic/webpack-inline-constant-exports-plugin": "^1.0.0",

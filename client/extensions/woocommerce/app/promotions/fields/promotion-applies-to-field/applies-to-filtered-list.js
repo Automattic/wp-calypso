@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { sortBy } from 'lodash';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 import formatCurrency from '@automattic/format-currency';
 
 /**

@@ -7,7 +7,7 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 /**
  * Internal dependencies
  */
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 
 /**
  * Constants

@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import {
 	JETPACK_PLANS,

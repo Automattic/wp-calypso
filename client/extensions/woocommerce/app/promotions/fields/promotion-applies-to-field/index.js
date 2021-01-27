@@ -13,7 +13,7 @@ import FormField from '../form-field';
 import FormSelect from 'calypso/components/forms/form-select';
 import AppliesToFilteredList from './applies-to-filtered-list';
 import ProductSearch from 'woocommerce/components/product-search';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 
 class PromotionAppliesToField extends React.Component {
 	static propTypes = {

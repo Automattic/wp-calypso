@@ -9,7 +9,7 @@ import { forEach, get, isEmpty, isEqual } from 'lodash';
  */
 import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import { getInitialState } from './get-initial-state';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	const validate = validator( schema, {

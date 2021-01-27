@@ -42,7 +42,7 @@ import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup';
 import StoreLocationSetupView from './setup/store-location';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import warn from 'calypso/lib/warn';
+import warn from '@automattic/warn';
 import StoreMoveNoticeView from './store-move-notice-view';
 import config from '@automattic/calypso-config';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
