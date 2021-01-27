@@ -35,7 +35,7 @@ const _filters = {
 	},
 	updates: function ( plugin ) {
 		return some( plugin.sites, function ( site ) {
-			return site.update;
+			return site.update && ! site.update.recentlyUpdated;
 		} );
 	},
 	isEqual: function ( pluginSlug, plugin ) {
