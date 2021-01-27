@@ -7,7 +7,9 @@ declare global {
 		wpcomEditorSiteLaunch?: {
 			launchUrl: string;
 			launchFlow: string;
-			isGutenboarding: boolean;
+			// property does not exist when not isGutenboarding
+			// property holds the value '1' when isGutenboarding
+			isGutenboarding?: '1';
 			locale?: string;
 		};
 		_currentSiteId: number;

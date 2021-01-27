@@ -39,18 +39,27 @@ function enqueue_launch_button_script_and_style( $site_launch_options ) {
 		$style_version
 	);
 
+	// Prepare site launch options.
+	$options = array(
+		'siteSlug'   => $site_launch_options['site_slug'],
+		'launchUrl'  => $site_launch_options['launch_url'],
+		'launchFlow' => $site_launch_options['launch_flow'],
+		'locale'     => determine_locale(),
+	);
+
+	$is_gutenboarding = $site_launch_options['is_gutenboarding'];
+	if ( $is_gutenboarding ) {
+		// The isGutenboarding prop either exists with the value '1' or does not exist at all.
+		// The value `true` gets typecasted to '1' by `wp_localize_script` anyway.
+		$options['isGutenboarding'] = '1';
+	}
+
 	// Pass site launch options to client side here.
 	// This is accessible via window.wpcomEditorSiteLaunch.
 	wp_localize_script(
 		'a8c-fse-editor-site-launch-button-script',
 		'wpcomEditorSiteLaunch',
-		array(
-			'siteSlug'        => $site_launch_options['site_slug'],
-			'launchUrl'       => $site_launch_options['launch_url'],
-			'launchFlow'      => $site_launch_options['launch_flow'],
-			'isGutenboarding' => $site_launch_options['is_gutenboarding'],
-			'locale'          => determine_locale(),
-		)
+		$options
 	);
 }
 
