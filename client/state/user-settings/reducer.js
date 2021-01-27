@@ -60,7 +60,7 @@ export const fetching = ( state = false, action ) => {
 			return true;
 		}
 		case USER_SETTINGS_REQUEST_FAILURE:
-		case USER_SETTINGS_SAVE_SUCCCESS: {
+		case USER_SETTINGS_REQUEST_SUCCESS: {
 			return false;
 		}
 	}
