@@ -77,6 +77,7 @@ cached-requests.json
 /client/server/bundler/assets*.json
 
 # Desktop app
+/desktop/dist
 /desktop/build
 /desktop/client
 /desktop/config
