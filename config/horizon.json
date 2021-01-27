@@ -47,6 +47,8 @@
 		"gutenboarding/language-picker": true,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch-mobile": true,
+		"gutenboarding/mshot-preview": true,
+		"gutenboarding/landscape-preview": true,
 		"happychat": false,
 		"help": true,
 		"inline-help": true,
