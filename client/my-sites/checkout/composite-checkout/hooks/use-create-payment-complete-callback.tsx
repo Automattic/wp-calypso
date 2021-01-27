@@ -238,7 +238,7 @@ function performRedirect( url: string ): void {
 
 function displayRenewalSuccessNotice(
 	responseCart: ResponseCart,
-	purchases: Record< number, Purchase >,
+	purchases: Record< number, Purchase[] >,
 	translate: ReturnType< typeof useTranslate >,
 	moment: ReturnType< typeof useLocalizedMoment >,
 	reduxDispatch: ReturnType< typeof useDispatch >
@@ -246,7 +246,7 @@ function displayRenewalSuccessNotice(
 	const renewalItem = getRenewalItems( responseCart )[ 0 ];
 	// group all purchases into an array
 	const purchasedProducts = Object.values( purchases ?? {} ).reduce(
-		( result: Purchase[], value: Purchase ) => [ ...result, value ],
+		( result: Purchase[], value: Purchase[] ) => [ ...result, ...value ],
 		[]
 	);
 	// and take the first product which matches the product id of the renewalItem
