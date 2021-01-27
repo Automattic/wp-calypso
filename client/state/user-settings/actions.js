@@ -14,7 +14,7 @@ import {
 	USER_SETTINGS_REQUEST_FAILURE,
 	USER_SETTINGS_REQUEST_SUCCESS,
 	USER_SETTINGS_SAVE,
-	USER_SETTINGS_SAVE_SUCCCESS,
+	USER_SETTINGS_SAVE_SUCCESS,
 	USER_SETTINGS_SAVE_FAILURE,
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
@@ -74,7 +74,7 @@ export const saveUserSettings = ( settingsOverride ) => ( {
  * @returns {object}               Action object
  */
 export const saveUserSettingsSuccess = ( settingValues ) => ( {
-	type: USER_SETTINGS_SAVE_SUCCCESS,
+	type: USER_SETTINGS_SAVE_SUCCESS,
 	settingValues,
 } );
 

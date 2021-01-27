@@ -12,7 +12,7 @@ import {
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_REMOVE,
 	USER_SETTINGS_UNSAVED_SET,
-	USER_SETTINGS_SAVE_SUCCCESS,
+	USER_SETTINGS_SAVE_SUCCESS,
 	USER_SETTINGS_SAVE_FAILURE,
 	USER_SETTINGS_REQUEST,
 	USER_SETTINGS_REQUEST_FAILURE,
@@ -23,7 +23,7 @@ import { combineReducers } from 'calypso/state/utils';
 export const settings = ( state = {}, { type, settingValues } ) => {
 	switch ( type ) {
 		case USER_SETTINGS_REQUEST_SUCCESS:
-		case USER_SETTINGS_SAVE_SUCCCESS: {
+		case USER_SETTINGS_SAVE_SUCCESS: {
 			return { ...state, ...settingValues };
 		}
 	}
@@ -72,7 +72,7 @@ export const updatingPassword = ( state = false, action ) => {
 		case USER_SETTINGS_SAVE: {
 			return !! action.settingsOverride?.password;
 		}
-		case USER_SETTINGS_SAVE_SUCCCESS:
+		case USER_SETTINGS_SAVE_SUCCESS:
 		case USER_SETTINGS_SAVE_FAILURE: {
 			return false;
 		}
@@ -85,7 +85,7 @@ export const updating = ( state = false, action ) => {
 		case USER_SETTINGS_SAVE: {
 			return true;
 		}
-		case USER_SETTINGS_SAVE_SUCCCESS:
+		case USER_SETTINGS_SAVE_SUCCESS:
 		case USER_SETTINGS_SAVE_FAILURE: {
 			return false;
 		}

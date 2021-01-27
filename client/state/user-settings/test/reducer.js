@@ -13,7 +13,7 @@ import {
 	USER_SETTINGS_REQUEST_SUCCESS,
 	USER_SETTINGS_SAVE,
 	USER_SETTINGS_SAVE_FAILURE,
-	USER_SETTINGS_SAVE_SUCCCESS,
+	USER_SETTINGS_SAVE_SUCCESS,
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_REMOVE,
 	USER_SETTINGS_UNSAVED_SET,
@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 
 		test( 'should store user settings after initial update', () => {
 			const state = settings( null, {
-				type: USER_SETTINGS_SAVE_SUCCCESS,
+				type: USER_SETTINGS_SAVE_SUCCESS,
 				settingValues: { foo: 'bar' },
 			} );
 
@@ -59,7 +59,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = settings( original, {
-				type: USER_SETTINGS_SAVE_SUCCCESS,
+				type: USER_SETTINGS_SAVE_SUCCESS,
 				settingValues: { baz: 'qux' },
 			} );
 
@@ -172,7 +172,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should return `false` if settings update finished (successfully)', () => {
-			const action = { type: USER_SETTINGS_SAVE_SUCCCESS };
+			const action = { type: USER_SETTINGS_SAVE_SUCCESS };
 
 			expect( updatingPassword( false, action ) ).toBe( false );
 		} );
