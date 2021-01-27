@@ -10,3 +10,16 @@
 .titan-mail-quantity-selection__divider {
 	margin-top: 1.5em;
 }
+.titan-mail-quantity-selection__domain-info {
+	margin-bottom: 1em;
+}
+.titan-mail-quantity-selection__mailbox-info {
+	span {
+		display: block;
+		font-size: $font-body-small;
+
+		&:last-child {
+			margin-bottom: 1em;
+		}
+	}
+}

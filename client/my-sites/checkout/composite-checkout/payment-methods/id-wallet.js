@@ -15,11 +15,12 @@ import {
 	useDispatch,
 } from '@automattic/composite-checkout';
 import { camelCase } from 'lodash';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
@@ -222,12 +223,13 @@ function IdWalletPayButton( { disabled, onClick, store } ) {
 	const contactCountryCode = useSelect(
 		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
 	);
+	const reduxDispatch = useReduxDispatch();
 
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store, contactCountryCode, __ ) ) {
+				if ( isFormValid( store, contactCountryCode, __, reduxDispatch ) ) {
 					debug( 'submitting id wallet payment' );
 					onClick( 'id_wallet', {
 						...massagedFields,
@@ -268,7 +270,7 @@ function IdWalletSummary() {
 	);
 }
 
-function isFormValid( store, contactCountryCode, __ ) {
+function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
 	// Touch fields so that we show errors
 	store.dispatch( store.actions.touchAllFields() );
 	let isValid = true;
@@ -305,7 +307,9 @@ function isFormValid( store, contactCountryCode, __ ) {
 
 	if ( validationResults.errors?.country?.length > 0 ) {
 		const countryErrorMessage = validationResults.errors.country[ 0 ];
-		notices.error( countryErrorMessage || __( 'An error occurred during your purchase.' ) );
+		reduxDispatch(
+			errorNotice( countryErrorMessage || __( 'An error occurred during your purchase.' ) )
+		);
 	}
 	return isValid;
 }

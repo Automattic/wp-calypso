@@ -145,20 +145,14 @@ export class PluginsBrowser extends Component {
 	};
 
 	getPluginsLists( search ) {
-		const shortLists = {};
 		const fullLists = {};
 
 		this.getVisibleCategories().forEach( ( category ) => {
-			shortLists[ category ] = PluginsListStore.getShortList( category );
 			fullLists[ category ] = PluginsListStore.getFullList( category );
 		} );
 
 		fullLists.search = PluginsListStore.getSearchList( search );
-		return { shortLists, fullLists };
-	}
-
-	getPluginsShortList( listName ) {
-		return get( this.state.shortLists, [ listName, 'list' ], [] );
+		return { fullLists };
 	}
 
 	getPluginsFullList( listName ) {
@@ -255,15 +249,14 @@ export class PluginsBrowser extends Component {
 
 	getPluginSingleListView( category ) {
 		const listLink = '/plugins/' + category + '/';
+		const pluginsFullList = this.getPluginsFullList( category );
 		return (
 			<PluginsBrowserList
-				plugins={ this.getPluginsShortList( category ) }
+				plugins={ pluginsFullList.slice( 0, SHORT_LIST_LENGTH ) }
 				listName={ category }
 				title={ this.translateCategory( category ) }
 				site={ this.props.siteSlug }
-				expandedListLink={
-					this.getPluginsFullList( category ).length > SHORT_LIST_LENGTH ? listLink : false
-				}
+				expandedListLink={ pluginsFullList.length > SHORT_LIST_LENGTH ? listLink : false }
 				size={ SHORT_LIST_LENGTH }
 				showPlaceholders={ get( this.state.fullLists, [ category, 'fetching' ] ) !== false }
 				currentSites={ this.props.sites }

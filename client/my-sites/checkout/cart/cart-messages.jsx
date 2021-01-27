@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import notices from 'calypso/notices';
 import { getNewMessages } from 'calypso/lib/cart-values';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 
 export default function CartMessages( { cart, isLoadingCart } ) {
 	const previousCart = useRef( null );
@@ -53,9 +54,8 @@ function getBlockedPurchaseErrorMessage( { translate, selectedSiteSlug } ) {
 				a: (
 					<a
 						href={
-							'https://wordpress.com/error-report/' + selectedSiteSlug
-								? '?url=payment@' + selectedSiteSlug
-								: ''
+							'https://wordpress.com/error-report/' +
+							( selectedSiteSlug ? '?url=payment@' + selectedSiteSlug : '' )
 						}
 						target="_blank"
 						rel="noopener noreferrer"
@@ -63,6 +63,21 @@ function getBlockedPurchaseErrorMessage( { translate, selectedSiteSlug } ) {
 				),
 			},
 		}
+	);
+}
+
+function getInvalidMultisitePurchaseErrorMessage( { translate, message } ) {
+	return (
+		<>
+			{ message }&nbsp;
+			<a
+				href={ JETPACK_SUPPORT + 'backup/#does-jetpack-backup-support-multisite' }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{ translate( 'More info' ) }
+			</a>
+		</>
 	);
 }
 
@@ -81,6 +96,11 @@ function getPrettyErrorMessages( messages, { translate, selectedSiteSlug } ) {
 			case 'blocked':
 				return Object.assign( error, {
 					message: getBlockedPurchaseErrorMessage( { translate, selectedSiteSlug } ),
+				} );
+
+			case 'invalid-product-multisite':
+				return Object.assign( error, {
+					message: getInvalidMultisitePurchaseErrorMessage( { translate, message: error.message } ),
 				} );
 
 			default:

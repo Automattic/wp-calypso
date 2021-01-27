@@ -1,15 +1,14 @@
 /**
  * Internal dependencies
  */
-import { PLUGIN_UPLOAD } from 'calypso/lib/plugins/constants';
+import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'calypso/state/action-types';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
-import Dispatcher from 'calypso/dispatcher';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'calypso/state/plugins/upload/actions';
-import { getSite } from 'calypso/state/sites/selectors';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';
@@ -52,10 +51,6 @@ describe( 'uploadPlugin', () => {
 } );
 
 describe( 'uploadComplete', () => {
-	const site = {
-		ID: siteId,
-		URL: 'https://wordpress.com',
-	};
 	const getState = jest.fn();
 
 	test( 'should return a plugin upload complete action', () => {
@@ -65,17 +60,15 @@ describe( 'uploadComplete', () => {
 	} );
 
 	test( 'should dispatch a receive installed plugin action', () => {
-		Dispatcher.handleServerAction.mockImplementation( () => {} );
-		getSite.mockImplementation( () => site );
 		const dispatch = jest.fn();
 
 		uploadComplete( { siteId }, SUCCESS_RESPONSE )( dispatch, getState );
 
-		expect( Dispatcher.handleServerAction ).toHaveBeenCalledWith( {
-			type: 'RECEIVE_INSTALLED_PLUGIN',
-			action: PLUGIN_UPLOAD,
-			site,
-			plugin: SUCCESS_RESPONSE,
+		expect( dispatch ).toHaveBeenCalledWith( {
+			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+			action: INSTALL_PLUGIN,
+			siteId,
+			pluginId: SUCCESS_RESPONSE.id,
 			data: SUCCESS_RESPONSE,
 		} );
 	} );

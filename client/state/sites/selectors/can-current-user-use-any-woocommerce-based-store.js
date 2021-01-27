@@ -10,16 +10,17 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
- * Returns true if current user can see and use Store option in menu
+ * Returns true if current user can use any WooCommerce-based store
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @returns {?boolean}        Whether site is previewable
+ * @returns {?boolean}        Whether current user can use any WooCommerce-based store
  */
-export default function canCurrentUserUseStore( state, siteId = null ) {
+export default function canCurrentUserUseAnyWooCommerceBasedStore( state, siteId = null ) {
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
+
 	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	const isSiteAT = !! isSiteAutomatedTransfer( state, siteId );
 

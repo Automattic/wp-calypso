@@ -34,7 +34,7 @@ function getTourContent() {
 		{
 			heading: __( 'Everything is a block', 'full-site-editing' ),
 			description: __(
-				'In the WordPress Editor paragraphs, images, and videos are all blocks.',
+				'In the WordPress Editor, paragraphs, images, and videos are all blocks.',
 				'full-site-editing'
 			),
 			imgSrc: allBlocks,
@@ -72,7 +72,7 @@ function getTourContent() {
 		},
 		{
 			heading: __( 'Drag & drop', 'full-site-editing' ),
-			description: __( 'To move blocks around click and drag the handle.', 'full-site-editing' ),
+			description: __( 'To move blocks around, click and drag the handle.', 'full-site-editing' ),
 			imgSrc: moveBlock,
 			animation: 'undo-button',
 		},

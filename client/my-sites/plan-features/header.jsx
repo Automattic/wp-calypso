@@ -225,7 +225,7 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		if ( isInSignup && ! isMonthlyPlan ) {
-			return translate( 'per month, billed annually' );
+			return translate( 'billed annually' );
 		}
 
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
@@ -359,13 +359,15 @@ export class PlanFeaturesHeader extends Component {
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
-							isInSignup={ displayFlatPrice }
+							displayFlatPrice={ displayFlatPrice }
+							isInSignup={ isInSignup }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
-							isInSignup={ displayFlatPrice }
+							displayFlatPrice={ displayFlatPrice }
+							isInSignup={ isInSignup }
 							discounted
 						/>
 					</div>
@@ -378,7 +380,8 @@ export class PlanFeaturesHeader extends Component {
 			<PlanPrice
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
-				isInSignup={ displayFlatPrice }
+				displayFlatPrice={ displayFlatPrice }
+				isInSignup={ isInSignup }
 			/>
 		);
 	}

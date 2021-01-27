@@ -26,6 +26,10 @@ function LaunchWpcomWelcomeTour() {
 	const isWpcomNuxEnabled = useSelect( ( select ) =>
 		select( 'automattic/nux' ).isWpcomNuxEnabled()
 	);
+	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
+	const isTourManuallyOpened = useSelect( ( select ) =>
+		select( 'automattic/nux' ).isTourManuallyOpened()
+	);
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// Preload first card image (others preloaded after NUX status confirmed)
@@ -44,6 +48,11 @@ function LaunchWpcomWelcomeTour() {
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
+	// Hide editor sidebar first time user sees the editor
+	useEffect( () => {
+		isWpcomNuxEnabled && closeGeneralSidebar();
+	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
+
 	useEffect( () => {
 		if ( ! isWpcomNuxEnabled ) {
 			return;
@@ -53,11 +62,12 @@ function LaunchWpcomWelcomeTour() {
 
 		recordTracksEvent( 'calypso_editor_wpcom_tour_open', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			is_manually_opened: isTourManuallyOpened,
 		} );
 		return () => {
 			document.body.removeChild( portalParent );
 		};
-	}, [ isWpcomNuxEnabled, portalParent ] );
+	}, [ isTourManuallyOpened, isWpcomNuxEnabled, portalParent ] );
 
 	if ( ! isWpcomNuxEnabled ) {
 		return null;
@@ -71,7 +81,8 @@ function WelcomeTourFrame() {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
-	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
+
+	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
 
 	const dismissWpcomNuxTour = ( source ) => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
@@ -79,8 +90,8 @@ function WelcomeTourFrame() {
 			slide_number: currentCardIndex + 1,
 			action: source,
 		} );
-
 		setWpcomNuxStatus( { isNuxEnabled: false } );
+		setTourOpenStatus( { isTourManuallyOpened: false } );
 	};
 
 	// Preload card images

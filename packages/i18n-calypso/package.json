@@ -32,6 +32,7 @@
 		"use-subscription": "^1.2.0"
 	},
 	"devDependencies": {
+		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
 		"react-test-renderer": "^16.12.0"
 	},

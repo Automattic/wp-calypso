@@ -16,7 +16,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
+import { infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { hasRenewalItem, getRenewalItems, hasPlan } from 'calypso/lib/cart-values/cart-items';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
@@ -143,7 +143,13 @@ export default function useCreatePaymentCompleteCallback( {
 
 			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
 				debug( 'purchase had a renewal' );
-				displayRenewalSuccessNotice( responseCart, transactionResult.purchases, translate, moment );
+				displayRenewalSuccessNotice(
+					responseCart,
+					transactionResult.purchases,
+					translate,
+					moment,
+					reduxDispatch
+				);
 			}
 
 			if ( receiptId && transactionResult?.purchases ) {
@@ -161,7 +167,7 @@ export default function useCreatePaymentCompleteCallback( {
 					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
 				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
 			) {
-				notices.info( translate( 'Almost done…' ) );
+				reduxDispatch( infoNotice( translate( 'Almost done…' ) ) );
 
 				const domainName = getDomainNameFromReceiptOrCart( transactionResult, responseCart );
 
@@ -224,7 +230,8 @@ function displayRenewalSuccessNotice(
 	responseCart: ResponseCart,
 	purchases: Record< number, Purchase >,
 	translate: ReturnType< typeof useTranslate >,
-	moment: ReturnType< typeof useLocalizedMoment >
+	moment: ReturnType< typeof useLocalizedMoment >,
+	reduxDispatch: ReturnType< typeof useDispatch >
 ): void {
 	const renewalItem = getRenewalItems( responseCart )[ 0 ];
 	// group all purchases into an array
@@ -244,39 +251,43 @@ function displayRenewalSuccessNotice(
 
 	if ( product.will_auto_renew ) {
 		debug( 'showing notice for product that will auto-renew' );
-		notices.success(
-			translate(
-				'%(productName)s has been renewed and will now auto renew in the future. ' +
-					'{{a}}Learn more{{/a}}',
-				{
-					args: {
-						productName: renewalItem.product_name,
-					},
-					components: {
-						a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
-					},
-				}
-			),
-			{ persistent: true }
+		reduxDispatch(
+			successNotice(
+				translate(
+					'%(productName)s has been renewed and will now auto renew in the future. ' +
+						'{{a}}Learn more{{/a}}',
+					{
+						args: {
+							productName: renewalItem.product_name,
+						},
+						components: {
+							a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
+						},
+					}
+				),
+				{ persistent: true }
+			)
 		);
 		return;
 	}
 
 	debug( 'showing notice for product that will not auto-renew' );
-	notices.success(
-		translate(
-			'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
-				'We sent your receipt to %(email)s.',
-			{
-				args: {
-					productName: renewalItem.product_name,
-					duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
-					date: moment( product.expiry ).format( 'LL' ),
-					email: product.user_email,
-				},
-			}
-		),
-		{ persistent: true }
+	reduxDispatch(
+		successNotice(
+			translate(
+				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
+					'We sent your receipt to %(email)s.',
+				{
+					args: {
+						productName: renewalItem.product_name,
+						duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+						date: moment( product.expiry ).format( 'LL' ),
+						email: product.user_email,
+					},
+				}
+			),
+			{ persistent: true }
+		)
 	);
 }
 

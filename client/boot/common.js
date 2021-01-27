@@ -155,7 +155,7 @@ const oauthTokenMiddleware = () => {
 				// the user back to it once the login flow is finished. We also set an expiration
 				// to this because we don't want to redirect by mistake a user with an old path
 				// stored in their session.
-				if ( isJetpackCloud && currentPath !== '/' ) {
+				if ( isJetpackCloud() && currentPath !== '/' ) {
 					const EXPIRATION_IN_SECONDS = 300;
 					const SESSION_STORAGE_PATH_KEY = 'jetpack_cloud_redirect_path';
 					const SESSION_STORAGE_PATH_KEY_EXPIRES_IN = 'jetpack_cloud_redirect_path_expires_in';
