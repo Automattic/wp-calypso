@@ -44,4 +44,8 @@ export const plansPaths = [ 'free', 'personal', 'premium', 'business', 'ecommerc
 
 export const plansProductSlugs = [ PLAN_FREE, ...annualSlugs, ...monthlySlugs ] as const;
 
-export const FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN = [ 'custom-domain', 'support-live' ];
+export const FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN = [
+	'custom-domain',
+	'support-live',
+	'priority-support',
+];
