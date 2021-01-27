@@ -37,9 +37,9 @@ const config = require( '../client/server/config/index.js' );
 const mag16 = config( 'magnificent_non_en_locales' ) || [];
 
 // image output variables
-const viewportHeight = 800; // Browser height for capturing the screenshot
+const viewportHeight = 500; // Browser height for capturing the screenshot
 const viewportScaleFactor = 1; // Browser pixel density for capturing the screenshot
-const viewportWidth = 1280; // Browser width for capturing the screenshot
+const viewportWidth = 800; // Browser width for capturing the screenshot
 
 const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
 
@@ -140,7 +140,7 @@ async function run() {
 			};
 
 			const animating = true;
-			const scrollPerFrame = 50;
+			const scrollPerFrame = 150;
 
 			if ( ! animating ) {
 				// Hide the masthead if we're stitching together a tall image
@@ -150,8 +150,8 @@ async function run() {
 			const screenshots = [];
 
 			const encoder = new GIFEncoder( viewportWidth, viewportHeight );
-			encoder.createWriteStream().pipe( fs.createWriteStream( `${ fileBase }.gif` ) );
-			console.log( `Saving animation to ${ fileBase }.gif` );
+			encoder.createWriteStream().pipe( fs.createWriteStream( `${ fileBase }_${ locale }.gif` ) );
+			console.log( `Saving animation to ${ fileBase }_${ locale }.gif` );
 
 			// setting gif encoder
 			encoder.start();
@@ -229,12 +229,16 @@ async function run() {
 			process.stdout.write( '\n' );
 			// We could still capture normal webp/jpg screenshots here.
 		}
-
-		console.log( 'closing page' );
-		await page.close();
 	}
+	console.log( 'closing page' );
+	await page.close();
 
 	console.log( 'Done!' );
 }
 
-run().then( () => process.exit( 0 ) );
+run()
+	.then( () => process.exit( 0 ) )
+	.catch( ( e ) => {
+		console.error( e );
+		process.exit( 1 );
+	} );
