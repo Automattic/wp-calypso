@@ -72,7 +72,7 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					onClick={ () => onChange( 'MONTHLY' ) }
 				>
 					<span className="plans-interval-toggle__label">
-						{ __( 'Monthly', __i18n_text_domain__ ) }
+						{ __( 'Pay monthly', __i18n_text_domain__ ) }
 					</span>
 				</SegmentedControl.Item>
 
@@ -81,7 +81,7 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					onClick={ () => onChange( 'ANNUALLY' ) }
 				>
 					<span className="plans-interval-toggle__label">
-						{ __( 'Annually', __i18n_text_domain__ ) }
+						{ __( 'Pay annually', __i18n_text_domain__ ) }
 					</span>
 					{ /*
 					 * Check covers both cases of maxMonthlyDiscountPercentage
@@ -90,12 +90,12 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					{ intervalType === 'MONTHLY' && maxMonthlyDiscountPercentage && (
 						<PopupMessages>
 							{ sprintf(
-								// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
+								// Translators: will be like "Save up to 30% by paying annually... Make sure the % symbol is kept.
 								__(
-									'Save up to %s%% by paying annually and get a free domain for one year',
+									'Save up to %(maxDiscount)d% by paying annually and get a free domain for one year',
 									__i18n_text_domain__
 								),
-								maxMonthlyDiscountPercentage
+								{ maxDiscount: maxMonthlyDiscountPercentage }
 							) }
 						</PopupMessages>
 					) }
