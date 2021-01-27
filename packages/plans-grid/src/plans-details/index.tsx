@@ -167,7 +167,11 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 						<th colSpan={ 6 }>{ __( 'Sign up', __i18n_text_domain__ ) }</th>
 					</tr>
 					<tr className="plans-details__feature-row" key="price">
-						<th>{ __( 'Monthly subscription (billed yearly)', __i18n_text_domain__ ) }</th>
+						<th>
+							{ billingPeriod === 'ANNUALLY'
+								? __( 'Monthly subscription (billed yearly)', __i18n_text_domain__ )
+								: __( 'Monthly subscription', __i18n_text_domain__ ) }
+						</th>
 						{ isLoading
 							? placeholderPlans.map( ( placeholder ) => (
 									<td key={ placeholder }>
