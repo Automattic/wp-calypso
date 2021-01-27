@@ -20,6 +20,7 @@ import type {
 	PopularBadgeVariation,
 } from '../plans-table/types';
 import PlansIntervalToggle from '../plans-interval-toggle';
+import { useSupportedPlans } from '../hooks';
 
 /**
  * Style dependencies
@@ -79,9 +80,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 		}
 	}, [ billingPeriod, onBillingPeriodChange ] );
 
-	const [ maxMonthlyDiscountPercentage, setMaxMonthlyDiscountPercentage ] = React.useState<
-		number | undefined
-	>( undefined );
+	const { maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
 
 	isAccordion && debug( 'PlansGrid accordion version is active' );
 
@@ -92,7 +91,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 			<PlansIntervalToggle
 				intervalType={ billingPeriod }
 				onChange={ setBillingPeriod }
-				maxMonthlyDiscountPercentage={ maxMonthlyDiscountPercentage }
+				maxMonthlyDiscountPercentage={ maxAnnualDiscount }
 				className="plans-grid__toggle"
 			/>
 
@@ -108,7 +107,6 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							disabledPlans={ disabledPlans }
 							locale={ locale }
 							billingPeriod={ billingPeriod }
-							onMaxMonthlyDiscountPercentageChange={ setMaxMonthlyDiscountPercentage }
 						></PlansAccordion>
 					) : (
 						<PlansTable
@@ -124,7 +122,6 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							showTaglines={ showPlanTaglines }
 							defaultAllPlansExpanded={ defaultAllPlansExpanded }
 							billingPeriod={ billingPeriod }
-							onMaxMonthlyDiscountPercentageChange={ setMaxMonthlyDiscountPercentage }
 						></PlansTable>
 					) }
 				</div>
