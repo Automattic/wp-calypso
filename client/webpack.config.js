@@ -392,7 +392,7 @@ const webpackConfig = {
 		 */
 		new ExtensiveLodashReplacementPlugin(),
 
-		! isDesktop && new ExtractManifestPlugin(),
+		! isDesktop && ! isDevelopment && new ExtractManifestPlugin(),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 };
