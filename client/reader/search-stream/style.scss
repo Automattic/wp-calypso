@@ -350,7 +350,7 @@
 	.reader-share__button-label,
 	.comment-button__label-status,
 	.like-button__label-status {
-		display: none;
+		@include screen-reader-text();
 	}
 
 	.reader-share__button {

@@ -174,7 +174,6 @@ class ReaderShare extends React.Component {
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
 			<div className="reader-share" onClick={ ( event ) => event.preventDefault() }>
 				<Button
-					aria-label={ translate( 'Share post' ) }
 					borderless
 					className={ buttonClasses }
 					compact={ this.props.iconSize === 18 }
