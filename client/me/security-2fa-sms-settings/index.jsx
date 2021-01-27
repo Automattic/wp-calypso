@@ -103,15 +103,15 @@ class Security2faSMSSettings extends React.Component {
 			phoneNumber.countryCode === this.props.userSettings.two_step_sms_country &&
 			phoneNumber.phoneNumber === this.props.userSettings.two_step_sms_phone_number
 		) {
-			this.onSubmitResponse();
+			this.handleSubmitResponse();
 			return;
 		}
 
 		try {
 			await this.props.saveTwoStepSMSSettings( phoneNumber.countryCode, phoneNumber.phoneNumber );
-			this.onSubmitResponse();
+			this.handleSubmitResponse();
 		} catch ( error ) {
-			this.onSubmitResponse( error );
+			this.handleSubmitResponse( error );
 		}
 	}
 
@@ -126,7 +126,7 @@ class Security2faSMSSettings extends React.Component {
 		} );
 	};
 
-	onSubmitResponse( error ) {
+	handleSubmitResponse( error ) {
 		if ( error ) {
 			this.setState( { lastError: error } );
 			return;
