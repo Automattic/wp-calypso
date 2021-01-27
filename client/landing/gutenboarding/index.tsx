@@ -9,6 +9,7 @@ import config from '../../config';
 import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import type { Site as SiteStore } from '@automattic/data-stores';
+import accessibleFocus from '@automattic/accessible-focus';
 import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 
 /**
@@ -17,7 +18,6 @@ import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 import Gutenboard from './gutenboard';
 import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
-import accessibleFocus from 'calypso/lib/accessible-focus';
 import availableDesigns from './available-designs';
 import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
