@@ -26,20 +26,17 @@
  */
 
 const fs = require( 'fs' );
-const captureWebsite = require( 'capture-website' );
-const sharp = require( 'sharp' );
+const puppeteer = require( 'puppeteer' );
+const GIFEncoder = require( 'gifencoder' );
+const PNG = require( 'png-js' );
+
 const wpUrl = require( '@wordpress/url' );
 const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
 const screenshotsBasePath = './static/images/design-screenshots'; // Folder to store output images
-
-const puppeteer = require( 'puppeteer' );
-
 const config = require( '../client/server/config/index.js' );
 const mag16 = config( 'magnificent_non_en_locales' ) || [];
 
 // image output variables
-const captureMaxHeight = 2072; // Cap long pages to  this pixel height when capturing
-const outputWidth = 900; // Outputted file width
 const viewportHeight = 800; // Browser height for capturing the screenshot
 const viewportScaleFactor = 1; // Browser pixel density for capturing the screenshot
 const viewportWidth = 1280; // Browser width for capturing the screenshot
@@ -96,6 +93,7 @@ async function run() {
 		ignoreHTTPSErrors: true,
 		// product:"firefox"
 	} );
+
 	// const page = browser.init()
 	const page = await browser.newPage();
 	await page.setViewport( {
@@ -118,52 +116,29 @@ async function run() {
 			const design = designs.featured[ i ];
 
 			const url = getDesignUrl( design, locale );
-			const file = `${ screenshotsPath }/${ design.slug }_${ design.template }_${ design.theme }`;
+			const fileBase = `${ design.slug }_${ design.template }_${ design.theme }`;
+			// const file = `${ screenshotsPath }/${ fileBase }`;
 
 			if ( ! url.match( /reynolds/ ) ) {
 				continue;
 			}
 
-			// page loaded?
-			console.log( 'going to url' );
 			const response = await page.goto( url, { waitUntil: 'networkidle0' } );
-			// console.log( 'response:', response );
-			console.log( 'response.ok():', response.ok() );
+
 			if ( ! ( response && response.ok() ) ) {
-				console.log( 'error: page did not load.' );
+				console.error( 'error: page did not load.' );
+				continue;
 			}
 
 			const scrollHeight = await page.evaluate( () => document.body.scrollHeight );
-			console.log( 'scrollHeight:', scrollHeight );
-			const content = await page.content();
-			// console.log( 'content:', content );
-			// await page.waitFor( 2000 );
-
-			console.log( `Taking screenshot of ${ url }` );
-			console.log( `Saving to ${ file }.jpg` );
 
 			const screenshotOptions = {
 				fullPage: false,
-				type: 'jpeg',
-				quality: 90,
-				// width: viewportWidth,
-				// height: viewportHeight,
-				// clip: {
-				// 	x:0,
-				// 	y:0,
-				// 	width: viewportWidth,
-				// 	height: captureMaxHeight,
-				// },
+				type: 'png',
 			};
 
-			// const screenshot = await page.screenshot( {
-			// 	path: `${ file }.jpg`,
-			// 	...screenshotOptions,
-			// } );
-
-			// Scroll:
 			const animating = true;
-			const scrollPerFrame = animating ? 100 : viewportHeight;
+			const scrollPerFrame = 50;
 
 			if ( ! animating ) {
 				// Hide the masthead if we're stitching together a tall image
@@ -172,32 +147,47 @@ async function run() {
 
 			const screenshots = [];
 
+			const encoder = new GIFEncoder( viewportWidth, viewportHeight );
+			encoder.createWriteStream().pipe( fs.createWriteStream( `${ fileBase }.gif` ) );
+			console.log( `Saving animation to ${ fileBase }.gif` );
+
+			// setting gif encoder
+			encoder.start();
+			encoder.setRepeat( -1 );
+			encoder.setDelay( 100 );
+			encoder.setQuality( 5 ); // default
+
+			const appendFrameToGif = encoder.addFrame.bind( encoder );
+
+			// screenshot -> Promise( )
+
+			const decodePNG = ( screenshot ) =>
+				new Promise( ( resolve ) =>
+					new PNG( screenshot ).decode( ( result ) => resolve( result ) )
+				);
+
 			try {
 				for (
-					let remaining = scrollHeight, i = 0;
+					let remaining = scrollHeight, screenshotIndex = 0;
 					0 <= remaining;
-					remaining -= scrollPerFrame, i++
+					remaining -= scrollPerFrame, screenshotIndex++
 				) {
 					await page.evaluate(
 						( scrollAmount ) => window.scrollBy( 0, scrollAmount ),
 						scrollPerFrame
 					);
-					const fileName = `${ file }_${ String( i ).padStart( 2, 0 ) }.jpg`;
-					console.log( 'creating', fileName );
-					screenshots.push(
-						await page.screenshot( {
-							path: fileName,
-							// clip: {
-							// 	x:0,
-							// 	// y: scrollHeight - remaining,
-							// 	y: 0,
-							// 	width: viewportWidth,
-							// 	// height: Math.min( remaining, viewportHeight ),
-							// 	height: viewportHeight,
-							// },
-							...screenshotOptions,
-						} )
-					);
+
+					// Uncomment to debug intermediate frames:
+					// const fileName = `${ file }_${ String( screenshotIndex ).padStart( 2, 0 ) }.jpg`;
+					// console.log( 'creating', fileName );
+					const screenshot = await page.screenshot( {
+						// path: fileName,
+						...screenshotOptions,
+					} );
+
+					await decodePNG( screenshot ).then( appendFrameToGif );
+
+					screenshots.push( screenshot );
 				}
 			} catch ( e ) {
 				if (
@@ -205,75 +195,31 @@ async function run() {
 					e.message.includes( 'Run "npm install" or "yarn install" to download a browser binary.' )
 				) {
 					console.error(
-						'\n\nPlease run `PUPPETEER_SKIP_DOWNLOAD= yarn install` to install the chromium binaries required for this script and then try again.'
+						'\n\nPlease run `(cd node_modules/puppeteer; PUPPETEER_SKIP_DOWNLOAD= yarn install)` to install the chromium binaries required for this script and then try again.'
 					);
 					process.exit( 1 );
 				}
-				console.log( 'screenshot error:', e );
+				console.error( 'screenshot error:', e );
 			}
 
-			continue;
+			// Scroll back up
+			await screenshots.reduceRight(
+				( previousPromise, screenshot ) =>
+					previousPromise.then( () => decodePNG( screenshot ) ).then( appendFrameToGif ),
+				Promise.resolve()
+			);
 
-			// Fix `reynolds_rockfield2_rockfield.jpg` first section becoming super tall
-			// @TODO: fix at the source since this will be an issue with mshots API, too.
-			const styles =
-				design.slug === 'reynolds'
-					? [ `.wp-block-cover, .wp-block-cover-image { min-height: ${ viewportHeight }px; }` ]
-					: [];
+			// Add a pause at the top:
+			if ( typeof screenshots[ 0 ] !== 'undefined' ) {
+				const decodedFirstFrame = await decodePNG( screenshots[ 0 ] );
+				appendFrameToGif( decodedFirstFrame );
+				appendFrameToGif( decodedFirstFrame );
+				appendFrameToGif( decodedFirstFrame );
+				appendFrameToGif( decodedFirstFrame );
+			}
 
-			console.log( `Taking screenshot of ${ url }` );
-
-			// let screenshot;
-			// 	screenshot = await captureWebsite.buffer( url, {
-			// 		// fullPage: true,
-			// 		scaleFactor: viewportScaleFactor,
-			// 		width: viewportWidth,
-			// 		height: viewportHeight,
-			// 		launchOptions: { headless: true, timeout: 30000, ignoreHTTPSErrors: true },
-			// 		defaultBackground: false,
-			// 		styles,
-			// 		timeout: 120,
-			// 		type: 'png',
-			// 		// generate appropriate clip parameters
-			// 		element: '#page',
-			// 	} );
-
-			// stiching inspiration: https://github.com/lovell/sharp/issues/405#issuecomment-208033263
-
-			[ 'webp', 'jpg' ].forEach( async ( extension ) => {
-				return;
-				console.log( `Resizing and saving to ${ file }.${ extension }` );
-				let image = await sharp( screenshot, { fit: 'max' } );
-				console.log( 'image:', image );
-				return (
-					image &&
-					( await image
-						.metadata()
-						.then( ( metadata ) => {
-							console.log( 'metadata:', metadata );
-							console.log(
-								'Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ):',
-								Math.min( metadata.height, captureMaxHeight * viewportScaleFactor )
-							);
-							// image = image
-							// 	.extract( {
-							// 		// Ensure we're not extracting taller area than screenshot actaully is
-							// 		height: Math.min( metadata.height, captureMaxHeight * viewportScaleFactor ),
-							// 		left: 0,
-							// 		top: 0,
-							// 		width: metadata.width,
-							// 	} )
-							// 	.resize( outputWidth );
-							if ( extension === 'webp' ) {
-								image = image.webp(); // default quality is 80
-							} else {
-								image = image.jpeg( { quality: 72 } );
-							}
-							image.toFile( `${ file }.${ extension }` );
-						} )
-						.catch( ( error ) => console.log( error ) ) )
-				);
-			} );
+			encoder.finish();
+			// We could still capture normal webp/jpg screenshots here.
 		}
 
 		console.log( 'closing page' );
@@ -284,22 +230,3 @@ async function run() {
 }
 
 run().then( () => process.exit( 0 ) );
-
-async function autoScroll( page ) {
-	await page.evaluate( async () => {
-		await new Promise( ( resolve, reject ) => {
-			var totalHeight = 0;
-			var distance = 100;
-			var timer = setInterval( () => {
-				var scrollHeight = document.body.scrollHeight;
-				window.scrollBy( 0, distance );
-				totalHeight += distance;
-
-				if ( totalHeight >= scrollHeight ) {
-					clearInterval( timer );
-					resolve();
-				}
-			}, 100 );
-		} );
-	} );
-}
