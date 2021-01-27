@@ -22,7 +22,7 @@ import { getDesignImageUrl, getDesignUrl, mShotOptions } from '../../available-d
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import type { Design } from '../../stores/onboard/types';
 import { useIsAnchorFm } from '../../path';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Style dependencies

@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { postLoginRequest, getErrorFromHTTPError } from 'calypso/state/login/utils';
 

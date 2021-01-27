@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { makeLayout, redirectLoggedOut } from 'calypso/controller';
 import { details, fetchThemeDetailsData } from './controller';
 import { siteSelection } from 'calypso/my-sites/controller';

@@ -47,7 +47,7 @@ import {
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 import { login } from 'calypso/lib/paths';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import {

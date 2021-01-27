@@ -1,4 +1,4 @@
-import * as config from 'calypso/config';
+import * as config from '@automattic/calypso-config';
 
 function fn() {
 	const config = { isEnabled: () => false };

@@ -7,7 +7,7 @@ import { isEqual } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTrack } from 'calypso/reader/stats';
 import { queryToFilterState } from 'calypso/state/activity-log/utils';
 import { setFilter } from 'calypso/state/activity-log/actions';

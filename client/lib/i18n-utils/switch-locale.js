@@ -8,7 +8,7 @@ import { forEach, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { isDefaultLocale, getLanguage } from './utils';
 import { getUrlFromParts, getUrlParts } from 'calypso/lib/url/url-parts';
 

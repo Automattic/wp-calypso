@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { sectionify } from 'calypso/lib/route';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupComponent from './main';

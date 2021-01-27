@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { get } from 'lodash';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import getGroups from 'calypso/state/happychat/selectors/get-groups';
 import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getHelpSelectedSite } from 'calypso/state/help/selectors';

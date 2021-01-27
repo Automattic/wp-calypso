@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
  * Internal dependencies
  */
 import { isExternal } from 'calypso/lib/url';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	hasRenewalItem,
 	getAllCartItems,

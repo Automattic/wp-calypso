@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import page from 'page';

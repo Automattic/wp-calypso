@@ -45,7 +45,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { Button } from '@automattic/components';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**

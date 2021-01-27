@@ -12,7 +12,7 @@ import { ProgressBar } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import CurrentSite from 'calypso/my-sites/current-site';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ExternalLink from 'calypso/components/external-link';

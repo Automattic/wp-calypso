@@ -11,7 +11,7 @@ import OAuthLogin from './login';
 import ConnectComponent from './connect';
 import { getToken } from 'calypso/lib/oauth-token';
 import wpcom from 'calypso/lib/wp';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import store from 'store';
 import userFactory from 'calypso/lib/user';
 import Main from 'calypso/components/main';

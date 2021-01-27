@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 // State Selectors
 import {

@@ -6,7 +6,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite, isJetpackModuleActive } from 'calypso/state/sites/selectors';
 import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';

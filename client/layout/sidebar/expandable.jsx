@@ -14,7 +14,7 @@ import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import HoverIntent from 'calypso/lib/hover-intent';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const isTouch = hasTouch();
 

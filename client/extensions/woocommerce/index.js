@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import page from 'page';
 import React from 'react';
 import { translate } from 'i18n-calypso';

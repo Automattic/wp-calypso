@@ -16,7 +16,7 @@ import {
 	isPaidWithCreditCard,
 } from 'calypso/lib/purchases';
 import { isDomainTransfer } from 'calypso/lib/products-values';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;

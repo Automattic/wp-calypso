@@ -6,7 +6,7 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { isEnabled } from '../../config';
+import { isEnabled } from '@automattic/calypso-config';
 import { mshotsUrl, MShotsOptions } from './components/mshots-image';
 import type { Design } from './stores/onboard/types';
 const availableDesignsConfig = require( './available-designs-config.json' );

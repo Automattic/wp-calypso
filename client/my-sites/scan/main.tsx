@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Button, Card, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 
 /**

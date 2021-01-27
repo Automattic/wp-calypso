@@ -13,7 +13,7 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import FormLabel from 'calypso/components/forms/form-label';
 import SegmentedControl from 'calypso/components/segmented-control';
 import SelectDropdown from 'calypso/components/select-dropdown';

@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

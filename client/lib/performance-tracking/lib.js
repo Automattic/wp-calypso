@@ -6,7 +6,7 @@ import { start, stop } from '@automattic/browser-data-collector';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';

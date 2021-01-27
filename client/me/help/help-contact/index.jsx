@@ -12,7 +12,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Main from 'calypso/components/main';
 import { Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';

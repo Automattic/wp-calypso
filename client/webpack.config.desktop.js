@@ -87,7 +87,7 @@ module.exports = {
 		modules: [ __dirname, 'node_modules' ],
 		alias: {
 			config: 'calypso/server/config',
-			'calypso/config': 'calypso/server/config',
+			'@automattic/calypso-config': 'calypso/server/config',
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,

@@ -7,7 +7,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';

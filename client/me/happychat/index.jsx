@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { sidebar } from 'calypso/me/controller';
 import Happychat from './main';
 import { setDocumentHeadTitle } from 'calypso/state/document-head/actions';

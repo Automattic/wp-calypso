@@ -20,7 +20,7 @@ import {
 } from 'calypso/me/purchases/paths.js';
 import titles from 'calypso/me/purchases/titles';
 import SectionNav from 'calypso/components/section-nav';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import Search from 'calypso/components/search';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 

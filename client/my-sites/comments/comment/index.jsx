@@ -12,7 +12,7 @@ import { debounce, get, isEqual, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import CommentActions from 'calypso/my-sites/comments/comment/comment-actions';
 import CommentContent from 'calypso/my-sites/comments/comment/comment-content';

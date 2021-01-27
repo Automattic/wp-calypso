@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Divider from './divider';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';

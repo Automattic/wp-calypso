@@ -6,7 +6,7 @@ import { start, stop } from '@automattic/browser-data-collector';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { startPerformanceTracking, stopPerformanceTracking } from '../lib';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
@@ -18,7 +18,7 @@ import {
 	isCurrentUserBootstrapped,
 } from 'calypso/state/current-user/selectors';
 
-jest.mock( 'calypso/config', () => ( {
+jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 jest.mock( '@automattic/browser-data-collector', () => ( {

@@ -34,7 +34,7 @@ import {
 	errorNotice as errorNoticeAction,
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { sendEmailLogin as sendEmailLoginAction } from 'calypso/state/auth/actions';

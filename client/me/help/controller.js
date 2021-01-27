@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  */
 import { login } from 'calypso/lib/paths';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';

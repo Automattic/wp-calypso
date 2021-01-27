@@ -14,7 +14,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { areShippingMethodsLoaded, areShippingMethodsLoading } from './selectors';
 import { fetchShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 export const fetchShippingMethodsSuccess = ( siteId, data ) => {
 	return {

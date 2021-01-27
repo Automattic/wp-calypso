@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Main from 'calypso/components/main';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';

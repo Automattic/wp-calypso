@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { Button } from '@automattic/components';
 import SiteTypeForm from './form';

@@ -26,7 +26,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 function AddNewPaymentMethod( props ) {
 	const goToPaymentMethods = () => page( paymentMethods );

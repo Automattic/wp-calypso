@@ -46,7 +46,7 @@ import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
 import requestExternalAccess from '@automattic/request-external-access';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import PicasaMigration from './picasa-migration';
 import SocialLogo from 'calypso/components/social-logo';
 

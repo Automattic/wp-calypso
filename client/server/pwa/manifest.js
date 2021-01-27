@@ -6,7 +6,7 @@ import querystring from 'querystring';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const getWordPressOptions = ( environmentUrlSuffix ) => ( {
 	gcm_sender_id: '87234302238',

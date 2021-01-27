@@ -10,7 +10,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,

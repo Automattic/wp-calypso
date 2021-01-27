@@ -18,7 +18,7 @@ import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { navItems, intervals as intervalConstants } from './constants';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies

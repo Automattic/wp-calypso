@@ -5,6 +5,7 @@
 	"references": [
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
+		{ "path": "./calypso-config" },
 		{ "path": "./calypso-stripe" },
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },

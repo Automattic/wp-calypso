@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

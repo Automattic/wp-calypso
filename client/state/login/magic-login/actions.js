@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { AUTHENTICATE_URL } from './constants';
 import { HTTPError, stringifyBody } from '../utils';
 import {

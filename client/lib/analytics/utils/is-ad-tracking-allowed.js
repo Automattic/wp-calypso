@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import debug from './debug';
 import isUrlExcludedForPerformance from './is-url-excluded-for-performance';
 import isPiiUrl from './is-pii-url';

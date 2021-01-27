@@ -12,7 +12,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderDetails from './email-provider-details';
 import {

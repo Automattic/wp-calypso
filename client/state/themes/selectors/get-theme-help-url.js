@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { oldShowcaseUrl } from 'calypso/state/themes/utils';
 

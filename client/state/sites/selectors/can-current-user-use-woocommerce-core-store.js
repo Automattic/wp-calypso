@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import canCurrentUserUseAnyWooCommerceBasedStore from 'calypso/state/sites/selectors/can-current-user-use-any-woocommerce-based-store';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';

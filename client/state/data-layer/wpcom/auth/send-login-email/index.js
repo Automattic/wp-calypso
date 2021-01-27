@@ -23,7 +23,7 @@ import {
 	removeNotice,
 } from 'calypso/state/notices/actions';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 export const sendLoginEmail = ( action ) => {
 	const {

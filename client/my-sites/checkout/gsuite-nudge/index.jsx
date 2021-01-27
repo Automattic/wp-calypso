@@ -12,7 +12,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,

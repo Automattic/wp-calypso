@@ -14,7 +14,7 @@ import { get } from 'lodash';
  */
 import { Button, CompactCard } from '@automattic/components';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	isRequestingInviteResend,
 	didInviteResendSucceed,

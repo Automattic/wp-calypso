@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import webRouter from './index.web';
 import { makeLayout, setLocaleMiddleware } from 'calypso/controller';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';

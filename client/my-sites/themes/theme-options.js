@@ -10,7 +10,7 @@ import { has, identity, mapValues, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,

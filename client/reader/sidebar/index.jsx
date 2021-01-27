@@ -41,7 +41,7 @@ import QueryReaderOrganizations from 'calypso/components/data/query-reader-organ
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**

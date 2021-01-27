@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { makeLayout } from 'calypso/controller';
 import { details, fetchThemeDetailsData, notFoundError } from './controller';
 

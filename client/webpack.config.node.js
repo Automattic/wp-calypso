@@ -134,7 +134,7 @@ const webpackConfig = {
 		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
-			'calypso/config': 'calypso/server/config',
+			'@automattic/calypso-config': 'calypso/server/config',
 		},
 	},
 	node: {

@@ -9,7 +9,7 @@ import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form-footer';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 

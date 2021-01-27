@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import {
 	loginSocialUser,

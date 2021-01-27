@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 
 const headerClass = 'features-helper__feature-header';

@@ -8,7 +8,7 @@ jest.mock( 'child_process', () => ( {
 
 jest.mock( 'superagent', () => jest.fn() );
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const impl = jest.fn();
 	impl.isEnabled = jest.fn();
 	return impl;
@@ -155,7 +155,7 @@ const buildApp = ( environment ) => {
 		// When the app requries these modules, they are loaded from its isolated registry.
 		// Requiring them here will give us the same instance used by the app, this will allow
 		// us to change the mock implementation later or make assertions about it.
-		mocks.config = require( 'calypso/config' );
+		mocks.config = require( '@automattic/calypso-config' );
 		mocks.matchesUA = require( 'browserslist-useragent' ).matchesUA;
 		const {
 			attachBuildTimestamp,

@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 

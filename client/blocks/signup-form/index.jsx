@@ -30,7 +30,7 @@ import PropTypes from 'prop-types';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import wpcom from 'calypso/lib/wp';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button } from '@automattic/components';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';

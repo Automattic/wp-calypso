@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import classnames from 'classnames';
 // eslint-disable-next-line import/no-extraneous-dependencies, no-restricted-imports
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies

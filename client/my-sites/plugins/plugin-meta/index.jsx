@@ -24,7 +24,7 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';

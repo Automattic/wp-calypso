@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import {
 	getAuthAccountType,

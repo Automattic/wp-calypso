@@ -13,7 +13,7 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { Button, RootChild } from '@automattic/components';

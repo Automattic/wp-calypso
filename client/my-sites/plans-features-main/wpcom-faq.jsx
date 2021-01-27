@@ -13,7 +13,7 @@ import FAQItem from 'calypso/components/faq/faq-item';
 import HappychatButton from 'calypso/components/happychat/button';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 

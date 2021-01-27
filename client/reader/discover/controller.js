@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { sectionify } from 'calypso/lib/route';
 import { recordTrack } from 'calypso/reader/stats';
 import {

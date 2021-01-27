@@ -41,7 +41,7 @@ import WpcomFAQ from './wpcom-faq';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	findPlansKeys,

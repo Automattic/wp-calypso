@@ -6,7 +6,7 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleFromPath } from 'calypso/lib/i18n-utils';
 
 /**

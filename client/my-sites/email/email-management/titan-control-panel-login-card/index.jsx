@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { Button, CompactCard } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';

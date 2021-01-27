@@ -20,7 +20,7 @@ import {
 
 import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 
-jest.mock( 'calypso/config', () => ( input ) => {
+jest.mock( '@automattic/calypso-config', () => ( input ) => {
 	const lookupTable = {
 		env_id: 'mocked-test-env-id',
 	};

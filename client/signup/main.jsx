@@ -26,7 +26,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import {
 	isDomainRegistration,

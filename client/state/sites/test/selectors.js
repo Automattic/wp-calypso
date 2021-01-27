@@ -55,7 +55,7 @@ import {
 	hasDefaultSiteTitle,
 	getSiteComputedAttributes,
 } from '../selectors';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	PLAN_BUSINESS,
@@ -64,7 +64,7 @@ import {
 	STORE_DEPRECATION_START_DATE,
 } from 'calypso/lib/plans/constants';
 
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';
 	configMock.isEnabled = jest.fn( () => true );
 	return configMock;

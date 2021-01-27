@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments

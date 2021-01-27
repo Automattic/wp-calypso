@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { jetpackPricingContext } from './controller';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 import { siteSelection } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';

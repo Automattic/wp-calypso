@@ -10,7 +10,7 @@ import { flowRight, get, pick } from 'lodash';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import PressThis from './press-this';
 import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';

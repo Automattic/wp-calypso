@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import titlecase from 'to-title-case';
 import Gridicon from 'calypso/components/gridicon';
 import { head, split } from 'lodash';

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';

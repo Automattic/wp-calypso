@@ -15,7 +15,7 @@ import wp from 'calypso/lib/wp';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import getCartKey from './get-cart-key';

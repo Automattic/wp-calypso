@@ -25,7 +25,7 @@ jest.mock( 'calypso/components/popover/menu', () => {
 } );
 // only enable the external-media options, enabling everything causes an
 // electron related build error
-jest.mock( 'calypso/config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
 	config.isEnabled = ( property ) => property.startsWith( 'external-media' );
 	return config;

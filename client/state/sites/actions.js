@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,

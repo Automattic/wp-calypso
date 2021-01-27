@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';

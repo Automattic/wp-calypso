@@ -12,7 +12,7 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import TranslatableString from 'calypso/components/translatable/proptype';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies

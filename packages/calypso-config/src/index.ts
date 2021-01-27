@@ -8,6 +8,13 @@ import cookie from 'cookie';
  */
 
 import createConfig from '@automattic/create-calypso-config';
+import type { ConfigData } from '@automattic/create-calypso-config';
+
+declare global {
+	interface Window {
+		configData: ConfigData;
+	}
+}
 
 /**
  * Manages config flags for various deployment builds
@@ -16,7 +23,7 @@ import createConfig from '@automattic/create-calypso-config';
  */
 if ( 'undefined' === typeof window || ! window.configData ) {
 	throw new ReferenceError(
-		'No configuration was found: please see client/config/README.md for more information'
+		'No configuration was found: please see packages/calypso-config/README.md for more information'
 	);
 }
 
@@ -28,24 +35,26 @@ const configData = window.configData;
 const CALYPSO_LIVE_REGEX = /^([a-zA-Z0-9-]+\.)?calypso\.live$/;
 
 // check if the current browser location is *.calypso.live
-export function isCalypsoLive() {
+export function isCalypsoLive(): boolean {
 	return typeof window !== 'undefined' && CALYPSO_LIVE_REGEX.test( window.location.host );
 }
 
-function applyFlags( flagsString, modificationMethod ) {
+function applyFlags( flagsString: string, modificationMethod: 'cookie' | 'URL' ) {
 	const flags = flagsString.split( ',' );
 	flags.forEach( ( flagRaw ) => {
 		const flag = flagRaw.replace( /^[-+]/, '' );
 		const enabled = ! /^-/.test( flagRaw );
-		configData.features[ flag ] = enabled;
-		// eslint-disable-next-line no-console
-		console.log(
-			'%cConfig flag %s via %s: %s',
-			'font-weight: bold;',
-			enabled ? 'enabled' : 'disabled',
-			modificationMethod,
-			flag
-		);
+		if ( configData.features ) {
+			configData.features[ flag ] = enabled;
+			// eslint-disable-next-line no-console
+			console.log(
+				'%cConfig flag %s via %s: %s',
+				'font-weight: bold;',
+				enabled ? 'enabled' : 'disabled',
+				modificationMethod,
+				flag
+			);
+		}
 	} );
 }
 

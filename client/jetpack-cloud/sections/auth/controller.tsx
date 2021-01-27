@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Connect from './connect';
 import GetToken from './get-token';
 import userModule from 'calypso/lib/user';

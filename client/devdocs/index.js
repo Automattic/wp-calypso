@@ -3,7 +3,7 @@
  */
 
 import page from 'page';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies

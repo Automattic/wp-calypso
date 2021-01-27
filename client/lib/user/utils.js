@@ -7,7 +7,7 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import user from 'calypso/lib/user';
 
 /**

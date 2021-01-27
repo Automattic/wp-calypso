@@ -41,7 +41,7 @@ import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'calypso/lib/pr
 import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import {

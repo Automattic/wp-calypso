@@ -9,7 +9,7 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Head from 'calypso/components/head';
 import EnvironmentBadge, {
 	TestHelper,

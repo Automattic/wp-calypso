@@ -10,7 +10,7 @@ const chalk = require( 'chalk' );
 const webpackConfig = require( 'calypso/webpack.config' );
 const { execSync } = require( 'child_process' );
 
-const config = require( 'calypso/config' );
+const config = require( '@automattic/calypso-config' );
 
 const protocol = process.env.PROTOCOL || config( 'protocol' );
 const host = process.env.HOST || config( 'hostname' );

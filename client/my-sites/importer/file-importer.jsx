@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled as isConfigEnabled } from 'calypso/config';
+import { isEnabled as isConfigEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';

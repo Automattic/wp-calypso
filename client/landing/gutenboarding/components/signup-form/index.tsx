@@ -31,7 +31,7 @@ import {
 } from '../../lib/analytics';
 import { localizeUrl } from '../../../../lib/i18n-utils';
 import { useTrackModal } from '../../hooks/use-track-modal';
-import config from '../../../../config';
+import config from '@automattic/calypso-config';
 
 interface Props {
 	onRequestClose: () => void;

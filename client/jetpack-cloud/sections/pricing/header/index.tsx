@@ -11,7 +11,7 @@ import React, { useMemo } from 'react';
 import JetpackComMasterbar from '../jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
 import OlarkChat from 'calypso/components/olark-chat';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
