@@ -123,10 +123,7 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 
 								{ ! isFree &&
 									( billingPeriod === 'ANNUALLY'
-										? sprintf(
-												__( 'per month, billed as %s annually', __i18n_text_domain__ ),
-												planProduct?.annualPrice
-										  )
+										? __( 'billed annually', __i18n_text_domain__ )
 										: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
 							</div>
 							{ ! isFree && (
