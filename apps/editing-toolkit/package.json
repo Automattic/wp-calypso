@@ -66,7 +66,7 @@
 		"block-patterns": "calypso-build --env source='block-patterns'",
 		"dev:block-patterns": "yarn run block-patterns",
 		"build:block-patterns": "NODE_ENV=production yarn run block-patterns",
-		"whats-new": "calypso-build --source='whats-new'",
+		"whats-new": "calypso-build --env source='whats-new'",
 		"dev:whats-new": "yarn run whats-new",
 		"build:whats-new": "NODE_ENV=production yarn run whats-new",
 		"dev": "node bin/npm-run-build.js --dev",

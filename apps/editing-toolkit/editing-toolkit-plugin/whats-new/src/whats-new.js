@@ -147,7 +147,7 @@ function getWhatsNewPages() {
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'<p>You can now drag and drop <Link1>Blocks</Link1>, and even <Link2>Block Patterns</Link2>, into your content directly from the Block Inserter.</p><p><Link>Learn more</Link>.</p>',
+					'<p>You can now drag and drop <Link1>Blocks</Link1>, and even <Link2>Block Patterns</Link2>, into your content directly from the Block Inserter.</p><p><Link3>Learn more</Link3></p>',
 					'full-site-editing'
 				),
 				{
@@ -182,7 +182,7 @@ function getWhatsNewPages() {
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'<p>Sometimes you just need a single webpage to get your idea across. Introducing our freshly-launched <Link1>Blank Canvas theme</Link1>, which is optimized for single-page websites.</p><p><Link2>Learn more</Link2>.</p>',
+					'<p>Sometimes you just need a single webpage to get your idea across. Introducing our freshly-launched <Link1>Blank Canvas theme</Link1>, which is optimized for single-page websites.</p><p><Link2>Learn more</Link2></p>',
 					'full-site-editing'
 				),
 				{
