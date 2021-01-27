@@ -48,9 +48,9 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 export const mShotOptions = (): MShotsOptions => {
 	// Take care changing these values as animation css in design-selector expect these height values
 	if ( isEnabled( 'gutenboarding/landscape-preview' ) ) {
-		return { vpw: 1600, vph: 1600, w: 500, h: 500 };
+		return { vpw: 1600, vph: 1600, w: 600, h: 600 };
 	}
-	return { vpw: 1600, vph: 3000, w: 500, h: 937 };
+	return { vpw: 1600, vph: 3000, w: 600, h: 1124 };
 };
 
 const canUseWebP = getCanUseWebP();
