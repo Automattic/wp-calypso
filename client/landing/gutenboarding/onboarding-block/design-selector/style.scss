@@ -111,7 +111,6 @@
 		display: block;
 		width: 100%;
 		height: 0;
-		padding-top: 360px / 480px * 200%;
 		border: 1px solid var( --studio-gray-5 );
 		position: relative;
 		overflow: hidden;
@@ -125,6 +124,22 @@
 			width: 100%;
 			height: auto;
 		}
+	}
+
+	.design-selector__landscape {
+		padding-top: 65%;
+
+		img {
+			transition: all 1s;
+		}
+
+		img:hover {
+			margin-top: -100px;
+		}
+	}
+
+	.design-selector__portrait {
+		padding-top: 360px / 480px * 200%;
 	}
 
 	.design-selector__option-meta {

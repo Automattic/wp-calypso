@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import { Tooltip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
@@ -17,7 +18,7 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import Badge from '../../components/badge';
 import MShotsImage from '../../components/mshots-image';
-import { getDesignImageUrl, getDesignUrl } from '../../available-designs';
+import { getDesignImageUrl, getDesignUrl, mShotOptions } from '../../available-designs';
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import type { Design } from '../../stores/onboard/types';
 import { useIsAnchorFm } from '../../path';
@@ -88,12 +89,20 @@ const DesignSelector: React.FunctionComponent = () => {
 									goNext();
 								} }
 							>
-								<span className="design-selector__image-frame">
+								<span
+									className={ classnames(
+										'design-selector__image-frame',
+										isEnabled( 'gutenboarding/landscape-preview' )
+											? 'design-selector__landscape'
+											: 'design-selector__portrait'
+									) }
+								>
 									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
 										<MShotsImage
 											url={ getDesignUrl( design, locale ) }
 											aria-labelledby={ makeOptionId( design ) }
 											alt=""
+											options={ mShotOptions() }
 										/>
 									) : (
 										<img
