@@ -34,7 +34,7 @@ const MONTHLY_PLAN_BILLING_PERIOD = 31;
  * @param plan the plan object
  */
 function getMonthlyPrice( plan: PricedAPIPlan ) {
-	return formatCurrency( plan.raw_price / 12, plan.currency_code ) as string;
+	return formatCurrency( plan.raw_price / 12, plan.currency_code, { stripZeros: true } ) as string;
 }
 
 /**
@@ -43,7 +43,7 @@ function getMonthlyPrice( plan: PricedAPIPlan ) {
  * @param plan the plan object
  */
 function getAnnualPrice( plan: PricedAPIPlan ) {
-	return formatCurrency( plan.raw_price * 12, plan.currency_code ) as string;
+	return formatCurrency( plan.raw_price * 12, plan.currency_code, { stripZeros: true } ) as string;
 }
 
 /**
@@ -53,7 +53,7 @@ function getAnnualPrice( plan: PricedAPIPlan ) {
  * @param plan the plan object
  */
 function getFormattedPrice( plan: PricedAPIPlan ) {
-	return formatCurrency( plan.raw_price, plan.currency_code ) as string;
+	return formatCurrency( plan.raw_price, plan.currency_code, { stripZeros: true } ) as string;
 }
 
 function calculateDiscounts( planProducts: PlanProduct[] ) {
