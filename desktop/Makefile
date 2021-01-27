@@ -19,39 +19,24 @@ export NODE_ENV = production
 export ELECTRON_BUILDER_ARGS =
 export NODE_ARGS = --max_old_space_size=8192
 
-.PHONY: build build-ci config server client source package
+.PHONY: build build-ci config server client source package e2e
 
 build:
 	$(info Building app...)
 
-	@cd $(CALYPSO_DIR) && yarn run build-desktop
+	@cd $(DESKTOP_DIR) && yarn run build
 
 config:
 	$(info Building config...)
 
-	@cd $(CALYPSO_DIR) && yarn run build-desktop:config
-
-server:
-	$(info Building app server...)
-
-	@cd $(CALYPSO_DIR) && yarn run build-desktop:server
-
-client:
-	$(info Building app client...)
-
-	@cd $(CALYPSO_DIR) && yarn run build-desktop:client
-
-source:
-	$(info Building app source...)
-
-	@cd $(CALYPSO_DIR) && yarn run build-desktop:source
+	@cd $(DESKTOP_DIR) && yarn run build:config
 
 secrets:
 	$(info Making app secrets...)
 
-	@cd $(CALYPSO_DIR) && yarn run build-desktop:secrets
+	@cd $(DESKTOP_DIR) && yarn run build:secrets
 
-# Note: cannot prepend prepend desktop/package.json with full path: cannot be resolved on Windows.
+# Note: cannot prepend desktop/package.json with full path: cannot be resolved on Windows.
 package: PACKAGE_ELECTRON_VERSION = $(shell cd $(DESKTOP_DIR) && node -e "console.log(require('./package.json').devDependencies.electron)")
 package:
 	$(info Packaging app...)

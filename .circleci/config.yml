@@ -183,10 +183,7 @@ references:
       npm install -g yarn
       yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
-    - desktop/build
-    - desktop/client
     - desktop/config
-    - desktop/public
     - desktop/resource/certificates/win.p12
     - desktop/resource/certificates/mac.p12
   desktop-decrypt-assets: &desktop-decrypt-assets
@@ -658,8 +655,8 @@ jobs:
       - slack/status:
           webhook: << parameters.slack-webhook >>
 
-  wp-desktop-source:
-    # Use Linux machine executor, NOT docker image for higher available RAM (7.5GB)
+  # TODO: Make this local to the Win, Linux and Mac jobs
+  wp-desktop-assets:
     machine:
       image: ubuntu-1604:202004-01
     resource_class: medium
@@ -667,11 +664,6 @@ jobs:
     environment:
       NVM_DIR: '/opt/circleci/.nvm'
       VERSION: << pipeline.git.tag >>
-      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
-      DETECT_CHROMEDRIVER_VERSION: 'false'
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
-      NODE_OPTIONS: --max-old-space-size=6144
-      YARN_CACHE_FOLDER: ~/.cache/yarn
       CONFIG_ENV: release
     steps:
       - checkout
@@ -682,64 +674,6 @@ jobs:
                 name: Ensure package.json Version And Tag Match
                 command: cd desktop/bin && node validate_tag.js $VERSION
       - run: *desktop-decrypt-assets
-      - run:
-          name: Compute cache checksums
-          command: |
-            # Get latest commit that modified packages directory
-            echo "$(git log -n 1 --format='%h' -- packages .nvmrc yarn.lock)" > packages-hash
-      - restore_cache: *desktop-restore-yarn-cache
-      - restore_cache: *desktop-restore-packages-cache
-      - restore_cache: *desktop-restore-calypso-build-cache
-      - run:
-          name: Install Linux deps
-          command: |
-            sudo apt update
-            sudo apt-get install -y git-restore-mtime bc
-      - run:
-          name: Restore file modified time
-          command: |
-            # Webpack cache-loader depends on file mtime, which is reset by "git clone".
-            # Use git-restore-mtime to restore original modification time of files based
-            # on date of most recent commit that modified them.
-            # Ref: http://manpages.ubuntu.com/manpages/bionic/man1/git-restore-mtime.1.html
-            #
-            # Note: this utility is highly optimized and is able to process all Calypso
-            # files in less than 10 seconds!
-            /usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
-      - run:
-          name: Install Dependencies
-          command: |
-            # Install Node
-            # Note: this syntax is required to load NVM_DIR in the machine executor.
-            # Ref: https://discuss.circleci.com/t/circleci-forgetting-node-version-on-machine-executor/28813
-            set +e
-            set +x
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install
-            nvm use
-            npm install -g yarn
-
-            # defer to restored packages whenever possible
-            # On a Machine executor, using cached built packages is significant:
-            # https://github.com/Automattic/wp-calypso/pull/44696#discussion_r468010942
-            if [ -f packages-cache-restored ]; then
-              export DISABLEPOSTINSTALL=1
-            fi
-            yarn install --frozen-lockfile
-            echo "$(cat packages-hash)" > packages-cache-restored
-      - save_cache: *desktop-save-yarn-cache
-      - run:
-          name: Build Desktop and Calypso source
-          no_output_timeout: 15m
-          command: |
-            set +e
-            set +x
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm use
-
-            yarn run build-desktop:source
-      - save_cache: *desktop-save-packages-cache
-      - save_cache: *desktop-save-calypso-build-cache
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
           paths: *desktop-cache-paths
@@ -772,7 +706,7 @@ jobs:
             # Otherwise only build application executable required for end-to-end testing.
             ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
-            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop
       - run:
           name: e2e Tests
           command: |
@@ -838,7 +772,7 @@ jobs:
             # Otherwise only build application executable required for end-to-end testing.
             ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 
-            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop
       - run:
           name: e2e Tests
           command: |
@@ -925,7 +859,7 @@ jobs:
             If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
 
 
-            make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
+            make -f desktop/Makefile build ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
       - run:
           name: Archive Unpacked Directories
           command: |
@@ -1103,49 +1037,62 @@ workflows:
           slack-webhook: '$SLACK_WOO'
   wp-desktop:
     jobs:
-      - wp-desktop-source:
+      - wp-desktop-assets:
+          filters:
+            branches:
+              only:
+              - trunk
+              - /release\/.*/
+              - /desktop\/.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-assets
           filters:
             branches:
               only:
                 - trunk
                 - /release\/.*/
                 - /desktop\/.*/
-      - wp-desktop-mac:
-          requires:
-            - wp-desktop-source
-      # Even though a TeamCity Linux job is ran against trunk,
-      # we should continue to periodically validate the Circle
-      # job to ensure CircleCI continues to work on all
-      # platforms since the application is deployed via CircleCI.
-      # This also provides a benchmark and fallback for TeamCity.
       - wp-desktop-linux:
           requires:
-            - wp-desktop-source
+            - wp-desktop-assets
+          filters:
+            branches:
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-windows:
           requires:
-            - wp-desktop-source
+            - wp-desktop-assets
+          filters:
+            branches:
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
   wp-desktop-release:
     when: << pipeline.git.tag >>
     jobs:
-      - wp-desktop-source:
+      - wp-desktop-assets:
           filters:
             tags:
               only: /v.*/
       - wp-desktop-mac:
           requires:
-            - wp-desktop-source
+            - wp-desktop-assets
           filters:
             tags:
               only: /v.*/
       - wp-desktop-linux:
           requires:
-            - wp-desktop-source
+            - wp-desktop-assets
           filters:
             tags:
               only: /v.*/
       - wp-desktop-windows:
           requires:
-            - wp-desktop-source
+            - wp-desktop-assets
           filters:
             tags:
               only: /v.*/
