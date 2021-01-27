@@ -69,9 +69,9 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return WP_REST_Response
 	 */
 	public function get_nux_status() {
-		// Check if we want to show the Welcome Tour variant pbxNRc-Cb-p2
+		// Check if we want to show the Welcome Guide variant pbxNRc-Cb-p2
 		// Performing the check here means that we'll only assign a user to an experiment when this API is first called.
-		$welcome_tour_show_variant = ( defined( 'SHOW_WELCOME_TOUR' ) && SHOW_WELCOME_TOUR ) || apply_filters( 'a8c_enable_wpcom_welcome_tour', false );
+		$welcome_guide_show_variant = ( defined( 'SHOW_WELCOME_TOUR' ) && SHOW_WELCOME_TOUR ) || apply_filters( 'a8c_enable_wpcom_welcome_tour', false );
 
 		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
@@ -83,7 +83,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 		return rest_ensure_response(
 			array(
 				'is_nux_enabled'            => $this->is_nux_enabled( $nux_status ),
-				'welcome_tour_show_variant' => $welcome_tour_show_variant,
+				'welcome_guide_show_variant' => $welcome_guide_show_variant,
 			)
 		);
 	}

@@ -157,10 +157,10 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 
 function TourRating() {
 	let isDisabled = false;
-	const tourRating = useSelect( ( select ) => select( 'automattic/nux' ).tourRating() );
-	const { setTourRating } = useDispatch( 'automattic/nux' );
+	const guideRating = useSelect( ( select ) => select( 'automattic/nux' ).guideRating() );
+	const { setGuideRating } = useDispatch( 'automattic/nux' );
 
-	if ( ! isDisabled && tourRating ) {
+	if ( ! isDisabled && guideRating ) {
 		isDisabled = true;
 	}
 	const rateTour = ( isThumbsUp ) => {
@@ -168,7 +168,7 @@ function TourRating() {
 			return;
 		}
 		isDisabled = true;
-		setTourRating( isThumbsUp ? 'thumbs-up' : 'thumbs-down' );
+		setGuideRating( isThumbsUp ? 'thumbs-up' : 'thumbs-down' );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 			thumbs_up: isThumbsUp,
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
@@ -182,7 +182,7 @@ function TourRating() {
 				<Button
 					aria-label={ __( 'Rate thumbs up', 'full-site-editing' ) }
 					className={ classNames( 'welcome-tour__end-icon', {
-						active: tourRating === 'thumbs-up',
+						active: guideRating === 'thumbs-up',
 					} ) }
 					disabled={ isDisabled }
 					icon={ thumbsUp }
@@ -192,7 +192,7 @@ function TourRating() {
 				<Button
 					aria-label={ __( 'Rate thumbs down', 'full-site-editing' ) }
 					className={ classNames( 'welcome-tour__end-icon', {
-						active: tourRating === 'thumbs-down',
+						active: guideRating === 'thumbs-down',
 					} ) }
 					disabled={ isDisabled }
 					icon={ thumbsDown }

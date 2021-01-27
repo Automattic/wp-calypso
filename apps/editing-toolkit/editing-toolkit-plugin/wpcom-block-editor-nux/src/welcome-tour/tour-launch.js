@@ -18,13 +18,13 @@ import { __ } from '@wordpress/i18n';
 
 function LaunchWpcomWelcomeTour() {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const { isWpcomNuxEnabled, isSPTOpen, isTourManuallyOpened } = useSelect( ( select ) => ( {
+	const { isWpcomNuxEnabled, isSPTOpen, isGuideManuallyOpened } = useSelect( ( select ) => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		// Handle the case where SPT is initialized and open
 		isSPTOpen:
 			select( 'automattic/starter-page-layouts' ) &&
 			select( 'automattic/starter-page-layouts' ).isOpen(),
-		isTourManuallyOpened: select( 'automattic/nux' ).isTourManuallyOpened(),
+		isGuideManuallyOpened: select( 'automattic/nux' ).isGuideManuallyOpened(),
 	} ) );
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
@@ -47,12 +47,12 @@ function LaunchWpcomWelcomeTour() {
 		// Track opening of the Welcome Guide
 		recordTracksEvent( 'calypso_editor_wpcom_tour_open', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-			is_manually_opened: isTourManuallyOpened,
+			is_manually_opened: isGuideManuallyOpened,
 		} );
 		return () => {
 			document.body.removeChild( portalParent );
 		};
-	}, [ isSPTOpen, isTourManuallyOpened, isWpcomNuxEnabled, portalParent ] );
+	}, [ isSPTOpen, isGuideManuallyOpened, isWpcomNuxEnabled, portalParent ] );
 
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
@@ -67,7 +67,7 @@ function WelcomeTourFrame() {
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
 
-	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
+	const { setWpcomNuxStatus, setGuideOpenStatus } = useDispatch( 'automattic/nux' );
 
 	const dismissWpcomNuxTour = ( source ) => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
@@ -76,7 +76,7 @@ function WelcomeTourFrame() {
 			action: source,
 		} );
 		setWpcomNuxStatus( { isNuxEnabled: false } );
-		setTourOpenStatus( { isTourManuallyOpened: false } );
+		setGuideOpenStatus( { isGuideManuallyOpened: false } );
 	};
 
 	// Preload card images

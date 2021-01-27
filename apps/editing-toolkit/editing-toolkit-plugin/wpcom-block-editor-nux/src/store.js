@@ -12,28 +12,28 @@ const isNuxEnabledReducer = ( state = undefined, action ) => {
 			return state;
 	}
 };
-const isTourManuallyOpenedReducer = ( state = false, action ) => {
+const isGuideManuallyOpenedReducer = ( state = false, action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN':
-			return action.isTourManuallyOpened;
+		case 'WPCOM_BLOCK_EDITOR_SET_GUIDE_OPEN':
+			return action.isGuideManuallyOpened;
 		default:
 			return state;
 	}
 };
 
-// TODO: next PR convert file to Typescript to ensure control of tourRating values: null, 'thumbs-up' 'thumbs-down'
-const tourRatingReducer = ( state = undefined, action ) => {
+// TODO: next PR convert file to Typescript to ensure control of guideRating values: null, 'thumbs-up' 'thumbs-down'
+const guideRatingReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING':
-			return action.tourRating;
+		case 'WPCOM_BLOCK_EDITOR_SET_GUIDE_RATING':
+			return action.guideRating;
 		default:
 			return state;
 	}
 };
 
-const showWpcomNuxVariantReducer = ( state = false, action ) => {
+const shouldShowWpcomGuideVariantReducer = ( state = false, action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_NUX_VARIANT':
+		case 'WPCOM_BLOCK_EDITOR_SET_GUIDE_VARIANT':
 			return action.showVariant;
 		default:
 			return state;
@@ -42,14 +42,14 @@ const showWpcomNuxVariantReducer = ( state = false, action ) => {
 
 const reducer = combineReducers( {
 	isNuxEnabled: isNuxEnabledReducer,
-	isTourManuallyOpened: isTourManuallyOpenedReducer,
-	tourRating: tourRatingReducer,
-	showWpcomNuxVariant: showWpcomNuxVariantReducer,
+	isGuideManuallyOpened: isGuideManuallyOpenedReducer,
+	guideRating: guideRatingReducer,
+	shouldShowWpcomGuideVariant: shouldShowWpcomGuideVariantReducer,
 } );
 
 const actions = {
-	// TODO: Clarify variable naming of nux vs tour for consistency and to better reflect terminology in core
-	// isFeatureActive instead of isNuxEnabled would match core nad make this logic easier to understand.
+	// TODO: Improve variable naming of nux vs tour for consistency and to better reflect terminology in core: use nux for the user status flag and Guide to describe the React component (like in core)
+	// isFeatureActive instead of isNuxEnabled would match core and make this logic easier to understand.
 	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
 		if ( ! bypassApi ) {
 			apiFetch( {
@@ -63,28 +63,28 @@ const actions = {
 			isNuxEnabled,
 		};
 	},
-	setTourRating: ( tourRating ) => {
-		return { type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING', tourRating };
+	setGuideRating: ( guideRating ) => {
+		return { type: 'WPCOM_BLOCK_EDITOR_SET_GUIDE_RATING', guideRating };
 	},
-	setShowWpcomNuxVariant: ( { showVariant } ) => {
+	setShouldShowWpcomGuideVariant: ( { showVariant } ) => {
 		return {
-			type: 'WPCOM_BLOCK_EDITOR_SET_NUX_VARIANT',
+			type: 'WPCOM_BLOCK_EDITOR_SET_GUIDE_VARIANT',
 			showVariant,
 		};
 	},
-	setTourOpenStatus: ( { isTourManuallyOpened } ) => {
+	setGuideOpenStatus: ( { isGuideManuallyOpened } ) => {
 		return {
-			type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN',
-			isTourManuallyOpened,
+			type: 'WPCOM_BLOCK_EDITOR_SET_GUIDE_OPEN',
+			isGuideManuallyOpened,
 		};
 	},
 };
 
 const selectors = {
-	isTourManuallyOpened: ( state ) => state.isTourManuallyOpened,
+	isGuideManuallyOpened: ( state ) => state.isGuideManuallyOpened,
 	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
-	tourRating: ( state ) => state.tourRating,
-	shouldShowWpcomNuxVariant: ( state ) => state.showWpcomNuxVariant,
+	guideRating: ( state ) => state.guideRating,
+	shouldShowWpcomGuideVariant: ( state ) => state.shouldShowWpcomGuideVariant,
 };
 
 registerStore( 'automattic/nux', {
