@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import React, { useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch, useStore } from 'react-redux';
@@ -175,7 +176,7 @@ export default function useCreatePaymentCompleteCallback( {
 					fetchSitesAndUser(
 						domainName,
 						() => {
-							window.location.href = url;
+							performRedirect( url );
 						},
 						reduxStore
 					);
@@ -193,9 +194,14 @@ export default function useCreatePaymentCompleteCallback( {
 				} catch ( err ) {
 					debug( 'error while clearing localStorage cart' );
 				}
+
+				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
+				// Using page.redirect() will take to the log in page which we don't want.
+				window.location.href = url;
+				return;
 			}
 
-			window.location.href = url;
+			performRedirect( url );
 		},
 		[
 			previousRoute,
@@ -220,6 +226,14 @@ export default function useCreatePaymentCompleteCallback( {
 			createUserAndSiteBeforeTransaction,
 		]
 	);
+}
+
+function performRedirect( url: string ): void {
+	try {
+		page( url );
+	} catch ( err ) {
+		window.location.href = url;
+	}
 }
 
 function displayRenewalSuccessNotice(
