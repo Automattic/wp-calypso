@@ -10,7 +10,10 @@ export function storeExperimentAssignment( experimentAssignment: ExperimentAssig
 	Validations.validateExperimentAssignment( experimentAssignment );
 
 	const previousExperimentAssignment = experiments[ experimentAssignment.experimentName ];
-	if ( previousExperimentAssignment && experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp ) {
+	if (
+		previousExperimentAssignment &&
+		experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp
+	) {
 		throw new Error(
 			'Trying to store an older experiment assignment than is present in the store, likely a race condition.'
 		);

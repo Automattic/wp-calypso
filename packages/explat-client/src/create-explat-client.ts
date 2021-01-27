@@ -135,7 +135,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					throw new Error(
 						`Trying to dangerously get an ExperimentAssignment that has loaded but has since expired`
 					);
-				} 
+				}
 			}
 
 			return storedExperimentAssignment;
