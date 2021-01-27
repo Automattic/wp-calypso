@@ -1,20 +1,26 @@
 /**
- * External dependencies
- */
-import wp from 'calypso/lib/wp';
-
-/**
  * Internal dependencies
  */
+import { fromApi } from 'calypso/state/data-layer/wpcom/me/settings';
 import {
 	saveUserSettingsFailure,
 	saveUserSettingsSuccess,
 } from 'calypso/state/user-settings/actions';
-import { fromApi } from 'calypso/state/data-layer/wpcom/me/settings';
 import { USER_SETTINGS_SAVE } from 'calypso/state/action-types';
+import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 
+/**
+ * Redux thunk which exclusively updates `countryCode` and `phoneNumber` settings
+ * required for Two-factor-authentication.
+ *
+ * Note: We purposely re-throw the error because we only catch it to handle the
+ * `fetching` state with `saveUserSettingsFailure`.
+ *
+ * @param {string} countryCode Holds a country code
+ * @param {string} phoneNumber Holds a phone number
+ */
 const saveTwoStepSMSSettings = ( countryCode, phoneNumber ) => async ( dispatch ) => {
 	dispatch( { type: USER_SETTINGS_SAVE } );
 
