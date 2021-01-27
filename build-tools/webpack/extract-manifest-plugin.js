@@ -15,11 +15,7 @@ class ExtractManifestModule extends webpack.RuntimeModule {
 
 		return `${ namespace }.__extracted_manifest = ${ runtimeTemplate.basicFunction(
 			'',
-			template.indent( [
-				'const manifest=new Map();',
-				...this.manifestContent,
-				'return manifest;',
-			] )
+			template.indent( [ 'var manifest=new Map();', ...this.manifestContent, 'return manifest;' ] )
 		) }`;
 	}
 }
