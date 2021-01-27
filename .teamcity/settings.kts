@@ -1105,6 +1105,11 @@ object WPComPlugins_EditorToolKit : BuildType({
 	triggers {
 		vcs {
 			triggerRules = "+:apps/editing-toolkit/**"
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+
 		}
 	}
 
