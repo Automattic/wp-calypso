@@ -286,18 +286,9 @@ export const getJetpackProductsDescriptions = () => {
 	const scanDescription = translate(
 		'Automatic scanning and one-click fixes keep your site one step ahead of security threats and malware.'
 	);
-	const antiSpamDescription =
-		{
-			i5: translate(
-				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
-			),
-			spp: translate(
-				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
-			),
-		}[ currentCROvariant ] ||
-		translate(
-			'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
-		);
+	const antiSpamDescription = translate(
+		'Save time and get better responses by automatically blocking spam from your comments and forms.'
+	);
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
