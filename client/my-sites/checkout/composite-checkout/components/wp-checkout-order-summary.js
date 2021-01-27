@@ -2,47 +2,27 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
 	FormStatus,
-	useEvents,
 	useFormStatus,
 	useLineItemsOfType,
 	useTotal,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
-import PaymentChatButton from './payment-chat-button';
-import getSupportVariation, {
-	SUPPORT_HAPPYCHAT,
-	SUPPORT_FORUM,
-	SUPPORT_DIRECTLY,
-} from 'calypso/state/selectors/get-inline-help-support-variation';
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
 import { useHasRenewalInCart } from '../hooks/has-renewal';
-import {
-	isWpComBusinessPlan,
-	isWpComEcommercePlan,
-	isWpComPersonalPlan,
-	isWpComPremiumPlan,
-	getYearlyPlanByMonthly,
-	getPlan,
-} from 'calypso/lib/plans';
+import { getYearlyPlanByMonthly, getPlan } from 'calypso/lib/plans';
 import { isMonthly } from 'calypso/lib/plans/constants';
-import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
-import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
-import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
@@ -107,7 +87,6 @@ export default function WPCheckoutOrderSummary( {
 					</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-			<CheckoutSummaryHelp />
 		</CheckoutSummaryCard>
 	);
 }
@@ -298,91 +277,12 @@ function CheckoutSummaryPlanFeatures( { siteId } ) {
 	);
 }
 
-function getHighestWpComPlanLabel( plans ) {
-	const planMatchersInOrder = [
-		{ label: 'WordPress.com eCommerce', matcher: isWpComEcommercePlan },
-		{ label: 'WordPress.com Business', matcher: isWpComBusinessPlan },
-		{ label: 'WordPress.com Premium', matcher: isWpComPremiumPlan },
-		{ label: 'WordPress.com Personal', matcher: isWpComPersonalPlan },
-	];
-	for ( const { label, matcher } of planMatchersInOrder ) {
-		for ( const plan of plans ) {
-			if ( matcher( get( plan, 'wpcom_meta.product_slug' ) ) ) {
-				return label;
-			}
-		}
-	}
-}
-
-export function CheckoutSummaryHelp() {
-	const reduxDispatch = useDispatch();
-	const translate = useTranslate();
-	const plans = useLineItemsOfType( 'plan' );
-
-	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
-	const supportVariation = useSelector( getSupportVariation );
-
-	const happyChatAvailable = useSelector( isHappychatAvailable );
-	const presalesChatAvailable = useSelector( isPresalesChatAvailable );
-	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
-	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
-
-	const onEvent = useEvents();
-	const handleHelpButtonClicked = () => {
-		onEvent( { type: 'calypso_checkout_composite_summary_help_click' } );
-		reduxDispatch( showInlineHelpPopover() );
-	};
-
-	// If chat is available and the cart has a pre-sales plan or is already eligible for chat.
-	const shouldRenderPaymentChatButton =
-		happyChatAvailable && ( isPresalesChatEligible || supportVariation === SUPPORT_HAPPYCHAT );
-
-	const hasDirectSupport =
-		supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
-
-	// If chat isn't available, use the inline help button instead.
-	return (
-		<CheckoutSummaryHelpWrapper>
-			<QuerySupportTypes />
-			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
-			{ shouldRenderPaymentChatButton ? (
-				<PaymentChatButton plan={ presalesEligiblePlanLabel } />
-			) : (
-				supportVariationDetermined && (
-					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
-						{ hasDirectSupport
-							? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
-									components: {
-										underline: <span />,
-									},
-							  } )
-							: translate(
-									'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
-									{
-										components: {
-											underline: <span />,
-										},
-									}
-							  ) }
-					</CheckoutSummaryHelpButton>
-				)
-			) }
-		</CheckoutSummaryHelpWrapper>
-	);
-}
-
 const pulse = keyframes`
-	0% {
-		opacity: 1;
-	}
+	0% { opacity: 1; }
 
-	70% {
-		opacity: 0.25;
-	}
+	70% { opacity: 0.25; }
 
-	100% {
-		opacity: 1;
-	}
+	100% { opacity: 1; }
 `;
 
 const CheckoutSummaryCard = styled( CheckoutSummaryCardUnstyled )`
@@ -394,21 +294,6 @@ const CheckoutSummaryFeatures = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 20px;
-	}
-
-	.payment-chat-button.is-borderless {
-		color: ${ ( props ) => props.theme.colors.textColor };
-		padding: 0;
-
-		svg {
-			margin-right: 4px;
-			width: 20px;
-
-			.rtl & {
-				margin-right: 0;
-				margin-left: 4px;
-			}
-		}
 	}
 `;
 
@@ -422,38 +307,6 @@ const CheckoutSummaryFeaturesListWrapper = styled.ul`
 	margin: 0;
 	list-style: none;
 	font-size: 14px;
-`;
-
-const CheckoutSummaryHelpButton = styled.button`
-	margin-top: 16px;
-	text-align: left;
-
-	.rtl & {
-		text-align: right;
-	}
-
-	span {
-		cursor: pointer;
-		text-decoration: underline;
-		color: var( --color-link );
-
-		&:hover {
-			text-decoration: none;
-		}
-	}
-`;
-
-const CheckoutSummaryHelpWrapper = styled.div`
-	position: absolute;
-
-	@media screen and ( max-width: 960px ) {
-		position: static;
-		padding: 0 20px 20px;
-
-		> button {
-			margin-top: 0;
-		}
-	}
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
@@ -557,14 +410,6 @@ const LoadingCopy = styled.p`
 			right: -26px;
 			left: auto;
 		}
-	}
-`;
-
-const LoadingButton = styled( LoadingCopy )`
-	margin: 16px 8px 0;
-
-	::before {
-		display: none;
 	}
 `;
 

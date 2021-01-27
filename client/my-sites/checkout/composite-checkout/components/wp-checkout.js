@@ -57,6 +57,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import PaymentMethodStep from './payment-method-step';
+import CheckoutHelpLink from './checkout-help-link';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -328,6 +329,7 @@ export default function WPCheckout( {
 							responseCart={ responseCart }
 							addItemToCart={ addItemToCart }
 						/>
+						<CheckoutHelpLink />
 					</CheckoutSummaryBody>
 				</CheckoutErrorBoundary>
 			</CheckoutSummaryArea>

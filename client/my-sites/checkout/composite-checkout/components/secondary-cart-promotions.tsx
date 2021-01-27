@@ -30,10 +30,6 @@ type DivProps = {
 const UpsellWrapper = styled.div< DivProps >`
 	background: ${ ( props ) => props.theme.colors.surface };
 
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		margin-top: 24px;
-	}
-
 	.cart__upsell-wrapper {
 		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 			border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -42,6 +38,7 @@ const UpsellWrapper = styled.div< DivProps >`
 
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+			margin-top: 24px;
 		}
 	}
 
