@@ -10,10 +10,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import buildFallbackResponse from './static-data/fallback-menu';
 import allSitesMenu from './static-data/all-sites-menu';
+import jetpackMenu from './static-data/jetpack-menu';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
@@ -23,6 +25,8 @@ const useSiteMenuItems = () => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -52,6 +56,10 @@ const useSiteMenuItems = () => {
 	 */
 	if ( ! siteDomain ) {
 		return allSitesMenu();
+	}
+
+	if ( isJetpack && ! isAtomic ) {
+		return jetpackMenu( { siteDomain } );
 	}
 
 	/**
