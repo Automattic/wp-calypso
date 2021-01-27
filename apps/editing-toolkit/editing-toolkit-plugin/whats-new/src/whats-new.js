@@ -29,7 +29,7 @@ function WhatsNewMenuItem() {
 	// Record Tracks event if user opens What's New
 	useEffect( () => {
 		if ( isActive ) {
-			recordTracksEvent( 'calypso_editor_whats_new_open' );
+			recordTracksEvent( 'block_editor_whats_new_open' );
 		}
 	}, [ isActive ] );
 
@@ -212,7 +212,7 @@ function WhatsNewPage( {
 	imgSrc,
 } ) {
 	useEffect( () => {
-		recordTracksEvent( 'calypso_editor_whats_new_slide_view', {
+		recordTracksEvent( 'block_editor_whats_new_slide_view', {
 			slide_number: pageNumber,
 			is_last_slide: isLastPage,
 		} );
