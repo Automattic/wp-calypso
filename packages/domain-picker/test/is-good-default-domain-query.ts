@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isGoodDefaultDomainQuery } from '../is-good-default-domain-query';
+import { isGoodDefaultDomainQuery } from '../src/utils';
 
 describe( 'isValidDomainQuery', () => {
 	it( 'rejects empty queries', () => {

@@ -3,8 +3,10 @@
  */
 import { useSelect } from '@wordpress/data';
 import { useDispatch } from '@wordpress/data';
+import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
+
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { LAUNCH_STORE } from '../stores';
 import { useSite, useTitle } from './';
@@ -38,17 +40,4 @@ export function useDomainSearch(): {
 
 function filterUnsuitableTitles( title: string ): string {
 	return isGoodDefaultDomainQuery( title ) ? title : '';
-}
-
-function isGoodDefaultDomainQuery( domainQuery: string ): boolean {
-	if ( typeof domainQuery.normalize === 'undefined' ) {
-		// If the browser doesn't support String.prototype.normalize then
-		// play it safe and assume this isn't a safe domain query.
-		return false;
-	}
-
-	return !! domainQuery
-		.normalize( 'NFD' ) // Encode diacritics in a consistent way so we can remove them
-		.replace( /[\u0300-\u036f]/g, '' )
-		.match( /[a-z0-9-.\s]/i );
 }

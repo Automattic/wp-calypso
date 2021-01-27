@@ -18,7 +18,7 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
-import { isGoodDefaultDomainQuery } from '../../lib/is-good-default-domain-query';
+import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
 
 /**
  * Style dependencies
