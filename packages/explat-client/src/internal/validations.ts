@@ -30,7 +30,8 @@ function isExperimentAssignment(
 		( isName( experimentAssignment[ 'variationName' ] ) ||
 			experimentAssignment[ 'variationName' ] === null ) &&
 		typeof experimentAssignment[ 'retrievedTimestamp' ] === 'number' &&
-		typeof experimentAssignment[ 'ttl' ] === 'number'
+		typeof experimentAssignment[ 'ttl' ] === 'number' &&
+		experimentAssignment[ 'ttl' ] !== 0
 	);
 }
 
