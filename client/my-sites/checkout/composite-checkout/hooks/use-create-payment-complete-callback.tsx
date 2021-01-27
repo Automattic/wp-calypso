@@ -261,7 +261,7 @@ function displayRenewalSuccessNotice(
 						},
 					}
 				),
-				{ persistent: true }
+				{ displayOnNextPage: true }
 			)
 		);
 		return;
@@ -282,7 +282,7 @@ function displayRenewalSuccessNotice(
 					},
 				}
 			),
-			{ persistent: true }
+			{ displayOnNextPage: true }
 		)
 	);
 }
