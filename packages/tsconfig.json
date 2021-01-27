@@ -3,6 +3,7 @@
 
 	// Reference all TS packages
 	"references": [
+		{ "path": "./accessible-focus" },
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
 		{ "path": "./calypso-stripe" },

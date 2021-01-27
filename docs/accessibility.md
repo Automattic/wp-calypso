@@ -82,6 +82,6 @@ Find tools that will help you bring accessibility into your workflow.
 
 As we work to make Calypso more accessible, we'll probably add more things here.
 
-- [accessible-focus](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/accessible-focus/README.md): A small module which is run at client startup and adds an `accessible-focus` class to the document's html element when keyboard navigation is detected, so that obvious focus styles can be added without being distracting for non-keyboard users.
+- [accessible-focus](https://github.com/Automattic/wp-calypso/tree/HEAD/packages/accessible-focus/README.md): A small module which is run at client startup and adds an `accessible-focus` class to the document's html element when keyboard navigation is detected, so that obvious focus styles can be added without being distracting for non-keyboard users.
 - [Focusable](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/focusable/README.md): A component that lets you wrap complex content in an accessible, clickable wrapper. It adds the "button" ARIA role, for screen reader support, and enables keyboard support for keyboard-only accessibility.
 - [ScreenReaderText](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/screen-reader-text): A component that adds text which is invisible on normal displays, but "visible" to screen readers.
