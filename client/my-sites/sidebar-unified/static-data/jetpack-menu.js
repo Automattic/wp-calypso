@@ -5,24 +5,9 @@ import { translate } from 'i18n-calypso';
 
 /* eslint-disable jsdoc/require-param */
 /**
- * Fallback nav menu items.
+ * Jetpack menu items.
  *
- * These are used as a fallback to ensure that if the API response for menu items
- * fails, the user always sees some menu items. They are required only in the
- * following circumstances:
- *
- * 1. The user has loaded the site for the first time and the Menus API response
- * has yet to be returned or cached in the Browser Storage APIs.
- *
- * 2. The Menu API REST API response fails and there is no response cached in the
- * Browser Storage.
- *
- * As a result of these conditions being an edge case, in most cases the user will
- * not see these menus items. They are a safe guard in case of error.
- *
- * As a rule the menu items are intended to be as close to the anticipated Menus API
- * response as possible but we should not take this too far. We need only show the bear
- * minimum required to navigate in the case that the API response fails.
+ * These are used for sites that are neither Simple or Atomic.
  */
 /* eslint-enable jsdoc/require-param */
 
