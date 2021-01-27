@@ -19,5 +19,7 @@ $onboarding-body-margin-mobile: 0 0 48px 0;
 $onboarding-body-margin-small: 0 0 64px 0;
 $onboarding-body-margin-medium: 0 0 80px 0;
 
+// @TODO: refactor to common variable in onboarding
+// see https://github.com/Automattic/wp-calypso/issues/47181
 // the blue accent this is used as the primary color in focused-launch
 $onboarding-accent-blue: #117ac9;
