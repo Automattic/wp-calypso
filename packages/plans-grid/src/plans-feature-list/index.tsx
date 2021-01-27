@@ -205,7 +205,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 	if ( disabledLabel ) {
 		featureItems.push( {
 			bulletIcon: CrossIcon,
-			textNode: { disabledLabel },
+			textNode: disabledLabel,
 			requiresAnnuallyBilledPlan: false,
 			listItemExtraClassName: 'plans-feature-list__item--disabled-message',
 		} );
@@ -229,7 +229,7 @@ const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 	features.forEach( ( { name, requiresAnnuallyBilledPlan } ) =>
 		featureItems.push( {
 			bulletIcon: requiresAnnuallyBilledPlan && billingPeriod === 'MONTHLY' ? CrossIcon : TickIcon,
-			textNode: <>{ name }</>,
+			textNode: name,
 			requiresAnnuallyBilledPlan,
 		} )
 	);
