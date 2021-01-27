@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import { getPostEdits } from 'calypso/state/posts/selectors/get-post-edits';
 import { getSitePost } from 'calypso/state/posts/selectors/get-site-post';
 import { applyPostEdits } from 'calypso/state/posts/utils';

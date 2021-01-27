@@ -7,7 +7,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import getJetpackModulesRequiringConnection from './get-jetpack-modules-requiring-connection';
 
 /**

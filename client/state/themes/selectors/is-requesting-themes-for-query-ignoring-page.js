@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { isEqual, omit, some } from 'lodash';
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 
 /**
  * Internal dependencies

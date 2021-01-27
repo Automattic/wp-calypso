@@ -14,7 +14,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 
 import 'calypso/state/plugins/init';
 

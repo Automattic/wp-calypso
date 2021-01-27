@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/wordads/init';

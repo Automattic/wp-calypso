@@ -6,7 +6,7 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 
 import 'calypso/state/billing-transactions/init';

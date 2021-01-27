@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import { getPostRevisions } from 'calypso/state/posts/selectors/get-post-revisions';
 import { getPostRevisionsDiff } from 'calypso/state/posts/selectors/get-post-revisions-diff';
 

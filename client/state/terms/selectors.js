@@ -6,7 +6,7 @@ import { get, range } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
 import 'calypso/state/terms/init';

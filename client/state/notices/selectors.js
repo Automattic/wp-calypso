@@ -6,7 +6,7 @@ import { values } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 
 import 'calypso/state/notices/init';
 

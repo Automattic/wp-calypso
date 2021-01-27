@@ -6,7 +6,7 @@ import { values, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 

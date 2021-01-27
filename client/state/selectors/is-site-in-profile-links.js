@@ -6,7 +6,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import getProfileLinks from 'calypso/state/selectors/get-profile-links';
 
 /**

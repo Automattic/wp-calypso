@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import createSelector from 'calypso/lib/create-selector';
+import createSelector from '@automattic/create-selector';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
