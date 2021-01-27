@@ -177,3 +177,24 @@ function get_iso_639_locale( $language ) {
 
 	return $language;
 }
+
+/**
+ * Hides plugin buttons that appear in the header on mobile devices
+ * (because there's not enough room).
+ *
+ * Can be disabled with the `a8c_fse_enqueue_hide_plugin_buttons_mobile_style` filter.
+ */
+function enqueue_hide_plugin_buttons_mobile_style() {
+	if ( apply_filters( 'a8c_fse_enqueue_hide_plugin_buttons_mobile_style', true ) ) {
+		$style_file = is_rtl()
+			? 'hide-plugin-buttons-mobile.rtl.css'
+			: 'hide-plugin-buttons-mobile.css';
+		wp_enqueue_style(
+			'a8c-fse-hide-plugin-buttons-mobile',
+			plugins_url( 'dist/' . $style_file, __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
+		);
+	}
+}
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_hide_plugin_buttons_mobile_style' );
