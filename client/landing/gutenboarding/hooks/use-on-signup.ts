@@ -18,7 +18,7 @@ import { useIsAnchorFm, useAnchorFmParams } from '../path';
  * After signup a site is automatically created using the username and bearerToken
  **/
 
-export default function useOnSignup() {
+export default function useOnSignup(): void {
 	const locale = useLocale();
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
@@ -40,7 +40,7 @@ export default function useOnSignup() {
 				anchorFmSpotifyUrl,
 			} );
 		},
-		[ createSite, locale, anchorFmPodcastId, anchorFmEpisodeId ]
+		[ createSite, locale, anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl ]
 	);
 
 	React.useEffect( () => {
