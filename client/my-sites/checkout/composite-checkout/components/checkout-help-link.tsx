@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import { get } from 'lodash';
 import { useEvents, useLineItemsOfType } from '@automattic/composite-checkout';
-import type { LineItem } from '@automattic/composite-checkout';
+import type { LineItem, Theme } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -35,7 +35,7 @@ import {
 } from 'calypso/lib/plans';
 
 type StyledProps = {
-	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	theme?: Theme;
 };
 
 const HappychatButton = styled( HappychatButtonUnstyled )`
