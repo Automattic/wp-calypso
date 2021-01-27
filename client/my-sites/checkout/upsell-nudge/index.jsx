@@ -299,7 +299,8 @@ export class UpsellNudge extends React.Component {
 		}
 
 		if ( DIFM_UPSELL === upsellType ) {
-			return '/me/difm-intake';
+			page( '/me/difm-intake' );
+			return;
 		}
 
 		return siteSlug
