@@ -25,6 +25,6 @@ subscribe( () => {
 		dispatch( 'automattic/nux' ).setWpcomNuxStatus( {
 			isNuxEnabled: true,
 		} );
-		dispatch( 'automattic/nux' ).setTourOpenStatus( { isTourManuallyOpened: true } );
+		dispatch( 'automattic/nux' ).setGuideOpenStatus( { isGuideManuallyOpened: true } );
 	}
 } );

@@ -21,17 +21,17 @@ import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
 
 function WpcomNux() {
-	const { isWpcomNuxEnabled, isSPTOpen, site, isTourManuallyOpened } = useSelect( ( select ) => ( {
+	const { isWpcomNuxEnabled, isSPTOpen, site, isGuideManuallyOpened } = useSelect( ( select ) => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		isSPTOpen:
 			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 		site: select( 'automattic/site' ).getSite( window._currentSiteId ),
-		isTourManuallyOpened: select( 'automattic/nux' ).isTourManuallyOpened(),
+		isGuideManuallyOpened: select( 'automattic/nux' ).isGuideManuallyOpened(),
 	} ) );
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
-	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
+	const { setWpcomNuxStatus, setGuideOpenStatus } = useDispatch( 'automattic/nux' );
 
 	// Hide editor sidebar first time users sees the editor
 	useEffect( () => {
@@ -43,10 +43,10 @@ function WpcomNux() {
 		if ( isWpcomNuxEnabled && ! isSPTOpen ) {
 			recordTracksEvent( 'calypso_editor_wpcom_nux_open', {
 				is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-				is_manually_opened: isTourManuallyOpened,
+				is_manually_opened: isGuideManuallyOpened,
 			} );
 		}
-	}, [ isWpcomNuxEnabled, isSPTOpen, isTourManuallyOpened ] );
+	}, [ isWpcomNuxEnabled, isSPTOpen, isGuideManuallyOpened ] );
 
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
@@ -57,7 +57,7 @@ function WpcomNux() {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 		} );
 		setWpcomNuxStatus( { isNuxEnabled: false } );
-		setTourOpenStatus( { isTourManuallyOpened: false } );
+		setGuideOpenStatus( { isGuideManuallyOpened: false } );
 	};
 
 	const isPodcastingSite = !! site?.options?.anchor_podcast;
