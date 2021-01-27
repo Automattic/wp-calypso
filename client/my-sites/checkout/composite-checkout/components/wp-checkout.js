@@ -49,6 +49,7 @@ import {
 import { login } from 'calypso/lib/paths';
 import config from 'calypso/config';
 import getContactDetailsType from '../lib/get-contact-details-type';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -71,11 +72,23 @@ const ContactFormTitle = () => {
 			? translate( 'Contact information' )
 			: translate( 'Enter your contact information' );
 	}
+
 	if ( contactDetailsType === 'gsuite' ) {
 		return ! isActive && isComplete
-			? translate( 'G Suite account information' )
-			: translate( 'Enter your G Suite account information' );
+			? translate( '%(googleMailService)s account information', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily(),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+			  } )
+			: translate( 'Enter your %(googleMailService)s account information', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily(),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+			  } );
 	}
+
 	return ! isActive && isComplete
 		? translate( 'Billing information' )
 		: translate( 'Enter your billing information' );
@@ -138,7 +151,8 @@ export default function WPCheckout( {
 		const redirectTo = '/checkout/no-site?cart=no-user';
 		const isNative = config.isEnabled( 'login/native-login-links' );
 		const loginUrl = login( { redirectTo, emailAddress, isNative } );
-		const loginRedirectMessage = translate(
+
+		return translate(
 			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
 			{
 				components: {
@@ -146,7 +160,6 @@ export default function WPCheckout( {
 				},
 			}
 		);
-		return loginRedirectMessage;
 	};
 
 	const validateContactDetailsAndDisplayErrors = async () => {
