@@ -1079,116 +1079,118 @@ object WpDesktop_DesktopE2ETests : BuildType({
 })
 
 object WPComPlugins : Project({
-    name = "WPCom Plugins"
-    buildType(WPComPlugins_EditorToolKit)
-    params {
-        text("docker_image_wpcom", "registry.a8c.com/calypso/ci-wpcom:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
-    }
+	name = "WPCom Plugins"
+	buildType(WPComPlugins_EditorToolKit)
+	params {
+		text("docker_image_wpcom", "registry.a8c.com/calypso/ci-wpcom:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+	}
 })
 
 object WPComPlugins_EditorToolKit : BuildType({
-    name = "Editor ToolKit"
+	name = "Editor ToolKit"
 
-    artifactRules = "editing-toolkit.zip"
+	artifactRules = "editing-toolkit.zip"
 
-    buildNumberPattern = "%build.prefix%.%build.counter%"
+	buildNumberPattern = "%build.prefix%.%build.counter%"
 
-    params {
-        param("build.prefix", "3")
-    }
+	params {
+		param("build.prefix", "3")
+	}
 
-    vcs {
-        root(WpCalypso)
-        cleanCheckout = true
-    }
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
 
-    triggers {
-        triggerRules = "+:root=${WpCalypso}:apps/editing-toolkit/**"
-    }
+	triggers {
+		vcs {
+			triggerRules = "+:root=${WpCalypso}:apps/editing-toolkit/**"
+		}
+	}
 
-    steps {
-        script {
-            name = "Prepare environment"
-            scriptContent = """
-                #!/bin/bash
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				#!/bin/bash
 
-                # Update node
-                . "${'$'}NVM_DIR/nvm.sh" --no-use
-                nvm install
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
-                set -o errexit
-                set -o nounset
-                set -o pipefail
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
-                # Update composer
-                composer install
+				# Update composer
+				composer install
 
-                # Install modules
-                yarn install
-            """.trimIndent()
-            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-            dockerPull = true
-            dockerImage = "%docker_image_wpcom%"
-            dockerRunParameters = "-u %env.UID%"
-        }
-        script {
-            name = "Run tests"
-            executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-            scriptContent = """
-                #!/bin/bash
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_wpcom%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run tests"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
 
-                # Update node
-                . "${'$'}NVM_DIR/nvm.sh" --no-use
-                nvm install
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
-                set -o errexit
-                set -o nounset
-                set -o pipefail
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
-                export JEST_JUNIT_OUTPUT_NAME="results.xml"
-                export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
 
-                cd apps/editing-toolkit
-                yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
-            """.trimIndent()
-            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-            dockerPull = true
-            dockerImage = "%docker_image_wpcom%"
-            dockerRunParameters = "-u %env.UID%"
-        }
-        script {
-            name = "Build artifacts"
-            executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-            scriptContent = """
-                #!/bin/bash
+				cd apps/editing-toolkit
+				yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_wpcom%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Build artifacts"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
 
-                # Update node
-                . "${'$'}NVM_DIR/nvm.sh" --no-use
-                nvm install
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
-                set -o errexit
-                set -o nounset
-                set -o pipefail
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
-                export NODE_ENV="production"
+				export NODE_ENV="production"
 
-                cd apps/editing-toolkit
+				cd apps/editing-toolkit
 
-                # Update plugin version in the plugin file.
-                sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'PLUGIN_VERSION'/c\define( 'PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
+				# Update plugin version in the plugin file.
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'PLUGIN_VERSION'/c\define( 'PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
 
-                # Update plugin stable tag in readme.txt.
-                sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
+				# Update plugin stable tag in readme.txt.
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 
-                yarn build
+				yarn build
 
-                cd editing-toolkit-plugin/
-                zip -r ../../../editing-toolkit.zip .
-            """.trimIndent()
-            dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-            dockerPull = true
-            dockerImage = "%docker_image_wpcom%"
-            dockerRunParameters = "-u %env.UID%"
-        }
-    }
+				cd editing-toolkit-plugin/
+				zip -r ../../../editing-toolkit.zip .
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_wpcom%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
 })
