@@ -152,7 +152,7 @@ class Layout extends Component {
 			return;
 		}
 
-		// Having the feature enabled by default in all environments, will let anyone use ?flags=-nav-unification to temporary disable it.
+		// Having the feature enabled by default in all environments, will let anyone use ?disable-nav-unification to temporary disable it.
 		// We still have the feature disabled in production as safety mechanism for all customers.
 		if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
 			return;
