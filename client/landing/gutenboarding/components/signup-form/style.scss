@@ -44,6 +44,11 @@
 		padding: 44px 20px 0;
 		text-align: center;
 
+		// Accomodate social login temporarily
+		form {
+			margin-bottom: 20px;
+		}
+
 		@include break-mobile {
 			padding: 0 20px 20px;
 			position: absolute;
