@@ -3,7 +3,7 @@ Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
-Stable tag: 2.12
+Stable tag: 2.13
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,15 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.13 =
+* New Onboarding Launch: fix plans data-store integration (https://github.com/Automattic/wp-calypso/pull/49304)
+* Refunds: update copy to reflect 14-day refunds (https://github.com/Automattic/wp-calypso/pull/48872)
+* Editing toolkit: clean out contributors list in readme (https://github.com/Automattic/wp-calypso/pull/49182)
+* Fix untranslated text in Domain Picker (https://github.com/Automattic/wp-calypso/pull/49168)
+* Use @automattic/format-currency package to format prices in Plan Store (https://github.com/Automattic/wp-calypso/pull/49293)
+* Patterns and SPT: Add pattern_meta is_web param to calls to the ptk/patterns endpoint (https://github.com/Automattic/wp-calypso/pull/49166)
+* Switch on block pattern modifications (https://github.com/Automattic/wp-calypso/pull/48848)
 
 = 2.12 =
 * Starter page templates: remove sidebar component (#48948)
