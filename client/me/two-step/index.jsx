@@ -15,10 +15,10 @@ import { Card } from '@automattic/components';
 import config from 'calypso/config';
 import DocumentHead from 'calypso/components/data/document-head';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
-import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import FormattedHeader from 'calypso/components/formatted-header';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import HeaderCake from 'calypso/components/header-cake';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
@@ -27,9 +27,9 @@ import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import ReauthRequired from 'calypso/me/reauth-required';
 import Security2faBackupCodes from 'calypso/me/security-2fa-backup-codes';
 import Security2faDisable from 'calypso/me/security-2fa-disable';
+import Security2faKey from 'calypso/me/security-2fa-key';
 import Security2faSetup from 'calypso/me/security-2fa-setup';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import Security2faKey from 'calypso/me/security-2fa-key';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 
 /**
