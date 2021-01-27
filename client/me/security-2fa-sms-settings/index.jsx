@@ -79,17 +79,17 @@ class Security2faSMSSettings extends React.Component {
 		return false;
 	}
 
-	onVerifyByApp( event ) {
+	onVerifyByApp = ( event ) => {
 		event.preventDefault();
 		this.verifyByApp = true;
 		this.submitSMSSettings();
-	}
+	};
 
-	onVerifyBySMS( event ) {
+	onVerifyBySMS = ( event ) => {
 		event.preventDefault();
 		this.verifyByApp = false;
 		this.submitSMSSettings();
-	}
+	};
 
 	async submitSMSSettings() {
 		const phoneNumber = this.state.phoneNumber;
