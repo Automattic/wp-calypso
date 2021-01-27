@@ -4,8 +4,11 @@
 const electron = require( 'electron' );
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
-const path = require( 'path' );
-const preloadDirectory = path.resolve( __dirname, '..', '..', '..', 'public_desktop' );
+
+/*
+ * Internal dependencies
+ */
+const { getPath } = require( '../../lib/assets' );
 
 // HACK(sendhilp, 9/6/2016): The reason for this strange importing is there seems to be a
 // bug post Electron 1.1.1 in which attempting to access electron.screen
@@ -33,16 +36,16 @@ const Config = require( '../../lib/config' );
  */
 const windows = {
 	about: {
-		file: 'about.html',
+		file: getPath( 'about.html' ),
 		config: 'aboutWindow',
 		handle: null,
-		preload: path.join( preloadDirectory, 'preload_about.js' ),
+		preload: getPath( 'preload_about.js' ),
 	},
 	preferences: {
-		file: 'preferences.html',
+		file: getPath( 'preferences.html' ),
 		config: 'preferencesWindow',
 		handle: null,
-		preload: path.resolve( preloadDirectory, 'preload_preferences.js' ),
+		preload: getPath( 'preload_preferences.js' ),
 	},
 	secret: {
 		file: 'secret.html',
@@ -51,7 +54,7 @@ const windows = {
 		preload: null,
 	},
 	wapuu: {
-		file: 'wapuu.html',
+		file: getPath( 'wapuu.html' ),
 		config: 'secretWindow',
 		full: true,
 		handle: null,
@@ -90,9 +93,7 @@ async function openWindow( windowName ) {
 			await windows[ windowName ].handle.webContents.session.setProxy( {
 				proxyRules: 'direct://',
 			} );
-			windows[ windowName ].handle.loadURL(
-				Config.server_url + ':' + Config.server_port + '/desktop/' + settings.file
-			);
+			windows[ windowName ].handle.loadURL( `file://${ settings.file }` );
 
 			windows[ windowName ].handle.on( 'closed', function () {
 				windows[ windowName ].handle = null;

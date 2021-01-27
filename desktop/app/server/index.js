@@ -2,7 +2,6 @@
  * External Dependencies
  */
 const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
-const path = require( 'path' );
 
 /**
  * Internal dependencies
@@ -14,6 +13,7 @@ const appInstance = require( '../lib/app-instance' );
 const platform = require( '../lib/platform' );
 const System = require( '../lib/system' );
 const log = require( '../lib/logger' )( 'desktop:runapp' );
+const { getPath } = require( '../lib/assets' );
 
 /**
  * Module variables
@@ -21,10 +21,8 @@ const log = require( '../lib/logger' )( 'desktop:runapp' );
 let mainWindow = null;
 
 function showAppWindow() {
-	const preloadFile = path.resolve(
-		path.join( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' )
-	);
-	const appUrl = 'https://www.wordpress.com';
+	const preloadFile = getPath( 'preload.js' );
+	const appUrl = Config.loginURL;
 	// TODO:
 	// - Use BrowserView
 	// - Restore last window location
