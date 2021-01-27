@@ -22,7 +22,7 @@
 		"posts-list-block": "calypso-build --env source='posts-list-block'",
 		"dev:posts-list-block": "yarn run posts-list-block",
 		"build:posts-list-block": "NODE_ENV=production yarn run posts-list-block",
-		"common": "calypso-build --env source='common','common/data-stores'",
+		"common": "calypso-build --env source='common','common/data-stores','common/hide-plugin-buttons-mobile'",
 		"dev:common": "yarn run common",
 		"build:common": "NODE_ENV=production yarn run common",
 		"editor-gutenboarding-launch": "calypso-build --env source='editor-gutenboarding-launch'",
