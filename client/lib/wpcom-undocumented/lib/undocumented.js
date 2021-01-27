@@ -858,6 +858,22 @@ Undocumented.prototype.getSiteProducts = function ( siteDomain, fn ) {
 };
 
 /**
+ * Get the user's billing history
+ *
+ * @param {Function} fn The callback function
+ */
+Undocumented.prototype.billingHistory = function ( fn ) {
+	return this._sendRequest(
+		{
+			path: '/me/billing-history',
+			method: 'get',
+			apiVersion: '1.3',
+		},
+		fn
+	);
+};
+
+/**
  * Get a site specific details for WordPress.com plans
  *
  * @param {Function} siteDomain The site slug
