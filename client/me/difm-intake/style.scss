@@ -19,3 +19,34 @@
         }
     }
 }
+
+.difm-intake__placeholders {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 25px;
+
+	.is-placeholder {
+		animation: pulse-light 800ms ease-in-out infinite;
+		background: var( --color-neutral-10 );
+	}
+}
+
+.difm-intake__placeholder-row {
+	height: 20px;
+	margin-bottom: 25px;
+}
+
+.difm-intake__placeholder-button {
+	height: 50px;
+	width: 100%;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		width: 80px;
+		height: 40px;
+	}
+}
+
+.difm-intake__placeholder-button-container {
+	display: flex;
+	justify-content: space-between;
+}

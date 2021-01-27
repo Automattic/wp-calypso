@@ -25,7 +25,7 @@ export class DifmUpsell extends PureComponent {
 	render() {
 		const { receiptId, translate } = this.props;
 
-		const title = translate( 'Checkout ‹ Plan Upgrade', {
+		const title = translate( 'Checkout ‹ "Built For You" offer', {
 			comment: '"Checkout" is the part of the site where a user is preparing to make a purchase.',
 		} );
 

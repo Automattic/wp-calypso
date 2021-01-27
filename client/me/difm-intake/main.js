@@ -8,7 +8,7 @@ import React, { Component, Fragment } from 'react';
  */
 import Main from 'calypso/components/main';
 import { localize } from 'i18n-calypso';
-import { Card } from '@automattic/components';
+import { Card, CompactCard } from '@automattic/components';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ExternalLink from 'calypso/components/external-link';
 
@@ -18,6 +18,10 @@ import ExternalLink from 'calypso/components/external-link';
 import './style.scss';
 
 class DifmIntake extends Component {
+	state = {
+		showPlaceholders: true,
+	};
+
 	renderHeader() {
 		const { translate } = this.props;
 
@@ -48,14 +52,44 @@ class DifmIntake extends Component {
 		);
 	}
 
+	setLoadingComplete = () => {
+		this.setState( { showPlaceholders: false } );
+	};
+
+	renderPlaceholders() {
+		return (
+			<CompactCard>
+				<div className="difm-intake__header">
+					<div className="difm-intake__placeholders">
+						<div className="difm-intake__placeholder-row is-placeholder" />
+						<div className="difm-intake__placeholder-row is-placeholder" />
+						<div className="difm-intake__placeholder-row is-placeholder" />
+					</div>
+					<div className="difm-intake__placeholders">
+						<div className="difm-intake__placeholder-row is-placeholder" />
+						<div className="difm-intake__placeholder-row is-placeholder" />
+						<div className="difm-intake__placeholder-row is-placeholder" />
+					</div>
+					<div className="difm-intake__placeholders">
+						<div className="difm-intake__placeholder-row is-placeholder" />
+						<div className="difm-intake__placeholder-row is-placeholder" />
+						<div className="difm-intake__placeholder-row is-placeholder" />
+					</div>
+				</div>
+			</CompactCard>
+		);
+	}
+
 	renderSurvey() {
 		return (
 			<div className="difm-intake__survey">
+				{ this.state.showPlaceholders && this.renderPlaceholders() }
 				<iframe
 					title="DIFM intake survey"
 					scrolling="auto"
 					width="100%"
 					allowtransparency="true"
+					onLoad={ this.setLoadingComplete }
 					src="https://automattic.survey.fm/site-builder-intake-survey-upsell-version?iframe=1"
 				>
 					<a href="https://automattic.survey.fm/site-builder-intake-survey-upsell-version">
