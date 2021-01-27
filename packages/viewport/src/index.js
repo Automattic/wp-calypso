@@ -72,6 +72,7 @@ function createMediaQueryList( { min, max } = {} ) {
 const mediaQueryLists = {
 	'<480px': createMediaQueryList( { max: 480 } ),
 	'<660px': createMediaQueryList( { max: 660 } ),
+	'<782px': createMediaQueryList( { max: 782 } ),
 	'<800px': createMediaQueryList( { max: 800 } ),
 	'<960px': createMediaQueryList( { max: 960 } ),
 	'<1040px': createMediaQueryList( { max: 1040 } ),
@@ -79,6 +80,7 @@ const mediaQueryLists = {
 	'<1400px': createMediaQueryList( { max: 1400 } ),
 	'>480px': createMediaQueryList( { min: 480 } ),
 	'>660px': createMediaQueryList( { min: 660 } ),
+	'>782px': createMediaQueryList( { min: 782 } ),
 	'>800px': createMediaQueryList( { min: 800 } ),
 	'>960px': createMediaQueryList( { min: 960 } ),
 	'>1040px': createMediaQueryList( { min: 1040 } ),
