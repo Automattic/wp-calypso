@@ -250,6 +250,8 @@ class TitanMailQuantitySelection extends React.Component {
 							name="quantity"
 							type="number"
 							min="1"
+							max="50"
+							step="1"
 							placeholder={ translate( 'Number of new mailboxes' ) }
 							value={ this.state.quantity }
 							onChange={ this.onQuantityChange }
