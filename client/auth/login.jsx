@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import store from 'store';
 import debugFactory from 'debug';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -135,13 +134,8 @@ export class Auth extends Component {
 		const { translate } = this.props;
 		const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
-		const bodyClasses = classNames( {
-			auth: true,
-			'is-jetpack-cloud': isJetpackCloud(),
-		} );
-
 		return (
-			<Main className={ bodyClasses }>
+			<Main className="auth">
 				<div className="auth__content">
 					{ isJetpackCloud() ? <JetpackLogo size={ 72 } /> : <WordPressLogo /> }
 					<form className="auth__form" onSubmit={ this.submitForm }>
