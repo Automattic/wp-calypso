@@ -52,7 +52,7 @@
 		"gdpr-banner": true,
 		"google-my-business": true,
 		"google-workspace-migration": true,
-		"gutenboarding/mshot-preview": true,
+		"gutenboarding/mshot-preview": false,
 		"gutenboarding/landscape-preview": true,
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/language-picker": false,

@@ -44,7 +44,7 @@
 		"google-my-business": false,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch-mobile": true,
-		"gutenboarding/mshot-preview": true,
+		"gutenboarding/mshot-preview": false,
 		"gutenboarding/landscape-preview": true,
 		"help": true,
 		"inline-help": true,

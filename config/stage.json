@@ -45,7 +45,7 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": false,
 		"google-my-business": true,
-		"gutenboarding/mshot-preview": true,
+		"gutenboarding/mshot-preview": false,
 		"gutenboarding/landscape-preview": true,
 		"gutenboarding/language-picker": false,
 		"gutenboarding/feature-picker": true,
