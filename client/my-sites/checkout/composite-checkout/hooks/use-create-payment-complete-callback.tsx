@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React, { useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch, useStore } from 'react-redux';
@@ -176,7 +175,7 @@ export default function useCreatePaymentCompleteCallback( {
 					fetchSitesAndUser(
 						domainName,
 						() => {
-							page.redirect( url );
+							window.location.href = url;
 						},
 						reduxStore
 					);
