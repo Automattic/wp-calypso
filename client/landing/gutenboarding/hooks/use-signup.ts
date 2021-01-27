@@ -28,8 +28,8 @@ export default function useSignup() {
 	const { showSignupDialog } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const { setShowSignupDialog } = useDispatch( ONBOARD_STORE );
 	const isAnchorFmSignup = useIsAnchorFm();
-	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const hasNewUser = useSelect( ( select ) => !! select( USER_STORE ).getNewUser() );
+	const hasCurrentUser = useSelect( ( select ) => !! select( USER_STORE ).getCurrentUser() );
 
 	const {
 		location: { pathname, search },
@@ -43,7 +43,7 @@ export default function useSignup() {
 		// we don't have a user yet.
 		if (
 			new URLSearchParams( search ).has( 'signup' ) ||
-			( isAnchorFmSignup && ! newUser && ! currentUser )
+			( isAnchorFmSignup && ! hasNewUser && ! hasCurrentUser )
 		) {
 			setShowSignupDialog( true );
 		} else {
@@ -53,7 +53,7 @@ export default function useSignup() {
 			// explicitly hide the dialog.
 			setShowSignupDialog( false );
 		}
-	}, [ pathname ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ pathname, isAnchorFmSignup, hasNewUser, hasCurrentUser ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return {
 		showSignupDialog,
