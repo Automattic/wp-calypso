@@ -73,6 +73,11 @@ class Layout extends Component {
 		shouldShowAppBanner: PropTypes.bool,
 	};
 
+	UNSAFE_componentWillMount() {
+		// This is temporary helper function until we have rolled out to 100% of customers.
+		this.isNavUnificationEnabled();
+	}
+
 	componentDidMount() {
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
@@ -100,6 +105,10 @@ class Layout extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( prevProps.teams !== this.props.teams ) {
+			// This is temporary helper function until we have rolled out to 100% of customers.
+			this.isNavUnificationEnabled();
+		}
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
@@ -146,6 +155,28 @@ class Layout extends Component {
 		);
 	}
 
+	// This is temporary helper function until we have rolled out to 100% of customers.
+	isNavUnificationEnabled() {
+		if ( ! this.props.teams.length ) {
+			return;
+		}
+
+		// Having the feature enabled by default in all environments, will let anyone use ?disable-nav-unification to temporary disable it.
+		// We still have the feature disabled in production as safety mechanism for all customers.
+		if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
+			return;
+		}
+
+		// Leave the feature enabled for all a12s.
+		if ( isAutomatticTeamMember( this.props.teams ) ) {
+			// Force enable even in Production.
+			return config.enable( 'nav-unification' );
+		}
+
+		// Disable the feature for all customers and non a12s accounts.
+		return config.disable( 'nav-unification' );
+	}
+
 	render() {
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
@@ -164,7 +195,7 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': isAutomatticTeamMember( this.props.teams ),
+			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const optionalBodyProps = () => {
@@ -178,13 +209,6 @@ class Layout extends Component {
 		};
 
 		const { shouldShowAppBanner } = this.props;
-
-		if ( isAutomatticTeamMember( this.props.teams ) ) {
-			config.enable( 'nav-unification' );
-		} else {
-			config.disable( 'nav-unification' );
-		}
-
 		return (
 			<div className={ sectionClass }>
 				<QueryExperiments />
