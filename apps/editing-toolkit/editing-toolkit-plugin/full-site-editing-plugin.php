@@ -316,6 +316,6 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
  * What's New section of the Tools menu
  */
 function load_whats_new() {
-	require_once __DIR__ . '/whats-new/whats-new.php';
+	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
