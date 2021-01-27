@@ -193,6 +193,7 @@ export function upsellNudge( context, next ) {
 
 	let upsellType;
 	let upgradeItem;
+	let addnlProps;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
 		upsellType = CONCIERGE_QUICKSTART_SESSION;
@@ -217,6 +218,8 @@ export function upsellNudge( context, next ) {
 		}
 	} else if ( context.path.includes( 'offer-difm' ) ) {
 		upsellType = DIFM_UPSELL;
+		const isFromEcommercePurchase = context.query?.isEcommerce === '1';
+		addnlProps = { isFromEcommercePurchase };
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
@@ -228,6 +231,7 @@ export function upsellNudge( context, next ) {
 				receiptId={ Number( receiptId ) }
 				upsellType={ upsellType }
 				upgradeItem={ upgradeItem }
+				addnlProps={ addnlProps }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
