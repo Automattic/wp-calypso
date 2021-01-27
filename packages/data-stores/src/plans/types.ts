@@ -7,14 +7,21 @@ export type StorePlanSlug = typeof plansProductSlugs[ number ];
 export type PlanSlug = typeof plansOrder[ number ];
 export type PlanPath = typeof plansPaths[ number ];
 
+export type PlanBillingPeriod = 'MONTHLY' | 'ANNUALLY';
+
 export type PlanAction = {
 	type: string;
 	slug?: string;
 };
+
+export type PlanSimplifiedFeature = {
+	name: string;
+	requiresAnnuallyBilledPlan: boolean;
+};
 export interface Plan {
 	title: string;
 	description: string;
-	features: string[];
+	features: PlanSimplifiedFeature[];
 	isPopular?: boolean;
 	isFree?: boolean;
 	featuresSlugs?: Record< string, boolean >;
@@ -24,7 +31,7 @@ export interface Plan {
 }
 
 export interface PlanProduct {
-	billingPeriod: 'MONTHLY' | 'ANNUALLY';
+	billingPeriod: PlanBillingPeriod;
 	price: string;
 	rawPrice: number;
 	productId: number;
@@ -110,6 +117,7 @@ export type PlanFeature = {
 	id?: string;
 	description?: string;
 	name: string;
+	requiresAnnuallyBilledPlan: boolean;
 	type?: string;
 	data?: Array< boolean | string >;
 };

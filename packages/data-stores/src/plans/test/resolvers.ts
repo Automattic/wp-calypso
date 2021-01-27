@@ -54,18 +54,24 @@ describe( 'getSupportedPlans', () => {
 						},
 					],
 					features: [ 'custom-domain' ],
+					highlighted_features: [ 'Custom domain', 'Other feature' ],
 				},
 			],
 			features_by_type: [
 				{
 					id: 'general',
 					name: null,
-					features: [ 'custom-domain' ],
+					features: [ 'custom-domain', 'other-feature' ],
 				},
 			],
 			features: [
 				{
 					id: 'custom-domain',
+					name: 'Custom domain',
+				},
+				{
+					id: 'other-feature',
+					name: 'Other feature',
 				},
 			],
 		};
@@ -96,7 +102,16 @@ describe( 'getSupportedPlans', () => {
 			plans: [
 				{
 					description: undefined,
-					features: undefined,
+					features: [
+						{
+							name: 'Custom domain',
+							requiresAnnuallyBilledPlan: true,
+						},
+						{
+							name: 'Other feature',
+							requiresAnnuallyBilledPlan: false,
+						},
+					],
 					featuresSlugs: {
 						'custom-domain': true,
 					},
@@ -154,16 +169,26 @@ describe( 'getSupportedPlans', () => {
 			features: {
 				'custom-domain': {
 					id: 'custom-domain',
-					name: undefined,
+					name: 'Custom domain',
 					description: undefined,
 					type: 'checkbox',
+					requiresAnnuallyBilledPlan: true,
+				},
+				'other-feature': {
+					id: 'other-feature',
+					name: 'Other feature',
+					description: undefined,
+					type: 'checkbox',
+					requiresAnnuallyBilledPlan: false,
 				},
 			},
 		} );
 
 		expect( iter.next().value ).toEqual( {
 			type: 'SET_FEATURES_BY_TYPE',
-			featuresByType: [ { id: 'general', name: null, features: [ 'custom-domain' ] } ],
+			featuresByType: [
+				{ id: 'general', name: null, features: [ 'custom-domain', 'other-feature' ] },
+			],
 		} );
 	} );
 } );

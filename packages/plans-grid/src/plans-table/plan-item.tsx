@@ -7,7 +7,7 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import type { CTAVariation, PopularBadgeVariation } from './types';
 import { useSelect } from '@wordpress/data';
 
@@ -15,7 +15,6 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
-import useBillingPeriod from '../hooks/use-billing-period';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
@@ -43,7 +42,8 @@ export interface Props {
 	slug: string;
 	name: string;
 	tagline?: string | false;
-	features: Array< string >;
+	features: Plans.PlanSimplifiedFeature[];
+	billingPeriod: Plans.PlanBillingPeriod;
 	domain?: DomainSuggestions.DomainSuggestion;
 	isPopular?: boolean;
 	isFree?: boolean;
@@ -57,8 +57,10 @@ export interface Props {
 	popularBadgeVariation?: PopularBadgeVariation;
 }
 
-// NOTE: this component is used by PlansAccordion and contains some duplicated code from plans-table/plans-item.tsx
-// TODO: keep only this component when it can support also being used in PlansTable
+// NOTE: there is some duplicate markup between this plan item (used in the
+// 'table' version of the plans grid) and the accortion plan item (used in the
+// 'accordion' version of the plans grid). Ideally the code should be refactored
+// to use the same markup, with just different styles
 
 const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
@@ -68,6 +70,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	isFree = false,
 	domain,
 	features,
+	billingPeriod,
 	onSelect,
 	onPickDomainClick,
 	onToggleExpandAll,
@@ -78,7 +81,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const billingPeriod = useBillingPeriod();
 	const planProduct = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
 	);
@@ -144,9 +146,30 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<div hidden={ ! isOpen }>
 						<div className="plan-item__price-note">
-							{ isFree
-								? __( 'free forever', __i18n_text_domain__ )
-								: __( 'per month, billed yearly', __i18n_text_domain__ ) }
+							{ isFree && __( 'free forever', __i18n_text_domain__ ) }
+							{ ! isFree &&
+								( billingPeriod === 'ANNUALLY'
+									? __( 'billed annually', __i18n_text_domain__ )
+									: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
+						</div>
+
+						{ /*
+							For the free plan, the following div is still rendered invisibile
+							and ignored by screen readers (via aria-hidden) to ensure the same
+							vertical spacing as the rest of the plan cards
+						 */ }
+						<div
+							className={ classNames( 'plan-item__price-discount', {
+								'plan-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
+								'plan-item__price-discount--hidden': isFree,
+							} ) }
+							aria-hidden={ isFree ? 'true' : 'false' }
+						>
+							{ sprintf(
+								// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
+								__( `Save %(discountRate)s%% by paying annually`, __i18n_text_domain__ ),
+								{ discountRate: planProduct?.annualDiscount ?? 0 }
+							) }
 						</div>
 
 						<div className="plan-item__actions">
@@ -195,6 +218,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								disabledLabel &&
 								sprintf( __( '%s is not included', __i18n_text_domain__ ), domain?.domain_name )
 							}
+							billingPeriod={ billingPeriod }
 						/>
 					</div>
 				</div>

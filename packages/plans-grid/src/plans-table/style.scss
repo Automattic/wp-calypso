@@ -24,22 +24,6 @@
 		color: var( --studio-gray-100 );
 	}
 
-	// in this variation, ticks are black-ish
-	.plans-feature-list__item,
-	.plans-feature-list__domain-summary {
-		& > svg path {
-			fill: var( --studio-gray-100 );
-			stroke: var( --studio-gray-100 );
-		}
-
-		&--disabled-message {
-			& > svg path {
-				fill: currentColor;
-				stroke: currentColor;
-			}
-		}
-	}
-
 	@media ( min-width: $break-mobile ) {
 		// to collapse double borders into one
 		+ .plan-item {
@@ -259,5 +243,30 @@
 	svg {
 		margin-left: -8px;
 		margin-right: 10px;
+	}
+}
+
+.plan-item__price-discount {
+	display: block;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+	line-height: 1.3;
+	letter-spacing: 0.2px;
+	text-transform: uppercase;
+	color: var( --studio-green-60 );
+
+	margin-bottom: 8px;
+
+	&--disabled {
+		color: var( --studio-gray-40 );
+		text-decoration: line-through;
+	}
+
+	&--hidden {
+		visibility: hidden;
+	}
+
+	.plan-item:not( .is-open ) & {
+		display: none;
 	}
 }

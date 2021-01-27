@@ -2,20 +2,19 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import { useSelect } from '@wordpress/data';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import PlanItem from './plan-item';
-import { PLANS_STORE } from '../constants';
 import type {
 	CTAVariation,
 	PopularBadgeVariation,
 	CustomTagLinesMap,
 	DisabledPlansMap,
 } from './types';
+import { useSupportedPlans } from '../hooks';
 
 /**
  * Style dependencies
@@ -34,6 +33,7 @@ export interface Props {
 	popularBadgeVariation: PopularBadgeVariation;
 	customTagLines?: CustomTagLinesMap;
 	defaultAllPlansExpanded?: boolean;
+	billingPeriod: Plans.PlanBillingPeriod;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
@@ -43,15 +43,14 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	currentDomain,
 	disabledPlans,
 	locale,
+	billingPeriod,
 	showTaglines = false,
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
 	customTagLines,
 	defaultAllPlansExpanded = false,
 } ) => {
-	const supportedPlans = useSelect( ( select ) =>
-		select( PLANS_STORE ).getSupportedPlans( locale )
-	);
+	const { supportedPlans } = useSupportedPlans( locale, billingPeriod );
 
 	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
 
@@ -71,6 +70,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							}
 							CTAVariation={ CTAVariation }
 							features={ plan.features ?? [] }
+							billingPeriod={ billingPeriod }
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }
 							name={ plan?.title.toString() }
