@@ -223,7 +223,7 @@ function ChangePaymentMethodList( {
 	const showErrorMessage = useCallback(
 		( error ) => {
 			const message = error?.toString ? error.toString() : error;
-			reduxDispatch( errorNotice( message, { persistent: true } ) );
+			reduxDispatch( errorNotice( message, { displayOnNextPage: true } ) );
 		},
 		[ reduxDispatch ]
 	);
@@ -237,7 +237,7 @@ function ChangePaymentMethodList( {
 
 	const showSuccessMessage = useCallback(
 		( message ) => {
-			reduxDispatch( successNotice( message, { persistent: true, duration: 5000 } ) );
+			reduxDispatch( successNotice( message, { displayOnNextPage: true, duration: 5000 } ) );
 		},
 		[ reduxDispatch ]
 	);
