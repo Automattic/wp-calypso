@@ -68,10 +68,20 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 
 	const domainSummary = (
 		<div className="nux-launch__summary-item">
-			{ /* TODO: what if the user picks a monthly-billed plan?  */ }
 			{ domain?.domain_name ? (
 				<p>
 					{ __( 'Custom domain', 'full-site-editing' ) }: { domain.domain_name }
+					{ planProduct?.billingPeriod === 'MONTHLY' && (
+						<>
+							<br />
+							<span className="nux-launch__summary-item__domain-price">
+								{
+									/* translators: %s is the price with currency. Eg: $15/year. */
+									sprintf( __( '%s/year', 'full-site-editing' ), domain.cost )
+								}
+							</span>
+						</>
+					) }
 				</p>
 			) : (
 				<>

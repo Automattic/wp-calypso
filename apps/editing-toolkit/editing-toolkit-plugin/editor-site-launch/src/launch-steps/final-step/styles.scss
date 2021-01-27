@@ -86,4 +86,7 @@ ul.nux-launch__feature-item-group {
 			@include onboarding-placeholder();
 		}
 	}
+	&__domain-price {
+		font-size: $font-body-small;
+	}
 }
