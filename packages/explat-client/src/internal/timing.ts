@@ -32,6 +32,13 @@ export function timeoutPromise< T >( promise: Promise< T >, ms: number ): Promis
 	] );
 }
 
+/**
+ * Wraps an async function so that if it is called multiple times it will just return the same promise - until the promise is fulfilled.
+ *
+ * Once the promise has been fulfilled it will reset.
+ *
+ * @param f The function to wrap
+ */
 export function asyncOneAtATime< T >( f: () => Promise< T > ): () => Promise< T > {
 	let isRunning = false;
 	let lastPromise = createUnresolvingPromise< T >();

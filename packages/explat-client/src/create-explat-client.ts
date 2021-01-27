@@ -53,8 +53,9 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 	} );
 
 	/**
-	 * We have a Async One At A Time (AOAAT) ExperimentAssignment fetch for each experiment (memoization over createAOAATExperimentAssignmentFetch).
-	 * This allows multiple calls to occur with only one request behind them.
+	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
+	 *
+	 * AOAAT stands for Async One At A Time, this is how we ensure for each experiment that there is only ever one fetch process occuring.
 	 *
 	 * @param experimentName The experiment's name
 	 */
