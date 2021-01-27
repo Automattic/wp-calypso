@@ -47,6 +47,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Fix untranslated text in Domain Picker (https://github.com/Automattic/wp-calypso/pull/49168)
 * Use @automattic/format-currency package to format prices in Plan Store (https://github.com/Automattic/wp-calypso/pull/49293)
 * Patterns and SPT: Add pattern_meta is_web param to calls to the ptk/patterns endpoint (https://github.com/Automattic/wp-calypso/pull/49166)
+* Switch on block pattern modifications (https://github.com/Automattic/wp-calypso/pull/48848)
 
 = 2.12 =
 * Starter page templates: remove sidebar component (#48948)
