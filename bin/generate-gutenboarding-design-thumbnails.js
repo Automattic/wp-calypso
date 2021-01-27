@@ -159,7 +159,12 @@ async function run() {
 			encoder.setDelay( 100 );
 			encoder.setQuality( 5 ); // default
 
-			const appendFrameToGif = encoder.addFrame.bind( encoder );
+			const dotWrap = ( f ) => ( ...args ) => {
+				process.stdout.write( '.' );
+				return f( ...args );
+			};
+
+			const appendFrameToGif = dotWrap( encoder.addFrame.bind( encoder ) );
 
 			// screenshot -> Promise( )
 
@@ -221,6 +226,7 @@ async function run() {
 			}
 
 			encoder.finish();
+			process.stdout.write( '\n' );
 			// We could still capture normal webp/jpg screenshots here.
 		}
 
