@@ -149,10 +149,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							{ isFree && __( 'free forever', __i18n_text_domain__ ) }
 							{ ! isFree &&
 								( billingPeriod === 'ANNUALLY'
-									? sprintf(
-											__( 'per month, billed as %s annually', __i18n_text_domain__ ),
-											planProduct?.annualPrice
-									  )
+									? __( 'billed annually', __i18n_text_domain__ )
 									: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
 						</div>
 
@@ -169,9 +166,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							aria-hidden={ isFree ? 'true' : 'false' }
 						>
 							{ sprintf(
-								// Translators: "%s" is a number, and "%%" is the percent sign. Please keep the "%s%%" string unchanged when translating.
-								__( 'Save %s%% by paying annually', __i18n_text_domain__ ),
-								planProduct?.annualDiscount ?? 0
+								// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
+								__( `Save %(discountRate)s%% by paying annually`, __i18n_text_domain__ ),
+								{ discountRate: planProduct?.annualDiscount ?? 0 }
 							) }
 						</div>
 

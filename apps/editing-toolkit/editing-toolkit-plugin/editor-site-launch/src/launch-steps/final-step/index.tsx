@@ -75,6 +75,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 						<>
 							<br />
 							<span className="nux-launch__summary-item__domain-price">
+								{ __( 'Domain Registration', 'full-site-editing' ) }:{ ' ' }
 								{
 									/* translators: %s is the price with currency. Eg: $15/year. */
 									sprintf( __( '%s/year', 'full-site-editing' ), domain.cost )
@@ -126,11 +127,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
 					{ __( 'Plan subscription', 'full-site-editing' ) }: { planProduct.price }{ ' ' }
 					{ planProduct.billingPeriod === 'ANNUALLY'
-						? sprintf(
-								// translators: %s is the cost per year (e.g 96$)
-								__( 'per month, billed as %s annually', 'full-site-editing' ),
-								planProduct?.annualPrice
-						  )
+						? __( 'billed annually', 'full-site-editing' )
 						: __( 'per month, billed monthly', 'full-site-editing' ) }
 				</>
 			) : (
