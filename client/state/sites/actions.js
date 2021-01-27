@@ -113,7 +113,7 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  *
- * @param {number} siteFragment Site ID or slug
+ * @param {number|string} siteFragment Site ID or slug
  * @param {boolean} forceWpcom explicitly get info from WPCOM vs Jetpack site
  * @returns {Function}              Action thunk
  */

@@ -10,7 +10,7 @@ import React from 'react';
  */
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { siteSelection, sites } from 'calypso/my-sites/controller';
+import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { startJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { translate } from 'i18n-calypso';
 import Landing from './sections/landing';
