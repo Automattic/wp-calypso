@@ -15,11 +15,11 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import './style.scss';
-import paymentsImage from './images/payments.png';
-import whatsappImage from './images/whatsapp.png';
-import blockPatternsImage from './images/block-patterns.png';
-import dragDropImage from './images/drag-drop.png';
-import singlePageSiteImage from './images/single-page-website.png';
+const paymentsImage = 'https://s0.wp.com/i/whats-new/payments.png';
+const whatsappImage = 'https://s0.wp.com/i/whats-new/whatsapp.png';
+const blockPatternsImage = 'https://s0.wp.com/i/whats-new/block-patterns.png';
+const dragDropImage = 'https://s0.wp.com/i/whats-new/drag-drop.png';
+const singlePageSiteImage = 'https://s0.wp.com/i/whats-new/single-page-website.png';
 
 function WhatsNewMenuItem() {
 	const { toggleWhatsNew } = useDispatch( 'whats-new' );
