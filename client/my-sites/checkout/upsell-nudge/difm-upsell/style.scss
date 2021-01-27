@@ -48,7 +48,11 @@ main.difm-upsell.main {
 	&__card-header,
 	&__card-footer {
 		width: 100%;
-	}
+    }
+    
+    .card.difm-upsell__card-header {
+        margin-bottom: 30px;
+    }
 
 	&__card-body {
 		overflow: auto;
@@ -77,11 +81,11 @@ main.difm-upsell.main {
 
 	&__doodle {
 		margin-top: 85px;
-	}
+    }
 
 	&__small-header {
-		font-style: italic;
-		text-align: center;
+		display: flex;
+		align-items: center;
 	}
 
 	&__header {
@@ -155,5 +159,19 @@ main.difm-upsell.main {
 		@include breakpoint-deprecated( '>480px' ) {
 			float: right;
 		}
+    }
+    
+    &__purchase-success-icon {
+        width: 30px;
+		margin-right: 10px;
+		fill: var( --studio-green-50 );
+    }
+
+	&__title-heading {
+		font-weight: 600;;
+	}
+
+	&__subtitle {
+		font-size: 0.875rem;
 	}
 }

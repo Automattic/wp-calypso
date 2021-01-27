@@ -49,9 +49,15 @@ export class DifmUpsell extends PureComponent {
 
 		return (
 			<header className="difm-upsell__small-header">
-				<h2 className="difm-upsell__title">
-					{ translate( "Hold tight, we're getting your site ready." ) }
-				</h2>
+				<Gridicon icon="checkmark-circle" className="difm-upsell__purchase-success-icon" />
+				<div className="difm-upsell__title">
+					<h2 className="difm-upsell__title-heading">
+						{ translate( 'Congratulations on your purchase!' ) }
+					</h2>
+					<div className="difm-upsell__subtitle">
+						{ translate( 'You will receive an email confirmation shortly.' ) }
+					</div>
+				</div>
 			</header>
 		);
 	}
