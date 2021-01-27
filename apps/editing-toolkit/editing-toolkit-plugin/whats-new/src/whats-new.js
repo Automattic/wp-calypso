@@ -18,6 +18,8 @@ import './style.scss';
 import paymentsImage from './images/payments.png';
 import whatsappImage from './images/whatsapp.png';
 import blockPatternsImage from './images/block-patterns.png';
+import dragDropImage from './images/drag-drop.png';
+import singlePageSiteImage from './images/single-page-website.png';
 
 function WhatsNewMenuItem() {
 	const { toggleWhatsNew } = useDispatch( 'whats-new' );
@@ -131,6 +133,65 @@ function getWhatsNewPages() {
 					Link: (
 						<a
 							href="https://wordpress.com/support/wordpress-editor/blocks/whatsapp-button-block/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					p: <p />,
+				}
+			),
+		},
+		{
+			imgSrc: dragDropImage,
+			heading: __( 'Drag and drop blocks and patterns in the editor', 'full-site-editing' ),
+			description: createInterpolateElement(
+				/* translators: the embed is a link */
+				__(
+					'<p>You can now drag and drop <Link1>Blocks</Link1>, and even <Link2>Block Patterns</Link2>, into your content directly from the Block Inserter.</p><p><Link>Learn more</Link>.</p>',
+					'full-site-editing'
+				),
+				{
+					Link1: (
+						<a
+							href="https://wordpress.com/support/wordpress-editor/blocks/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					Link2: (
+						<a
+							href="https://wordpress.com/support/block-pattern/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					Link3: (
+						<a
+							href="https://make.wordpress.org/core/2021/01/08/core-editor-improvement-drag-drop-blocks-and-patterns-from-the-inserter/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					p: <p />,
+				}
+			),
+		},
+		{
+			imgSrc: singlePageSiteImage,
+			heading: __( 'Quickly build single-page websites', 'full-site-editing' ),
+			description: createInterpolateElement(
+				/* translators: the embed is a link */
+				__(
+					'<p>Sometimes you just need a single webpage to get your idea across. Introducing our freshly-launched <Link1>Blank Canvas theme</Link1>, which is optimized for single-page websites.</p><p><Link2>Learn more</Link2>.</p>',
+					'full-site-editing'
+				),
+				{
+					Link1: (
+						<a href="https://wordpress.com/theme/blank-canvas" target="_blank" rel="noreferrer" />
+					),
+					Link2: (
+						<a
+							href="https://wordpress.com/blog/2021/01/25/building-single-page-websites-on-wordpress-com/"
 							target="_blank"
 							rel="noreferrer"
 						/>
