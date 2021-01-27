@@ -11,7 +11,13 @@ import { createExPlatClient } from 'explat-client'
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks'
 import { getAnonIdFromCookie } from 'calypso/state/experiments/reducer'
 
+const isDevelopmentMode = process.env.NODE_ENV === 'development';
+
 const logError = (errorMessage: string) => {
+    if ( isDevelopmentMode ) {
+        console.error('[ExPlat]', errorMessage)
+    }
+
     // TODO: Severity? Move this into the client?
     const error = {
         exPlatStandaloneClient: 'calypso',
@@ -28,14 +34,17 @@ const logError = (errorMessage: string) => {
         } );
     } catch {
         // eslint-disable-next-line no-console
-        console.error( 'Error: Unable to record the error in Logstash.' );
+        console.error( 'Error: Unable to send the error.' );
     }
     return
 }
 
 const fetchExperimentAssignment = ({experimentName, anonId} : { experimentName: string, anonId?: string }): Promise< unknown > => {
     return wpcom.req.get(
-        '/v2/experiments/0.1.0/assignments/calypso', 
+        {
+            path: '/experiments/0.1.0/assignments/wpcom',
+            apiNamespace: 'wpcom/v2'
+        },
         {
             experiment_name: experimentName,
             anon_id: anonId ?? undefined,
@@ -57,7 +66,6 @@ const getAnonId = (): string | null => {
     return getAnonIdFromCookie()
 }
 
-const isDevelopmentMode = process.env.NODE_ENV === 'development';
 
 const ExPlatClient = createExPlatClient({
     fetchExperimentAssignment,
@@ -66,8 +74,4 @@ const ExPlatClient = createExPlatClient({
     isDevelopmentMode,
 });
 
-export { 
-    ExPlatClient.loadExperimentAssignment as loadExperimentAssignment,
-    ExPlatClient.dangerouslyGetExperimentAssignment as dangerouslyGetExperimentAssignment
-    // ExPlatReactClient.useExperiment as useExperiment
-};
+export default ExPlatClient

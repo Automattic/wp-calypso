@@ -75,7 +75,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
 			try {
-				if ( Validation.isName( experimentName ) ) {
+				if ( ! Validation.isName( experimentName ) ) {
 					throw new Error( `Invalid experimentName: ${ experimentName }` );
 				}
 
@@ -105,16 +105,15 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 
 				return fetchedExperimentAssignment;
 			} catch ( e ) {
+				config.logError( e.message );
 				if ( config.isDevelopmentMode ) {
 					throw e;
-				} else {
-					config.logError( e.message );
 				}
 				return createNullExperimentAssignment();
 			}
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {
-			if ( Validation.isName( experimentName ) ) {
+			if ( ! Validation.isName( experimentName ) ) {
 				throw new Error( `Invalid experimentName: ${ experimentName }` );
 			}
 
@@ -129,15 +128,14 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				storedExperimentAssignment &&
 				! ExperimentAssignments.isAlive( storedExperimentAssignment )
 			) {
+				config.logError(
+					`Dangerously getting an ExperimentAssignment that has loaded but has since expired.`
+				);
 				if ( config.isDevelopmentMode ) {
 					throw new Error(
 						`Trying to dangerously get an ExperimentAssignment that has loaded but has since expired`
 					);
-				} else {
-					config.logError(
-						`Dangerously getting an ExperimentAssignment that has loaded but has since expired.`
-					);
-				}
+				} 
 			}
 
 			return storedExperimentAssignment;

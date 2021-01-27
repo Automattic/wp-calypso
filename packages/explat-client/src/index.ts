@@ -2,6 +2,6 @@
  * Internal dependencies
  */
 import { ExperimentAssignment } from './types';
-import createExPlatClient from './create-explat-client';
+import createExPlatClient, { ExPlatClient } from './create-explat-client';
 
-export { createExPlatClient, ExperimentAssignment };
+export { createExPlatClient, ExperimentAssignment, ExPlatClient };

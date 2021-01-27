@@ -27,7 +27,7 @@ function isExperimentAssignment(
 	return (
 		isObject( experimentAssignment ) &&
 		isName( experimentAssignment[ 'experimentName' ] ) &&
-		isName( experimentAssignment[ 'variationName' ] ) &&
+		( isName( experimentAssignment[ 'variationName' ] ) || experimentAssignment[ 'variationName'] === null ) &&
 		typeof experimentAssignment[ 'retrievedTimestamp' ] === 'number' &&
 		typeof experimentAssignment[ 'ttl' ] === 'number'
 	);

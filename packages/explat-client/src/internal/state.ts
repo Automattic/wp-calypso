@@ -4,13 +4,13 @@
 import { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
 
-const experiments: Record< string, ExperimentAssignment > = {};
+const experiments: Record< string, ExperimentAssignment | undefined > = {};
 
 export function storeExperimentAssignment( experimentAssignment: ExperimentAssignment ): void {
 	Validations.validateExperimentAssignment( experimentAssignment );
 
 	const previousExperimentAssignment = experiments[ experimentAssignment.experimentName ];
-	if ( experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp ) {
+	if ( previousExperimentAssignment && experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp ) {
 		throw new Error(
 			'Trying to store an older experiment assignment than is present in the store, likely a race condition.'
 		);
