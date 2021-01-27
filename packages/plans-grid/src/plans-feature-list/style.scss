@@ -134,8 +134,8 @@ ul.plans-feature-list__item-group {
 
 // Wrapper for the feature item's text content
 .plans-feature-list__item-text {
-	flex-grow: 1;
-	flex-shrink: 0;
+	// Item tends to occupy all available space, but without exceeding parent's width
+	flex: 1;
 	max-width: 100%;
 
 	// Makes the tick/cross icon align better with the text
