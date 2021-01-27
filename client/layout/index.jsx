@@ -73,6 +73,11 @@ class Layout extends Component {
 		shouldShowAppBanner: PropTypes.bool,
 	};
 
+	UNSAFE_componentWillMount() {
+		// This is temporary helper function until we have rolled out to 100% of customers.
+		this.isNavUnificationEnabled();
+	}
+
 	componentDidMount() {
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
@@ -100,6 +105,10 @@ class Layout extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( prevProps.teams !== this.props.teams ) {
+			// This is temporary helper function until we have rolled out to 100% of customers.
+			this.isNavUnificationEnabled();
+		}
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
@@ -169,8 +178,6 @@ class Layout extends Component {
 	}
 
 	render() {
-		this.isNavUnificationEnabled();
-
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
