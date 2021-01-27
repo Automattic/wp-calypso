@@ -21,8 +21,6 @@ class ExtractManifestModule extends webpack.RuntimeModule {
 }
 
 class ExtractManifestPlugin {
-	constructor() {}
-
 	apply( compiler ) {
 		// Tapping into compiler.make allow us to come after the regular TemplatedPathPlugin
 		compiler.hooks.compilation.tap( PLUGIN_NAME, ( compilation ) => {
