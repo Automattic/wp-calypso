@@ -149,7 +149,7 @@ class ConfirmCancelDomain extends React.Component {
 				translate( '%(purchaseName)s was successfully cancelled and refunded.', {
 					args: { purchaseName },
 				} ),
-				{ persistent: true }
+				{ displayOnNextPage: true }
 			);
 
 			this.props.refreshSitePlans( purchase.siteId );
