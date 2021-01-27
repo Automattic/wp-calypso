@@ -1100,6 +1100,7 @@ object WPComPlugins_EditorToolKit : BuildType({
     vcs {
         root(WpCalypso)
         cleanCheckout = true
+        triggerRules = "+:root=${WpCalypso}:apps/editing-toolkit/**"
     }
 
     steps {
