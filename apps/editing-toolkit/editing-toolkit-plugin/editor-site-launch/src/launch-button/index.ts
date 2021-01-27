@@ -28,9 +28,6 @@ domReady( () => {
 	}
 	handled = true;
 
-	// @TODO: this is just temporary for testing via feature flag. Remove it once focused-launch is live
-	const isFocusedLaunchFlowFeatureFlag = window.calypsoifyGutenberg?.isFocusedLaunchFlow;
-
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
 		if ( ! settingsBar ) {
@@ -63,6 +60,9 @@ domReady( () => {
 			if ( launchFlow === GUTENBOARDING_LAUNCH_FLOW ) {
 				dispatch( 'automattic/launch' ).openSidebar();
 			}
+
+			// @TODO: this is just temporary for testing via feature flag. Remove it once focused-launch is live
+			const isFocusedLaunchFlowFeatureFlag = window.calypsoifyGutenberg?.isFocusedLaunchFlow;
 
 			if ( launchFlow === FOCUSED_LAUNCH_FLOW || isFocusedLaunchFlowFeatureFlag ) {
 				dispatch( 'automattic/launch' ).openFocusedLaunch();
