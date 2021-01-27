@@ -87,7 +87,7 @@ import checkoutTheme from './lib/theme';
 import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
 export * from './types';
 
-export { Theme } from './lib/theme';
+export type { Theme } from './lib/theme';
 
 // Re-export the public API
 export {
