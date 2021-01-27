@@ -25,12 +25,6 @@ export default function Coupon( { id, className, disabled, couponStatus, couponF
 		handleCouponSubmit,
 	} = couponFieldStateProps;
 
-	if ( couponStatus === 'applied' ) {
-		// Clear the field value when the coupon is applied
-		setCouponFieldValue( '' );
-		return null;
-	}
-
 	const hasCouponError = couponStatus === 'invalid' || couponStatus === 'rejected';
 	const isPending = couponStatus === 'pending';
 
