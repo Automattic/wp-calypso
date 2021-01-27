@@ -45,6 +45,10 @@ async selectContinue() {
 
 ## Tags
 
+Tags are labels used by `mocha` (our test runner) to determine what tests should be run, depending on the environment. Consider it a form of metadata that conveys various test parameters to the runner.
+
+Typical example:
+
 ```(javascript)
 describe( "Block under test @parallel", function() {
   describe( "Test case 1", function() {
@@ -60,6 +64,13 @@ describe( "Block under test @parallel", function() {
   } )
 } )
 ```
+
+Some examples of tags:
+
+* parallel
+* jetpack
+* signup
+
 
 ## Page Objects
 

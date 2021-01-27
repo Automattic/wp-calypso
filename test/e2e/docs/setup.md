@@ -101,7 +101,7 @@ export CONFIG_KEY='<config_key_from_a8c_store>'
 export NODE_CONFIG='<config_name_to_use>'
 ```
 
-Additionally, see the list of other environment variables [here](docs/environment_variables.md).
+Additionally, see the list of other environment variables [here](environment_variables.md).
 
 ## Naming Branches
 
