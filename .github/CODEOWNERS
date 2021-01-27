@@ -93,3 +93,5 @@
 /client/components/experiment @Automattic/experimentation-platform
 /client/state/data-layer/wpcom/experiments @Automattic/experimentation-platform
 /client/state/experiments @Automattic/experimentation-platform
+/client/lib/explat @Automattic/experimentation-platform
+/packages/explat-client @Automattic/experimentation-platform
