@@ -15,6 +15,8 @@ Enhances the editing experience in the Block Editor.
 This plugin comes with a custom block to display a list of your most recent blog posts, as well as a template selector
 to give you a head start on creating new pages for your site. It also provides a way to change your font settings globally from the page editor.
 
+View source code at https://github.com/Automattic/wp-calypso/tree/trunk/apps/editing-toolkit.
+
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/full-site-editing` directory, or install the plugin through the WordPress plugins screen directly.
