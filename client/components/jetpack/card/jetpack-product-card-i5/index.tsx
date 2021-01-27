@@ -44,6 +44,7 @@ type OwnProps = {
 	expiryDate?: Moment;
 	isFeatured?: boolean;
 	isOwned?: boolean;
+	isIncludedInPlan?: boolean;
 	isDeprecated?: boolean;
 	isAligned?: boolean;
 	isDisabled?: boolean;
@@ -71,6 +72,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	expiryDate,
 	isFeatured,
 	isOwned,
+	isIncludedInPlan,
 	isDeprecated,
 	isAligned,
 	features,
@@ -112,30 +114,45 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 					<>{ preventWidows( productName ) }</>
 				) }
 				<p className="jetpack-product-card-i5__description">{ description }</p>
-				<div className="jetpack-product-card-i5__price">
-					{ currencyCode && originalPrice ? (
-						<>
-							{ displayFrom && <span className="jetpack-product-card-i5__price-from">from</span> }
-							<span className="jetpack-product-card-i5__raw-price">
-								<PlanPrice
-									rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
-									currencyCode={ currencyCode }
+				{ isOwned && (
+					<p className="jetpack-product-card-i5__you-own-this">
+						{ translate( 'You own this product' ) }
+					</p>
+				) }
+				{ isIncludedInPlan && (
+					<p className="jetpack-product-card-i5__you-own-this">
+						{ translate( 'Part of your current plan' ) }
+					</p>
+				) }
+				{ ! isOwned && ! isIncludedInPlan && (
+					<div className="jetpack-product-card-i5__price">
+						{ currencyCode && originalPrice ? (
+							<>
+								{ displayFrom && <span className="jetpack-product-card-i5__price-from">from</span> }
+								<span className="jetpack-product-card-i5__raw-price">
+									<PlanPrice
+										rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
+										currencyCode={ currencyCode }
+									/>
+								</span>
+								<JetpackProductCardTimeFrame
+									expiryDate={ expiryDate }
+									billingTerm={ billingTerm }
 								/>
-							</span>
-							<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-							{ tooltipText && (
-								<InfoPopover position="top" className="jetpack-product-card-i5__price-tooltip">
-									{ tooltipText }
-								</InfoPopover>
-							) }
-						</>
-					) : (
-						<>
-							<div className="jetpack-product-card-i5__price-placeholder" />
-							<div className="jetpack-product-card-i5__time-frame-placeholder" />
-						</>
-					) }
-				</div>
+								{ tooltipText && (
+									<InfoPopover position="top" className="jetpack-product-card-i5__price-tooltip">
+										{ tooltipText }
+									</InfoPopover>
+								) }
+							</>
+						) : (
+							<>
+								<div className="jetpack-product-card-i5__price-placeholder" />
+								<div className="jetpack-product-card-i5__time-frame-placeholder" />
+							</>
+						) }
+					</div>
+				) }
 				{ aboveButtonText && (
 					<p className="jetpack-product-card-i5__above-button">{ aboveButtonText }</p>
 				) }

@@ -69,7 +69,6 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 		}
 		return false;
 	}, [ item.productSlug, sitePlan, siteProducts ] );
-
 	// Calculate the product price.
 	const { originalPrice, discountedPrice, priceTiers } = useItemPrice(
 		siteId,
@@ -120,12 +119,13 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
 			isOwned={ isOwned }
+			isIncludedInPlan={ ! isOwned && isItemPlanFeature }
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
 			displayFrom={ ! siteId && priceTiers !== null }
 			tooltipText={ priceTiers && productTooltip( item, priceTiers ) }
-			aboveButtonText={ productAboveButtonText( item, siteProduct ) }
+			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			{ ...disabledProps }
 		/>
 	);

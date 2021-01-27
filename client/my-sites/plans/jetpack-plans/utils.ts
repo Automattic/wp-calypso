@@ -375,9 +375,16 @@ export function productTooltip(
 
 export function productAboveButtonText(
 	product: SelectorProduct,
-	siteProduct?: SiteProduct
+	siteProduct?: SiteProduct,
+	isOwned?: boolean,
+	isIncludedInPlan?: boolean
 ): TranslateResult | null {
-	if ( siteProduct && JETPACK_SEARCH_PRODUCTS.includes( product.productSlug ) ) {
+	if (
+		! isOwned &&
+		! isIncludedInPlan &&
+		siteProduct &&
+		JETPACK_SEARCH_PRODUCTS.includes( product.productSlug )
+	) {
 		return translate( '*estimated price based off of %(records)s records', {
 			args: {
 				records: numberFormat( siteProduct.tierUsage, 0 ),
