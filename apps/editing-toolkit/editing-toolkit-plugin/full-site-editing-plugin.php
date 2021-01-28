@@ -141,20 +141,12 @@ function load_common_module() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
 
 /**
- * Sigh: load_editor_site_launch
+ * Load Editor Site Launch
  */
 function load_editor_site_launch() {
 	require_once __DIR__ . '/editor-site-launch/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_site_launch' );
-
-/**
- * Sigh: load_editor_gutenboarding_launch
- */
-function load_editor_gutenboarding_launch() {
-	require_once __DIR__ . '/editor-gutenboarding-launch/index.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_gutenboarding_launch' );
 
 /**
  * Add front-end CoBlocks gallery block scripts.

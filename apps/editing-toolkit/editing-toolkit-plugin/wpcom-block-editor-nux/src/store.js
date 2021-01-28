@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import 'a8c-fse-common-data-stores';
 import apiFetch from '@wordpress/api-fetch';
 import { combineReducers, registerStore } from '@wordpress/data';
 
