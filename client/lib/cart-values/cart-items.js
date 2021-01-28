@@ -44,7 +44,8 @@ import {
 	isEcommerce,
 	isFreeTrial,
 	isFreeWordPressComDomain,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
 	isNoAds,
@@ -748,14 +749,13 @@ export function domainTransfer( properties ) {
 }
 
 /**
- * Retrieves all the G Suite items in the specified shopping cart.
- * Out-dated name Google Apps is still used here for consistency in naming.
+ * Retrieves all the items in the specified shopping cart for G Suite or Google Workspace.
  *
  * @param {CartValue} cart - cart as `CartValue` object
  * @returns {CartItemValue[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getGoogleApps( cart ) {
-	return filter( getAllCartItems( cart ), isGoogleApps );
+	return filter( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
 export function googleApps( properties ) {
@@ -838,7 +838,7 @@ export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
 }
 
 export function hasGoogleApps( cart ) {
-	return some( getAllCartItems( cart ), isGoogleApps );
+	return some( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
 export function hasTitanMail( cart ) {
@@ -985,7 +985,7 @@ export function getRenewalItemFromProduct( product, properties ) {
 		cartItem = planItem( product.product_slug );
 	}
 
-	if ( isGoogleApps( product ) ) {
+	if ( isGSuiteOrGoogleWorkspace( product ) ) {
 		cartItem = googleApps( product );
 	}
 

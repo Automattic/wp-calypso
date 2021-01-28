@@ -24,7 +24,7 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
@@ -271,7 +271,7 @@ class RemovePurchase extends Component {
 							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 						} )
 					}{ ' ' }
-					{ isGoogleApps( purchase )
+					{ isGSuiteOrGoogleWorkspace( purchase )
 						? translate(
 								'Your G Suite account will continue working without interruption. ' +
 									'You will be able to manage your G Suite billing directly through Google.'
@@ -336,7 +336,7 @@ class RemovePurchase extends Component {
 			return this.renderPlanDialog();
 		}
 
-		if ( isGoogleApps( purchase ) ) {
+		if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 			return (
 				<GSuiteCancellationPurchaseDialog
 					isVisible={ this.state.isDialogVisible }
@@ -346,6 +346,7 @@ class RemovePurchase extends Component {
 				/>
 			);
 		}
+
 		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
 			return this.renderAtomicDialog( purchase );
 		}

@@ -27,7 +27,7 @@ import {
 import {
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isConciergeSession,
 	isJetpackPlan,
 	isJetpackProduct,
@@ -368,7 +368,7 @@ function PurchaseMetaExpiration( {
 	if (
 		( isDomainRegistration( purchase ) ||
 			isPlan( purchase ) ||
-			isGoogleApps( purchase ) ||
+			isGSuiteOrGoogleWorkspace( purchase ) ||
 			isTitanMail( purchase ) ) &&
 		! isExpired( purchase )
 	) {

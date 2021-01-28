@@ -58,7 +58,7 @@ jest.mock( 'calypso/lib/products-values', () => ( {
 	isBundled: jest.fn( () => null ),
 	isDomainProduct: jest.fn( () => null ),
 	isCredits: jest.fn( () => null ),
-	isGoogleApps: jest.fn( () => null ),
+	isGSuiteOrExtraLicenseOrGoogleWorkspace: jest.fn( () => null ),
 } ) );
 
 const cartItem = {
