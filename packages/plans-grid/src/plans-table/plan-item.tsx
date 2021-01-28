@@ -182,11 +182,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									isPrimary
 									disabled={ !! disabledLabel }
 								>
-									<span>
-										{ disabledLabel
-											? __( disabledLabel, __i18n_text_domain__ )
-											: __( 'Choose', __i18n_text_domain__ ) }
-									</span>
+									<span>{ disabledLabel ?? __( 'Choose', __i18n_text_domain__ ) }</span>
 								</Button>
 							) : (
 								<Button
@@ -200,9 +196,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									<span>
 										{
 											/* translators: %s is a WordPress.com plan name (eg: Free, Personal) */
-											disabledLabel
-												? __( disabledLabel, __i18n_text_domain__ )
-												: sprintf( __( 'Select %s', __i18n_text_domain__ ), name )
+											disabledLabel ?? sprintf( __( 'Select %s', __i18n_text_domain__ ), name )
 										}
 									</span>
 								</Button>
@@ -216,6 +210,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							onPickDomain={ onPickDomainClick }
 							disabledLabel={
 								disabledLabel &&
+								// Translators: %s is the domain name (e.g. "example.com is not included")
 								sprintf( __( '%s is not included', __i18n_text_domain__ ), domain?.domain_name )
 							}
 							billingPeriod={ billingPeriod }
