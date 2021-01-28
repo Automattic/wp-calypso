@@ -8,16 +8,22 @@ import { ArrowButton } from '@automattic/onboarding';
 /**
  * Internal dependencies
  */
+import WrappingComponent from './suggestion-item-wrapper';
 
 interface Props {
 	onClick: () => void;
 }
 
 const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
+	const useYourOwnDomainItemRef = React.createRef< any >();
+
 	return (
-		/* eslint-disable jsx-a11y/click-events-have-key-events */
-		/* eslint-disable jsx-a11y/interactive-supports-focus */
-		<div role="button" className="domain-picker__suggestion-item type-link" onClick={ onClick }>
+		<WrappingComponent
+			type="button"
+			className="domain-picker__suggestion-item type-link"
+			ref={ useYourOwnDomainItemRef }
+			onClick={ onClick }
+		>
 			<div className="domain-picker__suggestion-item-name">
 				<span className="domain-picker__domain-wrapper with-margin with-bold-text">
 					{ __( 'Already own a domain?', __i18n_text_domain__ ) }
@@ -39,7 +45,7 @@ const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 					__i18n_text_domain__
 				) }
 			</ArrowButton>
-		</div>
+		</WrappingComponent>
 	);
 };
 
