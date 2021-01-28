@@ -70,6 +70,11 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			path: outputPath,
 			filename: '[name].js', // dynamic filename
 		},
+		optimization: {
+			...webpackConfig.optimization,
+			// disable module concatenation so that instances of `__()` are not renamed
+			concatenateModules: false,
+		},
 		plugins: [
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
