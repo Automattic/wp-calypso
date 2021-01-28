@@ -15,7 +15,7 @@ import { FLOW_ID } from '../gutenboarding/constants';
 
 type PlanPath = Plans.PlanPath;
 
-const plansPaths = Plans.plansPaths;
+const plansPaths = Plans.plansSlugs;
 
 // The first step (IntentGathering), which is found at the root route (/), is set as
 // `undefined`, as that's what matching our `path` pattern against a route with no explicit
