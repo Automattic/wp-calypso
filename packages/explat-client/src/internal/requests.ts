@@ -26,7 +26,7 @@ function validateFetchExperimentAssignmentResponse(
 	if ( isFetchExperimentAssignmentResponse( response ) ) {
 		return response;
 	}
-	throw new Error( 'Invalide FetchExperimentAssignmentResponse' );
+	throw new Error( 'Invalid FetchExperimentAssignmentResponse' );
 }
 
 export async function fetchExperimentAssignment(
