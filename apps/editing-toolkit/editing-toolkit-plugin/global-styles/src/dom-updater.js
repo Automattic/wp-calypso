@@ -58,7 +58,7 @@ export default ( options, getOptionValue ) => {
 			Object.keys( currentOptions ).forEach( ( key ) => {
 				declarationList += `${ cssVariables[ key ] }:${ currentOptions[ key ] };`;
 			} );
-			styleElement.textContent = `.edit-post-visual-editor.editor-styles-wrapper{${ declarationList }}`;
+			styleElement.textContent = `.edit-post-visual-editor .editor-styles-wrapper{${ declarationList }}`;
 		} );
 	} );
 };
