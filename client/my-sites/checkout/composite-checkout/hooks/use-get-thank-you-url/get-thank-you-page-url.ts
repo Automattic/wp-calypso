@@ -284,7 +284,7 @@ function getFallbackDestination( {
 		return siteWithReceiptOrCartUrl;
 	}
 
-	if ( siteSlug ) {
+	if ( siteSlug && ! isCartEmpty ) {
 		debug( 'just site slug', siteSlug );
 		return `/checkout/thank-you/${ siteSlug }`;
 	}

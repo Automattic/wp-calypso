@@ -50,6 +50,10 @@ import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hoo
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+} from 'calypso/signup/storageUtils';
 
 /**
  * Style dependencies
@@ -245,6 +249,14 @@ export class UpsellNudge extends React.Component {
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+
+		// Removes the destination cookie only if redirecting to the signup destination.
+		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
+		const destinationFromCookie = retrieveSignupDestination();
+		if ( url.includes( destinationFromCookie ) ) {
+			clearSignupDestinationCookie();
+		}
+
 		page.redirect( url );
 	};
 
