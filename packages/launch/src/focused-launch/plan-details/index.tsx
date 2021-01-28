@@ -65,15 +65,15 @@ const PlanDetails: React.FunctionComponent = () => {
 					currentPlanProductId={ selectedPlanProductId }
 					onPickDomainClick={ goBack }
 					customTagLines={ {
-						Free: __( 'Best for getting started', __i18n_text_domain__ ) as string,
-						Business: __( 'Best for small businesses', __i18n_text_domain__ ) as string,
+						free: __( 'Best for getting started', __i18n_text_domain__ ) as string,
+						business: __( 'Best for small businesses', __i18n_text_domain__ ) as string,
 					} }
 					showPlanTaglines
 					popularBadgeVariation="NEXT_TO_NAME"
 					disabledPlans={
 						hasPaidDomain
 							? {
-									[ 'Free' ]: __( 'Unavailable with domain', __i18n_text_domain__ ),
+									[ 'free' ]: __( 'Unavailable with domain', __i18n_text_domain__ ),
 							  }
 							: undefined
 					}
