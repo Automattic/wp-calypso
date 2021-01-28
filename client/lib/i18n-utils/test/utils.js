@@ -247,7 +247,7 @@ describe( 'utils', () => {
 	describe( '#localizeUrl', () => {
 		test( 'localizeUrl is still provided by client/lib/i18n-utils', () => {
 			expect( localizeUrl( 'https://wordpress.com/', 'de' ) ).toEqual(
-				'https://de.wordpress.com/'
+				'https://wordpress.com/de/'
 			);
 		} );
 

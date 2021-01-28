@@ -34,18 +34,21 @@ describe( '#localizeUrl', () => {
 
 		localizeUrl = testLocalizeUrl( 'pt-br' );
 		expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
-			'https://br.forums.wordpress.com/'
+			'https://wordpress.com/pt-br/forums/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/forums/' ) ).toEqual(
+			'https://wordpress.com/pt-br/forums/'
 		);
 		localizeUrl = testLocalizeUrl( 'en' );
 		expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
-			'https://en.forums.wordpress.com/'
+			'https://wordpress.com/forums/'
 		);
 	} );
 
 	test( 'should not change URL for `en`', () => {
 		[
 			'https://wordpress.com/',
-			'https://de.wordpress.com/',
+			'https://wordpress.com/de/',
 			'https://wordpress.com/start/',
 			'https://wordpress.com/wp-login.php?action=lostpassword',
 		].forEach( ( fullUrl ) => {
@@ -81,7 +84,7 @@ describe( '#localizeUrl', () => {
 		).toEqual( 'https://wordpress.com/de/support/all-about-domains/' );
 
 		expect( localizeUrl( localizeUrl( 'https://wordpress.com/', 'de' ), 'de' ) ).toEqual(
-			'https://de.wordpress.com/'
+			'https://wordpress.com/de/'
 		);
 		expect( localizeUrl( localizeUrl( 'https://en.blog.wordpress.com/', 'de' ), 'de' ) ).toEqual(
 			'https://wordpress.com/blog/'
@@ -99,9 +102,9 @@ describe( '#localizeUrl', () => {
 
 	test( 'logged-out homepage', () => {
 		expect( localizeUrl( 'https://wordpress.com/', 'en' ) ).toEqual( 'https://wordpress.com/' );
-		expect( localizeUrl( 'https://wordpress.com/', 'de' ) ).toEqual( 'https://de.wordpress.com/' );
+		expect( localizeUrl( 'https://wordpress.com/', 'de' ) ).toEqual( 'https://wordpress.com/de/' );
 		expect( localizeUrl( 'https://wordpress.com/', 'pt-br' ) ).toEqual(
-			'https://br.wordpress.com/'
+			'https://wordpress.com/pt-br/'
 		);
 		expect( localizeUrl( 'https://wordpress.com/', 'pl' ) ).toEqual( 'https://wordpress.com/' );
 
@@ -116,7 +119,7 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/blog/'
 		);
 		expect( localizeUrl( 'https://en.blog.wordpress.com/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/br/blog/'
+			'https://wordpress.com/pt-br/blog/'
 		);
 		expect( localizeUrl( 'https://en.blog.wordpress.com/', 'pl' ) ).toEqual(
 			'https://wordpress.com/blog/'
@@ -138,7 +141,7 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/de/support/'
 		);
 		expect( localizeUrl( 'https://en.support.wordpress.com/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/br/support/'
+			'https://wordpress.com/pt-br/support/'
 		);
 		expect( localizeUrl( 'https://en.support.wordpress.com/', 'pl' ) ).toEqual(
 			'https://wordpress.com/support/'
@@ -151,7 +154,7 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/de/support/path/'
 		);
 		expect( localizeUrl( 'https://en.support.wordpress.com/path/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/br/support/path/'
+			'https://wordpress.com/pt-br/support/path/'
 		);
 		expect( localizeUrl( 'https://en.support.wordpress.com/path/', 'pl' ) ).toEqual(
 			'https://wordpress.com/support/path/'
@@ -165,7 +168,7 @@ describe( '#localizeUrl', () => {
 		);
 
 		expect( localizeUrl( 'https://en.support.wordpress.com/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/br/support/'
+			'https://wordpress.com/pt-br/support/'
 		);
 		expect( localizeUrl( 'https://en.support.wordpress.com/', 'pl' ) ).toEqual(
 			'https://wordpress.com/support/'
@@ -178,7 +181,7 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/de/support/path/'
 		);
 		expect( localizeUrl( 'https://en.support.wordpress.com/path/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/br/support/path/'
+			'https://wordpress.com/pt-br/support/path/'
 		);
 		expect( localizeUrl( 'https://en.support.wordpress.com/path/', 'pl' ) ).toEqual(
 			'https://wordpress.com/support/path/'
@@ -187,19 +190,34 @@ describe( '#localizeUrl', () => {
 
 	test( 'forums url', () => {
 		expect( localizeUrl( 'https://en.forums.wordpress.com/', 'en' ) ).toEqual(
-			'https://en.forums.wordpress.com/'
+			'https://wordpress.com/forums/'
 		);
 		expect( localizeUrl( 'https://en.forums.wordpress.com/', 'de' ) ).toEqual(
-			'https://de.forums.wordpress.com/'
+			'https://wordpress.com/de/forums/'
 		);
 		expect( localizeUrl( 'https://en.forums.wordpress.com/', 'pt-br' ) ).toEqual(
-			'https://br.forums.wordpress.com/'
+			'https://wordpress.com/pt-br/forums/'
 		);
 		expect( localizeUrl( 'https://en.forums.wordpress.com/', 'th' ) ).toEqual(
-			'https://th.forums.wordpress.com/'
+			'https://wordpress.com/th/forums/'
 		);
 		expect( localizeUrl( 'https://en.forums.wordpress.com/', 'pl' ) ).toEqual(
-			'https://en.forums.wordpress.com/'
+			'https://wordpress.com/forums/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/forums/', 'en' ) ).toEqual(
+			'https://wordpress.com/forums/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/forums/', 'de' ) ).toEqual(
+			'https://wordpress.com/de/forums/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/forums/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/pt-br/forums/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/forums/', 'th' ) ).toEqual(
+			'https://wordpress.com/th/forums/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/forums/', 'pl' ) ).toEqual(
+			'https://wordpress.com/forums/'
 		);
 	} );
 
@@ -232,7 +250,10 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/tos/'
 		);
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'de' ) ).toEqual(
-			'https://de.wordpress.com/tos/'
+			'https://wordpress.com/de/tos/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/tos/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/pt-br/tos/'
 		);
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'pl' ) ).toEqual(
 			'https://wordpress.com/tos/'
