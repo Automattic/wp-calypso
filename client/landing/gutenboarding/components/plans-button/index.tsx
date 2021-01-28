@@ -40,7 +40,7 @@ const PlansButton: React.FunctionComponent = () => {
 		<>
 			<Link
 				to={ makePath( Step.PlansModal ) }
-				label={ __( planLabel ) }
+				label={ planLabel }
 				className={ classnames( 'plans-button', { 'is-highlighted': !! plan } ) }
 			>
 				{ isDesktop && planLabel }
