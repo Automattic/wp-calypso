@@ -240,22 +240,6 @@
 		opacity: 0.5;
 	}
 
-	&.is-selected {
-		border-color: $onboarding-accent-blue;
-		color: $onboarding-accent-blue;
-		background: $onboarding-accent-blue-background;
-
-		& svg {
-			fill: currentColor;
-			stroke: currentColor;
-
-			// makes it look more vertically centered
-			transform: translateY( -1px );
-			vertical-align: middle;
-			margin-right: 4px;
-		}
-	}
-
 	&.is-primary,
 	&.is-popular {
 		background: $onboarding-accent-blue;
@@ -276,6 +260,22 @@
 		&:not( .full-width ) svg {
 			margin-left: -8px;
 			margin-right: 10px;
+		}
+	}
+
+	&.is-selected {
+		border-color: $onboarding-accent-blue;
+		color: $onboarding-accent-blue;
+		background: $onboarding-accent-blue-background;
+
+		& svg {
+			fill: currentColor;
+			stroke: currentColor;
+
+			// makes it look more vertically centered
+			transform: translateY( -1px );
+			vertical-align: middle;
+			margin-right: 4px;
 		}
 	}
 
