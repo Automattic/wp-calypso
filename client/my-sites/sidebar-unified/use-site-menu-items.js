@@ -58,7 +58,10 @@ const useSiteMenuItems = () => {
 		return allSitesMenu();
 	}
 
-	if ( isJetpack && ! isAtomic ) {
+	/**
+	 * When we have a jetpack connected site & we cannot retrieve the dynamic menu from that site.
+	 */
+	if ( isJetpack && ! isAtomic && ! menuItems ) {
 		return jetpackMenu( { siteDomain } );
 	}
 
