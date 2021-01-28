@@ -36,15 +36,28 @@
 	justify-content: center;
 	align-content: center;
 	max-width: 100%;
+
+	.theme-jetpack-cloud & {
+		// Use a plain background color for Jetpack.com logins.
+		background: var( --color-surface-backdrop );
+	}
 }
 
 .auth__content {
 	margin: 0 auto;
 	text-align: center;
 
+	.jetpack-logo {
+		margin-bottom: 20px;
+	}
+
 	.notice {
 		width: calc( 100% - 20px );
 		margin: 20px auto 0;
+	}
+
+	.theme-jetpack-cloud & .notice {
+		width: 100%;
 	}
 
 	.notice.is-info {
@@ -88,6 +101,10 @@
 		float: none;
 		margin: 0;
 		width: calc( 100% - 20px );
+
+		.theme-jetpack-cloud & {
+			width: 100%;
+		}
 	}
 
 	.form-buttons-bar .button.is-primary[disabled],
@@ -136,6 +153,15 @@
 
 .auth__lost-password a {
 	color: var( --color-neutral-10 );
+
+	.theme-jetpack-cloud & {
+		color: var( --color-neutral-50 );
+
+		&:hover,
+		&:active {
+			color: var( --color-accent );
+		}
+	}
 }
 
 .auth__help,
@@ -168,10 +194,21 @@
 	}
 }
 
+.theme-jetpack-cloud .auth__links {
+	a, button {
+		color: var( --color-neutral-50 );
+
+		&:hover,
+		&:focus {
+			color: var( --color-accent );
+		}
+	}
+}
+
 .auth__self-hosted-instructions {
 	color: #fff;
 	background: var( --color-primary-dark );
-	border-radius: 8px;
+	border-radius: ( 2px * 4 );
 	padding: 40px;
 	position: absolute;
 	z-index: z-index( 'root', '.auth__self-hosted-instructions' );

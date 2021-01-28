@@ -22,6 +22,7 @@ import LostPassword from './lost-password';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SelfHostedInstructions from './self-hosted-instructions';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -136,7 +137,7 @@ export class Auth extends Component {
 		return (
 			<Main className="auth">
 				<div className="auth__content">
-					<WordPressLogo />
+					{ isJetpackCloud() ? <JetpackLogo size={ 72 } /> : <WordPressLogo /> }
 					<form className="auth__form" onSubmit={ this.submitForm }>
 						<FormFieldset>
 							<div className="auth__input-wrapper">
@@ -208,7 +209,9 @@ export class Auth extends Component {
 						<button onClick={ this.toggleSelfHostedInstructions }>
 							{ translate( 'Add self-hosted site' ) }
 						</button>
-						<a href={ config( 'signup_url' ) }>{ translate( 'Create account' ) }</a>
+						{ config( 'signup_url' ) && (
+							<a href={ config( 'signup_url' ) }>{ translate( 'Create account' ) }</a>
+						) }
 					</div>
 					{ showInstructions && (
 						<SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } />
