@@ -30,14 +30,10 @@ type Dependant< TState, TProps extends any[], TDependency > = (
  * a value or array of values to be shallowly compared for strict equality.
  *
  * @param state Current state object
- * @param props Props
  * @returns Value(s) to be shallow compared
  */
-const DEFAULT_GET_DEPENDANTS = < TState, TProps extends any[] >(
-	state: TState,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	...props: TProps
-): TState => state;
+const DEFAULT_GET_DEPENDANTS: Dependant< any, any, any > = < TState >( state: TState ): TState =>
+	state;
 
 /**
  * At runtime, assigns a function which returns a cache key for the memoized
