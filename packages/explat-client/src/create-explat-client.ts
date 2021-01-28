@@ -36,6 +36,19 @@ export interface ExPlatClient {
 	dangerouslyGetExperimentAssignment: ( experimentName: string ) => ExperimentAssignment;
 }
 
+export class MissingExperimentAssignmentError extends Error {
+	constructor( ...params: any[] ) {
+		super( ...params );
+
+		// Maintains proper stack trace for where our error was thrown (only available on V8)
+		if ( Error.captureStackTrace ) {
+			Error.captureStackTrace( this, MissingExperimentAssignmentError );
+		}
+
+		this.name = 'MissingExperimentAssignmentError';
+	}
+}
+
 /**
  * Create an ExPlat Client
  *
@@ -123,8 +136,8 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 
 			const storedExperimentAssignment = State.retrieveExperimentAssignment( experimentName );
 			if ( ! storedExperimentAssignment ) {
-				throw new Error(
-					`Trying to dangerously get an ExperimentAssignment that hasn't loaded, are you sure you have loaded this experiment?`
+				throw new MissingExperimentAssignmentError(
+					`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`
 				);
 			}
 
