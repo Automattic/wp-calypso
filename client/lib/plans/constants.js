@@ -16,6 +16,8 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
 
+export const JETPACK_REDIRECT_URL = `https://jetpack.com/redirect/`;
+
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';

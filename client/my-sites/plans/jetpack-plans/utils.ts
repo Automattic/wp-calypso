@@ -28,6 +28,7 @@ import {
 import RecordsDetails from './records-details';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
+	JETPACK_REDIRECT_URL,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 	TERM_BIENNIALLY,
@@ -721,10 +722,20 @@ export function checkout(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
+	const queryArgs = {
+		...urlQueryArgs,
+		// If we're on the /checkout path and isJetpackCloud(), add the `redirect_to` query arg to
+		// tell checkout to redirect to a Jetpack Redirect url after checkout complete.
+		...( siteSlug &&
+			isJetpackCloud() && {
+				redirect_to: `${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou`,
+			} ),
+	};
+
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
-		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
+		window.location.href = addQueryArgs( queryArgs, `https://wordpress.com${ path }` );
 	} else {
-		page.redirect( addQueryArgs( urlQueryArgs, path ) );
+		page.redirect( addQueryArgs( queryArgs, path ) );
 	}
 }
 

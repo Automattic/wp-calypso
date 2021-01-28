@@ -9,7 +9,7 @@
  */
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_ECOMMERCE } from '../../../../lib/plans/constants';
+import { PLAN_ECOMMERCE, JETPACK_REDIRECT_URL } from '../../../../lib/plans/constants';
 
 let mockGSuiteCountryIsValid = true;
 jest.mock( 'calypso/lib/user', () =>
@@ -319,6 +319,20 @@ describe( 'getThankYouPageUrl', () => {
 		const redirectTo = adminUrl + 'post.php?post=515';
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
 		expect( url ).toBe( redirectTo + '&action=edit&plan_upgraded=1' );
+	} );
+
+	it( 'redirects to a "Jetpack Redirect" url if "Jetpack Redirect" url and "source" query arg are provided and is Jetpack site.', () => {
+		// "Jetpack Redirect URL's: https://mc.a8c.com/jetpack-crew/redirects/"
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			redirectTo: `${ JETPACK_REDIRECT_URL }?source=jetpack-connect-thankyou`,
+			isJetpackNotAtomic: true,
+			productAliasFromUrl: 'jetpack_backup_daily',
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }?source=jetpack-connect-thankyou&site=foo.bar&query=product%3Djetpack_backup_daily%26thank-you%3Dtrue`
+		);
 	} );
 
 	it( 'redirects to manage purchase page if there is a renewal', () => {

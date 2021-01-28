@@ -29,7 +29,7 @@ import {
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import { JETPACK_RESET_PLANS, JETPACK_REDIRECT_URL } from 'calypso/lib/plans/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
 
@@ -79,7 +79,7 @@ export default function getThankYouPageUrl( {
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
 	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo && ! isExternal( redirectTo ) ) {
-		debug( 'has external redirectTo, so returning that', redirectTo );
+		debug( 'has internal redirectTo, so returning that', redirectTo );
 		return redirectTo;
 	}
 	if ( redirectTo ) {
@@ -102,6 +102,35 @@ export default function getThankYouPageUrl( {
 			debug( 'returning sanitized internal redirectTo', redirectTo );
 			return sanitizedRedirectTo;
 		}
+
+		// If `redirectTo` is a Jetpack Redirect url (https://mc.a8c.com/jetpack-crew/redirects/) with a `source` query param, we redirect to it
+		// and provide the siteSlug and productSlug.
+		if (
+			formatUrl( {
+				protocol,
+				hostname,
+				port,
+				pathname,
+			} ) === JETPACK_REDIRECT_URL &&
+			query?.source &&
+			isJetpackNotAtomic
+		) {
+			const sanitizedJetpackRedirect = formatUrl( {
+				protocol,
+				hostname,
+				port,
+				pathname,
+				query: {
+					source: query.source,
+					site: siteSlug,
+					query: `product=${ productAliasFromUrl }&thank-you=true`,
+				},
+			} );
+
+			debug( 'returning "Jetpack Redirect" url', sanitizedJetpackRedirect );
+			return sanitizedJetpackRedirect;
+		}
+
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
