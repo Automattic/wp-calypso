@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { includes, isEmpty, reduce, snakeCase, toPairs } from 'lodash';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import 'calypso/state/signup/init';
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport/src';
 
 function addProvidedDependencies( step, providedDependencies ) {
 	if ( isEmpty( providedDependencies ) ) {

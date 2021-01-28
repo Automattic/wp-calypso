@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debug from 'debug';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -15,7 +16,6 @@ import {
 	adTrackSignupComplete,
 	adTrackRegistration,
 } from 'calypso/lib/analytics/ad-tracking';
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
