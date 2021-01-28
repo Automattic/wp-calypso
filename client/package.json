@@ -16,7 +16,6 @@
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "^7.0.0",
 		"@automattic/calypso-color-schemes": "^2.1.1",
-		"@automattic/calypso-config": "^1.1.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
 		"@automattic/calypso-stripe": "^1.0.0",
 		"@automattic/color-studio": "^2.3.0",
