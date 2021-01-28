@@ -15,6 +15,7 @@ import PlanItem from '../plans-accordion-item';
 import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
 import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../constants';
 import type { DisabledPlansMap } from 'src/plans-table/types';
+import { useSupportedPlans } from '../hooks';
 
 /**
  * Style dependencies
@@ -37,9 +38,10 @@ export interface Props {
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: DisabledPlansMap;
 	locale: string;
+	billingPeriod: Plans.PlanBillingPeriod;
 }
 
-const PlansTable: React.FunctionComponent< Props > = ( {
+const PlansAccordion: React.FunctionComponent< Props > = ( {
 	selectedFeatures = [],
 	selectedPlanProductId,
 	onPlanSelect,
@@ -47,12 +49,11 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	currentDomain,
 	disabledPlans,
 	locale,
+	billingPeriod,
 } ) => {
 	const { __ } = useI18n();
 
-	const supportedPlans = useSelect( ( select ) =>
-		select( PLANS_STORE ).getSupportedPlans( locale )
-	);
+	const { supportedPlans } = useSupportedPlans( locale, billingPeriod );
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4 ];
@@ -118,6 +119,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 								name={ primaryPlan?.title.toString() }
 								description={ primaryPlan?.description.toString() }
 								features={ primaryPlan.features ?? [] }
+								billingPeriod={ billingPeriod }
 								domain={ currentDomain }
 								badge={ badge }
 								isFree={ primaryPlan.isFree }
@@ -155,6 +157,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 								name={ plan?.title.toString() }
 								description={ plan?.description.toString() }
 								features={ plan.features ?? [] }
+								billingPeriod={ billingPeriod }
 								domain={ currentDomain }
 								isFree={ plan.isFree }
 								isOpen={
@@ -173,4 +176,4 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	);
 };
 
-export default PlansTable;
+export default PlansAccordion;

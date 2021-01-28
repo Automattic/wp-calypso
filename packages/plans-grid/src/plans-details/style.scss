@@ -123,3 +123,25 @@
 		padding: 0 24px;
 	}
 }
+
+.plans-details__feature-annual-nudge {
+	display: block;
+	text-transform: uppercase;
+	font-size: 10px; /* stylelint-disable-line scales/font-size */
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1;
+	margin-bottom: 6px;
+
+	.plans-details__feature-row--enabled & {
+		color: var( --studio-green-60 );
+	}
+
+	.plans-details__feature-row--disabled & {
+		color: var( --studio-orange-40 );
+	}
+
+	.plans-details__feature-row--disabled & + span {
+		text-decoration: line-through;
+	}
+}

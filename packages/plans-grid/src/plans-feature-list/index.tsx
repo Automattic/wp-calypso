@@ -7,7 +7,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -19,81 +19,165 @@ import '../types-patch';
  */
 import './style.scss';
 
-const TickIcon = <Icon icon={ check } size={ 17 } />;
-const CrossIcon = <Icon icon={ close } size={ 17 } />;
-const ChevronDown = (
-	<svg width="8" viewBox="0 0 8 4">
-		<path d="M0 0 L8 0 L4 4 L0 0" fill="currentColor" />
-	</svg>
+interface FeatureListItemContentWrapperProps {
+	className: string;
+}
+
+interface FeatureListIconProps {
+	className: string;
+}
+
+const TickIcon: React.FunctionComponent< FeatureListIconProps > = ( { className } ) => (
+	<Icon className={ className } icon={ check } size={ 18 } />
+);
+const CrossIcon: React.FunctionComponent< FeatureListIconProps > = ( { className } ) => (
+	<Icon className={ className } icon={ close } size={ 18 } />
 );
 
-function domainMessageStateMachine(
+const DefaultFeatureListItemContentWrapper: React.FunctionComponent< FeatureListItemContentWrapperProps > = ( {
+	children,
+	className,
+} ) => <span className={ className }>{ children }</span>;
+
+const FeatureAnnualDiscountNudge: React.FunctionComponent< {
+	billingPeriod: Plans.PlanBillingPeriod;
+	__: typeof import('@wordpress/i18n').__;
+} > = ( { billingPeriod, __ } ) => (
+	<span
+		className="plans-feature-list__item-annual-nudge"
+		aria-label={
+			billingPeriod === 'ANNUALLY'
+				? __( 'Included with annual plans', __i18n_text_domain__ )
+				: __( 'Only included with annual plans', __i18n_text_domain__ )
+		}
+	>
+		{ __( 'Included with annual plans', __i18n_text_domain__ ) }
+	</span>
+);
+
+function computeDomainFeatureItem(
 	isFreePlan: boolean,
 	domain: DomainSuggestions.DomainSuggestion | undefined,
+	billingPeriod: Plans.PlanBillingPeriod,
 	__: typeof import('@wordpress/i18n').__
 ) {
+	const commonWrapperClassName = 'plans-feature-list__item-content-wrapper--domain-button';
+
 	const states = {
 		NO_DOMAIN: {
 			FREE_PLAN: null,
 			PAID_PLAN: {
-				className: 'plans-feature-list__domain-summary is-cta',
-				icon: TickIcon,
+				wrapperClassName: classnames( commonWrapperClassName, 'is-cta' ),
+				bulletIcon: billingPeriod === 'ANNUALLY' ? TickIcon : CrossIcon,
+				// actionIcon: ChevronDown,
+				requiresAnnuallyBilledPlan: true,
 				// translators: %s is a domain name eg: example.com is included
-				domainMessage: (
-					<>
-						{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) } { ChevronDown }
-					</>
-				),
+				domainMessage: <>{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) }</>,
 			},
 		},
 		FREE_DOMAIN: {
 			FREE_PLAN: null,
 			PAID_PLAN: {
-				className: 'plans-feature-list__domain-summary is-cta',
-				icon: TickIcon,
+				wrapperClassName: classnames( commonWrapperClassName, 'is-cta' ),
+				bulletIcon: billingPeriod === 'ANNUALLY' ? TickIcon : CrossIcon,
+				// actionIcon: ChevronDown,
+				requiresAnnuallyBilledPlan: true,
 				// translators: %s is a domain name eg: example.com is included
-				domainMessage: (
-					<>
-						{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) } { ChevronDown }
-					</>
-				),
+				domainMessage: <>{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) }</>,
 			},
 		},
 		PAID_DOMAIN: {
 			FREE_PLAN: {
-				className: 'plans-feature-list__domain-summary is-free',
-				icon: CrossIcon,
+				wrapperClassName: classnames( commonWrapperClassName, 'is-unavailable' ),
+				bulletIcon: CrossIcon,
+				// actionIcon: undefined,
+				requiresAnnuallyBilledPlan: false,
 				// translators: <url /> is a domain name eg: example.com is not included
 				domainMessage: (
-					<span>
+					<>
 						{ createInterpolateElement( __( '<url /> is not included', __i18n_text_domain__ ), {
 							url: <span className="plans-feature-list__item-url">{ domain?.domain_name }</span>,
 						} ) }
-					</span>
+					</>
 				),
 			},
 			PAID_PLAN: {
-				className: 'plans-feature-list__domain-summary is-picked',
-				icon: TickIcon,
+				wrapperClassName: commonWrapperClassName,
+				bulletIcon: billingPeriod === 'ANNUALLY' ? TickIcon : CrossIcon,
+				// actionIcon: undefined,
+				requiresAnnuallyBilledPlan: true,
 				// translators: <url /> is a domain name eg: example.com is included
 				domainMessage: (
-					<span>
+					<>
 						{ createInterpolateElement( __( '<url /> is included', __i18n_text_domain__ ), {
 							url: <span className="plans-feature-list__item-url">{ domain?.domain_name }</span>,
 						} ) }
-					</span>
+					</>
 				),
 			},
 		},
 	};
+
 	const domainKey = domain && ( domain.is_free ? 'FREE_DOMAIN' : 'PAID_DOMAIN' );
 	const planKey = isFreePlan ? 'FREE_PLAN' : 'PAID_PLAN';
 
 	return states[ domainKey || 'NO_DOMAIN' ][ planKey ];
 }
 
-export interface Props {
-	features: Array< string >;
+type FeatureListItem = {
+	bulletIcon: React.FunctionComponent< FeatureListIconProps >;
+	textNode: React.ReactNode;
+	requiresAnnuallyBilledPlan: boolean;
+	contentWrapperNode?: React.FunctionComponent< FeatureListItemContentWrapperProps >;
+	listItemExtraClassName?: string;
+};
+
+interface FeatureListItemProps extends FeatureListItem {
+	billingPeriod: Plans.PlanBillingPeriod;
+}
+
+const PlansFeatureListItem: React.FunctionComponent< FeatureListItemProps > = (
+	{
+		bulletIcon: BulletIcon,
+		textNode,
+		requiresAnnuallyBilledPlan,
+		contentWrapperNode: ItemWrapper = DefaultFeatureListItemContentWrapper,
+		listItemExtraClassName,
+		billingPeriod,
+	},
+	index
+) => {
+	const { __ } = useI18n();
+	return (
+		<li
+			key={ index }
+			className={ classnames(
+				'plans-feature-list__item',
+				{
+					'plans-feature-list__item--requires-annual-enabled':
+						requiresAnnuallyBilledPlan && billingPeriod === 'ANNUALLY',
+					'plans-feature-list__item--requires-annual-disabled':
+						requiresAnnuallyBilledPlan && billingPeriod !== 'ANNUALLY',
+				},
+				listItemExtraClassName
+			) }
+		>
+			<ItemWrapper className="plans-feature-list__item-content-wrapper">
+				<BulletIcon className="plans-feature-list__item-bullet-icon" />
+				<span className="plans-feature-list__item-text">
+					{ requiresAnnuallyBilledPlan && (
+						<FeatureAnnualDiscountNudge billingPeriod={ billingPeriod } __={ __ } />
+					) }
+					<span className="plans-feature-list__item-description">{ textNode }</span>
+				</span>
+			</ItemWrapper>
+		</li>
+	);
+};
+
+export interface PlansFeatureListProps {
+	features: Plans.PlanSimplifiedFeature[];
+	billingPeriod: Plans.PlanBillingPeriod;
 	domain?: DomainSuggestions.DomainSuggestion;
 	isFree?: boolean;
 	isOpen?: boolean;
@@ -102,18 +186,53 @@ export interface Props {
 	multiColumn?: boolean;
 }
 
-const PlansFeatureList: React.FunctionComponent< Props > = ( {
+const PlansFeatureList: React.FunctionComponent< PlansFeatureListProps > = ( {
 	features,
 	domain,
-	isFree = false,
+	billingPeriod,
+	isFree: isFreePlan = false,
 	isOpen = false,
 	onPickDomain,
 	disabledLabel,
 	multiColumn = false,
 } ) => {
 	const { __ } = useI18n();
+	const domainFeatureItem = computeDomainFeatureItem( isFreePlan, domain, billingPeriod, __ );
 
-	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
+	const featureItems: FeatureListItem[] = [];
+
+	// First feature item is about the availability of the domain
+	if ( disabledLabel ) {
+		featureItems.push( {
+			bulletIcon: CrossIcon,
+			textNode: disabledLabel,
+			requiresAnnuallyBilledPlan: false,
+			listItemExtraClassName: 'plans-feature-list__item--disabled-message',
+		} );
+	} else if ( domainFeatureItem ) {
+		featureItems.push( {
+			bulletIcon: domainFeatureItem.bulletIcon,
+			textNode: domainFeatureItem.domainMessage,
+			requiresAnnuallyBilledPlan: domainFeatureItem.requiresAnnuallyBilledPlan,
+			contentWrapperNode: ( { children, className } ) => (
+				<Button
+					className={ classnames( domainFeatureItem.wrapperClassName, className ) }
+					onClick={ onPickDomain }
+					isLink
+				>
+					{ children }
+				</Button>
+			),
+		} );
+	}
+
+	features.forEach( ( { name, requiresAnnuallyBilledPlan } ) =>
+		featureItems.push( {
+			bulletIcon: requiresAnnuallyBilledPlan && billingPeriod === 'MONTHLY' ? CrossIcon : TickIcon,
+			textNode: name,
+			requiresAnnuallyBilledPlan,
+		} )
+	);
 
 	return (
 		<div className="plans-feature-list" hidden={ ! isOpen }>
@@ -122,24 +241,12 @@ const PlansFeatureList: React.FunctionComponent< Props > = ( {
 					'plans-feature-list__item-group--columns': multiColumn,
 				} ) }
 			>
-				{ disabledLabel ? (
-					<li className="plans-feature-list__item plans-feature-list__item--disabled-message">
-						{ CrossIcon } <span>{ disabledLabel }</span>
-					</li>
-				) : (
-					domainMessage && (
-						<li className="plans-feature-list__item">
-							<Button className={ domainMessage.className } onClick={ onPickDomain } isLink>
-								{ domainMessage.icon }
-								{ domainMessage.domainMessage }
-							</Button>
-						</li>
-					)
-				) }
-				{ features.map( ( feature, i ) => (
-					<li key={ i } className="plans-feature-list__item">
-						{ TickIcon } <span>{ feature }</span>
-					</li>
+				{ featureItems.map( ( featureItemData, index ) => (
+					<PlansFeatureListItem
+						{ ...featureItemData }
+						billingPeriod={ billingPeriod }
+						key={ index }
+					/>
 				) ) }
 			</ul>
 		</div>

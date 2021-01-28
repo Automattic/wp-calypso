@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { sprintf } from '@wordpress/i18n';
 import { NextButton } from '@automattic/onboarding';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
@@ -12,7 +13,6 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
-import useBillingPeriod from '../hooks/use-billing-period';
 
 /**
  * Style dependencies
@@ -32,7 +32,8 @@ export interface Props {
 	slug: Plans.PlanSlug;
 	name: string;
 	description: string;
-	features: Array< string >;
+	features: Plans.PlanSimplifiedFeature[];
+	billingPeriod: Plans.PlanBillingPeriod;
 	domain?: DomainSuggestions.DomainSuggestion;
 	badge?: string;
 	isFree?: boolean;
@@ -45,11 +46,12 @@ export interface Props {
 	disabledLabel?: string;
 }
 
-const PlanItem: React.FunctionComponent< Props > = ( {
+const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 	slug,
 	name,
 	description,
 	features,
+	billingPeriod,
 	domain,
 	badge,
 	isFree = false,
@@ -62,7 +64,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const billingPeriod = useBillingPeriod();
 	const planProduct = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
 	);
@@ -118,17 +119,38 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								) }
 							</div>
 							<div className="plans-accordion-item__price-note">
-								{ isFree
-									? __( 'free forever', __i18n_text_domain__ )
-									: __( 'billed annually', __i18n_text_domain__ ) }
+								{ isFree && __( 'free forever', __i18n_text_domain__ ) }
+
+								{ ! isFree &&
+									( billingPeriod === 'ANNUALLY'
+										? __( 'billed annually', __i18n_text_domain__ )
+										: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
 							</div>
+							{ ! isFree && (
+								<div
+									className={ classNames( 'plans-accordion-item__price-discount', {
+										'plans-accordion-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
+									} ) }
+								>
+									{ sprintf(
+										// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
+										__( `Save %(discountRate)s%% by paying annually`, __i18n_text_domain__ ),
+										{ discountRate: planProduct?.annualDiscount ?? 0 }
+									) }
+								</div>
+							) }
 						</div>
 						<div className="plans-accordion-item__disabled-label">{ disabledLabel }</div>
 						{ ! isOpen && (
 							<div className="plans-accordion-item__dropdown-chevron">{ ChevronDown }</div>
 						) }
 					</div>
-					<div className="plans-accordion-item__actions" hidden={ ! isOpen }>
+					<div
+						className={ classNames( 'plans-accordion-item__actions', {
+							'plans-accordion-item__actions--paid-plan-margin': ! isFree,
+						} ) }
+						hidden={ ! isOpen }
+					>
 						<NextButton
 							data-e2e-button={ isFree ? 'freePlan' : 'paidPlan' }
 							onClick={ () => {
@@ -140,6 +162,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<PlansFeatureList
 						features={ features }
+						billingPeriod={ billingPeriod }
 						domain={ domain }
 						isFree={ isFree }
 						isOpen={ isOpen }
@@ -152,4 +175,4 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	);
 };
 
-export default PlanItem;
+export default PlanAccordionItem;

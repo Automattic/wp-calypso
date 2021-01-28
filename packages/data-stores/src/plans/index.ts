@@ -15,8 +15,15 @@ import * as resolvers from './resolvers';
 import { controls } from '../wpcom-request-controls';
 
 export type { State };
-export type { Plan, PlanSlug, PlanProduct } from './types';
-export type { PlanPath } from './types';
+export type {
+	Plan,
+	PlanSlug,
+	PlanProduct,
+	PlanFeature,
+	PlanPath,
+	PlanBillingPeriod,
+	PlanSimplifiedFeature,
+} from './types';
 
 // plansPaths is used to construct the route that accepts plan slugs like (/beginner, /business, etc..)
 export {
