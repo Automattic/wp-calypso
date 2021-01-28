@@ -8,11 +8,12 @@ import { __ } from '@wordpress/i18n';
 import { Modal, Button } from '@wordpress/components';
 import { Icon, wordpress, close } from '@wordpress/icons';
 import { LaunchContext, useOnLaunch } from '@automattic/launch';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE, SITE_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
 import LaunchProgress from '../launch-progress';
@@ -35,6 +36,12 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 	const { launchSite } = useDispatch( SITE_STORE );
 	const { savePost } = useDispatch( 'core/editor' );
 
+	const locale = useLocale();
+	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
+	const defaultFreePlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getDefaultFreePlan( locale )
+	);
+
 	const handleLaunch = React.useCallback( () => {
 		launchSite( siteId );
 		setIsLaunching( true );
@@ -44,12 +51,13 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 		const asyncSavePost = async () => {
 			await savePost();
 		};
-		if ( ! isLaunching && isLaunchImmediately ) {
+		if ( ! isLaunching && isLaunchImmediately && defaultFreePlan ) {
+			setPlanProductId( defaultFreePlan.productIds[ 0 ] );
 			setIsLaunching( true );
 			asyncSavePost();
 			handleLaunch();
 		}
-	}, [ isLaunching, isLaunchImmediately, handleLaunch, savePost ] );
+	}, [ isLaunching, isLaunchImmediately, handleLaunch, savePost, defaultFreePlan ] );
 
 	// handle redirects to checkout / my home after launch
 	useOnLaunch();
