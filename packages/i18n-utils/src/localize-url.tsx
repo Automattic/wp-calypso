@@ -123,27 +123,18 @@ export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true 
 		url.pathname = ( url.pathname + '/' ).replace( /\/+$/, '/' );
 	}
 
-	if ( ! locale || 'en' === locale ) {
-		if ( 'en.wordpress.com' === url.host ) {
-			url.host = 'wordpress.com';
-			return url.href;
-		}
-	}
+	const firstPathSegment = url.pathname.substr( 0, 1 + url.pathname.indexOf( '/', 1 ) );
 
 	if ( 'en.wordpress.com' === url.host ) {
 		url.host = 'wordpress.com';
 	}
 
-	if ( '/' + locale + '/' === url.pathname.substr( 0, 1 + url.pathname.indexOf( '/', 1 ) ) ) {
+	if ( '/' + locale + '/' === firstPathSegment ) {
 		return url.href;
 	}
 
 	// Lookup is checked back to front.
-	const lookup = [
-		url.host,
-		url.host + url.pathname.substr( 0, 1 + url.pathname.indexOf( '/', 1 ) ), // only look at the first path segment
-		url.host + url.pathname,
-	];
+	const lookup = [ url.host, url.host + firstPathSegment, url.host + url.pathname ];
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
