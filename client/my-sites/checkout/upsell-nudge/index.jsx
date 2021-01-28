@@ -56,7 +56,6 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 
-
 /**
  * Style dependencies
  */
