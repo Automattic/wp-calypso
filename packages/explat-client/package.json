@@ -8,7 +8,7 @@
 	"browser": "dist/cjs/index.web.js",
 	"module": "dist/esm/index.web.js",
 	"calypso:src": "src/index.web.ts",
-	"types": "dist/types/index.d.ts",
+	"types": "dist/types/index.web.d.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
