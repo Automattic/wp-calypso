@@ -126,7 +126,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
 					<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
 						{ translate(
-							'Save up to %(maxDiscount)d% by paying annually and get a free domain for one year',
+							'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
 							{
 								args: { maxDiscount },
 								comment: 'Will be like "Save up to 30% by paying annually..."',
