@@ -117,11 +117,9 @@ export interface APIPlanDetail {
 	support_priority: number;
 	support_name: string;
 	groups: string[];
-	products: [
-		{
-			plan_id: number;
-		}
-	];
+	products: {
+		plan_id: number;
+	}[];
 	name: string;
 	short_name: string;
 	nonlocalized_short_name: PlanSlug;
