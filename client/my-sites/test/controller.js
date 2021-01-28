@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import page from 'page';
@@ -158,18 +162,15 @@ describe( 'recordNoVisibleSitesPageView', () => {
 		const path = '/path';
 		const siteFragment = 'site';
 		const title = 'Title';
-
-		pageView.recordPageView = jest.fn();
+		const spy = jest.spyOn( pageView, 'recordPageView' );
 
 		recordNoVisibleSitesPageView( { path: `${ path }/${ siteFragment }` }, siteFragment, title );
 
-		expect( pageView.recordPageView ).toHaveBeenCalledWith(
-			`/no-sites`,
-			expect.stringMatching( 'All Sites Hidden' ),
-			{ base_path: path }
-		);
+		expect( spy ).toHaveBeenCalledWith( `/no-sites`, expect.stringMatching( 'All Sites Hidden' ), {
+			base_path: path,
+		} );
 
-		pageView.recordPageView.mockRestore();
+		spy.mockRestore();
 	} );
 } );
 
@@ -177,18 +178,15 @@ describe( 'recordNoSitesPageView', () => {
 	it( 'should record the page view', () => {
 		const path = '/path';
 		const siteFragment = 'site';
-
-		pageView.recordPageView = jest.fn();
+		const spy = jest.spyOn( pageView, 'recordPageView' );
 
 		recordNoSitesPageView( { path: `${ path }/${ siteFragment }` }, siteFragment );
 
-		expect( pageView.recordPageView ).toHaveBeenCalledWith(
-			`/no-sites`,
-			expect.stringMatching( 'No Sites' ),
-			{ base_path: path }
-		);
+		expect( spy ).toHaveBeenCalledWith( `/no-sites`, expect.stringMatching( 'No Sites' ), {
+			base_path: path,
+		} );
 
-		pageView.recordPageView.mockRestore();
+		spy.mockRestore();
 	} );
 } );
 
@@ -197,13 +195,12 @@ describe( 'redirectToPrimary', () => {
 		const path = '/path';
 		const siteFragment = 'site';
 		const query = 'a=b';
-
-		page.redirect = jest.fn();
+		const spy = jest.spyOn( page, 'redirect' );
 
 		redirectToPrimary( { pathname: `${ path }/no-site`, querystring: query }, siteFragment );
 
-		expect( page.redirect ).toHaveBeenCalledWith( `${ path }/site?${ query }` );
+		expect( spy ).toHaveBeenCalledWith( `${ path }/site?${ query }` );
 
-		page.redirect.mockRestore();
+		spy.mockRestore();
 	} );
 } );
