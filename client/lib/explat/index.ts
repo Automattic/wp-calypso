@@ -2,76 +2,84 @@
  * WordPress dependencies
  */
 import wpcom from 'calypso/lib/wp';
-import { createExPlatClient } from 'explat-client'
-
+import { createExPlatClient } from '@automattic/explat-client';
 
 /**
  * Internal dependecies
  */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks'
-import { getAnonIdFromCookie } from 'calypso/state/experiments/reducer'
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getAnonIdFromCookie } from 'calypso/state/experiments/reducer';
 
 const isDevelopmentMode = process.env.NODE_ENV === 'development';
 
-const logError = (errorMessage: string) => {
-    if ( isDevelopmentMode ) {
-        console.error('[ExPlat]', errorMessage)
-    }
+const logError = ( errorMessage: string ) => {
+	if ( isDevelopmentMode ) {
+		// eslint-disable-next-line no-console
+		console.error( '[ExPlat]', errorMessage );
+	}
 
-    // TODO: Severity? Move this into the client?
-    const error = {
-        exPlatStandaloneClient: 'calypso',
-        message: errorMessage,
-    }
+	// TODO: Severity? Move this into the client?
+	const error = {
+		exPlatStandaloneClient: 'calypso',
+		message: errorMessage,
+	};
 
-    const body = new window.FormData();
-    body.append( 'error', JSON.stringify(error) );
+	const body = new window.FormData();
+	body.append( 'error', JSON.stringify( error ) );
 
-    try {
-        window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
-            method: 'POST',
-            body,
-        } );
-    } catch {
-        // eslint-disable-next-line no-console
-        console.error( 'Error: Unable to send the error.' );
-    }
-    return
-}
+	try {
+		window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
+			method: 'POST',
+			body,
+		} );
+	} catch {
+		if ( isDevelopmentMode ) {
+			// eslint-disable-next-line no-console
+			console.error( '[ExPlat] Unable to send error to server.' );
+		}
+	}
+	return;
+};
 
-const fetchExperimentAssignment = ({experimentName, anonId} : { experimentName: string, anonId?: string }): Promise< unknown > => {
-    return wpcom.req.get(
-        {
-            path: '/experiments/0.1.0/assignments/wpcom',
-            apiNamespace: 'wpcom/v2'
-        },
-        {
-            experiment_name: experimentName,
-            anon_id: anonId ?? undefined,
-        },
-    )
-}
+const fetchExperimentAssignment = ( {
+	experimentName,
+	anonId,
+}: {
+	experimentName: string;
+	anonId?: string;
+} ): Promise< unknown > => {
+	return wpcom.req.get(
+		{
+			path: '/experiments/0.1.0/assignments/wpcom',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			experiment_name: experimentName,
+			anon_id: anonId ?? undefined,
+		}
+	);
+};
 
-let hasTracksEventFiredToEnsureAnonIdInCookie = false
-const getAnonId = (): string | null => {
-    if (typeof window === 'undefined') {
-        logError('Trying to retrieve anonId outside of a browser context.')
-        return null
-    }
+let hasTracksEventFiredToEnsureAnonIdInCookie = false;
+const getAnonId = async (): Promise< string | null > => {
+	if ( typeof window === 'undefined' ) {
+		logError( 'Trying to retrieve anonId outside of a browser context.' );
+		return null;
+	}
 
-    if (!hasTracksEventFiredToEnsureAnonIdInCookie) {
+	if ( ! hasTracksEventFiredToEnsureAnonIdInCookie ) {
 		recordTracksEvent( 'calypso_explat_first_experiment_fetch' );
-    }
+		hasTracksEventFiredToEnsureAnonIdInCookie = true;
+	}
 
-    return getAnonIdFromCookie()
-}
+	return getAnonIdFromCookie();
+};
 
+const ExPlatClient = createExPlatClient( {
+	fetchExperimentAssignment,
+	getAnonId,
+	logError,
+	isDevelopmentMode,
+} );
 
-const ExPlatClient = createExPlatClient({
-    fetchExperimentAssignment,
-    getAnonId,
-    logError,
-    isDevelopmentMode,
-});
-
-export default ExPlatClient
+export default ExPlatClient;

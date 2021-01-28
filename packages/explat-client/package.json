@@ -1,5 +1,5 @@
 {
-	"name": "explat-client",
+	"name": "@automattic/explat-client",
 	"version": "0.0.1",
 	"description": "Standalone ExPlat Client",
 	"author": "Automattic Inc.",

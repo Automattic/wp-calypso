@@ -37,7 +37,7 @@ export async function fetchExperimentAssignment(
 
 	const { variations, ttl } = validateFetchExperimentAssignmentResponse(
 		await config.fetchExperimentAssignment( {
-			anonId: config.getAnonId() ?? undefined,
+			anonId: ( await config.getAnonId() ) ?? undefined,
 			experimentName,
 		} )
 	);

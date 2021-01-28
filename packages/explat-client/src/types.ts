@@ -26,7 +26,7 @@ export interface FetchExperimentAssignment {
 }
 
 export interface GetAnonId {
-	(): string | null;
+	(): Promise< string | null >;
 }
 
 export interface LogError {
