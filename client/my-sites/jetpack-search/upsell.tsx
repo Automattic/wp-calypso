@@ -57,8 +57,9 @@ export default function JetpackSearchUpsell(): ReactElement {
 						text: translate( 'Upgrade to Jetpack Search' ),
 						action: {
 							url:
-								'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
-								siteSlug,
+								'/checkout/' +
+								siteSlug +
+								'/jetpack_search_monthly?utm_campaign=my-sites-jetpack-search&utm_source=calypso',
 							onClick: onUpgradeClick,
 							selfTarget: true,
 						},

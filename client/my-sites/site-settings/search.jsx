@@ -233,8 +233,9 @@ export default connect( ( state, { isRequestingSettings } ) => {
 		( site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) ) ) ||
 		!! hasSearchProduct;
 	const upgradeLink =
-		'https://jetpack.com/upgrade/search/?utm_campaign=site-settings&utm_source=calypso&site=' +
-		getSelectedSiteSlug( state );
+		'/checkout/' +
+		getSelectedSiteSlug( state ) +
+		'/jetpack_search_monthly?utm_campaign=site-settings&utm_source=calypso';
 
 	return {
 		activatingSearchModule:
