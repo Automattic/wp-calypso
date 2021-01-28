@@ -24,6 +24,7 @@ const logError = ( error: Record< string, string > & { message: string } ) => {
 	body.append( 'error', JSON.stringify( error ) );
 
 	try {
+		// TODO: Use wp.req.post here too
 		window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
 			method: 'POST',
 			body,
