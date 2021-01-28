@@ -116,7 +116,7 @@ describe( 'getSupportedPlans', () => {
 				{
 					annualPrice: '₹0',
 					billingPeriod: 'ANNUALLY',
-					pathSlug: undefined,
+					pathSlug: 'free',
 					periodAgnosticSlug: undefined,
 					price: '₹0',
 					productId: 1,
