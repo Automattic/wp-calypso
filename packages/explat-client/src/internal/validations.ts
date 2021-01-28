@@ -7,13 +7,15 @@ export function isObject( x: unknown ): x is Record< string, unknown > {
 	return typeof x === 'object' && x !== null;
 }
 
+const nameRegex = new RegExp( '^[a-z][a-z0-9_]*[a-z0-9]$' );
+
 /**
  * Test if a piece of data is a valid name
  *
  * @param name The data to test
  */
 export function isName( name: unknown ): name is string {
-	return typeof name === 'string' && name !== '';
+	return typeof name === 'string' && nameRegex.test( name );
 }
 
 /**
