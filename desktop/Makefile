@@ -17,7 +17,7 @@ CALYPSO_DIR := $(dir $(DESKTOP_DIR))
 export CONFIG_ENV = release
 export NODE_ENV = production
 export ELECTRON_BUILDER_ARGS =
-export NODE_ARGS = --max_old_space_size=8192
+export NODE_OPTIONS = --max_old_space_size=8192
 
 .PHONY: build build-ci config server client source package
 
