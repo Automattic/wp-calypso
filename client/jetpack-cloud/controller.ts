@@ -30,33 +30,13 @@ import type { UserData } from 'calypso/lib/user/user';
 import type PageJS from 'page';
 
 /**
- * Parse site slug from path. If no slug is detected but a `site` query parameter
- * exists, a redirection to `/:path/:site/` occurs.
+ * Parse site slug from path.
  *
  * @param {PageJS.Context} context Route context
  * @returns {string} Site slug
  */
 const parseSiteFragment = ( context: PageJS.Context ): string | undefined => {
-	const siteFragment = context.params.site || getSiteFragment( context.path );
-
-	if ( siteFragment ) {
-		return siteFragment;
-	}
-
-	const { query: queryParams, pathname } = context;
-	const { site: siteQuery } = queryParams;
-
-	if ( siteQuery ) {
-		page.redirect(
-			addQueryArgs(
-				{
-					...queryParams,
-					site: undefined,
-				},
-				`${ pathname }/${ siteQuery }`
-			)
-		);
-	}
+	return context.params.site || getSiteFragment( context.path ) || undefined;
 };
 
 /**
