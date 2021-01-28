@@ -72,7 +72,8 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					onClick={ () => onChange( 'MONTHLY' ) }
 				>
 					<span className="plans-interval-toggle__label">
-						{ __( 'Pay monthly', __i18n_text_domain__ ) }
+						{ /* Translators: intended as "pay monthly", as opposed to "pay annually" */ }
+						{ __( 'Monthly', __i18n_text_domain__ ) }
 					</span>
 				</SegmentedControl.Item>
 
@@ -81,7 +82,8 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					onClick={ () => onChange( 'ANNUALLY' ) }
 				>
 					<span className="plans-interval-toggle__label">
-						{ __( 'Pay annually', __i18n_text_domain__ ) }
+						{ /* Translators: intended as "pay annually", as opposed to "pay monthly" */ }
+						{ __( 'Annually', __i18n_text_domain__ ) }
 					</span>
 					{ /*
 					 * Check covers both cases of maxMonthlyDiscountPercentage
