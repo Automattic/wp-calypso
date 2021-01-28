@@ -25,6 +25,7 @@ describe( 'getSupportedPlans', () => {
 				// premium plan, billed annually
 				currency_code: 'INR',
 				product_slug: PLAN_PREMIUM,
+				path_slug: 'premium',
 				raw_price: 12,
 				product_id: 2,
 			},
@@ -127,11 +128,12 @@ describe( 'getSupportedPlans', () => {
 
 		// setPlanProducts call
 		expect( iter.next().value ).toEqual( {
+			type: 'SET_PLAN_PRODUCTS',
 			products: [
 				{
 					annualPrice: '₹0',
 					billingPeriod: 'ANNUALLY',
-					pathSlug: undefined,
+					pathSlug: 'free',
 					periodAgnosticSlug: undefined,
 					price: '₹0',
 					productId: 1,
@@ -142,7 +144,7 @@ describe( 'getSupportedPlans', () => {
 					annualDiscount: 92,
 					annualPrice: '₹12',
 					billingPeriod: 'ANNUALLY',
-					pathSlug: undefined,
+					pathSlug: 'premium',
 					periodAgnosticSlug: undefined,
 					price: '₹1',
 					productId: 2,
@@ -161,7 +163,6 @@ describe( 'getSupportedPlans', () => {
 					storeSlug: 'value_bundle_monthly',
 				},
 			],
-			type: 'SET_PLAN_PRODUCTS',
 		} );
 
 		expect( iter.next().value ).toEqual( {
