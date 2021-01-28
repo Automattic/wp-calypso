@@ -49,6 +49,7 @@ import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-card
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 
 /**
  * Style dependencies
@@ -241,6 +242,7 @@ export class UpsellNudge extends React.Component {
 			receiptId: this.props.receiptId,
 			cart: this.props.cart,
 			hideNudge: shouldHideUpsellNudges,
+			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 		page.redirect( url );
@@ -394,6 +396,7 @@ export default connect(
 			siteSlug,
 			selectedSiteId,
 			hasSevenDayRefundPeriod: isMonthly( planSlug ),
+			isEligibleForSignupDestinationResult: isEligibleForSignupDestination( props.cart ),
 		};
 	},
 	{
