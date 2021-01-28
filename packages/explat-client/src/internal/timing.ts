@@ -4,6 +4,8 @@ let lastNow = Date.now();
 /**
  * Returns the time in miliseconds.
  * A strictly increasing version of Date.now()
+ *
+ * Gives us some minimimal guarentees about user clocks.
  */
 export function monotonicNow(): number {
 	const maybeNow = Date.now();
