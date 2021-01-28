@@ -40,7 +40,7 @@ domReady( () => {
 			return;
 		}
 
-		const { launchUrl, launchFlow, isGutenboarding } = siteLaunchOptions;
+		const { launchUrl, launchFlow, isGutenboarding, anchorFmPodcastId } = siteLaunchOptions;
 
 		// Wrap 'Launch' button link to control launch flow.
 		const launchButton = document.createElement( 'a' );
@@ -56,6 +56,12 @@ domReady( () => {
 				launch_flow: launchFlow,
 				is_in_iframe: inIframe(),
 			} );
+
+			// Enable anchor-flavoured gutenboarding features (the launch button works immediately).
+			const isAnchorFm = !! anchorFmPodcastId;
+			if ( isAnchorFm ) {
+				dispatch( 'automattic/launch' ).enableAnchorFm();
+			}
 
 			if ( launchFlow === GUTENBOARDING_LAUNCH_FLOW ) {
 				dispatch( 'automattic/launch' ).openSidebar();
