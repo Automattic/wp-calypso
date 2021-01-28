@@ -56,8 +56,6 @@
 		"dev:wpcom-block-editor-nux": "yarn run wpcom-block-editor-nux",
 		"build:wpcom-block-editor-nux": "NODE_ENV=production yarn run wpcom-block-editor-nux",
 		"wpcom-block-editor-welcome-tour": "calypso-build --env source='wpcom-block-editor-welcome-tour'",
-		"dev:wpcom-block-editor-welcome-tour": "yarn run wpcom-block-editor-welcome-tour",
-		"build:wpcom-block-editor-welcome-tour": "NODE_ENV=production yarn run wpcom-block-editor-welcome-tour",
 		"premium-content": "calypso-build --env source='premium-content'",
 		"dev:premium-content": "yarn run premium-content",
 		"build:premium-content": "NODE_ENV=production yarn run premium-content",

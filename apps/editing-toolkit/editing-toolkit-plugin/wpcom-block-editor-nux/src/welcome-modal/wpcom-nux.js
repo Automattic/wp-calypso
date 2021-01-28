@@ -1,16 +1,11 @@
-/*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
-import './public-path';
-
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { registerPlugin } from '@wordpress/plugins';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getQueryArg } from '@wordpress/url';
 
@@ -26,29 +21,17 @@ import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
 
 function WpcomNux() {
-	const { isWpcomNuxEnabled, isSPTOpen, site, isGuideManuallyOpened } = useSelect( ( select ) => ( {
+	const { isWpcomNuxEnabled, isSPTOpen, site, isTourManuallyOpened } = useSelect( ( select ) => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		isSPTOpen:
 			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 		site: select( 'automattic/site' ).getSite( window._currentSiteId ),
-		isGuideManuallyOpened: select( 'automattic/nux' ).isGuideManuallyOpened(),
+		isTourManuallyOpened: select( 'automattic/nux' ).isTourManuallyOpened(),
 	} ) );
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
-	const { setWpcomNuxStatus, setGuideOpenStatus } = useDispatch( 'automattic/nux' );
-
-	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
-	useEffect( () => {
-		if ( typeof isWpcomNuxEnabled !== 'undefined' ) {
-			return;
-		}
-		const fetchWpcomNuxStatus = async () => {
-			const response = await apiFetch( { path: '/wpcom/v2/block-editor/nux' } );
-			setWpcomNuxStatus( { isNuxEnabled: response.is_nux_enabled, bypassApi: true } );
-		};
-		fetchWpcomNuxStatus();
-	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
+	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
 
 	// Hide editor sidebar first time users sees the editor
 	useEffect( () => {
@@ -60,10 +43,10 @@ function WpcomNux() {
 		if ( isWpcomNuxEnabled && ! isSPTOpen ) {
 			recordTracksEvent( 'calypso_editor_wpcom_nux_open', {
 				is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-				is_manually_opened: isGuideManuallyOpened,
+				is_manually_opened: isTourManuallyOpened,
 			} );
 		}
-	}, [ isWpcomNuxEnabled, isSPTOpen, isGuideManuallyOpened ] );
+	}, [ isWpcomNuxEnabled, isSPTOpen, isTourManuallyOpened ] );
 
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
@@ -74,7 +57,7 @@ function WpcomNux() {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 		} );
 		setWpcomNuxStatus( { isNuxEnabled: false } );
-		setGuideOpenStatus( { isGuideManuallyOpened: false } );
+		setTourOpenStatus( { isTourManuallyOpened: false } );
 	};
 
 	const isPodcastingSite = !! site?.options?.anchor_podcast;
@@ -206,11 +189,4 @@ function NuxPage( { pageNumber, isLastPage, alignBottom = false, heading, descri
 	);
 }
 
-// Only register plugin if these features are available.
-// If registered without this check, atomic sites without gutenberg enabled will error when loading the editor.
-// These seem to be the only dependencies here that are not supported there.
-if ( Guide && GuidePage ) {
-	registerPlugin( 'wpcom-block-editor-nux', {
-		render: () => <WpcomNux />,
-	} );
-}
+export default WpcomNux;

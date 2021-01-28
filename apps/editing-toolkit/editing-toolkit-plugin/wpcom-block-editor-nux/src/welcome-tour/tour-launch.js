@@ -1,6 +1,3 @@
-/*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
-import './public-path';
-
 /**
  * Internal dependencies
  */
@@ -13,11 +10,9 @@ import './style-tour.scss';
  * External dependencies
  */
 import { Button, Flex } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
 import { Icon } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
-import { registerPlugin } from '@wordpress/plugins';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { __ } from '@wordpress/i18n';
 
@@ -33,23 +28,9 @@ function LaunchWpcomWelcomeTour() {
 	} ) );
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
-	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// Preload first card image (others preloaded after NUX status confirmed)
 	new window.Image().src = getTourContent()[ 0 ].imgSrc;
-
-	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
-	useEffect( () => {
-		if ( typeof isWpcomNuxEnabled !== 'undefined' ) {
-			return;
-		}
-
-		const fetchWpcomNuxStatus = async () => {
-			const response = await apiFetch( { path: '/wpcom/v2/block-editor/nux' } );
-			setWpcomNuxStatus( { isNuxEnabled: response.is_nux_enabled, bypassApi: true } );
-		};
-		fetchWpcomNuxStatus();
-	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
 	// Hide editor sidebar first time user sees the editor
 	useEffect( () => {
@@ -147,7 +128,3 @@ function WelcomeTourMinimized( { onMaximize, setJustMaximized, slideNumber } ) {
 }
 
 export default LaunchWpcomWelcomeTour;
-
-registerPlugin( 'wpcom-block-editor-welcome-tour', {
-	render: () => <LaunchWpcomWelcomeTour />,
-} );

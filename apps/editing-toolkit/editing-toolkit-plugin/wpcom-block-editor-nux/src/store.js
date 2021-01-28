@@ -13,10 +13,29 @@ const isNuxEnabledReducer = ( state = undefined, action ) => {
 			return state;
 	}
 };
-const isGuideManuallyOpenedReducer = ( state = false, action ) => {
+const isTourManuallyOpenedReducer = ( state = false, action ) => {
 	switch ( action.type ) {
-		case 'WPCOM_BLOCK_EDITOR_SET_GUIDE_OPEN':
-			return action.isGuideManuallyOpened;
+		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN':
+			return action.isTourManuallyOpened;
+		default:
+			return state;
+	}
+};
+
+// TODO: next PR convert file to Typescript to ensure control of tourRating values: null, 'thumbs-up' 'thumbs-down'
+const tourRatingReducer = ( state = undefined, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING':
+			return action.tourRating;
+		default:
+			return state;
+	}
+};
+
+const showWpcomNuxVariantReducer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_BLOCK_EDITOR_SET_NUX_VARIANT':
+			return action.showVariant;
 		default:
 			return state;
 	}
@@ -24,10 +43,14 @@ const isGuideManuallyOpenedReducer = ( state = false, action ) => {
 
 const reducer = combineReducers( {
 	isNuxEnabled: isNuxEnabledReducer,
-	isGuideManuallyOpened: isGuideManuallyOpenedReducer,
+	isTourManuallyOpened: isTourManuallyOpenedReducer,
+	tourRating: tourRatingReducer,
+	showWpcomNuxVariant: showWpcomNuxVariantReducer,
 } );
 
 const actions = {
+	// TODO: Clarify variable naming of nux vs tour for consistency and to better reflect terminology in core
+	// isFeatureActive instead of isNuxEnabled would match core nad make this logic easier to understand.
 	setWpcomNuxStatus: ( { isNuxEnabled, bypassApi } ) => {
 		if ( ! bypassApi ) {
 			apiFetch( {
@@ -41,17 +64,28 @@ const actions = {
 			isNuxEnabled,
 		};
 	},
-	setGuideOpenStatus: ( { isGuideManuallyOpened } ) => {
+	setTourRating: ( tourRating ) => {
+		return { type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_RATING', tourRating };
+	},
+	setShowWpcomNuxVariant: ( { showVariant } ) => {
 		return {
-			type: 'WPCOM_BLOCK_EDITOR_SET_GUIDE_OPEN',
-			isGuideManuallyOpened,
+			type: 'WPCOM_BLOCK_EDITOR_SET_NUX_VARIANT',
+			showVariant,
+		};
+	},
+	setTourOpenStatus: ( { isTourManuallyOpened } ) => {
+		return {
+			type: 'WPCOM_BLOCK_EDITOR_SET_TOUR_OPEN',
+			isTourManuallyOpened,
 		};
 	},
 };
 
 const selectors = {
-	isGuideManuallyOpened: ( state ) => state.isGuideManuallyOpened,
+	isTourManuallyOpened: ( state ) => state.isTourManuallyOpened,
 	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
+	tourRating: ( state ) => state.tourRating,
+	shouldShowWpcomNuxVariant: ( state ) => state.showWpcomNuxVariant,
 };
 
 registerStore( 'automattic/nux', {
