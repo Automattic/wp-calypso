@@ -792,7 +792,6 @@ function getGutenboardingStatus( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const {
 			isGutenboarding,
-			isGutenboardingAnchorFm,
 			isSiteUnlaunched,
 			launchUrl,
 			isNewLaunchMobile,
@@ -802,7 +801,6 @@ function getGutenboardingStatus( calypsoPort ) {
 			currentCalypsoUrl,
 		} = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
-		calypsoifyGutenberg.isGutenboardingAnchorFm = isGutenboardingAnchorFm;
 		calypsoifyGutenberg.isSiteUnlaunched = isSiteUnlaunched;
 		calypsoifyGutenberg.launchUrl = launchUrl;
 		calypsoifyGutenberg.isNewLaunchMobile = isNewLaunchMobile;

@@ -376,7 +376,6 @@ class CalypsoifyIframe extends Component<
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding';
-			const isGutenboardingAnchorFm = !! this.props.anchorFmPodcastId;
 			const isSiteUnlaunched = this.props.isSiteUnlaunched;
 			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' ); // TODO: remove after ETK 2.8.6 is released
@@ -387,7 +386,6 @@ class CalypsoifyIframe extends Component<
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				isGutenboardingAnchorFm,
 				isSiteUnlaunched,
 				launchUrl,
 				isNewLaunchMobile,
@@ -865,7 +863,6 @@ const mapStateToProps = (
 		),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
-		anchorFmPodcastId: getSiteOption( state, siteId, 'anchor_podcast' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
 		parentPostId,
