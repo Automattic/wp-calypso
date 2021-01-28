@@ -7,11 +7,12 @@ import * as Request from './internal/requests';
 import * as State from './internal/state';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
+import { createNullExperimentAssignment } from './internal/experiment-assignments';
 
 /**
  * The number of seconds before we abandon fetching an experiment
  */
-const EXPERIMENT_FETCH_TIMEOUT = 5000;
+const EXPERIMENT_FETCH_TIMEOUT = 2000;
 
 export interface ExPlatClient {
 	/**
@@ -56,16 +57,6 @@ export class MissingExperimentAssignmentError extends Error {
  */
 export default function createExPlatClient( config: Config ): ExPlatClient {
 	/**
-	 * The null experiment assignment we return when we can't retrieve one.
-	 */
-	const createNullExperimentAssignment = (): ExperimentAssignment => ( {
-		experimentName: 'null_experiment_assignment',
-		variationName: null,
-		retrievedTimestamp: 0,
-		ttl: 0,
-	} );
-
-	/**
 	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
 	 *
 	 * AOAAT stands for Async One At A Time, this is how we ensure for each experiment that there is only ever one fetch process occuring.
@@ -106,6 +97,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				) {
 					experimentNameToAOAATExperimentAssignmentFetchAndStore[
 						experimentName
+						// TODO: Move this outside of loadExperimentAssignment
 					] = createAOAATExperimentAssignmentFetchAndStore( experimentName );
 				}
 				// TODO: Move timeout within AOAAT
@@ -114,7 +106,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					EXPERIMENT_FETCH_TIMEOUT
 				);
 				if ( ! fetchedExperimentAssignment ) {
-					return createNullExperimentAssignment();
+					throw new Error( `Could not fetch ExperimentAssignment` );
 				}
 
 				return fetchedExperimentAssignment;

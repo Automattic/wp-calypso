@@ -4,9 +4,10 @@
 	"description": "Standalone ExPlat Client",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.ts",
+	"main": "dist/cjs/index.node.js",
+	"browser": "dist/cjs/index.web.js",
+	"module": "dist/esm/index.web.js",
+	"calypso:src": "src/index.web.ts",
 	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
