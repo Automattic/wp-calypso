@@ -56,15 +56,11 @@ export function detectKeyboardNavigation( event: KeyboardEvent ): boolean {
 		return false;
 	}
 
-	let isKeyboardNavigation: boolean;
-
 	if ( typeof code === 'string' ) {
-		isKeyboardNavigation = keyboardNavigationKeyValues.includes( code );
-	} else {
-		isKeyboardNavigation = keyboardNavigationKeycodes.includes( code );
+		return keyboardNavigationKeyValues.indexOf( code ) !== -1;
 	}
 
-	return isKeyboardNavigation;
+	return keyboardNavigationKeycodes.indexOf( code ) !== -1;
 }
 
 let keyboardNavigation = false;

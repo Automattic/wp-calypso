@@ -5,7 +5,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
-	"sideEffects": true,
+	"sideEffects": false,
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
@@ -30,8 +30,5 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
-	},
-	"dependencies": {
-		"tslib": "^2.1.0"
 	}
 }
