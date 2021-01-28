@@ -12,8 +12,12 @@ import { localize } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
-import { isDomainRegistration, isPlan, isTitanMail } from 'calypso/lib/products-values';
+import {
+	isDomainRegistration,
+	isGoogleApps,
+	isPlan,
+	isTitanMail,
+} from 'calypso/lib/products-values';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';
@@ -53,7 +57,7 @@ class AutoRenewDisablingDialog extends Component {
 			return 'plan';
 		}
 
-		if ( isTitanMail( purchase ) ) {
+		if ( isGoogleApps( purchase ) || isTitanMail( purchase ) ) {
 			return 'email';
 		}
 
@@ -125,7 +129,8 @@ class AutoRenewDisablingDialog extends Component {
 					{
 						args: {
 							domainName: purchase.meta,
-							emailProductName: getTitanProductName(),
+							// Use the purchased product name to make sure it's correct
+							emailProductName: purchase.productName,
 							expiryDate,
 						},
 						comment:
