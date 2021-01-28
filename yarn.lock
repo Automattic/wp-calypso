@@ -23256,6 +23256,13 @@ redux-dynamic-middlewares@^2.0.0:
   resolved "https://registry.yarnpkg.com/redux-dynamic-middlewares/-/redux-dynamic-middlewares-2.0.0.tgz#bb34e42d22deb5fe8d5e6af8af66d0739d26e8b1"
   integrity sha512-Wqr76OhNkT+HqDumK9crfa/ZSR06wR29mB8DkTjR+Z/aTv9UmNv2zQKpjUBk4YiD7z2oXbPiWuycK4DB/jEQnQ==
 
+redux-mock-store@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/redux-mock-store/-/redux-mock-store-1.5.4.tgz#90d02495fd918ddbaa96b83aef626287c9ab5872"
+  integrity sha512-xmcA0O/tjCLXhh9Fuiq6pMrJCwFRaouA8436zcikdIpYWWCjU76CRk+i2bHx8EeiSiMGnB85/lZdU3wIJVXHTA==
+  dependencies:
+    lodash.isplainobject "^4.0.6"
+
 redux-multi@^0.1.12:
   version "0.1.12"
   resolved "https://registry.yarnpkg.com/redux-multi/-/redux-multi-0.1.12.tgz#28e1fe5e49672cbc5bd8a07f0b2aeaf0ef8355c2"
