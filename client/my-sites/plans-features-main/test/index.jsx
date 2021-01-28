@@ -22,11 +22,13 @@ jest.mock( 'calypso/components/data/cart', () => 'CartData' );
 jest.mock( 'calypso/my-sites/plan-features', () => 'PlanFeatures' );
 jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'calypso/my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
+jest.mock( '@automattic/warn', () => jest.fn() );
 
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
+import warn from '@automattic/warn';
 
 /**
  * Internal dependencies
@@ -327,7 +329,6 @@ describe( 'PlansFeaturesMain.getPlansFromProps', () => {
 	} );
 
 	test( 'Should filter out invalid plan types and print a warning in the console', () => {
-		global.console.warn = jest.fn();
 		const NOT_A_PLAN = 'not-a-plan';
 		const instance = new PlansFeaturesMain( {
 			...props,
@@ -336,7 +337,7 @@ describe( 'PlansFeaturesMain.getPlansFromProps', () => {
 		const plans = instance.getPlansFromProps( group, term );
 
 		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
-		expect( global.console.warn ).toHaveBeenCalledWith(
+		expect( warn ).toHaveBeenCalledWith(
 			`Invalid plan type, \`${ NOT_A_PLAN }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
 		);
 	} );
