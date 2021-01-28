@@ -15,22 +15,21 @@ export function monotonicNow(): number {
 	return lastNow;
 }
 
-export function createUnresolvingPromise< T >(): Promise< T > {
-	return new Promise< T >( () => {
-		return;
-	} );
-}
-
 /**
  * Timeouts a promise. Returns timeoutValue in event of timeout.
  *
  * @param promise The promise to timeout
- * @param ms The timeout time in milliseconds
+ * @param timeoutMilliseconds The timeout time in milliseconds
  */
-export function timeoutPromise< T >( promise: Promise< T >, ms: number ): Promise< T | null > {
+export function timeoutPromise< T >(
+	promise: Promise< T >,
+	timeoutMilliseconds: number
+): Promise< T | null > {
 	return Promise.race( [
 		promise,
-		new Promise< null >( ( res ) => setTimeout( () => res( null ), ms ) ),
+		new Promise< null >( ( _res, rej ) =>
+			setTimeout( () => rej( new Error( 'Promise has timed-out.' ) ), timeoutMilliseconds )
+		),
 	] );
 }
 
@@ -43,7 +42,7 @@ export function timeoutPromise< T >( promise: Promise< T >, ms: number ): Promis
  */
 export function asyncOneAtATime< T >( f: () => Promise< T > ): () => Promise< T > {
 	let isRunning = false;
-	let lastPromise = createUnresolvingPromise< T >();
+	let lastPromise: Promise< T > | null = null;
 	return async () => {
 		if ( ! isRunning ) {
 			isRunning = true;
@@ -53,6 +52,9 @@ export function asyncOneAtATime< T >( f: () => Promise< T > ): () => Promise< T 
 			};
 			lastPromise.then( afterwards );
 			lastPromise.catch( afterwards );
+		}
+		if ( lastPromise === null ) {
+			throw new Error( 'Invalid state: lastPromise should not be null.' );
 		}
 		return lastPromise;
 	};
