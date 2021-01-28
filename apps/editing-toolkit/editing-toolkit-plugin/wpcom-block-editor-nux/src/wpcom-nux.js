@@ -10,7 +10,7 @@ import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { registerPlugin } from '@wordpress/plugins';
+// import { registerPlugin } from '@wordpress/plugins';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getQueryArg } from '@wordpress/url';
 
@@ -210,7 +210,7 @@ function NuxPage( { pageNumber, isLastPage, alignBottom = false, heading, descri
 // If registered without this check, atomic sites without gutenberg enabled will error when loading the editor.
 // These seem to be the only dependencies here that are not supported there.
 if ( Guide && GuidePage ) {
-	registerPlugin( 'wpcom-block-editor-nux', {
-		render: () => <WpcomNux />,
-	} );
+	// registerPlugin( 'wpcom-block-editor-nux', {
+	// 	render: () => <WpcomNux />,
+	// } );
 }

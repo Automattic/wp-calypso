@@ -1,0 +1,57 @@
+$animation-frame: 100px;
+
+.animation-frame {
+	height: $animation-frame;
+	position: fixed;
+	width: $animation-frame;
+}
+.inserter-pulse {
+	border: 1px solid var( --color-primary );
+	border-radius: 50%;
+	height: $animation-frame - 2;
+	transform: scale( 0, 0 );
+	width: $animation-frame - 2;
+
+	animation: pulse 1s infinite ease-out;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale( 0, 0 );
+	}
+
+	50% {
+		transform: scale( 0.7, 0.7 );
+	}
+
+	90% {
+		transform: scale( 0.96, 0.96 );
+		border: 2px solid var( --color-primary-light );
+	}
+
+	94% {
+		transform: scale( 0.97, 0.97 );
+		border: 2px solid var( --color-primary-light );
+	}
+
+	96% {
+		transform: scale( 0.98, 0.98 );
+		border: 3px solid var( --color-primary-light );
+	}
+
+	100% {
+		transform: scale( 1.1, 1.1 );
+		border: 3px solid transparent;
+	}
+}
+
+// @keyframes pulse2 {
+// 	0% {
+// 		transform: scale( 0, 0 );
+// 	}
+
+// 	100% {
+// 		transform: scale( 1, 1 );
+// 		border: 2px solid var( --color-primary-light );
+// 	}
+// }
