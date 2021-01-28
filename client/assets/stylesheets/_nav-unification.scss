@@ -166,3 +166,17 @@
 		}
 	}
 }
+
+/**
+ * Color scheme specific styles
+ *
+ * Nav unification introduces changes that require modifications to existing color schemes.
+ */
+
+// Ensure sidebar is visually separate from the content in the Contrast color scheme
+// client/layout/style.scss
+.theme-default.is-contrast .is-nav-unification {
+	.layout__secondary {
+		outline: 1px solid var( --color-sidebar-border );
+	}
+}

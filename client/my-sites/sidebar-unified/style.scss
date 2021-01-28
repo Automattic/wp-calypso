@@ -157,24 +157,31 @@ $font-size: rem( 14px );
 			opacity: 0.6;
 		}
 
-		.sidebar__menu-item-parent {
-			&.selected {
-				.sidebar__menu-link {
-					background: var( --color-sidebar-menu-selected-background );
-					color: var( --color-sidebar-menu-selected-text );
+		.selected .sidebar__menu-link {
+			background: var( --color-sidebar-menu-selected-background );
+			color: var( --color-sidebar-menu-selected-text );
 
-					.sidebar__menu-icon {
-						color: var( --color-sidebar-menu-selected-text );
-					}
+			&::after {
+				display: block;
+			}
+		}
 
-					img.sidebar__menu-icon {
-						opacity: 1;
-					}
+		.sidebar__menu--selected .selected .sidebar__menu-link::after,
+		.sidebar__expandable-content .selected .sidebar__menu-link::after {
+			display: none;
+		}
 
-					&::after {
-						display: block;
-					}
-				}
+		.sidebar__menu-item-parent.selected .sidebar__menu-link {
+			.sidebar__menu-icon {
+				color: var( --color-sidebar-menu-selected-text );
+			}
+
+			img.sidebar__menu-icon {
+				opacity: 1;
+			}
+
+			&::after {
+				display: block;
 			}
 		}
 
@@ -454,6 +461,41 @@ $font-size: rem( 14px );
 		width: 80px;
 		height: 21px;
 		margin-right: 8px;
+	}
+
+	// Reader specific styles
+	// client/reader/sidebar/style.scss
+	.is-section-reader & {
+		.sidebar__menu .count {
+			background: transparent;
+			color: var( --color-sidebar-menu-text );
+			border-color: var( --color-sidebar-menu-text );
+		}
+
+		.sidebar__menu-link:hover .count {
+			color: var( --color-sidebar-submenu-hover-text );
+			border-color: var( --color-sidebar-submenu-hover-text );
+		}
+
+		.selected .sidebar__menu-link .count {
+			color: var( --color-sidebar-submenu-selected-text );
+			border-color: var( --color-sidebar-submenu-selected-text );
+		}
+
+		.sidebar__menu.is-toggle-open {
+			.sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: var( --color-sidebar-menu-selected-text );
+
+				&::after {
+					display: block;
+				}
+
+				.sidebar__menu-icon {
+					fill: var( --color-sidebar-menu-selected-text );
+				}
+			}
+		}
 	}
 
 	/*
