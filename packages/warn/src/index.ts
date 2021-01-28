@@ -1,4 +1,4 @@
-/* eslint-disable no-console, @typescript-eslint/no-empty-function */
+/* eslint-disable no-console */
 
 /*
  * Wraps console.warn to only emit in development and test environments.
@@ -7,11 +7,13 @@
  * For example: stats warns when any tracks events aren't properly formatted (@see lib/analytics)
  */
 
-let warn: typeof console.warn;
+let warn: ( ...data: any[] ) => void;
 if ( process.env.NODE_ENV === 'production' || 'function' !== typeof console.warn ) {
-	warn = (): void => {};
+	warn = (): void => {
+		/* don't log in production */
+	};
 } else {
-	warn = ( ...args: Parameters< typeof console.warn > ): void => console.warn( ...args );
+	warn = console.warn;
 }
 
 export default warn;

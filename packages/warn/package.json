@@ -1,11 +1,11 @@
 {
 	"name": "@automattic/warn",
 	"version": "1.0.0-alpha.0",
-	"description": "Creates the calypso configuration api.",
+	"description": "A tiny utility function that wraps the browsers `console.warn` so that it does not emit in production.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
-	"sideEffects": true,
+	"sideEffects": false,
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.ts",
@@ -30,6 +30,5 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
-	},
-	"dependencies": {}
+	}
 }
