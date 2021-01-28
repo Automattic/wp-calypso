@@ -48,7 +48,7 @@ export default function JetpackSearchMain(): ReactElement {
 	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
 
 	if ( ! hasLoadedSitePurchases ) {
-		return <JetpackSearchPlaceholder />;
+		return <JetpackSearchPlaceholder siteId={ siteId } />;
 	}
 
 	if ( ! hasSearchProduct ) {

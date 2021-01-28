@@ -13,6 +13,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 
 /**
  * Style dependencies
@@ -24,9 +25,14 @@ import './style.scss';
  */
 import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search.svg';
 
-export default function JetpackSearchPlaceholder(): ReactElement {
+interface Props {
+	siteId: number;
+}
+
+export default function JetpackSearchPlaceholder( { siteId }: Props ): ReactElement {
 	return (
 		<Main className="jetpack-search__placeholder">
+			<QuerySitePurchases siteId={ siteId } />
 			<DocumentHead title="Jetpack Search" />
 			<SidebarNavigation />
 
