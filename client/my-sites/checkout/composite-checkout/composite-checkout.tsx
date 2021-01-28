@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
@@ -232,14 +232,6 @@ export default function CompositeCheckout( {
 		productsForCart,
 		isInitialCartLoading,
 	} );
-
-	// Remove the coupon when it doesn't exist on the server-side
-	const couponSavingsTotal = responseCart?.coupon_savings_total_integer;
-	useEffect( () => {
-		if ( couponStatus === 'applied' && couponSavingsTotal === 0 ) {
-			removeCoupon();
-		}
-	}, [ couponStatus, couponSavingsTotal ] );
 
 	const {
 		items,

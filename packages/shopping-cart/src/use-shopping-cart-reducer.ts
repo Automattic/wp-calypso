@@ -279,7 +279,14 @@ function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart
 			}
 			return 'error';
 		}
+		case 'applied':
+			if ( ! isCouponApplied && couponDiscounts <= 0 ) {
+				return 'invalid';
+			}
+			break;
 		default:
 			return currentCouponStatus;
 	}
+
+	return currentCouponStatus;
 }
