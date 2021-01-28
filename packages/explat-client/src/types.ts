@@ -30,7 +30,7 @@ export interface GetAnonId {
 }
 
 export interface LogError {
-	( errorMessage: string ): void;
+	( error: Record< string, string > & { message: string } ): void;
 }
 
 export interface Config {

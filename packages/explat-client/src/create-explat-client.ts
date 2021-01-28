@@ -106,7 +106,10 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 
 				return fetchedExperimentAssignment;
 			} catch ( e ) {
-				config.logError( e.message );
+				config.logError( {
+					message: e.message,
+					experimentName,
+				} );
 				if ( config.isDevelopmentMode ) {
 					throw e;
 				}
@@ -129,9 +132,6 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				storedExperimentAssignment &&
 				! ExperimentAssignments.isAlive( storedExperimentAssignment )
 			) {
-				config.logError(
-					`Dangerously getting an ExperimentAssignment that has loaded but has since expired.`
-				);
 				if ( config.isDevelopmentMode ) {
 					throw new Error(
 						`Trying to dangerously get an ExperimentAssignment that has loaded but has since expired`

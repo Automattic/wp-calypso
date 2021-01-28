@@ -12,17 +12,13 @@ import { getAnonIdFromCookie } from 'calypso/state/experiments/reducer';
 
 const isDevelopmentMode = process.env.NODE_ENV === 'development';
 
-const logError = ( errorMessage: string ) => {
+const logError = ( error: Record< string, string > & { message: string } ) => {
 	if ( isDevelopmentMode ) {
 		// eslint-disable-next-line no-console
-		console.error( '[ExPlat]', errorMessage );
+		console.error( '[ExPlat]', error.message, error );
 	}
 
-	// TODO: Severity? Move this into the client?
-	const error = {
-		exPlatStandaloneClient: 'calypso',
-		message: errorMessage,
-	};
+	error[ 'exPlatStandaloneClient' ] = 'calypso';
 
 	const body = new window.FormData();
 	body.append( 'error', JSON.stringify( error ) );
@@ -63,7 +59,7 @@ const fetchExperimentAssignment = ( {
 let hasTracksEventFiredToEnsureAnonIdInCookie = false;
 const getAnonId = async (): Promise< string | null > => {
 	if ( typeof window === 'undefined' ) {
-		logError( 'Trying to retrieve anonId outside of a browser context.' );
+		logError( { message: 'Trying to retrieve anonId outside of a browser context.' } );
 		return null;
 	}
 
