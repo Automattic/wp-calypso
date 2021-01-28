@@ -110,7 +110,7 @@ function normalizePlanProducts(
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
 			storeSlug: planProduct.product_slug,
 			rawPrice: planProduct.raw_price,
-			pathSlug: planProduct.path_slug,
+			pathSlug: planProduct.product_slug === 'free_plan' ? 'free' : planProduct.path_slug,
 			price:
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0
 					? getFormattedPrice( planProduct )
