@@ -104,6 +104,7 @@ function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
