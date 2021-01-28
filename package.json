@@ -314,6 +314,8 @@
 	"devDependencies": {
 		"bunyan": "^1.8.14",
 		"chokidar": "^2.1.8",
-		"eslint-nibble": "^6.0.0"
+		"eslint-nibble": "^6.0.0",
+		"redux-mock-store": "^1.5.4",
+		"redux-thunk": "^2.3.0"
 	}
 }
