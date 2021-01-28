@@ -13,7 +13,7 @@ Add as many details as possible to help others reproduce the issue and test the 
 
 <!--
 Link a related issue to this PR. If the PR does not immediately resolve the issue,
-for example requires a separate deployment to be rolled out to production, avoid
+for example, it requires a separate deployment to production, avoid
 using the "fixes" keyword and instead attach the [Status] Fix Inbound label to
 the linked issue.
 -->
