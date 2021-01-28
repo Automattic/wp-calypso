@@ -17,7 +17,6 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import notices from 'calypso/notices';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -29,6 +28,7 @@ import Notice from 'calypso/components/notice';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import {
@@ -220,18 +220,27 @@ function ChangePaymentMethodList( {
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
 	const paymentMethods = useCreateAssignablePaymentMethods( currentlyAssignedPaymentMethodId );
 
-	const showErrorMessage = useCallback( ( error ) => {
-		const message = error?.toString ? error.toString() : error;
-		notices.error( message, { persistent: true } );
-	}, [] );
+	const showErrorMessage = useCallback(
+		( error ) => {
+			const message = error?.toString ? error.toString() : error;
+			reduxDispatch( errorNotice( message, { displayOnNextPage: true } ) );
+		},
+		[ reduxDispatch ]
+	);
 
-	const showInfoMessage = useCallback( ( message ) => {
-		notices.info( message );
-	}, [] );
+	const showInfoMessage = useCallback(
+		( message ) => {
+			reduxDispatch( infoNotice( message ) );
+		},
+		[ reduxDispatch ]
+	);
 
-	const showSuccessMessage = useCallback( ( message ) => {
-		notices.success( message, { persistent: true, duration: 5000 } );
-	}, [] );
+	const showSuccessMessage = useCallback(
+		( message ) => {
+			reduxDispatch( successNotice( message, { displayOnNextPage: true, duration: 5000 } ) );
+		},
+		[ reduxDispatch ]
+	);
 
 	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
 		( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
