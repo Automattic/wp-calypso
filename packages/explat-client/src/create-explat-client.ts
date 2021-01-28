@@ -10,7 +10,7 @@ import * as Validation from './internal/validations';
 import { createNullExperimentAssignment } from './internal/experiment-assignments';
 
 /**
- * The number of seconds before we abandon fetching an experiment
+ * The number of milliseconds before we abandon fetching an experiment
  */
 const EXPERIMENT_FETCH_TIMEOUT = 2000;
 
@@ -74,7 +74,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 		} );
 	const experimentNameToAOAATExperimentAssignmentFetchAndStore: Record<
 		string,
-		ReturnType< typeof createAOAATExperimentAssignmentFetchAndStore >
+		() => Promise< ExperimentAssignment >
 	> = {};
 
 	return {

@@ -35,7 +35,6 @@ const logError = ( error: Record< string, string > & { message: string } ) => {
 			console.error( '[ExPlat] Unable to send error to server.' );
 		}
 	}
-	return;
 };
 
 const fetchExperimentAssignment = ( {

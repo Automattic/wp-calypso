@@ -21,21 +21,15 @@ export interface ExperimentAssignment {
 
 // ## Abstracting the outside world
 
-export interface FetchExperimentAssignment {
-	( { experimentName, anonId }: { experimentName: string; anonId?: string } ): Promise< unknown >;
-}
-
-export interface GetAnonId {
-	(): Promise< string | null >;
-}
-
-export interface LogError {
-	( error: Record< string, string > & { message: string } ): void;
-}
-
 export interface Config {
-	fetchExperimentAssignment: FetchExperimentAssignment;
-	getAnonId: GetAnonId;
-	logError: LogError;
+	fetchExperimentAssignment: ( {
+		experimentName,
+		anonId,
+	}: {
+		experimentName: string;
+		anonId?: string;
+	} ) => Promise< unknown >;
+	getAnonId: () => Promise< string | null >;
+	logError: ( error: Record< string, string > & { message: string } ) => void;
 	isDevelopmentMode: boolean;
 }

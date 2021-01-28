@@ -4,12 +4,13 @@
 import { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
 
-const experiments: Record< string, ExperimentAssignment | undefined > = {};
+const experimentNameToExperimentAssignment: Record< string, ExperimentAssignment | undefined > = {};
 
 export function storeExperimentAssignment( experimentAssignment: ExperimentAssignment ): void {
 	Validations.validateExperimentAssignment( experimentAssignment );
 
-	const previousExperimentAssignment = experiments[ experimentAssignment.experimentName ];
+	const previousExperimentAssignment =
+		experimentNameToExperimentAssignment[ experimentAssignment.experimentName ];
 	if (
 		previousExperimentAssignment &&
 		experimentAssignment.retrievedTimestamp < previousExperimentAssignment.retrievedTimestamp
@@ -19,11 +20,13 @@ export function storeExperimentAssignment( experimentAssignment: ExperimentAssig
 		);
 	}
 
-	experiments[ experimentAssignment.experimentName ] = experimentAssignment;
+	experimentNameToExperimentAssignment[
+		experimentAssignment.experimentName
+	] = experimentAssignment;
 }
 
 export function retrieveExperimentAssignment(
 	experimentName: string
 ): ExperimentAssignment | undefined {
-	return experiments[ experimentName ];
+	return experimentNameToExperimentAssignment[ experimentName ];
 }
