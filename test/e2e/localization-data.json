@@ -4,7 +4,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "خطوة",
 		"wpcom_landing_page_string": "دخول",
-		"wpcom_base_url": "ar.wordpress.com",
+		"wpcom_base_url": "wordpress.com/ar",
 
 		"google_searches": [
 			{
@@ -197,7 +197,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "Etapa",
 		"wpcom_landing_page_string": "Fazer login",
-		"wpcom_base_url": "br.wordpress.com",
+		"wpcom_base_url": "wordpress.com/pt-br",
 
 		"google_searches": [
 			{
