@@ -136,7 +136,7 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 									} ) }
 								>
 									{ sprintf(
-										// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
+										// Translators: will be like "Save up to 30% by paying annually". Please keep "%%" for the percent sign
 										__( `Save %(discountRate)s%% by paying annually`, __i18n_text_domain__ ),
 										{ discountRate: planProduct?.annualDiscount ?? 0 }
 									) }
