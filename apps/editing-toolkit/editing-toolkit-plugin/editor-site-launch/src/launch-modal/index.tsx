@@ -32,6 +32,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 		select( LAUNCH_STORE ).getState()
 	);
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
+	const [ isImmediateLaunchStarted, setIsImmediateLaunchStarted ] = React.useState( false );
 
 	const { launchSite } = useDispatch( SITE_STORE );
 	const { savePost } = useDispatch( 'core/editor' );
@@ -47,17 +48,33 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 		setIsLaunching( true );
 	}, [ launchSite, setIsLaunching, siteId ] );
 
+	// When isLaunchImmediately: Show the "Hooray! Launching your site..." screen as soon as possible.
+	React.useEffect( () => {
+		if ( isLaunchImmediately && ! isLaunching ) {
+			setIsLaunching( true );
+		}
+	}, [ isLaunching, isLaunchImmediately ] );
+
+	// When isLaunchImmediately: Begin the launch process after the free plan has loaded
+	// and if we haven't already started it (isImmediateLaunchStarted).
 	React.useEffect( () => {
 		const asyncSavePost = async () => {
 			await savePost();
 		};
-		if ( ! isLaunching && isLaunchImmediately && defaultFreePlan ) {
-			setPlanProductId( defaultFreePlan.productIds[ 0 ] );
-			setIsLaunching( true );
+		if ( isLaunchImmediately && ! isImmediateLaunchStarted && defaultFreePlan?.productIds[ 0 ] ) {
+			setPlanProductId( defaultFreePlan?.productIds[ 0 ] );
+			setIsImmediateLaunchStarted( true );
 			asyncSavePost();
 			handleLaunch();
 		}
-	}, [ isLaunching, isLaunchImmediately, handleLaunch, savePost, defaultFreePlan ] );
+	}, [
+		isLaunchImmediately,
+		isImmediateLaunchStarted,
+		handleLaunch,
+		savePost,
+		defaultFreePlan,
+		setPlanProductId,
+	] );
 
 	// handle redirects to checkout / my home after launch
 	useOnLaunch();
