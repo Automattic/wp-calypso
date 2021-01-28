@@ -260,26 +260,21 @@ function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
 	}
 }
 
-function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart: ResponseCart ) {
+function getUpdatedCouponStatus(
+	currentCouponStatus: CouponStatus,
+	responseCart: ResponseCart
+): CouponStatus {
 	const isCouponApplied = responseCart.is_coupon_applied;
 	const couponDiscounts = responseCart.coupon_discounts_integer.length;
 
-	switch ( currentCouponStatus ) {
-		case 'fresh':
-			return isCouponApplied ? 'applied' : currentCouponStatus;
-		case 'pending': {
-			if ( isCouponApplied ) {
-				return 'applied';
-			}
-			if ( ! isCouponApplied && couponDiscounts <= 0 ) {
-				return 'invalid';
-			}
-			if ( ! isCouponApplied && couponDiscounts > 0 ) {
-				return 'rejected';
-			}
-			return 'error';
-		}
-		default:
-			return currentCouponStatus;
+	if ( isCouponApplied ) {
+		return 'applied';
 	}
+	if ( currentCouponStatus === 'pending' && couponDiscounts <= 0 ) {
+		return 'invalid';
+	}
+	if ( currentCouponStatus === 'pending' && couponDiscounts > 0 ) {
+		return 'rejected';
+	}
+	return 'fresh';
 }

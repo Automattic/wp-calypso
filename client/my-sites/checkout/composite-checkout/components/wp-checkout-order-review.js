@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
@@ -92,6 +92,14 @@ function CouponFieldArea( {
 } ) {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
+	const { setCouponFieldValue } = couponFieldStateProps;
+
+	useEffect( () => {
+		if ( couponStatus === 'applied' ) {
+			// Clear the field value when the coupon is applied
+			setCouponFieldValue( '' );
+		}
+	}, [ couponStatus, setCouponFieldValue ] );
 
 	if ( isPurchaseFree || couponStatus === 'applied' ) {
 		return null;
