@@ -60,7 +60,7 @@ interface Props {
 	isUnavailable?: boolean;
 	domain: string;
 	isLoading?: boolean;
-	cost: string;
+	cost?: string;
 	hstsRequired?: boolean;
 	isFree?: boolean;
 	isExistingSubdomain?: boolean;
