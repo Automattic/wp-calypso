@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 /**
@@ -44,16 +43,10 @@ export const getCurrentCROIterationName = (): Iterations => {
 		}
 	}
 
-	// Otherwise, check for the assigned A/B test value
-	const variant = abtest( 'jetpackSimplifyPricingPage' );
-
-	switch ( variant ) {
-		case 'test':
-			return Iterations.SPP;
-		case 'control':
-		default:
-			return Iterations.I5;
-	}
+	// Iterations.SPP still exists for now,
+	// but the test is over, so we don't need (or want) to call `abtest`.
+	// Instead, always return the default iteration, Iterations.I5.
+	return Iterations.I5;
 };
 
 type IterationValueFunction< T > = ( key: Iterations ) => T | undefined;
