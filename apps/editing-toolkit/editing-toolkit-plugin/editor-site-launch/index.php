@@ -39,6 +39,8 @@ function enqueue_launch_button_script_and_style( $site_launch_options ) {
 		$style_version
 	);
 
+	wp_set_script_translations( 'a8c-fse-editor-site-launch-button-script', 'full-site-editing' );
+
 	// Prepare site launch options.
 	$options = array(
 		'siteSlug'   => $site_launch_options['site_slug'],
