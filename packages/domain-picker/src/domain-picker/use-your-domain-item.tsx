@@ -15,13 +15,10 @@ interface Props {
 }
 
 const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
-	const useYourOwnDomainItemRef = React.createRef< any >();
-
 	return (
 		<WrappingComponent
 			type="button"
 			className="domain-picker__suggestion-item type-link"
-			ref={ useYourOwnDomainItemRef }
 			onClick={ onClick }
 		>
 			<div className="domain-picker__suggestion-item-name">
