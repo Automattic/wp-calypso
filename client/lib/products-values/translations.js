@@ -154,7 +154,11 @@ export const getJetpackProductsCallToAction = () => {
 	);
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
-	const antiSpam = translate( 'Get Anti-Spam' );
+	const antiSpam = (
+		<>
+			{ currentCROvariant === 'spp' ? translate( 'Get Anti-Spam' ) : translate( 'Get Anti-spam' ) }
+		</>
+	);
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,

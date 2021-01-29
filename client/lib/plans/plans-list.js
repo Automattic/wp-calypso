@@ -448,8 +448,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		].includes( plan ),
 	getDescription: () =>
 		translate(
-			'Additional security for sites with 24/7 activity. ' +
-				'Recommended for eCommerce stores, news organizations, and online forums.'
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
 		),
 	getTagline: () => translate( 'Best for sites with frequent updates' ),
 	getPlanCompareFeatures: () => [],

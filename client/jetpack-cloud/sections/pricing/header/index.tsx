@@ -29,7 +29,10 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 	const identity = config( 'olark_chat_identity' );
 	const translate = useTranslate();
 	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
-	const title = translate( 'Security, performance, and marketing tools for WordPress' );
+	const title =
+		iteration === 'spp'
+			? translate( 'Security, performance, and marketing tools for WordPress' )
+			: translate( 'Security, performance, and marketing tools made for WordPress' );
 
 	return (
 		<>
