@@ -21,6 +21,7 @@ Only the latest version of Calypso is supported.
 Our most critical targets are:
 
 * wordpress.com
+* cloud.jetpack.com
 
 For more targets, see the `In Scope` section on [HackerOne](https://hackerone.com/automattic).
 
