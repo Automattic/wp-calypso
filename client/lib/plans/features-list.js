@@ -1302,7 +1302,6 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SEARCH_V2,
-		getIcon: () => null,
 		getTitle: () => i18n.translate( 'Site Search: up to 100k records' ),
 
 		getDescription: () =>
@@ -1332,7 +1331,6 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CRM_V2 ]: {
 		getSlug: () => constants.FEATURE_CRM_V2,
-		getIcon: () => null,
 		getTitle: () => i18n.translate( 'CRM: Entrepreneur bundle' ),
 		getDescription: () =>
 			i18n.translate(
