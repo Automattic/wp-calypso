@@ -609,6 +609,9 @@ $plan-features-sidebar-width: 272px;
 
 .plans-features-main__group.is-wpcom {
 	padding-top: 19px;
+	overflow: scroll;
+	max-height: calc( 100vh - 115px );
+	margin-top: 14px;
 }
 
 // This is the customer type buttons that let
