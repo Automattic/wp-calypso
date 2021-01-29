@@ -58,7 +58,7 @@ const Home = ( {
 		);
 	}
 
-	if ( 'purchase_success' === displayMode ) {
+	if ( 'purchase-success' === displayMode ) {
 		const successMessage = translate( 'Your purchase has been completed!' );
 		notices.success( successMessage, {
 			persistent: true,
