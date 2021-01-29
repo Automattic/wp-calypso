@@ -112,7 +112,7 @@ function useStripProductsFromUrl( siteSlug: string | undefined, isLoading: boole
 			// page later will not add those products to the cart again.
 			const newUrl =
 				window.location.protocol + '//' + window.location.host + '/checkout/' + siteSlug ??
-				'' + window.location.search + window.location.hash;
+				'no-site' + window.location.search + window.location.hash;
 			debug( 'changing the url to strip the products to', newUrl );
 			window.history.replaceState( null, '', newUrl );
 		} catch ( error ) {
