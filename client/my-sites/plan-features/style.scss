@@ -10,6 +10,12 @@ $plan-features-sidebar-width: 272px;
 	// If experiment succeeds the following styles
 	// need to be moved to the corresponding selectors
 
+	.plans-features-main__group.is-wpcom {
+		overflow: auto;
+		max-height: calc( 100vh - 115px );
+		margin-top: 14px;
+	}
+
 	// To be moved to line 651 approximately
 	.plan-features--signup {
 		.plan-features__table {
@@ -609,9 +615,6 @@ $plan-features-sidebar-width: 272px;
 
 .plans-features-main__group.is-wpcom {
 	padding-top: 19px;
-	overflow: scroll;
-	max-height: calc( 100vh - 115px );
-	margin-top: 14px;
 }
 
 // This is the customer type buttons that let
