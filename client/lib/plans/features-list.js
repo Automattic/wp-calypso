@@ -1101,14 +1101,8 @@ export const FEATURES_LIST = {
 		getIcon: () => 'cloud-upload',
 		getTitle: ( variation ) =>
 			( {
-				i5: i18n.translate( 'All Backup Daily features' ),
 				spp: i18n.translate( 'All Jetpack Backup features' ),
-			}[ variation ] ||
-			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+			}[ variation ] || i18n.translate( 'All Backup Daily features' ) ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
