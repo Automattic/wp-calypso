@@ -438,7 +438,6 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_REALTIME,
 	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
-	getButtonLabel: () => undefined,
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
