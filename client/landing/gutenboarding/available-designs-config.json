@@ -16,9 +16,9 @@
 		},
 		{
 			"title": "Twenty Twenty One",
-			"slug": "twentytwentyone-blocks",
-			"template": "twentytwentyone-blocks",
-			"theme": "twentytwentyone-blocks",
+			"slug": "tt1-blocks",
+			"template": "tt1-blocks",
+			"theme": "tt1-blocks",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
