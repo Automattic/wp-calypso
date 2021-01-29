@@ -5,7 +5,8 @@
 	transition: none;
 
 	&.is-error,
-	&[type='password'] {
+	&[type='password'],
+	&[name='password'] {
 		margin-bottom: 0;
 	}
 
