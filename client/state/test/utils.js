@@ -17,9 +17,13 @@ import {
 	withEnhancers,
 	withStorageKey,
 } from 'calypso/state/utils';
-import warn from 'calypso/lib/warn';
 
-jest.mock( 'calypso/lib/warn', () => jest.fn() );
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+jest.mock( '@wordpress/warning', () => jest.fn() );
 
 describe( 'utils', () => {
 	beforeEach( () => warn.mockReset() );

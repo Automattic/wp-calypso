@@ -2,7 +2,6 @@
  * Extrenal dependencies
  *
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,11 +11,15 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
 import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
-import warn from 'calypso/lib/warn';
 
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {

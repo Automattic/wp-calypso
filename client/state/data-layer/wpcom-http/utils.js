@@ -5,10 +5,14 @@ import deterministicStringify from 'fast-json-stable-stringify';
 import { get, identity, merge, noop } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
 import { keyedReducer } from 'calypso/state/utils';
-import warn from 'calypso/lib/warn';
 
 /**
  * Returns response data from an HTTP request success action if available

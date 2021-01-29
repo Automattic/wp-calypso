@@ -5,7 +5,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { uniqueId, get, find } from 'lodash';
-import warn from 'calypso/lib/warn';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
@@ -46,11 +50,12 @@ export default class PromotionForm extends React.PureComponent {
 			case 'fixed_cart':
 			case 'percent':
 				return promotion.couponCode;
-			case 'product_sale':
+			case 'product_sale': {
 				const productIds = get( promotion, [ 'appliesTo', 'productIds' ], [] );
 				const productId = productIds.length > 0 ? productIds[ 0 ] : null;
 				const product = productId && find( products, { id: productId } );
 				return product ? product.name : '';
+			}
 		}
 	};
 

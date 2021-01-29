@@ -2,8 +2,12 @@
  * External dependencies
  */
 import { trim, isFunction } from 'lodash';
-import warn from 'calypso/lib/warn';
 import debugFactory from 'debug';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
