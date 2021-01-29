@@ -21,11 +21,11 @@
 	}
 
 	.design-selector__grid {
-		margin: 0 -32px 30px;
+		margin: 0 -24px 30px;
 	}
 
 	.design-selector__grid-minimal {
-		margin: 0 -32px 30px;
+		margin: 0 -24px 30px;
 	}
 
 	.design-selector__design-option {
@@ -33,7 +33,7 @@
 		font-family: inherit;
 		float: left;
 		width: 100%;
-		margin: 32px; // only applies in IE
+		margin: 24px; // only applies in IE
 
 		&:hover,
 		&:focus {
@@ -43,15 +43,15 @@
 		}
 
 		@include break-mobile {
-			width: calc( 50% - 32px );
+			width: calc( 50% - 24px );
 		}
 
 		@include break-large {
-			width: calc( 33.33% - 64px );
+			width: calc( 33.33% - 32px );
 		}
 
 		@include onboarding-break-gigantic {
-			width: calc( 25% - 64px );
+			width: calc( 25% - 32px );
 		}
 	}
 
@@ -64,12 +64,12 @@
 
 			@include break-mobile {
 				grid-template-columns: 1fr 1fr;
-				column-gap: 32px;
+				column-gap: 24px;
 			}
 
 			@include break-large {
 				grid-template-columns: 1fr 1fr 1fr;
-				column-gap: 64px;
+				column-gap: 32px;
 			}
 
 			@include onboarding-break-gigantic {
@@ -85,11 +85,11 @@
 
 			@include break-mobile {
 				grid-template-columns: 1fr 1fr;
-				column-gap: 32px;
+				column-gap: 24px;
 			}
 
 			@include break-large {
-				column-gap: 64px;
+				column-gap: 32px;
 			}
 		}
 
