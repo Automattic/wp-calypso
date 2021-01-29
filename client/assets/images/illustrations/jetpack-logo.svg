@@ -1,3 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="35" width="35" viewBox="0 0 120 120" fill="#2fb41f">
-	<path class="jetpack-emblem" d="M52.4 0C23.5 0 0 23.5 0 52.4c0 28.9 23.5 52.4 52.4 52.4 28.9 0 52.4-23.5 52.4-52.4C104.8 23.5 81.3 0 52.4 0zM49.7 61.1H23.6l26.1-50.8V61.1zM55 94.4V43.6h26.1L55 94.4z"></path>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" height="35" width="35" viewBox="0 0 120 120" fill="#2fb41f"><path class="jetpack-emblem" d="M52.4 0C23.5 0 0 23.5 0 52.4s23.5 52.4 52.4 52.4 52.4-23.5 52.4-52.4S81.3 0 52.4 0zm-2.7 61.1H23.6l26.1-50.8v50.8zM55 94.4V43.6h26.1L55 94.4z"/></svg>
