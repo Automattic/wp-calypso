@@ -2,14 +2,9 @@
  * Internal dependencies
  */
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
-import { JETPACK_RESET_PLANS, JETPACK_SECURITY_PLANS } from 'calypso/lib/plans/constants';
+import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
-import {
-	SELECTOR_PLANS_ALT_V1,
-	SELECTOR_PLANS_ALT_V2,
-	SELECTOR_PLANS_I5,
-	SELECTOR_PLANS_SPP,
-} from '../constants';
+import { SELECTOR_PLANS_I5, SELECTOR_PLANS_SPP } from '../constants';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
@@ -29,8 +24,6 @@ export const getPlansToDisplay = ( {
 	const iteration = getJetpackCROActiveVersion() as Iterations;
 	const plans =
 		{
-			[ Iterations.V1 ]: SELECTOR_PLANS_ALT_V1,
-			[ Iterations.V2 ]: SELECTOR_PLANS_ALT_V2,
 			[ Iterations.I5 ]: SELECTOR_PLANS_I5,
 			[ Iterations.SPP ]: SELECTOR_PLANS_SPP,
 		}[ iteration ] || [];
@@ -46,14 +39,7 @@ export const getPlansToDisplay = ( {
 				!! product &&
 				product.term === duration &&
 				// Don't include a plan the user already owns, regardless of the term
-				! currentPlanTerms.includes( product.productSlug ) &&
-				// In v1, we don't show both versions of Jetpack Security
-				! (
-					iteration === 'v1' &&
-					currentPlanSlug &&
-					JETPACK_SECURITY_PLANS.includes( currentPlanSlug ) &&
-					JETPACK_SECURITY_PLANS.includes( product.productSlug )
-				)
+				! currentPlanTerms.includes( product.productSlug )
 		)
 		.map( ( product: SelectorProduct ) => ( {
 			...product,
