@@ -60,8 +60,6 @@ class Security2faSMSSettings extends React.Component {
 		};
 	}
 
-	verifyByApp = null;
-
 	getSubmitDisabled() {
 		if ( this.props.isUpdatingUserSettings ) {
 			return true;
@@ -81,17 +79,16 @@ class Security2faSMSSettings extends React.Component {
 
 	onVerifyByApp = ( event ) => {
 		event.preventDefault();
-		this.verifyByApp = true;
-		this.submitSMSSettings();
+		this.submitSMSSettings( true );
 	};
 
 	onVerifyBySMS = ( event ) => {
 		event.preventDefault();
-		this.verifyByApp = false;
 		this.submitSMSSettings();
 	};
 
-	async submitSMSSettings() {
+	async submitSMSSettings( verifyByApp = false ) {
+		const { onVerifyByApp, onVerifyBySMS } = this.props;
 		const phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
@@ -103,15 +100,15 @@ class Security2faSMSSettings extends React.Component {
 			phoneNumber.countryCode === this.props.userSettings.two_step_sms_country &&
 			phoneNumber.phoneNumber === this.props.userSettings.two_step_sms_phone_number
 		) {
-			this.handleSubmitResponse();
+			verifyByApp ? onVerifyByApp() : onVerifyBySMS();
 			return;
 		}
 
 		try {
 			await this.props.saveTwoStepSMSSettings( phoneNumber.countryCode, phoneNumber.phoneNumber );
-			this.handleSubmitResponse();
+			verifyByApp ? onVerifyByApp() : onVerifyBySMS();
 		} catch ( error ) {
-			this.handleSubmitResponse( error );
+			this.setState( { lastError: error } );
 		}
 	}
 
@@ -125,17 +122,6 @@ class Security2faSMSSettings extends React.Component {
 			},
 		} );
 	};
-
-	handleSubmitResponse( error ) {
-		if ( error ) {
-			this.setState( { lastError: error } );
-			return;
-		}
-
-		const { onVerifyByApp, onVerifyBySMS } = this.props;
-
-		this.verifyByApp ? onVerifyByApp() : onVerifyBySMS();
-	}
 
 	clearLastError = () => {
 		this.setState( { lastError: false } );
