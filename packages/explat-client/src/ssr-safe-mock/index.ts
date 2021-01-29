@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { Config, ExperimentAssignment } from './types';
-import { ExPlatClient } from './create-explat-client';
-import { createNullExperimentAssignment } from './internal/experiment-assignments';
+import { Config, ExperimentAssignment } from '../types';
+import { ExPlatClient } from '../create-explat-client';
+import { createNullExperimentAssignment } from '../internal/experiment-assignments';
 
 function createExPlatClient( config: Config ): ExPlatClient {
 	return {
