@@ -8,7 +8,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import Banner from 'calypso/components/banner';
 
 /**
  * Style dependencies
@@ -44,39 +44,45 @@ class FreeDomainExplainer extends React.Component {
 		);
 	}
 
-	render() {
-		const { translate, isReskinned, locale } = this.props;
+	getDescription() {
+		const { translate, locale } = this.props;
 		const { TextWrapper } = this;
+		return (
+			<>
+				<TextWrapper className="free-domain-explainer__subtitle">
+					{ locale === 'en'
+						? translate(
+								"We'll pay the registration fees for your new domain when you choose an annual plan during the next step."
+						  )
+						: translate(
+								"We'll pay the registration fees for your new domain when you choose a paid plan during the next step."
+						  ) }
+				</TextWrapper>
+				<TextWrapper className="free-domain-explainer__subtitle">
+					{ translate( "You can claim your free custom domain later if you aren't ready yet." ) }
+				</TextWrapper>
+			</>
+		);
+	}
+
+	render() {
+		const { translate, locale } = this.props;
+		const title =
+			locale === 'en'
+				? translate( 'Get a free one-year domain registration with any paid annual plan.' )
+				: translate( 'Get a free one-year domain registration with any paid plan.' );
 
 		return (
-			<div className="free-domain-explainer card is-compact">
-				<header>
-					<h1 className="free-domain-explainer__title">
-						{ locale === 'en'
-							? translate( 'Get a free one-year domain registration with any paid annual plan.' )
-							: translate( 'Get a free one-year domain registration with any paid plan.' ) }
-					</h1>
-					<TextWrapper className="free-domain-explainer__subtitle">
-						{ locale === 'en'
-							? translate(
-									"We'll pay the registration fees for your new domain when you choose an annual plan during the next step."
-							  )
-							: translate(
-									"We'll pay the registration fees for your new domain when you choose a paid plan during the next step."
-							  ) }
-					</TextWrapper>
-					<TextWrapper className="free-domain-explainer__subtitle">
-						{ translate( "You can claim your free custom domain later if you aren't ready yet." ) }
-						<Button
-							borderless
-							className="free-domain-explainer__subtitle-link"
-							onClick={ this.handleClick }
-						>
-							{ translate( 'Review our plans to get started' ) } { ! isReskinned && <>&raquo;</> }
-						</Button>
-					</TextWrapper>
-				</header>
-			</div>
+			<Banner
+				callToAction={ translate( 'Review our plans to get started' ) }
+				description={ this.getDescription() }
+				dismissPreferenceName="free-domain-explainer"
+				dismissTemporary
+				horizontal
+				title={ title }
+				primaryButton={ false }
+				onClick={ this.handleClick }
+			/>
 		);
 	}
 }
