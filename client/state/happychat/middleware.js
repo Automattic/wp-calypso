@@ -37,6 +37,8 @@ export const socketMiddleware = ( connection = null ) => {
 	}
 
 	return ( store ) => ( next ) => ( action ) => {
+		const state = store.getState();
+
 		switch ( action.type ) {
 			case HAPPYCHAT_IO_INIT:
 				connection.init( store.dispatch, action.auth );
@@ -69,7 +71,6 @@ export const socketMiddleware = ( connection = null ) => {
 
 			case HAPPYCHAT_BLUR:
 			case HAPPYCHAT_FOCUS:
-				const state = store.getState();
 				isHappychatClientConnected( state ) &&
 				isHappychatChatAssigned( state ) &&
 				eventMessage[ action.type ]
