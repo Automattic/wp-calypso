@@ -1,13 +1,16 @@
 /**
  * Internal dependencies
  */
-import type { plansProductSlugs, plansOrder, plansPaths } from './constants';
+import type { plansProductSlugs, plansSlugs } from './constants';
 
 export type StorePlanSlug = typeof plansProductSlugs[ number ];
-export type PlanSlug = typeof plansOrder[ number ];
-export type PlanPath = typeof plansPaths[ number ];
+export type PlanSlug = typeof plansSlugs[ number ];
+
+// at the moment possible plan paths are identical with plan slugs
+export type PlanPath = PlanSlug;
 
 export type PlanBillingPeriod = 'MONTHLY' | 'ANNUALLY';
+export type PlanNonlocalizedShortName = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 
 export type PlanAction = {
 	type: string;
@@ -121,6 +124,7 @@ export type PlanFeature = {
 	type?: string;
 	data?: Array< boolean | string >;
 };
+
 export interface APIPlanDetail {
 	support_priority: number;
 	support_name: string;
@@ -130,7 +134,7 @@ export interface APIPlanDetail {
 	}[];
 	name: string;
 	short_name: string;
-	nonlocalized_short_name: PlanSlug;
+	nonlocalized_short_name: PlanNonlocalizedShortName;
 	tagline: string;
 	description: string;
 	features: string[];

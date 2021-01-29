@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { Plans as PlansStore } from '@automattic/data-stores';
+import type { Plans } from '@automattic/data-stores';
 
 const DEFAULT_SITE_NAME = __( 'Site Title', __i18n_text_domain__ );
 
@@ -64,13 +65,5 @@ export const isDomainProduct = ( item: ResponseCartProduct ): boolean => {
 };
 
 export const isPlanProduct = ( item: ResponseCartProduct ): boolean => {
-	return (
-		[
-			PlansStore.PLAN_FREE,
-			PlansStore.PLAN_PERSONAL,
-			PlansStore.PLAN_PREMIUM,
-			PlansStore.PLAN_BUSINESS,
-			PlansStore.PLAN_ECOMMERCE,
-		].indexOf( item.product_slug ) > -1
-	);
+	return PlansStore.plansProductSlugs.indexOf( item.product_slug as Plans.StorePlanSlug ) > -1;
 };

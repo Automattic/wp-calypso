@@ -155,23 +155,3 @@ export const isPlanFree = ( _: State, planSlug?: PlanSlug ): boolean => {
 export const isPlanProductFree = ( _: State, planProductId?: number | undefined ): boolean => {
 	return planProductId === 1;
 };
-
-/*
-export const getCorrespondingPlanFromOtherInterval = (
-	state: State,
-	plan: Plan | undefined
-): Plan | undefined => {
-	if ( ! plan ) {
-		return undefined;
-	}
-	if ( plan.isFree ) {
-		return plan;
-	}
-	if ( plan.billPeriod === 'ANNUALLY' ) {
-		const index = annualSlugs.indexOf( plan.storeSlug as never );
-		return getPlanBySlug( state, monthlySlugs[ index ] );
-	}
-	const index = monthlySlugs.indexOf( plan.storeSlug as never );
-	return getPlanBySlug( state, annualSlugs[ index ] );
-};
-*/

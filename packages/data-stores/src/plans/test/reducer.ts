@@ -5,64 +5,6 @@ import reducer from '../reducer';
 import { setPlans, setFeaturesByType, setFeatures, setPlanProducts } from '../actions';
 import { PLAN_FREE, PLAN_PREMIUM } from '../constants';
 
-/*
-{
-	plans: [
-		{
-			title: 'free plan',
-			description: 'it is free',
-			features: [],
-			isFree: true,
-			isPopular: false,
-			periodAgnosticSlug: 'Free',
-			productIds: [ 1 ],
-		},
-		{
-			title: 'premium plan',
-			description: 'it is premium',
-			features: [],
-			isPopular: true,
-			periodAgnosticSlug: 'Premium',
-			productIds: [ 2, 3 ],
-		},
-	],
-	planProducts: [
-		{
-			productId: 1,
-			price: '0',
-			rawPrice: 0,
-			billingPeriod: 'ANNUALLY',
-			pathSlug: 'free',
-			annualDiscount: 0,
-			storeSlug: 'free_plan',
-			periodAgnosticSlug: 'Free',
-		},
-		{
-			productId: 2,
-			price: '0',
-			rawPrice: 0,
-			billingPeriod: 'MONTHLY',
-			pathSlug: 'premium',
-			annualDiscount: 0,
-			storeSlug: 'value_bundle_monthly',
-			periodAgnosticSlug: 'Premium',
-		},
-		{
-			productId: 3,
-			price: '0',
-			rawPrice: 0,
-			billingPeriod: 'ANNUALLY',
-			pathSlug: 'premium',
-			annualDiscount: 0,
-			storeSlug: 'value_bundle',
-			periodAgnosticSlug: 'Premium',
-		},
-	],
-	features: {},
-	featuresByType: [],
-}
-*/
-
 describe( 'Plans reducer', () => {
 	describe( 'Plans', () => {
 		it( 'defaults to no plans info', () => {
@@ -80,7 +22,7 @@ describe( 'Plans reducer', () => {
 						features: [],
 						isFree: true,
 						isPopular: false,
-						periodAgnosticSlug: 'Free',
+						periodAgnosticSlug: 'free',
 						productIds: [ 1 ],
 					},
 				] )
@@ -92,32 +34,35 @@ describe( 'Plans reducer', () => {
 					{
 						productId: 1,
 						price: '0',
+						annualPrice: '0',
 						rawPrice: 0,
 						billingPeriod: 'ANNUALLY',
 						pathSlug: 'free',
 						annualDiscount: 0,
 						storeSlug: 'free_plan',
-						periodAgnosticSlug: 'Free',
+						periodAgnosticSlug: 'free',
 					},
 					{
 						productId: 2,
 						price: '0',
+						annualPrice: '0',
 						rawPrice: 0,
 						billingPeriod: 'MONTHLY',
 						pathSlug: 'premium',
 						annualDiscount: 0,
 						storeSlug: 'value_bundle_monthly',
-						periodAgnosticSlug: 'Premium',
+						periodAgnosticSlug: 'premium',
 					},
 					{
 						productId: 3,
 						price: '0',
+						annualPrice: '0',
 						rawPrice: 0,
 						billingPeriod: 'ANNUALLY',
 						pathSlug: 'premium',
 						annualDiscount: 0,
 						storeSlug: 'value_bundle',
-						periodAgnosticSlug: 'Premium',
+						periodAgnosticSlug: 'premium',
 					},
 				] )
 			);
@@ -130,7 +75,7 @@ describe( 'Plans reducer', () => {
 						description: 'it is free',
 						features: [],
 						isPopular: true,
-						periodAgnosticSlug: 'Free',
+						periodAgnosticSlug: 'free',
 						productIds: [ 1 ],
 					},
 				] )

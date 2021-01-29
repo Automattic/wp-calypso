@@ -16,6 +16,7 @@ import type {
 	PlanFeature,
 	PlanProduct,
 	Feature,
+	PlanSlug,
 } from './types';
 import {
 	PLAN_FREE,
@@ -186,6 +187,8 @@ export function* getSupportedPlans( locale = 'en' ) {
 	const features = processFeatures( plansFeatures.features );
 
 	const periodAgnosticPlans: Plan[] = plansFeatures.plans.map( ( plan ) => {
+		const planSlug = plan.nonlocalized_short_name?.toLowerCase() as PlanSlug;
+
 		return {
 			description: plan.tagline,
 			features: processPlanFeatures( plan, features ),
@@ -195,9 +198,9 @@ export function* getSupportedPlans( locale = 'en' ) {
 				slugs[ slug ] = true;
 				return slugs;
 			}, {} as Record< string, boolean > ),
-			isFree: plan.nonlocalized_short_name === TIMELESS_PLAN_FREE,
-			isPopular: plan.nonlocalized_short_name === TIMELESS_PLAN_PREMIUM,
-			periodAgnosticSlug: plan.nonlocalized_short_name,
+			isFree: planSlug === TIMELESS_PLAN_FREE,
+			isPopular: planSlug === TIMELESS_PLAN_PREMIUM,
+			periodAgnosticSlug: planSlug,
 			productIds: plan.products.map( ( { plan_id } ) => plan_id ),
 		};
 	} );
