@@ -3,7 +3,7 @@ Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
-Stable tag: 2.15
+Stable tag: 2.16
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.16 =
+* Fix Global Styles Panel Font Change Update (https://github.com/Automattic/wp-calypso/pull/49216)
+* Welcome Tour: combine existing and variant tour plugins (https://github.com/Automattic/wp-calypso/pull/49296)
 
 = 2.15 =
 * Add plugin to transform i18n imports to local variables (https://github.com/Automattic/wp-calypso/pull/49341)
