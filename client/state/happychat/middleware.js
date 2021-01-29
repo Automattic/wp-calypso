@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,8 +17,9 @@ import {
 	HAPPYCHAT_IO_SEND_MESSAGE_USERINFO,
 	HAPPYCHAT_IO_SEND_PREFERENCES,
 	HAPPYCHAT_IO_SEND_TYPING,
+	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
 } from 'calypso/state/action-types';
-import { sendEvent } from 'calypso/state/happychat/connection/actions';
+import { sendEvent, setChatCustomFields } from 'calypso/state/happychat/connection/actions';
 import buildConnection from 'calypso/lib/happychat/connection-async';
 import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 import isHappychatChatAssigned from 'calypso/state/happychat/selectors/is-happychat-chat-assigned';
@@ -36,6 +37,8 @@ export const socketMiddleware = ( connection = null ) => {
 	}
 
 	return ( store ) => ( next ) => ( action ) => {
+		const state = store.getState();
+
 		switch ( action.type ) {
 			case HAPPYCHAT_IO_INIT:
 				connection.init( store.dispatch, action.auth );
@@ -45,18 +48,29 @@ export const socketMiddleware = ( connection = null ) => {
 				connection.request( action, action.timeout );
 				break;
 
+			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
+				// When user info is sent, pass it through in a message...
+				connection.send( action );
+				// ... and also set a few of the values in Custom Fields
+				store.dispatch(
+					setChatCustomFields( {
+						howCanWeHelp: get( action, 'payload.meta.howCanWeHelp', null ),
+						howYouFeel: get( action, 'payload.meta.howYouFeel', null ),
+					} )
+				);
+				break;
+
 			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:
 			case HAPPYCHAT_IO_SEND_MESSAGE_LOG:
 			case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
-			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 			case HAPPYCHAT_IO_SEND_PREFERENCES:
 			case HAPPYCHAT_IO_SEND_TYPING:
+			case HAPPYCHAT_IO_SET_CUSTOM_FIELDS:
 				connection.send( action );
 				break;
 
 			case HAPPYCHAT_BLUR:
 			case HAPPYCHAT_FOCUS:
-				const state = store.getState();
 				isHappychatClientConnected( state ) &&
 				isHappychatChatAssigned( state ) &&
 				eventMessage[ action.type ]
