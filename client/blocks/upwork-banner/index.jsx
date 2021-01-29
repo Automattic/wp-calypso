@@ -83,7 +83,7 @@ class UpworkBanner extends PureComponent {
 				role="button"
 				style={ { backgroundColor: '#DAF5FC' } }
 				onClick={ this.onStartNowClick }
-				href={ 'https://wordpress.com/built-by-wordpress-com/' }
+				href="https://wordpress.com/built-by-wordpress-com/"
 			>
 				<QueryPreferences />
 				<h1 className="upwork-banner__title">
