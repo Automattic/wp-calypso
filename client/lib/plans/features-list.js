@@ -1094,7 +1094,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
@@ -1119,7 +1118,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
@@ -1143,7 +1141,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	[ constants.FEATURE_SCAN_V2 ]: {
@@ -1164,7 +1161,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	/**
@@ -1184,7 +1180,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	// * Scan Daily *
@@ -1213,7 +1208,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	// * Scan Real-time *
@@ -1242,7 +1236,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
@@ -1263,7 +1256,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	[ constants.FEATURE_ACTIVITY_LOG_V2 ]: {
@@ -1330,7 +1322,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	[ constants.FEATURE_VIDEO_HOSTING_V2 ]: {
@@ -1360,7 +1351,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: () => false,
 	},
 
 	[ constants.FEATURE_CRM_LEADS_AND_FUNNEL ]: {
