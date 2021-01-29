@@ -565,7 +565,7 @@ const _addTranslationsBatch = throttle( function ( userTranslations ) {
 	i18n.addTranslations( Object.assign( {}, ..._translationsBatch.splice( 0 ), userTranslations ) );
 	window.performance?.measure( 'add_translations', 'add_translations_start' );
 	window.performance?.clearMarks( 'add_translations_start' );
-}, 1000 / 60 );
+}, 100 );
 
 /**
  * Adds new translations to the existing locale data.
