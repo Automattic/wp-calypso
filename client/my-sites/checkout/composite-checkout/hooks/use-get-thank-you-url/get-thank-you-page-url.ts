@@ -390,9 +390,15 @@ function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< 
 	if ( cart && hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
 	}
+
 	if ( cart && hasTrafficGuide( cart ) ) {
 		return { d: 'traffic-guide' };
 	}
+
+	if ( cart ) {
+		return { d: 'purchase-success' };
+	}
+
 	return {};
 }
 

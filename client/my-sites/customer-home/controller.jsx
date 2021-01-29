@@ -18,12 +18,22 @@ export default async function ( context, next ) {
 	const isDev = context.query.dev === 'true';
 	const forcedView = context.query.view;
 
+	// Fetch display mode
+	const displayMode = context.query.d;
+
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome key={ siteId } isDev={ isDev } forcedView={ forcedView } />;
+	context.primary = (
+		<CustomerHome
+			key={ siteId }
+			isDev={ isDev }
+			forcedView={ forcedView }
+			displayMode={ displayMode }
+		/>
+	);
 
 	next();
 }

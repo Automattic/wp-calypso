@@ -29,6 +29,7 @@ import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import notices from 'calypso/notices';
 
 /**
  * Style dependencies
@@ -43,6 +44,7 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
+	displayMode,
 } ) => {
 	const translate = useTranslate();
 
@@ -54,6 +56,13 @@ const Home = ( {
 				illustration="/calypso/images/illustrations/error.svg"
 			/>
 		);
+	}
+
+	if ( 'purchase_success' === displayMode ) {
+		const successMessage = translate( 'Your purchase has been completed!' );
+		notices.success( successMessage, {
+			persistent: true,
+		} );
 	}
 
 	const header = (
