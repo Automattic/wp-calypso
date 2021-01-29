@@ -96,6 +96,7 @@ export default function CheckoutPaymentMethods( {
 					<CheckoutErrorBoundary
 						key={ method.id }
 						errorMessage={ sprintf(
+							/* translators: %s is the payment method name that has an error, like "PayPal" */
 							__( 'There was a problem with the payment method: %s' ),
 							method.id
 						) }
