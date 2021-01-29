@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
@@ -19,6 +18,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 } from 'calypso/lib/products-values/constants';
+import { getForCurrentCROIteration, Iterations } from '../iterations';
 
 /**
  * Type dependencies
@@ -56,13 +56,8 @@ const PRODUCT_POSITION_IN_GRID_SPP: Record< string, number > = {
 	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 70 ),
 };
 
-export function getProductPosition( slug: JetpackPlanSlugs | JetpackProductSlug ): number {
-	switch ( getJetpackCROActiveVersion() ) {
-		case 'i5':
-			return PRODUCT_POSITION_IN_GRID_I5[ slug ];
-		case 'spp':
-			return PRODUCT_POSITION_IN_GRID_SPP[ slug ];
-		default:
-			return 100;
-	}
-}
+export const getProductPosition = ( slug: JetpackPlanSlugs | JetpackProductSlug ): number =>
+	getForCurrentCROIteration( {
+		[ Iterations.I5 ]: PRODUCT_POSITION_IN_GRID_I5[ slug ],
+		[ Iterations.SPP ]: PRODUCT_POSITION_IN_GRID_SPP[ slug ],
+	} ) ?? 100;
