@@ -5,9 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import createReactClass from 'create-react-class';
-import debugFactory from 'debug';
-import { flowRight } from 'lodash';
+import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,50 +14,38 @@ import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import Notice from 'calypso/components/notice';
-import formBase from 'calypso/me/form-base';
 import Security2faProgress from 'calypso/me/security-2fa-progress';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import observe from 'calypso/lib/mixins/data-observe';
 import { protectForm } from 'calypso/lib/protect-form';
 import getCountries from 'calypso/state/selectors/get-countries';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
+import { saveTwoStepSMSSettings } from 'calypso/state/user-settings/thunks';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 
-const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
-
-const Security2faSMSSettings = createReactClass( {
-	displayName: 'Security2faSMSSettings',
-
-	componentDidMount: function () {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-		this.props.userSettings.getSettings();
-	},
-
-	componentWillUnmount: function () {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
-
-	mixins: [ formBase, observe( 'userSettings' ) ],
-
-	propTypes: {
+class Security2faSMSSettings extends React.Component {
+	static propTypes = {
 		countriesList: PropTypes.array.isRequired,
 		onCancel: PropTypes.func.isRequired,
 		onVerifyByApp: PropTypes.func.isRequired,
 		onVerifyBySMS: PropTypes.func.isRequired,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
-	},
+	};
 
-	verifyByApp: null,
+	constructor( props ) {
+		super( props );
 
-	getInitialState: function () {
 		let phoneNumber = null;
-		const storedCountry = this.props.userSettings.getSetting( 'two_step_sms_country' );
-		const storedNumber = this.props.userSettings.getSetting( 'two_step_sms_phone_number' );
+		const storedCountry = this.props.userSettings.two_step_sms_country;
+		const storedNumber = this.props.userSettings.two_step_sms_phone_number;
+
 		if ( storedCountry && storedNumber ) {
 			phoneNumber = {
 				countryCode: storedCountry,
@@ -68,14 +54,16 @@ const Security2faSMSSettings = createReactClass( {
 			};
 		}
 
-		return {
+		this.state = {
 			lastError: false,
 			phoneNumber,
 		};
-	},
+	}
 
-	getSubmitDisabled: function () {
-		if ( this.getDisabledState() ) {
+	verifyByApp = null;
+
+	getSubmitDisabled() {
+		if ( this.props.isUpdatingUserSettings ) {
 			return true;
 		}
 
@@ -89,29 +77,21 @@ const Security2faSMSSettings = createReactClass( {
 		}
 
 		return false;
-	},
+	}
 
-	onVerifyByApp: function ( event ) {
+	onVerifyByApp = ( event ) => {
 		event.preventDefault();
 		this.verifyByApp = true;
 		this.submitSMSSettings();
-	},
+	};
 
-	onVerifyBySMS: function ( event ) {
+	onVerifyBySMS = ( event ) => {
 		event.preventDefault();
 		this.verifyByApp = false;
 		this.submitSMSSettings();
-	},
+	};
 
-	/**
-	 * Note:  We purposely do not use form-base's submitForm so that we can
-	 * manage Notices ourselves
-	 */
-	submitSMSSettings: function () {
-		if ( ! this.refs.phoneInput ) {
-			return;
-		}
-
+	async submitSMSSettings() {
 		const phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
@@ -119,14 +99,23 @@ const Security2faSMSSettings = createReactClass( {
 			return;
 		}
 
-		this.props.userSettings.updateSetting( 'two_step_sms_phone_number', phoneNumber.phoneNumber );
-		this.props.userSettings.updateSetting( 'two_step_sms_country', phoneNumber.countryCode );
+		if (
+			phoneNumber.countryCode === this.props.userSettings.two_step_sms_country &&
+			phoneNumber.phoneNumber === this.props.userSettings.two_step_sms_phone_number
+		) {
+			this.handleSubmitResponse();
+			return;
+		}
 
-		this.setState( { submittingForm: true } );
-		this.props.userSettings.saveSettings( this.onSubmitResponse );
-	},
+		try {
+			await this.props.saveTwoStepSMSSettings( phoneNumber.countryCode, phoneNumber.phoneNumber );
+			this.handleSubmitResponse();
+		} catch ( error ) {
+			this.handleSubmitResponse( error );
+		}
+	}
 
-	onChangePhoneInput: function ( phoneNumber ) {
+	onChangePhoneInput = ( phoneNumber ) => {
 		this.setState( {
 			phoneNumber: {
 				phoneNumber: phoneNumber.phoneNumber,
@@ -135,28 +124,24 @@ const Security2faSMSSettings = createReactClass( {
 				validation: phoneNumber.validation,
 			},
 		} );
-	},
+	};
 
-	onSubmitResponse: function ( error ) {
-		this.setState( { submittingForm: false } );
-
+	handleSubmitResponse( error ) {
 		if ( error ) {
 			this.setState( { lastError: error } );
 			return;
 		}
 
-		if ( this.verifyByApp ) {
-			this.props.onVerifyByApp();
-		} else {
-			this.props.onVerifyBySMS();
-		}
-	},
+		const { onVerifyByApp, onVerifyBySMS } = this.props;
 
-	clearLastError: function () {
+		this.verifyByApp ? onVerifyByApp() : onVerifyBySMS();
+	}
+
+	clearLastError = () => {
 		this.setState( { lastError: false } );
-	},
+	};
 
-	possiblyRenderError: function () {
+	possiblyRenderError() {
 		let errorMessage;
 
 		if ( ! this.state.lastError ) {
@@ -172,9 +157,9 @@ const Security2faSMSSettings = createReactClass( {
 		return (
 			<Notice status="is-error" onDismissClick={ this.clearLastError } text={ errorMessage } />
 		);
-	},
+	}
 
-	render: function () {
+	render() {
 		const savingLabel = this.props.translate( 'Saving…' );
 
 		return (
@@ -194,23 +179,20 @@ const Security2faSMSSettings = createReactClass( {
 					<div className="security-2fa-sms-settings__fieldset-container">
 						<QuerySmsCountries />
 						<FormPhoneInput
-							ref="phoneInput"
 							countriesList={ this.props.countriesList }
-							disabled={ this.state.submittingForm }
+							disabled={ this.props.isUpdatingUserSettings }
 							countrySelectProps={ {
-								onFocus: function () {
+								onFocus() {
 									gaRecordEvent( 'Me', 'Focused On 2fa SMS Country Select' );
 								},
 							} }
 							phoneInputProps={ {
-								onFocus: function () {
+								onFocus() {
 									gaRecordEvent( 'Me', 'Focused On 2fa SMS Phone Number' );
 								},
 							} }
-							initialCountryCode={ this.props.userSettings.getSetting( 'two_step_sms_country' ) }
-							initialPhoneNumber={ this.props.userSettings.getSetting(
-								'two_step_sms_phone_number'
-							) }
+							initialCountryCode={ this.props.userSettings.two_step_sms_country }
+							initialPhoneNumber={ this.props.userSettings.two_step_sms_phone_number }
 							onChange={ this.onChangePhoneInput }
 						/>
 
@@ -220,46 +202,59 @@ const Security2faSMSSettings = createReactClass( {
 					<FormButtonsBar className="security-2fa-sms-settings__buttons">
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
-							onClick={ function ( event ) {
+							onClick={ ( event ) => {
 								gaRecordEvent( 'Me', 'Clicked On 2fa Use App Button' );
 								this.onVerifyByApp( event );
-							}.bind( this ) }
+							} }
 						>
-							{ this.state.submittingForm ? savingLabel : this.props.translate( 'Verify via App' ) }
+							{ this.props.isUpdatingUserSettings
+								? savingLabel
+								: this.props.translate( 'Verify via App' ) }
 						</FormButton>
 
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
 							isPrimary={ false }
-							onClick={ function ( event ) {
+							onClick={ ( event ) => {
 								gaRecordEvent( 'Me', 'Clicked On 2fa Use SMS Button' );
 								this.onVerifyBySMS( event );
-							}.bind( this ) }
+							} }
 						>
-							{ this.state.submittingForm ? savingLabel : this.props.translate( 'Verify via SMS' ) }
+							{ this.props.isUpdatingUserSettings
+								? savingLabel
+								: this.props.translate( 'Verify via SMS' ) }
 						</FormButton>
 
 						<FormButton
 							className="security-2fa-sms-settings__cancel-button"
 							isPrimary={ false }
-							onClick={ function ( event ) {
+							onClick={ ( event ) => {
 								gaRecordEvent( 'Me', 'Clicked On Step 1 2fa Cancel Button' );
 								this.props.onCancel( event );
-							}.bind( this ) }
+							} }
 						>
-							{ this.state.submittingForm ? savingLabel : this.props.translate( 'Cancel' ) }
+							{ this.props.isUpdatingUserSettings ? savingLabel : this.props.translate( 'Cancel' ) }
 						</FormButton>
 					</FormButtonsBar>
 				</form>
 			</div>
 		);
-	},
-} );
+	}
+}
 
-export default flowRight(
+export default compose(
 	protectForm,
 	localize,
-	connect( ( state ) => ( {
-		countriesList: getCountries( state, 'sms' ),
-	} ) )
+	connect(
+		( state ) => ( {
+			isUpdatingUserSettings: isUpdatingUserSettings( state ),
+			userSettings: getUserSettings( state ),
+			countriesList: getCountries( state, 'sms' ),
+		} ),
+		{
+			setUserSetting,
+			saveUserSettings,
+			saveTwoStepSMSSettings,
+		}
+	)
 )( Security2faSMSSettings );

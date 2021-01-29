@@ -11,8 +11,10 @@ import { get } from 'lodash';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_REQUEST_FAILURE,
+	USER_SETTINGS_REQUEST_SUCCESS,
 	USER_SETTINGS_SAVE,
-	USER_SETTINGS_SAVE_SUCCCESS,
+	USER_SETTINGS_SAVE_SUCCESS,
 	USER_SETTINGS_SAVE_FAILURE,
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
@@ -33,6 +35,28 @@ export const fetchUserSettings = () => ( {
 } );
 
 /**
+ * Used in signalling that requesting user settings was not successful
+ *
+ * @param {object} error Error object received from the API
+ * @returns {object} Action object
+ */
+export const fetchUserSettingsFailure = ( error ) => ( {
+	type: USER_SETTINGS_REQUEST_FAILURE,
+	error,
+} );
+
+/**
+ * Used in signalling that requesting user settings was successful.
+ *
+ * @param {object} settingValues Object containing fetched user settings
+ * @returns {object} Action object
+ */
+export const fetchUserSettingsSuccess = ( settingValues ) => ( {
+	type: USER_SETTINGS_REQUEST_SUCCESS,
+	settingValues,
+} );
+
+/**
  * Post settings to WordPress.com API at /me/settings endpoint
  *
  * @param {object} settingsOverride - default settings object
@@ -50,7 +74,7 @@ export const saveUserSettings = ( settingsOverride ) => ( {
  * @returns {object}               Action object
  */
 export const saveUserSettingsSuccess = ( settingValues ) => ( {
-	type: USER_SETTINGS_SAVE_SUCCCESS,
+	type: USER_SETTINGS_SAVE_SUCCESS,
 	settingValues,
 } );
 
