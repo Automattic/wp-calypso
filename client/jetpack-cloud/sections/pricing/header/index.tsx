@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 
 /**
@@ -13,7 +13,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import OlarkChat from 'calypso/components/olark-chat';
 import config from '@automattic/calypso-config';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { getCurrentCROIterationName } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 // Fresh Start 2021 promotion; runs from Feb 1 00:00 to Feb 14 23:59 UTC automatically.
@@ -28,7 +28,7 @@ import './style.scss';
 const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 	const identity = config( 'olark_chat_identity' );
 	const translate = useTranslate();
-	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
+	const iteration = useMemo( getCurrentCROIterationName, [] ) as Iterations;
 	const title =
 		iteration === 'spp'
 			? translate( 'Security, performance, and marketing tools for WordPress' )
