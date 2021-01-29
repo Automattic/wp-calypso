@@ -59,7 +59,13 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 	const placeholderPlans = [ 1, 2, 3, 4 ];
 
 	// Primary plan
-	const popularPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan( locale ) );
+	const { popularPlan, getPlanProduct } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
+		return {
+			popularPlan: plansStore.getDefaultPaidPlan( locale ),
+			getPlanProduct: plansStore.getPlanProduct,
+		};
+	} );
 	const recommendedPlanSlug = useSelect( ( select ) =>
 		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
 	);
@@ -127,7 +133,8 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 								isPrimary
 								isSelected={
 									!! selectedPlanProductId &&
-									primaryPlan.productIds.indexOf( selectedPlanProductId ) > -1
+									selectedPlanProductId ===
+										getPlanProduct( primaryPlan.periodAgnosticSlug, billingPeriod )?.productId
 								}
 								onSelect={ onPlanSelect }
 								onPickDomainClick={ onPickDomainClick }
@@ -164,7 +171,11 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 									openPlans.indexOf( plan.periodAgnosticSlug ) > -1 &&
 									! disabledPlans?.[ plan.periodAgnosticSlug ]
 								}
-								isSelected={ plan.productIds.indexOf( selectedPlanProductId as never ) > -1 }
+								isSelected={
+									!! selectedPlanProductId &&
+									selectedPlanProductId ===
+										getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
+								}
 								onSelect={ onPlanSelect }
 								onPickDomainClick={ onPickDomainClick }
 								onToggle={ handleToggle }

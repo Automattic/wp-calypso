@@ -3,6 +3,7 @@
  */
 import React, { useState } from 'react';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import type {
 	DisabledPlansMap,
 } from './types';
 import { useSupportedPlans } from '../hooks';
+import { PLANS_STORE } from '../constants';
 
 /**
  * Style dependencies
@@ -54,34 +56,39 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 
 	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
 
+	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
+
 	return (
 		<div className="plans-table">
-			{ supportedPlans.map(
-				( plan ) =>
-					plan && (
-						<PlanItem
-							popularBadgeVariation={ popularBadgeVariation }
-							allPlansExpanded={ allPlansExpanded }
-							key={ plan.periodAgnosticSlug }
-							slug={ plan.periodAgnosticSlug }
-							domain={ currentDomain }
-							tagline={
-								( showTaglines && customTagLines?.[ plan.periodAgnosticSlug ] ) ?? plan.description
-							}
-							CTAVariation={ CTAVariation }
-							features={ plan.features ?? [] }
-							billingPeriod={ billingPeriod }
-							isPopular={ plan.isPopular }
-							isFree={ plan.isFree }
-							name={ plan?.title.toString() }
-							isSelected={ plan.productIds.indexOf( selectedPlanProductId as never ) > -1 }
-							onSelect={ onPlanSelect }
-							onPickDomainClick={ onPickDomainClick }
-							onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
-							disabledLabel={ disabledPlans?.[ plan.periodAgnosticSlug ] }
-						></PlanItem>
-					)
-			) }
+			{ supportedPlans
+				.filter( ( plan ) => !! plan )
+				.map( ( plan ) => (
+					<PlanItem
+						popularBadgeVariation={ popularBadgeVariation }
+						allPlansExpanded={ allPlansExpanded }
+						key={ plan.periodAgnosticSlug }
+						slug={ plan.periodAgnosticSlug }
+						domain={ currentDomain }
+						tagline={
+							( showTaglines && customTagLines?.[ plan.periodAgnosticSlug ] ) ?? plan.description
+						}
+						CTAVariation={ CTAVariation }
+						features={ plan.features ?? [] }
+						billingPeriod={ billingPeriod }
+						isPopular={ plan.isPopular }
+						isFree={ plan.isFree }
+						name={ plan?.title.toString() }
+						isSelected={
+							!! selectedPlanProductId &&
+							selectedPlanProductId ===
+								getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
+						}
+						onSelect={ onPlanSelect }
+						onPickDomainClick={ onPickDomainClick }
+						onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
+						disabledLabel={ disabledPlans?.[ plan.periodAgnosticSlug ] }
+					></PlanItem>
+				) ) }
 		</div>
 	);
 };
