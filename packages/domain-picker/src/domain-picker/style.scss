@@ -109,6 +109,17 @@ $accent-blue: #117ac9;
 		}
 	}
 
+	&.type-link {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+
+		@include break-medium {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+
 	&.placeholder {
 		cursor: default;
 	}

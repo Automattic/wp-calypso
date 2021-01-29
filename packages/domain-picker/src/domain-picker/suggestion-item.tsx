@@ -20,6 +20,7 @@ import { sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import InfoTooltip from '../info-tooltip';
+import WrappingComponent from './suggestion-item-wrapper';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
 
@@ -30,32 +31,6 @@ export type SUGGESTION_ITEM_TYPE =
 	| typeof ITEM_TYPE_RADIO
 	| typeof ITEM_TYPE_BUTTON
 	| typeof ITEM_TYPE_INDIVIDUAL_ITEM;
-
-// to avoid nesting buttons, wrap the item with a div instead of button in button mode
-// (button mode means there is a Select button, not the whole item being a button)
-
-interface WrappingComponentAdditionalProps {
-	type: SUGGESTION_ITEM_TYPE;
-	disabled?: boolean;
-}
-type WrappingComponentProps = WrappingComponentAdditionalProps &
-	( React.HTMLAttributes< HTMLDivElement > | React.ButtonHTMLAttributes< HTMLButtonElement > );
-
-const WrappingComponent = React.forwardRef< HTMLButtonElement, WrappingComponentProps >(
-	( { type, disabled, ...props }, ref ) => {
-		if ( type === 'button' ) {
-			return <div { ...( props as React.HTMLAttributes< HTMLDivElement > ) } />;
-		}
-		return (
-			<button
-				ref={ ref }
-				disabled={ disabled }
-				{ ...( props as React.ButtonHTMLAttributes< HTMLButtonElement > ) }
-			/>
-		);
-	}
-);
-
 interface Props {
 	isUnavailable?: boolean;
 	domain: string;

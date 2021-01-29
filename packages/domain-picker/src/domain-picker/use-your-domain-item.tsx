@@ -8,6 +8,7 @@ import { ArrowButton } from '@automattic/onboarding';
 /**
  * Internal dependencies
  */
+import WrappingComponent from './suggestion-item-wrapper';
 
 interface Props {
 	onClick: () => void;
@@ -15,7 +16,11 @@ interface Props {
 
 const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 	return (
-		<label className="domain-picker__suggestion-item contains-link">
+		<WrappingComponent
+			type="button"
+			className="domain-picker__suggestion-item type-link"
+			onClick={ onClick }
+		>
 			<div className="domain-picker__suggestion-item-name">
 				<span className="domain-picker__domain-wrapper with-margin with-bold-text">
 					{ __( 'Already own a domain?', __i18n_text_domain__ ) }
@@ -37,7 +42,7 @@ const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
 					__i18n_text_domain__
 				) }
 			</ArrowButton>
-		</label>
+		</WrappingComponent>
 	);
 };
 
