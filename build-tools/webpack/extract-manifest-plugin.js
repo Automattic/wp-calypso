@@ -1,30 +1,22 @@
 const PLUGIN_NAME = 'ExtractManifestPlugin';
 const webpack = require( 'webpack' );
-
-class ExtractManifestModule extends webpack.RuntimeModule {
-	constructor( manifestContent = [] ) {
-		super( 'extract manifest' );
-		this.manifestContent = manifestContent;
-	}
-
-	generate() {
-		const { compilation } = this;
-		const { runtimeTemplate } = compilation;
-		const namespace = webpack.RuntimeGlobals.require;
-		const template = webpack.Template;
-
-		return `${ namespace }.__extracted_manifest = ${ runtimeTemplate.basicFunction(
-			'',
-			template.indent( [ 'var manifest=new Map();', ...this.manifestContent, 'return manifest;' ] )
-		) }`;
-	}
-}
+const { ConcatSource } = webpack.sources;
 
 class ExtractManifestPlugin {
+	constructor( options = {} ) {
+		this.options = {
+			manifestName: 'manifest',
+			runtimeChunk: 'runtime',
+			globalManifest: 'window.__WEBPACK_MANIFEST',
+			...options,
+		};
+	}
+
 	apply( compiler ) {
 		// Tapping into compiler.make allow us to come after the regular TemplatedPathPlugin
 		compiler.hooks.compilation.tap( PLUGIN_NAME, ( compilation ) => {
-			const manifestContent = [];
+			const globalManifest = this.options.globalManifest;
+			const manifestContent = [ `${ globalManifest }=new Map();` ];
 			const quoteRegex = new RegExp( /^(['"])/ );
 			const variableRegex = new RegExp( /\[(.*?)\]/gi );
 			const variablesProcessed = new Set();
@@ -110,12 +102,12 @@ class ExtractManifestPlugin {
 						// `nameExpression` is an expression that assumes `chunkId` exists in the scope (like `({1:'chunk1', 2:'chunk2'}[chunkId])`).
 						// Transform it to a function and add it to the manifest.
 						manifestContent.push(
-							`manifest.set('${ namespacedVariable }', function(chunkId){return ${ nameExpression };});`
+							`${ globalManifest }.set('${ namespacedVariable }', function(chunkId, ${ namespace }){return ${ nameExpression };});`
 						);
 						variablesProcessed.add( namespacedVariable );
 					}
 					// Create an expression that calls the generated manifest function with the chunkId
-					return `${ quote }+${ namespace }.__extracted_manifest().get('${ namespacedVariable }')(chunkId)+${ quote }`;
+					return `${ quote }+${ globalManifest }.get('${ namespacedVariable }')(chunkId, ${ namespace })+${ quote }`;
 				} );
 			} );
 
@@ -123,35 +115,29 @@ class ExtractManifestPlugin {
 			// template and hash for both files (eg: it will generate `runtime.<hash>.js` and `manifest.<hash>.js` and both <hash> will be the same).
 			//
 			// The logic has been copied from webpack/lib/javascript/JavascriptModulesPlugin.js
-			// compilation.hooks.renderManifest.tap( PLUGIN_NAME, ( result, options ) => {
-			// 	const { chunk, outputOptions } = options;
+			compilation.hooks.renderManifest.tap( PLUGIN_NAME, ( result, options ) => {
+				const { chunk, outputOptions } = options;
 
-			// 	if ( chunk.name === this.options.runtimeChunk ) {
-			// 		// Using unshift so the manifest comes before the runtime, so when the runtime runs, all globals are already in place.
-			// 		result.unshift( {
-			// 			render: () => new ConcatSource( ...manifestContent ),
-			// 			filenameTemplate: chunk.filenameTemplate || outputOptions.filename,
-			// 			pathOptions: {
-			// 				hash: options.hash,
-			// 				runtime: chunk.runtime,
-			// 				contentHashType: 'javascript',
-			// 				chunk: {
-			// 					...chunk,
-			// 					name: this.options.manifestName,
-			// 				},
-			// 			},
-			// 			identifier: `chunk${ chunk.id }-manifest`,
-			// 			hash: chunk.contentHash.javascript,
-			// 		} );
-			// 	}
-			// 	return result;
-			// } );
-
-			compilation.hooks.runtimeRequirementInTree
-				.for( webpack.RuntimeGlobals.ensureChunkHandlers )
-				.tap( PLUGIN_NAME, ( chunk ) => {
-					compilation.addRuntimeModule( chunk, new ExtractManifestModule( manifestContent ) );
-				} );
+				if ( chunk.name === this.options.runtimeChunk ) {
+					// Using unshift so the manifest comes before the runtime, so when the runtime runs, all globals are already in place.
+					result.unshift( {
+						render: () => new ConcatSource( ...manifestContent ),
+						filenameTemplate: chunk.filenameTemplate || outputOptions.filename,
+						pathOptions: {
+							hash: options.hash,
+							runtime: chunk.runtime,
+							contentHashType: 'javascript',
+							chunk: {
+								...chunk,
+								name: this.options.manifestName,
+							},
+						},
+						identifier: `chunk${ chunk.id }-manifest`,
+						hash: '12345',
+					} );
+				}
+				return result;
+			} );
 		} );
 	}
 }
