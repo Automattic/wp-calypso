@@ -192,6 +192,7 @@ export function getWindowInnerWidth() {
 
 /******************************************/
 /*       Vertical Scroll Experiment       */
+/*  	       pcbrnV-XN-p2               */
 /******************************************/
 
 //TODO: To be refactored using above using the DESKTOP_BREAKPOINT constant
@@ -202,19 +203,17 @@ export function isTabletResolution() {
 	return false;
 }
 
-export const DEVICE_MOBILE = 'MOBILE';
-export const DEVICE_TABLET = 'TABLET';
-export const DEVICE_DESKTOP = 'DESKTOP';
+export const DEVICE_MOBILE = 'mobile';
+export const DEVICE_TABLET = 'tablet';
+export const DEVICE_DESKTOP = 'desktop';
+
 export function resolveDeviceTypeByViewPort() {
-	let deviceType;
 	if ( isMobile() ) {
-		deviceType = DEVICE_MOBILE;
+		return DEVICE_MOBILE;
 	} else if ( isTabletResolution() ) {
-		deviceType = DEVICE_TABLET;
-	} else {
-		deviceType = DEVICE_DESKTOP;
+		return DEVICE_TABLET;
 	}
-	return deviceType;
+	return DEVICE_DESKTOP;
 }
 
 /******************************************/
