@@ -5,31 +5,10 @@
 	fill="none"
 	xmlns="http://www.w3.org/2000/svg"
 >
-	<g clip-path="url(#clip0)">
-		<rect width="24" height="24" fill="white" />
-		<mask
-			id="mask0"
-			mask-type="alpha"
-			maskUnits="userSpaceOnUse"
-			x="1"
-			y="1"
-			width="22"
-			height="22"
-		>
-			<path
-				fill-rule="evenodd"
-				clip-rule="evenodd"
-				d="M11.9999 6.66658V1.33325L22.6666 11.9999L11.9999 22.6666V17.3333H1.33325V6.66658H11.9999ZM18.8933 11.9999L14.6666 7.77325V9.33325H3.99992V14.6666H14.6666V16.2266L18.8933 11.9999Z"
-				fill="white"
-			/>
-		</mask>
-		<g mask="url(#mask0)">
-			<rect x="-4" y="-4" width="32" height="32" fill="#7BB1CD" />
-		</g>
-	</g>
-	<defs>
-		<clipPath id="clip0">
-			<rect width="24" height="24" fill="white" />
-		</clipPath>
-	</defs>
+<path
+		fill-rule="evenodd"
+		clip-rule="evenodd"
+		d="M11.9999 6.66658V1.33325L22.6666 11.9999L11.9999 22.6666V17.3333H1.33325V6.66658H11.9999ZM18.8933 11.9999L14.6666 7.77325V9.33325H3.99992V14.6666H14.6666V16.2266L18.8933 11.9999Z"
+		fill="#72aee6"
+	/>
 </svg>
