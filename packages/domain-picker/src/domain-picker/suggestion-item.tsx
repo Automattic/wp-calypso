@@ -215,10 +215,11 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				{ ! isFree && ! isUnavailable && (
 					<>
 						<span className="domain-picker__price-cost">
-							{
-								/* translators: %s is the price with currency. Eg: $15/year. */
-								sprintf( __( '%s/year', __i18n_text_domain__ ), cost )
-							}
+							{ sprintf(
+								// translators: %s is the price with currency. Eg: $15/year
+								__( '%s/year', __i18n_text_domain__ ),
+								cost
+							) }
 						</span>
 						<span className="domain-picker__price-inclusive">
 							{ /* Intentional whitespace to get the spacing around the text right */ }{ ' ' }

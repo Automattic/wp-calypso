@@ -82,10 +82,11 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 							<br />
 							<span className="nux-launch__summary-item__domain-price">
 								{ __( 'Domain Registration', 'full-site-editing' ) }:{ ' ' }
-								{
-									/* translators: %s is the price with currency. Eg: $15/year. */
-									sprintf( __( '%s/year', 'full-site-editing' ), domain.cost )
-								}
+								{ sprintf(
+									// translators: %s is the price with currency. Eg: $15/year
+									__( '%s/year', 'full-site-editing' ),
+									domain.cost
+								) }
 							</span>
 						</>
 					) }
