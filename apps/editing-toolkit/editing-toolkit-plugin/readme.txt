@@ -43,6 +43,11 @@ This plugin is experimental, so we don't provide any support for it outside of w
 = 2.16 =
 * Fix Global Styles Panel Font Change Update (https://github.com/Automattic/wp-calypso/pull/49216)
 * Welcome Tour: combine existing and variant tour plugins (https://github.com/Automattic/wp-calypso/pull/49296)
+* Launch: Fix launch button translations not loaded. (https://github.com/Automattic/wp-calypso/pull/49456)
+* Gutenboarding: Fix eCommerce plan not being recommended (https://github.com/Automattic/wp-calypso/pull/49426)
+* Gutenboarding: Fix "Choose a domain I own" layout on mobile (https://github.com/Automattic/wp-calypso/pull/49249)
+* Domain Picker: Prevent instant error on domain step during editor launch flow (https://github.com/Automattic/wp-calypso/pull/48399)
+* Focused Launch: Highlight selected plan in Focused Launch - Detailed Plans. (https://github.com/Automattic/wp-calypso/pull/48622)
 
 = 2.15 =
 * Add plugin to transform i18n imports to local variables (https://github.com/Automattic/wp-calypso/pull/49341)
