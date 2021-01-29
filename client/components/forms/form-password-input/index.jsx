@@ -52,8 +52,8 @@ class FormPasswordInput extends React.Component {
 		return (
 			<div className="form-password-input">
 				<FormTextInput
-					{ ...omit( this.props, 'hideToggle', 'submitting', 'isBreakpointActive' ) }
 					autoComplete="off"
+					{ ...omit( this.props, 'hideToggle', 'submitting', 'isBreakpointActive' ) }
 					ref={ this.textFieldRef }
 					type={ this.hidden() ? 'password' : 'text' }
 				/>
