@@ -530,7 +530,7 @@ function LineItemSublabelAndPrice( { item } ) {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
-		return translate( '%(sublabel)s: %(monthlyPrice)s /month × %(monthsPerBillPeriod)s', {
+		return translate( '%(sublabel)s: %(monthlyPrice)s / month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: item.sublabel,
 				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
