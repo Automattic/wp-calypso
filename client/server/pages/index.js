@@ -175,7 +175,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isMobileApp: isWpMobileApp( request.useragent.source ),
+		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isDebug,
 		staticUrls: staticFilesUrls,
 	};
