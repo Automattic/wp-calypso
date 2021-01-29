@@ -37,6 +37,8 @@ import {
 	SITE_BLOCKED,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
+import { JETPACK_REDIRECT_URL } from 'calypso/lib/plans/constants';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const debug = debugModule( 'calypso:jetpack-connect:main' );
 
@@ -87,7 +89,15 @@ const jetpackConnection = ( WrappedComponent ) => {
 				clearPlan();
 				if ( currentPlan ) {
 					debug( `Redirecting to checkout with ${ currentPlan } plan retrieved from cookies` );
-					this.redirect( 'checkout', url, currentPlan, queryArgs );
+					const urlQueryArgs = {
+						...queryArgs,
+						// If isJetpackCloud(), add the `redirect_to` url query arg to
+						// tell checkout to redirect to a Jetpack Redirect url after checkout complete.
+						...( isJetpackCloud() && {
+							redirect_to: `${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou`,
+						} ),
+					};
+					this.redirect( 'checkout', url, currentPlan, urlQueryArgs );
 				} else {
 					debug( 'Redirecting to plans_selection' );
 					this.redirect( 'plans_selection', url );
