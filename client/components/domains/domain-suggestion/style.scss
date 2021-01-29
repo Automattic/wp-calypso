@@ -1,6 +1,20 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
+.domain-suggestion {
+	&.is-clickable {
+		cursor: pointer;
+
+		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
+
+		&:hover {
+			box-shadow: 0 0 0 1px var( --color-neutral-light );
+			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
+		}
+	}
+}
+
 .domain-suggestion:not( .featured-domain-suggestion ) {
 	display: flex;
 	flex-direction: column;
@@ -20,18 +34,6 @@
 		@include breakpoint-deprecated( '>800px' ) {
 			flex-direction: row;
 			align-items: center;
-		}
-	}
-
-	&.is-clickable {
-		cursor: pointer;
-
-		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
-
-		&:hover {
-			box-shadow: 0 0 0 1px var( --color-neutral-light );
-			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
 		}
 	}
 
@@ -284,6 +286,13 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
+		&.is-clickable:hover {
+			@include break-mobile {
+				background: var( --color-primary-0 );
+				box-shadow: 0 0 0 1px var( --color-primary-40 );
+			}
+		}
+
 		&:not( .featured-domain-suggestion ) {
 			.domain-registration-suggestion__domain-title {
 				line-height: 3rem;
@@ -313,13 +322,6 @@ body.is-section-signup.is-white-signup {
 
 				@include break-mobile {
 					font-size: $font-body-extra-small;
-				}
-			}
-
-			&.is-clickable:hover {
-				@include break-mobile {
-					background: var( --color-primary-0 );
-					box-shadow: 0 0 0 1px var( --color-primary-40 );
 				}
 			}
 
