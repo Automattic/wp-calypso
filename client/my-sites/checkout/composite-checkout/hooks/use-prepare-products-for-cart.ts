@@ -108,8 +108,8 @@ function useStripProductsFromUrl( siteSlug: string | undefined, isLoading: boole
 		try {
 			// Replace the pathname with /checkout/example.com, which otherwise may
 			// include new products (eg /checkout/example.com/personal) or renewals
-			// (eg /checkout/value_bundle/11111111/example.com). That way loading the
-			// page later will not add those products to the cart again.
+			// (eg /checkout/value_bundle/renew/11111111/example.com). That way
+			// loading the page later will not add those products to the cart again.
 			const newUrl =
 				window.location.protocol + '//' + window.location.host + '/checkout/' + siteSlug ??
 				'no-site' + window.location.search + window.location.hash;
