@@ -1,4 +1,5 @@
 @import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 @import '~@automattic/typography/styles/variables';
 @import '../variables.scss';
@@ -210,39 +211,76 @@
 }
 
 .plan-item__select-button.components-button {
-	padding: 0 24px;
+	justify-content: center;
 	height: 40px;
+	margin-top: 15px;
+	padding: 0 24px;
+
+	font-size: $font-body-small;
+	color: var( --studio-gray-90 );
+
+	// stylelint-disable-next-line scales/radii
+	border-radius: 4px;
+	border: 1px solid var( --studio-gray-10 );
+
+	&:active,
+	&:hover {
+		background: inherit;
+		color: inherit;
+	}
+
+	&:focus {
+		border-color: inherit;
+		box-shadow: 0 0 0 1.5px $onboarding-accent-blue;
+	}
 
 	&:disabled {
+		border-color: var( --studio-gray-5 );
 		text-decoration: line-through;
 		opacity: 0.5;
 	}
 
-	&:not( .is-primary ) {
-		color: var( --studio-gray-90 );
+	&.is-primary,
+	&.is-popular {
+		background: $onboarding-accent-blue;
+		border-color: $onboarding-accent-blue;
 
+		color: var( --studio-white );
+
+		&:active:not( :disabled ),
 		&:hover {
-			color: inherit;
+			background: $onboarding-accent-blue;
+			border-color: inherit;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 1.5px $onboarding-accent-blue;
+		}
+
+		&:not( .full-width ) svg {
+			margin-left: -8px;
+			margin-right: 10px;
 		}
 	}
-}
 
-.plan-item__select-button.components-button.full-width {
-	width: 100%;
-	justify-content: center;
-	font-size: $font-body-small;
-	// stylelint-disable-next-line scales/radii
-	border-radius: 4px;
-	margin-top: 15px;
-	border: 1px solid var( --studio-gray-5 );
-}
+	&.is-selected {
+		border-color: $onboarding-accent-blue;
+		color: $onboarding-accent-blue;
+		background: $onboarding-accent-blue-background;
 
-.plan-item__select-button.components-button.is-primary {
-	border: 0;
+		& svg {
+			fill: currentColor;
+			stroke: currentColor;
 
-	svg {
-		margin-left: -8px;
-		margin-right: 10px;
+			// makes it look more vertically centered
+			transform: translateY( -1px );
+			vertical-align: middle;
+			margin-right: 4px;
+		}
+	}
+
+	&.full-width {
+		width: 100%;
 	}
 }
 
