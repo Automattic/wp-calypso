@@ -1123,15 +1123,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'Backup Real-time (off-site)' ),
-			}[ variation ] ||
-			i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Backup Real-time (off-site)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
