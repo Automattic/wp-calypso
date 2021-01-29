@@ -287,6 +287,7 @@ export class PlanFeatures extends Component {
 			translate,
 			showPlanCreditsApplied,
 			isLaunchPage,
+			isInVerticalScrollingPlansExperiment,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -345,6 +346,7 @@ export class PlanFeatures extends Component {
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
+						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -390,6 +392,7 @@ export class PlanFeatures extends Component {
 			siteType,
 			showPlanCreditsApplied,
 			withScroll,
+			isInVerticalScrollingPlansExperiment,
 		} = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -466,6 +469,7 @@ export class PlanFeatures extends Component {
 						plansWithScroll={ withScroll }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
+						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					/>
 				</th>
 			);

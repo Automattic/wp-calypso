@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { includes, isEmpty, reduce, snakeCase, toPairs } from 'lodash';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -71,7 +72,9 @@ function recordSubmitStep( stepName, providedDependencies ) {
 		{}
 	);
 
+	const device = resolveDeviceTypeByViewPort();
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
+		device,
 		step: stepName,
 		...inputs,
 	} );

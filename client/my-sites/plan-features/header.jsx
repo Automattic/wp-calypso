@@ -36,7 +36,12 @@ import { planLevelsMatch } from 'calypso/lib/plans/index';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const { isInSignup, plansWithScroll, planType } = this.props;
+		const {
+			isInSignup,
+			plansWithScroll,
+			planType,
+			isInVerticalScrollingPlansExperiment,
+		} = this.props;
 
 		if ( planType === PLAN_P2_FREE ) {
 			return this.renderPlansHeaderP2Free();
@@ -46,10 +51,20 @@ export class PlanFeaturesHeader extends Component {
 		if ( plansWithScroll ) {
 			return this.renderPlansHeaderNoTabs();
 		} else if ( isInSignup ) {
+			if ( isInVerticalScrollingPlansExperiment ) {
+				return this.renderPlansHeader();
+			}
 			return this.renderSignupHeader();
 		}
-
 		return this.renderPlansHeader();
+	}
+
+	resolveIsPillInCorner() {
+		const { isInSignup, isInVerticalScrollingPlansExperiment, plansWithScroll } = this.props;
+		return (
+			( isInVerticalScrollingPlansExperiment && isInSignup && plansWithScroll ) ||
+			( ! isInVerticalScrollingPlansExperiment && isInSignup )
+		);
 	}
 
 	renderPlansHeader() {
@@ -68,7 +83,7 @@ export class PlanFeaturesHeader extends Component {
 			'is-p2-plus': planType === PLAN_P2_PLUS,
 		} );
 		const isCurrent = this.isPlanCurrent();
-
+		const isPillInCorner = this.resolveIsPillInCorner();
 		return (
 			<header className={ headerClasses }>
 				{ planType !== PLAN_P2_PLUS && (
@@ -82,19 +97,19 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getBillingTimeframe() }
 				</div>
 				{ ! isInSignup && isCurrent && (
-					<PlanPill isInSignup={ isInSignup }>{ translate( 'Your Plan' ) }</PlanPill>
+					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Your Plan' ) }</PlanPill>
 				) }
 				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && (
-					<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
+					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Suggested' ) }</PlanPill>
 				) }
 				{ popular && ! selectedPlan && ! isCurrent && (
-					<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
+					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Popular' ) }</PlanPill>
 				) }
 				{ newPlan && ! selectedPlan && ! isCurrent && (
-					<PlanPill isInSignup={ isInSignup }>{ translate( 'New' ) }</PlanPill>
+					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'New' ) }</PlanPill>
 				) }
 				{ bestValue && ! selectedPlan && ! isCurrent && (
-					<PlanPill isInSignup={ isInSignup }>{ translate( 'Best Value' ) }</PlanPill>
+					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Best Value' ) }</PlanPill>
 				) }
 			</header>
 		);

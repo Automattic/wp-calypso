@@ -35,9 +35,30 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
  * Style dependencies
  */
 import './style.scss';
+import { Experiment } from 'calypso/components/experiment';
+import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
+import PulsingDot from 'calypso/components/pulsing-dot';
+import { isTabletResolution } from '@automattic/viewport';
 
 export class PlansStep extends Component {
+	state = {
+		plansWithScroll: ! isTabletResolution(),
+	};
+
+	windowResize = () => {
+		this.setState( { plansWithScroll: ! isTabletResolution() } );
+	};
+
+	componentWillUnmount() {
+		if ( typeof window === 'object' ) {
+			window.removeEventListener( 'resize', this.windowResize );
+		}
+	}
+
 	componentDidMount() {
+		if ( typeof window === 'object' ) {
+			window.addEventListener( 'resize', this.windowResize );
+		}
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -142,30 +163,41 @@ export class PlansStep extends Component {
 			planTypes,
 			flowName,
 			showTreatmentPlansReorderTest,
+			isLoadingExperiment,
+			isInVerticalScrollingPlansExperiment,
 		} = this.props;
 
 		return (
 			<div>
 				<QueryPlans />
-
-				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
-					isInSignup={ true }
-					isLaunchPage={ isLaunchPage }
-					intervalType={ this.getIntervalType() }
-					onUpgradeClick={ this.onSelectPlan }
-					showFAQ={ false }
-					displayJetpackPlans={ false }
-					domainName={ this.getDomainName() }
-					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-					plansWithScroll={ true }
-					planTypes={ planTypes }
-					flowName={ flowName }
-					customHeader={ this.getGutenboardingHeader() }
-					showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-				/>
+				{ isLoadingExperiment ? (
+					<div className="plans__loading-container">
+						<PulsingDot delay={ 400 } active />
+					</div>
+				) : (
+					<PlansFeaturesMain
+						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+						hideFreePlan={ hideFreePlan }
+						isInSignup={ true }
+						isLaunchPage={ isLaunchPage }
+						intervalType={ this.getIntervalType() }
+						onUpgradeClick={ this.onSelectPlan }
+						showFAQ={ false }
+						displayJetpackPlans={ false }
+						domainName={ this.getDomainName() }
+						customerType={ this.getCustomerType() }
+						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+						plansWithScroll={
+							isInVerticalScrollingPlansExperiment ? this.state.plansWithScroll : true
+						}
+						planTypes={ planTypes }
+						flowName={ flowName }
+						customHeader={ this.getGutenboardingHeader() }
+						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+						isAllPaidPlansShown={ true }
+						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -207,26 +239,30 @@ export class PlansStep extends Component {
 		}
 
 		return (
-			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ headerText }
-				fallbackHeaderText={ fallbackHeaderText }
-				subHeaderText={ subHeaderText }
-				fallbackSubHeaderText={ fallbackSubHeaderText }
-				isWideLayout={ true }
-				stepContent={ this.plansFeaturesList() }
-				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
-				backUrl={ backUrl }
-				backLabelText={ backLabelText }
-				hideFormattedHeader={ !! this.getGutenboardingHeader() }
-			/>
+			<>
+				<Experiment name="vertical_scrolling_plans" />
+				<StepWrapper
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
+					headerText={ headerText }
+					fallbackHeaderText={ fallbackHeaderText }
+					subHeaderText={ subHeaderText }
+					fallbackSubHeaderText={ fallbackSubHeaderText }
+					isWideLayout={ true }
+					stepContent={ this.plansFeaturesList() }
+					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+					backUrl={ backUrl }
+					backLabelText={ backLabelText }
+					hideFormattedHeader={ !! this.getGutenboardingHeader() }
+				/>
+			</>
 		);
 	}
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
+			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
@@ -284,6 +320,9 @@ export default connect(
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
+		isLoadingExperiment: isLoading( state ),
+		isInVerticalScrollingPlansExperiment:
+			'treatment' === getVariationForUser( state, 'vertical_scrolling_plans' ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

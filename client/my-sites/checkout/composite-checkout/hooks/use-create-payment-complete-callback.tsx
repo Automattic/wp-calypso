@@ -12,6 +12,7 @@ import type {
 	PaymentCompleteCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -317,12 +318,15 @@ function recordPaymentCompleteAnalytics( {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
 		: null;
+
+	const device = resolveDeviceTypeByViewPort();
 	reduxDispatch(
 		recordTracksEvent( 'calypso_checkout_payment_success', {
 			coupon_code: responseCart.coupon,
 			currency: responseCart.currency,
 			payment_method: wpcomPaymentMethod || '',
 			total_cost: responseCart.total_cost,
+			device,
 		} )
 	);
 	recordPurchase( {
@@ -336,6 +340,7 @@ function recordPaymentCompleteAnalytics( {
 		},
 		orderId: transactionResult?.receipt_id,
 	} );
+
 	return reduxDispatch(
 		recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
 			redirect_url: redirectUrl,
@@ -343,6 +348,7 @@ function recordPaymentCompleteAnalytics( {
 			total: responseCart.total_cost_integer,
 			currency: responseCart.currency,
 			payment_method: wpcomPaymentMethod || '',
+			device,
 		} )
 	);
 }

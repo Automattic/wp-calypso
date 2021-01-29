@@ -2,6 +2,10 @@
 	margin: 0 auto;
 	max-width: 700px;
 
+	.plans__loading-container {
+		margin-top: 18em;
+	}
+
 	&.is-wide-layout {
 		margin: auto;
 		max-width: 1200px;

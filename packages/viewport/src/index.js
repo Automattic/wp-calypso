@@ -189,3 +189,31 @@ export function subscribeIsDesktop( listener ) {
 export function getWindowInnerWidth() {
 	return isServer ? SERVER_WIDTH : window.innerWidth;
 }
+
+/******************************************/
+/*       Vertical Scroll Experiment       */
+/*  	       pcbrnV-XN-p2               */
+/******************************************/
+
+//TODO: To be refactored using above using the DESKTOP_BREAKPOINT constant
+export function isTabletResolution() {
+	if ( ! isServer ) {
+		return window.innerWidth < 1040;
+	}
+	return false;
+}
+
+export const DEVICE_MOBILE = 'mobile';
+export const DEVICE_TABLET = 'tablet';
+export const DEVICE_DESKTOP = 'desktop';
+
+export function resolveDeviceTypeByViewPort() {
+	if ( isMobile() ) {
+		return DEVICE_MOBILE;
+	} else if ( isTabletResolution() ) {
+		return DEVICE_TABLET;
+	}
+	return DEVICE_DESKTOP;
+}
+
+/******************************************/
