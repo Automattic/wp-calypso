@@ -64,7 +64,7 @@ function newspack_blocks_block_args( $args, $name ) {
 			'blog-posts-block-editor',
 			'newspack_blocks_data',
 			array(
-				'posts_rest_url' => rest_url( 'newspack-blocks/v1/posts' ),
+				'posts_rest_url' => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
 			)
 		);
 	}
