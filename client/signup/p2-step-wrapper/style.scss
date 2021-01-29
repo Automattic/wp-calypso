@@ -90,7 +90,7 @@
 	background-color: var( --p2-color-button );
 	color: var( --p2-color-text );
 	border: none;
-	border-radius: 40px;
+	border-radius: 40px; /* stylelint-disable-line scales/radii */
 	font-weight: normal;
 	font-size: var( --p2-font-size-form );
 	transition: background 0.2s ease;
