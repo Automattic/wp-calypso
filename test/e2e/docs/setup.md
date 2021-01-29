@@ -10,9 +10,11 @@ This document will cover the environment setup process to run the `wp-calypso` e
     - [Software Environment](#software-environment)
         - [Required software](#required-software)
         - [Steps](#steps)
+            - [Intel-based macOS](#intel-based-macos)
+            - [Apple Silicon-based macOS](#apple-silicon-based-macos)
     - [Configuration](#configuration)
         - [Overview](#overview)
-        - [Use in-repo configuration](#use-in-repo-configuration)
+        - [In-repo configuration](#in-repo-configuration)
         - [Custom configurations](#custom-configurations)
     - [Environment Variables](#environment-variables)
     - [Naming Branches](#naming-branches)
@@ -26,8 +28,9 @@ The following instructions are geared towards macOS users.
 ### Required software
 
 * [Node.js](https://nodejs.org/en/download/package-manager/#macos)
-* [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) (optional)
 * [yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+* [npm](https://www.npmjs.com/get-npm)
+* (optional) [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
 Node.js can also be installed using [brew](https://nodejs.dev/learn/how-to-install-nodejs).
 
@@ -35,23 +38,73 @@ It is strongly recommended to use `nvm` to manage multiple Node.js versions.
 
 ### Steps
 
-1. Navigate to the test directory:
+#### Intel-based macOS
+
+Once the prerequisite software are  installed, simply execute the following:
+
+1. navigate to the test directory:
 
 ```
 cd <repo_root>/tests/e2e
 ```
 
-2. Install dependencies:
+2. install dependencies:
 
 ```
 yarn install
 ```
 
-**Alternate Steps**
+#### Apple Silicon-based macOS
 
-For those that have freshly pulled the repository and have not installed any dependencies previously (eg. trials engineers) the steps above could result in `git pre-commit hooks` errors that prevent commits.
+It appears that key dependencies do not support ARM64 yet, notably `mocha`. 
+This means we must install and run a parallel Intel-based set of dependencies.
 
-Follow the instructions [here](docs/troubleshooting_debugging.md#git-pre-commit-hookhusky).
+1. install i386 Homebrew:
+
+```
+arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+```
+
+2. install `nvm` using i386 Homebrew:
+
+```
+arch -x86_64 /usr/local/bin/brew install nvm
+```
+
+3. using `nvm`, install the current version of node used in `wp-calypso`:
+
+```
+nvm install <node_version>
+```
+
+4. use the version of node installed:
+```
+nvm use <node_version>
+```
+
+5. update `npm` version:
+```
+arch -x86_64 npm install -g npm@latest
+```
+
+6. install `yarn`:
+
+```
+arch -x86_64 npm install yarn
+```
+
+7. install all dependencies from repo root:
+```
+arch -x86_64 yarn install --frozen-lockfile
+```
+
+8. verify that mocha runs in `test/e2e/` directory:
+
+```
+./node_modules/.bin/mocha
+```
+
+At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.
 
 ## Configuration
 
@@ -67,15 +120,15 @@ Under the [tests/e2e/config](test/e2e/config) directory are JSON files for prede
 
 It is also possible to use custom configuration files that are not part of the repo. See next section.
 
-### Use in-repo configuration
+### In-repo configuration
 
 There is a 'standard' configuration already in the GitHub repo under `test/e2e/config/`.
 
-This configuation must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
+This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
 
 ### Custom configurations
 
-Custom config files should be added under [tests/e2e/config](test/e2e/config) and should follow the naming scheme: 
+Custom config files should be added under `test/e2e/config/` and should follow the naming scheme: 
 
 ```
 local-<env>.json
@@ -85,7 +138,7 @@ local-<env>.json
 
 Values found in the local configuration file will override ones found in `default.json`. 
 
-This is useful to test various configurations in the local enviroment.
+This is useful to test various configurations in the local environment.
 e.g. testing on local Calypso instance, instead of production by setting the `calypsoBaseURL` property to `http://calypso.localhost:3000`.
 
 For the full list of possible configuration values, please see the following page: [config values](docs/config_values.md).

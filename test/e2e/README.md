@@ -5,10 +5,10 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 ## Table of contents
 
 - [Setup](docs/setup.md)
-  - [Software environment](docs/setup.md#software-environment)
-  - [Configuration file](docs/setup.md#configuration)
-  - [Environment variables](docs/setup.md#environment-variables)
-  - [Branch naming](docs/setup.md#naming-branches)
+  - [Software Environment](docs/setup.md#software-environment)
+  - [Configuration](docs/setup.md#configuration)
+  - [Environment Variables](docs/setup.md#environment-variables)
+  - [Naming Branches](docs/setup.md#naming-branches)
 - [Running tests](docs/running-tests.md)
     - [Local](docs/running-tests.md#local)
         - [Run all tests default](docs/running-tests.md#run-all-tests-default)
@@ -42,7 +42,5 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
   - [Nesting step blocks](docs/style-guide.md#nesting-step-blocks)
   - [Catching errors in a step block](docs/style-guide.md#catching-errors-in-a-step-block)
   - [Waiting for elements](docs/style-guide.md#waiting-for-elements)
-- [Troubleshooting & Debugging](docs/troubleshooting_debugging.md)
-  - [Table of contents](docs/troubleshooting_debugging.md#table-of-contents)
-  - [git pre-commit hook/husky](docs/troubleshooting_debugging.md#git-pre-commit-hookhusky)
-
+- [Troubleshooting & Debugging](docs/troubleshooting.md)
+  - [git pre-commit hook/husky](docs/troubleshooting.md#git-pre-commit-hookhusky)
