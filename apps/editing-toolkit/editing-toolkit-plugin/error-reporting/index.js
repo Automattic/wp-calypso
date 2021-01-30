@@ -1,31 +1,79 @@
 /**
+ * External dependencies
+ */
+import TraceKit from 'tracekit';
+
+/**
  * Internal dependencies
  */
-import Logger from 'calypso/lib/catch-js-errors';
+import apiFetch from '@wordpress/api-fetch';
 
-// TODO Should we check for some config like it's done in Calypso?
-/*if ( ! config.isEnabled( 'catch-js-errors' ) ) {
-		return;
-}*/
+/**
+ * Module variables
+ */
 
-const errorLogger = new Logger();
+/**
+ * Interval for error reports so we don't flood te endpoint. More frequent
+ * reports get throttled.
+ *
+ * @type {number}
+ */
+const REPORT_INTERVAL = 60000;
 
-// Save data to JS error logger
-errorLogger.saveDiagnosticData( {
-	user_id: 'where-to-get-the-id-from',
-	// anything else to include?
-} );
+const diagnosticData = {
+	user_id: 'todo-get-the-user-id',
+	blog_id: 'todo-get-the-blog-id',
+	extra: {
+		throttled: 0,
+	},
+};
 
-// Save data to JS error logger
-// Remember it should work for both simple and AT sites!
-errorLogger.saveDiagnosticData( {
-	user_id: 'where-to-get-the-user-id-from',
-	//user_id: getCurrentUserId( reduxStore.getState() ),
-	//calypso_env: config( 'env_id' ),
-} );
+let lastReport = 0;
 
-errorLogger.saveDiagnosticReducer( function () {
-	return {
-		blog_id: 'where-to-get-the-blog-id-from',
-	};
-} );
+if ( ! window.onerror ) {
+	TraceKit.report.subscribe( ( errorReport ) => {
+		debugger;
+		const error = {
+			message: errorReport.message,
+			url: document.location.href,
+		};
+
+		if ( Array.isArray( errorReport.stack ) ) {
+			const trace = errorReport.stack.slice( 0, 10 );
+			trace.forEach( ( report ) =>
+				Object.keys( report ).forEach( ( key ) => {
+					if ( key === 'context' && report[ key ] ) {
+						report[ key ] = JSON.stringify( report[ key ] ).substring( 0, 256 );
+					} else if ( typeof report[ key ] === 'string' && report[ key ].length > 512 ) {
+						report[ key ] = report[ key ].substring( 0, 512 );
+					} else if ( Array.isArray( report[ key ] ) ) {
+						report[ key ] = report[ key ].slice( 0, 3 );
+					}
+				} )
+			);
+			if ( JSON.stringify( trace ).length < 8192 ) {
+				error.trace = trace;
+			}
+		}
+
+		const now = Date.now();
+		if ( lastReport + REPORT_INTERVAL < now ) {
+			lastReport = now;
+			const data = new window.FormData();
+			data.append( 'error', JSON.stringify( error ) );
+			debugger;
+
+			// https://public-api.wordpress.com/rest/v1.1/js-error'
+			apiFetch( { path: '/rest/v1.1/js-error', method: 'POST', data } )
+				.then( ( foo ) => {
+					debugger;
+					diagnosticData.extra.throttled = 0;
+				} )
+				.catch( () => console.error( 'Error: Unable to record the error in Logstash.' ) );
+		} else {
+			diagnosticData.extra.throttled++;
+		}
+	} );
+}
+
+throw new Error( 'BOOM!' );
