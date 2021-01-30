@@ -27,7 +27,7 @@ for ( let i = 0; i < arches.length; i++ ) {
 	// (i.e. want arm64, not arm64e.)
 	// https://github.com/apple/tensorflow_macos/issues/28#issuecomment-735368891
 	//
-	// Use `files $(which python)` to verify.
+	// Use `file $(which <path/to/python/executable>)` to verify.
 	const pythonExe = process.env.PYTHON || '/Library/Developer/CommandLineTools/usr/bin/python3';
 
 	try {
