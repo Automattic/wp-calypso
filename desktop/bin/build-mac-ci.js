@@ -10,7 +10,7 @@ const yaml = require( 'js-yaml' );
 
 const { execSync } = require( 'child_process' );
 
-const PROJECT_DIR = path.join( __dirname, '../' );
+const PROJECT_DIR = path.join( __dirname, '..' );
 const BUILD_DIR = path.join( PROJECT_DIR, 'release' );
 const ELECTRON_BUILDER_ARGS = process.env.ELECTRON_BUILDER_ARGS || '';
 
@@ -21,15 +21,14 @@ const arches = [ 'x64', 'arm64' ];
 
 for ( let i = 0; i < arches.length; i++ ) {
 	const arch = arches[ i ];
+	//Need to use python3 for correct compilation for Apple Silicon.
+	// https://github.com/apple/tensorflow_macos/issues/28#issuecomment-735368891
+	const pythonExe = process.env.PYTHON || 'usr/local/bin/python3';
+
 	try {
 		// Manually rebuild native modules for the target architecture.
-		execSync( `npx electron-rebuild --force --arch=${ arch }`, {
+		execSync( `PYTHON="${ pythonExe }" npx electron-rebuild --force --arch=${ arch }`, {
 			stdio: 'inherit',
-			//Need to use python3 for correct compilation for Apple Silicon.
-			// https://github.com/apple/tensorflow_macos/issues/28#issuecomment-735368891
-			env: {
-				PYTHON: process.env.PYTHON || 'usr/local/bin/python3',
-			},
 		} );
 
 		// Note 1/30/21: There is a bug in electron-builder (v22.10.4) that rebuilds native dependencies
