@@ -26,12 +26,11 @@ Try the following:
 
 ```
 cd <repo_root>test/e2e
-rm -rf node_modules
-cd ../..
+find . -name 'node_modules' type -d -prune
 rm -rf node_modules
 ```
 
-2. return to the <repo_root> and install dependencies from there:
+2. return to the <repo_root> and install all dependencies from there:
 
 ```
 npm run install-if-no-packages
