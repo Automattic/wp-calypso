@@ -9,17 +9,17 @@ Refer to the [style guide](docs/style-guide.md) for coding style information.
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-    - [Table of contents](#table-of-contents)
-    - [Selector](#selector)
-        - [How](#how)
-    - [Component](#component)
-    - [Page Object Model](#page-object-model)
-        - [Structure](#structure)
-        - [Guidelines](#guidelines)
-    - [Flow](#flow)
-        - [Structure](#structure)
-        - [Guidelines](#guidelines)
-    - [Gutenberg Blocks](#gutenberg-blocks)
+  - [Table of contents](#table-of-contents)
+  - [Selector](#selector)
+    - [How](#how)
+  - [Component](#component)
+  - [Page Object Model](#page-object-model)
+    - [Structure](#structure)
+    - [Guidelines](#guidelines)
+  - [Flow](#flow)
+    - [Structure](#structure)
+    - [Guidelines](#guidelines)
+  - [Gutenberg Blocks](#gutenberg-blocks)
 
 <!-- /TOC -->
 
@@ -31,9 +31,9 @@ For modern automated e2e tests, `CSS` selectors are mainstream, although `xpath`
 
 Ideally, a selector satisfies all of the following:
 
-* **unique**: one selector, one element. 
-* **reliable**: the same element is selected with each iteration.
-* **brief**: selector is short and easy to read.
+- **unique**: one selector, one element.
+- **reliable**: the same element is selected with each iteration.
+- **brief**: selector is short and easy to read.
 
 ### How
 
@@ -45,20 +45,20 @@ Components are smaller in scope than page objects, but fundamentally the concept
 
 On `wp-calypso`, some possible components may be:
 
-* left sidebar
-* master bar
+- left sidebar
+- master bar
 
 ## Page Object Model
 
-Page Object Model (or *POM* for short) is a common technique used with Selenium WebDriver-based automated tests. 
+Page Object Model (or _POM_ for short) is a common technique used with Selenium WebDriver-based automated tests.
 
-Similar to a `Class` in software development, the POM groups together various attributes, functions and other code related to a certain page. Automated e2e tests interact with the page through an instance of the POM. 
+Similar to a `Class` in software development, the POM groups together various attributes, functions and other code related to a certain page. Automated e2e tests interact with the page through an instance of the POM.
 
 THe use of POM encourages the following:
 
-* **Don't Repeat Yourself (DRY)**: actions can be called from POM instead of being re-implemented each time.
-* **maintainability**: if a page changes, update the corresponding POM.
-* **readability**: named variables and functions are much easier to decipher than series of actions. 
+- **Don't Repeat Yourself (DRY)**: actions can be called from POM instead of being re-implemented each time.
+- **maintainability**: if a page changes, update the corresponding POM.
+- **readability**: named variables and functions are much easier to decipher than series of actions.
 
 Developers should add a new page object under `test/e2e/lib/pages` upon completion of a feature that adds a new page not covered by existing page objects.
 
@@ -75,7 +75,7 @@ constants
 
 export default class <class_name> {
     constructor
-    
+
     interactions to simulate on page
 }
 ```
@@ -97,8 +97,8 @@ export default class CancelDomainPage extends AsyncBaseContainer {
 
 ### Guidelines
 
-* selectors used more than once throughout the file is a good candidate to be turned into a constant.
-* strive to keep functions small and focused.
+- selectors used more than once throughout the file is a good candidate to be turned into a constant.
+- strive to keep functions small and focused.
 
 ## Flow
 
@@ -106,8 +106,8 @@ Flows can be considered as encapsulating a set of user actions that begin at Poi
 
 For the purpose of this document however, a flow typically refers to a set of actions constrained within a feature or two:
 
-* **user login**: beginning at login page and ending at the successful completion of the login process.
-* **new site onboarding**: beginning at selecting site name and ending with confirmation of site creation.
+- **user login**: beginning at login page and ending at the successful completion of the login process.
+- **new site onboarding**: beginning at selecting site name and ending with confirmation of site creation.
 
 ### Structure
 
@@ -122,7 +122,7 @@ constants
 
 export default class <class_name> {
     constructor
-    
+
     interactions
 
     helper functions
@@ -150,9 +150,8 @@ export default class LoginFlow {
 
 ### Guidelines
 
-* aggressively refactor such that basic actions can be extended by other functions.
-* tightly control scope so that flows do not become the e2e tests.
-
+- aggressively refactor such that basic actions can be extended by other functions.
+- tightly control scope so that flows do not become the e2e tests.
 
 ## Gutenberg Blocks
 

@@ -3,15 +3,15 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Async / Await](#async--await)
-    - [Tags](#tags)
-    - [Page Objects](#page-objects)
-    - [Use of this, const and lets](#use-of-this-const-and-lets)
-    - [Arrow functions](#arrow-functions)
-    - [Default values using destructuring](#default-values-using-destructuring)
-    - [Nesting step blocks](#nesting-step-blocks)
-    - [Catching errors in a step block](#catching-errors-in-a-step-block)
-    - [Waiting for elements](#waiting-for-elements)
+  - [Async / Await](#async--await)
+  - [Tags](#tags)
+  - [Page Objects](#page-objects)
+  - [Use of this, const and lets](#use-of-this-const-and-lets)
+  - [Arrow functions](#arrow-functions)
+  - [Default values using destructuring](#default-values-using-destructuring)
+  - [Nesting step blocks](#nesting-step-blocks)
+  - [Catching errors in a step block](#catching-errors-in-a-step-block)
+  - [Waiting for elements](#waiting-for-elements)
 
 <!-- /TOC -->
 
@@ -67,10 +67,9 @@ describe( "Block under test @parallel", function() {
 
 Some examples of tags:
 
-* parallel
-* jetpack
-* signup
-
+- parallel
+- jetpack
+- signup
 
 ## Page Objects
 

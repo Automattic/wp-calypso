@@ -5,20 +5,20 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-    - [Table of Contents](#table-of-contents)
-    - [Local](#local)
-        - [Run all tests default](#run-all-tests-default)
-        - [Run individual spec](#run-individual-spec)
-        - [Run individual case](#run-individual-case)
-        - [Modes](#modes)
-        - [Headless](#headless)
-        - [Other options](#other-options)
-        - [CircleCI docker image](#circleci-docker-image)
-    - [CircleCI](#circleci)
-        - [Canary](#canary)
-        - [Full suite](#full-suite)
-        - [Schedule](#schedule)
-    - [Sauce Labs](#sauce-labs)
+  - [Table of Contents](#table-of-contents)
+  - [Local](#local)
+    - [Run all tests default](#run-all-tests-default)
+    - [Run individual spec](#run-individual-spec)
+    - [Run individual case](#run-individual-case)
+    - [Modes](#modes)
+    - [Headless](#headless)
+    - [Other options](#other-options)
+    - [CircleCI docker image](#circleci-docker-image)
+  - [CircleCI](#circleci)
+    - [Canary](#canary)
+    - [Full suite](#full-suite)
+    - [Schedule](#schedule)
+  - [Sauce Labs](#sauce-labs)
 
 <!-- /TOC -->
 
@@ -32,7 +32,7 @@ To run tests locally, ensure relevant steps in the [setup](docs/setup.md) have b
 ./run.sh -g
 ```
 
-Configuration values for this command is read from `magellan.json`. 
+Configuration values for this command is read from `magellan.json`.
 
 This is the same process used in the CI environment.
 
@@ -45,6 +45,7 @@ Note that this command will search for tests tagged with `@parallel`. If you add
 ```
 
 eg.
+
 ```
 ./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js
 ```
@@ -52,6 +53,7 @@ eg.
 Alternatively, use the `.only` syntax when writing tests:
 
 eg.
+
 ```
 describe.only( 'Logging In and Out:', function() {
 ```
@@ -63,6 +65,7 @@ describe.only( 'Logging In and Out:', function() {
 ```
 
 eg.
+
 ```
 ./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
 ```
@@ -116,18 +119,16 @@ The `run.sh` script takes a number of parameters that can be mixed-and-matched.
 
 For the list of current supported flags, use `run.sh -h`.
 
-
 ### CircleCI docker image
 
 WIP.
-
 
 ## CircleCI
 
 Broadly speaking, `Automattic/wp-calypso` runs two types of test suites:
 
-* canary (limited set)
-* full (full set)
+- canary (limited set)
+- full (full set)
 
 Each suite is also scheduled to execute every _x_ hours at certain times throughout the day.
 
@@ -137,34 +138,34 @@ As of 2021-01-25, a variety of canary tests are triggered _automatically_ on all
 
 These include:
 
-* chrome canary
-* internet explorer
-* safari
-* woocommerce
+- chrome canary
+- internet explorer
+- safari
+- woocommerce
 
 ### Full suite
 
 The following GitHub labels provide ability to trigger e2e tests for specific feature(s):
 
-| Label | Target Suite |
-| --- | --- |
-| `[Status] Needs e2e Testing` | Full suite of WordPress.com e2e tests |
-| `[Status] Needs Jetpack e2e Testing` | Full suite of Jetpack e2e tests |
-| `[Status] Needs e2e Testing CoBlocks Edge` | Full suite of CoBlocks e2e tests |
-| `[Status] Needs e2e Testing Gutenberg` | Full suite of Gutenberg e2e tests |
-| `[Status] Needs e2e Testing horizon` | Full mobile & desktop suite of horizon e2e tests |
+| Label                                      | Target Suite                                     |
+| ------------------------------------------ | ------------------------------------------------ |
+| `[Status] Needs e2e Testing`               | Full suite of WordPress.com e2e tests            |
+| `[Status] Needs Jetpack e2e Testing`       | Full suite of Jetpack e2e tests                  |
+| `[Status] Needs e2e Testing CoBlocks Edge` | Full suite of CoBlocks e2e tests                 |
+| `[Status] Needs e2e Testing Gutenberg`     | Full suite of Gutenberg e2e tests                |
+| `[Status] Needs e2e Testing horizon`       | Full mobile & desktop suite of horizon e2e tests |
 
 ### Schedule
 
 _All times are in UTC._
 
-| Suite | When | Time |
-| -- | -- | -- |
-| WordPress.com | Each `wp-calypso` deployment | - |
-| | Every 6 hours | 00:00 |
-| Internet Explorer | ? | ? |
-| Jetpack | Every 12 hours | 01:00 |
-| WooCommerce | Every 12 hours | 11:00 |
+| Suite             | When                         | Time  |
+| ----------------- | ---------------------------- | ----- |
+| WordPress.com     | Each `wp-calypso` deployment | -     |
+|                   | Every 6 hours                | 00:00 |
+| Internet Explorer | ?                            | ?     |
+| Jetpack           | Every 12 hours               | 01:00 |
+| WooCommerce       | Every 12 hours               | 11:00 |
 
 ## Sauce Labs
 

@@ -3,21 +3,22 @@
 This document will cover the environment setup process to run the `wp-calypso` e2e tests.
 
 ## Table of contents
+
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Table of contents](#table-of-contents)
-    - [Software Environment](#software-environment)
-        - [Required software](#required-software)
-        - [Steps](#steps)
-            - [Intel-based macOS](#intel-based-macos)
-            - [Apple Silicon-based macOS](#apple-silicon-based-macos)
-    - [Configuration](#configuration)
-        - [Overview](#overview)
-        - [In-repo configuration](#in-repo-configuration)
-        - [Custom configurations](#custom-configurations)
-    - [Environment Variables](#environment-variables)
-    - [Naming Branches](#naming-branches)
+  - [Table of contents](#table-of-contents)
+  - [Software Environment](#software-environment)
+    - [Required software](#required-software)
+    - [Steps](#steps)
+      - [Intel-based macOS](#intel-based-macos)
+      - [Apple Silicon-based macOS](#apple-silicon-based-macos)
+  - [Configuration](#configuration)
+    - [Overview](#overview)
+    - [In-repo configuration](#in-repo-configuration)
+    - [Custom configurations](#custom-configurations)
+  - [Environment Variables](#environment-variables)
+  - [Naming Branches](#naming-branches)
 
 <!-- /TOC -->
 
@@ -27,10 +28,10 @@ The following instructions are geared towards macOS users.
 
 ### Required software
 
-* [Node.js](https://nodejs.org/en/download/package-manager/#macos)
-* [yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
-* [npm](https://www.npmjs.com/get-npm)
-* (optional) [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- [Node.js](https://nodejs.org/en/download/package-manager/#macos)
+- [yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable)
+- [npm](https://www.npmjs.com/get-npm)
+- (optional) [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
 Node.js can also be installed using [brew](https://nodejs.dev/learn/how-to-install-nodejs).
 
@@ -40,7 +41,7 @@ It is strongly recommended to use `nvm` to manage multiple Node.js versions.
 
 #### Intel-based macOS
 
-Once the prerequisite software are  installed, simply execute the following:
+Once the prerequisite software are installed, simply execute the following:
 
 1. navigate to the test directory:
 
@@ -56,7 +57,7 @@ yarn install
 
 #### Apple Silicon-based macOS
 
-It appears that key dependencies do not support ARM64 yet, notably `mocha`. 
+It appears that key dependencies do not support ARM64 yet, notably `mocha`.
 This means we must install and run a parallel Intel-based set of dependencies.
 
 1. install i386 Homebrew:
@@ -78,11 +79,13 @@ nvm install <node_version>
 ```
 
 4. use the version of node installed:
+
 ```
 nvm use <node_version>
 ```
 
 5. update `npm` version:
+
 ```
 arch -x86_64 npm install -g npm@latest
 ```
@@ -94,6 +97,7 @@ arch -x86_64 npm install yarn
 ```
 
 7. install all dependencies from repo root:
+
 ```
 arch -x86_64 yarn install --frozen-lockfile
 ```
@@ -114,9 +118,9 @@ The tests use the node [config](https://www.npmjs.com/package/config) library to
 
 Under the [tests/e2e/config](test/e2e/config) directory are JSON files for predefined environments:
 
-* `default.json` is for all environments
-* `development.json` is for local
-* `test.json` for CI
+- `default.json` is for all environments
+- `development.json` is for local
+- `test.json` for CI
 
 It is also possible to use custom configuration files that are not part of the repo. See next section.
 
@@ -128,7 +132,7 @@ This configuration must be decrypted prior to running any e2e tests. To decrypt,
 
 ### Custom configurations
 
-Custom config files should be added under `test/e2e/config/` and should follow the naming scheme: 
+Custom config files should be added under `test/e2e/config/` and should follow the naming scheme:
 
 ```
 local-<env>.json
@@ -136,7 +140,7 @@ local-<env>.json
 
 `.gitignore` ensures that custom configurations prefixed with `local-` will not be commited to the repository. However, **please ensure username/passwords and other configuration values are not committed by accident!**
 
-Values found in the local configuration file will override ones found in `default.json`. 
+Values found in the local configuration file will override ones found in `default.json`.
 
 This is useful to test various configurations in the local environment.
 e.g. testing on local Calypso instance, instead of production by setting the `calypsoBaseURL` property to `http://calypso.localhost:3000`.
