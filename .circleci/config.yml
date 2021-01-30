@@ -748,7 +748,7 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: '10.1.0'
+      xcode: '12.0.0-beta'
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     steps:
@@ -772,7 +772,7 @@ jobs:
             # Otherwise only build application executable required for end-to-end testing.
             ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
-            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
+            cd desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
           name: e2e Tests
           command: |
