@@ -149,6 +149,7 @@
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
 		"redux": "^4.0.5",
+		"tracekit": "^0.4.6",
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
