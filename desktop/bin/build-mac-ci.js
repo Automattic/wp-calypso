@@ -32,9 +32,17 @@ for ( let i = 0; i < arches.length; i++ ) {
 
 	try {
 		// Manually rebuild native modules for the target architecture.
-		execSync( `PYTHON="${ pythonExe }" npx electron-rebuild --force --arch=${ arch }`, {
-			stdio: 'inherit',
-		} );
+		//
+		// Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
+		// https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
+		execSync(
+			`SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk' ` +
+				`MACOSX_DEPLOYMENT_TARGET=11.1 ` +
+				`PYTHON="${ pythonExe }" npx electron-rebuild --force --arch=${ arch }`,
+			{
+				stdio: 'inherit',
+			}
+		);
 
 		// Note 1/30/21: There is a bug in electron-builder (v22.10.4) that rebuilds native dependencies
 		// with the host architecture instead of the target architecture.
