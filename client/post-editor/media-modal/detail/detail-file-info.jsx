@@ -102,6 +102,10 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 						<th>{ this.props.translate( 'File Type' ) }</th>
 						<td>{ this.getItemValue( 'extension' ) }</td>
 					</tr>
+					<tr>
+						<th>{ this.props.translate( 'File Size' ) }</th>
+						<td>{ this.getItemValue( 'size' ) }</td>
+					</tr>
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
 					<tr>
