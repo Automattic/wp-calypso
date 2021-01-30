@@ -23,7 +23,14 @@ for ( let i = 0; i < arches.length; i++ ) {
 	const arch = arches[ i ];
 	try {
 		// Manually rebuild native modules for the target architecture.
-		execSync( `npx electron-rebuild --force --arch=${ arch }`, { stdio: 'inherit' } );
+		execSync( `npx electron-rebuild --force --arch=${ arch }`, {
+			stdio: 'inherit',
+			//Need to use python3 for correct compilation for Apple Silicon.
+			// https://github.com/apple/tensorflow_macos/issues/28#issuecomment-735368891
+			env: {
+				PYTHON: process.env.PYTHON || 'usr/local/bin/python3',
+			},
+		} );
 
 		// Note 1/30/21: There is a bug in electron-builder (v22.10.4) that rebuilds native dependencies
 		// with the host architecture instead of the target architecture.
