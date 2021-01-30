@@ -21,9 +21,14 @@ const arches = [ 'x64', 'arm64' ];
 
 for ( let i = 0; i < arches.length; i++ ) {
 	const arch = arches[ i ];
-	//Need to use python3 for correct compilation for Apple Silicon.
+	console.log( `  • Building artifacts for arch ${ arch }...` );
+
+	// Need to use python3 - not python2 - for correct compilation for Apple Silicon.
+	// (i.e. want arm64, not arm64e.)
 	// https://github.com/apple/tensorflow_macos/issues/28#issuecomment-735368891
-	const pythonExe = process.env.PYTHON || 'usr/local/bin/python3';
+	//
+	// Use `files $(which python)` to verify.
+	const pythonExe = process.env.PYTHON || '/Library/Developer/CommandLineTools/usr/bin/python3';
 
 	try {
 		// Manually rebuild native modules for the target architecture.
@@ -61,6 +66,8 @@ if ( isReleaseBuild ) {
 		// electron-builder so that native modules can be generated correctly for each target
 		// architecture. The "files" key for latest-mac.yml of each architecture should be
 		// combined into a single file prior to publishing.
+		//
+		// Use `otool -hv -arch all <path/to/native/module>` to verify.
 		mergeYaml();
 	} catch ( e ) {
 		console.error( `Error generating artifact YML: `, e );
