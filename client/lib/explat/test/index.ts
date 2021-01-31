@@ -24,12 +24,12 @@ describe( 'ExPlatClient', () => {
 		expect( () =>
 			ExPlatClient.dangerouslyGetExperimentAssignment( 'experiment_b' )
 		).toThrowErrorMatchingInlineSnapshot(
-			`[MissingExperimentAssignmentError: Trying to dangerously get an ExperimentAssignment that hasn't loaded.]`
+			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
 		);
 		expect( () =>
 			ExPlatClient.dangerouslyGetExperimentAssignment( 'experiment_c' )
 		).toThrowErrorMatchingInlineSnapshot(
-			`[MissingExperimentAssignmentError: Trying to dangerously get an ExperimentAssignment that hasn't loaded.]`
+			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
 		);
 	} );
 } );

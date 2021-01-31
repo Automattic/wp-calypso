@@ -168,10 +168,6 @@ const webpackConfig = {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
 		new webpack.NormalModuleReplacementPlugin(
-			/^@automattic\/explat-client$/,
-			'@automattic/explat-client/ssr-safe-mock'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM

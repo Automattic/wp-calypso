@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { Config, ExperimentAssignment } from '../types';
-import { ExPlatClient } from '../create-explat-client';
-import { createNullExperimentAssignment } from '../internal/experiment-assignments';
+import { Config } from './types';
+import { ExPlatClient } from './create-explat-client';
+import { createNullExperimentAssignment } from './internal/experiment-assignments';
 
-function createExPlatClient( config: Config ): ExPlatClient {
+export default function createSsrSafeMockExPlatClient( config: Config ): ExPlatClient {
 	return {
 		loadExperimentAssignment: async ( experimentName: string ) => {
 			config.logError( {
@@ -23,5 +23,3 @@ function createExPlatClient( config: Config ): ExPlatClient {
 		},
 	};
 }
-
-export { createExPlatClient, ExperimentAssignment, ExPlatClient };
