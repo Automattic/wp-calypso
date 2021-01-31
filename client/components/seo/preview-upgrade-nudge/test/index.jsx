@@ -41,8 +41,9 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from 'calypso/lib/plans/constants';
 
 /**
@@ -99,13 +100,14 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 		PLAN_JETPACK_PREMIUM,
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
+		PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	].forEach( ( product_slug ) => {
 		test( `Jetpack Business for (${ product_slug })`, () => {
 			const comp = shallow(
 				<SeoPreviewNudge { ...props } isJetpack={ true } site={ { plan: { product_slug } } } />
 			);
 			expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
-			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_BUSINESS );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_SECURITY_DAILY );
 		} );
 	} );
 } );
