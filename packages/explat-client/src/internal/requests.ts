@@ -70,7 +70,7 @@ export async function fetchExperimentAssignment(
 	}
 
 	if ( ! ExperimentAssignments.isAlive( fetchedExperimentAssignment ) ) {
-		throw new Error( `Newly fetched experiment isn't alive, something must be wrong.` );
+		throw new Error( `Newly fetched experiment isn't alive.` );
 	}
 
 	return fetchedExperimentAssignment;
