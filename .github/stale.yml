@@ -27,7 +27,7 @@ markComment: >
   <ul>
     <li>It has been inactive in the past 6 months.</li>
     <li>It isn't a project or a milestone, and hasn’t been labeled with one of `[Pri] Blocker`, 
-  `[Pri] High`, `[Status] Keep Open`, or `OSS Citizen`.</li>
+  `[Pri] High`, or `[Status] Keep Open`.</li>
   </ul>
   
   <p>You can keep the issue open by adding a comment. If you do, please 
