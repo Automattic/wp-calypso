@@ -8,9 +8,9 @@ import { find, flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasSiteAnalyticsFeature } from './utils';
-import wrapSettingsForm from './wrap-settings-form';
-import { Card } from '@automattic/components';
+import { hasSiteAnalyticsFeature } from '../utils';
+import wrapSettingsForm from '../wrap-settings-form';
+import { Card, CompactCard } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import SupportInfo from 'calypso/components/support-info';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -21,11 +21,12 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import FormAnalyticsStores from './form-analytics-stores';
+import FormAnalyticsStores from '../form-analytics-stores';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
@@ -37,6 +38,11 @@ import {
 	OPTIONS_JETPACK_SECURITY,
 	PRODUCT_UPSELLS_BY_FEATURE,
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const validateGoogleAnalyticsCode = ( code ) =>
 	! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i );
@@ -115,6 +121,9 @@ export class GoogleAnalyticsForm extends Component {
 			? translate( 'Connect your site to Google Analytics' )
 			: translate( 'Connect your site to Google Analytics in seconds with the Premium plan' );
 
+		const recordSupportLinkClick = () => {
+			trackTracksEvent( 'calypso_traffic_settings_google_analytics_click' );
+		};
 		const plan = siteIsJetpack
 			? OPTIONS_JETPACK_SECURITY
 			: findFirstSimilarPlanKey( site.plan.product_slug, {
@@ -155,11 +164,37 @@ export class GoogleAnalyticsForm extends Component {
 					showButton={ ! showUpgradeNudge }
 					title={ translate( 'Google Analytics' ) }
 				/>
-
+				<CompactCard>
+					<div className="analytics site-settings__analytics">
+						<div className="analytics site-settings__google-illustration">
+							<img src={ cloudflareIllustration } alt="" />
+						</div>
+						<div className="analytics site-settings__analytics-text">
+							<p className="analytics site-settings__analytics-title">
+								{ translate( 'Google Analytics' ) }
+							</p>
+							<p>
+								{ translate(
+									'A free analytics tool that offers additional insight into your site.'
+								) }
+							</p>
+							<p>
+								<a
+									onClick={ recordSupportLinkClick }
+									href="https://www.GOOGLELINK.com"
+									target="_blank"
+									rel="noreferrer"
+								>
+									{ translate( 'Learn more' ) }
+								</a>
+							</p>
+						</div>
+					</div>
+				</CompactCard>
 				{ showUpgradeNudge && site && site.plan ? (
 					nudge
 				) : (
-					<Card className="analytics-settings site-settings__analytics-settings">
+					<Card className="analytics site-settings__analytics-settings">
 						{ siteIsJetpack && (
 							<FormFieldset>
 								<SupportInfo
