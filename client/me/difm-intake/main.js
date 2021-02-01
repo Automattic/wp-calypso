@@ -36,7 +36,10 @@ class DifmIntake extends Component {
 					<FormattedHeader
 						headerText={ translate( 'WordPress.com "Built for you" application form' ) }
 						subHeaderText={ translate(
-							'Fill out the form below to apply for your "Built for you" program.'
+							`Fill out the form below to apply for your "Built for you" program.{{br/}}We'll get back to you in 2-3 business days.`,
+							{
+								components: { br: <br /> },
+							}
 						) }
 					/>
 					<ExternalLink

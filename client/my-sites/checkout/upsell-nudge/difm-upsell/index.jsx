@@ -68,7 +68,7 @@ export class DifmUpsell extends PureComponent {
 			<>
 				<h2 className="difm-upsell__header">
 					{ translate(
-						'Skip to the launch line: {{br/}} Let our experts build your dream website',
+						'Skip to the launch line: {{br/}} Let our WordPress experts build your website',
 						{
 							components: { br: <br /> },
 						}
@@ -78,20 +78,18 @@ export class DifmUpsell extends PureComponent {
 				<div className="difm-upsell__column-pane">
 					<div className="difm-upsell__column-content">
 						<p>
-							<b>
-								{ translate(
-									'Stand out online with a beautiful, functional, secure website designed and built by WordPress experts just for you.'
-								) }
-							</b>
-						</p>
-						<p>
 							{ translate(
-								'If you’re familiar with WordPress plugins, you know why that’s exciting. Installing plugins on your site is like downloading an app on your phone. Except, instead of getting a new game or productivity tool, you get new features and functionality for your site.'
+								'Get up and running quickly by letting our WordPress experts build and design your website from scratch.'
 							) }
 						</p>
 						<p>
 							{ translate(
-								'There are more than 50,000 WordPress plugins available to help turn your site into any powerful platform you imagine.'
+								'Whether you’re launching a store, a business, or even online courses, we’ll help you stand out online with a beautiful, functional, secure website that’s built just for you.'
+							) }
+						</p>
+						<p>
+							{ translate(
+								'You’ll work with a dedicated engagement manager throughout the entire project, ensuring that your vision is carried through from start to finish. All for a one-time fee.'
 							) }
 						</p>
 						<p>{ translate( 'Our premium website building service is perfect for:' ) }</p>
@@ -100,7 +98,8 @@ export class DifmUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="difm-upsell__checklist-item-icon" />
 								<span className="difm-upsell__checklist-item-text">
 									{ translate( 'Online stores', {
-										comment: "This is a benefit listed on a 'Upgrade your plan' page",
+										comment:
+											"This is a type of business listed on the 'Website building service' offer page",
 									} ) }
 								</span>
 							</li>
@@ -108,7 +107,8 @@ export class DifmUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="difm-upsell__checklist-item-icon" />
 								<span className="difm-upsell__checklist-item-text">
 									{ translate( 'Educational websites', {
-										comment: "This is a benefit listed on a 'Upgrade your plan' page",
+										comment:
+											"This is a type of business listed on the 'Website building service' offer page",
 									} ) }
 								</span>
 							</li>
@@ -116,7 +116,8 @@ export class DifmUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="difm-upsell__checklist-item-icon" />
 								<span className="difm-upsell__checklist-item-text">
 									{ translate( 'Professional services', {
-										comment: "This is a benefit listed on a 'Upgrade your plan' page",
+										comment:
+											"This is a type of business listed on the 'Website building service' offer page",
 									} ) }
 								</span>
 							</li>
@@ -124,11 +125,18 @@ export class DifmUpsell extends PureComponent {
 								<Gridicon icon="checkmark" className="difm-upsell__checklist-item-icon" />
 								<span className="difm-upsell__checklist-item-text">
 									{ translate( 'Advanced tailored solutions', {
-										comment: "This is a benefit listed on a 'Upgrade your plan' page",
+										comment:
+											"This is a type of business listed on the 'Website building service' offer page",
 									} ) }
 								</span>
 							</li>
 						</ul>
+
+						<p>
+							{ translate(
+								'Simply tell us a little bit more about your website, and we’ll get back to you in 2-3 business days.'
+							) }
+						</p>
 
 						<p>
 							{ translate( '{{b}}Custom websites starting at $4,900{{/b}}', {
@@ -164,7 +172,7 @@ export class DifmUpsell extends PureComponent {
 					className="difm-upsell__accept-offer-button"
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
-					{ translate( 'I’m interested' ) }
+					{ translate( 'Yes, I want to apply now and get my site built' ) }
 				</Button>
 			</footer>
 		);
