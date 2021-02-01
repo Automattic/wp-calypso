@@ -43,6 +43,10 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	&.components-button {
 		height: 44px;
 	}
+
+	.wpcom-editor-welcome-tour__maximize-icon path {
+		fill: white;
+	}
 }
 
 .wpcom-editor-welcome-tour-card-frame {

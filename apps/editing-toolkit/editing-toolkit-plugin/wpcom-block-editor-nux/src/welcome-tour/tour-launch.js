@@ -66,9 +66,8 @@ function WelcomeTourFrame() {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
-
 	const { setWpcomNuxStatus, setTourOpenStatus } = useDispatch( 'automattic/nux' );
-
+	const isInserterOpened = useSelect( ( select ) => select( 'core/edit-post' ).isInserterOpened() );
 	const dismissWpcomNuxTour = ( source ) => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
@@ -78,6 +77,12 @@ function WelcomeTourFrame() {
 		setWpcomNuxStatus( { isNuxEnabled: false } );
 		setTourOpenStatus( { isTourManuallyOpened: false } );
 	};
+
+	useEffect( () => {
+		if ( isInserterOpened && ! isMinimized ) {
+			setIsMinimized( true );
+		}
+	}, [ isInserterOpened ] );
 
 	// Preload card images
 	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
@@ -118,10 +123,13 @@ function WelcomeTourMinimized( { onMaximize, setJustMaximized, slideNumber } ) {
 	};
 
 	return (
-		<Button onClick={ handleOnMaximize } className="wpcom-editor-welcome-tour__resume-btn">
+		<Button
+			onClick={ handleOnMaximize }
+			className="wpcom-editor-welcome-tour__resume-btn components-button is-primary"
+		>
 			<Flex gap={ 13 }>
 				<p>{ __( 'Click to resume tutorial', 'full-site-editing' ) }</p>
-				<Icon icon={ maximize } size={ 24 } />
+				<Icon className="wpcom-editor-welcome-tour__maximize-icon" icon={ maximize } size={ 24 } />
 			</Flex>
 		</Button>
 	);
