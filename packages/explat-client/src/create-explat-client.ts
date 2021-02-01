@@ -12,7 +12,7 @@ import { createFallbackExperimentAssignment as createFallbackExperimentAssignmen
 /**
  * The number of milliseconds before we abandon fetching an experiment
  */
-const EXPERIMENT_FETCH_TIMEOUT = 2000;
+const EXPERIMENT_FETCH_TIMEOUT = 5000;
 
 export interface ExPlatClient {
 	/**
@@ -118,7 +118,9 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				if ( config.isDevelopmentMode ) {
 					throw e;
 				}
-				return createFallbackExperimentAssignment( experimentName );
+				const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
+				State.storeExperimentAssignment( fallbackExperimentAssignment );
+				return fallbackExperimentAssignment;
 			}
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {

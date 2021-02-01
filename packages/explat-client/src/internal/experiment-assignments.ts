@@ -18,7 +18,14 @@ export function isAlive( experimentAssignment: ExperimentAssignment ): boolean {
 }
 
 /**
- * The null ExperimentAssignment we return when we can't retrieve one.
+ * The ttl (in seconds) for a fallback assignment.
+ * This limits the number of requests being sent to our server in the case of our server failing to return a working assignment
+ * and will be the minimum amount of time in-between requests per experiment.
+ */
+const fallbackExperimentAssignmentTtl = 60;
+
+/**
+ * A fallback ExperimentAssignment we return when we can't retrieve one.
  *
  * @param experimentName The name of the experiment
  */
@@ -27,7 +34,7 @@ export const createFallbackExperimentAssignment = (
 ): ExperimentAssignment => ( {
 	experimentName,
 	variationName: null,
-	retrievedTimestamp: 0,
-	ttl: 0,
+	retrievedTimestamp: Timing.monotonicNow(),
+	ttl: fallbackExperimentAssignmentTtl,
 	isFallbackExperimentAssignment: true,
 } );
