@@ -417,8 +417,8 @@ class CalypsoifyIframe extends Component<
 					post: translate( 'Add new post' ),
 				},
 				listHeadings: {
-					page: translate( 'Recent Pages' ),
-					post: translate( 'Recent Posts' ),
+					page: translate( 'Recent pages' ),
+					post: translate( 'Recent posts' ),
 				},
 			} );
 		}

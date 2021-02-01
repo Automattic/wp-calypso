@@ -60,9 +60,9 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 
 	let label = translate( 'Back' );
 	if ( postType === 'post' ) {
-		label = translate( 'View Posts' );
+		label = translate( 'View posts' );
 	} else if ( postType === 'page' ) {
-		label = translate( 'View Pages' );
+		label = translate( 'View pages' );
 	}
 
 	return {
