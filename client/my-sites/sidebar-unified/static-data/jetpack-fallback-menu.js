@@ -12,7 +12,6 @@ import { translate } from 'i18n-calypso';
 /* eslint-enable jsdoc/require-param */
 
 const JETPACK_ICON = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" %3E%3Cpath fill="%23a0a5aa" d="M16,0C7.2,0,0,7.2,0,16s7.2,16,16,16s16-7.2,16-16S24.8,0,16,0z"%3E%3C/path%3E%3Cpolygon fill="%23fff" points="15,19 7,19 15,3 "%3E%3C/polygon%3E%3Cpolygon fill="%23fff" points="17,29 17,13 25,13 "%3E%3C/polygon%3E%3C/svg%3E`;
-const WPADMIN_ICON = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cmVjdCB4PSIwIiBmaWxsPSJub25lIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiLz48Zz48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMTIgMkM2LjQ3NyAyIDIgNi40NzcgMiAxMnM0LjQ3NyAxMCAxMCAxMCAxMC00LjQ3NyAxMC0xMFMxNy41MjMgMiAxMiAyek0zLjUgMTJjMC0xLjIzMi4yNjQtMi40MDIuNzM2LTMuNDZMOC4yOSAxOS42NUM1LjQ1NiAxOC4yNzIgMy41IDE1LjM2NSAzLjUgMTJ6bTguNSA4LjVjLS44MzQgMC0xLjY0LS4xMi0yLjQtLjM0NWwyLjU1LTcuNDEgMi42MTMgNy4xNTdjLjAxNy4wNDIuMDM4LjA4LjA2LjExNy0uODg0LjMxLTEuODMzLjQ4LTIuODIzLjQ4em0xLjE3Mi0xMi40ODVjLjUxMi0uMDI3Ljk3My0uMDguOTczLS4wOC40NTgtLjA1NS40MDQtLjcyOC0uMDU0LS43MDIgMCAwLTEuMzc2LjEwOC0yLjI2NS4xMDgtLjgzNSAwLTIuMjQtLjEwNy0yLjI0LS4xMDctLjQ1OC0uMDI2LS41MS42NzQtLjA1My43IDAgMCAuNDM0LjA1NS44OTIuMDgybDEuMzI0IDMuNjMtMS44NiA1LjU3OC0zLjA5Ni05LjIwOGMuNTEyLS4wMjcuOTczLS4wOC45NzMtLjA4LjQ1OC0uMDU1LjQwMy0uNzI4LS4wNTUtLjcwMiAwIDAtMS4zNzYuMTA4LTIuMjY1LjEwOC0uMTYgMC0uMzQ3LS4wMDMtLjU0Ny0uMDFDNi40MTggNS4wMjUgOS4wMyAzLjUgMTIgMy41YzIuMjEzIDAgNC4yMjguODQ2IDUuNzQgMi4yMzItLjAzNy0uMDAyLS4wNzItLjAwNy0uMTEtLjAwNy0uODM1IDAtMS40MjcuNzI3LTEuNDI3IDEuNTEgMCAuNy40MDQgMS4yOTIuODM1IDEuOTkzLjMyMy41NjYuNyAxLjI5My43IDIuMzQ0IDAgLjcyNy0uMjggMS41NzItLjY0NiAyLjc0OGwtLjg0OCAyLjgzMy0zLjA3Mi05LjEzOHptMy4xIDExLjMzMmwyLjU5Ny03LjUwNmMuNDg0LTEuMjEyLjY0NS0yLjE4LjY0NS0zLjA0NCAwLS4zMTMtLjAyLS42MDMtLjA1Ny0uODc0LjY2NCAxLjIxIDEuMDQyIDIuNiAxLjA0MiA0LjA3OCAwIDMuMTM2LTEuNyA1Ljg3NC00LjIyNyA3LjM0N3oiLz48L2c+PC9zdmc+`;
 
 export default function jetpackMenu( { siteDomain } ) {
 	return [
@@ -238,7 +237,7 @@ export default function jetpackMenu( { siteDomain } ) {
 			url: `/settings/general/${ siteDomain }`,
 		},
 		{
-			icon: WPADMIN_ICON,
+			icon: 'dashicons-wordpress-alt',
 			slug: 'wp-admin',
 			title: translate( 'WP Admin' ),
 			type: 'menu-item',
