@@ -270,21 +270,6 @@ function load_wpcom_block_patterns_modifications() {
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 
-
-/**
- * Load Premium Content Block
- */
-function load_premium_content() {
-	/**
-	 * Disabled until we're ready to disable the premium content plugin in mp-plugins/earn
-	 */
-	if ( function_exists( '\A8C\FSE\Earn\PremiumContent\premium_content_block_init' ) ) {
-		return;
-	}
-	require_once __DIR__ . '/premium-content/premium-content.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_premium_content' );
-
 /**
  * Load Block Inserter Modifications module
  */
