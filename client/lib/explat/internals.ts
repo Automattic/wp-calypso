@@ -7,7 +7,8 @@ import wpcom from 'calypso/lib/wp';
  * Internal dependecies
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getAnonIdFromCookie } from 'calypso/state/experiments/reducer';
+import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
+import userUtils from 'calypso/lib/user/utils';
 
 // Using typescript to ensure we are being safe in SSR
 declare const window: undefined | ( Window & typeof globalThis );
@@ -72,17 +73,69 @@ export const fetchExperimentAssignment = ( {
 	);
 };
 
-let hasTracksEventFiredToEnsureAnonIdInCookie = false;
+let isInitializingAnonId = false;
+const anonIdPollingIntervalMilliseconds = 50;
+const anonIdPollingIntervalMaxAttempts = 100; // 50 * 100 = 5000 = 5 seconds
+const initializeAnonId = async (): Promise< string | null > => {
+	// This should only run once:
+	if ( isInitializingAnonId ) {
+		throw new Error( `Initializing AnonId more than once. This shouldn't occur.` );
+	}
+	isInitializingAnonId = true;
+
+	if ( typeof window === 'undefined' || typeof document === 'undefined' ) {
+		throw new Error( 'Trying to initialize anonId outside of a browser context.' );
+	}
+
+	recordTracksEvent( 'calypso_explat_initialization' );
+
+	let attempts = 0;
+	return new Promise( ( res ) => {
+		const anonIdPollingInterval = setInterval( () => {
+			if ( attempts > anonIdPollingIntervalMaxAttempts ) {
+				clearInterval( anonIdPollingInterval );
+				// This will fail if the user is logged in.
+				res( null );
+			}
+			attempts = attempts + 1;
+
+			const anonId = tracksAnonymousUserId();
+			if ( typeof anonId === 'string' && anonId !== '' ) {
+				clearInterval( anonIdPollingInterval );
+				res( anonId );
+			}
+		}, anonIdPollingIntervalMilliseconds );
+	} );
+};
+
+// We initialize the anonId at boot, wrapped so that we can log errors:
+let initializeAnonIdPromise: null | Promise< string | null > = null;
+if ( typeof window !== 'undefined' && typeof document !== 'undefined' ) {
+	( async () => {
+		try {
+			initializeAnonIdPromise = initializeAnonId();
+			await initializeAnonIdPromise;
+		} catch ( e ) {
+			logError( { message: e.message } );
+		}
+	} )();
+}
+
 export const getAnonId = async (): Promise< string | null > => {
-	if ( typeof window === 'undefined' ) {
-		logError( { message: 'Trying to retrieve anonId outside of a browser context.' } );
+	if ( userUtils.isLoggedIn() ) {
 		return null;
 	}
 
-	if ( ! hasTracksEventFiredToEnsureAnonIdInCookie ) {
-		recordTracksEvent( 'calypso_explat_first_experiment_fetch' );
-		hasTracksEventFiredToEnsureAnonIdInCookie = true;
+	if ( initializeAnonIdPromise === null ) {
+		throw new Error( 'AnonId initialization should have already started.' );
 	}
 
-	return getAnonIdFromCookie();
+	try {
+		return await initializeAnonIdPromise;
+	} catch ( e ) {
+		// We log errors above so we don't need to log them here
+		// and to keep things simple we return null if there is an error.
+	}
+
+	return null;
 };
