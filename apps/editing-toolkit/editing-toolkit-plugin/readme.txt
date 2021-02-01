@@ -3,7 +3,7 @@ Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
-Stable tag: 2.16
+Stable tag: 2.17
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.17 =
+* Premium Content: Remove from the Editing Toolkit plugin (https://github.com/Automattic/wp-calypso/pull/49561)
+* Anchor: Gutenboarding Launch works immediately without domain or plan selection (https://github.com/Automattic/wp-calypso/pull/48938)
 
 = 2.16 =
 * Fix Global Styles Panel Font Change Update (https://github.com/Automattic/wp-calypso/pull/49216)
