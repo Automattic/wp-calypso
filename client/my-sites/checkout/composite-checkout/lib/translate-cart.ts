@@ -208,7 +208,6 @@ function translateReponseCartProductToWPCOMCartItem(
 	} = serverCartItem;
 
 	let label = product_name || '';
-	const sublabel = String( getSublabel( serverCartItem ) );
 
 	if (
 		serverCartItem.meta &&
@@ -227,7 +226,6 @@ function translateReponseCartProductToWPCOMCartItem(
 	return {
 		id: uuid,
 		label,
-		sublabel,
 		type,
 		amount: {
 			currency: currency || '',
