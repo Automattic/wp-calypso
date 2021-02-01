@@ -106,6 +106,14 @@ const isExperimental: Reducer< boolean, LaunchAction > = ( state = false, action
 	return state;
 };
 
+const isAnchorFm: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'ENABLE_ANCHOR_FM' ) {
+		return true;
+	}
+
+	return state;
+};
+
 // Check if site title step should be displayed
 const isSiteTitleStepVisible: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'SHOW_SITE_TITLE_STEP' ) {
@@ -164,6 +172,7 @@ const reducer = combineReducers( {
 	isSidebarOpen,
 	isSidebarFullscreen,
 	isExperimental,
+	isAnchorFm,
 	isFocusedLaunchOpen,
 	isSiteTitleStepVisible,
 	isModalDismissible,
