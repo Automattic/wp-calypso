@@ -32,7 +32,6 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/warn": "^1.0.0-alpha.0",
 		"@wordpress/is-shallow-equal": "^3.0.0",
 		"@wordpress/warning": "^1.3.0",
 		"lodash": "^4.17.20",
