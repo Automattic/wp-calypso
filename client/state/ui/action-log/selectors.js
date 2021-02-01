@@ -6,7 +6,7 @@ import { findLast, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 import { ROUTE_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';

@@ -6,7 +6,7 @@ import { filter, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 
 import 'calypso/state/reader/init';
 

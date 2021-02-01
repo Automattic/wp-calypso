@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { map, pickBy } from 'lodash';
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 
 /**
  * Internal dependencies

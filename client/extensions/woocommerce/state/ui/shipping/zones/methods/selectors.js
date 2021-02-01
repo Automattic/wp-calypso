@@ -19,7 +19,7 @@ import {
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getAPIShippingZones,

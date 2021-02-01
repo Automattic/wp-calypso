@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 
 import 'calypso/state/comments/init';

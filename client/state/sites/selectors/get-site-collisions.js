@@ -3,7 +3,7 @@ import { filter, map, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 import { withoutHttp } from 'calypso/lib/url';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 

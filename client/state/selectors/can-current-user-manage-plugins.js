@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 /**

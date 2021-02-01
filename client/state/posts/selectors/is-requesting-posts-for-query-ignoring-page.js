@@ -6,7 +6,7 @@ import { isEqual, omit, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 import {
 	getDeserializedPostsQueryDetails,
 	getNormalizedPostsQuery,

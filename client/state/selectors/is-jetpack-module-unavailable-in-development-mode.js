@@ -7,7 +7,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 import getJetpackModulesRequiringConnection from './get-jetpack-modules-requiring-connection';
 
 /**

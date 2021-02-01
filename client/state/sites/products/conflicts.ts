@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/state-utils';
+import { createSelector } from '@automattic/state-utils';
 import { planHasFeature, planHasSuperiorFeature } from 'calypso/lib/plans';
 import {
 	FEATURE_JETPACK_BACKUP_REALTIME,
