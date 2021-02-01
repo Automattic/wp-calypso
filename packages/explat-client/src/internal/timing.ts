@@ -43,7 +43,7 @@ export function timeoutPromise< T >(
 export function asyncOneAtATime< T >( f: () => Promise< T > ): () => Promise< T > {
 	let isRunning = false;
 	let lastPromise: Promise< T > | null = null;
-	return async () => {
+	return () => {
 		if ( ! isRunning ) {
 			isRunning = true;
 			lastPromise = f();

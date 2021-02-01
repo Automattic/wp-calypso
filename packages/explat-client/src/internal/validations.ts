@@ -23,7 +23,7 @@ export function isName( name: unknown ): name is string {
  *
  * @param experimentAssignment The data to test
  */
-function isExperimentAssignment(
+export function isExperimentAssignment(
 	experimentAssignment: unknown
 ): experimentAssignment is ExperimentAssignment {
 	return (
