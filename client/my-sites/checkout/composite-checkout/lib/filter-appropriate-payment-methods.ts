@@ -8,7 +8,6 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import type { CheckoutCartItem } from '../types/checkout-cart';
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 import { readCheckoutPaymentMethodSlug } from './translate-payment-method-names';
@@ -28,8 +27,8 @@ export default function filterAppropriatePaymentMethods( {
 	paymentMethodObjects: PaymentMethod[];
 	countryCode: string;
 	total: LineItem;
-	credits: CheckoutCartItem | null;
-	subtotal: CheckoutCartItem;
+	credits: LineItem | null;
+	subtotal: LineItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	responseCart: ResponseCart;
 } ): PaymentMethod[] {

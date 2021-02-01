@@ -34,6 +34,7 @@ import {
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { getSublabel } from '../lib/translate-cart';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -84,6 +85,10 @@ function WPLineItem( {
 
 	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
 
+	const sublabel = item.wpcom_response_cart_product
+		? String( getSublabel( item.wpcom_response_cart_product ) )
+		: '';
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -97,7 +102,7 @@ function WPLineItem( {
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
-			{ item.sublabel && (
+			{ sublabel && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice item={ item } />
 					<DomainDiscountCallout item={ item } />
@@ -525,6 +530,9 @@ function LineItemSublabelAndPrice( { item } ) {
 	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
 	const isDomainMap = item.type === 'domain_map';
 	const productSlug = item.wpcom_meta?.product_slug;
+	const sublabel = item.wpcom_response_cart_product
+		? String( getSublabel( item.wpcom_response_cart_product ) )
+		: '';
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
@@ -532,7 +540,7 @@ function LineItemSublabelAndPrice( { item } ) {
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
 		return translate( '%(sublabel)s: %(monthlyPrice)s /month × %(monthsPerBillPeriod)s', {
 			args: {
-				sublabel: item.sublabel,
+				sublabel: sublabel,
 				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
 				monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
 			},
@@ -547,7 +555,7 @@ function LineItemSublabelAndPrice( { item } ) {
 
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month', {
 			args: {
-				sublabel: item.sublabel,
+				sublabel: sublabel,
 				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
 			},
 			comment: 'product type and monthly breakdown of total cost, separated by a colon',
@@ -562,14 +570,14 @@ function LineItemSublabelAndPrice( { item } ) {
 		return translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
 			args: {
 				premiumLabel,
-				sublabel: item.sublabel,
+				sublabel: sublabel,
 				interval: translate( 'billed annually' ),
 			},
 			comment:
 				'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
 		} );
 	}
-	return item.sublabel || null;
+	return sublabel || null;
 }
 
 function AnnualDiscountCallout( { item } ) {

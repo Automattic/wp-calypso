@@ -2,7 +2,8 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { LineItem } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 
 /**
@@ -13,7 +14,6 @@ import {
 	WPCOMCartItem,
 	WPCOMCartCouponItem,
 	WPCOMCartCreditsItem,
-	CheckoutCartItem,
 } from '../types/checkout-cart';
 import {
 	readWPCOMPaymentMethodClass,
@@ -69,7 +69,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		tax,
 	} = serverCart;
 
-	const taxLineItem: CheckoutCartItem = {
+	const taxLineItem: LineItem = {
 		id: 'tax-line-item',
 		label: String( translate( 'Tax' ) ),
 		type: 'tax', // TODO: does this need to be localized, e.g. tax-us?
@@ -122,7 +122,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const savingsLineItem: CheckoutCartItem = {
+	const savingsLineItem: LineItem = {
 		id: 'savings-line-item',
 		label: String( translate( 'Total savings' ) ),
 		type: 'savings',
@@ -133,7 +133,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const totalItem: CheckoutCartItem = {
+	const totalItem: LineItem = {
 		id: 'total',
 		type: 'total',
 		label: String( translate( 'Total' ) ),
@@ -144,7 +144,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const subtotalItem: CheckoutCartItem = {
+	const subtotalItem: LineItem = {
 		id: 'subtotal',
 		type: 'subtotal',
 		label: String( translate( 'Subtotal' ) ),
@@ -208,7 +208,6 @@ function translateReponseCartProductToWPCOMCartItem(
 	} = serverCartItem;
 
 	let label = product_name || '';
-	const sublabel = String( getSublabel( serverCartItem ) );
 
 	if (
 		serverCartItem.meta &&
@@ -227,13 +226,13 @@ function translateReponseCartProductToWPCOMCartItem(
 	return {
 		id: uuid,
 		label,
-		sublabel,
 		type,
 		amount: {
 			currency: currency || '',
 			value: item_subtotal_integer || 0,
 			displayValue: item_subtotal_display || '',
 		},
+		wpcom_response_cart_product: serverCartItem,
 		wpcom_meta: {
 			uuid: uuid,
 			meta,
@@ -415,7 +414,7 @@ function getCouponIdFromProducts( items: WPCOMCartItem[] ): string | undefined {
 	return couponItem?.wpcom_meta?.couponCode;
 }
 
-function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
+export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
 	const isRenewalItem = isRenewal( serverCartItem );
 	const { meta, product_name: productName } = serverCartItem;
 
