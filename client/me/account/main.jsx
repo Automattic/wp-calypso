@@ -705,9 +705,7 @@ const Account = createReactClass( {
 				>
 					{ this.isSubmittingForm( ACCOUNT_FORM_NAME )
 						? translate( 'Saving…' )
-						: translate( 'Save %s settings', {
-								args: 'account',
-						  } ) }
+						: translate( 'Save account settings' ) }
 				</FormButton>
 			</div>
 		);
