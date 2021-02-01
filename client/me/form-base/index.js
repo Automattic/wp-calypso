@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { upperFirst } from 'lodash';
 
 const debug = debugFactory( 'calypso:me:form-base' );
 
@@ -47,28 +46,11 @@ export default {
 		};
 	},
 
-	showNotice: function ( formName ) {
-		let noticeMsg = '';
+	showNotice: function () {
 		if ( this.props.userSettings.initialized && this.state.showNotice ) {
 			notices.clearNotices( 'notices' );
 
-			if ( formName ) {
-				const targetSetting = this.props.translate( '%s settings', {
-					args: upperFirst( formName ),
-					comment: 'A name for the group of related settings.',
-				} );
-
-				noticeMsg = this.props.translate( '%s saved successfully!', {
-					args: targetSetting,
-					comment: 'Notice informing user of successfully saved group of related form fields.',
-				} );
-			} else {
-				noticeMsg = this.props.translate( 'Settings saved successfully!', {
-					comment: 'Notice informing user of successfully saved group of related form fields.',
-				} );
-			}
-
-			notices.success( noticeMsg );
+			notices.success( this.props.translate( 'Settings saved successfully!' ) );
 			this.state.showNotice = false;
 		}
 	},
@@ -94,12 +76,7 @@ export default {
 		if ( error.message ) {
 			notices.error( error.message );
 		} else {
-			notices.error(
-				this.props.translate( 'There was a problem saving your %s changes.', {
-					args: upperFirst( formName ),
-					comment: 'Notice informing user of an error saving a group of related form fields.',
-				} )
-			);
+			notices.error( this.props.translate( 'There was a problem saving your changes.' ) );
 		}
 
 		this.setState( {
@@ -137,7 +114,7 @@ export default {
 				...( formName && { [ formName ]: false } ),
 			},
 		} );
-		this.showNotice( formName );
+		this.showNotice();
 		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 	},
 
