@@ -11,13 +11,14 @@ import { useSelect } from '@wordpress/data';
 import { Icon, check } from '@wordpress/icons';
 
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
-import type { CTAVariation, PopularBadgeVariation } from './types';
 
 /**
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
 import { PLANS_STORE } from '../stores';
+
+import type { CTAVariation, PopularBadgeVariation } from './types';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
