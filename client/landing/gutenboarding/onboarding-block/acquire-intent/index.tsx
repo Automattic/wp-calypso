@@ -16,6 +16,7 @@ import VerticalSelect from './vertical-select';
 import SiteTitle from './site-title';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
+import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-site';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
 import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
@@ -55,6 +56,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 		selected_vertical_label: getSelectedVertical()?.label,
 		has_selected_site_title: hasSiteTitle(),
 	} ) );
+
+	useDetectMatchingAnchorSite();
 
 	const handleSkip = () => {
 		skipSiteVertical();
