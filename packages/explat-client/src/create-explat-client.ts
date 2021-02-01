@@ -97,10 +97,8 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				) {
 					experimentNameToAOAATExperimentAssignmentFetchAndStore[
 						experimentName
-						// TODO: Move this outside of loadExperimentAssignment
 					] = createAOAATExperimentAssignmentFetchAndStore( experimentName );
 				}
-				// TODO: Move timeout within AOAAT
 				const fetchedExperimentAssignment = await Timing.timeoutPromise(
 					experimentNameToAOAATExperimentAssignmentFetchAndStore[ experimentName ](),
 					EXPERIMENT_FETCH_TIMEOUT
@@ -130,6 +128,8 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 						return storedExperimentAssignment;
 					}
 
+					// TODO: Possibly move this within async-one-at-a-time as we only want this to happen once across requests.
+					//       It happens to be ok now as we are fetching the recent stored EA just above.
 					const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
 					State.storeExperimentAssignment( fallbackExperimentAssignment );
 					return fallbackExperimentAssignment;
