@@ -85,7 +85,9 @@ function WPLineItem( {
 
 	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
 
-	const sublabel = String( getSublabel( item.wpcom_response_cart_product ) );
+	const sublabel = item.wpcom_response_cart_product
+		? String( getSublabel( item.wpcom_response_cart_product ) )
+		: '';
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -528,7 +530,9 @@ function LineItemSublabelAndPrice( { item } ) {
 	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
 	const isDomainMap = item.type === 'domain_map';
 	const productSlug = item.wpcom_meta?.product_slug;
-	const sublabel = String( getSublabel( item.wpcom_response_cart_product ) );
+	const sublabel = item.wpcom_response_cart_product
+		? String( getSublabel( item.wpcom_response_cart_product ) )
+		: '';
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
