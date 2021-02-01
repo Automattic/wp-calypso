@@ -30,8 +30,8 @@ import {
 	isPlan,
 	isJetpackSearch,
 } from 'calypso/lib/products-values';
-import notices from 'calypso/notices';
 import { purchasesRoot } from '../paths';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
@@ -139,7 +139,7 @@ class RemovePurchase extends Component {
 
 				this.closeDialog();
 
-				notices.error( purchasesError );
+				this.props.errorNotice( purchasesError );
 			} else {
 				if ( isDomainRegistration( purchase ) ) {
 					if ( isDomainOnlySite ) {
@@ -147,19 +147,19 @@ class RemovePurchase extends Component {
 						this.props.setAllSitesSelected();
 					}
 
-					notices.success(
+					this.props.successNotice(
 						translate( 'The domain {{domain/}} was removed from your account.', {
 							components: { domain: <em>{ productName }</em> },
 						} ),
-						{ persistent: true }
+						{ displayOnNextPage: true }
 					);
 				} else {
-					notices.success(
+					this.props.successNotice(
 						translate( '%(productName)s was removed from {{siteName/}}.', {
 							args: { productName },
 							components: { siteName: <em>{ purchase.domain }</em> },
 						} ),
-						{ persistent: true }
+						{ displayOnNextPage: true }
 					);
 				}
 
@@ -409,9 +409,11 @@ export default connect(
 		};
 	},
 	{
+		errorNotice,
 		receiveDeletedSite,
 		recordTracksEvent,
 		removePurchase,
 		setAllSitesSelected,
+		successNotice,
 	}
 )( localize( RemovePurchase ) );
