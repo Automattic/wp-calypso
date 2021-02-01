@@ -206,6 +206,19 @@ export const getTask = (
 				actionUrl: menusUrl,
 			};
 			break;
+		case CHECKLIST_KNOWN_TASKS.SITE_THEME_SELECTED:
+			taskData = {
+				timing: 5,
+				title: translate( 'Choose a theme' ),
+				description: translate(
+					'Make your site uniquely yours! ' +
+						'Themes don’t just change the look and feel of your site, they can also add new features such as a unique home page layout, interactive post sliders, and more!'
+				),
+				actionText: translate( 'Choose a theme' ),
+				isSkippable: false,
+				actionUrl: `/themes/${ siteSlug }`,
+			};
+			break;
 	}
 
 	const enhancedTask = {
