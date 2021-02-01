@@ -17,6 +17,10 @@ export interface ExperimentAssignment {
 	 * Time to live from when it was retrieved, seconds
 	 */
 	ttl: number;
+	/**
+	 * A marker for fallback assignments - when we can't retrieve from the server.
+	 */
+	isFallbackExperimentAssignment?: boolean;
 }
 
 // ## Abstracting the outside world

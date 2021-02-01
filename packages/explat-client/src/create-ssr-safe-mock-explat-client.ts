@@ -3,7 +3,7 @@
  */
 import { Config } from './types';
 import { ExPlatClient } from './create-explat-client';
-import { createNullExperimentAssignment } from './internal/experiment-assignments';
+import { createFallbackExperimentAssignment } from './internal/experiment-assignments';
 
 export default function createSsrSafeMockExPlatClient( config: Config ): ExPlatClient {
 	return {
@@ -12,14 +12,14 @@ export default function createSsrSafeMockExPlatClient( config: Config ): ExPlatC
 				message: 'Attempting to load ExperimentAssignment in SSR context',
 				experimentName,
 			} );
-			return createNullExperimentAssignment();
+			return createFallbackExperimentAssignment( experimentName );
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ) => {
 			config.logError( {
 				message: 'Attempting to dangerously get ExperimentAssignment in SSR context',
 				experimentName,
 			} );
-			return createNullExperimentAssignment();
+			return createFallbackExperimentAssignment( experimentName );
 		},
 	};
 }

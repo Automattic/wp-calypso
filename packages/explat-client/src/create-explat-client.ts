@@ -7,7 +7,7 @@ import * as Request from './internal/requests';
 import * as State from './internal/state';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
-import { createNullExperimentAssignment } from './internal/experiment-assignments';
+import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
 
 /**
  * The number of milliseconds before we abandon fetching an experiment
@@ -118,7 +118,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				if ( config.isDevelopmentMode ) {
 					throw e;
 				}
-				return createNullExperimentAssignment();
+				return createFallbackExperimentAssignment( experimentName );
 			}
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {

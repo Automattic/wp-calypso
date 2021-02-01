@@ -19,10 +19,15 @@ export function isAlive( experimentAssignment: ExperimentAssignment ): boolean {
 
 /**
  * The null ExperimentAssignment we return when we can't retrieve one.
+ *
+ * @param experimentName The name of the experiment
  */
-export const createNullExperimentAssignment = (): ExperimentAssignment => ( {
-	experimentName: 'null_experiment_assignment',
+export const createFallbackExperimentAssignment = (
+	experimentName: string
+): ExperimentAssignment => ( {
+	experimentName,
 	variationName: null,
 	retrievedTimestamp: 0,
 	ttl: 0,
+	isFallbackExperimentAssignment: true,
 } );
