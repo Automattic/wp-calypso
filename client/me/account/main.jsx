@@ -68,7 +68,9 @@ import user from 'calypso/lib/user';
  * Style dependencies
  */
 import './style.scss';
+import FormToggle from 'calypso/components/forms/form-toggle';
 
+const linkDestinationKey = 'calypso_preferences.linkDestination';
 const colorSchemeKey = 'calypso_preferences.colorScheme';
 
 /**
@@ -166,6 +168,16 @@ const Account = createReactClass( {
 		// store any selected locale variant so we can test it against those with no GP translation sets
 		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 		this.setState( { redirect, localeVariantSelected } );
+	},
+
+	toggleLinkDestination( linkDestination ) {
+		// Set a fallback link destination if no default value is provided by the API.
+		// This is a workaround that allows us to use userSettings.updateSetting() without an
+		// existing value. Without this workaround the save button wouldn't become active.
+		// TODO: the API should provide a default value, which would make this line obsolete
+		update( this.props.userSettings.settings, linkDestinationKey, ( value ) => value || false );
+
+		this.updateUserSetting( linkDestinationKey, linkDestination );
 	},
 
 	updateColorScheme( colorScheme ) {
@@ -950,6 +962,20 @@ const Account = createReactClass( {
 
 						{ canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) &&
 							this.communityTranslator() }
+
+						{ config.isEnabled( 'nav-unification' ) && (
+							<FormFieldset>
+								<FormLabel id="account__link_destination" htmlFor="link_destination">
+									{ translate( 'Dashboard appearance' ) }
+								</FormLabel>
+								<FormToggle
+									checked={ !! this.getUserSetting( 'linkDestination' ) }
+									onChange={ this.toggleLinkDestination }
+								>
+									{ translate( 'Replace all dashboard pages with WP Admin equivalents' ) }
+								</FormToggle>
+							</FormFieldset>
+						) }
 
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 							supportsCssCustomProperties() && (
