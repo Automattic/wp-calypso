@@ -13,6 +13,7 @@ import classnames from 'classnames';
 import AsyncLoad from 'calypso/components/async-load';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
+import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import notices from 'calypso/notices';
 import config from '@automattic/calypso-config';
@@ -149,7 +150,7 @@ class Layout extends Component {
 
 	renderMasterbar() {
 		if ( this.props.masterbarIsHidden ) {
-			return null;
+			return <EmptyMasterbar />;
 		}
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
