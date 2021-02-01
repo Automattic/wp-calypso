@@ -12,7 +12,7 @@ import type { Plans } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
-import { PLANS_STORE } from '../constants';
+import { PLANS_STORE } from '../stores';
 
 /**
  * Style dependencies

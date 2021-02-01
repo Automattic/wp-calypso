@@ -13,12 +13,12 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
+import { PLANS_STORE } from '../stores';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { PLANS_STORE } from '@automattic/data-stores/src/launch/constants';
 
 const ChevronDown = (
 	<svg width="8" viewBox="0 0 8 4">

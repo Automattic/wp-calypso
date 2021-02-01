@@ -2,21 +2,23 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
+
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import PlanItem from './plan-item';
+import { useSupportedPlans } from '../hooks';
+import { PLANS_STORE } from '../stores';
+
 import type {
 	CTAVariation,
 	PopularBadgeVariation,
 	CustomTagLinesMap,
 	DisabledPlansMap,
 } from './types';
-import { useSupportedPlans } from '../hooks';
-import { PLANS_STORE } from '../constants';
 
 /**
  * Style dependencies
