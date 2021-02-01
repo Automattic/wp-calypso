@@ -94,6 +94,7 @@ ul.plans-feature-list__item-group {
 			}
 		}
 
+		// Disabled/unavailable text color for when item is a button
 		&.is-unavailable,
 		.plans-accordion &.is-unavailable {
 			color: var( --studio-orange-40 );
@@ -103,6 +104,19 @@ ul.plans-feature-list__item-group {
 			&:focus {
 				color: var( --studio-orange-30 );
 			}
+		}
+	}
+
+	// Disabled/unavailable text color for when item is not a button
+	// (but is a disabled feature)
+	.plans-feature-list__item--disabled-message & {
+		font-weight: 700;
+		color: var( --studio-orange-40 );
+		text-decoration: line-through;
+
+		&:hover,
+		&:focus {
+			color: var( --studio-orange-30 );
 		}
 	}
 }
