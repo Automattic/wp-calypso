@@ -705,7 +705,9 @@ const Account = createReactClass( {
 				>
 					{ this.isSubmittingForm( ACCOUNT_FORM_NAME )
 						? translate( 'Saving…' )
-						: translate( 'Save account settings' ) }
+						: translate( 'Save %s settings', {
+								args: 'account',
+						  } ) }
 				</FormButton>
 			</div>
 		);
@@ -968,7 +970,9 @@ const Account = createReactClass( {
 						>
 							{ this.isSubmittingForm( INTERFACE_FORM_NAME )
 								? translate( 'Saving…' )
-								: translate( 'Save interface settings' ) }
+								: translate( 'Save %s settings', {
+										args: 'interface',
+								  } ) }
 						</FormButton>
 					</form>
 				</Card>
