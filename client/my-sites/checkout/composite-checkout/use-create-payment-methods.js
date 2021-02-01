@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import {
 	createPayPalMethod,
 	createAlipayMethod,
@@ -288,22 +288,56 @@ function useCreateApplePay( {
 	return applePayMethod;
 }
 
+// See https://usehooks.com/useMemoCompare/
+function useMemoCompare( next, compare ) {
+	// Ref for storing previous value
+	const previousRef = useRef();
+	const previous = previousRef.current;
+
+	// Pass previous and next value to compare function
+	// to determine whether to consider them equal.
+	const isEqual = compare( previous, next );
+
+	// If not equal update previousRef to next value.
+	// We only update if not equal so that this hook continues to return
+	// the same old value if compare keeps returning true.
+	useEffect( () => {
+		if ( ! isEqual ) {
+			previousRef.current = next;
+		}
+	} );
+
+	// Finally, if equal then return the previous value
+	return isEqual ? previous : next;
+}
+
 export function useCreateExistingCards( { storedCards, activePayButtonText = undefined } ) {
-	const existingCardMethods = useMemo( () => {
-		return storedCards.map( ( storedDetails ) =>
-			createExistingCardMethod( {
-				id: `existingCard-${ storedDetails.stored_details_id }`,
-				cardholderName: storedDetails.name,
-				cardExpiry: storedDetails.expiry,
-				brand: storedDetails.card_type,
-				last4: storedDetails.card,
-				storedDetailsId: storedDetails.stored_details_id,
-				paymentMethodToken: storedDetails.mp_ref,
-				paymentPartnerProcessorId: storedDetails.payment_partner,
-				activePayButtonText,
-			} )
+	// Memoize the cards by comparing their stored_details_id values, in case the
+	// objects are recreated on each render.
+	const memoizedStoredCards = useMemoCompare( storedCards, ( prev, next ) => {
+		const prevIds = prev?.map( ( card ) => card.stored_details_id ) ?? [];
+		const nextIds = next?.map( ( card ) => card.stored_details_id ) ?? [];
+		return (
+			prevIds.length === nextIds.length && prevIds.every( ( id, index ) => id === nextIds[ index ] )
 		);
-	}, [ storedCards, activePayButtonText ] );
+	} );
+	const existingCardMethods = useMemo( () => {
+		return (
+			memoizedStoredCards?.map( ( storedDetails ) =>
+				createExistingCardMethod( {
+					id: `existingCard-${ storedDetails.stored_details_id }`,
+					cardholderName: storedDetails.name,
+					cardExpiry: storedDetails.expiry,
+					brand: storedDetails.card_type,
+					last4: storedDetails.card,
+					storedDetailsId: storedDetails.stored_details_id,
+					paymentMethodToken: storedDetails.mp_ref,
+					paymentPartnerProcessorId: storedDetails.payment_partner,
+					activePayButtonText,
+				} )
+			) ?? []
+		);
+	}, [ memoizedStoredCards, activePayButtonText ] );
 	return existingCardMethods;
 }
 
