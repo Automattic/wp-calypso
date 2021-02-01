@@ -22,7 +22,7 @@ exemptMilestones: true
 staleLabel: "[Status] Stale"
 # Comment to post when marking an issue as stale. Set to `false` to disable
 markComment: >
-  <p>This issue has been marked as stale and will be closed in 14 days. 
+  <p>This issue has been marked as stale. 
   This happened because:</p>
   
   <ul>
