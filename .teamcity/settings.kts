@@ -236,6 +236,7 @@ object BuildDockerImage : BuildType({
 					--label com.a8c.build-id=%teamcity.build.id%
 					--build-arg workers=16
 					--build-arg node_memory=32768
+					--build-arg use_cache=true
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
