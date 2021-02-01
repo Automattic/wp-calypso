@@ -14,7 +14,7 @@ import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import buildFallbackResponse from './static-data/fallback-menu';
 import allSitesMenu from './static-data/all-sites-menu';
-import jetpackMenu from './static-data/jetpack-menu';
+import jetpackMenu from './static-data/jetpack-fallback-menu';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';

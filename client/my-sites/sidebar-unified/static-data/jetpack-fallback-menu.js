@@ -32,14 +32,14 @@ export default function jetpackMenu( { siteDomain } ) {
 			children: [
 				{
 					parent: 'upgrades',
-					slug: 'upgrades',
+					slug: 'plans',
 					title: translate( 'Plans' ),
 					type: 'submenu-item',
 					url: `/plans/${ siteDomain }`,
 				},
 				{
 					parent: 'upgrades',
-					slug: 'upgrades',
+					slug: 'purchases',
 					title: translate( 'Purchases' ),
 					type: 'submenu-item',
 					url: `/purchases/subscriptions/${ siteDomain }`,
@@ -104,7 +104,7 @@ export default function jetpackMenu( { siteDomain } ) {
 			slug: 'edit-comments-php',
 			title: translate( 'Comments' ),
 			type: 'menu-item',
-			url: `/comments/${ siteDomain }`,
+			url: `/comments/all/${ siteDomain }`,
 		},
 		{
 			icon: 'dashicons-feedback',
