@@ -7,21 +7,22 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
-import type { CTAVariation, PopularBadgeVariation } from './types';
 import { useSelect } from '@wordpress/data';
 import { Icon, check } from '@wordpress/icons';
 
-const TickIcon = <Icon icon={ check } size={ 17 } />;
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import type { CTAVariation, PopularBadgeVariation } from './types';
 
 /**
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
+import { PLANS_STORE } from '../stores';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
-import { PLANS_STORE } from '../constants';
+
+const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const ChevronDown = (
 	<svg width="8" viewBox="0 0 8 4">
