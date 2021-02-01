@@ -234,6 +234,7 @@ function translateReponseCartProductToWPCOMCartItem(
 			value: item_subtotal_integer || 0,
 			displayValue: item_subtotal_display || '',
 		},
+		wpcom_response_cart_product: serverCartItem,
 		wpcom_meta: {
 			uuid: uuid,
 			meta,

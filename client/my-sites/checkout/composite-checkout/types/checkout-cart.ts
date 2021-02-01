@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { ResponseCartProductExtra } from '@automattic/shopping-cart';
+import type { ResponseCartProductExtra, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { LineItem, LineItemAmount } from '@automattic/composite-checkout';
 
 /**
@@ -13,6 +13,7 @@ import type { CheckoutPaymentMethodSlug } from './checkout-payment-method-slug';
  * Cart item with WPCOM specific info added.
  */
 export type WPCOMCartItem = LineItem & {
+	wpcom_response_cart_product: ResponseCartProduct;
 	wpcom_meta: {
 		uuid: string;
 		meta?: string;
