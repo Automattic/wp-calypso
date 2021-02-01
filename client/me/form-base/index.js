@@ -48,13 +48,23 @@ export default {
 	},
 
 	showNotice: function ( formName ) {
+		let noticeMsg = '';
 		if ( this.props.userSettings.initialized && this.state.showNotice ) {
 			notices.clearNotices( 'notices' );
-			notices.success(
-				this.props.translate( '%s Settings saved successfully!', {
+
+			if ( formName ) {
+				const targetSetting = this.props.translate( '%s settings', {
 					args: upperFirst( formName ),
-				} )
-			);
+				} );
+
+				noticeMsg = this.props.translate( '%s saved successfully!', {
+					args: targetSetting,
+				} );
+			} else {
+				noticeMsg = this.props.translate( 'Settings saved successfully!' );
+			}
+
+			notices.success( noticeMsg );
 			this.state.showNotice = false;
 		}
 	},
