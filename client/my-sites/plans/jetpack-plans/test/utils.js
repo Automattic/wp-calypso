@@ -4,7 +4,6 @@
 jest.mock( 'calypso/state/products-list/selectors/get-product-cost' );
 jest.mock( 'calypso/state/current-user/selectors' );
 // Prevent `ReferenceError: window is not defined`
-jest.mock( '../products-grid-alt-2', () => null );
 jest.mock( '../products-grid-i5', () => null );
 
 /**

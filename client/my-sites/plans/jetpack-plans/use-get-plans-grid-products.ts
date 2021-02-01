@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { getPlan } from 'calypso/lib/plans';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
-	JETPACK_BACKUP_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
@@ -70,46 +69,31 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	const backupProductsToShow = [];
-	// In v1, we show the Backup product the site owns or Jetpack Backup Daily.
-	if ( currentCROvariant === 'v1' ) {
-		if (
-			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
-		) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_DAILY,
-				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
-			);
-		}
-		// We show the Backup product the site owns and the one the site doesn't own. In other words,
-		// we always show both Backup Daily and Backup Real-time.
-	} else {
-		if (
-			! ownedProducts.some( ( ownedProduct ) =>
-				[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes(
-					ownedProduct
-				)
-			)
-		) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_DAILY,
-				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
-			);
-		}
 
-		if (
-			currentCROvariant !== 'spp' &&
-			! ownedProducts.some( ( ownedProduct ) =>
-				[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
-					ownedProduct
-				)
+	if (
+		! ownedProducts.some( ( ownedProduct ) =>
+			[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes(
+				ownedProduct
 			)
-		) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_REALTIME,
-				PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
-			);
-		}
+		)
+	) {
+		backupProductsToShow.push( PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
 	}
+
+	if (
+		currentCROvariant !== 'spp' &&
+		! ownedProducts.some( ( ownedProduct ) =>
+			[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
+				ownedProduct
+			)
+		)
+	) {
+		backupProductsToShow.push(
+			PRODUCT_JETPACK_BACKUP_REALTIME,
+			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
+		);
+	}
+
 	availableProducts = [ ...availableProducts, ...backupProductsToShow ];
 
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying

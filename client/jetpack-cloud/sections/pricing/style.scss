@@ -10,22 +10,6 @@
 
 	font-family: 'Noto Sans', $sans;
 
-	.plans-filter-bar.sticky {
-		top: 0; // No masterbar here.
-		left: 0;
-
-		width: 100%;
-		max-width: none;
-
-		border-left: none;
-		border-right: none;
-
-		@include break-large {
-			// This is the height of the jpcom masterbar
-			top: 94px;
-		}
-	}
-
 	.header {
 		margin-bottom: 24px;
 		padding: 0 5%;
@@ -73,18 +57,6 @@
 		.jetpack-product-card__description {
 			font-size: rem( 15px );
 		}
-	}
-
-	.jetpack-product-card-alt {
-		background: var( --studio-gray-0 );
-
-		.foldable-card {
-			font-size: $font-body;
-		}
-	}
-
-	.jetpack-free-card-alt {
-		background: var( --studio-gray-0 );
 	}
 
 	.foldable-card {

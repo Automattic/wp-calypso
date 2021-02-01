@@ -244,67 +244,8 @@ export function productButtonLabel(
 	);
 }
 
-export function productButtonLabelAlt(
-	product: SelectorProduct,
-	isOwned: boolean,
-	isItemPlanFeature: boolean,
-	isUpgradeableToYearly: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult {
-	if ( isUpgradeableToYearly ) {
-		return translate( 'Upgrade to Yearly' );
-	}
-
-	if (
-		isOwned ||
-		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
-	) {
-		return product.type !== ITEM_TYPE_PRODUCT
-			? translate( 'Manage Plan' )
-			: translate( 'Manage Subscription' );
-	}
-
-	const { buttonLabel } = product;
-
-	// If it's a product with options, we want to use the name of the option
-	// to label the button.
-	const displayName = getProductWithOptionDisplayName( product, isOwned, isItemPlanFeature );
-	if ( getOptionFromSlug( product.productSlug ) ) {
-		return translate( 'Get {{name/}}', {
-			components: {
-				name: createElement( Fragment, {}, displayName ),
-			},
-			comment: '{{name/}} is the name of a product',
-		} );
-	}
-
-	return (
-		buttonLabel ??
-		translate( 'Get {{name/}}', {
-			components: {
-				name: createElement( Fragment, {}, displayName ),
-			},
-			comment: '{{name/}} is the name of a product',
-		} )
-	);
-}
-
 export function slugIsFeaturedProduct( productSlug: string ): boolean {
 	return FEATURED_PRODUCTS.includes( productSlug );
-}
-
-export function productBadgeLabelAlt(
-	product: SelectorProduct,
-	isOwned: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult | undefined {
-	if ( isOwned ) {
-		return translate( 'You own this' );
-	}
-
-	if ( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) ) {
-		return translate( 'Included in your plan' );
-	}
 }
 
 /**
@@ -483,9 +424,7 @@ export function itemToSelectorProduct(
 		}
 
 		const currentCROvariant = getJetpackCROActiveVersion();
-		const iconSlug = [ 'v1', 'v2', 'i5' ].includes( currentCROvariant )
-			? `${ yearlyProductSlug || item.product_slug }_v2_dark`
-			: `${ yearlyProductSlug || item.product_slug }_v2`;
+		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
 
 		return {
 			productSlug: item.product_slug,

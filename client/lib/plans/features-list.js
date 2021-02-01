@@ -1094,7 +1094,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
@@ -1102,20 +1101,8 @@ export const FEATURES_LIST = {
 		getIcon: () => 'cloud-upload',
 		getTitle: ( variation ) =>
 			( {
-				v2: i18n.translate( 'Backup {{strong}}{{em}}Daily{{/em}}{{/strong}}', {
-					components: {
-						em: <em />,
-						strong: <strong />,
-					},
-				} ),
-				i5: i18n.translate( 'All Backup Daily features' ),
 				spp: i18n.translate( 'All Jetpack Backup features' ),
-			}[ variation ] ||
-			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+			}[ variation ] || i18n.translate( 'All Backup Daily features' ) ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1125,29 +1112,12 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: ( variation ) =>
-			( {
-				v2: i18n.translate( 'Backup {{strong}}{{em}}Real{{nbh/}}time{{/em}}{{/strong}}', {
-					components: {
-						em: <em />,
-						strong: <strong />,
-						nbh: <>&#8209;</>,
-					},
-					comment: '{{nbh}} represents a non breakable hyphen',
-				} ),
-				i5: i18n.translate( 'Backup Real-time (off-site)' ),
-			}[ variation ] ||
-			i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Backup Real-time (off-site)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
@@ -1157,7 +1127,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_SCAN_V2 ]: {
@@ -1178,7 +1147,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	/**
@@ -1198,7 +1166,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	// * Scan Daily *
@@ -1227,7 +1194,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	// * Scan Real-time *
@@ -1256,7 +1222,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
@@ -1277,7 +1242,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_ACTIVITY_LOG_V2 ]: {
@@ -1332,18 +1296,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SEARCH_V2,
-		getIcon: ( variation ) => ( variation === 'v2' ? 'search' : null ),
-		getTitle: ( variation ) =>
-			( {
-				v2: i18n.translate( 'Jetpack Search {{strong}}{{em}}Up to 100k records{{/em}}{{/strong}}', {
-					components: {
-						em: <em />,
-						strong: <strong />,
-					},
-				} ),
-				i5: i18n.translate( 'Site Search: up to 100k records' ),
-				spp: i18n.translate( 'Site Search: up to 100k records' ),
-			}[ variation ] || i18n.translate( 'Search: up to 100k records' ) ),
+		getTitle: () => i18n.translate( 'Site Search: up to 100k records' ),
 
 		getDescription: () =>
 			i18n.translate(
@@ -1354,7 +1307,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_VIDEO_HOSTING_V2 ]: {
@@ -1373,16 +1325,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CRM_V2 ]: {
 		getSlug: () => constants.FEATURE_CRM_V2,
-		getIcon: ( variation ) => ( variation === 'v2' ? 'multiple-users' : null ),
-		getTitle: ( variation ) =>
-			( {
-				v2: i18n.translate( 'Jetpack CRM {{strong}}{{em}}Entrepreneur{{/em}}{{/strong}}', {
-					components: {
-						em: <em />,
-						strong: <strong />,
-					},
-				} ),
-			}[ variation ] || i18n.translate( 'CRM: Entrepreneur bundle' ) ),
+		getTitle: () => i18n.translate( 'CRM: Entrepreneur bundle' ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
@@ -1392,7 +1335,6 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
-		isProduct: ( variation ) => variation === 'v2',
 	},
 
 	[ constants.FEATURE_CRM_LEADS_AND_FUNNEL ]: {

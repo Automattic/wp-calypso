@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { createElement } from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -262,35 +261,19 @@ export const EXTERNAL_PRODUCT_CRM: ( variation: string ) => SelectorProduct = ( 
 	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM,
 	monthlyProductSlug: PRODUCT_JETPACK_CRM,
-	iconSlug: [ 'v1', 'v2' ].includes( variation ) ? 'jetpack_crm_dark' : 'jetpack_crm',
-	displayName:
-		{
-			v2: translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
-				components: {
-					em: createElement( 'em' ),
-				},
-			} ),
-			i5: translate( 'CRM Entrepreneur' ),
-		}[ variation ] || translate( 'Jetpack CRM' ),
-
-	shortName:
-		{
-			v2: translate( 'Jetpack CRM ' ),
-			i5: translate( 'CRM Entrepreneur' ),
-		}[ variation ] ||
-		translate( 'CRM', {
-			comment: 'Short name of the Jetpack CRM',
-		} ),
+	iconSlug: 'jetpack_crm',
+	displayName: translate( 'CRM Entrepreneur' ),
+	shortName: translate( 'CRM Entrepreneur' ),
 	tagline: translate( 'Manage contacts effortlessly' ),
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
 	// available via the API). Rather like a third-party product.
 	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
-	displayPrice: variation === 'v1' ? undefined : CRM_ENTREPRENEUR_PRICE,
-	displayCurrency: variation === 'v1' ? undefined : CRM_ENTREPRENEUR_CURRENCY,
+	displayPrice: CRM_ENTREPRENEUR_PRICE,
+	displayCurrency: CRM_ENTREPRENEUR_CURRENCY,
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
-	buttonLabel: variation === 'v1' ? translate( 'Get Jetpack CRM' ) : translate( 'Get CRM' ),
+	buttonLabel: translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem(
 			[
