@@ -6,7 +6,7 @@ Although we strive to create the most secure products possible, we are not perfe
 
 ### Web
 
-Only the latest version of Calypso (that is, what is present in the `trunk` branch) is supported. Calypso is continuously deployed shortly after each merge, multiple times per day.
+Only the latest version of Calypso (that is, what is present in the `trunk` branch) is supported. Calypso is continuously deployed shortly after each merge to trunk, multiple times per day.
 
 ### WordPress Desktop
 
