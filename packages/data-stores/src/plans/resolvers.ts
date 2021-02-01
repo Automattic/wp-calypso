@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { stringify } from 'qs';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -28,7 +29,6 @@ import {
 	FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN,
 } from './constants';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
-import formatCurrency from '@automattic/format-currency';
 
 const MONTHLY_PLAN_BILLING_PERIOD = 31;
 
