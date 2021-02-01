@@ -71,7 +71,7 @@ export function CloudflareAnalyticsSettings( {
 	};
 
 	const recordSupportLinkClick = () => {
-		trackTracksEvent( 'calypso_traffic_settings_cloudflare_click' );
+		trackTracksEvent( 'calypso_traffic_settings_cloudflare_support_click' );
 	};
 
 	const handleCodeChange = ( event ) => {
