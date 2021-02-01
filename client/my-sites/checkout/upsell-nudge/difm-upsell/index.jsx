@@ -10,6 +10,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { CompactCard, Button } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -156,8 +157,14 @@ export class DifmUpsell extends PureComponent {
 		);
 	}
 
+	handleDifmAccept = () => {
+		wpcom.undocumented().saveDifmInterestForUser();
+
+		this.props.handleClickAccept( 'accept' );
+	};
+
 	footer() {
-		const { translate, handleClickAccept, handleClickDecline } = this.props;
+		const { translate, handleClickDecline } = this.props;
 		return (
 			<footer className="difm-upsell__footer">
 				<Button
@@ -170,7 +177,7 @@ export class DifmUpsell extends PureComponent {
 				<Button
 					primary
 					className="difm-upsell__accept-offer-button"
-					onClick={ () => handleClickAccept( 'accept' ) }
+					onClick={ () => this.handleDifmAccept() }
 				>
 					{ translate( 'Yes, I want to apply now and get my site built' ) }
 				</Button>
