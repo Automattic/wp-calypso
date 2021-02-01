@@ -56,7 +56,7 @@ export interface PlanProduct {
 export interface PricedAPIPlan {
 	product_id: number;
 	product_name: string;
-	meta: Record< string, unknown >;
+	meta: Record< string, unknown > | null;
 	prices: {
 		AUD: number;
 		BRL: number;
@@ -85,35 +85,34 @@ export interface PricedAPIPlan {
 		USD: number;
 		TRY: number;
 	};
-	bundle_product_ids: {
-		0: number;
-		1: number;
-		2: number;
-		3: number;
-		4: number;
-		5: number;
-		6: number;
-	};
+	bundle_product_ids?: number[];
+	blog_id: null;
 	path_slug: PlanPath;
 	product_slug: StorePlanSlug;
 	description: string;
 	cost: number;
-	bill_period: 31 | 365;
+	bill_period: -1 | 31 | 365;
 	product_type: string;
 	available: string;
 	multi: number;
 	bd_slug: string;
 	bd_variation_slug: string;
-	outer_slug: string;
-	extra: string;
+	outer_slug: string | null;
+	extra: string | null;
 	capability: string;
 	product_name_short: string;
+	icon?: string;
+	icon_active?: string;
+	cost__from_plan: number;
+	currency__from_plan: string;
+	initial_cost_matched: boolean;
 	bill_period_label: string;
 	price: string;
 	formatted_price: string;
 	raw_price: number;
-	tagline: Record< string, unknown >;
+	tagline: string | null;
 	currency_code: string;
+	features_highlight: { title?: string; items: string[] }[];
 }
 
 export type PlanFeature = {
@@ -145,7 +144,7 @@ export interface APIPlanDetail {
 
 export interface FeaturesByType {
 	id: string;
-	name: string;
+	name: string | null;
 	features: string[];
 }
 
