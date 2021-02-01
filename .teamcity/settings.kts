@@ -234,6 +234,8 @@ object BuildDockerImage : BuildType({
 					--label com.a8c.image-builder=teamcity
 					--label com.a8c.target=calypso-live
 					--label com.a8c.build-id=%teamcity.build.id%
+					--build-arg workers=16
+					--build-arg node_memory=32768
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
