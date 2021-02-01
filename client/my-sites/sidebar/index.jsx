@@ -696,6 +696,7 @@ export class MySitesSidebar extends Component {
 			siteSuffix,
 			canUserUseCalypsoStore,
 			canUserUseWooCommerceCoreStore,
+			isSiteWpcomStore,
 		} = this.props;
 
 		if ( ! site ) {
@@ -715,6 +716,12 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		const isCalypsoStoreDeprecated = isEnabled( 'woocommerce/store-deprecated' );
+
+		if ( ! isSiteWpcomStore && isCalypsoStoreDeprecated && isBusiness( site.plan ) ) {
+			return null;
+		}
+
 		const infoCopy = translate(
 			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
 			{
@@ -729,7 +736,6 @@ export class MySitesSidebar extends Component {
 				},
 			}
 		);
-		const isCalypsoStoreDeprecated = isEnabled( 'woocommerce/store-deprecated' );
 
 		return (
 			<SidebarItem
@@ -745,15 +751,13 @@ export class MySitesSidebar extends Component {
 				forceInternalLink
 				className="sidebar__store"
 			>
-				{ isCalypsoStoreDeprecated && isBusiness( site.plan ) && (
-					<InfoPopover
-						className="sidebar__store-tooltip"
-						position="bottom right"
-						showOnHover={ true }
-					>
-						{ infoCopy }
-					</InfoPopover>
-				) }
+				<InfoPopover
+					className="sidebar__store-tooltip"
+					position="bottom right"
+					showOnHover={ true }
+				>
+					{ infoCopy }
+				</InfoPopover>
 			</SidebarItem>
 		);
 	}
