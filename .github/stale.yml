@@ -6,7 +6,8 @@
 # Number of days of inactivity before an issue becomes stale
 daysUntilStale: 180
 # Number of days of inactivity before a stale issue is closed
-daysUntilClose: 14
+# Set to false to disable auto-close.
+daysUntilClose: false
 # Issues with these labels will never be considered stale
 exemptLabels:
   - "[Pri] High"
