@@ -29,6 +29,8 @@ import {
 } from 'calypso/state/action-types';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 
+import 'calypso/state/data-layer/wpcom/sites/homepage';
+
 /**
  * Returns an action object to be used in signalling that a site has been
  * deleted.
