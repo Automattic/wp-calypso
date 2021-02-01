@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { upperFirst } from 'lodash';
 
 const debug = debugFactory( 'calypso:me:form-base' );
 
@@ -46,10 +47,14 @@ export default {
 		};
 	},
 
-	showNotice: function () {
+	showNotice: function ( formName ) {
 		if ( this.props.userSettings.initialized && this.state.showNotice ) {
 			notices.clearNotices( 'notices' );
-			notices.success( this.props.translate( 'Settings saved successfully!' ) );
+			notices.success(
+				this.props.translate( '%s Settings saved successfully!', {
+					args: upperFirst( formName ),
+				} )
+			);
 			this.state.showNotice = false;
 		}
 	},
@@ -75,7 +80,11 @@ export default {
 		if ( error.message ) {
 			notices.error( error.message );
 		} else {
-			notices.error( this.props.translate( 'There was a problem saving your changes.' ) );
+			notices.error(
+				this.props.translate( 'There was a problem saving your %s changes.', {
+					args: upperFirst( formName ),
+				} )
+			);
 		}
 
 		this.setState( {
@@ -113,7 +122,7 @@ export default {
 				...( formName && { [ formName ]: false } ),
 			},
 		} );
-		this.showNotice();
+		this.showNotice( formName );
 		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 	},
 
