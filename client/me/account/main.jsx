@@ -882,7 +882,7 @@ const Account = createReactClass( {
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+				<FormattedHeader brandFont headerText={ translate( 'Account settings' ) } align="left" />
 
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
@@ -921,7 +921,7 @@ const Account = createReactClass( {
 					</form>
 				</Card>
 
-				<SectionHeader label={ translate( 'Interface Settings' ) } />
+				<SectionHeader label={ translate( 'Interface settings' ) } />
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.saveInterfaceSettings }>
 						<FormFieldset>
