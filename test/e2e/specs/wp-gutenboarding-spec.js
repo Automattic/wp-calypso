@@ -36,7 +36,7 @@ before( async function () {
 
 describe( 'Gutenboarding: (' + screenSize + ')', function () {
 	this.timeout( mochaTimeOut );
-	describe.skip( 'Create new site as existing user @parallel @canary', function () {
+	describe( 'Create new site as existing user @parallel @canary', function () {
 		const siteTitle = dataHelper.randomPhrase();
 		const domainQuery = dataHelper.randomPhrase();
 		let newSiteDomain = '';
