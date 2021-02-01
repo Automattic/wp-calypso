@@ -55,13 +55,17 @@ export default {
 			if ( formName ) {
 				const targetSetting = this.props.translate( '%s settings', {
 					args: upperFirst( formName ),
+					comment: 'A name for the group of related settings.',
 				} );
 
 				noticeMsg = this.props.translate( '%s saved successfully!', {
 					args: targetSetting,
+					comment: 'Notice informing user of successfully saved group of related form fields.',
 				} );
 			} else {
-				noticeMsg = this.props.translate( 'Settings saved successfully!' );
+				noticeMsg = this.props.translate( 'Settings saved successfully!', {
+					comment: 'Notice informing user of successfully saved group of related form fields.',
+				} );
 			}
 
 			notices.success( noticeMsg );
@@ -93,6 +97,7 @@ export default {
 			notices.error(
 				this.props.translate( 'There was a problem saving your %s changes.', {
 					args: upperFirst( formName ),
+					comment: 'Notice informing user of an error saving a group of related form fields.',
 				} )
 			);
 		}
