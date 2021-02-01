@@ -280,6 +280,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	hasPaidDomain = false,
 	selectedPaidDomain = false,
 } ) => {
+	const locale = useLocale();
+
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
 	const billingPeriod = 'ANNUALLY';
@@ -293,11 +295,11 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	);
 
 	const selectedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId )
+		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId, locale )
 	);
 
 	const selectedPaidPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByProductId( selectedPaidPlanProductId )
+		select( PLANS_STORE ).getPlanByProductId( selectedPaidPlanProductId, locale )
 	);
 
 	const { defaultPaidPlan, defaultFreePlan } = usePlans();

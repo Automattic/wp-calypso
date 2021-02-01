@@ -28,8 +28,8 @@ export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSugge
 	state.domain;
 export const getSelectedPlanProductId = ( state: State ): number | undefined => state.planProductId;
 
-export const getSelectedPlan = ( state: State ): Plan | undefined =>
-	select( PLANS_STORE ).getPlanByProductId( state.planProductId );
+export const getSelectedPlan = ( state: State, locale: string ): Plan | undefined =>
+	select( PLANS_STORE ).getPlanByProductId( state.planProductId, locale );
 
 /**
  * Returns the product id of the the last paid plan the user had picked.

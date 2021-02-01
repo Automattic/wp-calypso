@@ -73,7 +73,7 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 	);
 
 	const recommendedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug )
+		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug, locale )
 	);
 
 	const primaryPlan = recommendedPlan || popularPlan;

@@ -24,10 +24,11 @@ import type { Plan } from '../stores/plans';
  */
 export function usePlanFromPath(): Plan | undefined {
 	const planPath = usePlanRouteParam();
+	const locale = useLocale();
 
 	const [ isPlanFree, planFromPath, selectedFeatures ] = useSelect( ( select ) => [
 		select( PLANS_STORE ).isPlanFree,
-		select( PLANS_STORE ).getPlanByPath( planPath ),
+		select( PLANS_STORE ).getPlanByPath( planPath, locale ),
 		select( ONBOARD_STORE ).getSelectedFeatures(),
 	] );
 
@@ -54,11 +55,11 @@ export function useSelectedPlan(): Plan | undefined {
 	);
 
 	const recommendedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug )
+		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug, locale )
 	);
 
 	const selectedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId )
+		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId, locale )
 	);
 
 	const planFromPath = usePlanFromPath();
