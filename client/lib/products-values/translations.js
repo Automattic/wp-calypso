@@ -74,17 +74,7 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 
-	const backupRealtime = getForCurrentCROIteration( {
-		[ Iterations.V2 ]: (
-			<>
-				{ translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</>
-		),
-	} ) || (
+	const backupRealtime = (
 		<>
 			{ translate( 'Backup {{em}}Real-Time{{/em}}', {
 				components: {
@@ -94,34 +84,11 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 	const search = translate( 'Site Search' );
-	const scan =
-		getForCurrentCROIteration( {
-			i5: translate( 'Scan' ),
-			spp: translate( 'Scan' ),
-		} ) || translate( 'Jetpack Scan' );
+	const scan = translate( 'Scan' );
 
-	const scanRealtime = getForCurrentCROIteration( {
-		[ Iterations.I5 ]: (
-			<>
-				{ translate( 'Scan {{em}}Real-Time{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</>
-		),
-		[ Iterations.SPP ]: (
-			<>
-				{ translate( 'Scan {{em}}Real-Time{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</>
-		),
-	} ) || (
+	const scanRealtime = (
 		<>
-			{ translate( 'Jetpack Scan {{em}}Real-Time{{/em}}', {
+			{ translate( 'Scan {{em}}Real-Time{{/em}}', {
 				components: {
 					em: <em />,
 				},
@@ -130,9 +97,8 @@ export const getJetpackProductsDisplayNames = () => {
 	);
 
 	const antiSpam = getForCurrentCROIteration( {
-		i5: translate( 'Anti-spam' ),
-		spp: translate( 'Anti-Spam' ),
-	} ) || <>{ translate( 'Jetpack Anti-spam' ) }</>;
+		[ Iterations.SPP ]: translate( 'Anti-Spam' ),
+	} ) || <>{ translate( 'Anti-spam' ) }</>;
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -241,28 +207,15 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
-	const backupDailyDescription =
-		getForCurrentCROIteration( {
-			[ Iterations.I5 ]: translate(
-				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
-			),
-			[ Iterations.SPP ]: translate(
-				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
-			),
-		} ) || translate( 'Never lose a word, image, page, or time worrying about your site.' );
+	const backupDailyDescription = translate(
+		'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
+	);
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
 	);
-	const searchDescription =
-		getForCurrentCROIteration( {
-			[ Iterations.I5 ]: translate(
-				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
-			),
-			[ Iterations.SPP ]: translate(
-				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
-			),
-		} ) ||
-		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
+	const searchDescription = translate(
+		'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
+	);
 
 	const scanDescription = translate(
 		'Automatic scanning and one-click fixes keep your site one step ahead of security threats and malware.'

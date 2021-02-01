@@ -22,10 +22,6 @@ const iterationNames: string[] = Object.values( Iterations );
  *
  * **NOTE:** Avoid using this if you can; instead, opt for either `getForCurrentCROIteration` or `doForCurrentCROIteration`.
  *
- * **IMPORTANT:** This function calls `abtest`, so only use it in places where
- * it's okay for the `jetpackSimplifyPricingPage` test to begin,
- * or in places you know it's already begun.
- *
  * @see Iterations
  * @see getForCurrentCROIteration
  * @see doForCurrentCROIteration
@@ -56,10 +52,6 @@ type IterationValueMap< T > = Partial< { [ key in Iterations ]: T } >;
  * Returns a value based on the current CRO test iteration,
  * or undefined if no matching value could be found.
  *
- * **IMPORTANT:** This function calls `abtest`, so only use it in places where
- * it's okay for the `jetpackSimplifyPricingPage` test to begin,
- * or in places you know it's already begun.
- *
  * @param valueGetter {IterationValueMap|IterationValueFunction} Either a map
  * from Iterations to return values, or a function that accepts the current Iteration as an argument.
  *
@@ -88,10 +80,6 @@ export const getForCurrentCROIteration = < T >(
 /**
  * Resolves the current CRO iteration and passes that information to a given
  * function.
- *
- * **IMPORTANT:** This function calls `abtest`, so only use it in places where
- * it's okay for the `jetpackSimplifyPricingPage` test to begin,
- * or in places you know it's already begun.
  *
  * @param fn The function to execute.
  */

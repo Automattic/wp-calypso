@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { translate, TranslateResult } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -266,55 +266,19 @@ export const EXTERNAL_PRODUCT_CRM: ( variation: Iterations ) => SelectorProduct 
 	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM,
 	monthlyProductSlug: PRODUCT_JETPACK_CRM,
-<<<<<<< HEAD
 	iconSlug: 'jetpack_crm',
 	displayName: translate( 'CRM Entrepreneur' ),
 	shortName: translate( 'CRM Entrepreneur' ),
-=======
-	iconSlug:
-		( {
-			[ Iterations.V1 ]: 'jetpack_crm_dark',
-			[ Iterations.V2 ]: 'jetpack_crm_dark',
-		} as Partial< Record< Iterations, string > > )[ variation ] || 'jetpack_crm',
-	displayName:
-		( {
-			[ Iterations.V2 ]: translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
-				components: {
-					em: createElement( 'em' ),
-				},
-			} ),
-			[ Iterations.I5 ]: translate( 'CRM Entrepreneur' ),
-		} as Partial< Record< Iterations, TranslateResult > > )[ variation ] ||
-		translate( 'Jetpack CRM' ),
-	shortName:
-		( {
-			[ Iterations.V2 ]: translate( 'Jetpack CRM ' ),
-			[ Iterations.I5 ]: translate( 'CRM Entrepreneur' ),
-		} as Partial< Record< Iterations, TranslateResult > > )[ variation ] ||
-		translate( 'CRM', {
-			comment: 'Short name of the Jetpack CRM',
-		} ),
->>>>>>> bc19a516d3... Use Iterations enum in jetpack-plans/constants
 	tagline: translate( 'Manage contacts effortlessly' ),
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
 	// available via the API). Rather like a third-party product.
 	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
-<<<<<<< HEAD
 	displayPrice: CRM_ENTREPRENEUR_PRICE,
 	displayCurrency: CRM_ENTREPRENEUR_CURRENCY,
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
 	buttonLabel: translate( 'Get CRM' ),
-=======
-	displayPrice: variation === Iterations.V1 ? undefined : CRM_ENTREPRENEUR_PRICE,
-	displayCurrency: variation === Iterations.V1 ? undefined : CRM_ENTREPRENEUR_CURRENCY,
-	description: translate(
-		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
-	),
-	buttonLabel:
-		variation === Iterations.V1 ? translate( 'Get Jetpack CRM' ) : translate( 'Get CRM' ),
->>>>>>> bc19a516d3... Use Iterations enum in jetpack-plans/constants
 	features: {
 		items: buildCardFeaturesFromItem(
 			[
