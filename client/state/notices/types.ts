@@ -5,6 +5,9 @@ import type { ReactNode } from 'react';
 
 export type NoticeId = string;
 
+export type NoticeCreationActionType = 'NOTICE_CREATE';
+export type NoticeRemovalActionType = 'NOTICE_REMOVE';
+
 export type NoticeStatusError = 'is-error';
 export type NoticeStatusInfo = 'is-info';
 export type NoticeStatusPlain = 'is-plain';
@@ -44,7 +47,7 @@ export interface NoticeActionOptions extends BaseNoticeOptions {
 
 // Notice action as returned by the action creator
 export type NoticeAction = {
-	type: string;
+	type: NoticeCreationActionType;
 	notice: NoticeActionOptions;
 };
 
@@ -66,5 +69,5 @@ export type NoticeRemovalActionCreator = (
 	noticeId: NoticeId
 ) => {
 	noticeId: NoticeId;
-	type: string;
+	type: NoticeRemovalActionType;
 };
