@@ -18,7 +18,7 @@ import { getName, purchaseType } from 'calypso/lib/purchases';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
-import notices from 'calypso/notices';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
@@ -108,7 +108,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 
 		const response = await survey.submit();
 		if ( ! response.success ) {
-			notices.error( response.err );
+			this.props.errorNotice( response.err );
 		}
 	};
 
@@ -120,11 +120,11 @@ class GSuiteCancelPurchaseDialog extends Component {
 		const { purchasesError } = this.props;
 
 		if ( purchasesError ) {
-			notices.error( purchasesError );
+			this.props.errorNotice( purchasesError );
 			return false;
 		}
 
-		notices.success(
+		this.props.successNotice(
 			translate( '%(productName)s was removed from {{domain/}}.', {
 				args: {
 					productName,
@@ -134,7 +134,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 				},
 			} ),
 			{
-				persistent: true,
+				displayOnNextPage: true,
 			}
 		);
 
@@ -252,7 +252,9 @@ export default connect(
 		};
 	},
 	{
+		errorNotice,
 		recordTracksEvent,
 		removePurchase,
+		successNotice,
 	}
 )( localize( GSuiteCancelPurchaseDialog ) );
