@@ -111,16 +111,42 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 
 				return fetchedExperimentAssignment;
 			} catch ( e ) {
-				config.logError( {
-					message: e.message,
-					experimentName,
-				} );
-				if ( config.isDevelopmentMode ) {
-					throw e;
+				// We need to be careful about errors thrown in the catch block too:
+				try {
+					config.logError( {
+						message: e.message,
+						experimentName,
+					} );
+					if ( config.isDevelopmentMode ) {
+						throw e;
+					}
+
+					// We provide stale but "recent" ExperimentAssignments, important for offline users.
+					const storedExperimentAssignment = State.retrieveExperimentAssignment( experimentName );
+					if (
+						storedExperimentAssignment &&
+						ExperimentAssignments.isRecent( storedExperimentAssignment )
+					) {
+						return storedExperimentAssignment;
+					}
+
+					const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
+					State.storeExperimentAssignment( fallbackExperimentAssignment );
+					return fallbackExperimentAssignment;
+				} catch ( e2 ) {
+					try {
+						config.logError( {
+							message: e2.message,
+							experimentName,
+						} );
+					} catch ( e3 ) {}
+					if ( config.isDevelopmentMode ) {
+						throw e2;
+					}
+
+					// As a last resort we just keep it very simple
+					return createFallbackExperimentAssignment( experimentName );
 				}
-				const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
-				State.storeExperimentAssignment( fallbackExperimentAssignment );
-				return fallbackExperimentAssignment;
 			}
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {
