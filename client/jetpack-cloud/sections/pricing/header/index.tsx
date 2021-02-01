@@ -38,15 +38,6 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 				'Security, performance, and marketing tools made for WordPress'
 			),
 		}[ iteration ] ?? translate( 'Security, performance, and marketing tools for WordPress' );
-	const tagline =
-		{
-			[ Iterations.V1 ]: '',
-			[ Iterations.V2 ]: '',
-			[ Iterations.I5 ]: '',
-		}[ iteration ] ??
-		translate(
-			'Get everything your site needs, in one package — so you can focus on your business.'
-		);
 
 	return (
 		<>
@@ -61,7 +52,6 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 					headerText={ preventWidows( title ) }
 					align="center"
 				/>
-				{ tagline && <p>{ tagline }</p> }
 			</div>
 		</>
 	);
