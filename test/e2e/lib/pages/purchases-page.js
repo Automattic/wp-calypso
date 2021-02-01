@@ -72,7 +72,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 		await this._waitForPurchases();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `a.purchase-item[data-e2e-connected-site=true]` )
+			by.css( `a.purchase-item[data-e2e-connected-site=true] svg` )
 		);
 	}
 }
