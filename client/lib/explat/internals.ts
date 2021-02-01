@@ -58,7 +58,7 @@ export const fetchExperimentAssignment = ( {
 	anonId,
 }: {
 	experimentName: string;
-	anonId?: string;
+	anonId: string | null;
 } ): Promise< unknown > => {
 	return wpcom.req.get(
 		{

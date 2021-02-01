@@ -31,7 +31,7 @@ export interface Config {
 		anonId,
 	}: {
 		experimentName: string;
-		anonId?: string;
+		anonId: string | null;
 	} ) => Promise< unknown >;
 	getAnonId: () => Promise< string | null >;
 	logError: ( error: Record< string, string > & { message: string } ) => void;
