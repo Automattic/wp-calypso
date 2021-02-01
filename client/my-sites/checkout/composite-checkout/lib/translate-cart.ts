@@ -416,7 +416,7 @@ function getCouponIdFromProducts( items: WPCOMCartItem[] ): string | undefined {
 	return couponItem?.wpcom_meta?.couponCode;
 }
 
-function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
+export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.TranslateResult {
 	const isRenewalItem = isRenewal( serverCartItem );
 	const { meta, product_name: productName } = serverCartItem;
 
