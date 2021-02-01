@@ -28,7 +28,7 @@ import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/c
 /**
  * Internal dependencies
  */
-import { GoogleAnalyticsForm } from '../form-analytics';
+import { GoogleAnalyticsForm } from '../form-google-analytics';
 
 const props = {
 	site: {

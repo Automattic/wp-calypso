@@ -122,7 +122,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		handleSubmitForm = ( event ) => {
 			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
 
-			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
+			if ( event && ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
 			}
 
