@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import createSelector from '@automattic/create-selector';
+import createSelector from '@automattic/state-utils';
 
 /**
  * Internal dependencies

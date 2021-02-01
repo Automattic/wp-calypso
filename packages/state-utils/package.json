@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/create-selector",
+	"name": "@automattic/state-utils",
 	"version": "1.0.0-alpha.0",
-	"description": "Creates the calypso configuration api.",
+	"description": "A collection of Redux state utilities.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -12,7 +12,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/create-selector"
+		"directory": "packages/state-utils"
 	},
 	"files": [
 		"dist",

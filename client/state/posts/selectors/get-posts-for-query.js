@@ -6,7 +6,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/create-selector';
+import createSelector from '@automattic/state-utils';
 import { getQueryManager } from 'calypso/state/posts/selectors/get-query-manager';
 import { getSerializedPostsQuery, normalizePostForDisplay } from 'calypso/state/posts/utils';
 

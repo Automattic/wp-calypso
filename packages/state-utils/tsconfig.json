@@ -31,6 +31,5 @@
 		"composite": true
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/test/*" ],
-	"references": [ { "path": "../warn" } ]
+	"exclude": [ "**/test/*" ]
 }

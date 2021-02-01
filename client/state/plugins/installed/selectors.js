@@ -6,7 +6,7 @@ import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lo
 /**
  * Internal dependencies
  */
-import createSelector from '@automattic/create-selector';
+import createSelector from '@automattic/state-utils';
 import {
 	getSite,
 	getSiteTitle,

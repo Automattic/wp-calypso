@@ -7,7 +7,7 @@ import { compact } from 'lodash';
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
-import createSelector from '@automattic/create-selector';
+import createSelector from '@automattic/state-utils';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { getSelectedSiteId, isSiteSection } from 'calypso/state/ui/selectors';
 import getSiteTitle from 'calypso/state/sites/selectors/get-site-title';

@@ -6,7 +6,7 @@ import { compact, get, isArray, isObject, isFunction } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
-import createSelector from '@automattic/create-selector';
+import createSelector from '@automattic/state-utils';
 
 /**
  * Internal dependencies
