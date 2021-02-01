@@ -9,10 +9,14 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import warn from 'calypso/lib/warn';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import {
 	JETPACK_PLANS,

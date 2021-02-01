@@ -5,9 +5,9 @@ import { memoize, includes } from 'lodash';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
- * Internal dependencies
+ * WordPress dependencies
  */
-import warn from 'calypso/lib/warn';
+import warn from '@wordpress/warning';
 
 /**
  * Constants
