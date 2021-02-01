@@ -2,14 +2,14 @@
  * External dependencies
  */
 import { filter } from 'lodash';
-import warn from '@automattic/warn';
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
 import createSelector from '../';
 
-jest.mock( '@automattic/warn', () => jest.fn() );
+jest.mock( '@wordpress/warning', () => jest.fn() );
 
 describe( 'index', () => {
 	let getSitePosts;
