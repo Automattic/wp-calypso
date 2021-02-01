@@ -90,7 +90,7 @@ function IncompleteLocaleNoticeMessage( {
 		>
 			<div className="language-picker__modal-incomplete-locale-notice-info">
 				{
-					/* translators: %(languageName)s is a localized language name, %(percentTranslated)d is a percentage number (0-100). %% is the escaped percent sign. */
+					/* translators: %(languageName)s is a localized language name, %(percentTranslated)d%% is a percentage number (0-100), followed by an escaped percent sign %%. */
 					sprintf( __( '(%(languageName)s is only %(percentTranslated)d%% translated)' ), {
 						languageName,
 						percentTranslated,
