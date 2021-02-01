@@ -156,8 +156,11 @@ export interface Feature {
 	type: string;
 }
 
+export type DetailsAPIFeature = Omit< Feature, 'type' >;
+
 export interface DetailsAPIResponse {
+	groups: { slug: string; name: string }[];
 	plans: APIPlanDetail[];
 	features_by_type: FeaturesByType[];
-	features: Feature[];
+	features: DetailsAPIFeature[];
 }

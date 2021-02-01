@@ -16,8 +16,8 @@ import type {
 	DetailsAPIResponse,
 	PlanFeature,
 	PlanProduct,
-	Feature,
 	PlanSlug,
+	DetailsAPIFeature,
 } from './types';
 import {
 	PLAN_FREE,
@@ -79,13 +79,13 @@ function calculateDiscounts( planProducts: PlanProduct[] ) {
 	}
 }
 
-function processFeatures( features: Feature[] ) {
+function processFeatures( features: DetailsAPIFeature[] ) {
 	return features.reduce( ( features, feature ) => {
 		features[ feature.id ] = {
 			id: feature.id,
 			name: feature.name,
 			description: feature.description,
-			type: feature.type ?? 'checkbox',
+			type: 'checkbox',
 			requiresAnnuallyBilledPlan:
 				FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN.indexOf( feature.id ) > -1,
 		};
