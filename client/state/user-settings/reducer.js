@@ -34,7 +34,7 @@ export const settings = ( state = {}, { type, settingValues } ) => {
 export const unsavedSettings = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case USER_SETTINGS_UNSAVED_CLEAR: {
-			const settingNames = action.settingNames;
+			const { settingNames } = action;
 
 			if ( ! settingNames ) {
 				return {};
