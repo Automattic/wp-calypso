@@ -18,7 +18,6 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import {
 	getByPurchaseId,
