@@ -39,6 +39,9 @@ class PageTemplateModal extends Component {
 		mapValues( keyBy( templates, 'name' ), 'title' )
 	);
 
+	// Extract ids for faster lookup.
+	getIdsByTemplateSlugs = memoize( ( templates ) => mapValues( keyBy( templates, 'name' ), 'ID' ) );
+
 	// Parse templates blocks and memoize them.
 	getBlocksByTemplateSlugs = memoize( ( templates ) => {
 		const blocksByTemplateSlugs = reduce(
@@ -75,24 +78,6 @@ class PageTemplateModal extends Component {
 			{}
 		);
 	}
-
-	getBlocksForPreview = memoize( ( previewedTemplate ) => {
-		const blocks = this.getBlocksByTemplateSlug( previewedTemplate );
-
-		// Modify the existing blocks returning new block object references.
-		return mapBlocksRecursively( blocks, function modifyBlocksForPreview( block ) {
-			// `jetpack/contact-form` has a placeholder to configure form settings
-			// we need to disable this to show the full form in the preview
-			if (
-				'jetpack/contact-form' === block.name &&
-				undefined !== block.attributes.hasFormSettingsSet
-			) {
-				block.attributes.hasFormSettingsSet = true;
-			}
-
-			return block;
-		} );
-	} );
 
 	getBlocksForSelection = ( selectedTemplate ) => {
 		const blocks = this.getBlocksByTemplateSlug( selectedTemplate );
@@ -273,6 +258,10 @@ class PageTemplateModal extends Component {
 		return get( this.getTitlesByTemplateSlugs( this.props.templates ), [ name ], '' );
 	}
 
+	getIdByTemplateSlug( name ) {
+		return get( this.getIdsByTemplateSlugs( this.props.templates ), [ name ], '' );
+	}
+
 	getTemplateGroups = () => {
 		if ( ! this.props.templates.length ) {
 			return null;
@@ -431,23 +420,10 @@ class PageTemplateModal extends Component {
 
 	render() {
 		const { previewedTemplate, isLoading } = this.state;
-		const { hidePageTitle, isOpen, currentBlocks } = this.props;
+		const { hidePageTitle, isOpen } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
-		}
-
-		// Sometimes currentBlocks is not loaded before getBlocksForPreview is called
-		// getBlocksForPreview memoizes the function call which causes it to always
-		// call it with an empty array. We delete the the cache for the function
-		// to allow it to memoize the loaded currentBlocks.
-		const currentBlocksPreviewCache = this.getBlocksForPreview.cache.get( 'current' );
-		if (
-			currentBlocksPreviewCache &&
-			currentBlocks &&
-			currentBlocksPreviewCache.length !== currentBlocks.length
-		) {
-			this.getBlocksForPreview.cache.delete( 'current' );
 		}
 
 		return (
@@ -477,13 +453,14 @@ class PageTemplateModal extends Component {
 						<>
 							<form className="page-template-modal__form">{ this.renderTemplateGroups() }</form>
 							<TemplateSelectorPreview
-								blocks={ this.getBlocksForPreview( previewedTemplate ) }
-								viewportWidth={ 1200 }
+								postId={ this.getIdByTemplateSlug( previewedTemplate ) }
 								title={
 									! hidePageTitle && previewedTemplate === 'current'
 										? this.props.currentPostTitle
 										: this.getTitleByTemplateSlug( previewedTemplate )
 								}
+								theme={ this.props.theme }
+								locale={ this.props.locale }
 							/>
 						</>
 					) }
