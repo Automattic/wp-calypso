@@ -284,30 +284,46 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const selectedPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getSelectedPlanProductId()
-	);
+	const { selectedPlanProductId } = useSelect( ( select ) => {
+		const launchStore = select( LAUNCH_STORE );
 
-	const selectedPaidPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getPaidPlanProductId()
-	);
-
-	const selectedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId, locale )
-	);
-
-	const selectedPaidPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByProductId( selectedPaidPlanProductId, locale )
-	);
-
-	const { selectedPlanProduct } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
 		return {
-			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
+			selectedPlanProductId: launchStore.getSelectedPlanProductId(),
 		};
 	} );
 
-	const billingPeriod = selectedPlanProduct?.billingPeriod;
+	const { selectedPaidPlanProductId } = useSelect( ( select ) => {
+		const launchStore = select( LAUNCH_STORE );
+
+		return {
+			selectedPaidPlanProductId: launchStore.getPaidPlanProductId(),
+		};
+	} );
+
+	const { selectedPlan } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
+
+		return {
+			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
+		};
+	} );
+
+	const { selectedPaidPlan } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
+
+		return {
+			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
+		};
+	} );
+
+	const { selectedPlanBillingPeriod } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
+
+		return {
+			selectedPlanBillingPeriod: plansStore.getPlanProductById( selectedPlanProductId )
+				?.billingPeriod,
+		};
+	} );
 
 	const { defaultPaidPlan, defaultFreePlan } = usePlans();
 
@@ -333,10 +349,14 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
 		: [ defaultPaidPlan, defaultFreePlan ];
 
-	const allAvailablePlansProducts = useSelect( ( select ) => {
-		return allAvailablePlans.map( ( plan ) =>
-			select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, billingPeriod )
-		);
+	const { allAvailablePlansProducts } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
+
+		return {
+			allAvailablePlansProducts: allAvailablePlans.map( ( plan ) =>
+				plansStore.getPlanProduct( plan?.periodAgnosticSlug, selectedPlanBillingPeriod )
+			),
+		};
 	} );
 
 	return (
@@ -515,19 +535,19 @@ const Summary: React.FunctionComponent = () => {
 		selectedDomain,
 		selectedPlanProductId,
 	] = useSelect( ( select ) => {
-		const { isSiteTitleStepVisible, domain, planProductId } = select( LAUNCH_STORE ).getState();
+		const launchStore = select( LAUNCH_STORE );
+		const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
 
-		return [
-			select( LAUNCH_STORE ).hasSelectedDomain(),
-			isSiteTitleStepVisible,
-			domain,
-			planProductId,
-		];
+		return [ launchStore.hasSelectedDomain(), isSiteTitleStepVisible, domain, planProductId ];
 	} );
 
-	const isSelectedPlanFree = useSelect( ( select ) =>
-		select( PLANS_STORE ).isPlanProductFree( selectedPlanProductId )
-	);
+	const { isSelectedPlanFree } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
+
+		return {
+			isSelectedPlanFree: plansStore.isPlanProductFree( selectedPlanProductId ),
+		};
+	} );
 
 	const { launchSite } = useDispatch( SITE_STORE );
 	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
