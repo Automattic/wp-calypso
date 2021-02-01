@@ -390,8 +390,6 @@ const webpackConfig = {
 		 * Replace `lodash` with `lodash-es`
 		 */
 		new ExtensiveLodashReplacementPlugin(),
-
-		// ! isDesktop && ! isDevelopment && new ExtractManifestPlugin(),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 };
