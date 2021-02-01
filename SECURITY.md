@@ -1,16 +1,16 @@
 # Security Policy
 
-Full details of the Automattic Security Policy can be found on [automattic.com](https://automattic.com/security/).
+Although we strive to create the most secure products possible, we are not perfect. If you happen to find a security vulnerability in one of our services, we would appreciate letting us know and allowing us to respond before disclosing the issue publicly.  We take security seriously, and we will try to review and reply to every legitimate security report personally within 24 hours. Other reports submitted will not be replied to.
 
 ## Supported Versions
 
 ### Web
 
-Only the latest version of Calypso is supported.
+Only the latest version of Calypso (that is, what is present in the `trunk` branch) is supported. Calypso is continuously deployed shortly after each merge, multiple times per day.
 
 ### WordPress Desktop
 
-[ADD WP DESKTOP STUFF HERE]
+Only the latest version of WordPress desktop is supported. To receive security updates, please update to the latest available version of WordPress desktop.
 
 ## Reporting a Vulnerability
 
