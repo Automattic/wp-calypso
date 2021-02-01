@@ -31,15 +31,15 @@ type TimeWindowProps = {
 	end: Moment;
 };
 
-const TimeGatedNewYear2021SaleBanner: React.FC< Props > = ( { urlQueryArgs } ) => {
-	const paramValue = urlQueryArgs?.[ 'newpack' ];
-
+const TimeGatedFreshStart2021SaleBanner: React.FC< Props > = ( { urlQueryArgs } ) => {
+	const paramValue = urlQueryArgs?.[ 'freshstart' ];
 	const moment = useLocalizedMoment();
-	if ( paramValue === undefined ) {
-		// Start at midnight UTC on Jan 1,
-		// and continue until 23:59:59 UTC on Jan 18
-		const start = moment.utc( '2021-01-01' );
-		const end = moment.utc( '2021-02-19' );
+
+	if ( ! paramValue ) {
+		// Start at midnight UTC on Feb 1,
+		// and continue until 23:59:59 UTC on Feb 14
+		const start = moment.utc( '2021-02-01' );
+		const end = moment.utc( '2021-02-14' );
 
 		return (
 			<TimeWindowWrapper start={ start } end={ end }>
@@ -52,7 +52,7 @@ const TimeGatedNewYear2021SaleBanner: React.FC< Props > = ( { urlQueryArgs } ) =
 		return null;
 	}
 
-	// Show the promo if the `newpack` arg is present,
+	// Show the promo if the `freshstart` arg is present,
 	// as long as the arg value isn't '0' or 'false'.
 	return <Banner />;
 };
@@ -61,4 +61,4 @@ type Props = {
 	urlQueryArgs: { [ key: string ]: string };
 };
 
-export default TimeGatedNewYear2021SaleBanner;
+export default TimeGatedFreshStart2021SaleBanner;

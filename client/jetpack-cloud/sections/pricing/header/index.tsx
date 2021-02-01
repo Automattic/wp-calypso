@@ -16,9 +16,9 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
-// New Year 2021 promotion; runs from Jan 1 00:00 to Jan 18 23:59 UTC automatically.
-// Safe to remove on or after Jan 19.
-import NewYear2021SaleBanner from 'calypso/components/jetpack/new-year-2021-sale-banner';
+// Fresh Start 2021 promotion; runs from Feb 1 00:00 to Feb 14 23:59 UTC automatically.
+// Safe to remove on or after Feb 15.
+import FreshStart2021SaleBanner from 'calypso/components/jetpack/fresh-start-2021-sale-banner';
 
 /**
  * Style dependencies
@@ -39,7 +39,7 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 			{ identity && <OlarkChat { ...{ identity } } /> }
 			<JetpackComMasterbar />
 
-			<NewYear2021SaleBanner urlQueryArgs={ urlQueryArgs } />
+			<FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } />
 
 			<div className={ classNames( 'header', iteration ) }>
 				<FormattedHeader
