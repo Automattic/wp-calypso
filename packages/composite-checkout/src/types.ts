@@ -46,7 +46,7 @@ export interface LineItem {
 	id: string;
 	type: string;
 	label: string;
-	subLabel?: string;
+	sublabel?: string;
 	amount: LineItemAmount;
 }
 
