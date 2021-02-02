@@ -57,7 +57,7 @@ export default function SelectPartnerKey(): ReactElement | null {
 					<Card>{ translate( 'You are not registered as a partner.' ) }</Card>
 				) }
 
-				{ keys.map( ( key ) => (
+				{ ! isFetching && keys.map( ( key ) => (
 					<Card key={ key.id } className="select-partner-key__card">
 						<div className="select-partner-key__key-name">{ key.name }</div>
 						<Button primary onClick={ () => dispatch( setActivePartnerKey( key.id ) ) }>

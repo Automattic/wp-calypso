@@ -14,17 +14,17 @@ import {
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { ReduxDispatch } from 'calypso/state/redux-store';
+import { APIError, Partner, PartnerPortalStore } from 'calypso/state/partner-portal';
 import { isFetchingPartner } from 'calypso/state/partner-portal/selectors';
 import wpcom from 'calypso/lib/wp';
-import { APIError, Partner } from 'calypso/state/partner-portal';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
 export function setActivePartnerKey(
 	partnerKeyId: number
-): ThunkAction< void, unknown, unknown, AnyAction > {
-	return ( dispatch: ReduxDispatch, getState: () => unknown ) => {
+): ThunkAction< void, PartnerPortalStore, unknown, AnyAction > {
+	return ( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ) => {
 		if ( isFetchingPartner( getState() ) ) {
 			return;
 		}
@@ -33,7 +33,7 @@ export function setActivePartnerKey(
 	};
 }
 
-export function fetchPartner( dispatch: ReduxDispatch, getState: () => unknown ): void {
+export function fetchPartner( dispatch: ReduxDispatch, getState: () => PartnerPortalStore ): void {
 	if ( isFetchingPartner( getState() ) ) {
 		return;
 	}

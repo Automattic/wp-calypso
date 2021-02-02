@@ -15,11 +15,24 @@ import {
 import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 
 export const initialState = {
+	hasFetched: false,
 	isFetching: false,
 	activePartnerKey: 0,
 	current: null,
 	error: '',
 };
+
+export const hasFetched = withoutPersistence(
+	( state = initialState.isFetching, action: AnyAction ) => {
+		switch ( action.type ) {
+			case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS:
+			case JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE:
+				return true;
+		}
+
+		return state;
+	}
+);
 
 export const isFetching = withoutPersistence(
 	( state = initialState.isFetching, action: AnyAction ) => {
@@ -74,6 +87,7 @@ export const error = withoutPersistence( ( state = initialState.error, action: A
 } );
 
 export default combineReducers( {
+	hasFetched,
 	isFetching,
 	activePartnerKey,
 	current,

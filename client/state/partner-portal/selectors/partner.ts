@@ -31,6 +31,10 @@ export function hasActivePartnerKey( state: PartnerPortalStore ): boolean {
 	return !! getActivePartnerKey( state );
 }
 
+export function hasFetchedPartner( state: PartnerPortalStore ): boolean {
+	return state.partnerPortal.partner.hasFetched;
+}
+
 export function isFetchingPartner( state: PartnerPortalStore ): boolean {
 	return state.partnerPortal.partner.isFetching;
 }
