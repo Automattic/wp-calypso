@@ -1,141 +1,115 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' );
-const https = require( 'https' ); // eslint-disable-line import/no-nodejs-modules
-const url = require( 'url' );
+const EventEmitter = require( 'events' ).EventEmitter;
 
 /**
  * Internal Dependencies
  */
-const log = require( '../logger' )( 'cookie-auth' );
+const keychain = require( '../../lib/keychain' );
+const log = require( '../../lib/logger' )( 'desktop:session' );
 
-/**
- * Module variables
+/*
+ * Module constants
  */
-const noop = function () {};
 
-function authorize( username, token ) {
-	const body = 'log=' + username;
-	const params = url.parse( 'https://wordpress.com/wp-login.php' );
-	params.method = 'POST';
-	params.headers = {
-		Authorization: 'Bearer ' + token,
-		'Content-Type': 'application/x-www-form-urlencoded',
-		'Content-Length': body.length,
-	};
-
-	return new Promise( ( resolve, reject ) => {
-		const req = https.request( params, ( res ) => {
-			if ( res.statusCode < 200 ) {
-				return reject( new Error( `Status Code: ${ res.statusCode }` ) );
-			}
-			return resolve( res );
-		} );
-
-		req.on( 'error', reject );
-
-		req.end( body );
-	} );
-}
-
-function parseCookie( cookieStr ) {
-	const cookie = {};
-	// split, the first is key/value, the rest are settings
-	const parts = cookieStr.split( '; ' ).map( ( v ) => v.split( '=' ) );
-
-	if ( parts.length === 0 ) {
-		return cookie;
+class SessionManager extends EventEmitter {
+	constructor() {
+		super();
 	}
 
-	const value = parts.shift();
+	async init( window ) {
+		log.info( 'Initializing session manager...' );
 
-	if ( value.length === 2 ) {
-		cookie.name = value[ 0 ];
-		cookie.value = value[ 1 ];
-	} else {
-		parts.unshift( value );
-	}
+		this.loggedIn = false;
+		this.window = window;
 
-	return parts.reduce( function ( collect, pair ) {
-		let val = true;
-		if ( pair.length === 2 ) {
-			val = pair[ 1 ];
-		}
-		collect[ pair[ 0 ] ] = val;
-		return collect;
-	}, cookie );
-}
+		// Check for existing cookies
+		const wordpress_logged_in = await getCookie(
+			window,
+			'https://public-api.wordpress.com',
+			'wordpress_logged_in'
+		);
+		if ( wordpress_logged_in && ! this.loggedIn ) {
+			log.info( `Got 'wordpress_logged_in' cookie, emitting 'logged-in' event...` );
 
-function setSessionCookies( window, authorizeResponse ) {
-	return new Promise( ( resolve ) => {
-		let cookieHeaders = authorizeResponse.headers[ 'set-cookie' ];
-		let count = 0;
-		if ( ! Array.isArray( cookieHeaders ) ) {
-			cookieHeaders = [ cookieHeaders ];
+			this.loggedIn = true;
+			this.emit( 'logged-in', wordpress_logged_in );
+			log.debug( `Logged in with cookie 'wordpress_logged_in': `, wordpress_logged_in );
 		}
 
-		count = cookieHeaders.length;
-
-		if ( count === 0 ) {
-			return resolve( true );
+		const wp_api_sec = await getCookie( window, 'https://public-api.wordpress.com', 'wp_api_sec' );
+		if ( this.loggedIn && wp_api_sec ) {
+			await keychainWrite( 'wp_api_sec', wp_api_sec.value );
+			this.emit( 'api:connect' );
 		}
 
-		cookieHeaders.forEach( async function ( cookieStr ) {
-			const cookie = parseCookie( cookieStr );
-			cookie.url = 'https://wordpress.com/';
-			if ( cookie.HttpOnly || cookie.httpOnly || cookie.httponly ) {
-				cookie.session = true;
-			}
-			try {
-				await window.webContents.session.cookies.set( cookie );
-			} catch ( e ) {
-				const { value, ...logCookie } = cookie; // don't log sensitive "value" field
-				log.error( `Failed to set session cookie (${ e.message }): `, logCookie );
-			}
-			count--;
-			if ( count === 0 ) {
-				return resolve( true );
-			}
-		} );
-	} );
-}
+		// Listen for auth events
+		this.window.webContents.session.cookies.on(
+			'changed',
+			async ( _, cookie, _reason, removed ) => {
+				// Listen for logged in/out events
+				if ( cookie.name === 'wordpress_logged_in' && cookie.domain === '.wordpress.com' ) {
+					if ( removed && this.loggedIn ) {
+						log.info( `'wordpress_logged_in' cookie was removed, emitting 'logged-out' event...` );
 
-function auth( window, onAuthorized ) {
-	ipc.on( 'user-auth', async function ( _, user, token ) {
-		log.info( `Handling 'user-auth' IPC event, setting session cookies...` );
+						this.loggedIn = false;
+						this.emit( 'logged-out' );
+						keychain.clear();
+					} else {
+						log.info( `Got 'wordpress_logged_in' cookie, emitting 'logged-in' event...` );
 
-		if ( user ) {
-			try {
-				const response = await authorize( user.username, token );
-				await setSessionCookies( window, response );
-				onAuthorized();
+						this.loggedIn = true;
 
-				log.info( 'Session cookies set.' );
-			} catch ( e ) {
-				log.error( 'Failed to set session cookies: ', e );
-			}
-		} else {
-			log.info( 'No user data, clearing session cookies...' );
+						this.emit( 'logged-in', { wordpress_logged_in: wordpress_logged_in } );
+						log.debug( `Logged in with cookie 'wordpress_logged_in': `, wordpress_logged_in );
+					}
 
-			window.webContents.session.cookies.get( {}, function ( e, cookies ) {
-				if ( e ) {
-					log.error( 'Failed to clear session cookies: ', e );
-					return;
+					// Listen for wp_api_sec cookie (Pinghub)
+					if (
+						cookie.name === 'wp_api_sec' &&
+						cookie.domain === 'https://public-api.wordpress.com'
+					) {
+						if ( removed ) {
+							this.emit( 'api:disconnect' );
+						} else if ( this.loggedIn ) {
+							await keychainWrite( 'wp_api_sec', cookie.value );
+							this.emit( 'api:connect' );
+						}
+					}
 				}
+			}
+		);
+	}
 
-				cookies.forEach( function ( cookie ) {
-					const domain = cookie.domain;
-					const cookieUrl =
-						'https://' + ( domain.startsWith( '.' ) ? domain.slice( 1 ) : domain ) + cookie.path;
-
-					window.webContents.session.cookies.remove( cookieUrl, cookie.name, noop );
-				} );
-			} );
-		}
-	} );
-
-	return window;
+	isLoggedIn() {
+		return this.loggedIn;
+	}
 }
 
-module.exports = auth;
+async function getCookie( window, cookieDomain, cookieName ) {
+	let cookies = await window.webContents.session.cookies.get( {
+		url: cookieDomain,
+		name: cookieName,
+	} );
+	if ( cookies ) {
+		if ( ! Array.isArray( cookies ) ) {
+			cookies = [ cookies ];
+		}
+		return cookies[ 0 ];
+	}
+	return null;
+}
+
+async function keychainWrite( key, value ) {
+	let success = false;
+	try {
+		await keychain.write( key, value );
+		success = true;
+	} catch ( e ) {
+		log.error( 'Failed to write to keychain: ', e );
+	}
+	return success;
+}
+
+module.exports = new SessionManager();
