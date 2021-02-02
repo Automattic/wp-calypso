@@ -2,10 +2,7 @@
 <ruleset name="editing-toolkit">
 	<description>Editing Toolkit Plugin Rules</description>
 
-	<rule ref="WordPress"/>
-	<rule ref="WordPress-Core"/>
-	<rule ref="WordPress-Docs"/>
-	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+	<rule ref="Jetpack"/>
 	<rule ref="WordPress.Utils.I18nTextDomainFixer">
 		<properties>
 			<property name="old_text_domain" type="array">
