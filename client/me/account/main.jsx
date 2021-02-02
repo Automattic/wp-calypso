@@ -969,7 +969,7 @@ const Account = createReactClass( {
 									{ translate( 'Dashboard appearance' ) }
 								</FormLabel>
 								<FormToggle
-									checked={ !! this.getUserSetting( 'linkDestination' ) }
+									checked={ !! this.getUserSetting( linkDestinationKey ) }
 									onChange={ this.toggleLinkDestination }
 								>
 									{ translate( 'Replace all dashboard pages with WP Admin equivalents' ) }
