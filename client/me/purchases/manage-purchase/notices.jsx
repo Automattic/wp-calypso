@@ -980,17 +980,19 @@ class PurchaseNotice extends Component {
 		);
 	}
 
-	renderConciergeConsumedNotice() {
-		const { purchase, translate } = this.props;
-
+	shouldRenderConciergeConsumedNotice() {
+		const { purchase } = this.props;
 		if ( ! isConciergeSession( purchase ) ) {
-			return null;
+			return false;
 		}
-
 		if ( ! isExpired( purchase ) ) {
-			return null;
+			return false;
 		}
+		return true;
+	}
 
+	renderConciergeConsumedNotice() {
+		const { translate } = this.props;
 		return (
 			<Notice
 				showDismiss={ false }
@@ -1029,9 +1031,8 @@ class PurchaseNotice extends Component {
 			return this.renderNonProductOwnerNotice();
 		}
 
-		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();
-		if ( consumedConciergeSessionNotice ) {
-			return consumedConciergeSessionNotice;
+		if ( this.shouldRenderConciergeConsumedNotice() ) {
+			return this.renderConciergeConsumedNotice();
 		}
 
 		const otherRenewablePurchasesNotice = this.renderOtherRenewablePurchasesNotice();
