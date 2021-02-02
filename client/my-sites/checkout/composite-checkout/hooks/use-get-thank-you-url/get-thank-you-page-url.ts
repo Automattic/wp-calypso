@@ -155,9 +155,8 @@ export default function getThankYouPageUrl( {
 	// nudge opened by a direct link to /offer-support-session.
 	const isCartEmpty = cart && getAllCartItems( cart ).length === 0;
 	if ( ':receiptId' === pendingOrReceiptId && isCartEmpty ) {
-		const emptyCartUrl = urlFromCookie || fallbackUrl;
-		debug( 'cart is empty or receipt ID is pending, so returning', emptyCartUrl );
-		return emptyCartUrl;
+		debug( 'cart is empty or receipt ID is pending, so returning', fallbackUrl );
+		return fallbackUrl;
 	}
 
 	// Domain only flow
