@@ -73,8 +73,6 @@
 .plugins-browser-item__title {
 	color: var( --color-neutral-70 );
 	font-weight: 600;
-	font-size: $font-title-small;
-	line-height: 1.3;
 	margin-top: -1px;
 	margin-bottom: 4px;
 }
@@ -84,12 +82,13 @@
 	display: flex;
 	justify-content: flex-start;
 	font-size: $font-body-small;
-	margin-bottom: 16px;
+	margin-bottom: 12px;
 }
 
 .plugins-browser-item__description {
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
-	margin-bottom: 8px;
+	margin-bottom: 0;
 }
 
 .plugins-browser-item .plugin-icon {
@@ -103,30 +102,31 @@
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	padding: 16px 24px;
+	padding: 8px 24px;
 	border-top: 1px solid var( --color-border-subtle );
 	color: var( --color-text-subtle );
-	font-size: $font-body-small;
+	font-size: $font-body-extra-small;
 	min-height: 28px;
 }
 
 .plugins-browser-item__support {
-	display: flex;
-	margin-left: 16px;
-
-	img {
-		flex-shrink: 0;
-		margin-left: 4px;
-	}
-}
-
-.plugins-browser-item .rating {
-	fill: var( --color-text );
-	margin-right: 16px;
+	background: var( --studio-gray-0 );
+	padding: 2px 8px;
+	// stylelint-disable-next-line
+	border-radius: 25px;
+	font-size: $font-body-extra-small;
+	display: inline-block;
+	margin-left: 12px;
 }
 
 .plugins-browser-item__ratings {
 	display: flex;
+	align-items: center;
+	margin-right: 16px;
+
+	& .gridicon {
+		margin-right: 3px;
+	}
 }
 
 .plugins-browser-item__rating-number {
@@ -134,7 +134,13 @@
 }
 
 .plugins-browser-item__downloads {
+	display: flex;
 	margin-right: 16px;
+	align-items: center;
+
+	& .gridicon {
+		margin-right: 3px;
+	}
 }
 
 .plugins-browser-item__installed {
@@ -153,4 +159,10 @@
 	margin: auto;
 	margin-right: 0;
 	justify-self: flex-end;
+}
+
+.button.plugins-browser-item__upgrade-button .gridicon,
+.button.plugins-browser-item__installed .gridicon {
+	width: 12px;
+	height: 12px;
 }

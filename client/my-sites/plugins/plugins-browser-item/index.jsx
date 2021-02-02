@@ -87,9 +87,7 @@ class PluginsBrowserListElement extends Component {
 		}
 
 		return (
-			<div className="plugins-browser-item__support">
-				{ this.props.translate( 'Support by WordPress.com' ) }
-			</div>
+			<div className="plugins-browser-item__support">{ this.props.translate( 'Supported' ) }</div>
 		);
 	}
 
@@ -98,7 +96,7 @@ class PluginsBrowserListElement extends Component {
 		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
 			return (
 				<Button className="plugins-browser-item__installed" compact>
-					<Gridicon icon="checkmark" size={ 18 } />
+					<Gridicon icon="checkmark" size={ 12 } />
 					{ this.props.translate( 'Installed' ) }
 				</Button>
 			);
@@ -135,7 +133,7 @@ class PluginsBrowserListElement extends Component {
 					{ this.props.showMeta && (
 						<div className="plugins-browser-item__meta is-placeholder">
 							<div className="plugins-browser-item__ratings">
-								<Rating rating={ 0 } size={ 16 } />
+								<Rating rating={ 0 } size={ 12 } />
 							</div>
 						</div>
 					) }
@@ -144,6 +142,21 @@ class PluginsBrowserListElement extends Component {
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
+
+	renderRating = () => {
+		const { plugin } = this.props;
+
+		if ( ! plugin.rating ) {
+			return;
+		}
+
+		return (
+			<div className="plugins-browser-item__ratings">
+				<Gridicon icon={ 'star' } size={ 12 } />
+				{ plugin.rating }
+			</div>
+		);
+	};
 
 	renderLastUpdated = () => {
 		const { plugin, moment } = this.props;
@@ -162,22 +175,24 @@ class PluginsBrowserListElement extends Component {
 	renderDownloaded() {
 		let downloaded = this.props.plugin.downloaded;
 		if ( downloaded > 1000000 ) {
-			downloaded = this.props.translate( '%(installs)sM+ installs', {
+			downloaded = this.props.translate( '%(installs)sM+', {
 				args: { installs: this.props.numberFormat( Math.floor( downloaded / 1000000 ) ) },
 			} );
 		} else if ( downloaded > 1000 ) {
-			downloaded = this.props.translate( '%(installs)sK+ installs', {
+			downloaded = this.props.translate( '%(installs)sK', {
 				args: { installs: this.props.numberFormat( Math.floor( downloaded / 1000 ) ) },
 			} );
 		} else if ( downloaded > 0 ) {
-			downloaded = this.props.translate( '%(installs)s installs', {
-				args: { installs: this.props.numberFormat( downloaded ) },
-			} );
+			downloaded = this.props.numberFormat( downloaded );
 		} else {
 			return;
 		}
 
-		return <div className="plugins-browser-item__downloads">{ downloaded }</div>;
+		return (
+			<div className="plugins-browser-item__downloads">
+				<Gridicon icon="arrow-down" size={ 12 } /> { downloaded }
+			</div>
+		);
 	}
 
 	render() {
@@ -207,11 +222,8 @@ class PluginsBrowserListElement extends Component {
 					</div>
 					{ showMeta && (
 						<div className="plugins-browser-item__meta">
-							<div className="plugins-browser-item__ratings">
-								<Rating rating={ plugin.rating } size={ 16 } />
-							</div>
+							{ this.renderRating() }
 							{ this.renderDownloaded() }
-							{ this.renderLastUpdated() }
 							{ this.renderInstalledIn() }
 							{ this.renderUpgradeButton() }
 						</div>
