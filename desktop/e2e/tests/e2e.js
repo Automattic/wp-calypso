@@ -1,16 +1,17 @@
+/* eslint-disable jest/no-commented-out-tests */
 require( 'mocha' );
 const { step } = require( 'mocha-steps' );
-const { assert } = require( 'chai' );
+// const { assert } = require( 'chai' );
 const webdriver = require( 'selenium-webdriver' );
 const chrome = require( 'selenium-webdriver/chrome' );
 const LoginPage = require( './lib/pages/login-page' );
-const NavBarComponent = require( './lib/components/nav-bar-component' );
-const ProfilePage = require( './lib/pages/profile-page' );
-const CustomerHomePage = require( './lib/pages/customer-home-page' );
-const PostPreviewComponent = require( './lib/components/post-preview-component' );
-const GutenbergEditorComponent = require( './lib/components/gutenberg-editor-component' );
+// const NavBarComponent = require( './lib/components/nav-bar-component' );
+// const ProfilePage = require( './lib/pages/profile-page' );
+// const CustomerHomePage = require( './lib/pages/customer-home-page' );
+// const PostPreviewComponent = require( './lib/components/post-preview-component' );
+// const GutenbergEditorComponent = require( './lib/components/gutenberg-editor-component' );
 
-const dataHelper = require( './lib/data-helper' );
+// const dataHelper = require( './lib/data-helper' );
 const options = new chrome.Options();
 options.addArguments(
 	'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.128 Electron/8.3.0 Safari/537.36'
@@ -28,7 +29,7 @@ const driverConfig = new webdriver.Builder()
 	} )
 	.forBrowser( 'electron' );
 
-let loggedInUrl;
+// let loggedInUrl;
 let driver;
 
 before( async function () {
@@ -50,86 +51,86 @@ describe( 'User Can log in', function () {
 		return await loginPage.login( process.env.E2EGUTENBERGUSER, process.env.E2EPASSWORD );
 	} );
 
-	step( 'Can see Customer Home Page after logging in', async function () {
-		await CustomerHomePage.Expect( driver );
-		return ( loggedInUrl = await driver.getCurrentUrl() );
-	} );
+	// step( 'Can see Customer Home Page after logging in', async function () {
+	// 	await CustomerHomePage.Expect( driver );
+	// 	return ( loggedInUrl = await driver.getCurrentUrl() );
+	// } );
 } );
 
-describe( 'Publish a New Post', function () {
-	this.timeout( 30000 );
-	const blogPostTitle = dataHelper.randomPhrase();
-	const blogPostQuote =
-		'“Whenever you find yourself on the side of the majority, it is time to pause and reflect.” Mark Twain';
+// describe( 'Publish a New Post', function () {
+// 	this.timeout( 30000 );
+// 	const blogPostTitle = dataHelper.randomPhrase();
+// 	const blogPostQuote =
+// 		'“Whenever you find yourself on the side of the majority, it is time to pause and reflect.” Mark Twain';
 
-	step( 'Can navigate to post editor', async function () {
-		const navbarComponent = await NavBarComponent.Expect( driver );
-		return await navbarComponent.clickCreateNewPost();
-	} );
+// 	step( 'Can navigate to post editor', async function () {
+// 		const navbarComponent = await NavBarComponent.Expect( driver );
+// 		return await navbarComponent.clickCreateNewPost();
+// 	} );
 
-	step( 'Can enter post title and content', async function () {
-		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-		await gEditorComponent.enterTitle( blogPostTitle );
-		await gEditorComponent.enterText( blogPostQuote + '\n' );
+// 	step( 'Can enter post title and content', async function () {
+// 		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+// 		await gEditorComponent.enterTitle( blogPostTitle );
+// 		await gEditorComponent.enterText( blogPostQuote + '\n' );
 
-		const errorShown = await gEditorComponent.errorDisplayed();
-		return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
-	} );
+// 		const errorShown = await gEditorComponent.errorDisplayed();
+// 		return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+// 	} );
 
-	step( 'Can publish and preview content', async function () {
-		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-		await gEditorComponent.ensureSaved();
-		await gEditorComponent.publish();
-		return gEditorComponent.launchPreview();
-	} );
+// 	step( 'Can publish and preview content', async function () {
+// 		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+// 		await gEditorComponent.ensureSaved();
+// 		await gEditorComponent.publish();
+// 		return gEditorComponent.launchPreview();
+// 	} );
 
-	step( 'Can see correct page title in preview', async function () {
-		const postPreviewComponent = await PostPreviewComponent.Expect( driver );
-		await postPreviewComponent.displayed();
-		const actualPageTitle = await postPreviewComponent.postTitle();
-		assert.strictEqual(
-			actualPageTitle.toUpperCase(),
-			blogPostTitle.toUpperCase(),
-			'The post preview title is not correct'
-		);
-	} );
+// 	step( 'Can see correct page title in preview', async function () {
+// 		const postPreviewComponent = await PostPreviewComponent.Expect( driver );
+// 		await postPreviewComponent.displayed();
+// 		const actualPageTitle = await postPreviewComponent.postTitle();
+// 		assert.strictEqual(
+// 			actualPageTitle.toUpperCase(),
+// 			blogPostTitle.toUpperCase(),
+// 			'The post preview title is not correct'
+// 		);
+// 	} );
 
-	step( 'Can see correct page content in preview', async function () {
-		const postPreviewComponent = await PostPreviewComponent.Expect( driver );
-		const content = await postPreviewComponent.postContent();
-		assert.equal(
-			content.indexOf( blogPostQuote ) > -1,
-			true,
-			'The post preview content (' +
-				content +
-				') does not include the expected content (' +
-				blogPostQuote +
-				')'
-		);
-	} );
+// 	step( 'Can see correct page content in preview', async function () {
+// 		const postPreviewComponent = await PostPreviewComponent.Expect( driver );
+// 		const content = await postPreviewComponent.postContent();
+// 		assert.equal(
+// 			content.indexOf( blogPostQuote ) > -1,
+// 			true,
+// 			'The post preview content (' +
+// 				content +
+// 				') does not include the expected content (' +
+// 				blogPostQuote +
+// 				')'
+// 		);
+// 	} );
 
-	step( 'Can return to customer home', async function () {
-		return await driver.get( loggedInUrl );
-	} );
-} );
+// 	step( 'Can return to customer home', async function () {
+// 		return await driver.get( loggedInUrl );
+// 	} );
+// } );
 
-describe( 'Can Log Out', function () {
-	this.timeout( 30000 );
+// describe( 'Can Log Out', function () {
+// 	this.timeout( 30000 );
 
-	step( 'Can view profile to log out', async function () {
-		const navbarComponent = await NavBarComponent.Expect( driver );
-		return await navbarComponent.clickProfileLink();
-	} );
+// 	step( 'Can view profile to log out', async function () {
+// 		const navbarComponent = await NavBarComponent.Expect( driver );
+// 		return await navbarComponent.clickProfileLink();
+// 	} );
 
-	step( 'Can logout from profile page', async function () {
-		const profilePage = await ProfilePage.Expect( driver );
-		return await profilePage.clickSignOut();
-	} );
+// 	step( 'Can logout from profile page', async function () {
+// 		const profilePage = await ProfilePage.Expect( driver );
+// 		return await profilePage.clickSignOut();
+// 	} );
 
-	step( 'Can see app login page after logging out', async function () {
-		return await LoginPage.Expect( driver );
-	} );
-} );
+// 	step( 'Can see app login page after logging out', async function () {
+// 		return await LoginPage.Expect( driver );
+// 	} );
+// } );
 
 after( async function () {
 	this.timeout( 30000 );
