@@ -240,9 +240,11 @@ class PluginsBrowserListElement extends Component {
 						<div className="plugins-browser-item__meta">
 							{ this.renderRating() }
 							{ this.renderDownloaded() }
-							{ this.renderDetailsLink() }
-							{ this.renderInstalledIn() }
-							{ this.renderUpgradeButton() }
+							<div className="plugins-browser-item__secondary-meta">
+								{ this.renderDetailsLink() }
+								{ this.renderInstalledIn() }
+								{ this.renderUpgradeButton() }
+							</div>
 						</div>
 					) }
 				</a>

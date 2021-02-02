@@ -147,27 +147,26 @@
 	}
 }
 
-.plugins-browser-item__installed {
+.plugins-browser-item__secondary-meta {
 	display: flex;
 	align-items: center;
 	margin: auto;
 	margin-right: 0;
 	justify-self: flex-end;
+}
+
+.plugins-browser-item__installed {
+	display: flex;
+	align-items: center;
+	margin-left: 16px;
 
 	.gridicon {
 		margin-right: 3px;
 	}
 }
 
-.plugins-browser-item__details {
-	justify-self: flex-end;
-}
-
 .button.plugins-browser-item__upgrade-button {
-	margin: auto;
-	margin-left: 12px;
-	margin-right: 0;
-	justify-self: flex-end;
+	margin-left: 16px;
 }
 
 .button.plugins-browser-item__upgrade-button .gridicon,
