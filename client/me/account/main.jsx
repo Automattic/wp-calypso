@@ -19,7 +19,6 @@ import LanguagePicker from 'calypso/components/language-picker';
 import SectionHeader from 'calypso/components/section-header';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { protectForm } from 'calypso/lib/protect-form';
-import formBase from 'calypso/me/form-base';
 import config from '@automattic/calypso-config';
 import languages from '@automattic/languages';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
@@ -44,7 +43,7 @@ import observe from 'calypso/lib/mixins/data-observe'; // eslint-disable-line no
 import Main from 'calypso/components/main';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
@@ -64,6 +63,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import user from 'calypso/lib/user';
 import FormToggle from 'calypso/components/forms/form-toggle';
+
+const noticeId = 'me-settings-notice';
+const noticeOptions = {
+	id: noticeId,
+};
 
 /**
  * Style dependencies
@@ -89,12 +93,12 @@ const INTERFACE_FIELDS = [
 	'enable_translator',
 	'calypso_preferences',
 ];
+
 /* eslint-disable react/prefer-es6-class */
 const Account = createReactClass( {
 	displayName: 'Account',
 
-	// form-base mixin is needed for getDisabledState() (and possibly other uses?)
-	mixins: [ formBase, observe( 'userSettings' ) ],
+	mixins: [ observe( 'userSettings' ) ],
 
 	propTypes: {
 		userSettings: PropTypes.object.isRequired,
@@ -109,11 +113,48 @@ const Account = createReactClass( {
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' component is mounted.' );
+		this.props.userSettings.getSettings();
 		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
+	},
+
+	UNSAFE_componentWillReceiveProps: function ( nextProp ) {
+		if ( nextProp.showNoticeInitially ) {
+			this.setState( { showNotice: nextProp.showNoticeInitially } );
+		}
 	},
 
 	componentWillUnmount() {
 		debug( this.constructor.displayName + ' component is unmounting.' );
+
+		// Silently clean up unsavedSettings before unmounting
+		this.props.userSettings.unsavedSettings = {};
+	},
+
+	getInitialState: function () {
+		return {
+			redirect: false,
+			submittingForm: false,
+			formsSubmitting: {},
+			changingUsername: false,
+			usernameAction: 'new',
+			showNotice: false,
+		};
+	},
+
+	showNotice: function () {
+		if ( this.props.userSettings.initialized && this.state.showNotice ) {
+			this.props.removeNotice( noticeId );
+
+			this.props.successNotice(
+				this.props.translate( 'Settings saved successfully!' ),
+				noticeOptions
+			);
+			this.state.showNotice = false;
+		}
+	},
+
+	getDisabledState: function ( formName ) {
+		return formName ? this.state.formsSubmitting[ formName ] : this.state.submittingForm;
 	},
 
 	getUserSetting( settingName ) {
@@ -663,6 +704,82 @@ const Account = createReactClass( {
 		);
 	},
 
+	handleSubmitError( error, formName = '' ) {
+		debug( 'Error saving settings: ' + JSON.stringify( error ) );
+
+		// handle error case here
+		if ( error.message ) {
+			this.props.errorNotice( error.message, noticeOptions );
+		} else {
+			this.props.errorNotice(
+				this.props.translate( 'There was a problem saving your changes.' ),
+				noticeOptions
+			);
+		}
+
+		this.setState( {
+			submittingForm: false,
+			formsSubmitting: {
+				...this.state.formsSubmitting,
+				...( formName && { [ formName ]: false } ),
+			},
+		} );
+	},
+
+	isSubmittingForm( formName ) {
+		return formName ? this.state.formsSubmitting[ formName ] : this.state.submittingForm;
+	},
+
+	handleSubmitSuccess( response, formName = '' ) {
+		this.props.markSaved && this.props.markSaved();
+
+		if ( this.state && this.state.redirect ) {
+			user()
+				.clear()
+				.then( () => {
+					// Sometimes changes in settings require a url refresh to update the UI.
+					// For example when the user changes the language.
+					window.location = this.state.redirect + '?updated=success';
+				} );
+			return;
+		}
+		// if we set submittingForm too soon the UI updates before the response is handled
+		this.setState( {
+			showNotice: true,
+			submittingForm: false,
+			formsSubmitting: {
+				...this.state.formsSubmitting,
+				...( formName && { [ formName ]: false } ),
+			},
+		} );
+		this.showNotice();
+		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
+	},
+
+	submitForm: function ( event, settingsToSave, formName = '' ) {
+		event.preventDefault();
+		debug( 'Submitting form' );
+
+		this.setState( {
+			submittingForm: true,
+			formsSubmitting: {
+				...this.state.formsSubmitting,
+				...( formName && { [ formName ]: true } ),
+			},
+		} );
+
+		this.props.userSettings.saveSettings(
+			function ( error, response ) {
+				if ( error ) {
+					this.handleSubmitError( error, formName );
+				} else {
+					this.handleSubmitSuccess( response, formName );
+				}
+			}.bind( this ),
+			settingsToSave
+		);
+	},
+
 	/*
 	 * These form fields are displayed when there is not a username change in progress.
 	 */
@@ -1018,7 +1135,14 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
 		} ),
-		{ bumpStat, errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
+		{
+			bumpStat,
+			errorNotice,
+			removeNotice,
+			recordGoogleEvent,
+			recordTracksEvent,
+			successNotice,
+		}
 	),
 	localize,
 	withLocalizedMoment,
