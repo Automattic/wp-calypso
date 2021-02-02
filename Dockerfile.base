@@ -11,8 +11,6 @@ ENV NVM_DIR=/calypso/.nvm
 ENV NODE_ENV=production
 ENV CALYPSO_ENV=production
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
-ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
-ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV HOME=/calypso
 
 RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
@@ -46,6 +44,8 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
+ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 RUN chown $UID /calypso
 
 # Set bash as the default shell
@@ -64,6 +64,8 @@ FROM base as ci-desktop
 
 ENV ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 ENV USE_HARD_LINKS=false
+ENV CHROMEDRIVER_SKIP_DOWNLOAD=false
+ENV PUPPETEER_SKIP_DOWNLOAD=false
 # This chrome image is the latest version supported by wp-desktop's chromedriver, declared in desktop/package.json.
 ENV CHROME_VERSION="80.0.3987.163-1"
 ENV DISPLAY=:99
