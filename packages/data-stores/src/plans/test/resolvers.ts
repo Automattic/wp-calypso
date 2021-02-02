@@ -22,6 +22,8 @@ import {
 	MOCK_FEATURES_BY_TYPE_MARKETING,
 } from '../mock/mock-constants';
 
+import type { PricedAPIPlan } from '../types';
+
 // Don't need to mock specific functions for any tests, but mocking
 // module because it accesses the `document` global.
 jest.mock( 'wpcom-proxy-request', () => ( {
@@ -32,15 +34,10 @@ describe( 'getSupportedPlans', () => {
 	it( 'calls setFeatures, setFeaturesByType, and setPlans after fetching plans', () => {
 		const iter = getSupportedPlans();
 
-		const planPriceData = [
-			MOCK_PLAN_PRICE_APIS_FREE,
-			MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY,
-			MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY,
-		];
-
-		const planDetailedData = {
-			body: MOCK_PLAN_DETAILS_API,
-		};
+		// Prepare stricter iterator types
+		type IteratorReturnType = ReturnType< typeof iter.next >;
+		type PlanPriceApiDataIterator = ( planPriceData: PricedAPIPlan[] ) => IteratorReturnType;
+		type PlanDetailsApiDataIterator = ( { body: DetailsAPIResponse } ) => IteratorReturnType;
 
 		// request to prices endpoint
 		expect( iter.next().value ).toEqual( {
@@ -53,7 +50,12 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		// request to plan details/features endpoint
-		expect( iter.next( planPriceData ).value ).toEqual( {
+		const planPriceApiData = [
+			MOCK_PLAN_PRICE_APIS_FREE,
+			MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY,
+			MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY,
+		];
+		expect( ( iter.next as PlanPriceApiDataIterator )( planPriceApiData ).value ).toEqual( {
 			type: 'FETCH_AND_PARSE',
 			resource: 'https://public-api.wordpress.com/wpcom/v2/plans/details?locale=en',
 			options: {
@@ -63,7 +65,10 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		// setPlans call
-		expect( iter.next( planDetailedData ).value ).toEqual( {
+		const planDetailsApiData = {
+			body: MOCK_PLAN_DETAILS_API,
+		};
+		expect( ( iter.next as PlanDetailsApiDataIterator )( planDetailsApiData ).value ).toEqual( {
 			locale: 'en',
 			type: 'SET_PLANS',
 			plans: [ MOCK_PLAN_FREE, MOCK_PLAN_PREMIUM ],
