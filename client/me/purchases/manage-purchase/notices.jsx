@@ -61,7 +61,7 @@ class PurchaseNotice extends Component {
 		handleRenewMultiplePurchases: PropTypes.func,
 		purchase: PropTypes.object,
 		purchaseAttachedTo: PropTypes.object,
-		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		selectedSite: PropTypes.object,
 		changePaymentMethodPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		getManagePurchaseUrlFor: PropTypes.func,
