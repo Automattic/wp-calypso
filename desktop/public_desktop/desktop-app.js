@@ -41,7 +41,7 @@ function startDesktopApp() {
 
 		if ( notIcon ) {
 			notIcon.addEventListener( 'click', function () {
-				window.electron.send( 'unread-notices-count', 0 );
+				window.electron.send( 'clear-notices-count', 0 );
 			} );
 		}
 	}
