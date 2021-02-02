@@ -104,21 +104,7 @@ object BuildBaseImages : BuildType({
 					registry.a8c.com/calypso/base:latest
 					registry.a8c.com/calypso/base:%build.number%
 				""".trimIndent()
-				commandArgs = "--no-cache --target builder"
-			}
-			param("dockerImage.platform", "linux")
-		}
-		dockerCommand {
-			name = "Build CI image"
-			commandType = build {
-				source = file {
-					path = "Dockerfile.base"
-				}
-				namesAndTags = """
-					registry.a8c.com/calypso/ci:latest
-					registry.a8c.com/calypso/ci:%build.number%
-				""".trimIndent()
-				commandArgs = "--target ci"
+				commandArgs = "--no-cache --target base"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -170,8 +156,6 @@ object BuildBaseImages : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/base:latest
 					registry.a8c.com/calypso/base:%build.number%
-					registry.a8c.com/calypso/ci:latest
-					registry.a8c.com/calypso/ci:%build.number%
 					registry.a8c.com/calypso/ci-desktop:latest
 					registry.a8c.com/calypso/ci-desktop:%build.number%
 					registry.a8c.com/calypso/ci-e2e:latest
