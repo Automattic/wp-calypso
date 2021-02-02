@@ -284,42 +284,20 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const { selectedPlanProductId } = useSelect( ( select ) => {
-		const launchStore = select( LAUNCH_STORE );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getSelectedPlanProductId()
+	);
 
-		return {
-			selectedPlanProductId: launchStore.getSelectedPlanProductId(),
-		};
-	} );
+	const selectedPaidPlanProductId = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getPaidPlanProductId()
+	);
 
-	const { selectedPaidPlanProductId } = useSelect( ( select ) => {
-		const launchStore = select( LAUNCH_STORE );
-
-		return {
-			selectedPaidPlanProductId: launchStore.getPaidPlanProductId(),
-		};
-	} );
-
-	const { selectedPlan } = useSelect( ( select ) => {
+	const { selectedPlan, selectedPaidPlan, selectedPlanBillingPeriod } = useSelect( ( select ) => {
 		const plansStore = select( PLANS_STORE );
 
 		return {
 			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
-		};
-	} );
-
-	const { selectedPaidPlan } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-
-		return {
 			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
-		};
-	} );
-
-	const { selectedPlanBillingPeriod } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-
-		return {
 			selectedPlanBillingPeriod: plansStore.getPlanProductById( selectedPlanProductId )
 				?.billingPeriod,
 		};
@@ -349,15 +327,11 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
 		: [ defaultPaidPlan, defaultFreePlan ];
 
-	const { allAvailablePlansProducts } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-
-		return {
-			allAvailablePlansProducts: allAvailablePlans.map( ( plan ) =>
-				plansStore.getPlanProduct( plan?.periodAgnosticSlug, selectedPlanBillingPeriod )
-			),
-		};
-	} );
+	const allAvailablePlansProducts = useSelect( ( select ) =>
+		allAvailablePlans.map( ( plan ) =>
+			select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, selectedPlanBillingPeriod )
+		)
+	);
 
 	return (
 		<SummaryStep
