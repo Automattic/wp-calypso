@@ -294,7 +294,7 @@ function addRequireChunkTranslationsHandler(
 			localeSlug,
 			targetBuild
 		).then( ( translations ) => {
-			i18n.addTranslations( { ...translations, ...userTranslations } );
+			addTranslations( { ...translations, ...userTranslations } );
 			loadedTranslationChunks[ chunkId ] = true;
 		} );
 
@@ -366,7 +366,7 @@ export default async function switchLocale( localeSlug ) {
 			// Load individual translation chunks
 			translatedInstalledChunks.forEach( ( chunkId ) =>
 				getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
-					.then( ( translations ) => i18n.addTranslations( translations ) )
+					.then( ( translations ) => addTranslations( translations ) )
 					.catch( ( error ) => {
 						debug( `Encountered an error loading translation chunk ${ chunkId }.` );
 						debug( error );
@@ -473,7 +473,7 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		} )
 		.then( ( res ) => res.json() )
 		.then( ( translations ) => {
-			i18n.addTranslations( translations );
+			addTranslations( translations );
 
 			return translations;
 		} );
@@ -544,4 +544,18 @@ function loadCSS( cssUrl, currentLink ) {
 
 		document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
 	} );
+}
+
+/**
+ * Add translations.
+ *
+ * This function also saves the duration of the call as a performance measure
+ *
+ * @param translations translations to add
+ */
+function addTranslations( translations ) {
+	window.performance?.mark( 'add_translations_start' );
+	i18n.addTranslations( translations );
+	window.performance?.measure( 'add_translations', 'add_translations_start' );
+	window.performance?.clearMarks( 'add_translations_start' );
 }
