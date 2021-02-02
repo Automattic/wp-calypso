@@ -32,7 +32,6 @@ let lastReport = 0;
 
 if ( ! window.onerror ) {
 	TraceKit.report.subscribe( ( errorReport ) => {
-		debugger;
 		const error = {
 			message: errorReport.message,
 			url: document.location.href,
@@ -59,17 +58,17 @@ if ( ! window.onerror ) {
 		const now = Date.now();
 		if ( lastReport + REPORT_INTERVAL < now ) {
 			lastReport = now;
-			const data = new window.FormData();
-			data.append( 'error', JSON.stringify( error ) );
-			debugger;
 
-			// https://public-api.wordpress.com/rest/v1.1/js-error'
-			apiFetch( { path: '/rest/v1.1/js-error', method: 'POST', data } )
-				.then( ( foo ) => {
-					debugger;
+			apiFetch( {
+				global: true,
+				path: '/rest/v1.1/js-error',
+				method: 'POST',
+				data: { error: JSON.stringify( error ) },
+			} )
+				.then( () => {
 					diagnosticData.extra.throttled = 0;
 				} )
-				.catch( () => console.error( 'Error: Unable to record the error in Logstash.' ) );
+				.catch( () => console.error( 'Error: Unable to record the error in Logstash.', error ) );
 		} else {
 			diagnosticData.extra.throttled++;
 		}
