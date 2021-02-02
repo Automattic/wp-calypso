@@ -365,7 +365,7 @@ export default function CompositeCheckout( {
 	// changing them because it can cause awkward UX. Here we try to wait for
 	// them to be all finished loading before we pass them along.
 	const arePaymentMethodsLoading =
-		items.length < 1 ||
+		responseCart.products.length < 1 ||
 		isInitialCartLoading ||
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
