@@ -10,7 +10,7 @@
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },
 		{ "path": "./create-calypso-config" },
-		{ "path": "./create-selector" },
+		{ "path": "./state-utils" },
 		{ "path": "./data-stores" },
 		{ "path": "./domain-picker" },
 		{ "path": "./i18n-utils" },
