@@ -21,7 +21,6 @@ import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
 import HeaderCake from 'calypso/components/header-cake';
 import wpcomLib from 'calypso/lib/wp';
-import notices from 'calypso/notices';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
@@ -71,6 +70,7 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_TICKET,
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanTermLabel } from 'calypso/lib/plans';
 
 /**
@@ -219,7 +219,7 @@ class HelpContact extends React.Component {
 			( error ) => {
 				if ( error ) {
 					// TODO: bump a stat here
-					notices.error( error.message );
+					this.props.errorNotice( error.message );
 
 					this.setState( { isSubmitting: false } );
 					return;
@@ -270,7 +270,7 @@ class HelpContact extends React.Component {
 			( error, data ) => {
 				if ( error ) {
 					// TODO: bump a stat here
-					notices.error( error.message );
+					this.props.errorNotice( error.message );
 
 					this.setState( { isSubmitting: false } );
 					return;
@@ -691,6 +691,7 @@ export default connect(
 	},
 	{
 		askDirectlyQuestion,
+		errorNotice,
 		initializeDirectly,
 		openHappychat,
 		recordTracksEventAction,
