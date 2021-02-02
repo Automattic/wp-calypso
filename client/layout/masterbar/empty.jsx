@@ -3,6 +3,6 @@
  */
 import React from 'react';
 
-export default EmptyMasterbar = () => (
-	<header id="header" className="masterbar" />
-);
+const EmptyMasterbar = () => <header id="header" className="masterbar" />;
+
+export default EmptyMasterbar;
