@@ -43,7 +43,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isEcommerce,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
@@ -330,8 +330,9 @@ export class CheckoutThankYou extends React.Component {
 				return page( domainManagementList( siteSlug ) );
 			}
 
-			if ( purchases.some( isGoogleApps ) ) {
-				const purchase = find( purchases, isGoogleApps );
+			if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
+				const purchase = find( purchases, isGSuiteOrExtraLicenseOrGoogleWorkspace );
+
 				return page( emailManagement( siteSlug, purchase.meta ) );
 			}
 		}
@@ -530,8 +531,11 @@ export class CheckoutThankYou extends React.Component {
 					DomainRegistrationDetails,
 					...findPurchaseAndDomain( purchases, isDomainRegistration ),
 				];
-			} else if ( purchases.some( isGoogleApps ) ) {
-				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
+			} else if ( purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ) {
+				return [
+					GoogleAppsDetails,
+					...findPurchaseAndDomain( purchases, isGSuiteOrExtraLicenseOrGoogleWorkspace ),
+				];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
 			} else if ( purchases.some( isSiteRedirect ) ) {

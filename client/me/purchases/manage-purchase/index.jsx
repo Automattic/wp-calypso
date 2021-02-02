@@ -69,7 +69,7 @@ import {
 	isDomainRegistration,
 	isDomainMapping,
 	isDomainTransfer,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackSearch,
 	isTheme,
 	isJetpackProduct,
@@ -410,7 +410,7 @@ class ManagePurchase extends Component {
 		if (
 			isAtomicSite &&
 			isSubscription( purchase ) &&
-			! isGoogleApps( purchase ) &&
+			! isGSuiteOrGoogleWorkspace( purchase ) &&
 			! isTitanMail( purchase ) &&
 			! isJetpackSearch( purchase )
 		) {

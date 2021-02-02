@@ -10,7 +10,7 @@ import React from 'react';
 import { getName, getSubscriptionEndDate, isRefundable } from 'calypso/lib/purchases';
 import {
 	isDomainMapping,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isDotComPlan,
 	isPlan,
@@ -64,7 +64,7 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 		);
 	}
 
-	if ( isGoogleApps( purchase ) ) {
+	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return translate(
 			'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
 				'You will be able to manage your G Suite billing directly through Google.',
@@ -109,7 +109,7 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 function nonrefundableCancellationEffectDetail( purchase, translate ) {
 	const subscriptionEndDate = getSubscriptionEndDate( purchase );
 
-	if ( isGoogleApps( purchase ) ) {
+	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return translate(
 			'Your G Suite account remains active until it expires on %(subscriptionEndDate)s.',
 			{
