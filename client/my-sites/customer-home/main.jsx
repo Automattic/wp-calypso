@@ -29,7 +29,6 @@ import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
-import NavUnificationModal from 'calypso/blocks/nav-unification-modal';
 
 /**
  * Style dependencies
