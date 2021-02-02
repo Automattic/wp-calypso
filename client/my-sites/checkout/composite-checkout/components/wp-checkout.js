@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 import {
@@ -29,7 +29,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -48,7 +47,6 @@ import {
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 import { login } from 'calypso/lib/paths';
-import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
 import config from '@automattic/calypso-config';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
@@ -104,47 +102,6 @@ const OrderReviewTitle = () => {
 
 const paymentMethodStep = getDefaultPaymentMethodStep();
 
-// Can be safely removed after 2021-02-14 when the FRESHPACK coupon expires
-const useFRESHPACKPromoCodePrefill = ( applyCoupon ) => {
-	const done = useRef();
-	const [ items ] = useLineItems();
-
-	useEffect( () => {
-		// Don't fully execute more than once
-		if ( done.current ) {
-			return;
-		}
-
-		// Only ever pre-fill the FRESHPACK coupon for people
-		// who are part of the corresponding A/B test group
-		const shouldPrefill = abtest( 'prefillFRESHPACKCouponCode' ) === 'test';
-		if ( ! shouldPrefill ) {
-			done.current = true;
-			return;
-		}
-
-		// We don't always immediately have a list of products in the cart;
-		// if the cart doesn't contain any products in its line items,
-		// don't go any further until they're loaded
-		const productSlugs = items
-			.map( ( i ) => i.wpcom_meta?.product_slug )
-			.filter( ( slug ) => slug );
-		if ( ! productSlugs.length ) {
-			return;
-		}
-
-		const cartContainsJetpackItems = productSlugs.some(
-			( slug ) => isJetpackProductSlug( slug ) || isJetpackPlanSlug( slug )
-		);
-
-		if ( cartContainsJetpackItems ) {
-			applyCoupon( 'FRESHPACK' );
-		}
-
-		done.current = true;
-	}, [ items, applyCoupon ] );
-};
-
 export default function WPCheckout( {
 	removeProductFromCart,
 	updateLocation,
@@ -185,9 +142,6 @@ export default function WPCheckout( {
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
 		'wpcom'
 	);
-
-	// Can be safely removed after 2021-02-14 when the FRESHPACK coupon expires
-	useFRESHPACKPromoCodePrefill( applyCoupon );
 
 	const [
 		shouldShowContactDetailsValidationErrors,

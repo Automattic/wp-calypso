@@ -16,6 +16,32 @@ const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-ur
 
 export type isPendingAddingProductsFromUrl = boolean;
 
+// Can be safely removed after 2021-02-14 when the FRESHPACK coupon expires
+import { abtest } from 'calypso/lib/abtest';
+import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
+const prefillFRESHPACKPromoCode = (
+	productsForCart: RequestCartProduct[],
+	applyCoupon: ApplyCouponToCart
+) => {
+	const includesJetpackItems = productsForCart.some(
+		( p ) => isJetpackProductSlug( p.product_slug ) || isJetpackPlanSlug( p.product_slug )
+	);
+
+	if ( ! includesJetpackItems ) {
+		debug( 'no Jetpack products detected; not applying FRESHPACK' );
+		return;
+	}
+
+	const shouldPrefill = abtest( 'prefillFRESHPACKCouponCode' ) === 'test';
+
+	if ( shouldPrefill ) {
+		debug( 'part of the prefill test group; applying FRESHPACK' );
+		applyCoupon( 'FRESHPACK' );
+	} else {
+		debug( 'not part of the prefill test group; not applying FRESHPACK' );
+	}
+};
+
 export default function useAddProductsFromUrl( {
 	isLoadingCart,
 	isCartPendingUpdate,
@@ -88,14 +114,24 @@ export default function useAddProductsFromUrl( {
 		if ( areCartProductsPreparing || isLoadingCart || hasRequestedInitialProducts.current ) {
 			return;
 		}
+
 		debug( 'adding initial products to cart', productsForCart );
 		if ( productsForCart.length > 0 ) {
 			addProductsToCart( productsForCart );
 		}
+
 		debug( 'adding initial coupon to cart', couponCodeFromUrl );
 		if ( couponCodeFromUrl ) {
+			debug( 'coupon code found; ignoring FRESHPACK prefill test' );
 			applyCoupon( couponCodeFromUrl );
+		} else {
+			// If there's no coupon supplied in the URL,
+			// we may auto-add the FRESHPACK code if this user
+			// is part of the corresponding test group
+			debug( 'no coupon code in url; checking FRESHPACK prefill test group' );
+			prefillFRESHPACKPromoCode( productsForCart, applyCoupon );
 		}
+
 		hasRequestedInitialProducts.current = true;
 	}, [
 		isLoading,
