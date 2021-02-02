@@ -7,6 +7,11 @@ import * as ExperimentAssignments from './experiment-assignments';
 
 const experimentNameToExperimentAssignment: Record< string, ExperimentAssignment | undefined > = {};
 
+/**
+ * Store an ExperimentAssignment.
+ *
+ * @param experimentAssignment The ExperimentAssignment
+ */
 export function storeExperimentAssignment( experimentAssignment: ExperimentAssignment ): void {
 	Validations.validateExperimentAssignment( experimentAssignment );
 
@@ -35,6 +40,11 @@ export function storeExperimentAssignment( experimentAssignment: ExperimentAssig
 	] = experimentAssignment;
 }
 
+/**
+ * Retrieve an ExperimentAssignment.
+ *
+ * @param experimentName The experiment name.
+ */
 export function retrieveExperimentAssignment(
 	experimentName: string
 ): ExperimentAssignment | undefined {
