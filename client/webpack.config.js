@@ -60,6 +60,7 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -392,6 +393,37 @@ const webpackConfig = {
 		new ExtensiveLodashReplacementPlugin(),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
+	...( shouldUsePersistentCache
+		? {
+				cache: {
+					// eslint-disable-next-line inclusive-language/use-inclusive-words
+					// More info in https://github.com/webpack/changelog-v5/blob/master/guides/persistent-caching.md
+					type: 'filesystem',
+					version: [
+						shouldBuildChunksMap,
+						shouldMinify,
+						process.env.ENTRY_LIMIT,
+						process.env.SECTION_LIMIT,
+						process.env.SOURCEMAP,
+						process.env.NODE_ENV,
+						process.env.CALYPSO_ENV,
+					].join( '-' ),
+					cacheDirectory: path.resolve( cachePath, 'webpack' ),
+					buildDependencies: {
+						config: [ __filename ],
+					},
+				},
+				snapshot: {
+					managedPaths: [
+						path.resolve( __dirname, '../node_modules' ),
+						path.resolve( __dirname, 'node_modules' ),
+					],
+				},
+				infrastructureLogging: {
+					debug: /webpack\.cache/,
+				},
+		  }
+		: {} ),
 };
 
 module.exports = webpackConfig;
