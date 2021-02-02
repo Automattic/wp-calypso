@@ -318,8 +318,18 @@ UserSettings.prototype.removeUnsavedSetting = function ( settingName ) {
 	}
 };
 
-UserSettings.prototype.hasUnsavedSettings = function () {
-	return ! isEmpty( this.unsavedSettings );
+UserSettings.prototype.hasUnsavedSettings = function ( fields ) {
+	if ( isEmpty( this.unsavedSettings ) ) {
+		return false;
+	}
+
+	const unsavedSettingsKeys = Object.keys( this.unsavedSettings );
+
+	if ( fields ) {
+		return fields.some( ( field ) => unsavedSettingsKeys.includes( field ) );
+	}
+
+	return true;
 };
 
 /**

@@ -9,17 +9,18 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
-import { debounce, flowRight as compose, get, has, map, size, update } from 'lodash';
+import { debounce, flowRight as compose, get, has, map, size, update, pick } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import LanguagePicker from 'calypso/components/language-picker';
+import SectionHeader from 'calypso/components/section-header';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { protectForm } from 'calypso/lib/protect-form';
 import formBase from 'calypso/me/form-base';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import languages from '@automattic/languages';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { Card, Button } from '@automattic/components';
@@ -77,7 +78,15 @@ const debug = debugFactory( 'calypso:me:account' );
 
 const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;
 const USERNAME_MIN_LENGTH = 4;
-
+const ACCOUNT_FORM_NAME = 'account';
+const INTERFACE_FORM_NAME = 'interface';
+const ACCOUNT_FIELDS = [ 'user_login', 'user_email', 'user_URL', 'primary_site_ID' ];
+const INTERFACE_FIELDS = [
+	'locale_variant',
+	'language',
+	'enable_translator',
+	'calypso_preferences',
+];
 /* eslint-disable react/prefer-es6-class */
 const Account = createReactClass( {
 	displayName: 'Account',
@@ -277,7 +286,7 @@ const Account = createReactClass( {
 					<FormCheckbox
 						checked={ this.getUserSetting( ENABLE_TRANSLATOR_KEY ) }
 						onChange={ this.updateCommunityTranslatorSetting }
-						disabled={ this.getDisabledState() }
+						disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
 						id={ ENABLE_TRANSLATOR_KEY }
 						name={ ENABLE_TRANSLATOR_KEY }
 						onClick={ this.getCheckboxHandler( 'Community Translator' ) }
@@ -623,23 +632,37 @@ const Account = createReactClass( {
 		return <FormTextValidation isError={ true } text={ notice } />;
 	},
 
+	shouldDisableAccountSubmitButton() {
+		const { userSettings } = this.props;
+
+		return (
+			! userSettings.hasUnsavedSettings( ACCOUNT_FIELDS ) ||
+			this.getDisabledState( ACCOUNT_FORM_NAME ) ||
+			this.hasEmailValidationError()
+		);
+	},
+
+	shouldDisableInterfaceSubmitButton() {
+		const { userSettings } = this.props;
+
+		return (
+			! userSettings.hasUnsavedSettings( INTERFACE_FIELDS ) ||
+			this.getDisabledState( INTERFACE_FORM_NAME )
+		);
+	},
+
 	/*
 	 * These form fields are displayed when there is not a username change in progress.
 	 */
 	renderAccountFields() {
-		const { translate, userSettings } = this.props;
-
-		const isSubmitButtonDisabled =
-			! userSettings.hasUnsavedSettings() ||
-			this.getDisabledState() ||
-			this.hasEmailValidationError();
+		const { translate } = this.props;
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
 					<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
+						disabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) || this.hasPendingEmailChange() }
 						id="user_email"
 						name="user_email"
 						isError={ !! this.state.emailValidationError }
@@ -662,7 +685,7 @@ const Account = createReactClass( {
 				<FormFieldset>
 					<FormLabel htmlFor="user_URL">{ translate( 'Web address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.getDisabledState() }
+						disabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) }
 						id="user_URL"
 						name="user_URL"
 						type="url"
@@ -675,56 +698,12 @@ const Account = createReactClass( {
 					</FormSettingExplanation>
 				</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel id="account__language" htmlFor="language">
-						{ translate( 'Interface language' ) }
-					</FormLabel>
-					<LanguagePicker
-						disabled={ this.getDisabledState() }
-						languages={ languages }
-						onClick={ this.getClickHandler( 'Interface Language Field' ) }
-						valueKey="langSlug"
-						value={
-							this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
-						}
-						empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
-						useFallbackForIncompleteLanguages={ this.getUserSetting(
-							'use_fallback_for_incomplete_languages'
-						) }
-						onChange={ this.updateLanguage }
-					/>
-					<FormSettingExplanation>
-						{ translate(
-							'This is the language of the interface you see across WordPress.com as a whole.'
-						) }
-					</FormSettingExplanation>
-					{ this.thankTranslationContributors() }
-				</FormFieldset>
-
-				{ canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) &&
-					this.communityTranslator() }
-
-				{ config.isEnabled( 'me/account/color-scheme-picker' ) && supportsCssCustomProperties() && (
-					<FormFieldset>
-						<FormLabel id="account__color_scheme" htmlFor="color_scheme">
-							{ translate( 'Dashboard color scheme' ) }
-						</FormLabel>
-						<ColorSchemePicker
-							temporarySelection
-							defaultSelection={
-								isEnabled( 'nav-unification' ) ? 'classic-dark' : 'classic-bright'
-							}
-							onSelection={ this.updateColorScheme }
-						/>
-					</FormFieldset>
-				) }
-
 				<FormButton
-					isSubmitting={ this.state.submittingForm }
-					disabled={ isSubmitButtonDisabled }
+					isSubmitting={ this.isSubmittingForm( ACCOUNT_FORM_NAME ) }
+					disabled={ this.shouldDisableAccountSubmitButton() }
 					onClick={ this.handleSubmitButtonClick }
 				>
-					{ this.state.submittingForm
+					{ this.isSubmittingForm( ACCOUNT_FORM_NAME )
 						? translate( 'Saving…' )
 						: translate( 'Save account settings' ) }
 				</FormButton>
@@ -877,6 +856,19 @@ const Account = createReactClass( {
 			</div>
 		);
 	},
+	saveAccountSettings( event ) {
+		const unSavedUserSettings = this.props.userSettings.unsavedSettings;
+		const fieldsForSave = pick( unSavedUserSettings, ACCOUNT_FIELDS );
+
+		this.submitForm( event, fieldsForSave, ACCOUNT_FORM_NAME );
+	},
+
+	saveInterfaceSettings( event ) {
+		const unSavedUserSettings = this.props.userSettings.unsavedSettings;
+		const fieldsForSave = pick( unSavedUserSettings, INTERFACE_FIELDS );
+
+		this.submitForm( event, fieldsForSave, INTERFACE_FORM_NAME );
+	},
 
 	render() {
 		const { markChanged, translate, userSettings } = this.props;
@@ -888,10 +880,11 @@ const Account = createReactClass( {
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+				<FormattedHeader brandFont headerText={ translate( 'Account settings' ) } align="left" />
 
+				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
-					<form onChange={ markChanged } onSubmit={ this.submitForm }>
+					<form onChange={ markChanged } onSubmit={ this.saveAccountSettings }>
 						<FormFieldset>
 							<FormLabel htmlFor="user_login">{ translate( 'Username' ) }</FormLabel>
 							<FormTextInput
@@ -900,7 +893,8 @@ const Account = createReactClass( {
 								autoCorrect="off"
 								className="account__username"
 								disabled={
-									this.getDisabledState() || ! this.getUserSetting( 'user_login_can_be_changed' )
+									this.getDisabledState( ACCOUNT_FORM_NAME ) ||
+									! this.getUserSetting( 'user_login_can_be_changed' )
 								}
 								id="user_login"
 								name="user_login"
@@ -922,6 +916,60 @@ const Account = createReactClass( {
 								{ renderUsernameForm ? this.renderUsernameFields() : this.renderAccountFields() }
 							</CSSTransition>
 						</TransitionGroup>
+					</form>
+				</Card>
+
+				<SectionHeader label={ translate( 'Interface settings' ) } />
+				<Card className="account__settings">
+					<form onChange={ markChanged } onSubmit={ this.saveInterfaceSettings }>
+						<FormFieldset>
+							<FormLabel id="account__language" htmlFor="language">
+								{ translate( 'Interface language' ) }
+							</FormLabel>
+							<LanguagePicker
+								disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
+								languages={ languages }
+								onClick={ this.getClickHandler( 'Interface Language Field' ) }
+								valueKey="langSlug"
+								value={
+									this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
+								}
+								empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
+								useFallbackForIncompleteLanguages={ this.getUserSetting(
+									'use_fallback_for_incomplete_languages'
+								) }
+								onChange={ this.updateLanguage }
+							/>
+							<FormSettingExplanation>
+								{ translate(
+									'This is the language of the interface you see across WordPress.com as a whole.'
+								) }
+							</FormSettingExplanation>
+							{ this.thankTranslationContributors() }
+						</FormFieldset>
+
+						{ canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) &&
+							this.communityTranslator() }
+
+						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
+							supportsCssCustomProperties() && (
+								<FormFieldset>
+									<FormLabel id="account__color_scheme" htmlFor="color_scheme">
+										{ translate( 'Dashboard color scheme' ) }
+									</FormLabel>
+									<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
+								</FormFieldset>
+							) }
+
+						<FormButton
+							isSubmitting={ this.isSubmittingForm( INTERFACE_FORM_NAME ) }
+							disabled={ this.shouldDisableInterfaceSubmitButton() }
+							onClick={ this.handleSubmitButtonClick }
+						>
+							{ this.isSubmittingForm( INTERFACE_FORM_NAME )
+								? translate( 'Saving…' )
+								: translate( 'Save interface settings' ) }
+						</FormButton>
 					</form>
 				</Card>
 
