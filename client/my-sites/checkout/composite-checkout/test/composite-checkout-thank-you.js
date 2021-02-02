@@ -179,7 +179,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			shouldShowDifmUpsell,
 		} );
-		expect( url ).toBe( '/checkout/foo.bar/offer-difm' );
+		expect( url ).toBe( '/checkout/foo.bar/offer-difm/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
