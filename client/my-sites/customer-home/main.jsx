@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import { NavUnificationAnnouncement } from '@automattic/announcements';
 
 /**
  * Internal dependencies
@@ -74,6 +75,7 @@ const Home = ( {
 
 	return (
 		<Main className="customer-home__main is-wide-layout">
+			<NavUnificationAnnouncement isEnabled={ true } />
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
