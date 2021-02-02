@@ -161,7 +161,7 @@
 		"@automattic/calypso-color-schemes": "^2.1.1",
 		"@automattic/calypso-doctor": "^0.1.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
-		"@automattic/color-studio": "^2.3.0",
+		"@automattic/color-studio": "https://github.com/Automattic/color-studio.git#blue",
 		"@automattic/components": "^1.0.0-alpha.1",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/i18n-utils": "^1.0.0",

@@ -16,6 +16,10 @@
   resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.3.0.tgz#6549e77f823514bdcf520cb2c48932c2c9db379f"
   integrity sha512-GRMV4PMtn2iE+30+RP33LyJSe4Qp8oILFNvk+iF8zd0LzUUaErZu86rk8YpEcLvFJzOU2BTXSewSdwyGc/sa1g==
 
+"@automattic/color-studio@https://github.com/Automattic/color-studio.git#blue":
+  version "2.4.0-0"
+  resolved "https://github.com/Automattic/color-studio.git#1eacae0bd517df845da542dce4231650ee32ca83"
+
 "@automattic/lasagna@^0.6.1":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.6.1.tgz#98984f268e3186c3d4455f7f2bc324d509910f0c"
