@@ -48,7 +48,7 @@
 	display: flex;
 	justify-content: space-between;
 	box-sizing: border-box;
-	padding: 24px 24px 16px;
+	padding: 24px;
 	height: 100%;
 	max-width: 100%;
 }
@@ -82,13 +82,17 @@
 	display: flex;
 	justify-content: flex-start;
 	font-size: $font-body-small;
-	margin-bottom: 12px;
+	margin-bottom: 0;
 }
 
 .plugins-browser-item__description {
 	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	margin-bottom: 0;
+}
+
+.plugins-browser-item__author-wrapper + .plugins-browser-item__description {
+	margin-top: 12px;
 }
 
 .plugins-browser-item .plugin-icon {
