@@ -2,19 +2,19 @@
  * Internal dependencies
  */
 import * as ExperimentAssignments from '../experiment-assignments';
-import { validExperimentAssignmentA } from '../test-common';
+import { validExperimentAssignment } from '../test-common';
 
 describe( 'isAlive', () => {
 	it( 'returns true for ExperimentAssignments within ttl', () => {
 		expect(
 			ExperimentAssignments.isAlive( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				retrievedTimestamp: Date.now(),
 			} )
 		).toBe( true );
 		expect(
 			ExperimentAssignments.isAlive( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				retrievedTimestamp: Date.now() - 1000 * 59,
 			} )
 		).toBe( true );
@@ -22,7 +22,7 @@ describe( 'isAlive', () => {
 	it( 'returns false for ExperimentAssignments outside of ttl', () => {
 		expect(
 			ExperimentAssignments.isAlive( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				retrievedTimestamp: Date.now() - 1000 * 60,
 			} )
 		).toBe( false );
@@ -33,13 +33,13 @@ describe( 'isRecent', () => {
 	it( 'returns true for ExperimentAssignments within maximumRecencyDelta', () => {
 		expect(
 			ExperimentAssignments.isRecent( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				retrievedTimestamp: Date.now(),
 			} )
 		).toBe( true );
 		expect(
 			ExperimentAssignments.isRecent( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				retrievedTimestamp: Date.now() - 1000 * 60 * 60 * 24 * 14 + 100,
 			} )
 		).toBe( true );
@@ -47,7 +47,7 @@ describe( 'isRecent', () => {
 	it( 'returns false for ExperimentAssignments outside of maximumRecencyDelta', () => {
 		expect(
 			ExperimentAssignments.isRecent( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				retrievedTimestamp: Date.now() - 1000 * 60 * 60 * 24 * 14,
 			} )
 		).toBe( false );
