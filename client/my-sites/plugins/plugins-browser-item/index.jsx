@@ -150,10 +150,13 @@ class PluginsBrowserListElement extends Component {
 			return;
 		}
 
+		//Plugin rating as percentage out of five stars
+		const stars = plugin.rating * 0.01 * 5;
+
 		return (
 			<div className="plugins-browser-item__ratings">
 				<Gridicon icon={ 'star' } size={ 12 } />
-				{ plugin.rating }
+				{ stars.toFixed( 1 ) }
 			</div>
 		);
 	};
