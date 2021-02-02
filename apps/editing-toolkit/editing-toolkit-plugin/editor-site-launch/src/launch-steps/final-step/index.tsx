@@ -21,6 +21,7 @@ import {
 	SubmitButtonWrapper,
 	FormStatus,
 } from '@automattic/composite-checkout';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -33,12 +34,11 @@ import './styles.scss';
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
-	const { domain, plan, LaunchStep, isStepCompleted, isFlowCompleted, planProductId } = useSelect(
+	const { domain, LaunchStep, isStepCompleted, isFlowCompleted, planProductId } = useSelect(
 		( select ) => {
 			const launchStore = select( LAUNCH_STORE );
 			return {
 				domain: launchStore.getSelectedDomain(),
-				plan: launchStore.getSelectedPlan(),
 				LaunchStep: launchStore.getLaunchStep(),
 				isStepCompleted: launchStore.isStepCompleted,
 				isFlowCompleted: launchStore.isFlowCompleted(),
@@ -47,9 +47,12 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		}
 	);
 
-	const planProduct = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanProductById( planProductId )
-	);
+	const locale = useLocale();
+
+	const [ plan, planProduct ] = useSelect( ( select ) => [
+		select( PLANS_STORE ).getPlanByProductId( planProductId, locale ),
+		select( PLANS_STORE ).getPlanProductById( planProductId ),
+	] );
 
 	const { title } = useTitle();
 	const { siteSubdomain } = useSiteDomains();
