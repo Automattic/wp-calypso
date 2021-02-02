@@ -8,8 +8,14 @@ const debug = debugFactory( 'calypso:me:form-base' );
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import user from 'calypso/lib/user';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+
+const noticeId = 'me-settings-notice';
+const noticeOptions = {
+	id: noticeId,
+};
 
 export default {
 	componentDidMount: function () {
@@ -48,9 +54,11 @@ export default {
 
 	showNotice: function () {
 		if ( this.props.userSettings.initialized && this.state.showNotice ) {
-			notices.clearNotices( 'notices' );
+			reduxDispatch( removeNotice( noticeId ) );
 
-			notices.success( this.props.translate( 'Settings saved successfully!' ) );
+			reduxDispatch(
+				successNotice( this.props.translate( 'Settings saved successfully!' ), noticeOptions )
+			);
 			this.state.showNotice = false;
 		}
 	},
@@ -74,9 +82,14 @@ export default {
 
 		// handle error case here
 		if ( error.message ) {
-			notices.error( error.message );
+			reduxDispatch( errorNotice( error.message, noticeOptions ) );
 		} else {
-			notices.error( this.props.translate( 'There was a problem saving your changes.' ) );
+			reduxDispatch(
+				errorNotice(
+					this.props.translate( 'There was a problem saving your changes.' ),
+					noticeOptions
+				)
+			);
 		}
 
 		this.setState( {
