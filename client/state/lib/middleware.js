@@ -44,8 +44,6 @@ if ( globalKeyBoardShortcutsEnabled ) {
 	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
 
-const desktop = config.isEnabled( 'desktop' ) ? require( 'calypso/lib/desktop' ).default : null;
-
 /**
  * Notifies user about the fact that they were automatically logged in
  * via an immediate link.
@@ -114,19 +112,6 @@ const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState
 	keyboardShortcuts.setNotificationsOpen( toggledState );
 };
 
-/**
- * Sets the selected site for lib/desktop
- *
- * @param {Function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {Function} getState - redux getState function
- */
-const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	desktop.setSelectedSite( selectedSite );
-};
-
 const fetchAutomatedTransferStatusForSelectedSite = ( dispatch, getState ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
@@ -153,9 +138,6 @@ const handler = ( dispatch, action, getState ) => {
 			setTimeout( () => {
 				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
-				}
-				if ( config.isEnabled( 'desktop' ) ) {
-					updateSelectedSiteForDesktop( dispatch, action, getState );
 				}
 
 				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );

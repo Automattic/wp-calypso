@@ -1,12 +1,16 @@
 /* eslint-disable import/no-nodejs-modules, no-console, no-process-exit */
 const fs = require( 'fs' );
-const { ncp } = require( 'ncp' );
+const path = require( 'path' );
 
+const DESKTOP_DIR = path.resolve( __dirname, '..' );
 /*
  * Create a desktop/config.json file by merging source files according to `CONFIG_ENV` value
  */
-const BASE_CONFIG = 'desktop/desktop-config/config-base.json';
-const TARGET_CONFIG = `desktop/desktop-config/config-${ process.env.CONFIG_ENV }.json`;
+const BASE_CONFIG = path.join( DESKTOP_DIR, 'desktop-config/config-base.json' );
+const TARGET_CONFIG = path.join(
+	DESKTOP_DIR,
+	`desktop/desktop-config/config-${ process.env.CONFIG_ENV }.json`
+);
 
 const base = JSON.parse( fs.readFileSync( BASE_CONFIG, 'utf-8' ) );
 let env;
@@ -20,7 +24,7 @@ try {
 
 const config = JSON.stringify( Object.assign( base, env ), null, 2 );
 
-fs.writeFileSync( 'client/desktop/config.json', config, 'utf-8' );
+fs.writeFileSync( path.join( DESKTOP_DIR, 'config', 'config.json' ), config, 'utf-8' );
 
 /*
  * Verify that the `config/secrets.json` file exists. It contains OAuth keys that the app needs
@@ -28,7 +32,7 @@ fs.writeFileSync( 'client/desktop/config.json', config, 'utf-8' );
  */
 let secretsString;
 try {
-	secretsString = fs.readFileSync( 'config/secrets.json', 'utf-8' );
+	secretsString = fs.readFileSync( path.join( DESKTOP_DIR, 'config', 'secrets.json' ), 'utf-8' );
 } catch {
 	console.error( 'Config file config/secrets.json does not exist. Please create one.' );
 	process.exit( 1 );
@@ -55,18 +59,3 @@ if ( process.env.CONFIG_ENV === 'release' ) {
 		process.exit( 1 );
 	}
 }
-
-/*
- * Copy Calypso config files to the target directory
- */
-ncp(
-	'config',
-	'desktop/config',
-	{ filter: ( name ) => /\/config(\/(secrets|_shared|desktop)\.json)?$/.test( name ) },
-	( err ) => {
-		if ( err ) {
-			console.error( 'Failed to copy config files:', err );
-			process.exit( 1 );
-		}
-	}
-);

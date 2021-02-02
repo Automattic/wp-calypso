@@ -9,7 +9,6 @@
  */
 const path = require( 'path' );
 const webpack = require( 'webpack' );
-const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
@@ -36,14 +35,12 @@ const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identi
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
 const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
-const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 
 /**
  * Internal variables
  */
-const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
@@ -57,7 +54,6 @@ const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
-const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -136,7 +132,7 @@ if ( isDevelopment ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
-const outputDir = path.resolve( isDesktop ? './desktop' : '.' );
+const outputDir = path.resolve( '.' );
 
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware serves assets from a hard-coded publicPath.
@@ -178,37 +174,24 @@ const webpackConfig = {
 	},
 	optimization: {
 		concatenateModules: ! isDevelopment && shouldConcatenateModules,
-		// Desktop: override removeAvailableModules and removeEmptyChunks to minimize resource/RAM usage.
-		removeAvailableModules: ! isDesktop,
-		removeEmptyChunks: ! isDesktop,
+		removeAvailableModules: true,
+		removeEmptyChunks: true,
 		splitChunks: {
 			chunks: 'all',
 			...( isDevelopment || shouldEmitStats ? {} : { name: false } ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: isDesktop ? false : { name: 'runtime' },
+		runtimeChunk: { name: 'runtime' },
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
 		minimizer: Minify( {
-			// Desktop: number of workers should *not* exceed # of vCPUs available.
-			// For both medium Machine and Docker images, number of vCPUs == 2.
-			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
-			parallel: isDesktop ? 2 : workerCount,
+			parallel: workerCount,
 			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
 			terserOptions: {
-				...( isDesktop
-					? {
-							ecma: 2017,
-							mangle: true,
-							compress: false,
-							safari10: false,
-					  }
-					: {
-							compress: true,
-							mangle: true,
-					  } ),
+				compress: true,
+				mangle: true,
 			},
 		} ),
 	},
@@ -339,23 +322,11 @@ const webpackConfig = {
 			startYear: 2000,
 			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
 		} ),
-		new ConfigFlagPlugin( {
-			flags: { desktop: config.isEnabled( 'desktop' ) },
-		} ),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
-		new RequireChunkCallbackPlugin(),
-		...( ! config.isEnabled( 'desktop' )
-			? [
-					new webpack.NormalModuleReplacementPlugin(
-						/^calypso[/\\]lib[/\\]desktop$/,
-						'lodash/noop'
-					),
-			  ]
-			: [] ),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser
 		 */
