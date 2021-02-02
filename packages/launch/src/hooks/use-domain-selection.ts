@@ -42,14 +42,17 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 
 	const domainName = domainProductFromCart?.meta;
 
-	const domainSuggestion = useDomainSuggestions( domainName, 1, undefined, undefined, {
+	// const TLD = domainName?.split( '.' )[ 1 ];
+
+	const domainSuggestions = useDomainSuggestions( domainName, 5, undefined, undefined, {
 		include_wordpressdotcom: false,
-		include_dotblogsubdomain: domainName?.includes( '.blog' ),
 		exact_sld_matches_only: true,
 		include_registered: true,
-	} )?.allDomainSuggestions?.[ 0 ];
+		// tlds: [ TLD ], // an attempt for more precise results, didn't help
+	} )?.allDomainSuggestions;
 
-	return domainSuggestion;
+	// search for a matching suggestion and return `undefined` if nothing matches
+	return domainSuggestions?.find( ( domain ) => domain.domain_name === domainName );
 }
 
 type DomainSelection = {
