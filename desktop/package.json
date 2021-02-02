@@ -13,21 +13,27 @@
 		"email": "wp-desktop@automattic.com"
 	},
 	"homepage": "https://desktop.wordpress.com/",
-	"main": "build/desktop.js",
+	"main": "./dist/index.js",
 	"keywords": [
 		"desktop",
 		"wordpress",
 		"wordpress.com"
 	],
 	"scripts": {
-		"build": "npx electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
-		"ci:build-mac": "node bin/build-mac-ci",
+		"dev": "cross-env NODE_ENV=development DEBUG=1 WP_DESKTOP_DEBUG=1 electron app/index.js",
+		"ci:build-mac": "yarn run build:main && node bin/build-mac-ci",
+		"build": "yarn run build:main && ELECTRON_BUILDER_ARGS=${ELECTRON_BUILDER_ARGS} yarn run build:app",
+		"build:app": "npx electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
+		"build:main": "webpack --display errors-only",
+		"build:config": "node bin/build-desktop-config.js",
+		"build:secrets": "node bin/build-desktop-secrets.js",
 		"ci:github:add-review": "node bin/github/add-review.js",
 		"ci:github:dismiss-review": "node bin/github/dismiss-review.js"
 	},
 	"devDependencies": {
 		"asana-phrase": "0.0.8",
 		"chai": "3.5.0",
+		"copy-webpack-plugin": "^6.2.1",
 		"electron": "11.0.4",
 		"electron-builder": "22.10.4",
 		"electron-chromedriver": "4.2.0",
@@ -42,9 +48,22 @@
 		"mocha-multi-reporters": "^1.5.1",
 		"mocha-steps": "1.3.0",
 		"ncp": "^2.0.0",
-		"selenium-webdriver": "4.0.0-alpha.1"
+		"selenium-webdriver": "4.0.0-alpha.1",
+		"webpack": "^4.44.2",
+		"webpack-cli": "^3.3.12"
 	},
 	"dependencies": {
-		"keytar": "7.1.0"
+		"archiver": "^3.1.1",
+		"cross-env": "^7.0.3",
+		"electron-fetch": "^1.2.1",
+		"electron-updater": "^4.2.5",
+		"js-yaml": "^4.0.0",
+		"keytar": "^7.1.0",
+		"make-dir": "^3.1.0",
+		"semver": "^7.3.2",
+		"superagent": "^3.8.3",
+		"winston": "^3.2.1",
+		"wpcom-xhr-request": "^1.2.0",
+		"ws": "^7.3.1"
 	}
 }
