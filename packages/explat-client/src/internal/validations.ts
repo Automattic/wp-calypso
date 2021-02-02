@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ExperimentAssignment } from '../types';
+import type { ExperimentAssignment } from '../types';
 
 export function isObject( x: unknown ): x is Record< string, unknown > {
 	return typeof x === 'object' && x !== null;
