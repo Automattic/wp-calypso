@@ -217,7 +217,11 @@ class PluginsBrowserListElement extends Component {
 								</div>
 								{ this.renderSupportedFlag() }
 							</div>
-							<div className="plugins-browser-item__description">{ plugin.short_description }</div>
+							{ showMeta && (
+								<div className="plugins-browser-item__description">
+									{ plugin.short_description }
+								</div>
+							) }
 						</div>
 					</div>
 					{ showMeta && (
