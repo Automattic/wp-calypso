@@ -10,6 +10,7 @@ const menu = require( '../../lib/menu' );
 const Config = require( '../../lib/config' );
 const platform = require( '../../lib/platform' );
 const SessionManager = require( '../../lib/session' );
+const WPNotificationsAPI = require( '../../lib/notifications/api' );
 
 module.exports = function ( mainWindow ) {
 	menu.set( app, mainWindow );
@@ -19,6 +20,13 @@ module.exports = function ( mainWindow ) {
 	} );
 	SessionManager.on( 'logged-out', () => {
 		handleLogout( mainWindow );
+	} );
+
+	SessionManager.on( 'api:connect', () => {
+		WPNotificationsAPI.connect();
+	} );
+	SessionManager.on( 'api:disconnect', () => {
+		WPNotificationsAPI.disconnect();
 	} );
 };
 
