@@ -63,12 +63,12 @@ import {
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import user from 'calypso/lib/user';
+import FormToggle from 'calypso/components/forms/form-toggle';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import FormToggle from 'calypso/components/forms/form-toggle';
 
 const linkDestinationKey = 'calypso_preferences.linkDestination';
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -972,7 +972,9 @@ const Account = createReactClass( {
 									checked={ !! this.getUserSetting( linkDestinationKey ) }
 									onChange={ this.toggleLinkDestination }
 								>
-									{ translate( 'Replace all dashboard pages with WP Admin equivalents' ) }
+									{ translate(
+										'Replace all dashboard pages with WP Admin equivalents when possible'
+									) }
 								</FormToggle>
 							</FormFieldset>
 						) }
