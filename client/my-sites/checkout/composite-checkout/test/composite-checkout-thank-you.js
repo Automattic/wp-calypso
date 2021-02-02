@@ -426,7 +426,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	it( 'Redirects to thank-you page without a receipt ID if isEligibleForSignupDestination is false', () => {
+	it( 'Redirects to root if previous receipt is "noPreviousPurchase" and isEligibleForSignupDestination is false', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			products: [ { product_slug: 'foo' } ],
@@ -434,23 +434,7 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			receiptId: ':receiptId',
-			cart,
-			getUrlFromCookie,
-			isEligibleForSignupDestination: false,
-		} );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar' );
-	} );
-
-	it( 'Redirects to root if isEligibleForSignupDestination is false, no receiptId, and cart is empty', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
-		const cart = {
-			products: [],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			receiptId: ':receiptId',
+			receiptId: 'noPreviousPurchase',
 			cart,
 			getUrlFromCookie,
 			isEligibleForSignupDestination: false,

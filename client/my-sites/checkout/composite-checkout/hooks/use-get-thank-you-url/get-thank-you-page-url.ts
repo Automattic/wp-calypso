@@ -290,6 +290,11 @@ function getFallbackDestination( {
 		return siteWithReceiptOrCartUrl;
 	}
 
+	if ( siteSlug ) {
+		debug( 'just site slug', siteSlug );
+		return `/checkout/thank-you/${ siteSlug }`;
+	}
+
 	debug( 'fallback is just root' );
 	return '/';
 }
