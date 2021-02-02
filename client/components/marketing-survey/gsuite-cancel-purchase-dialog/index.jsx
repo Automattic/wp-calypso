@@ -14,7 +14,7 @@ import * as steps from './steps';
 import { Dialog } from '@automattic/components';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getName, purchaseType } from 'calypso/lib/purchases';
+import { getName } from 'calypso/lib/purchases';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
@@ -246,7 +246,7 @@ export default connect(
 	( state, { purchase } ) => {
 		return {
 			productName: getName( purchase ),
-			domain: purchaseType( purchase ),
+			domain: purchase.meta,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 		};

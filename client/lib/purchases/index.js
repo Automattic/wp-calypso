@@ -20,10 +20,12 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
+	isGoogleWorkspace,
 	isJetpackPlan,
 	isMonthly as isMonthlyProduct,
 	isPlan,
 	isTheme,
+	isTitanMail,
 	isConciergeSession,
 } from 'calypso/lib/products-values';
 import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
@@ -676,6 +678,22 @@ function purchaseType( purchase ) {
 
 	if ( isDomainMapping( purchase ) ) {
 		return purchase.productName;
+	}
+
+	if ( isGoogleWorkspace( purchase ) ) {
+		return i18n.translate( 'Productivity And Collaboration Tools at %(domain)s', {
+			args: {
+				domain: purchase.meta,
+			},
+		} );
+	}
+
+	if ( isTitanMail( purchase ) ) {
+		return i18n.translate( 'Mailboxes at %(domain)s', {
+			args: {
+				domain: purchase.meta,
+			},
+		} );
 	}
 
 	if ( purchase.meta ) {
