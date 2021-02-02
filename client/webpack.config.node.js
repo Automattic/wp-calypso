@@ -174,10 +174,4 @@ const webpackConfig = {
 	].filter( Boolean ),
 };
 
-if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^calypso[/\\]lib[/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
 module.exports = webpackConfig;
