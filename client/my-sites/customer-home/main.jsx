@@ -75,10 +75,13 @@ const Home = ( {
 	}
 
 	if ( 'purchase-success' === noticeType ) {
+		const reduxDispatch = useDispatch();
 		const successMessage = translate( 'Your purchase has been completed!' );
-		notices.success( successMessage, {
-			persistent: true,
-		} );
+		reduxDispatch(
+			successNotice( successMessage, {
+				isPersistent: true,
+			} )
+		);
 	}
 
 	const header = (
