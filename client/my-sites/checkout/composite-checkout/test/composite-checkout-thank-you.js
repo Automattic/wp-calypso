@@ -491,7 +491,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/' );
 	} );
 
-	it( 'redirects to url from cookie if isEligibleForSignupDestination is set', () => {
+	it( 'redirects to url from cookie with notice type set to "purchase-success" if isEligibleForSignupDestination is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			products: [ { product_slug: 'foo' } ],
@@ -503,7 +503,7 @@ describe( 'getThankYouPageUrl', () => {
 			getUrlFromCookie,
 			isEligibleForSignupDestinationResult: true,
 		} );
-		expect( url ).toBe( '/cookie' );
+		expect( url ).toBe( '/cookie?notice=purchase-success' );
 	} );
 
 	it( 'Should store the current URL in the redirect cookie when called from the editor', () => {

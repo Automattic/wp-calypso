@@ -74,6 +74,13 @@ const Home = ( {
 		);
 	}
 
+	if ( 'purchase-success' === noticeType ) {
+		const successMessage = translate( 'Your purchase has been completed!' );
+		notices.success( successMessage, {
+			persistent: true,
+		} );
+	}
+
 	const header = (
 		<div className="customer-home__heading">
 			<FormattedHeader
