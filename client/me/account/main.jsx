@@ -964,7 +964,7 @@ const Account = createReactClass( {
 							this.communityTranslator() }
 
 						{ config.isEnabled( 'nav-unification' ) && (
-							<FormFieldset>
+							<FormFieldset className="account__link-destination">
 								<FormLabel id="account__link_destination" htmlFor="link_destination">
 									{ translate( 'Dashboard appearance' ) }
 								</FormLabel>
@@ -973,7 +973,7 @@ const Account = createReactClass( {
 									onChange={ this.toggleLinkDestination }
 								>
 									{ translate(
-										'Replace all dashboard pages with WP Admin equivalents when possible'
+										'Replace all dashboard pages with WP Admin equivalents when possible.'
 									) }
 								</FormToggle>
 							</FormFieldset>
