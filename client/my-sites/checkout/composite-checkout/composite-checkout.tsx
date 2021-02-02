@@ -16,7 +16,8 @@ import {
 	Button,
 } from '@automattic/composite-checkout';
 import { ThemeProvider } from 'emotion-theming';
-import { useShoppingCart, ResponseCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 
@@ -79,7 +80,6 @@ import {
 } from './types/wpcom-store-state';
 import { StoredCard } from './types/stored-cards';
 import { CountryListItem } from './types/country-list-item';
-import { WPCOMCartItem } from './types/checkout-cart';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
@@ -391,7 +391,7 @@ export default function CompositeCheckout( {
 
 	const getItemVariants = useProductVariants( {
 		siteId,
-		productSlug: getPlanProductSlugs( items )[ 0 ],
+		productSlug: getPlanProductSlugs( responseCart.products )[ 0 ],
 	} );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
@@ -665,12 +665,12 @@ export default function CompositeCheckout( {
 	);
 }
 
-function getPlanProductSlugs( items: WPCOMCartItem[] ): string[] {
+function getPlanProductSlugs( items: ResponseCartProduct[] ): string[] {
 	return items
 		.filter( ( item ) => {
-			return item.type !== 'tax' && getPlan( item.wpcom_meta.product_slug );
+			return getPlan( item.product_slug );
 		} )
-		.map( ( item ) => item.wpcom_meta.product_slug );
+		.map( ( item ) => item.product_slug );
 }
 
 function getAnalyticsPath(
