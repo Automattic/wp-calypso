@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -96,8 +97,13 @@ class PluginsBrowserList extends Component {
 	}
 
 	render() {
+		const { listName } = this.props;
+		const classes = classNames( 'plugins-browser-list', {
+			'plugins-browser-list__featured': listName === 'featured',
+		} );
+
 		return (
-			<div className="plugins-browser-list">
+			<div className={ classes }>
 				<div className="plugins-browser-list__section-heading">
 					<h2 className="plugins-browser-list__section-title">{ this.props.title }</h2>
 					{ this.renderLink() }

@@ -37,6 +37,12 @@
 	}
 }
 
+.plugins-browser-list__featured .plugins-browser-list__elements {
+	@include breakpoint-deprecated( '>1280px' ) {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+}
+
 .plugins-browser-list__section-heading {
 	display: flex;
 	justify-content: space-between;

@@ -148,7 +148,7 @@ export class PluginsBrowser extends Component {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'featured':
-				return translate( 'Featured', {
+				return translate( 'Staff Picks', {
 					context: 'Category description for the plugin browser.',
 				} );
 			case 'recommended':

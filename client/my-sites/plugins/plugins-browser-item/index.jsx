@@ -91,6 +91,15 @@ class PluginsBrowserListElement extends Component {
 		);
 	}
 
+	renderDetailsLink() {
+		const { translate } = this.props;
+		return (
+			<a href={ this.getPluginLink() } className="plugins-browser-item__details">
+				{ translate( 'Details' ) }
+			</a>
+		);
+	}
+
 	renderInstalledIn() {
 		const { sitesWithPlugin } = this.props;
 		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
@@ -231,6 +240,7 @@ class PluginsBrowserListElement extends Component {
 						<div className="plugins-browser-item__meta">
 							{ this.renderRating() }
 							{ this.renderDownloaded() }
+							{ this.renderDetailsLink() }
 							{ this.renderInstalledIn() }
 							{ this.renderUpgradeButton() }
 						</div>

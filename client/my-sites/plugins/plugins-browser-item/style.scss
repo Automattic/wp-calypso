@@ -159,8 +159,13 @@
 	}
 }
 
+.plugins-browser-item__details {
+	justify-self: flex-end;
+}
+
 .button.plugins-browser-item__upgrade-button {
 	margin: auto;
+	margin-left: 12px;
 	margin-right: 0;
 	justify-self: flex-end;
 }
