@@ -17,6 +17,10 @@ export interface ExperimentAssignment {
 	 * Time to live from when it was retrieved, seconds
 	 */
 	ttl: number;
+	/**
+	 * A marker for fallback assignments - when we can't retrieve from the server.
+	 */
+	isFallbackExperimentAssignment?: boolean;
 }
 
 // ## Abstracting the outside world
@@ -27,7 +31,7 @@ export interface Config {
 		anonId,
 	}: {
 		experimentName: string;
-		anonId?: string;
+		anonId: string | null;
 	} ) => Promise< unknown >;
 	getAnonId: () => Promise< string | null >;
 	logError: ( error: Record< string, string > & { message: string } ) => void;
