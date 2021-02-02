@@ -2,48 +2,48 @@
  * Internal dependencies
  */
 import * as State from '../state';
-import { validExperimentAssignmentA, validExperimentAssignmentB } from '../test-common';
+import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
 
 describe( 'state', () => {
-	it( 'should save and retrieve valid EAs', () => {
-		expect( State.retrieveExperimentAssignment( validExperimentAssignmentA.experimentName ) ).toBe(
+	it( 'should save and retrieve valid ExperimentAssignments', () => {
+		expect( State.retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toBe(
 			undefined
 		);
-		State.storeExperimentAssignment( validExperimentAssignmentA );
+		State.storeExperimentAssignment( validExperimentAssignment );
 		expect(
-			State.retrieveExperimentAssignment( validExperimentAssignmentA.experimentName )
-		).toEqual( validExperimentAssignmentA );
+			State.retrieveExperimentAssignment( validExperimentAssignment.experimentName )
+		).toEqual( validExperimentAssignment );
 
-		expect( State.retrieveExperimentAssignment( validExperimentAssignmentB.experimentName ) ).toBe(
-			undefined
-		);
-		State.storeExperimentAssignment( validExperimentAssignmentB );
 		expect(
-			State.retrieveExperimentAssignment( validExperimentAssignmentB.experimentName )
-		).toEqual( validExperimentAssignmentB );
+			State.retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
+		).toBe( undefined );
+		State.storeExperimentAssignment( validFallbackExperimentAssignment );
+		expect(
+			State.retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
+		).toEqual( validFallbackExperimentAssignment );
 	} );
 
-	it( 'should throw for storing an EA for a currently stored Experiment with an older date', () => {
-		expect( State.retrieveExperimentAssignment( validExperimentAssignmentB.experimentName ) ).toBe(
-			validExperimentAssignmentB
-		);
+	it( 'should throw for storing an ExperimentAssignment for a currently stored Experiment with an older date', () => {
+		expect(
+			State.retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
+		).toBe( validFallbackExperimentAssignment );
 		expect( () =>
 			State.storeExperimentAssignment( {
-				...validExperimentAssignmentB,
-				retrievedTimestamp: validExperimentAssignmentB.retrievedTimestamp - 1,
+				...validFallbackExperimentAssignment,
+				retrievedTimestamp: validFallbackExperimentAssignment.retrievedTimestamp - 1,
 			} )
 		).toThrowErrorMatchingInlineSnapshot(
 			`"Trying to store an older experiment assignment than is present in the store, likely a race condition."`
 		);
 	} );
 
-	it( 'should throw for overwriting a recent EA with a fallback', () => {
-		expect( State.retrieveExperimentAssignment( validExperimentAssignmentA.experimentName ) ).toBe(
-			validExperimentAssignmentA
+	it( 'should throw for overwriting a recent ExperimentAssignment with a fallback', () => {
+		expect( State.retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toBe(
+			validExperimentAssignment
 		);
 		expect( () =>
 			State.storeExperimentAssignment( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				isFallbackExperimentAssignment: true,
 			} )
 		).toThrowErrorMatchingInlineSnapshot(

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ExperimentAssignment } from '../types';
+import type { ExperimentAssignment } from '../types';
 import * as Timing from './timing';
 
 /**

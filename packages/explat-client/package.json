@@ -22,7 +22,7 @@
 		"prepack": "yarn run clean && yarn run build",
 		"test": "yarn jest"
 	},
-	"dependencies": {
+	"devDependencies": {
 		"@automattic/calypso-polyfills": "^1.0.0"
 	}
 }
