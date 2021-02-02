@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -30,22 +29,9 @@ export default function useDetectMatchingAnchorSite(): void {
 			return;
 		}
 
-		// Build URL to Endpoint
-		const anchorEndpointBase = '/anchor';
-		const queryParts = {
-			podcast: anchorFmPodcastId,
-			episode: anchorFmEpisodeId,
-			spotify_url: anchorFmSpotifyUrl,
-		};
-		const anchorEndpointUrl = addQueryArgs( anchorEndpointBase, queryParts );
-
-		// Hit Endpoint
-		wpcom.req
-			.get( {
-				path: anchorEndpointUrl,
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-			} )
+		wpcom
+			.undocumented()
+			.getMatchingAnchorSite( anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl )
 			.then( ( result: AnchorEndpointResult ) => {
 				if ( result?.location ) {
 					window.location.href = result.location;
