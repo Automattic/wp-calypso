@@ -82,8 +82,17 @@ function WelcomeTourFrame() {
 	// Preload card images
 	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
 
+	// Some editor menus close when they lose focus (onblur), but when the tour is open or minimized the user should
+	// be able to interact with menus (ex: the Block Inserter). To make that happen we capture the onMouseDown event
+	const captureWelcomeTourFrameClick = ( e ) => {
+		e.preventDefault();
+	};
+
 	return (
-		<div className="wpcom-editor-welcome-tour-frame">
+		<div
+			className="wpcom-editor-welcome-tour-frame"
+			onMouseDownCapture={ captureWelcomeTourFrameClick }
+		>
 			{ ! isMinimized ? (
 				<WelcomeTourCard
 					cardContent={ cardContent[ currentCardIndex ] }
