@@ -17,7 +17,11 @@ import {
 } from '@automattic/composite-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type {
+	RequestCartProduct,
+	ResponseCart,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 
@@ -98,6 +102,25 @@ const wpcom = wp.undocumented();
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
 const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
+
+// Can be safely removed after 2021-02-14 when the FRESHPACK coupon expires
+import { abtest } from 'calypso/lib/abtest';
+import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
+const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[] ) =>
+	useMemo( () => {
+		const includesJetpackItems = products
+			.map( ( p ) => p.product_slug )
+			.some( ( slug ) => isJetpackProductSlug( slug ) || isJetpackPlanSlug( slug ) );
+
+		// Only apply FRESHPACK if there's a Jetpack
+		// product or plan present in the cart
+		if ( ! includesJetpackItems ) {
+			return undefined;
+		}
+
+		const shouldPrefillCode = abtest( 'prefillFRESHPACKCouponCode' ) === 'test';
+		return shouldPrefillCode ? 'FRESHPACK' : undefined;
+	}, [ products ] );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -215,12 +238,14 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} = useShoppingCart();
 
+	const maybeFRESHPACKCode = useMaybeGetFRESHPACKCode( productsForCart );
+
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
 		areCartProductsPreparing,
-		couponCodeFromUrl,
+		couponCodeFromUrl: couponCodeFromUrl || maybeFRESHPACKCode,
 		applyCoupon,
 		addProductsToCart,
 	} );
