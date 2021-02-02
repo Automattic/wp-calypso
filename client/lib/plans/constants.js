@@ -16,7 +16,14 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
 
-export const JETPACK_REDIRECT_URL = 'https://jetpack.com/redirect/';
+// If JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN is true, checkout will redirect to the site's wp-admin,
+// otherwise it will redirect to the JETPACK_REDIRECT_URL. Checkout references these constants in:
+// client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts
+export const JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN = true;
+export const JETPACK_REDIRECT_URL =
+	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';
+export const redirectCloudCheckoutToWpAdmin = () =>
+	JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN ? true : false;
 
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';

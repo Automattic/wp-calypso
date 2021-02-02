@@ -30,7 +30,11 @@ import {
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import { JETPACK_RESET_PLANS, JETPACK_REDIRECT_URL } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_RESET_PLANS,
+	JETPACK_REDIRECT_URL,
+	redirectCloudCheckoutToWpAdmin,
+} from 'calypso/lib/plans/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
 
@@ -114,6 +118,7 @@ export default function getThankYouPageUrl( {
 	const fallbackUrl = getFallbackDestination( {
 		pendingOrReceiptId,
 		siteSlug,
+		adminUrl,
 		feature,
 		cart,
 		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
@@ -223,6 +228,7 @@ function getPendingOrReceiptId(
 function getFallbackDestination( {
 	pendingOrReceiptId,
 	siteSlug,
+	adminUrl,
 	feature,
 	cart,
 	isJetpackNotAtomic,
@@ -230,6 +236,7 @@ function getFallbackDestination( {
 }: {
 	pendingOrReceiptId: string;
 	siteSlug: string | undefined;
+	adminUrl: string | undefined;
 	feature: string | undefined;
 	cart: ResponseCart | undefined;
 	isJetpackNotAtomic: boolean;
@@ -261,12 +268,19 @@ function getFallbackDestination( {
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
+			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN
+			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
 			if ( isJetpackCloud() ) {
+				if ( redirectCloudCheckoutToWpAdmin() && adminUrl ) {
+					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
+					return `${ adminUrl }admin.php?page=jetpack#/my-plan`;
+				}
 				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
-				return `${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=${ siteSlug }&query=${ encodeURIComponent(
+				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
 					`product=${ purchasedProduct }&thank-you=true`
 				) }`;
 			}
+			// Otherwise if not Jetpack Cloud:
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 		}
 
@@ -405,7 +419,7 @@ function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< 
 }
 
 function getUrlWithQueryParam( url: string, queryParams: Record< string, string > ): string {
-	const { protocol, hostname, port, pathname, query } = parseUrl( url, true );
+	const { protocol, hostname, port, pathname, query, hash } = parseUrl( url, true );
 
 	return formatUrl( {
 		protocol,
@@ -416,6 +430,7 @@ function getUrlWithQueryParam( url: string, queryParams: Record< string, string 
 			...query,
 			...queryParams,
 		},
+		hash,
 	} );
 }
 
