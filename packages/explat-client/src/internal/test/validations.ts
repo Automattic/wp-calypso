@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import * as Validations from '../validations';
-import { validExperimentAssignmentA, validExperimentAssignmentB } from '../test-common';
+import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
 
 describe( 'isObject', () => {
 	it( 'returns true for an object', () => {
@@ -37,67 +37,67 @@ describe( 'isName', () => {
 
 describe( 'isExperimentAssignment', () => {
 	it( 'returns true for a valid ExperimentAssignment', () => {
-		expect( Validations.isExperimentAssignment( validExperimentAssignmentA ) ).toBe( true );
-		expect( Validations.isExperimentAssignment( validExperimentAssignmentB ) ).toBe( true );
+		expect( Validations.isExperimentAssignment( validExperimentAssignment ) ).toBe( true );
+		expect( Validations.isExperimentAssignment( validFallbackExperimentAssignment ) ).toBe( true );
 	} );
 	it( 'returns false for an invalid ExperimentAssignment', () => {
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				experimentName: undefined,
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentB,
+				...validFallbackExperimentAssignment,
 				experimentName: null,
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentB,
+				...validFallbackExperimentAssignment,
 				experimentName: 1,
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				variationName: undefined,
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentB,
+				...validFallbackExperimentAssignment,
 				variationName: 0,
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				retrievedTimestamp: undefined,
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentB,
+				...validFallbackExperimentAssignment,
 				retrievedTimestamp: 'string',
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentA,
+				...validExperimentAssignment,
 				ttl: undefined,
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentB,
+				...validFallbackExperimentAssignment,
 				ttl: 'string',
 			} )
 		).toBe( false );
 		expect(
 			Validations.isExperimentAssignment( {
-				...validExperimentAssignmentB,
+				...validFallbackExperimentAssignment,
 				ttl: 0,
 			} )
 		).toBe( false );
@@ -106,17 +106,17 @@ describe( 'isExperimentAssignment', () => {
 
 describe( 'validateExperimentAssignment', () => {
 	it( 'returns a valid ExperimentAssignment', () => {
-		expect( Validations.validateExperimentAssignment( validExperimentAssignmentA ) ).toEqual(
-			validExperimentAssignmentA
+		expect( Validations.validateExperimentAssignment( validExperimentAssignment ) ).toEqual(
+			validExperimentAssignment
 		);
-		expect( Validations.validateExperimentAssignment( validExperimentAssignmentB ) ).toEqual(
-			validExperimentAssignmentB
+		expect( Validations.validateExperimentAssignment( validFallbackExperimentAssignment ) ).toEqual(
+			validFallbackExperimentAssignment
 		);
 	} );
 	it( 'throws if there is an invalid ExperimentAssignment', () => {
 		expect( () => {
 			Validations.validateExperimentAssignment( {
-				...validExperimentAssignmentB,
+				...validFallbackExperimentAssignment,
 				experimentName: null,
 			} );
 		} ).toThrowErrorMatchingInlineSnapshot( `"Invalid ExperimentAssignment"` );
