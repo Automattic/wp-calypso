@@ -89,6 +89,20 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should store a nexted user setting', () => {
+			const state = unsavedSettings( undefined, {
+				type: USER_SETTINGS_UNSAVED_SET,
+				settingName: [ 'foo', 'bar' ],
+				value: 'baz',
+			} );
+
+			expect( state ).toEqual( {
+				foo: {
+					bar: 'baz',
+				},
+			} );
+		} );
+
 		test( 'should store additional user setting after it is set', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
@@ -106,6 +120,25 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should store additional nested user setting after it is set', () => {
+			const original = deepFreeze( {
+				foo: 'bar',
+			} );
+
+			const state = unsavedSettings( original, {
+				type: USER_SETTINGS_UNSAVED_SET,
+				settingName: [ 'baz', 'bar' ],
+				value: 'qux',
+			} );
+
+			expect( state ).toEqual( {
+				foo: 'bar',
+				baz: {
+					bar: 'qux',
+				},
+			} );
+		} );
+
 		test( 'should remove a user setting', () => {
 			const original = deepFreeze( {
 				foo: 'bar',
@@ -119,6 +152,46 @@ describe( 'reducer', () => {
 
 			expect( state ).toEqual( {
 				foo: 'bar',
+			} );
+		} );
+
+		test( 'should remove a nested user setting', () => {
+			const original = deepFreeze( {
+				foo: 'bar',
+				baz: {
+					bar: 'qux',
+				},
+			} );
+
+			const state = unsavedSettings( original, {
+				type: USER_SETTINGS_UNSAVED_REMOVE,
+				settingName: [ 'baz', 'bar' ],
+			} );
+
+			expect( state ).toEqual( {
+				foo: 'bar',
+			} );
+		} );
+
+		test( 'should keep non-empty top level setting keys', () => {
+			const original = deepFreeze( {
+				foo: 'bar',
+				baz: {
+					qux: 'bar',
+					bar: 'qux',
+				},
+			} );
+
+			const state = unsavedSettings( original, {
+				type: USER_SETTINGS_UNSAVED_REMOVE,
+				settingName: [ 'baz', 'bar' ],
+			} );
+
+			expect( state ).toEqual( {
+				foo: 'bar',
+				baz: {
+					qux: 'bar',
+				},
 			} );
 		} );
 
