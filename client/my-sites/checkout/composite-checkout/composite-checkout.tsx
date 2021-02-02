@@ -70,7 +70,6 @@ import useAddProductsFromUrl from './hooks/use-add-products-from-url';
 import useDetectedCountryCode from './hooks/use-detected-country-code';
 import WPCheckout from './components/wp-checkout';
 import { useWpcomStore } from './hooks/wpcom-store';
-import { areDomainsInLineItems } from './hooks/has-domains';
 import {
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
@@ -263,11 +262,13 @@ export default function CompositeCheckout( {
 		return url;
 	}, [ getThankYouUrlBase, recordEvent ] );
 
+	const contactDetailsType = getContactDetailsType( responseCart );
+
 	useWpcomStore(
 		registerStore,
 		applyContactDetailsRequiredMask(
 			emptyManagedContactDetails,
-			areDomainsInLineItems( items ) ? domainRequiredContactDetails : taxRequiredContactDetails
+			contactDetailsType === 'domain' ? domainRequiredContactDetails : taxRequiredContactDetails
 		),
 		updateContactDetailsCache
 	);
@@ -432,7 +433,6 @@ export default function CompositeCheckout( {
 		[ addProductsToCart, products, recordEvent ]
 	);
 
-	const contactDetailsType = getContactDetailsType( responseCart );
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
