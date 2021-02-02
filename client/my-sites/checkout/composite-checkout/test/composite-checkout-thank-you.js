@@ -9,7 +9,8 @@
  */
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_ECOMMERCE } from '../../../../lib/plans/constants';
+import { PLAN_ECOMMERCE, JETPACK_REDIRECT_URL } from '../../../../lib/plans/constants';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 let mockGSuiteCountryIsValid = true;
 jest.mock( 'calypso/lib/user', () =>
@@ -17,6 +18,8 @@ jest.mock( 'calypso/lib/user', () =>
 		get: () => ( { is_valid_google_apps_country: mockGSuiteCountryIsValid } ),
 	} ) )
 );
+
+jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
@@ -201,7 +204,84 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic jetpack product', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			productAliasFromUrl: 'jetpack_backup_daily',
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_backup_daily%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic jetpack product in the cart', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_backup_realtime' } ],
+			},
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_backup_realtime%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Security plan', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			productAliasFromUrl: 'jetpack_security_daily_monthly',
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_security_daily_monthly%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Security plan is in the cart', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_security_daily' } ],
+			},
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_security_daily%26thank-you%3Dtrue`
+		);
+	} );
+
+	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Complete plan is in the cart', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+		} );
+		expect( url ).toBe(
+			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_complete%26thank-you%3Dtrue`
+		);
+	} );
+
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
+		isJetpackCloud.mockImplementation( () => false );
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',

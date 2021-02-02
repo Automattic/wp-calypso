@@ -12,6 +12,7 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
  */
 import { isExternal } from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	hasRenewalItem,
 	getAllCartItems,
@@ -29,7 +30,7 @@ import {
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import { JETPACK_RESET_PLANS, JETPACK_REDIRECT_URL } from 'calypso/lib/plans/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
 
@@ -259,6 +260,13 @@ function getFallbackDestination( {
 			);
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
+
+			if ( isJetpackCloud() ) {
+				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
+				return `${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=${ siteSlug }&query=${ encodeURIComponent(
+					`product=${ purchasedProduct }&thank-you=true`
+				) }`;
+			}
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 		}
 
