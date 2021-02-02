@@ -181,7 +181,6 @@ function translateReponseCartProductToWPCOMCartItem(
 ): WPCOMCartItem {
 	const {
 		product_id,
-		product_name,
 		product_slug,
 		currency,
 		item_original_cost_display,
@@ -207,14 +206,7 @@ function translateReponseCartProductToWPCOMCartItem(
 		product_cost_display,
 	} = serverCartItem;
 
-	let label = product_name || '';
-
-	if (
-		serverCartItem.meta &&
-		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
-	) {
-		label = meta;
-	}
+	const label = getLabel( serverCartItem );
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
 
@@ -453,4 +445,14 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 	}
 
 	return isRenewalItem ? translate( 'Renewal' ) : '';
+}
+
+export function getLabel( serverCartItem: ResponseCartProduct ): string {
+	if (
+		serverCartItem.meta &&
+		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
+	) {
+		return serverCartItem.meta;
+	}
+	return serverCartItem.product_name || '';
 }
