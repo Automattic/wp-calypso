@@ -754,16 +754,13 @@ const Account = createReactClass( {
 			},
 		} );
 
-		this.props.userSettings.saveSettings(
-			function ( error, response ) {
-				if ( error ) {
-					this.handleSubmitError( error, formName );
-				} else {
-					this.handleSubmitSuccess( response, formName );
-				}
-			}.bind( this ),
-			settingsToSave
-		);
+		this.props.userSettings.saveSettings( ( error, response ) => {
+			if ( error ) {
+				this.handleSubmitError( error, formName );
+			} else {
+				this.handleSubmitSuccess( response, formName );
+			}
+		}, settingsToSave );
 	},
 
 	/*
