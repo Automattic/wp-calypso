@@ -940,41 +940,40 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		let noticeText = '';
-		let showNoticeAction = false;
-
-		if ( ! isRenewable( purchase ) ) {
-			if ( ! usePlanInsteadOfIncludedPurchase ) {
-				return null;
-			}
-
-			noticeText = translate(
-				'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
-				{
-					args: {
-						purchaseName: getName( currentPurchase ),
-						includedPurchaseName: getName( includedPurchase ),
-					},
-					components: {
-						managePurchase: (
-							<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
-						),
-					},
-				}
+		if ( isRenewable( purchase ) ) {
+			const noticeText = translate( 'This purchase has expired and is no longer in use.' );
+			return (
+				<Notice showDismiss={ false } status="is-error" text={ noticeText }>
+					{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
+					{ this.trackImpression( 'purchase-expired' ) }
+				</Notice>
 			);
-			// We can't show the action here, because it would try to renew the
-			// included purchase (rather than the plan that it is attached to).
-			// So we have to rely on the user going to the manage purchase page
-			// for the plan to renew it there.
-			showNoticeAction = false;
-		} else {
-			noticeText = translate( 'This purchase has expired and is no longer in use.' );
-			showNoticeAction = true;
 		}
 
+		if ( ! usePlanInsteadOfIncludedPurchase ) {
+			return null;
+		}
+
+		const noticeText = translate(
+			'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
+			{
+				args: {
+					purchaseName: getName( currentPurchase ),
+					includedPurchaseName: getName( includedPurchase ),
+				},
+				components: {
+					managePurchase: (
+						<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
+					),
+				},
+			}
+		);
+		// We can't show the action here, because it would try to renew the
+		// included purchase (rather than the plan that it is attached to).
+		// So we have to rely on the user going to the manage purchase page
+		// for the plan to renew it there.
 		return (
 			<Notice showDismiss={ false } status="is-error" text={ noticeText }>
-				{ showNoticeAction && this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expired' ) }
 			</Notice>
 		);
