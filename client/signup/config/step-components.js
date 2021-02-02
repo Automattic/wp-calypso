@@ -67,6 +67,10 @@ const stepNameToModuleName = {
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
 	'domain-upsell': 'domain-upsell',
+	'plans-business-monthly': 'plans',
+	'plans-ecommerce-monthly': 'plans',
+	'plans-personal-monthly': 'plans',
+	'plans-premium-monthly': 'plans',
 };
 
 export function getStepModuleName( stepName ) {

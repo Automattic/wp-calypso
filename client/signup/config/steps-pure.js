@@ -13,6 +13,10 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PREMIUM_MONTHLY,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE_MONTHLY,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -671,6 +675,50 @@ export function generateSteps( {
 			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
+		},
+
+		'plans-personal-monthly': {
+			stepName: 'plans-personal-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL_MONTHLY,
+			},
+		},
+
+		'plans-premium-monthly': {
+			stepName: 'plans-premium-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM_MONTHLY,
+			},
+		},
+
+		'plans-business-monthly': {
+			stepName: 'plans-business-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS_MONTHLY,
+			},
+		},
+
+		'plans-ecommerce-monthly': {
+			stepName: 'plans-ecommerce-monthly',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE_MONTHLY,
+			},
 		},
 	};
 }
