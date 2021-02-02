@@ -530,13 +530,13 @@ function LineItemSublabelAndPrice( { item } ) {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
-		return translate( '%(sublabel)s: %(monthlyPrice)s / month × %(monthsPerBillPeriod)s', {
+		return translate( '%(sublabel)s: %(monthlyPrice)s/month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: item.sublabel,
 				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
 				monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
 			},
-			comment: 'product type and monthly breakdown of total cost, separated by a colon',
+			comment: 'product type and monthly breakdown of total cost, separated by a colon. For "/month", there is no space before and after the "/" but please add a space if it makes sense in other languages.',
 		} );
 	}
 
