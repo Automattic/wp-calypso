@@ -121,7 +121,7 @@ ENTRYPOINT [ "/bin/bash" ]
 FROM base as ci-wpcom
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-COPY --from=builder --chown=$UID /calypso/composer.* /calypso/
+COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
 
 RUN apt update &&\
 	apt-get install -y apt-transport-https zip &&\
