@@ -323,7 +323,7 @@ export default function CompositeCheckout( {
 	const doNotRedirect = isInitialCartLoading || isCartPendingUpdate || areThereErrors;
 	const areWeRedirecting = useRedirectIfCartEmpty(
 		doNotRedirect,
-		items,
+		responseCart.products,
 		cartEmptyRedirectUrl,
 		createUserAndSiteBeforeTransaction
 	);
