@@ -16,7 +16,8 @@ import {
 	Button,
 } from '@automattic/composite-checkout';
 import { ThemeProvider } from 'emotion-theming';
-import { useShoppingCart, ResponseCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 
@@ -69,7 +70,6 @@ import useAddProductsFromUrl from './hooks/use-add-products-from-url';
 import useDetectedCountryCode from './hooks/use-detected-country-code';
 import WPCheckout from './components/wp-checkout';
 import { useWpcomStore } from './hooks/wpcom-store';
-import { areDomainsInLineItems } from './hooks/has-domains';
 import {
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
@@ -79,7 +79,6 @@ import {
 } from './types/wpcom-store-state';
 import { StoredCard } from './types/stored-cards';
 import { CountryListItem } from './types/country-list-item';
-import { WPCOMCartItem } from './types/checkout-cart';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
@@ -263,11 +262,13 @@ export default function CompositeCheckout( {
 		return url;
 	}, [ getThankYouUrlBase, recordEvent ] );
 
+	const contactDetailsType = getContactDetailsType( responseCart );
+
 	useWpcomStore(
 		registerStore,
 		applyContactDetailsRequiredMask(
 			emptyManagedContactDetails,
-			areDomainsInLineItems( items ) ? domainRequiredContactDetails : taxRequiredContactDetails
+			contactDetailsType === 'domain' ? domainRequiredContactDetails : taxRequiredContactDetails
 		),
 		updateContactDetailsCache
 	);
@@ -323,7 +324,7 @@ export default function CompositeCheckout( {
 	const doNotRedirect = isInitialCartLoading || isCartPendingUpdate || areThereErrors;
 	const areWeRedirecting = useRedirectIfCartEmpty(
 		doNotRedirect,
-		items,
+		responseCart.products,
 		cartEmptyRedirectUrl,
 		createUserAndSiteBeforeTransaction
 	);
@@ -342,7 +343,12 @@ export default function CompositeCheckout( {
 	const {
 		canMakePayment: isApplePayAvailable,
 		isLoading: isApplePayLoading,
-	} = useIsApplePayAvailable( stripe, stripeConfiguration, !! stripeLoadingError, items );
+	} = useIsApplePayAvailable(
+		stripe,
+		stripeConfiguration,
+		!! stripeLoadingError,
+		responseCart.currency
+	);
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		isStripeLoading,
@@ -360,7 +366,7 @@ export default function CompositeCheckout( {
 	// changing them because it can cause awkward UX. Here we try to wait for
 	// them to be all finished loading before we pass them along.
 	const arePaymentMethodsLoading =
-		items.length < 1 ||
+		responseCart.products.length < 1 ||
 		isInitialCartLoading ||
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
@@ -386,7 +392,7 @@ export default function CompositeCheckout( {
 
 	const getItemVariants = useProductVariants( {
 		siteId,
-		productSlug: getPlanProductSlugs( items )[ 0 ],
+		productSlug: getPlanProductSlugs( responseCart.products )[ 0 ],
 	} );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
@@ -427,7 +433,6 @@ export default function CompositeCheckout( {
 		[ addProductsToCart, products, recordEvent ]
 	);
 
-	const contactDetailsType = getContactDetailsType( responseCart );
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
@@ -541,13 +546,13 @@ export default function CompositeCheckout( {
 		isInitialCartLoading ||
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
-		items.length < 1;
+		responseCart.products.length < 1;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
-			items: items.length < 1,
+			items: responseCart.products.length < 1,
 		} );
 	}
 
@@ -660,12 +665,12 @@ export default function CompositeCheckout( {
 	);
 }
 
-function getPlanProductSlugs( items: WPCOMCartItem[] ): string[] {
+function getPlanProductSlugs( items: ResponseCartProduct[] ): string[] {
 	return items
 		.filter( ( item ) => {
-			return item.type !== 'tax' && getPlan( item.wpcom_meta.product_slug );
+			return getPlan( item.product_slug );
 		} )
-		.map( ( item ) => item.wpcom_meta.product_slug );
+		.map( ( item ) => item.product_slug );
 }
 
 function getAnalyticsPath(

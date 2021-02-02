@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useEffect, useState } from 'react';
-import type { LineItem } from '@automattic/composite-checkout';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import debugFactory from 'debug';
 
@@ -27,7 +26,7 @@ export default function useIsApplePayAvailable(
 	stripe: Stripe | null,
 	stripeConfiguration: StripeConfiguration | null,
 	isStripeError: boolean,
-	items: LineItem[]
+	currency: string | null
 ): CanMakePaymentState {
 	const [ canMakePayment, setCanMakePayment ] = useState< CanMakePaymentState >( {
 		isLoading: true,
@@ -101,10 +100,6 @@ export default function useIsApplePayAvailable(
 			}
 		}
 
-		const currency = items.reduce(
-			( firstCurrency, item ) => firstCurrency || item.amount.currency,
-			null
-		);
 		const paymentRequestOptions = {
 			requestPayerName: true,
 			requestPayerPhone: false,
@@ -131,7 +126,7 @@ export default function useIsApplePayAvailable(
 		} );
 
 		return unsubscribe;
-	}, [ canMakePayment, stripe, items, stripeConfiguration, isStripeError ] );
+	}, [ canMakePayment, stripe, currency, stripeConfiguration, isStripeError ] );
 
 	debug( 'useIsApplePayAvailable', canMakePayment );
 	return canMakePayment;
