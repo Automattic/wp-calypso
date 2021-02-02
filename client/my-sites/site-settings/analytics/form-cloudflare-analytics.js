@@ -31,8 +31,10 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
  * Style dependencies
  */
 import './style.scss';
+import AnalyticsToggleConfirmationDialog from 'calypso/my-sites/site-settings/analytics/toggle-confirmation-dialog';
 
-const validateTrackingId = ( code ) => ! code || code.match( /^[a-fA-F0-9]+$/i );
+const validateTrackingId = ( code ) =>
+	! code || code.match( /^[a-fA-F0-9]+$/i ) || code.match( /(?<=token":\s").*?(?=")/ );
 
 export function CloudflareAnalyticsSettings( {
 	fields,
@@ -50,6 +52,7 @@ export function CloudflareAnalyticsSettings( {
 	site,
 } ) {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ isCloudflareEnabled, setIsCloudflareEnabled ] = useState( false );
 	const [ loggedCloudflareAnalyticsModified, setLoggedCloudflareAnalyticsModified ] = useState(
 		false
@@ -93,6 +96,32 @@ export function CloudflareAnalyticsSettings( {
 		uniqueEventTracker( 'Typed In Analytics Key Field' )();
 	};
 
+	const processCloudflareCode = () => {
+		const token = fields.cloudflare_analytics?.code?.match( /(?<=token":\s").*?(?=")/ );
+		if ( token ) {
+			handleFieldChange( token );
+		}
+	};
+
+	const handleModalClose = () => {
+		setIsModalVisible( false );
+	};
+	const handleModalConfirm = () => {
+		setIsModalVisible( false );
+		updateFields( { wga: { code: '' } }, () => {
+			handleSubmitForm();
+		} );
+	};
+
+	const handleSaveButtonClick = () => {
+		// display confirmation modal that we will disable GA if Cloudflare is enabled.
+		if ( ! fields?.wga?.code ) {
+			handleSubmitForm();
+			return;
+		}
+		setIsModalVisible( true );
+	};
+
 	const handleFormToggle = () => {
 		if ( isCloudflareEnabled ) {
 			setIsCloudflareEnabled( false );
@@ -128,10 +157,18 @@ export function CloudflareAnalyticsSettings( {
 		);
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
+				{ isModalVisible && (
+					<AnalyticsToggleConfirmationDialog
+						productToDisable="Google Analytics"
+						productToEnable="Cloudflare"
+						onConfirm={ handleModalConfirm }
+						onClose={ handleModalClose }
+					/>
+				) }
 				<SettingsSectionHeader
 					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
+					onButtonClick={ handleSaveButtonClick }
 					showButton
 					title={ translate( 'Cloudflare' ) }
 				/>
@@ -177,6 +214,7 @@ export function CloudflareAnalyticsSettings( {
 								onFocus={ handleFieldFocus }
 								onKeyPress={ handleFieldKeypress }
 								isError={ ! isCodeValid }
+								onBlur={ processCloudflareCode }
 							/>
 							{ ! isCodeValid && (
 								<FormTextValidation
@@ -240,7 +278,7 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps, null, { pure: false } );
 
-const getFormSettings = partialRight( pick, [ 'cloudflare_analytics' ] );
+const getFormSettings = partialRight( pick, [ 'cloudflare_analytics', 'wga' ] );
 
 export default flowRight(
 	connectComponent,
