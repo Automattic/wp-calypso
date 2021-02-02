@@ -1,7 +1,7 @@
 <svg width="181" height="139" viewBox="0 0 181 139" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M173 87.0773C172.999 74.0818 170.109 61.2514 164.542 49.5267C158.975 37.802 150.872 27.4803 140.827 19.3184C130.782 11.1565 119.051 5.36138 106.492 2.35785C93.9334 -0.64568 80.8663 -0.781427 68.2488 1.96056C55.6314 4.70255 43.7834 10.2527 33.5736 18.2042C23.3638 26.1557 15.051 36.3068 9.24482 47.9134C3.43861 59.5199 0.286156 72.2876 0.0185878 85.2803C-0.24898 98.2729 2.37512 111.161 7.6985 123H165.301C170.386 111.717 173.011 99.4676 173 87.0773Z" fill="#E6F2E8"/>
-<path d="M2 123H170" stroke="#135E96" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M174 123H180" stroke="#135E96" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2 123H170" stroke="#055d9c" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M174 123H180" stroke="#055d9c" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M91 132C126.898 132 156 131.105 156 130C156 128.895 126.898 128 91 128C55.1015 128 26 128.895 26 130C26 131.105 55.1015 132 91 132Z" fill="#F6F7F7"/>
 <rect x="37.5" y="110.5" width="90" height="17" rx="1.5" fill="#F5E6B3" stroke="#DEB100"/>
 <line x1="44" y1="114" x2="44" y2="124" stroke="#DEB100" stroke-width="2" stroke-linecap="round"/>
