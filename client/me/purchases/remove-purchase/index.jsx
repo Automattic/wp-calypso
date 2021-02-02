@@ -151,7 +151,7 @@ class RemovePurchase extends Component {
 						translate( 'The domain {{domain/}} was removed from your account.', {
 							components: { domain: <em>{ productName }</em> },
 						} ),
-						{ displayOnNextPage: true }
+						{ isPersistent: true }
 					);
 				} else {
 					this.props.successNotice(
@@ -159,7 +159,7 @@ class RemovePurchase extends Component {
 							args: { productName },
 							components: { siteName: <em>{ purchase.domain }</em> },
 						} ),
-						{ displayOnNextPage: true }
+						{ isPersistent: true }
 					);
 				}
 
