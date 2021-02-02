@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Config, ExperimentAssignment } from '../types';
+import type { Config, ExperimentAssignment } from '../types';
 import { validateExperimentAssignment } from './validations';
 import { monotonicNow } from './timing';
 import { isObject } from './validations';
@@ -12,7 +12,12 @@ interface FetchExperimentAssignmentResponse {
 	ttl: number;
 }
 
-function isFetchExperimentAssignmentResponse(
+/**
+ * Exported for testing only.
+ *
+ * @param response The response data
+ */
+export function isFetchExperimentAssignmentResponse(
 	response: unknown
 ): response is FetchExperimentAssignmentResponse {
 	return (
@@ -29,6 +34,12 @@ function validateFetchExperimentAssignmentResponse(
 	throw new Error( 'Invalid FetchExperimentAssignmentResponse' );
 }
 
+/**
+ * Fetch an ExperimentAssignment
+ *
+ * @param config The config object providing dependecy injection.
+ * @param experimentName The experiment name to fetch
+ */
 export async function fetchExperimentAssignment(
 	config: Config,
 	experimentName: string

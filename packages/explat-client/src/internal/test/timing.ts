@@ -8,6 +8,7 @@ import '@automattic/calypso-polyfills';
  * Internal dependencies
  */
 import * as Timing from '../timing';
+import { delayedValue } from '../test-common';
 
 describe( 'monotonicNow', () => {
 	it( 'should be strictly monotonic', () => {
@@ -19,9 +20,6 @@ describe( 'monotonicNow', () => {
 		expect( Timing.monotonicNow() ).toBe( lastNow + 2 );
 	} );
 } );
-
-const delayedValue = < T >( value, delayMilliseconds ): Promise< T > =>
-	new Promise( ( res ) => setTimeout( () => res( value ), delayMilliseconds ) );
 
 describe( 'timeoutPromise', () => {
 	it( 'should resolve promises below the timeout', async () => {

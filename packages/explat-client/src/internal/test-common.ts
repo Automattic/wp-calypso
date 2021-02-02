@@ -12,3 +12,6 @@ export const validFallbackExperimentAssignment = {
 	ttl: 60,
 	isFallbackExperimentAssignment: true,
 };
+
+export const delayedValue = < T >( value: T, delayMilliseconds: number ): Promise< T > =>
+	new Promise( ( res ) => setTimeout( () => res( value ), delayMilliseconds ) );
