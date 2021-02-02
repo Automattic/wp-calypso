@@ -64,7 +64,7 @@ import wpcom from 'calypso/lib/wp';
 import user from 'calypso/lib/user';
 import FormToggle from 'calypso/components/forms/form-toggle';
 
-const noticeId = 'me-settings-notice';
+export const noticeId = 'me-settings-notice';
 const noticeOptions = {
 	id: noticeId,
 };
@@ -102,7 +102,6 @@ const Account = createReactClass( {
 
 	propTypes: {
 		userSettings: PropTypes.object.isRequired,
-		showNoticeInitially: PropTypes.bool,
 	},
 
 	UNSAFE_componentWillMount() {
@@ -115,12 +114,6 @@ const Account = createReactClass( {
 		debug( this.constructor.displayName + ' component is mounted.' );
 		this.props.userSettings.getSettings();
 		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
-	},
-
-	UNSAFE_componentWillReceiveProps: function ( nextProp ) {
-		if ( nextProp.showNoticeInitially ) {
-			this.setState( { showNotice: nextProp.showNoticeInitially } );
-		}
 	},
 
 	componentWillUnmount() {
@@ -137,20 +130,7 @@ const Account = createReactClass( {
 			formsSubmitting: {},
 			changingUsername: false,
 			usernameAction: 'new',
-			showNotice: false,
 		};
-	},
-
-	showNotice: function () {
-		if ( this.props.userSettings.initialized && this.state.showNotice ) {
-			this.props.removeNotice( noticeId );
-
-			this.props.successNotice(
-				this.props.translate( 'Settings saved successfully!' ),
-				noticeOptions
-			);
-			this.state.showNotice = false;
-		}
 	},
 
 	getDisabledState: function ( formName ) {
@@ -744,15 +724,21 @@ const Account = createReactClass( {
 			return;
 		}
 		// if we set submittingForm too soon the UI updates before the response is handled
-		this.setState( {
-			showNotice: true,
-			submittingForm: false,
-			formsSubmitting: {
-				...this.state.formsSubmitting,
-				...( formName && { [ formName ]: false } ),
+		this.setState(
+			{
+				submittingForm: false,
+				formsSubmitting: {
+					...this.state.formsSubmitting,
+					...( formName && { [ formName ]: false } ),
+				},
 			},
-		} );
-		this.showNotice();
+			() => {
+				this.props.successNotice(
+					this.props.translate( 'Settings saved successfully!' ),
+					noticeOptions
+				);
+			}
+		);
 		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 	},
 
