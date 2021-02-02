@@ -7,26 +7,17 @@ const keytar = require( 'keytar' );
  * Module constants
  */
 const keychainService = 'WordPress.com';
-const credentialsKey = 'User Credentials';
 
-function set( key, value ) {
-	return keytar.setPassword( keychainService, key, value );
+async function write( key, value ) {
+	return keytar.setPassword( keychainService, key, JSON.stringify( value ) );
 }
 
-function get( key ) {
-	return keytar.getPassword( keychainService, key );
-}
-
-async function setUserInfo( info ) {
-	return await set( credentialsKey, JSON.stringify( info ) );
-}
-
-async function getUserInfo() {
-	const info = await get( credentialsKey );
-	if ( info ) {
-		return JSON.parse( info );
+async function fetch( key ) {
+	let value = await keytar.getPassword( keychainService, key );
+	if ( value ) {
+		value = JSON.parse( value );
 	}
-	return null;
+	return value;
 }
 
 async function clear() {
@@ -40,6 +31,6 @@ async function clear() {
 
 module.exports = {
 	clear,
-	setUserInfo,
-	getUserInfo,
+	write,
+	fetch,
 };

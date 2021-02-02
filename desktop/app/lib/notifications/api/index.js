@@ -7,7 +7,7 @@ const EventEmitter = require( 'events' ).EventEmitter;
 /*
  * Internal dependencies
  */
-const state = require( '../../../lib/state' );
+const keychain = require( '../../../lib/keychain' );
 const { fetchNote, markReadStatus } = require( './notes' );
 const log = require( '../../../lib/logger' )( 'desktop:notifications:api' );
 
@@ -34,7 +34,7 @@ class WPNotificationsAPI extends EventEmitter {
 	}
 
 	async connect() {
-		const token = state.getUser().token;
+		const token = await keychain.fetch( 'wp_oauth_token' );
 
 		if ( ! token ) {
 			log.info( 'Failed to initialize websocket: token is NULL' );
