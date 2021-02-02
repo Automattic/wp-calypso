@@ -19,7 +19,7 @@ export default async function ( context, next ) {
 	const forcedView = context.query.view;
 
 	// Fetch display mode
-	const displayMode = context.query.d;
+	const noticeType = context.query.notice;
 
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {

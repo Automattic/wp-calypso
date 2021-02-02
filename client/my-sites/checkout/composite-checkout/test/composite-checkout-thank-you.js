@@ -739,7 +739,7 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: '1234abcd',
 			hideNudge: true,
 		} );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=purchase-success' );
 	} );
 
 	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart', () => {

@@ -44,7 +44,7 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	displayMode,
+	noticeType,
 } ) => {
 	const translate = useTranslate();
 
@@ -58,7 +58,7 @@ const Home = ( {
 		);
 	}
 
-	if ( 'purchase-success' === displayMode ) {
+	if ( 'purchase-success' === noticeType ) {
 		const successMessage = translate( 'Your purchase has been completed!' );
 		notices.success( successMessage, {
 			persistent: true,

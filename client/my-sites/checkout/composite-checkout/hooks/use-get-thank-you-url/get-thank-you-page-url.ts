@@ -196,6 +196,8 @@ export default function getThankYouPageUrl( {
 
 	if ( isEligibleForSignupDestinationResult && urlFromCookie ) {
 		debug( 'is eligible for signup destination', urlFromCookie );
+		const noticeType = getNoticeType( cart );
+		const queryParams = { ...displayModeParam, ...noticeType };
 		return getUrlWithQueryParam( urlFromCookie, displayModeParam );
 	}
 	debug( 'returning fallback url', fallbackUrl );
@@ -395,8 +397,12 @@ function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< 
 		return { d: 'traffic-guide' };
 	}
 
+	return {};
+}
+
+function getNoticeType( cart: ResponseCart | undefined ): Record< string, string > {
 	if ( cart ) {
-		return { d: 'purchase-success' };
+		return { notice: 'purchase-success' };
 	}
 
 	return {};
