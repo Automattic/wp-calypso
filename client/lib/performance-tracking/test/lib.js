@@ -16,7 +16,9 @@ import {
 	getCurrentUserSiteCount,
 	getCurrentUserVisibleSiteCount,
 	isCurrentUserBootstrapped,
+	getCurrentUserLocale,
 } from 'calypso/state/current-user/selectors';
+import { collectTranslationTimings, clearTranslationTimings } from '../collectors/translations';
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
@@ -37,8 +39,13 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserSiteCount: jest.fn(),
 	getCurrentUserVisibleSiteCount: jest.fn(),
 	isCurrentUserBootstrapped: jest.fn(),
+	getCurrentUserLocale: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => jest.fn() );
+jest.mock( '../collectors/translations', () => ( {
+	collectTranslationTimings: jest.fn(),
+	clearTranslationTimings: jest.fn(),
+} ) );
 
 const withFeatureEnabled = () =>
 	config.isEnabled.mockImplementation( ( key ) => key === 'rum-tracking/logstash' );
@@ -105,6 +112,7 @@ describe( 'startPerformanceTracking', () => {
 describe( 'stopPerformanceTracking', () => {
 	beforeEach( () => {
 		withFeatureEnabled();
+		collectTranslationTimings.mockImplementation( () => ( {} ) );
 	} );
 
 	afterEach( () => {
@@ -144,6 +152,7 @@ describe( 'stopPerformanceTracking', () => {
 		getCurrentUserVisibleSiteCount.mockImplementation( () => 1 );
 		getCurrentUserCountryCode.mockImplementation( () => 'es' );
 		isCurrentUserBootstrapped.mockImplementation( () => true );
+		getCurrentUserLocale.mockImplementation( () => 'es' );
 
 		// Run the default collector
 		stopPerformanceTracking( 'pageName', { state } );
@@ -160,6 +169,7 @@ describe( 'stopPerformanceTracking', () => {
 		expect( report.data.get( 'sitesVisibleCount' ) ).toBe( 1 );
 		expect( report.data.get( 'userCountryCode' ) ).toBe( 'es' );
 		expect( report.data.get( 'userBootstrapped' ) ).toBe( true );
+		expect( report.data.get( 'userLocale' ) ).toBe( 'es' );
 	} );
 
 	it( 'uses metdata to generate a collector', () => {
@@ -178,5 +188,23 @@ describe( 'stopPerformanceTracking', () => {
 		metadataCollector( report );
 
 		expect( report.data.get( 'foo' ) ).toBe( 42 );
+	} );
+
+	it( 'detects performance of translation chunks', () => {
+		collectTranslationTimings.mockImplementation( () => ( {
+			count: 1,
+			total: 10,
+		} ) );
+		const report = {
+			data: new Map(),
+		};
+
+		stopPerformanceTracking( 'pageName' );
+		const defaultCollector = stop.mock.calls[ 0 ][ 1 ].collectors[ 0 ];
+		defaultCollector( report );
+
+		expect( report.data.get( 'translationsChunksDuration' ) ).toBe( 10 );
+		expect( report.data.get( 'translationsChunksCount' ) ).toBe( 1 );
+		expect( clearTranslationTimings ).toHaveBeenCalled();
 	} );
 } );
