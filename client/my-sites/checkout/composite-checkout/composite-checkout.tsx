@@ -342,7 +342,12 @@ export default function CompositeCheckout( {
 	const {
 		canMakePayment: isApplePayAvailable,
 		isLoading: isApplePayLoading,
-	} = useIsApplePayAvailable( stripe, stripeConfiguration, !! stripeLoadingError, items );
+	} = useIsApplePayAvailable(
+		stripe,
+		stripeConfiguration,
+		!! stripeLoadingError,
+		responseCart.currency
+	);
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		isStripeLoading,
