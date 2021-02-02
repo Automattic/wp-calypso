@@ -327,10 +327,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
 		: [ defaultPaidPlan, defaultFreePlan ];
 
-	const allAvailablePlansProducts = useSelect( ( select ) =>
-		allAvailablePlans.map( ( plan ) =>
-			select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, selectedPlanBillingPeriod )
-		)
+	const allAvailablePlansProducts = useSelect(
+		( select ) =>
+			allAvailablePlans.map( ( plan ) =>
+				select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, selectedPlanBillingPeriod )
+			),
+		[ allAvailablePlans, selectedPlanBillingPeriod ]
 	);
 
 	return (
