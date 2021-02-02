@@ -9,7 +9,7 @@ import '@automattic/calypso-polyfills';
  */
 import * as Timing from '../timing';
 import * as Requests from '../requests';
-import { Config, ExperimentAssignment } from '../../types';
+import type { Config, ExperimentAssignment } from '../../types';
 import { delayedValue, validExperimentAssignment } from '../test-common';
 import * as ExperimentAssignments from '../experiment-assignments';
 

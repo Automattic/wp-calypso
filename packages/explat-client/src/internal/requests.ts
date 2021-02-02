@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Config, ExperimentAssignment } from '../types';
+import type { Config, ExperimentAssignment } from '../types';
 import { validateExperimentAssignment } from './validations';
 import { monotonicNow } from './timing';
 import { isObject } from './validations';
