@@ -133,7 +133,7 @@
 			transition: all 1s;
 		}
 
-		img:hover {
+		&.design-selector__scrollable img:hover {
 			margin-top: -100px;
 		}
 	}

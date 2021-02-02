@@ -320,6 +320,7 @@
 			"slug": "balan",
 			"template": "balan",
 			"theme": "mayland",
+			"preview": "static",
 			"fonts": {
 				"headings": "Rubik",
 				"base": "Roboto"
@@ -333,6 +334,7 @@
 			"slug": "pollard",
 			"template": "pollard",
 			"theme": "mayland",
+			"preview": "static",
 			"fonts": {
 				"headings": "Cabin",
 				"base": "Raleway"

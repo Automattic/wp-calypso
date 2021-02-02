@@ -94,7 +94,10 @@ const DesignSelector: React.FunctionComponent = () => {
 										'design-selector__image-frame',
 										isEnabled( 'gutenboarding/landscape-preview' )
 											? 'design-selector__landscape'
-											: 'design-selector__portrait'
+											: 'design-selector__portrait',
+										design.preview === 'static'
+											? 'design-selector__static'
+											: 'design-selector__scrollable'
 									) }
 								>
 									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
