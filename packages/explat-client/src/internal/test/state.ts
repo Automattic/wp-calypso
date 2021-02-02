@@ -5,7 +5,7 @@ import * as State from '../state';
 import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
 
 describe( 'state', () => {
-	it( 'should save and retrieve valid EAs', () => {
+	it( 'should save and retrieve valid ExperimentAssignments', () => {
 		expect( State.retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toBe(
 			undefined
 		);
@@ -23,7 +23,7 @@ describe( 'state', () => {
 		).toEqual( validFallbackExperimentAssignment );
 	} );
 
-	it( 'should throw for storing an EA for a currently stored Experiment with an older date', () => {
+	it( 'should throw for storing an ExperimentAssignment for a currently stored Experiment with an older date', () => {
 		expect(
 			State.retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
 		).toBe( validFallbackExperimentAssignment );
@@ -37,7 +37,7 @@ describe( 'state', () => {
 		);
 	} );
 
-	it( 'should throw for overwriting a recent EA with a fallback', () => {
+	it( 'should throw for overwriting a recent ExperimentAssignment with a fallback', () => {
 		expect( State.retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toBe(
 			validExperimentAssignment
 		);
