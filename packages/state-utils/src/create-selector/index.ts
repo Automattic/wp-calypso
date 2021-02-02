@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { memoize, includes } from 'lodash';
-import isShallowEqual from '@wordpress/is-shallow-equal';
+import { memoize } from 'lodash';
 
 /**
  * WordPress dependencies
  */
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import warn from '@wordpress/warning';
 
 /**
@@ -16,38 +16,39 @@ import warn from '@wordpress/warning';
 /**
  * Defines acceptable argument types for a memoized selector when using the
  * default cache key generating function.
- *
- * @type {Array}
  */
-const VALID_ARG_TYPES = [ 'number', 'boolean', 'string' ];
+const VALID_ARG_TYPES = [ 'number', 'boolean', 'string' ] as string[];
+
+type Dependant< TState, TProps extends any[], TDependency > = (
+	state: TState,
+	...props: TProps
+) => TDependency;
 
 /**
  * Default behavior for determining whether current state differs from previous
  * state, which is the basis upon which memoize cache is cleared. Should return
  * a value or array of values to be shallowly compared for strict equality.
  *
- * @type    {Function}
- * @param   {object}    state Current state object
- * @returns {(Array|*)}       Value(s) to be shallow compared
+ * @param state Current state object
+ * @returns Value(s) to be shallow compared
  */
-const DEFAULT_GET_DEPENDANTS = ( state ) => state;
+const DEFAULT_GET_DEPENDANTS: Dependant< any, any, any > = < TState >( state: TState ): TState =>
+	state;
 
 /**
  * At runtime, assigns a function which returns a cache key for the memoized
  * selector function, given a state object and a variable set of arguments. In
  * development mode, this warns when the memoized selector is passed a complex
  * object argument, as these cannot be depended upon as reliable cache keys.
- *
- * @type {Function} Function returning cache key for memoized selector
  */
 const DEFAULT_GET_CACHE_KEY = ( () => {
 	if ( 'production' === process.env.NODE_ENV ) {
-		return ( state, ...args ) => args.join();
+		return ( _: unknown, ...args: unknown[] ) => args.join();
 	}
 
-	return ( state, ...args ) => {
+	return ( _: unknown, ...args: unknown[] ) => {
 		const hasInvalidArg = args.some( ( arg ) => {
-			return arg && ! includes( VALID_ARG_TYPES, typeof arg );
+			return arg && ! VALID_ARG_TYPES.includes( typeof arg );
 		} );
 
 		if ( hasInvalidArg ) {
@@ -62,43 +63,46 @@ const DEFAULT_GET_CACHE_KEY = ( () => {
  * Given an array of getDependants functions, returns a single function which,
  * when called, returns an array of mapped results from those functions.
  *
- * @param   {Function[]} dependants Array of getDependants
- * @returns {Function}              Function mapping getDependants results
+ * @param dependants Array of getDependants
+ * @returns Function mapping getDependants results
  */
-const makeSelectorFromArray = ( dependants ) => ( state, ...args ) =>
+const makeSelectorFromArray = < TState, TProps extends any[] >(
+	dependants: ( ( state: TState, ...args: TProps ) => any )[]
+) => ( state: TState, ...args: TProps ) =>
 	dependants.map( ( dependant ) => dependant( state, ...args ) );
 
 /**
  * Returns a memoized state selector for use with the global application state.
  *
- * @param  {Function}            selector      Function calculating cached result
- * @param  {Function|Function[]} getDependants Function(s) describing dependent
+ * @param selector      Function calculating cached result
+ * @param getDependants Function(s) describing dependent
  *                                             state, or an array of dependent
  *                                             state selectors
- * @param   {Function}            getCacheKey   Function generating cache key
- * @returns {Function}                          Memoized selector
+ * @param getCacheKey   Function generating cache key
+ * @returns Memoized selector
  */
-export default function createSelector(
-	selector,
-	getDependants = DEFAULT_GET_DEPENDANTS,
-	getCacheKey = DEFAULT_GET_CACHE_KEY
-) {
+export default function createSelector< TState, TProps extends any[], TDerivedState >(
+	selector: ( state: TState, ...props: TProps ) => TDerivedState,
+	getDependants:
+		| Dependant< TState, TProps, any >
+		| Dependant< TState, TProps, any >[] = DEFAULT_GET_DEPENDANTS,
+	getCacheKey: ( state: TState, ...props: TProps ) => string = DEFAULT_GET_CACHE_KEY
+): ( state: TState, ...props: TProps ) => TDerivedState {
 	const memoizedSelector = memoize( selector, getCacheKey );
-	let lastDependants;
+	let lastDependants: any[];
 
-	if ( Array.isArray( getDependants ) ) {
-		getDependants = makeSelectorFromArray( getDependants );
-	}
+	const getDependantsFn =
+		typeof getDependants === 'function' ? getDependants : makeSelectorFromArray( getDependants );
 
 	return Object.assign(
-		function ( state, ...args ) {
-			let currentDependants = getDependants( state, ...args );
+		function ( state: TState, ...args: TProps ) {
+			let currentDependants = getDependantsFn( state, ...args );
 			if ( ! Array.isArray( currentDependants ) ) {
 				currentDependants = [ currentDependants ];
 			}
 
 			if ( lastDependants && ! isShallowEqual( currentDependants, lastDependants ) ) {
-				memoizedSelector.cache.clear();
+				memoizedSelector.cache.clear?.();
 			}
 
 			lastDependants = currentDependants;

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/happychat/init';

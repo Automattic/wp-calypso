@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { newPost } from 'calypso/lib/paths';
 import Popover from 'calypso/components/popover';
 import Count from 'calypso/components/count';

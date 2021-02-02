@@ -6,7 +6,7 @@ import { get, find } from 'lodash';
 /**
  * Internal Dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
 import 'calypso/state/plans/init';
 

@@ -6,7 +6,7 @@ import { intersection } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSiteProducts } from 'calypso/state/sites/selectors';
 
 /**

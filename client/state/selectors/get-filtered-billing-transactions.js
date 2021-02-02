@@ -8,7 +8,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
