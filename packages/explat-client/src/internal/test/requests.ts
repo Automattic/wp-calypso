@@ -1,0 +1,233 @@
+/**
+ * External dependencies
+ */
+// This is required to fix the "regeneratorRuntime is not defined" error
+import '@automattic/calypso-polyfills';
+
+/**
+ * Internal dependencies
+ */
+import * as Timing from '../timing';
+import * as Requests from '../requests';
+import { Config, ExperimentAssignment } from '../../types';
+import { delayedValue, validExperimentAssignment } from '../test-common';
+import * as ExperimentAssignments from '../experiment-assignments';
+
+const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
+
+const mockedFetchExperimentAssignment = jest.fn();
+const mockedGetAnonId = jest.fn();
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore; Not using the full Config
+const mockedConfig: Config = {
+	fetchExperimentAssignment: mockedFetchExperimentAssignment,
+	getAnonId: mockedGetAnonId,
+};
+
+function mockFetchExperimentAssignmentToMatchExperimentAssignment(
+	experimentAssignment: ExperimentAssignment
+) {
+	spiedMonotonicNow.mockImplementationOnce( () => experimentAssignment.retrievedTimestamp );
+	mockedFetchExperimentAssignment.mockImplementationOnce( () =>
+		delayedValue(
+			{
+				ttl: experimentAssignment.ttl,
+				variations: {
+					[ experimentAssignment.experimentName ]: experimentAssignment.variationName,
+				},
+			},
+			1
+		)
+	);
+}
+
+describe( 'fetchExperimentAssignment', () => {
+	it( 'should successfully fetch and return a well formed response', async () => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'asdf', 1 ) );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		const experimentAssignmentWithAnonId = await Requests.fetchExperimentAssignment(
+			mockedConfig,
+			validExperimentAssignment.experimentName
+		);
+		expect( experimentAssignmentWithAnonId ).toEqual( validExperimentAssignment );
+		expect( mockedFetchExperimentAssignment.mock.calls ).toEqual( [
+			[
+				{
+					anonId: 'asdf',
+					experimentName: 'experiment_name_a',
+				},
+			],
+		] );
+
+		mockedFetchExperimentAssignment.mockReset();
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		const experimentAssignmentWithoutAnonId = await Requests.fetchExperimentAssignment(
+			mockedConfig,
+			validExperimentAssignment.experimentName
+		);
+
+		expect( experimentAssignmentWithoutAnonId ).toEqual( validExperimentAssignment );
+		expect( mockedFetchExperimentAssignment.mock.calls ).toEqual( [
+			[
+				{
+					anonId: null,
+					experimentName: 'experiment_name_a',
+				},
+			],
+		] );
+	} );
+
+	it( 'should throw for an invalid response', async () => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
+			delayedValue(
+				{
+					ttl: 60,
+				},
+				1
+			)
+		);
+		await expect(
+			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
+		).rejects.toThrow( 'Invalid FetchExperimentAssignmentResponse' );
+	} );
+
+	it( 'should throw for multiple experiments in the response', async () => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
+		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
+			delayedValue(
+				{
+					ttl: 60,
+					variations: {
+						[ validExperimentAssignment.experimentName ]: validExperimentAssignment.variationName,
+						[ validExperimentAssignment.experimentName +
+						'_repeat' ]: validExperimentAssignment.variationName,
+					},
+				},
+				1
+			)
+		);
+		await expect(
+			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
+		).rejects.toThrow(
+			'Received multiple experiment assignments while trying to fetch exactly one.'
+		);
+	} );
+
+	it( 'should throw for no experiments in the response', async () => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
+		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
+			delayedValue(
+				{
+					ttl: 60,
+					variations: {},
+				},
+				1
+			)
+		);
+		await expect(
+			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
+		).rejects.toThrow( 'Received no experiment assignments while trying to fetch exactly one.' );
+	} );
+
+	it( 'should throw for response experiment not matching the requested name', async () => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		await expect(
+			Requests.fetchExperimentAssignment(
+				mockedConfig,
+				validExperimentAssignment.experimentName + '_different_name'
+			)
+		).rejects.toThrow(
+			`Newly fetched ExperimentAssignment's experiment name does not match request.`
+		);
+	} );
+
+	it( 'should throw for returned experiment not being alive', async () => {
+		jest.spyOn( ExperimentAssignments, 'isAlive' ).mockImplementationOnce( () => false );
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		await expect(
+			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
+		).rejects.toThrow( `Newly fetched experiment isn't alive.` );
+	} );
+} );
+
+describe( 'isFetchExperimentAssignmentResponse', () => {
+	it( 'should return true for valid reponses', () => {
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 0,
+				variations: {},
+			} )
+		).toBe( true );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 60,
+				variations: {
+					experiment_a: 'variation_name_a',
+					experiment_b: null,
+				},
+			} )
+		).toBe( true );
+	} );
+
+	it( 'should return false for invalid responses', () => {
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 0,
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				variations: {},
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: null,
+				variations: {},
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: undefined,
+				variations: {},
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 'string',
+				variations: {},
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: {},
+				variations: {},
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 0,
+				variations: null,
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 0,
+				variations: undefined,
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 0,
+				variations: 'string',
+			} )
+		).toBe( false );
+	} );
+} );
