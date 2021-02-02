@@ -426,6 +426,38 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
+	it( 'Redirects to thank-you page without a receipt ID if isEligibleForSignupDestination is false', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			products: [ { product_slug: 'foo' } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			receiptId: ':receiptId',
+			cart,
+			getUrlFromCookie,
+			isEligibleForSignupDestination: false,
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar' );
+	} );
+
+	it( 'Redirects to root if isEligibleForSignupDestination is false, no receiptId, and cart is empty', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			products: [],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			receiptId: ':receiptId',
+			cart,
+			getUrlFromCookie,
+			isEligibleForSignupDestination: false,
+		} );
+		expect( url ).toBe( '/' );
+	} );
+
 	it( 'redirects to url from cookie if isEligibleForSignupDestination is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
