@@ -34,7 +34,8 @@ import {
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import { getSublabel } from '../lib/translate-cart';
+import { getSublabel, getLabel } from '../lib/translate-cart';
+import { isPlan } from 'calypso/lib/products-values';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -54,18 +55,21 @@ function WPLineItem( {
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 } ) {
+	const product = item.wpcom_response_cart_product; // might be undefined for items like tax, coupon, etc.
+	const id = product?.uuid ?? item.id;
+	const type = isPlan( product ) ? 'plan' : product?.product_slug;
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const { formStatus } = useFormStatus();
-	const itemSpanId = `checkout-line-item-${ item.id }`;
-	const deleteButtonId = `checkout-delete-button-${ item.id }`;
+	const itemSpanId = `checkout-line-item-${ id }`;
+	const deleteButtonId = `checkout-delete-button-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const isPwpoUser = useSelector(
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 	const modalCopy = returnModalCopy(
-		item.type,
+		type,
 		translate,
 		hasDomainsInCart,
 		createUserAndSiteBeforeTransaction,
@@ -74,30 +78,29 @@ function WPLineItem( {
 	const onEvent = useEvents();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	const isRenewal = item.wpcom_meta?.extra?.purchaseId;
+	const isRenewal = !! product?.extra?.purchaseId;
 	// Show the variation picker when this is not a renewal
-	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
+	const shouldShowVariantSelector = getItemVariants && product && ! isRenewal;
 
-	const productSlug = item.wpcom_meta?.product_slug;
+	const productSlug = product?.product_slug;
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
 	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
 
-	const sublabel = item.wpcom_response_cart_product
-		? String( getSublabel( item.wpcom_response_cart_product ) )
-		: '';
+	const sublabel = product ? String( getSublabel( product ) ) : '';
+	const label = product ? getLabel( product ) : item.label;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
 			data-e2e-product-slug={ productSlug }
-			data-product-type={ item.type }
+			data-product-type={ type }
 		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
-				{ item.label }
+				{ label }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice item={ item } isSummary={ isSummary } />
@@ -122,12 +125,12 @@ function WPLineItem( {
 							onEvent( {
 								type: 'a8c_checkout_delete_product_press',
 								payload: {
-									product_name: item.label,
+									product_name: label,
 								},
 							} );
 						} }
 					>
-						<DeleteIcon uniqueID={ deleteButtonId } product={ item.label } />
+						<DeleteIcon uniqueID={ deleteButtonId } product={ label } />
 					</DeleteButton>
 
 					<CheckoutModal
@@ -140,7 +143,7 @@ function WPLineItem( {
 							onEvent( {
 								type: 'a8c_checkout_delete_product',
 								payload: {
-									product_name: item.label,
+									product_name: label,
 								},
 							} );
 						} }
