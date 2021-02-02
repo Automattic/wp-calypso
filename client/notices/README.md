@@ -1,5 +1,7 @@
 # Notices
 
+**NOTE: This library is deprecated. Consider using the [Redux notices](./client/state/notices/README.md) instead.**
+
 Provides some helper functions to render a notice on the UI. Types of notices are `error`, `success`, `info`, and `warning`.
 
 ## How to use?
