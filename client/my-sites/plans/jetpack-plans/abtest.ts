@@ -1,10 +1,9 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
-const VERSIONS = [ 'i5', 'spp' ];
+const VERSIONS = [ 'i5' ];
 const DEFAULT_VERSION = 'i5';
 
 /**
@@ -25,13 +24,5 @@ export const getJetpackCROActiveVersion = (): string => {
 		}
 	}
 
-	// Otherwise, check for the assigned A/B test value
-	const variant = abtest( 'jetpackSimplifyPricingPage' );
-
-	switch ( variant ) {
-		case 'test':
-			return 'spp';
-		default:
-			return DEFAULT_VERSION;
-	}
+	return DEFAULT_VERSION;
 };

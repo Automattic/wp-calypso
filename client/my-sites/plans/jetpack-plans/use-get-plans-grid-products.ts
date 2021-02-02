@@ -21,7 +21,6 @@ import {
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';
@@ -49,8 +48,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// Directly and indirectly owned products
 	const ownedProducts = [ ...purchasedProducts, ...includedInPlanProducts ];
 
-	const currentCROvariant = getJetpackCROActiveVersion();
-
 	// If Jetpack Search is directly or indirectly owned, continue, otherwise make it available.
 	if (
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
@@ -60,7 +57,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	// Include Jetpack CRM
 	if (
-		currentCROvariant !== 'spp' &&
 		! ownedProducts.some( ( ownedProduct ) =>
 			[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
 		)
@@ -81,7 +77,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	if (
-		currentCROvariant !== 'spp' &&
 		! ownedProducts.some( ( ownedProduct ) =>
 			[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
 				ownedProduct

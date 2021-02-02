@@ -68,14 +68,4 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	jetpackSimplifyPricingPage: {
-		datestamp: '20210125',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		localeTargets: 'any',
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };

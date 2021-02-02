@@ -114,15 +114,9 @@ export function durationToString( duration: Duration ): DurationString {
 }
 
 export function durationToText( duration: Duration ): TranslateResult {
-	if ( [ 'i5', 'spp' ].includes( getJetpackCROActiveVersion() ) ) {
-		return duration === TERM_MONTHLY
-			? translate( 'per month{{br/}}billed monthly', { components: { br: createElement( 'br' ) } } )
-			: translate( 'per month{{br/}}billed yearly', { components: { br: createElement( 'br' ) } } );
-	}
-
 	return duration === TERM_MONTHLY
-		? translate( 'per month, billed monthly' )
-		: translate( 'per month, billed yearly' );
+		? translate( 'per month{{br/}}billed monthly', { components: { br: createElement( 'br' ) } } )
+		: translate( 'per month{{br/}}billed yearly', { components: { br: createElement( 'br' ) } } );
 }
 
 // In the case of products that have options (daily and real-time), we want to display

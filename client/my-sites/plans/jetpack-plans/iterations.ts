@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import ProductsGridI5 from './products-grid-i5';
-import ProductsGridSpp from './spp/products-grid-spp';
 import JetpackFAQi5 from 'calypso/my-sites/plans-features-main/jetpack-faq-i5';
 import { getJetpackCROActiveVersion as getIteration } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 
@@ -17,7 +16,6 @@ import type { ProductsGridProps } from './types';
 
 export enum Iterations {
 	I5 = 'i5',
-	SPP = 'spp',
 }
 
 /**
@@ -27,13 +25,11 @@ export enum Iterations {
 export function getGridComponent(): React.FC< ProductsGridProps > | undefined {
 	return {
 		[ Iterations.I5 ]: ProductsGridI5,
-		[ Iterations.SPP ]: ProductsGridSpp,
 	}[ getIteration() as Iterations ];
 }
 
 export function getFaqComponent(): React.FC | undefined {
 	return {
 		[ Iterations.I5 ]: JetpackFAQi5,
-		[ Iterations.SPP ]: JetpackFAQi5,
 	}[ getIteration() as Iterations ];
 }

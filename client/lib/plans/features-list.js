@@ -1020,10 +1020,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
 		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
 		getIcon: () => 'lock',
-		getTitle: ( variation ) =>
-			( {
-				spp: i18n.translate( 'All Jetpack Security features' ),
-			}[ variation ] || i18n.translate( 'All Security Daily features' ) ),
+		getTitle: () => i18n.translate( 'All Security Daily features' ),
 		isPlan: true,
 	},
 
@@ -1074,11 +1071,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'Backup (real-time, off-site)' ),
-				spp: i18n.translate( 'Backup (real-time, off-site)' ),
-			}[ variation ] || i18n.translate( 'Automated real-time site backups' ) ),
+		getTitle: () => i18n.translate( 'Backup (real-time, off-site)' ),
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_V2 ]: {
@@ -1099,10 +1092,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: ( variation ) =>
-			( {
-				spp: i18n.translate( 'All Jetpack Backup features' ),
-			}[ variation ] || i18n.translate( 'All Backup Daily features' ) ),
+		getTitle: () => i18n.translate( 'All Backup Daily features' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1175,16 +1165,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'Scan (daily, automated)' ),
-				spp: i18n.translate( 'Scan (daily, automated)' ),
-			}[ variation ] ||
-			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Scan (daily, automated)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated daily scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
@@ -1203,16 +1184,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'Scan (real-time, automated)' ),
-				spp: i18n.translate( 'Scan (real-time, automated)' ),
-			}[ variation ] ||
-			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Scan (real-time, automated)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated real-time scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
@@ -1454,11 +1426,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {
 		getSlug: () => constants.FEATURE_ONE_CLICK_RESTORE_V2,
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'One-click restores' ),
-				spp: i18n.translate( 'One-click restores' ),
-			}[ variation ] || i18n.translate( 'One-click restores from desktop or mobile' ) ),
+		getTitle: () => i18n.translate( 'One-click restores' ),
 	},
 
 	[ constants.FEATURE_ONE_CLICK_FIX_V2 ]: {

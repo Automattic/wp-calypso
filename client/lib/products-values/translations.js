@@ -8,7 +8,6 @@ import { numberFormat, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from '@automattic/calypso-config';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
@@ -59,22 +58,15 @@ export const getJetpackProductsShortNames = () => {
 };
 
 export const getJetpackProductsDisplayNames = () => {
-	const currentCROvariant = getJetpackCROActiveVersion();
-	let backupDaily;
-	if ( currentCROvariant === 'spp' ) {
-		backupDaily = <>{ translate( 'Jetpack Backup' ) }</>;
-	} else {
-		backupDaily = (
-			<>
-				{ translate( 'Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: <em />,
-					},
-				} ) }
-			</>
-		);
-	}
-
+	const backupDaily = (
+		<>
+			{ translate( 'Backup {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }
+		</>
+	);
 	const backupRealtime = (
 		<>
 			{ translate( 'Backup {{em}}Real-Time{{/em}}', {
@@ -85,32 +77,17 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 	const search = translate( 'Site Search' );
-	const scan =
-		{
-			i5: translate( 'Scan' ),
-			spp: translate( 'Scan' ),
-		}[ currentCROvariant ] || translate( 'Jetpack Scan' );
-
+	const scan = translate( 'Scan' );
 	const scanRealtime = (
 		<>
-			{ currentCROvariant === 'i5' || currentCROvariant === 'spp'
-				? translate( 'Scan {{em}}Real-Time{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } )
-				: translate( 'Jetpack Scan {{em}}Real-Time{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } ) }
+			{ translate( 'Scan {{em}}Real-Time{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }
 		</>
 	);
-
-	const antiSpam = {
-		i5: translate( 'Anti-spam' ),
-		spp: translate( 'Anti-Spam' ),
-	}[ currentCROvariant ] || <>{ translate( 'Jetpack Anti-spam' ) }</>;
+	const antiSpam = translate( 'Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -131,16 +108,13 @@ export const getJetpackProductsDisplayNames = () => {
 };
 
 export const getJetpackProductsCallToAction = () => {
-	const currentCROvariant = getJetpackCROActiveVersion();
 	const backupDaily = (
 		<>
-			{ currentCROvariant === 'spp'
-				? translate( 'Get Jetpack Backup' )
-				: translate( 'Get Backup {{em}}Daily{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } ) }
+			{ translate( 'Get Backup {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) }
 		</>
 	);
 	const backupRealtime = (
@@ -154,11 +128,7 @@ export const getJetpackProductsCallToAction = () => {
 	);
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
-	const antiSpam = (
-		<>
-			{ currentCROvariant === 'spp' ? translate( 'Get Anti-Spam' ) : translate( 'Get Anti-spam' ) }
-		</>
-	);
+	const antiSpam = <>{ translate( 'Get Anti-spam' ) }</>;
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -218,32 +188,15 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
-	const currentCROvariant = getJetpackCROActiveVersion();
-
-	const backupDailyDescription =
-		{
-			i5: translate(
-				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
-			),
-			spp: translate(
-				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
-			),
-		}[ currentCROvariant ] ||
-		translate( 'Never lose a word, image, page, or time worrying about your site.' );
+	const backupDailyDescription = translate(
+		'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
+	);
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
 	);
-	const searchDescription =
-		{
-			i5: translate(
-				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
-			),
-			spp: translate(
-				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
-			),
-		}[ currentCROvariant ] ||
-		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
-
+	const searchDescription = translate(
+		'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
+	);
 	const scanDescription = translate(
 		'Automatic scanning and one-click fixes keep your site one step ahead of security threats and malware.'
 	);
