@@ -9,7 +9,11 @@
  */
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_ECOMMERCE, JETPACK_REDIRECT_URL } from '../../../../lib/plans/constants';
+import {
+	PLAN_ECOMMERCE,
+	JETPACK_REDIRECT_URL,
+	redirectCloudCheckoutToWpAdmin,
+} from 'calypso/lib/plans/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 let mockGSuiteCountryIsValid = true;
@@ -20,6 +24,10 @@ jest.mock( 'calypso/lib/user', () =>
 );
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
+jest.mock( 'calypso/lib/plans/constants', () => ( {
+	...jest.requireActual( 'calypso/lib/plans/constants' ),
+	redirectCloudCheckoutToWpAdmin: jest.fn(),
+} ) );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
@@ -42,6 +50,11 @@ const defaultArgs = {
 };
 
 describe( 'getThankYouPageUrl', () => {
+	beforeEach( () => {
+		isJetpackCloud.mockImplementation( () => false );
+		redirectCloudCheckoutToWpAdmin.mockImplementation( () => false );
+	} );
+
 	it( 'redirects to the root page when no site is set', () => {
 		const url = getThankYouPageUrl( defaultArgs );
 		expect( url ).toBe( '/' );
@@ -214,7 +227,7 @@ describe( 'getThankYouPageUrl', () => {
 			productAliasFromUrl: 'jetpack_backup_daily',
 		} );
 		expect( url ).toBe(
-			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_backup_daily%26thank-you%3Dtrue`
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_backup_daily%26thank-you%3Dtrue`
 		);
 	} );
 
@@ -230,7 +243,7 @@ describe( 'getThankYouPageUrl', () => {
 			},
 		} );
 		expect( url ).toBe(
-			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_backup_realtime%26thank-you%3Dtrue`
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_backup_realtime%26thank-you%3Dtrue`
 		);
 	} );
 
@@ -244,7 +257,7 @@ describe( 'getThankYouPageUrl', () => {
 			productAliasFromUrl: 'jetpack_security_daily_monthly',
 		} );
 		expect( url ).toBe(
-			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_security_daily_monthly%26thank-you%3Dtrue`
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_security_daily_monthly%26thank-you%3Dtrue`
 		);
 	} );
 
@@ -260,7 +273,7 @@ describe( 'getThankYouPageUrl', () => {
 			},
 		} );
 		expect( url ).toBe(
-			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_security_daily%26thank-you%3Dtrue`
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_security_daily%26thank-you%3Dtrue`
 		);
 	} );
 
@@ -276,12 +289,27 @@ describe( 'getThankYouPageUrl', () => {
 			},
 		} );
 		expect( url ).toBe(
-			`${ JETPACK_REDIRECT_URL }?source=jetpack-checkout-thankyou&site=foo.bar&query=product%3Djetpack_complete%26thank-you%3Dtrue`
+			`${ JETPACK_REDIRECT_URL }&site=foo.bar&query=product%3Djetpack_complete%26thank-you%3Dtrue`
 		);
 	} );
 
+	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCloudCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		redirectCloudCheckoutToWpAdmin.mockImplementation( () => true );
+		const adminUrl = 'https://my.site/wp-admin/';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+			adminUrl,
+		} );
+		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/my-plan` );
+	} );
+
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
-		isJetpackCloud.mockImplementation( () => false );
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
