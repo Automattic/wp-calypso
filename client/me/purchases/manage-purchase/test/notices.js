@@ -281,6 +281,57 @@ describe( 'PurchaseNotice', () => {
 		expect( screen.getByText( 'Renew Now' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders product expiring text and renew button if purchase is expiring and payment method is credits', () => {
+		const purchase = {
+			id: 'whatever1',
+			product_slug: 'value_bundle',
+			productName: 'Premium',
+			isRenewable: false,
+			isRechargeable: false,
+			expiryStatus: 'expiring',
+			payment: { type: 'credits' },
+		};
+		render(
+			<ReduxProvider store={ store }>
+				<PurchaseNotice
+					purchase={ purchase }
+					isProductOwner={ true }
+					selectedSite={ { slug: 'testingsite' } }
+					renewableSitePurchases={ [] }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( /Premium will expire and be removed from your site/ )
+		).toBeInTheDocument();
+		expect( screen.getByText( 'Renew Now' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders product expiring text and add card button if purchase is expiring and there is no payment method', () => {
+		const purchase = {
+			id: 'whatever1',
+			product_slug: 'value_bundle',
+			productName: 'Premium',
+			isRenewable: false,
+			isRechargeable: false,
+			expiryStatus: 'expiring',
+		};
+		render(
+			<ReduxProvider store={ store }>
+				<PurchaseNotice
+					purchase={ purchase }
+					isProductOwner={ true }
+					selectedSite={ { slug: 'testingsite' } }
+					renewableSitePurchases={ [] }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( /Premium will expire and be removed from your site/ )
+		).toBeInTheDocument();
+		expect( screen.getByText( 'Add Payment Method' ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders card expiring notice if card is expiring before subscription', () => {
 		const purchaseExpiry = new Date();
 		purchaseExpiry.setMonth( purchaseExpiry.getMonth() + 4 );
