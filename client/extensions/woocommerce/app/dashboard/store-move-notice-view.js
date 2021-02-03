@@ -45,7 +45,7 @@ class StoreMoveNoticeView extends Component {
 				<p>
 					{ isStoreDeprecated &&
 						translate(
-							'We’re rolling your favorite Store features into WooCommerce. In addition to Products and Orders, you’ll have top-level access for managing your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what to expect in February.',
+							'We’re retiring Store on February 22. With WooCommerce, discover a more flexible store management experience – including top-level access to your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what to expect.',
 							{
 								components: {
 									link: (
@@ -67,7 +67,7 @@ class StoreMoveNoticeView extends Component {
 						) }
 				</p>
 				<Button primary href={ site.URL + '/wp-admin/admin.php?page=wc-admin&from-calypso' }>
-					{ translate( 'Go to WooCommerce Home' ) }
+					{ translate( 'Try WooCommerce now' ) }
 				</Button>
 			</Card>
 		);
