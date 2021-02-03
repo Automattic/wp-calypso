@@ -19,6 +19,12 @@
 		height: 100%;
 		max-width: 100%;
 		color: inherit;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background-color: var( --color-primary-0 );
+		}
 	}
 
 	@include breakpoint-deprecated( '<960px' ) {
