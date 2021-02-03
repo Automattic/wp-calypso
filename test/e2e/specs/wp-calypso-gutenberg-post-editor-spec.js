@@ -289,7 +289,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					'OpenTable',
 					'Payments',
 					'Pay with PayPal',
-					'Premium Content',
 					'Pricing Table',
 				].forEach( ( block ) =>
 					assert.ok(
@@ -314,6 +313,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					'Mailchimp',
 					'Revue',
 					'Subscription Form',
+					'Premium Content',
 					'Click to Tweet',
 					'Logos',
 					'Contact Form',
