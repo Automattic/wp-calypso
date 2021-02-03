@@ -52,19 +52,16 @@ const Header: React.FunctionComponent = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 	const changeLocaleButton = () => {
-		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
-			return (
-				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
-					<Link to={ makePath( Step.LanguageModal ) }>
-						<span className="gutenboarding__header-site-language-label">
-							{ __( 'Site Language' ) }
-						</span>
-						<span className="gutenboarding__header-site-language-badge">{ locale }</span>
-					</Link>
-				</div>
-			);
-		}
-		return null;
+		return (
+			<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right gutenboarding__header-language-section">
+				<Link to={ makePath( Step.LanguageModal ) }>
+					<span className="gutenboarding__header-site-language-label">
+						{ __( 'Site Language' ) }
+					</span>
+					<span className="gutenboarding__header-site-language-badge">{ locale }</span>
+				</Link>
+			</div>
+		);
 	};
 
 	return (
@@ -91,9 +88,11 @@ const Header: React.FunctionComponent = () => {
 					{ showDomainsButton && <DomainPickerButton /> }
 				</div>
 				{ showLocaleButton && changeLocaleButton() }
-				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
-					{ showPlansButton && <PlansButton /> }
-				</div>
+				{ showPlansButton && (
+					<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
+						<PlansButton />
+					</div>
+				) }
 			</section>
 		</div>
 	);
