@@ -68,6 +68,32 @@ describe( 'PurchaseNotice', () => {
 	} );
 
 	// TODO: add tests for renderOtherRenewablePurchasesNotice
+	it( 'renders distant product expiry text and add card button if purchase is not expiring soon and the payment method is credits', () => {
+		const purchase = {
+			product_slug: 'value_bundle',
+			productName: 'Premium',
+			isRenewable: true,
+			isRechargeable: false,
+			expiryStatus: 'manualRenew',
+			payment: { type: 'credits' },
+		};
+		render(
+			<ReduxProvider store={ store }>
+				<PurchaseNotice
+					purchase={ purchase }
+					isProductOwner={ true }
+					selectedSite={ { slug: 'testingsite' } }
+					renewableSitePurchases={ [] }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText(
+				/You purchased Premium with credits. Please update your payment information before your plan expires/
+			)
+		).toBeInTheDocument();
+		expect( screen.getByText( 'Add Payment Method' ) ).toBeInTheDocument();
+	} );
 
 	it( 'renders expired plan text if purchase is included with a plan, the plan is expired, and the purchase is not renewable', () => {
 		const plan = {
