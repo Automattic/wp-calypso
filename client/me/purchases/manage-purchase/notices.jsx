@@ -194,70 +194,24 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		const renewNowButton = (
-			<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
-		);
-		const addCreditCardButton = (
-			<NoticeAction href={ changePaymentMethodPath }>
-				{ config.isEnabled( 'purchases/new-payment-methods' )
-					? translate( 'Add Payment Method' )
-					: translate( 'Add Credit Card' ) }
-			</NoticeAction>
-		);
-
-		const isPurchaseExpiringOrExpired = [ 'expiring', 'expired' ].includes(
-			purchase?.expiryStatus
-		); // We can't use isExpiring because it includes manualRenew
-
-		// If we have a payment method that's not credits, and the purchase is not rechargeable, render "Renew now".
-		if (
-			hasPaymentMethod( purchase ) &&
-			! isPaidWithCredits( purchase ) &&
-			! isRechargeable( purchase )
-		) {
-			return renewNowButton;
-		}
-
-		// If we have a payment method that's credits, and the purchase is neither expiring nor expired, render "Add credit card".
-		if ( isPaidWithCredits( purchase ) && ! isPurchaseExpiringOrExpired ) {
-			return addCreditCardButton;
-		}
-
-		// If we have a payment method that's credits, and the purchase is expiring or expired, and the purchase is not rechargeable, render "Renew now".
-		if (
-			isPaidWithCredits( purchase ) &&
-			isPurchaseExpiringOrExpired &&
-			! isRechargeable( purchase )
-		) {
-			return renewNowButton;
-		}
-
-		// If we have no payment method, and we can't explicitly renew, render "Add credit card".
-		if ( ! hasPaymentMethod( purchase ) && ! canExplicitRenew( purchase ) ) {
-			return addCreditCardButton;
-		}
-
-		// If we have no payment method, but we can explicitly renew, and the expiry date is not within than 3 months, render "Add credit card".
 		if (
 			! hasPaymentMethod( purchase ) &&
-			canExplicitRenew( purchase ) &&
-			shouldAddPaymentSourceInsteadOfRenewingNow( purchase )
+			( ! canExplicitRenew( purchase ) || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
 		) {
-			return addCreditCardButton;
+			return (
+				<NoticeAction href={ changePaymentMethodPath }>
+					{ config.isEnabled( 'purchases/new-payment-methods' )
+						? translate( 'Add Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</NoticeAction>
+			);
 		}
 
-		// If we have no payment method, but we can explicitly renew, and the expiry date is within 3 months, and the purchase is not rechargeable, render "Renew now".
-		if (
-			! hasPaymentMethod( purchase ) &&
-			canExplicitRenew( purchase ) &&
-			! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) &&
-			! isRechargeable( purchase )
-		) {
-			return renewNowButton;
-		}
-
-		// Otherwise, render nothing.
-		return null;
+		return (
+			! isRechargeable( purchase ) && (
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
+			)
+		);
 	}
 
 	trackImpression( warning ) {
