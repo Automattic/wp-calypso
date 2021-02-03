@@ -17,6 +17,10 @@ import PurchaseNotice from '../notices';
 
 describe( 'PurchaseNotice', () => {
 	const store = createReduxStore();
+	const futureYearDate = new Date();
+	futureYearDate.setFullYear( futureYearDate.getFullYear() + 10 );
+	const pastYearDate = new Date();
+	pastYearDate.setFullYear( pastYearDate.getFullYear() - 10 );
 
 	it( 'renders nothing when data is still loading', () => {
 		render(
@@ -67,7 +71,7 @@ describe( 'PurchaseNotice', () => {
 		expect( screen.getByText( 'This session has been used.' ) ).toBeInTheDocument();
 	} );
 
-	// TODO: add tests for renderOtherRenewablePurchasesNotice
+	// TODO: add tests for remaining cases of renderOtherRenewablePurchasesNotice
 	it( 'renders distant product expiry text and add card button if purchase is not expiring soon and the payment method is credits', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
@@ -93,6 +97,42 @@ describe( 'PurchaseNotice', () => {
 			)
 		).toBeInTheDocument();
 		expect( screen.getByText( 'Add Payment Method' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders distant product expiry text and no button if purchase is not expiring soon and the payment method is a card', () => {
+		const purchase = {
+			product_slug: 'value_bundle',
+			productName: 'Premium',
+			isRenewable: true,
+			isRechargeable: true,
+			expiryStatus: 'manualRenew',
+			payment: {
+				type: 'credit_card',
+				creditCard: {
+					expiryDate: '01/' + futureYearDate.getYear(),
+					type: 'visa',
+					number: 1111,
+				},
+			},
+		};
+		render(
+			<ReduxProvider store={ store }>
+				<PurchaseNotice
+					purchase={ purchase }
+					isProductOwner={ true }
+					selectedSite={ { slug: 'testingsite' } }
+					renewableSitePurchases={ [] }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( /Premium will expire and be removed from your site/ )
+		).toBeInTheDocument();
+		expect(
+			screen.getByText( /Please enable auto-renewal so you don't lose out on your paid features/ )
+		).toBeInTheDocument();
+		expect( screen.queryByText( 'Add Payment Method' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Renew now' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders expired plan text if purchase is included with a plan, the plan is expired, and the purchase is not renewable', () => {
@@ -372,7 +412,7 @@ describe( 'PurchaseNotice', () => {
 			payment: {
 				type: 'credit_card',
 				creditCard: {
-					expiryDate: '01/12',
+					expiryDate: '01/' + pastYearDate.getYear(),
 					type: 'visa',
 					number: 1111,
 				},
@@ -406,7 +446,7 @@ describe( 'PurchaseNotice', () => {
 			payment: {
 				type: 'credit_card',
 				creditCard: {
-					expiryDate: '01/12',
+					expiryDate: '01/' + pastYearDate.getYear(),
 					type: 'visa',
 					number: 1111,
 				},
@@ -439,7 +479,7 @@ describe( 'PurchaseNotice', () => {
 			payment: {
 				type: 'credit_card',
 				creditCard: {
-					expiryDate: '01/12',
+					expiryDate: '01/' + pastYearDate.getYear(),
 					type: 'visa',
 					number: 1111,
 				},
