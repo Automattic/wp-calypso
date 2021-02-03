@@ -84,6 +84,21 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		);
 	};
 
+	renderFileSize = () => {
+		const fileSize = this.getItemValue( 'size' );
+
+		if ( ! fileSize || fileSize === 0 ) {
+			return;
+		}
+
+		return (
+			<tr>
+				<th>{ this.props.translate( 'File Size' ) }</th>
+				<td>{ fileSize }</td>
+			</tr>
+		);
+	};
+
 	render() {
 		const classes = classNames( 'editor-media-modal-detail__file-info', {
 			'is-loading': ! this.props.item,
@@ -102,10 +117,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 						<th>{ this.props.translate( 'File Type' ) }</th>
 						<td>{ this.getItemValue( 'extension' ) }</td>
 					</tr>
-					<tr>
-						<th>{ this.props.translate( 'File Size' ) }</th>
-						<td>{ this.getItemValue( 'size' ) }</td>
-					</tr>
+					{ this.renderFileSize() }
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
 					<tr>
