@@ -151,6 +151,8 @@ function normalizePlanProducts(
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
 			storeSlug: planProduct.product_slug,
 			rawPrice: planProduct.raw_price,
+			// Not all plans returned from /plans have a `path_slug`
+			// Free plan is an exception, and is given a hardcoded path_slug
 			pathSlug: planProduct.product_slug === PLAN_FREE ? 'free' : planProduct.path_slug,
 			price:
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0

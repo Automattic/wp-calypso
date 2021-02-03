@@ -148,7 +148,6 @@ export const MOCK_PLAN_DETAILS_API: DetailsAPIResponse = {
 };
 
 // Individual plan (from APIs)
-// @TODO: path_slug doesn't exist on monthly and free plans
 export const MOCK_PLAN_PRICE_APIS_FREE: PricedAPIPlan = {
 	product_id: 1,
 	product_name: 'WordPress.com Free',
@@ -450,7 +449,6 @@ export const MOCK_PLAN_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	annualPrice: '€96',
 	annualDiscount: 43,
 };
-// @TODO: path_slug doesn't exist on monthly plan product
 export const MOCK_PLAN_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	productId: 1013,
 	billingPeriod: 'MONTHLY',
