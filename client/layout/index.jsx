@@ -15,7 +15,6 @@ import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
-import notices from 'calypso/notices';
 import config from '@automattic/calypso-config';
 import OfflineStatus from 'calypso/layout/offline-status';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -258,7 +257,6 @@ class Layout extends Component {
 						require="calypso/components/global-notices"
 						placeholder={ null }
 						id="notices"
-						notices={ notices.list }
 					/>
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
