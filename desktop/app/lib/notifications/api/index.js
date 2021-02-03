@@ -25,7 +25,7 @@ class WPNotificationsAPI extends EventEmitter {
 		clearTimeout( this.pingTimeout );
 
 		this.pingTimeout = setTimeout( () => {
-			log.info( 'Websock heartbeat timed out, attempting to reconnect...' );
+			log.info( 'Websocket heartbeat timed out, attempting to reconnect...' );
 			this.ws.terminate();
 			this.connect();
 			// heartbeat timeout: server ping interval + conservative assumption of latency.
