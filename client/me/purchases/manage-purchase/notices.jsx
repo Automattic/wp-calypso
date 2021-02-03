@@ -207,6 +207,21 @@ class PurchaseNotice extends Component {
 			);
 		}
 
+		// isExpiring(), which leads here (along with isExpired()) returns true
+		// when expiring, when auto-renew is disabled, or when the payment method
+		// was credits but we don't want to show "Add Payment Method" if the
+		// subscription is actually expiring or expired; we want to show "Renew
+		// Now" in that case.
+		if ( isPaidWithCredits( purchase ) && purchase.expiryStatus === 'manualRenew' ) {
+			return (
+				<NoticeAction href={ changePaymentMethodPath }>
+					{ config.isEnabled( 'purchases/new-payment-methods' )
+						? translate( 'Add Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</NoticeAction>
+			);
+		}
+
 		return (
 			! isRechargeable( purchase ) && (
 				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
