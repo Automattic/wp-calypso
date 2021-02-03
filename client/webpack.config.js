@@ -396,8 +396,7 @@ const webpackConfig = {
 	...( shouldUsePersistentCache
 		? {
 				cache: {
-					// eslint-disable-next-line inclusive-language/use-inclusive-words
-					// More info in https://github.com/webpack/changelog-v5/blob/master/guides/persistent-caching.md
+					// More info in https://github.com/webpack/changelog-v5/blob/f518964326583c74e9b78296faebdb9c32b01ea8/guides/persistent-caching.md
 					type: 'filesystem',
 					version: [
 						shouldBuildChunksMap,
