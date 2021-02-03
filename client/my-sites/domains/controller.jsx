@@ -129,13 +129,13 @@ const transferDomain = ( context, next ) => {
 				title="Domain Search > Domain Transfer"
 			/>
 			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
 					useStandardBack={ useStandardBack }
 				/>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -157,13 +157,13 @@ const useYourDomain = ( context, next ) => {
 				title="Domain Search > Use Your Own Domain"
 			/>
 			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<UseYourDomainStep
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
 					goBack={ handleGoBack }
 				/>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -183,7 +183,7 @@ const transferDomainPrecheck = ( context, next ) => {
 				path={ domainManagementTransferInPrecheck( ':site', ':domain' ) }
 				title="My Sites > Domains > Selected Domain"
 			/>
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<div>
 					<TransferDomainStep
 						forcePrecheck={ true }
@@ -191,7 +191,7 @@ const transferDomainPrecheck = ( context, next ) => {
 						goBack={ handleGoBack }
 					/>
 				</div>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
