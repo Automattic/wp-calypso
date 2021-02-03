@@ -209,7 +209,7 @@ class PurchaseNotice extends Component {
 
 		return (
 			! isRechargeable( purchase ) && (
-				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew now' ) }</NoticeAction>
 			)
 		);
 	}
