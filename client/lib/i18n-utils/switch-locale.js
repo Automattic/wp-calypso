@@ -570,8 +570,6 @@ const _addTranslationsBatch = throttle( function ( userTranslations ) {
 /**
  * Adds new translations to the existing locale data.
  *
-
- *
  * @param {Object} translations       Translations data
  * @param {Object} [userTranslations] User translations data that will override chunk translations
  */
