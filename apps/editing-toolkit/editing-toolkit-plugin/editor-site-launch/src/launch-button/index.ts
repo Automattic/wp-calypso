@@ -52,7 +52,7 @@ domReady( () => {
 			e.preventDefault();
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
-				is_new_site: isGutenboarding,
+				is_new_site: !! isGutenboarding,
 				launch_flow: launchFlow,
 				is_in_iframe: inIframe(),
 			} );
