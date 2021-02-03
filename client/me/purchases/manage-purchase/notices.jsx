@@ -953,6 +953,9 @@ class PurchaseNotice extends Component {
 		if ( ! usePlanInsteadOfIncludedPurchase ) {
 			return null;
 		}
+		if ( ! selectedSite ) {
+			return null;
+		}
 
 		const noticeText = translate(
 			'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
