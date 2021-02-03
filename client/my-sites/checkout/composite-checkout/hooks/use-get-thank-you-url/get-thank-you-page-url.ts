@@ -386,6 +386,15 @@ function getRedirectUrlForConciergeNudge( {
 			return upgradePath;
 		}
 
+		// This is for the DIFM upsell A/B test. Check https://wp.me/pcbrnV-Y3.
+		if ( hasBusinessPlan( cart ) ) {
+			recordTracksEvent( 'calypso_eligible_difm_upsell' );
+
+			if ( shouldShowDifmUpsell ) {
+				return `/checkout/${ siteSlug }/offer-difm/${ pendingOrReceiptId }`;
+			}
+		}
+
 		// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
 		// being offered and so sold, to be inline with HE availability.
 		// To dial back, uncomment the condition below and modify the test config.
@@ -397,21 +406,7 @@ function getRedirectUrlForConciergeNudge( {
 				}
 			}
 
-			if ( hasBusinessPlan( cart ) ) {
-				if ( shouldShowDifmUpsell ) {
-					recordTracksEvent( 'calypso_eligible_difm_upsell' );
-					return `/checkout/${ siteSlug }/offer-difm/${ pendingOrReceiptId }`;
-				}
-			}
-
 			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
-		}
-
-		if ( hasBusinessPlan( cart ) ) {
-			if ( shouldShowDifmUpsell ) {
-				recordTracksEvent( 'calypso_eligible_difm_upsell' );
-				return `/checkout/${ siteSlug }/offer-difm/${ pendingOrReceiptId }`;
-			}
 		}
 	}
 

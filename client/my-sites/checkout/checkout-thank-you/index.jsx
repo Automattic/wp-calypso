@@ -447,11 +447,12 @@ export class CheckoutThankYou extends React.Component {
 				);
 			}
 
+			// This is for the DIFM upsell A/B test. Check https://wp.me/pcbrnV-Y3.
+			recordTracksEvent( 'calypso_eligible_difm_upsell' );
 			if (
 				shouldShowDifmUpsell &&
 				! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-difm/${ receiptId }` )
 			) {
-				recordTracksEvent( 'calypso_eligible_difm_upsell' );
 				page( `/checkout/${ selectedSiteSlug }/offer-difm/${ receiptId }?isEcommerce=1` );
 			}
 
