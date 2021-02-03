@@ -340,11 +340,12 @@ class PurchaseNotice extends Component {
 			noticeStatus = 'is-error';
 		}
 
-		let noticeText = '';
-		let showNoticeAction = false;
+		if ( usePlanInsteadOfIncludedPurchase && ! selectedSite ) {
+			return null;
+		}
 
 		if ( usePlanInsteadOfIncludedPurchase ) {
-			noticeText = translate(
+			const noticeText = translate(
 				'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire and be removed from your site %(expiry)s.',
 				{
 					args: {
@@ -363,12 +364,19 @@ class PurchaseNotice extends Component {
 			// included purchase (rather than the plan that it is attached to).
 			// So we have to rely on the user going to the manage purchase page
 			// for the plan to renew it there.
-			showNoticeAction = false;
-		} else {
-			noticeText = this.getExpiringText( currentPurchase );
-			showNoticeAction = true;
+			return (
+				<Notice
+					className="manage-purchase__purchase-expiring-notice"
+					showDismiss={ false }
+					status={ noticeStatus }
+					text={ noticeText }
+				>
+					{ this.trackImpression( 'purchase-expiring' ) }
+				</Notice>
+			);
 		}
 
+		const noticeText = this.getExpiringText( currentPurchase );
 		return (
 			<Notice
 				className="manage-purchase__purchase-expiring-notice"
@@ -376,7 +384,7 @@ class PurchaseNotice extends Component {
 				status={ noticeStatus }
 				text={ noticeText }
 			>
-				{ showNoticeAction && this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
+				{ this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
 		);
