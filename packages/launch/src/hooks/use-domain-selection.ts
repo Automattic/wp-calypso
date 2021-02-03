@@ -3,9 +3,10 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import type { DomainSuggestions } from '@automattic/data-stores';
-import { mockDomainSuggestion, useDomainSuggestions } from '@automattic/domain-picker';
+import { DomainSuggestions } from '@automattic/data-stores';
+import { mockDomainSuggestion } from '@automattic/domain-picker';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import { DOMAIN_SUGGESTIONS_STORE } from '../stores';
 
 /**
  * Internal dependencies
@@ -42,17 +43,34 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 
 	const domainName = domainProductFromCart?.meta;
 
-	// const TLD = domainName?.split( '.' )[ 1 ];
+	const domainDetails = useSelect( ( select ) =>
+		select( DOMAIN_SUGGESTIONS_STORE ).isAvailable( domainName || '' )
+	);
 
-	const domainSuggestions = useDomainSuggestions( domainName, 5, undefined, undefined, {
-		include_wordpressdotcom: false,
-		exact_sld_matches_only: true,
-		include_registered: true,
-		// tlds: [ TLD ], // an attempt for more precise results, didn't help
-	} )?.allDomainSuggestions;
+	// if the domain is still available, forge a domain suggestion from it and return it
+	if (
+		domainProductFromCart &&
+		domainName &&
+		domainDetails &&
+		[ 'available', 'available_premium' ].indexOf( domainDetails.status ) > -1
+	) {
+		return {
+			hsts_required: domainDetails.hsts_required,
+			domain_name: domainName,
+			raw_price: domainProductFromCart.cost,
+			currency_code: domainProductFromCart.currency,
+			supports_privacy: domainProductFromCart.extra.privacy_available,
+			is_free: false,
+			product_id: domainProductFromCart.product_id,
+			product_slug: domainProductFromCart.product_slug,
+			cost: DomainSuggestions.getFormattedPrice(
+				domainProductFromCart.cost,
+				domainProductFromCart.currency
+			),
+		};
+	}
 
-	// search for a matching suggestion and return `undefined` if nothing matches
-	return domainSuggestions?.find( ( domain ) => domain.domain_name === domainName );
+	return undefined;
 }
 
 type DomainSelection = {
