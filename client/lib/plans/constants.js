@@ -22,8 +22,7 @@ import {
 export const JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN = true;
 export const JETPACK_REDIRECT_URL =
 	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';
-export const redirectCloudCheckoutToWpAdmin = () =>
-	JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN ? true : false;
+export const redirectCloudCheckoutToWpAdmin = () => !! JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN;
 
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
