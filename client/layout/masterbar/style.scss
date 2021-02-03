@@ -1,5 +1,12 @@
 $autobar-height: 20px;
 
+// Hide the masterbar on WP Mobile App views.
+.is-mobile-app-view {
+	.masterbar {
+		display: none;
+	}
+}
+
 // The WordPress.com Masterbar
 .masterbar {
 	background: var( --color-masterbar-background );
