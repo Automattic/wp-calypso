@@ -152,6 +152,30 @@ describe( 'PurchaseNotice', () => {
 		expect( screen.getByText( 'Add Payment Method' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders expired purchase text and renew now button if purchase is expired, renewable, not rechargable, and payment method is credits', () => {
+		const purchase = {
+			product_slug: 'value_bundle',
+			isRenewable: true,
+			isRechargeable: false,
+			expiryStatus: 'expired',
+			payment: { type: 'credits' },
+		};
+		render(
+			<ReduxProvider store={ store }>
+				<PurchaseNotice
+					purchase={ purchase }
+					isProductOwner={ true }
+					selectedSite={ { slug: 'testingsite' } }
+					renewableSitePurchases={ [] }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( 'This purchase has expired and is no longer in use.' )
+		).toBeInTheDocument();
+		expect( screen.getByText( 'Renew Now' ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders nothing if purchase is expired, is not renewable, not rechargable, and the payment method is a card', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
