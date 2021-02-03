@@ -209,7 +209,7 @@ class PurchaseNotice extends Component {
 
 		return (
 			! isRechargeable( purchase ) && (
-				<NoticeAction onClick={ onClick }>{ translate( 'Renew now' ) }</NoticeAction>
+				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
 			)
 		);
 	}
@@ -678,7 +678,7 @@ class PurchaseNotice extends Component {
 		) {
 			noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 			noticeActionOnClick = this.handleExpiringNoticeRenewAll;
-			noticeActionText = translate( 'Renew now' );
+			noticeActionText = translate( 'Renew Now' );
 			noticeImpressionName = 'current-expires-later-others-expire-soon';
 
 			if ( anotherPurchaseIsExpired ) {
@@ -721,7 +721,7 @@ class PurchaseNotice extends Component {
 		) {
 			noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 			noticeActionOnClick = this.handleExpiringNoticeRenewAll;
-			noticeActionText = translate( 'Renew now' );
+			noticeActionText = translate( 'Renew Now' );
 			noticeImpressionName = 'current-renews-later-others-expire-soon';
 
 			if ( anotherPurchaseIsExpired ) {
