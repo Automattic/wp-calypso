@@ -52,7 +52,9 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 		domainProductFromCart &&
 		domainName &&
 		domainDetails &&
-		[ 'available', 'available_premium' ].indexOf( domainDetails.status ) > -1
+		// for now, we consider premium domains unavailable and don't convert them into suggestions
+		// [ 'available', 'available_premium' ].indexOf( domainDetails.status ) > -1
+		domainDetails.status === 'available'
 	) {
 		return {
 			hsts_required: domainDetails.hsts_required,
