@@ -4,6 +4,11 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 
 ## Table of contents
 
+- [Overview](#overview)
+    - [What is this?](#what-is-this)
+    - [Our Goals](#our-goals)
+    - [Technology](#technology)
+    - [What is tested?](#what-is-tested)
 - [Setup](docs/setup.md)
   - [Software Environment](docs/setup.md#software-environment)
   - [Configuration](docs/setup.md#configuration)
