@@ -13,7 +13,6 @@ import classnames from 'classnames';
 import AsyncLoad from 'calypso/components/async-load';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
-import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import notices from 'calypso/notices';
 import config from '@automattic/calypso-config';
@@ -48,7 +47,6 @@ import Experiment from 'calypso/components/experiment';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
 
 /**
  * Style dependencies
@@ -131,10 +129,6 @@ class Layout extends Component {
 			return false;
 		}
 
-		if ( isWpMobileApp() ) {
-			return false;
-		}
-
 		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
 		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
 		const exemptedRoutesStartingWith = [ '/start/p2' ];
@@ -149,9 +143,6 @@ class Layout extends Component {
 	}
 
 	renderMasterbar() {
-		if ( this.props.masterbarIsHidden ) {
-			return <EmptyMasterbar />;
-		}
 		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
 			? JetpackCloudMasterbar
 			: MasterbarLoggedIn;
@@ -341,10 +332,7 @@ export default compose(
 
 		return {
 			masterbarIsHidden:
-				! masterbarIsVisible( state ) ||
-				noMasterbarForSection ||
-				noMasterbarForRoute ||
-				isWpMobileApp(),
+				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
 			isJetpack,
 			isJetpackLogin,
 			isJetpackWooCommerceFlow,
