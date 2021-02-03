@@ -56,6 +56,12 @@ export class MissingExperimentAssignmentError extends Error {
  * @param config Configuration object
  */
 export default function createExPlatClient( config: Config ): ExPlatClient {
+	if ( typeof window === 'undefined' ) {
+		throw new Error( 'Running outside of a browser context.' );
+	}
+
+	const store = State.createStore();
+
 	/**
 	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
 	 *
@@ -69,7 +75,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				config,
 				experimentName
 			);
-			State.storeExperimentAssignment( fetchedExperimentAssignment );
+			State.storeExperimentAssignment( store, fetchedExperimentAssignment );
 			return fetchedExperimentAssignment;
 		} );
 	const experimentNameToAOAATExperimentAssignmentFetchAndStore: Record<
@@ -84,7 +90,10 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					throw new Error( `Invalid experimentName: ${ experimentName }` );
 				}
 
-				const storedExperimentAssignment = State.retrieveExperimentAssignment( experimentName );
+				const storedExperimentAssignment = State.retrieveExperimentAssignment(
+					store,
+					experimentName
+				);
 				if (
 					storedExperimentAssignment &&
 					ExperimentAssignments.isAlive( storedExperimentAssignment )
@@ -120,7 +129,10 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					}
 
 					// We provide stale but "recent" ExperimentAssignments, important for offline users.
-					const storedExperimentAssignment = State.retrieveExperimentAssignment( experimentName );
+					const storedExperimentAssignment = State.retrieveExperimentAssignment(
+						store,
+						experimentName
+					);
 					if (
 						storedExperimentAssignment &&
 						ExperimentAssignments.isRecent( storedExperimentAssignment )
@@ -131,18 +143,21 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					// TODO: Possibly move this within async-one-at-a-time as we only want this to happen once across requests.
 					//       It happens to be ok now as we are fetching the recent stored EA just above.
 					const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
-					State.storeExperimentAssignment( fallbackExperimentAssignment );
+					State.storeExperimentAssignment( store, fallbackExperimentAssignment );
 					return fallbackExperimentAssignment;
 				} catch ( e2 ) {
+					// The devMode error gets passed through so we throw it again.
+					if ( config.isDevelopmentMode ) {
+						throw e2;
+					}
+
 					try {
 						config.logError( {
 							message: e2.message,
 							experimentName,
+							isSecondaryError: 'true',
 						} );
 					} catch ( e3 ) {}
-					if ( config.isDevelopmentMode ) {
-						throw e2;
-					}
 
 					// As a last resort we just keep it very simple
 					return createFallbackExperimentAssignment( experimentName );
@@ -154,7 +169,10 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				throw new Error( `Invalid experimentName: ${ experimentName }` );
 			}
 
-			const storedExperimentAssignment = State.retrieveExperimentAssignment( experimentName );
+			const storedExperimentAssignment = State.retrieveExperimentAssignment(
+				store,
+				experimentName
+			);
 			if ( ! storedExperimentAssignment ) {
 				throw new MissingExperimentAssignmentError(
 					`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`

@@ -3,6 +3,7 @@
  */
 import type { ExperimentAssignment } from '../types';
 import * as Timing from './timing';
+import { isName } from './validations';
 
 /**
  * Check if an ExperimentAssignment is still alive (as in the TTL).
@@ -42,15 +43,18 @@ const fallbackExperimentAssignmentTtl = 60;
 
 /**
  * A fallback ExperimentAssignment we return when we can't retrieve one.
+ * As it is used in fallback situations, this function must never throw.
  *
  * @param experimentName The name of the experiment
  */
 export const createFallbackExperimentAssignment = (
 	experimentName: string
-): ExperimentAssignment => ( {
-	experimentName,
-	variationName: null,
-	retrievedTimestamp: Timing.monotonicNow(),
-	ttl: fallbackExperimentAssignmentTtl,
-	isFallbackExperimentAssignment: true,
-} );
+): ExperimentAssignment => {
+	return {
+		experimentName: isName( experimentName ) ? experimentName : 'fallback_experiment_assignment',
+		variationName: null,
+		retrievedTimestamp: Timing.monotonicNow(),
+		ttl: fallbackExperimentAssignmentTtl,
+		isFallbackExperimentAssignment: true,
+	};
+};
