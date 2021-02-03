@@ -115,7 +115,11 @@
 	.help__support-session-text,
 	.help__support-session-illustration {
 		box-sizing: border-box;
-		padding: 24px;
+		padding: 24px 16px;
+
+		@include break-large {
+			padding: 24px;
+		}
 
 		@include break-huge {
 			padding: 32px;
