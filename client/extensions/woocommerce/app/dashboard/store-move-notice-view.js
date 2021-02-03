@@ -14,7 +14,7 @@ import { localize, translate } from 'i18n-calypso';
 import { Card, Button } from '@automattic/components';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import config from '@automattic/calypso-config';
-
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 /**
  * Image dependencies
  */
@@ -34,6 +34,14 @@ function getStoreStatus( isStoreDeprecated, isStoreRemoved ) {
 }
 
 class StoreMoveNoticeView extends Component {
+	trackTryWooCommerceClick = () => {
+		this.props.recordTracksEvent( 'calypso_store_try_woocommerce_click' );
+	};
+
+	trackLearnMoreAboutWooCommerceClick = () => {
+		this.props.recordTracksEvent( 'calypso_store_learn_more_about_woocommerce_click' );
+	};
+
 	render = () => {
 		const { site, isStoreDeprecated, isStoreRemoved } = this.props;
 		const status = getStoreStatus( isStoreDeprecated, isStoreRemoved );
@@ -45,11 +53,14 @@ class StoreMoveNoticeView extends Component {
 				<p>
 					{ isStoreDeprecated &&
 						translate(
-							'We’re retiring Store on February 22. With WooCommerce, discover a more flexible store management experience – including top-level access to your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what to expect.',
+							'We’re retiring Store on February 22. With WooCommerce, discover a more flexible store management experience — including top-level access to your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what to expect.',
 							{
 								components: {
 									link: (
-										<a href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/" />
+										<a
+											onClick={ this.trackLearnMoreAboutWooCommerceClick }
+											href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
+										/>
 									),
 								},
 							}
@@ -60,13 +71,20 @@ class StoreMoveNoticeView extends Component {
 							{
 								components: {
 									link: (
-										<a href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/" />
+										<a
+											onClick={ this.trackLearnMoreAboutWooCommerceClick }
+											href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
+										/>
 									),
 								},
 							}
 						) }
 				</p>
-				<Button primary href={ site.URL + '/wp-admin/admin.php?page=wc-admin&from-calypso' }>
+				<Button
+					primary
+					onClick={ this.trackTryWooCommerceClick }
+					href={ site.URL + '/wp-admin/admin.php?page=wc-admin&from-calypso' }
+				>
 					{ translate( 'Try WooCommerce now' ) }
 				</Button>
 			</Card>
@@ -82,4 +100,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( localize( StoreMoveNoticeView ) );
+export default connect( mapStateToProps, {
+	recordTracksEvent,
+} )( localize( StoreMoveNoticeView ) );
