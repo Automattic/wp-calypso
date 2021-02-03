@@ -20,6 +20,7 @@ import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
 import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
+import { useIsAnchorFm } from '../../path';
 
 /**
  * Style dependencies
@@ -57,7 +58,9 @@ const AcquireIntent: React.FunctionComponent = () => {
 		has_selected_site_title: hasSiteTitle(),
 	} ) );
 
-	useDetectMatchingAnchorSite();
+	// Allow Anchor Gutenboarding to check the backend for matching sites and redirect if found.
+	const isAnchorFm = useIsAnchorFm();
+	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
 
 	const handleSkip = () => {
 		skipSiteVertical();
@@ -106,6 +109,12 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const siteVertical = getSelectedVertical();
 
 	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
+
+	// In the case of an Anchor signup, we ask the backend to see if they already
+	// have an anchor site. If we're still waiting for this response, don't show anything yet.
+	if ( isAnchorFm && isLookingUpMatchingAnchorSites ) {
+		return <div className="gutenboarding-page acquire-intent" />;
+	}
 
 	return (
 		<div className="gutenboarding-page acquire-intent">
