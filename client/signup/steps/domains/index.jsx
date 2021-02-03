@@ -563,18 +563,20 @@ class DomainsStep extends React.Component {
 
 		return (
 			<div className="domains__step-section-wrapper" key="transferForm">
-				<TransferDomainStep
-					analyticsSection={ this.getAnalyticsSection() }
-					basePath={ this.props.path }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-					isSignupStep
-					mapDomainUrl={ this.getMapDomainUrl() }
-					onRegisterDomain={ this.handleAddDomain }
-					onTransferDomain={ this.handleAddTransfer }
-					onSave={ this.onTransferSave }
-					products={ this.props.productsList }
-				/>
+				<CalypsoShoppingCartProvider>
+					<TransferDomainStep
+						analyticsSection={ this.getAnalyticsSection() }
+						basePath={ this.props.path }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						initialQuery={ initialQuery }
+						isSignupStep
+						mapDomainUrl={ this.getMapDomainUrl() }
+						onRegisterDomain={ this.handleAddDomain }
+						onTransferDomain={ this.handleAddTransfer }
+						onSave={ this.onTransferSave }
+						products={ this.props.productsList }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
@@ -584,16 +586,18 @@ class DomainsStep extends React.Component {
 
 		return (
 			<div className="domains__step-section-wrapper" key="useYourDomainForm">
-				<UseYourDomainStep
-					analyticsSection={ this.getAnalyticsSection() }
-					basePath={ this.props.path }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-					isSignupStep
-					mapDomainUrl={ this.getMapDomainUrl() }
-					transferDomainUrl={ this.getTransferDomainUrl() }
-					products={ this.props.productsList }
-				/>
+				<CalypsoShoppingCartProvider>
+					<UseYourDomainStep
+						analyticsSection={ this.getAnalyticsSection() }
+						basePath={ this.props.path }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						initialQuery={ initialQuery }
+						isSignupStep
+						mapDomainUrl={ this.getMapDomainUrl() }
+						transferDomainUrl={ this.getTransferDomainUrl() }
+						products={ this.props.productsList }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
