@@ -13,7 +13,7 @@ $wpcom-modal-footer-padding-v: 20px;
 $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 // Core modal style overrides
-.nav-unification-modal__announcement {
+.nav-unification-modal {
 	&.components-modal__frame {
 		overflow: visible;
 		height: 65vh;
@@ -96,6 +96,16 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 			display: block;
 		}
 	}
+
+	.components-guide__finish-button {
+		background-color: var(--studio-pink-50);
+		color: #ffffff;
+		border-radius: 3px;
+
+		&:hover {
+			color: #ffffff;
+		}
+	}
 }
 
 .nav-unification-modal__page {
@@ -126,8 +136,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .nav-unification-modal__text {
 	padding: 25px;
 	height: 60%;
+	order: 2;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
+		order: 1;
 		height: auto;
 		padding: $wpcom-modal-padding-v $wpcom-modal-padding-h;
 	}
@@ -138,8 +150,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	text-align: center;
 	overflow: hidden;
 	position: relative;
+	order: 1;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
+		order: 2;
 		height: auto;
 	}
 }

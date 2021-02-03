@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -21,6 +22,7 @@ const Modal = () => {
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const dismissPreference = `nav-unification-modal-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
+	const translate = useTranslate();
 
 	if ( ! hasPreferences || isDismissed ) {
 		return null;
@@ -32,7 +34,7 @@ const Modal = () => {
 
 	return (
 		<Guide
-			className="nav-unification-modal__announcement"
+			className="nav-unification-modal"
 			onFinish={ handleDismiss }
 			pages={ [
 				{
@@ -50,8 +52,10 @@ const Modal = () => {
 									/>
 								</picture>
 							}
-							heading="A new way to navigate"
-							content="Introducing a single site management experience for WordPress.com."
+							heading={ translate( 'A new way to navigate' ) }
+							content={ translate(
+								'Introducing a single site management experience for WordPress.com.'
+							) }
 						/>
 					),
 				},
@@ -70,8 +74,10 @@ const Modal = () => {
 									/>
 								</picture>
 							}
-							heading="Everything in one place"
-							content="Manage your entire site from the sidebar, all without ever leaving your dashboard."
+							heading={ translate( 'Everything in one place' ) }
+							content={ translate(
+								'Manage your entire site from the sidebar, all without ever leaving your dashboard.'
+							) }
 						/>
 					),
 				},
@@ -90,8 +96,10 @@ const Modal = () => {
 									/>
 								</picture>
 							}
-							heading="Make it your own"
-							content="Customize the appearance of your navigation from your account settings."
+							heading={ translate( 'Make it your own' ) }
+							content={ translate(
+								'Customize the appearance of your navigation from your account settings.'
+							) }
 						/>
 					),
 				},
