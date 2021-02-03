@@ -7,6 +7,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -29,7 +30,6 @@ import {
 	recordGoogleRecaptchaAction,
 	recordOnboardingError,
 } from '../../lib/analytics';
-import { localizeUrl } from '../../../../lib/i18n-utils';
 import { useTrackModal } from '../../hooks/use-track-modal';
 import config from '@automattic/calypso-config';
 
@@ -61,6 +61,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	useTrackModal( 'Signup' );
 
 	const lang = useLangRouteParam();
+	const localizeUrl = useLocalizeUrl();
 
 	useEffect( () => {
 		initGoogleRecaptcha(
