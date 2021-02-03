@@ -44,6 +44,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * WelcomeTour: capture mousedown event and call preventDefault on the event (https://github.com/Automattic/wp-calypso/pull/49583)
 * Premium Content: Remove from the Editing Toolkit plugin (https://github.com/Automattic/wp-calypso/pull/49561)
 * Anchor: Gutenboarding Launch works immediately without domain or plan selection (https://github.com/Automattic/wp-calypso/pull/48938)
+* Editing Toolkit: Update Newspack blocks to v1.19.0 (https://github.com/Automattic/wp-calypso/pull/49493)
+* Plans store: Always pass locale to plans store (https://github.com/Automattic/wp-calypso/pull/49559)
+* Welcome Tour: Prevent clicks on Tour from bubbling up to the Block Inserter (https://github.com/Automattic/wp-calypso/pull/49583)
 
 = 2.16 =
 * Fix Global Styles Panel Font Change Update (https://github.com/Automattic/wp-calypso/pull/49216)
