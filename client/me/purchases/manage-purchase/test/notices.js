@@ -67,7 +67,7 @@ describe( 'PurchaseNotice', () => {
 		expect( screen.getByText( 'This session has been used.' ) ).toBeInTheDocument();
 	} );
 
-	// TODO: come back to this.renderOtherRenewablePurchasesNotice
+	// TODO: add tests for renderOtherRenewablePurchasesNotice
 
 	it( 'renders expired plan text if purchase is included with a plan, the plan is expired, and the purchase is not renewable', () => {
 		const plan = {
@@ -127,6 +127,29 @@ describe( 'PurchaseNotice', () => {
 			screen.getByText( 'This purchase has expired and is no longer in use.' )
 		).toBeInTheDocument();
 		expect( screen.getByText( 'Renew Now' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders expired purchase text and add card button if purchase is expired, renewable, not rechargable, and there is no payment method', () => {
+		const purchase = {
+			product_slug: 'value_bundle',
+			isRenewable: true,
+			isRechargeable: false,
+			expiryStatus: 'expired',
+		};
+		render(
+			<ReduxProvider store={ store }>
+				<PurchaseNotice
+					purchase={ purchase }
+					isProductOwner={ true }
+					selectedSite={ { slug: 'testingsite' } }
+					renewableSitePurchases={ [] }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( 'This purchase has expired and is no longer in use.' )
+		).toBeInTheDocument();
+		expect( screen.getByText( 'Add Payment Method' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders nothing if purchase is expired, is not renewable, not rechargable, and the payment method is a card', () => {
