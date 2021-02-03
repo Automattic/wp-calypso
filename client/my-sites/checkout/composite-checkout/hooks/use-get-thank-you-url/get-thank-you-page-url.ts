@@ -121,6 +121,14 @@ export default function getThankYouPageUrl( {
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
+	// If receipt ID is 'noPreviousPurchase', then send the user to a generic page (not post-purchase related).
+	// For example, this case arises when a Skip button is clicked on a concierge upsell
+	// nudge opened by a direct link to /checkout/offer-support-session.
+	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
+		debug( 'receipt ID is "noPreviousPurchase", so returning: ', fallbackUrl );
+		return fallbackUrl;
+	}
+
 	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
 
 	// If the user is making a purchase/upgrading within the editor,
@@ -148,16 +156,6 @@ export default function getThankYouPageUrl( {
 			managePurchaseUrl
 		);
 		return managePurchaseUrl;
-	}
-
-	// If cart is empty, then send the user to a generic page (not post-purchase related).
-	// For example, this case arises when a Skip button is clicked on a concierge upsell
-	// nudge opened by a direct link to /offer-support-session.
-	const isCartEmpty = cart && getAllCartItems( cart ).length === 0;
-	if ( ':receiptId' === pendingOrReceiptId && isCartEmpty ) {
-		const emptyCartUrl = urlFromCookie || fallbackUrl;
-		debug( 'cart is empty or receipt ID is pending, so returning', emptyCartUrl );
-		return emptyCartUrl;
 	}
 
 	// Domain only flow
