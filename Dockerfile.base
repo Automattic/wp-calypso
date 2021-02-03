@@ -12,6 +12,7 @@ ENV NODE_ENV=production
 ENV CALYPSO_ENV=production
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
+ENV PERSISTENT_CACHE=true
 
 RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
 	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"

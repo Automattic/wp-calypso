@@ -12,7 +12,7 @@ FROM registry.a8c.com/calypso/base:latest as builder-cache-true
 
 ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
-
+ENV PERSISTENT_CACHE=true
 
 ###################
 FROM builder-cache-${use_cache} as builder
