@@ -14,7 +14,7 @@ import MailingList from './mailing-list';
 import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import { addQueryArgs } from '@wordpress/url';
+import addQueryArgs from 'calypso/lib/url/add-query-args';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -2649,7 +2649,7 @@ Undocumented.prototype.getMatchingAnchorSite = function (
 		episode: anchorFmEpisodeId,
 		spotify_url: anchorFmSpotifyUrl,
 	};
-	const anchorEndpointUrl = addQueryArgs( '/anchor', queryParts );
+	const anchorEndpointUrl = addQueryArgs( queryParts, '/anchor' );
 	return this.wpcom.req.get( {
 		path: anchorEndpointUrl,
 		method: 'GET',
