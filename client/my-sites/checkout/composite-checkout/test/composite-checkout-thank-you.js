@@ -17,7 +17,6 @@ import {
 } from 'calypso/lib/plans/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
-
 let mockGSuiteCountryIsValid = true;
 jest.mock( 'calypso/lib/user', () =>
 	jest.fn( () => ( {
