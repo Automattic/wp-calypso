@@ -40,8 +40,9 @@ const Header: React.FunctionComponent = () => {
 	const showPlansButton =
 		[ 'DesignSelection', 'Style', 'Features' ].includes( currentStep ) && ! isAnchorFmSignup;
 
-	// locale button is hidden on AnchorFM flavored gutenboarding
-	const showLocaleButton = ! isAnchorFmSignup;
+	// locale button is hidden on DomainsModal, PlansModal, and AnchorFM flavored gutenboarding
+	const showLocaleButton =
+		! [ 'DomainsModal', 'PlansModal' ].includes( currentStep ) && ! isAnchorFmSignup;
 
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
