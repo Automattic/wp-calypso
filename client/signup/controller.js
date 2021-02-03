@@ -43,6 +43,9 @@ import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'calypso/lib/abtest';
 import user from 'calypso/lib/user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 
 /**
  * Constants
@@ -302,6 +305,18 @@ export default {
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName ),
 		} );
+
+		next();
+	},
+	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
+		const state = signupStore.getState();
+		const selectedSiteId = getSelectedSiteId( state );
+		const signupDependencies = getSignupDependencyStore( state );
+
+		if ( ! selectedSiteId && ( signupDependencies?.siteSlug || query?.siteSlug ) ) {
+			const siteId = getSiteId( state, signupDependencies?.siteSlug || query?.siteSlug );
+			signupStore.dispatch( setSelectedSiteId( siteId ) );
+		}
 
 		next();
 	},
