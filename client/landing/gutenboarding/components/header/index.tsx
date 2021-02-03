@@ -15,6 +15,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
 import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
+import { isEnabled } from '@automattic/calypso-config';
 import Link from '../link';
 
 /**
@@ -51,16 +52,19 @@ const Header: React.FunctionComponent = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 	const changeLocaleButton = () => {
-		return (
-			<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
-				<Link to={ makePath( Step.LanguageModal ) }>
-					<span className="gutenboarding__header-site-language-label">
-						{ __( 'Site Language' ) }
-					</span>
-					<span className="gutenboarding__header-site-language-badge">{ locale }</span>
-				</Link>
-			</div>
-		);
+		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
+			return (
+				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
+					<Link to={ makePath( Step.LanguageModal ) }>
+						<span className="gutenboarding__header-site-language-label">
+							{ __( 'Site Language' ) }
+						</span>
+						<span className="gutenboarding__header-site-language-badge">{ locale }</span>
+					</Link>
+				</div>
+			);
+		}
+		return null;
 	};
 
 	return (

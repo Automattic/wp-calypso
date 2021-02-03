@@ -51,6 +51,7 @@
 		"google-my-business": true,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
+		"gutenboarding/language-picker": false,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch-mobile": true,
 		"happychat": true,
