@@ -292,13 +292,13 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		select( LAUNCH_STORE ).getPaidPlanProductId()
 	);
 
-	const { selectedPlan, selectedPaidPlan, selectedPlanBillingPeriod } = useSelect( ( select ) => {
+	const { selectedPlan, selectedPaidPlan, billingPeriod } = useSelect( ( select ) => {
 		const plansStore = select( PLANS_STORE );
 
 		return {
 			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
 			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
-			selectedPlanBillingPeriod:
+			billingPeriod:
 				plansStore.getPlanProductById( selectedPlanProductId )?.billingPeriod || 'ANNUALLY',
 		};
 	} );
@@ -330,9 +330,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	const allAvailablePlansProducts = useSelect(
 		( select ) =>
 			allAvailablePlans.map( ( plan ) =>
-				select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, selectedPlanBillingPeriod )
+				select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, billingPeriod )
 			),
-		[ allAvailablePlans, selectedPlanBillingPeriod ]
+		[ allAvailablePlans, billingPeriod ]
 	);
 
 	return (
