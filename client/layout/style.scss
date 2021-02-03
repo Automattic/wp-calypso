@@ -316,8 +316,11 @@
 		}
 	}
 }
-
-.layout.has-no-masterbar {
+// Only apply the no-masterbar rule to logged in sections
+// This is done since most has-no-masterbar section have their own padding set already that we don't want to overwrite 
+.layout.has-no-masterbar.is-group-me,
+.layout.has-no-masterbar.is-group-sites,
+.layout.has-no-masterbar.is-section-reader {
 	--masterbar-height: 0;
 
 	.layout__content {
@@ -327,4 +330,3 @@
 		padding-top: 0;
 	}
 }
-
