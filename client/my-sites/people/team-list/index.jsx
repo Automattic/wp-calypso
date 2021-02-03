@@ -3,33 +3,54 @@
  */
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 /**
  * Internal dependencies
  */
-import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
 import Team from './team';
+import { useUsersQuery } from './users-query';
+import { uniqueBy } from './helpers';
 
-class TeamList extends React.Component {
-	static displayName = 'TeamList';
+function TeamList( props ) {
+	const { site, search } = props;
+	const fetchOptions = {
+		siteId: site?.ID,
+		order: 'ASC',
+		order_by: 'display_name',
+	};
 
-	render() {
-		const fetchOptions = {
-			siteId: this.props.site && this.props.site.ID,
-			order: 'ASC',
-			order_by: 'display_name',
-			search: this.props.search ? '*' + this.props.search + '*' : null,
-			search_columns: [ 'display_name', 'user_login' ],
-		};
-
-		Object.freeze( fetchOptions );
-
-		return (
-			<SiteUsersFetcher fetchOptions={ fetchOptions }>
-				<Team { ...this.props } />
-			</SiteUsersFetcher>
-		);
+	if ( search ) {
+		fetchOptions.search = `*${ search }*`;
+		fetchOptions.search_columns = [ 'display_name', 'user_login' ];
 	}
+
+	const { users, total, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useUsersQuery(
+		fetchOptions
+	);
+
+	/* @TODO: this shouldn't be possible but there are duplicates returned from the API sometimes */
+	const uniqueUsers = uniqueBy( users, ( a, b ) => a.ID === b.ID );
+
+	return (
+		<Team
+			fetchingUsers={ isLoading }
+			fetchingNextPage={ isFetchingNextPage }
+			totalUsers={ total }
+			users={ uniqueUsers }
+			excludedUsers={ [] }
+			fetchOptions={ fetchOptions }
+			fetchNextPage={ fetchNextPage }
+			hasNextPage={ hasNextPage }
+			{ ...props }
+		/>
+	);
 }
 
-export default localize( TeamList );
+export default localize( ( props ) => (
+	<QueryClientProvider client={ queryClient }>
+		<TeamList { ...props } />
+	</QueryClientProvider>
+) );
