@@ -1,0 +1,59 @@
+{
+	"name": "@automattic/page-template-modal",
+	"version": "1.0.0",
+	"description": "Automattic Page Template Modal",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/page-template-modal"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"dependencies": {
+		"@wordpress/nux": "^3.24.1",
+		"@wordpress/i18n": "*",
+		"@wordpress/compose": "*",
+		"@wordpress/components": "*",
+		"@wordpress/data": "*",
+		"@wordpress/element": "*",
+		"@wordpress/blocks": "*",
+		"@wordpress/hooks": "*",
+		"@wordpress/api-fetch": "*",
+		"@wordpress/url": "*",
+		"lodash": "*",
+		"classnames": "^2.2.6",
+		"@wordpress/block-editor": "*",
+		"@wordpress/editor": "*"
+	},
+	"devDependencies": {
+		"react": "^16.12.0",
+		"react-dom": "^16.12.0",
+		"react-test-renderer": "^16.12.0"
+	},
+	"peerDependencies": {
+		"react": "^16.8"
+	},
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
+	}
+}
