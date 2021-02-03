@@ -298,8 +298,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		return {
 			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
 			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
-			selectedPlanBillingPeriod: plansStore.getPlanProductById( selectedPlanProductId )
-				?.billingPeriod,
+			selectedPlanBillingPeriod:
+				plansStore.getPlanProductById( selectedPlanProductId )?.billingPeriod || 'ANNUALLY',
 		};
 	} );
 
