@@ -152,7 +152,7 @@ describe( 'PurchaseNotice', () => {
 		expect(
 			screen.getByText( 'This purchase has expired and is no longer in use.' )
 		).toBeInTheDocument();
-		expect( screen.getByText( 'Renew Now' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Renew now' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders expired purchase text and add card button if purchase is expired, renewable, not rechargable, and there is no payment method', () => {
@@ -178,7 +178,7 @@ describe( 'PurchaseNotice', () => {
 		expect( screen.getByText( 'Add Payment Method' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders expired purchase text and renew now button if purchase is expired, renewable, not rechargable, and payment method is credits', () => {
+	it( 'renders expired purchase text and renew button if purchase is expired, renewable, not rechargable, and payment method is credits', () => {
 		const purchase = {
 			product_slug: 'value_bundle',
 			isRenewable: true,
@@ -199,7 +199,7 @@ describe( 'PurchaseNotice', () => {
 		expect(
 			screen.getByText( 'This purchase has expired and is no longer in use.' )
 		).toBeInTheDocument();
-		expect( screen.getByText( 'Renew Now' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Renew now' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders nothing if purchase is expired, is not renewable, not rechargable, and the payment method is a card', () => {
@@ -304,7 +304,7 @@ describe( 'PurchaseNotice', () => {
 		expect(
 			screen.getByText( /Premium will expire and be removed from your site/ )
 		).toBeInTheDocument();
-		expect( screen.getByText( 'Renew Now' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Renew now' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders product expiring text and renew button if purchase is expiring and payment method is credits', () => {
@@ -330,7 +330,7 @@ describe( 'PurchaseNotice', () => {
 		expect(
 			screen.getByText( /Premium will expire and be removed from your site/ )
 		).toBeInTheDocument();
-		expect( screen.getByText( 'Renew Now' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Renew now' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders product expiring text and add card button if purchase is expiring and there is no payment method', () => {
