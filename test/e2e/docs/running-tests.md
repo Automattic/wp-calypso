@@ -5,26 +5,27 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-  - [Table of Contents](#table-of-contents)
-  - [Local](#local)
-    - [Run all tests default](#run-all-tests-default)
-    - [Run individual spec](#run-individual-spec)
-    - [Run individual case](#run-individual-case)
-    - [Modes](#modes)
-    - [Headless](#headless)
-    - [Other options](#other-options)
-    - [CircleCI docker image](#circleci-docker-image)
-  - [CircleCI](#circleci)
-    - [Canary](#canary)
-    - [Full suite](#full-suite)
-    - [Schedule](#schedule)
-  - [Sauce Labs](#sauce-labs)
+    - [Table of Contents](#table-of-contents)
+    - [Local Against Staging](#local-against-staging)
+        - [Run all tests default](#run-all-tests-default)
+        - [Run individual spec](#run-individual-spec)
+        - [Run individual case](#run-individual-case)
+        - [Headless](#headless)
+        - [Other options](#other-options)
+    - [Local Development Environment](#local-development-environment)
+    - [CircleCI](#circleci)
+        - [Canary](#canary)
+        - [Full suite](#full-suite)
+        - [Schedule](#schedule)
+    - [Sauce Labs](#sauce-labs)
 
 <!-- /TOC -->
 
-## Local
+## Local Against Staging
 
 To run tests locally, ensure relevant steps in the [setup](docs/setup.md) have been followed.
+
+These steps will execute tests against WordPress.com staging environment. To run against a local development environment see the section below.
 
 ### Run all tests (default)
 
@@ -72,30 +73,6 @@ eg.
 
 **!NOTE**: this syntax should be removed once the test is to be committed to the repository.
 
-### Modes
-
-All tests should be written to work in three modes: desktop (1440 wide), tablet (1024 wide) and mobile (375 wide).
-
-You can run tests in different modes by setting an environment variable `BROWSERSIZE` to either `desktop`, `tablet` or `mobile`.
-
-To force a specific mode:
-
-```
-env BROWSERSIZE=<mode> ./node_modules/.bin/mocha <path_to_e2e_spec>
-```
-
-Alternatively, use the `-s` flag when calling `run.sh`:
-
-```
-./run.sh -g -s <mode>
-```
-
-Multiple modes are supported:
-
-```
-./run.sh -g -s <mode1>,<mode2>
-```
-
 ### Headless
 
 By default the tests start their own Selenium server in the background, which in turn launches a Chrome browser on your desktop where you can watch the tests execute. This can be a bit of a headache if you're trying to do other work while the tests are running, as the browser may occasionally steal focus back (although that's mostly been resolved).
@@ -119,9 +96,14 @@ The `run.sh` script takes a number of parameters that can be mixed-and-matched.
 
 For the list of current supported flags, use `run.sh -h`.
 
-### CircleCI docker image
+## Local Development Environment
 
-WIP.
+Local development environment refers to a locally served instance of the `wp-calypso` frontend.
+
+```shell
+npm start
+./run.sh -g -u http://calypso.localhost:3000
+```
 
 ## CircleCI
 
@@ -130,7 +112,9 @@ Broadly speaking, `Automattic/wp-calypso` runs two types of test suites:
 - canary (limited set)
 - full (full set)
 
-Each suite is also scheduled to execute every _x_ hours at certain times throughout the day.
+Each suite is also scheduled to execute at regular intervals throughout the day.
+
+Additionally, suites can be triggered using the appropriate GitHub label on the PR.
 
 ### Canary
 
@@ -159,13 +143,14 @@ The following GitHub labels provide ability to trigger e2e tests for specific fe
 
 _All times are in UTC._
 
-| Suite             | When                         | Time  |
-| ----------------- | ---------------------------- | ----- |
-| WordPress.com     | Each `wp-calypso` deployment | -     |
-|                   | Every 6 hours                | 00:00 |
-| Internet Explorer | ?                            | ?     |
-| Jetpack           | Every 12 hours               | 01:00 |
-| WooCommerce       | Every 12 hours               | 11:00 |
+| Suite                 | When                         | Time                       |
+| --------------------- | ---------------------------- | -------------------------- |
+| WordPress.com         | Each `wp-calypso` deployment | -                          |
+|                       | Every 6 hours                | 00:00, 06:00, 12:00, 18:00 |
+| Internet Explorer     | ?                            | ?                          |
+| Jetpack               | Every 12 hours               | 01:00, 13:00               |
+| Jetpack Bleeding Edge | Every 12 hours               | 07:00, 19:00               |
+| WooCommerce           | Every 12 hours               | 11:00, 23:00               |
 
 ## Sauce Labs
 
