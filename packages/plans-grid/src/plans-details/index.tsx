@@ -169,7 +169,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 					<tr className="plans-details__feature-row" key="price">
 						<th>
 							{ billingPeriod === 'ANNUALLY'
-								? __( 'Monthly subscription (billed yearly)', __i18n_text_domain__ )
+								? __( 'Monthly Price (billed yearly)', __i18n_text_domain__ )
 								: __( 'Monthly subscription', __i18n_text_domain__ ) }
 						</th>
 						{ isLoading
