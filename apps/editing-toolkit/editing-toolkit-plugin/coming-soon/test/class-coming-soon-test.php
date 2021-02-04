@@ -152,6 +152,6 @@ class Coming_Soon_Test extends TestCase {
 		self::delete_coming_soon_site_options();
 
 		do_action( 'wpmu_new_blog', get_current_blog_id(), null, null, null, null, $meta );
-		$this->assertSame( 0, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertFalse( get_option( 'wpcom_public_coming_soon' ) );
 	}
 }
