@@ -43,7 +43,7 @@ import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { getStreamUrlFromPost } from 'calypso/reader/route';
+import { getPostUrl, getStreamUrlFromPost } from 'calypso/reader/route';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
@@ -467,6 +467,7 @@ export class FullPostView extends React.Component {
 						<div className="reader-full-post__sidebar-comment-like">
 							{ shouldShowComments( post ) && (
 								<CommentButton
+									href={ getPostUrl( post ) + '#comments' }
 									key="comment-button"
 									commentCount={ commentCount }
 									onClick={ this.handleCommentClick }
@@ -550,7 +551,11 @@ export class FullPostView extends React.Component {
 								/>
 							) }
 
-							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
+							<div
+								id="comments"
+								className="reader-full-post__comments-wrapper"
+								ref={ this.commentsWrapper }
+							>
 								{ shouldShowComments( post ) && (
 									<Comments
 										showNestingReplyArrow={ true }

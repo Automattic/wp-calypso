@@ -20,6 +20,7 @@ import { userCan } from 'calypso/state/posts/utils';
 import * as stats from 'calypso/reader/stats';
 import { localize } from 'i18n-calypso';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
+import { getPostUrl } from 'calypso/reader/route';
 
 /**
  * Style dependencies
@@ -86,6 +87,7 @@ const ReaderPostActions = ( props ) => {
 			{ shouldShowComments( post ) && (
 				<li className="reader-post-actions__item">
 					<CommentButton
+						href={ getPostUrl( post ) + '#comments' }
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
 						onClick={ onCommentClick }
