@@ -66,17 +66,22 @@ export class PlanPrice extends Component {
 		if ( displayFlatPrice ) {
 			const smallerPrice = renderPrice( priceRange[ 0 ] );
 			const higherPrice = priceRange[ 1 ] && renderPrice( priceRange[ 1 ] );
-
+			const termText = translate( ' per month', {
+				comment: 'Displays next to the price.',
+			} );
 			return (
-				<span className={ classes }>
-					{ priceRange[ 0 ].price.symbol }
-					{ ! higherPrice && renderPrice( priceRange[ 0 ] ) }
-					{ higherPrice &&
-						translate( '%(smallerPrice)s-%(higherPrice)s', {
-							args: { smallerPrice, higherPrice },
-							comment: 'The price range for a particular product',
-						} ) }
-				</span>
+				<>
+					<span className={ classes }>
+						{ priceRange[ 0 ].price.symbol }
+						{ ! higherPrice && renderPrice( priceRange[ 0 ] ) }
+						{ higherPrice &&
+							translate( '%(smallerPrice)s-%(higherPrice)s', {
+								args: { smallerPrice, higherPrice },
+								comment: 'The price range for a particular product',
+							} ) }
+					</span>
+					{ isInSignup && <span class="plan-price__mobile-term">{ termText }</span> }
+				</>
 			);
 		}
 
