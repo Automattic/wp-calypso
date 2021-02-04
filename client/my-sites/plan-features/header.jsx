@@ -232,6 +232,7 @@ export class PlanFeaturesHeader extends Component {
 			annualPricePerMonth,
 			isInSignup,
 			isMonthlyPlan,
+			plansWithScroll,
 		} = this.props;
 
 		if ( isInSignup && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
@@ -240,6 +241,9 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		if ( isInSignup && ! isMonthlyPlan ) {
+			if ( plansWithScroll ) {
+				return translate( 'billed annually' );
+			}
 			return translate( 'per month, billed annually' );
 		}
 
