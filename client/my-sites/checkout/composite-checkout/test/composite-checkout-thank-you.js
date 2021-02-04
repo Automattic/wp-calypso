@@ -437,7 +437,7 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: 'noPreviousPurchase',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestination: false,
+			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/' );
 	} );
