@@ -233,7 +233,7 @@ function getNewSiteParams( {
 
 function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback ) {
 	const cartItem = get( getSignupDependencyStore( state ), 'cartItem', undefined );
-	const newCartItems = [ cartItem, domainItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem, domainItem ];
 
 	const newCartItemsToAdd = newCartItems.map( ( item ) =>
 		addPrivacyProtectionIfSupported( item, state )
@@ -271,7 +271,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	// flowName isn't always passed in
 	const flowToCheck = flowName || lastKnownFlow;
 
-	const newCartItems = [ domainItem, googleAppsCartItem, themeItem ].filter( ( item ) => item );
+	const newCartItems = [ domainItem, googleAppsCartItem, themeItem ];
 
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 	const state = reduxStore.getState();
@@ -355,7 +355,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	}
 
 	const providedDependencies = { cartItem };
-	const newCartItems = [ cartItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem ];
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -372,7 +372,7 @@ export function addDomainToCart(
 	const { domainItem, googleAppsCartItem } = stepProvidedItems;
 	const providedDependencies = stepProvidedDependencies || { domainItem };
 
-	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
+	const newCartItems = [ domainItem, googleAppsCartItem ];
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
