@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, debounce, isNumber, indexOf, pull } from 'lodash';
+import { find, debounce, isNumber, indexOf } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -68,8 +68,7 @@ class ProductVariationTypesForm extends Component {
 	};
 
 	removeAttributeNameError = ( id ) => {
-		const attributeNameErrors = this.state.attributeNameErrors;
-		pull( attributeNameErrors, id );
+		const attributeNameErrors = this.state.attributeNameErrors.filter( ( e ) => e !== id );
 		this.setState( { attributeNameErrors } );
 	};
 
