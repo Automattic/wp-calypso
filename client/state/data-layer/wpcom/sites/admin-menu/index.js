@@ -6,6 +6,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 
 export const requestFetchAdminMenu = ( action ) =>
 	http(
@@ -17,8 +18,38 @@ export const requestFetchAdminMenu = ( action ) =>
 		action
 	);
 
-export const handleSuccess = ( { siteId }, menuData ) => {
-	return receiveAdminMenu( siteId, menuData );
+const sanitizeUrl = ( url, site ) => {
+	if ( new RegExp( `^https?://${ site?.domain }` ).test( url ) ) {
+		return url;
+	} else if ( /^\//.test( url ) ) {
+		return url;
+	}
+
+	return '';
+};
+
+const sanitizeMenuItem = ( menuItem, site ) => {
+	let sanitizedChildren;
+	if ( menuItem.children ) {
+		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
+			sanitizeMenuItem( subMenuItem, site )
+		);
+	}
+	return {
+		...menuItem,
+		url: sanitizeUrl( menuItem.url, site ),
+		...( sanitizedChildren ? { children: sanitizedChildren } : {} ),
+	};
+};
+
+export const handleSuccess = ( { siteId }, menuData ) => ( dispatch, getState ) => {
+	const site = getSite( getState(), siteId );
+	return dispatch(
+		receiveAdminMenu(
+			siteId,
+			menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, site ) )
+		)
+	);
 };
 
 export const handleError = () => {
