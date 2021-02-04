@@ -55,6 +55,11 @@ function getExternals() {
 				// (there are symlinks into `packages/` from the `node_modules` folder)
 				...packagesInMonorepo().map( ( pkg ) => new RegExp( `^${ pkg.name }(/|$)` ) ),
 
+				// Bundle all `@automattic/*` and `@wordpress/*` packages, too.
+				// We can guarantee that they are safe.
+				/^@automattic\//,
+				/^@wordpress\//,
+
 				// bundle the core-js polyfills. We pick only a very small subset of the library
 				// to polyfill a few things that are not supported by the latest LTS Node.js,
 				// and this avoids shipping the entire library which is fairly big.
