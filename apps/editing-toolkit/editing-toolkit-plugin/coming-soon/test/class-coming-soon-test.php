@@ -125,7 +125,7 @@ class Coming_Soon_Test extends TestCase {
 
 		// Check that we've added the action correctly.
 		self::delete_coming_soon_site_options();
-		$this->assertSame( 0, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertFalse( get_option( 'wpcom_public_coming_soon' ) );
 		do_action( 'wpmu_new_blog', get_current_blog_id(), null, null, null, null, $meta );
 		$this->assertSame( 1, get_option( 'wpcom_public_coming_soon' ) );
 	}
@@ -146,7 +146,7 @@ class Coming_Soon_Test extends TestCase {
 		$result = add_option_to_new_site( get_current_blog_id(), null, null, null, null, $meta );
 
 		$this->assertFalse( $result );
-		$this->assertSame( 0, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertFalse( get_option( 'wpcom_public_coming_soon' ) );
 
 		// Check that we've added the action correctly.
 		self::delete_coming_soon_site_options();
