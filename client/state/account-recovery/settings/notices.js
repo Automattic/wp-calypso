@@ -16,7 +16,7 @@ import {
 
 const getUpdateSuccessMessage = ( target, getState ) => {
 	switch ( target ) {
-		case 'phone':
+		case 'phone': {
 			const oldPhone = getAccountRecoveryPhone( getState() );
 
 			if ( null == oldPhone ) {
@@ -24,8 +24,9 @@ const getUpdateSuccessMessage = ( target, getState ) => {
 			}
 
 			return translate( 'Successfully updated. Please check your phone for the validation code.' );
+		}
 
-		case 'email':
+		case 'email': {
 			const oldEmail = getAccountRecoveryEmail( getState() );
 
 			if ( ! oldEmail ) {
@@ -37,6 +38,7 @@ const getUpdateSuccessMessage = ( target, getState ) => {
 			return translate(
 				'Successfully updated. Please check your mailbox for the validation email.'
 			);
+		}
 
 		default:
 			return translate( 'Successfully updated the recovery option.', {

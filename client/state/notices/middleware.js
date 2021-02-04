@@ -13,15 +13,6 @@ import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
 import { restorePost } from 'calypso/state/posts/actions';
 import {
-	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED,
-	ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED,
-	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
-	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
@@ -44,18 +35,6 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 import { purchasesRoot, billingHistoryReceipt } from 'calypso/me/purchases/paths';
-
-import {
-	onAccountRecoverySettingsFetchFailed,
-	onAccountRecoverySettingsUpdateFailed,
-	onAccountRecoverySettingsDeleteFailed,
-	onAccountRecoverySettingsUpdateSuccess,
-	onAccountRecoverySettingsDeleteSuccess,
-	onResentAccountRecoveryEmailValidationSuccess,
-	onResentAccountRecoveryEmailValidationFailed,
-	onAccountRecoveryPhoneValidationSuccess,
-	onAccountRecoveryPhoneValidationFailed,
-} from './account-recovery';
 
 /**
  * Handlers
@@ -233,15 +212,6 @@ export const onBillingTransactionRequestFailure = ( { transactionId, error } ) =
  */
 
 export const handlers = {
-	[ ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED ]: onAccountRecoverySettingsFetchFailed,
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS ]: onAccountRecoverySettingsUpdateSuccess,
-	[ ACCOUNT_RECOVERY_SETTINGS_UPDATE_FAILED ]: onAccountRecoverySettingsUpdateFailed,
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_SUCCESS ]: onAccountRecoverySettingsDeleteSuccess,
-	[ ACCOUNT_RECOVERY_SETTINGS_DELETE_FAILED ]: onAccountRecoverySettingsDeleteFailed,
-	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_SUCCESS ]: onResentAccountRecoveryEmailValidationSuccess,
-	[ ACCOUNT_RECOVERY_SETTINGS_RESEND_VALIDATION_FAILED ]: onResentAccountRecoveryEmailValidationFailed,
-	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS ]: onAccountRecoveryPhoneValidationSuccess,
-	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED ]: onAccountRecoveryPhoneValidationFailed,
 	[ BILLING_RECEIPT_EMAIL_SEND_FAILURE ]: onBillingReceiptEmailSendFailure,
 	[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: onBillingReceiptEmailSendSuccess,
 	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: onBillingTransactionRequestFailure,
