@@ -9,8 +9,10 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import QueryWhatsNewList from 'calypso/components/data/query-whats-new';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getWhatsNewList } from 'calypso/state/selectors/get-whats-new-list';
 
-function WhatsNew( { siteId } ) {
+function WhatsNew( { siteId, list } ) {
 	let listItems;
 
 	if ( ! posts ) {
@@ -49,8 +51,19 @@ function WhatsNew( { siteId } ) {
 	);
 }
 
-export const TBD = connect( ( state, ownProps ) => {
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const list = getWhatsNewList( state );
+
 	return {
-		list: relatedPostsForPost( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
+		site: getSelectedSite( state ),
+		siteId,
+		list,
+	};
+};
+
+export default connect( ( state, ownProps ) => {
+	return {
+		list: requestWhatsNewList( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
 	};
 } )( WhatsNew );
