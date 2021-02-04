@@ -403,7 +403,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						</p>
 						<div>
 							{ allAvailablePlans.map( ( plan, index ) =>
-								! plan ? (
+								typeof plan === 'undefined' ||
+								typeof allAvailablePlansProducts?.[ index ] === 'undefined' ? (
 									<FocusedLaunchSummaryItem key={ index } isLoading />
 								) : (
 									<FocusedLaunchSummaryItem
