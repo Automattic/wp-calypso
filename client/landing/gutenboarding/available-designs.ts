@@ -98,6 +98,12 @@ export function getAvailableDesigns(
 		),
 	};
 
+	// Filter out designs that have been marked as hidden in the json config
+	designs = {
+		...designs,
+		featured: designs.featured.filter( ( { hide } ) => ! hide ),
+	};
+
 	return designs;
 }
 

@@ -43,4 +43,10 @@ export interface Design {
 	theme: string;
 	title: string;
 	features: Array< DesignFeatures >;
+
+	/**
+	 * Quickly hide a design from the picker without having to remove
+	 * it from the available-designs-config.json file.
+	 */
+	hide?: boolean;
 }
