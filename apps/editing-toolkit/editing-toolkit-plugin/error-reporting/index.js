@@ -23,7 +23,7 @@ window.addEventListener(
 	'error',
 	throttle( ( { message, filename, lineno, colno } ) => {
 		const error = {
-			message,
+			message: `${ message } (${ filename }:${ lineno }:${ colno })`,
 			//file: `${ filename }:${ lineno }:${ colno })`,
 			//line: `${ lineno }:${ colno }`,
 			url: document.location.href,
@@ -40,5 +40,3 @@ window.addEventListener(
 			.catch( () => console.error( 'Error: Unable to record the error in Logstash.' ) );
 	}, REPORT_INTERVAL )
 );
-
-throw new Error( 'KABOOM!' );
