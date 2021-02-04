@@ -61,67 +61,12 @@ ul.plans-feature-list__item-group {
 .plans-feature-list__item-content-wrapper,
 .plans-feature-list__item-content-wrapper.components-button.is-link {
 	display: flex;
-	align-items: center;
-
-	font-size: $font-body-small;
-	font-weight: 400;
-	line-height: 1.2;
-	letter-spacing: 0.2px;
-	color: var( --studio-gray-70 );
-
-	.plans-accordion & {
-		align-items: flex-end;
-	}
+	align-items: flex-end;
+	padding: 0;
+	text-decoration: none;
 
 	&.plans-feature-list__item-content-wrapper--domain-button {
-		color: var( --studio-blue-40 );
-		font-weight: 700;
-		padding: 0;
-		text-decoration: none;
 		cursor: pointer;
-
-		&:hover,
-		&:focus {
-			color: var( --studio-blue-30 );
-		}
-
-		.plans-accordion & {
-			color: var( --studio-gray-70 );
-
-			&.is-cta {
-				color: var( --studio-gray-100 );
-			}
-
-			&:hover,
-			&:focus {
-				color: var( --studio-gray-50 );
-			}
-		}
-
-		// Disabled/unavailable text color for when item is a button
-		&.is-unavailable,
-		.plans-accordion &.is-unavailable {
-			color: var( --studio-orange-40 );
-			text-decoration: line-through;
-
-			&:hover,
-			&:focus {
-				color: var( --studio-orange-30 );
-			}
-		}
-	}
-
-	// Disabled/unavailable text color for when item is not a button
-	// (but is a disabled feature)
-	.plans-feature-list__item--disabled-message & {
-		font-weight: 700;
-		color: var( --studio-orange-40 );
-		text-decoration: line-through;
-
-		&:hover,
-		&:focus {
-			color: var( --studio-orange-30 );
-		}
 	}
 }
 
@@ -181,16 +126,76 @@ ul.plans-feature-list__item-group {
 
 // The text describing the feature
 .plans-feature-list__item-description {
+	font-size: $font-body-small;
+	line-height: 1.2;
+	letter-spacing: 0.2px;
+	font-weight: 400;
+	color: var( --studio-gray-70 );
+
+	// Text is bold when it's a button,
+	// or when it's a disabled feature (e.g. custom domain on a free plan)
+	.plans-feature-list__item-content-wrapper--domain-button &,
+	.plans-feature-list__item--disabled-message & {
+		font-weight: 700;
+	}
+
+	// When it's a button (e.g. custom domain), the text color is blue (including
+	// hover/focus), unless the plans grid variation is "accordion"
+	.plans-feature-list__item-content-wrapper--domain-button:not( .is-unavailable ) & {
+		color: var( --studio-blue-40 );
+
+		&:hover,
+		&:focus {
+			color: var( --studio-blue-30 );
+		}
+	}
+
+	// When it's the accordion variation, the feature button has grey text.
+	.plans-accordion
+		.plans-feature-list__item-content-wrapper--domain-button:not( .is-unavailable )
+		& {
+		color: var( --studio-gray-70 );
+
+		&.is-cta {
+			color: var( --studio-gray-100 );
+		}
+
+		&:hover,
+		&:focus {
+			color: var( --studio-gray-50 );
+		}
+	}
+
+	// When the feature is unavailable (in case of button),
+	// or disabled (in case of custom domain on a free plan), text color is orange
+	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable &,
+	.plans-feature-list__item--disabled-message & {
+		color: var( --studio-orange-40 );
+	}
+
+	// In case the feature is unavailable as a button, also add hover/focus orange
+	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable & {
+		&:hover,
+		&:focus {
+			color: var( --studio-orange-30 );
+		}
+	}
+
+	// Text is underlined when the item acts as a CTA
 	.plans-feature-list__item-content-wrapper--domain-button.is-cta & {
 		text-decoration: underline;
 	}
 
-	.plans-feature-list__item--disabled-message &,
-	.plans-feature-list__item--disabled-message
-		.plans-feature-list__item-content-wrapper--domain-button.is-cta
-		&,
+	// Text has a strike-through effect when it's disabled. This happens when:
+	// - the feature is disabled for a free plan when picking a custom domain
+	// - the feature is available for annually-billed plans, and the user
+	//   is looking at the monthly version of a plan
+	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable &,
 	.plans-feature-list__item--requires-annual-disabled &,
 	.plans-feature-list__item--requires-annual-disabled
+		.plans-feature-list__item-content-wrapper--domain-button.is-cta
+		&,
+	.plans-feature-list__item--disabled-message
 		.plans-feature-list__item-content-wrapper--domain-button.is-cta
 		& {
 		text-decoration: line-through;
