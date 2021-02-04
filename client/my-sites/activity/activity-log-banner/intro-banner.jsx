@@ -49,27 +49,27 @@ class IntroBanner extends Component {
 	recordDismiss = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_dismiss' );
 
 	renderCardContent() {
-		const { siteIsJetpack, siteHasBackup, siteHasScan, siteSlug, translate } = this.props;
+		const { siteIsJetpack, siteSlug, translate, siteHasActivityLog } = this.props;
 		const buttonHref = siteIsJetpack
 			? `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }`
 			: `/plans/${ siteSlug }?feature=${ FEATURE_JETPACK_ESSENTIAL }&plan=${ PLAN_PERSONAL }`;
 
 		return (
-			<Fragment>
+			<>
 				<p>
 					{ translate(
 						'We’ll keep track of all the events that take place on your site to help manage things easier. '
 					) }
-					{ ! siteHasBackup && ! siteHasScan
+					{ siteHasActivityLog
 						? translate(
-								'With your free plan, you can monitor the 20 most recent events on your site.'
+								'Looking for something specific? You can filter the events by type and date.'
 						  )
 						: translate(
-								'Looking for something specific? You can filter the events by type and date.'
+								'With your free plan, you can monitor the 20 most recent events on your site.'
 						  ) }
 				</p>
-				{ ! siteHasBackup && ! siteHasScan && (
-					<Fragment>
+				{ ! siteHasActivityLog && (
+					<>
 						<p>{ translate( 'Upgrade to a paid plan to unlock powerful features:' ) }</p>
 						<ul className="activity-log-banner__intro-list">
 							<li>
@@ -100,9 +100,9 @@ class IntroBanner extends Component {
 								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</div>
-					</Fragment>
+					</>
 				) }
-			</Fragment>
+			</>
 		);
 	}
 
@@ -143,10 +143,12 @@ export default connect(
 
 		return {
 			siteId,
-			siteIsJetpack: isJetpackSite( state, siteId ),
-			siteHasBackup: ! siteIsOnFreePlan || hasBackupPurchase,
-			siteHasScan: ! siteIsOnFreePlan || hasScanPurchase,
 			siteSlug: getSiteSlug( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+
+			// TODO: Eventually use getRewindCapabilities to determine this?
+			// Activity Log doesn't appear to show up there yet though.
+			siteHasActivityLog: ! siteIsOnFreePlan || hasBackupPurchase || hasScanPurchase,
 		};
 	},
 	{
