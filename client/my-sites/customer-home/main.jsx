@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -29,7 +29,7 @@ import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
-import notices from 'calypso/notices';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -47,6 +47,24 @@ const Home = ( {
 	noticeType,
 } ) => {
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+
+	useEffect( () => {
+		if ( ! canUserUseCustomerHome || ! layout || ! noticeType ) {
+			return;
+		}
+
+		if ( noticeType === 'difm-success' ) {
+			const successMessage = translate( 'Your application has been sent!' );
+			reduxDispatch(
+				successNotice( successMessage, {
+					isPersistent: true,
+				} )
+			);
+		}
+
+		return;
+	}, [ noticeType, layout, reduxDispatch, translate ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -56,13 +74,6 @@ const Home = ( {
 				illustration="/calypso/images/illustrations/error.svg"
 			/>
 		);
-	}
-
-	if ( 'difm_success' === noticeType ) {
-		const successMessage = translate( 'Your application has been sent!' );
-		notices.success( successMessage, {
-			persistent: true,
-		} );
 	}
 
 	const header = (
