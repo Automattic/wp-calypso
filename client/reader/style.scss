@@ -218,11 +218,11 @@
 .is-group-reader .comment-button__label-status,
 .is-group-reader .like-button__label-status {
 	@media( max-width: 530px ) {
-		@include screen-reader-text();
+		@include hide-content-accessibly();
 	}
 
 	@media( min-width: 661px ) and ( max-width: 790px ) {
-		@include screen-reader-text();
+		@include hide-content-accessibly();
 	}
 }
 

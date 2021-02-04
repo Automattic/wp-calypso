@@ -2,12 +2,17 @@
 // ==========================================================================
 // Hide content accessibly mixin
 // Hides content in a way that makes it still accessible to screen readers
+// Based on https://make.wordpress.org/accessibility/handbook/markup/the-css-class-screen-reader-text/
 // ==========================================================================
 
 @mixin hide-content-accessibly {
-	clip: rect( 1px, 1px, 1px, 1px );
-	height: 1px;
-	overflow: hidden;
 	position: absolute;
 	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect( 0, 0, 0, 0 );
+	white-space: nowrap;
+	border-width: 0;
 }

@@ -542,11 +542,11 @@
 	.comment-button__label-status,
 	.like-button__label-status {
 		@include breakpoint-deprecated( '>960px' ) {
-			@include screen-reader-text();
+			@include hide-content-accessibly();
 		}
 
 		@include breakpoint-deprecated( '<660px' ) {
-			@include screen-reader-text();
+			@include hide-content-accessibly();
 		}
 	}
 }
