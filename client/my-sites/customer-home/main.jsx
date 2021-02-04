@@ -61,6 +61,16 @@ const Home = ( {
 			reduxDispatch( successNotice( successMessage ) );
 		}
 
+		if ( noticeType === 'purchase-success' ) {
+			const successMessage = translate( 'Your purchase has been completed!' );
+			reduxDispatch(
+				successNotice( successMessage, {
+					isPersistent: true,
+				} )
+			);
+			return;
+		}
+
 		return;
 	}, [ noticeType, layout, canUserUseCustomerHome, reduxDispatch, translate ] );
 
@@ -71,15 +81,6 @@ const Home = ( {
 				title={ preventWidows( title ) }
 				illustration="/calypso/images/illustrations/error.svg"
 			/>
-		);
-	}
-
-	if ( 'purchase-success' === noticeType && layout ) {
-		const successMessage = translate( 'Your purchase has been completed!' );
-		reduxDispatch(
-			successNotice( successMessage, {
-				isPersistent: true,
-			} )
 		);
 	}
 
