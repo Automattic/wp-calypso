@@ -6,6 +6,7 @@
 
 - Breaking: drop support for wepback 4
 - Breaking: renamed option `output-jsonp-function` to `output-chunk-loading-global`
+- Breaking `./webpack/file-loader` loader doesn't support options anymore. It uses the new `asset/resource` instead of `file-loader`
 - Added: support for webpack 5
 - Updated dependencies
   - @wordpress/dependency-extraction-webpack-plugin to ^2.9.0
