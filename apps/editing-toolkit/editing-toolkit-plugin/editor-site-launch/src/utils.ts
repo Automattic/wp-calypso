@@ -5,17 +5,6 @@ import { doAction, hasAction } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
 import { FOCUSED_LAUNCH_FLOW, IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 
-interface CalypsoifyWindow extends Window {
-	currentSiteId?: number;
-	calypsoifyGutenberg?: {
-		isFocusedLaunchFlow: boolean;
-		isSiteUnlaunched?: boolean;
-		currentCalypsoUrl?: string;
-		[ key: string ]: unknown;
-	};
-}
-declare const window: CalypsoifyWindow;
-
 export const getCurrentLaunchFlowUrl = (): string => {
 	try {
 		return window?.calypsoifyGutenberg?.currentCalypsoUrl || window.location.href;
