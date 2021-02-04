@@ -112,32 +112,34 @@ Broadly speaking, `Automattic/wp-calypso` runs two types of test suites:
 - canary (limited set)
 - full (full set)
 
-Each suite is also scheduled to execute at regular intervals throughout the day.
-
-Additionally, suites can be triggered using the appropriate GitHub label on the PR.
+Full suites are scheduled to run at certain intervals throughout the day. Additionally, individual suites can be triggered by applying the appropriate label(s) on the PR at any time.
 
 ### Canary
 
-As of 2021-01-25, a variety of canary tests are triggered _automatically_ on all PRs and merges.
+Canary tests are triggered _**automatically**_ on all PRs and merges.
 
-These include:
+Canary suites include:
 
 - chrome canary
 - internet explorer
 - safari
 - woocommerce
 
+<br>
+
 ### Full suite
 
 The following GitHub labels provide ability to trigger e2e tests for specific feature(s):
 
-| Label                                      | Target Suite                                     |
-| ------------------------------------------ | ------------------------------------------------ |
-| `[Status] Needs e2e Testing`               | Full suite of WordPress.com e2e tests            |
-| `[Status] Needs Jetpack e2e Testing`       | Full suite of Jetpack e2e tests                  |
-| `[Status] Needs e2e Testing CoBlocks Edge` | Full suite of CoBlocks e2e tests                 |
-| `[Status] Needs e2e Testing Gutenberg`     | Full suite of Gutenberg e2e tests                |
-| `[Status] Needs e2e Testing horizon`       | Full mobile & desktop suite of horizon e2e tests |
+| Label                                       | Target Suite                                            | Example PR                                                            |
+| ------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------- |
+| `[Status] Needs e2e Testing`                | Full suite of WordPress.com e2e tests (mobile, desktop) | [#49367](https://github.com/Automattic/wp-calypso/pull/49367/commits) |
+| `[Status] Needs Jetpack e2e Testing`        | Full suite of Jetpack e2e tests                         | [#43752](https://github.com/Automattic/wp-calypso/pull/43752/commits) |
+| `[Status] Needs e2e Testing CoBlocks Edge`  | Full suite of CoBlocks e2e tests (mobile, desktop)      | [#48488](https://github.com/Automattic/wp-calypso/pull/48488/commits) |
+| `[Status] Needs e2e Testing Gutenberg Edge` | Full suite of Gutenberg Edge e2e tests                  | [#46271](https://github.com/Automattic/wp-calypso/pull/46271/commits) |
+| `[Status] Needs e2e Testing horizon`        | Full mobile & desktop suite of horizon e2e tests        | [#37645](https://github.com/Automattic/wp-calypso/pull/37645/commits) |
+
+<br>
 
 ### Schedule
 
@@ -151,6 +153,7 @@ _All times are in UTC._
 | Jetpack               | Every 12 hours               | 01:00, 13:00               |
 | Jetpack Bleeding Edge | Every 12 hours               | 07:00, 19:00               |
 | WooCommerce           | Every 12 hours               | 11:00, 23:00               |
+
 
 ## Sauce Labs
 
