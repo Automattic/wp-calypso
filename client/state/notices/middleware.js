@@ -13,9 +13,6 @@ import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
 import { restorePost } from 'calypso/state/posts/actions';
 import {
-	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-	BILLING_TRANSACTION_REQUEST_FAILURE,
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
@@ -34,21 +31,11 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
-import { purchasesRoot, billingHistoryReceipt } from 'calypso/me/purchases/paths';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 
 /**
  * Handlers
  */
-
-export const onBillingReceiptEmailSendFailure = () =>
-	errorNotice(
-		translate(
-			'There was a problem sending your receipt. Please try again later or contact support.'
-		)
-	);
-
-export const onBillingReceiptEmailSendSuccess = () =>
-	successNotice( translate( 'Your receipt was sent by email successfully.' ) );
 
 export const onGravatarReceiveImageFailure = ( action ) => errorNotice( action.errorMessage );
 
@@ -185,36 +172,11 @@ const onSiteDeleteFailure = ( { error } ) => {
 	return errorNotice( error.message );
 };
 
-export const onBillingTransactionRequestFailure = ( { transactionId, error } ) => {
-	const displayOnNextPage = true;
-	const id = `transaction-fetch-${ transactionId }`;
-	if ( 'invalid_receipt' === error.error ) {
-		return errorNotice(
-			translate( "Sorry, we couldn't find receipt #%s.", { args: transactionId } ),
-			{
-				id,
-				displayOnNextPage,
-				duration: 5000,
-			}
-		);
-	}
-
-	return errorNotice( translate( "Sorry, we weren't able to load the requested receipt." ), {
-		id,
-		displayOnNextPage,
-		button: translate( 'Try again' ),
-		href: billingHistoryReceipt( transactionId ),
-	} );
-};
-
 /**
  * Handler action type mapping
  */
 
 export const handlers = {
-	[ BILLING_RECEIPT_EMAIL_SEND_FAILURE ]: onBillingReceiptEmailSendFailure,
-	[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: onBillingReceiptEmailSendSuccess,
-	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: onBillingTransactionRequestFailure,
 	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: onGravatarReceiveImageFailure,
 	[ GRAVATAR_UPLOAD_REQUEST_FAILURE ]: onGravatarUploadRequestFailure,
 	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: onGravatarUploadRequestSuccess,

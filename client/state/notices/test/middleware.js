@@ -11,14 +11,12 @@ import thunk from 'redux-thunk';
  */
 import noticesMiddleware, {
 	handlers,
-	onBillingTransactionRequestFailure,
 	onPostDeleteFailure,
 	onPostRestoreFailure,
 	onPostSaveSuccess,
 } from '../middleware';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
-	BILLING_TRANSACTION_REQUEST_FAILURE,
 	NOTICE_CREATE,
 	POST_DELETE_FAILURE,
 	POST_RESTORE_FAILURE,
@@ -229,51 +227,6 @@ describe( 'middleware', () => {
 					notice: {
 						status: 'is-success',
 						text: 'Post successfully published',
-					},
-				} );
-			} );
-		} );
-
-		describe( 'onBillingTransactionRequestFailure()', () => {
-			const transactionId = 1234;
-
-			test( 'should dispatch a "not found" notice for invalid_receipt error', () => {
-				const noticeAction = onBillingTransactionRequestFailure( {
-					type: BILLING_TRANSACTION_REQUEST_FAILURE,
-					transactionId,
-					error: {
-						error: 'invalid_receipt',
-					},
-				} );
-
-				expect( noticeAction ).toMatchObject( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-						text: `Sorry, we couldn't find receipt #${ transactionId }.`,
-						noticeId: `transaction-fetch-${ transactionId }`,
-						displayOnNextPage: true,
-						duration: 5000,
-					},
-				} );
-			} );
-
-			test( 'should dispatch a "problem" notice for errors other than invalid_receipt', () => {
-				const noticeAction = onBillingTransactionRequestFailure( {
-					type: BILLING_TRANSACTION_REQUEST_FAILURE,
-					transactionId,
-					error: {
-						error: 'http_request_failed',
-					},
-				} );
-
-				expect( noticeAction ).toMatchObject( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-						text: "Sorry, we weren't able to load the requested receipt.",
-						noticeId: `transaction-fetch-${ transactionId }`,
-						displayOnNextPage: true,
 					},
 				} );
 			} );
