@@ -134,7 +134,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 				},
 			} ),
 			{
-				displayOnNextPage: true,
+				isPersistent: true,
 			}
 		);
 
