@@ -89,7 +89,6 @@ const ReaderPostActions = ( props ) => {
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
 						onClick={ onCommentClick }
-						tagName="button"
 						size={ iconSize }
 					/>
 				</li>
