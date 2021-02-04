@@ -5,31 +5,31 @@
 @import '~@automattic/onboarding/styles/mixins';
 @import '~@wordpress/base-styles/breakpoints';
 
-$wpcom-modal-breakpoint: 600px;
-$wpcom-modal-padding-v: 40px;
-$wpcom-modal-padding-h: 50px;
-$wpcom-modal-content-min-height: 350px;
-$wpcom-modal-footer-padding-v: 20px;
-$wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
+$modal-breakpoint: 600px;
+$modal-padding-v: 40px;
+$modal-padding-h: 50px;
+$modal-content-min-height: 350px;
+$modal-footer-padding-v: 20px;
+$modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 // Core modal style overrides
 .nav-unification-modal {
 	&.components-modal__frame {
 		overflow: visible;
 		height: 65vh;
-		top: calc( 17.5vh - #{$wpcom-modal-footer-height / 2} );
+		top: calc( 17.5vh - #{$modal-footer-height / 2} );
 
-		@media ( max-width: $wpcom-modal-breakpoint ) {
+		@media ( max-width: $modal-breakpoint ) {
 			width: 90vw;
 			min-width: 90vw;
 			left: 5vw;
 			right: 5vw;
 		}
 
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media ( min-width: $modal-breakpoint ) {
 			width: 720px;
-			height: $wpcom-modal-content-min-height;
-			top: calc( 50% - #{$wpcom-modal-footer-height / 2} );
+			height: $modal-content-min-height;
+			top: calc( 50% - #{$modal-footer-height / 2} );
 		}
 	}
 
@@ -48,17 +48,17 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	.components-guide__footer {
 		position: absolute;
 		width: 100%;
-		height: $wpcom-modal-footer-height;
-		bottom: $wpcom-modal-footer-height * -1;
+		height: $modal-footer-height;
+		bottom: $modal-footer-height * -1;
 		left: 0;
-		padding: $wpcom-modal-footer-padding-v 0;
+		padding: $modal-footer-padding-v 0;
 		margin: 0;
 		display: flex;
 		justify-content: center;
 		background: white;
 		border-top: 1px solid #dcdcde;
 
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media ( min-width: $modal-breakpoint ) {
 			border-top: none;
 		}
 	}
@@ -81,7 +81,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		&::before {
 			display: inline-block;
 			content: '';
-			height: $wpcom-modal-footer-height;
+			height: $modal-footer-height;
 			vertical-align: middle;
 		}
 
@@ -92,7 +92,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 		// Temporarily disable dots on mobile as alignment is wonky.
 		display: none;
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media ( min-width: $modal-breakpoint ) {
 			display: block;
 		}
 	}
@@ -115,19 +115,20 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	background: white;
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media ( min-width: $modal-breakpoint ) {
 		flex-direction: row;
 		justify-content: flex-start;
 		position: absolute;
-		min-height: $wpcom-modal-content-min-height;
+		min-height: $modal-content-min-height;
 		bottom: 0;
 	}
 }
 
 .nav-unification-modal__text,
 .nav-unification-modal__visual {
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media ( min-width: $modal-breakpoint ) {
 		flex: 1 auto;
 		min-width: 360px;
 	}
@@ -138,10 +139,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	height: 60%;
 	order: 2;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media ( min-width: $modal-breakpoint ) {
 		order: 1;
 		height: auto;
-		padding: $wpcom-modal-padding-v $wpcom-modal-padding-h;
+		padding: $modal-padding-v $modal-padding-h;
 	}
 }
 .nav-unification-modal__visual {
@@ -152,7 +153,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	position: relative;
 	order: 1;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media ( min-width: $modal-breakpoint ) {
 		order: 2;
 		height: auto;
 	}
@@ -162,12 +163,12 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	display: flex;
 	margin-top: 20px;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media ( min-width: $modal-breakpoint ) {
 		margin-top: 0;
 	}
 
 	&--center {
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
 			transform: translateY(-50%);
 			top: 50%;
@@ -175,14 +176,14 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 
 	&--bottom-right {
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
 			bottom: 0;
 		}
 	}
 
 	&--top-right {
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
 			top: 0;
 		}
@@ -201,7 +202,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	font-size: 24px;
 	line-height: 1.19;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media ( min-width: $modal-breakpoint ) {
 		font-size: 24px;
 	}
 }
@@ -213,7 +214,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	/* Gray / Gray 60 */
 	color: #50575e;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media ( min-width: $modal-breakpoint ) {
 		font-size: 17px;
 		line-height: 26px;
 	}
@@ -231,7 +232,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media ( min-width: $modal-breakpoint ) {
 		max-height: none;
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { Guide } from '@wordpress/components';
 import { Title } from '@automattic/onboarding';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,6 +15,22 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
+
+const Page = ( { heading, content, image } ) => {
+	return (
+		<div className="nav-unification-modal__page">
+			<div className="nav-unification-modal__text">
+				<div className="nav-unification-modal__heading">
+					<Title tagName="h2">{ heading }</Title>
+				</div>
+				<div className="nav-unification-modal__description">
+					<p>{ content }</p>
+				</div>
+			</div>
+			<div className="nav-unification-modal__visual">{ image }</div>
+		</div>
+	);
+};
 
 const Modal = () => {
 	const dispatch = useDispatch();
@@ -105,22 +121,6 @@ const Modal = () => {
 				},
 			] }
 		/>
-	);
-};
-
-const Page = ( { heading, content, image } ) => {
-	return (
-		<div className="nav-unification-modal__page">
-			<div className="nav-unification-modal__text">
-				<div className="nav-unification-modal__heading">
-					<Title tagName="h2">{ heading }</Title>
-				</div>
-				<div className="nav-unification-modal__description">
-					<p>{ content }</p>
-				</div>
-			</div>
-			<div className="nav-unification-modal__visual">{ image }</div>
-		</div>
 	);
 };
 
