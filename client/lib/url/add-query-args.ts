@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { pickBy } from 'lodash';
-import { Primitive } from 'utility-types';
+import type { Primitive } from 'utility-types';
 
 /**
  * Internal dependencies
  */
-import { URL as URLString } from 'calypso/types';
+import type { URL as URLString } from 'calypso/types';
 import { determineUrlType, URL_TYPE } from './url-type';
 import format from './format';
 
