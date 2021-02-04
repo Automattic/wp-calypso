@@ -290,13 +290,16 @@ class ReaderPostCard extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isFollowingItem: isFollowing( state, {
-			blogId: ownProps.postKey.blogId,
-			feedId: ownProps.postKey.feedId,
-		} ),
+		isFollowingItem:
+			ownProps.postKey &&
+			isFollowing( state, {
+				blogId: ownProps.postKey.blogId,
+				feedId: ownProps.postKey.feedId,
+			} ),
 		isWPForTeamsItem:
-			isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
-			isFeedWPForTeams( state, ownProps.postKey.feedId ),
+			ownProps.postKey &&
+			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
+				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
 		teams: getReaderTeams( state ),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
