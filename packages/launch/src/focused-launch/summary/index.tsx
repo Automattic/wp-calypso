@@ -284,8 +284,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const billingPeriod = 'ANNUALLY';
-
 	const selectedPlanProductId = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getSelectedPlanProductId()
 	);
@@ -294,13 +292,16 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		select( LAUNCH_STORE ).getPaidPlanProductId()
 	);
 
-	const selectedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByProductId( selectedPlanProductId, locale )
-	);
+	const { selectedPlan, selectedPaidPlan, billingPeriod } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
 
-	const selectedPaidPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByProductId( selectedPaidPlanProductId, locale )
-	);
+		return {
+			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
+			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
+			billingPeriod:
+				plansStore.getPlanProductById( selectedPlanProductId )?.billingPeriod || 'ANNUALLY',
+		};
+	} );
 
 	const { defaultPaidPlan, defaultFreePlan } = usePlans();
 
@@ -326,11 +327,13 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
 		: [ defaultPaidPlan, defaultFreePlan ];
 
-	const allAvailablePlansProducts = useSelect( ( select ) => {
-		return allAvailablePlans.map( ( plan ) =>
-			select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, billingPeriod )
-		);
-	} );
+	const allAvailablePlansProducts = useSelect(
+		( select ) =>
+			allAvailablePlans.map( ( plan ) =>
+				select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, billingPeriod )
+			),
+		[ allAvailablePlans, billingPeriod ]
+	);
 
 	return (
 		<SummaryStep
@@ -400,13 +403,13 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						</p>
 						<div>
 							{ allAvailablePlans.map( ( plan, index ) =>
-								! plan ? (
+								typeof plan === 'undefined' ||
+								typeof allAvailablePlansProducts?.[ index ] === 'undefined' ? (
 									<FocusedLaunchSummaryItem key={ index } isLoading />
 								) : (
 									<FocusedLaunchSummaryItem
 										key={ plan.periodAgnosticSlug }
 										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-										/* this must be fixed. the first product id represents the annual version of the plan */
 										onClick={ () =>
 											setPlanProductId( allAvailablePlansProducts[ index ]?.productId )
 										}
@@ -508,19 +511,19 @@ const Summary: React.FunctionComponent = () => {
 		selectedDomain,
 		selectedPlanProductId,
 	] = useSelect( ( select ) => {
-		const { isSiteTitleStepVisible, domain, planProductId } = select( LAUNCH_STORE ).getState();
+		const launchStore = select( LAUNCH_STORE );
+		const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
 
-		return [
-			select( LAUNCH_STORE ).hasSelectedDomain(),
-			isSiteTitleStepVisible,
-			domain,
-			planProductId,
-		];
+		return [ launchStore.hasSelectedDomain(), isSiteTitleStepVisible, domain, planProductId ];
 	} );
 
-	const isSelectedPlanFree = useSelect( ( select ) =>
-		select( PLANS_STORE ).isPlanProductFree( selectedPlanProductId )
-	);
+	const { isSelectedPlanFree } = useSelect( ( select ) => {
+		const plansStore = select( PLANS_STORE );
+
+		return {
+			isSelectedPlanFree: plansStore.isPlanProductFree( selectedPlanProductId ),
+		};
+	} );
 
 	const { launchSite } = useDispatch( SITE_STORE );
 	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
