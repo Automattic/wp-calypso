@@ -20,22 +20,17 @@ import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 import './style.scss';
 
 function CommentButton( props ) {
-	const { commentCount, href, onClick, showLabel, target } = props;
+	const { commentCount, href, onClick, size, target } = props;
 	const translate = useTranslate();
 
 	return (
 		<a className="comment-button" href={ href } onClick={ onClick } target={ target }>
-			<Gridicon
-				aria-hidden="true"
-				icon="comment"
-				size={ props.size }
-				className="comment-button__icon"
-			/>
+			<Gridicon aria-hidden="true" icon="comment" size={ size } className="comment-button__icon" />
 			<span className="comment-button__label">
 				{ commentCount > 0 && (
 					<span className="comment-button__label-count">{ commentCount }</span>
 				) }
-				{ showLabel && commentCount > 0 && (
+				{ commentCount > 0 && (
 					<span className="comment-button__label-status">
 						{ translate( 'Comment', 'Comments', {
 							context: 'noun',
@@ -52,7 +47,6 @@ CommentButton.propTypes = {
 	commentCount: PropTypes.number,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
-	showLabel: PropTypes.bool,
 	target: PropTypes.string,
 };
 
@@ -60,7 +54,6 @@ CommentButton.defaultProps = {
 	commentCount: 0,
 	href: null,
 	onClick: noop,
-	showLabel: true,
 	size: 24,
 	target: null,
 };
