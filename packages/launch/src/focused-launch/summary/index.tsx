@@ -410,7 +410,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 									<FocusedLaunchSummaryItem
 										key={ plan.periodAgnosticSlug }
 										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-										/* this must be fixed. the first product id represents the annual version of the plan */
 										onClick={ () =>
 											setPlanProductId( allAvailablePlansProducts[ index ]?.productId )
 										}
