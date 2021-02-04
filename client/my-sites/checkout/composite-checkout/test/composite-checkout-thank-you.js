@@ -457,21 +457,6 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/cookie' );
 	} );
 
-	it( 'redirects to url from cookie if cart is empty and no receipt is set', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
-		const cart = {
-			products: [],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			getUrlFromCookie,
-			isEligibleForSignupDestination: true,
-		} );
-		expect( url ).toBe( '/cookie' );
-	} );
-
 	it( 'Should store the current URL in the redirect cookie when called from the editor', () => {
 		const saveUrlToCookie = jest.fn();
 		const cart = {
