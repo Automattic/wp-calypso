@@ -50,28 +50,28 @@ class Coming_Soon_Test extends TestCase {
 		// Should deactivate Coming Soon when moving from public not indexed to public indexed (launch).
 		$result = disable_coming_soon_on_privacy_change( 0, 1 );
 		$this->assertTrue( $result );
-		$this->assertEquals( 0, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 0, get_option( 'wpcom_public_coming_soon' ) );
 
 		self::set_site_as_coming_soon();
 
 		// Should deactivate Coming Soon when moving from public not indexed to private.
 		$result = disable_coming_soon_on_privacy_change( 0, -1 );
 		$this->assertTrue( $result );
-		$this->assertEquals( 0, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 0, get_option( 'wpcom_public_coming_soon' ) );
 
 		self::set_site_as_coming_soon();
 
 		// Should not deactivate when moving from public indexed to public not indexed.
 		$result = disable_coming_soon_on_privacy_change( 1, 0 );
 		$this->assertFalse( $result );
-		$this->assertEquals( 1, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 1, get_option( 'wpcom_public_coming_soon' ) );
 
 		self::set_site_as_coming_soon();
 
 		// Should not deactivate when moving from private to public.
 		$result = disable_coming_soon_on_privacy_change( -1, 1 );
 		$this->assertFalse( $result );
-		$this->assertEquals( 1, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 1, get_option( 'wpcom_public_coming_soon' ) );
 	}
 
 	/**
@@ -96,13 +96,13 @@ class Coming_Soon_Test extends TestCase {
 		self::delete_coming_soon_site_options();
 		$options = array();
 		$result  = add_public_coming_soon_to_settings_endpoint_get( $options );
-		$this->assertEquals( 0, $result['wpcom_public_coming_soon'] );
+		$this->assertSame( 0, $result['wpcom_public_coming_soon'] );
 
 		// Now set the coming soon option to `1`.
 		self::set_site_as_coming_soon();
 		$result = add_public_coming_soon_to_settings_endpoint_get( $options );
 
-		$this->assertEquals( 1, $result['wpcom_public_coming_soon'] );
+		$this->assertSame( 1, $result['wpcom_public_coming_soon'] );
 	}
 
 	/**
@@ -121,13 +121,13 @@ class Coming_Soon_Test extends TestCase {
 		$result = add_option_to_new_site( get_current_blog_id(), null, null, null, null, $meta );
 
 		$this->assertTrue( $result );
-		$this->assertEquals( 1, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 1, get_option( 'wpcom_public_coming_soon' ) );
 
 		// Check that we've added the action correctly.
 		self::delete_coming_soon_site_options();
-		$this->assertEquals( 0, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 0, get_option( 'wpcom_public_coming_soon' ) );
 		do_action( 'wpmu_new_blog', get_current_blog_id(), null, null, null, null, $meta );
-		$this->assertEquals( 1, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 1, get_option( 'wpcom_public_coming_soon' ) );
 	}
 
 	/**
@@ -146,12 +146,12 @@ class Coming_Soon_Test extends TestCase {
 		$result = add_option_to_new_site( get_current_blog_id(), null, null, null, null, $meta );
 
 		$this->assertFalse( $result );
-		$this->assertEquals( 0, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 0, get_option( 'wpcom_public_coming_soon' ) );
 
 		// Check that we've added the action correctly.
 		self::delete_coming_soon_site_options();
 
 		do_action( 'wpmu_new_blog', get_current_blog_id(), null, null, null, null, $meta );
-		$this->assertEquals( 0, get_option( 'wpcom_public_coming_soon' ) );
+		$this->assertSame( 0, get_option( 'wpcom_public_coming_soon' ) );
 	}
 }
