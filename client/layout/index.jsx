@@ -308,8 +308,7 @@ export default compose(
 		const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		const isCheckoutFromGutenboarding =
 			'checkout' === sectionName && '1' === currentQuery?.preLaunch;
-		const noMasterbarForRoute =
-			isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
+		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
