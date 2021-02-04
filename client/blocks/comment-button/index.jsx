@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -24,20 +23,29 @@ function CommentButton( props ) {
 	const translate = useTranslate();
 
 	return (
-		<a className="comment-button" href={ href } onClick={ onClick } target={ target }>
+		<a className="comment-button" href={ href } onClick={ onClick } tabIndex="0" target={ target }>
 			<Gridicon aria-hidden="true" icon="comment" size={ size } className="comment-button__icon" />
 			<span className="comment-button__label">
 				{ commentCount > 0 && (
 					<span className="comment-button__label-count">{ commentCount }</span>
 				) }
-				{ commentCount > 0 && (
-					<span className="comment-button__label-status">
-						{ translate( 'Comment', 'Comments', {
-							context: 'noun',
-							count: commentCount,
-						} ) }
-					</span>
-				) }
+				<span className="comment-button__label-status">
+					{ commentCount > 0 && (
+						<Fragment>
+							{ translate( 'Comment', 'Comments', {
+								context: 'noun',
+								count: commentCount,
+							} ) }
+						</Fragment>
+					) }
+					{ commentCount === 0 && (
+						<Fragment>
+							{ translate( 'Comment', {
+								context: 'verb',
+							} ) }
+						</Fragment>
+					) }
+				</span>
 			</span>
 		</a>
 	);

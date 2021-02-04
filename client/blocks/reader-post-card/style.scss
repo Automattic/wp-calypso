@@ -605,7 +605,7 @@
 	.reader-share__button-label,
 	.comment-button__label-status,
 	.like-button__label-status {
-		display: none;
+		@include hide-content-accessibly();
 	}
 }
 
