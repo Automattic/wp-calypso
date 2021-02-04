@@ -8,7 +8,7 @@
 // Register Block Scripts.
 add_action(
 	'init',
-	function() {
+	function () {
 		$asset_file   = __DIR__ . '/dist/jetpack-timleine.asset.php';
 		$asset        = file_exists( $asset_file ) ? require $asset_file : null;
 		$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
@@ -40,7 +40,7 @@ add_action(
 			array(
 				'editor_script'   => 'jetpack-timeline',
 				'editor_style'    => 'jetpack-timeline',
-				'render_callback' => function( $attribs, $content ) {
+				'render_callback' => function ( $attribs, $content ) {
 					wp_enqueue_style( 'jetpack-timeline' );
 					return $content;
 				},
@@ -50,7 +50,7 @@ add_action(
 		// Allow vars for CSS props.
 		add_filter(
 			'safe_style_css',
-			function( $attr ) {
+			function ( $attr ) {
 				$attr[] = '--timeline-background-color';
 				$attr[] = '--timeline-text-color';
 				return $attr;

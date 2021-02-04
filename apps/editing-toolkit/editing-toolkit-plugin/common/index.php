@@ -40,7 +40,6 @@ function is_block_editor_screen() {
 	return is_callable( 'get_current_screen' ) && get_current_screen() && get_current_screen()->is_block_editor();
 }
 
-
 /**
  * Detects if the current page is the homepage post editor, and if the homepage
  * title is hidden.

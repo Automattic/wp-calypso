@@ -84,7 +84,7 @@ class Starter_Page_Templates {
 			'single'         => true,
 			'show_in_rest'   => true,
 			'object_subtype' => 'page',
-			'auth_callback'  => function() {
+			'auth_callback'  => function () {
 				return current_user_can( 'edit_posts' );
 			},
 		);

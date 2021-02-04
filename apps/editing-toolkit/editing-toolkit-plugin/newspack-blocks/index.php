@@ -93,7 +93,7 @@ function newspack_blocks_block_args( $args, $name ) {
 	// This fires from newspack-blocks at render time.
 	add_action(
 		'newspack_blocks_render_post_carousel',
-		function() {
+		function () {
 			wp_enqueue_style( 'carousel-block-view' );
 			wp_enqueue_script( 'carousel-block-view' );
 		}
@@ -102,7 +102,7 @@ function newspack_blocks_block_args( $args, $name ) {
 	// This fires from newspack-blocks at render time.
 	add_action(
 		'newspack_blocks_render_homepage_articles',
-		function() {
+		function () {
 			wp_enqueue_style( 'blog-posts-block-view' );
 			wp_enqueue_script( 'blog-posts-block-view' );
 		}
