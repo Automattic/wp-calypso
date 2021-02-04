@@ -5,6 +5,7 @@ import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
 import { get, noop, some, startsWith, uniq } from 'lodash';
+import { removeQueryArgs } from '@wordpress/url';
 
 /**
  * Internal Dependencies
@@ -24,7 +25,13 @@ import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
-import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
+import {
+	addQueryArgs,
+	getSiteFragment,
+	sectionify,
+	externalRedirect,
+	trailingslashit,
+} from 'calypso/lib/route';
 import config from '@automattic/calypso-config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -419,7 +426,7 @@ export function siteSelection( context, next ) {
 		}
 	} else {
 		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) ).then( () => {
+		dispatch( requestSite( siteFragment ) ).then( ( response ) => {
 			let freshSiteId = getSiteId( getState(), siteFragment );
 
 			if ( ! freshSiteId ) {
@@ -437,6 +444,16 @@ export function siteSelection( context, next ) {
 				if ( onSelectedSiteAvailable( context, basePath ) ) {
 					next();
 				}
+			} else if ( '1' === context.query?.unlinked && response?.site?.URL ) {
+				const authorizePath = addQueryArgs(
+					{
+						page: 'jetpack',
+						action: 'authorize_redirect',
+						dest_url: removeQueryArgs( window.origin + context.path, 'unlinked' ),
+					},
+					trailingslashit( response?.site?.URL ) + 'wp-admin/'
+				);
+				externalRedirect( authorizePath );
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				const allSitesPath = addQueryArgs(
