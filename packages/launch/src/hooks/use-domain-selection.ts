@@ -6,12 +6,11 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { mockDomainSuggestion } from '@automattic/domain-picker';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
-import { DOMAIN_SUGGESTIONS_STORE } from '../stores';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { isDomainProduct } from '../utils';
 import type { DomainProduct } from '../utils';
@@ -52,8 +51,10 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 		domainProductFromCart &&
 		domainName &&
 		domainDetails &&
+		// the availability endpoint returns "status: available|premium_available"
 		// for now, we consider premium domains unavailable and don't convert them into suggestions
-		// [ 'available', 'available_premium' ].indexOf( domainDetails.status ) > -1
+		// so instead of using [ 'available', 'available_premium' ].indexOf( domainDetails.status ) > -1
+		// we only accept domainDetails.status === 'available'
 		domainDetails.status === 'available'
 	) {
 		return {

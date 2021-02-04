@@ -26,12 +26,10 @@ export function useDomainSuggestions(
 	extraOptions = {}
 ): DomainSuggestionsResult | undefined {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
-	// Missing types for invalidateResolutionForStoreSelector
-	// (see packages/data/src/namespace-store/metadata/actions.js#L57)
 	const { invalidateResolutionForStoreSelector } = ( useDispatch(
 		DOMAIN_SUGGESTIONS_STORE
 	) as unknown ) as {
-		invalidateResolutionForStoreSelector: ( arg0: string ) => void;
+		invalidateResolutionForStoreSelector: ( selectorName: string ) => void;
 	};
 
 	return useSelect(
