@@ -61,13 +61,17 @@ ul.plans-feature-list__item-group {
 .plans-feature-list__item-content-wrapper,
 .plans-feature-list__item-content-wrapper.components-button.is-link {
 	display: flex;
-	align-items: flex-end;
+	align-items: center;
 
 	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 1.2;
 	letter-spacing: 0.2px;
 	color: var( --studio-gray-70 );
+
+	.plans-accordion & {
+		align-items: flex-end;
+	}
 
 	&.plans-feature-list__item-content-wrapper--domain-button {
 		color: var( --studio-blue-40 );
