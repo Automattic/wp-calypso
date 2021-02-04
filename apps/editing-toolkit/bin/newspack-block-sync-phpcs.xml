@@ -10,14 +10,5 @@
 		</properties>
 	</rule>
 
-	<rule ref="WordPress.Utils.I18nTextDomainFixer">
-		<properties>
-			<property name="old_text_domain" type="array">
-				<element value="newspack-blocks" />
-			</property>
-			<property name="new_text_domain" value="full-site-editing" />
-		</properties>
-	</rule>
-
 	<file>../editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</file>
 </ruleset>

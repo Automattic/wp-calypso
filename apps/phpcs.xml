@@ -28,8 +28,6 @@
 	<!-- Ignore assset files and undeployed files. -->
 	<exclude-pattern>*.asset.php</exclude-pattern>
 	<exclude-pattern>editing-toolkit/dev-plugin</exclude-pattern>
-	<!-- Newpack blocks is covered by "editing-toolkit/bin/newspack-block-sync-phpcs.xml" -->
-	<exclude-pattern>editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
 
 	<!-- Scan it all! -->
 	<file>.</file>
