@@ -17,6 +17,7 @@ interface Window {
 		currentCalypsoUrl?: string;
 		closeUrl?: string;
 		closeButtonLabel?: string;
+		manageReusableBlocksUrl?: string;
 		// @TODO: this is just temporary for testing via feature flag. Remove it once focused-launch is live
 		isFocusedLaunchFlow?: boolean;
 	};
