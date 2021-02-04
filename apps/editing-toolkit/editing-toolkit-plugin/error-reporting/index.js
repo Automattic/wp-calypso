@@ -1,18 +1,44 @@
 /**
- * External dependences
+ * Wordpress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
 
 /**
- * Internal dependencies
+ * External dependences
  */
-import handler from './src/handler';
+import { throttle } from 'lodash';
 
-window.onerror = handler( apiFetch );
+/**
+ * Module variables
+ */
 
-// Remove this code later, here to test the request and the throttling logic manually
-/*setInterval( function () {
-	for ( let i = 0; i < 100; i++ ) {
-		throw new Error( 'BOOOOOM!' );
-	}
-}, 2000 );*/
+/**
+ * Interval for error reports so we don't flood te endpoint.
+ *
+ * @type {number} throttling interval (since the last request) in milliseconds.
+ */
+const REPORT_INTERVAL = 60000; //1 minute
+
+window.addEventListener(
+	'error',
+	throttle( ( { message, filename, lineno, colno } ) => {
+		const error = {
+			message,
+			//file: `${ filename }:${ lineno }:${ colno })`,
+			//line: `${ lineno }:${ colno }`,
+			url: document.location.href,
+			feature: 'wp-admin',
+		};
+
+		apiFetch( {
+			global: true,
+			path: '/rest/v1.1/js-error',
+			method: 'POST',
+			data: { error: JSON.stringify( error ) },
+		} )
+			// eslint-disable-next-line no-console
+			.catch( () => console.error( 'Error: Unable to record the error in Logstash.' ) );
+	}, REPORT_INTERVAL )
+);
+
+throw new Error( 'KABOOM!' );
