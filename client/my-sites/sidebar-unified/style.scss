@@ -641,6 +641,10 @@ $font-size: rem( 14px );
 			min-height: initial;
 		}
 
+		&.focus-content .layout__content {
+			padding: 47px 0 0;
+		}
+
 		// client/layout/sidebar/style.scss
 		.sidebar {
 			position: absolute;
