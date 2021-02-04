@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -6,7 +11,6 @@ import {
 	DOMAIN_NAMESERVERS_FETCH_FAILURE,
 	DOMAIN_NAMESERVERS_RECEIVE,
 } from 'calypso/state/action-types';
-import { keyedReducer } from 'calypso/state/utils';
 import initialDomainState from './initial';
 
 const reducer = keyedReducer( 'domainName', ( state = initialDomainState, action ) => {

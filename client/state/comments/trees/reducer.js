@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get, map, reject, unionBy } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_TREE_SITE_ADD,
 } from 'calypso/state/action-types';
-import { keyedReducer } from 'calypso/state/utils';
 
 const convertToTree = ( comments ) =>
 	map(

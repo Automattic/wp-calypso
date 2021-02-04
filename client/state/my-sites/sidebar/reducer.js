@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -7,7 +12,7 @@ import {
 	MY_SITES_SIDEBAR_SECTION_COLLAPSE,
 	MY_SITES_SIDEBAR_SECTIONS_COLLAPSE_ALL,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 
 const schema = {
 	type: 'boolean',

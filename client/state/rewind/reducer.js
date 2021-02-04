@@ -1,7 +1,12 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import backups from './backups/reducer';
 import capabilities from './capabilities/reducer';
 import state from './state/reducer';

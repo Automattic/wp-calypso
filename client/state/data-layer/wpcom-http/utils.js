@@ -3,16 +3,12 @@
  */
 import deterministicStringify from 'fast-json-stable-stringify';
 import { get, identity, merge, noop } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * WordPress dependencies
  */
 import warn from '@wordpress/warning';
-
-/**
- * Internal dependencies
- */
-import { keyedReducer } from 'calypso/state/utils';
 
 /**
  * Returns response data from an HTTP request success action if available
@@ -95,7 +91,7 @@ export const requestsReducerItem = (
 	);
 };
 
-export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReducerItem );
+export const reducer = keyedReducer( ( a ) => a.meta?.dataLayer?.requestKey, requestsReducerItem );
 
 /**
  * Tracks the state of network activity for a given request type

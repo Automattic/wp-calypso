@@ -2,16 +2,12 @@
  * External dependencies
  */
 import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { validationSchemas } from './validation-schemas/reducer';
 import { domainWhoisSchema } from './schema';
 import {

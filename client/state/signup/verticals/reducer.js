@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-import { keyedReducer } from 'calypso/state/utils';
 import { SIGNUP_VERTICALS_SET } from 'calypso/state/action-types';
 
 export default keyedReducer( 'siteType', ( state = null, action ) => {

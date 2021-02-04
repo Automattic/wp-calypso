@@ -1,12 +1,12 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	keyedReducer,
-	withoutPersistence,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 
 import {
 	ORDER_TRANSACTION_FETCH,

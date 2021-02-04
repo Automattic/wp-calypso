@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get, includes, isUndefined, map, without, has } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import {
 	COMMENTS_QUERY_UPDATE,
 	COMMENTS_TREE_SITE_REQUEST,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { getFiltersKey } from 'calypso/state/comments/ui/utils';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 

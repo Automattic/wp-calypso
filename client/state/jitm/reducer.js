@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import { JITM_SET } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 
 export const storeJITM = ( state = {}, { type, jitms } ) => ( type === JITM_SET ? jitms : state );
 

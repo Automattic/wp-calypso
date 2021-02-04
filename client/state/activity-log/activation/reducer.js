@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-
 import { stubFalse, stubTrue } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import {
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
 } from 'calypso/state/action-types';
-import { keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 
 export const activationRequesting = keyedReducer(
 	'siteId',

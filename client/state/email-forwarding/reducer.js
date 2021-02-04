@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { orderBy } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import {
 	combineReducers,
-	keyedReducer,
 	withoutPersistence,
 	withSchemaValidation,
 	withStorageKey,

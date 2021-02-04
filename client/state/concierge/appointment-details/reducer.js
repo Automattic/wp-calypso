@@ -1,7 +1,12 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-import { keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 	CONCIERGE_APPOINTMENT_DETAILS_UPDATE,

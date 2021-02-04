@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-
-import { keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_METHOD_SCHEMA_REQUEST,
 	WOOCOMMERCE_SERVICES_SHIPPING_METHOD_SCHEMA_REQUEST_SUCCESS,

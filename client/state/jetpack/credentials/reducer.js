@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -13,7 +18,7 @@ import {
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation(

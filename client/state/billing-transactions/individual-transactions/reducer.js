@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -8,7 +13,7 @@ import {
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched.

@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import { WORDADS_STATUS_RECEIVE } from 'calypso/state/action-types';
-import { keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { withSchemaValidation } from 'calypso/state/utils';
 import { wordadsStatusSchema } from './schema';
 
 export const items = withSchemaValidation(

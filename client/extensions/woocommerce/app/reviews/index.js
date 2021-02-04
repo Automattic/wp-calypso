@@ -1,8 +1,6 @@
 /**
- * External depedencies
- *
+ * External dependencies
  */
-
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';

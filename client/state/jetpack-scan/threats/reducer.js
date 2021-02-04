@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -6,7 +11,7 @@ import {
 	JETPACK_SCAN_UPDATE_THREAT,
 	JETPACK_SCAN_UPDATE_THREAT_COMPLETED,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 const updating = keyedReducer( 'siteId', ( state = [], { type, ...payload } ) => {
 	switch ( type ) {

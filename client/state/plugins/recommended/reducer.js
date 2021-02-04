@@ -1,7 +1,11 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-import { keyedReducer } from 'calypso/state/utils';
 import {
 	PLUGINS_RECOMMENDED_RECEIVE,
 	PLUGINS_RECOMMENDED_REQUEST_FAILURE,

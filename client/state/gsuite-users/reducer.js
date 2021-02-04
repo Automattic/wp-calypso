@@ -1,9 +1,13 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
 	combineReducers,
-	keyedReducer,
 	withoutPersistence,
 	withSchemaValidation,
 	withStorageKey,

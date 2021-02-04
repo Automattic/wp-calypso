@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -7,7 +12,7 @@ import {
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Returns the updated app filter state after an action has been dispatched
@@ -26,8 +31,8 @@ export const app = ( state = null, action ) => {
 /**
  * Returns the updated date filter state after an action has been dispatched
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param {object} state  Current state
+ * @param {object} action Action payload
  * @returns {object}        Updated state
  */
 export const date = ( state = { month: null, operator: null }, { type, month, operator } ) => {

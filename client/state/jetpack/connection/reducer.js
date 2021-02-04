@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-
 import { stubFalse, stubTrue } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import {
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 /**
  * `Reducer` function which handles request/response actions

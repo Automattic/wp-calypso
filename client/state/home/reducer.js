@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -6,12 +11,7 @@ import {
 	HOME_QUICK_LINKS_EXPAND,
 	HOME_QUICK_LINKS_COLLAPSE,
 } from 'calypso/state/action-types';
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
 
 export const layout = ( state = {}, action ) =>
 	action.type === HOME_LAYOUT_SET ? action.layout : state;

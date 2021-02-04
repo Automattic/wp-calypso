@@ -2,11 +2,12 @@
  * External dependencies
  */
 import { uniqBy } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import { READER_FEED_SEARCH_RECEIVE } from 'calypso/state/reader/action-types';
 
 /**

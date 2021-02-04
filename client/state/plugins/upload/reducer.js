@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 
-import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 import {
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,

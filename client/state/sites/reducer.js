@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -39,12 +40,7 @@ import {
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.

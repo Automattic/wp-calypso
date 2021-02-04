@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import { restoreProgressSchema } from './schema';
@@ -9,7 +14,7 @@ import {
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 } from 'calypso/state/action-types';
-import { keyedReducer, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 
 const stubNull = () => null;
 

@@ -3,11 +3,12 @@
  */
 import { findIndex, last, takeRightWhile, takeWhile, filter, uniqWith } from 'lodash';
 import moment from 'moment';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { keyedReducer, combineReducers } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
@@ -236,4 +237,4 @@ const streamReducer = combineReducers( {
 	pageHandle,
 } );
 
-export default keyedReducer( 'payload.streamKey', streamReducer );
+export default keyedReducer( ( a ) => a.payload?.streamKey, streamReducer );

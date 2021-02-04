@@ -2,12 +2,13 @@
  * External dependencies
  */
 import { uniqBy } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import { READER_RECOMMENDED_SITES_RECEIVE } from 'calypso/state/reader/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 /**
  * Tracks mappings between randomization seeds and site recs.

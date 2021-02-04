@@ -2,12 +2,13 @@
  * External dependencies
  */
 import { some } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import itemSchema from './schema';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	POST_LIKES_ADD_LIKER,
 	POST_LIKES_RECEIVE,

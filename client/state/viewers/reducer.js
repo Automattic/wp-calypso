@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { omit } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ import {
 	VIEWERS_REQUEST_FAILURE,
 	VIEWERS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 
 export const items = ( state = {}, action ) => {
 	switch ( action.type ) {

@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import { GUTENBERG_IFRAME_ELIGIBLE_SET } from 'calypso/state/action-types';
-import { keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from 'calypso/state/utils';
 
 export const gutenbergIframeEligible = ( state, { type, isEligibleForGutenframe } ) =>
 	type === GUTENBERG_IFRAME_ELIGIBLE_SET ? isEligibleForGutenframe : state;

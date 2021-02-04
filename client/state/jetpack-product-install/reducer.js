@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import { JETPACK_PRODUCT_INSTALL_STATUS_RECEIVE } from 'calypso/state/action-types';
-import { keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from 'calypso/state/utils';
 
 const reducer = keyedReducer( 'siteId', ( state = {}, { type, status } ) => {
 	switch ( type ) {

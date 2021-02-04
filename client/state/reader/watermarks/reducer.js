@@ -2,12 +2,13 @@
  * External Dependencies
  */
 import { max } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import { READER_VIEW_STREAM } from 'calypso/state/reader/action-types';
-import { keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { withSchemaValidation } from 'calypso/state/utils';
 import schema from './watermark-schema';
 
 export const watermarks = keyedReducer(

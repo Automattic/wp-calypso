@@ -2,11 +2,12 @@
  * External dependencies
  */
 import { pick, set, isEqual, first } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import { countsSchema } from './schema';
 import { QUERY_FIELDS } from './constants';

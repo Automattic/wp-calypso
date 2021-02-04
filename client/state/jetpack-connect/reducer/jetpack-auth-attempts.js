@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import { AUTH_ATTEMPS_TTL } from '../constants';
@@ -8,7 +13,7 @@ import {
 	JETPACK_CONNECT_RETRY_AUTH,
 } from 'calypso/state/jetpack-connect/action-types';
 import { jetpackAuthAttemptsSchema } from './schema';
-import { keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { withSchemaValidation } from 'calypso/state/utils';
 
 export function authAttempts( state = undefined, { type, attemptNumber } ) {
 	switch ( type ) {

@@ -2,11 +2,12 @@
  * External dependencies
  */
 import { mapValues, merge } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { jetpackSettingsSchema } from './schema';
 import { normalizeSettings } from './utils';
 import {

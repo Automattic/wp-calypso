@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -7,7 +12,7 @@ import {
 	JETPACK_SCAN_REQUEST_SUCCESS,
 	JETPACK_SCAN_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import enqueueReducer from './enqueue/reducer';
 import historyReducer from './history/reducer';
 import threatCountsReducer from './threat-counts/reducer';

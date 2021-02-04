@@ -1,7 +1,12 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import {
 	JETPACK_REMOTE_INSTALL,
 	JETPACK_REMOTE_INSTALL_FAILURE,

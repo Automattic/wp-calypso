@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { keyedReducer } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -9,7 +14,6 @@ import {
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_UPDATE_ERROR,
 } from 'calypso/state/action-types';
-import { keyedReducer } from 'calypso/state/utils';
 
 export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type, rewindId } ) => {
 	switch ( type ) {

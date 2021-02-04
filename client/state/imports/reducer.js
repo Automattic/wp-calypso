@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { get, isEmpty, map, omit, omitBy } from 'lodash';
+import { keyedReducer } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import {
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import uploads from './uploads/reducer';
 import siteImporter from './site-importer/reducer';
 import { appStates } from './constants';

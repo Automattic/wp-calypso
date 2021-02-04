@@ -4,7 +4,7 @@
 import { keyBy, some, get } from 'lodash';
 
 /**
- * Internal depedencies
+ * Internal dependencies
  */
 import treeSelect from '@automattic/tree-select';
 import { keyToString, keyForPost } from 'calypso/reader/post-key';
