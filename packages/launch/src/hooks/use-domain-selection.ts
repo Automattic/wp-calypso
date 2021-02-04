@@ -3,14 +3,14 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import { DomainSuggestions } from '@automattic/data-stores';
 import { mockDomainSuggestion } from '@automattic/domain-picker';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE, SITE_STORE, DOMAIN_SUGGESTIONS_STORE, PLANS_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { isDomainProduct } from '../utils';
 import type { DomainProduct } from '../utils';
@@ -42,17 +42,38 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 
 	const domainName = domainProductFromCart?.meta;
 
-	const domainSuggestion = useSelect( ( select ) =>
-		domainName
-			? select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainName, {
-					quantity: 1,
-					include_wordpressdotcom: false,
-					include_dotblogsubdomain: false,
-			  } )?.[ 0 ]
-			: undefined
+	const domainDetails = useSelect( ( select ) =>
+		select( DOMAIN_SUGGESTIONS_STORE ).isAvailable( domainName || '' )
 	);
 
-	return domainSuggestion;
+	// if the domain is still available, forge a domain suggestion from it and return it
+	if (
+		domainProductFromCart &&
+		domainName &&
+		domainDetails &&
+		// the availability endpoint returns "status: available|premium_available"
+		// for now, we consider premium domains unavailable and don't convert them into suggestions
+		// so instead of using [ 'available', 'available_premium' ].indexOf( domainDetails.status ) > -1
+		// we only accept domainDetails.status === 'available'
+		domainDetails.status === 'available'
+	) {
+		return {
+			hsts_required: domainDetails.hsts_required,
+			domain_name: domainName,
+			raw_price: domainProductFromCart.cost,
+			currency_code: domainProductFromCart.currency,
+			supports_privacy: domainProductFromCart.extra.privacy_available,
+			is_free: false,
+			product_id: domainProductFromCart.product_id,
+			product_slug: domainProductFromCart.product_slug,
+			cost: DomainSuggestions.getFormattedPrice(
+				domainProductFromCart.cost,
+				domainProductFromCart.currency
+			),
+		};
+	}
+
+	return undefined;
 }
 
 type DomainSelection = {

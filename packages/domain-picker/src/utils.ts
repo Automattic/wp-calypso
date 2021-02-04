@@ -16,6 +16,8 @@ export function mockDomainSuggestion(
 		cost: '',
 		product_id: 0,
 		product_slug: '',
+		raw_price: 0,
+		currency_code: '',
 	};
 }
 

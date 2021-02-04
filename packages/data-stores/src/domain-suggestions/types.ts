@@ -88,14 +88,14 @@ export interface DomainSuggestion {
 	 *
 	 * @example 40
 	 */
-	raw_price?: number;
+	raw_price: number;
 
 	/**
 	 * Currency code
 	 *
 	 * @example USD
 	 */
-	currency_code?: string;
+	currency_code: string;
 
 	/**
 	 * Relevance as a percent: 0 <= relevance <= 1
@@ -137,7 +137,7 @@ export interface DomainSuggestion {
 	is_free?: boolean;
 
 	/**
-	 * Whether the domain requies HSTS
+	 * Whether the domain requires HSTS
 	 */
 	hsts_required?: boolean;
 }
@@ -201,6 +201,11 @@ export interface DomainAvailability {
 	 * Vendor
 	 */
 	vendor?: string;
+
+	/**
+	 * Whether the domain requires HSTS
+	 */
+	hsts_required?: boolean;
 }
 
 export type TimestampMS = ReturnType< typeof Date.now >;

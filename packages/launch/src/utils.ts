@@ -45,6 +45,11 @@ export type DomainProduct = {
 		privacy?: boolean;
 		source: string;
 	};
+	product_cost_display: string;
+	currency_code?: string;
+	product_slug?: string;
+	cost: number;
+	currency: string;
 };
 
 export const getDomainProduct = (
@@ -62,6 +67,11 @@ export const getDomainProduct = (
 			privacy: domain?.supports_privacy,
 			source: flow,
 		},
+		product_cost_display: domain.cost,
+		currency_code: domain.currency_code,
+		product_slug: domain.product_slug,
+		cost: domain.raw_price,
+		currency: domain.currency_code,
 	};
 };
 
