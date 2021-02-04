@@ -439,7 +439,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );
 	} );
 
-	it( 'does not redirect to url from cookie if isEligibleForSignupDestination is false', () => {
+	it( 'does not redirect to url from cookie if isEligibleForSignupDestinationResult is false', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			products: [ { product_slug: 'foo' } ],
@@ -454,7 +454,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	it( 'Redirects to root if previous receipt is "noPreviousPurchase" and isEligibleForSignupDestination is false', () => {
+	it( 'Redirects to root if previous receipt is "noPreviousPurchase" and isEligibleForSignupDestinationResult is false', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			products: [ { product_slug: 'foo' } ],
