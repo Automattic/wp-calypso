@@ -41,6 +41,7 @@ domReady( () => {
 		}
 
 		const { launchUrl, launchFlow, isGutenboarding, anchorFmPodcastId } = siteLaunchOptions;
+		const isAnchorFm = !! anchorFmPodcastId;
 
 		// Wrap 'Launch' button link to control launch flow.
 		const launchButton = document.createElement( 'a' );
@@ -58,7 +59,6 @@ domReady( () => {
 			} );
 
 			// Enable anchor-flavoured gutenboarding features (the launch button works immediately).
-			const isAnchorFm = !! anchorFmPodcastId;
 			if ( isAnchorFm ) {
 				dispatch( 'automattic/launch' ).enableAnchorFm();
 			}
@@ -106,6 +106,10 @@ domReady( () => {
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( launchButton );
-		saveButton && settingsBar.prepend( saveButton );
+		if ( isAnchorFm ) {
+			saveButton && settingsBar.removeChild( saveButton );
+		} else {
+			saveButton && settingsBar.prepend( saveButton );
+		}
 	} );
 } );
