@@ -9,15 +9,11 @@ import apiFetch from '@wordpress/api-fetch';
 import { throttle } from 'lodash';
 
 /**
- * Module variables
- */
-
-/**
  * Interval for error reports so we don't flood te endpoint.
  *
  * @type {number} throttling interval (since the last request) in milliseconds.
  */
-const REPORT_INTERVAL = 60000; //1 minute
+const REPORT_INTERVAL = 60000; // 1 minute
 
 window.addEventListener(
 	'error',
