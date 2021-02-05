@@ -103,12 +103,30 @@ describe( 'middleware', () => {
 			let state;
 			beforeEach( () => {
 				state = {
+					currentUser: {
+						locale: 'en',
+						capabilities: {},
+					},
 					happychat: {
 						chat: { status: HAPPYCHAT_CHAT_STATUS_DEFAULT },
 					},
 					route: { path: { current: '/happychat' } },
 					ui: {
 						section: { name: 'happychat' },
+					},
+					sites: {
+						items: {
+							1: {
+								ID: 1,
+								plan: {
+									product_id: 2002,
+									product_slug: 'jetpack_free',
+									product_name_short: 'Free',
+									free_trial: false,
+									expired: false,
+								},
+							},
+						},
 					},
 				};
 
@@ -134,6 +152,8 @@ describe( 'middleware', () => {
 						type: HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
 						payload: {
 							calypsoSectionName: 'happychat',
+							wpcomSiteId: '1',
+							wpcomSitePlan: 'jetpack_free',
 						},
 					} )
 				);
