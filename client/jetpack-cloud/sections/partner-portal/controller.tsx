@@ -27,7 +27,9 @@ export function partnerKeyContext( context: PageJS.Context, next: () => any ) {
 export function partnerPortalContext( context: PageJS.Context, next: () => any ) {
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <LicenseList />;
+	context.primary = (
+		<LicenseList status={ context.params.status } search={ context.query.s || '' } />
+	);
 	context.footer = <JetpackComFooter />;
 	next();
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -12,9 +12,23 @@ import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import LicensePreview from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
+import LicenseStatusFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-status-filter';
 
-export default function LicenseList() {
+export enum StatusFilter {
+	All = 'all',
+	Detached = 'detached',
+	Attached = 'attached',
+	Revoked = 'revoked',
+}
+
+interface Props {
+	status?: string;
+	search?: string;
+}
+
+export default function LicenseList( { status, search }: Props ): ReactElement {
 	const translate = useTranslate();
+	const statusFilter = Object.values( StatusFilter ).includes( status as never ) ? status : 'all';
 
 	const data = [
 		{
@@ -64,6 +78,8 @@ export default function LicenseList() {
 			<DocumentHead title={ translate( 'Licenses' ) } />
 
 			<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
+
+			<LicenseStatusFilter statusFilter={ statusFilter } search={ search } />
 
 			<LicenseListItem header>
 				<h2>{ translate( 'License state' ) }</h2>
