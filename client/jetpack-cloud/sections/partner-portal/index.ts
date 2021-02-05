@@ -18,7 +18,7 @@ export default function () {
 	page( `/partner-portal/partner-key`, controller.partnerKeyContext, makeLayout, clientRender );
 
 	page(
-		`/partner-portal/:status(detached|attached|revoked)?/`,
+		`/partner-portal/:state(detached|attached|revoked)?/`,
 		controller.requirePartnerKeyContext,
 		controller.partnerPortalContext,
 		makeLayout,

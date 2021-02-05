@@ -9,7 +9,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { StatusFilter } from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
+import { LicenseStates } from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
@@ -23,13 +23,13 @@ import UrlSearch from 'calypso/lib/url-search';
 import './style.scss';
 
 interface Props {
-	statusFilter?: StatusFilter;
+	stateFilter?: LicenseStates;
 	search?: string;
 	doSearch: ( query: string ) => void;
 	getSearchOpen: () => boolean;
 }
 
-const LicenseStatusFilter: React.FC< Props > = ( props ) => {
+const LicenseStateFilter: React.FC< Props > = ( props ) => {
 	const translate = useTranslate();
 	const basePath = '/partner-portal/';
 
@@ -48,7 +48,7 @@ const LicenseStatusFilter: React.FC< Props > = ( props ) => {
 		{ key: 'revoked', label: translate( 'Revoked' ), count: 5 },
 	].map( ( navItem ) => ( {
 		...navItem,
-		selected: props.statusFilter === navItem.key,
+		selected: props.stateFilter === navItem.key,
 		path: basePath + ( 'all' !== navItem.key ? navItem.key : '' ),
 		children: navItem.label,
 	} ) );
@@ -64,10 +64,10 @@ const LicenseStatusFilter: React.FC< Props > = ( props ) => {
 				</span>
 			}
 			selectedCount={ selectedItem.count }
-			classname={ classnames( 'license-status-filter', { 'search-open': props.getSearchOpen() } ) }
+			classname={ classnames( 'license-state-filter', { 'search-open': props.getSearchOpen() } ) }
 		>
 			<NavTabs
-				label={ translate( 'Status' ) }
+				label={ translate( 'State' ) }
 				selectedText={ selectedItem.label }
 				selectedCount={ selectedItem.count }
 			>
@@ -87,4 +87,4 @@ const LicenseStatusFilter: React.FC< Props > = ( props ) => {
 	);
 };
 
-export default UrlSearch( LicenseStatusFilter );
+export default UrlSearch( LicenseStateFilter );
