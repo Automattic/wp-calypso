@@ -34,10 +34,46 @@ $plan-features-sidebar-width: 272px;
 				display: block;
 			}
 
-			.plan-features__header-text .plan-price {
+			.plan-features__header {
+				display: block;
+				position: relative;
+				text-align: left;
+				box-sizing: border-box;
+				border-top: solid 8px;
+				border-radius: 2px 2px 0 0;
+				padding-bottom: 12px;
+		
+				&.is-blogger-plan {
+					border-color: var( --color-plan-blogger );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+		
+				&.is-personal-plan {
+					border-color: var( --color-plan-personal );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+		
+				&.is-premium-plan {
+					border-color: var( --color-plan-premium );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+		
+				&.is-business-plan {
+					border-color: var( --color-plan-business );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+		
+				&.is-ecommerce-plan {
+					border-color: var( --color-plan-ecommerce );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+			}
+
+			 .plan-price {
 				font-weight: 600;
 				margin-right: 10px;
 				font-size: $font-headline-large;
+				text-align: center;
 				font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
 
 				.plan-price__currency-symbol {
@@ -59,11 +95,9 @@ $plan-features-sidebar-width: 272px;
 
 			.plan-features__header-billing-info {
 				margin-bottom: 1.4em;
-				font-size: 0.75rem;
-				font-style: italic;
-				font-weight: 400;
 				color: var( --color-text-subtle );
 				line-height: normal;
+				text-align: center;
 			}
 		}
 	}
