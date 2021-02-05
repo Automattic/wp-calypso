@@ -1,13 +1,9 @@
 /**
  * External dependencies
  */
-import { isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
+import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
+import type { PropertyPath } from 'lodash';
 import type { Reducer, Action, AnyAction } from 'redux';
-
-/**
- * WordPress dependencies
- */
-import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
@@ -19,11 +15,11 @@ type CalypsoInitAction = Action< '@@calypso/INIT' >;
 type SerializeAction = Action< 'SERIALIZE' >;
 type DeserializeAction = Action< 'DESERIALIZE' >;
 
-export type KeyedReducerAction< TAction, TKeyedAction = Record< string, unknown > > =
+type KeyedReducerAction< TAction extends Action > =
 	| TAction
-	| ( CalypsoInitAction & Partial< TKeyedAction > )
-	| ( SerializeAction & Partial< TKeyedAction > )
-	| ( DeserializeAction & Partial< TKeyedAction > );
+	| CalypsoInitAction
+	| SerializeAction
+	| DeserializeAction;
 
 /**
  * Creates a super-reducer as a map of reducers over keyed objects
@@ -77,24 +73,21 @@ export type KeyedReducerAction< TAction, TKeyedAction = Record< string, unknown 
  * @param reducer applied to referenced item in state map
  * @returns super-reducer applying reducer over map of keyed items
  */
-const keyedReducer = <
-	TKey extends string | number,
-	TState,
-	TAction extends Action = AnyAction,
-	TKeyedAction = Record< string, unknown >
->(
-	keyPath: keyof KeyedReducerAction< TAction, TKeyedAction > | ( ( action: TAction ) => TKey ),
-	reducer: Reducer< TState | undefined, KeyedReducerAction< TAction, TKeyedAction > >
-): Reducer< Record< TKey, TState >, KeyedReducerAction< TAction, TKeyedAction > > => {
+const keyedReducer = < TState, TAction extends Action = AnyAction >(
+	keyPath: PropertyPath,
+	reducer: Reducer< TState, KeyedReducerAction< TAction > >
+): Reducer< Record< string | number, TState >, KeyedReducerAction< TAction > > => {
 	// some keys are invalid
-	if ( ! [ 'string', 'function' ].includes( typeof keyPath ) ) {
+	if ( 'string' !== typeof keyPath ) {
 		throw new TypeError(
-			`Key name passed into \`keyedReducer\` must be a string or a function but I detected a ${ typeof keyPath }`
+			`Key name passed into \`keyedReducer\` must be a string but I detected a ${ typeof keyPath }`
 		);
 	}
 
-	if ( typeof keyPath === 'string' && ! ( keyPath as string ).length ) {
-		throw new TypeError( 'Key name passed into `keyedReducer` must not be empty' );
+	if ( ! keyPath.length ) {
+		throw new TypeError(
+			'Key name passed into `keyedReducer` must have a non-zero length but I detected an empty string'
+		);
 	}
 
 	if ( 'function' !== typeof reducer ) {
@@ -106,9 +99,9 @@ const keyedReducer = <
 	const initialState = reducer( undefined, { type: '@@calypso/INIT' } );
 
 	return (
-		state: Record< TKey, TState > = {} as Record< TKey, TState >,
-		action: KeyedReducerAction< TAction, TKeyedAction >
-	): Record< TKey, TState > => {
+		state: Record< string | number, TState > = {} as Record< string | number, TState >,
+		action: KeyedReducerAction< TAction >
+	): Record< string | number, TState > => {
 		if ( action.type === SERIALIZE ) {
 			const serialized = reduce(
 				state,
@@ -125,38 +118,31 @@ const keyedReducer = <
 				},
 				undefined as SerializationResult< TState > | undefined
 			);
-			return ( serialized as unknown ) as Record< TKey, TState >;
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore We're doing some magic stuff here with serialization and deserialization so it's safe to just ignore this error
+			return serialized;
 		}
 
 		if ( action.type === DESERIALIZE ) {
 			return omitBy(
 				mapValues( state, ( item ) => reducer( item, action ) ),
 				( a ) => a === undefined || isEqual( a, initialState )
-			) as Record< TKey, TState >;
+			) as Record< string | number, TState >;
 		}
 
-		let itemKey: TKey | undefined = undefined;
-		if ( typeof keyPath === 'function' ) {
-			try {
-				itemKey = keyPath( action as TAction );
-			} catch ( e ) {
-				warn( e );
-				itemKey = undefined;
-			}
-		} else {
-			itemKey = action[ keyPath ] as TKey;
-		}
+		// don't allow coercion of key name: null => 0
+		const itemKey = get( action, keyPath, undefined ) as string | number;
 
 		// if the action doesn't contain a valid reference
 		// then return without any updates
-		if ( undefined === itemKey ) {
+		if ( null === itemKey || undefined === itemKey ) {
 			return state;
 		}
 
 		// pass the old sub-state from that item into the reducer
 		// we need this to update state and also to compare if
 		// we had any changes, thus the initialState
-		const oldItemState = state[ itemKey ];
+		const oldItemState = state[ itemKey ] as TState;
 		const newItemState = reducer( oldItemState, action );
 
 		// and do nothing if the new sub-state matches the old sub-state
@@ -168,7 +154,7 @@ const keyedReducer = <
 		// if it didn't exist anyway, then do nothing.
 		if ( undefined === newItemState || isEqual( newItemState, initialState ) ) {
 			return state.hasOwnProperty( itemKey )
-				? ( omit( state, itemKey ) as Record< TKey, TState > )
+				? ( omit( state, itemKey ) as Record< string | number, TState > )
 				: state;
 		}
 
