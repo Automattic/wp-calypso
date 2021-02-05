@@ -19,9 +19,9 @@ export const requestFetchAdminMenu = ( action ) =>
 	);
 
 const sanitizeUrl = ( url, site ) => {
-	if ( new RegExp( `^https?://${ site?.domain }` ).test( url ) ) {
-		return url;
-	} else if ( /^\//.test( url ) ) {
+	const isSafeInternalUrl = new RegExp( '^/' ).test( url );
+	const isSafeSiteDomainUrl = new RegExp( `^https?://${ site?.domain }` ).test( url );
+	if ( isSafeInternalUrl || isSafeSiteDomainUrl ) {
 		return url;
 	}
 
