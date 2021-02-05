@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '2.17' );
+define( 'A8C_ETK_PLUGIN_VERSION', '2.17' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';

@@ -54,7 +54,7 @@ function render_fallback_coming_soon_page() {
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 	add_filter( 'jetpack_implode_frontend_css', '__return_false', 99 ); // Jetpack "implodes" all registered CSS files into one file.
 
-	wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css', array(), PLUGIN_VERSION );
+	wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css', array(), A8C_ETK_PLUGIN_VERSION );
 
 	include __DIR__ . '/fallback-coming-soon-page.php';
 }
