@@ -365,7 +365,6 @@ export class PlanFeaturesHeader extends Component {
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
 		const { currencyCode, isInSignup, plansWithScroll } = this.props;
-		const displayFlatPrice = isInSignup && ! plansWithScroll;
 
 		if ( fullPrice && discountedPrice ) {
 			return (
@@ -374,14 +373,12 @@ export class PlanFeaturesHeader extends Component {
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
-							displayFlatPrice={ displayFlatPrice }
 							isInSignup={ isInSignup }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
-							displayFlatPrice={ displayFlatPrice }
 							isInSignup={ isInSignup }
 							discounted
 						/>
@@ -392,12 +389,7 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		return (
-			<PlanPrice
-				currencyCode={ currencyCode }
-				rawPrice={ fullPrice }
-				displayFlatPrice={ displayFlatPrice }
-				isInSignup={ isInSignup }
-			/>
+			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } isInSignup={ isInSignup } />
 		);
 	}
 

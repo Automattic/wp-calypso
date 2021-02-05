@@ -26,7 +26,6 @@ export class PlanPrice extends Component {
 			original,
 			discounted,
 			className,
-			displayFlatPrice,
 			isInSignup,
 			isOnSale,
 			taxText,
@@ -54,31 +53,6 @@ export class PlanPrice extends Component {
 			'is-original': original,
 			'is-discounted': discounted,
 		} );
-
-		const renderPrice = ( priceObj ) => {
-			const fraction = priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction;
-			if ( fraction ) {
-				return `${ priceObj.price.integer }${ fraction }`;
-			}
-			return priceObj.price.integer;
-		};
-
-		if ( displayFlatPrice ) {
-			const smallerPrice = renderPrice( priceRange[ 0 ] );
-			const higherPrice = priceRange[ 1 ] && renderPrice( priceRange[ 1 ] );
-
-			return (
-				<span className={ classes }>
-					{ priceRange[ 0 ].price.symbol }
-					{ ! higherPrice && renderPrice( priceRange[ 0 ] ) }
-					{ higherPrice &&
-						translate( '%(smallerPrice)s-%(higherPrice)s', {
-							args: { smallerPrice, higherPrice },
-							comment: 'The price range for a particular product',
-						} ) }
-				</span>
-			);
-		}
 
 		const renderPriceHtml = ( priceObj ) => {
 			return (

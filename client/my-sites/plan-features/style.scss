@@ -27,7 +27,6 @@ $plan-features-sidebar-width: 272px;
 				}
 				.plan-features--signup .plan-features__pricing {
 					padding: 0 7px;
-
 				}
 			}
 
@@ -35,18 +34,21 @@ $plan-features-sidebar-width: 272px;
 				display: block;
 			}
 
-			.plan-features__pricing .plan-price__currency-symbol {
-				vertical-align: super;
-				font-size: $font-body-extra-small;
-				font-weight: normal;
-			}
-
-			//To be moved to line 904 approximately
-			.plan-price.plan-price {
-				font-weight: 400;
+			.plan-features__header-text .plan-price {
+				font-weight: 600;
 				margin-right: 10px;
-				font-size: $font-title-medium;
+				font-size: $font-headline-large;
 				font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+
+				.plan-price__currency-symbol {
+					vertical-align: super;
+					font-size: $font-title-medium;
+					font-weight: 400;
+				}
+				
+				.plan-price__integer {
+					font-weight: 600;
+				}
 			}
 
 			.plan-features__header-title {
@@ -64,7 +66,6 @@ $plan-features-sidebar-width: 272px;
 				line-height: normal;
 			}
 		}
-
 	}
 }
 
