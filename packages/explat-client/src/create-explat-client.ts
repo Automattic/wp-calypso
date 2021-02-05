@@ -108,6 +108,8 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 						experimentName
 					] = createAOAATExperimentAssignmentFetchAndStore( experimentName );
 				}
+				// We time out the request here and not above so the fetch-and-store continues and can be
+				// returned by future uses of loadExperimentAssignment.
 				const fetchedExperimentAssignment = await Timing.timeoutPromise(
 					experimentNameToAOAATExperimentAssignmentFetchAndStore[ experimentName ](),
 					EXPERIMENT_FETCH_TIMEOUT
@@ -140,13 +142,14 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 						return storedExperimentAssignment;
 					}
 
-					// TODO: Possibly move this within async-one-at-a-time as we only want this to happen once across requests.
-					//       It happens to be ok now as we are fetching the recent stored EA just above.
+					// We are syncronously trying to retreive and then storing a fallback which means this fallback will
+					// be retrieved by all other loadExperimentAssignments that are currently running or will run,
+					// preventing a run on the server.
 					const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
 					State.storeExperimentAssignment( store, fallbackExperimentAssignment );
 					return fallbackExperimentAssignment;
 				} catch ( e2 ) {
-					// The devMode error gets passed through so we throw it again.
+					// The devMode error gets passed through so we have to throw it again.
 					if ( config.isDevelopmentMode ) {
 						throw e2;
 					}

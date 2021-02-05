@@ -30,11 +30,11 @@ beforeEach( () => {
 } );
 
 describe( 'loadExperimentAssignment', () => {
-	it( 'should behave as expected', () => {
+	it( 'should behave as expected', async () => {
 		spiedMonotonicNow.mockImplementationOnce( () => 123456 );
 		const client = createSsrSafeMockExPlatClient( mockedConfig );
 
-		expect( client.loadExperimentAssignment( 'experiment_name' ) ).resolves.toEqual( {
+		await expect( client.loadExperimentAssignment( 'experiment_name' ) ).resolves.toEqual( {
 			experimentName: 'experiment_name',
 			isFallbackExperimentAssignment: true,
 			retrievedTimestamp: 123456,
