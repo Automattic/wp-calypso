@@ -21,11 +21,10 @@ const REPORT_INTERVAL = 60000; //1 minute
 
 window.addEventListener(
 	'error',
-	throttle( ( { message, filename, lineno, colno } ) => {
-		const error = {
-			message: `${ message } (${ filename }:${ lineno }:${ colno })`,
-			//file: `${ filename }:${ lineno }:${ colno })`,
-			//line: `${ lineno }:${ colno }`,
+	throttle( ( { error } ) => {
+		const data = {
+			message: error.message,
+			trace: error.stack,
 			url: document.location.href,
 			feature: 'wp-admin',
 		};
@@ -34,7 +33,7 @@ window.addEventListener(
 			global: true,
 			path: '/rest/v1.1/js-error',
 			method: 'POST',
-			data: { error: JSON.stringify( error ) },
+			data: { error: JSON.stringify( data ) },
 		} )
 			// eslint-disable-next-line no-console
 			.catch( () => console.error( 'Error: Unable to record the error in Logstash.' ) );
