@@ -30,7 +30,7 @@ const sanitizeUrl = ( url, site ) => {
 
 const sanitizeMenuItem = ( menuItem, site ) => {
 	let sanitizedChildren;
-	if ( menuItem.children ) {
+	if ( Array.isArray( menuItem.children ) ) {
 		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
 			sanitizeMenuItem( subMenuItem, site )
 		);
@@ -43,6 +43,11 @@ const sanitizeMenuItem = ( menuItem, site ) => {
 };
 
 export const handleSuccess = ( { siteId }, menuData ) => ( dispatch, getState ) => {
+	if ( ! Array.isArray( menuData ) ) {
+		return receiveAdminMenu( siteId, menuData );
+	}
+
+	// Sanitize menu data.
 	const site = getSite( getState(), siteId );
 	return dispatch(
 		receiveAdminMenu(
