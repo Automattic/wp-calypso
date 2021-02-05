@@ -522,4 +522,3 @@ function getThankYouPageUrlForTrafficGuide( {
 		return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 	}
 }
-
