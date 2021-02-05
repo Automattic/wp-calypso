@@ -60,7 +60,8 @@ $font-size: rem( 14px );
 		box-sizing: border-box;
 
 		.sidebar__separator {
-			margin: 0 0 11px;
+			border-bottom: 1px solid var( --color-sidebar-border );
+			margin: 6px 0;
 		}
 
 		.current-site.card {
@@ -461,6 +462,10 @@ $font-size: rem( 14px );
 	}
 
 	.collapse-sidebar__toggle {
+		border-top: 1px solid var( --color-sidebar-border );
+		padding-top: 6px;
+		margin-top: 6px;
+
 		.sidebar__menu-link {
 			cursor: pointer;
 			color: var( --color-sidebar-text-alternative );
