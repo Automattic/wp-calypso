@@ -28,9 +28,11 @@ import type {
 // params are used by the associated resolver.
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
+export const getFeatures = ( state: State, locale: string ): Record< string, PlanFeature > =>
+	state.features[ locale ] ?? {};
 
-export const getFeaturesByType = ( state: State ): Array< FeaturesByType > => state.featuresByType;
+export const getFeaturesByType = ( state: State, locale: string ): Array< FeaturesByType > =>
+	state.featuresByType[ locale ] ?? [];
 
 export const getPlanByProductId = (
 	_state: State,
@@ -85,7 +87,7 @@ export const getDefaultFreePlan = ( _: State, locale: string ): Plan | undefined
 };
 
 export const getSupportedPlans = ( state: State, _locale: string ): Plan[] => {
-	return state.plans;
+	return state.plans[ _locale ] ?? [];
 };
 
 export const getPlansProducts = ( state: State ): PlanProduct[] => {

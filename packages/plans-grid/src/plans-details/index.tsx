@@ -43,8 +43,8 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 		return {
 			supportedPlans,
 			planProducts,
-			features: getFeatures(),
-			featuresByType: getFeaturesByType(),
+			features: getFeatures( locale ),
+			featuresByType: getFeaturesByType( locale ),
 		};
 	} );
 

@@ -167,7 +167,7 @@ function normalizePlanProducts(
 	return plansProducts;
 }
 
-export function* getSupportedPlans( locale = 'en' ) {
+export function* getSupportedPlans( locale: string ) {
 	const pricedPlans: PricedAPIPlan[] = yield wpcomRequest( {
 		path: '/plans',
 		query: stringify( { locale } ),
@@ -207,8 +207,8 @@ export function* getSupportedPlans( locale = 'en' ) {
 
 	const planProducts = normalizePlanProducts( pricedPlans, periodAgnosticPlans );
 
-	yield setPlans( periodAgnosticPlans );
+	yield setPlans( periodAgnosticPlans, locale );
 	yield setPlanProducts( planProducts );
-	yield setFeatures( features );
-	yield setFeaturesByType( plansFeatures.features_by_type );
+	yield setFeatures( features, locale );
+	yield setFeaturesByType( plansFeatures.features_by_type, locale );
 }
