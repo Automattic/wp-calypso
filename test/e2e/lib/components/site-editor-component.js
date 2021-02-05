@@ -16,6 +16,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		this.editorType = editorType;
 
 		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
+		this.editorCanvasiFrameSelector = By.css( 'iframe[name="editor-canvas"]' );
 	}
 
 	static async Expect( driver, editorType ) {
@@ -41,11 +42,23 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		await this.driver.sleep( 2000 );
 	}
 
-	async waitForTemplatePartsToLoad() {
-		await driverHelper.waitTillNotPresent(
-			this.driver,
-			By.css( '.wp-block-template-part .components-spinner' )
+	async runInCanvas( fn ) {
+		await this.driver.wait(
+			until.ableToSwitchToFrame( this.editorCanvasiFrameSelector ),
+			this.explicitWaitMS,
+			'Could not locate the editor canvas iFrame.'
 		);
+		await fn();
+		await this.driver.switchTo().parentFrame();
+	}
+
+	async waitForTemplatePartsToLoad() {
+		await this.runInCanvas( async () => {
+			await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( '.wp-block-template-part .components-spinner' )
+			);
+		} );
 	}
 
 	async waitForTemplateToLoad( templateName = 'Front Page' ) {
@@ -55,9 +68,11 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			templateName
 		);
 
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.edit-site-block-editor__block-list' )
-		);
+		await this.runInCanvas( async () => {
+			await driverHelper.waitTillPresentAndDisplayed(
+				this.driver,
+				By.css( '.edit-site-block-editor__block-list' )
+			);
+		} );
 	}
 }
