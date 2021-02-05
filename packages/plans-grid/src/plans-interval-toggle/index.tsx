@@ -96,7 +96,7 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 									'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
 									__i18n_text_domain__
 								),
-								{ maxDiscount: maxMonthlyDiscountPercentage ?? 0 }
+								{ maxDiscount: maxMonthlyDiscountPercentage }
 							) }
 						</PopupMessages>
 					) }
