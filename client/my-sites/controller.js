@@ -444,16 +444,8 @@ export function siteSelection( context, next ) {
 				if ( onSelectedSiteAvailable( context, basePath ) ) {
 					next();
 				}
-			} else if ( '1' === context.query?.unlinked && response?.site?.URL ) {
-				const authorizePath = addQueryArgs(
-					{
-						page: 'jetpack',
-						action: 'authorize_redirect',
-						dest_url: removeQueryArgs( window.origin + context.path, 'unlinked' ),
-					},
-					trailingslashit( response?.site?.URL ) + 'wp-admin/'
-				);
-				externalRedirect( authorizePath );
+			} else if ( shouldRedirectToJetpackAuthorize( context, response ) ) {
+				redirectToJetpackAuthorize( context, response );
 			} else {
 				// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 				const allSitesPath = addQueryArgs(
@@ -594,4 +586,33 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
 	}
 
 	next();
+}
+
+/**
+ * Whether we need to redirect user to the Jetpack site for authorization.
+ *
+ * @param {object} context -- The context object.
+ * @param {object} response -- The site information HTTP response.
+ * @returns {boolean} -- Whether we need to redirect user to the Jetpack site for authorization.
+ */
+export function shouldRedirectToJetpackAuthorize( context, response ) {
+	return '1' === context.query?.unlinked && !! response?.site?.URL;
+}
+
+/**
+ * Redirect the user to the Jetpack site for authorization.
+ *
+ * @param {object} context -- The context object.
+ * @param {object} response -- The site information HTTP response.
+ */
+export function redirectToJetpackAuthorize( context, response ) {
+	const authorizePath = addQueryArgs(
+		{
+			page: 'jetpack',
+			action: 'authorize_redirect',
+			dest_url: removeQueryArgs( window.origin + context.path, 'unlinked' ),
+		},
+		trailingslashit( response?.site?.URL ) + 'wp-admin/'
+	);
+	externalRedirect( authorizePath );
 }
