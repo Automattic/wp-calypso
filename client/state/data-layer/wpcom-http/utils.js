@@ -91,7 +91,7 @@ export const requestsReducerItem = (
 	);
 };
 
-export const reducer = keyedReducer( ( a ) => a.meta?.dataLayer?.requestKey, requestsReducerItem );
+export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReducerItem );
 
 /**
  * Tracks the state of network activity for a given request type

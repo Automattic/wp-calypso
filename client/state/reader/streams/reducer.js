@@ -237,4 +237,4 @@ const streamReducer = combineReducers( {
 	pageHandle,
 } );
 
-export default keyedReducer( ( a ) => a.payload?.streamKey, streamReducer );
+export default keyedReducer( 'payload.streamKey', streamReducer );
