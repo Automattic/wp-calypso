@@ -47,7 +47,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
 
 	const selectedMenuItem =
-		children && children.find( ( menuItem ) => itemLinkMatches( menuItem.url, path ) );
+		children &&
+		children.find( ( menuItem ) => menuItem.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
 
 	/**
@@ -65,19 +66,21 @@ export const MySitesSidebarUnifiedMenu = ( {
 		<li>
 			<ExpandableSidebarMenu
 				onClick={ () => {
-					if ( isWithinBreakpoint( '>782px' ) ) {
-						if ( isExternal( link ) ) {
-							// If the URL is external, page() will fail to replace state between different domains.
-							externalRedirect( link );
-							return;
-						}
+					if ( link ) {
+						if ( isWithinBreakpoint( '>782px' ) ) {
+							if ( isExternal( link ) ) {
+								// If the URL is external, page() will fail to replace state between different domains.
+								externalRedirect( link );
+								return;
+							}
 
-						// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
-						page( link );
+							// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
+							page( link );
 
-						if ( ! sidebarCollapsed ) {
-							// Keep only current submenu open.
-							reduxDispatch( collapseAllMySitesSidebarSections() );
+							if ( ! sidebarCollapsed ) {
+								// Keep only current submenu open.
+								reduxDispatch( collapseAllMySitesSidebarSections() );
+							}
 						}
 					}
 
