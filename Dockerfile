@@ -19,7 +19,7 @@ FROM builder-cache-${use_cache} as builder
 
 ARG commit_sha="(unknown)"
 ARG workers=4
-ARG node_memory=8192
+ARG node_memory=9216
 ENV CONTAINER 'docker'
 ENV PROGRESS true
 ENV COMMIT_SHA $commit_sha
