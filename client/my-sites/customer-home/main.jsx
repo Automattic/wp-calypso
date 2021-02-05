@@ -177,3 +177,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
 export default flowRight( connectHome, withTrackingTool( 'HotJar' ) )( Home );
+
