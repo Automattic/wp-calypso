@@ -49,7 +49,7 @@ const sanitizeMenuItem = ( menuItem, site ) => {
 
 export const handleSuccess = ( { siteId }, menuData ) => ( dispatch, getState ) => {
 	if ( ! Array.isArray( menuData ) ) {
-		return receiveAdminMenu( siteId, menuData );
+		return dispatch( receiveAdminMenu( siteId, menuData ) );
 	}
 
 	// Sanitize menu data.
