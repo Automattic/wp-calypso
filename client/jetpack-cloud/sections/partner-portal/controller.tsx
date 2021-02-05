@@ -46,7 +46,7 @@ export function requirePartnerKeyContext( context: PageJS.Context, next: () => a
 	page.redirect(
 		addQueryArgs(
 			{
-				return: window.location.pathname,
+				return: window.location.pathname + window.location.search,
 			},
 			'/partner-portal/partner-key'
 		)
