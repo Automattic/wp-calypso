@@ -44,7 +44,9 @@ import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-hap
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import getSectionName from 'calypso/state/ui/selectors/get-section-name';
+import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 
 const getRouteSetMessage = ( state, path ) => {
 	return `Looking at https://wordpress.com${ path }`;
@@ -165,8 +167,13 @@ export default ( store ) => ( next ) => ( action ) => {
 						sendEvent( getRouteSetMessage( state, getCurrentRoute( state ) ) )
 					)
 				);
+				const siteId = getHelpSelectedSiteId( state );
 				dispatch(
-					setChatCustomFields( { calypsoSectionName: getSectionName( state ) || '__unknown__' } )
+					setChatCustomFields( {
+						calypsoSectionName: getSectionName( state ) || '__unknown__',
+						wpcomSiteId: '' + siteId, // Convert to string for Custom Fields
+						wpcomSitePlan: getSitePlanSlug( state, siteId ),
+					} )
 				);
 			}
 			break;
