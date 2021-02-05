@@ -1192,7 +1192,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 				cd apps/editing-toolkit
 
 				# Update plugin version in the plugin file.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'PLUGIN_VERSION'/c\define( 'PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
 
 				# Update plugin stable tag in readme.txt.
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt

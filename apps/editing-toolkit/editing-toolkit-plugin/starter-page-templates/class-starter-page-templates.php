@@ -34,7 +34,7 @@ class Starter_Page_Templates {
 			'_',
 			array(
 				'starter_page_templates',
-				PLUGIN_VERSION,
+				A8C_ETK_PLUGIN_VERSION,
 				get_option( 'site_vertical', 'default' ),
 				get_locale(),
 			)
@@ -84,7 +84,7 @@ class Starter_Page_Templates {
 			'single'         => true,
 			'show_in_rest'   => true,
 			'object_subtype' => 'page',
-			'auth_callback'  => function() {
+			'auth_callback'  => function () {
 				return current_user_can( 'edit_posts' );
 			},
 		);
