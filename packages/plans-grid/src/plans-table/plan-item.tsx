@@ -63,7 +63,7 @@ export interface Props {
 }
 
 // NOTE: there is some duplicate markup between this plan item (used in the
-// 'table' version of the plans grid) and the accortion plan item (used in the
+// 'table' version of the plans grid) and the accordion plan item (used in the
 // 'accordion' version of the plans grid). Ideally the code should be refactored
 // to use the same markup, with just different styles
 
@@ -95,7 +95,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
-	// show a nbps in price while loading to prevent a janky UI
+	// show a nbsp in price while loading to prevent a jump in the UI
 	const nbsp = '\u00A0';
 
 	React.useEffect( () => {
@@ -103,6 +103,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	}, [ allPlansExpanded ] );
 
 	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
+
+	const fullWidthCtaLabelSelected = __( 'Current Selection', __i18n_text_domain__ );
+
+	// translators: %s is a WordPress.com plan name (eg: Free, Personal)
+	const fullWidthCtaLabelUnselected = __( 'Select %s', __i18n_text_domain__ );
 
 	return (
 		<div
@@ -160,7 +165,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						</div>
 
 						{ /*
-							For the free plan, the following div is still rendered invisibile
+							For the free plan, the following div is still rendered invisible
 							and ignored by screen readers (via aria-hidden) to ensure the same
 							vertical spacing as the rest of the plan cards
 						 */ }
@@ -203,11 +208,14 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									disabled={ !! disabledLabel }
 								>
 									<span>
-										{ isSelected ? TickIcon : '' }
-										{ isSelected
-											? sprintf( __( 'Current Selection', __i18n_text_domain__ ), name )
-											: /* translators: %s is a WordPress.com plan name (eg: Free, Personal) */
-											  sprintf( __( 'Select %s', __i18n_text_domain__ ), name ) }
+										{ disabledLabel ?? (
+											<>
+												{ isSelected ? TickIcon : '' }
+												{ isSelected
+													? sprintf( fullWidthCtaLabelSelected, name )
+													: sprintf( fullWidthCtaLabelUnselected, name ) }
+											</>
+										) }
 									</span>
 								</Button>
 							) }
@@ -220,8 +228,11 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							onPickDomain={ onPickDomainClick }
 							disabledLabel={
 								disabledLabel &&
-								// Translators: %s is the domain name (e.g. "example.com is not included")
-								sprintf( __( '%s is not included', __i18n_text_domain__ ), domain?.domain_name )
+								sprintf(
+									// Translators: %s is the domain name (e.g. "example.com is not included")
+									__( '%s is not included', __i18n_text_domain__ ),
+									domain?.domain_name
+								)
 							}
 							billingPeriod={ billingPeriod }
 						/>
