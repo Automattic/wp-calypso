@@ -386,7 +386,7 @@ function getRedirectUrlForConciergeNudge( {
 			return upgradePath;
 		}
 
-		// This is for the DIFM upsell A/B test. Check https://wp.me/pcbrnV-Y3.
+		// This is for the DIFM upsell A/B test. Check pcbrnV-Y3-p2.
 		if ( hasBusinessPlan( cart ) ) {
 			recordTracksEvent( 'calypso_eligible_difm_upsell' );
 

@@ -447,7 +447,7 @@ export class CheckoutThankYou extends React.Component {
 				);
 			}
 
-			// This is for the DIFM upsell A/B test. Check https://wp.me/pcbrnV-Y3.
+			// This is for the DIFM upsell A/B test. Check pcbrnV-Y3-p2.
 			recordTracksEvent( 'calypso_eligible_difm_upsell' );
 			if (
 				shouldShowDifmUpsell &&

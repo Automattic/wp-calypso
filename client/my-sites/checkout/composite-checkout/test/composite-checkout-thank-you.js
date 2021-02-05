@@ -141,7 +141,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/:receiptId' );
 	} );
 
-	// This test is for the A/B test defined in https://wp.me/pbxNRc-B0.
+	// This test is for the A/B test defined in pbxNRc-B0-p2.
 	it( 'redirects to the premium plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
 		const cart = {
 			products: [
