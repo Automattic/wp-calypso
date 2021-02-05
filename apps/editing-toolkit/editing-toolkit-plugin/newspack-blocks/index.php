@@ -64,7 +64,8 @@ function newspack_blocks_block_args( $args, $name ) {
 			'blog-posts-block-editor',
 			'newspack_blocks_data',
 			array(
-				'posts_rest_url' => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
+				'posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
+				'specific_posts_rest_url' => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
 			)
 		);
 	}
@@ -113,6 +114,23 @@ function newspack_blocks_block_args( $args, $name ) {
 	return $args;
 }
 add_filter( 'newspack_blocks_block_args', __NAMESPACE__ . '\newspack_blocks_block_args', 10, 2 );
+
+/**
+ * Filters plugins_url so we can rewrite the path to the AMP JS.
+ *
+ * @param string $url  The complete URL to the plugins directory including scheme and path.
+ * @param string $path Path relative to the URL to the plugins directory. Blank string if no path is specified.
+ *
+ * @return string The filtered URL.
+ */
+function newspack_blocks_amp_js_path( $url, $path ) {
+	if ( '/newspack-blocks/amp/homepage-articles/view.js' === $path ) {
+		return plugins_url( 'synced-newspack-blocks/amp/homepage-articles/view.js', __FILE__ );
+	}
+
+	return $url;
+}
+add_filter( 'plugins_url', __NAMESPACE__ . '\newspack_blocks_amp_js_path', 10, 2 );
 
 require_once __DIR__ . '/synced-newspack-blocks/class-newspack-blocks.php';
 require_once __DIR__ . '/synced-newspack-blocks/class-newspack-blocks-api.php';
