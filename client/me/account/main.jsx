@@ -194,13 +194,17 @@ const Account = createReactClass( {
 			);
 		}
 
-		const shouldRedirect =
+		const languageHasChanged =
 			value !== this.getUserOriginalSetting( 'language' ) ||
 			value !== this.getUserOriginalSetting( 'locale_variant' ) ||
 			( typeof empathyMode !== 'undefined' &&
 				empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' ) );
 
-		const redirect = shouldRedirect ? '/me/account' : false;
+		if ( languageHasChanged ) {
+			this.props.markChanged?.();
+		}
+
+		const redirect = languageHasChanged ? '/me/account' : false;
 		// store any selected locale variant so we can test it against those with no GP translation sets
 		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 		this.setState( { redirect, localeVariantSelected } );
