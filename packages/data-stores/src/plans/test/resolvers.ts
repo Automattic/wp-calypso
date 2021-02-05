@@ -100,6 +100,7 @@ describe( 'getSupportedPlans', () => {
 
 		// setPlans call
 		expect( iter.next( { body: planDetailedData } ).value ).toEqual( {
+			locale: 'en',
 			type: 'SET_PLANS',
 			plans: [
 				{
@@ -167,6 +168,7 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		expect( iter.next().value ).toEqual( {
+			locale: 'en',
 			type: 'SET_FEATURES',
 			features: {
 				'custom-domain': {
@@ -187,6 +189,7 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		expect( iter.next().value ).toEqual( {
+			locale: 'en',
 			type: 'SET_FEATURES_BY_TYPE',
 			featuresByType: [
 				{ id: 'general', name: null, features: [ 'custom-domain', 'other-feature' ] },

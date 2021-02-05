@@ -167,7 +167,7 @@ function normalizePlanProducts(
 	return plansProducts;
 }
 
-export function* getSupportedPlans( locale: string ) {
+export function* getSupportedPlans( locale = 'en' ) {
 	const pricedPlans: PricedAPIPlan[] = yield wpcomRequest( {
 		path: '/plans',
 		query: stringify( { locale } ),
