@@ -18,11 +18,11 @@ export default class DesignSelectorPage extends AsyncBaseContainer {
 
 	async selectFreeDesign() {
 		const freeOptions = await this.driver.findElements( this.freeOptionSelector );
-		freeOptions[ dataHelper.getRandomInt( 0, freeOptions.length - 1 ) ].click();
+		await freeOptions[ dataHelper.getRandomInt( 0, freeOptions.length - 1 ) ].click();
 	}
 
 	async selectPaidDesign() {
 		const paidOptions = await this.driver.findElements( this.paidOptionSelector );
-		paidOptions[ dataHelper.getRandomInt( 0, paidOptions.length - 1 ) ].click();
+		await paidOptions[ dataHelper.getRandomInt( 0, paidOptions.length - 1 ) ].click();
 	}
 }
