@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isJetpackPlan } from 'calypso/lib/products-values';
+import { isJetpackPlan, isJetpackProduct } from 'calypso/lib/products-values';
 import {
 	costToUSD,
 	isAdTrackingAllowed,
@@ -172,11 +172,17 @@ export async function recordOrder( cart, orderId ) {
 
 function splitWpcomJetpackCartInfo( cart ) {
 	const jetpackCost = cart.products
-		.map( ( product ) => ( isJetpackPlan( product ) ? product.cost : 0 ) )
+		.map( ( product ) =>
+			isJetpackPlan( product ) || isJetpackProduct( product ) ? product.cost : 0
+		)
 		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
 	const wpcomCost = cart.total_cost - jetpackCost;
-	const wpcomProducts = cart.products.filter( ( product ) => ! isJetpackPlan( product ) );
-	const jetpackProducts = cart.products.filter( ( product ) => isJetpackPlan( product ) );
+	const wpcomProducts = cart.products.filter(
+		( product ) => ! isJetpackPlan( product ) && ! isJetpackProduct( product )
+	);
+	const jetpackProducts = cart.products.filter(
+		( product ) => isJetpackPlan( product ) || isJetpackProduct( product )
+	);
 
 	return {
 		wpcomProducts: wpcomProducts,
