@@ -139,6 +139,7 @@ export function requestSite( siteFragment, forceWpcom = false ) {
 					return dispatch( {
 						type: SITE_REQUEST_FAILURE,
 						siteId: siteFragment,
+						site,
 						error: i18n.translate( 'No access to manage the site' ),
 					} );
 				}
