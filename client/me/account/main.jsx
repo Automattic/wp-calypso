@@ -117,6 +117,12 @@ const Account = createReactClass( {
 		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 	},
 
+	componentDidUpdate() {
+		if ( ! this.hasUnsavedUserSettings( [].concat( ACCOUNT_FIELDS, INTERFACE_FIELDS ) ) ) {
+			this.props.markSaved?.();
+		}
+	},
+
 	componentWillUnmount() {
 		debug( this.constructor.displayName + ' component is unmounting.' );
 
