@@ -193,10 +193,6 @@ $commentary-column-gap-wide: 100px;
 
 	.focused-launch-summary__launch-button {
 		flex: 1;
-
-		@include break-small {
-			flex: 0;
-		}
 	}
 
 	@include break-small {
