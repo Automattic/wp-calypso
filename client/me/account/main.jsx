@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
@@ -9,7 +8,7 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
-import { debounce, flowRight as compose, get, has, map, size, update, pick } from 'lodash';
+import { debounce, flowRight as compose, get, has, map, size } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -39,7 +38,6 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import observe from 'calypso/lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
 import Main from 'calypso/components/main';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
@@ -63,6 +61,16 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import user from 'calypso/lib/user';
 import FormToggle from 'calypso/components/forms/form-toggle';
+import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
+import {
+	clearUnsavedUserSettings,
+	removeUnsavedUserSetting,
+	setUserSetting,
+} from 'calypso/state/user-settings/actions';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -98,21 +106,14 @@ const INTERFACE_FIELDS = [
 const Account = createReactClass( {
 	displayName: 'Account',
 
-	mixins: [ observe( 'userSettings' ) ],
-
-	propTypes: {
-		userSettings: PropTypes.object.isRequired,
-	},
-
 	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
 		this.clearUsernameValidation();
-		this.props.userSettings.removeUnsavedSetting( 'user_login' );
+		this.props.removeUnsavedUserSetting( 'user_login' );
 	},
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' component is mounted.' );
-		this.props.userSettings.getSettings();
 		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 	},
 
@@ -120,7 +121,7 @@ const Account = createReactClass( {
 		debug( this.constructor.displayName + ' component is unmounting.' );
 
 		// Silently clean up unsavedSettings before unmounting
-		this.props.userSettings.unsavedSettings = {};
+		this.props.clearUnsavedUserSettings();
 	},
 
 	getInitialState: function () {
@@ -138,15 +139,29 @@ const Account = createReactClass( {
 	},
 
 	getUserSetting( settingName ) {
-		return this.props.userSettings.getSetting( settingName );
+		return (
+			get( this.props.unsavedUserSettings, settingName ) ??
+			this.getUserOriginalSetting( settingName )
+		);
 	},
 
 	getUserOriginalSetting( settingName ) {
-		return this.props.userSettings.getOriginalSetting( settingName );
+		return get( this.props.userSettings, settingName );
+	},
+
+	hasUnsavedUserSetting( settingName ) {
+		return has( this.props.unsavedUserSettings, settingName );
+	},
+
+	hasUnsavedUserSettings( settingNames ) {
+		return settingNames.reduce(
+			( acc, settingName ) => this.hasUnsavedUserSetting( settingName ) || acc,
+			false
+		);
 	},
 
 	updateUserSetting( settingName, value ) {
-		this.props.userSettings.updateSetting( settingName, value );
+		this.props.setUserSetting( settingName, value );
 	},
 
 	updateUserSettingInput( event ) {
@@ -192,22 +207,10 @@ const Account = createReactClass( {
 	},
 
 	toggleLinkDestination( linkDestination ) {
-		// Set a fallback link destination if no default value is provided by the API.
-		// This is a workaround that allows us to use userSettings.updateSetting() without an
-		// existing value. Without this workaround the save button wouldn't become active.
-		// TODO: the API should provide a default value, which would make this line obsolete
-		update( this.props.userSettings.settings, linkDestinationKey, ( value ) => value || false );
-
 		this.updateUserSetting( linkDestinationKey, linkDestination );
 	},
 
 	updateColorScheme( colorScheme ) {
-		// Set a fallback color scheme if no default value is provided by the API.
-		// This is a workaround that allows us to use userSettings.updateSetting() without an
-		// existing value. Without this workaround the save button wouldn't become active.
-		// TODO: the API should provide a default value, which would make this line obsolete
-		update( this.props.userSettings.settings, colorSchemeKey, ( value ) => value || 'default' );
-
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
 		this.updateUserSetting( colorSchemeKey, colorScheme );
@@ -393,10 +396,10 @@ const Account = createReactClass( {
 	},
 
 	handleSubmitButtonClick() {
-		const { unsavedSettings } = this.props.userSettings;
+		const { unsavedUserSettings } = this.props;
 		this.recordClickEvent( 'Save Account Settings Button' );
-		if ( has( unsavedSettings, colorSchemeKey ) ) {
-			const colorScheme = get( unsavedSettings, colorSchemeKey );
+		if ( has( unsavedUserSettings, colorSchemeKey ) ) {
+			const colorScheme = get( unsavedUserSettings, colorSchemeKey );
 			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
 				color_scheme: colorScheme,
 			} );
@@ -404,7 +407,7 @@ const Account = createReactClass( {
 			this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
 		}
 
-		if ( has( unsavedSettings, 'language' ) ) {
+		if ( has( unsavedUserSettings, 'language' ) ) {
 			this.props.recordTracksEvent( 'calypso_user_language_switch', {
 				new_language: this.getUserSetting( 'language' ),
 				previous_language:
@@ -470,9 +473,11 @@ const Account = createReactClass( {
 		} );
 
 		this.clearUsernameValidation();
-		this.props.userSettings.removeUnsavedSetting( 'user_login' );
+		this.props.removeUnsavedUserSetting( 'user_login' );
 
-		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
+		const { user_login, ...otherUnsavedSettings } = this.props.unsavedUserSettings;
+
+		if ( ! Object.keys( otherUnsavedSettings ).length ) {
 			this.props.markSaved();
 		}
 	},
@@ -541,7 +546,7 @@ const Account = createReactClass( {
 	},
 
 	hasPendingEmailChange() {
-		return this.props.userSettings.isPendingEmailChange();
+		return this.props.isPendingEmailChange;
 	},
 
 	renderPendingEmailChange() {
@@ -570,9 +575,9 @@ const Account = createReactClass( {
 	},
 
 	renderUsernameValidation() {
-		const { translate, userSettings } = this.props;
+		const { translate } = this.props;
 
-		if ( ! userSettings.isSettingUnsaved( 'user_login' ) ) {
+		if ( ! this.hasUnsavedUserSetting( 'user_login' ) ) {
 			return null;
 		}
 
@@ -641,9 +646,9 @@ const Account = createReactClass( {
 	},
 
 	renderEmailValidation() {
-		const { translate, userSettings } = this.props;
+		const { translate } = this.props;
 
-		if ( ! userSettings.isSettingUnsaved( 'user_email' ) ) {
+		if ( ! this.hasUnsavedUserSetting( 'user_email' ) ) {
 			return null;
 		}
 
@@ -666,20 +671,16 @@ const Account = createReactClass( {
 	},
 
 	shouldDisableAccountSubmitButton() {
-		const { userSettings } = this.props;
-
 		return (
-			! userSettings.hasUnsavedSettings( ACCOUNT_FIELDS ) ||
+			! this.hasUnsavedUserSettings( ACCOUNT_FIELDS ) ||
 			this.getDisabledState( ACCOUNT_FORM_NAME ) ||
 			this.hasEmailValidationError()
 		);
 	},
 
 	shouldDisableInterfaceSubmitButton() {
-		const { userSettings } = this.props;
-
 		return (
-			! userSettings.hasUnsavedSettings( INTERFACE_FIELDS ) ||
+			! this.hasUnsavedUserSettings( INTERFACE_FIELDS ) ||
 			this.getDisabledState( INTERFACE_FORM_NAME )
 		);
 	},
@@ -711,7 +712,9 @@ const Account = createReactClass( {
 	},
 
 	handleSubmitSuccess( response, formName = '' ) {
-		this.props.markSaved && this.props.markSaved();
+		if ( ! this.hasUnsavedUserSettings( [].concat( ACCOUNT_FIELDS, INTERFACE_FIELDS ) ) ) {
+			this.props.markSaved && this.props.markSaved();
+		}
 
 		if ( this.state && this.state.redirect ) {
 			user()
@@ -724,25 +727,17 @@ const Account = createReactClass( {
 			return;
 		}
 		// if we set submittingForm too soon the UI updates before the response is handled
-		this.setState(
-			{
-				submittingForm: false,
-				formsSubmitting: {
-					...this.state.formsSubmitting,
-					...( formName && { [ formName ]: false } ),
-				},
+		this.setState( {
+			submittingForm: false,
+			formsSubmitting: {
+				...this.state.formsSubmitting,
+				...( formName && { [ formName ]: false } ),
 			},
-			() => {
-				this.props.successNotice(
-					this.props.translate( 'Settings saved successfully!' ),
-					noticeOptions
-				);
-			}
-		);
+		} );
 		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 	},
 
-	submitForm: function ( event, settingsToSave, formName = '' ) {
+	submitForm: async function ( event, fields, formName = '' ) {
 		event.preventDefault();
 		debug( 'Submitting form' );
 
@@ -754,13 +749,12 @@ const Account = createReactClass( {
 			},
 		} );
 
-		this.props.userSettings.saveSettings( ( error, response ) => {
-			if ( error ) {
-				this.handleSubmitError( error, formName );
-			} else {
-				this.handleSubmitSuccess( response, formName );
-			}
-		}, settingsToSave );
+		try {
+			const response = await this.props.saveUnsavedUserSettings( fields );
+			this.handleSubmitSuccess( response, formName );
+		} catch ( error ) {
+			this.handleSubmitError( error, formName );
+		}
 	},
 
 	/*
@@ -969,26 +963,21 @@ const Account = createReactClass( {
 		);
 	},
 	saveAccountSettings( event ) {
-		const unSavedUserSettings = this.props.userSettings.unsavedSettings;
-		const fieldsForSave = pick( unSavedUserSettings, ACCOUNT_FIELDS );
-
-		this.submitForm( event, fieldsForSave, ACCOUNT_FORM_NAME );
+		this.submitForm( event, ACCOUNT_FIELDS, ACCOUNT_FORM_NAME );
 	},
 
 	saveInterfaceSettings( event ) {
-		const unSavedUserSettings = this.props.userSettings.unsavedSettings;
-		const fieldsForSave = pick( unSavedUserSettings, INTERFACE_FIELDS );
-
-		this.submitForm( event, fieldsForSave, INTERFACE_FORM_NAME );
+		this.submitForm( event, INTERFACE_FIELDS, INTERFACE_FORM_NAME );
 	},
 
 	render() {
-		const { markChanged, translate, userSettings } = this.props;
+		const { markChanged, translate } = this.props;
 		// Is a username change in progress?
-		const renderUsernameForm = userSettings.isSettingUnsaved( 'user_login' );
+		const renderUsernameForm = this.hasUnsavedUserSetting( 'user_login' );
 
 		return (
 			<Main className="account is-wide-layout">
+				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
@@ -1115,15 +1104,22 @@ export default compose(
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
 			currentUserName: getCurrentUserName( state ),
+			isPendingEmailChange: isPendingEmailChange( state ),
+			userSettings: getUserSettings( state ),
+			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
 		} ),
 		{
 			bumpStat,
+			clearUnsavedUserSettings,
 			errorNotice,
 			removeNotice,
 			recordGoogleEvent,
 			recordTracksEvent,
+			removeUnsavedUserSetting,
+			saveUnsavedUserSettings,
+			setUserSetting,
 			successNotice,
 		}
 	),
