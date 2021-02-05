@@ -25,6 +25,14 @@
 	<!-- Show sniff codes in all reports. -->
 	<arg value="ps"/>
 
+	<!-- Newspack and ETK don't use exactly the same code standard, so we need to
+		ignore style rules not tracked upstream. (We should not ignore rules
+		which catch actual errors.)
+	-->
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable" >
+		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+	</rule>
+
 	<!-- Ignore assset files and undeployed files. -->
 	<exclude-pattern>*.asset.php</exclude-pattern>
 	<exclude-pattern>editing-toolkit/dev-plugin</exclude-pattern>
