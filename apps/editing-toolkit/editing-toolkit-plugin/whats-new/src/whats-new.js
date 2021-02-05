@@ -20,23 +20,21 @@ const dragDropImage = 'https://s0.wp.com/i/whats-new/drag-drop.png';
 const singlePageSiteImage = 'https://s0.wp.com/i/whats-new/single-page-website.png';
 
 function WhatsNewMenuItem() {
-	const { toggleWhatsNew } = useDispatch( 'whats-new' );
-	const isActive = useSelect( ( select ) => select( 'whats-new' ).isWhatsNewActive() );
+	const { toggleWhatsNew } = useDispatch( 'automattic/whats-new' );
+	const isActive = useSelect( ( select ) => select( 'automattic/whats-new' ).isWhatsNewActive() );
 	const whatsNewPages = getWhatsNewPages();
 
 	// Record Tracks event if user opens What's New
 	useEffect( () => {
 		if ( isActive ) {
-			recordTracksEvent( 'block_editor_whats_new_open' );
+			recordTracksEvent( 'calypso_block_editor_whats_new_open' );
 		}
 	}, [ isActive ] );
 
 	return (
 		<>
 			<Fill name="ToolsMoreMenuGroup">
-				<MenuItem onClick={ () => toggleWhatsNew() }>
-					{ __( "What's new", 'full-site-editing' ) }
-				</MenuItem>
+				<MenuItem onClick={ toggleWhatsNew }>{ __( "What's new", 'full-site-editing' ) }</MenuItem>
 			</Fill>
 			{ isActive && (
 				<Guide
@@ -136,7 +134,7 @@ function WhatsNewPage( {
 	imgSrc,
 } ) {
 	useEffect( () => {
-		recordTracksEvent( 'block_editor_whats_new_slide_view', {
+		recordTracksEvent( 'calypso_block_editor_whats_new_slide_view', {
 			slide_number: pageNumber,
 			is_last_slide: isLastPage,
 		} );
