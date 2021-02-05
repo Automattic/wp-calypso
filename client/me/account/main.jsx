@@ -408,7 +408,7 @@ const Account = createReactClass( {
 	handleSubmitButtonClick() {
 		const { unsavedUserSettings } = this.props;
 		this.recordClickEvent( 'Save Account Settings Button' );
-		if ( has( unsavedUserSettings, colorSchemeKey ) ) {
+		if ( this.hasUnsavedUserSetting( colorSchemeKey ) ) {
 			const colorScheme = get( unsavedUserSettings, colorSchemeKey );
 			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
 				color_scheme: colorScheme,
@@ -417,7 +417,7 @@ const Account = createReactClass( {
 			this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
 		}
 
-		if ( has( unsavedUserSettings, 'language' ) ) {
+		if ( this.hasUnsavedUserSetting( 'language' ) ) {
 			this.props.recordTracksEvent( 'calypso_user_language_switch', {
 				new_language: this.getUserSetting( 'language' ),
 				previous_language:
