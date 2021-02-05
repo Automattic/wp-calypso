@@ -63,6 +63,12 @@ $font-size: rem( 14px );
 			margin: 0 0 11px;
 		}
 
+		.current-site.card {
+			margin-bottom: 8px;
+			border-bottom: 1px solid var( --color-sidebar-border );
+			padding: 0 0 12px;
+		}
+
 		.current-site .site {
 			padding: 18px 0 8px;
 		}
