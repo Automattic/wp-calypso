@@ -29,12 +29,17 @@ const sanitizeUrl = ( url, site ) => {
 };
 
 const sanitizeMenuItem = ( menuItem, site ) => {
+	if ( ! menuItem ) {
+		return menuItem;
+	}
+
 	let sanitizedChildren;
 	if ( Array.isArray( menuItem.children ) ) {
 		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
 			sanitizeMenuItem( subMenuItem, site )
 		);
 	}
+
 	return {
 		...menuItem,
 		url: sanitizeUrl( menuItem.url, site ),

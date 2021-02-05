@@ -47,8 +47,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
 
 	const selectedMenuItem =
-		children &&
-		children.find( ( menuItem ) => menuItem.url && itemLinkMatches( menuItem.url, path ) );
+		Array.isArray( children ) &&
+		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
 
 	/**
