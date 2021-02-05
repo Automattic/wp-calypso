@@ -119,7 +119,7 @@ const Account = createReactClass( {
 
 	componentDidUpdate() {
 		if ( ! this.hasUnsavedUserSettings( [].concat( ACCOUNT_FIELDS, INTERFACE_FIELDS ) ) ) {
-			this.props.markSaved?.();
+			this.props.markSaved();
 		}
 	},
 
@@ -207,7 +207,7 @@ const Account = createReactClass( {
 				empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' ) );
 
 		if ( languageHasChanged ) {
-			this.props.markChanged?.();
+			this.props.markChanged();
 		}
 
 		const redirect = languageHasChanged ? '/me/account' : false;
