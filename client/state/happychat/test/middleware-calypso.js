@@ -30,6 +30,7 @@ import {
 	ANALYTICS_EVENT_RECORD,
 	HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
 	HAPPYCHAT_IO_SEND_MESSAGE_LOG,
+	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'calypso/state/action-types';
 
@@ -106,6 +107,9 @@ describe( 'middleware', () => {
 						chat: { status: HAPPYCHAT_CHAT_STATUS_DEFAULT },
 					},
 					route: { path: { current: '/happychat' } },
+					ui: {
+						section: { name: 'happychat' },
+					},
 				};
 
 				store.getState.mockReturnValue( state );
@@ -123,6 +127,14 @@ describe( 'middleware', () => {
 						payload: expect.objectContaining( {
 							text: 'Looking at https://wordpress.com/happychat',
 						} ),
+					} )
+				);
+				expect( store.dispatch ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						type: HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
+						payload: {
+							calypsoSectionName: 'happychat',
+						},
 					} )
 				);
 			} );
