@@ -2654,6 +2654,11 @@ Undocumented.prototype.getMatchingAnchorSite = function (
 		site: anchorFmSite,
 		post: anchorFmPost,
 	};
+	Object.keys( queryParts ).forEach( ( k ) => {
+		if ( queryParts[ k ] === null ) {
+			delete queryParts[ k ];
+		}
+	} );
 	return this.wpcom.req.get(
 		{
 			path: '/anchor',
