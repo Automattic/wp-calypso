@@ -54,7 +54,7 @@ const Header: React.FunctionComponent = () => {
 	const changeLocaleButton = () => {
 		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
 			return (
-				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
+				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right gutenboarding__header-language-section">
 					<Link to={ makePath( Step.LanguageModal ) }>
 						<span className="gutenboarding__header-site-language-label">
 							{ __( 'Site Language' ) }
@@ -91,9 +91,11 @@ const Header: React.FunctionComponent = () => {
 					{ showDomainsButton && <DomainPickerButton /> }
 				</div>
 				{ showLocaleButton && changeLocaleButton() }
-				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
-					{ showPlansButton && <PlansButton /> }
-				</div>
+				{ showPlansButton && (
+					<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
+						<PlansButton />
+					</div>
+				) }
 			</section>
 		</div>
 	);

@@ -2,7 +2,7 @@
 @import '../../variables.scss';
 @import '~@automattic/onboarding/styles/z-index';
 
-$margin-left--gutenboarding__header-section-item: 13px; // matches design
+$margin--gutenboarding__header-section-item: 13px; // matches design
 $padding--gutenboarding__header: $grid-unit-10;
 
 // Copied from https://github.com/WordPress/gutenberg/blob/8c0c7b7267473b5c197dd3052e9707f75f4e6448/packages/edit-widgets/src/components/header/style.scss
@@ -28,15 +28,15 @@ $padding--gutenboarding__header: $grid-unit-10;
 }
 
 .gutenboarding__header-language-section {
-	margin-right: auto;
-
-	@include break-small {
-		margin-right: 15px;
+	&.gutenboarding__header-section-item {
+		// WP's button has a 12px padding which we will offset
+		margin-right: $margin--gutenboarding__header-section-item - 12px;
 	}
 }
 
 .gutenboarding__header-site-language-label {
 	display: none;
+	white-space: nowrap;
 
 	@include break-small {
 		display: inline;
@@ -46,9 +46,12 @@ $padding--gutenboarding__header: $grid-unit-10;
 .gutenboarding__header-site-language-badge {
 	display: inline-block;
 	padding: 1px 8px;
-	margin: 0 4px;
 	border: 1px solid $gray-200;
 	text-transform: uppercase;
+
+	@include break-small {
+		margin-left: 4px;
+	}
 }
 
 .gutenboarding__header-section {
@@ -56,13 +59,19 @@ $padding--gutenboarding__header: $grid-unit-10;
 	width: 100%;
 	align-items: center;
 	font-size: $font-body-small;
+	margin: 0 $margin--gutenboarding__header-section-item;
 }
 
 .gutenboarding__header-section-item {
-	margin-left: $margin-left--gutenboarding__header-section-item;
+	+ .gutenboarding__header-section-item {
+		margin-left: $margin--gutenboarding__header-section-item;
+	}
+}
 
-	&--right {
+.gutenboarding__header-section-item--right {
+	+ .gutenboarding__header-section-item--right {
 		margin-left: auto;
+		margin-right: $margin--gutenboarding__header-section-item;
 	}
 }
 
@@ -73,8 +82,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 }
 
 .gutenboarding__header-wp-logo {
-	margin-left: 24px - $padding--gutenboarding__header -
-		$margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
+	margin-left: 24px - $padding--gutenboarding__header - $margin--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
 	color: var( --studio-black );
 	display: flex;
 }
@@ -97,4 +105,15 @@ $padding--gutenboarding__header: $grid-unit-10;
 
 .gutenboarding__header-site-title-section {
 	white-space: nowrap;
+	// Ensure flex item doesn't exceed 100% of th
+	// available width, allowing content to have ellipsis.
+	min-width: 0;
+}
+
+.gutenboarding__header-site-title {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	// Give it a value because the domain header item
+	// has a flex-grow: 1 so give domain the priority.
+	max-width: 40vw;
 }
