@@ -20,7 +20,13 @@ interface AnchorEndpointResult {
 // see if there's already a site that belongs to me that matches these parameters.
 // If it's found, redirect the browser to it
 export default function useDetectMatchingAnchorSite(): boolean {
-	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
+	const {
+		anchorFmPodcastId,
+		anchorFmEpisodeId,
+		anchorFmSpotifyUrl,
+		anchorFmSite,
+		anchorFmPost,
+	} = useAnchorFmParams();
 	const isAnchorFm = useIsAnchorFm();
 	const currentUserExists = useSelect( ( select ) => !! select( USER_STORE ).getCurrentUser() );
 	const [ isLoading, setIsLoading ] = React.useState( !! ( isAnchorFm && currentUserExists ) );
@@ -35,7 +41,13 @@ export default function useDetectMatchingAnchorSite(): boolean {
 		setIsLoading( true );
 		wpcom
 			.undocumented()
-			.getMatchingAnchorSite( anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl )
+			.getMatchingAnchorSite(
+				anchorFmPodcastId,
+				anchorFmEpisodeId,
+				anchorFmSpotifyUrl,
+				anchorFmSite,
+				anchorFmPost
+			)
 			.then( ( result: AnchorEndpointResult ) => {
 				if ( result?.location ) {
 					window.location.href = result.location;
@@ -46,6 +58,14 @@ export default function useDetectMatchingAnchorSite(): boolean {
 			.catch( () => {
 				setIsLoading( false );
 			} );
-	}, [ isAnchorFm, currentUserExists, anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl ] );
+	}, [
+		isAnchorFm,
+		currentUserExists,
+		anchorFmPodcastId,
+		anchorFmEpisodeId,
+		anchorFmSpotifyUrl,
+		anchorFmSite,
+		anchorFmPost,
+	] );
 	return isLoading;
 }

@@ -2633,6 +2633,8 @@ Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
  * @param anchorFmPodcastId {string | null}  Example: 22b6608
  * @param anchorFmEpisodeId {string | null}  Example: e324a06c-3148-43a4-85d8-34c0d8222138
  * @param anchorFmSpotifyUrl {string | null} Example: https%3A%2F%2Fopen.spotify.com%2Fshow%2F6HTZdaDHjqXKDE4acYffoD%3Fsi%3DEVfDYETjQCu7pasVG5D73Q
+ * @param anchorFmSite {string | null} Example: 181129564
+ * @param anchorFmPost {string | null} Example: 5
  * @returns {Promise} A promise
  *    The promise should resolve to a json object containing ".location" key as {string|false} type.
  *    False - There were no matching sites detected, the user should create a new one.
@@ -2641,12 +2643,16 @@ Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
 Undocumented.prototype.getMatchingAnchorSite = function (
 	anchorFmPodcastId,
 	anchorFmEpisodeId,
-	anchorFmSpotifyUrl
+	anchorFmSpotifyUrl,
+	anchorFmSite,
+	anchorFmPost
 ) {
 	const queryParts = {
 		podcast: anchorFmPodcastId,
 		episode: anchorFmEpisodeId,
 		spotify_url: anchorFmSpotifyUrl,
+		site: anchorFmSite,
+		post: anchorFmPost,
 	};
 	return this.wpcom.req.get(
 		{
