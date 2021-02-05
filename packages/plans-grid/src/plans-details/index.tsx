@@ -51,13 +51,14 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4, 5 ];
 
+	// @TODO: clean this up when translations are done and we don't need fallbackAnnualBillingLabel
 	const newAnnualBillingLabel = __( 'Monthly price (billed yearly)', __i18n_text_domain__ );
 	const fallbackAnnualBillingLabel = __(
 		'Monthly subscription (billed yearly)',
 		__i18n_text_domain__
 	);
 	const annualBillingLabel =
-		locale === 'en' || hasTranslation?.( 'Monthly Price (billed yearly)', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( 'Monthly price (billed yearly)', __i18n_text_domain__ )
 			? newAnnualBillingLabel
 			: fallbackAnnualBillingLabel;
 
