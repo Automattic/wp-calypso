@@ -37,7 +37,7 @@ const canvasContext = textSizingCanvas.getContext( '2d' ) as CanvasRenderingCont
  * @param element The input element
  */
 function getTextWidth( text: string, element: HTMLInputElement | undefined ) {
-	if ( ! element ) {
+	if ( ! element || ! text ) {
 		return 0;
 	}
 	const computedCSS = window.getComputedStyle( element );
@@ -81,7 +81,7 @@ const AcquireIntentTextInput: React.FunctionComponent< Props > = ( {
 				autoCorrect="off"
 				onChange={ handleChange }
 				spellCheck={ false }
-				value={ value }
+				defaultValue={ value }
 				onFocus={ onFocus }
 				onBlur={ onBlur }
 				onKeyDown={ onKeyDown }
