@@ -15,8 +15,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import './style.scss';
-const paymentsImage = 'https://s0.wp.com/i/whats-new/payments.png';
-const whatsappImage = 'https://s0.wp.com/i/whats-new/whatsapp.png';
 const blockPatternsImage = 'https://s0.wp.com/i/whats-new/block-patterns.png';
 const dragDropImage = 'https://s0.wp.com/i/whats-new/drag-drop.png';
 const singlePageSiteImage = 'https://s0.wp.com/i/whats-new/single-page-website.png';
@@ -69,70 +67,13 @@ function getWhatsNewPages() {
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'<p>Easily add patterns in the editor to save time configuring and designing.</p> <p>There are hundreds of pre-made patterns for buttons, headers, galleries, and more available via the + button inserter at the top left of all pages and posts.</p> <p><Link>Learn more about block patterns</Link>.</p>',
+					'<p>Choose from hundreds of pre-made patterns for buttons, headers, galleries, and more available via the + button at the top of all pages.</p><p><Link>Learn more</Link></p>',
 					'full-site-editing'
 				),
 				{
 					Link: (
 						<a
 							href="https://wordpress.com/support/block-pattern/"
-							target="_blank"
-							rel="noreferrer"
-						/>
-					),
-					p: <p />,
-				}
-			),
-		},
-		{
-			imgSrc: paymentsImage,
-			heading: __( 'Use payments features to make money', 'full-site-editing' ),
-			description: createInterpolateElement(
-				/* translators: the embed is a link */
-				__(
-					'<p>You can process payments for just about anything on your website.</p><p>With the <Link1>Payments</Link1>, <Link2>Premium Content</Link2>, and <Link3>Donations blocks</Link3>, it takes just minutes to get set up to collect payments from your visitors. Available with any paid plan.</p><p><Link4>Get started with payments today</Link4>.</p>',
-					'full-site-editing'
-				),
-				{
-					Link1: (
-						<a
-							href="https://wordpress.com/support/wordpress-editor/blocks/payments/"
-							target="_blank"
-							rel="noreferrer"
-						/>
-					),
-					Link2: (
-						<a
-							href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
-							target="_blank"
-							rel="noreferrer"
-						/>
-					),
-					Link3: (
-						<a
-							href="https://wordpress.com/support/wordpress-editor/blocks/donations/"
-							target="_blank"
-							rel="noreferrer"
-						/>
-					),
-					Link4: <a href="http://wordpress.com/earn" target="_blank" rel="noreferrer" />,
-					p: <p />,
-				}
-			),
-		},
-		{
-			imgSrc: whatsappImage,
-			heading: __( 'Let your visitors message you on WhatsApp', 'full-site-editing' ),
-			description: createInterpolateElement(
-				/* translators: the embed is a link */
-				__(
-					'<p>Connect and communicate with your website’s visitors with the new <Link>WhatsApp block</Link>.</p><p>With a single click, your visitors can ask questions or message you for whatever reason. Available with Premium, Business, and eCommerce plans.</p>',
-					'full-site-editing'
-				),
-				{
-					Link: (
-						<a
-							href="https://wordpress.com/support/wordpress-editor/blocks/whatsapp-button-block/"
 							target="_blank"
 							rel="noreferrer"
 						/>
@@ -147,25 +88,11 @@ function getWhatsNewPages() {
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'<p>You can now drag and drop <Link1>Blocks</Link1>, and even <Link2>Block Patterns</Link2>, into your content directly from the Block Inserter.</p><p><Link3>Learn more</Link3></p>',
+					'<p>You can now drag and drop Blocks, and even Block Patterns, into your content directly from the Block Inserter.</p><p><Link>Learn more</Link></p>',
 					'full-site-editing'
 				),
 				{
-					Link1: (
-						<a
-							href="https://wordpress.com/support/wordpress-editor/blocks/"
-							target="_blank"
-							rel="noreferrer"
-						/>
-					),
-					Link2: (
-						<a
-							href="https://wordpress.com/support/block-pattern/"
-							target="_blank"
-							rel="noreferrer"
-						/>
-					),
-					Link3: (
+					Link: (
 						<a
 							href="https://make.wordpress.org/core/2021/01/08/core-editor-improvement-drag-drop-blocks-and-patterns-from-the-inserter/"
 							target="_blank"
@@ -182,14 +109,11 @@ function getWhatsNewPages() {
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
-					'<p>Sometimes you just need a single webpage to get your idea across. Introducing our freshly-launched <Link1>Blank Canvas theme</Link1>, which is optimized for single-page websites.</p><p><Link2>Learn more</Link2></p>',
+					'<p>Introducing our freshly-launched Blank Canvas theme, which is optimized for single-page websites.</p><p><Link>Learn more</Link></p>',
 					'full-site-editing'
 				),
 				{
-					Link1: (
-						<a href="https://wordpress.com/theme/blank-canvas" target="_blank" rel="noreferrer" />
-					),
-					Link2: (
+					Link: (
 						<a
 							href="https://wordpress.com/blog/2021/01/25/building-single-page-websites-on-wordpress-com/"
 							target="_blank"
