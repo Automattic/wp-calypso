@@ -3,8 +3,7 @@
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
-import { noop } from 'lodash';
-import type { Action, AnyAction } from 'redux';
+import type { Action } from 'redux';
 
 /**
  * Internal dependencies
@@ -12,25 +11,18 @@ import type { Action, AnyAction } from 'redux';
 import keyedReducer from '..';
 import type { KeyedReducerAction } from '..';
 
-interface PersonAction {
-	name?: string;
-	person?: { name?: string };
-}
+type PersonAction = { name?: string | number; person?: { name?: string | number } };
+type GrowAction = Action< 'GROW' > & PersonAction;
+type ResetAction = Action< 'RESET' > & PersonAction;
+type RemoveAction = Action< 'REMOVE' > & PersonAction;
+type StayAction = Action< 'STAY' > & PersonAction;
 
-interface GrowAction extends Action< 'GROW' >, PersonAction {}
-interface ResetAction extends Action< 'RESET' >, PersonAction {}
-interface RemoveAction extends Action< 'REMOVE' >, PersonAction {}
-interface StayAction extends Action< 'STAY' >, PersonAction {}
+type AgeAction = KeyedReducerAction< GrowAction | ResetAction | RemoveAction | StayAction >;
 
-type AgeAction = KeyedReducerAction<
-	GrowAction | ResetAction | RemoveAction | StayAction,
-	PersonAction
->;
-
-describe( '#keyedReducer', () => {
-	const grow = ( name: string | number ) => ( { type: 'GROW', name } as GrowAction );
-	const reset = ( name: string | number ) => ( { type: 'RESET', name } as ResetAction );
-	const remove = ( name: string | number ) => ( { type: 'REMOVE', name } as RemoveAction );
+describe( 'keyedReducer', () => {
+	const grow = ( name: string | number ) => ( { type: 'GROW' as const, name } );
+	const reset = ( name: string | number ) => ( { type: 'RESET' as const, name } );
+	const remove = ( name: string | number ) => ( { type: 'REMOVE' as const, name } );
 
 	const age = ( state = 0, action: AgeAction ) => {
 		if ( 'GROW' === action.type ) {
@@ -47,46 +39,43 @@ describe( '#keyedReducer', () => {
 		Bonobo: 13,
 	} );
 
-	test( 'should only accept string-type or function-type key names', () => {
+	test( 'should only accept string-type key names', () => {
 		expect( () => keyedReducer( null, age ) ).toThrow( TypeError );
 		expect( () => keyedReducer( undefined, age ) ).toThrow( TypeError );
-		// @ts-ignore
 		expect( () => keyedReducer( [], age ) ).toThrow( TypeError );
 		// @ts-ignore
 		expect( () => keyedReducer( {}, age ) ).toThrow( TypeError );
 		// @ts-ignore
 		expect( () => keyedReducer( true, age ) ).toThrow( TypeError );
-		// @ts-ignore
-
 		expect( () => keyedReducer( 10, age ) ).toThrow( TypeError );
-		// @ts-ignore
 		expect( () => keyedReducer( 15.4, age ) ).toThrow( TypeError );
-		// @ts-ignore
 		expect( () => keyedReducer( '', age ) ).toThrow( TypeError );
-
-		expect( () => keyedReducer( 'name', age ) ).not.toThrow( TypeError );
-		expect( () => keyedReducer( 'name', age ) ).not.toThrow( TypeError );
+		expect( () => keyedReducer( 'key', age ) ).not.toThrow( TypeError );
 	} );
 
 	test( 'should only accept a function as the reducer argument', () => {
-		expect( () => keyedReducer( ( a ) => a.key, null ) ).toThrow( TypeError );
-		expect( () => keyedReducer( ( a ) => a.key, undefined ) ).toThrow( TypeError );
+		expect( () => keyedReducer( 'key', null ) ).toThrow( TypeError );
+		expect( () => keyedReducer( 'key', undefined ) ).toThrow( TypeError );
 		// @ts-ignore
-		expect( () => keyedReducer( ( a ) => a.key, [] ) ).toThrow( TypeError );
+		expect( () => keyedReducer( 'key', [] ) ).toThrow( TypeError );
 		// @ts-ignore
-		expect( () => keyedReducer( ( a ) => a.key, {} ) ).toThrow( TypeError );
+		expect( () => keyedReducer( 'key', {} ) ).toThrow( TypeError );
 		// @ts-ignore
-		expect( () => keyedReducer( ( a ) => a.key, true ) ).toThrow( TypeError );
+		expect( () => keyedReducer( 'key', true ) ).toThrow( TypeError );
 		// @ts-ignore
-		expect( () => keyedReducer( ( a ) => a.key, 10 ) ).toThrow( TypeError );
+		expect( () => keyedReducer( 'key', 10 ) ).toThrow( TypeError );
 		// @ts-ignore
-		expect( () => keyedReducer( ( a ) => a.key, 15.4 ) ).toThrow( TypeError );
+		expect( () => keyedReducer( 'key', 15.4 ) ).toThrow( TypeError );
 		// @ts-ignore
-		expect( () => keyedReducer( ( a ) => a.key, '' ) ).toThrow( TypeError );
+		expect( () => keyedReducer( 'key', '' ) ).toThrow( TypeError );
 		// @ts-ignore
-		expect( () => keyedReducer( ( a ) => a.key ) ).toThrow( TypeError );
-
-		expect( () => keyedReducer( ( a ) => a.key, noop ) ).not.toThrow( TypeError );
+		expect( () => keyedReducer( 'key' ) ).toThrow( TypeError );
+		// @ts-ignore
+		expect( () =>
+			keyedReducer( 'key', () => {
+				/* empty for test */
+			} )
+		).not.toThrow( TypeError );
 	} );
 
 	test( 'should create keyed state given simple reducers', () => {
@@ -97,7 +86,7 @@ describe( '#keyedReducer', () => {
 	} );
 
 	test( 'should handle keyNames referencing nested keys', () => {
-		const keyed = keyedReducer( ( a ) => a.person.name, age );
+		const keyed = keyedReducer( 'person.name', age );
 		const action = { type: 'GROW' as const, person: { name: 'Calypso' } };
 		expect( keyed( undefined, action ) ).toEqual( {
 			Calypso: 1,
@@ -151,11 +140,8 @@ describe( '#keyedReducer', () => {
 	} );
 
 	test( 'should handle SERIALIZE and DESERIALIZE as global actions', () => {
-		type SetChickenAction = Action< 'SET_CHICKEN' > & { id: number };
-		const chickenReducer = (
-			state = '',
-			{ type }: KeyedReducerAction< SetChickenAction, { id: number } >
-		) => {
+		type SetChicken = Action< 'SET_CHICKEN' > & { id: number };
+		const chickenReducer = ( state = '', { type }: KeyedReducerAction< SetChicken > ) => {
 			switch ( type ) {
 				case 'SET_CHICKEN':
 					return 'chicken';
@@ -175,14 +161,14 @@ describe( '#keyedReducer', () => {
 			1: 'chicken',
 			2: 'chicken',
 		} );
-		// @ts-ignore Testing internals
+
+		// @ts-ignore testing internals
 		expect( keyed( prev, { type: 'SERIALIZE' } ).root() ).toEqual( { 1: 'serialized chicken' } );
 		expect( keyed( prev, { type: 'DESERIALIZE' } ) ).toEqual( { 1: 'deserialized chicken' } );
 	} );
 
 	test( 'should omit initial/undefined state from SERIALIZE/DESERIALIZE results', () => {
-		type ItemAction = KeyedReducerAction< AnyAction >;
-		const itemReducer = ( state = 0, { type }: ItemAction ) => {
+		const itemReducer = ( state = 0, { type } ) => {
 			switch ( type ) {
 				case 'SERIALIZE':
 				case 'DESERIALIZE':
@@ -193,21 +179,20 @@ describe( '#keyedReducer', () => {
 			}
 		};
 
-		const keyed = keyedReducer( ( a ) => a.id, itemReducer );
+		const keyed = keyedReducer( 'id', itemReducer );
 		const state = { a: 13, b: 0, c: 1 };
-
-		// @ts-ignore Testing internals
+		// @ts-ignore testing internals
 		expect( keyed( state, { type: 'SERIALIZE' } ).root() ).toEqual( { c: 1 } );
 		expect( keyed( state, { type: 'DESERIALIZE' } ) ).toEqual( { c: 1 } );
 	} );
 
 	test( 'should not serialize empty state', () => {
-		const keyed = keyedReducer( 'name', age );
+		const keyed = keyedReducer( 'id', age );
 		expect( keyed( {}, { type: 'SERIALIZE' } ) ).toBeUndefined();
 	} );
 
 	test( 'should serialize non-empty state', () => {
-		const keyed = keyedReducer( 'name', age );
+		const keyed = keyedReducer( 'id', age );
 
 		// state with non-initial value
 		const state = { 1: 1 };
@@ -217,7 +202,7 @@ describe( '#keyedReducer', () => {
 	} );
 
 	test( 'should deserialize no state into default empty state', () => {
-		const keyed = keyedReducer( 'name', age );
+		const keyed = keyedReducer( 'id', age );
 		expect( keyed( undefined, { type: 'DESERIALIZE' } ) ).toEqual( {} );
 	} );
 } );

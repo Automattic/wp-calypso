@@ -15,7 +15,7 @@ type CalypsoInitAction = Action< '@@calypso/INIT' >;
 type SerializeAction = Action< 'SERIALIZE' >;
 type DeserializeAction = Action< 'DESERIALIZE' >;
 
-type KeyedReducerAction< TAction extends Action > =
+export type KeyedReducerAction< TAction extends Action > =
 	| TAction
 	| CalypsoInitAction
 	| SerializeAction
