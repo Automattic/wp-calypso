@@ -67,7 +67,7 @@ const LicenseStatusFilter: React.FC< Props > = ( props ) => {
 			classname={ classnames( 'license-status-filter', { 'search-open': props.getSearchOpen() } ) }
 		>
 			<NavTabs
-				label={ translate( 'Testing' ) }
+				label={ translate( 'Status' ) }
 				selectedText={ selectedItem.label }
 				selectedCount={ selectedItem.count }
 			>
