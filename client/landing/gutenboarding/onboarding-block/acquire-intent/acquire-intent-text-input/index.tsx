@@ -27,7 +27,8 @@ interface Props {
  * This is needed for the underline width.
  */
 const textSizingCanvas = document.createElement( 'canvas' );
-textSizingCanvas.width = textSizingCanvas.height = 2000;
+textSizingCanvas.width = 2000;
+textSizingCanvas.height = 100;
 const canvasContext = textSizingCanvas.getContext( '2d' ) as CanvasRenderingContext2D;
 
 /**
