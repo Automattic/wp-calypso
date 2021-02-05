@@ -77,7 +77,7 @@ export async function recordOrder( cart, orderId ) {
 	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
 
 	recordOrderInGoogleAds( cart, orderId );
-	recordOrderInFacebook( cart, orderId );
+	recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
@@ -313,59 +313,59 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
  *
  * @param {object} cart - cart as `CartValue` object
  * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
-function recordOrderInFacebook( cart, orderId ) {
+function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
-		return;
-	}
-
-	/**
-	 * We have made a conscious decision to ignore the 0 cost carts, such that these carts are not considered
-	 * a conversion. We will analyze the results and make a final decision on this.
-	 */
-	if ( cart.total_cost < 0.01 ) {
-		debug( 'recordOrderInFacebook: skipping due to a 0-value cart.' );
 		return;
 	}
 
 	const currentUser = getCurrentUser();
 
-	// Fire both WPCom and Jetpack pixels
-
 	// WPCom
-
-	let params = [
-		'trackSingle',
-		TRACKING_IDS.facebookInit,
-		'Purchase',
-		{
-			product_slug: cart.products.map( ( product ) => product.product_slug ).join( ', ' ),
-			value: cart.total_cost,
-			currency: cart.currency,
-			user_id: currentUser ? currentUser.hashedPii.ID : 0,
-			order_id: orderId,
-		},
-	];
-	debug( 'recordOrderInFacebook: WPCom', params );
-	window.fbq( ...params );
+	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
+		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD ) {
+			const params = [
+				'trackSingle',
+				TRACKING_IDS.facebookInit,
+				'Purchase',
+				{
+					product_slug: wpcomJetpackCartInfo.wpcomProducts
+						.map( ( product ) => product.product_slug )
+						.join( ', ' ),
+					value: wpcomJetpackCartInfo.wpcomCostUSD,
+					currency: 'USD',
+					user_id: currentUser ? currentUser.hashedPii.ID : 0,
+					order_id: orderId,
+				},
+			];
+			debug( 'recordOrderInFacebook: WPCom', params );
+			window.fbq( ...params );
+		}
+	}
 
 	// Jetpack
-
-	params = [
-		'trackSingle',
-		TRACKING_IDS.facebookJetpackInit,
-		'Purchase',
-		{
-			product_slug: cart.products.map( ( product ) => product.product_slug ).join( ', ' ),
-			value: cart.total_cost,
-			currency: cart.currency,
-			user_id: currentUser ? currentUser.hashedPii.ID : 0,
-			order_id: orderId,
-		},
-	];
-	debug( 'recordOrderInFacebook: Jetpack', params );
-	window.fbq( ...params );
+	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		if ( null !== wpcomJetpackCartInfo.jetpackCostUSD ) {
+			const params = [
+				'trackSingle',
+				TRACKING_IDS.facebookJetpackInit,
+				'Purchase',
+				{
+					product_slug: wpcomJetpackCartInfo.jetpackProducts
+						.map( ( product ) => product.product_slug )
+						.join( ', ' ),
+					value: wpcomJetpackCartInfo.jetpackCostUSD,
+					currency: 'USD',
+					user_id: currentUser ? currentUser.hashedPii.ID : 0,
+					order_id: orderId,
+				},
+			];
+			debug( 'recordOrderInFacebook: Jetpack', params );
+			window.fbq( ...params );
+		}
+	}
 }
 
 /**
@@ -427,6 +427,8 @@ function recordOrderInGoogleAds( cart, orderId ) {
 		return;
 	}
 
+	// MCC-level event.
+	// @TODO Separate WPCOM from Jetpack events.
 	if ( isWpcomGoogleAdsGtagEnabled ) {
 		const params = [
 			'event',
@@ -513,6 +515,7 @@ function recordOrderInCriteo( cart, orderId ) {
 		return;
 	}
 
+	// @TODO Separate WPCOM from Jetpack events.
 	const params = [
 		'trackTransaction',
 		{
