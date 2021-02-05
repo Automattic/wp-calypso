@@ -37,7 +37,7 @@ function WhatsNewMenuItem() {
 		<>
 			<Fill name="ToolsMoreMenuGroup">
 				<MenuItem onClick={ () => toggleWhatsNew() }>
-					{ __( "What's New", 'full-site-editing' ) }
+					{ __( "What's new", 'full-site-editing' ) }
 				</MenuItem>
 			</Fill>
 			{ isActive && (
@@ -45,7 +45,7 @@ function WhatsNewMenuItem() {
 					className="whats-new"
 					contentLabel={ __( "What's New at WordPress.com", 'full-site-editing' ) }
 					finishButtonText={ __( 'Close', 'full-site-editing' ) }
-					onFinish={ () => toggleWhatsNew() }
+					onFinish={ toggleWhatsNew }
 				>
 					{ whatsNewPages.map( ( page, index ) => (
 						<WhatsNewPage
@@ -65,7 +65,7 @@ function getWhatsNewPages() {
 	return [
 		{
 			imgSrc: blockPatternsImage,
-			heading: __( 'New Block Patterns', 'full-site-editing' ),
+			heading: __( 'New block patterns', 'full-site-editing' ),
 			description: createInterpolateElement(
 				/* translators: the embed is a link */
 				__(
