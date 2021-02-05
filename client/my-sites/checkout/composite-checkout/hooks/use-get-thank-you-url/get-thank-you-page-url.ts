@@ -126,6 +126,14 @@ export default function getThankYouPageUrl( {
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
+	// If receipt ID is 'noPreviousPurchase', then send the user to a generic page (not post-purchase related).
+	// For example, this case arises when a Skip button is clicked on a concierge upsell
+	// nudge opened by a direct link to /checkout/offer-support-session.
+	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
+		debug( 'receipt ID is "noPreviousPurchase", so returning: ', fallbackUrl );
+		return fallbackUrl;
+	}
+
 	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
 
 	// If the user is making a purchase/upgrading within the editor,
@@ -153,16 +161,6 @@ export default function getThankYouPageUrl( {
 			managePurchaseUrl
 		);
 		return managePurchaseUrl;
-	}
-
-	// If cart is empty, then send the user to a generic page (not post-purchase related).
-	// For example, this case arises when a Skip button is clicked on a concierge upsell
-	// nudge opened by a direct link to /offer-support-session.
-	const isCartEmpty = cart && getAllCartItems( cart ).length === 0;
-	if ( ':receiptId' === pendingOrReceiptId && isCartEmpty ) {
-		const emptyCartUrl = urlFromCookie || fallbackUrl;
-		debug( 'cart is empty or receipt ID is pending, so returning', emptyCartUrl );
-		return emptyCartUrl;
 	}
 
 	// Domain only flow
@@ -245,6 +243,11 @@ function getFallbackDestination( {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
 
+	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
+		debug( 'fallback is just root' );
+		return '/';
+	}
+
 	// We will show the Thank You page if there's a site slug and either one of the following is true:
 	// - has a receipt number
 	// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
@@ -295,6 +298,7 @@ function getFallbackDestination( {
 				? `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`
 				: `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 		debug( 'site with receipt or cart; feature is', feature );
+
 		return siteWithReceiptOrCartUrl;
 	}
 
@@ -302,6 +306,7 @@ function getFallbackDestination( {
 		debug( 'just site slug', siteSlug );
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
+
 	debug( 'fallback is just root' );
 	return '/';
 }
