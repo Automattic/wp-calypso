@@ -17,7 +17,7 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import ProfileDropdown from 'calypso/components/jetpack/profile-dropdown';
 import { useBreakpoint } from '@automattic/viewport-react';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import PortalNav from 'calypso/components/jetpack/portal-nav';
+import AsyncLoad from 'calypso/components/async-load';
 
 /**
  * Style dependencies
@@ -58,7 +58,7 @@ const JetpackCloudMasterBar = () => {
 			>
 				<JetpackLogo size={ 28 } full={ ! isNarrow || isExteriorPage } />
 			</Item>
-			<PortalNav />
+			<AsyncLoad require="calypso/components/jetpack/portal-nav" placeholder={ null } />
 			<Item className="masterbar__item-title">{ headerTitle }</Item>
 			<Item
 				tipTarget="me"
