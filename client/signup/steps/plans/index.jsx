@@ -240,7 +240,7 @@ export class PlansStep extends Component {
 
 		return (
 			<>
-				<Experiment name="vertical_scrolling_plans" />
+				<Experiment name="vertical_plan_listing_v2" />
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
@@ -322,7 +322,7 @@ export default connect(
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 		isLoadingExperiment: isLoading( state ),
 		isInVerticalScrollingPlansExperiment:
-			'treatment' === getVariationForUser( state, 'vertical_scrolling_plans' ),
+			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
