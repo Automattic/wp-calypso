@@ -29,7 +29,7 @@ type Props = {
 };
 
 const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, billingPeriod } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 
 	const { supportedPlans, planProducts, features, featuresByType } = useSelect( ( select ) => {
 		const { getPlanProduct, getFeatures, getFeaturesByType, getSupportedPlans } = select(
@@ -50,6 +50,19 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4, 5 ];
+
+	// @TODO: clean this up when translations are done and we don't need fallbackAnnualBillingLabel
+	const newAnnualBillingLabel = __( 'Monthly price (billed yearly)', __i18n_text_domain__ );
+	const fallbackAnnualBillingLabel = __(
+		'Monthly subscription (billed yearly)',
+		__i18n_text_domain__
+	);
+	const annualBillingLabel =
+		locale === 'en' || hasTranslation?.( 'Monthly price (billed yearly)', __i18n_text_domain__ )
+			? newAnnualBillingLabel
+			: fallbackAnnualBillingLabel;
+
+	const monthlyBillingLabel = __( 'Monthly subscription', __i18n_text_domain__ );
 
 	return (
 		<div className="plans-details">
@@ -167,11 +180,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 						<th colSpan={ 6 }>{ __( 'Sign up', __i18n_text_domain__ ) }</th>
 					</tr>
 					<tr className="plans-details__feature-row" key="price">
-						<th>
-							{ billingPeriod === 'ANNUALLY'
-								? __( 'Monthly subscription (billed yearly)', __i18n_text_domain__ )
-								: __( 'Monthly subscription', __i18n_text_domain__ ) }
-						</th>
+						<th>{ billingPeriod === 'ANNUALLY' ? annualBillingLabel : monthlyBillingLabel }</th>
 						{ isLoading
 							? placeholderPlans.map( ( placeholder ) => (
 									<td key={ placeholder }>
