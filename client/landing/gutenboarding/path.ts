@@ -56,6 +56,7 @@ export interface GutenLocationStateType {
 	anchorFmSpotifyUrl?: string;
 	anchorFmSite?: string;
 	anchorFmPost?: string;
+	anchorFmIsNewSite?: string;
 }
 export type GutenLocationStateKeyType = keyof GutenLocationStateType;
 
@@ -131,6 +132,7 @@ export interface AnchorFmParams {
 	anchorFmSpotifyUrl: string | null;
 	anchorFmSite: string | null;
 	anchorFmPost: string | null;
+	anchorFmIsNewSite: string | null;
 }
 export function useAnchorFmParams(): AnchorFmParams {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
@@ -176,6 +178,13 @@ export function useAnchorFmParams(): AnchorFmParams {
 		locationStateParamName: 'anchorFmPost',
 		sanitize: sanitizeNumberParam,
 	} );
+	// Indicates the backend has told us we need to make a new site and
+	// we don't need to query it anymore.
+	const anchorFmIsNewSite = useAnchorParameter( {
+		queryParamName: 'anchor_is_new_site',
+		locationStateParamName: 'anchorFmIsNewSite',
+		sanitize: sanitizeNumberParam,
+	} );
 
 	return {
 		anchorFmPodcastId,
@@ -183,6 +192,7 @@ export function useAnchorFmParams(): AnchorFmParams {
 		anchorFmSpotifyUrl,
 		anchorFmSite,
 		anchorFmPost,
+		anchorFmIsNewSite,
 	};
 }
 
