@@ -13,8 +13,14 @@ import { StatusFilter } from 'calypso/jetpack-cloud/sections/partner-portal/lice
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
+import Count from 'calypso/components/count';
 import Search from 'calypso/components/search';
 import UrlSearch from 'calypso/lib/url-search';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 interface Props {
 	statusFilter?: StatusFilter;
@@ -51,7 +57,12 @@ const LicenseStatusFilter: React.FC< Props > = ( props ) => {
 
 	return (
 		<SectionNav
-			selectedText={ selectedItem.label }
+			selectedText={
+				<span>
+					{ selectedItem.label }
+					<Count count={ selectedItem.count } />
+				</span>
+			}
 			selectedCount={ selectedItem.count }
 			classname={ classnames( 'license-status-filter', { 'search-open': props.getSearchOpen() } ) }
 		>
