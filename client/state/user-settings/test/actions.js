@@ -23,7 +23,7 @@ describe( 'actions', () => {
 			expect( result ).toBe( true );
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: USER_SETTINGS_UNSAVED_SET,
-				settingName: 'foo',
+				settingName: [ 'foo' ],
 				value: 'qix',
 			} );
 		} );
@@ -42,7 +42,7 @@ describe( 'actions', () => {
 			expect( result ).toBe( true );
 			expect( dispatch ).toHaveBeenCalledWith( {
 				type: USER_SETTINGS_UNSAVED_REMOVE,
-				settingName: 'foo',
+				settingName: [ 'foo' ],
 			} );
 		} );
 
