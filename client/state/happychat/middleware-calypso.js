@@ -30,7 +30,12 @@ import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
 } from 'calypso/state/happychat/constants';
-import { sendEvent, sendLog, sendPreferences } from 'calypso/state/happychat/connection/actions';
+import {
+	sendEvent,
+	sendLog,
+	sendPreferences,
+	setChatCustomFields,
+} from 'calypso/state/happychat/connection/actions';
 import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
 import getGroups from 'calypso/state/happychat/selectors/get-groups';
 import getSkills from 'calypso/state/happychat/selectors/get-skills';
@@ -39,6 +44,7 @@ import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-hap
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import getSectionName from 'calypso/state/ui/selectors/get-section-name';
 
 const getRouteSetMessage = ( state, path ) => {
 	return `Looking at https://wordpress.com${ path }`;
@@ -158,6 +164,9 @@ export default ( store ) => ( next ) => ( action ) => {
 						recordTracksEvent( 'calypso_happychat_start' ),
 						sendEvent( getRouteSetMessage( state, getCurrentRoute( state ) ) )
 					)
+				);
+				dispatch(
+					setChatCustomFields( { calypsoSectionName: getSectionName( state ) || '__unknown__' } )
 				);
 			}
 			break;
