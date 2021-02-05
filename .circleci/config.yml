@@ -794,7 +794,6 @@ jobs:
             if ls desktop/release/*.zip &>/dev/null
             then
               ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
-              ditto -ck --rsrc --sequesterRsrc desktop/release/mac-arm64 desktop/release/mac-arm64.app.zip
             fi
       - run:
           when: always

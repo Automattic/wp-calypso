@@ -17,7 +17,7 @@ const ELECTRON_BUILDER_ARGS = process.env.ELECTRON_BUILDER_ARGS || '';
 const circleTag = process.env.CIRCLE_TAG;
 const isReleaseBuild = process.platform === 'darwin' && !! circleTag && circleTag.startsWith( 'v' );
 
-const arches = [ 'x64', 'arm64' ];
+const arches = isReleaseBuild ? [ 'x64', 'arm64' ] : [ 'x64' ];
 
 for ( let i = 0; i < arches.length; i++ ) {
 	const arch = arches[ i ];
