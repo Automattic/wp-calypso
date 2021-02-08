@@ -247,9 +247,11 @@ function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string 
 export function WPNonProductLineItem( {
 	lineItem,
 	className = null,
+	isSummary,
 }: {
 	lineItem: LineItemType;
 	className?: string | null;
+	isSummary?: boolean;
 } ): JSX.Element {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -263,9 +265,11 @@ export function WPNonProductLineItem( {
 			data-e2e-product-slug={ lineItem.id }
 			data-product-type={ lineItem.id }
 		>
-			<LineItemTitle id={ itemSpanId }>{ label }</LineItemTitle>
+			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
+				{ label }
+			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice actualAmount={ actualAmountDisplay } />
+				<LineItemPrice actualAmount={ actualAmountDisplay } isSummary={ isSummary } />
 			</span>
 		</div>
 	);
