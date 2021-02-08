@@ -50,7 +50,6 @@ const debug = debugFactory( 'calypso:composite-checkout:translate-cart' );
 export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
 	const {
 		products,
-		coupon_savings_total_display,
 		coupon_savings_total_integer,
 		savings_total_display,
 		savings_total_integer,
@@ -61,23 +60,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 	const taxLineItem = getTaxLineItem( serverCart );
 
-	const couponLineItem: WPCOMCartCouponItem = {
-		id: 'coupon-line-item',
-		label: String( translate( 'Coupon: %(couponCode)s', { args: { couponCode: coupon } } ) ),
-		type: 'coupon',
-		amount: {
-			currency: currency,
-			value: coupon_savings_total_integer,
-			displayValue: String(
-				translate( '- %(discountAmount)s', {
-					args: { discountAmount: coupon_savings_total_display },
-				} )
-			),
-		},
-		wpcom_meta: {
-			couponCode: coupon,
-		},
-	};
+	const couponLineItem = getCouponLineItem( serverCart );
 
 	const creditsLineItem = getCreditsLineItem( serverCart );
 
@@ -113,6 +96,31 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		credits: creditsLineItem,
 		allowedPaymentMethods,
 		couponCode: coupon,
+	};
+}
+
+export function getCouponLineItem( responseCart: ResponseCart ): WPCOMCartCouponItem | null {
+	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
+		return null;
+	}
+	return {
+		id: 'coupon-line-item',
+		label: String(
+			translate( 'Coupon: %(couponCode)s', { args: { couponCode: responseCart.coupon } } )
+		),
+		type: 'coupon',
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.coupon_savings_total_integer,
+			displayValue: String(
+				translate( '- %(discountAmount)s', {
+					args: { discountAmount: responseCart.coupon_savings_total_display },
+				} )
+			),
+		},
+		wpcom_meta: {
+			couponCode: responseCart.coupon,
+		},
 	};
 }
 
