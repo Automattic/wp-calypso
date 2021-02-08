@@ -38,7 +38,7 @@ describe( 'updateRecentSitesPreferences', () => {
 		expect( store.getActions() ).toHaveLength( 0 );
 	} );
 
-	it( 'should not nothing if no site is selected', () => {
+	it( 'should do nothing if no site is selected', () => {
 		const initialState = {
 			preferences: {
 				remoteValues: {},
@@ -54,7 +54,7 @@ describe( 'updateRecentSitesPreferences', () => {
 		expect( store.getActions() ).toHaveLength( 0 );
 	} );
 
-	it( 'should not nothing if selected site is the most recent', () => {
+	it( 'should do nothing if selected site is the most recent', () => {
 		const selectedSiteId = 1;
 		const initialState = {
 			preferences: {
