@@ -11,6 +11,7 @@ import {
 	useEvents,
 	Button,
 } from '@automattic/composite-checkout';
+import type { Theme } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import type { RemoveProductFromCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -44,7 +45,7 @@ import type {
 	OnChangeItemVariant,
 } from './item-variation-picker';
 
-const WPOrderReviewList = styled.ul`
+const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	box-sizing: border-box;
 	margin: 20px 30px 20px 0;
@@ -67,7 +68,12 @@ const WPOrderReviewListItem = styled.li`
 	list-style: none;
 `;
 
-export const LineItem = styled( WPLineItem )`
+export const LineItem = styled( WPLineItem )< {
+	theme?: Theme;
+	total?: boolean;
+	tax?: boolean;
+	subtotal?: boolean;
+} >`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
@@ -90,7 +96,7 @@ export const LineItem = styled( WPLineItem )`
 	}
 `;
 
-const LineItemMeta = styled.div`
+const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	display: flex;
 	font-size: 14px;
@@ -98,7 +104,7 @@ const LineItemMeta = styled.div`
 	width: 100%;
 `;
 
-const DiscountCallout = styled.div`
+const DiscountCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.success };
 	text-align: right;
 
@@ -107,13 +113,13 @@ const DiscountCallout = styled.div`
 	}
 `;
 
-const LineItemTitle = styled.div`
+const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
 	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
 `;
 
-const LineItemPriceWrapper = styled.span`
+const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
 	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
 
@@ -123,7 +129,7 @@ const LineItemPriceWrapper = styled.span`
 	}
 `;
 
-const DeleteButton = styled( Button )`
+const DeleteButton = styled( Button )< { theme?: Theme } >`
 	position: absolute;
 	padding: 10px;
 	right: -50px;
