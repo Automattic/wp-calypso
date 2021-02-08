@@ -331,7 +331,7 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 
 	// WPCom
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD ) {
+		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD && wpcomJetpackCartInfo.wpcomCostUSD > 0 ) {
 			const params = [
 				'trackSingle',
 				TRACKING_IDS.facebookInit,
@@ -353,7 +353,7 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 
 	// Jetpack
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		if ( null !== wpcomJetpackCartInfo.jetpackCostUSD ) {
+		if ( null !== wpcomJetpackCartInfo.jetpackCostUSD && wpcomJetpackCartInfo.jetpackCostUSD > 0 ) {
 			const params = [
 				'trackSingle',
 				TRACKING_IDS.facebookJetpackInit,
