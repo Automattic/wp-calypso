@@ -83,7 +83,11 @@ domReady( () => {
 			} else {
 				// Save post in the background while step-by-step or focused launch flow opens
 				setTimeout( () => {
-					dispatch( 'core/editor' ).savePost();
+					if ( isAnchorFm ) {
+						dispatch( 'core/editor' ).editPost( { status: 'publish' } );
+					} else {
+						dispatch( 'core/editor' ).savePost();
+					}
 				}, 1000 );
 			}
 		} );
