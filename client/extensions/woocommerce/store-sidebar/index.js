@@ -326,12 +326,12 @@ function mapStateToProps( state ) {
 	const hasProducts = getCountProducts( state ) > 0;
 	const isLoaded = areCountsLoaded( state );
 	const totalNewOrders = getCountNewOrders( state );
-	const totalPendingReviews = getCountPendingReviews( state );
 	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
 	const pluginsLoaded = arePluginsLoaded( state, siteId );
 	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
 	const isStoreRemoved = config.isEnabled( 'woocommerce/store-removed' );
+	const totalPendingReviews = isStoreRemoved ? 0 : getCountPendingReviews( state );
 	const shouldRedirectAfterInstall =
 		'' === get( getCurrentQueryArguments( state ), 'redirect_after_install' );
 
