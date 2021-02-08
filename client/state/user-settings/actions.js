@@ -127,6 +127,21 @@ function hasLanguageChanged( languageSettingValue, settings = {} ) {
 }
 
 /**
+ * Split a path into an array.
+ *
+ * Example: Input of `calypso_preferences.colorScheme` results in `[ 'calypso_preferences', 'colorScheme' ]`
+ *
+ * @param {string|Array} path Path to be split into an array
+ */
+function castPath( path ) {
+	if ( Array.isArray( path ) ) {
+		return path;
+	}
+
+	return path.split( '.' );
+}
+
+/**
  * Handles the storage and removal of changed setting that are pending
  * being saved to the WPCOM API.
  *
@@ -137,9 +152,9 @@ function hasLanguageChanged( languageSettingValue, settings = {} ) {
 export function setUserSetting( settingName, value ) {
 	return ( dispatch, getState ) => {
 		const settings = getUserSettings( getState() );
-		const settingKey = Array.isArray( settingName ) ? settingName : settingName.split( '.' );
+		const settingPath = castPath( settingName );
 
-		const maybeSetting = get( settings, settingKey );
+		const maybeSetting = get( settings, settingPath );
 
 		if (
 			maybeSetting === undefined &&
@@ -168,9 +183,9 @@ export function setUserSetting( settingName, value ) {
 			languageHasChanged
 		) {
 			debug( 'Removing ' + settingName + ' from changed settings.' );
-			dispatch( removeUnsavedUserSetting( settingKey ) );
+			dispatch( removeUnsavedUserSetting( settingPath ) );
 		} else {
-			dispatch( setUnsavedUserSetting( settingKey, value ) );
+			dispatch( setUnsavedUserSetting( settingPath, value ) );
 		}
 
 		return true;
