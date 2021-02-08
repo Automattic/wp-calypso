@@ -1,6 +1,19 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
+.help__heading {
+	display: flex;
+
+	.formatted-header {
+		margin-right: 12px;
+	}
+
+	.help__contact-us-header-button {
+		margin: auto;
+		margin-right: 0;
+	}
+}
+
 .help .upwork-banner {
 	margin: 10px 10px 20px;
 
