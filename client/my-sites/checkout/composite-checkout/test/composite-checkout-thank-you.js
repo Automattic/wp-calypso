@@ -10,6 +10,7 @@
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
 	redirectCloudCheckoutToWpAdmin,
@@ -140,7 +141,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/:receiptId' );
 	} );
 
-	// This test is for the A/B test defined in https://wp.me/pbxNRc-B0.
+	// This test is for the A/B test defined in pbxNRc-B0-p2.
 	it( 'redirects to the premium plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
 		const cart = {
 			products: [
@@ -158,6 +159,26 @@ describe( 'getThankYouPageUrl', () => {
 			shouldShowOneClickTreatment,
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/premium/:receiptId' );
+	} );
+
+	// This test is for the A/B test defined in https://wp.me/pcbrnV-12W.
+	it( 'redirects to the DIFM offer page when a site but no orderId is set and the cart contains the business plan', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: PLAN_BUSINESS,
+				},
+			],
+		};
+		// Note: This requires the user to be assigned to the treatment of the premium bump A/B test
+		const shouldShowDifmUpsell = true;
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			shouldShowDifmUpsell,
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-difm/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
