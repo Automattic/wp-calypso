@@ -9,6 +9,8 @@ import page from 'page';
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
+import { requestAnchorMatchingSite } from 'calypso/state/data-getters';
+import { waitForHttpData } from 'calypso/state/data-layer/http-data';
 import { USER_STORE } from '../stores/user';
 import { useIsAnchorFm, useAnchorFmParams } from '../path';
 
@@ -40,6 +42,39 @@ export default function useDetectMatchingAnchorSite(): boolean {
 			return;
 		}
 
+		// Fails with error
+		// Error: Cannot use HTTP data without injecting Redux store enhancer!
+		// Changing <AcquireIntent> (where this hook is used) to "export default connect( null, null )( AcquireIntent );" (connect from react-redux)
+		// Causes a new error about <Provider>/store missing (Not used in gutenboarding?)
+		console.log( 'new method of making fetch:' );
+		waitForHttpData( () => ( {
+			match: requestAnchorMatchingSite(
+				anchorFmPodcastId,
+				anchorFmEpisodeId,
+				anchorFmSpotifyUrl,
+				anchorFmSite,
+				anchorFmPost
+			),
+		} ) ).then( ( result ) => {
+			console.log( 'fetch done: ' );
+			console.log( { result } );
+		} );
+
+		// Does this return a promise? - Doesn't work
+		// Error: Cannot use HTTP data without injecting Redux store enhancer!
+		/*
+		const a = requestAnchorMatchingSite(
+			anchorFmPodcastId,
+			anchorFmEpisodeId,
+			anchorFmSpotifyUrl,
+			anchorFmSite,
+			anchorFmPost
+		);
+		console.log( { a } );
+		*/
+
+		// Use wpcom.undocumented() (Works)
+		/*
 		setIsLoading( true );
 		wpcom
 			.undocumented()
@@ -64,6 +99,7 @@ export default function useDetectMatchingAnchorSite(): boolean {
 			.catch( () => {
 				setIsLoading( false );
 			} );
+			*/
 	}, [
 		isAnchorFm,
 		currentUserExists,
