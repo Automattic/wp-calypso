@@ -135,11 +135,11 @@ export interface AnchorFmParams {
 	anchorFmIsNewSite: string | null;
 }
 export function useAnchorFmParams(): AnchorFmParams {
-	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+	const sanitizeAlphaNumeric = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
 	const anchorFmPodcastId = useAnchorParameter( {
 		queryParamName: 'anchor_podcast',
 		locationStateParamName: 'anchorFmPodcastId',
-		sanitize: sanitizePodcast,
+		sanitize: sanitizeAlphaNumeric,
 	} );
 
 	// Allow all characters allowed in urls
@@ -189,7 +189,7 @@ export function useAnchorFmParams(): AnchorFmParams {
 	const anchorFmIsNewSite = useAnchorParameter( {
 		queryParamName: 'anchor_is_new_site',
 		locationStateParamName: 'anchorFmIsNewSite',
-		sanitize: sanitizeNumberParam,
+		sanitize: sanitizeAlphaNumeric,
 	} );
 
 	return {
