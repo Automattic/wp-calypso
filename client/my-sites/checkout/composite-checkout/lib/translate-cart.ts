@@ -52,12 +52,9 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		products,
 		coupon_savings_total_display,
 		coupon_savings_total_integer,
-		sub_total_with_taxes_display,
 		savings_total_display,
 		savings_total_integer,
 		currency,
-		credits_integer,
-		credits_display,
 		allowed_payment_methods,
 		sub_total_integer,
 		sub_total_display,
@@ -84,29 +81,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const creditsLineItem: WPCOMCartCreditsItem = {
-		id: 'credits',
-		label: String( translate( 'Credits' ) ),
-		type: 'credits',
-		amount: {
-			currency: currency,
-			value: credits_integer,
-			displayValue: String(
-				translate( '- %(discountAmount)s', {
-					args: {
-						// Clamp the credits display value to the total
-						discountAmount: doesPurchaseHaveFullCredits( serverCart )
-							? sub_total_with_taxes_display
-							: credits_display,
-					},
-				} )
-			),
-		},
-		wpcom_meta: {
-			credits_integer,
-			credits_display,
-		},
-	};
+	const creditsLineItem = getCreditsLineItem( serverCart );
 
 	const savingsLineItem: LineItem = {
 		id: 'savings-line-item',
@@ -146,7 +121,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		total: totalItem,
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
-		credits: credits_integer > 0 ? creditsLineItem : null,
+		credits: creditsLineItem,
 		allowedPaymentMethods,
 		couponCode: coupon,
 	};
@@ -177,6 +152,35 @@ export function getTaxLineItem( responseCart: ResponseCart ): LineItem | null {
 			currency: responseCart.currency,
 			value: responseCart.total_tax_integer,
 			displayValue: responseCart.total_tax_display,
+		},
+	};
+}
+
+export function getCreditsLineItem( responseCart: ResponseCart ): WPCOMCartCreditsItem | null {
+	if ( responseCart.credits_integer <= 0 ) {
+		return null;
+	}
+	return {
+		id: 'credits',
+		label: String( translate( 'Credits' ) ),
+		type: 'credits',
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.credits_integer,
+			displayValue: String(
+				translate( '- %(discountAmount)s', {
+					args: {
+						// Clamp the credits display value to the total
+						discountAmount: doesPurchaseHaveFullCredits( responseCart )
+							? responseCart.sub_total_with_taxes_display
+							: responseCart.credits_display,
+					},
+				} )
+			),
+		},
+		wpcom_meta: {
+			credits_integer: responseCart.credits_integer,
+			credits_display: responseCart.credits_display,
 		},
 	};
 }
