@@ -17,6 +17,7 @@ interface OwnProps {
 	scary?: boolean;
 	busy?: boolean;
 	borderless?: boolean;
+	plain?: boolean;
 }
 
 type AnchorElementProps = AnchorHTMLAttributes< HTMLAnchorElement >;
@@ -31,34 +32,59 @@ type ButtonProps = OwnProps & Omit< ButtonHTMLAttributes< HTMLButtonElement >, '
 const isAnchor = ( props: AnchorProps | ButtonProps ): props is AnchorProps =>
 	!! ( props as AnchorProps ).href;
 
-const Button: FunctionComponent< ButtonProps | AnchorProps > = ( {
+const cleanAnchorProps = ( {
+	type,
 	borderless,
 	busy,
-	className: classProp,
+	className,
 	compact,
 	primary,
 	scary,
-	...props
-} ) => {
-	const className = classnames( 'button', classProp, {
-		'is-compact': compact,
-		'is-primary': primary,
-		'is-scary': scary,
-		'is-busy': busy,
-		'is-borderless': borderless,
-	} );
+	plain,
+	...anchorProps
+}: ButtonProps | AnchorProps ): AnchorProps => anchorProps as AnchorProps;
+
+const cleanButtonProps = ( {
+	type = 'button',
+	borderless,
+	busy,
+	className,
+	compact,
+	primary,
+	scary,
+	plain,
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore Clean incorrect usage of the component
+	rel,
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore Clean incorrect usage of the component
+	href,
+	...buttonProps
+}: ButtonProps | AnchorProps ): ButtonProps => ( { ...buttonProps, type } as ButtonProps );
+
+const Button: FunctionComponent< ButtonProps | AnchorProps > = ( props ) => {
+	const classes = props.plain
+		? classnames( 'button-plain', props.className )
+		: classnames( 'button', props.className, {
+				'is-compact': props.compact,
+				'is-primary': props.primary,
+				'is-scary': props.scary,
+				'is-busy': props.busy,
+				'is-borderless': props.borderless,
+		  } );
 
 	if ( isAnchor( props ) ) {
+		const anchorProps = cleanAnchorProps( props );
 		// block referrers when external link
-		const rel: string | undefined = props.target
-			? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
-			: props.rel;
+		const rel: string | undefined = anchorProps.target
+			? ( anchorProps.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
+			: anchorProps.rel;
 
-		return <a { ...props } rel={ rel } className={ className } />;
+		return <a { ...anchorProps } rel={ rel } className={ classes } />;
 	}
 
-	const { type = 'button' } = props as ButtonProps;
-	return <button { ...( props as ButtonProps ) } type={ type } className={ className } />;
+	const buttonProps = cleanButtonProps( props );
+	return <button { ...buttonProps } className={ classes } />;
 };
 
 export default Button;
