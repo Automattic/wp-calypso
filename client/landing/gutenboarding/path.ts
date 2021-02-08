@@ -189,7 +189,7 @@ export function useAnchorFmParams(): AnchorFmParams {
 	const anchorFmIsNewSite = useAnchorParameter( {
 		queryParamName: 'anchor_is_new_site',
 		locationStateParamName: 'anchorFmIsNewSite',
-		sanitize: sanitizeNumberParam,
+		sanitize: ( flag: string ) => ( flag === 'true' ? 'true' : 'false' ),
 	} );
 
 	return {
