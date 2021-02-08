@@ -453,7 +453,7 @@ export class CheckoutThankYou extends React.Component {
 				shouldShowDifmUpsell &&
 				! previousRoute.includes( `/checkout/${ selectedSiteSlug }/offer-difm/${ receiptId }` )
 			) {
-				page( `/checkout/${ selectedSiteSlug }/offer-difm/${ receiptId }?isEcommerce=1` );
+				page( `/checkout/${ selectedSiteSlug }/offer-difm/${ receiptId }` );
 			}
 
 			return (
