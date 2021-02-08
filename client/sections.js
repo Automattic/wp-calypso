@@ -491,6 +491,12 @@ const sections = [
 		module: 'calypso/jetpack-cloud/sections/partner-portal',
 		group: 'jetpack-cloud',
 	},
+	{
+		name: 'woocommerce',
+		paths: [ '/woocommerce' ],
+		module: 'calypso/my-sites/woocommerce',
+		group: 'woocommerce',
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {
