@@ -286,7 +286,7 @@ export function WPOrderReviewLineItems( {
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
 }: {
-	items: WPCOMCartItem[];
+	items: ( WPCOMCartItem | LineItemType )[];
 	className?: string;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -306,6 +306,13 @@ export function WPOrderReviewLineItems( {
 					return true;
 				} )
 				.map( ( item ) => {
+					if ( ! isLineItemAProduct( item ) ) {
+						return (
+							<WPOrderReviewListItem key={ item.id }>
+								<NonProductLineItem lineItem={ item } isSummary={ isSummary } />
+							</WPOrderReviewListItem>
+						);
+					}
 					return (
 						<WPOrderReviewListItem key={ item.id }>
 							<LineItem
@@ -342,6 +349,11 @@ WPOrderReviewLineItems.propTypes = {
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 };
+
+function isLineItemAProduct( item: WPCOMCartItem | LineItemType ): item is WPCOMCartItem {
+	const itemAsProduct = item as WPCOMCartItem;
+	return !! itemAsProduct.wpcom_response_cart_product;
+}
 
 function GSuiteUsersList( { product }: { product: ResponseCartProduct } ) {
 	const users = product.extra?.google_apps_users ?? [];
@@ -478,7 +490,7 @@ function canItemBeDeleted( item: WPCOMCartItem ): boolean {
 	return ! itemTypesThatCannotBeDeleted.includes( item.type );
 }
 
-function shouldLineItemBeShownWhenStepInactive( item: WPCOMCartItem ): boolean {
+function shouldLineItemBeShownWhenStepInactive( item: LineItemType ): boolean {
 	const itemTypesToIgnore = [ 'tax' ];
 	return ! itemTypesToIgnore.includes( item.type );
 }
