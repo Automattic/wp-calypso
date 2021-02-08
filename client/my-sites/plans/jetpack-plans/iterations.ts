@@ -20,13 +20,14 @@ const iterationNames: string[] = Object.values( Iterations );
 /**
  * Gets the name of the current CRO iteration.
  *
- * **NOTE:** Avoid using this if you can; instead, opt for either `getForCurrentCROIteration` or `doForCurrentCROIteration`.
+ * **NOTE:** Avoid using this externally; instead, opt for either
+ * `getForCurrentCROIteration` or `doForCurrentCROIteration`.
  *
  * @see Iterations
  * @see getForCurrentCROIteration
  * @see doForCurrentCROIteration
  */
-export const getCurrentCROIterationName = (): Iterations => {
+const getCurrentCROIterationName = (): Iterations => {
 	// If we see a query parameter, obey that,
 	// regardless of any active A/B test value
 	if ( typeof window !== 'undefined' ) {
