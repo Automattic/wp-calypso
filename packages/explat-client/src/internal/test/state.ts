@@ -6,48 +6,37 @@ import { validExperimentAssignment, validFallbackExperimentAssignment } from '..
 
 describe( 'state', () => {
 	it( 'should save and retrieve valid ExperimentAssignments', () => {
-		expect( State.retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toBe(
-			undefined
-		);
-		State.storeExperimentAssignment( validExperimentAssignment );
+		const store = State.createStore();
 		expect(
-			State.retrieveExperimentAssignment( validExperimentAssignment.experimentName )
+			State.retrieveExperimentAssignment( store, validExperimentAssignment.experimentName )
+		).toBe( undefined );
+		State.storeExperimentAssignment( store, validExperimentAssignment );
+		expect(
+			State.retrieveExperimentAssignment( store, validExperimentAssignment.experimentName )
 		).toEqual( validExperimentAssignment );
 
 		expect(
-			State.retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
+			State.retrieveExperimentAssignment( store, validFallbackExperimentAssignment.experimentName )
 		).toBe( undefined );
-		State.storeExperimentAssignment( validFallbackExperimentAssignment );
+		State.storeExperimentAssignment( store, validFallbackExperimentAssignment );
 		expect(
-			State.retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
+			State.retrieveExperimentAssignment( store, validFallbackExperimentAssignment.experimentName )
 		).toEqual( validFallbackExperimentAssignment );
 	} );
 
 	it( 'should throw for storing an ExperimentAssignment for a currently stored Experiment with an older date', () => {
+		const store = State.createStore();
+		State.storeExperimentAssignment( store, validFallbackExperimentAssignment );
 		expect(
-			State.retrieveExperimentAssignment( validFallbackExperimentAssignment.experimentName )
+			State.retrieveExperimentAssignment( store, validFallbackExperimentAssignment.experimentName )
 		).toBe( validFallbackExperimentAssignment );
 		expect( () =>
-			State.storeExperimentAssignment( {
+			State.storeExperimentAssignment( store, {
 				...validFallbackExperimentAssignment,
 				retrievedTimestamp: validFallbackExperimentAssignment.retrievedTimestamp - 1,
 			} )
 		).toThrowErrorMatchingInlineSnapshot(
 			`"Trying to store an older experiment assignment than is present in the store, likely a race condition."`
-		);
-	} );
-
-	it( 'should throw for overwriting a recent ExperimentAssignment with a fallback', () => {
-		expect( State.retrieveExperimentAssignment( validExperimentAssignment.experimentName ) ).toBe(
-			validExperimentAssignment
-		);
-		expect( () =>
-			State.storeExperimentAssignment( {
-				...validExperimentAssignment,
-				isFallbackExperimentAssignment: true,
-			} )
-		).toThrowErrorMatchingInlineSnapshot(
-			`"Replacing recent ExperimentAssignment with fallback ExperimentAssignment."`
 		);
 	} );
 } );
