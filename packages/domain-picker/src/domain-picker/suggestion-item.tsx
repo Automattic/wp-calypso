@@ -133,6 +133,9 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 		onSelect( domain );
 	};
 
+	const selectButtonLabelSelected = __( 'Selected', __i18n_text_domain__ );
+	const selectButtonLabelUnselected = __( 'Select', __i18n_text_domain__ );
+
 	return (
 		<WrappingComponent
 			ref={ buttonRef }
@@ -256,8 +259,8 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 							onClick={ onDomainSelect }
 						>
 							{ selected && ! isUnavailable
-								? __( 'Selected', __i18n_text_domain__ )
-								: __( 'Select', __i18n_text_domain__ ) }
+								? selectButtonLabelSelected
+								: selectButtonLabelUnselected }
 						</Button>
 					</div>
 				) ) }
