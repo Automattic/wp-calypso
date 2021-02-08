@@ -18,6 +18,12 @@ body.is-focused-launch-complete .editor-gutenberg-launch__launch-button {
 
 .focused-launch-details__back-button-wrapper {
 	margin-bottom: 24px;
+	background-color: #fff;
+	padding: 0 10px;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 60px;
+	z-index: 1;
 }
 
 .focused-launch-details__header {
