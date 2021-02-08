@@ -337,6 +337,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const popularLabel = __( 'Popular', __i18n_text_domain__ );
 
+	const freePlanLabel = __( 'Free', __i18n_text_domain__ );
+	const freePlanLabelNotAvailable = __(
+		'Not available with your domain selection',
+		__i18n_text_domain__
+	);
+
 	return (
 		<SummaryStep
 			highlighted={ !! highlighted }
@@ -430,8 +436,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 												nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
 											>
 												{ hasPaidDomain || selectedPaidDomain
-													? __( 'Not available with your domain selection', __i18n_text_domain__ )
-													: __( 'Free', __i18n_text_domain__ ) }
+													? freePlanLabelNotAvailable
+													: freePlanLabel }
 											</TrailingContentSide>
 										) : (
 											<TrailingContentSide nodeType="PRICE">
