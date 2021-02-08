@@ -77,7 +77,10 @@ class Block_Patterns_From_API {
 
 		foreach ( (array) $block_patterns as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
-				$pattern_categories[ $slug ] = $category['title'];
+				// Temporarily skip the 'featured' category so that we can expose it at another time.
+				if ( 'featured' !== $slug ) {
+					$pattern_categories[ $slug ] = $category['title'];
+				}
 			}
 		}
 
