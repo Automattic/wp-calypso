@@ -56,8 +56,6 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		savings_total_integer,
 		currency,
 		allowed_payment_methods,
-		sub_total_integer,
-		sub_total_display,
 		coupon,
 	} = serverCart;
 
@@ -96,16 +94,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 	const totalItem = getTotalLineItem( serverCart );
 
-	const subtotalItem: LineItem = {
-		id: 'subtotal',
-		type: 'subtotal',
-		label: String( translate( 'Subtotal' ) ),
-		amount: {
-			currency: currency,
-			value: sub_total_integer,
-			displayValue: sub_total_display,
-		},
-	};
+	const subtotalItem = getSubtotalLineItem( serverCart );
 
 	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
 
@@ -124,6 +113,19 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		credits: creditsLineItem,
 		allowedPaymentMethods,
 		couponCode: coupon,
+	};
+}
+
+export function getSubtotalLineItem( responseCart: ResponseCart ): LineItem {
+	return {
+		id: 'subtotal',
+		type: 'subtotal',
+		label: String( translate( 'Subtotal' ) ),
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.sub_total_integer,
+			displayValue: responseCart.sub_total_display,
+		},
 	};
 }
 
