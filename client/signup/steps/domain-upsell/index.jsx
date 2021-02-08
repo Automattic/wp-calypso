@@ -10,6 +10,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getSecureYourBrand,
 	isRequestingSecureYourBrand,
+	hasSecureYourBrandError,
 } from 'calypso/state/secure-your-brand/selectors';
 import { Button, Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -61,10 +62,6 @@ export default function DomainUpsellStep( props ) {
 	);
 }
 
-function getDomainName( siteSlug ) {
-	return siteSlug.replace( '.wordpress.com', '.blog' );
-}
-
 function FormattedSuggestion( translate, suggestion, isRecommended ) {
 	const currency = suggestion.currency;
 	return (
@@ -106,7 +103,7 @@ function RecommendedDomains( props ) {
 	const selectDomain = ( event ) => setSelectedDomain( event.target.value );
 	const secureYourBrand = useSelector( ( state ) => getSecureYourBrand( state ) );
 	const isLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
-	const domain = getDomainName( siteSlug );
+	const hasError = useSelector( ( state ) => hasSecureYourBrandError( state ) );
 	const productData = secureYourBrand.product_data;
 	const selectedProduct = productData?.filter(
 		( product ) => product.domain === selectedDomain
@@ -150,9 +147,13 @@ function RecommendedDomains( props ) {
 		goToNextStep();
 	};
 
+	if ( hasError ) {
+		handleSkipButtonClick();
+	}
+
 	return (
 		<div className="domain-upsell">
-			{ ! productData && <QuerySecureYourBrand domain={ domain } /> }
+			{ ! productData && ! isLoading && ! hasError && <QuerySecureYourBrand domain={ siteSlug } /> }
 			<Card style={ { maxWidth: '615px' } } className="domain-upsell__card">
 				{ isLoading ? (
 					[ ...Array( 3 ) ].map( ( e, i ) => (
