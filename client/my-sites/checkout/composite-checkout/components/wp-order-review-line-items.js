@@ -92,6 +92,15 @@ function WPLineItem( {
 	const sublabel = product ? String( getSublabel( product ) ) : '';
 	const label = product ? getLabel( product ) : item.label;
 
+	let originalAmountDisplay = item.wpcom_meta?.item_original_subtotal_display;
+	let originalAmountInteger = item.wpcom_meta?.item_original_subtotal_integer;
+	if ( item.wpcom_meta?.related_monthly_plan_cost_integer ) {
+		originalAmountInteger = item.wpcom_meta?.related_monthly_plan_cost_integer;
+		originalAmountDisplay = item.wpcom_meta?.related_monthly_plan_cost_display;
+	}
+	const actualAmountDisplay = item.amount.displayValue;
+	const isDiscounted = item.amount.value < originalAmountInteger && originalAmountDisplay;
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -103,7 +112,12 @@ function WPLineItem( {
 				{ label }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice item={ item } isSummary={ isSummary } />
+				<LineItemPrice
+					isDiscounted={ isDiscounted }
+					actualAmount={ actualAmountDisplay }
+					originalAmount={ originalAmountDisplay }
+					isSummary={ isSummary }
+				/>
 			</span>
 			{ sublabel && (
 				<LineItemMeta>
@@ -189,20 +203,12 @@ WPLineItem.propTypes = {
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };
 
-function LineItemPrice( { item, isSummary } ) {
-	let originalAmountDisplay = item.wpcom_meta?.item_original_subtotal_display;
-	let originalAmountInteger = item.wpcom_meta?.item_original_subtotal_integer;
-	if ( item.wpcom_meta?.related_monthly_plan_cost_integer ) {
-		originalAmountInteger = item.wpcom_meta?.related_monthly_plan_cost_integer;
-		originalAmountDisplay = item.wpcom_meta?.related_monthly_plan_cost_display;
-	}
-	const isDiscounted = item.amount.value < originalAmountInteger && originalAmountDisplay;
-	const actualAmount = item.amount.displayValue;
+function LineItemPrice( { isDiscounted, actualAmount, originalAmount, isSummary } ) {
 	return (
 		<LineItemPriceWrapper isSummary={ isSummary }>
 			{ isDiscounted ? (
 				<>
-					<s>{ originalAmountDisplay }</s> { actualAmount }
+					<s>{ originalAmount }</s> { actualAmount }
 				</>
 			) : (
 				actualAmount
