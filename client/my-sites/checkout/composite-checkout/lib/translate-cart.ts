@@ -50,8 +50,6 @@ const debug = debugFactory( 'calypso:composite-checkout:translate-cart' );
 export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
 	const {
 		products,
-		total_tax_integer,
-		total_tax_display,
 		coupon_savings_total_display,
 		coupon_savings_total_integer,
 		sub_total_with_taxes_display,
@@ -64,19 +62,9 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		sub_total_integer,
 		sub_total_display,
 		coupon,
-		tax,
 	} = serverCart;
 
-	const taxLineItem: LineItem = {
-		id: 'tax-line-item',
-		label: String( translate( 'Tax' ) ),
-		type: 'tax', // TODO: does this need to be localized, e.g. tax-us?
-		amount: {
-			currency: currency,
-			value: total_tax_integer,
-			displayValue: total_tax_display,
-		},
-	};
+	const taxLineItem = getTaxLineItem( serverCart );
 
 	const couponLineItem: WPCOMCartCouponItem = {
 		id: 'coupon-line-item',
@@ -153,7 +141,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 	return {
 		items: products.map( translateReponseCartProductToWPCOMCartItem ),
-		tax: tax.display_taxes ? taxLineItem : null,
+		tax: taxLineItem,
 		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
 		total: totalItem,
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
@@ -173,6 +161,22 @@ export function getTotalLineItem( responseCart: ResponseCart ): LineItem {
 			currency: responseCart.currency,
 			value: responseCart.total_cost_integer,
 			displayValue: responseCart.total_cost_display,
+		},
+	};
+}
+
+export function getTaxLineItem( responseCart: ResponseCart ): LineItem | null {
+	if ( ! responseCart.tax.display_taxes ) {
+		return null;
+	}
+	return {
+		id: 'tax-line-item',
+		label: String( translate( 'Tax' ) ),
+		type: 'tax',
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.total_tax_integer,
+			displayValue: responseCart.total_tax_display,
 		},
 	};
 }
