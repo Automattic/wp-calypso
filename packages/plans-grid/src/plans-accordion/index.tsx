@@ -78,9 +78,8 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 
 	const primaryPlan = recommendedPlan || popularPlan;
 
-	const badge = recommendedPlan
-		? __( 'Recommended for you', __i18n_text_domain__ )
-		: __( 'Popular', __i18n_text_domain__ );
+	const badgeTextRecommended = __( 'Recommended for you', __i18n_text_domain__ );
+	const badgeTextPopular = __( 'Popular', __i18n_text_domain__ );
 
 	// Other plans
 	const otherPlans = supportedPlans.filter(
@@ -132,7 +131,7 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 								features={ primaryPlan.features ?? [] }
 								billingPeriod={ billingPeriod }
 								domain={ currentDomain }
-								badge={ badge }
+								badge={ recommendedPlan ? badgeTextRecommended : badgeTextPopular }
 								isFree={ primaryPlan.isFree }
 								isOpen
 								isPrimary
