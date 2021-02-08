@@ -14,8 +14,20 @@ import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/prefe
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { useTranslate } from 'i18n-calypso';
 
-import './style.scss';
+/**
+ * Image dependencies
+ */
+import desktopOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-1.jpg';
+import desktopTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-2.jpg';
+import desktopThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-3.jpg';
+import mobileOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-1.jpg';
+import mobileTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-2.jpg';
+import mobileThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-3.jpg';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const Page = ( { heading, content, image } ) => {
 	return (
@@ -59,14 +71,8 @@ const Modal = () => {
 						<Page
 							image={
 								<picture className="nav-unification-modal__picture nav-unification-modal__picture--bottom-right">
-									<source
-										srcSet="/calypso/images/nav-unification-announcement/unify-nav-desktop-1.jpg"
-										media="(min-width: 600px)"
-									/>
-									<img
-										alt="Scrolling sub navigation"
-										src="/calypso/images/nav-unification-announcement/unify-nav-mobile-1.jpg"
-									/>
+									<source srcSet={ desktopOneImg } media="(min-width: 600px)" />
+									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileOneImg } />
 								</picture>
 							}
 							heading={ translate( 'A new way to navigate' ) }
@@ -81,14 +87,8 @@ const Modal = () => {
 						<Page
 							image={
 								<picture className="nav-unification-modal__picture nav-unification-modal__picture--no-margin nav-unification-modal__picture--top-right">
-									<source
-										srcSet="/calypso/images/nav-unification-announcement/unify-nav-desktop-2.jpg"
-										media="(min-width: 600px)"
-									/>
-									<img
-										alt="Scrolling complete navigation"
-										src="/calypso/images/nav-unification-announcement/unify-nav-mobile-2.jpg"
-									/>
+									<source srcSet={ desktopTwoImg } media="(min-width: 600px)" />
+									<img alt={ translate( 'Scrolling complete navigation' ) } src={ mobileTwoImg } />
 								</picture>
 							}
 							heading={ translate( 'Everything in one place' ) }
@@ -103,14 +103,8 @@ const Modal = () => {
 						<Page
 							image={
 								<picture className="nav-unification-modal__picture nav-unification-modal__picture--center">
-									<source
-										srcSet="/calypso/images/nav-unification-announcement/unify-nav-desktop-3.jpg"
-										media="(min-width: 600px)"
-									/>
-									<img
-										alt="Scrolling sub navigation"
-										src="/calypso/images/nav-unification-announcement/unify-nav-mobile-3.jpg"
-									/>
+									<source srcSet={ desktopThreeImg } media="(min-width: 600px)" />
+									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileThreeImg } />
 								</picture>
 							}
 							heading={ translate( 'Make it your own' ) }
