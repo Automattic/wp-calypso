@@ -18,7 +18,7 @@ const requestWhatsNewList = ( action ) => {
 	);
 };
 
-const setList = ( { siteId }, list ) => setWhatsNewList( siteId, list );
+const setList = ( action, list ) => setWhatsNewList( action, list );
 
 registerHandlers( 'state/data-layer/wpcom/sites/whats-new/list/index.js', {
 	[ WHATS_NEW_LIST_REQUEST ]: [

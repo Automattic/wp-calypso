@@ -25,6 +25,7 @@ import {
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import WhatsNew from 'calypso/components/whats-new';
 
 /**
  * Images
@@ -116,6 +117,7 @@ export const MarketingTools: FunctionComponent = () => {
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
 
 			<div className="tools__feature-list">
+				<WhatsNew />
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
