@@ -10,6 +10,8 @@ import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
 import { readFileSync } from 'fs';
+//Needed for puppeteer tests
+const puppeteer = require( 'puppeteer' );
 
 import * as remote from 'selenium-webdriver/remote';
 
@@ -28,6 +30,29 @@ export function currentScreenSize() {
 		screenSize = 'desktop';
 	}
 	return screenSize.toLowerCase();
+}
+
+export function usePuppeteer() {
+	let envUsePuppeteer = process.env.USE_PUPPETEER;
+	if ( envUsePuppeteer === undefined || envUsePuppeteer === '' ) {
+		envUsePuppeteer = 'false';
+	}
+	return envUsePuppeteer.toLowerCase();
+}
+
+export function getOptions() {
+	let options;
+	if (
+		process.env.HEADLESS ||
+		( config.has( 'headless' ) && config.get( 'headless' ) === 'true' )
+	) {
+		options = { headless: true };
+		global.isHeadless = true;
+	} else {
+		options = { headless: false };
+		global.isHeadless = false;
+	}
+	return options;
 }
 
 export function currentLocale() {
@@ -202,9 +227,13 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				);
 		}
 	}
-	await driver
-		.manage()
-		.setTimeouts( { implicit: webDriverImplicitTimeOutMS, pageLoad: webDriverPageLoadTimeOutMS } );
+	if ( this.usePuppeteer() === 'true' ) {
+		return await puppeteer.launch( this.getOptions() );
+	}
+	await driver.manage().setTimeouts( {
+		implicit: webDriverImplicitTimeOutMS,
+		pageLoad: webDriverPageLoadTimeOutMS,
+	} );
 	if ( resizeBrowserWindow ) {
 		await resizeBrowser( driver, screenSize );
 	}
@@ -262,6 +291,17 @@ export async function ensureNotLoggedIn( driver ) {
 	// This makes sure neither auth domain or local domain has any cookies or local storage
 	const calypsoURL = dataHelper.configGet( 'calypsoBaseURL' );
 	const wordPressDotComURL = 'https://wordpress.com';
+	if ( this.usePuppeteer() === 'true' ) {
+		const context = await driver.createIncognitoBrowserContext();
+		const page = await context.newPage();
+
+		page.waitFor( 2000 ); // wait before clearing data
+		if ( calypsoURL !== wordPressDotComURL ) {
+			await page.goto( wordPressDotComURL );
+		}
+		await page.goto( calypsoURL );
+		return page.waitFor( 500 );
+	}
 
 	await driver.sleep( 2000 ); // wait before clearing data
 

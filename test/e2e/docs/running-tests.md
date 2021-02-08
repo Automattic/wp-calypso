@@ -176,3 +176,20 @@ export SAUCE_ARG="-l osx-chrome"
 ```
 
 Note that tests tend to run slower on Sauce Labs and this option should be used sparingly.
+
+1. `export HEADLESS=1`
+1. `./node_modules/.bin/mocha specs/wp-log-in-out-spec.js`
+Note that tests tend to run slower on Sauce Labs and this option should be used sparingly.
+
+
+## Puppeteer
+
+to run tests with Puppeteer, add following environmental variable
+
+```
+export USE_PUPPETEER='true'
+```
+
+run ported tests with command as below
+./node_modules/.bin/mocha ./lib/bootstrap.js specs/wp-log-in-out-spec.js
+

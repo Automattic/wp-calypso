@@ -33,6 +33,16 @@ export default class AsyncBaseContainer {
 	}
 
 	static async Visit( driver, url ) {
+		if ( driverManager.usePuppeteer() === 'true' ) {
+			const page = await driver.newPage();
+			page.goto( url, { waitUntil: 'networkidle2' } );
+
+			if ( ! page.url ) {
+				throw new Error( `URL is required to visit the ${ page.name }` );
+			}
+			return page;
+		}
+
 		const page = new this( driver, url );
 		if ( ! page.url ) {
 			throw new Error( `URL is required to visit the ${ page.name }` );
