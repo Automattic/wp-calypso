@@ -90,7 +90,7 @@ const Confetti: React.FunctionComponent< { className?: string } > = ( { classNam
 		<Circle cx="341" cy="134" r="2" fill="#F0C930" />
 		<Circle cx="131" cy="83" r="2" fill="#3361CC" />
 		<Circle cx="214.5" cy="13.5" r="2.5" fill="#37E688" />
-		<Circle cx="352.763" cy="98.263" r="3" fill="#09A884" />
+		<Circle cx="352.763" cy="98.263" r="3" fill="#009E73" />
 		<Circle cx="285.181" cy="60.541" r="3" fill="#FF3B30" />
 	</SVG>
 );
