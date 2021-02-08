@@ -126,10 +126,8 @@ function WPLineItem( {
 					<AnnualDiscountCallout product={ product } />
 				</LineItemMeta>
 			) }
-			{ isGSuite && <GSuiteUsersList product={ item.wpcom_response_cart_product } /> }
-			{ isTitanMail && (
-				<TitanMailMeta product={ item.wpcom_response_cart_product } isRenewal={ isRenewal } />
-			) }
+			{ isGSuite && <GSuiteUsersList product={ product } /> }
+			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
@@ -155,7 +153,7 @@ function WPLineItem( {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeProductFromCart( item.wpcom_meta.uuid );
+							removeProductFromCart( product.uuid );
 							onEvent( {
 								type: 'a8c_checkout_delete_product',
 								payload: {
@@ -176,7 +174,7 @@ function WPLineItem( {
 
 			{ shouldShowVariantSelector && (
 				<ItemVariationPicker
-					selectedItem={ item }
+					selectedItem={ product }
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
 					isDisabled={ isDisabled }
