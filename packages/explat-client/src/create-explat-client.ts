@@ -182,13 +182,15 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				);
 			}
 
-			if (
-				storedExperimentAssignment &&
-				! ExperimentAssignments.isAlive( storedExperimentAssignment )
-			) {
-				if ( config.isDevelopmentMode ) {
+			// We want to be loud in development mode to help pick up any issues:
+			if ( config.isDevelopmentMode ) {
+				// Highlight when we dangerously get an experiment too soon to when we load one:
+				if (
+					storedExperimentAssignment &&
+					Timing.monotonicNow() - storedExperimentAssignment.retrievedTimestamp < 1000
+				) {
 					throw new Error(
-						`Trying to dangerously get an ExperimentAssignment that has loaded but has since expired`
+						`Warning: Trying to dangerously get an ExperimentAssignment too soon after loading.`
 					);
 				}
 			}

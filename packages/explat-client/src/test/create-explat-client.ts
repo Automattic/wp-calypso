@@ -123,6 +123,34 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		}
 	` );
 	} );
+	it( `[anonId] should successfully load an ExperimentAssignment`, async () => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'the-anon-id-123', 0 ) );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		mockedConfig.isDevelopmentMode = false;
+		const client = createExPlatClient( mockedConfig );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
+		await expect(
+			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
+		).resolves.toEqual( validExperimentAssignment );
+		expect( allMockedConfigCalls() ).toMatchInlineSnapshot( `
+		Object {
+		  "fetchExperimentAssignment": Array [
+		    Array [
+		      Object {
+		        "anonId": "the-anon-id-123",
+		        "experimentName": "experiment_name_a",
+		      },
+		    ],
+		  ],
+		  "getAnonId": Array [
+		    Array [],
+		  ],
+		  "logError": Array [],
+		}
+	` );
+	} );
 	it( `[developmentMode] should successfully load an ExperimentAssignment`, async () => {
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		mockedConfig.isDevelopmentMode = true;
@@ -834,5 +862,79 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		  "logError": Array [],
 		}
 	` );
+	} );
+} );
+
+describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
+	it( 'should throw when given an invalid name', () => {
+		mockedConfig.isDevelopmentMode = false;
+		const client = createExPlatClient( mockedConfig );
+		expect( () =>
+			client.dangerouslyGetExperimentAssignment( 'the-invalid-name' )
+		).toThrowErrorMatchingInlineSnapshot( `"Invalid experimentName: the-invalid-name"` );
+	} );
+
+	it( `should throw when the matching experiment hasn't loaded yet`, () => {
+		mockedConfig.isDevelopmentMode = false;
+		const client = createExPlatClient( mockedConfig );
+		expect( () =>
+			client.dangerouslyGetExperimentAssignment( 'experiment_name_a' )
+		).toThrowErrorMatchingInlineSnapshot(
+			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
+		);
+	} );
+	it( `should throw when the matching experiment hasn't loaded yet but is currently loading`, () => {
+		mockedConfig.isDevelopmentMode = false;
+		const client = createExPlatClient( mockedConfig );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		expect( () =>
+			client.dangerouslyGetExperimentAssignment( 'experiment_name_a' )
+		).toThrowErrorMatchingInlineSnapshot(
+			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
+		);
+	} );
+	it( `should return a loaded ExperimentAssignment`, async () => {
+		mockedConfig.isDevelopmentMode = false;
+		const client = createExPlatClient( mockedConfig );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1
+		);
+		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
+		expect(
+			client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName )
+		).toEqual( validExperimentAssignment );
+	} );
+	it( `[developerMode] should throw when run too soon after loading an ExperimentAssignment`, async () => {
+		mockedConfig.isDevelopmentMode = true;
+		const client = createExPlatClient( mockedConfig );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1
+		);
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1
+		);
+		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
+		expect( () =>
+			client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName )
+		).toThrowErrorMatchingInlineSnapshot(
+			`"Warning: Trying to dangerously get an ExperimentAssignment too soon after loading."`
+		);
+	} );
+	it( `[developmentMode] should return a loaded ExperimentAssignment when not run too soon after`, async () => {
+		mockedConfig.isDevelopmentMode = true;
+		const client = createExPlatClient( mockedConfig );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1
+		);
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
+		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
+		expect(
+			client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName )
+		).toEqual( validExperimentAssignment );
 	} );
 } );
