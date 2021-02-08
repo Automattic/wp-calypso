@@ -98,6 +98,8 @@ const ACCOUNT_FIELDS = [ 'user_login', 'user_email', 'user_URL', 'primary_site_I
 const INTERFACE_FIELDS = [
 	'locale_variant',
 	'language',
+	'i18n_empathy_mode',
+	'use_fallback_for_incomplete_languages',
 	'enable_translator',
 	'calypso_preferences',
 ];
