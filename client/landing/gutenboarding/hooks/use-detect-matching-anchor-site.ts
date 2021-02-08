@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { useSelect } from '@wordpress/data';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ export default function useDetectMatchingAnchorSite(): boolean {
 		anchorFmSpotifyUrl,
 		anchorFmSite,
 		anchorFmPost,
+		anchorFmIsNewSite,
 	} = useAnchorFmParams();
 	const isAnchorFm = useIsAnchorFm();
 	const currentUserExists = useSelect( ( select ) => !! select( USER_STORE ).getCurrentUser() );
@@ -33,7 +35,7 @@ export default function useDetectMatchingAnchorSite(): boolean {
 
 	React.useEffect( () => {
 		// Must be a logged-in user on anchor FM to check
-		if ( ! isAnchorFm || ! currentUserExists ) {
+		if ( ! isAnchorFm || ! currentUserExists || anchorFmIsNewSite ) {
 			setIsLoading( false );
 			return;
 		}
@@ -50,7 +52,11 @@ export default function useDetectMatchingAnchorSite(): boolean {
 			)
 			.then( ( result: AnchorEndpointResult ) => {
 				if ( result?.location ) {
-					window.location.href = result.location;
+					try {
+						page( result.location );
+					} catch ( err ) {
+						window.location.href = result.location;
+					}
 				} else {
 					setIsLoading( false );
 				}
@@ -66,6 +72,7 @@ export default function useDetectMatchingAnchorSite(): boolean {
 		anchorFmSpotifyUrl,
 		anchorFmSite,
 		anchorFmPost,
+		anchorFmIsNewSite,
 	] );
 	return isLoading;
 }
