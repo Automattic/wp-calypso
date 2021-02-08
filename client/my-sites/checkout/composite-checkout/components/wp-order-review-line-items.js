@@ -126,8 +126,10 @@ function WPLineItem( {
 					<AnnualDiscountCallout item={ item } />
 				</LineItemMeta>
 			) }
-			{ isGSuite && <GSuiteUsersList item={ item } /> }
-			{ isTitanMail && <TitanMailMeta item={ item } isRenewal={ isRenewal } /> }
+			{ isGSuite && <GSuiteUsersList product={ item.wpcom_response_cart_product } /> }
+			{ isTitanMail && (
+				<TitanMailMeta product={ item.wpcom_response_cart_product } isRenewal={ isRenewal } />
+			) }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
@@ -421,15 +423,15 @@ const WPOrderReviewListItem = styled.li`
 	list-style: none;
 `;
 
-function GSuiteUsersList( { item } ) {
-	const users = item.wpcom_meta?.extra?.google_apps_users ?? [];
+function GSuiteUsersList( { product } ) {
+	const users = product.extra?.google_apps_users ?? [];
 	return (
 		<>
 			{ users.map( ( user, index ) => {
 				return (
 					<LineItemMeta key={ user.email }>
 						<div key={ user.email }>{ user.email }</div>
-						{ index === 0 && <GSuiteDiscountCallout item={ item } /> }
+						{ index === 0 && <GSuiteDiscountCallout product={ product } /> }
 					</LineItemMeta>
 				);
 			} ) }
@@ -437,10 +439,10 @@ function GSuiteUsersList( { item } ) {
 	);
 }
 
-function TitanMailMeta( { item, isRenewal } ) {
+function TitanMailMeta( { product, isRenewal } ) {
 	const translate = useTranslate();
-	const quantity = item.wpcom_meta?.extra?.new_quantity ?? 1;
-	const domainName = item.wpcom_meta?.meta;
+	const quantity = product.extra?.new_quantity ?? 1;
+	const domainName = product.meta;
 	const translateArgs = {
 		args: {
 			numberOfMailboxes: quantity,
@@ -625,15 +627,15 @@ function DomainDiscountCallout( { item } ) {
 	return null;
 }
 
-function GSuiteDiscountCallout( { item } ) {
+function GSuiteDiscountCallout( { product } ) {
 	const translate = useTranslate();
 
-	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( item.wpcom_meta?.product_slug );
+	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug );
 
 	if (
 		isGSuite &&
-		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer &&
-		item.wpcom_meta?.is_sale_coupon_applied
+		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
+		product.is_sale_coupon_applied
 	) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
