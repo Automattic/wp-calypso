@@ -104,10 +104,18 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
 
+	const normalCtaLabelFallback = __( 'Choose', __i18n_text_domain__ );
+
 	const fullWidthCtaLabelSelected = __( 'Current Selection', __i18n_text_domain__ );
 
 	// translators: %s is a WordPress.com plan name (eg: Free, Personal)
 	const fullWidthCtaLabelUnselected = __( 'Select %s', __i18n_text_domain__ );
+
+	const planItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
+	const planItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
+
+	const expandToggleLabelExpanded = __( 'Collapse all plans', __i18n_text_domain__ );
+	const expandToggleLabelCollapsed = __( 'Expand all plans', __i18n_text_domain__ );
 
 	return (
 		<div
@@ -160,8 +168,8 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 							{ isFree && __( 'free forever', __i18n_text_domain__ ) }
 							{ ! isFree &&
 								( billingPeriod === 'ANNUALLY'
-									? __( 'billed annually', __i18n_text_domain__ )
-									: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
+									? planItemPriceLabelAnnually
+									: planItemPriceLabelMonthly ) }
 						</div>
 
 						{ /*
@@ -193,7 +201,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 									isPrimary
 									disabled={ !! disabledLabel }
 								>
-									<span>{ disabledLabel ?? __( 'Choose', __i18n_text_domain__ ) }</span>
+									<span>{ disabledLabel ?? normalCtaLabelFallback }</span>
 								</Button>
 							) : (
 								<Button
@@ -242,9 +250,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 			{ isPopular && ! isDesktop && (
 				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
-					{ allPlansExpanded
-						? __( 'Collapse all plans', __i18n_text_domain__ )
-						: __( 'Expand all plans', __i18n_text_domain__ ) }
+					{ allPlansExpanded ? expandToggleLabelExpanded : expandToggleLabelCollapsed }
 				</Button>
 			) }
 		</div>

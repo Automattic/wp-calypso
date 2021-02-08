@@ -64,6 +64,9 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 
 	const monthlyBillingLabel = __( 'Monthly subscription', __i18n_text_domain__ );
 
+	const annualNudgeTextAnnually = __( 'Included with annual plans', __i18n_text_domain__ );
+	const annualNudgeTextMonthly = __( 'Only included with annual plans', __i18n_text_domain__ );
+
 	return (
 		<div className="plans-details">
 			<table className="plans-details__table">
@@ -123,8 +126,8 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 												className="plans-details__feature-annual-nudge"
 												aria-label={
 													billingPeriod === 'ANNUALLY'
-														? __( 'Included with annual plans', __i18n_text_domain__ )
-														: __( 'Only included with annual plans', __i18n_text_domain__ )
+														? annualNudgeTextAnnually
+														: annualNudgeTextMonthly
 												}
 											>
 												{ __( 'Included with annual plans', __i18n_text_domain__ ) }

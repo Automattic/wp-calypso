@@ -75,6 +75,9 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 		! disabledLabel && onToggle?.( slug, ! isOpen );
 	};
 
+	const planItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
+	const planItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
+
 	return (
 		<div
 			className={ classNames( 'plans-accordion-item', {
@@ -123,8 +126,8 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 
 								{ ! isFree &&
 									( billingPeriod === 'ANNUALLY'
-										? __( 'billed annually', __i18n_text_domain__ )
-										: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
+										? planItemPriceLabelAnnually
+										: planItemPriceLabelMonthly ) }
 							</div>
 							{ ! isFree && (
 								<div

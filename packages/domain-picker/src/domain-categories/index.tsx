@@ -37,13 +37,15 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 		select( DOMAIN_SUGGESTIONS_STORE ).getCategories()
 	);
 
+	const allCategoriesLabel = __( 'All Categories', __i18n_text_domain__ );
+
 	return (
 		<div className={ classNames( 'domain-categories', { 'is-open': isOpen } ) }>
 			<Button
 				className="domain-categories__dropdown-button"
 				onClick={ () => setIsOpen( ! isOpen ) }
 			>
-				<span>{ ! selected ? __( 'All Categories', __i18n_text_domain__ ) : selected }</span>
+				<span>{ selected ?? allCategoriesLabel }</span>
 				<Icon icon={ chevronDown } size={ 16 } />
 			</Button>
 			<ul className="domain-categories__item-group">
