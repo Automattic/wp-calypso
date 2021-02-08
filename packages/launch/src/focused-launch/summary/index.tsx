@@ -335,6 +335,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		[ allAvailablePlans, billingPeriod ]
 	);
 
+	const popularLabel = __( 'Popular', __i18n_text_domain__ );
+
 	return (
 		<SummaryStep
 			highlighted={ !! highlighted }
@@ -421,7 +423,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 												/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
 												sprintf( __( '%s Plan', __i18n_text_domain__ ), plan.title ?? '' )
 											}
-											badgeText={ plan.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
+											badgeText={ plan.isPopular ? popularLabel : '' }
 										/>
 										{ plan.isFree ? (
 											<TrailingContentSide
