@@ -3,35 +3,40 @@
  */
 import { forEach } from 'lodash';
 
+type Json = any;
+
 /**
  * Helper class for holding results of state serialization
  * Accumulates the state tree for "root" and any number of custom "storage keys"
  * Each storage key is then saved as a separate record in IndexedDB
  */
-export class SerializationResult< TResult > {
-	results: { [ storageKey: string ]: TResult | { [ reducerKey: string ]: TResult } };
-
-	constructor( results: { [ storageKey: string ]: TResult } = {} ) {
+export default class SerializationResult {
+	results: Record< string, Json >;
+	constructor( results: Record< string, Json > = {} ) {
 		this.results = results;
 	}
 
-	get(): SerializationResult< TResult >[ 'results' ] {
+	get(): Record< string, Json > {
 		return this.results;
 	}
 
-	root(): TResult {
-		return this.results.root as TResult;
+	root(): Json | SerializationResult {
+		return this.results.root;
 	}
 
-	addRootResult( reducerKey: string, result: TResult ): void {
-		this.addResult( 'root', reducerKey, result );
+	addRootResult( reducerKey: string, result: Json | SerializationResult ): void {
+		return this.addResult( 'root', reducerKey, result );
 	}
 
-	addKeyResult( storageKey: string, result: TResult ): void {
-		this.addResult( storageKey, null, result );
+	addKeyResult( storageKey: string, result: Json | SerializationResult ): void {
+		return this.addResult( storageKey, null, result );
 	}
 
-	addResult( storageKey: string, reducerKey: string | null, result: TResult ): void {
+	addResult(
+		storageKey: string,
+		reducerKey: string | null,
+		result: Json | SerializationResult
+	): void {
 		if ( result instanceof SerializationResult ) {
 			forEach( result.results, ( resultState, resultKey ) => {
 				if ( resultKey === 'root' ) {
@@ -42,9 +47,9 @@ export class SerializationResult< TResult > {
 			} );
 		} else if ( reducerKey ) {
 			if ( ! this.results[ storageKey ] ) {
-				this.results[ storageKey ] = {} as TResult;
+				this.results[ storageKey ] = {};
 			}
-			( this.results[ storageKey ] as { [ reducerKey: string ]: TResult } )[ reducerKey ] = result;
+			this.results[ storageKey ][ reducerKey ] = result;
 		} else {
 			this.results[ storageKey ] = result;
 		}

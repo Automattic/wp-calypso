@@ -9,7 +9,7 @@ import type { Reducer, Action, AnyAction } from 'redux';
  * Internal dependencies
  */
 import { DESERIALIZE, SERIALIZE } from '../action-types';
-import { SerializationResult } from '../serialization-result';
+import SerializationResult from '../serialization-result';
 
 type CalypsoInitAction = Action< '@@calypso/INIT' >;
 type SerializeAction = Action< 'SERIALIZE' >;
@@ -116,7 +116,7 @@ const keyedReducer = < TState, TAction extends Action = AnyAction >(
 					}
 					return result;
 				},
-				undefined as SerializationResult< TState > | undefined
+				undefined as SerializationResult | undefined
 			);
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore We're doing some magic stuff here with serialization and deserialization so it's safe to just ignore this error
