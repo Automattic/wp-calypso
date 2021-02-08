@@ -122,8 +122,8 @@ function WPLineItem( {
 			{ sublabel && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout item={ item } />
-					<AnnualDiscountCallout item={ item } />
+					<DomainDiscountCallout product={ product } />
+					<AnnualDiscountCallout product={ product } />
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList product={ item.wpcom_response_cart_product } /> }
@@ -590,9 +590,9 @@ function LineItemSublabelAndPrice( { product } ) {
 	return sublabel || null;
 }
 
-function AnnualDiscountCallout( { item } ) {
+function AnnualDiscountCallout( { product } ) {
 	const translate = useTranslate();
-	const planSlug = item?.wpcom_meta?.product_slug;
+	const planSlug = product.product_slug;
 
 	if ( ! isWpComPlan( planSlug ) || isMonthlyPlan( planSlug ) ) {
 		return null;
@@ -609,16 +609,16 @@ function AnnualDiscountCallout( { item } ) {
 	return null;
 }
 
-function DomainDiscountCallout( { item } ) {
+function DomainDiscountCallout( { product } ) {
 	const translate = useTranslate();
 
-	const isFreeBundledDomainRegistration = item.wpcom_meta?.is_bundled && item.amount.value === 0;
+	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
 	if ( isFreeBundledDomainRegistration ) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 
 	const isFreeDomainMapping =
-		item.wpcom_meta?.product_slug === 'domain_map' && item.amount.value === 0;
+		product.product_slug === 'domain_map' && product.item_subtotal_integer === 0;
 	if ( isFreeDomainMapping ) {
 		return <DiscountCallout>{ translate( 'Free with your plan' ) }</DiscountCallout>;
 	}
