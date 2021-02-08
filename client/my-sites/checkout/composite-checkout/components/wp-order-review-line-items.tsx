@@ -98,20 +98,15 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 
 const LineItem = styled( WPLineItem )< {
 	theme?: Theme;
-	total?: boolean;
-	tax?: boolean;
-	subtotal?: boolean;
 } >`
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	font-weight: ${ ( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal ) };
-	color: ${ ( { theme, total } ) =>
-		total ? theme.colors.textColorDark : theme.colors.textColor };
-	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
-	padding: ${ ( { total, tax, subtotal } ) => ( total || subtotal || tax ? '10px 0' : '20px 0' ) };
-	border-bottom: ${ ( { theme, total } ) =>
-		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
+	font-weight: ${ ( { theme } ) => theme.weights.normal };
+	color: ${ ( { theme } ) => theme.colors.textColor };
+	font-size: 1.1em;
+	padding: 20px 0;
+	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
 
 	.is-summary & {
