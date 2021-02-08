@@ -13,7 +13,7 @@ import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import classNames from 'classnames';
 import { Icon, check } from '@wordpress/icons';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -515,9 +515,6 @@ type StepIndexRenderFunction = ( renderOptions: {
 } ) => React.ReactNode;
 
 const Summary: React.FunctionComponent = () => {
-	const locale = useLocale();
-	const localizeUrl = useLocalizeUrl();
-
 	const [
 		hasSelectedDomain,
 		isSiteTitleStepVisible,
@@ -696,10 +693,7 @@ const Summary: React.FunctionComponent = () => {
 
 				<div className="focused-launch-summary__ask-for-help">
 					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
-					<a
-						href={ localizeUrl( 'https://wordpress.com/help', locale ) }
-						onClick={ onAskForHelpClick }
-					>
+					<a href="/help" onClick={ onAskForHelpClick }>
 						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
 					</a>
 				</div>
