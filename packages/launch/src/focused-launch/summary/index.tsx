@@ -378,10 +378,11 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<div>
 							<FocusedLaunchSummaryItem readOnly={ true }>
 								<LeadingContentSide
-									label={
+									label={ sprintf(
 										/* translators: Purchased plan label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
-										sprintf( __( '%s Plan', __i18n_text_domain__ ), sitePlan?.product_name_short )
-									}
+										__( '%s Plan', __i18n_text_domain__ ),
+										sitePlan?.product_name_short
+									) }
 								/>
 								<TrailingContentSide nodeType="PRICE">
 									<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
@@ -425,10 +426,11 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 										readOnly={ plan.isFree && ( hasPaidDomain || selectedPaidDomain ) }
 									>
 										<LeadingContentSide
-											label={
+											label={ sprintf(
 												/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
-												sprintf( __( '%s Plan', __i18n_text_domain__ ), plan.title ?? '' )
-											}
+												__( '%s Plan', __i18n_text_domain__ ),
+												plan.title ?? ''
+											) }
 											badgeText={ plan.isPopular ? popularLabel : '' }
 										/>
 										{ plan.isFree ? (
