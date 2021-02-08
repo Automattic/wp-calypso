@@ -178,8 +178,14 @@ export function useAnchorFmParams(): AnchorFmParams {
 		locationStateParamName: 'anchorFmPost',
 		sanitize: sanitizeNumberParam,
 	} );
+
+	// anchorFmIsNewSite:
 	// Indicates the backend has told us we need to make a new site and
 	// we don't need to query it anymore.
+	// If we start with "/new?anchor_podcast=abcdef0", the backend might say there's
+	// no matching site and redirect us to "/new?anchor_podcast=abcdef0&anchor_episode=1234-123456&anchor_is_new_site=true",
+	// because it found the last episode and wanted to pass that information to us.
+	// In this case, we don't need to ask the backend again after restarting gutenboarding.
 	const anchorFmIsNewSite = useAnchorParameter( {
 		queryParamName: 'anchor_is_new_site',
 		locationStateParamName: 'anchorFmIsNewSite',
