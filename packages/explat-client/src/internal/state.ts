@@ -3,7 +3,6 @@
  */
 import type { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
-import * as ExperimentAssignments from './experiment-assignments';
 
 type Store = {
 	experimentNameToExperimentAssignment: Record< string, ExperimentAssignment | undefined >;
@@ -35,15 +34,6 @@ export function storeExperimentAssignment(
 		throw new Error(
 			'Trying to store an older experiment assignment than is present in the store, likely a race condition.'
 		);
-	}
-
-	if (
-		previousExperimentAssignment &&
-		! previousExperimentAssignment.isFallbackExperimentAssignment &&
-		ExperimentAssignments.isRecent( previousExperimentAssignment ) &&
-		experimentAssignment.isFallbackExperimentAssignment
-	) {
-		throw new Error( 'Replacing recent ExperimentAssignment with fallback ExperimentAssignment.' );
 	}
 
 	store.experimentNameToExperimentAssignment[

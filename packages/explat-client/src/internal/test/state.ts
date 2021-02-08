@@ -39,20 +39,4 @@ describe( 'state', () => {
 			`"Trying to store an older experiment assignment than is present in the store, likely a race condition."`
 		);
 	} );
-
-	it( 'should throw for overwriting a recent ExperimentAssignment with a fallback', () => {
-		const store = State.createStore();
-		State.storeExperimentAssignment( store, validExperimentAssignment );
-		expect(
-			State.retrieveExperimentAssignment( store, validExperimentAssignment.experimentName )
-		).toBe( validExperimentAssignment );
-		expect( () =>
-			State.storeExperimentAssignment( store, {
-				...validExperimentAssignment,
-				isFallbackExperimentAssignment: true,
-			} )
-		).toThrowErrorMatchingInlineSnapshot(
-			`"Replacing recent ExperimentAssignment with fallback ExperimentAssignment."`
-		);
-	} );
 } );
