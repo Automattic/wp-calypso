@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { useLineItems } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import type { LineItem as LineItemType } from '@automattic/composite-checkout';
@@ -12,7 +11,7 @@ import type { LineItem as LineItemType } from '@automattic/composite-checkout';
  */
 import CheckoutTerms from '../components/checkout-terms';
 import { NonProductLineItem, WPOrderReviewSection } from './wp-order-review-line-items';
-import { getTotalLineItem } from '../lib/translate-cart';
+import { getTotalLineItem, getTaxLineItem } from '../lib/translate-cart';
 
 const CheckoutTermsWrapper = styled.div`
 	& > * {
@@ -73,8 +72,7 @@ export default function PaymentMethodStep( {
 	activeStepContent: JSX.Element;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
-	const [ items ] = useLineItems();
-	const taxes = items.filter( ( item ) => item.type === 'tax' );
+	const taxLineItem = getTaxLineItem( responseCart );
 	return (
 		<>
 			{ activeStepContent }
@@ -85,9 +83,7 @@ export default function PaymentMethodStep( {
 
 			<WPOrderReviewSection>
 				{ subtotal && <NonProductLineItem subtotal lineItem={ subtotal } /> }
-				{ taxes.map( ( tax ) => (
-					<NonProductLineItem tax key={ tax.id } lineItem={ tax } />
-				) ) }
+				{ taxLineItem && <NonProductLineItem tax lineItem={ taxLineItem } /> }
 				{ credits && subtotal.amount.value > 0 && (
 					<NonProductLineItem subtotal lineItem={ credits } />
 				) }
