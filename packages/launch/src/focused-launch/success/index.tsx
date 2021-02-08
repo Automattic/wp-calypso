@@ -66,6 +66,9 @@ const Success: React.FunctionComponent = () => {
 		__i18n_text_domain__
 	);
 
+	const copyButtonLabelIdle = __( 'Copy Link', __i18n_text_domain__ );
+	const copyButtonLabelActivated = __( 'Copied!', __i18n_text_domain__ );
+
 	return (
 		<div className="focused-launch-container focused-launch-success__wrapper">
 			<Confetti className="focused-launch-success__confetti" />
@@ -93,9 +96,7 @@ const Success: React.FunctionComponent = () => {
 							onFinishCopy={ () => setHasCopied( false ) }
 							className="focused-launch-success__url-copy-button"
 						>
-							{ hasCopied
-								? __( 'Copied!', __i18n_text_domain__ )
-								: __( 'Copy Link', __i18n_text_domain__ ) }
+							{ hasCopied ? copyButtonLabelActivated : copyButtonLabelIdle }
 						</ClipboardButton>
 					</div>
 
