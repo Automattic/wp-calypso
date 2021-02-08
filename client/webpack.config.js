@@ -144,20 +144,9 @@ const outputDir = path.resolve( isDesktop ? './desktop' : '.' );
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware serves assets from a hard-coded publicPath.
 	// This is required so that running calypso via `yarn start` doesn't break.
-	isDevelopment
-		? {
-				outputPath: 'images',
-				publicPath: `/calypso/${ extraPath }/images/`,
-				esModules: true,
-		  }
-		: {
-				// File-loader does not understand absolute paths so __dirname won't work.
-				// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
-				outputPath: path.join( '..', 'images' ),
-				publicPath: '/calypso/images/',
-				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
-				esModules: true,
-		  }
+	{
+		outputPath: isDevelopment ? 'images' : '../images',
+	}
 );
 
 const webpackConfig = {
