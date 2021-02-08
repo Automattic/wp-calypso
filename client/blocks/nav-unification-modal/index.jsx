@@ -16,6 +16,7 @@ import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
+
 const Page = ( { heading, content, image } ) => {
 	return (
 		<div className="nav-unification-modal__page">
