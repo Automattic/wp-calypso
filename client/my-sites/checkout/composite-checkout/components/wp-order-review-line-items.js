@@ -121,7 +121,7 @@ function WPLineItem( {
 			</span>
 			{ sublabel && (
 				<LineItemMeta>
-					<LineItemSublabelAndPrice item={ item } />
+					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout item={ item } />
 					<AnnualDiscountCallout item={ item } />
 				</LineItemMeta>
@@ -536,30 +536,29 @@ function shouldLineItemBeShownWhenStepInactive( item ) {
 	return ! itemTypesToIgnore.includes( item.type );
 }
 
-function LineItemSublabelAndPrice( { item } ) {
+function LineItemSublabelAndPrice( { product } ) {
 	const translate = useTranslate();
-	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
-	const isDomainMap = item.type === 'domain_map';
-	const productSlug = item.wpcom_meta?.product_slug;
-	const sublabel = item.wpcom_response_cart_product
-		? String( getSublabel( item.wpcom_response_cart_product ) )
-		: '';
+	const isDomainRegistration = product.is_domain_registration;
+	const isDomainMap = product.product_slug === 'domain_map';
+	const productSlug = product.product_slug;
+	const sublabel = String( getSublabel( product ) );
+	const type = isPlan( product ) ? 'plan' : product.product_slug;
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
-	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
+	if ( type === 'plan' && product.months_per_bill_period > 1 ) {
 		return translate( '%(sublabel)s: %(monthlyPrice)s /month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: sublabel,
-				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
-				monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+				monthlyPrice: product.item_subtotal_monthly_cost_display,
+				monthsPerBillPeriod: product.months_per_bill_period,
 			},
 			comment: 'product type and monthly breakdown of total cost, separated by a colon',
 		} );
 	}
 
-	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period === 1 ) {
+	if ( type === 'plan' && product.months_per_bill_period === 1 ) {
 		if ( isWpComPlan( productSlug ) ) {
 			return translate( 'Monthly subscription' );
 		}
@@ -567,7 +566,7 @@ function LineItemSublabelAndPrice( { item } ) {
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month', {
 			args: {
 				sublabel: sublabel,
-				monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
+				monthlyPrice: product.item_subtotal_monthly_cost_display,
 			},
 			comment: 'product type and monthly breakdown of total cost, separated by a colon',
 		} );
@@ -575,9 +574,9 @@ function LineItemSublabelAndPrice( { item } ) {
 
 	if (
 		( isDomainRegistration || isDomainMap || isGSuite ) &&
-		item.wpcom_meta?.months_per_bill_period === 12
+		product.months_per_bill_period === 12
 	) {
-		const premiumLabel = item.wpcom_meta?.extra?.premium ? translate( 'Premium' ) : null;
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
 		return translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
 			args: {
 				premiumLabel,
