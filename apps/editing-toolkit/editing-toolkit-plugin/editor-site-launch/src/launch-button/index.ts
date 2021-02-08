@@ -106,8 +106,8 @@ domReady( () => {
 
 		// Put 'Launch' and 'Save' back on bar in desired order.
 		settingsBar.prepend( launchButton );
-		if ( isAnchorFm ) {
-			saveButton && settingsBar.removeChild( saveButton );
+		if ( isAnchorFm && saveButton ) {
+			saveButton.style.display = 'none';
 		} else {
 			saveButton && settingsBar.prepend( saveButton );
 		}
