@@ -2,61 +2,84 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import debugFactory from 'debug';
+import config from '@automattic/calypso-config';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-/* eslint-disable no-restricted-imports */
-import observe from 'calypso/lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import Gridicon from 'calypso/components/gridicon';
+import wpcom from 'calypso/lib/wp';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 
-const debug = debugFactory( 'calypso:stats:action-follow' );
+class StatsActionFollow extends React.Component {
+	state = {
+		isFollowing: this.props.isFollowing,
+	};
 
-const StatsActionFollow = createReactClass( {
-	displayName: 'StatsActionFollow',
+	refreshFollowers = () => {
+		this.props.requestSiteStats( this.props.selectedSiteId, 'statsFollowers', {
+			type: 'wpcom',
+			max: 10,
+		} );
+		this.props.requestSiteStats( this.props.selectedSiteId, 'statsCommentFollowers', { max: 7 } );
+	};
 
-	mixins: [ observe( 'followSite' ) ],
-
-	clickHandler: function ( event ) {
-		const site = this.props.followSite;
+	clickHandler = ( event ) => {
 		let gaEvent;
 
 		event.stopPropagation();
 		event.preventDefault();
-		debug( 'handling follower click', this.props.data );
 
-		if ( ! site.is_following ) {
+		if ( ! this.state.isFollowing ) {
 			gaEvent = 'Follow';
-			site.follow();
+			wpcom
+				.site( this.props.siteId )
+				.follow()
+				.add( { source: config( 'readerFollowingSource' ) } )
+				.then( this.refreshFollowers );
+
+			// Intentionally optimistic update.
+			this.setState( {
+				isFollowing: true,
+			} );
 		} else {
 			gaEvent = 'Unfollow';
-			site.unfollow();
+			wpcom
+				.site( this.props.siteId )
+				.follow()
+				.del( { source: config( 'readerFollowingSource' ) } )
+				.then( this.refreshFollowers );
+
+			// Intentionally optimistic update.
+			this.setState( {
+				isFollowing: false,
+			} );
 		}
 
 		gaRecordEvent( 'Stats', 'Clicked ' + gaEvent + ' in ' + this.props.moduleName + ' List' );
-	},
+	};
 
-	render: function () {
-		const site = this.props.followSite;
-		const following = site.is_following;
+	render() {
+		const { siteDomain } = this.props;
+		const { isFollowing } = this.state;
 		const wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
-			follow: ! following,
-			following: following,
+			follow: ! isFollowing,
+			following: isFollowing,
 		} );
-		const label = following
+		const label = isFollowing
 			? this.props.translate( 'Following', {
 					context: 'Stats: Follow action / Following status',
 			  } )
 			: this.props.translate( 'Follow', {
 					context: 'Stats: Follow action / Following status',
 			  } );
-		const gridiconType = following ? 'reader-following' : 'reader-follow';
+		const gridiconType = isFollowing ? 'reader-following' : 'reader-follow';
 		const wrapperClassSet = classNames( wrapperClass );
 
 		return (
@@ -65,7 +88,7 @@ const StatsActionFollow = createReactClass( {
 					href="#"
 					onClick={ this.clickHandler }
 					className={ wrapperClassSet }
-					title={ site.blog_domain }
+					title={ siteDomain }
 					aria-label={ this.props.translate( 'Follow or unfollow user', {
 						textOnly: true,
 						context: 'Stats ARIA label: Follow/Unfollow action',
@@ -84,7 +107,15 @@ const StatsActionFollow = createReactClass( {
 				</a>
 			</li>
 		);
-	},
-} );
+	}
+}
 
-export default localize( StatsActionFollow );
+export default connect(
+	( state, { siteId } ) => ( {
+		siteDomain: getSiteDomain( state, siteId ),
+		selectedSiteId: getSelectedSiteId( state ),
+	} ),
+	{
+		requestSiteStats,
+	}
+)( localize( StatsActionFollow ) );
