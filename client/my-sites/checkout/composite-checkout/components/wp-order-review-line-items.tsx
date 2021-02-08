@@ -11,7 +11,7 @@ import {
 	useEvents,
 	Button,
 } from '@automattic/composite-checkout';
-import type { Theme } from '@automattic/composite-checkout';
+import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import type { RemoveProductFromCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -68,7 +68,35 @@ const WPOrderReviewListItem = styled.li`
 	list-style: none;
 `;
 
-export const LineItem = styled( WPLineItem )< {
+export const NonProductLineItem = styled( WPNonProductLineItem )< {
+	theme?: Theme;
+	total?: boolean;
+	tax?: boolean;
+	subtotal?: boolean;
+} >`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	font-weight: ${ ( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal ) };
+	color: ${ ( { theme, total } ) =>
+		total ? theme.colors.textColorDark : theme.colors.textColor };
+	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
+	padding: ${ ( { total, tax, subtotal } ) => ( total || subtotal || tax ? '10px 0' : '20px 0' ) };
+	border-bottom: ${ ( { theme, total } ) =>
+		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
+	position: relative;
+
+	.is-summary & {
+		padding: 10px 0;
+		border-bottom: 0;
+	}
+
+	.checkout-line-item__price {
+		position: relative;
+	}
+`;
+
+const LineItem = styled( WPLineItem )< {
 	theme?: Theme;
 	total?: boolean;
 	tax?: boolean;
@@ -164,14 +192,14 @@ function LineItemPrice( {
 	originalAmount,
 	isSummary,
 }: {
-	isDiscounted: boolean;
+	isDiscounted?: boolean;
 	actualAmount: string;
-	originalAmount: string;
+	originalAmount?: string;
 	isSummary?: boolean;
 } ) {
 	return (
 		<LineItemPriceWrapper isSummary={ isSummary }>
-			{ isDiscounted ? (
+			{ isDiscounted && originalAmount ? (
 				<>
 					<s>{ originalAmount }</s> { actualAmount }
 				</>
@@ -221,18 +249,32 @@ function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string 
 	);
 }
 
-export function WPOrderReviewTotal( {
-	total,
+export function WPNonProductLineItem( {
+	lineItem,
 	className = null,
 }: {
-	total: WPCOMCartItem;
+	lineItem: LineItemType;
 	className?: string | null;
 } ): JSX.Element {
+	const id = lineItem.id;
+	const itemSpanId = `checkout-line-item-${ id }`;
+	const label = lineItem.label;
+	const actualAmountDisplay = lineItem.amount.displayValue;
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<div className={ joinClasses( [ className, 'order-review-total' ] ) }>
-			<LineItem total item={ total } />
+		<div
+			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
+			data-e2e-product-slug={ lineItem.id }
+			data-product-type={ lineItem.id }
+		>
+			<LineItemTitle id={ itemSpanId }>{ label }</LineItemTitle>
+			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
+				<LineItemPrice actualAmount={ actualAmountDisplay } />
+			</span>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export function WPOrderReviewLineItems( {
@@ -268,7 +310,7 @@ export function WPOrderReviewLineItems( {
 					return (
 						<WPOrderReviewListItem key={ item.id }>
 							<LineItem
-								item={ item }
+								product={ item.wpcom_response_cart_product }
 								hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
 								removeProductFromCart={
 									item.type === 'coupon' ? removeCoupon : removeProductFromCart
@@ -358,13 +400,14 @@ interface ModalCopy {
 }
 
 function returnModalCopy(
-	product: string,
+	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
 	createUserAndSiteBeforeTransaction: boolean,
 	isPwpoUser: boolean
 ): ModalCopy {
-	const productType = product === 'plan' && hasDomainsInCart ? 'plan with dependencies' : product;
+	const productType =
+		isPlan( product ) && hasDomainsInCart ? 'plan with dependencies' : product.product_slug;
 
 	switch ( productType ) {
 		case 'plan with dependencies': {
@@ -575,7 +618,7 @@ function GSuiteDiscountCallout( {
 }
 
 function WPLineItem( {
-	item,
+	product,
 	className,
 	hasDeleteButton,
 	removeProductFromCart,
@@ -584,7 +627,7 @@ function WPLineItem( {
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 }: {
-	item: WPCOMCartItem;
+	product: ResponseCartProduct;
 	className?: string;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -593,9 +636,7 @@ function WPLineItem( {
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
-	const product = item.wpcom_response_cart_product; // might be undefined for items like tax, coupon, etc.
-	const id = product?.uuid ?? item.id;
-	const type = isPlan( product ) ? 'plan' : product?.product_slug;
+	const id = product.uuid;
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
 	const { formStatus } = useFormStatus();
@@ -607,7 +648,7 @@ function WPLineItem( {
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 	const modalCopy = returnModalCopy(
-		type,
+		product,
 		translate,
 		hasDomainsInCart,
 		createUserAndSiteBeforeTransaction || false,
@@ -627,21 +668,18 @@ function WPLineItem( {
 
 	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
 
-	const sublabel = product ? String( getSublabel( product ) ) : '';
-	const label = product ? getLabel( product ) : item.label;
+	const sublabel = String( getSublabel( product ) );
+	const label = getLabel( product );
 
-	let originalAmountDisplay = item.wpcom_meta?.item_original_subtotal_display;
-	let originalAmountInteger = item.wpcom_meta?.item_original_subtotal_integer;
-	if (
-		item.wpcom_meta?.related_monthly_plan_cost_integer &&
-		item.wpcom_meta?.related_monthly_plan_cost_display
-	) {
-		originalAmountInteger = item.wpcom_meta?.related_monthly_plan_cost_integer;
-		originalAmountDisplay = item.wpcom_meta?.related_monthly_plan_cost_display;
+	let originalAmountDisplay = product.item_original_subtotal_display;
+	let originalAmountInteger = product.item_original_subtotal_integer;
+	if ( product.related_monthly_plan_cost_integer && product.related_monthly_plan_cost_display ) {
+		originalAmountInteger = product.related_monthly_plan_cost_integer;
+		originalAmountDisplay = product.related_monthly_plan_cost_display;
 	}
-	const actualAmountDisplay = item.amount.displayValue;
+	const actualAmountDisplay = product.item_subtotal_display;
 	const isDiscounted = Boolean(
-		item.amount.value < originalAmountInteger && originalAmountDisplay
+		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -649,7 +687,7 @@ function WPLineItem( {
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
 			data-e2e-product-slug={ productSlug }
-			data-product-type={ type }
+			data-product-type={ isPlan( product ) ? 'plan' : product.product_slug }
 		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
@@ -725,6 +763,7 @@ function WPLineItem( {
 			) }
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 WPLineItem.propTypes = {
@@ -735,12 +774,7 @@ WPLineItem.propTypes = {
 	isSummary: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeProductFromCart: PropTypes.func,
-	item: PropTypes.shape( {
-		label: PropTypes.string,
-		amount: PropTypes.shape( {
-			displayValue: PropTypes.string,
-		} ),
-	} ),
+	product: PropTypes.object.isRequired,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
