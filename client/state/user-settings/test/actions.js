@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
-/**
  * Internal dependencies
  */
 import { setUserSetting } from '../actions';
@@ -16,7 +10,7 @@ import {
 describe( 'actions', () => {
 	describe( 'updateUserSetting()', () => {
 		test( 'should store the new value to unsaved settings', () => {
-			const dispatch = sinon.spy();
+			const dispatch = jest.fn();
 			const getState = () => ( {
 				userSettings: {
 					settings: { foo: 'bar' },
@@ -26,8 +20,8 @@ describe( 'actions', () => {
 
 			const result = setUserSetting( 'foo', 'qix' )( dispatch, getState );
 
-			expect( result ).to.be.true;
-			expect( dispatch ).to.have.been.calledWith( {
+			expect( result ).toBe( true );
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: USER_SETTINGS_UNSAVED_SET,
 				settingName: 'foo',
 				value: 'qix',
@@ -35,7 +29,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should remove the value from unsaved settings after it is reset to original value', () => {
-			const dispatch = sinon.spy();
+			const dispatch = jest.fn();
 			const getState = () => ( {
 				userSettings: {
 					settings: { foo: 'bar' },
@@ -45,15 +39,15 @@ describe( 'actions', () => {
 
 			const result = setUserSetting( 'foo', 'bar' )( dispatch, getState );
 
-			expect( result ).to.be.true;
-			expect( dispatch ).to.have.been.calledWith( {
+			expect( result ).toBe( true );
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: USER_SETTINGS_UNSAVED_REMOVE,
 				settingName: 'foo',
 			} );
 		} );
 
 		test( 'should ignore update of a setting that is not already in the server data', () => {
-			const dispatch = sinon.spy();
+			const dispatch = jest.fn();
 			const getState = () => ( {
 				userSettings: {
 					settings: { foo: 'bar' },
@@ -63,8 +57,8 @@ describe( 'actions', () => {
 
 			const result = setUserSetting( 'baz', 'qix' )( dispatch, getState );
 
-			expect( result ).to.be.false;
-			expect( dispatch ).to.not.have.been.called;
+			expect( result ).toBe( false );
+			expect( dispatch ).toHaveBeenCalledTimes( 0 );
 		} );
 	} );
 } );
