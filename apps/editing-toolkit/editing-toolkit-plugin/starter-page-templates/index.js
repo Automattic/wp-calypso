@@ -7,8 +7,7 @@ import { dispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { PageTemplatesPlugin } from './page-template-modal';
-import { initializeWithIdentity } from './page-template-modal/utils/tracking';
+import { PageTemplatesPlugin, initializeTracksWithIdentity } from '@automattic/page-template-modal';
 import './store';
 
 // Load config passed from backend.
@@ -25,7 +24,7 @@ const {
 } = window.starterPageTemplatesConfig;
 
 if ( tracksUserData ) {
-	initializeWithIdentity( tracksUserData );
+	initializeTracksWithIdentity( tracksUserData );
 }
 
 const templatesPluginSharedProps = {
