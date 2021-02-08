@@ -20,6 +20,8 @@ import earnCardPrompt from 'calypso/assets/images/customer-home/illustration--se
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
+	translate( 'gp-localci-client: New string #3' );
+
 	return (
 		<EducationalContent
 			title={ translate( 'Make money from your website' ) }

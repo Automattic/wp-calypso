@@ -46,6 +46,8 @@ const Home = ( {
 } ) => {
 	const translate = useTranslate();
 
+	translate( 'gp-localci-client: New string #1' );
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return (
@@ -66,6 +68,7 @@ const Home = ( {
 			/>
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction }>
+					{ translate( 'gp-localci-client: New string #2' ) }
 					{ translate( 'Visit site' ) }
 				</Button>
 			</div>
