@@ -65,11 +65,12 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 	/**
 	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
 	 *
-	 * AOAAT stands for Async One At A Time, this is how we ensure for each experiment that there is only ever one fetch process occuring.
+	 * Using asyncOneAtATime, is how we ensure for each experiment that there is only ever one fetch process occuring.
+	 *
 	 *
 	 * @param experimentName The experiment's name
 	 */
-	const createAOAATExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
+	const createWrappedExperimentAssignmentFetchAndStore = ( experimentName: string ) =>
 		Timing.asyncOneAtATime( async () => {
 			const fetchedExperimentAssignment = await Request.fetchExperimentAssignment(
 				config,
@@ -78,7 +79,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 			State.storeExperimentAssignment( store, fetchedExperimentAssignment );
 			return fetchedExperimentAssignment;
 		} );
-	const experimentNameToAOAATExperimentAssignmentFetchAndStore: Record<
+	const experimentNameToWrappedExperimentAssignmentFetchAndStore: Record<
 		string,
 		() => Promise< ExperimentAssignment >
 	> = {};
@@ -102,16 +103,16 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				}
 
 				if (
-					experimentNameToAOAATExperimentAssignmentFetchAndStore[ experimentName ] === undefined
+					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ] === undefined
 				) {
-					experimentNameToAOAATExperimentAssignmentFetchAndStore[
+					experimentNameToWrappedExperimentAssignmentFetchAndStore[
 						experimentName
-					] = createAOAATExperimentAssignmentFetchAndStore( experimentName );
+					] = createWrappedExperimentAssignmentFetchAndStore( experimentName );
 				}
 				// We time out the request here and not above so the fetch-and-store continues and can be
 				// returned by future uses of loadExperimentAssignment.
 				const fetchedExperimentAssignment = await Timing.timeoutPromise(
-					experimentNameToAOAATExperimentAssignmentFetchAndStore[ experimentName ](),
+					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ](),
 					EXPERIMENT_FETCH_TIMEOUT
 				);
 				if ( ! fetchedExperimentAssignment ) {
