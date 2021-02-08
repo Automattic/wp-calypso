@@ -52,8 +52,6 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		products,
 		total_tax_integer,
 		total_tax_display,
-		total_cost_integer,
-		total_cost_display,
 		coupon_savings_total_display,
 		coupon_savings_total_integer,
 		sub_total_with_taxes_display,
@@ -133,16 +131,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const totalItem: LineItem = {
-		id: 'total',
-		type: 'total',
-		label: String( translate( 'Total' ) ),
-		amount: {
-			currency: currency,
-			value: total_cost_integer,
-			displayValue: total_cost_display,
-		},
-	};
+	const totalItem = getTotalLineItem( serverCart );
 
 	const subtotalItem: LineItem = {
 		id: 'subtotal',
@@ -172,6 +161,19 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		credits: credits_integer > 0 ? creditsLineItem : null,
 		allowedPaymentMethods,
 		couponCode: coupon,
+	};
+}
+
+export function getTotalLineItem( responseCart: ResponseCart ): LineItem {
+	return {
+		id: 'total',
+		type: 'total',
+		label: String( translate( 'Total' ) ),
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.total_cost_integer,
+			displayValue: responseCart.total_cost_display,
+		},
 	};
 }
 
