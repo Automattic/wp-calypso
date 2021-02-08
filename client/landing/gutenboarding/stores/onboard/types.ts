@@ -41,6 +41,7 @@ export interface Design {
 	src: string;
 	template: string;
 	theme: string;
+	preview?: 'static';
 	title: string;
 	features: Array< DesignFeatures >;
 
