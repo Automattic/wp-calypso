@@ -102,6 +102,9 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 		);
 	};
 
+	const plansToggleExpanded = __( 'Collapse all plans', __i18n_text_domain__ );
+	const plansToggleCollapsed = __( 'Show all plans', __i18n_text_domain__ );
+
 	return (
 		<div className="plans-accordion">
 			<div className="plans-accordion__plan-item-group">
@@ -148,9 +151,7 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-accordion__actions">
 				<Button className="plans-accordion__toggle-all-button" onClick={ handleToggleAll } isLink>
-					{ allPlansOpened
-						? __( 'Collapse all plans', __i18n_text_domain__ )
-						: __( 'Show all plans', __i18n_text_domain__ ) }
+					{ allPlansOpened ? plansToggleExpanded : plansToggleCollapsed }
 				</Button>
 			</div>
 
