@@ -219,7 +219,7 @@ const BlockFramePreview = ( {
 		<div ref={ frameContainerRef }>
 			<iframe
 				ref={ iframeRef }
-				title={ __( 'Preview', 'full-site-editing' ) }
+				title={ __( 'Preview', __i18n_text_domain__ ) }
 				className={ classnames( 'editor-styles-wrapper', className ) }
 				style={ style }
 				tabIndex={ -1 }

@@ -4,10 +4,10 @@
 import { _x } from '@wordpress/i18n';
 
 const PLACEHOLDER_DEFAULTS = {
-	Address: _x( '123 Main St', 'default address', 'full-site-editing' ),
-	Phone: _x( '555-555-5555', 'default phone number', 'full-site-editing' ),
-	CompanyName: _x( 'Your Company Name', 'default company name', 'full-site-editing' ),
-	Vertical: _x( 'Business', 'default vertical name', 'full-site-editing' ),
+	Address: _x( '123 Main St', 'default address', __i18n_text_domain__ ),
+	Phone: _x( '555-555-5555', 'default phone number', __i18n_text_domain__ ),
+	CompanyName: _x( 'Your Company Name', 'default company name', __i18n_text_domain__ ),
+	Vertical: _x( 'Business', 'default vertical name', __i18n_text_domain__ ),
 };
 
 const KEY_MAP = {
