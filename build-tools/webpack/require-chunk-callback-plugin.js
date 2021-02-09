@@ -24,6 +24,9 @@ class RequireChunkCallbackPlugin {
 					source,
 					'',
 					`
+						// Array to store all loading or loaded chunks
+						var _installedChunks = [];
+
 						function RequireChunkCallback() {
 							this.callbacks = [];
 						}
@@ -51,7 +54,7 @@ class RequireChunkCallbackPlugin {
 						};
 
 						RequireChunkCallback.prototype.getInstalledChunks = function() {
-							return Object.keys( installedChunks ).map( function( chunkId ) {
+							return _installedChunks.map( function( chunkId ) {
 								return ${ chunkIdToURL }( chunkId )
 									.replace( __webpack_require__.p, '' )
 									.replace( /\\.js$/, '' );
@@ -77,7 +80,9 @@ class RequireChunkCallbackPlugin {
 						chunkId: chunkId,
 						publicPath: __webpack_require__.p,
 						scriptSrc: ${ chunkIdToURL }( chunkId )
-					}, promises )`,
+					}, promises );
+
+					_installedChunks.push( chunkId );`,
 				] );
 			} );
 		} );
