@@ -286,6 +286,7 @@ export class PlansStep extends Component {
 	render() {
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
+			'in-plans-redesign-experiment': this.props.shouldShowPlansRedesign,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
