@@ -17,10 +17,18 @@ export function randomPhrase() {
 	return `${ gen[ 1 ].toProperCase() } ${ gen[ 2 ].toProperCase() } ${ gen[ 3 ].toProperCase() } ${ gen[ 4 ].toProperCase() }`;
 }
 
-export function getEmailAddress( prefix, inboxId ) {
-	const domain = 'mailosaur.io';
+export function getEmailAddress( prefix, inboxId, useEmailService = false ) {
+	let email;
 	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
-	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+	if ( useEmailService === true ) {
+		const domain = 'mailosaur.io';
+		email = `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+	} else {
+		const emailUsername = config.has( 'emailUsername' ) ? config.get( 'emailUsername' ) : '';
+		const emailDomain = config.has( 'emailDomain' ) ? config.get( 'emailDomain' ) : '';
+		email = `${ emailUsername }+${ prefix }@${ emailDomain }`;
+	}
+	return email
 }
 
 export function getExpectedFreeAddresses( searchTerm ) {
