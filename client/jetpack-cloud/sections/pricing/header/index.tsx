@@ -10,8 +10,6 @@ import React, { useMemo } from 'react';
  */
 import JetpackComMasterbar from '../jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
-import OlarkChat from 'calypso/components/olark-chat';
-import config from '@automattic/calypso-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getForCurrentCROIteration } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
@@ -26,7 +24,6 @@ import FreshStart2021SaleBanner from 'calypso/components/jetpack/fresh-start-202
 import './style.scss';
 
 const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
-	const identity = config( 'olark_chat_identity' );
 	const translate = useTranslate();
 
 	const iterationClassName = useMemo(
@@ -43,7 +40,6 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 
 	return (
 		<>
-			{ identity && <OlarkChat { ...{ identity } } /> }
 			<JetpackComMasterbar />
 
 			<FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } />

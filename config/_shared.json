@@ -28,7 +28,6 @@
 	"jetpack_connect_url": false,
 	"mc_analytics_enabled": false,
 	"oauth_client_id": false,
-	"olark_chat_identity": false,
 	"protocol": "http",
 	"port": 3000,
 	"happychat_url": "https://happychat.io/customer",
