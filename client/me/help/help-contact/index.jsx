@@ -613,7 +613,7 @@ class HelpContact extends React.Component {
 							compact={ compact }
 							displayAt="2021-03-28 00:00Z"
 							closesAt="2021-04-04 00:00Z"
-							reopensAt="2021-04-05 07:00Z"
+							reopensAt="2021-04-05 06:00Z"
 						/>
 						<ChatHolidayClosureNotice
 							holidayName="Christmas"
