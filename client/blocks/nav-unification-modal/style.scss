@@ -98,7 +98,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	}
 
 	.components-guide__finish-button {
-		background-color: var(--studio-pink-50);
+		background-color: var( --studio-pink-50 );
 		color: #ffffff;
 		border-radius: 3px;
 
@@ -147,7 +147,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 }
 .nav-unification-modal__visual {
 	height: 95%;
-	background: var(--studio-blue-5);
+	background: var( --studio-blue-5 );
 	text-align: center;
 	overflow: hidden;
 	position: relative;
@@ -167,10 +167,20 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		margin-top: 0;
 	}
 
+	&--bottom-right,
+	&--center {
+		img {
+			@media ( max-width: $modal-breakpoint ) {
+				position: absolute;
+				bottom: 0;
+			}
+		}
+	}
+
 	&--center {
 		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
-			transform: translateY(-50%);
+			transform: translateY( -50% );
 			top: 50%;
 		}
 	}
@@ -230,7 +240,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	&.align-bottom {
 		align-self: flex-end;
 	}
-
 
 	@media ( min-width: $modal-breakpoint ) {
 		max-height: none;
