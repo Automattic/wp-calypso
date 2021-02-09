@@ -92,6 +92,8 @@ const INTERFACE_FIELDS = [
 	'language',
 	'enable_translator',
 	'calypso_preferences',
+	'i18n_empathy_mode',
+	'use_fallback_for_incomplete_languages',
 ];
 
 /* eslint-disable react/prefer-es6-class */
