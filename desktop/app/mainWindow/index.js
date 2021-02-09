@@ -8,7 +8,7 @@ const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
  */
 const Config = require( '../lib/config' );
 const Settings = require( '../lib/settings' );
-const cookieAuth = require( '../lib/cookie-auth' );
+const SessionManager = require( '../lib/session' );
 const appInstance = require( '../lib/app-instance' );
 const platform = require( '../lib/platform' );
 const System = require( '../lib/system' );
@@ -41,9 +41,7 @@ function showAppWindow() {
 
 	mainWindow = new BrowserWindow( config );
 
-	cookieAuth( mainWindow, function () {
-		mainWindow.webContents.send( 'cookie-auth-complete' );
-	} );
+	SessionManager.init( mainWindow );
 
 	mainWindow.webContents.on( 'did-finish-load', function () {
 		mainWindow.webContents.send( 'app-config', System.getDetails() );

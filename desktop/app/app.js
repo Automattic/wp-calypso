@@ -18,5 +18,5 @@ module.exports = function () {
 	log.info( 'Waiting for app window to load' );
 
 	// Start the main window
-	require( './server' )();
+	require( './mainWindow' )();
 };
