@@ -127,7 +127,11 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		</div>
 	);
 
-	const planSummaryCostLabelAnnually = __( 'billed annually', 'full-site-editing' );
+	// translators: %s is the cost per year (e.g "billed as 96$ annually")
+	const planSummaryCostLabelAnnually = __(
+		'per month, billed as %s annually',
+		'full-site-editing'
+	);
 	const planSummaryCostLabelMonthly = __( 'per month, billed monthly', 'full-site-editing' );
 
 	const planSummary = (
@@ -137,7 +141,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 					<p className="nux-launch__summary-item__plan-name">WordPress.com { plan.title }</p>
 					{ __( 'Plan subscription', 'full-site-editing' ) }: { planProduct.price }{ ' ' }
 					{ planProduct.billingPeriod === 'ANNUALLY'
-						? planSummaryCostLabelAnnually
+						? sprintf( planSummaryCostLabelAnnually, planProduct?.annualPrice )
 						: planSummaryCostLabelMonthly }
 				</>
 			) : (
