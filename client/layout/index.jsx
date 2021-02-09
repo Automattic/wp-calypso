@@ -299,9 +299,6 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'nav-unification' ) && ! config.isEnabled( 'jetpack-cloud' ) && (
-					<AsyncLoad require="calypso/blocks/nav-unification-modal" placeholder={ null } />
-				) }
 				<QueryReaderTeams />
 			</div>
 		);

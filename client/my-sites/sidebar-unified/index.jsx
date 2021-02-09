@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'calypso/components/async-load';
 import CurrentSite from 'calypso/my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
@@ -29,6 +30,7 @@ import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
+
 import './style.scss';
 
 export const MySitesSidebarUnified = ( { path } ) => {
@@ -48,34 +50,39 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	}
 
 	return (
-		<Sidebar>
-			<li>
-				<CurrentSite forceAllSitesView={ isAllDomainsView } />
-			</li>
-			{ menuItems.map( ( item, i ) => {
-				const isSelected = item?.url && itemLinkMatches( item.url, path );
+		<>
+			<Sidebar>
+				<li>
+					<CurrentSite forceAllSitesView={ isAllDomainsView } />
+				</li>
+				{ menuItems.map( ( item, i ) => {
+					const isSelected = item?.url && itemLinkMatches( item.url, path );
 
-				if ( 'separator' === item?.type ) {
-					return <SidebarSeparator key={ i } />;
-				}
+					if ( 'separator' === item?.type ) {
+						return <SidebarSeparator key={ i } />;
+					}
 
-				if ( item?.children?.length ) {
+					if ( item?.children?.length ) {
+						return (
+							<MySitesSidebarUnifiedMenu
+								key={ item.slug }
+								path={ path }
+								link={ item.url }
+								selected={ isSelected }
+								sidebarCollapsed={ sidebarIsCollapsed }
+								{ ...item }
+							/>
+						);
+					}
+
 					return (
-						<MySitesSidebarUnifiedMenu
-							key={ item.slug }
-							path={ path }
-							link={ item.url }
-							selected={ !! isSelected }
-							sidebarCollapsed={ sidebarIsCollapsed }
-							{ ...item }
-						/>
+						<MySitesSidebarUnifiedItem key={ item.slug } selected={ isSelected } { ...item } />
 					);
-				}
-
-				return <MySitesSidebarUnifiedItem key={ item.slug } selected={ isSelected } { ...item } />;
-			} ) }
-			<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
-		</Sidebar>
+				} ) }
+				<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
+			</Sidebar>
+			<AsyncLoad require="calypso/blocks/nav-unification-modal" placeholder={ null } />
+		</>
 	);
 };
 
