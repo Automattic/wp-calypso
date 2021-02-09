@@ -207,8 +207,8 @@ export function* getSupportedPlans( locale = 'en' ) {
 
 	const planProducts = normalizePlanProducts( pricedPlans, periodAgnosticPlans );
 
-	yield setPlans( periodAgnosticPlans );
+	yield setPlans( periodAgnosticPlans, locale );
 	yield setPlanProducts( planProducts );
-	yield setFeatures( features );
-	yield setFeaturesByType( plansFeatures.features_by_type );
+	yield setFeatures( features, locale );
+	yield setFeaturesByType( plansFeatures.features_by_type, locale );
 }

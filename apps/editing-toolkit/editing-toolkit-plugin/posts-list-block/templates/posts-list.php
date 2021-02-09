@@ -21,7 +21,7 @@ if ( $posts_list instanceof WP_Query && $posts_list->have_posts() ) :
 				$posts_list->the_post();
 				?>
 				<li class="a8c-posts-list__item">
-					<?php require dirname( __FILE__ ) . '/post-item.php'; ?>
+					<?php require __DIR__ . '/post-item.php'; ?>
 				</li>
 			<?php endwhile; ?>
 		</ul>

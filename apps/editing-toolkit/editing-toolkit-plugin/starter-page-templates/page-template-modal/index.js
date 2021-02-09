@@ -281,7 +281,8 @@ class PageTemplateModal extends Component {
 		const templateGroups = {};
 		for ( const template of this.props.templates ) {
 			for ( const key in template.categories ) {
-				if ( ! ( key in templateGroups ) ) {
+				// Temporarily skip the 'featured' category so that we can expose it at another time.
+				if ( key !== 'featured' && ! ( key in templateGroups ) ) {
 					templateGroups[ key ] = template.categories[ key ];
 				}
 			}

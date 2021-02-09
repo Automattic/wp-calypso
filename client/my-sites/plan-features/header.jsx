@@ -52,7 +52,7 @@ export class PlanFeaturesHeader extends Component {
 			return this.renderPlansHeaderNoTabs();
 		} else if ( isInSignup ) {
 			if ( isInVerticalScrollingPlansExperiment ) {
-				return this.renderPlansHeader();
+				return this.renderPlansHeaderNoTabs();
 			}
 			return this.renderSignupHeader();
 		}
@@ -83,7 +83,7 @@ export class PlanFeaturesHeader extends Component {
 			'is-p2-plus': planType === PLAN_P2_PLUS,
 		} );
 		const isCurrent = this.isPlanCurrent();
-		const isPillInCorner = this.resolveIsPillInCorner();
+
 		return (
 			<header className={ headerClasses }>
 				{ planType !== PLAN_P2_PLUS && (
@@ -97,19 +97,19 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getBillingTimeframe() }
 				</div>
 				{ ! isInSignup && isCurrent && (
-					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Your Plan' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Your Plan' ) }</PlanPill>
 				) }
 				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && (
-					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Suggested' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
 				) }
 				{ popular && ! selectedPlan && ! isCurrent && (
-					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Popular' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 				) }
 				{ newPlan && ! selectedPlan && ! isCurrent && (
-					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'New' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'New' ) }</PlanPill>
 				) }
 				{ bestValue && ! selectedPlan && ! isCurrent && (
-					<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Best Value' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Best Value' ) }</PlanPill>
 				) }
 			</header>
 		);
@@ -123,12 +123,12 @@ export class PlanFeaturesHeader extends Component {
 			popular,
 			selectedPlan,
 			title,
-			isInSignup,
 			audience,
 			translate,
 		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+		const isPillInCorner = this.resolveIsPillInCorner();
 
 		return (
 			<span>
@@ -136,16 +136,16 @@ export class PlanFeaturesHeader extends Component {
 					<h4 className="plan-features__header-title">{ title }</h4>
 					<div className="plan-features__audience">{ audience }</div>
 					{ planLevelsMatch( selectedPlan, planType ) && (
-						<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Suggested' ) }</PlanPill>
 					) }
 					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Popular' ) }</PlanPill>
 					) }
 					{ newPlan && ! selectedPlan && (
-						<PlanPill isInSignup={ isInSignup }>{ translate( 'New' ) }</PlanPill>
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'New' ) }</PlanPill>
 					) }
 					{ bestValue && ! selectedPlan && (
-						<PlanPill isInSignup={ isInSignup }>{ translate( 'Best Value' ) }</PlanPill>
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Best Value' ) }</PlanPill>
 					) }
 				</header>
 				<div className="plan-features__pricing">
@@ -364,8 +364,14 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup, plansWithScroll } = this.props;
-		const displayFlatPrice = isInSignup && ! plansWithScroll;
+		const {
+			currencyCode,
+			isInSignup,
+			plansWithScroll,
+			isInVerticalScrollingPlansExperiment,
+		} = this.props;
+		const displayFlatPrice =
+			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
 
 		if ( fullPrice && discountedPrice ) {
 			return (

@@ -13,7 +13,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import OlarkChat from 'calypso/components/olark-chat';
 import config from '@automattic/calypso-config';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { getForCurrentCROIteration } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 // Fresh Start 2021 promotion; runs from Feb 1 00:00 to Feb 14 23:59 UTC automatically.
@@ -28,11 +28,18 @@ import './style.scss';
 const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 	const identity = config( 'olark_chat_identity' );
 	const translate = useTranslate();
-	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
-	const title =
-		iteration === 'spp'
-			? translate( 'Security, performance, and marketing tools for WordPress' )
-			: translate( 'Security, performance, and marketing tools made for WordPress' );
+
+	const iterationClassName = useMemo(
+		() => getForCurrentCROIteration( ( variation: Iterations ) => `iteration-${ variation }` ),
+		[]
+	) as Iterations;
+	const title = useMemo(
+		() =>
+			getForCurrentCROIteration( {
+				[ Iterations.SPP ]: translate( 'Security, performance, and marketing tools for WordPress' ),
+			} ) || translate( 'Security, performance, and marketing tools made for WordPress' ),
+		[ translate ]
+	);
 
 	return (
 		<>
@@ -41,7 +48,7 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 
 			<FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } />
 
-			<div className={ classNames( 'header', iteration ) }>
+			<div className={ classNames( 'header', iterationClassName ) }>
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows( title ) }

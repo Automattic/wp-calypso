@@ -128,7 +128,11 @@ export function CheckoutPaymentMethodsTitle(): JSX.Element {
 	const { __ } = useI18n();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	return <>{ ! isActive && isComplete ? __( 'Payment method' ) : __( 'Pick a payment method' ) }</>;
+
+	const paymentMethodLabelActive = __( 'Pick a payment method' );
+	const paymentMethodLabelInactive = __( 'Payment method' );
+
+	return <>{ ! isActive && isComplete ? paymentMethodLabelInactive : paymentMethodLabelActive }</>;
 }
 
 function PaymentMethod( {

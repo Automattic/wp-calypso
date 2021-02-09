@@ -9,23 +9,26 @@ describe( 'Plans reducer', () => {
 	describe( 'Plans', () => {
 		it( 'defaults to no plans info', () => {
 			const { plans } = reducer( undefined, { type: 'DUMMY' } );
-			expect( plans ).toEqual( [] );
+			expect( plans ).toEqual( {} );
 		} );
 
 		it( 'replaces old plans with new plans', () => {
 			let state = reducer(
 				undefined,
-				setPlans( [
-					{
-						title: 'free plan',
-						description: 'it is free',
-						features: [],
-						isFree: true,
-						isPopular: false,
-						periodAgnosticSlug: 'free',
-						productIds: [ 1 ],
-					},
-				] )
+				setPlans(
+					[
+						{
+							title: 'free plan',
+							description: 'it is free',
+							features: [],
+							isFree: true,
+							isPopular: false,
+							periodAgnosticSlug: 'free',
+							productIds: [ 1 ],
+						},
+					],
+					'en'
+				)
 			);
 
 			state = reducer(
@@ -69,58 +72,67 @@ describe( 'Plans reducer', () => {
 
 			const { plans } = reducer(
 				state,
-				setPlans( [
-					{
-						title: 'new free',
-						description: 'it is free',
-						features: [],
-						isPopular: true,
-						periodAgnosticSlug: 'free',
-						productIds: [ 1 ],
-					},
-				] )
+				setPlans(
+					[
+						{
+							title: 'new free',
+							description: 'it is free',
+							features: [],
+							isPopular: true,
+							periodAgnosticSlug: 'free',
+							productIds: [ 1 ],
+						},
+					],
+					'en'
+				)
 			);
 
-			expect( plans[ 0 ].title ).toBe( 'new free' );
-			expect( plans[ 1 ] ).toBeUndefined();
+			expect( plans.en[ 0 ].title ).toBe( 'new free' );
+			expect( plans.en[ 1 ] ).toBeUndefined();
 		} );
 	} );
 
 	describe( 'Features By Type', () => {
 		it( 'defaults to no featuresByType info', () => {
 			const { featuresByType } = reducer( undefined, { type: 'DUMMY' } );
-			expect( featuresByType ).toEqual( [] );
+			expect( featuresByType ).toEqual( {} );
 		} );
 
 		it( 'replaces old featuresByType info with new featuresByType info', () => {
 			const state = reducer(
 				undefined,
-				setFeaturesByType( [
-					{
-						id: '1',
-						name: 'one',
-						features: [],
-					},
-					{
-						id: '2',
-						name: 'two',
-						features: [],
-					},
-				] )
+				setFeaturesByType(
+					[
+						{
+							id: '1',
+							name: 'one',
+							features: [],
+						},
+						{
+							id: '2',
+							name: 'two',
+							features: [],
+						},
+					],
+					'en'
+				)
 			);
 
 			const { featuresByType } = reducer(
 				state,
-				setFeaturesByType( [
-					{
-						id: '3',
-						name: 'three',
-						features: [],
-					},
-				] )
+				setFeaturesByType(
+					[
+						{
+							id: '3',
+							name: 'three',
+							features: [],
+						},
+					],
+					'en'
+				)
 			);
 
-			expect( featuresByType ).toEqual( [
+			expect( featuresByType.en ).toEqual( [
 				{
 					id: '3',
 					name: 'three',
@@ -139,13 +151,16 @@ describe( 'Plans reducer', () => {
 		it( 'replaces old features with new features', () => {
 			const state = reducer(
 				undefined,
-				setFeatures( { [ PLAN_FREE ]: { name: 'name' }, [ PLAN_PREMIUM ]: { name: 'name' } } )
+				setFeatures( { [ PLAN_FREE ]: { name: 'name' }, [ PLAN_PREMIUM ]: { name: 'name' } }, 'en' )
 			);
 
-			const { features } = reducer( state, setFeatures( { [ PLAN_FREE ]: { name: 'new name' } } ) );
+			const { features } = reducer(
+				state,
+				setFeatures( { [ PLAN_FREE ]: { name: 'new name' } }, 'en' )
+			);
 
-			expect( features[ PLAN_FREE ].name ).toBe( 'new name' );
-			expect( features[ PLAN_PREMIUM ] ).toBeUndefined();
+			expect( features.en[ PLAN_FREE ].name ).toBe( 'new name' );
+			expect( features.en[ PLAN_PREMIUM ] ).toBeUndefined();
 		} );
 	} );
 } );

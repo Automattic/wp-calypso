@@ -134,6 +134,10 @@ $commentary-column-gap-wide: 100px;
 	@include break-large {
 		width: $commentary-column-width-large;
 	}
+
+	& svg {
+		flex-shrink: 0;
+	}
 }
 
 .focused-launch-summary__data-input {

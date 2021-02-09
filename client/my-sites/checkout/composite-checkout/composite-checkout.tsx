@@ -421,7 +421,7 @@ export default function CompositeCheckout( {
 	} );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
-		String( purchaseId ),
+		purchaseId,
 		productAliasFromUrl,
 		siteSlug,
 		feature,
@@ -699,7 +699,7 @@ function getPlanProductSlugs( items: ResponseCartProduct[] ): string[] {
 }
 
 function getAnalyticsPath(
-	purchaseId: string | undefined,
+	purchaseId: number | undefined,
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,

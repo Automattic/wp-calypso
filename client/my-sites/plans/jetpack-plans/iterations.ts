@@ -1,15 +1,7 @@
 /**
  * Internal dependencies
  */
-import ProductsGridI5 from './products-grid-i5';
-import ProductsGridSpp from './spp/products-grid-spp';
-import JetpackFAQi5 from 'calypso/my-sites/plans-features-main/jetpack-faq-i5';
-import { getJetpackCROActiveVersion as getIteration } from 'calypso/my-sites/plans/jetpack-plans/abtest';
-
-/**
- * Type dependencies
- */
-import type { ProductsGridProps } from './types';
+import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 /**
  * Iterations
@@ -19,21 +11,78 @@ export enum Iterations {
 	I5 = 'i5',
 	SPP = 'spp',
 }
+const iterationNames: string[] = Object.values( Iterations );
 
 /**
  * Getters
  */
 
-export function getGridComponent(): React.FC< ProductsGridProps > | undefined {
-	return {
-		[ Iterations.I5 ]: ProductsGridI5,
-		[ Iterations.SPP ]: ProductsGridSpp,
-	}[ getIteration() as Iterations ];
-}
+/**
+ * Gets the name of the current CRO iteration.
+ *
+ * **NOTE:** Avoid using this externally; instead, opt for either
+ * `getForCurrentCROIteration` or `doForCurrentCROIteration`.
+ *
+ * @see Iterations
+ * @see getForCurrentCROIteration
+ * @see doForCurrentCROIteration
+ */
+const getCurrentCROIterationName = (): Iterations => {
+	// If we see a query parameter, obey that,
+	// regardless of any active A/B test value
+	if ( typeof window !== 'undefined' ) {
+		const iterationQuery = getUrlParts( window.location.href ).searchParams?.get(
+			'cloud-pricing-page'
+		);
 
-export function getFaqComponent(): React.FC | undefined {
-	return {
-		[ Iterations.I5 ]: JetpackFAQi5,
-		[ Iterations.SPP ]: JetpackFAQi5,
-	}[ getIteration() as Iterations ];
-}
+		if ( iterationQuery && iterationNames.includes( iterationQuery ) ) {
+			return iterationQuery as Iterations;
+		}
+	}
+
+	// Iterations.SPP still exists for now,
+	// but the test is over, so we don't need (or want) to call `abtest`.
+	// Instead, always return the default iteration, Iterations.I5.
+	return Iterations.I5;
+};
+
+type IterationValueFunction< T > = ( key: Iterations ) => T | undefined;
+type IterationValueMap< T > = Partial< { [ key in Iterations ]: T } >;
+
+/**
+ * Returns a value based on the current CRO test iteration,
+ * or undefined if no matching value could be found.
+ *
+ * @param valueGetter {IterationValueMap|IterationValueFunction} Either a map
+ * from Iterations to return values, or a function that accepts the current Iteration as an argument.
+ *
+ * @see getCurrentCROIterationName
+ */
+export const getForCurrentCROIteration = < T >(
+	valueGetter?: IterationValueMap< T > | IterationValueFunction< T >
+): T | undefined => {
+	if ( ! valueGetter ) {
+		return undefined;
+	}
+
+	const iteration = getCurrentCROIterationName();
+
+	if ( typeof valueGetter === 'function' ) {
+		return valueGetter( iteration );
+	}
+
+	if ( typeof valueGetter === 'object' ) {
+		return valueGetter[ iteration ];
+	}
+
+	return undefined;
+};
+
+/**
+ * Resolves the current CRO iteration and passes that information to a given
+ * function.
+ *
+ * @param fn The function to execute.
+ */
+export const doForCurrentCROIteration = ( fn: ( key: Iterations ) => void ): void =>
+	fn( getCurrentCROIterationName() );

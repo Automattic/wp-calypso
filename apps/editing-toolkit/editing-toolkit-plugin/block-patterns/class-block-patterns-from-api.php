@@ -37,7 +37,7 @@ class Block_Patterns_From_API {
 				'_',
 				array(
 					'block_patterns',
-					PLUGIN_VERSION,
+					A8C_ETK_PLUGIN_VERSION,
 					$this->get_block_patterns_locale(),
 				)
 			)
@@ -77,7 +77,10 @@ class Block_Patterns_From_API {
 
 		foreach ( (array) $block_patterns as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
-				$pattern_categories[ $slug ] = $category['title'];
+				// Temporarily skip the 'featured' category so that we can expose it at another time.
+				if ( 'featured' !== $slug ) {
+					$pattern_categories[ $slug ] = $category['title'];
+				}
 			}
 		}
 
@@ -92,7 +95,7 @@ class Block_Patterns_From_API {
 				$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
 
 				register_block_pattern(
-					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
+					self::PATTERN_NAMESPACE . $pattern['name'],
 					array(
 						'title'         => $pattern['title'],
 						'description'   => $pattern['description'],

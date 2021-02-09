@@ -21,14 +21,25 @@ export default class StylePreviewPage extends AsyncBaseContainer {
 	}
 
 	async selectFontPairing( fontIndex ) {
-		const fontOptions = await this.driver.findElements(
-			By.css( 'button.style-preview__font-option' )
-		);
+		let fontOptions;
+		if ( this.screenSize === 'MOBILE' ) {
+			const mobileExpandFontOptionsButton = By.css(
+				'.style-preview__font-options-mobile .style-preview__font-option-select'
+			);
+			await driverHelper.clickWhenClickable( this.driver, mobileExpandFontOptionsButton );
+			fontOptions = await this.driver.findElements(
+				By.css( '.style-preview__font-options-mobile button.style-preview__font-option' )
+			);
+		} else {
+			fontOptions = await this.driver.findElements(
+				By.css( '.style-preview__font-options-desktop button.style-preview__font-option' )
+			);
+		}
 
 		if ( fontIndex === undefined ) {
 			fontIndex = dataHelper.getRandomInt( 0, fontOptions.length - 1 );
 		}
 
-		fontOptions[ fontIndex ].click();
+		await fontOptions[ fontIndex ].click();
 	}
 }

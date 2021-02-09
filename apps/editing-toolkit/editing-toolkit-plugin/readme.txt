@@ -3,7 +3,7 @@ Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
-Stable tag: 2.17
+Stable tag: 2.18
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,12 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.18 =
+* Introduces a "What's New" dialogue for the editor. (https://github.com/Automattic/wp-calypso/pull/48722)
+* Updates newspack blocks to v1.20, fixing issues with AMP and "specific posts" mode. (https://github.com/Automattic/wp-calypso/pull/49778)
+* Fix issues in the plan selector. (https://github.com/Automattic/wp-calypso/pull/49523)
+* Improve translations in site launch and onboarding. (https://github.com/Automattic/wp-calypso/pull/47947)
 
 = 2.17 =
 * WelcomeTour: capture mousedown event and call preventDefault on the event (https://github.com/Automattic/wp-calypso/pull/49583)

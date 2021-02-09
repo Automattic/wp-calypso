@@ -58,6 +58,7 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_ACTIVITY_LOG,
 } from 'calypso/lib/plans/constants';
+import { Iterations } from './iterations';
 import { buildCardFeaturesFromItem } from './utils';
 
 /**
@@ -109,7 +110,7 @@ export const PRODUCTS_WITH_OPTIONS = [
 ] as const;
 
 // Jetpack Security
-export const OPTION_PLAN_SECURITY: ( variation: string ) => SelectorProduct = ( variation ) => {
+export const OPTION_PLAN_SECURITY: ( variation: Iterations ) => SelectorProduct = ( variation ) => {
 	const plan = {
 		productSlug: OPTIONS_JETPACK_SECURITY,
 		annualOptionSlug: OPTIONS_JETPACK_SECURITY,
@@ -175,7 +176,7 @@ export const OPTION_PLAN_SECURITY: ( variation: string ) => SelectorProduct = ( 
 
 	return plan;
 };
-export const OPTION_PLAN_SECURITY_MONTHLY: ( variation: string ) => SelectorProduct = (
+export const OPTION_PLAN_SECURITY_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
 	variation
 ) => ( {
 	...OPTION_PLAN_SECURITY( variation ),
@@ -186,7 +187,9 @@ export const OPTION_PLAN_SECURITY_MONTHLY: ( variation: string ) => SelectorProd
 } );
 
 // Jetpack Backup
-export const OPTION_PRODUCT_BACKUP: ( variation: string ) => SelectorProduct = ( variation ) => {
+export const OPTION_PRODUCT_BACKUP: ( variation: Iterations ) => SelectorProduct = (
+	variation
+) => {
 	const plan = {
 		productSlug: OPTIONS_JETPACK_BACKUP,
 		annualOptionSlug: OPTIONS_JETPACK_BACKUP,
@@ -239,7 +242,7 @@ export const OPTION_PRODUCT_BACKUP: ( variation: string ) => SelectorProduct = (
 	return plan;
 };
 
-export const OPTION_PRODUCT_BACKUP_MONTHLY: ( variation: string ) => SelectorProduct = (
+export const OPTION_PRODUCT_BACKUP_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
 	variation
 ) => ( {
 	...OPTION_PRODUCT_BACKUP( variation ),
@@ -254,7 +257,9 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: ( variation: string ) => SelectorPro
 const CRM_ENTREPRENEUR_PRICE = 17;
 const CRM_ENTREPRENEUR_CURRENCY = 'USD';
 
-export const EXTERNAL_PRODUCT_CRM: ( variation: string ) => SelectorProduct = ( variation ) => ( {
+export const EXTERNAL_PRODUCT_CRM: ( variation: Iterations ) => SelectorProduct = (
+	variation
+) => ( {
 	productSlug: PRODUCT_JETPACK_CRM,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
@@ -291,7 +296,7 @@ export const EXTERNAL_PRODUCT_CRM: ( variation: string ) => SelectorProduct = ( 
 	externalUrl: 'https://jetpackcrm.com/pricing/',
 } );
 
-export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: string ) => SelectorProduct = (
+export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
 	variation
 ) => ( {
 	...EXTERNAL_PRODUCT_CRM( variation ),
@@ -305,7 +310,7 @@ export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: string ) => SelectorProd
 // Map slug to objects.
 export const OPTIONS_SLUG_MAP: Record<
 	SelectorProductSlug,
-	( variation: string ) => SelectorProduct
+	( variation: Iterations ) => SelectorProduct
 > = {
 	[ OPTIONS_JETPACK_SECURITY ]: OPTION_PLAN_SECURITY,
 	[ OPTIONS_JETPACK_SECURITY_MONTHLY ]: OPTION_PLAN_SECURITY_MONTHLY,
@@ -319,7 +324,7 @@ export const EXTERNAL_PRODUCTS_LIST = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM
 // External Product slugs to SelectorProduct.
 export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
 	string,
-	( variation: string ) => SelectorProduct
+	( variation: Iterations ) => SelectorProduct
 > = {
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,

@@ -2,8 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { __, _x } from '@wordpress/i18n';
 import { ArrowButton } from '@automattic/onboarding';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -15,6 +15,8 @@ interface Props {
 }
 
 const UseYourDomainItem: React.FunctionComponent< Props > = ( { onClick } ) => {
+	const { __, _x } = useI18n();
+
 	return (
 		<WrappingComponent
 			type="button"
