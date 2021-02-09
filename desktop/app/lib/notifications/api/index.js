@@ -34,7 +34,7 @@ class WPNotificationsAPI extends EventEmitter {
 	}
 
 	async connect() {
-		const token = await keychain.fetch( 'wp_oauth_token' );
+		const token = await keychain.read( 'wp_oauth_token' );
 
 		if ( ! token ) {
 			log.info( 'Failed to initialize websocket: token is NULL' );

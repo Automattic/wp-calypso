@@ -12,7 +12,7 @@ async function write( key, value ) {
 	return keytar.setPassword( keychainService, key, JSON.stringify( value ) );
 }
 
-async function fetch( key ) {
+async function read( key ) {
 	let value = await keytar.getPassword( keychainService, key );
 	if ( value ) {
 		value = JSON.parse( value );
@@ -32,5 +32,5 @@ async function clear() {
 module.exports = {
 	clear,
 	write,
-	fetch,
+	read,
 };
