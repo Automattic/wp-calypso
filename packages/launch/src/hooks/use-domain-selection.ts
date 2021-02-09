@@ -42,8 +42,14 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 
 	const domainName = domainProductFromCart?.meta;
 
-	const domainDetails = useSelect( ( select ) =>
-		select( DOMAIN_SUGGESTIONS_STORE ).isAvailable( domainName || '' )
+	const domainDetails = useSelect(
+		( select ) => {
+			if ( ! domainName ) {
+				return;
+			}
+			return select( DOMAIN_SUGGESTIONS_STORE ).isAvailable( domainName );
+		},
+		[ domainName ]
 	);
 
 	// if the domain is still available, forge a domain suggestion from it and return it
