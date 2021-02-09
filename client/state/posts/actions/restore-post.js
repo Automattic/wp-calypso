@@ -1,4 +1,10 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+import { truncate } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
@@ -7,7 +13,9 @@ import {
 	POST_RESTORE_SUCCESS,
 	POST_RESTORE,
 } from 'calypso/state/action-types';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import { receivePost } from 'calypso/state/posts/actions/receive-post';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/posts/init';
 
@@ -20,7 +28,7 @@ import 'calypso/state/posts/init';
  * @returns {Function}        Action thunk
  */
 export function restorePost( siteId, postId ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: POST_RESTORE,
 			siteId,
@@ -37,6 +45,7 @@ export function restorePost( siteId, postId ) {
 					postId,
 				} );
 				dispatch( receivePost( restoredPost ) );
+				dispatch( successNotice( translate( 'Post successfully restored' ) ) );
 			},
 			( error ) => {
 				dispatch( {
@@ -45,6 +54,19 @@ export function restorePost( siteId, postId ) {
 					postId,
 					error,
 				} );
+
+				const post = getSitePost( getState(), siteId, postId );
+
+				let message;
+				if ( post ) {
+					message = translate( 'An error occurred while restoring "%s"', {
+						args: [ truncate( post.title, { length: 24 } ) ],
+					} );
+				} else {
+					message = translate( 'An error occurred while restoring the post' );
+				}
+
+				dispatch( errorNotice( message ) );
 			}
 		);
 
