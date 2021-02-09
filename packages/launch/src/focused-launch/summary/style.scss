@@ -192,7 +192,7 @@ $commentary-column-gap-wide: 100px;
 	}
 
 	.focused-launch-summary__launch-button {
-		flex: 1;
+		flex-grow: 1;
 	}
 
 	@include break-small {
