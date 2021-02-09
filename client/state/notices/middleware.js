@@ -7,11 +7,9 @@ import { get, truncate } from 'lodash';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { getSitePost } from 'calypso/state/posts/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
-import { restorePost } from 'calypso/state/posts/actions';
 import {
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
@@ -20,11 +18,6 @@ import {
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITES_DELETE_REQUEST_SUCCESS,
 	INVITES_DELETE_REQUEST_FAILURE,
-	POST_DELETE_FAILURE,
-	POST_DELETE_SUCCESS,
-	POST_RESTORE_FAILURE,
-	POST_RESTORE_SUCCESS,
-	POST_SAVE_SUCCESS,
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
@@ -67,64 +60,6 @@ export const onDeleteInvitesSuccess = ( { inviteIds } ) =>
 
 export const onInviteResendRequestFailure = () =>
 	errorNotice( translate( 'Invitation failed to resend.' ) );
-
-export const onPostDeleteFailure = ( action ) => ( dispatch, getState ) => {
-	const post = getSitePost( getState(), action.siteId, action.postId );
-
-	let message;
-	if ( post ) {
-		message = translate( 'An error occurred while deleting "%s"', {
-			args: [ truncate( post.title, { length: 24 } ) ],
-		} );
-	} else {
-		message = translate( 'An error occurred while deleting the post' );
-	}
-
-	dispatch( errorNotice( message ) );
-};
-
-const onPostDeleteSuccess = () => successNotice( translate( 'Post successfully deleted' ) );
-
-export const onPostRestoreFailure = ( action ) => ( dispatch, getState ) => {
-	const post = getSitePost( getState(), action.siteId, action.postId );
-
-	let message;
-	if ( post ) {
-		message = translate( 'An error occurred while restoring "%s"', {
-			args: [ truncate( post.title, { length: 24 } ) ],
-		} );
-	} else {
-		message = translate( 'An error occurred while restoring the post' );
-	}
-
-	dispatch( errorNotice( message ) );
-};
-
-const onPostRestoreSuccess = () => successNotice( translate( 'Post successfully restored' ) );
-
-export const onPostSaveSuccess = ( { post, savedPost } ) => ( dispatch ) => {
-	switch ( post.status ) {
-		case 'trash': {
-			const noticeId = 'trash_' + savedPost.global_ID;
-			dispatch(
-				successNotice( translate( 'Post successfully moved to trash.' ), {
-					id: noticeId,
-					button: translate( 'Undo' ),
-					onClick: () => {
-						dispatch( removeNotice( noticeId ) );
-						dispatch( restorePost( savedPost.site_ID, savedPost.ID ) );
-					},
-				} )
-			);
-			break;
-		}
-
-		case 'publish': {
-			dispatch( successNotice( translate( 'Post successfully published' ) ) );
-			break;
-		}
-	}
-};
 
 const onGuidedTransferHostDetailsSaveSuccess = () =>
 	successNotice( translate( 'Thanks for confirming those details!' ) );
@@ -183,11 +118,6 @@ export const handlers = {
 	[ INVITES_DELETE_REQUEST_SUCCESS ]: onDeleteInvitesSuccess,
 	[ INVITES_DELETE_REQUEST_FAILURE ]: onDeleteInvitesFailure,
 	[ INVITE_RESEND_REQUEST_FAILURE ]: onInviteResendRequestFailure,
-	[ POST_DELETE_FAILURE ]: onPostDeleteFailure,
-	[ POST_DELETE_SUCCESS ]: onPostDeleteSuccess,
-	[ POST_RESTORE_FAILURE ]: onPostRestoreFailure,
-	[ POST_RESTORE_SUCCESS ]: onPostRestoreSuccess,
-	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: onGuidedTransferHostDetailsSaveSuccess,
 	[ SITE_DELETE ]: onSiteDelete,
 	[ SITE_DELETE_FAILURE ]: onSiteDeleteFailure,
