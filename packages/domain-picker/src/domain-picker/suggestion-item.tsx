@@ -82,15 +82,15 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const freeDomainLabel =
 		type === ITEM_TYPE_INDIVIDUAL_ITEM ? freeDomainLabelDefault : freeDomainLabelFree;
 
-	const firstYearLabel = __( 'Included in annual plans', __i18n_text_domain__ );
+	const includedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
 	// translators: text in between the <strong></strong> marks is styled as bold text
-	const firstYearLabelFormatted = __(
+	const includedLabelFormatted = __(
 		'<strong>First year included</strong> in annual plans',
 		__i18n_text_domain__
 	);
 	const paidIncludedDomainLabel = isMobile
-		? firstYearLabel
-		: createInterpolateElement( firstYearLabelFormatted, {
+		? includedLabel
+		: createInterpolateElement( includedLabelFormatted, {
 				strong: <strong />,
 		  } );
 
