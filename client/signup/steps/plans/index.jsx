@@ -202,15 +202,38 @@ export class PlansStep extends Component {
 		);
 	}
 
+	getHeaderText() {
+		if ( this.props.shouldShowPlansRedesign ) {
+			return 'Choose a plan';
+		}
+
+		return this.props.headerText || this.props.translate( "Pick a plan that's right for you." );
+	}
+
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate } = this.props;
+		const { hideFreePlan, subHeaderText, shouldShowPlansRedesign, translate } = this.props;
 
 		if ( ! hideFreePlan ) {
+			if ( shouldShowPlansRedesign ) {
+				return translate(
+					'Cancel for a full refund within 30 days risk-free. Or {{link}}start with a free site{{/link}}.',
+					{
+						components: {
+							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+						},
+					}
+				);
+			}
+
 			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
 				components: {
 					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
 				},
 			} );
+		}
+
+		if ( shouldShowPlansRedesign ) {
+			return "Cancel for a full refund within 30 days. There's no risk.";
 		}
 
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
@@ -225,7 +248,7 @@ export class PlansStep extends Component {
 			hasInitializedSitesBackUrl,
 		} = this.props;
 
-		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
+		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText = this.getSubHeaderText();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
@@ -305,7 +328,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 export default connect(
 	(
 		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation }, flowName }
 	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
@@ -323,6 +346,9 @@ export default connect(
 		isLoadingExperiment: isLoading( state ),
 		isInVerticalScrollingPlansExperiment:
 			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
+		shouldShowPlansRedesign:
+			'treatment' === getVariationForUser( state, 'signup_plans_step_redesign_v1' ) &&
+			flowName === 'onboarding',
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
