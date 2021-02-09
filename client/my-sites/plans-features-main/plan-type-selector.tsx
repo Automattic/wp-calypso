@@ -56,7 +56,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 				...defaultArgs,
 				...additionalArgs,
 			},
-			''
+			document.location?.search
 		);
 	}
 
