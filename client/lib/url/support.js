@@ -6,7 +6,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
-export const ADDING_GOOGLE_APPS_TO_YOUR_SITE = `${ root }/adding-g-suite-to-your-site`;
+export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-g-suite-to-your-site/`;
 export const ADDING_USERS = `${ root }/adding-users`;
 export const AUTO_RENEWAL = `${ root }/auto-renewal`;
 export const BANDPAGE_WIDGET = `${ root }/widgets/bandpage-widget`;
@@ -15,7 +15,6 @@ export const CHANGE_NAME_SERVERS = `${ root }/domains/custom-dns/#changing-name-
 export const CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS = `${ root }/domains/change-name-servers/#finding-out-your-new-name-server`;
 export const COMMENTS = `${ root }/category/comments`;
 export const COMMUNITY_TRANSLATOR = `${ root }/community-translator`;
-export const COMPLETING_GOOGLE_APPS_SIGNUP = `${ root }/adding-g-suite-to-your-site/#completing-sign-up`;
 export const CONCIERGE_SUPPORT = `${ root }/concierge-support`;
 export const CONNECT = `${ root }/connect`;
 export const CONTACT = `${ root }/contact`;
@@ -56,7 +55,7 @@ export const FOLLOWERS = `${ root }/followers`;
 export const FORMS = `${ root }/forms`;
 export const GETTING_MORE_VIEWS_AND_TRAFFIC = `${ root }/getting-more-views-and-traffic`;
 export const GOOGLE_ANALYTICS = `${ root }/google-analytics`;
-export const GOOGLE_APPS_LEARNING_CENTER = 'https://gsuite.google.com/learning-center/';
+export const GSUITE_LEARNING_CENTER = 'https://gsuite.google.com/learning-center/';
 export const GOOGLE_PLUS_EMBEDS = `${ root }/google-plus-embeds`;
 export const GRAVATAR_HOVERCARDS = `${ root }/gravatar-hovercards`;
 export const GUIDED_TRANSFER = `${ root }/guided-transfer`;

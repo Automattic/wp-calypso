@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -21,18 +22,18 @@ class GSuiteCancellationSurvey extends Component {
 		const {
 			disabled,
 			onSurveyAnswerChange,
+			purchase: { productSlug },
 			surveyAnswerId,
 			surveyAnswerText,
 			translate,
 		} = this.props;
+
 		return (
 			<MultipleChoiceQuestion
 				answers={ [
 					{
 						id: 'too-expensive',
 						answerText: translate( "It's too expensive." ),
-						textInput: true,
-						textInputPrompt: translate( 'How can we improve G Suite?' ),
 					},
 					{
 						id: 'do-not-need-it',
@@ -57,7 +58,12 @@ class GSuiteCancellationSurvey extends Component {
 						doNotShuffle: true,
 					},
 				] }
-				question={ translate( 'Please tell us why you are cancelling G Suite:' ) }
+				question={ translate( 'Please tell us why you are cancelling %(googleMailService)s:', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily( productSlug ),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+				} ) }
 				onAnswerChange={ onSurveyAnswerChange }
 				disabled={ disabled }
 				selectedAnswerId={ surveyAnswerId }
@@ -70,6 +76,7 @@ class GSuiteCancellationSurvey extends Component {
 GSuiteCancellationSurvey.propTypes = {
 	disabled: PropTypes.bool.isRequired,
 	onSurveyAnswerChange: PropTypes.func.isRequired,
+	purchase: PropTypes.object.isRequired,
 	translate: PropTypes.func.isRequired,
 	surveyAnswerId: PropTypes.string,
 	surveyAnswerText: PropTypes.string,
