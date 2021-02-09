@@ -186,6 +186,13 @@ $wp-org-admin-bar-mobile: 46px;
 	}
 }
 
+.page-template-modal__template-list-container {
+	position: fixed;
+	top: 111px + $wp-org-admin-bar-mobile;
+	left: calc( 20% + #{$preview-right-margin * 2} );
+	right: $preview-right-margin;
+}
+
 .page-template-modal__form-title {
 	font-weight: bold;
 	margin-bottom: 1em;
