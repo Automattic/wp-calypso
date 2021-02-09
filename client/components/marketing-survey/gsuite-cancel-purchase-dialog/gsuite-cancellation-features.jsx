@@ -13,7 +13,6 @@ import CardHeading from 'calypso/components/card-heading';
 import GSuiteFeatures from 'calypso/components/gsuite/gsuite-features';
 import GSuiteLearnMore from 'calypso/components/gsuite/gsuite-learn-more';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { purchaseType } from 'calypso/lib/purchases';
 
 class GSuiteCancellationFeatures extends Component {
 	componentDidMount() {
@@ -26,8 +25,7 @@ class GSuiteCancellationFeatures extends Component {
 
 	render() {
 		const { purchase, translate } = this.props;
-		const gsuiteDomain = purchaseType( purchase );
-		const { productSlug } = purchase;
+		const { meta: gsuiteDomain, productSlug } = purchase;
 		return (
 			<div className="gsuite-cancel-purchase-dialog__features">
 				<CardHeading tagName="h3" size={ 24 }>
