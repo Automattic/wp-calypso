@@ -43,9 +43,9 @@ import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'calypso/lib/abtest';
 import user from 'calypso/lib/user';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSiteId from 'calypso/state/selectors/get-site-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 
 /**
  * Constants
@@ -309,16 +309,36 @@ export default {
 		next();
 	},
 	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
-		const state = signupStore.getState();
-		const selectedSiteId = getSelectedSiteId( state );
-		const signupDependencies = getSignupDependencyStore( state );
+		const { getState, dispatch } = signupStore;
+		const signupDependencies = getSignupDependencyStore( getState() );
 
-		if ( ! selectedSiteId && ( signupDependencies?.siteSlug || query?.siteSlug ) ) {
-			const siteId = getSiteId( state, signupDependencies?.siteSlug || query?.siteSlug );
-			signupStore.dispatch( setSelectedSiteId( siteId ) );
+		const siteFragment = signupDependencies?.siteSlug || query?.siteSlug;
+		const siteId = getSiteId( getState(), siteFragment );
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
+			next();
+		} else {
+			// Fetch the site by siteFragment and then try to select again
+			dispatch( requestSite( siteFragment ) ).then( () => {
+				let freshSiteId = getSiteId( getState(), siteFragment );
+
+				if ( ! freshSiteId ) {
+					const wpcomStagingFragment = siteFragment.replace(
+						/\b.wordpress.com/,
+						'.wpcomstaging.com'
+					);
+					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+				}
+
+				if ( freshSiteId ) {
+					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+					// to wp-admin. In that case, don't continue handling the route.
+					dispatch( setSelectedSiteId( freshSiteId ) );
+					next();
+				}
+			} );
+			next();
 		}
-
-		next();
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
 		const state = signupStore.getState();

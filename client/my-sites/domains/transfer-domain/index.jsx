@@ -17,6 +17,7 @@ import {
 	domainTransfer,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
+import { addItem, addItems } from 'calypso/lib/cart/actions';
 import Notice from 'calypso/components/notice';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
@@ -28,8 +29,6 @@ import {
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import { withShoppingCart } from '@automattic/shopping-cart';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 export class TransferDomain extends Component {
 	static propTypes = {
@@ -70,19 +69,14 @@ export class TransferDomain extends Component {
 	addDomainToCart = ( suggestion ) => {
 		const { selectedSiteSlug } = this.props;
 
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes(
-					domainRegistration( {
-						productSlug: suggestion.product_slug,
-						domain: suggestion.domain_name,
-					} ),
-					this.props.productsList
-				),
-			] )
-			.then( () => {
-				page( '/checkout/' + selectedSiteSlug );
-			} );
+		addItem(
+			domainRegistration( {
+				productSlug: suggestion.product_slug,
+				domain: suggestion.domain_name,
+			} )
+		);
+
+		page( '/checkout/' + selectedSiteSlug );
 	};
 
 	handleRegisterDomain = ( suggestion ) => {
@@ -115,11 +109,9 @@ export class TransferDomain extends Component {
 			transfer = updatePrivacyForDomain( transfer, true );
 		}
 
-		this.props.shoppingCartManager
-			.addProductsToCart( [ fillInSingleCartItemAttributes( transfer, this.props.productsList ) ] )
-			.then( () => {
-				page( '/checkout/' + selectedSiteSlug );
-			} );
+		addItems( [ transfer ] );
+
+		page( '/checkout/' + selectedSiteSlug );
 	};
 
 	UNSAFE_componentWillMount() {
@@ -199,4 +191,4 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
-} ) )( withShoppingCart( TransferDomain ) );
+} ) )( TransferDomain );
