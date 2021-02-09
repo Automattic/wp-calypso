@@ -333,13 +333,13 @@ export default class PageTemplateModal extends Component {
 
 		const currentGroup =
 			'blank' !== this.props._starter_page_template
-				? this.renderTemplateGroup( 'current', __( 'Current', 'full-site-editing' ) )
+				? this.renderTemplateGroup( 'current', __( 'Current', __i18n_text_domain__ ) )
 				: null;
 
-		const blankGroup = this.renderTemplateGroup( 'blank', __( 'Blank', 'full-site-editing' ) );
+		const blankGroup = this.renderTemplateGroup( 'blank', __( 'Blank', __i18n_text_domain__ ) );
 
 		const homePageGroup = this.props.isFrontPage
-			? this.renderTemplateGroup( 'home-page', __( 'Home Page', 'full-site-editing' ) )
+			? this.renderTemplateGroup( 'home-page', __( 'Home Page', __i18n_text_domain__ ) )
 			: null;
 
 		const renderedGroups = [];
@@ -408,7 +408,7 @@ export default class PageTemplateModal extends Component {
 				<legend className="page-template-modal__form-title">{ groupTitle }</legend>
 
 				<TemplateSelectorControl
-					label={ __( 'Layout', 'full-site-editing' ) }
+					label={ __( 'Layout', __i18n_text_domain__ ) }
 					legendLabel={ groupTitle }
 					templates={ filteredTemplatesList }
 					blocksByTemplates={ blocksByTemplateSlug }
@@ -445,7 +445,7 @@ export default class PageTemplateModal extends Component {
 
 		return (
 			<Modal
-				title={ __( 'Select Page Layout', 'full-site-editing' ) }
+				title={ __( 'Select Page Layout', __i18n_text_domain__ ) }
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
 				shouldCloseOnClickOutside={ false }
@@ -457,14 +457,14 @@ export default class PageTemplateModal extends Component {
 					className="page-template-modal__close-button components-icon-button"
 					onClick={ this.closeModal }
 					icon="arrow-left-alt2"
-					label={ __( 'Go back', 'full-site-editing' ) }
+					label={ __( 'Go back', __i18n_text_domain__ ) }
 				/>
 
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
 						<div className="page-template-modal__loading">
 							<Spinner />
-							{ __( 'Adding layout…', 'full-site-editing' ) }
+							{ __( 'Adding layout…', __i18n_text_domain__ ) }
 						</div>
 					) : (
 						<>
@@ -493,7 +493,7 @@ export default class PageTemplateModal extends Component {
 					>
 						{ sprintf(
 							/* translators: %s is name of a page layout. Eg: Dalston or Blank. */
-							__( 'Use %s layout', 'full-site-editing' ),
+							__( 'Use %s layout', __i18n_text_domain__ ),
 							this.getTitleByTemplateSlug( previewedTemplate )
 						) }
 					</Button>

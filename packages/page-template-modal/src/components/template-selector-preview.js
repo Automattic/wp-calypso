@@ -16,7 +16,7 @@ const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
 			{ noBlocks && (
 				<div className="editor-styles-wrapper">
 					<div className="template-selector-preview__empty-state">
-						{ __( 'Select a layout to preview.', 'full-site-editing' ) }
+						{ __( 'Select a layout to preview.', __i18n_text_domain__ ) }
 					</div>
 				</div>
 			) }
