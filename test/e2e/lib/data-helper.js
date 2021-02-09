@@ -28,7 +28,7 @@ export function getEmailAddress( prefix, inboxId, useEmailService = false ) {
 		const emailDomain = config.has( 'emailDomain' ) ? config.get( 'emailDomain' ) : '';
 		email = `${ emailUsername }+${ prefix }@${ emailDomain }`;
 	}
-	return email
+	return email;
 }
 
 export function getExpectedFreeAddresses( searchTerm ) {
