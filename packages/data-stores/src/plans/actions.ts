@@ -3,24 +3,27 @@
  */
 import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
 
-export const setFeatures = ( features: Record< string, PlanFeature > ) => {
+export const setFeatures = ( features: Record< string, PlanFeature >, locale: string ) => {
 	return {
 		type: 'SET_FEATURES' as const,
 		features,
+		locale,
 	};
 };
 
-export const setFeaturesByType = ( featuresByType: Array< FeaturesByType > ) => {
+export const setFeaturesByType = ( featuresByType: Array< FeaturesByType >, locale: string ) => {
 	return {
 		type: 'SET_FEATURES_BY_TYPE' as const,
 		featuresByType,
+		locale,
 	};
 };
 
-export const setPlans = ( plans: Plan[] ) => {
+export const setPlans = ( plans: Plan[], locale: string ) => {
 	return {
 		type: 'SET_PLANS' as const,
 		plans,
+		locale,
 	};
 };
 
