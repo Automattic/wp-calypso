@@ -7,13 +7,13 @@ import { camelCase, kebabCase, debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import {
 	handleRenewNowClick,
 	isRenewable,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
 import wpcomFactory from 'calypso/lib/wp';
+import { infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const wpcom = wpcomFactory.undocumented();
@@ -28,6 +28,7 @@ export async function saveOrUpdateCreditCard( {
 	formFieldValues,
 	stripeConfiguration,
 	parseTokenFromResponse,
+	reduxDispatch,
 } ) {
 	const token = await getTokenForSavingCard( {
 		formFieldValues,
@@ -42,6 +43,7 @@ export async function saveOrUpdateCreditCard( {
 			translate,
 			saveStoredCard,
 			stripeConfiguration,
+			reduxDispatch,
 		} );
 	}
 
@@ -53,6 +55,7 @@ export async function saveOrUpdateCreditCard( {
 		token,
 		translate,
 		stripeConfiguration,
+		reduxDispatch,
 	} );
 }
 
@@ -71,15 +74,23 @@ export async function getTokenForSavingCard( {
 	return token;
 }
 
-async function saveCreditCard( { token, translate, saveStoredCard, stripeConfiguration } ) {
+async function saveCreditCard( {
+	token,
+	translate,
+	saveStoredCard,
+	stripeConfiguration,
+	reduxDispatch,
+} ) {
 	const additionalData = stripeConfiguration
 		? { payment_partner: stripeConfiguration.processor_id }
 		: {};
 	await saveStoredCard( { token, additionalData } );
 	recordTracksEvent( 'calypso_purchases_add_new_payment_method' );
-	notices.success( translate( 'Card added successfully' ), {
-		persistent: true,
-	} );
+	reduxDispatch(
+		successNotice( translate( 'Card added successfully' ), {
+			isPersistent: true,
+		} )
+	);
 }
 
 export async function updateCreditCard( {
@@ -90,6 +101,7 @@ export async function updateCreditCard( {
 	token,
 	translate,
 	stripeConfiguration,
+	reduxDispatch,
 } ) {
 	const cardDetails = kebabCaseFormFields( formFieldValues );
 	const updatedCreditCardApiParams = getParamsForApi(
@@ -107,14 +119,14 @@ export async function updateCreditCard( {
 	recordTracksEvent( 'calypso_purchases_save_new_payment_method' );
 
 	let noticeMessage = response.success;
-	let noticeOptions = { persistent: true };
+	let noticeOptions = { isPersistent: true };
 
 	if ( purchaseIsRenewable && shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
 		noticeMessage = translate( 'Your credit card details were successfully updated.' );
 		noticeOptions = {
-			persistent: true,
+			isPersistent: true,
 		};
-		notices.success( noticeMessage, noticeOptions );
+		reduxDispatch( successNotice( noticeMessage, noticeOptions ) );
 		return;
 	}
 
@@ -128,13 +140,13 @@ export async function updateCreditCard( {
 				handleRenewNowClick( purchase, siteSlug );
 				closeFunction();
 			},
-			persistent: true,
+			isPersistent: true,
 		};
-		notices.info( noticeMessage, noticeOptions );
+		reduxDispatch( infoNotice( noticeMessage, noticeOptions ) );
 		return;
 	}
 
-	notices.success( noticeMessage, noticeOptions );
+	reduxDispatch( successNotice( noticeMessage, noticeOptions ) );
 }
 
 export function getParamsForApi( cardDetails, cardToken, stripeConfiguration, extraParams = {} ) {
