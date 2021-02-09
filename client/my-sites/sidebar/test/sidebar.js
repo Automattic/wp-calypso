@@ -259,6 +259,7 @@ describe( 'MySitesSidebar', () => {
 					},
 				},
 				isSiteWpcomStore: true,
+				woocommerceUrl: 'http://test.com/wp-admin/admin.php?page=wc-admin&from-calypso',
 			} );
 			const WooCommerce = () => Sidebar.woocommerce();
 

@@ -56,6 +56,7 @@ import {
 	getSiteOption,
 	canCurrentUserUseCalypsoStore,
 	canCurrentUserUseWooCommerceCoreStore,
+	getSiteWoocommerceUrl,
 } from 'calypso/state/sites/selectors';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
@@ -765,7 +766,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	woocommerce() {
-		const { site, canUserUseWooCommerceCoreStore, siteSuffix, isSiteWpcomStore } = this.props;
+		const {
+			site,
+			canUserUseWooCommerceCoreStore,
+			siteSuffix,
+			isSiteWpcomStore,
+			woocommerceUrl,
+		} = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -785,7 +792,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let storeLink = site.options.admin_url + 'admin.php?page=wc-admin&from-calypso';
+		let storeLink = woocommerceUrl;
 		if ( ! isSiteWpcomStore ) {
 			// Navigate to Store UI for installation.
 			storeLink = '/store' + siteSuffix + '?redirect_after_install';
@@ -1216,6 +1223,7 @@ function mapStateToProps( state ) {
 		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		onboardingUrl: getOnboardingUrl( state ),
 		isSiteWpcomStore: getSiteOption( state, siteId, 'is_wpcom_store' ), // 'is_automated_transfer' && 'woocommerce_is_active'
+		woocommerceUrl: getSiteWoocommerceUrl( state, siteId ),
 	};
 }
 
