@@ -10,7 +10,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -50,7 +50,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	}
 
 	return (
-		<>
+		<Fragment>
 			<Sidebar>
 				<li>
 					<CurrentSite forceAllSitesView={ isAllDomainsView } />
@@ -82,7 +82,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 				<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
 			</Sidebar>
 			<AsyncLoad require="calypso/blocks/nav-unification-modal" placeholder={ null } />
-		</>
+		</Fragment>
 	);
 };
 
