@@ -18,6 +18,7 @@ import warn from '@wordpress/warning';
  */
 import AsyncLoad from 'calypso/components/async-load';
 import PlanFeatures from 'calypso/my-sites/plan-features';
+import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import {
 	JETPACK_PLANS,
 	PLAN_JETPACK_PERSONAL,
@@ -128,6 +129,75 @@ export class PlansFeaturesMain extends Component {
 		) {
 			return true;
 		}
+	}
+
+	showFeatureComparison() {
+		const {
+			basePlansPath,
+			customerType,
+			disableBloggerPlanWithNonBlogDomain,
+			displayJetpackPlans,
+			domainName,
+			isInSignup,
+			isJetpack,
+			isLandingPage,
+			isLaunchPage,
+			onUpgradeClick,
+			selectedFeature,
+			selectedPlan,
+			withDiscount,
+			discountEndDate,
+			redirectTo,
+			siteId,
+			plansWithScroll,
+			isReskinned,
+			isInVerticalScrollingPlansExperiment,
+		} = this.props;
+
+		const plans = this.getPlansForPlanFeatures();
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+
+		return (
+			<div
+				className={ classNames(
+					'plans-features-main__group',
+					'is-' + ( displayJetpackPlans ? 'jetpack' : 'wpcom' ),
+					{
+						[ `is-customer-${ customerType }` ]: ! displayJetpackPlans,
+						'is-scrollable': plansWithScroll,
+					}
+				) }
+				data-e2e-plans={ displayJetpackPlans ? 'jetpack' : 'wpcom' }
+			>
+				<PlanFeaturesComparison
+					basePlansPath={ basePlansPath }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					displayJetpackPlans={ displayJetpackPlans }
+					domainName={ domainName }
+					nonDotBlogDomains={ this.filterDotBlogDomains() }
+					isInSignup={ isInSignup }
+					isLandingPage={ isLandingPage }
+					isLaunchPage={ isLaunchPage }
+					onUpgradeClick={ onUpgradeClick }
+					plans={ plans }
+					redirectTo={ redirectTo }
+					visiblePlans={ visiblePlans }
+					selectedFeature={ selectedFeature }
+					selectedPlan={ selectedPlan }
+					withDiscount={ withDiscount }
+					discountEndDate={ discountEndDate }
+					withScroll={ plansWithScroll }
+					popularPlanSpec={ getPopularPlanSpec( {
+						customerType,
+						isJetpack,
+						availablePlans: visiblePlans,
+					} ) }
+					siteId={ siteId }
+					isReskinned={ isReskinned }
+					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+				/>
+			</div>
+		);
 	}
 
 	getPlanFeatures() {
@@ -432,7 +502,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { isInSignup, siteId, siteSlug, customHeader } = this.props;
+		const { isInSignup, siteId, siteSlug, customHeader, shouldShowPlansRedesign } = this.props;
 		const basePlansPath = isInSignup ? window.location?.pathname : `/plans/${ siteSlug }`;
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -451,7 +521,7 @@ export class PlansFeaturesMain extends Component {
 					plans={ visiblePlans }
 					basePlansPath={ basePlansPath }
 				/>
-				{ this.getPlanFeatures() }
+				{ shouldShowPlansRedesign ? this.showFeatureComparison() : this.getPlanFeatures() }
 				{ this.renderProductsSelector() }
 				{ this.mayRenderFAQ() }
 			</div>

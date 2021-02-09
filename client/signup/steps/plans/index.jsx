@@ -165,6 +165,7 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
+			shouldShowPlansRedesign,
 		} = this.props;
 
 		return (
@@ -196,6 +197,7 @@ export class PlansStep extends Component {
 						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 						isAllPaidPlansShown={ true }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+						shouldShowPlansRedesign={ shouldShowPlansRedesign }
 					/>
 				) }
 			</div>
