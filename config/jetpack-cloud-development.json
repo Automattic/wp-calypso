@@ -45,6 +45,7 @@
 		"jetpack/on-demand-scan": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/prefill-signup-email": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
@@ -71,9 +72,7 @@
 		"scan": true,
 		"jetpack-connect": true
 	},
-	"site_filter": [
-		"jetpack"
-	],
+	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",

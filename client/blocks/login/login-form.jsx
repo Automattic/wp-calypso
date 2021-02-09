@@ -52,6 +52,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 
+import { addQueryArgs } from 'calypso/lib/route';
+
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
@@ -425,8 +427,12 @@ export class LoginForm extends Component {
 
 		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
 
-		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
+
+		let signupUrl = config( 'signup_url' );
+		if ( config.isEnabled( 'jetpack/prefill-signup-email' ) ) {
+			signupUrl = addQueryArgs( { email: this.state.usernameOrEmail }, signupUrl );
+		}
 
 		// copied from login-links.jsx
 		if (

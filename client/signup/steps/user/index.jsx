@@ -444,10 +444,15 @@ export class UserStep extends Component {
 		const isReskinned =
 			'onboarding' === flowName && 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
+		const email = config.isEnabled( 'jetpack/prefill-signup-email' )
+			? this.props.initialContext?.query?.email
+			: undefined;
+
 		return (
 			<>
 				<SignupForm
 					{ ...omit( this.props, [ 'translate' ] ) }
+					email={ email }
 					redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
 					disabled={ this.userCreationStarted() }
 					submitting={ this.userCreationStarted() }
