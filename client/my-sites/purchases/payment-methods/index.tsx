@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -18,12 +18,9 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
 import HeaderCake from 'calypso/components/header-cake';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import titles from 'calypso/me/purchases/titles';
-import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import config from '@automattic/calypso-config';
@@ -31,6 +28,10 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
+import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
+import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
+import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
+import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
 
 function useLogPaymentMethodsError( message: string ) {
 	const reduxDispatch = useDispatch();
@@ -84,39 +85,36 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 	);
 }
 
-export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.Element {
+function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ): JSX.Element {
 	const translate = useTranslate();
 	const goToBillingHistory = () => page( getPaymentMethodsUrlFor( siteSlug ) );
-	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
-	const reduxDispatch = useDispatch();
-	const saveStoredCard = ( ...args: unknown[] ) => reduxDispatch( addStoredCard( ...args ) );
-	const locale = useSelector( getCurrentUserLocale );
 	const logPaymentMethodsError = useLogPaymentMethodsError(
 		'site level add new payment method load error'
 	);
 
+	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+	const stripeMethod = useCreateCreditCard( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		shouldUseEbanx: false,
+		shouldShowTaxFields: true,
+		activePayButtonText: translate( 'Save card' ),
+	} );
+	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( doesValueExist ), [
+		stripeMethod,
+	] );
+
+	if ( paymentMethodList.length === 0 ) {
+		return <PaymentMethodLoader title={ String( titles.addPaymentMethod ) } />;
+	}
+
 	return (
 		<Main className="purchases is-wide-layout">
 			<MySitesSidebarNavigation />
-			<PageViewTracker
-				path={
-					config.isEnabled( 'purchases/new-payment-methods' )
-						? '/purchases/add-payment-method'
-						: '/purchases/add-credit-card'
-				}
-				title={
-					config.isEnabled( 'purchases/new-payment-methods' )
-						? titles.addPaymentMethod
-						: titles.addCreditCard
-				}
-			/>
-			<DocumentHead
-				title={
-					config.isEnabled( 'purchases/new-payment-methods' )
-						? titles.addPaymentMethod
-						: titles.addCreditCard
-				}
-			/>
+			<PageViewTracker path={ '/purchases/add-payment-method' } title={ titles.addPaymentMethod } />
+			<DocumentHead title={ titles.addPaymentMethod } />
 			<FormattedHeader
 				brandFont
 				className="payment-methods__page-heading"
@@ -128,25 +126,13 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPaymentMethodsError }
 			>
-				<HeaderCake onClick={ goToBillingHistory }>
-					{ config.isEnabled( 'purchases/new-payment-methods' )
-						? titles.addPaymentMethod
-						: titles.addCreditCard }
-				</HeaderCake>
+				<HeaderCake onClick={ goToBillingHistory }>{ titles.addPaymentMethod }</HeaderCake>
 				<Layout>
 					<Column type="main">
-						<StripeHookProvider
-							locale={ locale }
-							configurationArgs={ { needs_intent: true } }
-							fetchStripeConfiguration={ getStripeConfiguration }
-						>
-							<PaymentMethodForm
-								recordFormSubmitEvent={ recordFormSubmitEvent }
-								saveStoredCard={ saveStoredCard }
-								successCallback={ goToBillingHistory }
-								showUsedForExistingPurchasesInfo={ true }
-							/>
-						</StripeHookProvider>
+						<PaymentMethodSelector
+							paymentMethods={ paymentMethodList }
+							successCallback={ goToBillingHistory }
+						/>
 					</Column>
 					<Column type="sidebar">
 						<PaymentMethodSidebar />
@@ -157,3 +143,18 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 	);
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
+
+export function SiteLevelAddNewPaymentMethod(
+	props: React.ComponentPropsWithoutRef< typeof SiteLevelAddNewPaymentMethodForm >
+): JSX.Element {
+	const locale = useSelector( getCurrentUserLocale );
+	return (
+		<StripeHookProvider
+			locale={ locale }
+			configurationArgs={ { needs_intent: true } }
+			fetchStripeConfiguration={ getStripeConfiguration }
+		>
+			<SiteLevelAddNewPaymentMethodForm { ...props } />
+		</StripeHookProvider>
+	);
+}
