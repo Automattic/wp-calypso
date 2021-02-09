@@ -751,13 +751,15 @@ export class MySitesSidebar extends Component {
 				forceInternalLink
 				className="sidebar__store"
 			>
-				<InfoPopover
-					className="sidebar__store-tooltip"
-					position="bottom right"
-					showOnHover={ true }
-				>
-					{ infoCopy }
-				</InfoPopover>
+				{ isBusiness( site.plan ) && (
+					<InfoPopover
+						className="sidebar__store-tooltip"
+						position="bottom right"
+						showOnHover={ true }
+					>
+						{ infoCopy }
+					</InfoPopover>
+				) }
 			</SidebarItem>
 		);
 	}
