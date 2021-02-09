@@ -19,6 +19,7 @@ import {
 } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 import { compose, withSafeTimeout } from '@wordpress/compose';
+import type { BlockEditorProvider } from '@wordpress/block-editor';
 
 import { __ } from '@wordpress/i18n';
 
@@ -26,6 +27,13 @@ import CustomBlockPreview from './block-preview';
 
 // Debounce time applied to the on resize window event.
 const DEBOUNCE_TIMEOUT = 300;
+
+//
+declare global {
+	interface Window {
+		jQuery?: any;
+	}
+}
 
 /**
  * Copies the styles from the provided src document
@@ -37,7 +45,7 @@ const DEBOUNCE_TIMEOUT = 300;
  * `contentDocument` where the `link` and `style` Nodes from the `head` and
  * `body` will be copied
  */
-const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
+const copyStylesToIframe = ( srcDocument: Document, targetiFrameDocument?: Document | null ) => {
 	const styleNodes = [ 'link', 'style' ];
 
 	// See https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment
@@ -46,51 +54,73 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 		body: document.createDocumentFragment(), // eslint-disable-line no-undef
 	};
 
-	each( Object.keys( targetDOMFragment ), ( domReference ) => {
-		return each(
-			filter( srcDocument[ domReference ].children, ( { localName } ) =>
-				// Only return specific style-related Nodes
-				styleNodes.includes( localName )
-			),
-			( targetNode ) => {
-				// Clone the original node and append to the appropriate Fragement
-				const deep = true;
-				targetDOMFragment[ domReference ].appendChild( targetNode.cloneNode( deep ) );
-			}
-		);
-	} );
+	each(
+		Object.keys( targetDOMFragment ) as ( keyof typeof targetDOMFragment )[],
+		( domReference ) => {
+			return each(
+				filter( srcDocument[ domReference ].children, ( { localName } ) =>
+					// Only return specific style-related Nodes
+					styleNodes.includes( localName )
+				),
+				( targetNode ) => {
+					// Clone the original node and append to the appropriate Fragement
+					const deep = true;
+					targetDOMFragment[ domReference ].appendChild( targetNode.cloneNode( deep ) );
+				}
+			);
+		}
+	);
 
 	// Consolidate updates to iframe DOM
-	targetiFrameDocument.head.appendChild( targetDOMFragment.head );
-	targetiFrameDocument.body.appendChild( targetDOMFragment.body );
+	targetiFrameDocument?.head.appendChild( targetDOMFragment.head );
+	targetiFrameDocument?.body.appendChild( targetDOMFragment.body );
 };
 
-/**
- * Performs a blocks preview using an iFrame.
- *
- * @param {object} props component's props
- * @param {object} props.className CSS class to apply to component
- * @param {string} props.bodyClassName CSS class to apply to the iframe's `<body>` tag
- * @param {number} props.viewportWidth pixel width of the viewable size of the preview
- * @param {Array} props.blocks array of Gutenberg Block objects
- * @param {object} props.settings block Editor settings object
- * @param {Function} props.setTimeout safe version of window.setTimeout via `withSafeTimeout`
- * @param {string} props.title Template Title - see #39831 for details.
- */
-const BlockFramePreview = ( {
+interface BlockFramePreviewProps {
+	/**
+	 * CSS class to apply to the component
+	 */
+	className?: string;
+	/**
+	 * CSS class to apply to the iframe's `<body>` tag
+	 */
+	bodyClassName?: string;
+	/**
+	 * pixel width of the viewable size of the preview
+	 */
+	viewportWidth: number;
+	/**
+	 * array of Gutenberg Block objects
+	 */
+	blocks: BlockEditorProvider.Props[ 'value' ];
+	/**
+	 * block Editor settings object
+	 */
+	settings: BlockEditorProvider.Props[ 'settings' ];
+	/**
+	 * safe version of window.setTimeout via `withSafeTimeout`
+	 */
+	setTimeout?: typeof window.setTimeout;
+	/**
+	 * Template Title - see #39831 for details.
+	 */
+	title: string;
+}
+
+const BlockFramePreview: React.FC< BlockFramePreviewProps > = ( {
 	className = 'block-iframe-preview',
 	bodyClassName = 'block-iframe-preview-body',
 	viewportWidth,
 	blocks,
 	settings,
-	setTimeout = noop,
+	setTimeout = noop as any,
 	title,
 } ) => {
-	const frameContainerRef = useRef();
-	const iframeRef = useRef();
+	const frameContainerRef = useRef< HTMLDivElement >( null );
+	const iframeRef = useRef< HTMLIFrameElement >( null );
 
 	// Set the initial scale factor.
-	const [ style, setStyle ] = useState( {
+	const [ style, setStyle ] = useState< React.CSSProperties >( {
 		transform: `scale( 1 )`,
 	} );
 
@@ -113,7 +143,7 @@ const BlockFramePreview = ( {
 		}
 
 		// Scaling iFrame.
-		const width = viewportWidth || frameContainerRef.current.offsetWidth;
+		const width = viewportWidth || frameContainerRef.current?.offsetWidth;
 		const scale = parentNode.offsetWidth / viewportWidth;
 		const height = parentNode.offsetHeight / scale;
 
@@ -154,8 +184,8 @@ const BlockFramePreview = ( {
 	// Populate iFrame styles.
 	useEffect( () => {
 		setTimeout( () => {
-			copyStylesToIframe( window.document, iframeRef.current.contentDocument );
-			iframeRef.current.contentDocument.body.classList.add(
+			copyStylesToIframe( window.document, iframeRef.current?.contentDocument );
+			iframeRef.current?.contentDocument?.body.classList.add(
 				bodyClassName,
 				'editor-styles-wrapper',
 				'block-editor__container'
@@ -168,14 +198,18 @@ const BlockFramePreview = ( {
 			 *
 			 * See: https://github.com/WordPress/gutenberg/pull/20609/
 			 */
-			iframeRef.current.contentDocument.head.innerHTML +=
-				'<style>.editor-post-title .editor-post-title__input { height: auto !important; }</style>';
+			if ( iframeRef.current?.contentDocument?.head.innerHTML ) {
+				iframeRef.current.contentDocument.head.innerHTML +=
+					'<style>.editor-post-title .editor-post-title__input { height: auto !important; }</style>';
+			}
 
 			// Prevent links and buttons from being clicked. This is applied within
 			// the iframe, because if we targeted the iframe itself it would prevent
 			// scrolling the iframe in Firefox.
-			iframeRef.current.contentDocument.head.innerHTML +=
-				'<style>a, button, .wp-block-button, .wp-block-button__link { pointer-events: none; cursor: default; }</style>';
+			if ( iframeRef.current?.contentDocument?.head.innerHTML ) {
+				iframeRef.current.contentDocument.head.innerHTML +=
+					'<style>a, button, .wp-block-button, .wp-block-button__link { pointer-events: none; cursor: default; }</style>';
+			}
 
 			rescale();
 		}, 0 );

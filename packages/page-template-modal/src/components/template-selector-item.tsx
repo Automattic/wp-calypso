@@ -4,7 +4,19 @@
 import { isNil } from 'lodash';
 import classnames from 'classnames';
 
-const TemplateSelectorItem = ( props ) => {
+interface TemplateSelectorItemProps {
+	id?: unknown;
+	value?: string;
+	onSelect: ( newValue: string ) => void;
+	title?: string;
+	description: string;
+	theme: string;
+	locale: string;
+	templatePostID?: string;
+	isSelected: unknown;
+}
+
+const TemplateSelectorItem: React.FC< TemplateSelectorItemProps > = ( props ) => {
 	const {
 		id,
 		value,
@@ -13,7 +25,7 @@ const TemplateSelectorItem = ( props ) => {
 		description,
 		theme,
 		locale,
-		templatePostID = null,
+		templatePostID = 'null',
 		isSelected,
 	} = props;
 
@@ -33,11 +45,11 @@ const TemplateSelectorItem = ( props ) => {
 
 	const staticPreviewImg =
 		'blank' === value
-			? null
+			? undefined
 			: mshotsUrl + encodeURIComponent( previewUrl ) + '?vpw=1024&vph=1024&w=500&h=500';
 
-	const refreshSourceImg = ( e ) => {
-		const img = e.target;
+	const refreshSourceImg: React.ReactEventHandler< HTMLImageElement > = ( e ) => {
+		const img = e.currentTarget;
 
 		if ( -1 !== img.src.indexOf( 'reload=1' ) ) {
 			return;

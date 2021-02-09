@@ -7,8 +7,19 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import BlockIframePreview from './block-iframe-preview';
+import type { BlockEditorProvider } from '@wordpress/block-editor';
 
-const TemplateSelectorPreview = ( { blocks = [], viewportWidth, title } ) => {
+interface TemplateSelectorPreviewProps {
+	blocks: BlockEditorProvider.Props[ 'value' ];
+	viewportWidth: number;
+	title: string;
+}
+
+const TemplateSelectorPreview: React.FC< TemplateSelectorPreviewProps > = ( {
+	blocks = [],
+	viewportWidth,
+	title,
+} ) => {
 	const noBlocks = ! blocks.length;
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */

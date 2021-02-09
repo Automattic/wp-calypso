@@ -17,14 +17,27 @@ import { memo } from '@wordpress/element';
 import TemplateSelectorItem from './template-selector-item';
 import replacePlaceholders from '../utils/replace-placeholders';
 
-export const TemplateSelectorControl = ( {
+interface TemplateSelectorControlProps {
+	label: React.ReactNode;
+	legendLabel: string;
+	className: string;
+	help: React.ReactNode;
+	instanceId: unknown;
+	templates?: unknown[];
+	theme?: string;
+	locale?: string;
+	onTemplateSelect?: () => void;
+	siteInformation?: Record< string, unknown >;
+	selectedTemplate: unknown;
+}
+
+export const TemplateSelectorControl: React.FC< TemplateSelectorControlProps > = ( {
 	label,
 	legendLabel,
 	className,
 	help,
 	instanceId,
 	templates = [],
-	blocksByTemplates = {},
 	theme = 'maywood',
 	locale = 'en',
 	onTemplateSelect = noop,
@@ -59,12 +72,10 @@ export const TemplateSelectorControl = ( {
 							value={ name }
 							title={ replacePlaceholders( title, siteInformation ) }
 							description={ description }
-							help={ help }
 							onSelect={ onTemplateSelect }
 							templatePostID={ ID }
 							theme={ theme }
 							locale={ locale }
-							blocks={ blocksByTemplates.hasOwnProperty( name ) ? blocksByTemplates[ name ] : [] }
 							isSelected={ name === selectedTemplate }
 						/>
 					</li>
