@@ -77,7 +77,7 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "business" ],
-			"is_premium": true,
+			"is_premium": false,
 			"features": []
 		},
 		{
