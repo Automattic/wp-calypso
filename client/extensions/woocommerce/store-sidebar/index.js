@@ -325,7 +325,6 @@ function mapStateToProps( state ) {
 	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
 	const hasProducts = getCountProducts( state ) > 0;
 	const isLoaded = areCountsLoaded( state );
-	const totalNewOrders = getCountNewOrders( state );
 	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
 	const pluginsLoaded = arePluginsLoaded( state, siteId );
@@ -334,6 +333,11 @@ function mapStateToProps( state ) {
 	const totalPendingReviews = isStoreRemoved ? 0 : getCountPendingReviews( state );
 	const shouldRedirectAfterInstall =
 		'' === get( getCurrentQueryArguments( state ), 'redirect_after_install' );
+
+	let totalNewOrders = 0;
+	if ( ! isStoreRemoved ) {
+		totalNewOrders = getCountNewOrders( state );
+	}
 
 	return {
 		allRequiredPluginsActive,
