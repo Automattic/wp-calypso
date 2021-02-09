@@ -37,57 +37,10 @@ $wp-org-sidebar-collapsed: 36px;
 $wp-org-admin-bar-full: 32px;
 $wp-org-admin-bar-mobile: 46px;
 
-// Modal Overlay
-.page-template-modal-screen-overlay {
-	animation: none;
-	background-color: transparent; // hide the overlay visually
-	z-index: 99; // Right below the wp-admin admin bar and sidebar.
-}
-
-// When not in fullscreen mode allow space for WP.org sidebar
-body:not( .is-fullscreen-mode ) {
-	.page-template-modal-screen-overlay {
-		@media screen and ( min-width: $breakpoint-tablet ) {
-			left: $wp-org-sidebar-collapsed;
-		}
-
-		@media screen and ( min-width: $breakpoint-desktop ) {
-			left: $wp-org-sidebar-full;
-		}
-	}
-	@media screen and ( min-width: $breakpoint-tablet ) {
-		&.folded .page-template-modal-screen-overlay {
-			left: $wp-org-sidebar-collapsed;
-		}
-		&:not( .folded ):not( .auto-fold ) .page-template-modal-screen-overlay {
-			left: $wp-org-sidebar-full;
-		}
-	}
-}
-
-// Allow space for admin bar if present and not in full screen mode
-body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
-	top: $wp-org-admin-bar-mobile;
-
-	@media screen and ( min-width: $breakpoint-tablet ) {
-		top: $wp-org-admin-bar-full;
-	}
-}
-
 // Full screen modal
 .page-template-modal {
-	width: 100%;
-	height: 100vh;
-	animation: none;
-	box-shadow: none; // cancel "modal" appearance
-	border: none; // cancel "modal" appearance
-	top: 0; // overlay the Block Editor toolbar
-	left: 0;
-	right: 0;
-	bottom: 0;
-	transform: none;
-	max-width: none;
-	max-height: none;
+	width: 90%;
+	height: 90vh;
 	background-color: $template-modal-background-color;
 }
 

@@ -440,7 +440,6 @@ export default class PageTemplateModal extends Component {
 			<Modal
 				title={ __( 'Select Page Layout', __i18n_text_domain__ ) }
 				className="page-template-modal"
-				overlayClassName="page-template-modal-screen-overlay"
 				shouldCloseOnClickOutside={ false }
 				// Using both variants here to be compatible with new Gutenberg and old (older than 6.6).
 				isDismissable={ false }
