@@ -59,6 +59,9 @@ const cleanButtonProps = ( {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore Clean incorrect usage of the component
 	href,
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore Clean incorrect usage of the component
+	target,
 	...buttonProps
 }: ButtonProps | AnchorProps ): ButtonProps => ( { ...buttonProps, type } as ButtonProps );
 
@@ -85,6 +88,10 @@ const Button: FunctionComponent< ButtonProps | AnchorProps > = ( props ) => {
 
 	const buttonProps = cleanButtonProps( props );
 	return <button { ...buttonProps } className={ classes } />;
+};
+
+Button.defaultProps = {
+	type: 'button',
 };
 
 export default Button;
