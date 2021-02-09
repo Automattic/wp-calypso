@@ -611,3 +611,29 @@ export async function waitTillTextPresent( driver, selector, text, waitOverride 
 		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be present and displayed with text '${ text }'`
 	);
 }
+
+/**
+ * Matches a selector's href attribute with a regex
+ *
+ * @param {object} driver - Browser context in which to search
+ * @param {object} selector - Element to search for
+ * @param {object} hrefRegex - Regex argument
+ * @returns {Promise} - Promise of a Boolean value
+ */
+export function elementContainsLinkTo( driver, selector, hrefRegex ) {
+	return driver.findElement( selector ).then(
+		function ( element ) {
+			return element.getAttribute( 'href' ).then(
+				function ( href ) {
+					return href && href.match( hrefRegex ) !== null;
+				},
+				function () {
+					return false;
+				}
+			);
+		},
+		function () {
+			return false;
+		}
+	);
+}

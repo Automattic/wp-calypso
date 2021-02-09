@@ -14,6 +14,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.sidebar' ) );
 		this.storeSelector = By.css( '.menu-link-text[data-e2e-sidebar="Store"]' );
+		this.woocommerceSelector = By.css( '.sidebar__woocommerce-menu-item > a.sidebar__menu-link' );
 	}
 	async _postInit() {
 		return await this.ensureSidebarMenuVisible();
@@ -125,12 +126,23 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return await this._scrollToAndClickMenuItem( 'side-menu-comments' );
 	}
 
-	async selectStoreOption() {
-		return await driverHelper.clickWhenClickable( this.driver, this.storeSelector );
+	async storeOptionRemoved() {
+		return await driverHelper.elementIsNotPresent( this.driver, this.storeSelector );
 	}
 
-	async storeOptionDisplayed() {
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, this.storeSelector );
+	async woocommerceOptionDisplayed() {
+		return await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			this.woocommerceSelector
+		);
+	}
+
+	async woocommerceOptionLinksToWoocommerce() {
+		return await driverHelper.elementContainsLinkTo(
+			this.driver,
+			this.woocommerceSelector,
+			/:\/\/.*\/wp-admin\/admin.php\?page=wc-admin/
+		);
 	}
 
 	async settingsOptionExists( click = false ) {
