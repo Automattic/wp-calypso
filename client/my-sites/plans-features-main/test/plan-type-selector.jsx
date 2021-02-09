@@ -20,8 +20,10 @@ describe( '<PlanTypeSelector />', () => {
 		withWPPlanTabs: true,
 	};
 
-	test( 'Should show CustomerTypeToggle when withWPPlanTabs is set to true', () => {
-		const comp = shallow( <PlanTypeSelector { ...myProps } customerType="personal" /> );
+	test( 'Should show CustomerTypeToggle when kind is set to `customer`', () => {
+		const comp = shallow(
+			<PlanTypeSelector { ...myProps } kind="customer" customerType="personal" />
+		);
 
 		expect( comp.find( 'CustomerTypeToggle' ).length ).toBe( 1 );
 
@@ -29,7 +31,7 @@ describe( '<PlanTypeSelector />', () => {
 		expect( comp.find( 'CustomerTypeToggle[customerType="personal"]' ).length ).toBe( 1 );
 	} );
 
-	test( 'Should show IntervalTypeToggle when displayJetpackPlans is set to true', () => {
+	test( 'Should show IntervalTypeToggle when kind is set to `interval`', () => {
 		const comp = shallow(
 			<PlanTypeSelector { ...myProps } displayJetpackPlans={ true } intervalType="monthly" />
 		);

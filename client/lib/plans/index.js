@@ -330,6 +330,10 @@ export function isWpComFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_WPCOM } );
 }
 
+export function isWpComMonthlyPlan( planSlug ) {
+	return planMatches( planSlug, { term: TERM_MONTHLY, group: GROUP_WPCOM } );
+}
+
 export function isJetpackBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
 }

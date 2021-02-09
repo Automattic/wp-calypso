@@ -22,9 +22,7 @@ import { isMonthly } from 'calypso/lib/plans/constants';
 import { getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 type Props = {
-	displayJetpackPlans: boolean;
-	withWPPlanTabs: boolean;
-	plansWithScroll: boolean;
+	kind: 'interval' | 'customer';
 	basePlansPath?: string | null;
 	intervalType: string;
 	customerType: string;
@@ -45,7 +43,6 @@ type GeneratePathFunction = ( props: Partial< Props >, args: PathArgs ) => strin
 
 export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 	const { intervalType = '' } = additionalArgs;
-	const plansUrl = props.basePlansPath || '/plans';
 	const defaultArgs = {
 		customerType: null,
 		discount: props.withDiscount,
@@ -59,7 +56,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 				...defaultArgs,
 				...additionalArgs,
 			},
-			document.location.search
+			''
 		);
 	}
 
@@ -68,7 +65,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 			...defaultArgs,
 			...omit( additionalArgs, 'intervalType' ),
 		},
-		plansLink( plansUrl, props.siteSlug, intervalType, true )
+		plansLink( props.basePlansPath || '/plans', props.siteSlug, intervalType, true )
 	);
 };
 
@@ -99,18 +96,23 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	);
 };
 
-type IntervalTypeProps = Pick< Props, 'intervalType' | 'plans' >;
+type IntervalTypeProps = Pick< Props, 'intervalType' | 'plans' | 'isInSignup' >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
-	const { intervalType } = props;
+	const { intervalType, isInSignup } = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
-	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle' );
-	const popupIsVisible = intervalType === 'monthly';
+	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
+		'is-signup': isInSignup,
+	} );
+	const popupIsVisible = intervalType === 'monthly' && isInSignup;
 	const maxDiscount = useMaxDiscount( props.plans );
 
 	return (
-		<IntervalTypeToggleWrapper showingMonthly={ intervalType === 'monthly' }>
+		<IntervalTypeToggleWrapper
+			showingMonthly={ intervalType === 'monthly' }
+			isInSignup={ isInSignup }
+		>
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
@@ -165,12 +167,12 @@ export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = 
 	);
 };
 
-const PlanTypeSelector: React.FunctionComponent< Props > = ( props ) => {
-	if ( props.displayJetpackPlans || props.isInSignup ) {
+const PlanTypeSelector: React.FunctionComponent< Props > = ( { kind, ...props } ) => {
+	if ( kind === 'interval' ) {
 		return <IntervalTypeToggle { ...props } />;
 	}
 
-	if ( props.withWPPlanTabs && ! props.hidePersonalPlan ) {
+	if ( kind === 'customer' ) {
 		return <CustomerTypeToggle { ...props } />;
 	}
 
@@ -208,51 +210,60 @@ function useMaxDiscount( plans: string[] ): number {
 
 export default PlanTypeSelector;
 
-const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean } >`
-	display: flex;
+const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSignup: boolean } >`
+	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
 	align-content: space-between;
 
-	> .segmented-control {
-		margin: 0 auto 0;
+	> .segmented-control.is-compact:not( .is-signup ) {
+		margin: 8px auto 16px;
+		max-width: 480px;
+
+		.segmented-control__link {
+			padding: 8px 12px;
+		}
+	}
+
+	> .segmented-control.is-signup {
+		margin: 0 auto;
 		border: solid 1px var( --color-neutral-10 );
 
 		@media screen and ( max-width: 960px ) {
 			margin-bottom: ${ ( { showingMonthly } ) => ( showingMonthly ? '65px' : 0 ) };
 		}
-	}
 
-	.segmented-control__item {
-		--color-primary: var( --color-neutral-100 );
-		--color-text-inverted: var( --color-neutral-0 );
-		--color-primary-light: var( --color-neutral-80 );
-		--color-primary-dark: var( --color-neutral-80 );
-		--item-padding: 3px;
+		.segmented-control__item {
+			--color-primary: var( --color-neutral-100 );
+			--color-text-inverted: var( --color-neutral-0 );
+			--color-primary-light: var( --color-neutral-80 );
+			--color-primary-dark: var( --color-neutral-80 );
+			--item-padding: 3px;
 
-		padding: var( --item-padding ) 0;
+			padding: var( --item-padding ) 0;
 
-		&:first-of-type {
-			padding-left: var( --item-padding );
+			&:first-of-type {
+				padding-left: var( --item-padding );
+			}
+
+			&:last-of-type {
+				padding-right: var( --item-padding );
+			}
+
+			&:last-of-type .segmented-control__link {
+				border-right: none;
+			}
 		}
 
-		&:last-of-type {
-			padding-right: var( --item-padding );
+		.segmented-control__link {
+			border: none;
+			padding-top: 6px;
+			padding-bottom: 6px;
+			color: var( --color-neutral-80 );
 		}
 
-		&:last-of-type .segmented-control__link {
-			border-right: none;
-		}
-	}
-
-	.segmented-control__link {
-		border: none;
-		padding-top: 6px;
-		padding-bottom: 6px;
-		color: var( --color-neutral-80 );
-	}
-
-	.segmented-control__item:not( .is-selected ) {
-		.segmented-control__link:hover {
-			background-color: var( --color-neutral-5 );
+		.segmented-control__item:not( .is-selected ) {
+			.segmented-control__link:hover {
+				background-color: var( --color-neutral-5 );
+			}
 		}
 	}
 `;
