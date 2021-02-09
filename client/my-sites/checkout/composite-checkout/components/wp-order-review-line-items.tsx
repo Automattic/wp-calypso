@@ -14,7 +14,12 @@ import {
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import type { RemoveProductFromCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import type {
+	RemoveProductFromCart,
+	ResponseCartProduct,
+	RemoveCouponFromCart,
+} from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -36,9 +41,14 @@ import {
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import { getSublabel, getLabel } from '../lib/translate-cart';
+import {
+	getSublabel,
+	getLabel,
+	getCouponLineItem,
+	getTaxLineItem,
+	getCreditsLineItem,
+} from '../lib/translate-cart';
 import { isPlan } from 'calypso/lib/products-values';
-import type { WPCOMCartItem } from '../types/checkout-cart';
 import type {
 	WPCOMProductSlug,
 	WPCOMProductVariant,
@@ -72,6 +82,7 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
 	total?: boolean;
 	tax?: boolean;
+	coupon?: boolean;
 	subtotal?: boolean;
 } >`
 	display: flex;
@@ -81,7 +92,8 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	color: ${ ( { theme, total } ) =>
 		total ? theme.colors.textColorDark : theme.colors.textColor };
 	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1.1em' ) };
-	padding: ${ ( { total, tax, subtotal } ) => ( total || subtotal || tax ? '10px 0' : '20px 0' ) };
+	padding: ${ ( { total, tax, subtotal, coupon } ) =>
+		total || subtotal || tax || coupon ? '10px 0' : '20px 0' };
 	border-bottom: ${ ( { theme, total } ) =>
 		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
@@ -152,11 +164,11 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 	}
 `;
 
-const DeleteButton = styled( Button )< { theme?: Theme } >`
+const DeleteButton = styled( Button )< { theme?: Theme; coupon?: boolean } >`
 	position: absolute;
 	padding: 10px;
 	right: -50px;
-	top: 7px;
+	top: ${ ( props ) => ( props.coupon ? '0px' : '7px' ) };
 
 	:hover rect {
 		fill: ${ ( props ) => props.theme.colors.error };
@@ -246,17 +258,40 @@ function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string 
 
 export function WPNonProductLineItem( {
 	lineItem,
+	coupon,
 	className = null,
 	isSummary,
+	hasDeleteButton,
+	removeProductFromCart,
+	createUserAndSiteBeforeTransaction,
 }: {
 	lineItem: LineItemType;
+	coupon?: boolean;
 	className?: string | null;
 	isSummary?: boolean;
+	hasDeleteButton?: boolean;
+	removeProductFromCart?: () => void;
+	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const label = lineItem.label;
 	const actualAmountDisplay = lineItem.amount.displayValue;
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const deleteButtonId = `checkout-delete-button-${ id }`;
+	const translate = useTranslate();
+	const isPwpoUser = useSelector(
+		( state ) =>
+			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+	);
+	const modalCopy = returnModalCopy(
+		lineItem.type,
+		translate,
+		createUserAndSiteBeforeTransaction || false,
+		isPwpoUser || false
+	);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -271,13 +306,39 @@ export function WPNonProductLineItem( {
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice actualAmount={ actualAmountDisplay } isSummary={ isSummary } />
 			</span>
+			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
+				<>
+					<DeleteButton
+						coupon={ coupon }
+						className="checkout-line-item__remove-product"
+						buttonType="borderless"
+						disabled={ isDisabled }
+						onClick={ () => {
+							setIsModalVisible( true );
+						} }
+					>
+						<DeleteIcon uniqueID={ deleteButtonId } product={ label } />
+					</DeleteButton>
+
+					<CheckoutModal
+						isVisible={ isModalVisible }
+						closeModal={ () => {
+							setIsModalVisible( false );
+						} }
+						primaryAction={ () => {
+							removeProductFromCart();
+						} }
+						title={ modalCopy.title }
+						copy={ modalCopy.description }
+					/>
+				</>
+			) }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export function WPOrderReviewLineItems( {
-	items,
 	className,
 	isSummary,
 	removeProductFromCart,
@@ -286,49 +347,56 @@ export function WPOrderReviewLineItems( {
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
 }: {
-	items: ( WPCOMCartItem | LineItemType )[];
 	className?: string;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	removeCoupon: RemoveProductFromCart;
+	removeCoupon: RemoveCouponFromCart;
 	getItemVariants?: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangePlanLength?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
+	const { responseCart } = useShoppingCart();
+	const taxLineItem = getTaxLineItem( responseCart );
+	const creditsLineItem = getCreditsLineItem( responseCart );
+	const couponLineItem = getCouponLineItem( responseCart );
+
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items
-				.filter( ( item ) => item.label ) // remove items without a label
-				.filter( ( item ) => {
-					if ( isSummary && ! shouldLineItemBeShownWhenStepInactive( item ) ) {
-						return false;
-					}
-					return true;
-				} )
-				.map( ( item ) => {
-					if ( ! isLineItemAProduct( item ) ) {
-						return (
-							<WPOrderReviewListItem key={ item.id }>
-								<NonProductLineItem lineItem={ item } isSummary={ isSummary } />
-							</WPOrderReviewListItem>
-						);
-					}
-					return (
-						<WPOrderReviewListItem key={ item.id }>
-							<LineItem
-								product={ item.wpcom_response_cart_product }
-								hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
-								removeProductFromCart={
-									item.type === 'coupon' ? removeCoupon : removeProductFromCart
-								}
-								getItemVariants={ getItemVariants }
-								onChangePlanLength={ onChangePlanLength }
-								isSummary={ isSummary }
-								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-							/>
-						</WPOrderReviewListItem>
-					);
-				} ) }
+			{ responseCart.products.map( ( product ) => {
+				return (
+					<WPOrderReviewListItem key={ product.uuid }>
+						<LineItem
+							product={ product }
+							hasDeleteButton={ ! isSummary && canItemBeDeleted( product ) }
+							removeProductFromCart={ removeProductFromCart }
+							getItemVariants={ getItemVariants }
+							onChangePlanLength={ onChangePlanLength }
+							isSummary={ isSummary }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						/>
+					</WPOrderReviewListItem>
+				);
+			} ) }
+			{ taxLineItem && ! isSummary && (
+				<WPOrderReviewListItem key={ taxLineItem.id }>
+					<NonProductLineItem tax lineItem={ taxLineItem } isSummary={ isSummary } />
+				</WPOrderReviewListItem>
+			) }
+			{ couponLineItem && (
+				<WPOrderReviewListItem key={ couponLineItem.id }>
+					<NonProductLineItem
+						coupon
+						lineItem={ couponLineItem }
+						isSummary={ isSummary }
+						hasDeleteButton={ ! isSummary }
+						removeProductFromCart={ removeCoupon }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					/>
+				</WPOrderReviewListItem>
+			) }
+			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
+				<NonProductLineItem subtotal lineItem={ creditsLineItem } isSummary={ isSummary } />
+			) }
 		</WPOrderReviewList>
 	);
 }
@@ -338,22 +406,9 @@ WPOrderReviewLineItems.propTypes = {
 	isSummary: PropTypes.bool,
 	removeProductFromCart: PropTypes.func,
 	removeCoupon: PropTypes.func,
-	items: PropTypes.arrayOf(
-		PropTypes.shape( {
-			label: PropTypes.string,
-			amount: PropTypes.shape( {
-				displayValue: PropTypes.string,
-			} ),
-		} )
-	),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 };
-
-function isLineItemAProduct( item: WPCOMCartItem | LineItemType ): item is WPCOMCartItem {
-	const itemAsProduct = item as WPCOMCartItem;
-	return !! itemAsProduct.wpcom_response_cart_product;
-}
 
 function GSuiteUsersList( { product }: { product: ResponseCartProduct } ) {
 	const users = product.extra?.google_apps_users ?? [];
@@ -410,7 +465,7 @@ interface ModalCopy {
 	description: string;
 }
 
-function returnModalCopy(
+function returnModalCopyForProduct(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
@@ -419,7 +474,15 @@ function returnModalCopy(
 ): ModalCopy {
 	const productType =
 		isPlan( product ) && hasDomainsInCart ? 'plan with dependencies' : product.product_slug;
+	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isPwpoUser );
+}
 
+function returnModalCopy(
+	productType: string,
+	translate: ReturnType< typeof useTranslate >,
+	createUserAndSiteBeforeTransaction: boolean,
+	isPwpoUser: boolean
+): ModalCopy {
 	switch ( productType ) {
 		case 'plan with dependencies': {
 			const title = String( translate( 'You are about to remove your plan from the cart' ) );
@@ -485,14 +548,9 @@ function returnModalCopy(
 	}
 }
 
-function canItemBeDeleted( item: WPCOMCartItem ): boolean {
-	const itemTypesThatCannotBeDeleted = [ 'domain_redemption', 'tax', 'credits' ];
-	return ! itemTypesThatCannotBeDeleted.includes( item.type );
-}
-
-function shouldLineItemBeShownWhenStepInactive( item: LineItemType ): boolean {
-	const itemTypesToIgnore = [ 'tax' ];
-	return ! itemTypesToIgnore.includes( item.type );
+function canItemBeDeleted( item: ResponseCartProduct ): boolean {
+	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
+	return ! itemTypesThatCannotBeDeleted.includes( item.product_slug );
 }
 
 function LineItemSublabelAndPrice( {
@@ -658,7 +716,7 @@ function WPLineItem( {
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
-	const modalCopy = returnModalCopy(
+	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
 		hasDomainsInCart,
