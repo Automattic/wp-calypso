@@ -1003,317 +1003,323 @@ jobs:
 
 workflows:
   version: 2
-  calypso:
+  windows-test:
     jobs:
-      - setup
-      - prime-calypso-live:
-          filters:
-            branches:
-              ignore: trunk
-      - build-notifications:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - build-o2-blocks:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - build-wpcom-block-editor:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - translate:
-          requires:
-            - setup
-      - lint:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - test-client:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - test-packages:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - test-server:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - typecheck-strict:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - wait-calypso-live:
-          requires:
-            - setup
-          filters:
-            branches:
-              ignore:
-                # Do not spin up calypso.live for `trunk`
-                - trunk
-                # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
-                - /pull\/[0-9]+/
-      #      - test-e2e-canary:
-      #          requires:
-      #            - wait-calypso-live
-      #          test-flags: '-C -S $CIRCLE_SHA1'
-      - test-e2e-canary:
-          name: test-e2e-canary-ie
-          requires:
-            - wait-calypso-live
-          test-flags: '-z -S $CIRCLE_SHA1'
-          test-target: 'IE11'
-          slack-webhook: '$SLACK_IE'
-      - test-e2e-canary:
-          name: test-e2e-canary-safari
-          requires:
-            - wait-calypso-live
-          test-flags: '-y -S $CIRCLE_SHA1'
-      - test-e2e-canary:
-          name: test-e2e-canary-woo
-          requires:
-            - wait-calypso-live
-          test-flags: '-W -S $CIRCLE_SHA1'
-          test-target: 'WOO'
-          slack-webhook: '$SLACK_WOO'
-  wp-desktop:
-    jobs:
-      - wp-desktop-source:
-          filters:
-            branches:
-              only:
-                - trunk
-                - /release\/.*/
-                - /desktop\/.*/
-      - wp-desktop-mac:
-          requires:
-            - wp-desktop-source
-      # Even though a TeamCity Linux job is ran against trunk,
-      # we should continue to periodically validate the Circle
-      # job to ensure CircleCI continues to work on all
-      # platforms since the application is deployed via CircleCI.
-      # This also provides a benchmark and fallback for TeamCity.
-      - wp-desktop-linux:
-          requires:
-            - wp-desktop-source
+      - wp-desktop-source
       - wp-desktop-windows:
           requires:
             - wp-desktop-source
-  wp-desktop-release:
-    when: << pipeline.git.tag >>
-    jobs:
-      - wp-desktop-source:
-          filters:
-            tags:
-              only: /v.*/
-      - wp-desktop-mac:
-          requires:
-            - wp-desktop-source
-          filters:
-            tags:
-              only: /v.*/
-      - wp-desktop-linux:
-          requires:
-            - wp-desktop-source
-          filters:
-            tags:
-              only: /v.*/
-      - wp-desktop-windows:
-          requires:
-            - wp-desktop-source
-          filters:
-            tags:
-              only: /v.*/
-      - wp-desktop-publish:
-          requires:
-            - wp-desktop-mac
-            - wp-desktop-linux
-            - wp-desktop-windows
-          filters:
-            tags:
-              only: /v.*/
-  calypso-nightly:
-    jobs:
-      - setup
-      - test-client:
-          requires:
-            - setup
-      - test-integration:
-          requires:
-            - setup
-      - test-packages:
-          requires:
-            - setup
-      - test-server:
-          requires:
-            - setup
-    triggers:
-      - schedule:
-          cron: '0 4 * * *'
-          filters:
-            branches:
-              only:
-                - trunk
+  # calypso:
+  #   jobs:
+  #     - setup
+  #     - prime-calypso-live:
+  #         filters:
+  #           branches:
+  #             ignore: trunk
+  #     - build-notifications:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - build-o2-blocks:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - build-wpcom-block-editor:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - translate:
+  #         requires:
+  #           - setup
+  #     - lint:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - test-client:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - test-packages:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - test-server:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - typecheck-strict:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - wait-calypso-live:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             ignore:
+  #               # Do not spin up calypso.live for `trunk`
+  #               - trunk
+  #               # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
+  #               - /pull\/[0-9]+/
+  #     #      - test-e2e-canary:
+  #     #          requires:
+  #     #            - wait-calypso-live
+  #     #          test-flags: '-C -S $CIRCLE_SHA1'
+  #     - test-e2e-canary:
+  #         name: test-e2e-canary-ie
+  #         requires:
+  #           - wait-calypso-live
+  #         test-flags: '-z -S $CIRCLE_SHA1'
+  #         test-target: 'IE11'
+  #         slack-webhook: '$SLACK_IE'
+  #     - test-e2e-canary:
+  #         name: test-e2e-canary-safari
+  #         requires:
+  #           - wait-calypso-live
+  #         test-flags: '-y -S $CIRCLE_SHA1'
+  #     - test-e2e-canary:
+  #         name: test-e2e-canary-woo
+  #         requires:
+  #           - wait-calypso-live
+  #         test-flags: '-W -S $CIRCLE_SHA1'
+  #         test-target: 'WOO'
+  #         slack-webhook: '$SLACK_WOO'
+  # wp-desktop:
+  #   jobs:
+  #     - wp-desktop-source:
+  #         filters:
+  #           branches:
+  #             only:
+  #               - trunk
+  #               - /release\/.*/
+  #               - /desktop\/.*/
+  #     - wp-desktop-mac:
+  #         requires:
+  #           - wp-desktop-source
+  #     # Even though a TeamCity Linux job is ran against trunk,
+  #     # we should continue to periodically validate the Circle
+  #     # job to ensure CircleCI continues to work on all
+  #     # platforms since the application is deployed via CircleCI.
+  #     # This also provides a benchmark and fallback for TeamCity.
+  #     - wp-desktop-linux:
+  #         requires:
+  #           - wp-desktop-source
+  #     - wp-desktop-windows:
+  #         requires:
+  #           - wp-desktop-source
+  # wp-desktop-release:
+  #   when: << pipeline.git.tag >>
+  #   jobs:
+  #     - wp-desktop-source:
+  #         filters:
+  #           tags:
+  #             only: /v.*/
+  #     - wp-desktop-mac:
+  #         requires:
+  #           - wp-desktop-source
+  #         filters:
+  #           tags:
+  #             only: /v.*/
+  #     - wp-desktop-linux:
+  #         requires:
+  #           - wp-desktop-source
+  #         filters:
+  #           tags:
+  #             only: /v.*/
+  #     - wp-desktop-windows:
+  #         requires:
+  #           - wp-desktop-source
+  #         filters:
+  #           tags:
+  #             only: /v.*/
+  #     - wp-desktop-publish:
+  #         requires:
+  #           - wp-desktop-mac
+  #           - wp-desktop-linux
+  #           - wp-desktop-windows
+  #         filters:
+  #           tags:
+  #             only: /v.*/
+  # calypso-nightly:
+  #   jobs:
+  #     - setup
+  #     - test-client:
+  #         requires:
+  #           - setup
+  #     - test-integration:
+  #         requires:
+  #           - setup
+  #     - test-packages:
+  #         requires:
+  #           - setup
+  #     - test-server:
+  #         requires:
+  #           - setup
+  #   triggers:
+  #     - schedule:
+  #         cron: '0 4 * * *'
+  #         filters:
+  #           branches:
+  #             only:
+  #               - trunk
 
-  e2e-full-suite-scheduled:
-    jobs:
-      - setup
-      - test-e2e:
-          requires:
-            - setup
-    triggers:
-      - schedule:
-          cron: '0 3,15 * * *'
-          filters:
-            branches:
-              only: trunk
+  # e2e-full-suite-scheduled:
+  #   jobs:
+  #     - setup
+  #     - test-e2e:
+  #         requires:
+  #           - setup
+  #   triggers:
+  #     - schedule:
+  #         cron: '0 3,15 * * *'
+  #         filters:
+  #           branches:
+  #             only: trunk
 
-  e2e-canary-scheduled:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-canary-ie-sched
-          requires:
-            - setup
-          test-flags: '-w'
-          test-target: 'IE11'
-          slack-webhook: '$SLACK_IE'
-      - test-e2e-canary:
-          name: test-e2e-canary-woo-sched
-          requires:
-            - setup
-          test-flags: '-W'
-          test-target: 'WOO'
-          slack-webhook: '$SLACK_WOO'
-    triggers:
-      - schedule:
-          cron: '0 12 * * *'
-          filters:
-            branches:
-              only: trunk
+  # e2e-canary-scheduled:
+  #   jobs:
+  #     - setup
+  #     - test-e2e-canary:
+  #         name: test-e2e-canary-ie-sched
+  #         requires:
+  #           - setup
+  #         test-flags: '-w'
+  #         test-target: 'IE11'
+  #         slack-webhook: '$SLACK_IE'
+  #     - test-e2e-canary:
+  #         name: test-e2e-canary-woo-sched
+  #         requires:
+  #           - setup
+  #         test-flags: '-W'
+  #         test-target: 'WOO'
+  #         slack-webhook: '$SLACK_WOO'
+  #   triggers:
+  #     - schedule:
+  #         cron: '0 12 * * *'
+  #         filters:
+  #           branches:
+  #             only: trunk
 
-  e2e-full-suite-edge-scheduled:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-full-suite-edge
-          requires:
-            - setup
-          test-flags: '-g'
-          env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
-    triggers:
-      - schedule:
-          cron: '30 8 * * *'
-          filters:
-            branches:
-              only: trunk
+  # e2e-full-suite-edge-scheduled:
+  #   jobs:
+  #     - setup
+  #     - test-e2e-canary:
+  #         name: test-e2e-full-suite-edge
+  #         requires:
+  #           - setup
+  #         test-flags: '-g'
+  #         env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
+  #   triggers:
+  #     - schedule:
+  #         cron: '30 8 * * *'
+  #         filters:
+  #           branches:
+  #             only: trunk
 
-  e2e-jetpack-be-scheduled:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-jetpack
-          requires:
-            - setup
-          test-flags: '-j -s desktop'
-          jetpack-host: 'PRESSABLEBLEEDINGEDGE'
-          test-target: 'JETPACK'
-          slack-webhook: '$SLACK_JP'
-    triggers:
-      - schedule:
-          cron: '0 7 * * *'
-          filters:
-            branches:
-              only: trunk
+  # e2e-jetpack-be-scheduled:
+  #   jobs:
+  #     - setup
+  #     - test-e2e-canary:
+  #         name: test-e2e-jetpack
+  #         requires:
+  #           - setup
+  #         test-flags: '-j -s desktop'
+  #         jetpack-host: 'PRESSABLEBLEEDINGEDGE'
+  #         test-target: 'JETPACK'
+  #         slack-webhook: '$SLACK_JP'
+  #   triggers:
+  #     - schedule:
+  #         cron: '0 7 * * *'
+  #         filters:
+  #           branches:
+  #             only: trunk
 
-  # Temporarily disabling these scheduled test runs
-  #  e2e-jetpack-scheduled:
-  #    jobs:
-  #    - setup
-  #    - test-e2e-canary:
-  #        name: test-e2e-jetpack
-  #        requires:
-  #        - setup
-  #        test-flags: "-j"
-  #        jetpack-host: "PRESSABLE"
-  #        test-target: "JETPACK"
-  #        slack-webhook: "$SLACK_JP"
-  #    triggers:
-  #    - schedule:
-  #        cron: "0 1,13 * * *"
-  #        filters:
-  #          branches:
-  #            only: trunk
+  # # Temporarily disabling these scheduled test runs
+  # #  e2e-jetpack-scheduled:
+  # #    jobs:
+  # #    - setup
+  # #    - test-e2e-canary:
+  # #        name: test-e2e-jetpack
+  # #        requires:
+  # #        - setup
+  # #        test-flags: "-j"
+  # #        jetpack-host: "PRESSABLE"
+  # #        test-target: "JETPACK"
+  # #        slack-webhook: "$SLACK_JP"
+  # #    triggers:
+  # #    - schedule:
+  # #        cron: "0 1,13 * * *"
+  # #        filters:
+  # #          branches:
+  # #            only: trunk
 
-  e2e-canary-i18n-monthly:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-i18n-monthly
-          requires:
-            - setup
-          test-target: 'I18N'
-          test-flags: '-i'
-          filters:
-            branches:
-              only: trunk
-    triggers:
-      - schedule:
-          cron: '40 15 19 * *'
-          filters:
-            branches:
-              only: trunk
+  # e2e-canary-i18n-monthly:
+  #   jobs:
+  #     - setup
+  #     - test-e2e-canary:
+  #         name: test-e2e-i18n-monthly
+  #         requires:
+  #           - setup
+  #         test-target: 'I18N'
+  #         test-flags: '-i'
+  #         filters:
+  #           branches:
+  #             only: trunk
+  #   triggers:
+  #     - schedule:
+  #         cron: '40 15 19 * *'
+  #         filters:
+  #           branches:
+  #             only: trunk
 
-  e2e-canary-i18n-nightly:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-i18n-nightly
-          requires:
-            - setup
-          test-target: 'I18N'
-          test-flags: '-I'
-          filters:
-            branches:
-              only: trunk
-    triggers:
-      - schedule:
-          cron: '46 4 * * *'
-          filters:
-            branches:
-              only: trunk
+  # e2e-canary-i18n-nightly:
+  #   jobs:
+  #     - setup
+  #     - test-e2e-canary:
+  #         name: test-e2e-i18n-nightly
+  #         requires:
+  #           - setup
+  #         test-target: 'I18N'
+  #         test-flags: '-I'
+  #         filters:
+  #           branches:
+  #             only: trunk
+  #   triggers:
+  #     - schedule:
+  #         cron: '46 4 * * *'
+  #         filters:
+  #           branches:
+  #             only: trunk
 # vi: sts=2 ts=2 sw=2 et
