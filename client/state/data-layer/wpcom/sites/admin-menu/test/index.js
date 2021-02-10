@@ -24,12 +24,14 @@ describe( 'requestFetchAdminMenu', () => {
 } );
 
 describe( 'handlers', () => {
+	const getState = () => ( {
+		sites: {
+			items: { 73738: { options: { admin_url: 'https://example.wordpress.com/wp-admin' } } },
+		},
+	} );
+
 	test( 'should create correct success action on fetch success ', () => {
 		const dispatch = jest.fn();
-		const getState = () => ( {
-			currentUser: { capabilities: { 73738: {} } },
-			sites: { items: { 73738: { ID: 73738, domain: 'example.wordpress.com' } } },
-		} );
 		const menuData = {};
 		const action = receiveAdminMenu( 73738, menuData );
 		handleSuccess( { siteId: 73738 }, menuData )( dispatch, getState );
@@ -39,10 +41,6 @@ describe( 'handlers', () => {
 
 	test( 'should sanitize menu URLs', () => {
 		const dispatch = jest.fn();
-		const getState = () => ( {
-			currentUser: { capabilities: { 73738: {} } },
-			sites: { items: { 73738: { ID: 73738, domain: 'example.wordpress.com' } } },
-		} );
 		const unsafeMenu = [
 			{
 				icon: 'dashicons-warning',
@@ -57,6 +55,22 @@ describe( 'handlers', () => {
 						title: 'Or here',
 						type: 'submenu-item',
 						url: 'http://example.com',
+					},
+				],
+			},
+			{
+				icon: 'dashicons-default',
+				slug: 'my-custom-menu-3',
+				title: 'Home',
+				type: 'menu-item',
+				url: '/home',
+				children: [
+					{
+						parent: 'my-custom-menu-3',
+						slug: 'my-custom-menu-4',
+						title: 'Settings',
+						type: 'submenu-item',
+						url: 'https://example.wordpress.com/wp-admin/settings.php',
 					},
 				],
 			},
