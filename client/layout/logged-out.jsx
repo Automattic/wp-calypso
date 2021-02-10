@@ -13,7 +13,6 @@ import { get, startsWith, flowRight as compose } from 'lodash';
 import AsyncLoad from 'calypso/components/async-load';
 import config from '@automattic/calypso-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
-import notices from 'calypso/notices';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import {
@@ -110,12 +109,7 @@ const LayoutLoggedOut = ( {
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } />
 			{ masterbar }
 			<div id="content" className="layout__content">
-				<AsyncLoad
-					require="calypso/components/global-notices"
-					placeholder={ null }
-					id="notices"
-					notices={ notices.list }
-				/>
+				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				{ isCheckout && <AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } /> }
 				<div id="primary" className="layout__primary">
 					{ primary }

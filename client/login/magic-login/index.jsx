@@ -13,7 +13,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import { login } from 'calypso/lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -153,7 +152,7 @@ class MagicLogin extends React.Component {
 
 				{ this.renderLocaleSuggestions() }
 
-				<GlobalNotices id="notices" notices={ notices.list } />
+				<GlobalNotices id="notices" />
 
 				<RequestLoginEmailForm />
 
