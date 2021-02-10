@@ -32,13 +32,12 @@ import FocusedLaunchSummaryItem, {
 	LeadingContentSide,
 	TrailingContentSide,
 } from './focused-launch-summary-item';
-import { LAUNCH_STORE, SITE_STORE, Plan } from '../../stores';
+import { LAUNCH_STORE, SITE_STORE, Plan, PLANS_STORE } from '../../stores';
 import LaunchContext from '../../context';
 import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
-import { PLANS_STORE } from '@automattic/data-stores/src/launch/constants';
 
 const bulb = (
 	<SVG viewBox="0 0 24 24">
@@ -299,7 +298,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
 			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
 			billingPeriod:
-				plansStore.getPlanProductById( selectedPlanProductId )?.billingPeriod || 'ANNUALLY',
+				plansStore.getPlanProductById( selectedPaidPlanProductId )?.billingPeriod || 'ANNUALLY',
 		};
 	} );
 

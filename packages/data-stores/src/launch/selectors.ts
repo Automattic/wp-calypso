@@ -7,7 +7,7 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { LaunchSequence, LaunchStep } from './data';
-import { PLANS_STORE, STORE_KEY as LAUNCH_STORE } from './constants';
+import { STORE_KEY as LAUNCH_STORE } from './constants';
 
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
@@ -27,22 +27,7 @@ export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSugge
 	state.domain;
 export const getSelectedPlanProductId = ( state: State ): number | undefined => state.planProductId;
 
-/**
- * Returns the product id of the the last paid plan the user had picked.
- * If they revert to a free plan,
- * this is useful if you want to recommend their once-picked paid plan
- *
- * @param state State
- */
-export const getPaidPlanProductId = ( state: State ): number | undefined => {
-	const productId = state.planProductId;
-	const isFree = select( PLANS_STORE ).isPlanProductFree( productId );
-
-	return productId && ! isFree ? productId : undefined;
-};
-
 // Check if a domain has been explicitly selected (including free subdomain)
-
 /**
  * Check if the user has selected a domain, including explicitly selecting the subdomain
  * This is useful for step/flow completion in the context of highlighting steps or enabling Launch button
