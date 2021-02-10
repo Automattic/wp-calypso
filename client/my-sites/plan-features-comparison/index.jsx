@@ -16,9 +16,9 @@ import formatCurrency from '@automattic/format-currency';
  */
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
-import PlanFeaturesActions from './actions';
-import PlanFeaturesHeader from './header';
-import PlanFeaturesItem from './item';
+// import PlanFeaturesActions from './actions';
+import PlanFeaturesComparisonHeader from './header';
+// import PlanFeaturesItem from './item';
 import SpinnerLine from 'calypso/components/spinner-line';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { abtest } from 'calypso/lib/abtest';
@@ -79,7 +79,6 @@ import {
 	TYPE_FREE,
 } from 'calypso/lib/plans/constants';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 
 /**
@@ -87,7 +86,7 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
  */
 import './style.scss';
 
-export class PlanFeatures extends Component {
+export class PlanFeaturesComparison extends Component {
 	render() {
 		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
@@ -100,17 +99,17 @@ export class PlanFeatures extends Component {
 		const planWrapperClasses = classNames( {
 			'plans-wrapper': isInSignup,
 		} );
-		const mobileView = ! withScroll && (
-			<div className="plan-features__mobile">{ this.renderMobileView() }</div>
-		);
+		// const mobileView = ! withScroll && (
+		// 	<div className="plan-features__mobile">{ this.renderMobileView() }</div>
+		// );
 		let planDescriptions;
 		let bottomButtons = null;
 
-		if ( withScroll || ! isInSignup ) {
-			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
+		// if ( withScroll || ! isInSignup ) {
+		// 	planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
 
-			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
-		}
+		// 	bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
+		// }
 
 		const initialSelectedIndex = selectedPlan
 			? plans.indexOf( selectedPlan )
@@ -122,27 +121,22 @@ export class PlanFeatures extends Component {
 				<div className={ planClasses }>
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
-						{ mobileView }
-						<PlanFeaturesScroller
-							withScroll={ withScroll }
-							planCount={ planProperties.length }
-							cellSelector=".plan-features__table-item"
-							initialSelectedIndex={ initialSelectedIndex }
-						>
+						{ /* { mobileView } */ }
+						<div>
 							<table className={ tableClasses }>
 								<caption className="plan-features__screen-reader-text screen-reader-text">
 									{ translate( 'Available plans to choose from' ) }
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
-									{ ! withScroll && planDescriptions }
+									{ /* { ! withScroll && planDescriptions }
 									<tr>{ this.renderTopButtons() }</tr>
 									{ withScroll && planDescriptions }
 									{ this.renderPlanFeatureRows() }
-									{ ! withScroll && ! isInSignup && bottomButtons }
+									{ ! withScroll && ! isInSignup && bottomButtons } */ }
 								</tbody>
 							</table>
-						</PlanFeaturesScroller>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -387,7 +381,6 @@ export class PlanFeatures extends Component {
 	renderPlanHeaders() {
 		const {
 			basePlansPath,
-			disableBloggerPlanWithNonBlogDomain,
 			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
@@ -396,7 +389,6 @@ export class PlanFeatures extends Component {
 			siteType,
 			showPlanCreditsApplied,
 			withScroll,
-			isInVerticalScrollingPlansExperiment,
 		} = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -419,12 +411,6 @@ export class PlanFeatures extends Component {
 			let audience = planConstantObj.getAudience();
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
-			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
-					discountPrice = 0;
-				}
-			}
-
 			if ( isInSignup && ! displayJetpackPlans ) {
 				switch ( siteType ) {
 					case 'blog':
@@ -441,15 +427,11 @@ export class PlanFeatures extends Component {
 				}
 			}
 
-			if ( isInSignup && displayJetpackPlans ) {
-				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
-			}
-
 			const { annualPricePerMonth, isMonthlyPlan } = properties;
 
 			return (
 				<th scope="col" key={ planName } className={ classes }>
-					<PlanFeaturesHeader
+					<PlanFeaturesComparisonHeader
 						audience={ audience }
 						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
@@ -473,7 +455,6 @@ export class PlanFeatures extends Component {
 						plansWithScroll={ withScroll }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
-						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					/>
 				</th>
 			);
@@ -773,7 +754,7 @@ export class PlanFeatures extends Component {
 	}
 }
 
-PlanFeatures.propTypes = {
+PlanFeaturesComparison.propTypes = {
 	basePlansPath: PropTypes.string,
 	canPurchase: PropTypes.bool.isRequired,
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
@@ -794,7 +775,7 @@ PlanFeatures.propTypes = {
 	sitePlan: PropTypes.object,
 };
 
-PlanFeatures.defaultProps = {
+PlanFeaturesComparison.defaultProps = {
 	basePlansPath: null,
 	displayJetpackPlans: false,
 	isInSignup: false,
@@ -1042,6 +1023,6 @@ export default connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( PlanFeatures ) );
+)( localize( PlanFeaturesComparison ) );
 
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
