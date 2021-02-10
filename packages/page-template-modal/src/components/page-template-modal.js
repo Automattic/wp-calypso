@@ -11,7 +11,6 @@ import { parse as parseBlocks } from '@wordpress/blocks';
  * Internal dependencies
  */
 import TemplateSelectorControl from './template-selector-control';
-import TemplateSelectorPreview from './template-selector-preview';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import replacePlaceholders from '../utils/replace-placeholders';
 import ensureAssets from '../utils/ensure-assets';
@@ -405,8 +404,6 @@ export default class PageTemplateModal extends Component {
 
 		return (
 			<fieldset className="page-template-modal__list">
-				<legend className="page-template-modal__form-title">{ groupTitle }</legend>
-
 				<TemplateSelectorControl
 					label={ __( 'Layout', __i18n_text_domain__ ) }
 					legendLabel={ groupTitle }
@@ -474,13 +471,17 @@ export default class PageTemplateModal extends Component {
 										__i18n_text_domain__
 									) }
 								</p>
-								<Button onClick={ () => this.handleSelection( 'blank' ) }>
+								<Button isSecondary onClick={ () => this.handleSelection( 'blank' ) }>
 									{ __( 'Blank page', __i18n_text_domain__ ) }
 								</Button>
 								<ul>
 									{ this.getTemplateCategories().map( ( { slug, name } ) => (
 										<li key={ slug }>
-											<Button onClick={ () => this.handleCategorySelection( slug ) }>
+											<Button
+												isTertiary
+												isPressed={ slug === selectedCategory }
+												onClick={ () => this.handleCategorySelection( slug ) }
+											>
 												{ name }
 											</Button>
 										</li>
