@@ -725,7 +725,7 @@ const Account = createReactClass( {
 
 	handleSubmitSuccess( response, formName = '' ) {
 		if ( ! this.hasUnsavedUserSettings( [].concat( ACCOUNT_FIELDS, INTERFACE_FIELDS ) ) ) {
-			this.props.markSaved && this.props.markSaved();
+			this.props.markSaved();
 		}
 
 		if ( this.state && this.state.redirect ) {
