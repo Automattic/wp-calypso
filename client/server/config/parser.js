@@ -7,7 +7,7 @@
  */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const assign = require( 'lodash/assign' );
+const { assign, assignWith } = require( 'lodash' );
 const debug = require( 'debug' )( 'config' );
 
 function getDataFromFile( file ) {
@@ -43,7 +43,10 @@ module.exports = function ( configPath, defaultOpts ) {
 	const disabledFeatures = opts.disabledFeatures ? opts.disabledFeatures.split( ',' ) : [];
 
 	configFiles.forEach( function ( file ) {
-		assign( data, getDataFromFile( file ) );
+		// merge the objects in `features` field, and do a simple assignment for other fields
+		assignWith( data, getDataFromFile( file ), ( objValue, srcValue, key ) =>
+			key === 'features' ? { ...objValue, ...srcValue } : undefined
+		);
 	} );
 
 	if ( data.hasOwnProperty( 'features' ) ) {
