@@ -132,9 +132,7 @@ function normalizePlanProducts(
 	periodAgnosticPlans: Plan[]
 ): PlanProduct[] {
 	const plansProducts: PlanProduct[] = plansProductSlugs.reduce( ( plans, slug ) => {
-		const planProduct = pricedPlans.find(
-			( pricedPlan ) => pricedPlan.product_slug === slug
-		) as PricedAPIPlan;
+		const planProduct = pricedPlans.find( ( pricedPlan ) => pricedPlan.product_slug === slug );
 
 		if ( ! planProduct ) {
 			return plans;
@@ -146,6 +144,7 @@ function normalizePlanProducts(
 
 		plans.push( {
 			productId: planProduct.product_id,
+			// This means that free plan is considered "annually billed"
 			billingPeriod:
 				planProduct.bill_period === MONTHLY_PLAN_BILLING_PERIOD ? 'MONTHLY' : 'ANNUALLY',
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,

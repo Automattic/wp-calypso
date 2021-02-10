@@ -6,7 +6,9 @@ import type {
 	PlanProduct,
 	FeaturesByType,
 	PlanSimplifiedFeature,
-	PricedAPIPlan,
+	PricedAPIPlanFree,
+	PricedAPIPlanPaidAnnually,
+	PricedAPIPlanPaidMonthly,
 	DetailsAPIResponse,
 } from '../types';
 
@@ -148,7 +150,7 @@ export const MOCK_PLAN_DETAILS_API: DetailsAPIResponse = {
 };
 
 // Individual plan (from APIs)
-export const MOCK_PLAN_PRICE_APIS_FREE: PricedAPIPlan = {
+export const MOCK_PLAN_PRICE_APIS_FREE: PricedAPIPlanFree = {
 	product_id: 1,
 	product_name: 'WordPress.com Free',
 	meta: null,
@@ -211,7 +213,7 @@ export const MOCK_PLAN_PRICE_APIS_FREE: PricedAPIPlan = {
 		},
 	],
 };
-export const MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY: PricedAPIPlan = {
+export const MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY: PricedAPIPlanPaidAnnually = {
 	product_id: 1003,
 	product_name: 'WordPress.com Premium',
 	meta: null,
@@ -316,7 +318,7 @@ export const MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY: PricedAPIPlan = {
 		},
 	],
 };
-export const MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY: PricedAPIPlan = {
+export const MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY: PricedAPIPlanPaidMonthly = {
 	product_id: 1013,
 	product_name: 'WordPress.com Premium',
 	meta: null,

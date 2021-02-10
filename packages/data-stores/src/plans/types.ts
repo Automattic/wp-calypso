@@ -50,69 +50,32 @@ export interface PlanProduct {
 }
 
 /**
- * types of an item from https://public-api.wordpress.com/rest/v1.5/plans response
- * can be super useful later
+ * Item returned from https://public-api.wordpress.com/rest/v1.5/plans response
+ * Only the properties that are actually used in the store are typed
  */
 export interface PricedAPIPlan {
 	product_id: number;
 	product_name: string;
-	meta: Record< string, unknown > | null;
-	prices: {
-		AUD: number;
-		BRL: number;
-		CAD: number;
-		CHF: number;
-		CZK: number;
-		DKK: number;
-		EUR: number;
-		GBP: number;
-		HKD: number;
-		HUF: number;
-		IDR: number;
-		ILS: number;
-		INR: number;
-		JPY: number;
-		MXN: number;
-		NOK: number;
-		NZD: number;
-		PHP: number;
-		PLN: number;
-		RUB: number;
-		SEK: number;
-		SGD: number;
-		THB: number;
-		TWD: number;
-		USD: number;
-		TRY: number;
-	};
-	bundle_product_ids?: number[];
-	blog_id: null;
 	path_slug?: PlanPath;
 	product_slug: StorePlanSlug;
-	description: string;
-	cost: number;
 	bill_period: -1 | 31 | 365;
-	product_type: string;
-	available: string;
-	multi: number;
-	bd_slug: string;
-	bd_variation_slug: string;
-	outer_slug: string | null;
-	extra: string | null;
-	capability: string;
-	product_name_short: string;
-	icon?: string;
-	icon_active?: string;
-	cost__from_plan: number;
-	currency__from_plan: string;
-	initial_cost_matched: boolean;
-	bill_period_label: string;
-	price: string;
-	formatted_price: string;
 	raw_price: number;
-	tagline: string | null;
 	currency_code: string;
-	features_highlight?: { title?: string; items: string[] }[];
+	[ key: string ]: unknown;
+}
+export interface PricedAPIPlanFree extends PricedAPIPlan {
+	product_id: 1;
+	cost: 0;
+	product_slug: 'free_plan';
+	bill_period: -1;
+	raw_price: 0;
+}
+export interface PricedAPIPlanPaidAnnually extends PricedAPIPlan {
+	path_slug: PlanPath;
+	bill_period: 365;
+}
+export interface PricedAPIPlanPaidMonthly extends PricedAPIPlan {
+	bill_period: 31;
 }
 
 export type PlanFeature = {
@@ -125,21 +88,16 @@ export type PlanFeature = {
 };
 
 export interface APIPlanDetail {
-	support_priority: number;
-	support_name: string;
-	groups: string[];
+	nonlocalized_short_name: PlanNonlocalizedShortName;
+	tagline: string;
+	storage: string;
+	short_name: string;
 	products: {
 		plan_id: number;
 	}[];
-	name: string;
-	short_name: string;
-	nonlocalized_short_name: PlanNonlocalizedShortName;
-	tagline: string;
-	description: string;
-	features: string[];
 	highlighted_features: string[];
-	storage: string;
-	icon: string;
+	features: string[];
+	[ key: string ]: unknown;
 }
 
 export interface FeaturesByType {
@@ -158,8 +116,8 @@ export interface Feature {
 export type DetailsAPIFeature = Omit< Feature, 'type' >;
 
 export interface DetailsAPIResponse {
-	groups: { slug: string; name: string }[];
 	plans: APIPlanDetail[];
 	features_by_type: FeaturesByType[];
 	features: DetailsAPIFeature[];
+	[ key: string ]: unknown;
 }
