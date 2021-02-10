@@ -45,34 +45,18 @@ $sidebar-width: 25%;
 	height: 90vh;
 }
 
-.page-template-modal .components-modal__header-heading-container {
-	@include screen-reader-text();
+// Overrides of the Gutenberg modal component
+.page-template-modal {
+	.components-modal__content {
+		overflow-y: scroll;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.components-modal__header {
+		border-bottom: none;
+	}
 }
 
-// Show close button in all modes.
-.page-template-modal__close-button {
-	display: block;
-	position: absolute;
-	z-index: 20;
-	top: 9px;
-	width: 36px;
-	height: 36px;
-	left: 10px;
-}
-
-.page-template-modal .components-modal__header::after {
-	display: block;
-	position: absolute;
-	content: ' ';
-	border-right: 1px solid $template-selector-border-color;
-	height: 100%;
-	left: 56px;
-}
-
-.page-template-modal .components-modal__content {
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
-}
 .page-template-modal__inner {
 	padding: 0 20px;
 }

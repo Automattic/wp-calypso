@@ -3,9 +3,10 @@
  */
 import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, omit } from 'lodash';
 import { __ } from '@wordpress/i18n';
-import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
+import { Button, Modal, Spinner } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
+import { withInstanceId } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ import mapBlocksRecursively from '../utils/map-blocks-recursively';
 import containsMissingBlock from '../utils/contains-missing-block';
 import { sortGroupNames } from '../utils/group-utils';
 
-export default class PageTemplateModal extends Component {
+class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
 		selectedCategory: null,
@@ -420,7 +421,7 @@ export default class PageTemplateModal extends Component {
 
 	render() {
 		const { isLoading, selectedCategory } = this.state;
-		const { isOpen, currentBlocks } = this.props;
+		const { isOpen, currentBlocks, instanceId } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
@@ -441,20 +442,14 @@ export default class PageTemplateModal extends Component {
 
 		return (
 			<Modal
-				title={ __( 'Select Page Layout', __i18n_text_domain__ ) }
 				className="page-template-modal"
-				shouldCloseOnClickOutside={ false }
-				// Using both variants here to be compatible with new Gutenberg and old (older than 6.6).
-				isDismissable={ false }
-				isDismissible={ false }
+				onRequestClose={ this.closeModal }
+				aria={ {
+					// TODO: `labelledby` option isn't working because of a <Modal> bug in Gutenberg
+					labelledby: `page-template-modal__heading-${ instanceId }`,
+					describedby: `page-template-modal__description-${ instanceId }`,
+				} }
 			>
-				<IconButton
-					className="page-template-modal__close-button components-icon-button"
-					onClick={ this.closeModal }
-					icon="arrow-left-alt2"
-					label={ __( 'Go back', __i18n_text_domain__ ) }
-				/>
-
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
 						<div className="page-template-modal__loading">
@@ -464,8 +459,10 @@ export default class PageTemplateModal extends Component {
 					) : (
 						<>
 							<div className="page-template-modal__sidebar">
-								<h1>{ __( 'Add a page', __i18n_text_domain__ ) }</h1>
-								<p>
+								<h1 id={ `page-template-modal__heading-${ instanceId }` }>
+									{ __( 'Add a page', __i18n_text_domain__ ) }
+								</h1>
+								<p id={ `page-template-modal__description-${ instanceId }` }>
 									{ __(
 										'Pick a pre-defined layout or start with a blank page.',
 										__i18n_text_domain__
@@ -501,3 +498,5 @@ export default class PageTemplateModal extends Component {
 		);
 	}
 }
+
+export default withInstanceId( PageTemplateModal );
