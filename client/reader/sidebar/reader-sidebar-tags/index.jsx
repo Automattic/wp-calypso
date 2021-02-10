@@ -18,6 +18,7 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import SidebarSeparator from 'calypso/layout/sidebar/separator';
 
 export class ReaderSidebarTags extends Component {
 	static propTypes = {
@@ -57,6 +58,7 @@ export class ReaderSidebarTags extends Component {
 		const { tags, isOpen, translate, onClick } = this.props;
 		return (
 			<li>
+				<SidebarSeparator />
 				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
