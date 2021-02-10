@@ -19,6 +19,7 @@ import {
 	purchasesRoot,
 	deprecated as deprecatedPaths,
 } from 'calypso/me/purchases/paths';
+import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -127,6 +128,7 @@ class MeSidebar extends React.Component {
 					</div>
 
 					<SidebarMenu>
+						<SidebarSeparator />
 						<SidebarItem
 							selected={ selected === 'profile' }
 							link={
@@ -196,9 +198,7 @@ class MeSidebar extends React.Component {
 							onNavigate={ this.onNavigate }
 							preloadSectionName="site-blocks"
 						/>
-					</SidebarMenu>
-
-					<SidebarMenu>
+						<SidebarSeparator />
 						<SidebarItem
 							selected={ selected === 'get-apps' }
 							link={ '/me/get-apps' }
