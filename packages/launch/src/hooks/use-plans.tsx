@@ -21,15 +21,10 @@ export function usePlans(): {
 } {
 	const locale = useLocale();
 
-	const defaultPaidPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getDefaultPaidPlan( locale )
-	);
-
-	const defaultFreePlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getDefaultFreePlan( locale )
-	);
-
-	return { defaultPaidPlan, defaultFreePlan };
+	return useSelect( ( select ) => ( {
+		defaultPaidPlan: select( PLANS_STORE ).getDefaultPaidPlan( locale ),
+		defaultFreePlan: select( PLANS_STORE ).getDefaultFreePlan( locale ),
+	} ) );
 }
 
 export function usePlanProductFromCart(): PlanProductForFlow | undefined {

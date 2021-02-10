@@ -21,7 +21,7 @@ import { useDomainSuggestionFromCart, usePlanProductIdFromCart } from '../hooks'
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
-	const { isSiteLaunched, isSiteLaunching } = useSite();
+	const { hasPaidPlan, isSiteLaunched, isSiteLaunching } = useSite();
 
 	const [ hasSelectedDomain, selectedPlanProductId ] = useSelect( ( select ) => {
 		const { planProductId } = select( LAUNCH_STORE ).getState();
@@ -41,16 +41,24 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	}, [ hasSelectedDomain, domainSuggestionFromCart, setDomain ] );
 
 	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
-	// If there is no selected plan, but there is a plan in cart,
+	// If there is no selected plan and the site has no paid plan, but there is a plan in cart,
 	// set the plan from cart as the selected plan.
 	const planProductIdFromCart = usePlanProductIdFromCart();
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
 	React.useEffect( () => {
-		if ( ! selectedPlanProductId && planProductIdFromCart ) {
+		if ( ! selectedPlanProductId && planProductIdFromCart && ! hasPaidPlan ) {
 			setPlanProductId( planProductIdFromCart );
 		}
-	}, [ selectedPlanProductId, planProductIdFromCart, setPlanProductId ] );
+	}, [ selectedPlanProductId, planProductIdFromCart, setPlanProductId, hasPaidPlan ] );
+
+	// If there is a purchased plan, remove any selected plan from Launch store
+	const { unsetPlanProductId } = useDispatch( LAUNCH_STORE );
+	React.useEffect( () => {
+		if ( hasPaidPlan ) {
+			unsetPlanProductId();
+		}
+	}, [ hasPaidPlan, unsetPlanProductId ] );
 
 	return (
 		<Router>

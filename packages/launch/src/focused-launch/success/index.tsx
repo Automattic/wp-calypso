@@ -16,7 +16,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useSiteDomains } from '../../hooks';
 import Confetti from './confetti';
 import LaunchContext from '../../context';
-import { LAUNCH_STORE, PLANS_STORE, SITE_STORE } from '../../stores';
+import { LAUNCH_STORE, SITE_STORE } from '../../stores';
 
 import './style.scss';
 
@@ -27,13 +27,9 @@ const Success: React.FunctionComponent = () => {
 
 	const isSiteLaunching = useSelect( ( select ) => select( SITE_STORE ).isSiteLaunching( siteId ) );
 
-	const selectedPlanProductId = useSelect(
-		( select ) => select( LAUNCH_STORE ).getSelectedPlanProductId(),
+	const isSelectedPlanPaid = useSelect(
+		( select ) => !! select( LAUNCH_STORE ).getPaidPlanProductId(),
 		[]
-	);
-	const isSelectedPlanFree = useSelect(
-		( select ) => select( PLANS_STORE ).isPlanProductFree( selectedPlanProductId ),
-		[ selectedPlanProductId ]
 	);
 
 	const { unsetModalDismissible, hideModalTitle, closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
@@ -55,14 +51,14 @@ const Success: React.FunctionComponent = () => {
 	}, [ unsetModalDismissible, hideModalTitle ] );
 
 	const continueEditing = () => {
-		if ( isSelectedPlanFree ) {
-			// If the site was launched without purchasing a paid plan, don't reload the page
-			closeFocusedLaunch();
-		} else {
+		if ( isSelectedPlanPaid ) {
 			// After a plan was purchased, we need to reload the page for plans data to be picked up by Jetpack Premium blocks
 			// @TODO: see if there is a way to prevent reloading
 			const pathName = new URL( getCurrentLaunchFlowUrl() || '' )?.pathname;
 			redirectTo( pathName || `/page/${ siteSubdomain?.domain }/home` );
+		} else {
+			// If the site was launched without purchasing a paid plan, don't reload the page
+			closeFocusedLaunch();
 		}
 	};
 
