@@ -100,6 +100,11 @@ class Layout extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
+		if ( config.isEnabled( 'nav-unification' ) ) {
+			window.addEventListener( 'scroll', scrollCallback );
+			window.addEventListener( 'resize', scrollCallback );
+		}
 		if ( prevProps.teams !== this.props.teams ) {
 			// This is temporary helper function until we have rolled out to 100% of customers.
 			this.isNavUnificationEnabled();
@@ -110,13 +115,6 @@ class Layout extends Component {
 		if ( prevProps.colorSchemePreference === this.props.colorSchemePreference ) {
 			return;
 		}
-
-		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
-		if ( config.isEnabled( 'nav-unification' ) ) {
-			window.addEventListener( 'scroll', scrollCallback );
-			window.addEventListener( 'resize', scrollCallback );
-		}
-
 		if ( typeof document !== 'undefined' ) {
 			const classList = document.querySelector( 'body' ).classList;
 			classList.remove( `is-${ prevProps.colorSchemePreference }` );
