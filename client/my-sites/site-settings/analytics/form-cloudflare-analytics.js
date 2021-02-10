@@ -31,7 +31,6 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
  * Style dependencies
  */
 import './style.scss';
-import AnalyticsToggleConfirmationDialog from 'calypso/my-sites/site-settings/analytics/toggle-confirmation-dialog';
 
 const validateTrackingId = ( code ) =>
 	! code || code.match( /^[a-fA-F0-9]+$/i ) || code.match( /(?<=token":\s").*?(?=")/ );
@@ -52,7 +51,6 @@ export function CloudflareAnalyticsSettings( {
 	site,
 } ) {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
-	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ isCloudflareEnabled, setIsCloudflareEnabled ] = useState( false );
 	const [ loggedCloudflareAnalyticsModified, setLoggedCloudflareAnalyticsModified ] = useState(
 		false
@@ -61,8 +59,10 @@ export function CloudflareAnalyticsSettings( {
 		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
 
 	useEffect( () => {
-		if ( fields?.cloudflare_analytics?.code ) {
+		if ( fields?.jetpack_cloudflare_analytics?.code ) {
 			setIsCloudflareEnabled( true );
+		} else {
+			setIsCloudflareEnabled( false );
 		}
 	}, [ fields ] );
 
@@ -70,7 +70,7 @@ export function CloudflareAnalyticsSettings( {
 		const updatedCloudflareFields = Object.assign( {}, fields.cloudflare || {}, {
 			code: value,
 		} );
-		updateFields( { cloudflare_analytics: updatedCloudflareFields }, callback );
+		updateFields( { jetpack_cloudflare_analytics: updatedCloudflareFields }, callback );
 	};
 
 	const recordSupportLinkClick = () => {
@@ -84,42 +84,23 @@ export function CloudflareAnalyticsSettings( {
 	};
 
 	const handleFieldFocus = () => {
-		trackTracksEvent( 'calypso_cloudflare_analytics_key_field_focused', { path } );
+		trackTracksEvent( 'calypso_jetpack_cloudflare_analytics_key_field_focused', { path } );
 		eventTracker( 'Focused Cloudflare Analytics Key Field' )();
 	};
 
 	const handleFieldKeypress = () => {
 		if ( ! loggedCloudflareAnalyticsModified ) {
-			trackTracksEvent( 'calypso_cloudflare_analytics_key_field_modified', { path } );
+			trackTracksEvent( 'calypso_jetpack_cloudflare_analytics_key_field_modified', { path } );
 			setLoggedCloudflareAnalyticsModified( true );
 		}
 		uniqueEventTracker( 'Typed In Analytics Key Field' )();
 	};
 
 	const processCloudflareCode = () => {
-		const token = fields.cloudflare_analytics?.code?.match( /(?<=token":\s").*?(?=")/ );
+		const token = fields.jetpack_cloudflare_analytics?.code?.match( /(?<=token":\s").*?(?=")/ );
 		if ( token ) {
 			handleFieldChange( token );
 		}
-	};
-
-	const handleModalClose = () => {
-		setIsModalVisible( false );
-	};
-	const handleModalConfirm = () => {
-		setIsModalVisible( false );
-		updateFields( { wga: { code: '' } }, () => {
-			handleSubmitForm();
-		} );
-	};
-
-	const handleSaveButtonClick = () => {
-		// display confirmation modal that we will disable GA if Cloudflare is enabled.
-		if ( ! fields?.wga?.code ) {
-			handleSubmitForm();
-			return;
-		}
-		setIsModalVisible( true );
 	};
 
 	const handleFormToggle = () => {
@@ -147,7 +128,7 @@ export function CloudflareAnalyticsSettings( {
 				description={ translate(
 					'Choose an additional analytics tool to connect and get unique insights about your site traffic.'
 				) }
-				event={ 'cloudflare_analytics_settings' }
+				event={ 'jetpack_cloudflare_analytics_settings' }
 				feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 				plan={ plan }
 				href={ null }
@@ -157,18 +138,10 @@ export function CloudflareAnalyticsSettings( {
 		);
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
-				{ isModalVisible && (
-					<AnalyticsToggleConfirmationDialog
-						productToDisable="Google Analytics"
-						productToEnable="Cloudflare"
-						onConfirm={ handleModalConfirm }
-						onClose={ handleModalClose }
-					/>
-				) }
 				<SettingsSectionHeader
 					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }
-					onButtonClick={ handleSaveButtonClick }
+					onButtonClick={ handleSubmitForm }
 					showButton
 					title={ translate( 'Cloudflare' ) }
 				/>
@@ -207,7 +180,11 @@ export function CloudflareAnalyticsSettings( {
 							<FormTextInput
 								name="cloudflareCode"
 								id="cloudflareCode"
-								value={ fields.cloudflare_analytics ? fields.cloudflare_analytics.code : '' }
+								value={
+									fields.jetpack_cloudflare_analytics
+										? fields.jetpack_cloudflare_analytics.code
+										: ''
+								}
 								onChange={ handleCodeChange }
 								placeholder={ placeholderText }
 								disabled={ isRequestingSettings || ! enableForm }
@@ -278,7 +255,7 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps, null, { pure: false } );
 
-const getFormSettings = partialRight( pick, [ 'cloudflare_analytics', 'wga' ] );
+const getFormSettings = partialRight( pick, [ 'jetpack_cloudflare_analytics' ] );
 
 export default flowRight(
 	connectComponent,
