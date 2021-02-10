@@ -927,7 +927,7 @@ jobs:
             # Use make for bash-like environment variable substitution
 
             # Codesign release (tagged) builds only
-            If ( -Not $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName=null' }
+            If ( -Not $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName="null"' }
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
