@@ -12,6 +12,7 @@ import {
 	TIMELESS_PLAN_ECOMMERCE,
 	TIMELESS_PLAN_FREE,
 	STORE_KEY,
+	FREE_PLAN_PRODUCT_ID,
 } from './constants';
 import deprecate from '@wordpress/deprecated';
 import type {
@@ -161,5 +162,5 @@ export const isPlanFree = ( _: State, planSlug?: PlanSlug ): boolean => {
 };
 
 export const isPlanProductFree = ( _: State, planProductId?: number | undefined ): boolean => {
-	return planProductId === 1;
+	return planProductId === FREE_PLAN_PRODUCT_ID;
 };
