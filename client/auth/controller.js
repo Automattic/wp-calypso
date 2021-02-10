@@ -41,9 +41,9 @@ export default {
 		let authUrl;
 
 		if ( config( 'oauth_client_id' ) ) {
-			const protocol = process.env.PROTOCOL || config( 'protocol' );
-			const host = process.env.HOST || config( 'hostname' );
-			const port = process.env.PORT || config( 'port' );
+			const protocol = config( 'protocol' );
+			const host = config( 'hostname' );
+			const port = config( 'port' );
 			const redirectUri = `${ protocol }://${ host }:${ port }/api/oauth/token`;
 
 			const params = new URLSearchParams( {
