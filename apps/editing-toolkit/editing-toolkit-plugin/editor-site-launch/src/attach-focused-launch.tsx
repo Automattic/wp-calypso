@@ -9,6 +9,7 @@ import FocusedLaunchModal from '@automattic/launch';
 /**
  * Internal dependencies
  */
+import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
 import { LAUNCH_STORE, SITE_STORE } from './stores';
 import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
 
@@ -46,6 +47,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				redirectTo={ redirectToWpcomPath }
 				siteId={ currentSiteId }
 				getCurrentLaunchFlowUrl={ getCurrentLaunchFlowUrl }
+				isInIframe={ inIframe() }
 			/>
 		) : null;
 	},

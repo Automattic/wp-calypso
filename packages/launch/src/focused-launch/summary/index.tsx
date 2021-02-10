@@ -545,7 +545,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const { siteId } = React.useContext( LaunchContext );
 
-	const { goToCheckout } = useCart();
+	const { goToCheckoutAndLaunch } = useCart();
 
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
@@ -567,10 +567,12 @@ const Summary: React.FunctionComponent = () => {
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
 	const handleLaunch = () => {
+		// Launch the site directly if Free plan and subdomain are selected.
+		// Otherwise, show checkout as the next step.
 		if ( ! selectedDomain && isSelectedPlanFree ) {
 			launchSite( siteId );
 		} else {
-			goToCheckout();
+			goToCheckoutAndLaunch();
 		}
 	};
 

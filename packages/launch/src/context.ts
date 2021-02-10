@@ -7,9 +7,14 @@ import { addQueryArgs } from '@wordpress/url';
 interface LaunchContext {
 	siteId: number;
 	redirectTo: ( url: string ) => void;
-	openCheckout: ( siteSlug: string, isEcommerce?: boolean, onSuccessCallback?: () => void ) => void;
+	openCheckout: (
+		siteSlug?: string,
+		isEcommerce?: boolean,
+		onSuccessCallback?: () => void
+	) => void;
 	getCurrentLaunchFlowUrl: () => string | undefined;
 	flow: string;
+	isInIframe: boolean;
 }
 
 const defaultRedirectTo = ( url: string ) => {
@@ -39,6 +44,7 @@ const LaunchContext = React.createContext< LaunchContext >( {
 		);
 	},
 	flow: 'launch',
+	isInIframe: false,
 } );
 
 export default LaunchContext;

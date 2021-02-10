@@ -21,9 +21,10 @@ import './styles.scss';
 interface Props {
 	locale?: string;
 	siteId: number;
-	openCheckout: ( siteSlug: string, isEcommerce?: boolean ) => void;
+	openCheckout: ( siteSlug?: string, isEcommerce?: boolean ) => void;
 	redirectTo: ( path: string ) => void;
 	getCurrentLaunchFlowUrl: () => string | undefined;
+	isInIframe: boolean;
 }
 
 const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
@@ -32,6 +33,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	openCheckout,
 	redirectTo,
 	getCurrentLaunchFlowUrl,
+	isInIframe,
 } ) => {
 	const {
 		isModalDismissible,
@@ -40,7 +42,6 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	} = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 
 	const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
-
 	return (
 		<LocaleProvider localeSlug={ locale }>
 			<Modal
@@ -67,6 +68,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 							openCheckout,
 							flow: FOCUSED_LAUNCH_FLOW_ID,
 							getCurrentLaunchFlowUrl,
+							isInIframe,
 						} }
 					>
 						<FocusedLaunch />
