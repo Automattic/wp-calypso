@@ -21,8 +21,6 @@ import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
-	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
-	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 
@@ -63,12 +61,6 @@ export const onInviteResendRequestFailure = () =>
 
 const onGuidedTransferHostDetailsSaveSuccess = () =>
 	successNotice( translate( 'Thanks for confirming those details!' ) );
-
-const onSiteMonitorSettingsUpdateSuccess = () =>
-	successNotice( translate( 'Settings saved successfully!' ) );
-
-const onSiteMonitorSettingsUpdateFailure = () =>
-	successNotice( translate( 'There was a problem saving your changes. Please, try again.' ) );
 
 const onSiteDelete = ( { siteId } ) => ( dispatch, getState ) => {
 	const siteDomain = getSiteDomain( getState(), siteId );
@@ -122,8 +114,6 @@ export const handlers = {
 	[ SITE_DELETE ]: onSiteDelete,
 	[ SITE_DELETE_FAILURE ]: onSiteDeleteFailure,
 	[ SITE_DELETE_RECEIVE ]: onSiteDeleteReceive,
-	[ SITE_MONITOR_SETTINGS_UPDATE_SUCCESS ]: onSiteMonitorSettingsUpdateSuccess,
-	[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: onSiteMonitorSettingsUpdateFailure,
 };
 
 /**
