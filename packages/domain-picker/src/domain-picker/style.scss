@@ -406,6 +406,10 @@ $accent-blue: #117ac9;
 	@include break-small {
 		display: inline;
 	}
+
+	strong {
+		font-weight: 700;
+	}
 }
 
 .domain-picker__price-renewal {
