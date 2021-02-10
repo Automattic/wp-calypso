@@ -73,7 +73,9 @@ module.exports = function ( mainWindow ) {
 	// This attempts to catch some network errors and display an error screen in order to avoid a blank white page
 	mainWindow.webContents.on(
 		'did-fail-load',
-		async function ( event, errorCode, errorDescription ) {
+		async function ( event, errorCode, errorDescription, validatedURL ) {
+			log.error( `Failed to load URL '${ validatedURL }'` );
+
 			if ( ERRORS_TO_IGNORE.indexOf( errorCode ) === -1 ) {
 				if ( isErrorPage( event.sender ) ) {
 					failedToLoadError( mainWindow );
