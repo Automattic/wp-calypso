@@ -10,7 +10,7 @@ import { addFilter, removeFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies
  */
-import PageTemplateModal from '@automattic/page-template-modal';
+import { PageTemplateModal } from '@automattic/page-template-modal';
 
 const INSERTING_HOOK_NAME = 'isInsertingPageTemplate';
 const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-template';

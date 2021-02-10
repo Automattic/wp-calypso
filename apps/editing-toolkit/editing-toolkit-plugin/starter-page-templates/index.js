@@ -8,7 +8,7 @@ import { initializeTracksWithIdentity } from '@automattic/page-template-modal';
 /**
  * Internal dependencies
  */
-import { PageTemplatesPlugin } from './page-patterns-plugin';
+import { PageTemplatesPlugin } from './page-template-plugin';
 import './store';
 
 // Load config passed from backend.
