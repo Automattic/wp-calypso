@@ -7,12 +7,8 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	withSchemaValidation,
-	withoutPersistence,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
