@@ -77,17 +77,37 @@ class Block_Patterns_From_API {
 
 		foreach ( (array) $block_patterns as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
-				// Temporarily skip the 'featured' category so that we can expose it at another time.
-				if ( 'featured' !== $slug ) {
-					$pattern_categories[ $slug ] = $category['title'];
-				}
+				$pattern_categories[ $slug ] = array( 'label' => $category['title'] );
 			}
 		}
 
-		// Order categories alphabetically and register them.
-		asort( $pattern_categories );
-		foreach ( (array) $pattern_categories as $slug => $label ) {
-			register_block_pattern_category( $slug, array( 'label' => $label ) );
+		// Unregister existing categories so that we can insert them in the desired order (alphabetically)
+		$existing_categories = [];
+		foreach( \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered() as $existing_category ) {
+			$existing_categories[ $existing_category['name'] ] = $existing_category;
+			unregister_block_pattern_category( $existing_category['name'] );
+		}
+
+		$pattern_categories = array_merge( $pattern_categories, $existing_categories );
+
+		// Order categories alphabetically by their slug.
+		ksort( $pattern_categories );
+
+		// Move the Featured category to be the first category.
+		if ( isset( $pattern_categories['featured'] ) ) {
+			$featured_category = $pattern_categories['featured'];
+			unset( $pattern_categories['featured'] );
+			$pattern_categories = array_merge(
+				array(
+					'featured' => $featured_category
+				),
+				$pattern_categories
+			);
+		}
+
+		// Register categories (and re-register existing categories).
+		foreach ( (array) $pattern_categories as $slug => $category_properties ) {
+			register_block_pattern_category( $slug, $category_properties );
 		}
 
 		foreach ( (array) $block_patterns as $pattern ) {
