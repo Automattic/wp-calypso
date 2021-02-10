@@ -5,7 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
+import { Card } from '@automattic/components';
 /**
  * Internal Dependencies
  */
@@ -13,18 +13,21 @@ import QueryWhatsNewList from 'calypso/components/data/query-whats-new';
 import { getWhatsNewList } from 'calypso/state/whats-new/selectors';
 function WhatsNew( { list, isListReady } ) {
 	return (
-		<>
+		<Card>
 			<div>
-				<QueryWhatsNewList />
-				{ JSON.stringify( list ) }
+				{ ! isListReady && <QueryWhatsNewList /> }
 				{ isListReady &&
-					list.map( ( item ) => (
-						<p>
-							{ item.appVersionName }: { item.detailsUrl }
-						</p>
+					list.announcements.map( ( item ) => (
+						<>
+							<p>{ item.title }</p>
+							<p>{ item.subtitle }</p>
+							<p>
+								<a href={ item.detailsUrl }>Learn more</a>
+							</p>
+						</>
 					) ) }
 			</div>
-		</>
+		</Card>
 	);
 }
 
@@ -34,9 +37,8 @@ WhatsNew.propTypes = {
 };
 
 const mapStateToProps = ( state ) => {
-	const list = getWhatsNewList( state ).announcements;
-	// const isListReady = Object.keys( list ).length !== 0;
-	const isListReady = list !== null;
+	const list = getWhatsNewList( state );
+	const isListReady = Object.keys( list ).length !== 0;
 
 	return {
 		list,
