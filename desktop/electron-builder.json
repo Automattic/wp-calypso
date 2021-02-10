@@ -46,7 +46,8 @@
 		"target": {
 			"target": "nsis",
 			"arch": [ "x64", "ia32" ]
-		}
+		},
+		"certificateSubjectName": "Automattic, Inc."
 	},
 	"nsis": {
 		"oneClick": false,
