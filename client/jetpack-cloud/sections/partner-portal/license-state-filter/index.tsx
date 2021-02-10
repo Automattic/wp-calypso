@@ -9,7 +9,8 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { LicenseStates } from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
+
+import { LicenseStates } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
@@ -23,8 +24,8 @@ import UrlSearch from 'calypso/lib/url-search';
 import './style.scss';
 
 interface Props {
-	stateFilter?: LicenseStates;
-	search?: string;
+	stateFilter: LicenseStates;
+	search: string;
 	doSearch: ( query: string ) => void;
 	getSearchOpen: () => boolean;
 }
