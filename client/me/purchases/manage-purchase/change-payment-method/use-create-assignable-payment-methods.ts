@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
@@ -16,12 +16,17 @@ import {
 	useCreateExistingCards,
 	useCreatePayPal,
 } from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
 
 export default function useCreateAssignablePaymentMethods(
 	currentPaymentMethodId: string
 ): PaymentMethod[] {
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+
+	const allowedPaymentMethods = useFetchAvailablePaymentMethods();
+	// TODO: wait for allowedPaymentMethods to be fetched somehow
 
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
@@ -47,9 +52,21 @@ export default function useCreateAssignablePaymentMethods(
 	} );
 
 	const paymentMethods = useMemo(
-		() => [ ...existingCardMethods, stripeMethod, payPalMethod ].filter( Boolean ),
-		[ stripeMethod, existingCardMethods, payPalMethod ]
+		() =>
+			[ ...existingCardMethods, stripeMethod, payPalMethod ]
+				.filter( doesValueExist )
+				.filter( ( method ) => {
+					const paymentMethodName = translateCheckoutPaymentMethodToWpcomPaymentMethod( method.id );
+					return paymentMethodName && allowedPaymentMethods.includes( paymentMethodName );
+				} ),
+		[ stripeMethod, existingCardMethods, payPalMethod, allowedPaymentMethods ]
 	);
 
 	return paymentMethods;
+}
+
+function useFetchAvailablePaymentMethods(): string[] {
+	const [ allowedPaymentMethods ] = useState< string[] >( [] );
+	// FIXME: fetch and memoize from /me/allowed-payment-methods
+	return allowedPaymentMethods;
 }
