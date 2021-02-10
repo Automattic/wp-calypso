@@ -2,19 +2,15 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, truncate } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
-import { getInviteForSite } from 'calypso/state/invites/selectors';
 import {
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
-	INVITE_RESEND_REQUEST_FAILURE,
-	INVITES_DELETE_REQUEST_SUCCESS,
-	INVITES_DELETE_REQUEST_FAILURE,
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
@@ -26,27 +22,6 @@ import { purchasesRoot } from 'calypso/me/purchases/paths';
 /**
  * Handlers
  */
-
-export const onDeleteInvitesFailure = ( action ) => ( dispatch, getState ) => {
-	for ( const inviteId of action.inviteIds ) {
-		const invite = getInviteForSite( getState(), action.siteId, inviteId );
-		dispatch(
-			errorNotice(
-				translate( 'An error occurred while deleting the invite for %s.', {
-					args: truncate( invite.user.email, { length: 20 } ),
-				} )
-			)
-		);
-	}
-};
-
-export const onDeleteInvitesSuccess = ( { inviteIds } ) =>
-	successNotice( translate( 'Invite deleted.', 'Invites deleted.', { count: inviteIds.length } ), {
-		displayOnNextPage: true,
-	} );
-
-export const onInviteResendRequestFailure = () =>
-	errorNotice( translate( 'Invitation failed to resend.' ) );
 
 const onGuidedTransferHostDetailsSaveSuccess = () =>
 	successNotice( translate( 'Thanks for confirming those details!' ) );
@@ -99,9 +74,6 @@ const onSiteDeleteFailure = ( { error } ) => {
  */
 
 export const handlers = {
-	[ INVITES_DELETE_REQUEST_SUCCESS ]: onDeleteInvitesSuccess,
-	[ INVITES_DELETE_REQUEST_FAILURE ]: onDeleteInvitesFailure,
-	[ INVITE_RESEND_REQUEST_FAILURE ]: onInviteResendRequestFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: onGuidedTransferHostDetailsSaveSuccess,
 	[ SITE_DELETE ]: onSiteDelete,
 	[ SITE_DELETE_FAILURE ]: onSiteDeleteFailure,
