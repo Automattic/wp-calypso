@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
@@ -18,6 +18,7 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
+import useFetchAvailablePaymentMethods from './use-fetch-available-payment-methods';
 
 export default function useCreateAssignablePaymentMethods(
 	currentPaymentMethodId: string
@@ -25,8 +26,11 @@ export default function useCreateAssignablePaymentMethods(
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 
-	const allowedPaymentMethods = useFetchAvailablePaymentMethods();
-	// TODO: wait for allowedPaymentMethods to be fetched somehow
+	const {
+		isFetching: isLoadingAllowedPaymentMethods,
+		data: allowedPaymentMethods,
+		error: allowedPaymentMethodsError,
+	} = useFetchAvailablePaymentMethods();
 
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
@@ -56,17 +60,25 @@ export default function useCreateAssignablePaymentMethods(
 			[ ...existingCardMethods, stripeMethod, payPalMethod ]
 				.filter( doesValueExist )
 				.filter( ( method ) => {
+					// If there's an error fetching allowed payment methods, just allow all of them.
+					if ( allowedPaymentMethodsError ) {
+						return true;
+					}
 					const paymentMethodName = translateCheckoutPaymentMethodToWpcomPaymentMethod( method.id );
 					return paymentMethodName && allowedPaymentMethods.includes( paymentMethodName );
 				} ),
-		[ stripeMethod, existingCardMethods, payPalMethod, allowedPaymentMethods ]
+		[
+			stripeMethod,
+			existingCardMethods,
+			payPalMethod,
+			allowedPaymentMethods,
+			allowedPaymentMethodsError,
+		]
 	);
 
-	return paymentMethods;
-}
+	if ( isLoadingAllowedPaymentMethods ) {
+		return [];
+	}
 
-function useFetchAvailablePaymentMethods(): string[] {
-	const [ allowedPaymentMethods ] = useState< string[] >( [] );
-	// FIXME: fetch and memoize from /me/allowed-payment-methods
-	return allowedPaymentMethods;
+	return paymentMethods;
 }
