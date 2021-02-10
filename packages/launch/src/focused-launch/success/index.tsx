@@ -36,12 +36,7 @@ const Success: React.FunctionComponent = () => {
 		[ selectedPlanProductId ]
 	);
 
-	const {
-		unsetModalDismissible,
-		hideModalTitle,
-		closeFocusedLaunch,
-		disablePersistentSuccessView,
-	} = useDispatch( LAUNCH_STORE );
+	const { unsetModalDismissible, hideModalTitle, closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
 
@@ -62,7 +57,6 @@ const Success: React.FunctionComponent = () => {
 	const continueEditing = () => {
 		if ( isSelectedPlanFree ) {
 			// If the site was launched without purchasing a paid plan, don't reload the page
-			disablePersistentSuccessView();
 			closeFocusedLaunch();
 		} else {
 			// After a plan was purchased, we need to reload the page for plans data to be picked up by Jetpack Premium blocks
@@ -73,7 +67,6 @@ const Success: React.FunctionComponent = () => {
 	};
 
 	const redirectToHome = () => {
-		disablePersistentSuccessView();
 		redirectTo( `/home/${ siteSubdomain?.domain }` );
 	};
 

@@ -22,28 +22,12 @@ import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
 	const { isSiteLaunched, isSiteLaunching } = useSite();
-	const { enablePersistentSuccessView } = useDispatch( LAUNCH_STORE );
 
-	const [ hasSelectedDomain, selectedPlanProductId, shouldDisplaySuccessView ] = useSelect(
-		( select ) => {
-			const { planProductId, shouldDisplaySuccessView } = select( LAUNCH_STORE ).getState();
+	const [ hasSelectedDomain, selectedPlanProductId ] = useSelect( ( select ) => {
+		const { planProductId } = select( LAUNCH_STORE ).getState();
 
-			return [
-				select( LAUNCH_STORE ).hasSelectedDomain(),
-				planProductId,
-				shouldDisplaySuccessView,
-			];
-		}
-	);
-
-	// Force Success view to be the default view when opening Focused Launch modal.
-	// This is used in case the user opens the Focused Launch modal after launching
-	// the site (e.g. when redirected back after the checkout screen)
-	React.useEffect( () => {
-		if ( isSiteLaunched ) {
-			enablePersistentSuccessView();
-		}
-	}, [ isSiteLaunched, enablePersistentSuccessView ] );
+		return [ select( LAUNCH_STORE ).hasSelectedDomain(), planProductId ];
+	} );
 
 	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
 	// If there is no selected domain, but there is a domain in cart,
@@ -69,10 +53,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	}, [ selectedPlanProductId, planProductIdFromCart, setPlanProductId ] );
 
 	return (
-		<Router
-			initialEntries={ [ FocusedLaunchRoute.Summary, FocusedLaunchRoute.Success ] }
-			initialIndex={ shouldDisplaySuccessView ? 1 : 0 }
-		>
+		<Router>
 			<ScrollToTop selector=".components-modal__content" />
 			{ ( isSiteLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
 			<Switch>

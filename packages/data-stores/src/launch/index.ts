@@ -38,7 +38,6 @@ export function register(): typeof STORE_KEY {
 				'isExperimental',
 				'isAnchorFm',
 				'isSiteTitleStepVisible',
-				'shouldDisplaySuccessView',
 			],
 		} );
 	}

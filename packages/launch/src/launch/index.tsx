@@ -35,22 +35,18 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	getCurrentLaunchFlowUrl,
 	isInIframe,
 } ) => {
-	const {
-		isModalDismissible,
-		isModalTitleVisible,
-		shouldDisplaySuccessView,
-	} = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { isModalDismissible, isModalTitleVisible } = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getState()
+	);
 
 	const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
+
 	return (
 		<LocaleProvider localeSlug={ locale }>
 			<Modal
 				open={ true }
 				className={ classNames( 'launch__focused-modal', {
 					'launch__focused-modal--hide-title': ! isModalTitleVisible,
-				} ) }
-				overlayClassName={ classNames( 'launch__focused-modal-overlay', {
-					'launch__focused-modal-overlay--delay-animation-in': shouldDisplaySuccessView,
 				} ) }
 				bodyOpenClassName="has-focused-launch-modal"
 				onRequestClose={ closeFocusedLaunch }

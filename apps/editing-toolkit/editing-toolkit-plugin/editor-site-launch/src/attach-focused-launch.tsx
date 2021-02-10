@@ -21,17 +21,11 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 	render: function LaunchSidebar() {
 		const currentSiteId = window._currentSiteId;
 
-		const [ isFocusedLaunchOpen, shouldDisplaySuccessView, isSiteLaunched ] = useSelect(
-			( select ) => {
-				const { isFocusedLaunchOpen, shouldDisplaySuccessView } = select( LAUNCH_STORE ).getState();
+		const [ isFocusedLaunchOpen, isSiteLaunched ] = useSelect( ( select ) => {
+			const { isFocusedLaunchOpen } = select( LAUNCH_STORE ).getState();
 
-				return [
-					isFocusedLaunchOpen,
-					shouldDisplaySuccessView,
-					select( SITE_STORE ).isSiteLaunched( currentSiteId ),
-				];
-			}
-		);
+			return [ isFocusedLaunchOpen, select( SITE_STORE ).isSiteLaunched( currentSiteId ) ];
+		} );
 
 		// Add a class to hide the Launch button from editor bar when site is launched
 		React.useEffect( () => {
@@ -40,7 +34,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 			}
 		}, [ isSiteLaunched ] );
 
-		return isFocusedLaunchOpen || shouldDisplaySuccessView ? (
+		return isFocusedLaunchOpen ? (
 			<FocusedLaunchModal
 				locale={ window.wpcomEditorSiteLaunch?.locale }
 				openCheckout={ openCheckout }
