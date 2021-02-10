@@ -1,8 +1,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import type { FunctionComponent, AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react';
+import React, { forwardRef } from 'react';
+import type {
+	Ref,
+	ForwardRefRenderFunction,
+	AnchorHTMLAttributes,
+	ButtonHTMLAttributes,
+} from 'react';
 import classnames from 'classnames';
 import type { NonUndefined } from 'utility-types';
 
@@ -65,7 +70,10 @@ const cleanButtonProps = ( {
 	...buttonProps
 }: ButtonProps | AnchorProps ): ButtonProps => ( { ...buttonProps, type } as ButtonProps );
 
-const Button: FunctionComponent< ButtonProps | AnchorProps > = ( props ) => {
+const Button: ForwardRefRenderFunction<
+	HTMLButtonElement | HTMLAnchorElement,
+	ButtonProps | AnchorProps
+> = ( props, ref ) => {
 	const classes = props.plain
 		? classnames( 'button-plain', props.className )
 		: classnames( 'button', props.className, {
@@ -83,15 +91,26 @@ const Button: FunctionComponent< ButtonProps | AnchorProps > = ( props ) => {
 			? ( anchorProps.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
 			: anchorProps.rel;
 
-		return <a { ...anchorProps } rel={ rel } className={ classes } />;
+		return (
+			<a
+				{ ...anchorProps }
+				rel={ rel }
+				className={ classes }
+				ref={ ref as Ref< HTMLAnchorElement > }
+			/>
+		);
 	}
 
 	const buttonProps = cleanButtonProps( props );
-	return <button { ...buttonProps } className={ classes } />;
+	return (
+		<button { ...buttonProps } className={ classes } ref={ ref as Ref< HTMLButtonElement > } />
+	);
 };
 
-Button.defaultProps = {
+const ButtonWithForwardedRef = forwardRef( Button );
+
+ButtonWithForwardedRef.defaultProps = {
 	type: 'button',
 };
 
-export default Button;
+export default ButtonWithForwardedRef;
