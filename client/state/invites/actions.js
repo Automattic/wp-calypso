@@ -103,7 +103,7 @@ const deleteInvitesFailureNotice = ( siteId, inviteIds ) => ( dispatch, getState
 		dispatch(
 			errorNotice(
 				translate( 'An error occurred while deleting the invite for %s.', {
-					args: truncate( invite.user.email, { length: 20 } ),
+					args: truncate( invite.user.email || invite.user.login, { length: 20 } ),
 				} )
 			)
 		);
