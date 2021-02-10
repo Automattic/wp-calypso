@@ -16,16 +16,25 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useSiteDomains } from '../../hooks';
 import Confetti from './confetti';
 import LaunchContext from '../../context';
-import { LAUNCH_STORE, SITE_STORE } from '../../stores';
+import { LAUNCH_STORE, PLANS_STORE, SITE_STORE } from '../../stores';
 
 import './style.scss';
 
 // Success is shown when the site is launched but also while the site is still launching.
 // This view is technically going to be the selected view in the modal even while the user goes through the checkout flow (which is rendered on top of this view).
 const Success: React.FunctionComponent = () => {
-	const { redirectTo, siteId } = React.useContext( LaunchContext );
+	const { redirectTo, siteId, getCurrentLaunchFlowUrl } = React.useContext( LaunchContext );
 
 	const isSiteLaunching = useSelect( ( select ) => select( SITE_STORE ).isSiteLaunching( siteId ) );
+
+	const selectedPlanProductId = useSelect(
+		( select ) => select( LAUNCH_STORE ).getSelectedPlanProductId(),
+		[]
+	);
+	const isSelectedPlanFree = useSelect(
+		( select ) => select( PLANS_STORE ).isPlanProductFree( selectedPlanProductId ),
+		[ selectedPlanProductId ]
+	);
 
 	const {
 		unsetModalDismissible,
@@ -51,8 +60,16 @@ const Success: React.FunctionComponent = () => {
 	}, [ unsetModalDismissible, hideModalTitle ] );
 
 	const continueEditing = () => {
-		disablePersistentSuccessView();
-		closeFocusedLaunch();
+		if ( isSelectedPlanFree ) {
+			// If the site was launched without purchasing a paid plan, don't reload the page
+			disablePersistentSuccessView();
+			closeFocusedLaunch();
+		} else {
+			// After a plan was purchased, we need to reload the page for plans data to be picked up by Jetpack Premium blocks
+			// @TODO: see if there is a way to prevent reloading
+			const pathName = new URL( getCurrentLaunchFlowUrl() || '' )?.pathname;
+			redirectTo( pathName || `/page/${ siteSubdomain?.domain }/home` );
+		}
 	};
 
 	const redirectToHome = () => {
