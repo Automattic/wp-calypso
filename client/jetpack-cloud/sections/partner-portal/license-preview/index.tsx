@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { getUrlParts } from 'calypso/lib/url';
 import classnames from 'classnames';
 
 /**
@@ -28,28 +29,29 @@ import './style.scss';
 
 interface Props {
 	licenseKey: string;
-	domain: string;
 	product: string;
-	issuedOn: string;
-	attachedOn: string;
-	revokedOn: string;
-	username: string;
-	blogId: number;
+	username: string | null;
+	blogId: number | null;
+	siteUrl: string | null;
+	issuedAt: string;
+	attachedAt: string | null;
+	revokedAt: string | null;
 }
 
 export default function LicensePreview( {
 	licenseKey,
-	domain,
 	product,
-	issuedOn,
-	attachedOn,
-	revokedOn,
 	username,
 	blogId,
-}: Props ) {
+	siteUrl,
+	issuedAt,
+	attachedAt,
+	revokedAt,
+}: Props ): ReactElement {
 	const translate = useTranslate();
 	const [ isOpen, setOpen ] = useState( false );
-	const licenseState = getLicenseState( attachedOn, revokedOn );
+	const licenseState = getLicenseState( attachedAt, revokedAt );
+	const domain = siteUrl ? getUrlParts( siteUrl ).hostname : '';
 	const showDomain = domain && [ STATE_ATTACHED, STATE_REVOKED ].indexOf( licenseState ) !== -1;
 
 	const open = useCallback( () => {
@@ -98,14 +100,14 @@ export default function LicensePreview( {
 				<div>
 					<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
 
-					<FormattedDate date={ issuedOn } format="YYYY-MM-DD" />
+					<FormattedDate date={ issuedAt } format="YYYY-MM-DD" />
 				</div>
 
 				<div>
 					<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
 
 					{ licenseState === STATE_ATTACHED && (
-						<FormattedDate date={ attachedOn } format="YYYY-MM-DD" />
+						<FormattedDate date={ attachedAt } format="YYYY-MM-DD" />
 					) }
 
 					{ licenseState !== STATE_ATTACHED && (
@@ -117,7 +119,7 @@ export default function LicensePreview( {
 					<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
 
 					{ licenseState === STATE_REVOKED && (
-						<FormattedDate date={ revokedOn } format="YYYY-MM-DD" />
+						<FormattedDate date={ revokedAt } format="YYYY-MM-DD" />
 					) }
 
 					{ licenseState !== STATE_REVOKED && (
@@ -147,11 +149,11 @@ export default function LicensePreview( {
 			{ isOpen && (
 				<LicenseDetails
 					licenseKey={ licenseKey }
-					issuedOn={ issuedOn }
-					attachedOn={ attachedOn }
-					revokedOn={ revokedOn }
 					username={ username }
 					blogId={ blogId }
+					issuedAt={ issuedAt }
+					attachedAt={ attachedAt }
+					revokedAt={ revokedAt }
 				/>
 			) }
 		</div>

@@ -9,7 +9,7 @@ import type PageJS from 'page';
  * Internal dependencies
  */
 import { addQueryArgs } from 'calypso/lib/route';
-import { getActivePartnerKey } from 'calypso/state/partner-portal/selectors';
+import { getActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
 import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';

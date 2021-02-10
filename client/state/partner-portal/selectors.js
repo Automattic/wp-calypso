@@ -8,7 +8,8 @@ import startsWith from 'lodash/startsWith';
  */
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-export * from 'calypso/state/partner-portal/selectors/partner';
+// Required for modular state.
+import 'calypso/state/partner-portal/init';
 
 export const isPartnerPortal = ( state ) =>
 	startsWith( getCurrentRoute( state ), '/partner-portal' );

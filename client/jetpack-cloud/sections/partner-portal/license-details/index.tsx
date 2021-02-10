@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -25,23 +25,23 @@ import './style.scss';
 
 interface Props {
 	licenseKey: string;
-	issuedOn: string;
-	attachedOn: string;
-	revokedOn: string;
-	username: string;
-	blogId: number;
+	username: string | null;
+	blogId: number | null;
+	issuedAt: string;
+	attachedAt: string | null;
+	revokedAt: string | null;
 }
 
 export default function LicenseDetails( {
 	licenseKey,
-	issuedOn,
-	attachedOn,
-	revokedOn,
 	username,
 	blogId,
-}: Props ) {
+	issuedAt,
+	attachedAt,
+	revokedAt,
+}: Props ): ReactElement {
 	const translate = useTranslate();
-	const licenseState = getLicenseState( attachedOn, revokedOn );
+	const licenseState = getLicenseState( attachedAt, revokedAt );
 
 	return (
 		<Card className="license-details">
@@ -65,13 +65,13 @@ export default function LicenseDetails( {
 
 				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( 'Issued on' ) }</h4>
-					<FormattedDate date={ issuedOn } format="LLL" />
+					<FormattedDate date={ issuedAt } format="LLL" />
 				</li>
 
 				{ licenseState === STATE_ATTACHED && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Attached on' ) }</h4>
-						<FormattedDate date={ attachedOn } format="LLL" />
+						<FormattedDate date={ attachedAt } format="LLL" />
 					</li>
 				) }
 
@@ -85,7 +85,7 @@ export default function LicenseDetails( {
 				{ licenseState === STATE_REVOKED && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Revoked on' ) }</h4>
-						<FormattedDate date={ revokedOn } format="LLL" />
+						<FormattedDate date={ revokedAt } format="LLL" />
 					</li>
 				) }
 

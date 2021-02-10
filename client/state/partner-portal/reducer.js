@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { combineReducers, withStorageKey } from 'calypso/state/utils';
-import partner from 'calypso/state/partner-portal/reducer/partner';
+import partner from 'calypso/state/partner-portal/partner/reducer';
 
 const combinedReducer = combineReducers( {
 	partner,
