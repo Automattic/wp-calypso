@@ -4,39 +4,44 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /**
  * Internal Dependencies
  */
 import QueryWhatsNewList from 'calypso/components/data/query-whats-new';
-// import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWhatsNewList } from 'calypso/state/whats-new/selectors';
-
-function WhatsNew( { list } ) {
+function WhatsNew( { list, isListReady } ) {
 	return (
 		<>
 			<div>
-				list obect:
-				{ ! list && <QueryWhatsNewList /> }
+				<QueryWhatsNewList />
 				{ JSON.stringify( list ) }
+				{ isListReady &&
+					list.map( ( item ) => (
+						<p>
+							{ item.appVersionName }: { item.detailsUrl }
+						</p>
+					) ) }
 			</div>
 		</>
 	);
 }
 
+WhatsNew.propTypes = {
+	list: PropTypes.object,
+	isListReady: PropTypes.bool,
+};
+
 const mapStateToProps = ( state ) => {
-	// const siteId = getSelectedSiteId( state );
-	const list = getWhatsNewList( state );
+	const list = getWhatsNewList( state ).announcements;
+	// const isListReady = Object.keys( list ).length !== 0;
+	const isListReady = list !== null;
 
 	return {
 		list,
+		isListReady,
 	};
 };
-
-// export default connect( ( state, ownProps ) => {
-// 	return {
-// 		list: requestWhatsNewList( state, ownProps.siteId, ownProps.postId, SCOPE_OTHER ),
-// 	};
-// } )( WhatsNew );
 
 export default connect( mapStateToProps )( WhatsNew );

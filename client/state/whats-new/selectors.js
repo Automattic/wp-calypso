@@ -10,5 +10,5 @@ import 'calypso/state/whats-new/init';
  * @returns {object} Object with list of cards for each region
  */
 export function getWhatsNewList( state ) {
-	return state.whatsNew.list;
+	return state.whatsNew?.list ?? null;
 }

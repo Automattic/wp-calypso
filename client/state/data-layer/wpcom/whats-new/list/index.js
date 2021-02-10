@@ -11,16 +11,16 @@ const requestWhatsNewList = ( action ) => {
 	return http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/whats-new/list`,
+			path: `/whats-new/list`,
 			apiNamespace: 'wpcom/v2',
 		},
 		action
 	);
 };
 
-const setList = ( action, list ) => setWhatsNewList( action, list );
+const setList = ( action, list ) => setWhatsNewList( list );
 
-registerHandlers( 'state/data-layer/wpcom/sites/whats-new/list/index.js', {
+registerHandlers( 'state/data-layer/wpcom/whats-new/list/index.js', {
 	[ WHATS_NEW_LIST_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestWhatsNewList,

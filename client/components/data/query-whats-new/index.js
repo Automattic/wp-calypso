@@ -9,11 +9,11 @@ import { useDispatch } from 'react-redux';
  */
 import { requestWhatsNewList } from 'calypso/state/whats-new/actions';
 
-export default function QueryWhatsNewList( siteId ) {
+export default function QueryWhatsNewList() {
 	const dispatch = useDispatch();
 	React.useEffect( () => {
-		dispatch( requestWhatsNewList( siteId ) );
-	}, [ dispatch, siteId ] );
+		dispatch( requestWhatsNewList() );
+	}, [ dispatch ] );
 
 	return null;
 }
