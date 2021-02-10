@@ -11,9 +11,6 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
 import {
-	GRAVATAR_RECEIVE_IMAGE_FAILURE,
-	GRAVATAR_UPLOAD_REQUEST_FAILURE,
-	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITES_DELETE_REQUEST_SUCCESS,
@@ -29,16 +26,6 @@ import { purchasesRoot } from 'calypso/me/purchases/paths';
 /**
  * Handlers
  */
-
-export const onGravatarReceiveImageFailure = ( action ) => errorNotice( action.errorMessage );
-
-export const onGravatarUploadRequestFailure = () =>
-	errorNotice(
-		translate( 'Hmm, your new profile photo was not saved. Please try uploading again.' )
-	);
-
-export const onGravatarUploadRequestSuccess = () =>
-	successNotice( translate( 'You successfully uploaded a new profile photo — looking sharp!' ) );
 
 export const onDeleteInvitesFailure = ( action ) => ( dispatch, getState ) => {
 	for ( const inviteId of action.inviteIds ) {
@@ -112,9 +99,6 @@ const onSiteDeleteFailure = ( { error } ) => {
  */
 
 export const handlers = {
-	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: onGravatarReceiveImageFailure,
-	[ GRAVATAR_UPLOAD_REQUEST_FAILURE ]: onGravatarUploadRequestFailure,
-	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: onGravatarUploadRequestSuccess,
 	[ INVITES_DELETE_REQUEST_SUCCESS ]: onDeleteInvitesSuccess,
 	[ INVITES_DELETE_REQUEST_FAILURE ]: onDeleteInvitesFailure,
 	[ INVITE_RESEND_REQUEST_FAILURE ]: onInviteResendRequestFailure,
