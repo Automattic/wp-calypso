@@ -3,11 +3,12 @@
  */
 import { registerPlugin } from '@wordpress/plugins';
 import { dispatch } from '@wordpress/data';
+import { initializeTracksWithIdentity } from '@automattic/page-template-modal';
 
 /**
  * Internal dependencies
  */
-import { PageTemplatesPlugin, initializeTracksWithIdentity } from '@automattic/page-template-modal';
+import { PageTemplatesPlugin } from './page-patterns-plugin';
 import './store';
 
 // Load config passed from backend.
