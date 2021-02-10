@@ -38,7 +38,10 @@
 	}
 
 	&.is-disabled {
-		opacity: 0.2;
-		cursor: not-allowed;
+		.dns-records__list-type,
+		.dns-records__list-info {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
 	}
 }
