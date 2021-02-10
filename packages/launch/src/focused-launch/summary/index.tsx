@@ -515,6 +515,8 @@ type StepIndexRenderFunction = ( renderOptions: {
 } ) => React.ReactNode;
 
 const Summary: React.FunctionComponent = () => {
+	const { siteId } = React.useContext( LaunchContext );
+
 	const [
 		hasSelectedDomain,
 		isSiteTitleStepVisible,
@@ -527,35 +529,40 @@ const Summary: React.FunctionComponent = () => {
 		return [ launchStore.hasSelectedDomain(), isSiteTitleStepVisible, domain, planProductId ];
 	} );
 
-	const { isSelectedPlanFree } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-
-		return {
-			isSelectedPlanFree: plansStore.isPlanProductFree( selectedPlanProductId ),
-		};
-	} );
+	const isSelectedPlanFree = useSelect(
+		( select ) => select( PLANS_STORE ).isPlanProductFree( selectedPlanProductId ),
+		[ selectedPlanProductId ]
+	);
 
 	const { launchSite } = useDispatch( SITE_STORE );
-	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
+	const {
+		setModalDismissible,
+		unsetModalDismissible,
+		showModalTitle,
+		showSiteTitleStep,
+	} = useDispatch( LAUNCH_STORE );
 	const { title, updateTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
 
-	const { siteId } = React.useContext( LaunchContext );
-
-	const { goToCheckoutAndLaunch } = useCart();
-
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
 
-	// When the summary view is active, the modal should be dismissible, and
+	const { goToCheckoutAndLaunch, isCartUpdating } = useCart();
+
+	// When the summary view is active, if cart is not updating, the modal should be dismissible, and
 	// the modal title should be visible
 	React.useEffect( () => {
-		setModalDismissible();
+		if ( isCartUpdating ) {
+			unsetModalDismissible();
+		} else {
+			setModalDismissible();
+		}
+
 		showModalTitle();
-	}, [ setModalDismissible, showModalTitle ] );
+	}, [ isCartUpdating, setModalDismissible, showModalTitle, unsetModalDismissible ] );
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
@@ -678,8 +685,10 @@ const Summary: React.FunctionComponent = () => {
 			<div className="focused-launch-summary__actions-wrapper">
 				<ActionButtons className="focused-launch-summary__launch-action-bar">
 					<NextButton
-						className="focused-launch-summary__launch-button"
-						disabled={ ! isReadyToLaunch }
+						className={ classNames( 'focused-launch-summary__launch-button', {
+							'focused-launch-summary__launch-button--is-loading': isCartUpdating,
+						} ) }
+						disabled={ ! isReadyToLaunch || isCartUpdating }
 						onClick={ handleLaunch }
 					>
 						{ __( 'Launch your site', __i18n_text_domain__ ) }
