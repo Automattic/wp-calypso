@@ -67,10 +67,17 @@ describe( 'handlers', () => {
 				children: [
 					{
 						parent: 'my-custom-menu-3',
-						slug: 'my-custom-menu-4',
+						slug: 'my-custom-menu-3',
 						title: 'Settings',
 						type: 'submenu-item',
 						url: 'https://example.wordpress.com/wp-admin/settings.php',
+					},
+                    {
+						parent: 'my-custom-menu-4',
+						slug: 'my-custom-menu-4',
+						title: 'Malicious Child',
+						type: 'submenu-item',
+						url: 'javascript:alert("not good")',
 					},
 				],
 			},
