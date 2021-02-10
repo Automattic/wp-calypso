@@ -21,5 +21,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"prepack": "yarn run clean && yarn run build",
 		"test": "yarn jest"
+	},
+	"devDependencies": {
+		"@automattic/calypso-polyfills": "^1.0.0"
 	}
 }
