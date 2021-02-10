@@ -26,6 +26,7 @@ import useDomainsViewStatus from './use-domains-view-status';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import SidebarRegion from 'calypso/layout/sidebar/region';
 import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
@@ -52,9 +53,9 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	return (
 		<Fragment>
 			<Sidebar>
-				<li>
+				<SidebarRegion>
 					<CurrentSite forceAllSitesView={ isAllDomainsView } />
-				</li>
+				</SidebarRegion>
 				{ menuItems.map( ( item, i ) => {
 					const isSelected = item?.url && itemLinkMatches( item.url, path );
 
