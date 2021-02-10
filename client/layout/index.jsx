@@ -90,12 +90,6 @@ class Layout extends Component {
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
 			}
 		}
-
-		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
-		if ( config.isEnabled( 'nav-unification' ) ) {
-			window.addEventListener( 'scroll', scrollCallback );
-			window.addEventListener( 'resize', scrollCallback );
-		}
 	}
 
 	componentWillUnmount() {
@@ -116,6 +110,13 @@ class Layout extends Component {
 		if ( prevProps.colorSchemePreference === this.props.colorSchemePreference ) {
 			return;
 		}
+
+		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
+		if ( config.isEnabled( 'nav-unification' ) ) {
+			window.addEventListener( 'scroll', scrollCallback );
+			window.addEventListener( 'resize', scrollCallback );
+		}
+
 		if ( typeof document !== 'undefined' ) {
 			const classList = document.querySelector( 'body' ).classList;
 			classList.remove( `is-${ prevProps.colorSchemePreference }` );
