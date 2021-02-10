@@ -120,7 +120,7 @@ const Account = createReactClass( {
 	},
 
 	componentDidUpdate() {
-		if ( ! this.hasUnsavedUserSettings( [].concat( ACCOUNT_FIELDS, INTERFACE_FIELDS ) ) ) {
+		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
 		}
 	},
@@ -723,7 +723,7 @@ const Account = createReactClass( {
 	},
 
 	handleSubmitSuccess( response, formName = '' ) {
-		if ( ! this.hasUnsavedUserSettings( [].concat( ACCOUNT_FIELDS, INTERFACE_FIELDS ) ) ) {
+		if ( ! this.hasUnsavedUserSettings( ACCOUNT_FIELDS.concat( INTERFACE_FIELDS ) ) ) {
 			this.props.markSaved();
 		}
 
