@@ -109,7 +109,12 @@ const Modal = () => {
 							}
 							heading={ translate( 'Make it your own' ) }
 							content={ translate(
-								'Customize the appearance of your navigation from your account settings.'
+								'Customize the appearance of your navigation from your {{a}}account settings{{/a}}.',
+								{
+									components: {
+										a: <a href="/me/account" />,
+									},
+								}
 							) }
 						/>
 					),
