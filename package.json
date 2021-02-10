@@ -172,7 +172,7 @@
 		"@babel/core": "^7.12.3",
 		"@babel/register": "^7.12.1",
 		"@babel/runtime": "^7.12.5",
-		"@signal-noise/stylelint-scales": "^1.4.0",
+		"@signal-noise/stylelint-scales": "^2.0.0",
 		"@storybook/addon-actions": "^6.1.10",
 		"@storybook/preset-scss": "^1.0.3",
 		"@storybook/react": "^6.1.10",
