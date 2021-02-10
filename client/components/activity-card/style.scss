@@ -35,6 +35,20 @@
 		margin: 8px 0;
 		font-style: italic;
 	}
+
+	&.with-error {
+		.activity-card__time-icon {
+			fill: var( --color-error );
+		}
+
+		.activity-card__time-text {
+			color: var( --color-error );
+		}
+
+		.card {
+			border: solid 1px var( --color-error );
+		}
+	}
 }
 
 .activity-card__time {
