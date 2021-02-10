@@ -72,7 +72,7 @@ describe( 'handlers', () => {
 						type: 'submenu-item',
 						url: 'https://example.wordpress.com/wp-admin/settings.php',
 					},
-                    {
+					{
 						parent: 'my-custom-menu-4',
 						slug: 'my-custom-menu-4',
 						title: 'Malicious Child',
@@ -85,6 +85,7 @@ describe( 'handlers', () => {
 		const sanitizedMenu = [ ...unsafeMenu ];
 		sanitizedMenu[ 0 ].url = '';
 		sanitizedMenu[ 0 ].children[ 0 ].url = '';
+		sanitizedMenu[ 1 ].children[ 1 ].url = '';
 		const action = receiveAdminMenu( 73738, sanitizedMenu );
 
 		handleSuccess( { siteId: 73738 }, unsafeMenu )( dispatch, getState );
