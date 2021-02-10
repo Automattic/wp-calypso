@@ -15,7 +15,7 @@ import {
 } from 'calypso/state/action-types';
 import { ReduxDispatch } from 'calypso/state/redux-store';
 import { APIError, Partner, PartnerPortalStore } from 'calypso/state/partner-portal';
-import { isFetchingPartner } from 'calypso/state/partner-portal/selectors';
+import { isFetchingPartner } from 'calypso/state/partner-portal/partner/selectors';
 import wpcom from 'calypso/lib/wp';
 
 // Required for modular state.
