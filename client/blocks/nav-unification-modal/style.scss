@@ -169,7 +169,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .nav-unification-modal__picture {
 	display: flex;
 	margin-top: 20px;
-	// Safari default for align-items is stretch
+	// Preserve image aspect ratio on Safari (default for align-items is stretch)
 	align-items: flex-end;
 
 	@media ( min-width: $modal-breakpoint ) {
