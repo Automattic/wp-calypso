@@ -700,7 +700,6 @@ const Account = createReactClass( {
 	handleSubmitError( error, formName = '' ) {
 		debug( 'Error saving settings: ' + JSON.stringify( error ) );
 
-		// handle error case here
 		if ( error.message ) {
 			this.props.errorNotice( error.message, noticeOptions );
 		} else {
@@ -728,7 +727,7 @@ const Account = createReactClass( {
 			this.props.markSaved();
 		}
 
-		if ( this.state && this.state.redirect ) {
+		if ( this.state.redirect ) {
 			user()
 				.clear()
 				.then( () => {
@@ -738,14 +737,22 @@ const Account = createReactClass( {
 				} );
 			return;
 		}
-		// if we set submittingForm too soon the UI updates before the response is handled
-		this.setState( {
-			submittingForm: false,
-			formsSubmitting: {
-				...this.state.formsSubmitting,
-				...( formName && { [ formName ]: false } ),
+
+		this.setState(
+			{
+				submittingForm: false,
+				formsSubmitting: {
+					...this.state.formsSubmitting,
+					...( formName && { [ formName ]: false } ),
+				},
 			},
-		} );
+			() => {
+				this.props.successNotice(
+					this.props.translate( 'Settings saved successfully!' ),
+					noticeOptions
+				);
+			}
+		);
 		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 	},
 
