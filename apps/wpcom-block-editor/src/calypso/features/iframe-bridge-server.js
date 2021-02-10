@@ -961,9 +961,32 @@ async function preselectParentPage() {
 	}
 }
 
+function handleCheckoutModalOpened( calypsoPort, data ) {
+	const { port1, port2 } = new MessageChannel();
+
+	// Remove checkoutOnSuccessCallback from data to prevent
+	// the `data` object could not be cloned in postMessage()
+	const { checkoutOnSuccessCallback, ...cartData } = data;
+
+	calypsoPort.postMessage(
+		{
+			action: 'openCheckoutModal',
+			payload: cartData,
+		},
+		[ port2 ]
+	);
+
+	port1.onmessage = () => {
+		checkoutOnSuccessCallback?.();
+		// this is a once-only port
+		// to send more messages we have to re-open the
+		// modal and create a new channel
+		port1.close();
+	};
+}
+
 function handleCheckoutModal( calypsoPort ) {
 	const { port1, port2 } = new MessageChannel();
-	const { port1: checkoutPort1, port2: checkoutPort2 } = new MessageChannel();
 	calypsoPort.postMessage(
 		{
 			action: 'getCheckoutModalStatus',
@@ -971,7 +994,6 @@ function handleCheckoutModal( calypsoPort ) {
 		},
 		[ port2 ]
 	);
-	let callback;
 	port1.onmessage = ( message ) => {
 		const { isCheckoutOverlayEnabled } = message.data;
 
@@ -981,24 +1003,10 @@ function handleCheckoutModal( calypsoPort ) {
 				'a8c.wpcom-block-editor.openCheckoutModal',
 				'a8c/wpcom-block-editor/openCheckoutModal',
 				( data ) => {
-					callback = data.checkoutOnSuccessCallback;
-					// Deleting the checkoutOnSuccessCallback as otherwise
-					// the `data` object could not be cloned in postMessage()
-					delete data.checkoutOnSuccessCallback;
-					calypsoPort.postMessage(
-						{
-							action: 'openCheckoutModal',
-							payload: data,
-						},
-						[ checkoutPort2 ]
-					);
+					handleCheckoutModalOpened( calypsoPort, data );
 				}
 			);
 		}
-	};
-
-	checkoutPort1.onmessage = () => {
-		callback?.();
 	};
 }
 

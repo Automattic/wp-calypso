@@ -198,9 +198,12 @@ export default function useCreatePaymentCompleteCallback( {
 				}
 			}
 
+			// Focused Launch is showing a success dialog directly in editor instead of a thank you page.
+			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
 			if ( isInEditor && isFocusedLaunch && ! hasEcommercePlan( responseCart ) ) {
 				return;
 			}
+
 			debug( 'just redirecting to', url );
 
 			if ( createUserAndSiteBeforeTransaction ) {
