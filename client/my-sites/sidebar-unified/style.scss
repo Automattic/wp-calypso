@@ -76,10 +76,10 @@ $font-size: rem( 14px );
 
 		.site__content {
 			padding: 0 0 0 16px;
+		}
 
-			.site-icon {
-				margin-right: 22px;
-			}
+		.site-icon {
+			margin-right: 21px;
 		}
 
 		.site__home {
@@ -347,7 +347,16 @@ $font-size: rem( 14px );
 	// client/blocks/site/style.scss
 	.site__content,
 	.all-sites .all-sites__content {
-		padding: 10px 0 10px 8px;
+		padding: 12px 0 12px 16px;
+	}
+
+	.site-selector .site .site-icon {
+		margin-right: 16px;
+	}
+
+	//client/blocks/all-sites/style.scss
+	.all-sites .count {
+		margin-right: 16px;
 	}
 
 	.is-sidebar-collapsed & {
