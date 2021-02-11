@@ -81,9 +81,9 @@ class Block_Patterns_From_API {
 			}
 		}
 
-		// Unregister existing categories so that we can insert them in the desired order (alphabetically)
-		$existing_categories = [];
-		foreach( \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered() as $existing_category ) {
+		// Unregister existing categories so that we can insert them in the desired order (alphabetically).
+		$existing_categories = array();
+		foreach ( \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered() as $existing_category ) {
 			$existing_categories[ $existing_category['name'] ] = $existing_category;
 			unregister_block_pattern_category( $existing_category['name'] );
 		}
@@ -91,9 +91,12 @@ class Block_Patterns_From_API {
 		$pattern_categories = array_merge( $pattern_categories, $existing_categories );
 
 		// Order categories alphabetically by their label.
-		uasort( $pattern_categories, function( $a, $b ) {
-			return strnatcasecmp( $a['label'], $b['label'] );
-		} );
+		uasort(
+			$pattern_categories,
+			function( $a, $b ) {
+				return strnatcasecmp( $a['label'], $b['label'] );
+			}
+		);
 
 		// Move the Featured category to be the first category.
 		if ( isset( $pattern_categories['featured'] ) ) {
@@ -101,7 +104,7 @@ class Block_Patterns_From_API {
 			unset( $pattern_categories['featured'] );
 			$pattern_categories = array_merge(
 				array(
-					'featured' => $featured_category
+					'featured' => $featured_category,
 				),
 				$pattern_categories
 			);
