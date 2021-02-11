@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { get } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import formatCurrency from '@automattic/format-currency';
+import formatCurrency, { getCurrencyObject } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -58,12 +58,15 @@ export class PlanFeaturesComparisonHeader extends Component {
 			translate,
 		} = this.props;
 
-		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+		const headerClasses = classNames(
+			'plan-features-comparison__header',
+			getPlanClass( planType )
+		);
 
 		return (
 			<span>
 				<header className={ headerClasses }>
-					<h4 className="plan-features__header-title">{ title }</h4>
+					<h4 className="plan-features-comparison__header-title">{ title }</h4>
 					{ planLevelsMatch( selectedPlan, planType ) && (
 						<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
 					) }
@@ -77,7 +80,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 						<PlanPill isInSignup={ isInSignup }>{ translate( 'Best Value' ) }</PlanPill>
 					) }
 				</header>
-				<div className="plan-features__pricing">
+				<div className="plan-features-comparison__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
 					{ this.getIntervalDiscount() }
 				</div>
@@ -109,6 +112,8 @@ export class PlanFeaturesComparisonHeader extends Component {
 		const {
 			discountPrice,
 			rawPrice,
+			rawPriceAnnual,
+			currencyCode,
 			translate,
 			planType,
 			currentSitePlan,
@@ -123,7 +128,12 @@ export class PlanFeaturesComparisonHeader extends Component {
 		}
 
 		if ( isInSignup && ! isMonthlyPlan ) {
-			return translate( 'billed annually' );
+			const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
+			const annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
+
+			return translate( 'billed as %(price)s annually', {
+				args: { price: annualPriceText },
+			} );
 		}
 
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
@@ -163,14 +173,14 @@ export class PlanFeaturesComparisonHeader extends Component {
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
-		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
+		const timeframeClasses = classNames( 'plan-features-comparison__header-timeframe', {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder,
 		} );
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 		if ( isInSignup || plansWithScroll ) {
 			return (
-				<div className={ 'plan-features__header-billing-info' }>
+				<div className={ 'plan-features-comparison__header-billing-info' }>
 					<span>{ perMonthDescription }</span>
 				</div>
 			);
@@ -187,7 +197,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 					{ ! isPlaceholder ? perMonthDescription : '' }
 					{ isDiscounted && ! isPlaceholder && (
 						<InfoPopover
-							className="plan-features__header-tip-info"
+							className="plan-features-comparison__header-tip-info"
 							position={ isMobile() ? 'top' : 'bottom left' }
 						>
 							{ this.getDiscountTooltipMessage() }
@@ -224,8 +234,8 @@ export class PlanFeaturesComparisonHeader extends Component {
 
 		if ( isPlaceholder && ! isInSignup ) {
 			const classes = classNames( 'is-placeholder', {
-				'plan-features__price': ! isJetpack,
-				'plan-features__price-jetpack': isJetpack,
+				'plan-features-comparison__price': ! isJetpack,
+				'plan-features-comparison__price-jetpack': isJetpack,
 			} );
 
 			return <div className={ classes } />;
@@ -258,8 +268,8 @@ export class PlanFeaturesComparisonHeader extends Component {
 
 		if ( fullPrice && discountedPrice ) {
 			return (
-				<span className="plan-features__header-price-group">
-					<div className="plan-features__header-price-group-prices">
+				<span className="plan-features-comparison__header-price-group">
+					<div className="plan-features-comparison__header-price-group-prices">
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
@@ -318,7 +328,9 @@ export class PlanFeaturesComparisonHeader extends Component {
 		}
 
 		return (
-			<span className="plan-features__header-credit-label">{ translate( 'Credit applied' ) }</span>
+			<span className="plan-features-comparison__header-credit-label">
+				{ translate( 'Credit applied' ) }
+			</span>
 		);
 	}
 

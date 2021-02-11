@@ -90,7 +90,7 @@ export class PlanFeaturesComparison extends Component {
 	render() {
 		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
-			'plan-features__table',
+			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
@@ -100,7 +100,7 @@ export class PlanFeaturesComparison extends Component {
 			'plans-wrapper': isInSignup,
 		} );
 		// const mobileView = ! withScroll && (
-		// 	<div className="plan-features__mobile">{ this.renderMobileView() }</div>
+		// 	<div className="plan-features-comparison__mobile">{ this.renderMobileView() }</div>
 		// );
 		let planDescriptions;
 		let bottomButtons = null;
@@ -120,11 +120,11 @@ export class PlanFeaturesComparison extends Component {
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
-					<div ref={ this.contentRef } className="plan-features__content">
+					<div ref={ this.contentRef } className="plan-features-comparison__content">
 						{ /* { mobileView } */ }
 						<div>
 							<table className={ tableClasses }>
-								<caption className="plan-features__screen-reader-text screen-reader-text">
+								<caption className="plan-features-comparison__screen-reader-text screen-reader-text">
 									{ translate( 'Available plans to choose from' ) }
 								</caption>
 								<tbody>
@@ -161,7 +161,7 @@ export class PlanFeaturesComparison extends Component {
 		const activeDiscount = getDiscountByName( this.props.withDiscount, this.props.discountEndDate );
 		return ReactDOM.createPortal(
 			<Notice
-				className="plan-features__notice-credits"
+				className="plan-features-comparison__notice-credits"
 				showDismiss={ false }
 				icon="info-outline"
 				status="is-success"
@@ -222,7 +222,7 @@ export class PlanFeaturesComparison extends Component {
 
 		return ReactDOM.createPortal(
 			<Notice
-				className="plan-features__notice-credits"
+				className="plan-features-comparison__notice-credits"
 				showDismiss={ false }
 				icon="info-outline"
 				status="is-success"
@@ -260,7 +260,7 @@ export class PlanFeaturesComparison extends Component {
 			return false;
 		}
 		return ReactDOM.createPortal(
-			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
+			<Notice className="plan-features-comparison__notice" showDismiss={ false } status="is-info">
 				{ translate(
 					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 				) }
@@ -320,7 +320,7 @@ export class PlanFeaturesComparison extends Component {
 				? planConstantObj.getShortDescription( abtest )
 				: planConstantObj.getDescription( abtest );
 			return (
-				<div className="plan-features__mobile-plan" key={ planName }>
+				<div className="plan-features-comparison__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
 						availableForPurchase={ availableForPurchase }
 						current={ current }
@@ -346,7 +346,7 @@ export class PlanFeaturesComparison extends Component {
 						audience={ planConstantObj.getAudience() }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					/>
-					<p className="plan-features__description">{ planDescription }</p>
+					<p className="plan-features-comparison__description">{ planDescription }</p>
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
 						canPurchase={ canPurchase }
@@ -405,9 +405,10 @@ export class PlanFeaturesComparison extends Component {
 				isPlaceholder,
 				hideMonthly,
 				rawPrice,
+				rawPriceAnnual,
 			} = properties;
 			let { discountPrice } = properties;
-			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
+			const classes = classNames( 'plan-features-comparison__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
 			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
@@ -448,6 +449,7 @@ export class PlanFeaturesComparison extends Component {
 						planType={ planName }
 						popular={ popular }
 						rawPrice={ rawPrice }
+						rawPriceAnnual={ rawPriceAnnual }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
@@ -467,7 +469,7 @@ export class PlanFeaturesComparison extends Component {
 		return map( planProperties, ( properties ) => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
 
-			const classes = classNames( 'plan-features__table-item', {
+			const classes = classNames( 'plan-features-comparison__table-item', {
 				'is-placeholder': isPlaceholder,
 				'is-description': withScroll,
 			} );
@@ -483,7 +485,7 @@ export class PlanFeaturesComparison extends Component {
 				<td key={ planName } className={ classes }>
 					{ isPlaceholder ? <SpinnerLine /> : null }
 
-					<p className="plan-features__description">{ description }</p>
+					<p className="plan-features-comparison__description">{ description }</p>
 				</td>
 			);
 		} );
@@ -548,7 +550,7 @@ export class PlanFeaturesComparison extends Component {
 			} = properties;
 
 			const classes = classNames(
-				'plan-features__table-item',
+				'plan-features-comparison__table-item',
 				'has-border-bottom',
 				'is-top-buttons'
 			);
@@ -612,7 +614,7 @@ export class PlanFeaturesComparison extends Component {
 		const longestFeatures = this.getLongestFeaturesList();
 		return map( longestFeatures, ( featureKey, rowIndex ) => {
 			return (
-				<tr key={ rowIndex } className="plan-features__row">
+				<tr key={ rowIndex } className="plan-features-comparison__row">
 					{ this.renderPlanFeatureColumns( rowIndex ) }
 				</tr>
 			);
@@ -627,7 +629,7 @@ export class PlanFeaturesComparison extends Component {
 		}
 
 		return (
-			<span className="plan-features__item-annual-plan">
+			<span className="plan-features-comparison__item-annual-plan">
 				{ translate( 'Included with annual plans' ) }
 			</span>
 		);
@@ -637,7 +639,7 @@ export class PlanFeaturesComparison extends Component {
 		const description = feature.getDescription
 			? feature.getDescription( abtest, this.props.domainName )
 			: null;
-		const classes = classNames( 'plan-features__item-info', {
+		const classes = classNames( 'plan-features-comparison__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
 		} );
@@ -651,7 +653,7 @@ export class PlanFeaturesComparison extends Component {
 			>
 				<span className={ classes }>
 					{ this.renderAnnualPlansFeatureNotice( feature ) }
-					<span className="plan-features__item-title">{ feature.getTitle() }</span>
+					<span className="plan-features-comparison__item-title">{ feature.getTitle() }</span>
 				</span>
 			</PlanFeaturesItem>
 		);
@@ -667,19 +669,23 @@ export class PlanFeaturesComparison extends Component {
 			const key = featureKeys[ rowIndex ];
 			const currentFeature = features[ key ];
 
-			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
-				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
-				'is-last-feature': rowIndex + 1 === featureKeys.length,
-				'is-highlighted':
-					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-			} );
+			const classes = classNames(
+				'plan-features-comparison__table-item',
+				getPlanClass( planName ),
+				{
+					'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
+					'is-last-feature': rowIndex + 1 === featureKeys.length,
+					'is-highlighted':
+						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+				}
+			);
 
 			return currentFeature ? (
 				<td key={ `${ planName }-${ key }` } className={ classes }>
 					{ this.renderFeatureItem( currentFeature ) }
 				</td>
 			) : (
-				<td key={ `${ planName }-none` } className="plan-features__table-item" />
+				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
 			);
 		} );
 	}
@@ -708,7 +714,7 @@ export class PlanFeaturesComparison extends Component {
 				popular,
 			} = properties;
 			const classes = classNames(
-				'plan-features__table-item',
+				'plan-features-comparison__table-item',
 				'has-border-bottom',
 				'is-bottom-buttons'
 			);
@@ -983,6 +989,7 @@ export default connect(
 						bestValue ||
 						plans.length === 1,
 					rawPrice,
+					rawPriceAnnual: getPlanRawPrice( state, planProductId, false ),
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 					annualPricePerMonth,
