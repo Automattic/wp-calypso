@@ -116,7 +116,13 @@ const getScrollLeft = (
 	return scrollLeft;
 };
 
-const InnerSearch: React.ForwardRefRenderFunction< HTMLInputElement, Props > = (
+type ImperativeHandle = {
+	focus: () => void;
+	blur: () => void;
+	clear: () => void;
+};
+
+const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 	{
 		delaySearch: delaySearchProp,
 		disabled,
@@ -152,6 +158,14 @@ const InnerSearch: React.ForwardRefRenderFunction< HTMLInputElement, Props > = (
 	},
 	forwardedRef
 ) => {
+	const [ { keyword, isOpen, hasFocus }, setState ] = React.useReducer<
+		React.Reducer< State, Partial< State > >
+	>( ( oldState, nextState ) => ( { ...oldState, ...nextState } ), {
+		keyword: defaultValue ?? '',
+		isOpen: defaultIsOpen ?? false,
+		hasFocus: autoFocus ?? false,
+	} );
+
 	const instanceId = React.useMemo( () => getUniqueId(), [] );
 	const searchInput: React.MutableRefObject< HTMLInputElement | null > = React.useRef( null );
 	const openIcon: React.RefObject< HTMLButtonElement | null > = React.useRef( null );
@@ -165,6 +179,18 @@ const InnerSearch: React.ForwardRefRenderFunction< HTMLInputElement, Props > = (
 
 	const blur = React.useCallback( () => searchInput.current?.blur(), [] );
 
+	const clear = React.useCallback( (): void => setState( { keyword: '' } ), [] );
+
+	React.useImperativeHandle(
+		forwardedRef,
+		() => ( {
+			focus,
+			blur,
+			clear,
+		} ),
+		[ focus, blur, clear ]
+	);
+
 	// uncontrolled
 	const delaySearch = React.useRef( delaySearchProp );
 
@@ -172,14 +198,6 @@ const InnerSearch: React.ForwardRefRenderFunction< HTMLInputElement, Props > = (
 		() => ( delaySearch.current ? debounce( onSearchProp, delayTimeout ) : onSearchProp ),
 		[ onSearchProp, delayTimeout ]
 	);
-
-	const [ { keyword, isOpen, hasFocus }, setState ] = React.useReducer<
-		React.Reducer< State, Partial< State > >
-	>( ( oldState, nextState ) => ( { ...oldState, ...nextState } ), {
-		keyword: defaultValue ?? '',
-		isOpen: defaultIsOpen ?? false,
-		hasFocus: autoFocus ?? false,
-	} );
 
 	React.useEffect( () => {
 		if ( keyword ) {
@@ -446,14 +464,7 @@ const InnerSearch: React.ForwardRefRenderFunction< HTMLInputElement, Props > = (
 					placeholder={ placeholder }
 					role="searchbox"
 					value={ searchValue }
-					ref={ ( ref ) => {
-						if ( typeof forwardedRef === 'function' ) {
-							forwardedRef( ref );
-						} else if ( forwardedRef ) {
-							forwardedRef.current = ref;
-						}
-						searchInput.current = ref;
-					} }
+					ref={ searchInput }
 					onChange={ onChange }
 					onKeyUp={ onKeyUp }
 					onKeyDown={ onKeyDown }
