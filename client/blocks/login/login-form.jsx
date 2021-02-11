@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
-import { capitalize, defer, includes, get, startsWith } from 'lodash';
+import { capitalize, defer, includes, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -40,6 +40,7 @@ import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
 	getRequestError,
+	getSignupUrl,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
@@ -408,64 +409,15 @@ export class LoginForm extends Component {
 		const {
 			accountType,
 			oauth2Client,
-			redirectTo,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
-			isGutenboarding,
 			isJetpackWooDnaFlow,
 			wccomFrom,
-			currentRoute,
-			currentQuery,
-			pathname,
-			locale,
+			signupUrl,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
-
-		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-
-		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
-
-		// copied from login-links.jsx
-		if (
-			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
-		) {
-			// Basic validation that we're in a valid Jetpack Authorization flow
-			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
-			) {
-				/**
-				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
-				 * this case, the redirect_to will handle signups as part of the flow. Use the
-				 * `redirect_to` parameter directly for signup.
-				 */
-				signupUrl = currentQuery.redirect_to;
-			} else {
-				signupUrl = '/jetpack/connect';
-			}
-		} else if ( '/jetpack-connect' === pathname ) {
-			signupUrl = '/jetpack/connect';
-		} else if ( signupFlow ) {
-			signupUrl += '/' + signupFlow;
-		}
-
-		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
-			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
-			const oauth2Params = new globalThis.URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo || '',
-			} );
-
-			signupUrl = `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
-		}
-
-		if ( isGutenboarding ) {
-			signupUrl = '/new' + langFragment;
-		}
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
@@ -665,6 +617,7 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
+			signupUrl: getSignupUrl( state, props?.locale, props?.pathname, props?.isGutenboarding ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
@@ -673,7 +626,6 @@ export default connect(
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-			currentQuery: getCurrentQueryArguments( state ),
 		};
 	},
 	{

@@ -5,7 +5,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, includes, startsWith } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -28,6 +28,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import { getSignupUrl } from 'calypso/state/login/selectors';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 
 export class LoginLinks extends React.Component {
@@ -275,87 +276,10 @@ export class LoginLinks extends React.Component {
 
 	renderSignUpLink() {
 		// Taken from client/layout/masterbar/logged-out.jsx
-		const {
-			currentQuery,
-			currentRoute,
-			oauth2Client,
-			pathname,
-			translate,
-			wccomFrom,
-			isGutenboarding,
-			locale,
-		} = this.props;
+		const { currentRoute, oauth2Client, signupUrl, translate } = this.props;
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
-		}
-
-		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
-		if (
-			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
-		) {
-			// Basic validation that we're in a valid Jetpack Authorization flow
-			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
-			) {
-				/**
-				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
-				 * this case, the redirect_to will handle signups as part of the flow. Use the
-				 * `redirect_to` parameter directly for signup.
-				 */
-				signupUrl = currentQuery.redirect_to;
-			} else {
-				signupUrl = '/jetpack/connect';
-			}
-		} else if ( '/jetpack-connect' === pathname ) {
-			signupUrl = '/jetpack/connect';
-		} else if ( signupFlow ) {
-			signupUrl += '/' + signupFlow;
-		}
-
-		if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
-			const oauth2Flow = 'crowdsignal';
-			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = new URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo,
-			} );
-
-			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
-		}
-
-		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			oauth2Client &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom
-		) {
-			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = new URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				'wccom-from': wccomFrom,
-				oauth2_redirect: redirectTo,
-			} );
-
-			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
-		}
-
-		if ( isGutenboarding ) {
-			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-			signupUrl = this.props.signupUrl || '/new' + langFragment;
-		}
-
-		if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
-			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = new URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo,
-			} );
-
-			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 		}
 
 		return (
@@ -385,8 +309,13 @@ export class LoginLinks extends React.Component {
 }
 
 export default connect(
-	( state ) => ( {
-		currentQuery: getCurrentQueryArguments( state ),
+	( state, ownProps ) => ( {
+		signupUrl: getSignupUrl(
+			state,
+			ownProps?.locale,
+			ownProps?.pathname,
+			ownProps?.isGutenboarding
+		),
 		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		oauth2Client: getCurrentOAuth2Client( state ),
