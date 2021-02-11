@@ -12,7 +12,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
 /**
@@ -55,15 +54,10 @@ const StatsSparklineChart = ( { className, hourlyViews } ) => {
 	);
 };
 const StatsSparkline = ( { className, siteId } ) => {
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const hourlyViews = useSelector( ( state ) => {
 		const statsInsights = getSiteStatsNormalizedData( state, siteId, 'statsInsights' );
 		return statsInsights.hourlyViews ? Object.values( statsInsights.hourlyViews ) : null;
 	} );
-
-	if ( ! siteId || isJetpack ) {
-		return null;
-	}
 
 	return (
 		<>
