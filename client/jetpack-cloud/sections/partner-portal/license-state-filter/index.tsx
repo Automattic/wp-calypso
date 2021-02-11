@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { ReactElement } from 'react';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
 
@@ -65,7 +64,7 @@ function LicenseStateFilter( props: Props ): ReactElement {
 				</span>
 			}
 			selectedCount={ selectedItem.count }
-			classname={ classnames( 'license-state-filter', { 'search-open': props.getSearchOpen() } ) }
+			classname="license-state-filter"
 		>
 			<NavTabs
 				label={ translate( 'State' ) }
