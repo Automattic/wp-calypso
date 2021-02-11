@@ -1,9 +1,7 @@
 /**
- * Possible license states.
+ * Internal dependencies
  */
-export const STATE_ATTACHED = 'attached';
-export const STATE_DETACHED = 'detached';
-export const STATE_REVOKED = 'revoked';
+import { LicenseStates } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 /**
  * Get the state of a license based on its properties.
@@ -12,16 +10,19 @@ export const STATE_REVOKED = 'revoked';
  *
  * @param {string | null} attachedAt Date the license was attached on, if any.
  * @param {string | null} revokedAt Date the license was revoked on, if any.
- * @returns {string} State matching one of the STATE_* constant values.
+ * @returns {LicenseStates} State matching one of the `LicenseStates` values.
  */
-export function getLicenseState( attachedAt: string | null, revokedAt: string | null ): string {
+export function getLicenseState(
+	attachedAt: string | null,
+	revokedAt: string | null
+): LicenseStates {
 	if ( revokedAt ) {
-		return STATE_REVOKED;
+		return LicenseStates.Revoked;
 	}
 
 	if ( attachedAt ) {
-		return STATE_ATTACHED;
+		return LicenseStates.Attached;
 	}
 
-	return STATE_DETACHED;
+	return LicenseStates.Detached;
 }
