@@ -10,10 +10,9 @@ import {
 	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
 	FormStatus,
 	useFormStatus,
-	useLineItemsOfType,
-	useTotal,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -28,6 +27,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import getPlanFeatures from '../lib/get-plan-features';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import { getCouponLineItem, getTaxLineItem, getTotalLineItem } from '../lib/translate-cart';
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
@@ -35,10 +35,11 @@ export default function WPCheckoutOrderSummary( {
 	nextDomainIsFree = false,
 } = {} ) {
 	const translate = useTranslate();
-	const taxes = useLineItemsOfType( 'tax' );
-	const coupons = useLineItemsOfType( 'coupon' );
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
+	const { responseCart } = useShoppingCart();
+	const couponLineItem = getCouponLineItem( responseCart );
+	const taxLineItem = getTaxLineItem( responseCart );
+	const totalLineItem = getTotalLineItem( responseCart );
 
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
@@ -68,22 +69,22 @@ export default function WPCheckoutOrderSummary( {
 				) }
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
-				{ coupons.map( ( coupon ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + coupon.id }>
-						<span>{ coupon.label }</span>
-						<span>{ coupon.amount.displayValue }</span>
+				{ couponLineItem && (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
+						<span>{ couponLineItem.label }</span>
+						<span>{ couponLineItem.amount.displayValue }</span>
 					</CheckoutSummaryLineItem>
-				) ) }
-				{ taxes.map( ( tax ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
-						<span>{ tax.label }</span>
-						<span>{ tax.amount.displayValue }</span>
+				) }
+				{ taxLineItem && (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+						<span>{ taxLineItem.label }</span>
+						<span>{ taxLineItem.amount.displayValue }</span>
 					</CheckoutSummaryLineItem>
-				) ) }
+				) }
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
-						{ total.amount.displayValue }
+						{ totalLineItem.amount.displayValue }
 					</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
