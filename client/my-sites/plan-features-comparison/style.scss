@@ -110,6 +110,11 @@ $plan-features-sidebar-width: 272px;
 		color: var( --studio-gray-80 );
 		font-size: $font-body-small;
 	}
+
+	.plan-features__actions-button {
+		width: 60%;
+		border-radius: 4px; /* stylelint-disable-line */
+	}
 }
 
 

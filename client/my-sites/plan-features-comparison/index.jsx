@@ -16,7 +16,7 @@ import formatCurrency from '@automattic/format-currency';
  */
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
-// import PlanFeaturesActions from './actions';
+import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 // import PlanFeaturesItem from './item';
 import SpinnerLine from 'calypso/components/spinner-line';
@@ -132,11 +132,11 @@ export class PlanFeaturesComparison extends Component {
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
-									{ /* { ! withScroll && planDescriptions }
+									{ /* { ! withScroll && planDescriptions } */ }
 									<tr>{ this.renderTopButtons() }</tr>
-									{ withScroll && planDescriptions }
-									{ this.renderPlanFeatureRows() }
-									{ ! withScroll && ! isInSignup && bottomButtons } */ }
+									{ /* { withScroll && planDescriptions } */ }
+									{ /* { this.renderPlanFeatureRows() } */ }
+									{ /* { ! withScroll && ! isInSignup && bottomButtons } */ }
 								</tbody>
 							</table>
 						</div>
@@ -573,7 +573,7 @@ export class PlanFeaturesComparison extends Component {
 
 			return (
 				<td key={ planName } className={ classes }>
-					<PlanFeaturesActions
+					<PlanFeaturesComparisonActions
 						availableForPurchase={ availableForPurchase }
 						buttonText={ buttonText }
 						canPurchase={ canPurchase }
