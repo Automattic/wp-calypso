@@ -16,18 +16,12 @@ import LicensePreview from 'calypso/jetpack-cloud/sections/partner-portal/licens
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
 
 interface Props {
-	licenseState?: string;
-	search?: string;
+	licenseState: LicenseStates;
+	search: string;
 }
 
-export default function LicenseList( {
-	licenseState = LicenseStates.All,
-	search = '',
-}: Props ): ReactElement {
+export default function LicenseList( { licenseState, search }: Props ): ReactElement {
 	const translate = useTranslate();
-	const stateFilter = Object.values( LicenseStates ).includes( licenseState as never )
-		? licenseState
-		: 'all';
 
 	const data = [
 		{
@@ -78,7 +72,7 @@ export default function LicenseList( {
 
 			<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-			<LicenseStateFilter stateFilter={ stateFilter } search={ search } />
+			<LicenseStateFilter stateFilter={ licenseState } search={ search } />
 
 			<LicenseListItem header>
 				<h2>{ translate( 'License state' ) }</h2>
