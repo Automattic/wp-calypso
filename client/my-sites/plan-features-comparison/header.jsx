@@ -12,20 +12,13 @@ import formatCurrency, { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  **/
-import { ProductIcon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPill from 'calypso/components/plans/plan-pill';
-import {
-	TYPE_FREE,
-	GROUP_WPCOM,
-	TERM_ANNUALLY,
-	PLAN_P2_FREE,
-	PLAN_P2_PLUS,
-} from 'calypso/lib/plans/constants';
+import { TYPE_FREE, GROUP_WPCOM, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
 import { getYearlyPlanByMonthly, planMatches, getPlanClass, isFreePlan } from 'calypso/lib/plans';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -36,12 +29,6 @@ import { planLevelsMatch } from 'calypso/lib/plans/index';
 
 export class PlanFeaturesComparisonHeader extends Component {
 	render() {
-		const { planType } = this.props;
-
-		if ( planType === PLAN_P2_FREE ) {
-			return this.renderPlansHeaderP2Free();
-		}
-
 		return this.renderPlansHeaderNoTabs();
 	}
 
@@ -54,7 +41,6 @@ export class PlanFeaturesComparisonHeader extends Component {
 			selectedPlan,
 			isInSignup,
 			title,
-			audience,
 			translate,
 		} = this.props;
 
@@ -65,13 +51,15 @@ export class PlanFeaturesComparisonHeader extends Component {
 
 		return (
 			<span>
+				<div>
+					{ popular && ! selectedPlan && (
+						<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
+					) }
+				</div>
 				<header className={ headerClasses }>
 					<h4 className="plan-features-comparison__header-title">{ title }</h4>
 					{ planLevelsMatch( selectedPlan, planType ) && (
 						<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
-					) }
-					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 					) }
 					{ newPlan && ! selectedPlan && (
 						<PlanPill isInSignup={ isInSignup }>{ translate( 'New' ) }</PlanPill>
@@ -81,7 +69,8 @@ export class PlanFeaturesComparisonHeader extends Component {
 					) }
 				</header>
 				<div className="plan-features-comparison__pricing">
-					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ this.getPlanFeaturesPrices() }
+					{ this.getBillingTimeframe() }
 					{ this.getAnnualDiscount() }
 					{ this.getIntervalDiscount() }
 				</div>

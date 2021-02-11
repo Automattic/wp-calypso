@@ -40,6 +40,7 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-comparison__header {
 		justify-content: center;
 		font-weight: 400;
+		margin-top: 30px;
 	}
 
 	.plan-features-comparison__pricing {
@@ -77,6 +78,7 @@ $plan-features-sidebar-width: 272px;
 			color: var( --studio-gray-40 );
 			font-weight: 600;
 			font-size: $font-body-extra-small;
+			padding-bottom: 5px;
 		}
 
 		.plan-features-comparison__header-annual-discount {
@@ -98,6 +100,15 @@ $plan-features-sidebar-width: 272px;
 			color: var( --studio-gray-100 );
 			font-weight: 600;
 		}
+	}
+
+	.plan-pill.is-in-signup {
+		right: 52%;
+		transform: translate( 50% );
+		border-radius: 4px; /* stylelint-disable-line */
+		background-color: var( --studio-green-5 );
+		color: var( --studio-gray-80 );
+		font-size: $font-body-small;
 	}
 }
 
