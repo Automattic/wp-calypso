@@ -15,7 +15,7 @@ import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key';
-import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
+import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 
 export function partnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
@@ -30,9 +30,7 @@ export function partnerPortalContext( context: PageJS.Context, next: () => void 
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = (
-		<LicenseList licenseFilter={ licenseFilter } search={ context.query.s || '' } />
-	);
+	context.primary = <Licenses licenseFilter={ licenseFilter } search={ context.query.s || '' } />;
 	context.footer = <JetpackComFooter />;
 	next();
 }

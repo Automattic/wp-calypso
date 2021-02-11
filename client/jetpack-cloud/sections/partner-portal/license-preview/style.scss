@@ -121,4 +121,10 @@
 	&__toggle {
 		padding: 0;
 	}
+
+	&--placeholder &__domain,
+	&--placeholder &__product,
+	&--placeholder &__label + div {
+		@include placeholder( --color-neutral-10 );
+	}
 }
