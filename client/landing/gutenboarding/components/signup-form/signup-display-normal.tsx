@@ -4,6 +4,7 @@
 import React from 'react';
 import { Button, TextControl, Modal, Notice } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
+import type { WPElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -12,11 +13,6 @@ import { useIsAnchorFm } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
-
-// build-types/create-interpolate-element.d.ts
-// has
-// 36 export type WPElement = import("react").ReactElement<any, string | ((props: any) => import("react").ReactElement<any, string | any | (new (props: any) => import("react").Component<any, any,       any>)>) | (new (props: any) => import("react").Component<any, any, any>)>;
-// So I should be able to import type WPElement
 
 interface Props {
 	closeModal: () => void;
@@ -27,20 +23,10 @@ interface Props {
 	isMobile: boolean;
 	loginUrl: string;
 	passwordVal: string;
-	recaptcha_tos: React.ReactElement<
-		any,
-		| string
-		| ( ( props: any ) => React.ReactElement< any, any > )
-		| ( new ( props: any ) => React.Component< any, any, any > )
-	>;
+	recaptcha_tos: WPElement;
 	setEmailVal: React.Dispatch< React.SetStateAction< string > >;
 	setPasswordVal: React.Dispatch< React.SetStateAction< string > >;
-	tos: React.ReactElement<
-		any,
-		| string
-		| ( ( props: any ) => React.ReactElement< any, any > )
-		| ( new ( props: any ) => React.Component< any, any, any > )
-	>;
+	tos: WPElement;
 }
 
 const SignupDisplayNormal = ( {
