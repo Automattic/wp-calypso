@@ -19,7 +19,9 @@
 
 .site-settings__analytics-illustration {
 	width: 10%;
-	padding-left: -10px;
+	img {
+		width: 100%;
+	}
 }
 
 .site-settings__analytics-spacer {

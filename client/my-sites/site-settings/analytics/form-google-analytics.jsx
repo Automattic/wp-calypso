@@ -26,7 +26,7 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
+import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
@@ -183,7 +183,7 @@ export function GoogleAnalyticsSettings( {
 				<CompactCard>
 					<div className="analytics site-settings__analytics">
 						<div className="analytics site-settings__analytics-illustration">
-							<img src={ cloudflareIllustration } alt="" />
+							<img src={ googleIllustration } alt="" />
 						</div>
 						<div className="analytics site-settings__analytics-text">
 							<p className="analytics site-settings__analytics-title">
