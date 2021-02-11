@@ -22,7 +22,7 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 		site_count: getCurrentUserSiteCount( state ) || 0,
 		site_id_label: 'wpcom',
 		client: config( 'client_slug' ),
-		user_lang: getCurrentUserLocale( state ),
+		user_locale: getCurrentUserLocale( state ),
 	};
 
 	const omitSelectedSite = shouldReportOmitBlogId( eventProperties.path );
