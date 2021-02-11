@@ -297,7 +297,7 @@ export function WPNonProductLineItem( {
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
 			data-e2e-product-slug={ lineItem.id }
-			data-product-type={ lineItem.id }
+			data-product-type={ lineItem.type }
 		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
