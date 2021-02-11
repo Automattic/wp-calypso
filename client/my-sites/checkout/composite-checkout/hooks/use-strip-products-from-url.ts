@@ -23,7 +23,7 @@ export default function useStripProductsFromUrl(
 			// /checkout/example.com?coupon=FOOBAR). That way loading the page later
 			// will not add those products to the cart again.
 			const queryString = window.location.search;
-			const alteredQueryString = queryString.replace( /&?coupon=[^&]+&?/, '' );
+			const alteredQueryString = queryString.replace( /&?coupon=[^&]+/, '' );
 			const finalSiteSlug = siteSlug ?? 'no-site';
 			const newUrl =
 				window.location.protocol +
