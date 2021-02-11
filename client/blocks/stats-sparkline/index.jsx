@@ -4,56 +4,78 @@
 
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
-import { get, mapValues, sortBy } from 'lodash';
+import classnames from 'classnames';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
-const StatsSparkline = ( { isJetpack, siteUrl, className, siteId, highestViews } ) => {
-	const translate = useTranslate();
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-	if ( ! siteId || ! siteUrl || isJetpack ) {
+const StatsSparklineChart = ( { className, hourlyViews } ) => {
+	const translate = useTranslate();
+	const highestViews = Math.max( ...hourlyViews );
+	const title = translate( 'Highest hourly views %(highestViews)s', { args: { highestViews } } );
+
+	const chartHeight = 24 - 7; // 24px is the desired height, 7px is the total top+bottom padding
+	const chartWidth = 2 * hourlyViews.length - 1; // 1px bars with 1px space in between
+
+	return (
+		<div
+			className={ classnames( 'stats-sparkline', className ) }
+			title={ title }
+			style={ { height: chartHeight + 'px', width: chartWidth + 'px' } }
+		>
+			{ hourlyViews.map( ( value, i ) => {
+				// for zero value, we show a baseline bar with 1px height
+				let scale = 1 / chartHeight;
+				// if the chart is all zeros, show just the flat baseline
+				if ( highestViews > 0 ) {
+					// fill the remaining height with the bar scaled according to the value
+					scale += ( value / highestViews ) * ( 1 - 1 / chartHeight );
+				}
+
+				return (
+					<div
+						key={ i }
+						className="stats-sparkline__bar"
+						style={ { transform: `scaleY(${ scale })` } }
+					/>
+				);
+			} ) }
+		</div>
+	);
+};
+const StatsSparkline = ( { className, siteId } ) => {
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const hourlyViews = useSelector( ( state ) => {
+		const statsInsights = getSiteStatsNormalizedData( state, siteId, 'statsInsights' );
+		return statsInsights.hourlyViews ? Object.values( statsInsights.hourlyViews ) : null;
+	} );
+
+	if ( ! siteId || isJetpack ) {
 		return null;
 	}
 
-	const title = highestViews
-		? translate( 'Highest hourly views %(highestViews)s', { args: { highestViews } } )
-		: null;
-
-	const src = `${ siteUrl }/wp-includes/charts/admin-bar-hours-scale-2x.php?masterbar=1&s=${ siteId }`;
-
 	return (
-		<Fragment>
-			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
-			<img className={ className } alt={ title } title={ title } src={ src } />
-		</Fragment>
+		<>
+			<QuerySiteStats siteId={ siteId } statType="statsInsights" />
+			{ hourlyViews && <StatsSparklineChart className={ className } hourlyViews={ hourlyViews } /> }
+		</>
 	);
 };
 
 StatsSparkline.propTypes = {
 	className: PropTypes.string,
 	siteId: PropTypes.number,
-	isJetpack: PropTypes.bool,
-	siteUrl: PropTypes.string,
 };
 
-export default connect( ( state, ownProps ) => {
-	const { siteId } = ownProps;
-	const hourlyData = get(
-		getSiteStatsNormalizedData( state, siteId, 'statsInsights' ),
-		'hourlyViews',
-		[]
-	);
-	const hourlyViews = sortBy( mapValues( hourlyData ) );
-	return {
-		isJetpack: isJetpackSite( state, siteId ),
-		siteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
-		highestViews: hourlyViews.length ? hourlyViews[ hourlyViews.length - 1 ] : 0,
-	};
-} )( StatsSparkline );
+export default StatsSparkline;
