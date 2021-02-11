@@ -8,11 +8,11 @@ const debug = debugFactory( 'calypso:composite-checkout:use-strip-products-from-
 
 export default function useStripProductsFromUrl(
 	siteSlug: string | undefined,
-	isLoading: boolean
+	doNotRun: boolean
 ): void {
 	useEffect( () => {
-		// Only run this when the url has been processed already
-		if ( ! isLoading ) {
+		// Only run this when the url has been processed for products already
+		if ( doNotRun ) {
 			return;
 		}
 

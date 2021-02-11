@@ -94,7 +94,9 @@ export default function usePrepareProductsForCart( {
 		addHandler,
 	} );
 
-	useStripProductsFromUrl( siteSlug, state.isLoading );
+	// Do not strip products from url until the URL has been parsed
+	const areProductsRetrievedFromUrl = ! state.isLoading;
+	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl );
 
 	return state;
 }
