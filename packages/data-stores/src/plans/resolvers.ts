@@ -16,8 +16,8 @@ import type {
 	DetailsAPIResponse,
 	PlanFeature,
 	PlanProduct,
-	Feature,
 	PlanSlug,
+	DetailsAPIFeature,
 } from './types';
 import {
 	PLAN_FREE,
@@ -79,13 +79,13 @@ function calculateDiscounts( planProducts: PlanProduct[] ) {
 	}
 }
 
-function processFeatures( features: Feature[] ) {
+function processFeatures( features: DetailsAPIFeature[] ) {
 	return features.reduce( ( features, feature ) => {
 		features[ feature.id ] = {
 			id: feature.id,
 			name: feature.name,
 			description: feature.description,
-			type: feature.type ?? 'checkbox',
+			type: 'checkbox',
 			requiresAnnuallyBilledPlan:
 				FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN.indexOf( feature.id ) > -1,
 		};
@@ -132,9 +132,7 @@ function normalizePlanProducts(
 	periodAgnosticPlans: Plan[]
 ): PlanProduct[] {
 	const plansProducts: PlanProduct[] = plansProductSlugs.reduce( ( plans, slug ) => {
-		const planProduct = pricedPlans.find(
-			( pricedPlan ) => pricedPlan.product_slug === slug
-		) as PricedAPIPlan;
+		const planProduct = pricedPlans.find( ( pricedPlan ) => pricedPlan.product_slug === slug );
 
 		if ( ! planProduct ) {
 			return plans;
@@ -146,11 +144,14 @@ function normalizePlanProducts(
 
 		plans.push( {
 			productId: planProduct.product_id,
+			// This means that free plan is considered "annually billed"
 			billingPeriod:
 				planProduct.bill_period === MONTHLY_PLAN_BILLING_PERIOD ? 'MONTHLY' : 'ANNUALLY',
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
 			storeSlug: planProduct.product_slug,
 			rawPrice: planProduct.raw_price,
+			// Not all plans returned from /plans have a `path_slug`
+			// Free plan is an exception, and is given a hardcoded path_slug
 			pathSlug: planProduct.product_slug === PLAN_FREE ? 'free' : planProduct.path_slug,
 			price:
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0
