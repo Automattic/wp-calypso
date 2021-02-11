@@ -285,7 +285,7 @@ class ImportURLStepComponent extends Component {
 
 		const headerText = translate( 'Where can we find your old site?' );
 		const subHeaderText = translate(
-			'Enter your Wix site URL, sometimes called a domain name or site address.'
+			"Enter your Wix site's URL, sometimes called a domain name or site address."
 		);
 
 		return (
