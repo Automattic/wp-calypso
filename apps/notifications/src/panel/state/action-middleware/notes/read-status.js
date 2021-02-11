@@ -29,9 +29,9 @@ export const markAsRead = ( { getState }, { noteId } ) => {
 		return;
 	}
 
-	const seenSupportedTypes = note.type === 'automattcher' || note.type === 'new_post';
+	const isSeenSupportedType = note.type === 'automattcher' || note.type === 'new_post';
 	const hasRequiredIds = note.meta && note.meta.ids && note.meta.ids.site && note.meta.ids.post;
-	if ( seenSupportedTypes && hasRequiredIds ) {
+	if ( isSeenSupportedType && hasRequiredIds ) {
 		// Mark post as seen if notification is open.
 		markPostAsSeen( note.meta.ids.site, note.meta.ids.post );
 	}
