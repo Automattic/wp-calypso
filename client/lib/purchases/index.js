@@ -681,7 +681,7 @@ function purchaseType( purchase ) {
 	}
 
 	if ( isGoogleWorkspace( purchase ) ) {
-		return i18n.translate( 'Productivity And Collaboration Tools at %(domain)s', {
+		return i18n.translate( 'Productivity and Collaboration Tools at %(domain)s', {
 			args: {
 				domain: purchase.meta,
 			},
