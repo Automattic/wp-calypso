@@ -90,319 +90,315 @@ type State = {
 	hasFocus: boolean;
 };
 
-export class Search extends React.Component< Props, State > {
-	static defaultProps = {
-		autoFocus: false,
-		compact: false,
-		delaySearch: false,
-		delayTimeout: SEARCH_DEBOUNCE_MS,
-		describedBy: undefined,
-		dir: undefined,
-		disableAutocorrect: false,
-		disabled: false,
-		fitsContainer: false,
-		hideClose: false,
-		hideOpenIcon: false,
-		defaultIsOpen: false,
-		onClick: noop,
-		onKeyDown: noop,
-		onSearchChange: noop,
-		onSearchOpen: noop,
-		onSearchClose: noop,
-		openIconSide: 'left' as const,
-		//undefined value for overlayStyling is an optimization that will
-		//disable overlay scrolling calculation when no overlay is provided.
-		overlayStyling: undefined,
-		pinned: false,
-		recordEvent: noop,
-		searching: false,
-	};
+let currentId = 0;
+const getUniqueId = () => currentId++;
 
-	static currentId = 0;
-	static getUniqueId = (): number => {
-		return Search.currentId++;
-	};
-
-	instanceId = Search.getUniqueId();
-	searchInput = React.createRef< HTMLInputElement >();
-	openIcon = React.createRef< HTMLButtonElement >();
-	overlay = React.createRef< HTMLDivElement >();
-
-	// debounced `onSearch` will have a `cancel` function
-	onSearch: ( ( search: string ) => void ) & { cancel?: () => void } = this.props.delaySearch
-		? debounce( this.props.onSearch, this.props.delayTimeout )
-		: this.props.onSearch;
-
-	state = {
-		keyword: this.props.defaultValue ?? '',
-		isOpen: this.props.defaultIsOpen ?? false,
-		hasFocus: this.props.autoFocus ?? false,
-	};
-
-	openSearch = (
-		event:
-			| MouseEvent< HTMLButtonElement | HTMLInputElement >
-			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	): void => {
-		event.preventDefault();
-		this.setState( {
-			keyword: '',
-			isOpen: true,
-		} );
-		this.props.onSearchOpen?.( event );
-		// prevent outlines around the open icon after being clicked
-		this.openIcon.current?.blur();
-		this.props.recordEvent?.( 'Clicked Open Search' );
-	};
-
-	closeSearch = (
-		event:
-			| MouseEvent< HTMLButtonElement | HTMLInputElement >
-			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	): void => {
-		event.preventDefault();
-
-		if ( this.props.disabled ) {
-			return;
-		}
-
-		this.setState( {
-			keyword: '',
-			isOpen: false,
-		} );
-
-		if ( this.searchInput.current ) {
-			this.searchInput.current.value = ''; // will not trigger onChange
-		}
-
-		if ( this.props.pinned ) {
-			this.searchInput.current?.blur();
-			this.openIcon.current?.focus();
-		} else {
-			this.searchInput.current?.focus();
-		}
-
-		this.props.onSearchClose?.( event );
-
-		this.props.recordEvent?.( 'Clicked Close Search' );
-	};
-
-	closeListener = keyListener( this.closeSearch );
-	openListener = keyListener( this.openSearch );
-
-	componentDidUpdate( _: Props, prevState: State ): void {
-		this.scrollOverlay();
-		// Focus if the search box was opened
-		if ( this.state.isOpen && ! prevState.isOpen ) {
-			this.focus();
-		}
-
-		if ( this.state.keyword === prevState.keyword ) {
-			return;
-		}
-
-		// if there's a keyword change: trigger search
-		if ( this.state.keyword ) {
-			this.onSearch( this.state.keyword );
-		} else {
-			// explicitly bypass debouncing when there is no keyword is empty
-			if ( this.props.delaySearch ) {
-				// Cancel any pending debounce
-				this.onSearch.cancel?.();
-			}
-
-			this.props.onSearch( this.state.keyword );
-		}
-
-		this.props.onSearchChange?.( this.state.keyword );
+//This is fix for IE11. Does not work on Edge.
+//On IE11 scrollLeft value for input is always 0.
+//We are calculating it manually using TextRange object.
+const getScrollLeft = (
+	inputElement: HTMLInputElement & { createTextRange?: () => Range }
+): number => {
+	//TextRange is IE11 specific so this checks if we are not on IE11.
+	if ( ! inputElement.createTextRange ) {
+		return inputElement.scrollLeft;
 	}
 
-	scrollOverlay = (): void => {
-		this.overlay &&
-			window.requestAnimationFrame( () => {
-				if ( this.overlay.current && this.searchInput.current ) {
-					this.overlay.current.scrollLeft = this.getScrollLeft( this.searchInput.current );
-				}
-			} );
-	};
+	const range = inputElement.createTextRange();
+	const inputStyle = window.getComputedStyle( inputElement, undefined );
+	const paddingLeft = parseFloat( inputStyle.paddingLeft );
+	const rangeRect = range.getBoundingClientRect();
+	const scrollLeft =
+		inputElement.getBoundingClientRect().left +
+		inputElement.clientLeft +
+		paddingLeft -
+		rangeRect.left;
+	return scrollLeft;
+};
 
-	//This is fix for IE11. Does not work on Edge.
-	//On IE11 scrollLeft value for input is always 0.
-	//We are calculating it manually using TextRange object.
-	getScrollLeft = (
-		inputElement: HTMLInputElement & { createTextRange?: () => Range }
-	): number => {
-		//TextRange is IE11 specific so this checks if we are not on IE11.
-		if ( ! inputElement.createTextRange ) {
-			return inputElement.scrollLeft;
-		}
+const InnerSearch: React.ForwardRefRenderFunction< HTMLInputElement, Props > = (
+	{
+		delaySearch: delaySearchProp,
+		disabled,
+		pinned,
+		onSearchClose,
+		onSearchChange,
+		onSearch: onSearchProp,
+		onBlur: onBlurProp,
+		onKeyDown: onKeyDownProp,
+		onClick,
+		describedBy,
+		delayTimeout,
+		defaultValue,
+		defaultIsOpen,
+		autoFocus,
+		onSearchOpen,
+		recordEvent,
+		overlayStyling,
+		placeholder: placeholderProp,
+		__,
+		inputLabel,
+		disableAutocorrect,
+		className,
+		dir,
+		fitsContainer,
+		searching,
+		compact,
+		hideOpenIcon,
+		openIconSide,
+		minLength,
+		maxLength,
+		hideClose,
+	},
+	forwardedRef
+) => {
+	const instanceId = React.useMemo( () => getUniqueId(), [] );
+	const searchInput: React.MutableRefObject< HTMLInputElement | null > = React.useRef( null );
+	const openIcon: React.RefObject< HTMLButtonElement | null > = React.useRef( null );
+	const overlay: React.RefObject< HTMLDivElement | null > = React.useRef( null );
 
-		const range = inputElement.createTextRange();
-		const inputStyle = window.getComputedStyle( inputElement, undefined );
-		const paddingLeft = parseFloat( inputStyle.paddingLeft );
-		const rangeRect = range.getBoundingClientRect();
-		const scrollLeft =
-			inputElement.getBoundingClientRect().left +
-			inputElement.clientLeft +
-			paddingLeft -
-			rangeRect.left;
-		return scrollLeft;
-	};
-
-	focus = (): void => {
+	const focus = React.useCallback( () => {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
 		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
-		setTimeout( () => this.searchInput.current?.focus(), 0 );
-	};
+		setTimeout( () => searchInput.current?.focus(), 0 );
+	}, [] );
 
-	blur = (): void => this.searchInput.current?.blur();
+	const blur = React.useCallback( () => searchInput.current?.blur(), [] );
 
-	clear = (): void => this.setState( { keyword: '' } );
+	// uncontrolled
+	const delaySearch = React.useRef( delaySearchProp );
 
-	onBlur = ( event: FocusEvent< HTMLInputElement > ): void => {
-		if ( this.props.onBlur ) {
-			this.props.onBlur( event );
+	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo(
+		() => ( delaySearch.current ? debounce( onSearchProp, delayTimeout ) : onSearchProp ),
+		[ onSearchProp, delayTimeout ]
+	);
+
+	const [ { keyword, isOpen, hasFocus }, setState ] = React.useReducer<
+		React.Reducer< State, Partial< State > >
+	>( ( oldState, nextState ) => ( { ...oldState, ...nextState } ), {
+		keyword: defaultValue ?? '',
+		isOpen: defaultIsOpen ?? false,
+		hasFocus: autoFocus ?? false,
+	} );
+
+	React.useEffect( () => {
+		if ( keyword ) {
+			doSearch( keyword );
+		} else {
+			// explicitly bypass debouncing when there is no keyword is empty
+			if ( delaySearch.current ) {
+				// Cancel any pending debounce
+				doSearch.cancel?.();
+			}
+
+			doSearch( keyword );
 		}
 
-		this.setState( { hasFocus: false } );
-	};
+		onSearchChange?.( keyword );
+	}, [ doSearch, keyword, onSearchChange ] );
 
-	onChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
-		this.setState( {
-			keyword: event.target?.value ?? this.state.keyword,
-		} );
-	};
+	const openSearch = React.useCallback(
+		(
+			event:
+				| MouseEvent< HTMLButtonElement | HTMLInputElement >
+				| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
+		): void => {
+			event.preventDefault();
+			setState( {
+				keyword: '',
+				isOpen: true,
+			} );
+			focus();
+			onSearchOpen?.( event );
+			// prevent outlines around the open icon after being clicked
+			openIcon.current?.blur();
+			recordEvent?.( 'Clicked Open Search' );
+		},
+		[ onSearchOpen, recordEvent, focus ]
+	);
 
-	keyUp = ( event: KeyboardEvent< HTMLInputElement > ): void => {
-		if ( event.key === 'Enter' && window.innerWidth < 480 ) {
-			//dismiss soft keyboards
-			this.blur();
-		}
+	const closeSearch = React.useCallback(
+		(
+			event:
+				| MouseEvent< HTMLButtonElement | HTMLInputElement >
+				| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
+		): void => {
+			event.preventDefault();
 
-		if ( ! this.props.pinned ) {
-			return;
-		}
+			if ( disabled ) {
+				return;
+			}
 
-		if ( event.key === 'Escape' ) {
-			this.closeListener( event );
-		}
-		this.scrollOverlay();
-	};
+			setState( {
+				keyword: '',
+				isOpen: false,
+			} );
 
-	keyDown = ( event: KeyboardEvent< HTMLInputElement > ): void => {
-		this.scrollOverlay();
+			if ( searchInput.current ) {
+				searchInput.current.value = ''; // will not trigger onChange
+			}
 
-		if (
-			event.key === 'Escape' &&
-			// currentTarget will be the input element, rather than target which can be anything
-			event.currentTarget?.value === ''
-		) {
-			this.closeListener( event );
-		}
+			if ( pinned ) {
+				searchInput.current?.blur();
+				openIcon.current?.focus();
+			} else {
+				searchInput.current?.focus();
+			}
 
-		this.props.onKeyDown?.( event );
-	};
+			onSearchClose?.( event );
+
+			recordEvent?.( 'Clicked Close Search' );
+		},
+		[ disabled, pinned, onSearchClose, recordEvent ]
+	);
+
+	const closeListener = React.useMemo( () => keyListener( closeSearch ), [ closeSearch ] );
+	const openListener = React.useMemo( () => keyListener( openSearch ), [ openSearch ] );
+
+	const scrollOverlay = React.useCallback( (): void => {
+		overlay &&
+			window.requestAnimationFrame( () => {
+				if ( overlay.current && searchInput.current ) {
+					overlay.current.scrollLeft = getScrollLeft( searchInput.current );
+				}
+			} );
+	}, [] );
+
+	React.useEffect( () => {
+		scrollOverlay();
+	}, [ keyword, isOpen, hasFocus, scrollOverlay ] );
+
+	const onBlur = React.useCallback(
+		( event: FocusEvent< HTMLInputElement > ): void => {
+			if ( onBlurProp ) {
+				onBlurProp( event );
+			}
+
+			setState( { hasFocus: false } );
+		},
+		[ onBlurProp ]
+	);
+
+	const onChange = React.useCallback(
+		( event: ChangeEvent< HTMLInputElement > ): void => {
+			setState( {
+				keyword: event.target?.value ?? keyword,
+			} );
+		},
+		[ keyword ]
+	);
+
+	const onKeyUp = React.useCallback(
+		( event: KeyboardEvent< HTMLInputElement > ): void => {
+			if ( event.key === 'Enter' && window.innerWidth < 480 ) {
+				//dismiss soft keyboards
+				blur();
+			}
+
+			if ( ! pinned ) {
+				return;
+			}
+
+			if ( event.key === 'Escape' ) {
+				closeListener( event );
+			}
+			scrollOverlay();
+		},
+		[ pinned, blur, closeListener, scrollOverlay ]
+	);
+
+	const onKeyDown = React.useCallback(
+		( event: KeyboardEvent< HTMLInputElement > ): void => {
+			scrollOverlay();
+
+			if (
+				event.key === 'Escape' &&
+				// currentTarget will be the input element, rather than target which can be anything
+				event.currentTarget?.value === ''
+			) {
+				closeListener( event );
+			}
+
+			onKeyDownProp?.( event );
+		},
+		[ scrollOverlay, closeListener, onKeyDownProp ]
+	);
 
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
-	onFocus = (): void => {
-		this.setState( { hasFocus: true } );
-		this.props.onSearchOpen?.();
+	const onFocus = React.useCallback( (): void => {
+		setState( { hasFocus: true } );
+		onSearchOpen?.();
 
-		if ( ! this.searchInput.current ) {
+		if ( ! searchInput.current ) {
 			return;
 		}
 
-		const setValue = this.searchInput.current.value ?? '';
+		const setValue = searchInput.current.value ?? '';
 		if ( setValue ) {
 			// Firefox needs clear or won't move cursor to end
-			this.searchInput.current.value = '';
-			this.searchInput.current.value = setValue;
+			searchInput.current.value = '';
+			searchInput.current.value = setValue;
 		}
-	};
+	}, [ onSearchOpen ] );
 
-	handleSubmit = ( event: FormEvent ): void => {
+	const handleSubmit = React.useCallback( ( event: FormEvent ): void => {
 		event.preventDefault();
 		event.stopPropagation();
+	}, [] );
+
+	const searchValue = keyword;
+	const placeholder = placeholderProp || __( 'Search…', __i18n_text_domain__ );
+	const isOpenUnpinnedOrQueried = isOpen || ! pinned || searchValue;
+
+	const autocorrectProps = disableAutocorrect && {
+		autoComplete: 'off',
+		autoCorrect: 'off',
+		spellCheck: 'false' as const,
 	};
 
-	render(): JSX.Element {
-		const searchValue = this.state.keyword;
-		const placeholder = this.props.placeholder || this.props.__( 'Search…', __i18n_text_domain__ );
-		const inputLabel = this.props.inputLabel;
-		const isOpenUnpinnedOrQueried = this.state.isOpen || ! this.props.pinned || searchValue;
+	const searchClass = classNames( 'search-component', className, dir, {
+		'is-expanded-to-container': fitsContainer,
+		'is-open': isOpenUnpinnedOrQueried,
+		'is-searching': searching,
+		'is-compact': compact,
+		'has-focus': hasFocus,
+		'has-open-icon': ! hideOpenIcon,
+	} );
 
-		const autocorrectProps = this.props.disableAutocorrect && {
-			autoComplete: 'off',
-			autoCorrect: 'off',
-			spellCheck: 'false' as const,
-		};
+	const fadeClass = classNames( 'search-component__input-fade', dir );
+	const inputClass = classNames( 'search-component__input', dir );
 
-		const searchClass = classNames( 'search-component', this.props.className, this.props.dir, {
-			'is-expanded-to-container': this.props.fitsContainer,
-			'is-open': isOpenUnpinnedOrQueried,
-			'is-searching': this.props.searching,
-			'is-compact': this.props.compact,
-			'has-focus': this.state.hasFocus,
-			'has-open-icon': ! this.props.hideOpenIcon,
-		} );
+	const shouldRenderRightOpenIcon = openIconSide === 'right' && ! keyword;
 
-		const fadeClass = classNames( 'search-component__input-fade', this.props.dir );
-		const inputClass = classNames( 'search-component__input', this.props.dir );
+	const renderStylingDiv = React.useCallback( () => {
+		if ( typeof overlayStyling === 'function' ) {
+			return (
+				<div
+					className="search-component__text-overlay"
+					ref={ overlay as React.RefObject< HTMLDivElement > }
+				>
+					{ overlayStyling( keyword ) }
+				</div>
+			);
+		}
+		return null;
+	}, [ overlayStyling, keyword ] );
 
-		const shouldRenderRightOpenIcon = this.props.openIconSide === 'right' && ! this.state.keyword;
-
-		return (
-			<div dir={ this.props.dir } className={ searchClass } role="search">
-				<Spinner />
-				{ this.props.openIconSide === 'left' && this.renderOpenIcon() }
-				<form className={ fadeClass } action="." onSubmit={ this.handleSubmit }>
-					<input
-						type="search"
-						id={ 'search-component-' + this.instanceId }
-						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						aria-describedby={ this.props.describedBy }
-						aria-label={ inputLabel ? inputLabel : this.props.__( 'Search', __i18n_text_domain__ ) }
-						aria-hidden={ ! isOpenUnpinnedOrQueried }
-						className={ inputClass }
-						placeholder={ placeholder }
-						role="searchbox"
-						value={ searchValue }
-						ref={ this.searchInput }
-						onChange={ this.onChange }
-						onKeyUp={ this.keyUp }
-						onKeyDown={ this.keyDown }
-						onMouseUp={ this.props.onClick }
-						onFocus={ this.onFocus }
-						onBlur={ this.onBlur }
-						disabled={ this.props.disabled }
-						autoCapitalize="none"
-						dir={ this.props.dir }
-						maxLength={ this.props.maxLength }
-						minLength={ this.props.minLength }
-						{ ...autocorrectProps }
-					/>
-					{ this.renderStylingDiv() }
-				</form>
-				{ shouldRenderRightOpenIcon ? this.renderOpenIcon() : this.closeButton() }
-			</div>
-		);
-	}
-
-	renderOpenIcon(): JSX.Element {
-		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
+	const renderOpenIcon = React.useCallback( (): JSX.Element => {
+		const enableOpenIcon = pinned && ! isOpen;
 
 		return (
 			<Button
 				className="search-component__icon-navigation"
-				ref={ this.openIcon }
-				onClick={ enableOpenIcon ? this.openSearch : this.focus }
+				ref={ openIcon as React.RefObject< HTMLButtonElement > }
+				onClick={ enableOpenIcon ? openSearch : focus }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
-				onKeyDown={ enableOpenIcon ? this.openListener : undefined }
-				aria-controls={ 'search-component-' + this.instanceId }
-				aria-label={ this.props.__( 'Open Search', __i18n_text_domain__ ) }
+				onKeyDown={ enableOpenIcon ? openListener : undefined }
+				aria-controls={ 'search-component-' + instanceId }
+				aria-label={ __( 'Open Search', __i18n_text_domain__ ) }
 			>
-				{ ! this.props.hideOpenIcon && (
+				{ ! hideOpenIcon && (
 					// `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work)
 					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					/* @ts-ignore */
@@ -410,29 +406,18 @@ export class Search extends React.Component< Props, State > {
 				) }
 			</Button>
 		);
-	}
+	}, [ pinned, isOpen, hideOpenIcon, __, focus, instanceId, openListener, openSearch ] );
 
-	renderStylingDiv(): JSX.Element | null {
-		if ( typeof this.props.overlayStyling === 'function' ) {
-			return (
-				<div className="search-component__text-overlay" ref={ this.overlay }>
-					{ this.props.overlayStyling( this.state.keyword ) }
-				</div>
-			);
-		}
-		return null;
-	}
-
-	closeButton(): JSX.Element | null {
-		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
+	const renderCloseButton = React.useCallback( () => {
+		if ( ! hideClose && ( keyword || isOpen ) ) {
 			return (
 				<Button
 					className="search-component__icon-navigation"
-					onClick={ this.closeSearch }
+					onClick={ closeSearch }
 					tabIndex={ 0 }
-					onKeyDown={ this.closeListener }
-					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ this.props.__( 'Close Search', __i18n_text_domain__ ) }
+					onKeyDown={ closeListener }
+					aria-controls={ 'search-component-' + instanceId }
+					aria-label={ __( 'Close Search', __i18n_text_domain__ ) }
 				>
 					{ /* `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work) */ }
 					{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
@@ -443,7 +428,78 @@ export class Search extends React.Component< Props, State > {
 		}
 
 		return null;
-	}
-}
+	}, [ hideClose, keyword, isOpen, closeSearch, __, instanceId, closeListener ] );
+
+	return (
+		<div dir={ dir } className={ searchClass } role="search">
+			<Spinner />
+			{ openIconSide === 'left' && renderOpenIcon() }
+			<form className={ fadeClass } action="." onSubmit={ handleSubmit }>
+				<input
+					type="search"
+					id={ 'search-component-' + instanceId }
+					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+					aria-describedby={ describedBy }
+					aria-label={ inputLabel ? inputLabel : __( 'Search', __i18n_text_domain__ ) }
+					aria-hidden={ ! isOpenUnpinnedOrQueried }
+					className={ inputClass }
+					placeholder={ placeholder }
+					role="searchbox"
+					value={ searchValue }
+					ref={ ( ref ) => {
+						if ( typeof forwardedRef === 'function' ) {
+							forwardedRef( ref );
+						} else if ( forwardedRef ) {
+							forwardedRef.current = ref;
+						}
+						searchInput.current = ref;
+					} }
+					onChange={ onChange }
+					onKeyUp={ onKeyUp }
+					onKeyDown={ onKeyDown }
+					onMouseUp={ onClick }
+					onFocus={ onFocus }
+					onBlur={ onBlur }
+					disabled={ disabled }
+					autoCapitalize="none"
+					dir={ dir }
+					maxLength={ maxLength }
+					minLength={ minLength }
+					{ ...autocorrectProps }
+				/>
+				{ renderStylingDiv() }
+			</form>
+			{ shouldRenderRightOpenIcon ? renderOpenIcon() : renderCloseButton() }
+		</div>
+	);
+};
+
+export const Search = React.forwardRef( InnerSearch );
+Search.defaultProps = {
+	autoFocus: false,
+	compact: false,
+	delaySearch: false,
+	delayTimeout: SEARCH_DEBOUNCE_MS,
+	describedBy: undefined,
+	dir: undefined,
+	disableAutocorrect: false,
+	disabled: false,
+	fitsContainer: false,
+	hideClose: false,
+	hideOpenIcon: false,
+	defaultIsOpen: false,
+	onClick: noop,
+	onKeyDown: noop,
+	onSearchChange: noop,
+	onSearchOpen: noop,
+	onSearchClose: noop,
+	openIconSide: 'left' as const,
+	//undefined value for overlayStyling is an optimization that will
+	//disable overlay scrolling calculation when no overlay is provided.
+	overlayStyling: undefined,
+	pinned: false,
+	recordEvent: noop,
+	searching: false,
+};
 
 export default withI18n( Search );
