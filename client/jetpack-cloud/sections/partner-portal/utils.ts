@@ -26,3 +26,23 @@ export function getLicenseState(
 
 	return LicenseStates.Detached;
 }
+/**
+ * Get the state of a license based on a string.
+ * If the given string is not a valid LicenseState, it returns `LicenseStates.All`
+ *
+ * @param {(LicenseStates|string)?} licenseFilter The filter string matching the `state` param in the URL
+ * @returns {LicenseStates} State matching one of LicenseStates values.
+ */
+export function getLicenseStateByQueryParamValue(
+	licenseFilter?: LicenseStates | string
+): LicenseStates {
+	switch ( licenseFilter ) {
+		case LicenseStates.All:
+		case LicenseStates.Attached:
+		case LicenseStates.Detached:
+		case LicenseStates.Revoked:
+			return licenseFilter;
+		default:
+			return LicenseStates.All;
+	}
+}

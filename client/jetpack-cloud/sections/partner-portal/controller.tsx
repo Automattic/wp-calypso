@@ -10,14 +10,14 @@ import type PageJS from 'page';
  */
 import { addQueryArgs } from 'calypso/lib/route';
 import { getActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
-import { LicenseStates } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { getLicenseStateByQueryParamValue } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 
-export function partnerKeyContext( context: PageJS.Context, next: () => any ) {
+export function partnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <SelectPartnerKey />;
@@ -25,20 +25,17 @@ export function partnerKeyContext( context: PageJS.Context, next: () => any ) {
 	next();
 }
 
-export function partnerPortalContext( context: PageJS.Context, next: () => any ) {
-	const licenseState = context.params.state;
-	const stateFilter = Object.values( LicenseStates ).includes( licenseState as never )
-		? licenseState
-		: 'all';
+export function partnerPortalContext( context: PageJS.Context, next: () => void ): void {
+	const licenseState = getLicenseStateByQueryParamValue( context.params.state );
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <LicenseList licenseState={ stateFilter } search={ context.query.s || '' } />;
+	context.primary = <LicenseList licenseState={ licenseState } search={ context.query.s || '' } />;
 	context.footer = <JetpackComFooter />;
 	next();
 }
 
-export function requirePartnerKeyContext( context: PageJS.Context, next: () => any ) {
+export function requirePartnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	const state = context.store.getState();
 	const hasKey = getActivePartnerKey( state );
 
