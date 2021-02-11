@@ -35,8 +35,5 @@ export default function canCurrentUserUseCalypsoStore( state, siteId = null ) {
 	const subscribedDate = new Date( currentPlan.subscribedDate );
 	const subscribedBeforeDeprecation = subscribedDate < STORE_DEPRECATION_START_DATE;
 
-	return (
-		canCurrentUserUseAnyWooCommerceBasedStore( state, siteId ) &&
-		( config.isEnabled( 'woocommerce/store-deprecated' ) ? subscribedBeforeDeprecation : true )
-	);
+	return canCurrentUserUseAnyWooCommerceBasedStore( state, siteId ) && subscribedBeforeDeprecation;
 }

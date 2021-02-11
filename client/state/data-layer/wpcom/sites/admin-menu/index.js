@@ -6,7 +6,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getSite } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 export const requestFetchAdminMenu = ( action ) =>
 	http(
@@ -18,17 +18,17 @@ export const requestFetchAdminMenu = ( action ) =>
 		action
 	);
 
-const sanitizeUrl = ( url, site ) => {
+const sanitizeUrl = ( url, wpAdminUrl ) => {
 	const isSafeInternalUrl = new RegExp( '^/' ).test( url );
-	const isSafeSiteDomainUrl = new RegExp( `^https?://${ site?.domain }` ).test( url );
-	if ( isSafeInternalUrl || isSafeSiteDomainUrl ) {
+	const isSafeWpAdminUrl = new RegExp( `^${ wpAdminUrl }` ).test( url );
+	if ( isSafeInternalUrl || isSafeWpAdminUrl ) {
 		return url;
 	}
 
 	return '';
 };
 
-const sanitizeMenuItem = ( menuItem, site ) => {
+const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
 	if ( ! menuItem ) {
 		return menuItem;
 	}
@@ -36,13 +36,13 @@ const sanitizeMenuItem = ( menuItem, site ) => {
 	let sanitizedChildren;
 	if ( Array.isArray( menuItem.children ) ) {
 		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
-			sanitizeMenuItem( subMenuItem, site )
+			sanitizeMenuItem( subMenuItem, wpAdminUrl )
 		);
 	}
 
 	return {
 		...menuItem,
-		url: sanitizeUrl( menuItem.url, site ),
+		url: sanitizeUrl( menuItem.url, wpAdminUrl ),
 		...( sanitizedChildren ? { children: sanitizedChildren } : {} ),
 	};
 };
@@ -53,11 +53,11 @@ export const handleSuccess = ( { siteId }, menuData ) => ( dispatch, getState ) 
 	}
 
 	// Sanitize menu data.
-	const site = getSite( getState(), siteId );
+	const wpAdminUrl = getSiteAdminUrl( getState(), siteId );
 	return dispatch(
 		receiveAdminMenu(
 			siteId,
-			menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, site ) )
+			menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, wpAdminUrl ) )
 		)
 	);
 };

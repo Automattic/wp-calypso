@@ -1324,8 +1324,11 @@ object WPComPlugins_EditorToolKit : BuildType({
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 
 				yarn build
-
 				cd editing-toolkit-plugin/
+				
+				# Metadata file with info for the download script.
+				echo -e "commit_hash=%build.vcs.number%\nbuild_number=%build.number%\n" > build_meta.txt
+
 				zip -r ../../../editing-toolkit.zip .
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux

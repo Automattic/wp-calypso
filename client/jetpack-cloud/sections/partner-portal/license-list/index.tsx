@@ -19,41 +19,41 @@ export default function LicenseList() {
 	const data = [
 		{
 			licenseKey: 'jetpack-security-daily_AcNAyEhPaSXeFVgRj0gZkgn0Z',
-			domain: 'yetanothersite.net',
+			siteUrl: 'https://yetanothersite.net',
 			product: 'Jetpack Security Daily',
-			issuedOn: '2020-11-26 18:24:52',
-			attachedOn: '2020-11-27 18:24:52',
-			revokedOn: '',
+			issuedAt: '2020-11-26 18:24:52',
+			attachedAt: '2020-11-27 18:24:52',
+			revokedAt: '',
 			username: 'ianramosc',
 			blogId: 883882032,
 		},
 		{
 			licenseKey: 'jetpack-backup-daily_AcNAyEhPaSXeFVgRj0gZkgn0Z',
-			domain: '',
+			siteUrl: '',
 			product: 'Jetpack Backup Daily',
-			issuedOn: '2020-11-26 18:24:52',
-			attachedOn: '',
-			revokedOn: '',
+			issuedAt: '2020-11-26 18:24:52',
+			attachedAt: '',
+			revokedAt: '',
 			username: 'ianramosc',
 			blogId: 883882032,
 		},
 		{
 			licenseKey: 'jetpack-security-realtime_AcNAyEhPaSXeFVgRj0gZkgn0Z',
-			domain: 'mygroovysite.co.uk',
+			siteUrl: 'https://mygroovysite.co.uk',
 			product: 'Jetpack Security Real-time',
-			issuedOn: '2020-11-24 18:24:52',
-			attachedOn: '2020-11-25 18:24:52',
-			revokedOn: '',
+			issuedAt: '2020-11-24 18:24:52',
+			attachedAt: '2020-11-25 18:24:52',
+			revokedAt: '',
 			username: 'ianramosc',
 			blogId: 883882032,
 		},
 		{
 			licenseKey: 'security-daily_AcNAyEhPaSXeFVgRj0gZkgn0Z',
-			domain: 'mylicenselesssite.com',
+			siteUrl: 'https://mylicenselesssite.com',
 			product: 'Security Daily',
-			issuedOn: '2020-11-24 18:24:52',
-			attachedOn: '2020-11-25 18:24:52',
-			revokedOn: '2020-11-25 18:24:52',
+			issuedAt: '2020-11-24 18:24:52',
+			attachedAt: '2020-11-25 18:24:52',
+			revokedAt: '2020-11-25 18:24:52',
 			username: 'ianramosc',
 			blogId: 883882032,
 		},
@@ -78,13 +78,13 @@ export default function LicenseList() {
 				<LicensePreview
 					key={ license.licenseKey }
 					licenseKey={ license.licenseKey }
-					domain={ license.domain }
 					product={ license.product }
-					issuedOn={ license.issuedOn }
-					attachedOn={ license.attachedOn }
-					revokedOn={ license.revokedOn }
 					username={ license.username }
 					blogId={ license.blogId }
+					siteUrl={ license.siteUrl }
+					issuedAt={ license.issuedAt }
+					attachedAt={ license.attachedAt }
+					revokedAt={ license.revokedAt }
 				/>
 			) ) }
 		</Main>

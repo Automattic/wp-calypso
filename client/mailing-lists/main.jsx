@@ -118,6 +118,8 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Jetpack Promotions' );
 		} else if ( 'jetpack_news' === category ) {
 			return this.props.translate( 'Jetpack Newsletter' );
+		} else if ( 'jetpack_reports' === category ) {
+			return this.props.translate( 'Jetpack Reports' );
 		}
 
 		return category;
@@ -155,6 +157,8 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Sales and promotions for Jetpack products and services.' );
 		} else if ( 'jetpack_news' === category ) {
 			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
+		} else if ( 'jetpack_reports' === category ) {
+			return this.props.translate( 'Jetpack security and performance reports.' );
 		}
 
 		return null;

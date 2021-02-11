@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -45,7 +44,7 @@ export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 	const section = find( items, { id: activeSection } );
 	return (
 		<div>
-			{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
+			{ <StoreDeprecatedNotice /> }
 			<SectionNav selectedText={ section && section.title }>
 				<NavTabs>
 					{ items.map( ( { id, path, title } ) => {

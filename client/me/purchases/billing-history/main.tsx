@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -37,7 +38,7 @@ export function BillingHistoryContent( {
 	);
 }
 
-export default function BillingHistory(): JSX.Element {
+function BillingHistory(): JSX.Element {
 	return (
 		<Main className="billing-history is-wide-layout">
 			<DocumentHead title={ titles.billingHistory } />
@@ -50,3 +51,4 @@ export default function BillingHistory(): JSX.Element {
 		</Main>
 	);
 }
+export default localize( BillingHistory );

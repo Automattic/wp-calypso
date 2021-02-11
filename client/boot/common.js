@@ -15,7 +15,6 @@ import store from 'store';
 import { setupLocale } from './locale';
 import config from '@automattic/calypso-config';
 import { ProviderWrappedLayout } from 'calypso/controller';
-import notices from 'calypso/notices';
 import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
 import { getSavedVariations } from 'calypso/lib/abtest'; // used by error logger
@@ -182,11 +181,6 @@ const setRouteMiddleware = () => {
 	} );
 };
 
-const clearNoticesMiddleware = () => {
-	//TODO: remove this one when notices are reduxified - it is for old notices
-	page( '*', notices.clearNoticesOnNavigation );
-};
-
 const unsavedFormsMiddleware = () => {
 	// warn against navigating from changed, unsaved forms
 	page.exit( '*', checkFormHandler );
@@ -284,7 +278,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	oauthTokenMiddleware();
 	setupRoutes();
 	setRouteMiddleware();
-	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.

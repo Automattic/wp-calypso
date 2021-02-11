@@ -32,4 +32,6 @@ assignees: ''
 
 #### Level of impact (Does it block purchases? Does it affect more than just one site?)
 
+#### Reproducibility (Consistent, Intermittent) Leave empty for consistent.
+
 #### Screenshot / Video: If applicable, add screenshots to help explain your problem.

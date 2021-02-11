@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -181,5 +182,5 @@ function ChangePaymentMethodWrapper( props ) {
 }
 
 export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )(
-	ChangePaymentMethodWrapper
+	localize( ChangePaymentMethodWrapper )
 );
