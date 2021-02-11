@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { CONTACT, GOOGLE_APPS_LEARNING_CENTER } from 'calypso/lib/url/support';
+import { CONTACT, GSUITE_LEARNING_CENTER } from 'calypso/lib/url/support';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { useSelector } from 'react-redux';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -112,7 +112,7 @@ const GoogleAppsDetails = ( { purchases } ) => {
 				},
 				comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
 			} ) }
-			href={ GOOGLE_APPS_LEARNING_CENTER }
+			href={ GSUITE_LEARNING_CENTER }
 			target="_blank"
 			rel="noopener noreferrer"
 			requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
