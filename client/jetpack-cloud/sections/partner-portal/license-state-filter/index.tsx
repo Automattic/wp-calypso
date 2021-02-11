@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -30,23 +30,23 @@ interface Props {
 	getSearchOpen: () => boolean;
 }
 
-const LicenseStateFilter: React.FC< Props > = ( props ) => {
+function LicenseStateFilter( props: Props ): ReactElement {
 	const translate = useTranslate();
 	const basePath = '/partner-portal/';
 
 	const navItems = [
-		{ key: 'all', label: translate( 'All Active' ), count: 4 },
+		{ key: LicenseStates.All, label: translate( 'All Active' ), count: 4 },
 		{
-			key: 'detached',
+			key: LicenseStates.Detached,
 			label: translate( 'Detached' ),
 			count: 2,
 		},
 		{
-			key: 'attached',
+			key: LicenseStates.Attached,
 			label: translate( 'Attached' ),
 			count: 7,
 		},
-		{ key: 'revoked', label: translate( 'Revoked' ), count: 5 },
+		{ key: LicenseStates.Revoked, label: translate( 'Revoked' ), count: 5 },
 	].map( ( navItem ) => ( {
 		...navItem,
 		selected: props.stateFilter === navItem.key,
@@ -86,6 +86,6 @@ const LicenseStateFilter: React.FC< Props > = ( props ) => {
 			/>
 		</SectionNav>
 	);
-};
+}
 
 export default UrlSearch( LicenseStateFilter );
