@@ -3,6 +3,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
+import page from 'page';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import { capitalize, defer, includes, get, startsWith } from 'lodash';
@@ -110,9 +111,7 @@ export class LoginForm extends Component {
 		if ( this.showUsernameError() ) {
 			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		} else {
-			window.location.replace(
-				addQueryArgs( this.getSignupUrl(), { email: this.state.usernameOrEmail } )
-			);
+			page( addQueryArgs( this.getSignupUrl(), { email: this.state.usernameOrEmail } ) );
 		}
 	}
 
