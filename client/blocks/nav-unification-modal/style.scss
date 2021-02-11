@@ -137,10 +137,8 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .nav-unification-modal__text {
 	padding: 25px;
 	height: 60%;
-	order: 2;
 
 	@media ( min-width: $modal-breakpoint ) {
-		order: 1;
 		height: auto;
 		padding: $modal-padding-v $modal-padding-h;
 	}
@@ -153,7 +151,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	text-align: center;
 	overflow: hidden;
 	position: relative;
-	order: 1;
 
 	@include break-mobile {
 		// For smaller screens, ensure the top of the images are displayed.
@@ -161,7 +158,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	}
 
 	@media ( min-width: $modal-breakpoint ) {
-		order: 2;
 		height: auto;
 	}
 }
