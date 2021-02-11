@@ -48,8 +48,8 @@ describe( 'NavigationLink', () => {
 	test( 'should render Button element', () => {
 		const wrapper = shallow( <NavigationLink { ...props } /> );
 
-		expect( wrapper.find( 'Button' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'Button' ).props().className ).toEqual( 'navigation-link' );
+		expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'ForwardRef(Button)' ).props().className ).toEqual( 'navigation-link' );
 	} );
 
 	test( 'should render no icons when the direction prop is undefined', () => {
