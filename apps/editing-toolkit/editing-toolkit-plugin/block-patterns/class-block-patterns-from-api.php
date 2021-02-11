@@ -93,7 +93,7 @@ class Block_Patterns_From_API {
 		// Order categories alphabetically by their label.
 		uasort(
 			$pattern_categories,
-			function( $a, $b ) {
+			function ( $a, $b ) {
 				return strnatcasecmp( $a['label'], $b['label'] );
 			}
 		);
