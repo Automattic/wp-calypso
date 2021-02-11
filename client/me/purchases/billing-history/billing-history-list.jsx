@@ -15,12 +15,11 @@ import { capitalPDangit } from 'calypso/lib/formatting';
 import { CompactCard } from '@automattic/components';
 import Pagination from 'calypso/components/pagination';
 import BillingHistoryFilters from 'calypso/me/purchases/billing-history/billing-history-filters';
-import { groupDomainProducts, renderTransactionAmount } from './utils';
+import { getTransactionTermLabel, groupDomainProducts, renderTransactionAmount } from './utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { setPage } from 'calypso/state/billing-transactions/ui/actions';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
-import { getPlanTermLabel } from 'calypso/lib/plans';
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'calypso/state/billing-transactions/actions';
@@ -81,7 +80,7 @@ class BillingHistoryList extends React.Component {
 	serviceNameDescription = ( transaction ) => {
 		let description;
 		if ( transaction.domain ) {
-			const termLabel = getPlanTermLabel( transaction.wpcom_product_slug, this.props.translate );
+			const termLabel = getTransactionTermLabel( transaction, this.props.translate );
 			description = (
 				<div>
 					<strong>{ transaction.plan }</strong>
