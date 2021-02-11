@@ -24,9 +24,15 @@ export default function useStripProductsFromUrl(
 			// will not add those products to the cart again.
 			const queryString = window.location.search;
 			const alteredQueryString = queryString.replace( /&?coupon=[^&]+&?/, '' );
+			const finalSiteSlug = siteSlug ?? 'no-site';
 			const newUrl =
-				window.location.protocol + '//' + window.location.host + '/checkout/' + siteSlug ??
-				'no-site' + alteredQueryString + window.location.hash;
+				window.location.protocol +
+				'//' +
+				window.location.host +
+				'/checkout/' +
+				finalSiteSlug +
+				alteredQueryString +
+				window.location.hash;
 			debug( 'changing the url to strip the products to', newUrl );
 			window.history.replaceState( null, '', newUrl );
 		} catch ( error ) {
