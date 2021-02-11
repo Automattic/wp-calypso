@@ -265,10 +265,10 @@ else # Not using multiple CircleCI containers, just queue up the tests in sequen
       for locale in ${LOCALE_ARRAY[@]}; do
         for config in "${MAGELLAN_CONFIGS[@]}"; do
           if [ "$config" != "" ]; then
-            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale NODE_CONFIG='{$NODE_CONFIG_ARG}' $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --debug"
-
-            eval $CMD
+		  	echo "Starting"
+            BROWSERSIZE=$size BROWSERLOCALE=$locale NODE_CONFIG='{$NODE_CONFIG_ARG}' yarn magellan --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --debug
             RETURN+=$?
+			echo "Done"
           fi
         done
       done

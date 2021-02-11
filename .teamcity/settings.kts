@@ -861,7 +861,7 @@ object RunCanaryE2eTests : BuildType({
 				export NODE_CONFIG_ENV=test
 
 				## Uncomment to debug Magellan
-				#export MAGELLANDEBUG=true
+				export MAGELLANDEBUG=true
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
