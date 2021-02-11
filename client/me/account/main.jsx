@@ -63,6 +63,7 @@ import user from 'calypso/lib/user';
 import FormToggle from 'calypso/components/forms/form-toggle';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import {
+	cancelPendingEmailChange,
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
 	setUserSetting,
@@ -387,21 +388,6 @@ const Account = createReactClass( {
 		);
 	},
 
-	cancelEmailChange() {
-		const { translate, userSettings } = this.props;
-		userSettings.cancelPendingEmailChange( ( error, response ) => {
-			if ( error ) {
-				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
-				this.props.errorNotice(
-					translate( 'There was a problem canceling the email change. Please, try again.' )
-				);
-			} else {
-				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
-				this.props.successNotice( translate( 'The email change has been successfully canceled.' ) );
-			}
-		} );
-	},
-
 	handleRadioChange( event ) {
 		const { name, value } = event.currentTarget;
 		this.setState( { [ name ]: value } );
@@ -581,7 +567,9 @@ const Account = createReactClass( {
 					}
 				) }
 			>
-				<NoticeAction onClick={ this.cancelEmailChange }>{ translate( 'Cancel' ) }</NoticeAction>
+				<NoticeAction onClick={ () => this.props.cancelPendingEmailChange() }>
+					{ translate( 'Cancel' ) }
+				</NoticeAction>
 			</Notice>
 		);
 	},
@@ -1131,6 +1119,7 @@ export default compose(
 		} ),
 		{
 			bumpStat,
+			cancelPendingEmailChange,
 			clearUnsavedUserSettings,
 			errorNotice,
 			removeNotice,
