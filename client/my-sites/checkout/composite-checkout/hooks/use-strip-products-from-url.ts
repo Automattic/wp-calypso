@@ -19,11 +19,12 @@ export default function useStripProductsFromUrl(
 		try {
 			// Replace the pathname with /checkout/example.com, which otherwise may
 			// include new products (eg /checkout/example.com/personal) or renewals
-			// (eg /checkout/value_bundle/renew/11111111/example.com) or coupons (eg
-			// /checkout/example.com?coupon=FOOBAR). That way loading the page later
-			// will not add those products to the cart again.
+			// (eg /checkout/value_bundle/renew/11111111/example.com). That way
+			// loading the page later will not add those products to the cart again.
+			// This does not strip data from the query string, including coupons.
+			// Coupons are parsed out of the URL in a different place than the
+			// products, and removing them here may cause them not to be applied.
 			const queryString = window.location.search;
-			const alteredQueryString = queryString.replace( /&?coupon=[^&]+/, '' );
 			const finalSiteSlug = siteSlug ?? 'no-site';
 			const newUrl =
 				window.location.protocol +
@@ -31,7 +32,7 @@ export default function useStripProductsFromUrl(
 				window.location.host +
 				'/checkout/' +
 				finalSiteSlug +
-				alteredQueryString +
+				queryString +
 				window.location.hash;
 			debug( 'changing the url to strip the products to', newUrl );
 			window.history.replaceState( null, '', newUrl );
@@ -40,5 +41,5 @@ export default function useStripProductsFromUrl(
 			debug( 'changing the url to strip the products failed', error );
 			return;
 		}
-	}, [ isLoading, siteSlug ] );
+	}, [ doNotRun, siteSlug ] );
 }
