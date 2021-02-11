@@ -304,7 +304,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
-				value: matchScore * 100 || 90,
+				value: Math.min( matchScore * 100, 90 ),
 			};
 		}
 
@@ -312,7 +312,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			title = translate( 'Best Alternative' );
 			progressBarProps = {
 				title,
-				value: matchScore * 100 || 80,
+				value: Math.min( matchScore * 100, 80 ),
 			};
 		}
 
