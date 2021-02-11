@@ -65,6 +65,7 @@ export interface PricedAPIPlan {
 export interface PricedAPIPlanFree extends PricedAPIPlan {
 	product_id: 1;
 	cost: 0;
+	path_slug: 'free';
 	product_slug: 'free_plan';
 	bill_period: -1;
 	raw_price: 0;

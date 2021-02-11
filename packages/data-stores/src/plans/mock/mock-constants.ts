@@ -209,6 +209,7 @@ export const MOCK_PLAN_PRICE_APIS_FREE: MockPricedAPIPlanFree = {
 	},
 	cost: 0,
 	blog_id: null,
+	path_slug: 'free',
 	product_slug: 'free_plan',
 	description: '',
 	bill_period: -1,
