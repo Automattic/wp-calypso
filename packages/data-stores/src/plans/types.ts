@@ -106,14 +106,16 @@ export interface FeaturesByType {
 	features: string[];
 }
 
-export interface Feature {
+export interface DetailsAPIFeature {
 	id: string;
 	name: string;
 	description: string;
-	type: string;
 }
 
-export type DetailsAPIFeature = Omit< Feature, 'type' >;
+export interface Feature extends DetailsAPIFeature {
+	// TODO: https://github.com/Automattic/wp-calypso/issues/49991
+	type: 'checkbox';
+}
 
 export interface DetailsAPIResponse {
 	plans: APIPlanDetail[];
