@@ -62,6 +62,7 @@ project {
 		text("calypso.run_full_eslint", "false", label = "Run full eslint", description = "True will lint all files, empty/false will lint only changed files", allowEmpty = true)
 		text("env.DOCKER_BUILDKIT", "1", label = "Enable Docker BuildKit", description = "Enables BuildKit (faster image generation). Values 0 or 1", allowEmpty = true)
 		password("CONFIG_E2E_ENCRYPTION_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", display = ParameterDisplay.HIDDEN)
+		text("env.SKIP_TSC", "true", label = "Skip TS type generation", description = "Skips running `tsc` on yarn install", allowEmpty = true)
 	}
 
 	features {
@@ -1325,7 +1326,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 				yarn build
 				cd editing-toolkit-plugin/
-				
+
 				# Metadata file with info for the download script.
 				echo -e "commit_hash=%build.vcs.number%\nbuild_number=%build.number%\n" > build_meta.txt
 
