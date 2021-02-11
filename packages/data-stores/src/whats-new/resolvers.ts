@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { apiFetch } from '@wordpress/data-controls';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { receiveWhatsNewList } from './actions';
+import { wpcomRequest } from '../wpcom-request-controls';
+import { STORE_KEY } from './constants';
 
 /**
  * Fetch list of active What's New announcements.
@@ -15,8 +16,11 @@ import { receiveWhatsNewList } from './actions';
  * API response.
  */
 export function* getWhatsNewList() {
-	const url = 'https://public-api.wordpress.com/wpcom/v2/whats-new/list';
-	const list = yield apiFetch( { url } );
-
-	return receiveWhatsNewList( list );
+	try {
+		const list = yield wpcomRequest( {
+			path: 'whats-new/list',
+			apiVersion: '2',
+		} );
+		yield dispatch( STORE_KEY ).receiveWhatsNewList( list );
+	} catch ( e ) {}
 }
