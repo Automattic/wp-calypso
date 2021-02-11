@@ -8,6 +8,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
+import accessibleFocus from '@automattic/accessible-focus';
 
 /**
  * Internal dependencies
@@ -18,7 +19,6 @@ import { ProviderWrappedLayout } from 'calypso/controller';
 import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
 import { getSavedVariations } from 'calypso/lib/abtest'; // used by error logger
-import accessibleFocus from 'calypso/lib/accessible-focus';
 import Logger from 'calypso/lib/catch-js-errors';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
