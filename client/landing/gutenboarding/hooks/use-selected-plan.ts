@@ -74,15 +74,6 @@ export function useSelectedPlan(): Plan | undefined {
 }
 
 export function useNewSiteVisibility(): Site.Visibility {
-	const currentSlug = useSelectedPlan()?.periodAgnosticSlug;
-	const isEcommerce = useSelect( ( select ) =>
-		select( PLANS_STORE ).isPlanEcommerce( currentSlug )
-	);
-
-	if ( isEcommerce ) {
-		return Site.Visibility.PublicIndexed;
-	}
-
 	return Site.Visibility.PublicNotIndexed;
 }
 
