@@ -668,7 +668,7 @@ export function checkout(
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
-		page.redirect( addQueryArgs( urlQueryArgs, path ) );
+		page( addQueryArgs( urlQueryArgs, path ) );
 	}
 }
 
@@ -685,7 +685,7 @@ export function manageSitePurchase( siteSlug: string, purchaseId: number ): void
 	if ( isJetpackCloud() ) {
 		window.location.href = `https://wordpress.com${ relativePath }`;
 	} else {
-		page.redirect( relativePath );
+		page( relativePath );
 	}
 }
 
