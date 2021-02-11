@@ -32,13 +32,12 @@ import FocusedLaunchSummaryItem, {
 	LeadingContentSide,
 	TrailingContentSide,
 } from './focused-launch-summary-item';
-import { LAUNCH_STORE, SITE_STORE, Plan, PLANS_STORE } from '../../stores';
+import { LAUNCH_STORE, SITE_STORE, Plan, PlanProduct, PLANS_STORE } from '../../stores';
 import LaunchContext from '../../context';
 import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
-import type { PlanProduct } from '@automattic/data-stores/src/plans';
 
 const bulb = (
 	<SVG viewBox="0 0 24 24">
@@ -303,16 +302,16 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		PlanProduct | undefined
 	>();
 
+	const [ billingPeriod, setBillingPeriod ] = React.useState< PlanProduct[ 'billingPeriod' ] >(
+		selectedPlanProduct?.billingPeriod ?? 'ANNUALLY'
+	);
+
 	const {
 		defaultPaidPlan,
 		defaultFreePlan,
 		defaultPaidPlanProduct,
 		defaultFreePlanProduct,
-	} = usePlans(
-		selectedPlan?.isFree
-			? nonDefaultPaidPlanProduct?.billingPeriod
-			: selectedPlanProduct?.billingPeriod
-	);
+	} = usePlans( billingPeriod );
 
 	React.useEffect( () => {
 		if (
@@ -323,6 +322,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		) {
 			setNonDefaultPaidPlan( selectedPlan );
 			setNonDefaultPaidPlanProduct( selectedPlanProduct );
+		}
+		if ( selectedPlanProduct && ! selectedPlan?.isFree ) {
+			setBillingPeriod( selectedPlanProduct?.billingPeriod );
 		}
 	}, [ selectedPlan, defaultPaidPlan, nonDefaultPaidPlan, selectedPlanProduct ] );
 
