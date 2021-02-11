@@ -342,7 +342,8 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Run type checks
-				yarn run tsc --project client/landing/gutenboarding
+				yarn tsc --build packages/tsconfig.json
+				yarn tsc --project client/landing/gutenboarding
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
