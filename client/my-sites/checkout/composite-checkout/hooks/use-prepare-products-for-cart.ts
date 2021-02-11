@@ -23,6 +23,7 @@ import { getPlanByPathSlug } from 'calypso/lib/plans';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import doesValueExist from '../lib/does-value-exist';
+import useStripProductsFromUrl from './use-strip-products-from-url';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -96,34 +97,6 @@ export default function usePrepareProductsForCart( {
 	useStripProductsFromUrl( siteSlug, state.isLoading );
 
 	return state;
-}
-
-function useStripProductsFromUrl( siteSlug: string | undefined, isLoading: boolean ): void {
-	useEffect( () => {
-		// Only run this when the url has been processed already
-		if ( ! isLoading ) {
-			return;
-		}
-
-		try {
-			// Replace the pathname with /checkout/example.com, which otherwise may
-			// include new products (eg /checkout/example.com/personal) or renewals
-			// (eg /checkout/value_bundle/renew/11111111/example.com) or coupons (eg
-			// /checkout/example.com?coupon=FOOBAR). That way loading the page later
-			// will not add those products to the cart again.
-			const queryString = window.location.search;
-			const alteredQueryString = queryString.replace( /&?coupon=[^&]+&?/, '' );
-			const newUrl =
-				window.location.protocol + '//' + window.location.host + '/checkout/' + siteSlug ??
-				'no-site' + alteredQueryString + window.location.hash;
-			debug( 'changing the url to strip the products to', newUrl );
-			window.history.replaceState( null, '', newUrl );
-		} catch ( error ) {
-			// Fail silently; this isn't that important to do
-			debug( 'changing the url to strip the products failed', error );
-			return;
-		}
-	}, [ isLoading, siteSlug ] );
 }
 
 type PreparedProductsAction =
