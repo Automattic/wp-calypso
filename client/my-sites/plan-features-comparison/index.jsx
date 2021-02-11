@@ -48,6 +48,8 @@ import {
 	isWpComEcommercePlan,
 	isWpComBusinessPlan,
 	getPlanClass,
+	findPlansKeys,
+	getPlan as getPlanFromKey,
 } from 'calypso/lib/plans';
 import {
 	getPlanDiscountedRawPrice,
@@ -69,6 +71,7 @@ import {
 	isMonthly,
 	isNew,
 	PLAN_FREE,
+	TERM_MONTHLY,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -406,6 +409,7 @@ export class PlanFeaturesComparison extends Component {
 				hideMonthly,
 				rawPrice,
 				rawPriceAnnual,
+				rawPriceForMonthlyPlan,
 			} = properties;
 			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features-comparison__table-item', 'has-border-top' );
@@ -450,6 +454,7 @@ export class PlanFeaturesComparison extends Component {
 						popular={ popular }
 						rawPrice={ rawPrice }
 						rawPriceAnnual={ rawPriceAnnual }
+						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
@@ -926,6 +931,7 @@ export default connect(
 				const rawPrice = siteId
 					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getPlanRawPrice( state, planProductId, showMonthlyPrice );
+
 				const discountPrice = siteId
 					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
@@ -940,6 +946,20 @@ export default connect(
 							? getSitePlanRawPrice( state, selectedSiteId, plan, { isMonthly: true } )
 							: getPlanRawPrice( state, yearlyPlan.product_id, true );
 					}
+				}
+
+				let rawPriceForMonthlyPlan; // This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
+				if ( isInSignup && ! displayJetpackPlans ) {
+					const monthlyPlanKey = findPlansKeys( {
+						group: planConstantObj.group,
+						term: TERM_MONTHLY,
+						type: planConstantObj.type,
+					} )[ 0 ];
+					const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey ).getProductId();
+
+					rawPriceForMonthlyPlan = siteId
+						? getSitePlanRawPrice( state, selectedSiteId, plan, true )
+						: getPlanRawPrice( state, monthlyPlanProductId, true );
 				}
 
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
@@ -990,6 +1010,7 @@ export default connect(
 						plans.length === 1,
 					rawPrice,
 					rawPriceAnnual: getPlanRawPrice( state, planProductId, false ),
+					rawPriceForMonthlyPlan,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 					annualPricePerMonth,

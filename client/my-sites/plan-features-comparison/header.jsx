@@ -82,6 +82,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 				</header>
 				<div className="plan-features-comparison__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ this.getAnnualDiscount() }
 					{ this.getIntervalDiscount() }
 				</div>
 			</span>
@@ -158,6 +159,31 @@ export class PlanFeaturesComparisonHeader extends Component {
 				components: { br: <br /> },
 			}
 		);
+	}
+
+	getAnnualDiscount() {
+		const {
+			isInSignup,
+			isMonthlyPlan,
+			rawPriceForMonthlyPlan,
+			annualPricePerMonth,
+			translate,
+		} = this.props;
+
+		if ( isInSignup && ! isMonthlyPlan ) {
+			const discountRate = Math.round(
+				( 100 * ( rawPriceForMonthlyPlan - annualPricePerMonth ) ) / rawPriceForMonthlyPlan
+			);
+			const annualDiscountText = translate( `You're saving %(discountRate)s%%`, {
+				args: { discountRate },
+			} );
+
+			return (
+				<div className={ 'plan-features-comparison__header-annual-discount' }>
+					<span>{ annualDiscountText }</span>
+				</div>
+			);
+		}
 	}
 
 	getBillingTimeframe() {
