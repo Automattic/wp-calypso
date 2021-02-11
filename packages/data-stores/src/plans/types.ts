@@ -61,7 +61,6 @@ export interface PricedAPIPlan {
 	bill_period: -1 | 31 | 365;
 	raw_price: number;
 	currency_code: string;
-	[ key: string ]: unknown;
 }
 export interface PricedAPIPlanFree extends PricedAPIPlan {
 	product_id: 1;
@@ -97,7 +96,6 @@ export interface APIPlanDetail {
 	}[];
 	highlighted_features: string[];
 	features: string[];
-	[ key: string ]: unknown;
 }
 
 export interface FeaturesByType {
@@ -121,5 +119,4 @@ export interface DetailsAPIResponse {
 	plans: APIPlanDetail[];
 	features_by_type: FeaturesByType[];
 	features: DetailsAPIFeature[];
-	[ key: string ]: unknown;
 }

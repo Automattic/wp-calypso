@@ -10,6 +10,7 @@ import type {
 	PricedAPIPlanPaidAnnually,
 	PricedAPIPlanPaidMonthly,
 	DetailsAPIResponse,
+	APIPlanDetail,
 } from '../types';
 
 /**
@@ -23,6 +24,29 @@ import type {
  * - Free plan
  * - Premium plan (annually and monthly billed)
  */
+
+//==============================================================================
+// Mock TypeScript interfaces
+// (allow us to use real-ish APIs data without TypeScript complaining about
+// extra props that are otherwise ignored in this data-store)
+//==============================================================================
+
+interface MockPricedAPIPlanFree extends PricedAPIPlanFree {
+	[ key: string ]: unknown;
+}
+interface MockAPIPlanDetail extends APIPlanDetail {
+	[ key: string ]: unknown;
+}
+interface MockDetailsAPIResponse extends DetailsAPIResponse {
+	plans: MockAPIPlanDetail[];
+	[ key: string ]: unknown;
+}
+interface MockPricedAPIPlanPaidAnnually extends PricedAPIPlanPaidAnnually {
+	[ key: string ]: unknown;
+}
+interface MockPricedAPIPlanPaidMonthly extends PricedAPIPlanPaidMonthly {
+	[ key: string ]: unknown;
+}
 
 //==============================================================================
 // APIs
@@ -79,7 +103,7 @@ export const MOCK_FEATURES_BY_TYPE_MARKETING: FeaturesByType = {
 };
 
 // All plans details (from APIs)
-export const MOCK_PLAN_DETAILS_API: DetailsAPIResponse = {
+export const MOCK_PLAN_DETAILS_API: MockDetailsAPIResponse = {
 	groups: [
 		{
 			slug: 'personal',
@@ -150,7 +174,8 @@ export const MOCK_PLAN_DETAILS_API: DetailsAPIResponse = {
 };
 
 // Individual plan (from APIs)
-export const MOCK_PLAN_PRICE_APIS_FREE: PricedAPIPlanFree = {
+
+export const MOCK_PLAN_PRICE_APIS_FREE: MockPricedAPIPlanFree = {
 	product_id: 1,
 	product_name: 'WordPress.com Free',
 	meta: null,
@@ -213,7 +238,8 @@ export const MOCK_PLAN_PRICE_APIS_FREE: PricedAPIPlanFree = {
 		},
 	],
 };
-export const MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY: PricedAPIPlanPaidAnnually = {
+
+export const MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnually = {
 	product_id: 1003,
 	product_name: 'WordPress.com Premium',
 	meta: null,
@@ -318,7 +344,8 @@ export const MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY: PricedAPIPlanPaidAnnually = 
 		},
 	],
 };
-export const MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY: PricedAPIPlanPaidMonthly = {
+
+export const MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY: MockPricedAPIPlanPaidMonthly = {
 	product_id: 1013,
 	product_name: 'WordPress.com Premium',
 	meta: null,
