@@ -76,7 +76,7 @@ export const getJetpackProductsDisplayNames = () => {
 
 	const backupRealtime = (
 		<>
-			{ translate( 'Backup {{em}}Real-Time{{/em}}', {
+			{ translate( 'Backup {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em />,
 				},
@@ -88,7 +88,7 @@ export const getJetpackProductsDisplayNames = () => {
 
 	const scanRealtime = (
 		<>
-			{ translate( 'Scan {{em}}Real-Time{{/em}}', {
+			{ translate( 'Scan {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em />,
 				},
@@ -133,7 +133,7 @@ export const getJetpackProductsCallToAction = () => {
 
 	const backupRealtime = (
 		<>
-			{ translate( 'Get Backup {{em}}Real-Time{{/em}}', {
+			{ translate( 'Get Backup {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em />,
 				},
