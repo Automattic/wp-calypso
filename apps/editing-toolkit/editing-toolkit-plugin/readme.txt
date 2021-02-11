@@ -39,6 +39,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+View the commit history here: https://github.com/Automattic/wp-calypso/commits/trunk/apps/editing-toolkit
 
 = 2.18 =
 * Introduces a "What's New" dialogue for the editor. (https://github.com/Automattic/wp-calypso/pull/48722)
