@@ -417,12 +417,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				 * Temporary workaround for https://github.com/WordPress/gutenberg/issues/28932.
 				 * More context: p1612999643307600-slack-C7YPUHBB2.
 				 *
-				 * Why hacking it to make it pass? Why not skipping the step?
-				 * - The bug is not critical.
-				 * - We still want the rest of the step*[0] to run, ideally.
+				 * Why hacking it to make it pass? Why not skipping the step? Because:
+				 * - The bug is not critical;
+				 * - We still want the rest of the step*[0] to run, ideally;
 				 * - While the bug is not critical and AFAIK it only happens in a single step
-				 * in the Desktop viewport, it's possible it could manifest in other situations and
-				 * brake more tests while we don't have a fix upstream.
+				 *   in the Desktop viewport, it's possible it could manifest in other situations and
+				 *   break more tests while we don't have a fix upstream.
 				 *
 				 * *[0] https://github.com/Automattic/wp-calypso/blob/trunk/test/e2e/specs/wp-calypso-gutenberg-post-editor-spec.js#L72
 				 *
@@ -438,7 +438,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				 * in the editor.
 				 *
 				 * If we can't find it (which means we fell into the buggy scenario described in the issue above), we
-				 * regerate the selector, this time making sure that it doesn't include an `is-selected` class selector
+				 * regenerate the selector, this time making sure that it doesn't include an `is-selected` class selector
 				 * as part of it. This should be enugh for the rest of the code to find it and proceed as expected.
 				 *
 				 * ToDo: Once the fix for https://github.com/WordPress/gutenberg/issues/28932 is available,
