@@ -6,13 +6,9 @@ import { merge } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { shortcodesSchema } from './schema';
-import {
-	combineReducers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
