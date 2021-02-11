@@ -27,7 +27,7 @@ class CheckoutMasterbar extends React.Component {
 			previousPath &&
 			'' !== previousPath &&
 			previousPath !== window.location.href &&
-			! previousPath.includes( '/checkout/no-site' )
+			! previousPath.includes( '/checkout/' )
 		) {
 			closeUrl = previousPath;
 		}
