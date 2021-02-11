@@ -38,6 +38,7 @@ import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
+import type { PlanProduct } from '@automattic/data-stores/src/plans';
 
 const bulb = (
 	<SVG viewBox="0 0 24 24">
@@ -287,35 +288,43 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		select( LAUNCH_STORE ).getSelectedPlanProductId()
 	);
 
-	const selectedPaidPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getPaidPlanProductId()
-	);
-
-	const { selectedPlan, selectedPaidPlan, billingPeriod } = useSelect( ( select ) => {
+	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
 		const plansStore = select( PLANS_STORE );
 
 		return {
 			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
-			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
-			billingPeriod:
-				plansStore.getPlanProductById( selectedPaidPlanProductId )?.billingPeriod || 'ANNUALLY',
+			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
 		};
 	} );
 
-	const { defaultPaidPlan, defaultFreePlan } = usePlans();
-
 	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
+	const [ nonDefaultPaidPlanProduct, setNonDefaultPaidPlanProduct ] = React.useState<
+		PlanProduct | undefined
+	>();
+
+	const {
+		defaultPaidPlan,
+		defaultFreePlan,
+		defaultPaidPlanProduct,
+		defaultFreePlanProduct,
+	} = usePlans(
+		selectedPlan?.isFree
+			? nonDefaultPaidPlanProduct?.billingPeriod
+			: selectedPlanProduct?.billingPeriod
+	);
 
 	React.useEffect( () => {
 		if (
-			selectedPaidPlan &&
+			selectedPlan &&
 			defaultPaidPlan &&
-			selectedPaidPlan.periodAgnosticSlug !== defaultPaidPlan.periodAgnosticSlug
+			! selectedPlan.isFree &&
+			selectedPlan.periodAgnosticSlug !== defaultPaidPlan.periodAgnosticSlug
 		) {
-			setNonDefaultPaidPlan( selectedPaidPlan );
+			setNonDefaultPaidPlan( selectedPlan );
+			setNonDefaultPaidPlanProduct( selectedPlanProduct );
 		}
-	}, [ selectedPaidPlan, defaultPaidPlan, nonDefaultPaidPlan ] );
+	}, [ selectedPlan, defaultPaidPlan, nonDefaultPaidPlan, selectedPlanProduct ] );
 
 	const isPlanSelected = ( plan: Plan ) =>
 		plan && plan.periodAgnosticSlug === selectedPlan?.periodAgnosticSlug;
@@ -326,13 +335,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
 		: [ defaultPaidPlan, defaultFreePlan ];
 
-	const allAvailablePlansProducts = useSelect(
-		( select ) =>
-			allAvailablePlans.map( ( plan ) =>
-				select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, billingPeriod )
-			),
-		[ allAvailablePlans, billingPeriod ]
-	);
+	const allAvailablePlansProducts: ( PlanProduct | undefined )[] = nonDefaultPaidPlanProduct
+		? [ defaultPaidPlanProduct, nonDefaultPaidPlanProduct, defaultFreePlanProduct ]
+		: [ defaultPaidPlanProduct, defaultFreePlanProduct ];
 
 	const popularLabel = __( 'Popular', __i18n_text_domain__ );
 

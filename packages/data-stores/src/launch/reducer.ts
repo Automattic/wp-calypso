@@ -11,7 +11,6 @@ import type * as DomainSuggestions from '../domain-suggestions';
 import { LaunchStep } from './data';
 import type { LaunchStepType } from './types';
 import type { LaunchAction } from './actions';
-import { FREE_PLAN_PRODUCT_ID } from './constants';
 
 const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name, action ) => {
 	if ( action.type === 'SET_STEP' ) {
@@ -60,13 +59,6 @@ const planProductId: Reducer< number | undefined, LaunchAction > = ( state, acti
 	}
 	if ( action.type === 'UNSET_PLAN_PRODUCT_ID' ) {
 		return undefined;
-	}
-	return state;
-};
-
-const paidPlanProductId: Reducer< number | undefined, LaunchAction > = ( state, action ) => {
-	if ( action.type === 'SET_PLAN_PRODUCT_ID' && action.planProductId !== FREE_PLAN_PRODUCT_ID ) {
-		return action.planProductId;
 	}
 	return state;
 };
@@ -163,7 +155,6 @@ const reducer = combineReducers( {
 	domain,
 	confirmedDomainSelection,
 	domainSearch,
-	paidPlanProductId,
 	planProductId,
 	isSidebarOpen,
 	isSidebarFullscreen,
