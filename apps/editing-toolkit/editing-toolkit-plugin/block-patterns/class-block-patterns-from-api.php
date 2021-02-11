@@ -90,8 +90,10 @@ class Block_Patterns_From_API {
 
 		$pattern_categories = array_merge( $pattern_categories, $existing_categories );
 
-		// Order categories alphabetically by their slug.
-		ksort( $pattern_categories );
+		// Order categories alphabetically by their label.
+		uasort( $pattern_categories, function( $a, $b ) {
+			return strnatcasecmp( $a['label'], $b['label'] );
+		} );
 
 		// Move the Featured category to be the first category.
 		if ( isset( $pattern_categories['featured'] ) ) {
