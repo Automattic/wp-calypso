@@ -3,7 +3,7 @@
  */
 import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, omit } from 'lodash';
 import { __ } from '@wordpress/i18n';
-import { Button, Modal, Spinner } from '@wordpress/components';
+import { Button, Modal, Spinner, DropdownMenu } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { withInstanceId } from '@wordpress/compose';
@@ -471,7 +471,18 @@ class PageTemplateModal extends Component {
 								<Button isSecondary onClick={ () => this.handleSelection( 'blank' ) }>
 									{ __( 'Blank page', __i18n_text_domain__ ) }
 								</Button>
-								<ul>
+								<select
+									className="page-template-modal__mobile-category-dropdown"
+									value={ selectedCategory }
+									onChange={ ( e ) => this.handleCategorySelection( e.currentTarget.value ) }
+								>
+									{ this.getTemplateCategories().map( ( { slug, name } ) => (
+										<option key={ slug } value={ slug }>
+											{ name }
+										</option>
+									) ) }
+								</select>
+								<ul className="page-template-modal__category-list">
 									{ this.getTemplateCategories().map( ( { slug, name } ) => (
 										<li key={ slug }>
 											<Button

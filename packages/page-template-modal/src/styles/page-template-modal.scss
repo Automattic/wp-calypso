@@ -39,10 +39,11 @@ $wp-org-admin-bar-mobile: 46px;
 
 $sidebar-width: 25%;
 
-// Full screen modal
 .page-template-modal {
-	width: 90%;
-	height: 90vh;
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		width: 90%;
+		height: 90vh;
+	}
 }
 
 // Overrides of the Gutenberg modal component
@@ -58,7 +59,9 @@ $sidebar-width: 25%;
 }
 
 .page-template-modal__inner {
-	padding: 0 20px;
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		padding: 0 20px;
+	}
 }
 
 .page-template-modal__list {
@@ -159,30 +162,44 @@ $sidebar-width: 25%;
 }
 
 .page-template-modal__sidebar {
-	position: fixed;
-	width: calc( #{$sidebar-width} - 24px );
-	pointer-events: none;
-	padding-right: 44px;
-
-	> * {
-		pointer-events: auto;
-	}
-
-	ul {
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		position: fixed;
+		width: calc( #{$sidebar-width} - 24px );
 		pointer-events: none;
+		padding-right: 44px;
 
-		li > * {
+		> * {
 			pointer-events: auto;
 		}
+
+		.page-template-modal__category-list {
+			pointer-events: none;
+
+			li > * {
+				pointer-events: auto;
+			}
+		}
 	}
+}
+
+.page-template-modal__category-list {
+	display: none;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
-		padding-right: 44px;
+		display: block;
+	}
+}
+
+.page-template-modal__mobile-category-dropdown {
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		display: none;
 	}
 }
 
 .page-template-modal__template-list-container {
-	padding-left: $sidebar-width;
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		padding-left: $sidebar-width;
+	}
 }
 
 // Template Selector Preview
