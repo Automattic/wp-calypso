@@ -61,7 +61,7 @@ describe( 'createFallbackExperimentAssignment', () => {
 			'experiment_name'
 		);
 
-		expect( fallbackExperimentAssignment.retrievedTimestamp ).toBeGreaterThan( now );
+		expect( fallbackExperimentAssignment.retrievedTimestamp ).toBeGreaterThanOrEqual( now );
 		expect( ExperimentAssignments.isAlive( fallbackExperimentAssignment ) ).toBe( true );
 		expect( ExperimentAssignments.isRecent( fallbackExperimentAssignment ) ).toBe( true );
 
