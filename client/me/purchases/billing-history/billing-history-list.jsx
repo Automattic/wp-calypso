@@ -86,6 +86,9 @@ class BillingHistoryList extends React.Component {
 					<strong>{ transaction.plan }</strong>
 					<small>{ transaction.domain }</small>
 					{ termLabel ? <small>{ termLabel }</small> : null }
+					{ transaction.product_quantity_summary && (
+						<small>{ transaction.product_quantity_summary }</small>
+					) }
 				</div>
 			);
 		} else {
