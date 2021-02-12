@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, findIndex, last, map, noop, reduce } from 'lodash';
+import { compact, get, last, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
@@ -18,7 +18,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
-// import PlanFeaturesItem from './item';
+import { PlanFeaturesAvailableItem, PlanFeaturesMissingItem } from './item';
 import SpinnerLine from 'calypso/components/spinner-line';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { abtest } from 'calypso/lib/abtest';
@@ -91,7 +91,7 @@ import './style.scss';
 
 export class PlanFeaturesComparison extends Component {
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
+		const { isInSignup, planProperties, translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
@@ -105,18 +105,6 @@ export class PlanFeaturesComparison extends Component {
 		// const mobileView = ! withScroll && (
 		// 	<div className="plan-features-comparison__mobile">{ this.renderMobileView() }</div>
 		// );
-		let planDescriptions;
-		let bottomButtons = null;
-
-		// if ( withScroll || ! isInSignup ) {
-		// 	planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
-
-		// 	bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
-		// }
-
-		const initialSelectedIndex = selectedPlan
-			? plans.indexOf( selectedPlan )
-			: findIndex( planProperties, { popular: true } );
 
 		return (
 			<div className={ planWrapperClasses }>
@@ -132,11 +120,8 @@ export class PlanFeaturesComparison extends Component {
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
-									{ /* { ! withScroll && planDescriptions } */ }
 									<tr>{ this.renderTopButtons() }</tr>
-									{ /* { withScroll && planDescriptions } */ }
-									{ /* { this.renderPlanFeatureRows() } */ }
-									{ /* { ! withScroll && ! isInSignup && bottomButtons } */ }
+									{ this.renderPlanFeatureRows() }
 								</tbody>
 							</table>
 						</div>
@@ -411,10 +396,10 @@ export class PlanFeaturesComparison extends Component {
 				rawPriceAnnual,
 				rawPriceForMonthlyPlan,
 			} = properties;
-			let { discountPrice } = properties;
+			const { discountPrice } = properties;
 			const classes = classNames( 'plan-features-comparison__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
+			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			if ( isInSignup && ! displayJetpackPlans ) {
 				switch ( siteType ) {
@@ -608,7 +593,7 @@ export class PlanFeaturesComparison extends Component {
 		return reduce(
 			planProperties,
 			( longest, properties ) => {
-				const currentFeatures = Object.keys( properties.features );
+				const currentFeatures = Object.keys( properties.availableAndMissingFeatures );
 				return currentFeatures.length > longest.length ? currentFeatures : longest;
 			},
 			[]
@@ -640,39 +625,44 @@ export class PlanFeaturesComparison extends Component {
 		);
 	}
 
-	renderFeatureItem( feature, index ) {
-		const description = feature.getDescription
-			? feature.getDescription( abtest, this.props.domainName )
-			: null;
+	renderFeatureItem( feature, index, type ) {
 		const classes = classNames( 'plan-features-comparison__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
 		} );
 
+		const FeatureDisplayComponent =
+			type === 'availableFeature' ? PlanFeaturesAvailableItem : PlanFeaturesMissingItem;
+
 		return (
-			<PlanFeaturesItem
-				key={ index }
-				description={ description }
-				hideInfoPopover={ feature.hideInfoPopover }
-				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
-			>
-				<span className={ classes }>
-					{ this.renderAnnualPlansFeatureNotice( feature ) }
-					<span className="plan-features-comparison__item-title">{ feature.getTitle() }</span>
-				</span>
-			</PlanFeaturesItem>
+			<>
+				<FeatureDisplayComponent key={ index }>
+					<span className={ classes }>
+						{ /* { this.renderAnnualPlansFeatureNotice( feature ) } */ }
+						<span className="plan-features-comparison__item-title">
+							{ feature.getTitle( this.props.domainName ) }
+						</span>
+					</span>
+				</FeatureDisplayComponent>
+			</>
 		);
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
 		const { planProperties, selectedFeature, withScroll } = this.props;
 
-		return map( planProperties, ( properties ) => {
-			const { features, planName } = properties;
+		return map( planProperties, ( properties, mapIndex ) => {
+			const features = properties.availableAndMissingFeatures;
+			const { missingFeaturesForAnnualPlans, planName } = properties;
 
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
 			const currentFeature = features[ key ];
+
+			let type = 'availableFeature';
+			if ( missingFeaturesForAnnualPlans.includes( currentFeature.getSlug() ) ) {
+				type = 'missingFeature';
+			}
 
 			const classes = classNames(
 				'plan-features-comparison__table-item',
@@ -682,79 +672,16 @@ export class PlanFeaturesComparison extends Component {
 					'is-last-feature': rowIndex + 1 === featureKeys.length,
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+					'is-bold': rowIndex === 0,
 				}
 			);
 
 			return currentFeature ? (
 				<td key={ `${ planName }-${ key }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature ) }
+					{ this.renderFeatureItem( currentFeature, mapIndex, type ) }
 				</td>
 			) : (
 				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
-			);
-		} );
-	}
-
-	renderBottomButtons() {
-		const {
-			canPurchase,
-			disableBloggerPlanWithNonBlogDomain,
-			isInSignup,
-			isLandingPage,
-			isLaunchPage,
-			planProperties,
-			selectedPlan,
-			selectedSiteSlug,
-			purchaseId,
-		} = this.props;
-
-		return map( planProperties, ( properties ) => {
-			let { availableForPurchase } = properties;
-			const {
-				current,
-				planName,
-				primaryUpgrade,
-				isPlaceholder,
-				planConstantObj,
-				popular,
-			} = properties;
-			const classes = classNames(
-				'plan-features-comparison__table-item',
-				'has-border-bottom',
-				'is-bottom-buttons'
-			);
-
-			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
-					availableForPurchase = false;
-				}
-			}
-
-			return (
-				<td key={ planName } className={ classes }>
-					<PlanFeaturesActions
-						availableForPurchase={ availableForPurchase }
-						canPurchase={ canPurchase }
-						className={ getPlanClass( planName ) }
-						current={ current }
-						freePlan={ isFreePlan( planName ) }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
-						manageHref={
-							purchaseId
-								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-								: `/plans/my-plan/${ selectedSiteSlug }`
-						}
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
-						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
-						selectedPlan={ selectedPlan }
-					/>
-				</td>
 			);
 		} );
 	}
@@ -915,7 +842,11 @@ export default connect(
 
 							break;
 						default:
-							if ( planConstantObj.getSignupFeatures ) {
+							if ( planConstantObj.getSignupCompareAvailableFeatures ) {
+								planFeatures = getPlanFeaturesObject(
+									planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
+								);
+							} else {
 								planFeatures = getPlanFeaturesObject(
 									planConstantObj.getSignupFeatures( currentPlan )
 								);
@@ -977,6 +908,14 @@ export default connect(
 					} );
 				}
 
+				const missingFeaturesForAnnualPlans = planConstantObj.getSignupCompareMissingFeatures();
+				const missingFeaturesForAnnualPlansObj = planConstantObj.getSignupCompareMissingFeatures
+					? getPlanFeaturesObject( missingFeaturesForAnnualPlans )
+					: [];
+
+				// console.log('getSignupCompareMissingFeatures: ');
+				// console.log(getPlanFeaturesObject( planConstantObj.getSignupCompareMissingFeatures() ));
+
 				// Strip annual-only features out for the site's /plans page
 				if ( ! isInSignup || isPlaceholder ) {
 					planFeatures = planFeatures.filter(
@@ -992,6 +931,8 @@ export default connect(
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,
+					missingFeaturesForAnnualPlans,
+					availableAndMissingFeatures: [ ...planFeatures, ...missingFeaturesForAnnualPlansObj ],
 					isLandingPage,
 					isPlaceholder,
 					planConstantObj,

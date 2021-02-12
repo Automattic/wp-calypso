@@ -9,6 +9,7 @@ $plan-features-sidebar-width: 272px;
 .in-plans-redesign-experiment {
 	.plan-features--signup {
 		.plan-features-comparison__table {
+			width: 80%;
 			@media ( min-width: 1040px ) {
 				border-spacing: 0;
 			}
@@ -112,8 +113,33 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features__actions-button {
-		width: 60%;
 		border-radius: 4px; /* stylelint-disable-line */
+	}
+
+	.plan-features-comparison__item {
+		padding: 0.5rem;
+
+		.plan-features-comparison__item-checkmark {
+			fill: var( --studio-green-50 );
+			width: 16px;
+			height: 16px;
+			margin-right: 0;
+		}
+
+		.plan-features-comparison__item-cross {
+			fill: var( --studio-gray-20 );
+			width: 16px;
+			height: 16px;
+			margin-right: 0;
+		}
+
+		.plan-features-comparison__item-title {
+			line-height: 18px;
+		}
+	}
+
+	.plan-features-comparison__table-item.is-bold {
+		font-weight: bold;
 	}
 }
 
