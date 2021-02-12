@@ -56,11 +56,94 @@ export const paths = {
 	'wpcom-free': wpcomFree,
 	'wpcom-personal': wpcomPersonal,
 	'wpcom-premium': wpcomPremium,
-	'wpcom-search': jetpackSearch,
-	'wpcom-search_monthly': jetpackSearch,
 };
 
-export const iconToProductSlugMap = {
+export type SupportedSlugs =
+	| 'free_plan'
+	| 'blogger-bundle'
+	| 'blogger-bundle-2y'
+	| 'personal-bundle'
+	| 'personal-bundle-2y'
+	| 'personal-bundle-monthly'
+	| 'value_bundle'
+	| 'value_bundle-2y'
+	| 'value_bundle-monthly'
+	| 'value_bundle_monthly'
+	| 'ecommerce-bundle'
+	| 'ecommerce-bundle-2y'
+	| 'ecommerce-bundle-monthly'
+	| 'business-bundle'
+	| 'business-bundle-2y'
+	| 'business-bundle-monthly'
+	| 'jetpack_free'
+	| 'jetpack_personal'
+	| 'jetpack_personal_monthly'
+	| 'jetpack_premium'
+	| 'jetpack_premium_monthly'
+	| 'jetpack_business'
+	| 'jetpack_business_monthly'
+	| 'jetpack_complete'
+	| 'jetpack_complete_monthly'
+	| 'jetpack_complete_v2'
+	| 'jetpack_complete_monthly_v2'
+	| 'jetpack_crm'
+	| 'jetpack_crm_monthly'
+	| 'jetpack_crm_dark'
+	| 'jetpack_crm_monthly_dark'
+	| 'jetpack_backup_daily'
+	| 'jetpack_backup_daily_monthly'
+	| 'jetpack_backup_realtime'
+	| 'jetpack_backup_realtime_monthly'
+	| 'jetpack_backup_v2'
+	| 'jetpack_backup_daily_v2'
+	| 'jetpack_backup_daily_monthly_v2'
+	| 'jetpack_backup_realtime_v2'
+	| 'jetpack_backup_realtime_monthly_v2'
+	| 'jetpack_backup_v2_dark'
+	| 'jetpack_backup_daily_v2_dark'
+	| 'jetpack_backup_daily_monthly_v2_dark'
+	| 'jetpack_backup_realtime_v2_dark'
+	| 'jetpack_backup_realtime_monthly_v2_dark'
+	| 'jetpack_scan'
+	| 'jetpack_scan_monthly'
+	| 'jetpack_scan_v2'
+	| 'jetpack_scan_monthly_v2'
+	| 'jetpack_scan_daily_v2'
+	| 'jetpack_scan_daily_monthly_v2'
+	| 'jetpack_scan_realtime_v2'
+	| 'jetpack_scan_realtime_monthly_v2'
+	| 'jetpack_scan_v2_dark'
+	| 'jetpack_scan_monthly_v2_dark'
+	| 'jetpack_scan_daily_v2_dark'
+	| 'jetpack_scan_daily_monthly_v2_dark'
+	| 'jetpack_scan_realtime_v2_dark'
+	| 'jetpack_scan_realtime_monthly_v2_dark'
+	| 'jetpack_search'
+	| 'jetpack_search_monthly'
+	| 'wpcom_search'
+	| 'wpcom_search_monthly'
+	| 'jetpack_search_v2'
+	| 'jetpack_search_monthly_v2'
+	| 'jetpack_search_v2_dark'
+	| 'jetpack_search_monthly_v2_dark'
+	| 'jetpack_anti_spam'
+	| 'jetpack_anti_spam_monthly'
+	| 'jetpack_anti_spam_v2'
+	| 'jetpack_anti_spam_monthly_v2'
+	| 'jetpack_anti_spam_v2_dark'
+	| 'jetpack_anti_spam_monthly_v2_dark'
+	| 'jetpack_security_v2'
+	| 'jetpack_security_monthly_v2'
+	| 'jetpack_security_daily_v2'
+	| 'jetpack_security_daily_monthly_v2'
+	| 'jetpack_security_realtime_v2'
+	| 'jetpack_security_realtime_monthly_v2'
+	| 'jetpack_security_daily'
+	| 'jetpack_security_daily_monthly'
+	| 'jetpack_security_realtime'
+	| 'jetpack_security_realtime_monthly';
+
+export const iconToProductSlugMap: Record< keyof typeof paths, readonly SupportedSlugs[] > = {
 	'wpcom-free': [ 'free_plan' ],
 	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ],
 	'wpcom-personal': [ 'personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly' ],
@@ -100,12 +183,7 @@ export const iconToProductSlugMap = {
 		'jetpack_backup_realtime_v2_dark',
 		'jetpack_backup_realtime_monthly_v2_dark',
 	],
-	'jetpack-scan': [
-		'jetpack_scan',
-		'jetpack_scan_monthly',
-		'jetpack_scan_realtime',
-		'jetpack_scan_realtime_monthly',
-	],
+	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
 	'jetpack-scan-v2': [
 		'jetpack_scan_v2',
 		'jetpack_scan_monthly_v2',
@@ -145,6 +223,4 @@ export const iconToProductSlugMap = {
 		'jetpack_security_realtime',
 		'jetpack_security_realtime_monthly',
 	],
-};
-
-export const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].flat();
+} as const;

@@ -2,26 +2,34 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { findKey } from 'lodash';
+import { findKey, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { iconToProductSlugMap, paths, supportedSlugs } from './config';
+import { iconToProductSlugMap, paths } from './config';
+import type { SupportedSlugs } from './config';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function ProductIcon( { className, slug } ) {
+type Props = {
+	className?: string;
+	slug: SupportedSlugs;
+};
+
+const ProductIcon: React.FunctionComponent< Props > = ( { className, slug } ) => {
 	if ( ! slug ) {
 		return null;
 	}
 
-	const iconSlug = findKey( iconToProductSlugMap, ( products ) => products.includes( slug ) );
+	const iconSlug = findKey( iconToProductSlugMap, ( products ) =>
+		includes( products, slug )
+	) as keyof typeof paths;
+
 	const iconPath = paths[ iconSlug ];
 
 	if ( ! iconPath ) {
@@ -36,11 +44,6 @@ function ProductIcon( { className, slug } ) {
 			alt=""
 		/>
 	);
-}
-
-ProductIcon.propTypes = {
-	classNames: PropTypes.string,
-	slug: PropTypes.oneOf( supportedSlugs ).isRequired,
 };
 
 export default ProductIcon;
