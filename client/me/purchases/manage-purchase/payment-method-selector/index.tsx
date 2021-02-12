@@ -152,8 +152,35 @@ export default function PaymentMethodSelector( {
 				) }
 
 				<CheckoutSubmitButton />
+
+				{ ! purchase && (
+					<AllSubscriptionsEffectWarning useForAllSubscriptions={ useForAllSubscriptions } />
+				) }
 			</Card>
 		</CheckoutProvider>
+	);
+}
+
+function AllSubscriptionsEffectWarning( {
+	useForAllSubscriptions,
+}: {
+	useForAllSubscriptions: boolean;
+} ) {
+	const translate = useTranslate();
+
+	if ( useForAllSubscriptions ) {
+		return (
+			<div className="payment-method-selector__all-subscriptions-effect-warning">
+				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
+			</div>
+		);
+	}
+	return (
+		<div className="payment-method-selector__all-subscriptions-effect-warning">
+			{ translate(
+				'This card will not be assigned to any subscriptions. You can assign it to a subscription from the subscription page.'
+			) }
+		</div>
 	);
 }
 
