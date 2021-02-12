@@ -1208,7 +1208,6 @@ object WPComPlugins_EditorToolKit : BuildType({
 	artifactRules = "editing-toolkit.zip"
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
-
 	params {
 		param("build.prefix", "3")
 	}
@@ -1329,7 +1328,11 @@ object WPComPlugins_EditorToolKit : BuildType({
 				cd editing-toolkit-plugin/
 
 				# Metadata file with info for the download script.
-				echo -e "commit_hash=%build.vcs.number%\nbuild_number=%build.number%\n" > build_meta.txt
+				tee build_meta.txt <<-EOM
+					commit_hash=%build.vcs.number%
+					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+					build_number=%build.number%
+					EOM
 
 				zip -r ../../../editing-toolkit.zip .
 			""".trimIndent()
