@@ -135,22 +135,22 @@ const SignupDisplayAnchor = ( {
 								</div>
 								<div>
 									<ul className="signup-form__anchor-list">
-										<li>Create forms and mailing lists</li>
-										<li>Accept Payments and sell merchandise</li>
-										<li>Built-in SEO and social tools</li>
+										<li> { __( 'Create forms and mailing lists' ) } </li>
+										<li> { __( 'Accept Payments and sell merchandise' ) } </li>
+										<li> { __( 'Built-in SEO and social tools' ) } </li>
 									</ul>
 								</div>
 							</div>
 
 							<div className="signup-form__anchor-col-right-group">
 								<div className="signup-form__anchor-right-heading">
-									Increase your audience with episode transcriptions
+									{ __( 'Increase your audience with episode transcriptions' ) }
 								</div>
 								<div>
 									<ul className="signup-form__anchor-list">
-										<li>Add transcriptions to episode pages</li>
-										<li>Customizable templates built for podcasts</li>
-										<li>Add images, videos, and text formatting</li>
+										<li> { __( 'Add transcriptions to episode pages' ) } </li>
+										<li> { __( 'Customizable templates built for podcasts' ) } </li>
+										<li> { __( 'Add images, videos, and text formatting' ) } </li>
 									</ul>
 								</div>
 							</div>
