@@ -13,6 +13,7 @@ import FocusedLaunchModal from '@automattic/launch';
 import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
 import { LAUNCH_STORE, SITE_STORE } from './stores';
 import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
+import { IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,11 +23,15 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 	render: function LaunchSidebar() {
 		const currentSiteId = window._currentSiteId;
 
-		const [ isFocusedLaunchOpen, isSiteLaunched ] = useSelect( ( select ) => {
-			const { isFocusedLaunchOpen } = select( LAUNCH_STORE ).getState();
+		const isSiteLaunched = useSelect(
+			( select ) => select( SITE_STORE ).isSiteLaunched( currentSiteId ),
+			[ currentSiteId ]
+		);
 
-			return [ isFocusedLaunchOpen, select( SITE_STORE ).isSiteLaunched( currentSiteId ) ];
-		} );
+		const { isFocusedLaunchOpen } = useSelect(
+			( select ) => select( LAUNCH_STORE ).getState(),
+			[]
+		);
 
 		const { openFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
@@ -37,9 +42,11 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 			}
 		}, [ isSiteLaunched ] );
 
+		// '?should_launch' query arg is used when the mandatory checkout step
+		// is redirecting to an external payment processing page (eg: Paypal)
 		const shouldLaunch = hasQueryArg(
 			inIframe() ? getCurrentLaunchFlowUrl() : window.location.href,
-			'should_launch'
+			IMMEDIATE_LAUNCH_QUERY_ARG
 		);
 
 		React.useEffect( () => {

@@ -3,7 +3,7 @@
  */
 import { doAction, hasAction } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
-import { FOCUSED_LAUNCH_FLOW } from './constants';
+import { FOCUSED_LAUNCH_FLOW, IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 
 interface CalypsoifyWindow extends Window {
 	currentSiteId?: number;
@@ -50,7 +50,7 @@ export const openCheckout = (
 			checkoutOnSuccessCallback: onSuccessCallback,
 			isFocusedLaunch: true,
 			redirectTo: addQueryArgs( urlWithoutArgs, {
-				should_launch: true,
+				[ IMMEDIATE_LAUNCH_QUERY_ARG ]: true,
 			} ),
 		} );
 		return;
