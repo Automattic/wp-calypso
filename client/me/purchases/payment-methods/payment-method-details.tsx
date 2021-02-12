@@ -26,6 +26,7 @@ interface Props {
 	email?: string;
 	paymentPartner?: string;
 	selected?: boolean;
+	isExpired?: boolean;
 }
 
 const PaymentMethodDetails: FunctionComponent< Props > = ( {
@@ -36,6 +37,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	selected,
 	email,
 	paymentPartner,
+	isExpired,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -63,7 +65,12 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 					} ) }
 				</span>
 
-				{ displayExpirationDate && (
+				{ isExpired && (
+					<span className="payment-method-details__expiration-date">
+						{ translate( 'Credit card expired' ) }
+					</span>
+				) }
+				{ ! isExpired && displayExpirationDate && (
 					<span className="payment-method-details__expiration-date">
 						{ translate( 'Expires %(date)s', {
 							args: { date: displayExpirationDate },
