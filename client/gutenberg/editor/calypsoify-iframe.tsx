@@ -57,7 +57,7 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
-import type { RequestCart } from '@automattic/shopping-cart';
+import type { CheckoutModalOptions } from 'calypso/blocks/editor-checkout-modal';
 
 /**
  * Types
@@ -100,7 +100,7 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-	cartData?: RequestCart;
+	checkoutModalOptions?: CheckoutModalOptions;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -144,7 +144,7 @@ class CalypsoifyIframe extends Component<
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
-		cartData: undefined,
+		checkoutModalOptions: undefined,
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -297,7 +297,7 @@ class CalypsoifyIframe extends Component<
 			this.checkoutPort = ports[ 0 ];
 			this.setState( {
 				isCheckoutModalVisible: true,
-				cartData: payload,
+				checkoutModalOptions: payload,
 			} );
 		}
 
@@ -726,7 +726,7 @@ class CalypsoifyIframe extends Component<
 			postUrl,
 			editedPost,
 			currentIFrameUrl,
-			cartData,
+			checkoutModalOptions,
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
@@ -773,9 +773,11 @@ class CalypsoifyIframe extends Component<
 						checkoutOnSuccessCallback={ this.handleCheckoutSuccess }
 						require="calypso/blocks/editor-checkout-modal"
 						onClose={ this.closeCheckoutModal }
-						cartData={ cartData }
 						placeholder={ null }
 						isOpen={ isCheckoutModalVisible }
+						cartData={ checkoutModalOptions?.cartData }
+						redirectTo={ checkoutModalOptions?.redirectTo }
+						isFocusedLaunch={ checkoutModalOptions?.isFocusedLaunch }
 					/>
 				) }
 				<AsyncLoad

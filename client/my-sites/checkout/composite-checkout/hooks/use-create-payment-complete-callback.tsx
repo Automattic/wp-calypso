@@ -244,6 +244,7 @@ export default function useCreatePaymentCompleteCallback( {
 			translate,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
+			isFocusedLaunch,
 		]
 	);
 }

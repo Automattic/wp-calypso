@@ -4,10 +4,10 @@
 import React, { useMemo, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Icon, wordpress } from '@wordpress/icons';
-import type { RequestCart } from '@automattic/shopping-cart';
 import { Modal } from '@wordpress/components';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -27,6 +27,12 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
  */
 import './style.scss';
 
+export interface CheckoutModalOptions {
+	cartData?: RequestCart;
+	redirectTo?: string;
+	isFocusedLaunch?: boolean;
+}
+
 const wpcom = wp.undocumented();
 
 function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
@@ -44,7 +50,15 @@ function removeHashFromUrl(): void {
 }
 
 const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
-	const { site, isOpen, onClose, cartData, checkoutOnSuccessCallback } = props;
+	const {
+		site,
+		isOpen,
+		onClose,
+		cartData,
+		redirectTo,
+		isFocusedLaunch,
+		checkoutOnSuccessCallback,
+	} = props;
 
 	const translate = useTranslate();
 
@@ -93,8 +107,9 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 					locale={ props.locale }
 				>
 					<CompositeCheckout
+						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 						isInEditor
-						isFocusedLaunch={ ! cartData?.products } // we currently know we're not passing cartData from Focused Launch
+						isFocusedLaunch={ isFocusedLaunch }
 						siteId={ site?.ID }
 						siteSlug={ site?.slug }
 						productAliasFromUrl={ commaSeparatedProductSlugs }
@@ -106,14 +121,14 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 	) : null;
 };
 
-type Props = {
+interface Props extends CheckoutModalOptions {
 	site: SiteData | null;
-	cartData?: RequestCart;
 	onClose: () => void;
 	isOpen: boolean;
 	locale: string | undefined;
 	checkoutOnSuccessCallback?: () => void;
-};
+	isFocusedLaunch?: boolean;
+}
 
 EditorCheckoutModal.defaultProps = {
 	site: null,

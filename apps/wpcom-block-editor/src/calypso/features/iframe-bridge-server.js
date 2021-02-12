@@ -966,12 +966,12 @@ function handleCheckoutModalOpened( calypsoPort, data ) {
 
 	// Remove checkoutOnSuccessCallback from data to prevent
 	// the `data` object could not be cloned in postMessage()
-	const { checkoutOnSuccessCallback, ...cartData } = data;
+	const { checkoutOnSuccessCallback, ...checkoutModalOptions } = data;
 
 	calypsoPort.postMessage(
 		{
 			action: 'openCheckoutModal',
-			payload: cartData,
+			payload: checkoutModalOptions,
 		},
 		[ port2 ]
 	);
