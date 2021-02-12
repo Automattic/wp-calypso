@@ -7,6 +7,7 @@ import { useInfiniteQuery } from 'react-query';
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
+import uniqueBy from 'calypso/lib/uniqueBy';
 
 export const DEFAULT_NUMBER = 100;
 export const defaults = {
@@ -14,10 +15,13 @@ export const defaults = {
 	offset: 0,
 };
 
+const extractPages = ( pages = [] ) => pages.flatMap( ( page ) => page.users );
+const compareUnique = ( a, b ) => a.ID === b.ID;
+
 const useUsers = ( fetchOptions = {}, queryOptions = {} ) => {
 	const { search, siteId } = fetchOptions;
 
-	const { data, ...rest } = useInfiniteQuery(
+	return useInfiniteQuery(
 		[ 'users', siteId, search ],
 		async ( { pageParam = 0 } ) => {
 			const res = await wpcom
@@ -32,16 +36,17 @@ const useUsers = ( fetchOptions = {}, queryOptions = {} ) => {
 				}
 				return allPages.length * DEFAULT_NUMBER;
 			},
+			select: ( data ) => {
+				return {
+					/* @TODO: `uniqueBy` is necessary, because the API can return duplicates */
+					users: uniqueBy( extractPages( data.pages ), compareUnique ),
+					total: data.pages[ 0 ].found,
+					...data,
+				};
+			},
 			...queryOptions,
 		}
 	);
-
-	return {
-		users: data?.pages.flatMap( ( page ) => page.users ) ?? [],
-		total: data?.pages[ 0 ]?.found,
-		data,
-		...rest,
-	};
 };
 
 export default useUsers;

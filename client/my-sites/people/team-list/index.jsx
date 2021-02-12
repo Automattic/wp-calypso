@@ -12,7 +12,6 @@ const queryClient = new QueryClient();
  */
 import Team from './team';
 import useUsers from 'calypso/data/use-users';
-import { uniqueBy } from './helpers';
 
 function TeamList( props ) {
 	const { site, search } = props;
@@ -27,19 +26,16 @@ function TeamList( props ) {
 		fetchOptions.search_columns = [ 'display_name', 'user_login' ];
 	}
 
-	const { users, total, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useUsers(
+	const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useUsers(
 		fetchOptions
 	);
-
-	/* @TODO: this shouldn't be possible but there are duplicates returned from the API sometimes */
-	const uniqueUsers = uniqueBy( users, ( a, b ) => a.ID === b.ID );
 
 	return (
 		<Team
 			fetchingUsers={ isLoading }
 			fetchingNextPage={ isFetchingNextPage }
-			totalUsers={ total }
-			users={ uniqueUsers }
+			totalUsers={ data?.total }
+			users={ data?.users ?? [] }
 			excludedUsers={ [] }
 			fetchOptions={ fetchOptions }
 			fetchNextPage={ fetchNextPage }
