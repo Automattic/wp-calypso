@@ -55,6 +55,7 @@ export const getTask = (
 		isDomainUnverified,
 		isEmailUnverified,
 		isPodcastingSite,
+		isLaunchedSite,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -83,11 +84,15 @@ export const getTask = (
 
 			// Change the task title for podcasting sites.
 			if ( isPodcastingSite ) {
-				taskData.title = translate( 'You launched your podcast site!' );
+				taskData.title = isLaunchedSite
+					? translate( 'You launched your podcast site!' )
+					: translate( 'Welcome to your podcast site!' );
 				taskData.hideLabel = true;
-				taskData.description = translate(
-					"Now that you've created your site, we'll guide you through completing a few additional steps to continue building your site."
-				);
+				taskData.description = isLaunchedSite
+					? translate(
+							'Now that you’ve created your site, we’ll guide you through completing a few additional steps to continue building your site.'
+					  )
+					: translate( "Next, we'll guide you through setting up and launching your site." );
 			}
 			break;
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
