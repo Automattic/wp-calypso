@@ -182,6 +182,13 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</section>
+
+			<section className="products-grid-i5__section products-grid-i5__asterisk-items">
+				<h2 className="products-grid-i5__asterisk-item">
+					{ translate( 'All plans include priority support' ) }
+				</h2>
+			</section>
+
 			<section className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'More Products' ) }</h2>
 				<ul className="products-grid-i5__product-grid">
