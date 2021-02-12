@@ -199,6 +199,7 @@ function ReceiptLineItems( { transaction } ) {
 					{ termLabel ? <em>{ termLabel }</em> : null }
 					<br />
 					<em>{ item.domain }</em>
+					{ item.product_quantity_summary && <em>{ item.product_quantity_summary }</em> }
 				</td>
 				<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
 					{ item.amount }
