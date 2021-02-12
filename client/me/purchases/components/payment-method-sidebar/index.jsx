@@ -71,22 +71,7 @@ function MainCard( { purchase } ) {
 		);
 	}
 
-	return (
-		<Card className="payment-method-sidebar__details-card">
-			<CardHeading
-				tagName="h1"
-				size={ 16 }
-				isBold={ true }
-				className="payment-method-sidebar__title"
-			>
-				{ translate( 'Usage' ) }
-			</CardHeading>
-
-			<p className="payment-method-sidebar__paragraph">
-				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
-			</p>
-		</Card>
-	);
+	return null;
 }
 
 PaymentMethodSidebar.propTypes = {
