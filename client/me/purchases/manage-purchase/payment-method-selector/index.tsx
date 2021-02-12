@@ -90,7 +90,7 @@ export default function PaymentMethodSelector( {
 		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
 	} );
 
-	const [ isChecked, setIsChecked ] = useState< boolean >( true );
+	const [ useForAllSubscriptions, setUseForAllSubscriptions ] = useState< boolean >( true );
 	const assignAllSubscriptionsText = String(
 		translate( 'Assign this payment method to all of my subscriptions' )
 	);
@@ -111,6 +111,7 @@ export default function PaymentMethodSelector( {
 					assignNewCardProcessor(
 						{
 							purchase,
+							useForAllSubscriptions,
 							translate,
 							stripe,
 							stripeConfiguration,
@@ -138,14 +139,16 @@ export default function PaymentMethodSelector( {
 					</p>
 				</div>
 
-				<FormLabel>
-					<FormInputCheckbox
-						checked={ isChecked }
-						onChange={ () => setIsChecked( ( checked ) => ! checked ) }
-						aria-label={ assignAllSubscriptionsText }
-					/>
-					{ assignAllSubscriptionsText }
-				</FormLabel>
+				{ ! purchase && (
+					<FormLabel>
+						<FormInputCheckbox
+							checked={ useForAllSubscriptions }
+							onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
+							aria-label={ assignAllSubscriptionsText }
+						/>
+						{ assignAllSubscriptionsText }
+					</FormLabel>
+				) }
 
 				<CheckoutSubmitButton />
 			</Card>
