@@ -27,25 +27,32 @@ function CommentButton( props ) {
 			<Gridicon aria-hidden="true" icon="comment" size={ size } className="comment-button__icon" />
 			<span className="comment-button__label">
 				{ commentCount > 0 && (
-					<span className="comment-button__label-count">{ commentCount }</span>
-				) }
-				<span className="comment-button__label-status">
-					{ commentCount > 0 && (
-						<Fragment>
-							{ translate( 'Comment', 'Comments', {
+					<Fragment>
+						{ translate(
+							'{{count}}%(number)d{{/count}} {{label}}Comment{{/label}}',
+							'{{count}}%(number)d{{/count}} {{label}}Comments{{/label}}',
+							{
+								args: {
+									number: commentCount,
+								},
+								components: {
+									count: <span className="comment-button__label-count" />,
+									label: <span className="comment-button__label-status" />,
+								},
 								context: 'noun',
 								count: commentCount,
-							} ) }
-						</Fragment>
-					) }
-					{ commentCount === 0 && (
-						<Fragment>
-							{ translate( 'Comment', {
-								context: 'verb',
-							} ) }
-						</Fragment>
-					) }
-				</span>
+							}
+						) }
+					</Fragment>
+				) }
+				{ commentCount === 0 && (
+					<span className="comment-button__label-status">
+						>
+						{ translate( 'Comment', {
+							context: 'verb',
+						} ) }
+					</span>
+				) }
 			</span>
 		</a>
 	);

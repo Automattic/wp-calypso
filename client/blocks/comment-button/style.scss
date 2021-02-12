@@ -7,10 +7,6 @@
 	padding: 4px;
 	position: relative;
 
-	.comment-button__label-count {
-		margin-right: 4px;
-	}
-
 	.comment-button__label-status {
 		@include breakpoint-deprecated( '<480px' ) {
 			@include hide-content-accessibly();
