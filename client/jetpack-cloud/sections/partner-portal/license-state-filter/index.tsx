@@ -64,7 +64,7 @@ function LicenseStateFilter( props: Props ): ReactElement {
 				</span>
 			}
 			selectedCount={ selectedItem.count }
-			classname="license-state-filter"
+			className="license-state-filter"
 		>
 			<NavTabs
 				label={ translate( 'State' ) }
