@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useStripe } from '@automattic/calypso-stripe';
 import {
@@ -36,6 +36,8 @@ import {
 import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
 import TosText from './tos-text';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 import './style.scss';
 
@@ -88,6 +90,11 @@ export default function PaymentMethodSelector( {
 		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
 	} );
 
+	const [ isChecked, setIsChecked ] = useState< boolean >( true );
+	const assignAllSubscriptionsText = String(
+		translate( 'Assign this payment method to all of my subscriptions' )
+	);
+
 	return (
 		<CheckoutProvider
 			onPaymentComplete={ () =>
@@ -130,6 +137,15 @@ export default function PaymentMethodSelector( {
 						<TosText />
 					</p>
 				</div>
+
+				<FormLabel>
+					<FormInputCheckbox
+						checked={ isChecked }
+						onChange={ () => setIsChecked( ( checked ) => ! checked ) }
+						aria-label={ assignAllSubscriptionsText }
+					/>
+					{ assignAllSubscriptionsText }
+				</FormLabel>
 
 				<CheckoutSubmitButton />
 			</Card>
