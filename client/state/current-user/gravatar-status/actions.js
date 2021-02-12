@@ -37,5 +37,5 @@ export const receiveGravatarImageFailed = ( { errorMessage, statName } ) => ( di
 			}
 		)
 	);
-	dispatch( errorNotice( errorMessage ) );
+	dispatch( errorNotice( errorMessage, { id: 'gravatar-upload' } ) );
 };
