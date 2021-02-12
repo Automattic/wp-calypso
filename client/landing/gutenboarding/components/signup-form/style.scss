@@ -189,6 +189,90 @@
 	.components-base-control .components-base-control__field {
 		margin-bottom: 10px;
 	}
+
+	//// Anchor Specific ////
+
+	// 1024 wide container
+	.signup-form__anchor-body {
+		position: relative;
+		padding: 44px 20px 0;
+		text-align: center;
+
+		@include break-mobile {
+			padding: 0 20px 20px;
+			position: absolute;
+			top: 25%;
+			left: 50%;
+			width: 100%;
+			max-width: 1024px;
+			transform: translateX( -50% );
+		}
+	}
+
+	// "Create a WordPress.com account.." under main header
+	.signup-form__anchor-subheading {
+		padding-bottom: 64px;
+
+		& > p {
+			@include onboarding-large-text;
+			color: var( --studio-gray-40 );
+		}
+	}
+
+	// Flexbox Row used for 2 column layout
+	.signup-form__anchor-row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		width: 100%;
+	}
+
+	// Flexbox Col used for 2 column layout
+	.signup-form__anchor-col {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 100%;
+		flex: 1;
+	}
+
+	// Thin line between Flexbox Cols
+	.signup-form__anchor-separator {
+		background: var( --studio-gray-5 );
+		width: 1px;
+	}
+
+	// Container of left column
+	.signup-form__anchor-col-left-container {
+		padding-left: 4rem;
+		padding-right: 4rem;
+	}
+
+	// Container of right column
+	.signup-form__anchor-col-right-container {
+		text-align: left;
+		padding-left: 4rem;
+		padding-right: 4rem;
+	}
+
+	// Div grouping together right heading "Turn your listeners.." with bullet points
+	.signup-form__anchor-col-right-group {
+		margin-bottom: 2em;
+	}
+
+	// Right heading like "Turn your listeners.."
+	.signup-form__anchor-right-heading {
+		font-size: 1.25rem;
+		margin-bottom: 0.5rem;
+	}
+
+	// UL with Right bullet points
+	.signup-form__anchor-list {
+		color: var( --studio-gray-70 );
+		font-size: 0.875rem;
+		& > li {
+			margin-bottom: 0.5rem;
+		}
+	}
 }
 
 .grecaptcha-badge {
