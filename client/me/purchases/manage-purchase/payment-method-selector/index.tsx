@@ -90,7 +90,7 @@ export default function PaymentMethodSelector( {
 		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
 	} );
 
-	const [ useForAllSubscriptions, setUseForAllSubscriptions ] = useState< boolean >( true );
+	const [ useForAllSubscriptions, setUseForAllSubscriptions ] = useState< boolean >( ! purchase );
 	const assignAllSubscriptionsText = String(
 		translate( 'Assign this payment method to all of my subscriptions' )
 	);
