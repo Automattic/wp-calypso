@@ -11,7 +11,6 @@ import { Button, ProductIcon } from '@automattic/components';
  * Internal dependencies
  */
 import JetpackProductCardTimeFrame from './time-frame';
-import { preventWidows } from 'calypso/lib/formatting';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
@@ -179,7 +178,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 				{ createElement(
 					`h${ parsedHeadingLevel }`,
 					{ className: 'jetpack-product-card-i5__product-name' },
-					<>{ preventWidows( productName ) }</>
+					<>{ productName }</>
 				) }
 				<p className="jetpack-product-card-i5__description">{ description }</p>
 				<DisplayPrice
