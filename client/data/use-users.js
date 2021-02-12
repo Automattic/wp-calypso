@@ -14,15 +14,15 @@ export const defaults = {
 	offset: 0,
 };
 
-export const useUsersQuery = ( options = {} ) => {
-	const { search, siteId } = options;
+const useUsers = ( fetchOptions = {}, queryOptions = {} ) => {
+	const { search, siteId } = fetchOptions;
 
 	const { data, ...rest } = useInfiniteQuery(
 		[ 'users', siteId, search ],
 		async ( { pageParam = 0 } ) => {
 			const res = await wpcom
 				.site( siteId )
-				.usersList( { ...defaults, ...options, offset: pageParam } );
+				.usersList( { ...defaults, ...fetchOptions, offset: pageParam } );
 			return res;
 		},
 		{
@@ -32,6 +32,7 @@ export const useUsersQuery = ( options = {} ) => {
 				}
 				return allPages.length * DEFAULT_NUMBER;
 			},
+			...queryOptions,
 		}
 	);
 
@@ -42,3 +43,5 @@ export const useUsersQuery = ( options = {} ) => {
 		...rest,
 	};
 };
+
+export default useUsers;
