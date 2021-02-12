@@ -28,7 +28,7 @@ interface Props {
 	tos: WPElement;
 }
 
-const SignupDisplayNormal = ( {
+const SignupDisplayAnchor = ( {
 	closeModal,
 	emailVal,
 	errorMessage,
@@ -47,7 +47,7 @@ const SignupDisplayNormal = ( {
 	return (
 		<Modal
 			className={ 'signup-form' }
-			title={ __( 'Save your progress' ) }
+			title={ __( 'Create your podcast site with WordPress.com' ) }
 			onRequestClose={ closeModal }
 			focusOnMount={ false }
 			isDismissible={ false }
@@ -58,12 +58,14 @@ const SignupDisplayNormal = ( {
 			<SignupFormHeader onRequestClose={ closeModal } />
 
 			<div className="signup-form__body">
-				<h1 className="signup-form__title">{ __( 'Save your progress' ) }</h1>
+				<h1 className="signup-form__title">
+					{ __( 'Create your podcast site with WordPress.com' ) }
+				</h1>
 
 				<form onSubmit={ handleSignUp }>
 					<fieldset className="signup-form__fieldset">
 						<legend className="signup-form__legend">
-							<p>{ __( 'Enter an email and password to save your progress and continue.' ) }</p>
+							<p>{ __( 'Create a WordPress.com account and start creating your free site.' ) }</p>
 						</legend>
 
 						<TextControl
@@ -118,4 +120,4 @@ const SignupDisplayNormal = ( {
 		</Modal>
 	);
 };
-export default SignupDisplayNormal;
+export default SignupDisplayAnchor;

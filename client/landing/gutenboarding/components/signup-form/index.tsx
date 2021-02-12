@@ -31,6 +31,7 @@ import {
 import { useTrackModal } from '../../hooks/use-track-modal';
 import config from '@automattic/calypso-config';
 import SignupDisplayNormal from './signup-display-normal';
+import SignupDisplayAnchor from './signup-display-anchor';
 
 interface Props {
 	onRequestClose: () => void;
@@ -198,21 +199,24 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	signupUrl = encodeURIComponent( signupUrl );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
-	return (
-		<SignupDisplayNormal
-			closeModal={ closeModal }
-			emailVal={ emailVal }
-			errorMessage={ errorMessage }
-			handleSignUp={ handleSignUp }
-			isFetchingNewUser={ isFetchingNewUser }
-			isMobile={ isMobile }
-			loginUrl={ loginUrl }
-			passwordVal={ passwordVal }
-			recaptcha_tos={ recaptcha_tos }
-			setEmailVal={ setEmailVal }
-			setPasswordVal={ setPasswordVal }
-			tos={ tos }
-		/>
+	const displayProps = {
+		closeModal,
+		emailVal,
+		errorMessage,
+		handleSignUp,
+		isFetchingNewUser,
+		isMobile,
+		loginUrl,
+		passwordVal,
+		recaptcha_tos,
+		setEmailVal,
+		setPasswordVal,
+		tos,
+	};
+	return isAnchorFmSignup ? (
+		<SignupDisplayAnchor { ...displayProps } />
+	) : (
+		<SignupDisplayNormal { ...displayProps } />
 	);
 };
 
