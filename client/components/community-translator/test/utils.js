@@ -20,11 +20,6 @@ jest.mock( '@automattic/viewport', () => ( {
 	isMobile: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/user-settings', () => ( {
-	getSetting: jest.fn(),
-	getOriginalSetting: jest.fn(),
-} ) );
-
 // see: `languages` array in config/_shared.json
 const languagesMock = [
 	{

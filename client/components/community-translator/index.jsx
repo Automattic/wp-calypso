@@ -12,8 +12,8 @@ import { connect } from 'react-redux';
  */
 import Translatable from './translatable';
 import languages from '@automattic/languages';
-import userSettings from 'calypso/lib/user-settings';
 import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
 /**
  * Style dependencies
@@ -31,6 +31,7 @@ class CommunityTranslator extends Component {
 	initialized = false;
 
 	componentDidMount() {
+		this.props.fetchUserSettings();
 		this.setLanguage();
 
 		// wrap translations from i18n
@@ -42,12 +43,10 @@ class CommunityTranslator extends Component {
 		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 		i18n.registerComponentUpdateHook( () => {} );
 		i18n.on( 'change', this.refresh );
-		userSettings.on( 'change', this.refresh );
 	}
 
 	componentWillUnmount() {
 		i18n.off( 'change', this.refresh );
-		userSettings.removeListener( 'change', this.refresh );
 	}
 
 	setLanguage() {
@@ -63,11 +62,6 @@ class CommunityTranslator extends Component {
 
 	refresh = () => {
 		if ( this.initialized ) {
-			return;
-		}
-
-		if ( ! userSettings.getSettings() ) {
-			debug( 'initialization failed because userSettings are not ready' );
 			return;
 		}
 
@@ -163,6 +157,9 @@ class CommunityTranslator extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
-} ) )( localize( CommunityTranslator ) );
+export default connect(
+	( state ) => ( {
+		isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
+	} ),
+	{ fetchUserSettings }
+)( localize( CommunityTranslator ) );
