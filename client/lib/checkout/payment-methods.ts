@@ -27,6 +27,7 @@ export interface PaymentMethod {
 	name: string;
 	expiry: string;
 	stored_details_id: string;
+	is_expired?: boolean;
 }
 
 export const isPaymentAgreement = ( method: PaymentMethod ) =>
