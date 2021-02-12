@@ -1,19 +1,26 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import LicensePreview from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
+import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
 
-export default function LicenseList() {
+interface Props {
+	licenseFilter: LicenseFilter;
+	search: string;
+}
+
+export default function LicenseList( { licenseFilter, search }: Props ): ReactElement {
 	const translate = useTranslate();
 
 	const data = [
@@ -64,6 +71,8 @@ export default function LicenseList() {
 			<DocumentHead title={ translate( 'Licenses' ) } />
 
 			<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
+
+			<LicenseStateFilter licenseFilter={ licenseFilter } search={ search } />
 
 			<LicenseListItem header>
 				<h2>{ translate( 'License state' ) }</h2>
