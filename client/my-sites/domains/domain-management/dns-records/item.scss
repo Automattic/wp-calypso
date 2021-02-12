@@ -39,7 +39,8 @@
 
 	&.is-disabled {
 		.dns-records__list-type,
-		.dns-records__list-info {
+		.dns-records__list-info,
+		.dns__list-remove {
 			opacity: 0.4;
 			cursor: not-allowed;
 		}
