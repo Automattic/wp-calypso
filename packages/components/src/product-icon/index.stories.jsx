@@ -7,7 +7,7 @@ import './index.stories.scss';
 import ProductIcon from '.';
 import { iconToProductSlugMap } from './config';
 
-const supportedSlugs = [ ...Object.values( iconToProductSlugMap ) ].flat();
+const supportedSlugs = Object.values( iconToProductSlugMap ).flat();
 
 export default { title: 'ProductIcon' };
 
