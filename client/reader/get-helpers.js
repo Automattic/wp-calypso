@@ -100,21 +100,12 @@ export const getSiteAuthorName = ( site ) => {
  *
  * @param {object} flags eligibility data
  * @param {Array} flags.teams list of reader teams
- * @param {boolean} flags.isFollowingItem wether or not is following a blog id
  * @param {boolean} flags.isWPForTeamsItem id if exists
  *
  * @returns {boolean} whether or not the user can use the feature for the given site
  */
-export const isEligibleForUnseen = ( {
-	teams,
-	isFollowingItem = false,
-	isWPForTeamsItem = false,
-} ) => {
+export const isEligibleForUnseen = ( { teams, isWPForTeamsItem = false } ) => {
 	if ( ! config.isEnabled( 'reader/seen-posts' ) ) {
-		return false;
-	}
-
-	if ( ! isFollowingItem ) {
 		return false;
 	}
 
@@ -123,4 +114,20 @@ export const isEligibleForUnseen = ( {
 	}
 
 	return isWPForTeamsItem;
+};
+
+export const canBeMarkedAsSeen = ( { post = null, posts = [] } ) => {
+	if ( post !== null ) {
+		return post.hasOwnProperty( 'is_seen' );
+	}
+
+	if ( posts.length ) {
+		for ( const thePost in posts ) {
+			if ( thePost.hasOwnProperty( 'is_seen' ) ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 };
