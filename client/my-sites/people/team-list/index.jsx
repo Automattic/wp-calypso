@@ -11,7 +11,7 @@ const queryClient = new QueryClient();
  * Internal dependencies
  */
 import Team from './team';
-import { useUsersQuery } from './users-query';
+import useUsers from 'calypso/data/use-users';
 import { uniqueBy } from './helpers';
 
 function TeamList( props ) {
@@ -27,7 +27,7 @@ function TeamList( props ) {
 		fetchOptions.search_columns = [ 'display_name', 'user_login' ];
 	}
 
-	const { users, total, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useUsersQuery(
+	const { users, total, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useUsers(
 		fetchOptions
 	);
 
