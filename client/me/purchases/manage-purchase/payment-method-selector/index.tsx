@@ -140,8 +140,9 @@ export default function PaymentMethodSelector( {
 				</div>
 
 				{ ! purchase && (
-					<FormLabel>
+					<FormLabel className="payment-method-selector__all-subscriptions-checkbox-label">
 						<FormInputCheckbox
+							className="payment-method-selector__all-subscriptions-checkbox"
 							checked={ useForAllSubscriptions }
 							onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
 							aria-label={ assignAllSubscriptionsText }
