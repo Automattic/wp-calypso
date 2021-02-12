@@ -50,6 +50,8 @@ function TeamList( props ) {
 }
 
 export default localize( ( props ) => (
+	// @TODO: this should be moved to a more cental place in case
+	// we decide to use `react-query` in more places
 	<QueryClientProvider client={ queryClient }>
 		<TeamList { ...props } />
 	</QueryClientProvider>
