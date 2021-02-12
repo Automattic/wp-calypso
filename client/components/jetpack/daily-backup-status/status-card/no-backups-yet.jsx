@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
  */
 import ExternalLink from 'calypso/components/external-link';
 import { JETPACK_CONTACT_SUPPORT, CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { selectedSiteId } from 'calypso/state/help/actions';
+import { selectSiteId } from 'calypso/state/help/actions';
 import { addQueryArgs } from 'calypso/lib/url';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -31,7 +31,7 @@ const NoBackupsYet = () => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const siteName = useSelector( ( state ) => getRawSite( state, siteId ) )?.name;
 	const dispatch = useDispatch();
-	const onSupportClick = useCallback( () => dispatch( selectedSiteId( siteId ) ), [
+	const onSupportClick = useCallback( () => dispatch( selectSiteId( siteId ) ), [
 		dispatch,
 		siteId,
 	] );
