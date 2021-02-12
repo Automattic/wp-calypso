@@ -39,6 +39,9 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 				brandFont
 				className="site-settings__page-heading"
 				headerText={ translate( 'Settings' ) }
+				subHeaderText={ translate(
+					'Manage your site settings, including language, time zone, site visibility, and more.'
+				) }
 				align="left"
 			/>
 			<SiteSettingsNavigation section={ 'general' } />
