@@ -9,11 +9,7 @@ import { isMobile } from '@automattic/viewport';
 /**
  * Internal dependencies
  */
-import {
-	canDisplayCommunityTranslator,
-	getTranslationPermaLink,
-	normalizeDetailsFromTranslationData,
-} from '../utils';
+import { getTranslationPermaLink, normalizeDetailsFromTranslationData } from '../utils';
 import {
 	GP_PROJECT,
 	GP_BASE_URL,
@@ -69,27 +65,6 @@ const mockGpApiResponseItem = {
 describe( 'Community Translator', () => {
 	afterEach( () => {
 		isMobile.mockReset();
-	} );
-	describe( 'canDisplayCommunityTranslator()', () => {
-		test( 'should display community translator in non-mobile and non-en locale', () => {
-			isMobile.mockReturnValue( false );
-			expect( canDisplayCommunityTranslator( 'it', '' ) ).toBe( true );
-		} );
-
-		test( 'should not display community translator in non-mobile and en locale', () => {
-			isMobile.mockReturnValue( false );
-			expect( canDisplayCommunityTranslator( 'en', '' ) ).toBe( false );
-		} );
-
-		test( 'should not display community translator in mobile', () => {
-			isMobile.mockReturnValue( true );
-			expect( canDisplayCommunityTranslator( 'de', '' ) ).toBe( false );
-		} );
-
-		test( 'should not display community translator when locale is not defined', () => {
-			isMobile.mockReturnValue( false );
-			expect( canDisplayCommunityTranslator( undefined ) ).toBe( false );
-		} );
 	} );
 
 	describe( 'getTranslationPermaLink()', () => {

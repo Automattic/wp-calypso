@@ -46,7 +46,7 @@ import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { canDisplayCommunityTranslator } from 'calypso/components/community-translator/utils';
+import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'calypso/state/data-getters';
@@ -1056,8 +1056,7 @@ const Account = createReactClass( {
 							{ this.thankTranslationContributors() }
 						</FormFieldset>
 
-						{ canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) &&
-							this.communityTranslator() }
+						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
 						{ config.isEnabled( 'nav-unification' ) && (
 							<FormFieldset className="account__link-destination">
@@ -1106,12 +1105,13 @@ const Account = createReactClass( {
 export default compose(
 	connect(
 		( state ) => ( {
-			requestingMissingSites: isRequestingMissingSites( state ),
+			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
 			countryCode: requestGeoLocation().data,
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
 			currentUserName: getCurrentUserName( state ),
 			isPendingEmailChange: isPendingEmailChange( state ),
+			requestingMissingSites: isRequestingMissingSites( state ),
 			userSettings: getUserSettings( state ),
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),

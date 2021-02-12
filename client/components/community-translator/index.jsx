@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ import { find, isEmpty } from 'lodash';
 import Translatable from './translatable';
 import languages from '@automattic/languages';
 import userSettings from 'calypso/lib/user-settings';
-import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
+import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
 
 /**
  * Style dependencies
@@ -70,7 +71,7 @@ class CommunityTranslator extends Component {
 			return;
 		}
 
-		if ( ! isCommunityTranslatorEnabled() ) {
+		if ( ! this.props.isCommunityTranslatorEnabled ) {
 			debug( 'not initializing, not enabled' );
 			return;
 		}
@@ -95,7 +96,7 @@ class CommunityTranslator extends Component {
 	 * @returns {object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		if ( ! isCommunityTranslatorEnabled() ) {
+		if ( ! this.props.isCommunityTranslatorEnabled ) {
 			return displayedTranslationFromPage;
 		}
 
@@ -162,4 +163,6 @@ class CommunityTranslator extends Component {
 	}
 }
 
-export default localize( CommunityTranslator );
+export default connect( ( state ) => ( {
+	isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
+} ) )( localize( CommunityTranslator ) );
