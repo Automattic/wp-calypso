@@ -21,7 +21,10 @@ export async function saveCreditCard( {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 } ): Promise< StoredCardEndpointResponse > {
-	const additionalData = getParamsForApi( token, stripeConfiguration );
+	const additionalData = getParamsForApi( {
+		cardToken: token,
+		stripeConfiguration,
+	} );
 	const response = await wpcom.me().storedCardAdd( token, additionalData );
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_purchases_add_new_payment_method_error' );
@@ -40,7 +43,11 @@ export async function updateCreditCard( {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 } ): Promise< StoredCardEndpointResponse > {
-	const updatedCreditCardApiParams = getParamsForApi( token, stripeConfiguration, purchase );
+	const updatedCreditCardApiParams = getParamsForApi( {
+		cardToken: token,
+		stripeConfiguration,
+		purchase,
+	} );
 	const response = await wpcom.updateCreditCard( updatedCreditCardApiParams );
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_purchases_save_new_payment_method_error' );
@@ -50,11 +57,15 @@ export async function updateCreditCard( {
 	return response;
 }
 
-function getParamsForApi(
-	cardToken: string,
-	stripeConfiguration: StripeConfiguration,
-	purchase?: Purchase | undefined
-) {
+function getParamsForApi( {
+	cardToken,
+	stripeConfiguration,
+	purchase,
+}: {
+	cardToken: string;
+	stripeConfiguration: StripeConfiguration;
+	purchase?: Purchase | undefined;
+} ) {
 	return {
 		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
 		paygate_token: cardToken,
