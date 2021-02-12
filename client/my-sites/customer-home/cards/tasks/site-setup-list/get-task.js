@@ -85,7 +85,7 @@ export const getTask = (
 			if ( isPodcastingSite ) {
 				taskData.title = translate( 'You launched your podcast site!' );
 				taskData.hideLabel = true;
-				task.Data.description = translate(
+				taskData.description = translate(
 					"Now that you've created your site, we'll guide you through completing a few additional steps to continue building your site."
 				);
 			}
