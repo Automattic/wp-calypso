@@ -157,16 +157,20 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 					<p className="jetpack-product-card-i5__above-button">{ aboveButtonText }</p>
 				) }
 				{ isDisabled && disabledMessage && (
-					<p className="jetpack-product-card-i5__disabled-message">{ disabledMessage }</p>
+					<p className="jetpack-product-card-i5__disabled-message">
+						{ preventWidows( disabledMessage ) }
+					</p>
 				) }
-				<Button
-					primary={ buttonPrimary }
-					className="jetpack-product-card-i5__button"
-					onClick={ onButtonClick }
-					disabled={ isDisabled }
-				>
-					{ buttonLabel }
-				</Button>
+				{ ! isDisabled && (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card-i5__button"
+						onClick={ onButtonClick }
+						disabled={ isDisabled }
+					>
+						{ buttonLabel }
+					</Button>
+				) }
 				{ features && features.items.length > 0 && (
 					<JetpackProductCardFeatures features={ features } />
 				) }

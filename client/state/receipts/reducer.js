@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	RECEIPT_FETCH,
 	RECEIPT_FETCH_COMPLETED,
 	RECEIPT_FETCH_FAILED,
 } from 'calypso/state/action-types';
 import { initialReceiptState } from 'calypso/state/receipts/initial';
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Returns a new state with the given attributes for the given receipt ID.

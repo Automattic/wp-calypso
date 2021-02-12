@@ -56,7 +56,7 @@ describe( 'PlanBillingPeriod', () => {
 
 		it( 'should upgrade to a yearly plan when the button is clicked', () => {
 			const wrapper = shallow( <PlanBillingPeriod { ...props } /> );
-			wrapper.find( 'Button' ).simulate( 'click' );
+			wrapper.find( 'ForwardRef(Button)' ).simulate( 'click' );
 			expect( page ).toHaveBeenCalledWith( '/checkout/site.com/jetpack_premium' );
 		} );
 
@@ -64,7 +64,7 @@ describe( 'PlanBillingPeriod', () => {
 			test( 'should display a message instead of the upgrade button', () => {
 				const site = null;
 				const wrapper = shallow( <PlanBillingPeriod { ...props } site={ site } /> );
-				expect( wrapper.find( 'Button' ) ).toHaveLength( 0 );
+				expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 0 );
 				expect( wrapper.find( 'FormSettingExplanation' ).last().shallow().text() ).toContain(
 					'To manage your plan, please reconnect your site.'
 				);
