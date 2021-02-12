@@ -32,6 +32,7 @@
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@babel/runtime": "^7.12.5",
 		"@wordpress/components": "^12.0.1",
+		"@wordpress/compose": "^3.23.1",
 		"@wordpress/icons": "^2.9.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.20",

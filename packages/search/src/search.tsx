@@ -13,6 +13,12 @@ import { debounce } from 'lodash';
  */
 import { Button, Spinner } from '@wordpress/components';
 import { close, search, Icon } from '@wordpress/icons';
+import { useInstanceId } from '@wordpress/compose';
+
+/**
+ * Internal dependencies
+ */
+import { useUpdateEffect } from './utils';
 
 /**
  * Style dependencies
@@ -90,9 +96,6 @@ type State = {
 	hasFocus: boolean;
 };
 
-let currentId = 0;
-const getUniqueId = () => currentId++;
-
 //This is fix for IE11. Does not work on Edge.
 //On IE11 scrollLeft value for input is always 0.
 //We are calculating it manually using TextRange object.
@@ -166,7 +169,7 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 		hasFocus: autoFocus ?? false,
 	} );
 
-	const instanceId = React.useMemo( () => getUniqueId(), [] );
+	const instanceId = useInstanceId( InnerSearch, 'search' );
 	const searchInput: React.MutableRefObject< HTMLInputElement | null > = React.useRef( null );
 	const openIcon: React.RefObject< HTMLButtonElement | null > = React.useRef( null );
 	const overlay: React.RefObject< HTMLDivElement | null > = React.useRef( null );
@@ -199,11 +202,11 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 		[ onSearchProp, delayTimeout ]
 	);
 
-	React.useEffect( () => {
+	useUpdateEffect( () => {
 		if ( keyword ) {
 			doSearch( keyword );
 		} else {
-			// explicitly bypass debouncing when there is no keyword is empty
+			// explicitly bypass debouncing when keyword is empty
 			if ( delaySearch.current ) {
 				// Cancel any pending debounce
 				doSearch.cancel?.();
