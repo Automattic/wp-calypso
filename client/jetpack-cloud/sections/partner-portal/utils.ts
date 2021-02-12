@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { LicenseStates } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { LicenseFilter, LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 /**
  * Get the state of a license based on its properties.
@@ -10,39 +10,31 @@ import { LicenseStates } from 'calypso/jetpack-cloud/sections/partner-portal/typ
  *
  * @param {string | null} attachedAt Date the license was attached on, if any.
  * @param {string | null} revokedAt Date the license was revoked on, if any.
- * @returns {LicenseStates} State matching one of the `LicenseStates` values.
+ * @returns {LicenseState} State matching one of the `LicenseState` values.
  */
 export function getLicenseState(
 	attachedAt: string | null,
 	revokedAt: string | null
-): LicenseStates {
+): LicenseState {
 	if ( revokedAt ) {
-		return LicenseStates.Revoked;
+		return LicenseState.Revoked;
 	}
 
 	if ( attachedAt ) {
-		return LicenseStates.Attached;
+		return LicenseState.Attached;
 	}
 
-	return LicenseStates.Detached;
+	return LicenseState.Detached;
 }
 /**
  * Get the state of a license based on a string.
- * If the given string is not a valid LicenseState, it returns `LicenseStates.All`
+ * If the given string is not a valid LicenseState, it returns `LicenseFilter.All`
  *
- * @param {(LicenseStates|string)?} licenseFilter The filter string matching the `state` param in the URL
- * @returns {LicenseStates} State matching one of LicenseStates values.
+ * @param {string?} value The filter string matching the `state` param in the URL
+ * @returns {LicenseFilter} State matching one of LicenseFilter values.
  */
-export function getLicenseStateByQueryParamValue(
-	licenseFilter?: LicenseStates | string
-): LicenseStates {
-	switch ( licenseFilter ) {
-		case LicenseStates.All:
-		case LicenseStates.Attached:
-		case LicenseStates.Detached:
-		case LicenseStates.Revoked:
-			return licenseFilter;
-		default:
-			return LicenseStates.All;
-	}
+export function stringToLicenseFilter( value?: string ): LicenseFilter {
+	return Object.values( LicenseFilter ).includes( value as LicenseFilter )
+		? ( value as LicenseFilter )
+		: LicenseFilter.All;
 }

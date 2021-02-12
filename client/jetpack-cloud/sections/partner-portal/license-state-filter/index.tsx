@@ -9,7 +9,7 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 
-import { LicenseStates } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
@@ -23,7 +23,7 @@ import UrlSearch from 'calypso/lib/url-search';
 import './style.scss';
 
 interface Props {
-	stateFilter: LicenseStates;
+	licenseFilter: LicenseFilter;
 	search: string;
 	doSearch: ( query: string ) => void;
 	getSearchOpen: () => boolean;
@@ -34,21 +34,21 @@ function LicenseStateFilter( props: Props ): ReactElement {
 	const basePath = '/partner-portal/';
 
 	const navItems = [
-		{ key: LicenseStates.All, label: translate( 'All Active' ), count: 4 },
+		{ key: LicenseFilter.All, label: translate( 'All Active' ), count: 4 },
 		{
-			key: LicenseStates.Detached,
+			key: LicenseFilter.Detached,
 			label: translate( 'Detached' ),
 			count: 2,
 		},
 		{
-			key: LicenseStates.Attached,
+			key: LicenseFilter.Attached,
 			label: translate( 'Attached' ),
 			count: 7,
 		},
-		{ key: LicenseStates.Revoked, label: translate( 'Revoked' ), count: 5 },
+		{ key: LicenseFilter.Revoked, label: translate( 'Revoked' ), count: 5 },
 	].map( ( navItem ) => ( {
 		...navItem,
-		selected: props.stateFilter === navItem.key,
+		selected: props.licenseFilter === navItem.key,
 		path: basePath + ( 'all' !== navItem.key ? navItem.key : '' ),
 		children: navItem.label,
 	} ) );

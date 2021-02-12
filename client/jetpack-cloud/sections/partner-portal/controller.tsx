@@ -10,7 +10,7 @@ import type PageJS from 'page';
  */
 import { addQueryArgs } from 'calypso/lib/route';
 import { getActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
-import { getLicenseStateByQueryParamValue } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { stringToLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
@@ -26,11 +26,13 @@ export function partnerKeyContext( context: PageJS.Context, next: () => void ): 
 }
 
 export function partnerPortalContext( context: PageJS.Context, next: () => void ): void {
-	const licenseState = getLicenseStateByQueryParamValue( context.params.state );
+	const licenseFilter = stringToLicenseFilter( context.params.state );
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <LicenseList licenseState={ licenseState } search={ context.query.s || '' } />;
+	context.primary = (
+		<LicenseList licenseFilter={ licenseFilter } search={ context.query.s || '' } />
+	);
 	context.footer = <JetpackComFooter />;
 	next();
 }
