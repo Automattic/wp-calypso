@@ -143,6 +143,7 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
 			isOwned={ isOwned }
 			isIncludedInPlan={ ! isOwned && isItemPlanFeature }
+			isFree={ item.isFree }
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
