@@ -55,7 +55,10 @@ export function announceSuccess( { file } ) {
 			);
 			dispatch(
 				successNotice(
-					translate( 'You successfully uploaded a new profile photo — looking sharp!' )
+					translate( 'You successfully uploaded a new profile photo — looking sharp!' ),
+					{
+						id: 'gravatar-upload',
+					}
 				)
 			);
 		} );
@@ -73,7 +76,10 @@ export function announceFailure() {
 			{ type: GRAVATAR_UPLOAD_REQUEST_FAILURE }
 		),
 		errorNotice(
-			translate( 'Hmm, your new profile photo was not saved. Please try uploading again.' )
+			translate( 'Hmm, your new profile photo was not saved. Please try uploading again.' ),
+			{
+				id: 'gravatar-upload',
+			}
 		),
 	];
 }
