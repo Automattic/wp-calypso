@@ -13,7 +13,7 @@ const queryClient = new QueryClient();
  * Internal dependencies
  */
 import Team from './team';
-import useUsers from 'calypso/data/use-users';
+import useUsers from 'calypso/data/users/use-users';
 
 function TeamList( props ) {
 	const dispatch = useDispatch();
