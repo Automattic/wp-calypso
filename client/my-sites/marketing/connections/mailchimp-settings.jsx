@@ -92,7 +92,6 @@ const MailchimpSettings = ( {
 		);
 	}
 
-	/* eslint-disable jsx-a11y/no-onchange */
 	return (
 		<div>
 			<QueryMailchimpLists siteId={ siteId } />
@@ -132,7 +131,6 @@ const MailchimpSettings = ( {
 			{ common }
 		</div>
 	);
-	/* eslint-enable jsx-a11y/no-onchange */
 };
 
 export const renderMailchimpLogo = () => (
