@@ -10,7 +10,7 @@ import { combineReducers } from '@wordpress/data';
 import type { WhatsNewState } from './types';
 import type { Action } from './actions';
 
-const whatsNewList: Reducer< WhatsNewState | undefined, Action > = ( state = {}, action ) => {
+const list: Reducer< WhatsNewState[], Action > = ( state = [], action ) => {
 	if ( action.type === 'WHATS_NEW_LIST_RECEIVE' ) {
 		return {
 			...state,
@@ -20,7 +20,7 @@ const whatsNewList: Reducer< WhatsNewState | undefined, Action > = ( state = {},
 	return state;
 };
 
-const reducer = combineReducers( { whatsNewList } );
+const reducer = combineReducers( { list } );
 
 export type State = ReturnType< typeof reducer >;
 
