@@ -10,6 +10,7 @@ import { initializeTracksWithIdentity } from '@automattic/page-template-modal';
  */
 import { PageTemplatesPlugin } from './page-template-plugin';
 import './store';
+import './index.scss';
 
 // Load config passed from backend.
 const {
