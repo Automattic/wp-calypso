@@ -58,6 +58,7 @@ const PRODUCT_POSITION_IN_GRID_SPP: Record< string, number > = {
 
 export const getProductPosition = ( slug: JetpackPlanSlugs | JetpackProductSlug ): number =>
 	getForCurrentCROIteration( {
-		[ Iterations.I5 ]: PRODUCT_POSITION_IN_GRID_I5[ slug ],
 		[ Iterations.SPP ]: PRODUCT_POSITION_IN_GRID_SPP[ slug ],
-	} ) ?? 100;
+	} ) ??
+	PRODUCT_POSITION_IN_GRID_I5[ slug ] ??
+	100;

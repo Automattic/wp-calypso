@@ -68,4 +68,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
+	newPurchaseIntroPricing: {
+		datestamp: '20210215',
+		variations: {
+			withIntroPricing: 50,
+			withoutIntroPricing: 50,
+		},
+		defaultVariation: 'withoutIntroPricing',
+		allowExistingUsers: true,
+	},
 };

@@ -58,9 +58,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const Grid = useMemo(
 		() =>
 			getForCurrentCROIteration( {
-				[ Iterations.I5 ]: ProductsGridI5,
 				[ Iterations.SPP ]: ProductsGridSpp,
-			} ),
+			} ) || ProductsGridI5,
 		[]
 	);
 
