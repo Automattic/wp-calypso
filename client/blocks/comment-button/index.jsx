@@ -47,7 +47,6 @@ function CommentButton( props ) {
 				) }
 				{ commentCount === 0 && (
 					<span className="comment-button__label-status">
-						>
 						{ translate( 'Comment', {
 							context: 'verb',
 						} ) }
