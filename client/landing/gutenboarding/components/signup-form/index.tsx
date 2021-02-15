@@ -30,8 +30,8 @@ import {
 } from '../../lib/analytics';
 import { useTrackModal } from '../../hooks/use-track-modal';
 import config from '@automattic/calypso-config';
-import SignupDisplayNormal from './signup-display-normal';
-import SignupDisplayAnchor from './signup-display-anchor';
+import SignupDefaultLayout from './signup-default-layout';
+import SignupAnchorLayout from './signup-anchor-layout';
 
 interface Props {
 	onRequestClose: () => void;
@@ -214,9 +214,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		tos,
 	};
 	return isAnchorFmSignup ? (
-		<SignupDisplayAnchor { ...displayProps } />
+		<SignupAnchorLayout { ...displayProps } />
 	) : (
-		<SignupDisplayNormal { ...displayProps } />
+		<SignupDefaultLayout { ...displayProps } />
 	);
 };
 

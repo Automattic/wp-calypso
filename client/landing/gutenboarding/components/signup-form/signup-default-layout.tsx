@@ -28,7 +28,7 @@ interface Props {
 	tos: WPElement;
 }
 
-const SignupDisplayNormal = ( {
+const SignupDefaultLayout = ( {
 	closeModal,
 	emailVal,
 	errorMessage,
@@ -118,4 +118,4 @@ const SignupDisplayNormal = ( {
 		</Modal>
 	);
 };
-export default SignupDisplayNormal;
+export default SignupDefaultLayout;

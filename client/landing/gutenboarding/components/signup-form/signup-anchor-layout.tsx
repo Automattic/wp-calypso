@@ -28,7 +28,7 @@ interface Props {
 	tos: WPElement;
 }
 
-const SignupDisplayAnchor = ( {
+const SignupAnchorLayout = ( {
 	closeModal,
 	emailVal,
 	errorMessage,
@@ -163,4 +163,4 @@ const SignupDisplayAnchor = ( {
 		</Modal>
 	);
 };
-export default SignupDisplayAnchor;
+export default SignupAnchorLayout;
