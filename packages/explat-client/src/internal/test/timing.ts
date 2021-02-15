@@ -29,16 +29,20 @@ describe( 'timeoutPromise', () => {
 	it( 'should resolve promises below the timeout', async () => {
 		const promise1 = Timing.timeoutPromise( new Promise( ( res ) => res( 123 ) ), 1 );
 		jest.advanceTimersToNextTimer();
+		jest.advanceTimersToNextTimer();
 		await expect( promise1 ).resolves.toBe( 123 );
 		const promise2 = Timing.timeoutPromise( delayedValue( 123, 1 ), 4 );
+		jest.advanceTimersToNextTimer();
 		jest.advanceTimersToNextTimer();
 		await expect( promise2 ).resolves.toBe( 123 );
 	} );
 	it( 'should throw if promise gets timed-out', async () => {
 		const promise1 = Timing.timeoutPromise( delayedValue( null, 4 ), 1 );
 		jest.advanceTimersToNextTimer();
+		jest.advanceTimersToNextTimer();
 		await expect( promise1 ).rejects.toThrowError();
 		const promise2 = Timing.timeoutPromise( delayedValue( null, 5 ), 2 );
+		jest.advanceTimersToNextTimer();
 		jest.advanceTimersToNextTimer();
 		await expect( promise2 ).rejects.toThrowError();
 	} );
