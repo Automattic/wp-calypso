@@ -1,21 +1,7 @@
 /**
- * External dependencies
- */
-import { get, includes, startsWith } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import 'calypso/state/login/init';
-import config from '@automattic/calypso-config';
-import {
-	isCrowdsignalOAuth2Client,
-	isJetpackCloudOAuth2Client,
-	isWooOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Retrieve the user ID for the two factor authentication process.
@@ -263,70 +249,3 @@ export const getSocialAccountLinkAuthInfo = ( state ) =>
  * @returns {?string}         Email address or username.
  */
 export const getLastCheckedUsernameOrEmail = ( state ) => state.login.lastCheckedUsernameOrEmail;
-
-export const getSignupUrl = ( state, locale, pathname, isGutenboarding ) => {
-	let signupUrl = config( 'signup_url' );
-
-	const currentQuery = getCurrentQueryArguments( state );
-	const currentRoute = getCurrentRoute( state );
-	const oauth2Client = getCurrentOAuth2Client( state );
-
-	const redirectTo = get( currentQuery, 'redirect_to', '' );
-	const signupFlow = get( currentQuery, 'signup_flow' );
-	const wccomFrom = get( currentQuery, 'wccom-from' );
-
-	const oauth2Params = new URLSearchParams( {
-		oauth2_client_id: oauth2Client.id,
-		oauth2_redirect: redirectTo,
-	} );
-
-	if (
-		// Match locales like `/log-in/jetpack/es`
-		startsWith( currentRoute, '/log-in/jetpack' )
-	) {
-		// Basic validation that we're in a valid Jetpack Authorization flow
-		if (
-			includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-			includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
-		) {
-			/**
-			 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
-			 * this case, the redirect_to will handle signups as part of the flow. Use the
-			 * `redirect_to` parameter directly for signup.
-			 */
-			signupUrl = currentQuery.redirect_to;
-		} else {
-			signupUrl = '/jetpack/connect';
-		}
-	} else if ( '/jetpack-connect' === pathname ) {
-		signupUrl = '/jetpack/connect';
-	} else if ( signupFlow ) {
-		signupUrl += '/' + signupFlow;
-	}
-
-	if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
-		const oauth2Flow = 'crowdsignal';
-		signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
-	}
-
-	if (
-		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-		oauth2Client &&
-		isWooOAuth2Client( oauth2Client ) &&
-		wccomFrom
-	) {
-		oauth2Params.set( 'wccom-from', wccomFrom );
-		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
-	}
-
-	if ( isGutenboarding ) {
-		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-		signupUrl = '/new' + langFragment;
-	}
-
-	if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
-		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
-	}
-
-	return signupUrl;
-};

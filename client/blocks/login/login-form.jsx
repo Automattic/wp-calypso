@@ -40,13 +40,13 @@ import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
 	getRequestError,
-	getSignupUrl,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getSignupUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -412,12 +412,25 @@ export class LoginForm extends Component {
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
+			isGutenboarding,
 			isJetpackWooDnaFlow,
 			wccomFrom,
-			signupUrl,
+			currentRoute,
+			currentQuery,
+			pathname,
+			locale,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
+
+		const signupUrl = getSignupUrl(
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
@@ -617,7 +630,6 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
-			signupUrl: getSignupUrl( state, props?.locale, props?.pathname, props?.isGutenboarding ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
@@ -626,6 +638,7 @@ export default connect(
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			currentQuery: getCurrentQueryArguments( state ),
 		};
 	},
 	{

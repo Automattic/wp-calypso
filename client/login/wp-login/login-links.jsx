@@ -15,6 +15,7 @@ import config, { isEnabled } from '@automattic/calypso-config';
 import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
+import { getSignupUrl } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -28,7 +29,6 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
-import { getSignupUrl } from 'calypso/state/login/selectors';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 
 export class LoginLinks extends React.Component {
@@ -276,7 +276,24 @@ export class LoginLinks extends React.Component {
 
 	renderSignUpLink() {
 		// Taken from client/layout/masterbar/logged-out.jsx
-		const { currentRoute, oauth2Client, signupUrl, translate } = this.props;
+		const {
+			currentRoute,
+			isGutenboarding,
+			locale,
+			oauth2Client,
+			pathname,
+			query,
+			translate,
+		} = this.props;
+
+		const signupUrl = getSignupUrl(
+			query,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
@@ -309,13 +326,7 @@ export class LoginLinks extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		signupUrl: getSignupUrl(
-			state,
-			ownProps?.locale,
-			ownProps?.pathname,
-			ownProps?.isGutenboarding
-		),
+	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		oauth2Client: getCurrentOAuth2Client( state ),
