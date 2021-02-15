@@ -263,6 +263,10 @@ module.exports = {
 		// i18n-calypso translate triggers false failures
 		'jsx-a11y/anchor-has-content': 'off',
 
+		// Deprecated rule, the problems using <select> with keyboards this addressed don't appear to be an issue anymore
+		// https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/issues/398
+		'jsx-a11y/no-onchange': 'off',
+
 		'no-restricted-imports': [
 			2,
 			{

@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	SELECTED_SITE_SET,
 	SECTION_LOADING_SET,
@@ -8,7 +9,7 @@ import {
 	SIDEBAR_TOGGLE_VISIBILITY,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
 import language from './language/reducer';

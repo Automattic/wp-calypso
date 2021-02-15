@@ -72,12 +72,12 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should render a <Button /> when callToAction is specified', () => {
 		const comp = shallow( <Banner { ...props } callToAction={ 'Buy something!' } /> );
-		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
+		expect( comp.find( 'ForwardRef(Button)' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not render a <Button /> when callToAction is not specified', () => {
 		const comp = shallow( <Banner { ...props } /> );
-		expect( comp.find( 'Button' ) ).toHaveLength( 0 );
+		expect( comp.find( 'ForwardRef(Button)' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should have .is-jetpack class and JetpackLogo if jetpack prop is defined', () => {
@@ -166,10 +166,10 @@ describe( 'Banner basic tests', () => {
 		expect( comp.find( 'Card' ).props().href ).toBeNull();
 		expect( comp.find( 'Card' ).props().onClick ).toBeNull();
 
-		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
-		expect( comp.find( 'Button' ).props().href ).toBe( '/' );
-		expect( comp.find( 'Button' ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventwidows adds \xA0 non-breaking space;
-		expect( comp.find( 'Button' ).props().onClick ).toBe( comp.instance().handleClick );
+		expect( comp.find( 'ForwardRef(Button)' ) ).toHaveLength( 1 );
+		expect( comp.find( 'ForwardRef(Button)' ).props().href ).toBe( '/' );
+		expect( comp.find( 'ForwardRef(Button)' ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventwidows adds \xA0 non-breaking space;
+		expect( comp.find( 'ForwardRef(Button)' ).props().onClick ).toBe( comp.instance().handleClick );
 	} );
 
 	test( 'should render Card with href and CTA button with no href if href prop is passed and callToAction is also passed and forceHref is true', () => {
@@ -180,8 +180,8 @@ describe( 'Banner basic tests', () => {
 		expect( comp.find( 'Card' ).props().href ).toBe( '/' );
 		expect( comp.find( 'Card' ).props().onClick ).toBe( comp.instance().handleClick );
 
-		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
-		expect( comp.find( 'Button' ).props().href ).toBeUndefined();
-		expect( comp.find( 'Button' ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventWidows adds \xA0 non-breaking space;
+		expect( comp.find( 'ForwardRef(Button)' ) ).toHaveLength( 1 );
+		expect( comp.find( 'ForwardRef(Button)' ).props().href ).toBeUndefined();
+		expect( comp.find( 'ForwardRef(Button)' ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventWidows adds \xA0 non-breaking space;
 	} );
 } );

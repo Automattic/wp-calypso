@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	SUPPORT_ARTICLE_DIALOG_OPEN,
 	SUPPORT_ARTICLE_DIALOG_CLOSE,

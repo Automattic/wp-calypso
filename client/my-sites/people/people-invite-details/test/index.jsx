@@ -88,7 +88,7 @@ describe( 'PeopleInviteDetails', () => {
 			/>
 		);
 
-		const revokeInviteButton = inviteDetails.find( 'Button' );
+		const revokeInviteButton = inviteDetails.find( 'ForwardRef(Button)' );
 		expect( revokeInviteButton ).toHaveLength( 1 );
 		expect( revokeInviteButton.children() ).toHaveLength( 1 );
 		expect( revokeInviteButton.children().text() ).toEqual( 'Revoke invite' );
@@ -117,7 +117,7 @@ describe( 'PeopleInviteDetails', () => {
 			/>
 		);
 
-		const clearInviteButton = inviteDetails.find( 'Button' );
+		const clearInviteButton = inviteDetails.find( 'ForwardRef(Button)' );
 		expect( clearInviteButton ).toHaveLength( 1 );
 		expect( clearInviteButton.children() ).toHaveLength( 1 );
 		expect( clearInviteButton.children().text() ).toEqual( 'Clear invite' );

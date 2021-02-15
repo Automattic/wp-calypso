@@ -17,12 +17,12 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Image dependencies
  */
-import desktopOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-1.jpg';
-import desktopTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-2.jpg';
-import desktopThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-3.jpg';
-import mobileOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-1.jpg';
-import mobileTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-2.jpg';
-import mobileThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-3.jpg';
+import desktopOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-1.png';
+import desktopTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-2.png';
+import desktopThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-3.png';
+import mobileOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-1.png';
+import mobileTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-2.png';
+import mobileThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-3.png';
 
 /**
  * Style dependencies
@@ -109,7 +109,12 @@ const Modal = () => {
 							}
 							heading={ translate( 'Make it your own' ) }
 							content={ translate(
-								'Customize the appearance of your navigation from your account settings.'
+								'Customize the appearance of your navigation from your {{a}}account settings{{/a}}.',
+								{
+									components: {
+										a: <a href="/me/account" />,
+									},
+								}
 							) }
 						/>
 					),

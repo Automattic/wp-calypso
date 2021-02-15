@@ -2,12 +2,16 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
+import { truncate } from 'lodash';
 const debug = debugFactory( 'calypso:invites-actions' );
 
 /**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getInviteForSite } from 'calypso/state/invites/selectors';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -84,6 +88,7 @@ export function resendInvite( siteId, inviteId ) {
 					inviteId,
 					error,
 				} );
+				dispatch( errorNotice( translate( 'Invitation failed to resend.' ) ) );
 			} );
 	};
 }
@@ -91,6 +96,19 @@ export function resendInvite( siteId, inviteId ) {
 export function deleteInvite( siteId, inviteId ) {
 	return deleteInvites( siteId, [ inviteId ] );
 }
+
+const deleteInvitesFailureNotice = ( siteId, inviteIds ) => ( dispatch, getState ) => {
+	for ( const inviteId of inviteIds ) {
+		const invite = getInviteForSite( getState(), siteId, inviteId );
+		dispatch(
+			errorNotice(
+				translate( 'An error occurred while deleting the invite for %s.', {
+					args: truncate( invite.user.email || invite.user.login, { length: 20 } ),
+				} )
+			)
+		);
+	}
+};
 
 export function deleteInvites( siteId, inviteIds ) {
 	return ( dispatch ) => {
@@ -113,6 +131,14 @@ export function deleteInvites( siteId, inviteIds ) {
 						inviteIds: data.deleted,
 						data,
 					} );
+					dispatch(
+						successNotice(
+							translate( 'Invite deleted.', 'Invites deleted.', { count: inviteIds.length } ),
+							{
+								displayOnNextPage: true,
+							}
+						)
+					);
 				}
 
 				// It's possible for the request to succeed, but the deletion to fail.
@@ -123,6 +149,7 @@ export function deleteInvites( siteId, inviteIds ) {
 						inviteIds: data.invalid,
 						data,
 					} );
+					dispatch( deleteInvitesFailureNotice( siteId, inviteIds ) );
 				}
 			} )
 			.catch( ( error ) => {
@@ -132,6 +159,7 @@ export function deleteInvites( siteId, inviteIds ) {
 					inviteIds,
 					error,
 				} );
+				dispatch( deleteInvitesFailureNotice( siteId, inviteIds ) );
 			} );
 	};
 }
