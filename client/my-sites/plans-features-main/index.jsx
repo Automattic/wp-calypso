@@ -428,7 +428,7 @@ export class PlansFeaturesMain extends Component {
 			return null;
 		}
 
-		return displayJetpackPlans ? <JetpackFAQ /> : <WpcomFAQ />;
+		return displayJetpackPlans ? <p>TEST</p> : <WpcomFAQ />;
 	}
 
 	render() {

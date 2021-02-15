@@ -23,9 +23,9 @@ interface Props {
 }
 
 const JetpackProductCardFeaturesItem: React.FC< Props > = ( { item: { text } } ) => (
-	<li className="jetpack-product-card-i5__features-item">
-		<img className="jetpack-product-card-i5__features-icon" src={ checkmarkIcon } alt="" />
-		<p className="jetpack-product-card-i5__features-text">{ preventWidows( text ) }</p>
+	<li className="jetpack-product-card__features-item">
+		<img className="jetpack-product-card__features-icon" src={ checkmarkIcon } alt="" />
+		<p className="jetpack-product-card__features-text">{ preventWidows( text ) }</p>
 	</li>
 );
 

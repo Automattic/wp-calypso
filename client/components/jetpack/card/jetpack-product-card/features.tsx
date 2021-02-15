@@ -21,8 +21,8 @@ export interface Props {
 
 const JetpackProductCardFeatures: React.FC< Props > = ( { className, features: { items } } ) => {
 	return (
-		<section className={ classnames( className, 'jetpack-product-card-i5__features' ) }>
-			<ul className="jetpack-product-card-i5__features-list">
+		<section className={ classnames( className, 'jetpack-product-card__features' ) }>
+			<ul className="jetpack-product-card__features-list">
 				{ ( items as ProductCardFeaturesItem[] ).map( ( item, i ) => (
 					<FeaturesItem key={ i } item={ item } />
 				) ) }

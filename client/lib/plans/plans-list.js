@@ -484,8 +484,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 const getPlanJetpackCompleteDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_ALL,
-	getTitle: ( variation ) =>
-		( { i5: translate( 'Complete' ) }[ variation ] || translate( 'Jetpack Complete' ) ),
+	getTitle: () => translate( 'Complete' ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[

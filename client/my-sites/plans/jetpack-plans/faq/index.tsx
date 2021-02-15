@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import FoldableFAQ from 'calypso/components/foldable-faq';
-import { getHelpLink } from '../jetpack-faq';
+import { getHelpLink } from 'calypso/my-sites/plans-features-main/jetpack-faq';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -18,7 +18,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
  */
 import './style.scss';
 
-const JetpackFAQi5: React.FC = () => {
+const JetpackFAQ: React.FC = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
@@ -43,8 +43,8 @@ const JetpackFAQi5: React.FC = () => {
 
 	return (
 		<>
-			<section className="jetpack-faq-i5">
-				<h2 className="jetpack-faq-i5__heading">{ translate( 'Frequently Asked Questions' ) }</h2>
+			<section className="jetpack-faq">
+				<h2 className="jetpack-faq__heading">{ translate( 'Frequently Asked Questions' ) }</h2>
 
 				<FoldableFAQ
 					id="faq-1"
@@ -111,4 +111,4 @@ const JetpackFAQi5: React.FC = () => {
 	);
 };
 
-export default JetpackFAQi5;
+export default JetpackFAQ;

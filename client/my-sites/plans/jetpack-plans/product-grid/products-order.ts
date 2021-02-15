@@ -28,7 +28,7 @@ import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
 const setProductsInPosition = ( slugs: string[], position: number ) =>
 	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: position } ), {} );
 
-const PRODUCT_POSITION_IN_GRID_I5: Record< string, number > = {
+const PRODUCT_POSITION_IN_GRID: Record< string, number > = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: 1,
 	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: 1,
 	[ PLAN_JETPACK_SECURITY_DAILY ]: 10,
@@ -45,4 +45,4 @@ const PRODUCT_POSITION_IN_GRID_I5: Record< string, number > = {
 };
 
 export const getProductPosition = ( slug: JetpackPlanSlugs | JetpackProductSlug ): number =>
-	PRODUCT_POSITION_IN_GRID_I5[ slug ] ?? 100;
+	PRODUCT_POSITION_IN_GRID[ slug ] ?? 100;

@@ -29,7 +29,7 @@ const JetpackProductCardTimeFrame: React.FC< Props > = ( { expiryDate, billingTe
 
 	return productExpiryDate ? (
 		<time
-			className="jetpack-product-card-i5__expiration-date"
+			className="jetpack-product-card__expiration-date"
 			dateTime={ productExpiryDate.format( 'YYYY-DD-YY' ) }
 		>
 			{ translate( 'expires %(date)s', {
@@ -39,7 +39,7 @@ const JetpackProductCardTimeFrame: React.FC< Props > = ( { expiryDate, billingTe
 			} ) }
 		</time>
 	) : (
-		<span className="jetpack-product-card-i5__billing-time-frame">
+		<span className="jetpack-product-card__billing-time-frame">
 			{ durationToText( billingTerm ) }
 		</span>
 	);

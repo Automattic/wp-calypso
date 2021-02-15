@@ -17,6 +17,10 @@ import {
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import JetpackProductCardNPIP from 'calypso/components/jetpack/card/npip/jetpack-product-card-npip';
 import JetpackProductCardI5 from 'calypso/components/jetpack/card/i5/jetpack-product-card-i5';
+import PlanRenewalMessage from '../plan-renewal-message';
+import useItemPrice from '../use-item-price';
+import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
@@ -37,7 +41,7 @@ import { isJetpackPlanSlug } from 'calypso/lib/products-values/is-jetpack-plan-s
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, SelectorProduct, SiteProduct } from '../../types';
+import type { Duration, PurchaseCallback, SelectorProduct, SiteProduct } from '../types';
 
 interface ProductCardProps {
 	item: SelectorProduct;
@@ -49,7 +53,7 @@ interface ProductCardProps {
 	featuredPlans?: string[];
 }
 
-const ProductCardI5: React.FC< ProductCardProps > = ( {
+const ProductCard: React.FC< ProductCardProps > = ( {
 	item,
 	onClick,
 	siteId,
@@ -169,4 +173,4 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 	);
 };
 
-export default ProductCardI5;
+export default ProductCard;
