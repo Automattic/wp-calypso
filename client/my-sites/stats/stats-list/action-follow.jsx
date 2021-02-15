@@ -37,29 +37,41 @@ class StatsActionFollow extends React.Component {
 		event.preventDefault();
 
 		if ( ! this.state.isFollowing ) {
+			// Intentionally optimistic update.
+			this.setState( {
+				isFollowing: true,
+			} );
+
 			gaEvent = 'Follow';
 			wpcom
 				.site( this.props.siteId )
 				.follow()
 				.add( { source: config( 'readerFollowingSource' ) } )
-				.then( this.refreshFollowers );
-
+				.then( this.refreshFollowers )
+				.catch( () => {
+					// Revert to the previous state
+					this.setState( {
+						isFollowing: false,
+					} );
+				} );
+		} else {
 			// Intentionally optimistic update.
 			this.setState( {
-				isFollowing: true,
+				isFollowing: false,
 			} );
-		} else {
+
 			gaEvent = 'Unfollow';
 			wpcom
 				.site( this.props.siteId )
 				.follow()
 				.del( { source: config( 'readerFollowingSource' ) } )
-				.then( this.refreshFollowers );
-
-			// Intentionally optimistic update.
-			this.setState( {
-				isFollowing: false,
-			} );
+				.then( this.refreshFollowers )
+				.catch( () => {
+					// Revert to the previous state
+					this.setState( {
+						isFollowing: true,
+					} );
+				} );
 		}
 
 		gaRecordEvent( 'Stats', 'Clicked ' + gaEvent + ' in ' + this.props.moduleName + ' List' );
