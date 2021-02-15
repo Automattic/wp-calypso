@@ -7,7 +7,6 @@ import impureLodash from 'calypso/lib/impure-lodash';
  * Internal dependencies
  */
 import { NOTICE_CREATE, NOTICE_REMOVE } from 'calypso/state/action-types';
-import { extendAction } from 'calypso/state/utils';
 import type {
 	NoticeActionCreator,
 	NoticeActionCreatorWithStatus,
@@ -50,8 +49,3 @@ export const warningNotice: NoticeActionCreator = ( text, noticeOptions ) =>
 	createNotice( 'is-warning', text, noticeOptions );
 export const plainNotice: NoticeActionCreator = ( text, noticeOptions ) =>
 	createNotice( 'is-plain', text, noticeOptions );
-
-// Higher-order action creator: modify the wrapped creator to return actions with the
-// `notices.skip` meta, so that it's ignored by the notices middleware.
-export const withoutNotice = ( actionCreator ) => ( ...args ) =>
-	extendAction( actionCreator( ...args ), { meta: { notices: { skip: true } } } );
