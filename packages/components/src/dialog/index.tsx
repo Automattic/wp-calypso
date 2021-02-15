@@ -1,0 +1,106 @@
+/**
+ * External dependencies
+ */
+import React from 'react';
+import type { FunctionComponent, ReactNode } from 'react';
+import Modal from 'react-modal';
+import classnames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+import ButtonBar from './button-bar';
+import type { Button, BaseButton } from './button-bar';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+type Props = {
+	additionalClassNames: Parameters< typeof classnames >[ 0 ];
+	autoFocus: boolean;
+	baseClassName: string;
+	buttons: Button[];
+	className: string;
+	children: ReactNode;
+	isBackdropVisible: boolean;
+	isFullScreen: boolean;
+	isVisible: boolean;
+	label: string;
+	leaveTimeout: number;
+	onClose: ( action?: string ) => void;
+	shouldCloseOnEsc: boolean;
+};
+
+const Dialog: FunctionComponent< Props > = ( {
+	additionalClassNames,
+	buttons,
+	baseClassName,
+	className,
+	children,
+	isBackdropVisible,
+	isFullScreen,
+	isVisible,
+	label,
+	leaveTimeout,
+	onClose,
+	shouldCloseOnEsc,
+} ) => {
+	const close = React.useCallback( () => onClose?.(), [ onClose ] );
+	const onButtonClick = React.useCallback(
+		( button: BaseButton ) => {
+			if ( button.onClick ) {
+				button.onClick( () => onClose?.( button.action ) );
+			} else {
+				onClose?.( button.action );
+			}
+		},
+		[ onClose ]
+	);
+
+	// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
+	const dialogClassName = classnames( baseClassName, 'card', additionalClassNames );
+
+	const backdropClassName = classnames( baseClassName + '__backdrop', {
+		'is-full-screen': isFullScreen,
+		'is-hidden': ! isBackdropVisible,
+	} );
+
+	const contentClassName = classnames( baseClassName + '__content', className );
+
+	return (
+		<Modal
+			isOpen={ isVisible }
+			onRequestClose={ close }
+			closeTimeoutMS={ leaveTimeout }
+			contentLabel={ label }
+			overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
+			className={ dialogClassName }
+			htmlOpenClassName="ReactModal__Html--open"
+			role="dialog"
+			shouldCloseOnEsc={ shouldCloseOnEsc }
+		>
+			<div className={ contentClassName } tabIndex={ -1 }>
+				{ children }
+			</div>
+			<ButtonBar
+				buttons={ buttons }
+				onButtonClick={ onButtonClick }
+				baseClassName={ baseClassName }
+			/>
+		</Modal>
+	);
+};
+
+Dialog.defaultProps = {
+	autoFocus: true,
+	baseClassName: 'dialog',
+	isBackdropVisible: true,
+	isFullScreen: true,
+	isVisible: false,
+	label: '',
+	leaveTimeout: 200,
+};
+
+export default Dialog;
