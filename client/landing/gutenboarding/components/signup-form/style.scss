@@ -266,7 +266,8 @@
 	}
 
 	// UL with Right bullet points
-	.signup-form__anchor-list {
+	ul.signup-form__anchor-list {
+		list-style: disc inside;
 		color: var( --studio-gray-70 );
 		font-size: 0.875rem;
 		& > li {
