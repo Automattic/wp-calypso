@@ -459,29 +459,41 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<div className="page-template-modal__sidebar">
-								<h1 id={ `page-template-modal__heading-${ instanceId }` }>
+								<h1
+									id={ `page-template-modal__heading-${ instanceId }` }
+									className="page-template-modal__heading"
+								>
 									{ __( 'Add a page', __i18n_text_domain__ ) }
 								</h1>
-								<p id={ `page-template-modal__description-${ instanceId }` }>
+								<p
+									id={ `page-template-modal__description-${ instanceId }` }
+									className="page-template-modal__description"
+								>
 									{ __(
 										'Pick a pre-defined layout or start with a blank page.',
 										__i18n_text_domain__
 									) }
 								</p>
-								<Button isSecondary onClick={ () => this.handleSelection( 'blank' ) }>
-									{ __( 'Blank page', __i18n_text_domain__ ) }
-								</Button>
-								<select
-									className="page-template-modal__mobile-category-dropdown"
-									value={ selectedCategory }
-									onChange={ ( e ) => this.handleCategorySelection( e.currentTarget.value ) }
-								>
-									{ this.getTemplateCategories().map( ( { slug, name } ) => (
-										<option key={ slug } value={ slug }>
-											{ name }
-										</option>
-									) ) }
-								</select>
+								<div className="page-template-modal__button-container">
+									<Button
+										isSecondary
+										onClick={ () => this.handleSelection( 'blank' ) }
+										className="page-template-modal__blank-button"
+									>
+										{ __( 'Blank page', __i18n_text_domain__ ) }
+									</Button>
+									<select
+										className="page-template-modal__mobile-category-dropdown"
+										value={ selectedCategory }
+										onChange={ ( e ) => this.handleCategorySelection( e.currentTarget.value ) }
+									>
+										{ this.getTemplateCategories().map( ( { slug, name } ) => (
+											<option key={ slug } value={ slug }>
+												{ name }
+											</option>
+										) ) }
+									</select>
+								</div>
 								<ul className="page-template-modal__category-list">
 									{ this.getTemplateCategories().map( ( { slug, name } ) => (
 										<li key={ slug }>

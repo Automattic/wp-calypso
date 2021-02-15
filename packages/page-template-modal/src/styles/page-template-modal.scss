@@ -1,3 +1,6 @@
+@import '~@automattic/typography/styles/fonts';
+@import '~@automattic/typography/styles/variables';
+
 @mixin screen-reader-text() {
 	border: 0;
 	clip: rect( 1px, 1px, 1px, 1px );
@@ -37,7 +40,7 @@ $wp-org-sidebar-collapsed: 36px;
 $wp-org-admin-bar-full: 32px;
 $wp-org-admin-bar-mobile: 46px;
 
-$sidebar-width: 25%;
+$sidebar-width: 324px;
 
 .page-template-modal {
 	@media screen and ( min-width: $breakpoint-mobile ) {
@@ -56,6 +59,33 @@ $sidebar-width: 25%;
 	.components-modal__header {
 		border-bottom: none;
 	}
+}
+
+.page-template-modal__heading {
+	font-family: $brand-serif;
+	font-weight: 400;
+	letter-spacing: -0.4px;
+	margin: 0;
+
+	font-size: 2rem;
+	line-height: 1.25;
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		font-size: 2.25rem;
+		line-height: 1.1;
+	}
+
+	@media screen and ( min-width: $breakpoint-tablet ) {
+		font-size: 3rem;
+		line-height: 1.35;
+	}
+}
+
+.page-template-modal__description {
+	color: var( --studio-gray-60 );
+	margin: 0 0 24px;
+	font-size: 1rem;
+	line-height: 1.5;
 }
 
 .page-template-modal__inner {
@@ -184,10 +214,51 @@ $sidebar-width: 25%;
 
 .page-template-modal__category-list {
 	display: none;
+	margin: 0;
+	padding-top: 40px;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		display: block;
 	}
+
+	.components-button {
+		padding: 0;
+		height: auto;
+		color: var( --color-text );
+		font-size: 0.875rem;
+		line-height: 1.9;
+
+		&:hover {
+			box-shadow: none !important;
+			color: var( --color-text );
+		}
+
+		&:active {
+			background: transparent !important;
+			color: var( --color-text );
+		}
+
+		&[aria-pressed='true'] {
+			font-weight: 700;
+			color: var( --color-text ) !important;
+			background: transparent !important;
+		}
+	}
+}
+
+.page-template-modal__button-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 8px;
+
+	@media screen and ( min-width: $breakpoint-mobile ) {
+		// No grid layout necessary on desktop view
+		display: inline;
+	}
+}
+
+.page-template-modal__blank-button {
+	min-height: 40px;
 }
 
 .page-template-modal__mobile-category-dropdown {
