@@ -158,7 +158,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async toggleOptionsMenu() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='Options']" )
+			By.css( ".edit-post-more-menu button[aria-label='Options']" )
 		);
 
 		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
