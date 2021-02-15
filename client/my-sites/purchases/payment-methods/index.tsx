@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
@@ -10,6 +10,7 @@ import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 /**
  * Internal dependencies
  */
+import { errorNotice } from 'calypso/state/notices/actions';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -105,6 +106,12 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( doesValueExist ), [
 		stripeMethod,
 	] );
+	const reduxDispatch = useDispatch();
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			reduxDispatch( errorNotice( stripeLoadingError.message ) );
+		}
+	}, [ stripeLoadingError, reduxDispatch ] );
 
 	if ( paymentMethodList.length === 0 ) {
 		return <PaymentMethodLoader title={ String( titles.addPaymentMethod ) } />;
