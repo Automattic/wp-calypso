@@ -28,6 +28,15 @@ interface Props {
 	tos: WPElement;
 }
 
+/*
+ * <SignupDefaultLayout>:
+ *  Gutenboarding sign-up is split into two layers.
+ *  <SignupForm /> Handles the mechanics of both "regular" and "anchor.fm flavored" gutenboarding.
+ *  It will render one of two components that contains a specialized layout:
+ *    <SignupDefaultLayout />: "Regular" gutenboarding (/new)
+ *    <SignupAnchorLayout />: "Anchor.fm flavored" gutenboarding (/new?anchor_podcast=9fa55c4)
+ *  These components take the same props.
+ */
 const SignupDefaultLayout = ( {
 	closeModal,
 	emailVal,
