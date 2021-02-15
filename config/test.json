@@ -41,7 +41,6 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"gdpr-banner": false,
 		"google-my-business": false,
-		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
