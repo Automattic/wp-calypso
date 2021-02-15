@@ -8,7 +8,7 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import wpcom from 'calypso/lib/wp';
+import wpcom, { wpcomJetpackLicensing } from 'calypso/lib/wp';
 import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
 import { extendAction } from 'calypso/state/utils';
 import {
@@ -24,17 +24,21 @@ const debug = debugModule( 'calypso:data-layer:wpcom-http' );
  * fetcherMap :: String -> (Params -> Query -> [Body] -> Promise)
  *
  * @param {string} method name of HTTP method for request
+ * @param {string} fetcher Name of fetcher to use. Defaults to wpcom.
  * @returns {Function} the fetcher
  */
-const fetcherMap = ( method ) =>
-	get(
+const fetcherMap = function ( method, fetcher = 'wpcom' ) {
+	const req = 'wpcomJetpackLicensing' === fetcher ? wpcomJetpackLicensing.req : wpcom.req;
+
+	return get(
 		{
-			GET: wpcom.req.get.bind( wpcom.req ),
-			POST: wpcom.req.post.bind( wpcom.req ),
+			GET: req.get.bind( req ),
+			POST: req.post.bind( req ),
 		},
 		method,
 		null
 	);
+};
 
 export const successMeta = ( data, headers ) => ( { meta: { dataLayer: { data, headers } } } );
 export const failureMeta = ( error, headers ) => ( { meta: { dataLayer: { error, headers } } } );
@@ -61,6 +65,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 		query = {},
 	} = action;
 	const { responseType } = options || {};
+	const fetcher = get( options, 'options.fetcher', 'wpcom' );
 
 	const onStreamRecord =
 		rawOnStreamRecord &&
@@ -70,7 +75,10 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 
 	const method = rawMethod.toUpperCase();
 
-	const request = fetcherMap( method )(
+	const request = fetcherMap(
+		method,
+		fetcher
+	)(
 		...compact( [
 			{ path, formData, onStreamRecord, responseType },
 			{ ...query }, // wpcom mutates the query so hand it a copy

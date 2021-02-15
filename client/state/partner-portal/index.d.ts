@@ -1,9 +1,33 @@
+/**
+ * External dependencies
+ */
+import { AnyAction } from 'redux';
+
+/**
+ * Utility.
+ */
+interface HttpAction extends AnyAction {
+	fetcher: string;
+}
+
+export interface PaginatedItems< T > {
+	currentItems: number;
+	currentPage: number;
+	items: T[];
+	itemsPerPage: number;
+	totalItems: number;
+	totalPages: number;
+}
+
 export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
 }
 
+/**
+ * Store.
+ */
 export interface PartnerKey {
 	id: number;
 	name: string;
@@ -18,7 +42,7 @@ export interface Partner {
 	keys: PartnerKey[];
 }
 
-export interface PartnerState {
+export interface PartnerStore {
 	hasFetched: boolean;
 	isFetching: boolean;
 	activePartnerKey: number;
@@ -26,10 +50,34 @@ export interface PartnerState {
 	error: string;
 }
 
-export interface PartnerPortalState {
-	partner: PartnerState;
+export interface License {
+	licenseId: number;
+	licenseKey: string;
+	productId: number;
+	product: string;
+	userId: number | null;
+	username: string | null;
+	blogId: number | null;
+	siteUrl: string | null;
+	issuedAt: string;
+	attachedAt: string | null;
+	revokedAt: string | null;
+}
+
+export interface LicensesStore {
+	hasFetched: boolean;
+	isFetching: boolean;
+	paginated: PaginatedItems< License > | null;
 }
 
 export interface PartnerPortalStore {
-	partnerPortal: PartnerPortalState;
+	partner: PartnerStore;
+	licenses: LicensesStore;
+}
+
+/**
+ * Represents the entire Redux store but defines only the parts that the partner portal deals with.
+ */
+export interface PartnerPortalStore {
+	partnerPortal: PartnerPortalStore;
 }
