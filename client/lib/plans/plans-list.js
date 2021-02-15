@@ -146,7 +146,7 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
 	getSignupCompareAvailableFeatures: () => [
-		constants.FEATURE_INCLUDED_DOMAIN,
+		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_HOSTING,
 		constants.FEATURE_NO_ADS,
 		constants.FEATURE_COLLECT_PAYMENTS_V2,
@@ -249,7 +249,7 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_ALL_BUSINESS_FEATURES,
 	],
 	getSignupCompareAvailableFeatures: () => [
-		constants.FEATURE_INCLUDED_DOMAIN,
+		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_HOSTING,
 		constants.FEATURE_NO_ADS,
 		constants.FEATURE_COLLECT_PAYMENTS_V2,
@@ -341,7 +341,7 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_ALL_PERSONAL_FEATURES,
 	],
 	getSignupCompareAvailableFeatures: () => [
-		constants.FEATURE_INCLUDED_DOMAIN,
+		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_HOSTING,
 		constants.FEATURE_NO_ADS,
 		constants.FEATURE_COLLECT_PAYMENTS_V2,
@@ -438,7 +438,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	getSignupCompareAvailableFeatures: () => [
-		constants.FEATURE_INCLUDED_DOMAIN,
+		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_HOSTING,
 		constants.FEATURE_NO_ADS,
 		constants.FEATURE_COLLECT_PAYMENTS_V2,

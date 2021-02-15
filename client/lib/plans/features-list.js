@@ -352,10 +352,17 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => constants.FEATURE_CUSTOM_DOMAIN,
-		getTitle: () =>
-			i18n.translate( 'Free domain for one year', {
+		getTitle: ( domainName ) => {
+			if ( domainName ) {
+				return i18n.translate( 'The domain %(domainName)s is free for the first year', {
+					args: { domainName },
+				} );
+			}
+
+			return i18n.translate( 'Free domain for one year', {
 				context: 'title',
-			} ),
+			} );
+		},
 		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
@@ -1637,17 +1644,6 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_HOSTING ]: {
 		getSlug: () => constants.FEATURE_HOSTING,
 		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
-		getDescription: () => {},
-	},
-
-	[ constants.FEATURE_INCLUDED_DOMAIN ]: {
-		getSlug: () => constants.FEATURE_HOSTING,
-		getTitle: ( domainName ) =>
-			domainName
-				? i18n.translate( 'The domain %(domainName)s is free for the first year', {
-						args: { domainName },
-				  } )
-				: i18n.translate( 'Free domain for one year' ),
 		getDescription: () => {},
 	},
 

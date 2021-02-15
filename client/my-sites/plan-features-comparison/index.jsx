@@ -132,9 +132,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderNotice() {
-		return (
-			this.renderUpgradeDisabledNotice() || this.renderDiscountNotice() || this.renderCreditNotice()
-		);
+		return this.renderDiscountNotice();
 	}
 
 	renderDiscountNotice() {
@@ -181,80 +179,8 @@ export class PlanFeaturesComparison extends Component {
 		return true;
 	}
 
-	higherPlanAvailable() {
-		const currentPlan = get( this.props, 'sitePlan.product_slug', '' );
-		const highestPlan = last( this.props.planProperties );
-		return currentPlan !== highestPlan.planName && highestPlan.availableForPurchase;
-	}
-
-	renderCreditNotice() {
-		const {
-			canPurchase,
-			hasPlaceholders,
-			translate,
-			planCredits,
-			planProperties,
-			showPlanCreditsApplied,
-		} = this.props;
-		const bannerContainer = this.getBannerContainer();
-		if (
-			hasPlaceholders ||
-			! canPurchase ||
-			! bannerContainer ||
-			! showPlanCreditsApplied ||
-			! planCredits ||
-			! this.higherPlanAvailable()
-		) {
-			return null;
-		}
-
-		return ReactDOM.createPortal(
-			<Notice
-				className="plan-features-comparison__notice-credits"
-				showDismiss={ false }
-				icon="info-outline"
-				status="is-success"
-			>
-				{ translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
-						'Apply those credits towards an upgrade before they expire!',
-					{
-						args: {
-							amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
-						},
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
-			</Notice>,
-			bannerContainer
-		);
-	}
-
 	getBannerContainer() {
 		return document.querySelector( '.plans-features-main__notice' );
-	}
-
-	renderUpgradeDisabledNotice() {
-		const { canPurchase, hasPlaceholders, translate } = this.props;
-
-		if ( hasPlaceholders || canPurchase ) {
-			return null;
-		}
-
-		const bannerContainer = this.getBannerContainer();
-		if ( ! bannerContainer ) {
-			return false;
-		}
-		return ReactDOM.createPortal(
-			<Notice className="plan-features-comparison__notice" showDismiss={ false } status="is-info">
-				{ translate(
-					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
-				) }
-			</Notice>,
-			bannerContainer
-		);
 	}
 
 	renderMobileView() {
@@ -638,10 +564,12 @@ export class PlanFeaturesComparison extends Component {
 			<>
 				<FeatureDisplayComponent key={ index }>
 					<span className={ classes }>
-						{ /* { this.renderAnnualPlansFeatureNotice( feature ) } */ }
 						<span className="plan-features-comparison__item-title">
 							{ feature.getTitle( this.props.domainName ) }
 						</span>
+						{ ! feature.availableForCurrentPlan &&
+							feature.availableOnlyForAnnualPlans &&
+							this.renderAnnualPlansFeatureNotice( feature ) }
 					</span>
 				</FeatureDisplayComponent>
 			</>
@@ -659,10 +587,14 @@ export class PlanFeaturesComparison extends Component {
 			const key = featureKeys[ rowIndex ];
 			const currentFeature = features[ key ];
 
-			let type = 'availableFeature';
-			if ( missingFeaturesForAnnualPlans.includes( currentFeature.getSlug() ) ) {
-				type = 'missingFeature';
+			if ( ! currentFeature ) {
+				return;
 			}
+
+			const isFeatureMissingForPlan =
+				missingFeaturesForAnnualPlans.includes( currentFeature.getSlug() ) ||
+				! currentFeature.availableForCurrentPlan;
+			const type = isFeatureMissingForPlan ? 'missingFeature' : 'availableFeature';
 
 			const classes = classNames(
 				'plan-features-comparison__table-item',

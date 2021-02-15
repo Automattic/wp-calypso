@@ -124,6 +124,7 @@ $plan-features-sidebar-width: 272px;
 			width: 16px;
 			height: 16px;
 			margin-right: 0;
+			flex: 0 0 auto;
 		}
 
 		.plan-features-comparison__item-cross {
@@ -135,6 +136,7 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-features-comparison__item-title {
 			line-height: 18px;
+			overflow-wrap: break-word;
 		}
 	}
 

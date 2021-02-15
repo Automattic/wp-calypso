@@ -212,7 +212,6 @@ export const FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP = 'unlimited-backup';
 export const FEATURE_MEMBERSHIPS = 'memberships';
 export const FEATURE_PREMIUM_CONTENT_BLOCK = 'premium-content-block';
 export const FEATURE_HOSTING = 'hosting';
-export const FEATURE_INCLUDED_DOMAIN = 'included-domain';
 export const PREMIUM_DESIGN_FOR_STORES = 'premium-design-for-stores';
 export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
 export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
