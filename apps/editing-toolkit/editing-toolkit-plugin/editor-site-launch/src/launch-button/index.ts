@@ -67,14 +67,11 @@ domReady( () => {
 				dispatch( 'automattic/launch' ).openSidebar();
 			}
 
-			// @TODO: this is just temporary for testing via feature flag. Remove it once focused-launch is live
-			const isFocusedLaunchFlowFeatureFlag = window.calypsoifyGutenberg?.isFocusedLaunchFlow;
-
-			if ( launchFlow === FOCUSED_LAUNCH_FLOW || isFocusedLaunchFlowFeatureFlag ) {
+			if ( launchFlow === FOCUSED_LAUNCH_FLOW ) {
 				dispatch( 'automattic/launch' ).openFocusedLaunch();
 			}
 
-			if ( launchFlow === SITE_LAUNCH_FLOW && ! isFocusedLaunchFlowFeatureFlag ) {
+			if ( launchFlow === SITE_LAUNCH_FLOW ) {
 				// Save post first before redirecting to launch url
 				( async () => {
 					await dispatch( 'core/editor' ).savePost();
