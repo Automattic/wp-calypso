@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
+import { get } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -96,6 +96,8 @@ class Viewers extends React.PureComponent {
 
 	render() {
 		const listClass = this.state.bulkEditing ? 'bulk-editing' : null;
+		const isSitePrivateOrComingSoon =
+			this.props.site.is_private || get( this.props.site, 'is_coming_soon', false );
 		let viewers;
 		let emptyContentArgs = {
 			title:
@@ -105,7 +107,7 @@ class Viewers extends React.PureComponent {
 		};
 
 		if ( ! this.props.viewers.length && ! this.props.fetching ) {
-			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {
+			if ( this.props.site && ! this.props.site.jetpack && ! isSitePrivateOrComingSoon ) {
 				emptyContentArgs = Object.assign( emptyContentArgs, {
 					line: this.props.translate(
 						'Only private sites can have viewers. You can make your site private by ' +

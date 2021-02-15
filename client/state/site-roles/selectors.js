@@ -43,7 +43,8 @@ export const getSiteRoles = ( state, siteId ) => {
  */
 export const getWpcomFollowerRole = ( state, siteId ) => {
 	const site = getSite( state, siteId );
-	const displayName = site.is_private
+	const isSitePrivateOrComingSoon = site.is_private || site.is_coming_soon;
+	const displayName = isSitePrivateOrComingSoon
 		? translate( 'Viewer', { context: 'Role that is displayed in a select' } )
 		: translate( 'Follower', { context: 'Role that is displayed in a select' } );
 
