@@ -5,6 +5,11 @@ import { find, map, partition, reduce, some } from 'lodash';
 import React, { Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
 
+/**
+ * Internal dependencies
+ */
+import { getPlanTermLabel } from 'calypso/lib/plans';
+
 export const groupDomainProducts = ( originalItems, translate ) => {
 	const transactionItems = Object.keys( originalItems ).map( ( key ) => {
 		return Object.assign( {}, originalItems[ key ] );
@@ -75,4 +80,17 @@ export function renderTransactionAmount( transaction, { translate, addingTax = f
 			<div className="billing-history__transaction-tax-amount">{ taxAmount }</div>
 		</Fragment>
 	);
+}
+
+export function getTransactionTermLabel( transaction, translate ) {
+	switch ( transaction.months_per_renewal_interval ) {
+		case 1:
+			return translate( 'Monthly subscription' );
+		case 12:
+			return translate( 'Annual subscription' );
+		case 24:
+			return translate( 'Two year subscription' );
+		default:
+			return getPlanTermLabel( transaction.wpcom_product_slug, translate );
+	}
 }
