@@ -6,7 +6,6 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import { findIndex, isUndefined, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -142,68 +141,6 @@ describe( 'Users Store', () => {
 			updatedUsers.slice( -2, 2 ).forEach( ( user ) => {
 				assert.equal( user.roles[ 0 ], 'contributor' );
 			} );
-		} );
-	} );
-
-	describe( 'Update a user', () => {
-		beforeEach( () => {
-			Dispatcher.handleServerAction( actions.fetched );
-		} );
-
-		test( 'Should update a specific user with new attributes', () => {
-			const users = UsersStore.getUsers( options );
-			const testUserIndex = findIndex( users, ( user ) => user.name === 'Test One' );
-			Dispatcher.handleServerAction( actions.updateSingleUser );
-			const usersAgain = UsersStore.getUsers( options );
-			assert.equal( usersAgain[ testUserIndex ].name, 'Test Won' );
-		} );
-
-		test( 'Error should restore the updated user', () => {
-			const userId = usersData.users[ 0 ].ID;
-			const user = UsersStore.getUser( siteId, userId );
-
-			assert.equal( user.name, 'Test One' );
-
-			Dispatcher.handleServerAction( actions.updateSingleUser );
-			const userAgain = UsersStore.getUser( siteId, userId );
-			assert.equal( userAgain.name, 'Test Won' );
-
-			Dispatcher.handleServerAction( actions.updateUserError );
-			const userRestored = UsersStore.getUser( siteId, userId );
-			assert.equal( userRestored.name, 'Test One' );
-		} );
-	} );
-
-	describe( 'Delete a user', () => {
-		let userId;
-		let userAgain;
-
-		beforeEach( () => {
-			Dispatcher.handleServerAction( actions.fetched );
-			userId = usersData.users[ 0 ].ID;
-		} );
-
-		test( 'Should delete a specific user', () => {
-			Dispatcher.handleServerAction( actions.deleteUser );
-			userAgain = UsersStore.getUser( siteId, userId );
-			assert.equal( userAgain, null );
-		} );
-
-		test( 'Error should restore the deleted user', () => {
-			Dispatcher.handleServerAction( actions.deleteUser );
-			userAgain = UsersStore.getUser( siteId, userId );
-			assert.equal( userAgain, null );
-
-			Dispatcher.handleServerAction( actions.deleteUserError );
-			const userRestored = UsersStore.getUser( siteId, userId );
-			assert.equal( userRestored.name, 'Test One' );
-		} );
-
-		test( 'There should be no undefined objects in user array after deleting a user', () => {
-			Dispatcher.handleServerAction( actions.deleteUser );
-			const users = UsersStore.getUsers( options );
-			const someUndefined = some( users, isUndefined );
-			assert.isFalse( someUndefined );
 		} );
 	} );
 

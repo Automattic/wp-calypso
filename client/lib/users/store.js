@@ -96,49 +96,6 @@ function updateUser( siteId, id, user ) {
 	_usersBySite[ siteId ][ id ] = Object.assign( {}, _usersBySite[ siteId ][ id ], user );
 }
 
-function decrementPaginationData( siteId, userId ) {
-	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
-		if (
-			namespace.endsWith( 'siteId=' + siteId ) &&
-			_userIDsByNamespace[ namespace ].has( userId )
-		) {
-			_totalUsersByNamespace[ namespace ]--;
-			_usersFetchedByNamespace[ namespace ]--;
-		}
-	} );
-}
-
-function incrementPaginationData( siteId, userId ) {
-	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
-		if (
-			namespace.endsWith( 'siteId=' + siteId ) &&
-			_userIDsByNamespace[ namespace ].has( userId )
-		) {
-			_totalUsersByNamespace[ namespace ]++;
-			_usersFetchedByNamespace[ namespace ]++;
-		}
-	} );
-}
-
-function deleteUserFromSite( siteId, userId ) {
-	if ( ! _usersBySite[ siteId ] || ! _usersBySite[ siteId ][ userId ] ) {
-		return;
-	}
-	delete _usersBySite[ siteId ][ userId ];
-	decrementPaginationData( siteId, userId );
-}
-
-function deleteUserFromNamespaces( siteId, userId ) {
-	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
-		if (
-			namespace.endsWith( 'siteId=' + siteId ) &&
-			_userIDsByNamespace[ namespace ].has( userId )
-		) {
-			_userIDsByNamespace[ namespace ].delete( userId );
-		}
-	} );
-}
-
 function addSingleUser( fetchOptions, user, namespace ) {
 	if ( ! _userIDsByNamespace[ namespace ] ) {
 		_userIDsByNamespace[ namespace ] = new Set();
@@ -195,27 +152,6 @@ UsersStore.dispatchToken = Dispatcher.register( function ( payload ) {
 				updateUsers( action.fetchOptions, action.data.users, action.data.found );
 				UsersStore.emitChange();
 			}
-			break;
-		case 'UPDATE_SITE_USER':
-			updateUser( action.siteId, action.user.ID, action.user );
-			UsersStore.emitChange();
-			break;
-		case 'RECEIVE_UPDATE_SITE_USER_FAILURE':
-			updateUser( action.siteId, action.user.ID, action.user );
-			UsersStore.emitChange();
-			break;
-		case 'DELETE_SITE_USER':
-			deleteUserFromSite( action.siteId, action.user.ID );
-			UsersStore.emitChange();
-			break;
-		case 'RECEIVE_DELETE_SITE_USER_SUCCESS':
-			deleteUserFromNamespaces( action.siteId, action.user.ID );
-			UsersStore.emitChange();
-			break;
-		case 'RECEIVE_DELETE_SITE_USER_FAILURE':
-			updateUser( action.siteId, action.user.ID, action.user );
-			incrementPaginationData( action.siteId, action.user.ID );
-			UsersStore.emitChange();
 			break;
 		case 'FETCHING_USERS':
 			namespace = getNamespace( action.fetchOptions );
