@@ -264,6 +264,7 @@ export class PlansStep extends Component {
 		return (
 			<>
 				<Experiment name="vertical_plan_listing_v2" />
+				<Experiment name="signup_plans_step_redesign_v1" />
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
