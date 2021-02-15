@@ -233,6 +233,7 @@
 		flex-direction: column;
 		flex-basis: 100%;
 		flex: 1;
+		justify-content: center;
 	}
 
 	// Thin line between Flexbox Cols
@@ -257,6 +258,9 @@
 	// Div grouping together right heading "Turn your listeners.." with bullet points
 	.signup-form__anchor-col-right-group {
 		margin-bottom: 2em;
+		&:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	// Right heading like "Turn your listeners.."
