@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/page-template-modal",
-	"version": "1.0.0",
+	"version": "1.0.0-alpha.0",
 	"description": "Automattic Page Template Modal",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -50,7 +50,7 @@
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build": "calypso-build",
+		"build": "transpile && copy-assets",
 		"prepack": "yarn run clean && yarn run build"
 	}
 }

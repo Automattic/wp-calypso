@@ -6,10 +6,6 @@ import '@wordpress/nux';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { addFilter, removeFilter } from '@wordpress/hooks';
-
-/**
- * Internal dependencies
- */
 import { PageTemplateModal } from '@automattic/page-template-modal';
 
 const INSERTING_HOOK_NAME = 'isInsertingPageTemplate';
