@@ -15,19 +15,10 @@ import wpcom from 'calypso/lib/wp';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
-import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 
 class StatsActionFollow extends React.Component {
 	state = {
 		isFollowing: this.props.isFollowing,
-	};
-
-	refreshFollowers = () => {
-		this.props.requestSiteStats( this.props.selectedSiteId, 'statsFollowers', {
-			type: 'wpcom',
-			max: 10,
-		} );
-		this.props.requestSiteStats( this.props.selectedSiteId, 'statsCommentFollowers', { max: 7 } );
 	};
 
 	clickHandler = ( event ) => {
@@ -47,7 +38,6 @@ class StatsActionFollow extends React.Component {
 				.site( this.props.siteId )
 				.follow()
 				.add( { source: config( 'readerFollowingSource' ) } )
-				.then( this.refreshFollowers )
 				.catch( () => {
 					// Revert to the previous state
 					this.setState( {
@@ -65,7 +55,6 @@ class StatsActionFollow extends React.Component {
 				.site( this.props.siteId )
 				.follow()
 				.del( { source: config( 'readerFollowingSource' ) } )
-				.then( this.refreshFollowers )
 				.catch( () => {
 					// Revert to the previous state
 					this.setState( {
@@ -122,12 +111,7 @@ class StatsActionFollow extends React.Component {
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		siteDomain: getSiteDomain( state, siteId ),
-		selectedSiteId: getSelectedSiteId( state ),
-	} ),
-	{
-		requestSiteStats,
-	}
-)( localize( StatsActionFollow ) );
+export default connect( ( state, { siteId } ) => ( {
+	siteDomain: getSiteDomain( state, siteId ),
+	selectedSiteId: getSelectedSiteId( state ),
+} ) )( localize( StatsActionFollow ) );
