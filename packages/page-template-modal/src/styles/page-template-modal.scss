@@ -150,10 +150,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .template-selector-item__label {
 	display: block;
 	width: 100%;
-	font-size: 14px;
+	font-size: 14px; /* stylelint-disable-line */
 	text-align: center;
 	border: solid 2px $template-selector-border-color;
-	border-radius: 6px;
+	border-radius: 6px; /* stylelint-disable-line */
 	cursor: pointer;
 	appearance: none;
 	padding: 0;
@@ -424,7 +424,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	.swiper-pagination-bullet {
-		border-radius: 100%;
+		border-radius: 100%; /* stylelint-disable-line */
 	}
 
 	// Fixes cover image spacing and full-width group spacing
@@ -446,10 +446,5 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	// Using flex-basis: auto; on the child allows the height to be calculated properly
 	.wp-block-columns > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type='core/column'] .block-core-columns {
 		flex-basis: auto;
-	}
-}
-.sidebar-modal-opener {
-	.template-selector-item__label {
-		max-width: 300px;
 	}
 }
