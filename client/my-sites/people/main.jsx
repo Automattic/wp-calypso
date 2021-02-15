@@ -49,13 +49,7 @@ class People extends React.Component {
 					/>
 				);
 			case 'viewers':
-				return (
-					<ViewersList
-						key={ `people-viewers-${ site.ID }` }
-						site={ site }
-						label={ translate( 'Viewers' ) }
-					/>
-				);
+				return <ViewersList site={ site } label={ translate( 'Viewers' ) } />;
 			default:
 				return null;
 		}
