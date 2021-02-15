@@ -100,7 +100,7 @@ class Block_Patterns_From_API {
 
 		// Move the Featured category to be the first category.
 		if ( isset( $pattern_categories['featured'] ) ) {
-			$featured_category = $pattern_categories['featured'];
+			$featured_category  = $pattern_categories['featured'];
 			$pattern_categories = array( 'featured' => $featured_category ) + $pattern_categories;
 		}
 
