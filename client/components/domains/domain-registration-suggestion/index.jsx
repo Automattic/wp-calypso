@@ -300,7 +300,9 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		const isExactFullMatch =
-			matchReasons.includes( SLD_EXACT_MATCH ) && matchReasons.includes( TLD_EXACT_MATCH );
+			matchReasons &&
+			matchReasons.includes( SLD_EXACT_MATCH ) &&
+			matchReasons.includes( TLD_EXACT_MATCH );
 		let title;
 		let progressBarProps;
 		if ( isRecommended ) {
