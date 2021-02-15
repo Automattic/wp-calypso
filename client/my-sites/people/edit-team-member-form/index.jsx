@@ -79,6 +79,7 @@ export const EditTeamMemberForm = ( {
 					isJetpack={ isJetpack }
 					isMultisite={ isMultisite }
 					user={ user }
+					siteSlug={ siteSlug }
 				/>
 			) }
 		</Main>

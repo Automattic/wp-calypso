@@ -6,7 +6,8 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
+import page from 'page';
+import { connect, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -21,7 +22,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import User from 'calypso/components/user';
 import AuthorSelector from 'calypso/blocks/author-selector';
-import { deleteUser } from 'calypso/lib/users/actions';
 import accept from 'calypso/lib/accept';
 import Gravatar from 'calypso/components/gravatar';
 import { localize } from 'i18n-calypso';
@@ -32,6 +32,8 @@ import {
 	requestExternalContributorsRemoval,
 } from 'calypso/state/data-getters';
 import { httpData } from 'calypso/state/data-layer/http-data';
+import useDeleteUser from 'calypso/data/users/delete-user';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -168,7 +170,7 @@ class DeleteUser extends React.Component {
 							user.linked_user_ID ? user.linked_user_ID : user.ID
 						);
 					}
-					deleteUser( siteId, user.ID );
+					this.props.deleteUser( { userId: user.ID } );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -198,7 +200,7 @@ class DeleteUser extends React.Component {
 				user.linked_user_ID ? user.linked_user_ID : user.ID
 			);
 		}
-		deleteUser( siteId, user.ID, reassignUserId );
+		this.props.deleteUser( { userId: user.ID, reassignUserId } );
 
 		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
@@ -319,6 +321,77 @@ class DeleteUser extends React.Component {
 	}
 }
 
+const withDeleteUser = ( Component ) => {
+	return ( props ) => {
+		const { siteId, user, translate, isMultisite, siteSlug } = props;
+		const { deleteUser, isSuccess, isError, error } = useDeleteUser( siteId );
+		const dispatch = useDispatch();
+
+		React.useEffect( () => {
+			if ( isSuccess ) {
+				dispatch(
+					successNotice(
+						isMultisite
+							? translate( 'Successfully removed @%(user)s', {
+									args: { user: user?.login },
+									context: 'Success message after a user has been removed.',
+							  } )
+							: translate( 'Successfully deleted @%(user)s', {
+									args: { user: user?.login },
+									context: 'Success message after a user has been deleted.',
+							  } ),
+						{ id: 'delete-user-notice', displayOnNextPage: true }
+					)
+				);
+				page.redirect( `/people/team${ siteSlug ? `/${ siteSlug }` : '' }` );
+			}
+		}, [ isSuccess, translate, dispatch, user, isMultisite, siteSlug ] );
+
+		React.useEffect( () => {
+			if ( isError ) {
+				if ( 'user_owns_domain_subscription' === error.error ) {
+					const numDomains = error.message.split( ',' ).length;
+					dispatch(
+						errorNotice(
+							translate(
+								'@%(user)s owns following domain used on this site: {{strong}}%(domains)s{{/strong}}. This domain will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
+								'@%(user)s owns following domains used on this site: {{strong}}%(domains)s{{/strong}}. These domains will have to be transferred to a different site, transferred to a different registrar, or canceled before removing or deleting @%(user)s.',
+								{
+									count: numDomains,
+									args: {
+										domains: error.message,
+										user: user.login,
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
+							),
+							{ id: 'delete-user-notice' }
+						)
+					);
+				}
+
+				dispatch(
+					errorNotice(
+						isMultisite
+							? translate( 'There was an error removing @%(user)s', {
+									args: { user: user.login },
+									context: 'Error message after A site has failed to perform actions on a user.',
+							  } )
+							: translate( 'There was an error deleting @%(user)s', {
+									args: { user: user.login },
+									context: 'Error message after A site has failed to perform actions on a user.',
+							  } )
+					)
+				);
+			}
+		}, [ isError, error, translate, dispatch, user, isMultisite ] );
+
+		return <Component { ...props } deleteUser={ deleteUser } />;
+	};
+};
+
 const getContributorType = ( externalContributors, userId ) => {
 	if ( externalContributors.data ) {
 		return externalContributors.data.includes( userId ) ? 'external' : 'standard';
@@ -341,5 +414,5 @@ export default localize(
 			};
 		},
 		{ recordGoogleEvent }
-	)( DeleteUser )
+	)( withDeleteUser( DeleteUser ) )
 );
