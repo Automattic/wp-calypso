@@ -312,27 +312,22 @@ export default {
 		const { getState, dispatch } = signupStore;
 		const signupDependencies = getSignupDependencyStore( getState() );
 
-		const siteFragment = signupDependencies?.siteSlug || query?.siteSlug;
-		const siteId = getSiteId( getState(), siteFragment );
+		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
+		const siteId = getSiteId( getState(), siteSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
 			next();
 		} else {
-			// Fetch the site by siteFragment and then try to select again
-			dispatch( requestSite( siteFragment ) ).then( () => {
-				let freshSiteId = getSiteId( getState(), siteFragment );
+			// Fetch the site by siteSlug and then try to select again
+			dispatch( requestSite( siteSlug ) ).then( () => {
+				let freshSiteId = getSiteId( getState(), siteSlug );
 
 				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment.replace(
-						/\b.wordpress.com/,
-						'.wpcomstaging.com'
-					);
+					const wpcomStagingFragment = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
 				if ( freshSiteId ) {
-					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
-					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
 					next();
 				}

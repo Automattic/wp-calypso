@@ -68,16 +68,16 @@ export class TransferDomain extends Component {
 	};
 
 	addDomainToCart = ( suggestion ) => {
-		const { selectedSiteSlug } = this.props;
+		const { selectedSiteSlug, shoppingCartManager, productsList } = this.props;
 
-		this.props.shoppingCartManager
+		shoppingCartManager
 			.addProductsToCart( [
 				fillInSingleCartItemAttributes(
 					domainRegistration( {
 						productSlug: suggestion.product_slug,
 						domain: suggestion.domain_name,
 					} ),
-					this.props.productsList
+					productsList
 				),
 			] )
 			.then( () => {
@@ -99,7 +99,7 @@ export class TransferDomain extends Component {
 	};
 
 	handleTransferDomain = ( domain, authCode, supportsPrivacy ) => {
-		const { selectedSiteSlug } = this.props;
+		const { selectedSiteSlug, shoppingCartManager } = this.props;
 
 		this.setState( { errorMessage: null } );
 
@@ -115,7 +115,7 @@ export class TransferDomain extends Component {
 			transfer = updatePrivacyForDomain( transfer, true );
 		}
 
-		this.props.shoppingCartManager
+		shoppingCartManager
 			.addProductsToCart( [ fillInSingleCartItemAttributes( transfer, this.props.productsList ) ] )
 			.then( () => {
 				page( '/checkout/' + selectedSiteSlug );
