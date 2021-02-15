@@ -154,14 +154,11 @@ export default function PaymentMethodSelector( {
 							aria-label={ assignAllSubscriptionsText }
 						/>
 						{ assignAllSubscriptionsText }
+						<AllSubscriptionsEffectWarning useForAllSubscriptions={ useForAllSubscriptions } />
 					</FormLabel>
 				) }
 
 				<CheckoutSubmitButton />
-
-				{ ! purchase && (
-					<AllSubscriptionsEffectWarning useForAllSubscriptions={ useForAllSubscriptions } />
-				) }
 			</Card>
 		</CheckoutProvider>
 	);
@@ -176,17 +173,17 @@ function AllSubscriptionsEffectWarning( {
 
 	if ( useForAllSubscriptions ) {
 		return (
-			<div className="payment-method-selector__all-subscriptions-effect-warning">
+			<span className="payment-method-selector__all-subscriptions-effect-warning">
 				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
-			</div>
+			</span>
 		);
 	}
 	return (
-		<div className="payment-method-selector__all-subscriptions-effect-warning">
+		<span className="payment-method-selector__all-subscriptions-effect-warning">
 			{ translate(
 				'This card will not be assigned to any subscriptions. You can assign it to a subscription from the subscription page.'
 			) }
-		</div>
+		</span>
 	);
 }
 
