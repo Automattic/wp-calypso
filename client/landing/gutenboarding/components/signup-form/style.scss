@@ -199,16 +199,16 @@
 		text-align: center;
 
 		@include break-small {
+			padding: 64px 20px 0;
+		}
+		@include break-medium {
 			padding: 0 20px 20px;
 			position: absolute;
-			top: 12%;
+			top: 24%;
 			left: 50%;
 			width: 100%;
 			max-width: 1024px;
 			transform: translateX( -50% );
-		}
-		@include break-medium {
-			top: 25%;
 		}
 	}
 
