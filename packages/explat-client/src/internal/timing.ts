@@ -24,10 +24,10 @@ export function monotonicNow(): number {
 export function timeoutPromise< T >(
 	promise: Promise< T >,
 	timeoutMilliseconds: number
-): Promise< T | null > {
+): Promise< T > {
 	return Promise.race( [
 		promise,
-		new Promise< null >( ( _res, rej ) =>
+		new Promise< T >( ( _res, rej ) =>
 			setTimeout( () => rej( new Error( 'Promise has timed-out.' ) ), timeoutMilliseconds )
 		),
 	] );

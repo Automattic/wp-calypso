@@ -20,14 +20,12 @@ describe( 'monotonicNow', () => {
 	} );
 } );
 
-const delayedValue = < T >( value, delayMilliseconds ): Promise< T > =>
+const delayedValue = < T >( value: T, delayMilliseconds: number ): Promise< T > =>
 	new Promise( ( res ) => setTimeout( () => res( value ), delayMilliseconds ) );
 
 describe( 'timeoutPromise', () => {
 	it( 'should resolve promises below the timeout', async () => {
-		await expect( Timing.timeoutPromise( new Promise( ( res ) => res( 123 ) ), 1 ) ).resolves.toBe(
-			123
-		);
+		await expect( Timing.timeoutPromise( Promise.resolve( 123 ), 1 ) ).resolves.toBe( 123 );
 		await expect( Timing.timeoutPromise( delayedValue( 123, 1 ), 2 ) ).resolves.toBe( 123 );
 	} );
 	it( 'should throw if promise gets timed-out', async () => {
