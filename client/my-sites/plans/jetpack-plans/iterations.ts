@@ -9,9 +9,9 @@ import { getUrlParts } from 'calypso/lib/url/url-parts';
  */
 
 export enum Iterations {
-	I5 = 'i5',
 	NPIP = 'npip', // New purchase intro pricing
 }
+
 const iterationNames: string[] = Object.values( Iterations );
 
 /**
@@ -28,7 +28,7 @@ const iterationNames: string[] = Object.values( Iterations );
  * @see getForCurrentCROIteration
  * @see doForCurrentCROIteration
  */
-const getCurrentCROIterationName = (): Iterations => {
+const getCurrentCROIterationName = (): Iterations | null => {
 	// If we see a query parameter, obey that,
 	// regardless of any active A/B test value
 	if ( typeof window !== 'undefined' ) {
@@ -43,7 +43,7 @@ const getCurrentCROIterationName = (): Iterations => {
 
 	const newPurchaseIntroPricing = abtest( 'jetpackNewPurchaseIntroPricing' ) === 'withIntroPricing';
 
-	return newPurchaseIntroPricing ? Iterations.NPIP : Iterations.I5;
+	return newPurchaseIntroPricing ? Iterations.NPIP : null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations ) => T | undefined;
