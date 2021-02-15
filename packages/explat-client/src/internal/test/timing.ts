@@ -28,11 +28,11 @@ describe( 'timeoutPromise', () => {
 		await expect( Timing.timeoutPromise( new Promise( ( res ) => res( 123 ) ), 1 ) ).resolves.toBe(
 			123
 		);
-		await expect( Timing.timeoutPromise( delayedValue( 123, 1 ), 2 ) ).resolves.toBe( 123 );
+		await expect( Timing.timeoutPromise( delayedValue( 123, 1 ), 4 ) ).resolves.toBe( 123 );
 	} );
 	it( 'should throw if promise gets timed-out', async () => {
-		await expect( Timing.timeoutPromise( delayedValue( null, 2 ), 1 ) ).rejects.toThrowError();
-		await expect( Timing.timeoutPromise( delayedValue( null, 3 ), 2 ) ).rejects.toThrowError();
+		await expect( Timing.timeoutPromise( delayedValue( null, 4 ), 1 ) ).rejects.toThrowError();
+		await expect( Timing.timeoutPromise( delayedValue( null, 5 ), 2 ) ).rejects.toThrowError();
 	} );
 } );
 
@@ -53,13 +53,13 @@ describe( 'asyncOneAtATime', () => {
 	} );
 
 	it( 'it should return a different promise after the last has resolved', async () => {
-		const f = Timing.asyncOneAtATime( async () => delayedValue( 123, 5 ) );
+		const f = Timing.asyncOneAtATime( async () => delayedValue( 123, 3 ) );
 		const a = f();
 		const b = f();
 		expect( a ).toBe( b );
 		await expect( a ).resolves.toBe( 123 );
 
-		await delayedValue( null, 5 );
+		await delayedValue( null, 3 );
 		const c = f();
 		const d = f();
 		expect( a ).not.toBe( c );
