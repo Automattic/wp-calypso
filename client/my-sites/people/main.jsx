@@ -5,6 +5,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 /**
  * Internal dependencies
@@ -25,6 +26,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 
+const queryClient = new QueryClient();
+
 class People extends React.Component {
 	renderPeopleList() {
 		const { site, search, filter, translate } = this.props;
@@ -33,20 +36,9 @@ class People extends React.Component {
 			case 'team':
 				return <TeamList site={ site } search={ search } />;
 			case 'followers':
-				/* We're using the `key` prop here to make sure a fresh instance
-				   is mounted in case a user changes their site. That way we don't
-				   have to deal with resetting internal state. Same goes for email
-				   followers. */
-				return <FollowersList key={ `people-followers-${ site.ID }` } site={ site } />;
+				return <FollowersList site={ site } />;
 			case 'email-followers':
-				return (
-					<FollowersList
-						key={ `people-email-followers-${ site.ID }` }
-						site={ site }
-						search={ search }
-						type="email"
-					/>
-				);
+				return <FollowersList site={ site } search={ search } type="email" />;
 			case 'viewers':
 				return (
 					<ViewersList
@@ -113,7 +105,9 @@ class People extends React.Component {
 							site={ site }
 						/>
 					}
-					{ this.renderPeopleList() }
+					<QueryClientProvider client={ queryClient }>
+						{ this.renderPeopleList() }
+					</QueryClientProvider>
 				</div>
 			</Main>
 		);

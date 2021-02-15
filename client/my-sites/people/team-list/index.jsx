@@ -3,11 +3,8 @@
  */
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-
-const queryClient = new QueryClient();
 
 /**
  * Internal dependencies
@@ -68,10 +65,4 @@ function TeamList( props ) {
 	);
 }
 
-export default localize( ( props ) => (
-	// @TODO: this should be moved to a more cental place in case
-	// we decide to use `react-query` in more places
-	<QueryClientProvider client={ queryClient }>
-		<TeamList { ...props } />
-	</QueryClientProvider>
-) );
+export default localize( TeamList );
