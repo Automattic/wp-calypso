@@ -68,14 +68,4 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	prefillFRESHPACKCouponCode: {
-		datestamp: '20210203',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		localeTargets: 'any',
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 };

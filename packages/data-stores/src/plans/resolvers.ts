@@ -16,11 +16,10 @@ import type {
 	DetailsAPIResponse,
 	PlanFeature,
 	PlanProduct,
-	Feature,
 	PlanSlug,
+	DetailsAPIFeature,
 } from './types';
 import {
-	PLAN_FREE,
 	TIMELESS_PLAN_FREE,
 	TIMELESS_PLAN_PREMIUM,
 	plansProductSlugs,
@@ -79,13 +78,13 @@ function calculateDiscounts( planProducts: PlanProduct[] ) {
 	}
 }
 
-function processFeatures( features: Feature[] ) {
+function processFeatures( features: DetailsAPIFeature[] ) {
 	return features.reduce( ( features, feature ) => {
 		features[ feature.id ] = {
 			id: feature.id,
 			name: feature.name,
 			description: feature.description,
-			type: feature.type ?? 'checkbox',
+			type: 'checkbox',
 			requiresAnnuallyBilledPlan:
 				FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN.indexOf( feature.id ) > -1,
 		};
@@ -132,9 +131,7 @@ function normalizePlanProducts(
 	periodAgnosticPlans: Plan[]
 ): PlanProduct[] {
 	const plansProducts: PlanProduct[] = plansProductSlugs.reduce( ( plans, slug ) => {
-		const planProduct = pricedPlans.find(
-			( pricedPlan ) => pricedPlan.product_slug === slug
-		) as PricedAPIPlan;
+		const planProduct = pricedPlans.find( ( pricedPlan ) => pricedPlan.product_slug === slug );
 
 		if ( ! planProduct ) {
 			return plans;
@@ -146,12 +143,14 @@ function normalizePlanProducts(
 
 		plans.push( {
 			productId: planProduct.product_id,
+			// This means that free plan is considered "annually billed"
 			billingPeriod:
 				planProduct.bill_period === MONTHLY_PLAN_BILLING_PERIOD ? 'MONTHLY' : 'ANNUALLY',
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
 			storeSlug: planProduct.product_slug,
 			rawPrice: planProduct.raw_price,
-			pathSlug: planProduct.product_slug === PLAN_FREE ? 'free' : planProduct.path_slug,
+			// Not all plans returned from /plans have a `path_slug` (e.g. monthly plans don't have)
+			pathSlug: planProduct.path_slug,
 			price:
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0
 					? getFormattedPrice( planProduct )
@@ -207,8 +206,8 @@ export function* getSupportedPlans( locale = 'en' ) {
 
 	const planProducts = normalizePlanProducts( pricedPlans, periodAgnosticPlans );
 
-	yield setPlans( periodAgnosticPlans );
+	yield setPlans( periodAgnosticPlans, locale );
 	yield setPlanProducts( planProducts );
-	yield setFeatures( features );
-	yield setFeaturesByType( plansFeatures.features_by_type );
+	yield setFeatures( features, locale );
+	yield setFeaturesByType( plansFeatures.features_by_type, locale );
 }

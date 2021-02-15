@@ -7,7 +7,8 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { settingsSchema, systemSchema } from './schema';
 
 import {

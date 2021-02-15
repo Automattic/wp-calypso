@@ -14,6 +14,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -548,15 +549,14 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 
 const mapState = ( state ) => {
 	const user = getCurrentUser( state );
-	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 
 	return {
 		hasLoadedSites: hasLoadedSites( state ),
 		sites: getSites( state ),
 		showRecentSites: get( user, 'visible_site_count', 0 ) > 11,
 		recentSites: getPreference( state, 'recentSites' ),
-		siteCount: get( user, 'site_count', 0 ),
-		visibleSiteCount: visibleSiteCount,
+		siteCount: getUserSiteCountForPlatform( user ),
+		visibleSiteCount: getUserVisibleSiteCountForPlatform( user ),
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),

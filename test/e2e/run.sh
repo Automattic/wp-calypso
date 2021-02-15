@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+
 MAGELLAN=./node_modules/.bin/magellan
 MOCHA_ARGS=""
 WORKERS=6

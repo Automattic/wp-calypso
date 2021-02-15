@@ -136,6 +136,7 @@ export function PaymentMethodForm( {
 				formFieldValues,
 				stripeConfiguration,
 				parseTokenFromResponse: parseStripeToken,
+				reduxDispatch,
 			} );
 			successCallback();
 		} catch ( error ) {

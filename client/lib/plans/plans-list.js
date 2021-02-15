@@ -426,6 +426,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -437,7 +438,10 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_REALTIME,
-	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	getTitle: () =>
+		translate( 'Security {{em}}Real-time{{/em}}', {
+			components: { em: <em style={ { whiteSpace: 'nowrap' } } /> },
+		} ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -470,6 +474,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -524,6 +529,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -941,7 +947,10 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getHiddenFeatures: () => [],
+		getHiddenFeatures: () => [
+			constants.FEATURE_ADVANCED_SEO,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
+		],
 		getInferiorHiddenFeatures: () => [],
 	},
 
@@ -1146,6 +1155,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
+			constants.FEATURE_ADVANCED_SEO,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -1194,6 +1205,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_ADVANCED_SEO,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},

@@ -12,9 +12,9 @@ const { execSync } = require( 'child_process' );
 
 const config = require( '@automattic/calypso-config' );
 
-const protocol = process.env.PROTOCOL || config( 'protocol' );
-const host = process.env.HOST || config( 'hostname' );
-const port = process.env.PORT || config( 'port' );
+const protocol = config( 'protocol' );
+const host = config( 'hostname' );
+const port = config( 'port' );
 const shouldProfile = process.env.PROFILE === 'true';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||

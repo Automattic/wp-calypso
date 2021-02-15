@@ -6,7 +6,8 @@ import { get, isEmpty, pick, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import magicLogin from './magic-login/reducer';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,

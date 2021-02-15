@@ -24,6 +24,7 @@ import {
 	isDomainTransferProduct,
 	isDomainProduct,
 	isDotComPlan,
+	isGSuiteOrGoogleWorkspace,
 	isTitanMail,
 } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
@@ -50,77 +51,19 @@ const debug = debugFactory( 'calypso:composite-checkout:translate-cart' );
 export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
 	const {
 		products,
-		total_tax_integer,
-		total_tax_display,
-		total_cost_integer,
-		total_cost_display,
-		coupon_savings_total_display,
 		coupon_savings_total_integer,
-		sub_total_with_taxes_display,
 		savings_total_display,
 		savings_total_integer,
 		currency,
-		credits_integer,
-		credits_display,
 		allowed_payment_methods,
-		sub_total_integer,
-		sub_total_display,
 		coupon,
-		tax,
 	} = serverCart;
 
-	const taxLineItem: LineItem = {
-		id: 'tax-line-item',
-		label: String( translate( 'Tax' ) ),
-		type: 'tax', // TODO: does this need to be localized, e.g. tax-us?
-		amount: {
-			currency: currency,
-			value: total_tax_integer,
-			displayValue: total_tax_display,
-		},
-	};
+	const taxLineItem = getTaxLineItem( serverCart );
 
-	const couponLineItem: WPCOMCartCouponItem = {
-		id: 'coupon-line-item',
-		label: String( translate( 'Coupon: %(couponCode)s', { args: { couponCode: coupon } } ) ),
-		type: 'coupon',
-		amount: {
-			currency: currency,
-			value: coupon_savings_total_integer,
-			displayValue: String(
-				translate( '- %(discountAmount)s', {
-					args: { discountAmount: coupon_savings_total_display },
-				} )
-			),
-		},
-		wpcom_meta: {
-			couponCode: coupon,
-		},
-	};
+	const couponLineItem = getCouponLineItem( serverCart );
 
-	const creditsLineItem: WPCOMCartCreditsItem = {
-		id: 'credits',
-		label: String( translate( 'Credits' ) ),
-		type: 'credits',
-		amount: {
-			currency: currency,
-			value: credits_integer,
-			displayValue: String(
-				translate( '- %(discountAmount)s', {
-					args: {
-						// Clamp the credits display value to the total
-						discountAmount: doesPurchaseHaveFullCredits( serverCart )
-							? sub_total_with_taxes_display
-							: credits_display,
-					},
-				} )
-			),
-		},
-		wpcom_meta: {
-			credits_integer,
-			credits_display,
-		},
-	};
+	const creditsLineItem = getCreditsLineItem( serverCart );
 
 	const savingsLineItem: LineItem = {
 		id: 'savings-line-item',
@@ -133,27 +76,9 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
-	const totalItem: LineItem = {
-		id: 'total',
-		type: 'total',
-		label: String( translate( 'Total' ) ),
-		amount: {
-			currency: currency,
-			value: total_cost_integer,
-			displayValue: total_cost_display,
-		},
-	};
+	const totalItem = getTotalLineItem( serverCart );
 
-	const subtotalItem: LineItem = {
-		id: 'subtotal',
-		type: 'subtotal',
-		label: String( translate( 'Subtotal' ) ),
-		amount: {
-			currency: currency,
-			value: sub_total_integer,
-			displayValue: sub_total_display,
-		},
-	};
+	const subtotalItem = getSubtotalLineItem( serverCart );
 
 	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
 
@@ -164,14 +89,110 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 	return {
 		items: products.map( translateReponseCartProductToWPCOMCartItem ),
-		tax: tax.display_taxes ? taxLineItem : null,
+		tax: taxLineItem,
 		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
 		total: totalItem,
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
-		credits: credits_integer > 0 ? creditsLineItem : null,
+		credits: creditsLineItem,
 		allowedPaymentMethods,
 		couponCode: coupon,
+	};
+}
+
+export function getCouponLineItem( responseCart: ResponseCart ): WPCOMCartCouponItem | null {
+	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
+		return null;
+	}
+	return {
+		id: 'coupon-line-item',
+		label: String(
+			translate( 'Coupon: %(couponCode)s', { args: { couponCode: responseCart.coupon } } )
+		),
+		type: 'coupon',
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.coupon_savings_total_integer,
+			displayValue: String(
+				translate( '- %(discountAmount)s', {
+					args: { discountAmount: responseCart.coupon_savings_total_display },
+				} )
+			),
+		},
+		wpcom_meta: {
+			couponCode: responseCart.coupon,
+		},
+	};
+}
+
+export function getSubtotalLineItem( responseCart: ResponseCart ): LineItem {
+	return {
+		id: 'subtotal',
+		type: 'subtotal',
+		label: String( translate( 'Subtotal' ) ),
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.sub_total_integer,
+			displayValue: responseCart.sub_total_display,
+		},
+	};
+}
+
+export function getTotalLineItem( responseCart: ResponseCart ): LineItem {
+	return {
+		id: 'total',
+		type: 'total',
+		label: String( translate( 'Total' ) ),
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.total_cost_integer,
+			displayValue: responseCart.total_cost_display,
+		},
+	};
+}
+
+export function getTaxLineItem( responseCart: ResponseCart ): LineItem | null {
+	if ( ! responseCart.tax.display_taxes ) {
+		return null;
+	}
+	return {
+		id: 'tax-line-item',
+		label: String( translate( 'Tax' ) ),
+		type: 'tax',
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.total_tax_integer,
+			displayValue: responseCart.total_tax_display,
+		},
+	};
+}
+
+export function getCreditsLineItem( responseCart: ResponseCart ): WPCOMCartCreditsItem | null {
+	if ( responseCart.credits_integer <= 0 ) {
+		return null;
+	}
+	return {
+		id: 'credits',
+		label: String( translate( 'Credits' ) ),
+		type: 'credits',
+		amount: {
+			currency: responseCart.currency,
+			value: responseCart.credits_integer,
+			displayValue: String(
+				translate( '- %(discountAmount)s', {
+					args: {
+						// Clamp the credits display value to the total
+						discountAmount: doesPurchaseHaveFullCredits( responseCart )
+							? responseCart.sub_total_with_taxes_display
+							: responseCart.credits_display,
+					},
+				} )
+			),
+		},
+		wpcom_meta: {
+			credits_integer: responseCart.credits_integer,
+			credits_display: responseCart.credits_display,
+		},
 	};
 }
 
@@ -181,7 +202,6 @@ function translateReponseCartProductToWPCOMCartItem(
 ): WPCOMCartItem {
 	const {
 		product_id,
-		product_name,
 		product_slug,
 		currency,
 		item_original_cost_display,
@@ -207,14 +227,7 @@ function translateReponseCartProductToWPCOMCartItem(
 		product_cost_display,
 	} = serverCartItem;
 
-	let label = product_name || '';
-
-	if (
-		serverCartItem.meta &&
-		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
-	) {
-		label = meta;
-	}
+	const label = getLabel( serverCartItem );
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
 
@@ -439,6 +452,14 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 		return isRenewalItem ? translate( 'Plan Renewal' ) : translate( 'Plan Subscription' );
 	}
 
+	if ( isGSuiteOrGoogleWorkspace( serverCartItem ) ) {
+		if ( isRenewalItem ) {
+			return translate( 'Productivity and Collaboration Tools Renewal' );
+		}
+
+		return translate( 'Productivity and Collaboration Tools' );
+	}
+
 	if (
 		meta &&
 		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
@@ -453,4 +474,14 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 	}
 
 	return isRenewalItem ? translate( 'Renewal' ) : '';
+}
+
+export function getLabel( serverCartItem: ResponseCartProduct ): string {
+	if (
+		serverCartItem.meta &&
+		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
+	) {
+		return serverCartItem.meta;
+	}
+	return serverCartItem.product_name || '';
 }

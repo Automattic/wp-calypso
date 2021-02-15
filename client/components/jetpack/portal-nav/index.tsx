@@ -13,8 +13,8 @@ import { isSectionNameEnabled } from 'calypso/sections-filter';
 import {
 	getCurrentPartner,
 	hasFetchedPartner,
-	isPartnerPortal,
-} from 'calypso/state/partner-portal/selectors';
+} from 'calypso/state/partner-portal/partner/selectors';
+import { isPartnerPortal } from 'calypso/state/partner-portal/selectors';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';

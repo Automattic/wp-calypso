@@ -98,7 +98,7 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 	  }
 	: {
 			type: T;
-			payload: P;
+			payload?: P;
 	  };
 
 export interface CheckoutProviderProps {

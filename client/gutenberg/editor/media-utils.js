@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, head, includes, isArray, reduce, split } from 'lodash';
+import { get, head, includes, isArray, reduce } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -21,9 +21,7 @@ export const mediaCalypsoToGutenberg = ( media ) => {
 		url: get( media, 'URL' ),
 		alt: get( media, 'alt' ),
 		// TODO: replace with `{ source: 'rich-text' }` after updating Gutenberg
-		caption: !! media.caption
-			? parseWithAttributeSchema( media.caption, { source: 'children' } )
-			: '',
+		caption: media.caption ? parseWithAttributeSchema( media.caption, { source: 'children' } ) : '',
 		description: get( media, 'description' ),
 		filename: get( media, 'file' ),
 		height: get( media, 'height' ),
@@ -43,7 +41,7 @@ export const mediaCalypsoToGutenberg = ( media ) => {
 			),
 		},
 		title: get( media, 'title' ),
-		type: head( split( get( media, 'mime_type', '' ), '/' ) ),
+		type: head( get( media, 'mime_type', '' ).split( '/' ) ),
 		width: get( media, 'width' ),
 	};
 };
