@@ -119,14 +119,14 @@ const SignupDisplayAnchor = ( {
 				<div className="signup-form__anchor-row">
 					{ /* Left Column: Contains Form */ }
 					<div className="signup-form__anchor-col">
-						<div className="signup-form__anchor-col-left-container">{ form }</div>
+						<div className="signup-form__anchor-col-container is-left-col">{ form }</div>
 					</div>
 
 					<div className="signup-form__anchor-separator" aria-hidden="true" role="presentation" />
 
 					{ /* Right Column: Contains Marketing Text */ }
 					<div className="signup-form__anchor-col">
-						<div className="signup-form__anchor-col-right-container">
+						<div className="signup-form__anchor-col-container is-right-col">
 							<div className="signup-form__anchor-col-right-group">
 								<div className="signup-form__anchor-right-heading">
 									{ __(

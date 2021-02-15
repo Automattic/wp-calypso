@@ -198,14 +198,17 @@
 		padding: 44px 20px 0;
 		text-align: center;
 
-		@include break-mobile {
+		@include break-small {
 			padding: 0 20px 20px;
 			position: absolute;
-			top: 25%;
+			top: 12%;
 			left: 50%;
 			width: 100%;
 			max-width: 1024px;
 			transform: translateX( -50% );
+		}
+		@include break-medium {
+			top: 25%;
 		}
 	}
 
@@ -221,7 +224,14 @@
 
 	// Flexbox Row used for 2 column layout
 	.signup-form__anchor-row {
-		display: flex;
+		// One column for small displays
+		display: block;
+
+		// Two column for medium and larger
+		@include break-medium {
+			display: flex;
+		}
+
 		flex-direction: row;
 		flex-wrap: wrap;
 		width: 100%;
@@ -239,20 +249,42 @@
 	// Thin line between Flexbox Cols
 	.signup-form__anchor-separator {
 		background: var( --studio-gray-5 );
-		width: 1px;
+		width: 0;
+		@include break-medium {
+			width: 1px;
+		}
 	}
 
-	// Container of left column
-	.signup-form__anchor-col-left-container {
-		padding-left: 4rem;
-		padding-right: 4rem;
-	}
+	// Container of left+right columns
+	.signup-form__anchor-col-container {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		// @include break-mobile {
+		// 	background-color: #FFAAAA;
+		// }
+		@include break-small {
+			// background-color: #AAFFAA;
+			padding-left: 1rem;
+			padding-right: 1rem;
+		}
+		@include break-medium {
+			// background-color: #AAAAFF;
+			padding-left: 2rem;
+			padding-right: 2rem;
+		}
+		@include break-large {
+			// background-color: #FFFFAA;
+			padding-left: 4rem;
+			padding-right: 4rem;
+		}
 
-	// Container of right column
-	.signup-form__anchor-col-right-container {
-		text-align: left;
-		padding-left: 4rem;
-		padding-right: 4rem;
+		&.is-right-col {
+			text-align: left;
+			margin-top: 3rem;
+			@include break-medium {
+				margin-top: 0;
+			}
+		}
 	}
 
 	// Div grouping together right heading "Turn your listeners.." with bullet points
