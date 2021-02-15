@@ -13,11 +13,13 @@ import LaunchContext from '../context';
 import { getDomainProduct, getPlanProductForFlow } from '../utils';
 import { useSiteDomains } from '../hooks';
 
-export function useCart(): {
+type LaunchCart = {
 	goToCheckout: () => Promise< void >; // used in gutenboarding-launch
 	goToCheckoutAndLaunch: () => Promise< void >; // used in focused-launch integrated with Editor Checkout modal
 	isCartUpdating: boolean;
-} {
+};
+
+export function useCart(): LaunchCart {
 	const { siteId, flow, openCheckout, isInIframe } = React.useContext( LaunchContext );
 
 	const locale = useLocale();
@@ -29,10 +31,11 @@ export function useCart(): {
 
 	const { planProduct, isEcommercePlan } = useSelect(
 		( select ) => {
-			const plan = select( PLANS_STORE ).getPlanByProductId( planProductId, locale );
+			const plansStore = select( PLANS_STORE );
+			const plan = plansStore.getPlanByProductId( planProductId, locale );
 			return {
-				planProduct: select( PLANS_STORE ).getPlanProductById( planProductId as number ),
-				isEcommercePlan: select( PLANS_STORE ).isPlanEcommerce( plan?.periodAgnosticSlug ),
+				planProduct: plansStore.getPlanProductById( planProductId as number ),
+				isEcommercePlan: plansStore.isPlanEcommerce( plan?.periodAgnosticSlug ),
 			};
 		},
 		[ planProductId, locale ]
