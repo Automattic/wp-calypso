@@ -37,40 +37,8 @@
 		}
 	}
 
-	.jetpack-product-card {
-		.jetpack-product-card__product-name {
-			font-size: rem( 21px );
-		}
-
-		.jetpack-product-card__from,
-		.jetpack-product-card__billing-time-frame,
-		.jetpack-product-card__subheadline {
-			color: #8c8f94;
-
-			font-size: rem( 11px );
-
-			@include break-medium {
-				font-size: rem( 13px );
-			}
-		}
-
-		.jetpack-product-card__description {
-			font-size: rem( 15px );
-		}
-	}
-
 	.foldable-card {
 		font-size: rem( 13px );
-	}
-
-	.jetpack-free-card {
-		.jetpack-free-card__header {
-			font-size: rem( 21px );
-		}
-
-		.jetpack-free-card__body {
-			font-size: rem( 15px );
-		}
 	}
 
 	.faq {
