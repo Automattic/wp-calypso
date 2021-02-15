@@ -156,3 +156,41 @@ export default function LicensePreview( {
 		</div>
 	);
 }
+
+export function LicensePreviewPlaceholder(): ReactElement {
+	const translate = useTranslate();
+
+	return (
+		<div className="license-preview license-preview--placeholder">
+			<LicenseListItem className="license-preview__card">
+				<div>
+					<h3 className="license-preview__domain">{ translate( 'Loading' ) }</h3>
+
+					<div className="license-preview__product" />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div />
+
+				<div />
+			</LicenseListItem>
+		</div>
+	);
+}
