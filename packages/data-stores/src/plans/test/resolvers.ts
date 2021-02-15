@@ -2,7 +2,27 @@
  * Internal dependencies
  */
 import { getSupportedPlans } from '../resolvers';
-import { PLAN_FREE, PLAN_PREMIUM, PLAN_PREMIUM_MONTHLY } from '../constants';
+import {
+	MOCK_PLAN_PRICE_APIS_FREE,
+	MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY,
+	MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY,
+	MOCK_PLAN_DETAILS_API,
+	MOCK_PLAN_FREE,
+	MOCK_PLAN_PREMIUM,
+	MOCK_PLAN_PRODUCT_FREE,
+	MOCK_PLAN_PRODUCT_PREMIUM_ANNUALLY,
+	MOCK_PLAN_PRODUCT_PREMIUM_MONTHLY,
+	MOCK_FEATURE_CUSTOM_DOMAIN,
+	MOCK_FEATURE_LIVE_SUPPORT,
+	MOCK_FEATURE_PRIORITY_SUPPORT,
+	MOCK_FEATURE_RECURRING_PAYMENTS,
+	MOCK_FEATURE_WORDADS,
+	MOCK_FEATURES_BY_TYPE_GENERAL,
+	MOCK_FEATURES_BY_TYPE_COMMERCE,
+	MOCK_FEATURES_BY_TYPE_MARKETING,
+} from '../mock/mock-constants';
+
+import type { PricedAPIPlan } from '../types';
 
 // Don't need to mock specific functions for any tests, but mocking
 // module because it accesses the `document` global.
@@ -14,69 +34,10 @@ describe( 'getSupportedPlans', () => {
 	it( 'calls setFeatures, setFeaturesByType, and setPlans after fetching plans', () => {
 		const iter = getSupportedPlans();
 
-		const planPriceData = [
-			{
-				currency_code: 'INR',
-				product_slug: PLAN_FREE,
-				raw_price: 0,
-				product_id: 1,
-			},
-			{
-				// premium plan, billed annually
-				currency_code: 'INR',
-				product_slug: PLAN_PREMIUM,
-				path_slug: 'premium',
-				raw_price: 12,
-				product_id: 2,
-			},
-			{
-				// premium plan, billed monthly
-				currency_code: 'INR',
-				product_slug: PLAN_PREMIUM_MONTHLY,
-				raw_price: 13,
-				product_id: 3,
-				bill_period: 31,
-			},
-		];
-
-		const planDetailedData = {
-			groups: [],
-			plans: [
-				{
-					products: [
-						{
-							plan_id: 1,
-						},
-						{
-							plan_id: 2,
-						},
-						{
-							plan_id: 3,
-						},
-					],
-					features: [ 'custom-domain' ],
-					highlighted_features: [ 'Custom domain', 'Other feature' ],
-					nonlocalized_short_name: 'Premium',
-				},
-			],
-			features_by_type: [
-				{
-					id: 'general',
-					name: null,
-					features: [ 'custom-domain', 'other-feature' ],
-				},
-			],
-			features: [
-				{
-					id: 'custom-domain',
-					name: 'Custom domain',
-				},
-				{
-					id: 'other-feature',
-					name: 'Other feature',
-				},
-			],
-		};
+		// Prepare stricter iterator types
+		type IteratorReturnType = ReturnType< typeof iter.next >;
+		type PlanPriceApiDataIterator = ( planPriceData: PricedAPIPlan[] ) => IteratorReturnType;
+		type PlanDetailsApiDataIterator = ( { body: DetailsAPIResponse } ) => IteratorReturnType;
 
 		// request to prices endpoint
 		expect( iter.next().value ).toEqual( {
@@ -89,7 +50,12 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		// request to plan details/features endpoint
-		expect( iter.next( planPriceData ).value ).toEqual( {
+		const planPriceApiData = [
+			MOCK_PLAN_PRICE_APIS_FREE,
+			MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY,
+			MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY,
+		];
+		expect( ( iter.next as PlanPriceApiDataIterator )( planPriceApiData ).value ).toEqual( {
 			type: 'FETCH_AND_PARSE',
 			resource: 'https://public-api.wordpress.com/wpcom/v2/plans/details?locale=en',
 			options: {
@@ -99,97 +65,57 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		// setPlans call
-		expect( iter.next( { body: planDetailedData } ).value ).toEqual( {
+		const planDetailsApiData = {
+			body: MOCK_PLAN_DETAILS_API,
+		};
+		expect( ( iter.next as PlanDetailsApiDataIterator )( planDetailsApiData ).value ).toEqual( {
+			locale: 'en',
 			type: 'SET_PLANS',
-			plans: [
-				{
-					description: undefined,
-					features: [
-						{
-							name: 'Custom domain',
-							requiresAnnuallyBilledPlan: true,
-						},
-						{
-							name: 'Other feature',
-							requiresAnnuallyBilledPlan: false,
-						},
-					],
-					featuresSlugs: {
-						'custom-domain': true,
-					},
-					isFree: false,
-					isPopular: true,
-					periodAgnosticSlug: 'premium',
-					productIds: [ 1, 2, 3 ],
-					storage: undefined,
-					title: undefined,
-				},
-			],
+			plans: [ MOCK_PLAN_FREE, MOCK_PLAN_PREMIUM ],
 		} );
 
 		// setPlanProducts call
 		expect( iter.next().value ).toEqual( {
 			type: 'SET_PLAN_PRODUCTS',
 			products: [
-				{
-					annualPrice: '₹0',
-					billingPeriod: 'ANNUALLY',
-					pathSlug: 'free',
-					periodAgnosticSlug: 'premium',
-					price: '₹0',
-					productId: 1,
-					rawPrice: 0,
-					storeSlug: 'free_plan',
-				},
-				{
-					annualDiscount: 92,
-					annualPrice: '₹12',
-					billingPeriod: 'ANNUALLY',
-					pathSlug: 'premium',
-					periodAgnosticSlug: 'premium',
-					price: '₹1',
-					productId: 2,
-					rawPrice: 12,
-					storeSlug: 'value_bundle',
-				},
-				{
-					annualPrice: '₹156',
-					annualDiscount: 92,
-					billingPeriod: 'MONTHLY',
-					pathSlug: undefined,
-					periodAgnosticSlug: 'premium',
-					price: '₹13',
-					productId: 3,
-					rawPrice: 13,
-					storeSlug: 'value_bundle_monthly',
-				},
+				MOCK_PLAN_PRODUCT_FREE,
+				MOCK_PLAN_PRODUCT_PREMIUM_ANNUALLY,
+				MOCK_PLAN_PRODUCT_PREMIUM_MONTHLY,
 			],
 		} );
 
 		expect( iter.next().value ).toEqual( {
+			locale: 'en',
 			type: 'SET_FEATURES',
-			features: {
-				'custom-domain': {
-					id: 'custom-domain',
-					name: 'Custom domain',
-					description: undefined,
-					type: 'checkbox',
-					requiresAnnuallyBilledPlan: true,
-				},
-				'other-feature': {
-					id: 'other-feature',
-					name: 'Other feature',
-					description: undefined,
-					type: 'checkbox',
-					requiresAnnuallyBilledPlan: false,
-				},
-			},
+			features: [
+				MOCK_FEATURE_CUSTOM_DOMAIN,
+				MOCK_FEATURE_LIVE_SUPPORT,
+				MOCK_FEATURE_PRIORITY_SUPPORT,
+				MOCK_FEATURE_RECURRING_PAYMENTS,
+				MOCK_FEATURE_WORDADS,
+			].reduce(
+				( dict, feature ) => ( {
+					...dict,
+					[ feature.id ]: {
+						...feature,
+						type: 'checkbox',
+						requiresAnnuallyBilledPlan:
+							feature.id === MOCK_FEATURE_CUSTOM_DOMAIN.id ||
+							feature.id === MOCK_FEATURE_LIVE_SUPPORT.id ||
+							feature.id === MOCK_FEATURE_PRIORITY_SUPPORT.id,
+					},
+				} ),
+				{}
+			),
 		} );
 
 		expect( iter.next().value ).toEqual( {
+			locale: 'en',
 			type: 'SET_FEATURES_BY_TYPE',
 			featuresByType: [
-				{ id: 'general', name: null, features: [ 'custom-domain', 'other-feature' ] },
+				MOCK_FEATURES_BY_TYPE_GENERAL,
+				MOCK_FEATURES_BY_TYPE_COMMERCE,
+				MOCK_FEATURES_BY_TYPE_MARKETING,
 			],
 		} );
 	} );

@@ -3,6 +3,13 @@
 	background-color: var( --color-primary );
 }
 
+.components-form-toggle {
+	input[type='checkbox'] {
+		cursor: pointer;
+
+	}
+}
+
 /* @wordpress/components Button overrides */
 .components-button {
 	&,
@@ -88,6 +95,7 @@
 .components-radio-control {
 	&__input[type='radio'] {
 		padding: 6px;
+		cursor: pointer;
 
 		&:checked {
 			border-color: var( --color-accent );

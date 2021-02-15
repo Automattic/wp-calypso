@@ -1,13 +1,9 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { postFormatsItemsSchema } from './schema';
-import {
-	combineReducers,
-	withSchemaValidation,
-	withStorageKey,
-	withoutPersistence,
-} from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,

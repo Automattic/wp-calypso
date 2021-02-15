@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import appointmentDetails from './appointment-details/reducer';
 import appointmentTimespan from './appointment-timespan/reducer';
 import availableTimes from './available-times/reducer';

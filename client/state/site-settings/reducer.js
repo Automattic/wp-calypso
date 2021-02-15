@@ -6,12 +6,8 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	MEDIA_DELETE,

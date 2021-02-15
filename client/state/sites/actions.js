@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
 import config from '@automattic/calypso-config';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
@@ -140,7 +142,7 @@ export function requestSite( siteFragment, forceWpcom = false ) {
 						type: SITE_REQUEST_FAILURE,
 						siteId: siteFragment,
 						site,
-						error: i18n.translate( 'No access to manage the site' ),
+						error: translate( 'No access to manage the site' ),
 					} );
 				}
 
@@ -168,6 +170,12 @@ export function requestSite( siteFragment, forceWpcom = false ) {
 	};
 }
 
+const siteDeletionNoticeId = 'site-delete';
+const siteDeletionNoticeOptions = {
+	duration: 5000,
+	id: siteDeletionNoticeId,
+};
+
 /**
  * Returns a function which, when invoked, triggers a network request to delete
  * a site.
@@ -176,11 +184,21 @@ export function requestSite( siteFragment, forceWpcom = false ) {
  * @returns {Function}        Action thunk
  */
 export function deleteSite( siteId ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const siteDomain = getSiteDomain( getState(), siteId );
+
 		dispatch( {
 			type: SITE_DELETE,
 			siteId,
 		} );
+
+		dispatch(
+			successNotice(
+				translate( '%(siteDomain)s is being deleted.', { args: { siteDomain } } ),
+				siteDeletionNoticeOptions
+			)
+		);
+
 		return wpcom
 			.undocumented()
 			.deleteSite( siteId )
@@ -190,6 +208,12 @@ export function deleteSite( siteId ) {
 					type: SITE_DELETE_SUCCESS,
 					siteId,
 				} );
+				dispatch(
+					successNotice(
+						translate( '%(siteDomain)s has been deleted.', { args: { siteDomain } } ),
+						siteDeletionNoticeOptions
+					)
+				);
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -197,6 +221,22 @@ export function deleteSite( siteId ) {
 					siteId,
 					error,
 				} );
+				if ( error.error === 'active-subscriptions' ) {
+					dispatch(
+						errorNotice(
+							translate( 'You must cancel any active subscriptions prior to deleting your site.' ),
+							{
+								id: siteDeletionNoticeId,
+								showDismiss: false,
+								button: translate( 'Manage Purchases' ),
+								href: purchasesRoot,
+							}
+						)
+					);
+					return;
+				}
+
+				dispatch( errorNotice( error.message, siteDeletionNoticeOptions ) );
 			} );
 	};
 }

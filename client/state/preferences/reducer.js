@@ -6,6 +6,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
@@ -14,12 +15,7 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
 } from 'calypso/state/action-types';
-import {
-	combineReducers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 import { remoteValuesSchema } from './schema';
 
 /**

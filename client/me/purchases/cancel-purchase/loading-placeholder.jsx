@@ -4,6 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -43,4 +44,4 @@ CancelPurchaseLoadingPlaceholder.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func.isRequired,
 };
 
-export default CancelPurchaseLoadingPlaceholder;
+export default localize( CancelPurchaseLoadingPlaceholder );

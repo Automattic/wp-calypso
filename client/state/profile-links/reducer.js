@@ -6,7 +6,8 @@ import { reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	USER_PROFILE_LINKS_ADD_DUPLICATE,
 	USER_PROFILE_LINKS_ADD_FAILURE,

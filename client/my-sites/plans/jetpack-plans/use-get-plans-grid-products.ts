@@ -18,8 +18,7 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
+	JETPACK_CRM_FREE_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
 import { doForCurrentCROIteration, Iterations } from './iterations';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -60,15 +59,9 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	doForCurrentCROIteration( ( variation: Iterations ) => {
 		if (
 			variation !== Iterations.SPP &&
-			! ownedProducts.some( ( ownedProduct ) =>
-				[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
-			)
+			! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
 		) {
-			availableProducts = [
-				...availableProducts,
-				PRODUCT_JETPACK_CRM,
-				PRODUCT_JETPACK_CRM_MONTHLY,
-			];
+			availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
 		}
 	} );
 

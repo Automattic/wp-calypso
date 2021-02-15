@@ -58,13 +58,18 @@ module.exports = function ( configPath, defaultOpts ) {
 	}
 
 	if (
-		! ( secretsPath === realSecretsPath ) &&
+		secretsPath !== realSecretsPath &&
 		data.features &&
 		data.features[ 'wpcom-user-bootstrap' ]
 	) {
 		console.error( 'Disabling server-side user-bootstrapping because of a missing secrets.json' );
 		data.features[ 'wpcom-user-bootstrap' ] = false;
 	}
+
+	// `protocol`, `hostname` and `port` config values can be overridden by env variables
+	data.protocol = process.env.PROTOCOL || data.protocol;
+	data.hostname = process.env.HOST || data.hostname;
+	data.port = process.env.PORT || data.port;
 
 	const serverData = assign( {}, data, getDataFromFile( secretsPath ) );
 	const clientData = assign( {}, data );

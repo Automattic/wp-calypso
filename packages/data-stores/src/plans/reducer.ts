@@ -10,34 +10,37 @@ import { combineReducers } from '@wordpress/data';
 import type { PlanAction } from './actions';
 import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
 
-export const features: Reducer< Record< string, PlanFeature >, PlanAction > = (
+// create a Locale type just for code readability
+type Locale = string;
+
+export const features: Reducer< Record< Locale, Record< string, PlanFeature > >, PlanAction > = (
 	state = {},
 	action
 ) => {
 	switch ( action.type ) {
 		case 'SET_FEATURES':
-			return action.features;
+			return { ...state, [ action.locale ]: action.features };
 		default:
 			return state;
 	}
 };
 
-export const featuresByType: Reducer< Array< FeaturesByType >, PlanAction > = (
-	state = [],
+export const featuresByType: Reducer< Record< Locale, Array< FeaturesByType > >, PlanAction > = (
+	state = {},
 	action
 ) => {
 	switch ( action.type ) {
 		case 'SET_FEATURES_BY_TYPE':
-			return action.featuresByType;
+			return { ...state, [ action.locale ]: action.featuresByType };
 		default:
 			return state;
 	}
 };
 
-export const plans: Reducer< Plan[], PlanAction > = ( state = [], action ) => {
+export const plans: Reducer< Record< Locale, Plan[] >, PlanAction > = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case 'SET_PLANS':
-			return action.plans;
+			return { ...state, [ action.locale ]: action.plans };
 		default:
 			return state;
 	}

@@ -952,12 +952,6 @@ export const FEATURES_LIST = {
 		hideInfoPopover: true,
 	},
 
-	[ constants.FEATURE_PRIORITY_SUPPORT_JETPACK ]: {
-		getSlug: () => constants.FEATURE_PRIORITY_SUPPORT_JETPACK,
-		getTitle: () => i18n.translate( 'Priority support' ),
-		getDescription: () => i18n.translate( 'Faster response times from our security experts.' ),
-		hideInfoPopover: true,
-	},
 	[ constants.FEATURE_TRAFFIC_TOOLS_JETPACK ]: {
 		getSlug: () => constants.FEATURE_TRAFFIC_TOOLS_JETPACK,
 		getTitle: () => i18n.translate( 'Advanced traffic tools' ),
@@ -1396,11 +1390,6 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'No contact limits' ),
 	},
 
-	[ constants.FEATURE_CRM_PRIORITY_SUPPORT ]: {
-		getSlug: () => constants.FEATURE_CRM_PRIORITY_SUPPORT,
-		getTitle: () => i18n.translate( 'Priority support' ),
-	},
-
 	[ constants.FEATURE_SOCIAL_MEDIA_POSTING_V2 ]: {
 		getSlug: () => constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
 		getTitle: () => i18n.translate( 'Scheduled social media posting' ),
@@ -1462,31 +1451,6 @@ export const FEATURES_LIST = {
 				{
 					components: {
 						link: <ExternalLink icon href="https://jetpack.com/features/design/themes/" />,
-					},
-				}
-			),
-	},
-
-	[ constants.FEATURE_WPCOM_PREMIUM_THEMES ]: {
-		getSlug: () => constants.FEATURE_WPCOM_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Premium themes' ),
-		getDescription: () => {},
-	},
-
-	[ constants.FEATURE_PRIORITY_SUPPORT_V2 ]: {
-		getSlug: () => constants.FEATURE_PRIORITY_SUPPORT_V2,
-		getTitle: () => i18n.translate( 'Priority support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Get fast WordPress support from the WordPress experts. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://jetpack.com/features/security/expert-priority-support/"
-							/>
-						),
 					},
 				}
 			),

@@ -77,15 +77,15 @@
 /client/types.ts @Automattic/type-review
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
-# FSE (Full Site Editing)
+# Editing Toolkit Modules
 /apps/editing-toolkit/editing-toolkit-plugin/site-editor @Automattic/cylon
 /apps/editing-toolkit/editing-toolkit-plugin/dotcom-fse @Automattic/cylon
 /apps/editing-toolkit/editing-toolkit-plugin/posts-list-block @Automattic/ajax
 /apps/editing-toolkit/editing-toolkit-plugin/global-styles @Automattic/cylon @nosolosw
 
-# FSE Workflow Files
-/.github/workflows/editing-toolkit-plugin.yml @Automattic/cylon
-/.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
+# Editing Toolkit Workflow Files
+/.github/workflows/editing-toolkit-plugin.yml @noahtallen
+/.github/workflows/send-calypso-app-build-trigger.sh @noahtallen
 
 # Experimentation platform legacy library and new client
 /client/lib/abtest @Automattic/experimentation-platform

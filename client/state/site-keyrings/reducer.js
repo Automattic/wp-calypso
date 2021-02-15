@@ -1,12 +1,8 @@
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 import { siteKeyrings as siteKeyringsSchema } from './schema';
 import {
 	SITE_KEYRINGS_REQUEST,
