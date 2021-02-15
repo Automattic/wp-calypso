@@ -630,15 +630,9 @@ export default connect(
 
 							break;
 						default:
-							if ( planConstantObj.getSignupCompareAvailableFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
-								);
-							} else {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupFeatures( currentPlan )
-								);
-							}
+							planFeatures = getPlanFeaturesObject(
+								planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
+							);
 					}
 				}
 
@@ -700,9 +694,6 @@ export default connect(
 				const missingFeaturesForAnnualPlansObj = planConstantObj.getSignupCompareMissingFeatures
 					? getPlanFeaturesObject( missingFeaturesForAnnualPlans )
 					: [];
-
-				// console.log('getSignupCompareMissingFeatures: ');
-				// console.log(getPlanFeaturesObject( planConstantObj.getSignupCompareMissingFeatures() ));
 
 				// Strip annual-only features out for the site's /plans page
 				if ( ! isInSignup || isPlaceholder ) {
