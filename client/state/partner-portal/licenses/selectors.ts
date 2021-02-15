@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { License, PaginatedItems, PartnerPortalStore } from 'calypso/state/partner-portal';
+import { License, PaginatedItems, PartnerPortalStore } from 'calypso/state/partner-portal/types';
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 

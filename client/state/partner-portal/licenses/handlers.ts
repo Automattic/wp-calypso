@@ -11,7 +11,7 @@ import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 } from 'calypso/state/action-types';
-import { HttpAction, License, PaginatedItems } from 'calypso/state/partner-portal';
+import { HttpAction, License, PaginatedItems } from 'calypso/state/partner-portal/types';
 import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { NoticeAction } from 'calypso/state/notices/types';

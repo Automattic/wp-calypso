@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { License, PaginatedItems } from 'calypso/state/partner-portal';
+import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import {
 	hasFetchedLicenses,

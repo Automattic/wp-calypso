@@ -14,7 +14,7 @@ import {
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { ReduxDispatch } from 'calypso/state/redux-store';
-import { APIError, Partner, PartnerPortalStore } from 'calypso/state/partner-portal';
+import { APIError, Partner, PartnerPortalStore } from 'calypso/state/partner-portal/types';
 import {
 	getActivePartnerKey,
 	isFetchingPartner,

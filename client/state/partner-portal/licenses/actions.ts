@@ -11,7 +11,7 @@ import {
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 } from 'calypso/state/action-types';
 import { ReduxDispatch } from 'calypso/state/redux-store';
-import { HttpAction, License } from 'calypso/state/partner-portal';
+import { HttpAction, License } from 'calypso/state/partner-portal/types';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';

@@ -6,7 +6,7 @@ import { AnyAction } from 'redux';
 /**
  * Utility.
  */
-interface HttpAction extends AnyAction {
+export interface HttpAction extends AnyAction {
 	fetcher: string;
 }
 
@@ -70,7 +70,7 @@ export interface LicensesStore {
 	paginated: PaginatedItems< License > | null;
 }
 
-export interface PartnerPortalStore {
+interface CombinedStore {
 	partner: PartnerStore;
 	licenses: LicensesStore;
 }
@@ -79,5 +79,5 @@ export interface PartnerPortalStore {
  * Represents the entire Redux store but defines only the parts that the partner portal deals with.
  */
 export interface PartnerPortalStore {
-	partnerPortal: PartnerPortalStore;
+	partnerPortal: CombinedStore;
 }
