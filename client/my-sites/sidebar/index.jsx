@@ -716,9 +716,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const isCalypsoStoreDeprecated = isEnabled( 'woocommerce/store-deprecated' );
-
-		if ( ! isSiteWpcomStore && isCalypsoStoreDeprecated && isBusiness( site.plan ) ) {
+		if ( ! isSiteWpcomStore && isBusiness( site.plan ) ) {
 			return null;
 		}
 
@@ -751,13 +749,15 @@ export class MySitesSidebar extends Component {
 				forceInternalLink
 				className="sidebar__store"
 			>
-				<InfoPopover
-					className="sidebar__store-tooltip"
-					position="bottom right"
-					showOnHover={ true }
-				>
-					{ infoCopy }
-				</InfoPopover>
+				{ isBusiness( site.plan ) && (
+					<InfoPopover
+						className="sidebar__store-tooltip"
+						position="bottom right"
+						showOnHover={ true }
+					>
+						{ infoCopy }
+					</InfoPopover>
+				) }
 			</SidebarItem>
 		);
 	}
@@ -769,14 +769,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const isCalypsoStoreDeprecatedOrRemoved =
-			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
-
-		if (
-			! isCalypsoStoreDeprecatedOrRemoved ||
-			! isBusiness( site.plan ) ||
-			! canUserUseWooCommerceCoreStore
-		) {
+		if ( ! isBusiness( site.plan ) || ! canUserUseWooCommerceCoreStore ) {
 			// Right now, we only use the "WooCommerce" label for Business plan sites.
 			// eCommerce sites continue to use the "Store" label for now
 			// (see handling in `store()` above.

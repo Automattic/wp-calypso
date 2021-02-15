@@ -6,13 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
-import {
-	combineReducers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {

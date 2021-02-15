@@ -498,6 +498,7 @@ $accent-blue: #117ac9;
 .domain-picker__item-tip {
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-40 );
+	word-break: initial; // don't inherit word-breaking behaviour from domain name
 }
 
 .domain-picker__error {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, split } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ export default function getSiteThemeShowcasePath( state, siteId ) {
 		return null;
 	}
 
-	const [ type, slug ] = split( getSiteOption( state, siteId, 'theme_slug' ), '/', 2 );
+	const [ type, slug ] = getSiteOption( state, siteId, 'theme_slug' )?.split( '/', 2 ) ?? [];
 
 	// to accomodate a8c and other theme types
 	if ( ! includes( [ 'pub', 'premium' ], type ) ) {

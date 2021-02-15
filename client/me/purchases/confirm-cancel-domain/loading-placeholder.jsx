@@ -4,6 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -40,4 +41,4 @@ ConfirmCancelDomainLoadingPlaceholder.propTypes = {
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
-export default ConfirmCancelDomainLoadingPlaceholder;
+export default localize( ConfirmCancelDomainLoadingPlaceholder );

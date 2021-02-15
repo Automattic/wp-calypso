@@ -1,13 +1,9 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { siteRolesSchema } from './schema';
-import {
-	combineReducers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,

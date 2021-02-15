@@ -69,8 +69,7 @@ describe( 'cancellation-effect', () => {
 				productsValues.isGSuiteOrGoogleWorkspace = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
-					'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
-						'You will be able to manage your G Suite billing directly through Google.'
+					'You will be refunded %(cost)s, and your %(googleMailService)s account will continue working without interruption. You will be able to set up billing for your account directly with Google.'
 				);
 			} );
 
@@ -116,7 +115,7 @@ describe( 'cancellation-effect', () => {
 				productsValues.isGSuiteOrGoogleWorkspace = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
-					'Your G Suite account remains active until it expires on %(subscriptionEndDate)s.'
+					'Your %(googleMailService)s account remains active until it expires on %(subscriptionEndDate)s.'
 				);
 			} );
 

@@ -80,6 +80,24 @@
 	margin-top: 32px;
 }
 
+.products-grid-i5__asterisk-items {
+	margin-top: initial;
+	margin-bottom: -20px;
+}
+
+.products-grid-i5__asterisk-item {
+	&::before {
+		content: '*';
+	}
+
+	text-align: center;
+	color: var( --color-neutral-light );
+
+	font-size: $font-title-medium;
+	letter-spacing: -0.95px;
+	line-height: $font-headline-large;
+}
+
 .products-grid-i5__more.is-detached {
 	margin-top: 48px;
 }

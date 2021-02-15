@@ -6,7 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	SITE_ADDRESS_AVAILABILITY_REQUEST,
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,

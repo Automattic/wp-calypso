@@ -3626,9 +3626,7 @@ describe( 'selectors', () => {
 		beforeEach( () => {
 			// Enable all features except for store deprecation and removal
 			config.isEnabled.mockImplementation( ( feature ) => {
-				return (
-					feature !== 'woocommerce/store-deprecated' && feature !== 'woocommerce/store-removed'
-				);
+				return feature !== 'woocommerce/store-removed';
 			} );
 		} );
 
@@ -3777,19 +3775,6 @@ describe( 'selectors', () => {
 			).toBe( false );
 		} );
 
-		test( 'should return false if site is Business and Store is not deprecated or removed', () => {
-			// Enable all features except for store deprecation
-			config.isEnabled.mockImplementation( ( feature ) => {
-				return (
-					feature !== 'woocommerce/store-deprecated' && feature !== 'woocommerce/store-removed'
-				);
-			} );
-
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
-			).toBe( false );
-		} );
-
 		test( 'should return true if site is Business and Store is deprecated but not removed', () => {
 			// Enable all features except for store removal
 			config.isEnabled.mockImplementation( ( feature ) => feature !== 'woocommerce/store-removed' );
@@ -3800,11 +3785,6 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if site is Business and Store is not deprecated but is removed', () => {
-			// Enable all features except for store deprecation
-			config.isEnabled.mockImplementation(
-				( feature ) => feature !== 'woocommerce/store-deprecated'
-			);
-
 			expect(
 				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
 			).toBe( true );

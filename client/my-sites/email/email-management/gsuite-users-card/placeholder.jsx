@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 /**
@@ -18,7 +17,8 @@ import './style.scss';
 
 const Placeholder = () => (
 	<div className="gsuite-users-card__container is-placeholder">
-		<SectionHeader label={ 'G Suite Users' } />
+		<SectionHeader />
+
 		<CompactCard className="gsuite-users-card__user-list">
 			<ul className="gsuite-users-card__user-list-inner">
 				<GSuiteUserItem user={ { email: 'mail@example.com', domain: 'example.com' } } />

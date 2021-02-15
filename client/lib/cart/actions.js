@@ -126,6 +126,8 @@ export function getRememberedCoupon() {
 		'ALT',
 		'FBSAVE15',
 		'FIVERR',
+		'FLASHFB200FF',
+		'FLASHFB500FF',
 		'GENEA',
 		'KITVISA',
 		'LINKEDIN',

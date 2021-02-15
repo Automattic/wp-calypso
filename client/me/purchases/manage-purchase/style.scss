@@ -135,6 +135,15 @@
 		fill: var( --color-text-inverted );
 	}
 
+	.gridicons-my-sites {
+		background: unset;
+		fill: var( --color-wordpress-com );
+		margin-left: -3px;
+		margin-top: -3px;
+		padding: 0;
+		transform: scale( 1.1 );
+	}
+
 	.gridicons-themes {
 		border-radius: 8px;
 	}

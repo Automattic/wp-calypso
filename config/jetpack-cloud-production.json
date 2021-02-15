@@ -65,6 +65,5 @@
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
-	"theme_color": "#2fb41f",
-	"olark_chat_identity": "5581-687-10-4070"
+	"theme_color": "#2fb41f"
 }

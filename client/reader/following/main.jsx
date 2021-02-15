@@ -72,7 +72,7 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
-				{ isEligibleForUnseen( { teams, isFollowingItem: true } ) && (
+				{ isEligibleForUnseen( { teams } ) && (
 					<Button
 						compact
 						onClick={ () => markAllAsSeen( props.feedsInfo ) }

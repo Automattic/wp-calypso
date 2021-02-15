@@ -2,6 +2,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
@@ -11,7 +12,7 @@ import {
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
 } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { storedCardsSchema } from './schema';
 
 /**

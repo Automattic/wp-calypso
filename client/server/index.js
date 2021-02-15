@@ -13,14 +13,14 @@ import fs from 'fs';
  * Internal dependencies
  */
 import boot from './boot';
-import config from './config';
+import config from '@automattic/calypso-config';
 import { getLogger } from './lib/logger';
 
 const logger = getLogger();
 const start = Date.now();
-const protocol = process.env.PROTOCOL || config( 'protocol' );
-const port = process.env.PORT || config( 'port' );
-const host = process.env.HOST || config( 'hostname' );
+const protocol = config( 'protocol' );
+const port = config( 'port' );
+const host = config( 'hostname' );
 const app = boot();
 
 function sendBootStatus( status ) {

@@ -29,14 +29,14 @@ describe( 'hasSiteSeoFeature', () => {
 	it( 'returns false if the site does not have the SEO feature', () => {
 		expect( hasSiteSeoFeature( { plan: wpcomFreePlan } ) ).toEqual( false );
 		expect( hasSiteSeoFeature( { plan: wpcomPremiumPlan } ) ).toEqual( false );
-		expect( hasSiteSeoFeature( { plan: jpFreePlan } ) ).toEqual( false );
-		expect( hasSiteSeoFeature( { plan: jpPersonalPlan } ) ).toEqual( false );
 	} );
 
 	it( 'returns true if the site has the SEO feature', () => {
 		expect( hasSiteSeoFeature( { plan: wpcomBusinessPlan } ) ).toEqual( true );
 		expect( hasSiteSeoFeature( { plan: wpcomEcommercePlan } ) ).toEqual( true );
 		expect( hasSiteSeoFeature( { plan: wpcomEnterprisePlan } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpFreePlan } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpPersonalPlan } ) ).toEqual( true );
 		expect( hasSiteSeoFeature( { plan: jpPremiumPlan } ) ).toEqual( true );
 		expect( hasSiteSeoFeature( { plan: jpBusinessPlan } ) ).toEqual( true );
 		expect( hasSiteSeoFeature( { plan: jpSecurityDailyPlan } ) ).toEqual( true );

@@ -36,6 +36,8 @@ To clarify these expectations, Calypso has adopted the code of conduct defined b
 
 Need to report a security vulnerability? Go to [https://automattic.com/security/](https://automattic.com/security/) or directly to our security bug bounty site [https://hackerone.com/automattic](https://hackerone.com/automattic/).
 
+Our security policy can be read in full [here](./SECURITY.md).
+
 ## Browser Support
 
 We support the latest two versions of all major browsers, except IE, where we currently only support 11 and Edge. (see [Browse Happy](https://browsehappy.com/) for current latest versions).
