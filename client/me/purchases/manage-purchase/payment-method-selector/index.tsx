@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useStripe } from '@automattic/calypso-stripe';
 import {
@@ -52,7 +52,7 @@ export default function PaymentMethodSelector( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
+	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
 	const showErrorMessage = useCallback(
@@ -94,6 +94,12 @@ export default function PaymentMethodSelector( {
 	const assignAllSubscriptionsText = String(
 		translate( 'Assign this payment method to all of my subscriptions' )
 	);
+
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			showErrorMessage( stripeLoadingError );
+		}
+	}, [ stripeLoadingError, showErrorMessage ] );
 
 	return (
 		<CheckoutProvider
