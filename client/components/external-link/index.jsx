@@ -7,11 +7,11 @@ import classnames from 'classnames';
 import { assign, omit } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { translate } from 'i18n-calypso';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { ScreenReaderText } from '@automattic/components';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
@@ -76,11 +76,11 @@ class ExternalLink extends Component {
 				{ this.props.children }
 				{ this.props.icon && ! this.props.showIconFirst && iconComponent }
 				{ this.props.icon && (
-					<ScreenReaderText>
+					<VisuallyHidden>
 						{ translate( '(opens in a new tab)', {
 							comment: 'accessibility label for an external link',
 						} ) }
-					</ScreenReaderText>
+					</VisuallyHidden>
 				) }
 			</a>
 		);

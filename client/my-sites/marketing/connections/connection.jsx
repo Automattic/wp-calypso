@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { ScreenReaderText } from '@automattic/components';
 
 class SharingConnection extends Component {
 	static propTypes = {
@@ -129,7 +129,7 @@ class SharingConnection extends Component {
 						size={ 36 }
 					/>
 				) }
-				<ScreenReaderText>{ this.props.connection.label }</ScreenReaderText>
+				<VisuallyHidden>{ this.props.connection.label }</VisuallyHidden>
 			</span>
 		);
 	}

@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, includes, times, first } from 'lodash';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import Notice from 'calypso/components/notice';
-import { Card, ScreenReaderText } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -248,9 +249,9 @@ class DomainSearchResults extends React.Component {
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			suggestionCount = (
 				<div aria-live="polite">
-					<ScreenReaderText>
+					<VisuallyHidden>
 						{ this.props.translate( '%s domains found', { args: this.props.suggestions.length } ) }
-					</ScreenReaderText>
+					</VisuallyHidden>
 				</div>
 			);
 

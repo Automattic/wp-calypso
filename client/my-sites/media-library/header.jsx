@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'calypso/lib/site/utils';
 import MediaModalSecondaryActions from 'calypso/post-editor/media-modal/secondary-actions';
-import { Card, Button, ScreenReaderText } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import ButtonGroup from 'calypso/components/button-group';
 import StickyPanel from 'calypso/components/sticky-panel';
 
@@ -94,7 +95,7 @@ class MediaLibraryHeader extends React.Component {
 					className="button media-library__upload-more"
 					data-tip-target="media-library-upload-more"
 				>
-					<ScreenReaderText>{ this.props.translate( 'More Options' ) }</ScreenReaderText>
+					<VisuallyHidden>{ this.props.translate( 'More Options' ) }</VisuallyHidden>
 					<Gridicon icon="chevron-down" size={ 18 } />
 					<PopoverMenu
 						context={ this.state.moreOptionsContext }

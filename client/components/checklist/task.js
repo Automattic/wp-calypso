@@ -8,9 +8,14 @@ import React, { Fragment, PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
+ * WordPress dependencies
+ */
+import { VisuallyHidden } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
-import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import Spinner from 'calypso/components/spinner';
 
@@ -56,7 +61,7 @@ class Task extends PureComponent {
 		if ( inProgress ) {
 			return (
 				<Fragment>
-					<ScreenReaderText>{ translate( 'In progress' ) }</ScreenReaderText>
+					<VisuallyHidden>{ translate( 'In progress' ) }</VisuallyHidden>
 					{ this.renderGridicon() }
 				</Fragment>
 			);
@@ -65,7 +70,7 @@ class Task extends PureComponent {
 		if ( disableIcon ) {
 			return (
 				<div className="checklist__task-icon is-disabled">
-					<ScreenReaderText>{ translate( 'Waiting to complete' ) }</ScreenReaderText>
+					<VisuallyHidden>{ translate( 'Waiting to complete' ) }</VisuallyHidden>
 				</div>
 			);
 		}
@@ -73,9 +78,9 @@ class Task extends PureComponent {
 		if ( onDismiss ) {
 			return (
 				<div className="checklist__task-icon">
-					<ScreenReaderText>
+					<VisuallyHidden>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
-					</ScreenReaderText>
+					</VisuallyHidden>
 					{ this.renderGridicon() }
 				</div>
 			);
@@ -84,7 +89,7 @@ class Task extends PureComponent {
 		if ( completed ) {
 			return (
 				<div className="checklist__task-icon">
-					<ScreenReaderText>{ translate( 'Complete' ) }</ScreenReaderText>
+					<VisuallyHidden>{ translate( 'Complete' ) }</VisuallyHidden>
 					{ this.renderGridicon() }
 				</div>
 			);
@@ -93,7 +98,7 @@ class Task extends PureComponent {
 		if ( isWarning ) {
 			return (
 				<div>
-					<ScreenReaderText>{ translate( 'Warning' ) }</ScreenReaderText>
+					<VisuallyHidden>{ translate( 'Warning' ) }</VisuallyHidden>
 					{ this.renderGridicon() }
 				</div>
 			);

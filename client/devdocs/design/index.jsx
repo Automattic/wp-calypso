@@ -96,7 +96,6 @@ import PromoCard from 'calypso/components/promo-section/promo-card/docs/example'
 import Ranges from 'calypso/components/forms/range/docs/example';
 import Rating from 'calypso/components/rating/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
-import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
 import SearchDemo from 'calypso/components/search/docs/example';
 import SectionHeader from 'calypso/components/section-header/docs/example';
 import SectionNav from 'calypso/components/section-nav/docs/example';
@@ -254,7 +253,6 @@ export default class DesignAssets extends React.Component {
 					<Ranges readmeFilePath="forms/range" />
 					<Rating readmeFilePath="rating" />
 					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
-					<ScreenReaderTextExample readmeFilePath="/packages/components/src/screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />

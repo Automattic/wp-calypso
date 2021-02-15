@@ -4,11 +4,12 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { Card, ScreenReaderText } from '@automattic/components';
+import { Card } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -75,7 +76,7 @@ class ActivityLogBanner extends Component {
 				</div>
 				{ isDismissable && (
 					<button className="activity-log-banner__dismiss" onClick={ onDismissClick } type="button">
-						<ScreenReaderText>{ translate( 'Dismiss' ) }</ScreenReaderText>
+						<VisuallyHidden>{ translate( 'Dismiss' ) }</VisuallyHidden>
 						<Gridicon icon="cross" size={ 24 } />
 					</button>
 				) }

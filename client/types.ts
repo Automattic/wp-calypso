@@ -61,3 +61,12 @@ declare global {
 		AppBoot: () => void;
 	}
 }
+
+// Missing from the type definition
+declare module '@wordpress/components' {
+	export function VisuallyHidden( props: {
+		children: React.ReactNode;
+		as?: React.ElementType;
+		className?: string;
+	} ): JSX.Element;
+}

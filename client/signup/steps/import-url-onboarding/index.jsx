@@ -5,11 +5,12 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get, includes, invoke, isEmpty } from 'lodash';
+import { VisuallyHidden } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { Button, Card, ScreenReaderText } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -303,9 +304,9 @@ class ImportURLOnboardingStepComponent extends Component {
 				{ this.renderNotice() }
 				<Card className="import-url-onboarding__url-card">
 					<form className="import-url-onboarding__form" onSubmit={ this.handleSubmit }>
-						<ScreenReaderText>
+						<VisuallyHidden>
 							<FormLabel htmlFor="url-input">Site URL</FormLabel>
-						</ScreenReaderText>
+						</VisuallyHidden>
 
 						<FormTextInput
 							id="url-input"
