@@ -40,13 +40,7 @@ class People extends React.Component {
 			case 'email-followers':
 				return <FollowersList site={ site } search={ search } type="email" />;
 			case 'viewers':
-				return (
-					<ViewersList
-						key={ `people-viewers-${ site.ID }` }
-						site={ site }
-						label={ translate( 'Viewers' ) }
-					/>
-				);
+				return <ViewersList site={ site } label={ translate( 'Viewers' ) } />;
 			default:
 				return null;
 		}

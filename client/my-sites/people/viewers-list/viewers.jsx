@@ -18,8 +18,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import accept from 'calypso/lib/accept';
 import ListEnd from 'calypso/components/list-end';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { removeViewer } from 'calypso/state/viewers/actions';
-import { getViewers, getTotalViewers, isFetchingViewers } from 'calypso/state/viewers/selectors';
 
 class Viewers extends React.Component {
 	infiniteList = React.createRef();
@@ -33,7 +31,7 @@ class Viewers extends React.Component {
 			'page',
 			this.props.page + 1
 		);
-		this.props.incrementPage();
+		this.props.fetchNextPage();
 	};
 
 	removeViewer = ( viewer ) => {
@@ -53,7 +51,7 @@ class Viewers extends React.Component {
 						'People',
 						'Clicked Remove Button In Remove Viewer Confirmation'
 					);
-					this.props.removeViewer( this.props.site.ID, viewer.ID );
+					this.props.removeViewer( viewer.ID );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -82,8 +80,6 @@ class Viewers extends React.Component {
 	};
 
 	getViewerRef = ( viewer ) => 'viewer-' + viewer.ID;
-
-	isLastPage = () => this.props.totalViewers <= this.props.viewers.length;
 
 	render() {
 		let viewers;
@@ -116,8 +112,8 @@ class Viewers extends React.Component {
 					items={ this.props.viewers }
 					className="viewers-list__infinite is-people"
 					ref={ this.infiniteList }
-					fetchingNextPage={ this.props.fetching }
-					lastPage={ this.isLastPage() }
+					fetchingNextPage={ this.props.isFetchingNextPage }
+					lastPage={ ! this.props.hasNextPage }
 					fetchNextPage={ this.fetchNextPage }
 					getItemRef={ this.getViewerRef }
 					renderLoadingPlaceholders={ this.renderPlaceholders }
@@ -138,21 +134,14 @@ class Viewers extends React.Component {
 					count={ this.props.fetching ? null : this.props.totalViewers }
 				/>
 				<Card className="people-invites__invites-list">{ viewers }</Card>
-				{ this.isLastPage() && <ListEnd /> }
+				{ ! this.props.hasNextPage && <ListEnd /> }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { site } ) => ( {
-	viewers: getViewers( state, site.ID ),
-	fetching: isFetchingViewers( state, site.ID ),
-	totalViewers: getTotalViewers( state, site.ID ),
-} );
-
 const mapDispatchToProps = {
 	recordGoogleEvent,
-	removeViewer,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Viewers ) );
+export default connect( null, mapDispatchToProps )( localize( Viewers ) );
