@@ -391,14 +391,7 @@ const getPlanBusinessDetails = () => ( {
 const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_DAILY,
-	getTitle: ( variation ) =>
-		( {
-			spp: translate( 'Jetpack Security' ),
-		}[ variation ] || translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ) ),
-	getButtonLabel: ( variation ) =>
-		( {
-			spp: translate( 'Get Jetpack Security' ),
-		}[ variation ] || undefined ),
+	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),

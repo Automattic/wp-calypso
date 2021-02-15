@@ -1014,10 +1014,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
 		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
 		getIcon: () => 'lock',
-		getTitle: ( variation ) =>
-			( {
-				spp: i18n.translate( 'All Jetpack Security features' ),
-			}[ variation ] || i18n.translate( 'All Security Daily features' ) ),
+		getTitle: () => i18n.translate( 'All Security Daily features' ),
 		isPlan: true,
 	},
 
@@ -1089,10 +1086,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: ( variation ) =>
-			( {
-				spp: i18n.translate( 'All Jetpack Backup features' ),
-			}[ variation ] || i18n.translate( 'All Backup Daily features' ) ),
+		getTitle: () => i18n.translate( 'All Backup Daily features' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
