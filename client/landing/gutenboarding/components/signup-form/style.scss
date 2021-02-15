@@ -259,21 +259,15 @@
 	.signup-form__anchor-col-container {
 		padding-left: 0.5rem;
 		padding-right: 0.5rem;
-		// @include break-mobile {
-		// 	background-color: #FFAAAA;
-		// }
 		@include break-small {
-			// background-color: #AAFFAA;
 			padding-left: 1rem;
 			padding-right: 1rem;
 		}
 		@include break-medium {
-			// background-color: #AAAAFF;
 			padding-left: 2rem;
 			padding-right: 2rem;
 		}
 		@include break-large {
-			// background-color: #FFFFAA;
 			padding-left: 4rem;
 			padding-right: 4rem;
 		}
