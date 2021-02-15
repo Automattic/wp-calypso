@@ -41,7 +41,7 @@ const SignupDefaultLayout = ( {
 	setEmailVal,
 	setPasswordVal,
 	tos,
-}: Props ) => {
+}: Props ): JSX.Element => {
 	const { __ } = useI18n();
 
 	return (
