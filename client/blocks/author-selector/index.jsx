@@ -4,83 +4,71 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import debugModule from 'debug';
 import { trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
 import SwitcherShell from './switcher-shell';
+import useUsers from 'calypso/data/users/use-users';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:author-selector' );
+function AuthorSelector( props ) {
+	const [ search, setSearch ] = React.useState( '' );
+	const { siteId, exclude } = props;
 
-class AuthorSelector extends React.Component {
-	static displayName = 'AuthorSelector';
-
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		onSelect: PropTypes.func,
-		exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
-		allowSingleUser: PropTypes.bool,
-		popoverPosition: PropTypes.string,
-		transformAuthor: PropTypes.func,
+	const fetchOptions = {
+		siteId: siteId,
+		order: 'ASC',
+		order_by: 'display_name',
+		number: 50,
 	};
 
-	static defaultProps = {
-		showAuthorMenu: false,
-		onClose: function () {},
-		allowSingleUser: false,
-		popoverPosition: 'bottom left',
-	};
-
-	state = {
-		search: '',
-	};
-
-	componentDidMount() {
-		debug( 'AuthorSelector mounted' );
+	if ( search ) {
+		fetchOptions.number = 20; // make search a little faster
+		fetchOptions.search = `*${ trim( search ) }*`;
+		fetchOptions.search_columns = [ 'user_login', 'display_name' ];
 	}
 
-	render() {
-		let searchString = this.state.search || '';
-		searchString = trim( searchString );
+	const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } = useUsers(
+		fetchOptions
+	);
 
-		const fetchOptions = {
-			siteId: this.props.siteId,
-			order: 'ASC',
-			order_by: 'display_name',
-			number: 50,
-		};
+	const users = data?.users.filter( ( user ) => ! exclude.includes( user.ID ) ) ?? [];
 
-		if ( searchString ) {
-			fetchOptions.number = 20; // make search a little faster
-			fetchOptions.search = searchString;
-			fetchOptions.search_columns = [ 'user_login', 'display_name' ];
-		}
-
-		Object.freeze( fetchOptions );
-		return (
-			<SiteUsersFetcher fetchOptions={ fetchOptions } exclude={ this.props.exclude }>
-				<SwitcherShell { ...this.props } updateSearch={ this._updateSearch } />
-			</SiteUsersFetcher>
-		);
-	}
-
-	_updateSearch = ( searchTerm ) => {
-		searchTerm = searchTerm ? '*' + searchTerm + '*' : '';
-		this.setState( {
-			search: searchTerm,
-		} );
-	};
+	return (
+		<SwitcherShell
+			{ ...props }
+			fetchOptions={ fetchOptions }
+			updateSearch={ setSearch }
+			users={ users }
+			fetchNextPage={ fetchNextPage }
+			fetchingUsers={ isLoading }
+			fetchingNextPage={ isFetchingNextPage }
+			hasNextPage={ hasNextPage }
+		/>
+	);
 }
+
+AuthorSelector.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	onSelect: PropTypes.func,
+	exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
+	allowSingleUser: PropTypes.bool,
+	popoverPosition: PropTypes.string,
+	transformAuthor: PropTypes.func,
+};
+
+AuthorSelector.defaultProps = {
+	showAuthorMenu: false,
+	onClose: function () {},
+	allowSingleUser: false,
+	popoverPosition: 'bottom left',
+	exclude: [],
+};
 
 export default localize( AuthorSelector );
