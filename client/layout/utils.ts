@@ -49,7 +49,7 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 
 		if (
 			windowHeight >= secondaryElHeight + masterbarHeight &&
-			secondaryEl !== undefined &&
+			content !== null &&
 			secondaryEl !== null &&
 			( content.style.minHeight !== 'initial' || secondaryEl.style.position )
 		) {
