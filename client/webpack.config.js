@@ -283,6 +283,7 @@ const webpackConfig = {
 
 				// Node polyfills
 				process: 'process/browser',
+				util: require.resolve( 'util' ),
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
