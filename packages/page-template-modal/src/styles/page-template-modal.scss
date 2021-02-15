@@ -150,10 +150,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 .template-selector-item__label {
 	display: block;
 	width: 100%;
-	font-size: 14px;
+	font-size: 14px; /* stylelint-disable-line */
 	text-align: center;
 	border: solid 2px $template-selector-border-color;
-	border-radius: 6px;
+	border-radius: 6px; /* stylelint-disable-line */
 	cursor: pointer;
 	appearance: none;
 	padding: 0;
@@ -348,40 +348,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
-// Sidebar modal opener goo.
-.sidebar-modal-opener {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-
-	.template-selector-item__label {
-		max-width: 300px;
-	}
-}
-
-.sidebar-modal-opener__warning-modal {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-}
-
-.sidebar-modal-opener__warning-text {
-	max-width: 300px;
-	font-size: 1rem;
-	line-height: 1.5rem;
-}
-
-.sidebar-modal-opener__warning-options {
-	float: right;
-	margin-top: 20px;
-
-	.components-button {
-		margin-left: 12px;
-	}
-}
-
 .block-iframe-preview {
 	position: absolute;
 	top: 0;
@@ -458,7 +424,7 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 
 	.swiper-pagination-bullet {
-		border-radius: 100%;
+		border-radius: 100%; /* stylelint-disable-line */
 	}
 
 	// Fixes cover image spacing and full-width group spacing

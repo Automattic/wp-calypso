@@ -1,33 +1,25 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, stubTrue, omit } from 'lodash';
-import classnames from 'classnames';
-import '@wordpress/nux';
+import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, omit } from 'lodash';
 import { __, sprintf } from '@wordpress/i18n';
-import { compose } from '@wordpress/compose';
+import classnames from 'classnames';
 import { Button, Modal, Spinner, IconButton } from '@wordpress/components';
-import { withDispatch, withSelect } from '@wordpress/data';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
-import { addFilter, removeFilter } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
  */
-import './styles/starter-page-templates-editor.scss';
-import TemplateSelectorControl from './components/template-selector-control';
-import TemplateSelectorPreview from './components/template-selector-preview';
-import { trackDismiss, trackSelection, trackView } from './utils/tracking';
-import replacePlaceholders from './utils/replace-placeholders';
-import ensureAssets from './utils/ensure-assets';
-import mapBlocksRecursively from './utils/map-blocks-recursively';
-import containsMissingBlock from './utils/contains-missing-block';
+import TemplateSelectorControl from './template-selector-control';
+import TemplateSelectorPreview from './template-selector-preview';
+import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
+import replacePlaceholders from '../utils/replace-placeholders';
+import ensureAssets from '../utils/ensure-assets';
+import mapBlocksRecursively from '../utils/map-blocks-recursively';
+import containsMissingBlock from '../utils/contains-missing-block';
 
-const INSERTING_HOOK_NAME = 'isInsertingPageTemplate';
-const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-template';
-
-class PageTemplateModal extends Component {
+export default class PageTemplateModal extends Component {
 	state = {
 		isLoading: false,
 		previewedTemplate: null,
@@ -341,13 +333,13 @@ class PageTemplateModal extends Component {
 
 		const currentGroup =
 			'blank' !== this.props._starter_page_template
-				? this.renderTemplateGroup( 'current', __( 'Current', 'full-site-editing' ) )
+				? this.renderTemplateGroup( 'current', __( 'Current', __i18n_text_domain__ ) )
 				: null;
 
-		const blankGroup = this.renderTemplateGroup( 'blank', __( 'Blank', 'full-site-editing' ) );
+		const blankGroup = this.renderTemplateGroup( 'blank', __( 'Blank', __i18n_text_domain__ ) );
 
 		const homePageGroup = this.props.isFrontPage
-			? this.renderTemplateGroup( 'home-page', __( 'Home Page', 'full-site-editing' ) )
+			? this.renderTemplateGroup( 'home-page', __( 'Home Page', __i18n_text_domain__ ) )
 			: null;
 
 		const renderedGroups = [];
@@ -416,7 +408,7 @@ class PageTemplateModal extends Component {
 				<legend className="page-template-modal__form-title">{ groupTitle }</legend>
 
 				<TemplateSelectorControl
-					label={ __( 'Layout', 'full-site-editing' ) }
+					label={ __( 'Layout', __i18n_text_domain__ ) }
 					legendLabel={ groupTitle }
 					templates={ filteredTemplatesList }
 					blocksByTemplates={ blocksByTemplateSlug }
@@ -453,7 +445,7 @@ class PageTemplateModal extends Component {
 
 		return (
 			<Modal
-				title={ __( 'Select Page Layout', 'full-site-editing' ) }
+				title={ __( 'Select Page Layout', __i18n_text_domain__ ) }
 				className="page-template-modal"
 				overlayClassName="page-template-modal-screen-overlay"
 				shouldCloseOnClickOutside={ false }
@@ -465,14 +457,14 @@ class PageTemplateModal extends Component {
 					className="page-template-modal__close-button components-icon-button"
 					onClick={ this.closeModal }
 					icon="arrow-left-alt2"
-					label={ __( 'Go back', 'full-site-editing' ) }
+					label={ __( 'Go back', __i18n_text_domain__ ) }
 				/>
 
 				<div className="page-template-modal__inner">
 					{ isLoading ? (
 						<div className="page-template-modal__loading">
 							<Spinner />
-							{ __( 'Adding layout…', 'full-site-editing' ) }
+							{ __( 'Adding layout…', __i18n_text_domain__ ) }
 						</div>
 					) : (
 						<>
@@ -501,7 +493,7 @@ class PageTemplateModal extends Component {
 					>
 						{ sprintf(
 							/* translators: %s is name of a page layout. Eg: Dalston or Blank. */
-							__( 'Use %s layout', 'full-site-editing' ),
+							__( 'Use %s layout', __i18n_text_domain__ ),
 							this.getTitleByTemplateSlug( previewedTemplate )
 						) }
 					</Button>
@@ -510,68 +502,3 @@ class PageTemplateModal extends Component {
 		);
 	}
 }
-
-export const PageTemplatesPlugin = compose(
-	withSelect( ( select ) => {
-		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
-		const { _starter_page_template } = getMeta();
-		const { isOpen } = select( 'automattic/starter-page-layouts' );
-		const currentBlocks = select( 'core/editor' ).getBlocks();
-		return {
-			isOpen: isOpen(),
-			getMeta,
-			_starter_page_template,
-			currentBlocks,
-			currentPostTitle: select( 'core/editor' ).getCurrentPost().title,
-			postContentBlock: currentBlocks.find( ( block ) => block.name === 'a8c/post-content' ),
-			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 or higher
-			areTipsEnabled: select( 'core/nux' ) ? select( 'core/nux' ).areTipsEnabled() : false, // Gutenberg 7.1.0 or lower
-		};
-	} ),
-	withDispatch( ( dispatch, ownProps ) => {
-		const editorDispatcher = dispatch( 'core/editor' );
-		const { setOpenState } = dispatch( 'automattic/starter-page-layouts' );
-		return {
-			setOpenState,
-			saveTemplateChoice: ( name ) => {
-				// Save selected template slug in meta.
-				const currentMeta = ownProps.getMeta();
-				editorDispatcher.editPost( {
-					meta: {
-						...currentMeta,
-						_starter_page_template: name,
-					},
-				} );
-			},
-			insertTemplate: ( title, blocks ) => {
-				// Add filter to let the tracking library know we are inserting a template.
-				addFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE, stubTrue );
-
-				// Set post title.
-				if ( title ) {
-					editorDispatcher.editPost( { title } );
-				}
-
-				// Replace blocks.
-				const postContentBlock = ownProps.postContentBlock;
-				dispatch( 'core/block-editor' ).replaceInnerBlocks(
-					postContentBlock ? postContentBlock.clientId : '',
-					blocks,
-					false
-				);
-
-				// Remove filter.
-				removeFilter( INSERTING_HOOK_NAME, INSERTING_HOOK_NAMESPACE );
-			},
-			hideWelcomeGuide: () => {
-				if ( ownProps.isWelcomeGuideActive ) {
-					// Gutenberg 7.2.0 or higher.
-					dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
-				} else if ( ownProps.areTipsEnabled ) {
-					// Gutenberg 7.1.0 or lower.
-					dispatch( 'core/nux' ).disableTips();
-				}
-			},
-		};
-	} )
-)( PageTemplateModal );
