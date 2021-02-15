@@ -46,6 +46,7 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QueryExperiments from 'calypso/components/data/query-experiments';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -745,6 +746,7 @@ class Signup extends React.Component {
 					/>
 				) }
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
+				<QueryExperiments />
 				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
 					<SiteMockups stepName={ this.props.stepName } />
 				) }
