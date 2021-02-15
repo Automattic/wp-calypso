@@ -9,14 +9,7 @@
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 
 module.exports = () => {
-	return getBaseWebpackConfig(
-		{
-			WP: true,
-		},
-		{
-			entry: {
-				index: './src/index.js',
-			},
-		}
-	);
+	return getBaseWebpackConfig( {
+		WP: true,
+	} );
 };

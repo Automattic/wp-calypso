@@ -348,40 +348,6 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	}
 }
 
-// Sidebar modal opener goo.
-.sidebar-modal-opener {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-
-	.template-selector-item__label {
-		max-width: 300px;
-	}
-}
-
-.sidebar-modal-opener__warning-modal {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-}
-
-.sidebar-modal-opener__warning-text {
-	max-width: 300px;
-	font-size: 1rem;
-	line-height: 1.5rem;
-}
-
-.sidebar-modal-opener__warning-options {
-	float: right;
-	margin-top: 20px;
-
-	.components-button {
-		margin-left: 12px;
-	}
-}
-
 .block-iframe-preview {
 	position: absolute;
 	top: 0;
@@ -480,5 +446,10 @@ body.admin-bar:not( .is-fullscreen-mode ) .page-template-modal-screen-overlay {
 	// Using flex-basis: auto; on the child allows the height to be calculated properly
 	.wp-block-columns > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type='core/column'] .block-core-columns {
 		flex-basis: auto;
+	}
+}
+.sidebar-modal-opener {
+	.template-selector-item__label {
+		max-width: 300px;
 	}
 }
