@@ -3,9 +3,18 @@
  * External dependencies
  */
 
-import { withI18n, I18nReact } from '@automattic/react-i18n';
+import { useI18n, I18nReact } from '@automattic/react-i18n';
 import classNames from 'classnames';
-import React, { ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
+import React from 'react';
+import type {
+	RefObject,
+	MutableRefObject,
+	ChangeEvent,
+	FocusEvent,
+	FormEvent,
+	KeyboardEvent,
+	MouseEvent,
+} from 'react';
 import { debounce } from 'lodash';
 
 /**
@@ -90,12 +99,6 @@ type Props = {
 	value?: string;
 };
 
-type State = {
-	keyword: string;
-	isOpen: boolean;
-	hasFocus: boolean;
-};
-
 //This is fix for IE11. Does not work on Edge.
 //On IE11 scrollLeft value for input is always 0.
 //We are calculating it manually using TextRange object.
@@ -127,7 +130,7 @@ type ImperativeHandle = {
 
 const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 	{
-		delaySearch: delaySearchProp,
+		delaySearch,
 		disabled,
 		pinned,
 		onSearchClose,
@@ -138,14 +141,13 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 		onClick,
 		describedBy,
 		delayTimeout,
-		defaultValue,
-		defaultIsOpen,
-		autoFocus,
+		defaultValue = '',
+		defaultIsOpen = false,
+		autoFocus = false,
 		onSearchOpen,
 		recordEvent,
 		overlayStyling,
 		placeholder: placeholderProp,
-		__,
 		inputLabel,
 		disableAutocorrect,
 		className,
@@ -161,18 +163,15 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 	},
 	forwardedRef
 ) => {
-	const [ { keyword, isOpen, hasFocus }, setState ] = React.useReducer<
-		React.Reducer< State, Partial< State > >
-	>( ( oldState, nextState ) => ( { ...oldState, ...nextState } ), {
-		keyword: defaultValue ?? '',
-		isOpen: defaultIsOpen ?? false,
-		hasFocus: autoFocus ?? false,
-	} );
+	const { __ } = useI18n();
+	const [ keyword, setKeyword ] = React.useState( defaultValue );
+	const [ isOpen, setIsOpen ] = React.useState( defaultIsOpen );
+	const [ hasFocus, setHasFocus ] = React.useState( autoFocus );
 
 	const instanceId = useInstanceId( InnerSearch, 'search' );
-	const searchInput: React.MutableRefObject< HTMLInputElement | null > = React.useRef( null );
-	const openIcon: React.RefObject< HTMLButtonElement | null > = React.useRef( null );
-	const overlay: React.RefObject< HTMLDivElement | null > = React.useRef( null );
+	const searchInput: MutableRefObject< HTMLInputElement | null > = React.useRef( null );
+	const openIcon: RefObject< HTMLButtonElement | null > = React.useRef( null );
+	const overlay: RefObject< HTMLDivElement | null > = React.useRef( null );
 
 	const focus = React.useCallback( () => {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
@@ -182,7 +181,7 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 
 	const blur = React.useCallback( () => searchInput.current?.blur(), [] );
 
-	const clear = React.useCallback( (): void => setState( { keyword: '' } ), [] );
+	const clear = React.useCallback( (): void => setKeyword( '' ), [] );
 
 	React.useImperativeHandle(
 		forwardedRef,
@@ -194,12 +193,9 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 		[ focus, blur, clear ]
 	);
 
-	// uncontrolled
-	const delaySearch = React.useRef( delaySearchProp );
-
 	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo(
-		() => ( delaySearch.current ? debounce( onSearchProp, delayTimeout ) : onSearchProp ),
-		[ onSearchProp, delayTimeout ]
+		() => ( delaySearch ? debounce( onSearchProp, delayTimeout ) : onSearchProp ),
+		[ onSearchProp, delayTimeout, delaySearch ]
 	);
 
 	useUpdateEffect( () => {
@@ -207,7 +203,7 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 			doSearch( keyword );
 		} else {
 			// explicitly bypass debouncing when keyword is empty
-			if ( delaySearch.current ) {
+			if ( delaySearch ) {
 				// Cancel any pending debounce
 				doSearch.cancel?.();
 			}
@@ -225,10 +221,10 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 				| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
 		): void => {
 			event.preventDefault();
-			setState( {
-				keyword: '',
-				isOpen: true,
-			} );
+
+			setKeyword( '' );
+			setIsOpen( true );
+
 			focus();
 			onSearchOpen?.( event );
 			// prevent outlines around the open icon after being clicked
@@ -250,10 +246,8 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 				return;
 			}
 
-			setState( {
-				keyword: '',
-				isOpen: false,
-			} );
+			setKeyword( '' );
+			setIsOpen( false );
 
 			if ( searchInput.current ) {
 				searchInput.current.value = ''; // will not trigger onChange
@@ -295,19 +289,14 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 				onBlurProp( event );
 			}
 
-			setState( { hasFocus: false } );
+			setHasFocus( false );
 		},
 		[ onBlurProp ]
 	);
 
-	const onChange = React.useCallback(
-		( event: ChangeEvent< HTMLInputElement > ): void => {
-			setState( {
-				keyword: event.target?.value ?? keyword,
-			} );
-		},
-		[ keyword ]
-	);
+	const onChange = React.useCallback( ( event: ChangeEvent< HTMLInputElement > ): void => {
+		setKeyword( event.target.value );
+	}, [] );
 
 	const onKeyUp = React.useCallback(
 		( event: KeyboardEvent< HTMLInputElement > ): void => {
@@ -348,7 +337,7 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
 	const onFocus = React.useCallback( (): void => {
-		setState( { hasFocus: true } );
+		setHasFocus( true );
 		onSearchOpen?.();
 
 		if ( ! searchInput.current ) {
@@ -392,44 +381,39 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 
 	const shouldRenderRightOpenIcon = openIconSide === 'right' && ! keyword;
 
-	const renderStylingDiv = React.useCallback( () => {
+	const renderStylingDiv = () => {
 		if ( typeof overlayStyling === 'function' ) {
 			return (
 				<div
 					className="search-component__text-overlay"
-					ref={ overlay as React.RefObject< HTMLDivElement > }
+					ref={ overlay as RefObject< HTMLDivElement > }
 				>
 					{ overlayStyling( keyword ) }
 				</div>
 			);
 		}
 		return null;
-	}, [ overlayStyling, keyword ] );
+	};
 
-	const renderOpenIcon = React.useCallback( (): JSX.Element => {
+	const renderOpenIcon = () => {
 		const enableOpenIcon = pinned && ! isOpen;
 
 		return (
 			<Button
 				className="search-component__icon-navigation"
-				ref={ openIcon as React.RefObject< HTMLButtonElement > }
+				ref={ openIcon as RefObject< HTMLButtonElement > }
 				onClick={ enableOpenIcon ? openSearch : focus }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
 				aria-controls={ 'search-component-' + instanceId }
 				aria-label={ __( 'Open Search', __i18n_text_domain__ ) }
 			>
-				{ ! hideOpenIcon && (
-					// `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work)
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					/* @ts-ignore */
-					<Icon icon={ search } className="search-component__open-icon" />
-				) }
+				{ ! hideOpenIcon && <Icon icon={ search } className="search-component__open-icon" /> }
 			</Button>
 		);
-	}, [ pinned, isOpen, hideOpenIcon, __, focus, instanceId, openListener, openSearch ] );
+	};
 
-	const renderCloseButton = React.useCallback( () => {
+	const renderCloseButton = () => {
 		if ( ! hideClose && ( keyword || isOpen ) ) {
 			return (
 				<Button
@@ -440,16 +424,13 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 					aria-controls={ 'search-component-' + instanceId }
 					aria-label={ __( 'Close Search', __i18n_text_domain__ ) }
 				>
-					{ /* `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work) */ }
-					{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
-					{ /* @ts-ignore */ }
 					<Icon icon={ close } className="search-component__close-icon" />
 				</Button>
 			);
 		}
 
 		return null;
-	}, [ hideClose, keyword, isOpen, closeSearch, __, instanceId, closeListener ] );
+	};
 
 	return (
 		<div dir={ dir } className={ searchClass } role="search">
@@ -516,4 +497,4 @@ Search.defaultProps = {
 	searching: false,
 };
 
-export default withI18n( Search );
+export default Search;
