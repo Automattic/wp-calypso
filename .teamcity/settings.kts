@@ -859,9 +859,8 @@ object RunCanaryE2eTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
-
-				## Uncomment to debug Magellan
-				#export MAGELLANDEBUG=true
+				export MAGELLANDEBUG=true
+				export TEST_VIDEO=true
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -890,9 +889,6 @@ object RunCanaryE2eTests : BuildType({
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-				# Start framebuffer
-				Xvfb ${'$'}{DISPLAY} -screen 0 1440x1000x24 &
 
 				# Run the test
 				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
@@ -958,7 +954,6 @@ object RunCanaryE2eTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
-		supportTestRetry = true
 	}
 
 	dependencies {

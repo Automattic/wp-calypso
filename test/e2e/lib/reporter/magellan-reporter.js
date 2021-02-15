@@ -1,5 +1,7 @@
 const BaseReporter = require( 'testarmada-magellan' ).Reporter;
+const logger = require( 'testarmada-magellan/src/logger.js' );
 const util = require( 'util' );
+const { Writable } = require( 'stream' );
 
 // Requirements for Slack output
 const slack = require( 'slack-notify' );
@@ -12,11 +14,24 @@ const Reporter = function () {};
 
 util.inherits( Reporter, BaseReporter );
 
+const log = ( testRun ) =>
+	new Writable( {
+		write( chunk, encoding, callback ) {
+			const msg = chunk.toString( 'utf8' );
+			msg.split( '\n' ).forEach( ( line ) => {
+				if ( line.length ) {
+					logger.log( '--> ' + testRun.guid + ' ' + line );
+				}
+			} );
+			callback( null );
+		},
+	} );
+
 Reporter.prototype.listenTo = function ( testRun, test, source ) {
 	// Print STDOUT/ERR to the screen for extra debugging
 	if ( process.env.MAGELLANDEBUG ) {
-		source.stdout.pipe( process.stdout );
-		source.stderr.pipe( process.stderr );
+		source.stdout.pipe( log( testRun ) );
+		source.stderr.pipe( log( testRun ) );
 	}
 
 	// Create global report and screenshots directories
