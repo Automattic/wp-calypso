@@ -42,7 +42,7 @@ const getCurrentCROIterationName = (): Iterations => {
 		}
 	}
 
-	const newPurchaseIntroPricing = abtest( 'newPurchaseIntroPricing' ) === 'withIntroPricing';
+	const newPurchaseIntroPricing = abtest( 'jetpackNewPurchaseIntroPricing' ) === 'withIntroPricing';
 
 	return newPurchaseIntroPricing ? Iterations.NPIP : Iterations.I5;
 };
