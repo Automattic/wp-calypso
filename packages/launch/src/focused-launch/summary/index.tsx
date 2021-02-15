@@ -32,10 +32,11 @@ import FocusedLaunchSummaryItem, {
 	LeadingContentSide,
 	TrailingContentSide,
 } from './focused-launch-summary-item';
-import { LAUNCH_STORE, SITE_STORE, Plan, PlanProduct, PLANS_STORE } from '../../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../../stores';
 import LaunchContext from '../../context';
 import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
+import type { Plan, PlanProduct } from '../../stores';
 
 import './style.scss';
 

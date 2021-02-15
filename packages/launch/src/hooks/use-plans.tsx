@@ -27,13 +27,15 @@ export function usePlans(
 
 	return useSelect(
 		( select ) => {
-			const defaultFreePlan = select( PLANS_STORE ).getDefaultFreePlan( locale );
-			const defaultPaidPlan = select( PLANS_STORE ).getDefaultPaidPlan( locale );
-			const defaultPaidPlanProduct = select( PLANS_STORE ).getPlanProduct(
+			const plansStore = select( PLANS_STORE );
+
+			const defaultFreePlan = plansStore.getDefaultFreePlan( locale );
+			const defaultPaidPlan = plansStore.getDefaultPaidPlan( locale );
+			const defaultPaidPlanProduct = plansStore.getPlanProduct(
 				defaultPaidPlan?.periodAgnosticSlug,
 				billingPeriod
 			);
-			const defaultFreePlanProduct = select( PLANS_STORE ).getPlanProduct(
+			const defaultFreePlanProduct = plansStore.getPlanProduct(
 				defaultFreePlan?.periodAgnosticSlug,
 				billingPeriod
 			);

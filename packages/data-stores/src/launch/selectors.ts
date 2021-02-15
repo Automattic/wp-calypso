@@ -7,7 +7,7 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { LaunchSequence, LaunchStep } from './data';
-import { STORE_KEY as LAUNCH_STORE } from './constants';
+import { STORE_KEY as LAUNCH_STORE, PLANS_STORE } from './constants';
 
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
@@ -26,6 +26,10 @@ export const hasPaidDomain = ( state: State ): boolean => {
 export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSuggestion | undefined =>
 	state.domain;
 export const getSelectedPlanProductId = ( state: State ): number | undefined => state.planProductId;
+
+export const isSelectedPlanPaid = ( state: State ): boolean =>
+	Boolean( state.planProductId ) &&
+	! select( PLANS_STORE ).isPlanProductFree( state.planProductId );
 
 // Check if a domain has been explicitly selected (including free subdomain)
 /**
