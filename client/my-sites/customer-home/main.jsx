@@ -55,16 +55,14 @@ const Home = ( {
 		}
 
 		if ( noticeType === 'difm-success' ) {
+			reduxDispatch( recordTracksEvent( 'calypso_difm_intake_submitted' ) );
+
 			const successMessage = translate( 'Your application has been sent!' );
-			reduxDispatch(
-				successNotice( successMessage, {
-					isPersistent: true,
-				} )
-			);
+			reduxDispatch( successNotice( successMessage ) );
 		}
 
 		return;
-	}, [ noticeType, layout, reduxDispatch, translate ] );
+	}, [ noticeType, layout, canUserUseCustomerHome, reduxDispatch, translate ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );

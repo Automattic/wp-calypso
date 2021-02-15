@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
 import classnames from 'classnames';
 
 /**
@@ -23,7 +23,7 @@ export default function LicenseListItem( {
 	header = false,
 	className = '',
 	children,
-}: React.PropsWithChildren< Props > ) {
+}: React.PropsWithChildren< Props > ): ReactElement {
 	return (
 		<CompactCard className={ className }>
 			<div

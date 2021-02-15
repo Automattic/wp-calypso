@@ -89,6 +89,15 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
 		];
 	}
 
+	if ( settingsOverride?.user_email_change_pending !== undefined ) {
+		return [
+			errorNotice(
+				translate( 'There was a problem canceling the email change. Please, try again.' )
+			),
+			saveUserSettingsFailure( settingsOverride, error ),
+		];
+	}
+
 	return [
 		errorNotice( error.message || translate( 'There was a problem saving your changes.' ), {
 			id: 'save-user-settings',
@@ -116,6 +125,11 @@ export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => ( dispa
 	const userLibModule = require( 'calypso/lib/user' );
 	const userLib = userLibModule.default ? userLibModule.default : userLibModule; // TODO: delete line after removing add-module-exports.
 	userLib().fetch();
+
+	if ( settingsOverride?.user_email_change_pending !== undefined ) {
+		dispatch( successNotice( translate( 'The email change has been successfully canceled.' ) ) );
+		return;
+	}
 
 	dispatch(
 		successNotice( translate( 'Settings saved successfully!' ), {

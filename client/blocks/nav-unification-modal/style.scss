@@ -98,7 +98,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	}
 
 	.components-guide__finish-button {
-		background-color: var(--studio-pink-50);
+		background-color: var( --studio-pink-50 );
 		color: #ffffff;
 		border-radius: 3px;
 
@@ -137,24 +137,27 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .nav-unification-modal__text {
 	padding: 25px;
 	height: 60%;
-	order: 2;
 
 	@media ( min-width: $modal-breakpoint ) {
-		order: 1;
 		height: auto;
 		padding: $modal-padding-v $modal-padding-h;
 	}
 }
 .nav-unification-modal__visual {
 	height: 95%;
-	background: var(--studio-blue-5);
+	align-items: flex-end;
+	background: var( --studio-blue-5 );
+	display: flex;
 	text-align: center;
 	overflow: hidden;
 	position: relative;
-	order: 1;
+
+	@include break-mobile {
+		// For smaller screens, ensure the top of the images are displayed.
+		align-items: flex-start;
+	}
 
 	@media ( min-width: $modal-breakpoint ) {
-		order: 2;
 		height: auto;
 	}
 }
@@ -162,6 +165,8 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .nav-unification-modal__picture {
 	display: flex;
 	margin-top: 20px;
+	// Preserve image aspect ratio on Safari (default for align-items is stretch)
+	align-items: flex-end;
 
 	@media ( min-width: $modal-breakpoint ) {
 		margin-top: 0;
@@ -170,7 +175,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	&--center {
 		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
-			transform: translateY(-50%);
+			transform: translateY( -50% );
 			top: 50%;
 		}
 	}
@@ -183,6 +188,8 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	}
 
 	&--top-right {
+		align-self: flex-start;
+
 		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
 			top: 0;
@@ -230,7 +237,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	&.align-bottom {
 		align-self: flex-end;
 	}
-
 
 	@media ( min-width: $modal-breakpoint ) {
 		max-height: none;

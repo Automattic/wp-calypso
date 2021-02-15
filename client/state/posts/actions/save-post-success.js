@@ -1,7 +1,14 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import { POST_SAVE_SUCCESS } from 'calypso/state/action-types';
+import { restorePost } from 'calypso/state/posts/actions';
+import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/posts/init';
 
@@ -15,11 +22,35 @@ import 'calypso/state/posts/init';
  * @returns {object}              Action thunk
  */
 export function savePostSuccess( siteId, postId = null, savedPost, post ) {
-	return {
-		type: POST_SAVE_SUCCESS,
-		siteId,
-		postId,
-		savedPost,
-		post,
+	return ( dispatch ) => {
+		dispatch( {
+			type: POST_SAVE_SUCCESS,
+			siteId,
+			postId,
+			savedPost,
+			post,
+		} );
+
+		switch ( post.status ) {
+			case 'trash': {
+				const noticeId = 'trash_' + savedPost.global_ID;
+				dispatch(
+					successNotice( translate( 'Post successfully moved to trash.' ), {
+						id: noticeId,
+						button: translate( 'Undo' ),
+						onClick: () => {
+							dispatch( removeNotice( noticeId ) );
+							dispatch( restorePost( savedPost.site_ID, savedPost.ID ) );
+						},
+					} )
+				);
+				break;
+			}
+
+			case 'publish': {
+				dispatch( successNotice( translate( 'Post successfully published' ) ) );
+				break;
+			}
+		}
 	};
 }

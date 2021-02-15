@@ -34,7 +34,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 
 	if ( isPlan( purchase ) ) {
 		url = '/plans/my-plan/' + selectedSite.slug;
-		text = i18n.translate( 'View Plan Features' );
+		text = i18n.translate( 'Plan Features' );
 	}
 
 	if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {

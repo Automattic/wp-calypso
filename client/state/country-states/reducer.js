@@ -1,18 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import {
-	combineReducers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
 import { itemSchema } from './schema';
 
 // Stores the complete list of states, indexed by locale key

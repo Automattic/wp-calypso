@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	ACTIVE_PROMOTIONS_RECEIVE,
 	ACTIVE_PROMOTIONS_REQUEST,
 	ACTIVE_PROMOTIONS_REQUEST_SUCCESS,
 	ACTIVE_PROMOTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**

@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { EDITOR_TYPE_SET } from 'calypso/state/action-types';
-import { keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { keyedReducer } from 'calypso/state/utils';
 
 export const selectedEditor = ( state, { type, editor } ) =>
 	type === EDITOR_TYPE_SET ? editor : state;

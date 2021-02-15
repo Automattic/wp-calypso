@@ -24,11 +24,10 @@ import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderCombinedCardPostPlaceholder from 'calypso/blocks/reader-combined-card/placeholders/post';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
-		isFollowingItem: PropTypes.bool,
 		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 		post: PropTypes.object,
@@ -88,7 +87,6 @@ class ReaderCombinedCardPost extends React.Component {
 			isSelected,
 			postKey,
 			teams,
-			isFollowingItem,
 			isWPForTeamsItem,
 		} = this.props;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
@@ -126,8 +124,10 @@ class ReaderCombinedCardPost extends React.Component {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
 
-		const isSeen =
-			isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) && !! post.is_seen;
+		let isSeen = true;
+		if ( canBeMarkedAsSeen( { post } ) ) {
+			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && post.is_seen;
+		}
 		const classes = classnames( {
 			'reader-combined-card__post': true,
 			'is-selected': isSelected,

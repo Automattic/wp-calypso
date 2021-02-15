@@ -46,7 +46,6 @@ class FeedHeader extends Component {
 		feed: PropTypes.object,
 		showBack: PropTypes.bool,
 		streamKey: PropTypes.string,
-		isFollowingItem: PropTypes.bool,
 		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 	};
@@ -82,7 +81,6 @@ class FeedHeader extends Component {
 			following,
 			isEmailBlocked,
 			teams,
-			isFollowingItem,
 			isWPForTeamsItem,
 		} = this.props;
 		const followerCount = this.getFollowerCount( feed, site );
@@ -127,7 +125,7 @@ class FeedHeader extends Component {
 								</div>
 							) }
 
-							{ isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) && feed && (
+							{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) && feed && (
 								<button
 									onClick={ this.markAllAsSeen }
 									className="reader-feed-header__seen-button"
@@ -177,10 +175,6 @@ class FeedHeader extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isFollowingItem: isFollowing( state, {
-			blogId: ownProps.site && ownProps.site.ID,
-			feedId: ownProps.feed && ownProps.feed.feed_ID,
-		} ),
 		isWPForTeamsItem:
 			isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
 			isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),

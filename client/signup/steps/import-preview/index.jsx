@@ -49,17 +49,6 @@ class ImportPreview extends Component {
 					"We're unable to import your theme, plugins, comments, or online store."
 				),
 			},
-			'godaddy-gocentral': {
-				supported: [
-					translate( 'Pages' ),
-					translate( 'Blog posts' ),
-					translate( 'Images' ),
-					translate( 'Other media' ),
-				],
-				unsupported: translate(
-					"We're unable to import your online store, site layout, or styling."
-				),
-			},
 			medium: {
 				supported: [
 					translate( 'Posts' ),

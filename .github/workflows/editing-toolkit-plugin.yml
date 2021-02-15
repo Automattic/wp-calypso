@@ -149,7 +149,7 @@ jobs:
 
       - name: Setup wp-env dependencies
         run: |
-          echo '{ "plugins": [ "./dev-plugin", "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
+          echo '{ "plugins": [ "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
         working-directory: apps/editing-toolkit
 
       - name: Start wp-env

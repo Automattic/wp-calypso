@@ -204,7 +204,6 @@ function EbanxTefFields() {
 function BankSelector( { id, value, onChange, label, isError, errorMessage, disabled } ) {
 	const { __ } = useI18n();
 	const bankOptions = getBankOptions( __ );
-	/* eslint-disable jsx-a11y/no-onchange */
 	return (
 		<SelectWrapper>
 			<label htmlFor={ id } disabled={ disabled }>
@@ -223,7 +222,6 @@ function BankSelector( { id, value, onChange, label, isError, errorMessage, disa
 			<ErrorMessage isError={ isError } errorMessage={ errorMessage } />
 		</SelectWrapper>
 	);
-	/* eslint-enable jsx-a11y/no-onchange */
 }
 
 function BankOption( { value, label } ) {

@@ -15,7 +15,7 @@ import { PLANS_STORE } from '../stores/plans';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
-import { useIsAnchorFm, useAnchorFmParams, useOnboardingFlow } from '../path';
+import { useOnboardingFlow } from '../path';
 
 const wpcom = wp.undocumented();
 
@@ -72,9 +72,7 @@ export default function useOnSiteCreation(): void {
 		select( PLANS_STORE ).getPlanProductById( selectedPlanProductId )
 	);
 
-	const isAnchorFmSignup = useIsAnchorFm();
 	const flow = useOnboardingFlow();
-	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const flowCompleteTrackingParams = {
@@ -144,17 +142,6 @@ export default function useOnSiteCreation(): void {
 			let destination;
 			if ( design?.is_fse ) {
 				destination = `/site-editor/${ newSite.site_slug }/`;
-			} else if ( isAnchorFmSignup ) {
-				const params = {
-					anchor_podcast: anchorFmPodcastId,
-					anchor_episode: anchorFmEpisodeId,
-					spotify_url: anchorFmSpotifyUrl,
-				};
-				const queryString = Object.keys( params )
-					.filter( ( key ) => params[ key as keyof typeof params ] != null )
-					.map( ( key ) => key + '=' + params[ key as keyof typeof params ] )
-					.join( '&' );
-				destination = `/post/${ newSite.site_slug }?${ queryString }`;
 			} else {
 				destination = `/page/${ newSite.site_slug }/home`;
 			}
@@ -172,9 +159,5 @@ export default function useOnSiteCreation(): void {
 		flowCompleteTrackingParams,
 		shouldRedirectToEditorAfterCheckout,
 		design,
-		isAnchorFmSignup,
-		anchorFmPodcastId,
-		anchorFmEpisodeId,
-		anchorFmSpotifyUrl,
 	] );
 }

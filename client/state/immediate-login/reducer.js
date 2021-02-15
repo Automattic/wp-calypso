@@ -2,7 +2,8 @@
  * Internal dependencies
  */
 
-import { withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import { IMMEDIATE_LOGIN_SAVE_INFO } from 'calypso/state/action-types';
 
 const initialState = {
