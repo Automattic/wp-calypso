@@ -20,19 +20,7 @@ export function randomPhrase() {
 export function getEmailAddress( prefix, inboxId ) {
 	const domain = 'mailosaur.io';
 	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
-<<<<<<< HEAD
-	if ( useEmailService === true ) {
-		const domain = 'mailosaur.io';
-		email = `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
-	} else {
-		const emailUsername = config.has( 'emailUsername' ) ? config.get( 'emailUsername' ) : '';
-		const emailDomain = config.has( 'emailDomain' ) ? config.get( 'emailDomain' ) : '';
-		email = `${ emailUsername }+${ prefix }@${ emailDomain }`;
-	}
-	return email;
-=======
 	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
->>>>>>> de078ffc3f... Revert "Use dummy email address if we're not actually checking the email"
 }
 
 export function getExpectedFreeAddresses( searchTerm ) {
