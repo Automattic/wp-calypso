@@ -71,9 +71,7 @@ describe( 'asyncOneAtATime', () => {
 		jest.advanceTimersByTime( 4 );
 		await expect( a ).resolves.toBe( 123 );
 
-		const delay = delayedValue( null, 3 );
 		jest.advanceTimersByTime( 4 );
-		await delay;
 		const c = f();
 		const d = f();
 		expect( a ).not.toBe( c );
