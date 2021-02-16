@@ -759,22 +759,6 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	return result.then?.( camelCaseKeys );
 };
 
-/**
- * Retrieves the Titan order provisioning URL for a domain.
- *
- * @param domain the domain name
- * @param fn The callback function
- */
-Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/emails/titan/${ encodeURIComponent( domain ) }/order-provisioning-url`,
-			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt, fn ) {
 	return this.wpcom.req.get(
 		{
