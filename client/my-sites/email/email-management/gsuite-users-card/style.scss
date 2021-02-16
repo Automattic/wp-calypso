@@ -1,5 +1,92 @@
-.gsuite-users-card__container {
-	margin-bottom: 10px;
+.gsuite-users-card {
+	> div:not( :first-child ) {
+		margin-top: 24px;
+
+		.section-header {
+			align-items: center;
+		}
+	}
+
+	&.is-placeholder {
+		.gsuite-users-card__foldable-card-header-icon {
+			@include placeholder();
+			display: inline-block;
+			height: 36px;
+			width: 36px;
+		}
+
+		.gsuite-users-card__foldable-card-header-text {
+			width: 40%;
+
+			strong, em {
+				@include placeholder();
+				display: inline-block;
+				height: 21px;
+			}
+
+			strong {
+				width: 30%;
+			}
+
+			em {
+				margin-top: 5px;
+			}
+		}
+	}
+}
+
+.gsuite-users-card__foldable-card {
+	margin-bottom: 0;
+
+	.gsuite-users-card__foldable-card-header-icon {
+		margin-right: 10px;
+		max-width: 36px;
+	}
+
+	.gsuite-users-card__foldable-card-header-text {
+		display: flex;
+		flex-direction: column;
+
+		em {
+			color: var( --color-neutral-50 );
+			font-style: normal;
+		}
+	}
+
+	.gsuite-users-card__foldable-card-services {
+		column-gap: 10px;
+		display: grid;
+		grid-template-columns: repeat( 7, 1fr );
+		list-style: none;
+		margin: 0;
+		row-gap: 10px;
+
+		@include breakpoint-deprecated( '<960px' ) {
+			grid-template-columns: repeat( 4, 1fr );
+			grid-template-rows: repeat( 2, 1fr );
+		}
+
+		a {
+			align-items: center;
+			display: flex;
+			flex-direction: column;
+			padding: 10px;
+			text-align: center;
+
+			&:hover {
+				background-color: #eee;
+				border-radius: 5px;
+			}
+
+			img {
+				max-width: 30px;
+			}
+
+			strong {
+				padding-top: 5px;
+			}
+		}
+	}
 }
 
 .gsuite-users-card__user-list {
