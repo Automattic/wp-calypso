@@ -17,9 +17,10 @@ export function randomPhrase() {
 	return `${ gen[ 1 ].toProperCase() } ${ gen[ 2 ].toProperCase() } ${ gen[ 3 ].toProperCase() } ${ gen[ 4 ].toProperCase() }`;
 }
 
-export function getEmailAddress( prefix, inboxId, useEmailService = false ) {
-	let email;
+export function getEmailAddress( prefix, inboxId ) {
+	const domain = 'mailosaur.io';
 	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
+<<<<<<< HEAD
 	if ( useEmailService === true ) {
 		const domain = 'mailosaur.io';
 		email = `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
@@ -29,6 +30,9 @@ export function getEmailAddress( prefix, inboxId, useEmailService = false ) {
 		email = `${ emailUsername }+${ prefix }@${ emailDomain }`;
 	}
 	return email;
+=======
+	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+>>>>>>> de078ffc3f... Revert "Use dummy email address if we're not actually checking the email"
 }
 
 export function getExpectedFreeAddresses( searchTerm ) {
