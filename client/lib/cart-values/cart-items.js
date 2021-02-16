@@ -1308,12 +1308,36 @@ export function isPaidDomain( domainPriceRule ) {
 	return 'PRICE' === domainPriceRule;
 }
 
-export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
+const isMonthlyOrFreeFlow = ( flowName ) => {
+	return (
+		flowName &&
+		[
+			'free',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+		].includes( flowName )
+	);
+};
+
+export function getDomainPriceRule(
+	withPlansOnly,
+	selectedSite,
+	cart,
+	suggestion,
+	isDomainOnly,
+	flowName
+) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
 	}
 
 	if ( suggestion?.is_premium ) {
+		return 'PRICE';
+	}
+
+	if ( isMonthlyOrFreeFlow( flowName ) ) {
 		return 'PRICE';
 	}
 

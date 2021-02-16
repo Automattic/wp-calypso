@@ -33,6 +33,7 @@ import Badge from 'calypso/components/badge';
 import PremiumBadge from '../premium-badge';
 import InfoPopover from 'calypso/components/info-popover';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -177,8 +178,22 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
-		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
+		const {
+			cart,
+			isDomainOnly,
+			domainsWithPlansOnly,
+			selectedSite,
+			suggestion,
+			flowName,
+		} = this.props;
+		return getDomainPriceRule(
+			domainsWithPlansOnly,
+			selectedSite,
+			cart,
+			suggestion,
+			isDomainOnly,
+			flowName
+		);
 	}
 
 	/**
@@ -413,6 +428,7 @@ const mapStateToProps = ( state, props ) => {
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 	const stripZeros = props.showStrikedOutPrice ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
+	const flowName = getCurrentFlowName( state );
 
 	let productCost;
 	let productSaleCost;
@@ -433,6 +449,7 @@ const mapStateToProps = ( state, props ) => {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
 		productCost,
 		productSaleCost,
+		flowName,
 	};
 };
 
