@@ -118,10 +118,12 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 				return fetchedExperimentAssignment;
 			} catch ( e ) {
-				config.logError( {
-					message: e.message,
-					experimentName,
-				} );
+				try {
+					config.logError( {
+						message: e.message,
+						experimentName,
+					} );
+				} catch ( e2 ) {}
 				if ( config.isDevelopmentMode ) {
 					throw e;
 				}

@@ -420,13 +420,6 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		        "message": "Invalid experimentName: the-invalid-experiment-name",
 		      },
 		    ],
-		    Array [
-		      Object {
-		        "experimentName": "the-invalid-experiment-name",
-		        "isSecondaryError": "true",
-		        "message": "Error logging.",
-		      },
-		    ],
 		  ],
 		}
 	` );
@@ -441,7 +434,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		const client = createExPlatClient( mockedConfig );
 		await expect(
 			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
-		).rejects.toThrow( 'Error while logging.' );
+		).rejects.toThrow( 'Invalid experimentName: the-invalid-experiment-name' );
 		expect( allMockedConfigCalls() ).toMatchInlineSnapshot( `
 		Object {
 		  "fetchExperimentAssignment": Array [],
