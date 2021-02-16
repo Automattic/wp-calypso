@@ -8,7 +8,12 @@ import '@automattic/calypso-polyfills';
  * Internal dependencies
  */
 import { createExPlatClient } from '../create-explat-client';
-import { delayedValue, validExperimentAssignment } from '../internal/test-common';
+import {
+	delayedValue,
+	ONE_DELAY,
+	validExperimentAssignment,
+	ZERO_DELAY,
+} from '../internal/test-common';
 import * as Timing from '../internal/timing';
 import type { Config, ExperimentAssignment } from '../types';
 
@@ -43,7 +48,7 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 					[ experimentAssignment.experimentName ]: experimentAssignment.variationName,
 				},
 			},
-			1
+			ONE_DELAY
 		)
 	);
 }
@@ -106,7 +111,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		expect( mockedLogError.mock.calls ).toMatchInlineSnapshot( `Array []` );
 	} );
 	it( `[anonId] should successfully load an ExperimentAssignment`, async () => {
-		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'the-anon-id-123', 0 ) );
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'the-anon-id-123', ZERO_DELAY ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		mockedConfig.isDevelopmentMode = false;
 		const client = createExPlatClient( createMockedConfig() );
