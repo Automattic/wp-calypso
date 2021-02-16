@@ -177,7 +177,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					Timing.monotonicNow() - storedExperimentAssignment.retrievedTimestamp < 1000
 				) {
 					throw new Error(
-						`Warning: Trying to dangerously get an ExperimentAssignment too soon after loading.`
+						`Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.`
 					);
 				}
 			}
