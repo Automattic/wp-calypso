@@ -4,10 +4,9 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,15 +37,11 @@ import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import Gridicon from 'calypso/components/gridicon';
-import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
-import titanLogo from 'calypso/assets/images/email-providers/titan.svg';
-import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
+import TitanProviderDetails from 'calypso/my-sites/email/email-providers-comparison/email-provider-details/titan-provider-details';
 
 /**
  * Style dependencies
@@ -177,68 +172,14 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderTitanDetails( className ) {
-		const { currencyCode, currentUserLocale, titanMailProduct, translate } = this.props;
-		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
-		const billingFrequency =
-			! config.isEnabled( 'titan/phase-2' ) &&
-			( isEnglish || i18n.hasTranslation( 'Annual or monthly billing' ) )
-				? translate( 'Annual or monthly billing' )
-				: translate( 'Monthly billing' );
-
-		const formattedPrice = config.isEnabled( 'titan/phase-2' )
-			? translate( '{{price/}} /user /month', {
-					components: {
-						price: <span>{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }</span>,
-					},
-					comment: '{{price/}} is the formatted price, e.g. $20',
-			  } )
-			: translate( '{{price/}} /user /month', {
-					components: {
-						price: <span>{ formatCurrency( 3.5, 'USD' ) }</span>,
-					},
-					comment: '{{price/}} is the formatted price, e.g. $20',
-			  } );
-		const providerName = getTitanProductName();
-		const providerCtaText = translate( 'Add %(emailProductName)s', {
-			args: {
-				emailProductName: providerName,
-			},
-			comment: '%(emailProductName)s is the product name, either "Email" or "Titan Mail"',
-		} );
-		const providerEmailLogo = config.isEnabled( 'titan/phase-2' ) ? (
-			<Gridicon
-				className="email-providers-comparison__providers-wordpress-com-email"
-				icon="my-sites"
-			/>
-		) : (
-			{ path: titanLogo }
-		);
-		const badge = config.isEnabled( 'titan/phase-2' ) ? (
-			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
-		) : null;
+		const { currencyCode, titanMailProduct } = this.props;
 
 		return (
-			<EmailProviderDetails
-				title={ providerName }
-				description={ translate(
-					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
-				) }
-				image={ providerEmailLogo }
-				features={ [
-					billingFrequency,
-					translate( 'Send and receive from your custom domain' ),
-					translate( '30GB storage' ),
-					translate( 'Email, calendars, and contacts' ),
-					translate( 'One-click import of existing emails and contacts' ),
-					translate( 'Read receipts to track email opens' ),
-				] }
-				formattedPrice={ formattedPrice }
-				buttonLabel={ providerCtaText }
-				hasPrimaryButton={ true }
-				isButtonBusy={ this.state.isFetchingProvisioningURL }
-				onButtonClick={ this.onAddTitanClick }
-				badge={ badge }
-				className={ classNames( className, 'titan' ) }
+			<TitanProviderDetails
+				className={ className }
+				currencyCode={ currencyCode }
+				onAddTitanClick={ this.onAddTitanClick }
+				titanMailProduct={ titanMailProduct }
 			/>
 		);
 	}
