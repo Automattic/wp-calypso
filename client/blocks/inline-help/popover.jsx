@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
+import { Popover } from '@wordpress/components';
 
 /**
  * Internal Dependencies
@@ -17,7 +18,6 @@ import { __ } from '@wordpress/i18n';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import { selectResult, resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import { Button } from '@automattic/components';
-import Popover from 'calypso/components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
@@ -31,6 +31,7 @@ class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
+		context: PropTypes.element.isRequired,
 	};
 
 	static defaultProps = {
@@ -188,11 +189,12 @@ class InlineHelpPopover extends Component {
 
 		return (
 			<Popover
-				isVisible
 				onClose={ this.props.onClose }
 				position="top left"
-				context={ this.props.context }
+				expandOnMobile={ false }
+				noArrow={ false }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
+				getAnchorRect={ () => this.props.context.getBoundingClientRect() }
 			>
 				{ this.renderPopoverContent() }
 				{ this.renderPopoverFooter() }

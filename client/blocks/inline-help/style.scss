@@ -129,12 +129,7 @@
 	z-index: z-index( 'root', '.inline-help__mobile-overlay' );
 }
 
-.inline-help__popover.popover {
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-top: -5px;
-		width: calc( 100% - 28px );
-	}
-
+.components-popover .components-popover__content {
 	p {
 		font-size: $font-body-extra-small;
 
@@ -152,18 +147,12 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
-		width: 320px;
-
-		position: fixed;
-		top: auto !important;
-		bottom: 76px !important;
+	@include breakpoint-deprecated( '<660px' ) {
+		width: calc( 100vw - 28px );
 	}
 
-	&.is-top .popover__arrow::before,
-	&.is-top-left .popover__arrow::before,
-	&.is-top-right .popover__arrow::before {
-		border-top: 10px solid var( --color-neutral-0 );
+	@include breakpoint-deprecated( '>660px' ) {
+		width: 320px;
 	}
 }
 
