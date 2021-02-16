@@ -16,6 +16,22 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
+	.formatted-header {
+		@media ( max-width: 1040px ) {
+			text-align: left;
+		}
+	}
+
+	.plan-features-comparison__popular-tag-container {
+		@media ( max-width: 1040px ) {
+		display: flex;
+		position: absolute;
+		top: 15px;
+		right: 0;
+		margin-right: 15px;
+		}
+	}
+
 	.plans-features-main__group.is-wpcom .plan-features-comparison__header {
 		&.is-blogger-plan {
 			border-bottom: none;
@@ -42,11 +58,16 @@ $plan-features-sidebar-width: 272px;
 		justify-content: center;
 		font-weight: 400;
 		margin-top: 30px;
+
+		@media ( max-width: 1040px ) {
+			margin-top: 10px;
+		}
 	}
 
 	.plan-features-comparison__pricing {
 		padding: 8px 16px;
 		margin: 0;
+		text-align: center;
 		
 
 		.plan-price {
@@ -95,6 +116,10 @@ $plan-features-sidebar-width: 272px;
 		.plan-features-comparison__header-title {
 			color: var( --studio-gray-80 );
 			font-weight: 400;
+
+			@media ( max-width: 1040px ) {
+				font-size: $font-title-medium;
+			}
 		}
 
 		.is-premium-plan .plan-features-comparison__header-title {
@@ -110,6 +135,10 @@ $plan-features-sidebar-width: 272px;
 		background-color: var( --studio-green-5 );
 		color: var( --studio-gray-80 );
 		font-size: $font-body-small;
+
+		@media ( max-width: 1040px ) {
+			transform: none;
+		}
 	}
 
 	.plan-features__actions-button {
@@ -234,6 +263,8 @@ $plan-features-sidebar-width: 272px;
 	border: solid 1px var( --color-neutral-5 );
 	background-color: var( --color-surface );
 	margin-bottom: 24px;
+	position: relative;
+	border-radius: 6px; /* stylelint-disable-line */
 }
 
 .is-section-plans .plan-features-comparison__table {
@@ -398,7 +429,6 @@ $plan-features-sidebar-width: 272px;
 	width: 56px;
 	height: 56px;
 	margin-right: 15px;
-	border-radius: 50%;
 }
 
 .is-section-plans .plan-features-comparison__header-figure {

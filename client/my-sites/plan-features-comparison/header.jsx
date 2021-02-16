@@ -51,7 +51,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 
 		return (
 			<span>
-				<div>
+				<div className="plan-features-comparison__popular-tag-container">
 					{ popular && ! selectedPlan && (
 						<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 					) }
@@ -272,14 +272,8 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const {
-			currencyCode,
-			isInSignup,
-			plansWithScroll,
-			isInVerticalScrollingPlansExperiment,
-		} = this.props;
-		const displayFlatPrice =
-			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
+		const { currencyCode, isInSignup, plansWithScroll, isMobileView } = this.props;
+		const displayFlatPrice = isInSignup && ! plansWithScroll && ! isMobileView;
 
 		if ( fullPrice && discountedPrice ) {
 			return (

@@ -100,12 +100,17 @@ export class PlanFeaturesComparison extends Component {
 			'plans-wrapper': isInSignup,
 		} );
 
+		const mobileView = (
+			<div className="plan-features-comparison__mobile">{ this.renderMobileView() }</div>
+		);
+
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features-comparison__content">
+						{ mobileView }
 						<div>
 							<table className={ tableClasses }>
 								<caption className="plan-features-comparison__screen-reader-text screen-reader-text">
@@ -174,6 +179,111 @@ export class PlanFeaturesComparison extends Component {
 
 	getBannerContainer() {
 		return document.querySelector( '.plans-features-main__notice' );
+	}
+
+	renderMobileView() {
+		const {
+			basePlansPath,
+			canPurchase,
+			isInSignup,
+			isLandingPage,
+			isJetpack,
+			planProperties,
+			selectedPlan,
+			showPlanCreditsApplied,
+			isLaunchPage,
+		} = this.props;
+
+		// move any free plan to last place in mobile view
+		let freePlanProperties;
+		const reorderedPlans = planProperties.filter( ( properties ) => {
+			if ( isFreePlan( properties.planName ) ) {
+				freePlanProperties = properties;
+				return false;
+			}
+			return true;
+		} );
+
+		if ( freePlanProperties ) {
+			reorderedPlans.push( freePlanProperties );
+		}
+
+		return map( reorderedPlans, ( properties ) => {
+			const {
+				availableForPurchase,
+				currencyCode,
+				current,
+				planConstantObj,
+				planName,
+				popular,
+				newPlan,
+				bestValue,
+				relatedMonthlyPlan,
+				rawPriceForMonthlyPlan,
+				primaryUpgrade,
+				isPlaceholder,
+				hideMonthly,
+			} = properties;
+			const { rawPrice, rawPriceAnnual, discountPrice } = properties;
+			const { annualPricePerMonth, isMonthlyPlan } = properties;
+			return (
+				<div className="plan-features-comparison__mobile-plan" key={ planName }>
+					<PlanFeaturesComparisonHeader
+						availableForPurchase={ availableForPurchase }
+						current={ current }
+						currencyCode={ currencyCode }
+						isJetpack={ isJetpack }
+						popular={ popular }
+						newPlan={ newPlan }
+						bestValue={ bestValue }
+						title={ planConstantObj.getTitle() }
+						planType={ planName }
+						rawPrice={ rawPrice }
+						rawPriceAnnual={ rawPriceAnnual }
+						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
+						discountPrice={ discountPrice }
+						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+						hideMonthly={ hideMonthly }
+						isPlaceholder={ isPlaceholder }
+						basePlansPath={ basePlansPath }
+						relatedMonthlyPlan={ relatedMonthlyPlan }
+						isInSignup={ isInSignup }
+						selectedPlan={ selectedPlan }
+						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						annualPricePerMonth={ annualPricePerMonth }
+						isMonthlyPlan={ isMonthlyPlan }
+						audience={ planConstantObj.getAudience() }
+						isMobileView={ true }
+					/>
+					<PlanFeaturesComparisonActions
+						availableForPurchase={ availableForPurchase }
+						canPurchase={ canPurchase }
+						className={ getPlanClass( planName ) }
+						current={ current }
+						freePlan={ isFreePlan( planName ) }
+						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
+						isLaunchPage={ isLaunchPage }
+						isPlaceholder={ isPlaceholder }
+						isPopular={ popular }
+						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
+						planName={ planConstantObj.getTitle() }
+						planType={ planName }
+						primaryUpgrade={ primaryUpgrade }
+						selectedPlan={ selectedPlan }
+					/>
+					{ /* <FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
+						{ this.renderMobileFeatures( features ) }
+					</FoldableCard> */ }
+				</div>
+			);
+		} );
+	}
+
+	renderMobileFeatures( features ) {
+		return map( features, ( currentFeature, index ) => {
+			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
+		} );
 	}
 
 	renderPlanHeaders() {
