@@ -8,12 +8,12 @@ import { Link } from 'react-router-dom';
 import { ActionButtons, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
-import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
+import { TextControl, SVG, Path, Tooltip, Circle, Rect, Button } from '@wordpress/components';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import classNames from 'classnames';
 import { Icon, check } from '@wordpress/icons';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -543,9 +543,12 @@ const Summary: React.FunctionComponent = () => {
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
 
-	const { siteId, redirectTo } = React.useContext( LaunchContext );
+	const { siteId } = React.useContext( LaunchContext );
 
 	const { goToCheckout } = useCart();
+
+	const locale = useLocale();
+	const localizeUrl = useLocalizeUrl();
 
 	// When the summary view is active, the modal should be dismissible, and
 	// the modal title should be visible
@@ -568,17 +571,6 @@ const Summary: React.FunctionComponent = () => {
 		if ( selectedDomain || ! isSelectedPlanFree ) {
 			goToCheckout();
 		}
-	};
-
-	const onAskForHelpClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
-		const helpHref = ( event.target as HTMLAnchorElement ).getAttribute( 'href' );
-
-		if ( ! helpHref ) {
-			return;
-		}
-
-		redirectTo( helpHref );
-		event.preventDefault();
 	};
 
 	// Prepare Steps
@@ -693,9 +685,13 @@ const Summary: React.FunctionComponent = () => {
 
 				<div className="focused-launch-summary__ask-for-help">
 					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
-					<a href="/help" onClick={ onAskForHelpClick }>
+					<Button
+						isLink
+						href={ localizeUrl( 'https://wordpress.com/help', locale ) }
+						target="_blank"
+					>
 						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
-					</a>
+					</Button>
 				</div>
 			</div>
 		</div>
