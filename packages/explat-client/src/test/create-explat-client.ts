@@ -7,7 +7,7 @@ import '@automattic/calypso-polyfills';
 /**
  * Internal dependencies
  */
-import createExPlatClient from '../create-explat-client';
+import { createExPlatClient } from '../create-explat-client';
 import { delayedValue, validExperimentAssignment } from '../internal/test-common';
 import * as Timing from '../internal/timing';
 import type { Config, ExperimentAssignment } from '../types';
@@ -919,7 +919,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		expect( () =>
 			client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName )
 		).toThrowErrorMatchingInlineSnapshot(
-			`"Warning: Trying to dangerously get an ExperimentAssignment too soon after loading."`
+			`"Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it."`
 		);
 	} );
 	it( `[developmentMode] should return a loaded ExperimentAssignment when not run too soon after`, async () => {

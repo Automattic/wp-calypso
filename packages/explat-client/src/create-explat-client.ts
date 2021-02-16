@@ -55,7 +55,7 @@ export class MissingExperimentAssignmentError extends Error {
  *
  * @param config Configuration object
  */
-export default function createExPlatClient( config: Config ): ExPlatClient {
+export function createExPlatClient( config: Config ): ExPlatClient {
 	if ( typeof window === 'undefined' ) {
 		throw new Error( 'Running outside of a browser context.' );
 	}
@@ -183,6 +183,30 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 			}
 
 			return storedExperimentAssignment;
+		},
+	};
+}
+
+/**
+ * A dummy ExPlat client to sub in under SSR contexts
+ *
+ * @param config The config
+ */
+export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
+	return {
+		loadExperimentAssignment: async ( experimentName: string ) => {
+			config.logError( {
+				message: 'Attempting to load ExperimentAssignment in SSR context',
+				experimentName,
+			} );
+			return createFallbackExperimentAssignment( experimentName );
+		},
+		dangerouslyGetExperimentAssignment: ( experimentName: string ) => {
+			config.logError( {
+				message: 'Attempting to dangerously get ExperimentAssignment in SSR context',
+				experimentName,
+			} );
+			return createFallbackExperimentAssignment( experimentName );
 		},
 	};
 }

@@ -7,7 +7,7 @@ import '@automattic/calypso-polyfills';
 /**
  * Internal dependencies
  */
-import createSsrSafeMockExPlatClient from '../create-ssr-safe-mock-explat-client';
+import { createSsrSafeDummyExPlatClient } from '../create-explat-client';
 import * as Timing from '../internal/timing';
 import type { Config } from '../types';
 
@@ -32,7 +32,7 @@ beforeEach( () => {
 describe( 'loadExperimentAssignment', () => {
 	it( 'should behave as expected', async () => {
 		spiedMonotonicNow.mockImplementationOnce( () => 123456 );
-		const client = createSsrSafeMockExPlatClient( mockedConfig );
+		const client = createSsrSafeDummyExPlatClient( mockedConfig );
 
 		await expect( client.loadExperimentAssignment( 'experiment_name' ) ).resolves.toEqual( {
 			experimentName: 'experiment_name',
@@ -61,7 +61,7 @@ describe( 'dangerouslyGetExperimentAssignment', () => {
 	it( 'should behave as expected', () => {
 		spiedMonotonicNow.mockImplementationOnce( () => 123456 );
 
-		const client = createSsrSafeMockExPlatClient( mockedConfig );
+		const client = createSsrSafeDummyExPlatClient( mockedConfig );
 		expect( client.dangerouslyGetExperimentAssignment( 'experiment_name' ) ).toEqual( {
 			experimentName: 'experiment_name',
 			isFallbackExperimentAssignment: true,

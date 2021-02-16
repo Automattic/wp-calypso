@@ -7,8 +7,10 @@ import '@automattic/calypso-polyfills';
 /**
  * Internal dependencies
  */
-import createBrowserExPlatClient from '../create-explat-client';
-import createSsrSafeMockExPlatClient from '../create-ssr-safe-mock-explat-client';
+import {
+	createExPlatClient as createBrowserExPlatClient,
+	createSsrSafeDummyExPlatClient,
+} from '../create-explat-client';
 
 beforeEach( () => {
 	jest.resetModules();
@@ -31,7 +33,7 @@ describe( 'index.ts', () => {
 		global.window = undefined;
 		const exPlatIndex = require( '../index' );
 		expect( exPlatIndex.createExPlatClient.toString() ).toBe(
-			createSsrSafeMockExPlatClient.toString()
+			createSsrSafeDummyExPlatClient.toString()
 		);
 	} );
 } );

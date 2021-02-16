@@ -2,10 +2,13 @@
  * Internal dependencies
  */
 import { ExperimentAssignment } from './types';
-import createBrowserExPlatClient, { ExPlatClient } from './create-explat-client';
-import createSsrSafeMockExPlatClient from './create-ssr-safe-mock-explat-client';
+import {
+	createExPlatClient as createBrowserExPlatClient,
+	createSsrSafeDummyExPlatClient,
+	ExPlatClient,
+} from './create-explat-client';
 
 const createExPlatClient =
-	typeof window === 'undefined' ? createSsrSafeMockExPlatClient : createBrowserExPlatClient;
+	typeof window === 'undefined' ? createSsrSafeDummyExPlatClient : createBrowserExPlatClient;
 
 export { createExPlatClient, ExperimentAssignment, ExPlatClient };
