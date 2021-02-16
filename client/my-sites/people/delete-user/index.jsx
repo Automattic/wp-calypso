@@ -333,12 +333,12 @@ const withDeleteUser = ( Component ) => {
 					successNotice(
 						isMultisite
 							? translate( 'Successfully removed @%(user)s', {
-									args: { user: user?.login },
-									context: 'Success message after a user has been removed.',
+									args: { user: user.login },
+									context: 'Success message after a user has been modified.',
 							  } )
 							: translate( 'Successfully deleted @%(user)s', {
-									args: { user: user?.login },
-									context: 'Success message after a user has been deleted.',
+									args: { user: user.login },
+									context: 'Success message after a user has been modified.',
 							  } ),
 						{ id: 'delete-user-notice', displayOnNextPage: true }
 					)

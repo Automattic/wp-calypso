@@ -39,7 +39,7 @@ function TeamList( props ) {
 	React.useEffect( () => {
 		error &&
 			dispatch(
-				errorNotice( translate( 'There was an error retrieving users.' ), {
+				errorNotice( translate( 'There was an error retrieving users' ), {
 					id: 'site-users-notice',
 					button: 'Try again.',
 					onClick: () => {
