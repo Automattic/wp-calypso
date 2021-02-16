@@ -83,14 +83,15 @@ export function getSignupUrl(
 	if (
 		config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 		oauth2Client &&
-		isWooOAuth2Client( oauth2Client ) &&
-		wccomFrom
+		isWooOAuth2Client( oauth2Client )
 	) {
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
-			'wccom-from': wccomFrom,
 			oauth2_redirect: redirectTo,
 		} );
+		if ( wccomFrom ) {
+			oauth2Params.set( 'wccom-from', wccomFrom );
+		}
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 	}
 
