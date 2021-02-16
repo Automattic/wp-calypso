@@ -265,9 +265,11 @@ add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
  */
 function load_wpcom_block_patterns_modifications() {
 	// Disable the premium patterns feature temporarily due to performance issues (#50069).
-	// if ( apply_filters( 'a8c_enable_block_patterns_modifications', true ) ) {
-	// 	require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
-	// }
+	/*
+	if ( apply_filters( 'a8c_enable_block_patterns_modifications', true ) ) {
+		require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
+	}
+	*/
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 
