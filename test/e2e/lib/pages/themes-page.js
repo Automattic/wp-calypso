@@ -65,7 +65,8 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async getFirstThemeName() {
-		const selector = by.css( '.theme-showcase__all-themes .is-actionable:not(.is-active) h2' );
+		// Get the first theme that isn't the Twenty-Twenty-One theme
+		const selector = by.css( ".theme-showcase__all-themes .is-actionable:not(.is-active):not([data-e2e-theme*='twenty-twenty-one']) h2" );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
