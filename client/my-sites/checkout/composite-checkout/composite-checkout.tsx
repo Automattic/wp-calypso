@@ -416,9 +416,10 @@ export default function CompositeCheckout( {
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
+	const planSlugs = getPlanProductSlugs( responseCart.products );
 	const getItemVariants = useProductVariants( {
 		siteId,
-		productSlug: getPlanProductSlugs( responseCart.products )[ 0 ],
+		productSlug: planSlugs.length > 0 ? planSlugs[ 0 ] : undefined,
 	} );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(

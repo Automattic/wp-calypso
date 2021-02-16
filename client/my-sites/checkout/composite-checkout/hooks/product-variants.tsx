@@ -22,10 +22,53 @@ import {
 	TERM_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import { requestProductsList } from 'calypso/state/products-list/actions';
+import type { Plan } from 'calypso/lib/plans/types';
+import type { WPCOMProductSlug, WPCOMProductVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
-export function useProductVariants( { siteId, productSlug } ) {
+export interface AvailableProductVariant {
+	planSlug: string;
+	plan: Plan;
+	product: {
+		product_id: number;
+		currency_code: string;
+	};
+	priceFullBeforeDiscount: number;
+	priceFull: number;
+	priceFinal: number;
+	priceMonthly: number;
+}
+
+export type GetProductVariants = ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
+
+const Discount = styled.span`
+	color: ${ ( props ) => props.theme.colors.discount };
+	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
+`;
+
+const DoNotPayThis = styled.span`
+	text-decoration: line-through;
+	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
+`;
+
+export function useProductVariants( {
+	siteId,
+	productSlug,
+}: {
+	siteId: number | undefined;
+	productSlug: string | undefined;
+} ): GetProductVariants {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
@@ -54,7 +97,7 @@ export function useProductVariants( { siteId, productSlug } ) {
 		}
 	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
-	const getproductVariant = ( variant ) => {
+	const getProductVariant = ( variant: AvailableProductVariant ): WPCOMProductVariant => {
 		return {
 			variantLabel: getTermText( variant.plan.term, translate ),
 			variantDetails: <VariantPrice variant={ variant } />,
@@ -63,20 +106,22 @@ export function useProductVariants( { siteId, productSlug } ) {
 		};
 	};
 
-	return ( anyProductSlug ) => {
+	return ( anyProductSlug: string ) => {
 		if ( anyProductSlug !== productSlug ) {
 			return [];
 		}
 
 		if ( ! isWpComPlan( productSlug ) ) {
-			return productsWithPrices.map( getproductVariant );
+			return productsWithPrices.map( getProductVariant );
 		}
 
-		return replaceFullPriceWithMonthlyCost( productsWithPrices ).map( getproductVariant );
+		return replaceFullPriceWithMonthlyCost( productsWithPrices ).map( getProductVariant );
 	};
 }
 
-function replaceFullPriceWithMonthlyCost( products ) {
+function replaceFullPriceWithMonthlyCost(
+	products: AvailableProductVariant[]
+): AvailableProductVariant[] {
 	const monthlyPlan = products.filter( ( product ) => product.plan?.term === TERM_MONTHLY )?.[ 0 ];
 
 	if ( ! monthlyPlan ) {
@@ -101,7 +146,7 @@ function replaceFullPriceWithMonthlyCost( products ) {
 	} );
 }
 
-function VariantPrice( { variant } ) {
+function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {
 	const currentPrice = variant.priceFinal || variant.priceFull;
 	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
 	return (
@@ -117,7 +162,7 @@ function VariantPrice( { variant } ) {
 	);
 }
 
-function VariantPriceDiscount( { variant } ) {
+function VariantPriceDiscount( { variant }: { variant: AvailableProductVariant } ) {
 	const translate = useTranslate();
 	const discountPercentage = Math.round(
 		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
@@ -133,7 +178,7 @@ function VariantPriceDiscount( { variant } ) {
 	);
 }
 
-function useVariantPlanProductSlugs( productSlug ) {
+function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
 	const reduxDispatch = useDispatch();
 
 	const chosenPlan = getPlan( productSlug );
@@ -168,40 +213,22 @@ function useVariantPlanProductSlugs( productSlug ) {
 	} );
 }
 
-function getTermText( term, translate ) {
+function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
 		case TERM_BIENNIALLY:
-			return translate( 'Two years' );
+			return String( translate( 'Two years' ) );
 
 		case TERM_ANNUALLY:
-			return translate( 'One year' );
+			return String( translate( 'One year' ) );
 
 		case TERM_MONTHLY:
-			return translate( 'One month' );
+			return String( translate( 'One month' ) );
+		default:
+			return '';
 	}
 }
 
-const Discount = styled.span`
-	color: ${ ( props ) => props.theme.colors.discount };
-	margin-right: 8px;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
-`;
-
-const DoNotPayThis = styled.span`
-	text-decoration: line-through;
-	margin-right: 8px;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
-`;
-
-function myFormatCurrency( price, code, options = {} ) {
+function myFormatCurrency( price: number, code: string, options = {} ) {
 	const precision = CURRENCIES[ code ].precision;
 	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
 
