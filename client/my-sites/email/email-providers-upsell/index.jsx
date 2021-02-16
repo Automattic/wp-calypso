@@ -88,7 +88,13 @@ export default function EmailProvidersUpsell( { domain } ) {
 				{ translate( 'Register %(domain)s', { args: { domain } } ) }
 			</HeaderCake>
 
-			<CustomEmailPromo domainName={ domain } />
+			<CustomEmailPromo domainName={ domain }>
+				<div className="email-providers-upsell__intro-actions">
+					<Button onClick={ () => handleSkipClick( 'intro_text' ) }>
+						{ translate( 'No thanks! I just want a domain!' ) }
+					</Button>
+				</div>
+			</CustomEmailPromo>
 			<div className="email-providers-upsell__providers">
 				<TitanProviderDetails
 					className={ titanCardClassName }

@@ -15,7 +15,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
  */
 import './style.scss';
 
-export default function CustomEmailPromo( { domainName } ) {
+export default function CustomEmailPromo( { domainName, children } ) {
 	const translate = useTranslate();
 	const image = {
 		path: emailIllustration,
@@ -44,6 +44,7 @@ export default function CustomEmailPromo( { domainName } ) {
 					translateArgs
 				) }
 			</p>
+			{ children }
 		</PromoCard>
 	);
 }
