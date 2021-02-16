@@ -94,7 +94,6 @@ function renderTransactionQuantitySummaryForTitanMail(
 		return translate( 'Renewal for %(quantity)s mailbox', 'Renewal for %(quantity)s mailboxes', {
 			args: { quantity: licensed_quantity },
 			count: licensed_quantity,
-			context: 'Renewal description with number of mailboxes renewed',
 			comment: '%(quantity)s is number of mailboxes renewed',
 		} );
 	}
@@ -106,7 +105,6 @@ function renderTransactionQuantitySummaryForTitanMail(
 			{
 				args: { quantity: new_quantity },
 				count: new_quantity,
-				context: 'Purchase description with additional number of mailboxes purchased',
 				comment: '%(quantity)s is additional number of mailboxes purchased',
 			}
 		);
@@ -115,7 +113,6 @@ function renderTransactionQuantitySummaryForTitanMail(
 	return translate( 'Purchase of %(quantity)s mailbox', 'Purchase of %(quantity)s mailboxes', {
 		args: { quantity: licensed_quantity },
 		count: licensed_quantity,
-		context: 'Purchase description with number of mailboxes purchased',
 		comment: '%(quantity)s is number of mailboxes purchased',
 	} );
 }
@@ -131,7 +128,6 @@ function renderTransactionQuantitySummaryForGoogleWorkspace(
 		return translate( 'Renewal for %(quantity)s user', 'Renewal for %(quantity)s users', {
 			args: { quantity: licensed_quantity },
 			count: licensed_quantity,
-			context: 'Renewal description with number of users renewed',
 			comment: '%(quantity)s is number of users renewed',
 		} );
 	}
@@ -140,7 +136,6 @@ function renderTransactionQuantitySummaryForGoogleWorkspace(
 		return translate( 'Purchase of %(quantity)s new user', 'Purchase of %(quantity)s new users', {
 			args: { quantity: new_quantity },
 			count: new_quantity,
-			context: 'Purchase description with additional number of users purchased',
 			comment: '%(quantity)s is additional number of users purchased',
 		} );
 	}
@@ -148,7 +143,6 @@ function renderTransactionQuantitySummaryForGoogleWorkspace(
 	return translate( 'Purchase of %(quantity)s user', 'Purchase of %(quantity)s users', {
 		args: { quantity: licensed_quantity },
 		count: licensed_quantity,
-		context: 'Purchase description with number of users purchased',
 		comment: '%(quantity)s is number of users purchased',
 	} );
 }
@@ -188,7 +182,6 @@ export function renderTransactionQuantitySummary(
 		return translate( 'Renewal for %(quantity)s item', 'Renewal for %(quantity)s items', {
 			args: { quantity: licensed_quantity },
 			count: licensed_quantity,
-			context: 'Renewal description with number of items renewed',
 			comment: '%(quantity)s is number of items renewed',
 		} );
 	}
@@ -197,7 +190,6 @@ export function renderTransactionQuantitySummary(
 		return translate( 'Purchase of %(quantity)s new item', 'Purchase of %(quantity)s new items', {
 			args: { quantity: new_quantity },
 			count: new_quantity,
-			context: 'Purchase description with additional number of items purchased',
 			comment: '%(quantity)s is additional number of items purchased',
 		} );
 	}
@@ -205,7 +197,6 @@ export function renderTransactionQuantitySummary(
 	return translate( 'Purchase of %(quantity)s item', 'Purchase of %(quantity)s items', {
 		args: { quantity: licensed_quantity },
 		count: licensed_quantity,
-		context: 'Purchase description with number of items purchased',
 		comment: '%(quantity)s is number of items purchased',
 	} );
 }
