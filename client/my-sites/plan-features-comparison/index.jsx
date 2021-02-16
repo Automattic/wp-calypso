@@ -397,7 +397,7 @@ export class PlanFeaturesComparison extends Component {
 		const { translate, isInSignup } = this.props;
 
 		if ( ! isInSignup || ! feature.availableOnlyForAnnualPlans ) {
-			return null;
+			return '';
 		}
 
 		return (
@@ -418,14 +418,14 @@ export class PlanFeaturesComparison extends Component {
 
 		return (
 			<>
-				<FeatureDisplayComponent key={ index }>
+				<FeatureDisplayComponent
+					key={ index }
+					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
+				>
 					<span className={ classes }>
 						<span className="plan-features-comparison__item-title">
 							{ feature.getTitle( this.props.domainName ) }
 						</span>
-						{ ! feature.availableForCurrentPlan &&
-							feature.availableOnlyForAnnualPlans &&
-							this.renderAnnualPlansFeatureNotice( feature ) }
 					</span>
 				</FeatureDisplayComponent>
 			</>

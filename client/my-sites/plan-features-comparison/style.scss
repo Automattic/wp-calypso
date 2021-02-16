@@ -119,6 +119,31 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-comparison__item {
 		padding: 0.5rem;
 
+		&.plan-features-comparison__item-unavailable {
+			display: flex;
+			flex-direction: column;
+
+			& .plan-features-comparison__item-annual-plan-container {
+				display: flex;
+				position: absolute;
+				margin-left: 21px;
+				top: 5px;
+
+				& .plan-features-comparison__item-annual-plan {
+					font-weight: 600;
+					color: var( --color-error );
+				}
+			}
+
+			& .plan-features-comparison__item-info-container {
+				display: flex;
+
+				&.plan-features-comparison__item-info-annual-only {
+					margin-top: 10px;
+				}
+			}
+		}
+
 		.plan-features-comparison__item-checkmark {
 			fill: var( --studio-green-50 );
 			width: 16px;
