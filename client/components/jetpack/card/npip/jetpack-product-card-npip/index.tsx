@@ -10,6 +10,7 @@ import { Button, ProductIcon } from '@automattic/components';
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
 import { preventWidows } from 'calypso/lib/formatting';
 import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -73,17 +74,31 @@ const DisplayPrice = ( {
 
 	if ( isOwned ) {
 		return (
-			<p className="jetpack-product-card-npip__you-own-this">
-				{ translate( 'You own this product' ) }
-			</p>
+			<div className="jetpack-product-card-npip__price">
+				<p className="jetpack-product-card-npip__you-own-this">
+					<Gridicon
+						className="jetpack-product-card-npip__you-own-this-icon"
+						icon="checkmark-circle"
+						size={ 48 }
+					/>
+					{ translate( 'You own this product' ) }
+				</p>
+			</div>
 		);
 	}
 
 	if ( isIncludedInPlan ) {
 		return (
-			<p className="jetpack-product-card-npip__you-own-this">
-				{ translate( 'Part of your current plan' ) }
-			</p>
+			<div className="jetpack-product-card-npip__price">
+				<p className="jetpack-product-card-npip__you-own-this">
+					<Gridicon
+						className="jetpack-product-card-npip__you-own-this-icon"
+						icon="checkmark-circle"
+						size={ 48 }
+					/>
+					{ translate( 'Part of your current plan' ) }
+				</p>
+			</div>
 		);
 	}
 

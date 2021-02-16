@@ -102,16 +102,26 @@
 }
 
 .jetpack-product-card-npip__you-own-this {
-	margin-top: -18px;
-	margin-bottom: 31px;
-
-	padding-top: 6px;
-	padding-bottom: 6px;
-
+	margin-top: 40px;
+	margin-bottom: initial;
+	padding-top: 16px;
+	padding-bottom: 28px;
 	border-radius: ( 2px * 2 );
 
-	text-align: center;
-	background-color: rgba( var( --color-success-10-rgb ), 0.1 );
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	color: var( --studio-gray-20 );
+	background-color: var( --studio-gray-0 );
+}
+
+.jetpack-product-card-npip__you-own-this-icon {
+	display: block;
+
+	margin: 8px auto;
+	fill: currentColor;
 }
 
 .jetpack-product-card-npip__price {
