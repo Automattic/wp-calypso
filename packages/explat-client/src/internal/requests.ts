@@ -21,7 +21,10 @@ export function isFetchExperimentAssignmentResponse(
 	response: unknown
 ): response is FetchExperimentAssignmentResponse {
 	return (
-		isObject( response ) && isObject( response.variations ) && typeof response.ttl === 'number'
+		isObject( response ) &&
+		isObject( response.variations ) &&
+		typeof response.ttl === 'number' &&
+		0 < response.ttl
 	);
 }
 

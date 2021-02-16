@@ -10,18 +10,20 @@ import '@automattic/calypso-polyfills';
 import * as Timing from '../timing';
 import * as Requests from '../requests';
 import type { Config, ExperimentAssignment } from '../../types';
-import { delayedValue, validExperimentAssignment } from '../test-common';
+import { delayedValue, ONE_DELAY, validExperimentAssignment } from '../test-common';
 import * as ExperimentAssignments from '../experiment-assignments';
 
 const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
 
 const mockedFetchExperimentAssignment = jest.fn();
 const mockedGetAnonId = jest.fn();
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore; Not using the full Config
 const mockedConfig: Config = {
 	fetchExperimentAssignment: mockedFetchExperimentAssignment,
 	getAnonId: mockedGetAnonId,
+	logError: async () => {
+		throw new Error( `The tested file should throw and not log.` );
+	},
+	isDevelopmentMode: false,
 };
 
 function mockFetchExperimentAssignmentToMatchExperimentAssignment(
@@ -36,14 +38,14 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 					[ experimentAssignment.experimentName ]: experimentAssignment.variationName,
 				},
 			},
-			1
+			ONE_DELAY
 		)
 	);
 }
 
 describe( 'fetchExperimentAssignment', () => {
-	it( 'should successfully fetch and return a well formed response', async () => {
-		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'asdf', 1 ) );
+	it( 'should successfully fetch and return a well formed response with an anonId', async () => {
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'asdf', ONE_DELAY ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		const experimentAssignmentWithAnonId = await Requests.fetchExperimentAssignment(
 			mockedConfig,
@@ -58,9 +60,11 @@ describe( 'fetchExperimentAssignment', () => {
 				},
 			],
 		] );
+	} );
 
+	it( 'should successfully fetch and return a well formed response without an anonId', async () => {
 		mockedFetchExperimentAssignment.mockReset();
-		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		const experimentAssignmentWithoutAnonId = await Requests.fetchExperimentAssignment(
 			mockedConfig,
@@ -79,13 +83,13 @@ describe( 'fetchExperimentAssignment', () => {
 	} );
 
 	it( 'should throw for an invalid response', async () => {
-		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
 			delayedValue(
 				{
 					ttl: 60,
 				},
-				1
+				ONE_DELAY
 			)
 		);
 		await expect(
@@ -94,7 +98,7 @@ describe( 'fetchExperimentAssignment', () => {
 	} );
 
 	it( 'should throw for multiple experiments in the response', async () => {
-		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
 		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
 			delayedValue(
@@ -106,7 +110,7 @@ describe( 'fetchExperimentAssignment', () => {
 						'_repeat' ]: validExperimentAssignment.variationName,
 					},
 				},
-				1
+				ONE_DELAY
 			)
 		);
 		await expect(
@@ -117,7 +121,7 @@ describe( 'fetchExperimentAssignment', () => {
 	} );
 
 	it( 'should throw for no experiments in the response', async () => {
-		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
 		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
 			delayedValue(
@@ -125,7 +129,7 @@ describe( 'fetchExperimentAssignment', () => {
 					ttl: 60,
 					variations: {},
 				},
-				1
+				ONE_DELAY
 			)
 		);
 		await expect(
@@ -134,7 +138,7 @@ describe( 'fetchExperimentAssignment', () => {
 	} );
 
 	it( 'should throw for response experiment not matching the requested name', async () => {
-		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		await expect(
@@ -149,7 +153,7 @@ describe( 'fetchExperimentAssignment', () => {
 
 	it( 'should throw for returned experiment not being alive', async () => {
 		jest.spyOn( ExperimentAssignments, 'isAlive' ).mockImplementationOnce( () => false );
-		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, 1 ) );
+		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		await expect(
 			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
@@ -161,7 +165,7 @@ describe( 'isFetchExperimentAssignmentResponse', () => {
 	it( 'should return true for valid reponses', () => {
 		expect(
 			Requests.isFetchExperimentAssignmentResponse( {
-				ttl: 0,
+				ttl: 1,
 				variations: {},
 			} )
 		).toBe( true );
@@ -174,6 +178,24 @@ describe( 'isFetchExperimentAssignmentResponse', () => {
 				},
 			} )
 		).toBe( true );
+	} );
+
+	it( 'should return false for reponses with 0 ttl', () => {
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 0,
+				variations: {},
+			} )
+		).toBe( false );
+		expect(
+			Requests.isFetchExperimentAssignmentResponse( {
+				ttl: 0,
+				variations: {
+					experiment_a: 'variation_name_a',
+					experiment_b: null,
+				},
+			} )
+		).toBe( false );
 	} );
 
 	it( 'should return false for invalid responses', () => {
