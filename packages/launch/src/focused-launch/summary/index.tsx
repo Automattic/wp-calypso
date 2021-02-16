@@ -687,7 +687,7 @@ const Summary: React.FunctionComponent = () => {
 					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
 					<Button
 						isLink
-						href={ localizeUrl( 'https://wordpress.com/help', locale ) }
+						href={ localizeUrl( 'https://wordpress.com/help/contact', locale ) }
 						target="_blank"
 					>
 						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
