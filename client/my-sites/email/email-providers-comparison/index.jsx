@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -159,17 +158,13 @@ class EmailProvidersComparison extends React.Component {
 
 	render() {
 		const { isGSuiteSupported } = this.props;
-		const isTitanSupported = config.isEnabled( 'titan/phase-2' );
-		const cardClassName = classNames( [
-			isGSuiteSupported ? null : 'no-gsuite',
-			isTitanSupported ? null : 'no-titan',
-		] );
+		const cardClassName = isGSuiteSupported ? null : 'no-gsuite';
 		return (
 			<>
 				{ this.renderHeaderSection() }
 				<div className="email-providers-comparison__providers">
 					{ this.renderForwardingDetails( cardClassName ) }
-					{ isTitanSupported && this.renderTitanDetails( cardClassName ) }
+					{ this.renderTitanDetails( cardClassName ) }
 					{ isGSuiteSupported && this.renderGSuiteDetails( cardClassName ) }
 					<TrackComponentView
 						eventName="calypso_email_providers_comparison_page_view"
