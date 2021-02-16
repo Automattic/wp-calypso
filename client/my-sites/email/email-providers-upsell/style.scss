@@ -1,0 +1,21 @@
+.email-providers-upsell__providers {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-bottom: 16px;
+
+	.promo-card {
+		width: calc( 50% - 0.5em );
+		margin: 0;
+	}
+}
+
+.email-providers-upsell__actions {
+	display: flex;
+	flex-direction: row;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-direction: column;
+	}
+}

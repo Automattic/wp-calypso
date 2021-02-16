@@ -26,6 +26,7 @@ import MapDomain from 'calypso/my-sites/domains/map-domain';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
+import EmailProvidersUpsell from 'calypso/my-sites/email/email-providers-upsell';
 import GSuiteUpgrade from 'calypso/components/upgrades/gsuite';
 import {
 	domainManagementTransferIn,
@@ -220,6 +221,25 @@ const googleAppsWithRegistration = ( context, next ) => {
 	next();
 };
 
+const emailWithRegistration = ( context, next ) => {
+	context.primary = (
+		<Main wideLayout>
+			<PageViewTracker
+				path="/domains/add/:domain/email/:site"
+				title="Domain Search > Domain Registration > Email"
+			/>
+			<DocumentHead
+				title={ translate( 'Register %(domain)s', {
+					args: { domain: context.params.registerDomain },
+				} ) }
+			/>
+			<EmailProvidersUpsell domain={ context.params.registerDomain } />
+		</Main>
+	);
+
+	next();
+};
+
 const redirectIfNoSite = ( redirectTo ) => {
 	return ( context, next ) => {
 		const state = context.store.getState();
@@ -282,6 +302,7 @@ export default {
 	jetpackNoDomainsWarning,
 	siteRedirect,
 	mapDomain,
+	emailWithRegistration,
 	googleAppsWithRegistration,
 	redirectToDomainSearchSuggestion,
 	redirectIfNoSite,

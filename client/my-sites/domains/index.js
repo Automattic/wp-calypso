@@ -241,6 +241,17 @@ export default function () {
 		);
 
 		page(
+			'/domains/add/:registerDomain/email/:domain',
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.emailWithRegistration,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			'/domains/add/:registerDomain/google-apps/:domain',
 			siteSelection,
 			navigation,
