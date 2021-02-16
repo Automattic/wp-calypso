@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import Translatable from './translatable';
 import languages from '@automattic/languages';
 import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 
 /**
  * Style dependencies
@@ -31,7 +31,6 @@ class CommunityTranslator extends Component {
 	initialized = false;
 
 	componentDidMount() {
-		this.props.fetchUserSettings();
 		this.setLanguage();
 
 		// wrap translations from i18n
@@ -153,13 +152,10 @@ class CommunityTranslator extends Component {
 	}
 
 	render() {
-		return null;
+		return <QueryUserSettings />;
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
-	} ),
-	{ fetchUserSettings }
-)( localize( CommunityTranslator ) );
+export default connect( ( state ) => ( {
+	isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
+} ) )( localize( CommunityTranslator ) );
