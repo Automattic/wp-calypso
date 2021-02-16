@@ -189,9 +189,8 @@
 	}
 }
 
-.jetpack-product-card-npip__price
-.plan-price.is-discounted
-.plan-price__currency-symbol {
+.jetpack-product-card-npip__price .plan-price.is-discounted,
+.jetpack-product-card-npip__price .plan-price.is-discounted .plan-price__currency-symbol {
 	color: inherit;
 }
 
