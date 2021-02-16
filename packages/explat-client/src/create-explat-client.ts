@@ -118,45 +118,43 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 
 				return fetchedExperimentAssignment;
 			} catch ( e ) {
-				// We need to be careful about errors thrown in the catch block too:
+				config.logError( {
+					message: e.message,
+					experimentName,
+				} );
+				if ( config.isDevelopmentMode ) {
+					throw e;
+				}
+			}
+
+			// Fetching failed and we're not in development mode.
+			try {
+				// We provide stale ExperimentAssignments, important for offline users.
+				const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
+				if ( storedExperimentAssignment ) {
+					return storedExperimentAssignment;
+				}
+
+				// We are syncronously trying to retreive and then store a fallback which means this fallback will
+				// be retrieved by all other loadExperimentAssignments that are currently running or will run,
+				// preventing a run on the server.
+				const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
+				experimentAssignmentStore.store( fallbackExperimentAssignment );
+				return fallbackExperimentAssignment;
+			} catch ( e ) {
 				try {
 					config.logError( {
 						message: e.message,
 						experimentName,
+						isSecondaryError: 'true',
 					} );
-					if ( config.isDevelopmentMode ) {
-						throw e;
-					}
-
-					// We provide stale ExperimentAssignments, important for offline users.
-					const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
-					if ( storedExperimentAssignment ) {
-						return storedExperimentAssignment;
-					}
-
-					// We are syncronously trying to retreive and then store a fallback which means this fallback will
-					// be retrieved by all other loadExperimentAssignments that are currently running or will run,
-					// preventing a run on the server.
-					const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
-					experimentAssignmentStore.store( fallbackExperimentAssignment );
-					return fallbackExperimentAssignment;
-				} catch ( e2 ) {
-					// The devMode error gets passed through so we have to throw it again.
-					if ( config.isDevelopmentMode ) {
-						throw e2;
-					}
-
-					try {
-						config.logError( {
-							message: e2.message,
-							experimentName,
-							isSecondaryError: 'true',
-						} );
-					} catch ( e3 ) {}
-
-					// As a last resort we just keep it very simple
-					return createFallbackExperimentAssignment( experimentName );
+				} catch ( e2 ) {}
+				if ( config.isDevelopmentMode ) {
+					throw e;
 				}
+
+				// As a last resort we just keep it very simple
+				return createFallbackExperimentAssignment( experimentName );
 			}
 		},
 		dangerouslyGetExperimentAssignment: ( experimentName: string ): ExperimentAssignment => {
