@@ -34,7 +34,7 @@ function LicenseStateFilter( props: Props ): ReactElement {
 	const basePath = '/partner-portal/';
 
 	const navItems = [
-		{ key: LicenseFilter.All, label: translate( 'All Active' ), count: 4 },
+		{ key: LicenseFilter.NotRevoked, label: translate( 'All Active' ), count: 4 },
 		{
 			key: LicenseFilter.Detached,
 			label: translate( 'Detached' ),
@@ -49,7 +49,7 @@ function LicenseStateFilter( props: Props ): ReactElement {
 	].map( ( navItem ) => ( {
 		...navItem,
 		selected: props.filter === navItem.key,
-		path: basePath + ( 'all' !== navItem.key ? navItem.key : '' ),
+		path: basePath + ( LicenseFilter.NotRevoked !== navItem.key ? navItem.key : '' ),
 		children: navItem.label,
 	} ) );
 

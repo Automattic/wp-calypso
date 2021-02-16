@@ -5,7 +5,7 @@ export enum LicenseState {
 }
 
 export enum LicenseFilter {
-	All = 'all',
+	NotRevoked = 'not_revoked',
 	Detached = 'detached',
 	Attached = 'attached',
 	Revoked = 'revoked',
