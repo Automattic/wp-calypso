@@ -652,7 +652,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				// in the Desktop screen size, but resize to a mobileish size.
 				// For this reason, when in the mobile screen size, we force-close
 				// the welcome modal before trying to click the template selector.
-				await driverHelper.clickWhenClickable(
+				await driverHelper.clickIfPresent(
 					this.driver,
 					By.css( '.edit-post-welcome-guide button[aria-label="Close dialog"]' )
 				);
