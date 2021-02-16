@@ -43,13 +43,7 @@ domReady( () => {
 		const { launchUrl, launchFlow, isGutenboarding, anchorFmPodcastId } = siteLaunchOptions;
 
 		// Wrap 'Launch' button link to control launch flow.
-		const launchButton = document.createElement( 'a' );
-		// This was previously launchUrl but setting it to javascript: void(0)
-		// to prevent users from doing through site launch when they are
-		// assigned to focused launch. This can happen if they hit CMD+Click
-		// or Right Click + Open In New Tab.
-		launchButton.href = 'javascript: void(0);';
-		launchButton.target = '_top';
+		const launchButton = document.createElement( 'button' );
 		launchButton.className = 'editor-gutenberg-launch__launch-button components-button is-primary';
 		launchButton.addEventListener( 'click', ( e: Event ) => {
 			// Prevent default behaviour
