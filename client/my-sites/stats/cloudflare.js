@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo.svg';
+import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
