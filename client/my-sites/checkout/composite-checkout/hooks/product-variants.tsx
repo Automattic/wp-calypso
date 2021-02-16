@@ -27,16 +27,13 @@ import type { WPCOMProductSlug, WPCOMProductVariant } from '../components/item-v
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
-export interface Product {
-	// TODO: Whatever is stored in state and returned by the getProductsList selector
-	product_id: number;
-	currency_code: string;
-}
-
-export interface PossibleProductVariant {
+export interface AvailableProductVariant {
 	planSlug: string;
 	plan: Plan;
-	product: Product;
+	product: {
+		product_id: number;
+		currency_code: string;
+	};
 	priceFullBeforeDiscount: number;
 	priceFull: number;
 	priceFinal: number;
@@ -100,7 +97,7 @@ export function useProductVariants( {
 		}
 	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
-	const getProductVariant = ( variant: PossibleProductVariant ): WPCOMProductVariant => {
+	const getProductVariant = ( variant: AvailableProductVariant ): WPCOMProductVariant => {
 		return {
 			variantLabel: getTermText( variant.plan.term, translate ),
 			variantDetails: <VariantPrice variant={ variant } />,
@@ -123,8 +120,8 @@ export function useProductVariants( {
 }
 
 function replaceFullPriceWithMonthlyCost(
-	products: PossibleProductVariant[]
-): PossibleProductVariant[] {
+	products: AvailableProductVariant[]
+): AvailableProductVariant[] {
 	const monthlyPlan = products.filter( ( product ) => product.plan?.term === TERM_MONTHLY )?.[ 0 ];
 
 	if ( ! monthlyPlan ) {
@@ -149,7 +146,7 @@ function replaceFullPriceWithMonthlyCost(
 	} );
 }
 
-function VariantPrice( { variant }: { variant: PossibleProductVariant } ) {
+function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {
 	const currentPrice = variant.priceFinal || variant.priceFull;
 	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
 	return (
@@ -165,7 +162,7 @@ function VariantPrice( { variant }: { variant: PossibleProductVariant } ) {
 	);
 }
 
-function VariantPriceDiscount( { variant }: { variant: PossibleProductVariant } ) {
+function VariantPriceDiscount( { variant }: { variant: AvailableProductVariant } ) {
 	const translate = useTranslate();
 	const discountPercentage = Math.round(
 		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
