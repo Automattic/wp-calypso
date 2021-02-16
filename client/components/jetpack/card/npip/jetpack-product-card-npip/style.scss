@@ -242,6 +242,10 @@
 }
 
 .jetpack-product-card-npip__above-button {
+	position: relative;
+	top: 4px;
+	margin-bottom: calc( -0.875rem * 1.2 );
+
 	color: var( --studio-gray-40 );
 	font-size: 0.875rem;
 	line-height: 1.2;
