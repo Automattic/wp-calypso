@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
@@ -58,8 +59,10 @@ class EmailProviderDetails extends React.Component {
 			isButtonBusy,
 		} = this.props;
 
+		const allClassNames = classnames( 'email-provider-details', className );
+
 		return (
-			<PromoCard { ...{ className, title, image, badge } }>
+			<PromoCard { ...{ className: allClassNames, title, image, badge } }>
 				<p className="email-provider-details__description">{ description }</p>
 				<PromoCardPrice { ...{ formattedPrice, discount } } />
 				<Button
