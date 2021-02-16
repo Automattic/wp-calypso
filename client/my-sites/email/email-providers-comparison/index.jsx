@@ -11,7 +11,6 @@ import page from 'page';
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
-import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderDetails from './email-provider-details';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -30,8 +29,8 @@ import {
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
+import CustomEmailPromo from 'calypso/my-sites/email/email-providers-comparison/custom-email-promo';
 import GSuiteProviderDetails from 'calypso/my-sites/email/email-providers-comparison/gsuite-provider-details';
 import TitanProviderDetails from 'calypso/my-sites/email/email-providers-comparison/titan-provider-details';
 
@@ -73,35 +72,9 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	renderHeaderSection() {
-		const { domain, translate } = this.props;
-		const image = {
-			path: emailIllustration,
-			align: 'right',
-		};
+		const { domain } = this.props;
 
-		const translateArgs = {
-			args: {
-				domainName: domain.name,
-			},
-			comment: '%(domainName)s is the domain name, e.g example.com',
-		};
-
-		return (
-			<PromoCard
-				isPrimary
-				title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
-				image={ image }
-				className="email-providers-comparison__action-panel"
-			>
-				<p>
-					{ translate(
-						'Pick one of our flexible options to connect your domain with email ' +
-							'and start getting emails @%(domainName)s today.',
-						translateArgs
-					) }
-				</p>
-			</PromoCard>
-		);
+		return <CustomEmailPromo domainName={ domain.name } />;
 	}
 
 	renderForwardingDetails( className ) {
