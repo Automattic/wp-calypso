@@ -149,7 +149,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 					return await this.siteSelector.ok();
 				} );
 
-				// Skip reason:
+				// Skip reason: https://github.com/Automattic/wp-calypso/issues/50130
 				describe.skip( 'Successful activation dialog', function () {
 					step( 'should show the successful activation dialog', async function () {
 						const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
