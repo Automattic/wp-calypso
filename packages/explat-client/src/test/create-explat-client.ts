@@ -23,6 +23,13 @@ const mockedConfig: Config = {
 	getAnonId: mockedGetAnonId,
 	isDevelopmentMode: false,
 };
+const createMockedConfig = ( isDevelopmentMode = false ) => ( {
+	logError: mockedLogError,
+	fetchExperimentAssignment: mockedFetchExperimentAssignment,
+	getAnonId: mockedGetAnonId,
+	isDevelopmentMode,
+} );
+const DEVELOPMENT_MODE = true;
 
 function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 	experimentAssignment: ExperimentAssignment
@@ -62,22 +69,22 @@ describe( 'createExPlatClient', () => {
 	it( `should throw if initialized outside of a browser context`, () => {
 		setSsrContext();
 
-		expect( () => createExPlatClient( mockedConfig ) ).toThrowErrorMatchingInlineSnapshot(
+		expect( () => createExPlatClient( createMockedConfig() ) ).toThrowErrorMatchingInlineSnapshot(
 			`"Running outside of a browser context."`
 		);
 	} );
 
 	it( `shouldn't call any deps if only initialized`, () => {
-		createExPlatClient( mockedConfig );
+		createExPlatClient( createMockedConfig() );
 
 		expect( mockedLogError.mock.calls ).toMatchInlineSnapshot( `Array []` );
 	} );
 
 	it( `shouldn't throw if initialized multiple times`, () => {
-		const a = createExPlatClient( mockedConfig );
-		const b = createExPlatClient( mockedConfig );
-		const c = createExPlatClient( mockedConfig );
-		const d = createExPlatClient( mockedConfig );
+		const a = createExPlatClient( createMockedConfig() );
+		const b = createExPlatClient( createMockedConfig() );
+		const c = createExPlatClient( createMockedConfig() );
+		const d = createExPlatClient( createMockedConfig() );
 		expect( a ).not.toBe( null );
 		expect( b ).not.toBe( null );
 		expect( c ).not.toBe( null );
@@ -89,7 +96,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	it( `should successfully load an ExperimentAssignment`, async () => {
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1000
 		);
@@ -102,7 +109,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'the-anon-id-123', 0 ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1000
 		);
@@ -113,8 +120,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	} );
 	it( `[developmentMode] should successfully load an ExperimentAssignment`, async () => {
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1000
 		);
@@ -126,7 +132,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	it( `Invalid experimentName: should return fallback and log`, async () => {
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		await expect(
 			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
 		).resolves.toEqual( {
@@ -149,8 +155,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	} );
 	it( `[developmentMode] Invalid experimentName: should throw`, async () => {
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 		await expect(
 			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
 		).rejects.toThrow( 'Invalid experimentName: the-invalid-experiment-name' );
@@ -170,7 +175,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			() => new Promise( ( _res, rej ) => rej( new Error( 'some-error-123' ) ) )
 		);
 		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
 		const secondNow = firstNow + 1;
@@ -200,8 +205,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		mockedFetchExperimentAssignment.mockImplementationOnce(
 			() => new Promise( ( _res, rej ) => rej( new Error( 'some-error-123' ) ) )
 		);
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
 		const secondNow = firstNow + 1;
@@ -224,8 +228,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		jest.useFakeTimers();
 
 		mockedFetchExperimentAssignment.mockImplementationOnce( () => new Promise( () => undefined ) );
-		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
 		const secondNow = firstNow + 1;
@@ -258,8 +261,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 
 		mockedFetchExperimentAssignment.mockImplementationOnce( () => new Promise( () => undefined ) );
 		spiedMonotonicNow.mockImplementation( () => Date.now() );
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 		const expectationPromise = expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
 		).rejects.toThrow( 'Promise has timed-out.' );
@@ -283,8 +285,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		mockedLogError.mockImplementation( () => {
 			throw new Error( 'Error logging.' );
 		} );
-		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		await expect(
 			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
 		).resolves.toEqual( {
@@ -311,8 +312,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		mockedLogError.mockImplementation( () => {
 			throw new Error( 'Error while logging.' );
 		} );
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 		await expect(
 			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
 		).rejects.toThrow( 'Invalid experimentName: the-invalid-experiment-name' );
@@ -331,8 +331,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 
 describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 	it( `should respect the ttl`, async () => {
-		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		const firstDate = Date.now();
@@ -386,8 +385,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 	} );
 
 	it( `[developmentMode] should respect the ttl`, async () => {
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		const firstDate = Date.now();
@@ -439,8 +437,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		);
 	} );
 	it( `should only make one request even if it fails, returning the same fallback - until ttl is over with successful next`, async () => {
-		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 
 		const invalidExperimentAssignment = {
 			...validExperimentAssignment,
@@ -528,8 +525,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		expect( mockedLogError.mock.calls ).toMatchInlineSnapshot( `Array []` );
 	} );
 	it( `[developmentMode] should only make one request even if it fails, throwing the same error`, async () => {
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 
 		const invalidExperimentAssignment = {
 			...validExperimentAssignment,
@@ -639,16 +635,14 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 
 describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 	it( 'should throw when given an invalid name', () => {
-		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		expect( () =>
 			client.dangerouslyGetExperimentAssignment( 'the-invalid-name' )
 		).toThrowErrorMatchingInlineSnapshot( `"Invalid experimentName: the-invalid-name"` );
 	} );
 
 	it( `should throw when the matching experiment hasn't loaded yet`, () => {
-		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		expect( () =>
 			client.dangerouslyGetExperimentAssignment( 'experiment_name_a' )
 		).toThrowErrorMatchingInlineSnapshot(
@@ -656,8 +650,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		);
 	} );
 	it( `should throw when the matching experiment hasn't loaded yet but is currently loading`, () => {
-		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		expect( () =>
 			client.dangerouslyGetExperimentAssignment( 'experiment_name_a' )
@@ -666,8 +659,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		);
 	} );
 	it( `should return a loaded ExperimentAssignment`, async () => {
-		mockedConfig.isDevelopmentMode = false;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig() );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1
@@ -678,8 +670,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		).toEqual( validExperimentAssignment );
 	} );
 	it( `[developerMode] should throw when run too soon after loading an ExperimentAssignment`, async () => {
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1
@@ -695,8 +686,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		);
 	} );
 	it( `[developmentMode] should return a loaded ExperimentAssignment when not run too soon after`, async () => {
-		mockedConfig.isDevelopmentMode = true;
-		const client = createExPlatClient( mockedConfig );
+		const client = createExPlatClient( createMockedConfig( DEVELOPMENT_MODE ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1
