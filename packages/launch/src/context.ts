@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 
-interface LaunchContext {
+export interface LaunchContextProps {
 	siteId: number;
 	redirectTo: ( url: string ) => void;
 	openCheckout: (
@@ -22,15 +22,9 @@ const defaultRedirectTo = ( url: string ) => {
 	window.location.href = url;
 };
 
-const defaultCurrentLaunchFlowUrl = (): string | undefined => {
-	try {
-		return window.location.href;
-	} catch ( err ) {
-		return undefined;
-	}
-};
+const defaultCurrentLaunchFlowUrl = (): string => window.location.href;
 
-const LaunchContext = React.createContext< LaunchContext >( {
+const LaunchContext = React.createContext< LaunchContextProps >( {
 	siteId: 0,
 	redirectTo: defaultRedirectTo,
 	getCurrentLaunchFlowUrl: defaultCurrentLaunchFlowUrl,
