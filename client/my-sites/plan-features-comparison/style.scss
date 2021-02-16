@@ -228,12 +228,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-comparison__item {
-		border-bottom: solid 1px var( --color-neutral-5 );
 		font-size: $font-body-small;
-	}
-
-	.plan-features-comparison__item:last-child {
-		border-bottom: none;
 	}
 }
 

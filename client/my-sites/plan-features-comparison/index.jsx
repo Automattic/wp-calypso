@@ -223,9 +223,10 @@ export class PlanFeaturesComparison extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				features,
 			} = properties;
 			const { rawPrice, rawPriceAnnual, discountPrice } = properties;
-			const { annualPricePerMonth, isMonthlyPlan } = properties;
+			const { annualPricePerMonth, isMonthlyPlan, missingFeaturesForAnnualPlans } = properties;
 			return (
 				<div className="plan-features-comparison__mobile-plan" key={ planName }>
 					<PlanFeaturesComparisonHeader
@@ -272,17 +273,19 @@ export class PlanFeaturesComparison extends Component {
 						primaryUpgrade={ primaryUpgrade }
 						selectedPlan={ selectedPlan }
 					/>
-					{ /* <FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
-						{ this.renderMobileFeatures( features ) }
-					</FoldableCard> */ }
+					{ this.renderMobileFeatures( features, missingFeaturesForAnnualPlans ) }
 				</div>
 			);
 		} );
 	}
 
-	renderMobileFeatures( features ) {
+	renderMobileFeatures( features, missingFeaturesForAnnualPlans ) {
 		return map( features, ( currentFeature, index ) => {
-			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
+			const isFeatureMissingForPlan =
+				missingFeaturesForAnnualPlans.includes( currentFeature.getSlug() ) ||
+				! currentFeature.availableForCurrentPlan;
+			const type = isFeatureMissingForPlan ? 'missingFeature' : 'availableFeature';
+			return currentFeature ? this.renderFeatureItem( currentFeature, index, type ) : null;
 		} );
 	}
 
