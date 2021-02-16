@@ -22,13 +22,7 @@ const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
 const mockedFetchExperimentAssignment = jest.fn();
 const mockedGetAnonId = jest.fn();
 const mockedLogError = jest.fn();
-const mockedConfig: Config = {
-	logError: mockedLogError,
-	fetchExperimentAssignment: mockedFetchExperimentAssignment,
-	getAnonId: mockedGetAnonId,
-	isDevelopmentMode: false,
-};
-const createMockedConfig = ( isDevelopmentMode = false ) => ( {
+const createMockedConfig = ( isDevelopmentMode = false ): Config => ( {
 	logError: mockedLogError,
 	fetchExperimentAssignment: mockedFetchExperimentAssignment,
 	getAnonId: mockedGetAnonId,
@@ -100,7 +94,6 @@ describe( 'createExPlatClient', () => {
 describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	it( `should successfully load an ExperimentAssignment`, async () => {
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
-		mockedConfig.isDevelopmentMode = false;
 		const client = createExPlatClient( createMockedConfig() );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1000
@@ -113,7 +106,6 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	it( `[anonId] should successfully load an ExperimentAssignment`, async () => {
 		mockedGetAnonId.mockImplementationOnce( () => delayedValue( 'the-anon-id-123', ZERO_DELAY ) );
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
-		mockedConfig.isDevelopmentMode = false;
 		const client = createExPlatClient( createMockedConfig() );
 		spiedMonotonicNow.mockImplementationOnce(
 			() => validExperimentAssignment.retrievedTimestamp + 1000
@@ -136,7 +128,6 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	} );
 	it( `Invalid experimentName: should return fallback and log`, async () => {
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
-		mockedConfig.isDevelopmentMode = false;
 		const client = createExPlatClient( createMockedConfig() );
 		await expect(
 			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
@@ -179,7 +170,6 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		mockedFetchExperimentAssignment.mockImplementationOnce(
 			() => new Promise( ( _res, rej ) => rej( new Error( 'some-error-123' ) ) )
 		);
-		mockedConfig.isDevelopmentMode = false;
 		const client = createExPlatClient( createMockedConfig() );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
