@@ -17,8 +17,6 @@ const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
 const mockedFetchExperimentAssignment = jest.fn();
 const mockedGetAnonId = jest.fn();
 const mockedLogError = jest.fn();
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore; Not using the full Config
 const mockedConfig: Config = {
 	logError: mockedLogError,
 	fetchExperimentAssignment: mockedFetchExperimentAssignment,
@@ -51,27 +49,30 @@ function allMockedConfigCalls() {
 	};
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-global.window = {};
+function setBrowserContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	global.window = {};
+}
+
+function setSsrContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	global.window = undefined;
+}
 
 beforeEach( () => {
 	jest.resetAllMocks();
+	setBrowserContext();
 } );
 
 describe( 'createExPlatClient', () => {
 	it( `should throw if initialized outside of a browser context`, () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		global.window = undefined;
+		setSsrContext();
 
 		expect( () => createExPlatClient( mockedConfig ) ).toThrowErrorMatchingInlineSnapshot(
 			`"Running outside of a browser context."`
 		);
-
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		global.window = {};
 	} );
 
 	it( `shouldn't call any deps if only initialized`, () => {
@@ -86,12 +87,15 @@ describe( 'createExPlatClient', () => {
 	` );
 	} );
 
-	// eslint-disable-next-line jest/expect-expect
 	it( `shouldn't throw if initialized multiple times`, () => {
-		createExPlatClient( mockedConfig );
-		createExPlatClient( mockedConfig );
-		createExPlatClient( mockedConfig );
-		createExPlatClient( mockedConfig );
+		const a = createExPlatClient( mockedConfig );
+		const b = createExPlatClient( mockedConfig );
+		const c = createExPlatClient( mockedConfig );
+		const d = createExPlatClient( mockedConfig );
+		expect( a ).not.toBe( null );
+		expect( b ).not.toBe( null );
+		expect( c ).not.toBe( null );
+		expect( d ).not.toBe( null );
 	} );
 } );
 
