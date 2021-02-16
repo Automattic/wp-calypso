@@ -4,8 +4,14 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import type {
+	RemoveProductFromCart,
+	RemoveCouponFromCart,
+	CouponStatus,
+} from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -13,7 +19,10 @@ import { useTranslate } from 'i18n-calypso';
 import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
-import { isLineItemADomain } from '../hooks/has-domains';
+import { isDomainRegistration, isDomainTransfer } from 'calypso/lib/products-values';
+import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
+import type { GetProductVariants } from '../hooks/product-variants';
+import type { OnChangeItemVariant } from './item-variation-picker';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -26,18 +35,31 @@ export default function WPCheckoutOrderReview( {
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
-} ) {
+}: {
+	className?: string;
+	removeProductFromCart: RemoveProductFromCart;
+	removeCoupon: RemoveCouponFromCart;
+	couponStatus: CouponStatus;
+	couponFieldStateProps: CouponFieldStateProps;
+	getItemVariants: GetProductVariants;
+	onChangePlanLength: OnChangeItemVariant;
+	siteUrl?: string;
+	isSummary?: boolean;
+	createUserAndSiteBeforeTransaction?: boolean;
+} ): JSX.Element {
 	const translate = useTranslate();
-	const [ items, total ] = useLineItems();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
-	const isPurchaseFree = total.amount.value === 0;
+	const { responseCart } = useShoppingCart();
+	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
-	const firstDomainItem = items.find( isLineItemADomain );
-	const domainUrl = firstDomainItem ? firstDomainItem.label : siteUrl;
-	const removeCouponAndClearField = ( uuid ) => {
-		removeCoupon( uuid );
+	const firstDomainItem = responseCart.products.find(
+		( product ) => isDomainTransfer( product ) || isDomainRegistration( product )
+	);
+	const domainUrl = firstDomainItem ? firstDomainItem.meta : siteUrl;
+	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );
 		setCouponFieldVisible( false );
+		return removeCoupon();
 	};
 
 	return (
@@ -88,6 +110,12 @@ function CouponFieldArea( {
 	isPurchaseFree,
 	couponStatus,
 	couponFieldStateProps,
+}: {
+	isCouponFieldVisible: boolean;
+	setCouponFieldVisible: ( visible: boolean ) => void;
+	isPurchaseFree: boolean;
+	couponStatus: CouponStatus;
+	couponFieldStateProps: CouponFieldStateProps;
 } ) {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
