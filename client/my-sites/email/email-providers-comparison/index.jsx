@@ -14,10 +14,7 @@ import page from 'page';
 import config from '@automattic/calypso-config';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderDetails from './email-provider-details';
-import {
-	getCurrentUserCurrencyCode,
-	getCurrentUserLocale,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -226,7 +223,6 @@ export default connect(
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentUserLocale: getCurrentUserLocale( state ),
 			gSuiteProduct: getProductBySlug( state, productSlug ),
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 			currentRoute: getCurrentRoute( state ),
