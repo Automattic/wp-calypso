@@ -19,7 +19,6 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import Main from 'calypso/components/main';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { canDomainAddGSuite } from 'calypso/lib/gsuite';
 import {
 	hasPlan,
 	hasDomainInCart,
@@ -159,11 +158,7 @@ class DomainSearch extends Component {
 				fillInSingleCartItemAttributes( registration, this.props.productsList ),
 			] )
 			.then( () => {
-				if ( canDomainAddGSuite( domain ) ) {
-					page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
-				} else {
-					page( '/checkout/' + this.props.selectedSiteSlug );
-				}
+				page( '/domains/add/' + domain + '/email/' + this.props.selectedSiteSlug );
 			} );
 	}
 
