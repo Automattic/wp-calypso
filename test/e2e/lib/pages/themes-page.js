@@ -70,6 +70,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 			".theme-showcase__all-themes .is-actionable:not(.is-active):not([data-e2e-theme*='twenty-twenty-one']) h2"
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		await driverHelper.scrollIntoView( this.driver, selector );
 		return await this.driver.findElement( selector ).getText();
 	}
 
