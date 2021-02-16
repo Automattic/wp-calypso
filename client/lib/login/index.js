@@ -97,7 +97,7 @@ export function getSignupUrl(
 
 	if ( isGutenboarding ) {
 		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-		signupUrl = '/new' + langFragment;
+		signupUrl = '/new/plans?signup' + langFragment;
 	}
 
 	if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
