@@ -38,9 +38,9 @@ const Cloudflare = () => {
 							disableCircle={ true }
 							iconPath={ cloudflareIllustration }
 							href="CLOUDFLARELEARNMORELINK"
-							tracksImpressionName="banner_stats_cloudflare"
-							event="calypso_stats_cloudflare_analytics_learn_more"
-							callToAction="Learn more"
+							tracksImpressionName="calypso_stats_cloudflare_banner_view"
+							event="calypso_stats_cloudflare_analytics_learn_more_click"
+							callToAction={ translate( 'Learn more' ) }
 						/>
 					) }
 					{ sitePlan && showUpsell && (
@@ -50,11 +50,10 @@ const Cloudflare = () => {
 								'Get deeper insights into your site traffic and performance with Cloudflare Analytics.'
 							) }
 							customerType="business"
-							tracksImpressionName="upsell_nudge_stats_cloudflare"
-							event="calypso_stats_cloudflare_analytics_upsell_nudge"
+							tracksImpressionName="calypso_stats_cloudflare_upsell_view"
+							event="calypso_stats_cloudflare_analytics_upsell_nudge_click"
 							showIcon={ true }
-							forceDisplay={ true }
-							callToAction="Upgrade"
+							callToAction={ translate( 'Upgrade' ) }
 						/>
 					) }
 				</>

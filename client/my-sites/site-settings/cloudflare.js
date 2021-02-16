@@ -48,7 +48,9 @@ const Cloudflare = () => {
 								<img src={ jetpackIllustration } alt="" />
 							</div>
 							<div className="site-settings__cloudflare-text">
-								<p className="site-settings__cloudflare-title">Jetpack Site Accelerator</p>
+								<p className="site-settings__cloudflare-title">
+									{ translate( 'Jetpack Site Accelerator' ) }
+								</p>
 								<p>{ translate( 'Comes built-in with WordPress.com Business plans.' ) }</p>
 								<p>
 									<a
@@ -67,9 +69,8 @@ const Cloudflare = () => {
 						<UpsellNudge
 							title={ translate( 'Available on Business plan or higher' ) }
 							href={ upgradeLink }
-							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge' }
+							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge_click' }
 							showIcon={ true }
-							forceDisplay={ true }
 						/>
 					) }
 					<CompactCard>
@@ -78,7 +79,9 @@ const Cloudflare = () => {
 								<img src={ cloudflareIllustration } alt="" />
 							</div>
 							<div className="site-settings__cloudflare-text">
-								<p className="site-settings__cloudflare-title">Cloudflare CDN</p>
+								<p className="site-settings__cloudflare-title">
+									{ translate( 'Cloudflare CDN ' ) }
+								</p>
 								<p>
 									{ translate( 'An alternative to Jetpack CDN, with security-focused plans.' ) }
 								</p>
@@ -102,9 +105,8 @@ const Cloudflare = () => {
 								'A CDN (Content Delivery Network) optimizes your content to provide users with the fastest experience.'
 							) }
 							href={ upgradeLink }
-							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge' }
+							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge_click' }
 							showIcon={ true }
-							forceDisplay={ true }
 						/>
 					) }
 					<div class="site-settings__cloudflare-spacer" />
