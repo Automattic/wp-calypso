@@ -16,6 +16,7 @@ import {
 	mapKeys,
 	merge,
 	pick,
+	omitBy,
 	snakeCase,
 } from 'lodash';
 import debugModule from 'debug';
@@ -122,8 +123,11 @@ class SignupForm extends Component {
 
 	state = {
 		submitting: false,
-		focusPassword: false,
-		focusUsername: false,
+		isFieldDirty: {
+			email: false,
+			username: false,
+			password: false,
+		},
 		form: null,
 		signedUp: false,
 		validationInitialized: false,
@@ -237,6 +241,14 @@ class SignupForm extends Component {
 		}
 	};
 
+	filterEmptyFieldErrors = ( errorMessages ) => {
+		// Don't show "field is empty" error message unless the field is 'dirty' (it has been interacted with).
+		return omitBy(
+			errorMessages,
+			( value, key ) => value.hasOwnProperty( 'argument' ) && ! this.state.isFieldDirty[ key ]
+		);
+	};
+
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
@@ -260,6 +272,12 @@ class SignupForm extends Component {
 			let messages = response.success
 				? {}
 				: mapKeys( response.messages, ( value, key ) => camelCase( key ) );
+
+			// On Jetpack sign up form, prevent "field is empty" error messages from displaying prematurely
+			// before the form has been submitted or before the field has been interacted with (is dirty).
+			if ( this.isJetpack() && ! this.state.submitting ) {
+				messages = this.filterEmptyFieldErrors( messages );
+			}
 
 			forEach( messages, ( fieldError, field ) => {
 				if ( ! formState.isFieldInvalid( this.state.form, field ) ) {
@@ -338,19 +356,10 @@ class SignupForm extends Component {
 
 	handleBlur = ( event ) => {
 		const fieldId = event.target.id;
-		// Ensure that username and password field validation does not trigger prematurely
-		if ( fieldId === 'password' ) {
-			this.setState( { focusPassword: true }, () => {
-				this.validateAndSaveForm();
-			} );
-			return;
-		}
-		if ( fieldId === 'username' ) {
-			this.setState( { focusUsername: true }, () => {
-				this.validateAndSaveForm();
-			} );
-			return;
-		}
+		this.setState( {
+			isFieldDirty: { ...this.state.isFieldDirty, [ fieldId ]: true },
+			submitting: false,
+		} );
 
 		this.validateAndSaveForm();
 	};
