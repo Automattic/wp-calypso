@@ -61,25 +61,27 @@ domReady( () => {
 				dispatch( 'automattic/launch' ).enableAnchorFm();
 			}
 
-			if ( launchFlow === GUTENBOARDING_LAUNCH_FLOW ) {
-				dispatch( 'automattic/launch' ).openSidebar();
-			}
+			const { savePost } = dispatch( 'core/editor' );
+			const delayedSavePost = () => setTimeout( () => savePost(), 1000 );
 
-			if ( launchFlow === FOCUSED_LAUNCH_FLOW ) {
-				dispatch( 'automattic/launch' ).openFocusedLaunch();
-			}
-
-			if ( launchFlow === SITE_LAUNCH_FLOW ) {
-				// Save post first before redirecting to launch url
-				( async () => {
-					await dispatch( 'core/editor' ).savePost();
-					window.top.location.href = launchUrl;
-				} )();
-			} else {
-				// Save post in the background while step-by-step or focused launch flow opens
-				setTimeout( () => {
-					dispatch( 'core/editor' ).savePost();
-				}, 1000 );
+			switch ( launchFlow ) {
+				case GUTENBOARDING_LAUNCH_FLOW:
+					// Save post in the background while step-by-step flow opens
+					dispatch( 'automattic/launch' ).openSidebar();
+					delayedSavePost();
+					break;
+				case FOCUSED_LAUNCH_FLOW:
+					// Save post in the background while focused launch flow opens
+					dispatch( 'automattic/launch' ).openFocusedLaunch();
+					delayedSavePost();
+					break;
+				case SITE_LAUNCH_FLOW:
+					// Save post first before redirecting to launch url
+					( async () => {
+						await savePost();
+						window.top.location.href = launchUrl;
+					} )();
+					break;
 			}
 		} );
 
