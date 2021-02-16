@@ -288,7 +288,7 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( flowName !== 'launch-site' ) {
+		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
