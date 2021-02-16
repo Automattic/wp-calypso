@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { AnyAction } from 'redux';
 import { connect } from 'react-redux';
 import { memoize } from 'lodash';
 import { localize, translate as TranslateType } from 'i18n-calypso';
@@ -28,8 +27,8 @@ import 'calypso/jetpack-cloud/style.scss';
 
 interface Props {
 	path: string;
-	dispatchRecordTracksEvent: ( name: string, properties: any ) => AnyAction;
-	translate: TranslateType;
+	dispatchRecordTracksEvent: typeof recordTracksEvent;
+	translate: typeof TranslateType;
 }
 
 class PartnerPortalSidebar extends Component< Props > {
@@ -49,8 +48,9 @@ class PartnerPortalSidebar extends Component< Props > {
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarItem
-							icon="next-page"
-							label={ translate( 'Partner Portal', {
+							materialIcon="vpn_key"
+							materialIconStyle="filled"
+							label={ translate( 'Licenses', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
 							link="/partner-portal"

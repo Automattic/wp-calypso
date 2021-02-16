@@ -35,7 +35,7 @@ interface Props {
 	isUnavailable?: boolean;
 	domain: string;
 	isLoading?: boolean;
-	cost: string;
+	cost?: string;
 	hstsRequired?: boolean;
 	isFree?: boolean;
 	isExistingSubdomain?: boolean;
@@ -76,34 +76,40 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const [ previousDomain, setPreviousDomain ] = React.useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = React.useState< string | undefined >();
 
+	const freeDomainLabelDefault = __( 'Default', __i18n_text_domain__ );
+	const freeDomainLabelFree = __( 'Free', __i18n_text_domain__ );
+
+	const firstYearLabel = __( 'Included in paid plans', __i18n_text_domain__ );
+	const firstYearLabelAlt = __( 'Included with annual plans', __i18n_text_domain__ );
+	// translators: text in between the <strong></strong> marks is styled as bold text
+	const firstYearLabelFormatted = __(
+		'<strong>First year included</strong> in paid plans',
+		__i18n_text_domain__
+	);
+
 	const freeDomainLabel =
-		type === ITEM_TYPE_INDIVIDUAL_ITEM
-			? __( 'Default', __i18n_text_domain__ )
-			: __( 'Free', __i18n_text_domain__ );
+		type === ITEM_TYPE_INDIVIDUAL_ITEM ? freeDomainLabelDefault : freeDomainLabelFree;
 
 	const firstYearIncludedInPaidLabel = isMobile
-		? __( 'Included in paid plans', __i18n_text_domain__ )
-		: createInterpolateElement(
-				__( '<strong>First year included</strong> in paid plans', __i18n_text_domain__ ),
-				{
-					strong: <strong />,
-				}
-		  );
+		? firstYearLabel
+		: createInterpolateElement( firstYearLabelFormatted, {
+				strong: <strong />,
+		  } );
 
 	/**
 	 *  IIFE executes immediately after creation, hence it returns the translated values immediately.
 	 * The great advantage is that:
 	 * 1. We don't have to execute it during rendering.
 	 * 2. We don't have to use nested ternaries (which is not allowed by the linter).
-	 * 3. It improves the readibility of our code
+	 * 3. It improves the readability of our code
 	 */
 	const paidIncludedDomainLabel = ( () => {
 		if ( type === ITEM_TYPE_INDIVIDUAL_ITEM ) {
 			return firstYearIncludedInPaidLabel;
 		} else if ( isMobile ) {
-			return __( 'Free', __i18n_text_domain__ );
+			return freeDomainLabelFree;
 		}
-		return __( 'Included with annual plans', __i18n_text_domain__ );
+		return firstYearLabelAlt;
 	} )();
 
 	React.useEffect( () => {
@@ -126,6 +132,9 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 		}
 		onSelect( domain );
 	};
+
+	const selectButtonLabelSelected = __( 'Selected', __i18n_text_domain__ );
+	const selectButtonLabelUnselected = __( 'Select', __i18n_text_domain__ );
 
 	return (
 		<WrappingComponent
@@ -215,17 +224,22 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				{ ! isFree && ! isUnavailable && (
 					<>
 						<span className="domain-picker__price-cost">
-							{
-								/* translators: %s is the price with currency. Eg: $15/year. */
-								sprintf( __( '%s/year', __i18n_text_domain__ ), cost )
-							}
+							{ sprintf(
+								// translators: %s is the price with currency. Eg: $15/year
+								__( '%s/year', __i18n_text_domain__ ),
+								cost
+							) }
 						</span>
 						<span className="domain-picker__price-inclusive">
 							{ /* Intentional whitespace to get the spacing around the text right */ }{ ' ' }
 							{ paidIncludedDomainLabel }{ ' ' }
 						</span>
 						<span className="domain-picker__price-renewal">
-							{ sprintf( __( 'Renews at: %s /year', __i18n_text_domain__ ), cost ) }
+							{ sprintf(
+								// translators: %s is the domain renewal cost (i.e. "Renews at: 20$ / year" )
+								__( 'Renews at: %s /year', __i18n_text_domain__ ),
+								cost
+							) }
 						</span>
 					</>
 				) }
@@ -245,8 +259,8 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 							onClick={ onDomainSelect }
 						>
 							{ selected && ! isUnavailable
-								? __( 'Selected', __i18n_text_domain__ )
-								: __( 'Select', __i18n_text_domain__ ) }
+								? selectButtonLabelSelected
+								: selectButtonLabelUnselected }
 						</Button>
 					</div>
 				) ) }

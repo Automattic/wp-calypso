@@ -216,6 +216,12 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteSite()', () => {
+		const getState = () => ( {
+			sites: {
+				items: {},
+			},
+		} );
+
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -231,7 +237,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch delete action when thunk triggered', () => {
-			deleteSite( 2916284 )( spy );
+			deleteSite( 2916284 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_DELETE,
@@ -240,13 +246,13 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive deleted site when request completes', () => {
-			return deleteSite( 2916284 )( spy ).then( () => {
+			return deleteSite( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( receiveDeletedSite( 2916284 ) );
 			} );
 		} );
 
 		test( 'should dispatch delete success action when request completes', () => {
-			return deleteSite( 2916284 )( spy ).then( () => {
+			return deleteSite( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_DELETE_SUCCESS,
 					siteId: 2916284,
@@ -255,7 +261,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request for delete fails', () => {
-			return deleteSite( 77203074 )( spy ).then( () => {
+			return deleteSite( 77203074 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_DELETE_FAILURE,
 					siteId: 77203074,

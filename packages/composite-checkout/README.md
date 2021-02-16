@@ -118,7 +118,7 @@ Each item is an object with the following properties:
 - `id: string`. A unique identifier for this line item within the array of line items. Do not use the product id; never assume that only one instance of a particular product is present.
 - `type: string`. Not used internally but can be used to organize line items (eg: `tax` for a VAT line item).
 - `label: string`. The displayed title of the line item.
-- `subLabel?: string`. An optional subtitle for the line item.
+- `sublabel?: string`. An optional subtitle for the line item.
 - `amount: { currency: string, value: number, displayValue: string }`. The price of the line item. For line items without a price, set value to 0 and displayValue to an empty string.
 
 ## Data Stores
@@ -542,7 +542,7 @@ No, line items can be anything. The most common use is for products, taxes, subt
 
 ### Do line items amount properties have to have an integer value?
 
-The primary properties used in a line item by default are `id` (which must be unique), `label` (with an optional `subLabel`), and `amount.displayValue`. The other properties (`type`, `amount.currency`, `amount.value`) are not used outside custom implementations, but it's highly recommended that you provide them. As requirements and customizations change, it can be helpful to have a way to perform calculations, conversions, and sorting on line items, which will require those fields. If any required field is undefined, an error will be thrown to help notice these errors as soon as possible.
+The primary properties used in a line item by default are `id` (which must be unique), `label` (with an optional `sublabel`), and `amount.displayValue`. The other properties (`type`, `amount.currency`, `amount.value`) are not used outside custom implementations, but it's highly recommended that you provide them. As requirements and customizations change, it can be helpful to have a way to perform calculations, conversions, and sorting on line items, which will require those fields. If any required field is undefined, an error will be thrown to help notice these errors as soon as possible.
 
 ### Can I add custom properties to line items?
 

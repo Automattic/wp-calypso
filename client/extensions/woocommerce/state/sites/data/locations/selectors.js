@@ -7,7 +7,7 @@ import { find, filter, flatMap, get, isArray, isEmpty, omit, sortBy } from 'loda
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING, ERROR } from 'woocommerce/state/constants';
 

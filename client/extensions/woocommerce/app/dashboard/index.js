@@ -9,6 +9,11 @@ import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
@@ -42,10 +47,10 @@ import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup';
 import StoreLocationSetupView from './setup/store-location';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import warn from 'calypso/lib/warn';
 import StoreMoveNoticeView from './store-move-notice-view';
 import config from '@automattic/calypso-config';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 
 class Dashboard extends Component {
 	static propTypes = {
@@ -170,7 +175,7 @@ class Dashboard extends Component {
 			setupChoicesLoading,
 			storeLocation,
 			shouldRedirectAfterInstall,
-			isCalypsoStoreDeprecatedOrRemoved,
+			isSiteWpcomStore,
 		} = this.props;
 
 		const adminURL = get( selectedSite, 'options.admin_url', '' );
@@ -188,13 +193,15 @@ class Dashboard extends Component {
 			return <RequiredPluginsInstallView site={ selectedSite } />;
 		}
 
-		if (
-			finishedInstallOfRequiredPlugins &&
-			isCalypsoStoreDeprecatedOrRemoved &&
-			shouldRedirectAfterInstall
-		) {
-			// Redirect to Core UI setup after finish installation.
-			this.redirectToWoocommerceSetup( selectedSite );
+		if ( finishedInstallOfRequiredPlugins && shouldRedirectAfterInstall ) {
+			// Redirect to Core UI setup after finish installation if store is
+			// installed on this site. This check is needed because of an edge
+			// case where, if WooCommerce was installed then removed, then
+			// shouldRedirectAfterInstall is always true
+			if ( isSiteWpcomStore ) {
+				this.redirectToWoocommerceSetup( selectedSite );
+			}
+
 			return <RequiredPluginsInstallView site={ selectedSite } />;
 		}
 
@@ -265,10 +272,9 @@ class Dashboard extends Component {
 			siteId,
 			finishedInstallOfRequiredPlugins,
 			shouldRedirectAfterInstall,
-			isCalypsoStoreDeprecatedOrRemoved,
 		} = this.props;
 		const useWideLayout = isSetupComplete ? true : false;
-		const shouldShowStoreNotice = isCalypsoStoreDeprecatedOrRemoved && ! shouldRedirectAfterInstall;
+		const shouldShowStoreNotice = ! shouldRedirectAfterInstall;
 		const shouldRenderDashboardContents =
 			! config.isEnabled( 'woocommerce/store-removed' ) ||
 			! finishedInstallOfRequiredPlugins ||
@@ -313,9 +319,8 @@ function mapStateToProps( state ) {
 	const loading = setupChoicesLoading || ! hasCounts || settingsGeneralLoading;
 	const shouldRedirectAfterInstall =
 		'' === get( getCurrentQueryArguments( state ), 'redirect_after_install' );
-	const isCalypsoStoreDeprecatedOrRemoved =
-		config.isEnabled( 'woocommerce/store-deprecated' ) ||
-		config.isEnabled( 'woocommerce/store-removed' );
+
+	const isSiteWpcomStore = getSiteOption( state, siteId, 'is_wpcom_store' );
 
 	return {
 		finishedInitialSetup,
@@ -333,7 +338,7 @@ function mapStateToProps( state ) {
 		siteId,
 		storeLocation,
 		shouldRedirectAfterInstall,
-		isCalypsoStoreDeprecatedOrRemoved,
+		isSiteWpcomStore,
 	};
 }
 

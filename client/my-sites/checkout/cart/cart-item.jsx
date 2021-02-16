@@ -17,7 +17,7 @@ import { canRemoveFromCart } from 'calypso/lib/cart-values';
 import { getIncludedDomain } from 'calypso/lib/cart-values/cart-items';
 import {
 	isCredits,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isTheme,
 	isMonthly,
 	isYearly,
@@ -186,7 +186,7 @@ export class CartItem extends React.Component {
 			( selectedSite && selectedSite.domain );
 		let info = null;
 
-		if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
+		if ( isGSuiteOrExtraLicenseOrGoogleWorkspace( cartItem ) && cartItem.extra.google_apps_users ) {
 			info = cartItem.extra.google_apps_users.map( ( user ) => (
 				<div key={ `user-${ user.email }` }>{ user.email }</div>
 			) );

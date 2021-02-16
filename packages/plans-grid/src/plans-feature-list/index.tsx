@@ -42,18 +42,19 @@ const DefaultFeatureListItemContentWrapper: React.FunctionComponent< FeatureList
 const FeatureAnnualDiscountNudge: React.FunctionComponent< {
 	billingPeriod: Plans.PlanBillingPeriod;
 	__: typeof import('@wordpress/i18n').__;
-} > = ( { billingPeriod, __ } ) => (
-	<span
-		className="plans-feature-list__item-annual-nudge"
-		aria-label={
-			billingPeriod === 'ANNUALLY'
-				? __( 'Included with annual plans', __i18n_text_domain__ )
-				: __( 'Only included with annual plans', __i18n_text_domain__ )
-		}
-	>
-		{ __( 'Included with annual plans', __i18n_text_domain__ ) }
-	</span>
-);
+} > = ( { billingPeriod, __ } ) => {
+	const annualNudgeTextAnnually = __( 'Included with annual plans', __i18n_text_domain__ );
+	const annualNudgeTextMonthly = __( 'Only included with annual plans', __i18n_text_domain__ );
+
+	return (
+		<span
+			className="plans-feature-list__item-annual-nudge"
+			aria-label={ billingPeriod === 'ANNUALLY' ? annualNudgeTextAnnually : annualNudgeTextMonthly }
+		>
+			{ annualNudgeTextAnnually }
+		</span>
+	);
+};
 
 function computeDomainFeatureItem(
 	isFreePlan: boolean,

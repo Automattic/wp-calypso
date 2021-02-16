@@ -4,11 +4,15 @@
 import { random, map, includes, get, noop } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import warn from 'calypso/lib/warn';
 import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
 import { receivePosts } from 'calypso/state/reader/posts/actions';

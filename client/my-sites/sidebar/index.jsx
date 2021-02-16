@@ -696,6 +696,7 @@ export class MySitesSidebar extends Component {
 			siteSuffix,
 			canUserUseCalypsoStore,
 			canUserUseWooCommerceCoreStore,
+			isSiteWpcomStore,
 		} = this.props;
 
 		if ( ! site ) {
@@ -715,6 +716,10 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		if ( ! isSiteWpcomStore && isBusiness( site.plan ) ) {
+			return null;
+		}
+
 		const infoCopy = translate(
 			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
 			{
@@ -729,7 +734,6 @@ export class MySitesSidebar extends Component {
 				},
 			}
 		);
-		const isCalypsoStoreDeprecated = isEnabled( 'woocommerce/store-deprecated' );
 
 		return (
 			<SidebarItem
@@ -745,7 +749,7 @@ export class MySitesSidebar extends Component {
 				forceInternalLink
 				className="sidebar__store"
 			>
-				{ isCalypsoStoreDeprecated && isBusiness( site.plan ) && (
+				{ isBusiness( site.plan ) && (
 					<InfoPopover
 						className="sidebar__store-tooltip"
 						position="bottom right"
@@ -765,14 +769,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const isCalypsoStoreDeprecatedOrRemoved =
-			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
-
-		if (
-			! isCalypsoStoreDeprecatedOrRemoved ||
-			! isBusiness( site.plan ) ||
-			! canUserUseWooCommerceCoreStore
-		) {
+		if ( ! isBusiness( site.plan ) || ! canUserUseWooCommerceCoreStore ) {
 			// Right now, we only use the "WooCommerce" label for Business plan sites.
 			// eCommerce sites continue to use the "Store" label for now
 			// (see handling in `store()` above.

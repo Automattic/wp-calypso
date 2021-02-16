@@ -13,7 +13,6 @@ FROM registry.a8c.com/calypso/base:latest as builder-cache-true
 ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 
-
 ###################
 FROM builder-cache-${use_cache} as builder
 
@@ -24,6 +23,7 @@ ENV CONTAINER 'docker'
 ENV PROGRESS true
 ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
+ENV NODE_ENV production
 ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
 ENV CHROMEDRIVER_SKIP_DOWNLOAD true

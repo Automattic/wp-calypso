@@ -28,20 +28,23 @@ import type {
 // params are used by the associated resolver.
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
+export const getFeatures = ( state: State, locale: string ): Record< string, PlanFeature > =>
+	state.features[ locale ] ?? {};
 
-export const getFeaturesByType = ( state: State ): Array< FeaturesByType > => state.featuresByType;
+export const getFeaturesByType = ( state: State, locale: string ): Array< FeaturesByType > =>
+	state.featuresByType[ locale ] ?? [];
 
 export const getPlanByProductId = (
 	_state: State,
-	productId: number | undefined
+	productId: number | undefined,
+	locale: string
 ): Plan | undefined => {
 	if ( ! productId ) {
 		return undefined;
 	}
 
 	return select( STORE_KEY )
-		.getSupportedPlans()
+		.getSupportedPlans( locale )
 		.find( ( plan ) => plan.productIds.indexOf( productId ) > -1 );
 };
 
@@ -60,13 +63,14 @@ export const getPlanProductById = (
 
 export const getPlanByPeriodAgnosticSlug = (
 	_state: State,
-	slug: PlanSlug | undefined
+	slug: PlanSlug | undefined,
+	locale: string
 ): Plan | undefined => {
 	if ( ! slug ) {
 		return undefined;
 	}
 	return select( STORE_KEY )
-		.getSupportedPlans()
+		.getSupportedPlans( locale )
 		.find( ( plan ) => plan.periodAgnosticSlug === slug );
 };
 
@@ -82,11 +86,11 @@ export const getDefaultFreePlan = ( _: State, locale: string ): Plan | undefined
 		.find( ( plan ) => plan.periodAgnosticSlug === TIMELESS_PLAN_FREE );
 };
 
-export const getSupportedPlans = ( state: State, _locale?: string ): Plan[] => {
-	return state.plans;
+export const getSupportedPlans = ( state: State, _locale: string ): Plan[] => {
+	return state.plans[ _locale ] ?? [];
 };
 
-export const getPlansProducts = ( state: State, _locale?: string ): PlanProduct[] => {
+export const getPlansProducts = ( state: State ): PlanProduct[] => {
 	return state.planProducts;
 };
 
@@ -108,7 +112,11 @@ export const getPrices = ( _state: State, _locale: string ): Record< StorePlanSl
 		}, {} as Record< StorePlanSlug, string > );
 };
 
-export const getPlanByPath = ( _state: State, path?: PlanPath ): Plan | undefined => {
+export const getPlanByPath = (
+	_state: State,
+	path: PlanPath | undefined,
+	locale: string
+): Plan | undefined => {
 	if ( ! path ) {
 		return undefined;
 	}
@@ -121,7 +129,7 @@ export const getPlanByPath = ( _state: State, path?: PlanPath ): Plan | undefine
 	}
 
 	return select( STORE_KEY )
-		.getSupportedPlans()
+		.getSupportedPlans( locale )
 		.find( ( plan ) => plan.periodAgnosticSlug === planProduct?.periodAgnosticSlug );
 };
 

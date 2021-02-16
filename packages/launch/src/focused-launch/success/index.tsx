@@ -60,17 +60,21 @@ const Success: React.FunctionComponent = () => {
 		redirectTo( `/home/${ siteSubdomain?.domain }` );
 	};
 
+	const subtitleTextLaunching = __( 'Your site will be live shortly.', __i18n_text_domain__ );
+	const subtitleTextLaunched = __(
+		"Congratulations, your website is now live. We're excited to watch you grow with WordPress.",
+		__i18n_text_domain__
+	);
+
+	const copyButtonLabelIdle = __( 'Copy Link', __i18n_text_domain__ );
+	const copyButtonLabelActivated = __( 'Copied!', __i18n_text_domain__ );
+
 	return (
 		<div className="focused-launch-container focused-launch-success__wrapper">
 			<Confetti className="focused-launch-success__confetti" />
 			<Title tagName="h2">{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
 			<SubTitle tagName="h3">
-				{ isSiteLaunching
-					? __( 'Your site will be live shortly.', '__i18n_text_domain__' )
-					: __(
-							"Congratulations, your website is now live. We're excited to watch you grow with WordPress.",
-							__i18n_text_domain__
-					  ) }
+				{ isSiteLaunching ? subtitleTextLaunching : subtitleTextLaunched }
 			</SubTitle>
 			{ ! isSiteLaunching && (
 				<>
@@ -92,9 +96,7 @@ const Success: React.FunctionComponent = () => {
 							onFinishCopy={ () => setHasCopied( false ) }
 							className="focused-launch-success__url-copy-button"
 						>
-							{ hasCopied
-								? __( 'Copied!', __i18n_text_domain__ )
-								: __( 'Copy Link', __i18n_text_domain__ ) }
+							{ hasCopied ? copyButtonLabelActivated : copyButtonLabelIdle }
 						</ClipboardButton>
 					</div>
 

@@ -10,15 +10,13 @@ import React, { useMemo } from 'react';
  */
 import JetpackComMasterbar from '../jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
-import OlarkChat from 'calypso/components/olark-chat';
-import config from '@automattic/calypso-config';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { getForCurrentCROIteration } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
-// New Year 2021 promotion; runs from Jan 1 00:00 to Jan 18 23:59 UTC automatically.
-// Safe to remove on or after Jan 19.
-import NewYear2021SaleBanner from 'calypso/components/jetpack/new-year-2021-sale-banner';
+// Fresh Start 2021 promotion; runs from Feb 1 00:00 to Feb 14 23:59 UTC automatically.
+// Safe to remove on or after Feb 15.
+import FreshStart2021SaleBanner from 'calypso/components/jetpack/fresh-start-2021-sale-banner';
 
 /**
  * Style dependencies
@@ -26,42 +24,32 @@ import NewYear2021SaleBanner from 'calypso/components/jetpack/new-year-2021-sale
 import './style.scss';
 
 const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
-	const identity = config( 'olark_chat_identity' );
 	const translate = useTranslate();
-	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
 
-	const title =
-		{
-			[ Iterations.V1 ]: translate( 'Security, performance, and growth tools for WordPress' ),
-			[ Iterations.V2 ]: translate( 'Security, performance, and growth tools for WordPress' ),
-			[ Iterations.I5 ]: translate(
-				'Security, performance, and marketing tools made for WordPress'
-			),
-		}[ iteration ] ?? translate( 'Security, performance, and marketing tools for WordPress' );
-	const tagline =
-		{
-			[ Iterations.V1 ]: '',
-			[ Iterations.V2 ]: '',
-			[ Iterations.I5 ]: '',
-		}[ iteration ] ??
-		translate(
-			'Get everything your site needs, in one package — so you can focus on your business.'
-		);
+	const iterationClassName = useMemo(
+		() => getForCurrentCROIteration( ( variation: Iterations ) => `iteration-${ variation }` ),
+		[]
+	) as Iterations;
+	const title = useMemo(
+		() =>
+			getForCurrentCROIteration( {
+				[ Iterations.SPP ]: translate( 'Security, performance, and marketing tools for WordPress' ),
+			} ) || translate( 'Security, performance, and marketing tools made for WordPress' ),
+		[ translate ]
+	);
 
 	return (
 		<>
-			{ identity && <OlarkChat { ...{ identity } } /> }
 			<JetpackComMasterbar />
 
-			<NewYear2021SaleBanner urlQueryArgs={ urlQueryArgs } />
+			<FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } />
 
-			<div className={ classNames( 'header', iteration ) }>
+			<div className={ classNames( 'header', iterationClassName ) }>
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows( title ) }
 					align="center"
 				/>
-				{ tagline && <p>{ tagline }</p> }
 			</div>
 		</>
 	);

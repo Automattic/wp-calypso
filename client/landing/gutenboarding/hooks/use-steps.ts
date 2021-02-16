@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import { PLANS_STORE } from '../stores/plans';
 import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
+	const locale = useLocale();
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 
@@ -47,7 +49,9 @@ export default function useSteps(): Array< StepType > {
 		select( ONBOARD_STORE ).getState()
 	);
 	const planProductId = useSelect( ( select ) => select( ONBOARD_STORE ).getPlanProductId() );
-	const plan = useSelect( ( select ) => select( PLANS_STORE ).getPlanByProductId( planProductId ) );
+	const plan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanByProductId( planProductId, locale )
+	);
 	const hasPlanFromPath = !! usePlanFromPath();
 
 	if ( domain && ! hasUsedDomainsStep ) {

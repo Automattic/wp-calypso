@@ -37,7 +37,7 @@ class Block_Patterns_From_API {
 				'_',
 				array(
 					'block_patterns',
-					PLUGIN_VERSION,
+					A8C_ETK_PLUGIN_VERSION,
 					$this->get_block_patterns_locale(),
 				)
 			)
@@ -77,14 +77,36 @@ class Block_Patterns_From_API {
 
 		foreach ( (array) $block_patterns as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
-				$pattern_categories[ $slug ] = $category['title'];
+				$pattern_categories[ $slug ] = array( 'label' => $category['title'] );
 			}
 		}
 
-		// Order categories alphabetically and register them.
-		asort( $pattern_categories );
-		foreach ( (array) $pattern_categories as $slug => $label ) {
-			register_block_pattern_category( $slug, array( 'label' => $label ) );
+		// Unregister existing categories so that we can insert them in the desired order (alphabetically).
+		$existing_categories = array();
+		foreach ( \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered() as $existing_category ) {
+			$existing_categories[ $existing_category['name'] ] = $existing_category;
+			unregister_block_pattern_category( $existing_category['name'] );
+		}
+
+		$pattern_categories = array_merge( $pattern_categories, $existing_categories );
+
+		// Order categories alphabetically by their label.
+		uasort(
+			$pattern_categories,
+			function ( $a, $b ) {
+				return strnatcasecmp( $a['label'], $b['label'] );
+			}
+		);
+
+		// Move the Featured category to be the first category.
+		if ( isset( $pattern_categories['featured'] ) ) {
+			$featured_category  = $pattern_categories['featured'];
+			$pattern_categories = array( 'featured' => $featured_category ) + $pattern_categories;
+		}
+
+		// Register categories (and re-register existing categories).
+		foreach ( (array) $pattern_categories as $slug => $category_properties ) {
+			register_block_pattern_category( $slug, $category_properties );
 		}
 
 		foreach ( (array) $block_patterns as $pattern ) {
@@ -92,7 +114,7 @@ class Block_Patterns_From_API {
 				$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
 
 				register_block_pattern(
-					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
+					self::PATTERN_NAMESPACE . $pattern['name'],
 					array(
 						'title'         => $pattern['title'],
 						'description'   => $pattern['description'],

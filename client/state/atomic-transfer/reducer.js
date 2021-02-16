@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	combineReducers,
 	keyedReducer,
 	withoutPersistence,
 	withSchemaValidation,
-	withStorageKey,
 } from 'calypso/state/utils';
 import { atomicTransfer as schema } from './schema';
 import {

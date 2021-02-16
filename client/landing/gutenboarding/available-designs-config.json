@@ -16,9 +16,9 @@
 		},
 		{
 			"title": "Twenty Twenty One",
-			"slug": "twentytwentyone-blocks",
-			"template": "twentytwentyone-blocks",
-			"theme": "twentytwentyone-blocks",
+			"slug": "tt1-blocks",
+			"template": "tt1-blocks",
+			"theme": "tt1-blocks",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
@@ -64,6 +64,19 @@
 				"base": "Raleway"
 			},
 			"categories": [ "featured", "portfolio" ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Doyle",
+			"slug": "doyle",
+			"template": "doyle",
+			"theme": "alves",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "business" ],
 			"is_premium": false,
 			"features": []
 		},
@@ -144,7 +157,8 @@
 			},
 			"categories": [ "featured", "charity", "non-profit" ],
 			"is_premium": false,
-			"features": []
+			"features": [],
+			"hide": true
 		},
 		{
 			"title": "Barnsbury",
@@ -314,6 +328,34 @@
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"features": [ "anchorfm" ]
+		},
+		{
+			"title": "Balan",
+			"slug": "balan",
+			"template": "balan",
+			"theme": "mayland",
+			"preview": "static",
+			"fonts": {
+				"headings": "Rubik",
+				"base": "Roboto"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Pollard",
+			"slug": "pollard",
+			"template": "pollard",
+			"theme": "mayland",
+			"preview": "static",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Raleway"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"features": []
 		}
 	]
 }

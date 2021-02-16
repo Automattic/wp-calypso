@@ -6,7 +6,7 @@ import { groupBy, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 
 import 'calypso/state/billing-transactions/init';

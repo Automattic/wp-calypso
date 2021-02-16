@@ -80,7 +80,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
 		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
-		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
+		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId, true );
 		let magicLoginLink;
 
 		before( async function () {

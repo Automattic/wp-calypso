@@ -33,7 +33,7 @@ function Orders( { className, params, site, translate } ) {
 			<ActionHeader breadcrumbs={ <span>{ translate( 'Orders' ) }</span> }>
 				{ addButton }
 			</ActionHeader>
-			{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
+			{ <StoreDeprecatedNotice /> }
 			<OrdersList currentStatus={ params && params.filter } />
 		</Main>
 	);

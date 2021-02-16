@@ -6,7 +6,7 @@ import { keys, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 import { getThemeFilterTermFromString } from 'calypso/state/themes/selectors/get-theme-filter-term-from-string';
 

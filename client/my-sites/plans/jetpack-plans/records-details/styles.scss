@@ -34,25 +34,6 @@
 	font-weight: 600;
 }
 
-.records-details-alt {
-	text-align: center;
-
-	color: var( --color-text );
-}
-
-.records-details-alt__records {
-	font-size: $font-body;
-	font-weight: 600;
-}
-
-.records-details-alt__tier {
-	margin: 8px 0 0;
-
-	font-size: $font-body-small;
-
-	color: var( --color-text-subtle );
-}
-
 .records-details__price {
 	display: flex;
 	justify-content: center;

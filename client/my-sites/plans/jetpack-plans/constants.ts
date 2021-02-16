@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { createElement } from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -16,6 +15,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
+	PRODUCT_JETPACK_CRM_FREE,
+	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
@@ -41,14 +42,12 @@ import {
 	FEATURE_SOCIAL_MEDIA_POSTING_V2,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_SITE_MONETIZATION_V2,
-	FEATURE_PRIORITY_SUPPORT_V2,
 	FEATURE_ONE_CLICK_RESTORE_V2,
 	FEATURE_SECURE_STORAGE_V2,
 	FEATURE_CRM_LEADS_AND_FUNNEL,
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_NO_CONTACT_LIMITS,
-	FEATURE_CRM_PRIORITY_SUPPORT,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_SEARCH_V2,
@@ -59,6 +58,7 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_ACTIVITY_LOG,
 } from 'calypso/lib/plans/constants';
+import { Iterations } from './iterations';
 import { buildCardFeaturesFromItem } from './utils';
 
 /**
@@ -110,7 +110,7 @@ export const PRODUCTS_WITH_OPTIONS = [
 ] as const;
 
 // Jetpack Security
-export const OPTION_PLAN_SECURITY: ( variation: string ) => SelectorProduct = ( variation ) => {
+export const OPTION_PLAN_SECURITY: ( variation: Iterations ) => SelectorProduct = ( variation ) => {
 	const plan = {
 		productSlug: OPTIONS_JETPACK_SECURITY,
 		annualOptionSlug: OPTIONS_JETPACK_SECURITY,
@@ -144,7 +144,6 @@ export const OPTION_PLAN_SECURITY: ( variation: string ) => SelectorProduct = ( 
 						FEATURE_SOCIAL_MEDIA_POSTING_V2,
 						FEATURE_COLLECT_PAYMENTS_V2,
 						FEATURE_SITE_MONETIZATION_V2,
-						FEATURE_PRIORITY_SUPPORT_V2,
 					],
 				},
 				undefined,
@@ -176,7 +175,7 @@ export const OPTION_PLAN_SECURITY: ( variation: string ) => SelectorProduct = ( 
 
 	return plan;
 };
-export const OPTION_PLAN_SECURITY_MONTHLY: ( variation: string ) => SelectorProduct = (
+export const OPTION_PLAN_SECURITY_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
 	variation
 ) => ( {
 	...OPTION_PLAN_SECURITY( variation ),
@@ -187,7 +186,9 @@ export const OPTION_PLAN_SECURITY_MONTHLY: ( variation: string ) => SelectorProd
 } );
 
 // Jetpack Backup
-export const OPTION_PRODUCT_BACKUP: ( variation: string ) => SelectorProduct = ( variation ) => {
+export const OPTION_PRODUCT_BACKUP: ( variation: Iterations ) => SelectorProduct = (
+	variation
+) => {
 	const plan = {
 		productSlug: OPTIONS_JETPACK_BACKUP,
 		annualOptionSlug: OPTIONS_JETPACK_BACKUP,
@@ -212,7 +213,6 @@ export const OPTION_PRODUCT_BACKUP: ( variation: string ) => SelectorProduct = (
 					FEATURE_ONE_CLICK_RESTORE_V2,
 					FEATURE_SECURE_STORAGE_V2,
 					FEATURE_ACTIVITY_LOG_V2,
-					FEATURE_PRIORITY_SUPPORT_V2,
 				],
 				{ withoutDescription: true, withoutIcon: true },
 				variation
@@ -240,7 +240,7 @@ export const OPTION_PRODUCT_BACKUP: ( variation: string ) => SelectorProduct = (
 	return plan;
 };
 
-export const OPTION_PRODUCT_BACKUP_MONTHLY: ( variation: string ) => SelectorProduct = (
+export const OPTION_PRODUCT_BACKUP_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
 	variation
 ) => ( {
 	...OPTION_PRODUCT_BACKUP( variation ),
@@ -255,42 +255,27 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: ( variation: string ) => SelectorPro
 const CRM_ENTREPRENEUR_PRICE = 17;
 const CRM_ENTREPRENEUR_CURRENCY = 'USD';
 
-export const EXTERNAL_PRODUCT_CRM: ( variation: string ) => SelectorProduct = ( variation ) => ( {
-	productSlug: PRODUCT_JETPACK_CRM,
+export const EXTERNAL_PRODUCT_CRM_FREE: ( variation: Iterations ) => SelectorProduct = (
+	variation
+) => ( {
+	productSlug: PRODUCT_JETPACK_CRM_FREE,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
 	subtypes: [],
-	costProductSlug: PRODUCT_JETPACK_CRM,
-	monthlyProductSlug: PRODUCT_JETPACK_CRM,
-	iconSlug: [ 'v1', 'v2' ].includes( variation ) ? 'jetpack_crm_dark' : 'jetpack_crm',
-	displayName:
-		{
-			v2: translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
-				components: {
-					em: createElement( 'em' ),
-				},
-			} ),
-			i5: translate( 'CRM Entrepreneur' ),
-		}[ variation ] || translate( 'Jetpack CRM' ),
-
-	shortName:
-		{
-			v2: translate( 'Jetpack CRM ' ),
-			i5: translate( 'CRM Entrepreneur' ),
-		}[ variation ] ||
-		translate( 'CRM', {
-			comment: 'Short name of the Jetpack CRM',
-		} ),
+	isFree: true,
+	costProductSlug: PRODUCT_JETPACK_CRM_FREE,
+	monthlyProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	iconSlug: 'jetpack_crm',
+	displayName: translate( 'CRM' ),
+	shortName: translate( 'CRM' ),
 	tagline: translate( 'Manage contacts effortlessly' ),
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
 	// available via the API). Rather like a third-party product.
 	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
-	displayPrice: variation === 'v1' ? undefined : CRM_ENTREPRENEUR_PRICE,
-	displayCurrency: variation === 'v1' ? undefined : CRM_ENTREPRENEUR_CURRENCY,
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
-	buttonLabel: variation === 'v1' ? translate( 'Get Jetpack CRM' ) : translate( 'Get CRM' ),
+	buttonLabel: translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem(
 			[
@@ -298,7 +283,6 @@ export const EXTERNAL_PRODUCT_CRM: ( variation: string ) => SelectorProduct = ( 
 				FEATURE_CRM_PROPOSALS_AND_INVOICES,
 				FEATURE_CRM_TRACK_TRANSACTIONS,
 				FEATURE_CRM_NO_CONTACT_LIMITS,
-				FEATURE_CRM_PRIORITY_SUPPORT,
 			],
 			{ withoutDescription: true, withoutIcon: true },
 			variation
@@ -308,7 +292,55 @@ export const EXTERNAL_PRODUCT_CRM: ( variation: string ) => SelectorProduct = ( 
 	externalUrl: 'https://jetpackcrm.com/pricing/',
 } );
 
-export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: string ) => SelectorProduct = (
+export const EXTERNAL_PRODUCT_CRM_FREE_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
+	variation
+) => ( {
+	...EXTERNAL_PRODUCT_CRM_FREE( variation ),
+	term: TERM_MONTHLY,
+	productSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	costProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	monthlyProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+} );
+
+export const EXTERNAL_PRODUCT_CRM: ( variation: Iterations ) => SelectorProduct = (
+	variation
+) => ( {
+	productSlug: PRODUCT_JETPACK_CRM,
+	term: TERM_ANNUALLY,
+	type: ITEM_TYPE_PRODUCT,
+	subtypes: [],
+	costProductSlug: PRODUCT_JETPACK_CRM,
+	monthlyProductSlug: PRODUCT_JETPACK_CRM,
+	iconSlug: 'jetpack_crm',
+	displayName: translate( 'CRM Entrepreneur' ),
+	shortName: translate( 'CRM Entrepreneur' ),
+	tagline: translate( 'Manage contacts effortlessly' ),
+	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
+	// available via the API). Rather like a third-party product.
+	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
+	displayPrice: CRM_ENTREPRENEUR_PRICE,
+	displayCurrency: CRM_ENTREPRENEUR_CURRENCY,
+	description: translate(
+		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
+	),
+	buttonLabel: translate( 'Get CRM' ),
+	features: {
+		items: buildCardFeaturesFromItem(
+			[
+				FEATURE_CRM_LEADS_AND_FUNNEL,
+				FEATURE_CRM_PROPOSALS_AND_INVOICES,
+				FEATURE_CRM_TRACK_TRANSACTIONS,
+				FEATURE_CRM_NO_CONTACT_LIMITS,
+			],
+			{ withoutDescription: true, withoutIcon: true },
+			variation
+		),
+	},
+	hidePrice: true,
+	externalUrl: 'https://jetpackcrm.com/pricing/',
+} );
+
+export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
 	variation
 ) => ( {
 	...EXTERNAL_PRODUCT_CRM( variation ),
@@ -322,7 +354,7 @@ export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: string ) => SelectorProd
 // Map slug to objects.
 export const OPTIONS_SLUG_MAP: Record<
 	SelectorProductSlug,
-	( variation: string ) => SelectorProduct
+	( variation: Iterations ) => SelectorProduct
 > = {
 	[ OPTIONS_JETPACK_SECURITY ]: OPTION_PLAN_SECURITY,
 	[ OPTIONS_JETPACK_SECURITY_MONTHLY ]: OPTION_PLAN_SECURITY_MONTHLY,
@@ -331,13 +363,20 @@ export const OPTIONS_SLUG_MAP: Record<
 };
 
 // List of products showcased in the Plans grid but not sold through Calypso
-export const EXTERNAL_PRODUCTS_LIST = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
+export const EXTERNAL_PRODUCTS_LIST = [
+	PRODUCT_JETPACK_CRM_FREE,
+	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
+];
 
 // External Product slugs to SelectorProduct.
 export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
 	string,
-	( variation: string ) => SelectorProduct
+	( variation: Iterations ) => SelectorProduct
 > = {
+	[ PRODUCT_JETPACK_CRM_FREE ]: EXTERNAL_PRODUCT_CRM_FREE,
+	[ PRODUCT_JETPACK_CRM_FREE_MONTHLY ]: EXTERNAL_PRODUCT_CRM_FREE_MONTHLY,
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
 };

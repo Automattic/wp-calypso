@@ -260,7 +260,7 @@ export function updatePlugin( siteId, plugin ) {
 }
 
 export function enableAutoupdatePlugin( siteId, plugin ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: ENABLE_AUTOUPDATE_PLUGIN,
@@ -278,7 +278,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
 			afterEnableAutoupdateCallback( undefined );
 			if ( data.update ) {
-				updatePlugin( siteId, data )( dispatch, getState );
+				updatePlugin( siteId, data )( dispatch );
 			}
 		};
 
@@ -506,7 +506,7 @@ export function receiveSitePlugins( siteId, plugins ) {
 }
 
 export function fetchSitePlugins( siteId ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		const defaultAction = {
 			siteId,
 		};
@@ -518,7 +518,7 @@ export function fetchSitePlugins( siteId ) {
 
 			data.plugins.map( ( plugin ) => {
 				if ( plugin.update && plugin.autoupdate ) {
-					updatePlugin( siteId, plugin )( dispatch, getState );
+					updatePlugin( siteId, plugin )( dispatch );
 				}
 			} );
 		};

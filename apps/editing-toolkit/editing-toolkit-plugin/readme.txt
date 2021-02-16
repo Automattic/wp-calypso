@@ -3,7 +3,7 @@ Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
-Stable tag: 2.16
+Stable tag: 2.19
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,25 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+View the commit history here: https://github.com/Automattic/wp-calypso/commits/trunk/apps/editing-toolkit
+
+= 2.19 =
+* Unhide draft button when site hasn't launched yet. (https://github.com/Automattic/wp-calypso/pull/49766)
+* Fix issues in Focused Launch
+
+= 2.18 =
+* Introduces a "What's New" dialogue for the editor. (https://github.com/Automattic/wp-calypso/pull/48722)
+* Updates newspack blocks to v1.20, fixing issues with AMP and "specific posts" mode. (https://github.com/Automattic/wp-calypso/pull/49778)
+* Fix issues in the plan selector. (https://github.com/Automattic/wp-calypso/pull/49523)
+* Improve translations in site launch and onboarding. (https://github.com/Automattic/wp-calypso/pull/47947)
+
+= 2.17 =
+* WelcomeTour: capture mousedown event and call preventDefault on the event (https://github.com/Automattic/wp-calypso/pull/49583)
+* Premium Content: Remove from the Editing Toolkit plugin (https://github.com/Automattic/wp-calypso/pull/49561)
+* Anchor: Gutenboarding Launch works immediately without domain or plan selection (https://github.com/Automattic/wp-calypso/pull/48938)
+* Editing Toolkit: Update Newspack blocks to v1.19.0 (https://github.com/Automattic/wp-calypso/pull/49493)
+* Plans store: Always pass locale to plans store (https://github.com/Automattic/wp-calypso/pull/49559)
+* Welcome Tour: Prevent clicks on Tour from bubbling up to the Block Inserter (https://github.com/Automattic/wp-calypso/pull/49583)
 
 = 2.16 =
 * Fix Global Styles Panel Font Change Update (https://github.com/Automattic/wp-calypso/pull/49216)

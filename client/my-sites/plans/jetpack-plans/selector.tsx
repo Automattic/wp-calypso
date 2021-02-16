@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import PlansFilterBar from 'calypso/my-sites/plans/jetpack-plans/plans-filter-bar';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { checkout, manageSitePurchase } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
@@ -22,9 +21,11 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import {
-	getGridComponent,
-	showFilterBarInSelector,
+	getForCurrentCROIteration,
+	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import ProductsGridI5 from './i5/products-grid-i5';
+import ProductsGridSpp from './spp/products-grid-spp';
 
 /**
  * Type dependencies
@@ -54,7 +55,14 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
-	const Grid = useMemo( () => getGridComponent(), [] );
+	const Grid = useMemo(
+		() =>
+			getForCurrentCROIteration( {
+				[ Iterations.I5 ]: ProductsGridI5,
+				[ Iterations.SPP ]: ProductsGridSpp,
+			} ),
+		[]
+	);
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -143,16 +151,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			{ header }
 
-			{ showFilterBarInSelector() && (
-				<PlansFilterBar onDurationChange={ trackDurationChange } duration={ currentDuration } />
-			) }
-
 			{ Grid && (
 				<Grid
 					duration={ currentDuration }
 					onSelectProduct={ selectProduct }
 					urlQueryArgs={ urlQueryArgs }
-					{ ...( ! showFilterBarInSelector() && { onDurationChange: trackDurationChange } ) }
+					onDurationChange={ trackDurationChange }
 				/>
 			) }
 

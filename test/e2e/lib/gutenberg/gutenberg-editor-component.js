@@ -158,7 +158,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async toggleOptionsMenu() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='Options']" )
+			By.css( ".edit-post-more-menu button[aria-label='Options']" )
 		);
 
 		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
@@ -644,6 +644,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				// For some reason, when the screensize is set to mobile,
+				// the welcome guide modal is not closed when the template button
+				// is clicked, causing the test to fail with a timeout.
+				//
+				// The same doesn't seem to happen if I run the test
+				// in the Desktop screen size, but resize to a mobileish size.
+				// For this reason, when in the mobile screen size, we force-close
+				// the welcome modal before trying to click the template selector.
+				await driverHelper.clickIfPresent(
+					this.driver,
+					By.css( '.edit-post-welcome-guide button[aria-label="Close dialog"]' )
+				);
 				await driverHelper.clickWhenClickable(
 					this.driver,
 					By.css( 'button.template-selector-item__label[value="blank"]' )

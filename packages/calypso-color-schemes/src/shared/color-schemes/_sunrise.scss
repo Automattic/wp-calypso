@@ -32,6 +32,7 @@ Well use studio-orange for both the primary and accent colors
 	--theme-base-color-rgb: 207, 73, 68; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-submenu-text-color: #f1c8c7; /* mix( $base-color, $text-color, 30% ) */
 	--theme-submenu-background-color: #be3631; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-submenu-hover-text-color: #f7e3d3; /* Direct from wp-admin */
 	--theme-icon-color: #f3f1f1; /* Direct from wp-admin */
 	--theme-highlight-color: #dd823b; /* Direct from wp-admin */
 	--theme-highlight-color-rgb: 221, 130, 59; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
@@ -143,6 +144,6 @@ Well use studio-orange for both the primary and accent colors
 	--color-sidebar-submenu-background: var( --theme-submenu-background-color );
 	--color-sidebar-submenu-text: var( --theme-submenu-text-color );
 	--color-sidebar-submenu-hover-background: transparent;
-	--color-sidebar-submenu-hover-text: var( --theme-highlight-color );
+	--color-sidebar-submenu-hover-text: var( --theme-submenu-hover-text-color );
 }
 

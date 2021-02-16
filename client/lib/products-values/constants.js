@@ -21,6 +21,8 @@ export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
+export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
+export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
 
 export const JETPACK_PRODUCTS_BY_TERM = [
 	{
@@ -50,6 +52,10 @@ export const JETPACK_PRODUCTS_BY_TERM = [
 	{
 		yearly: PRODUCT_JETPACK_CRM,
 		monthly: PRODUCT_JETPACK_CRM_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_CRM_FREE,
+		monthly: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	},
 ];
 
@@ -81,6 +87,10 @@ export const JETPACK_SCAN_PRODUCTS = [
 ];
 
 export const JETPACK_CRM_PRODUCTS = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
+export const JETPACK_CRM_FREE_PRODUCTS = [
+	PRODUCT_JETPACK_CRM_FREE,
+	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+];
 
 export const JETPACK_ANTI_SPAM_PRODUCTS = [
 	PRODUCT_JETPACK_ANTI_SPAM,

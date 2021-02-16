@@ -1,0 +1,48 @@
+.payment-method-selector__terms {
+	color: var( --color-text-subtle );
+	margin: 5px 0 0;
+	padding: 0;
+
+	p {
+		font-size: $font-body-extra-small;
+		margin-left: 24px;
+	}
+
+	.gridicon {
+		float: left;
+	}
+}
+
+/* Override checkout styles */
+.payment-method-selector__content {
+	.credit-card-fields-inner-wrapper {
+		max-width: 525px;
+	}
+
+	.contact-fields {
+		margin-top: 16px;
+		padding-bottom: 8px;
+	}
+
+	.checkout__step-wrapper.checkout__step-wrapper--last-step {
+		margin-bottom: 0;
+		border: 0;
+		width: 100%;
+		max-width: none;
+	}
+
+	.checkout__step-wrapper--last-step .checkout-steps__submit-button-wrapper {
+		background: transparent;
+		padding: 0;
+		position: relative;
+		border: 0;
+	}
+
+	.checkout-submit-button .checkout-button {
+		width: auto;
+
+		&:focus {
+			outline: var( --color-primary-light ) solid 2px;
+		}
+	}
+}

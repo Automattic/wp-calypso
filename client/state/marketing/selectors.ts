@@ -12,3 +12,7 @@ export function isTreatmentOneClickTest( state: AppState ): boolean {
 export function isTreatmentPlansReorderTest( state: AppState ): boolean {
 	return 'treatment' === getCurrentUser( state )?.meta.plans_reorder_abtest_variation;
 }
+
+export function isTreatmentDifmUpsellTest( state: AppState ): boolean {
+	return 'treatment' === getVariationForUser( state, 'post_purchase_difm_upsell' );
+}

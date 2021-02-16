@@ -52,15 +52,17 @@ project {
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		text("env.E2E_WORKERS", "7", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
+		text("E2E_WORKERS", "16", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
 		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
-		password("env.CONFIG_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", label = "Config key", description = "Key used to decrypt config")
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		param("teamcity.git.fetchAllHeads", "true")
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
-		text("docker_image", "registry.a8c.com/calypso/ci:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
+		text("docker_image", "registry.a8c.com/calypso/base:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
 		text("docker_image_e2e", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker e2e image", description = "Docker image used to run e2e tests", allowEmpty = true)
 		text("calypso.run_full_eslint", "false", label = "Run full eslint", description = "True will lint all files, empty/false will lint only changed files", allowEmpty = true)
+		text("env.DOCKER_BUILDKIT", "1", label = "Enable Docker BuildKit", description = "Enables BuildKit (faster image generation). Values 0 or 1", allowEmpty = true)
+		password("CONFIG_E2E_ENCRYPTION_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", display = ParameterDisplay.HIDDEN)
+		text("env.SKIP_TSC", "true", label = "Skip TS type generation", description = "Skips running `tsc` on yarn install", allowEmpty = true)
 	}
 
 	features {
@@ -86,6 +88,7 @@ object BuildBaseImages : BuildType({
 
 	params {
 		param("build.prefix", "1.0")
+		param("image_tag", "latest")
 	}
 
 	vcs {
@@ -101,24 +104,10 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = """
-					registry.a8c.com/calypso/base:latest
+					registry.a8c.com/calypso/base:%image_tag%
 					registry.a8c.com/calypso/base:%build.number%
 				""".trimIndent()
-				commandArgs = "--no-cache --target builder"
-			}
-			param("dockerImage.platform", "linux")
-		}
-		dockerCommand {
-			name = "Build CI image"
-			commandType = build {
-				source = file {
-					path = "Dockerfile.base"
-				}
-				namesAndTags = """
-					registry.a8c.com/calypso/ci:latest
-					registry.a8c.com/calypso/ci:%build.number%
-				""".trimIndent()
-				commandArgs = "--target ci"
+				commandArgs = "--no-cache --target base"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -129,7 +118,7 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = """
-					registry.a8c.com/calypso/ci-desktop:latest
+					registry.a8c.com/calypso/ci-desktop:%image_tag%
 					registry.a8c.com/calypso/ci-desktop:%build.number%
 				""".trimIndent()
 				commandArgs = "--target ci-desktop"
@@ -143,7 +132,7 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = """
-					registry.a8c.com/calypso/ci-e2e:latest
+					registry.a8c.com/calypso/ci-e2e:%image_tag%
 					registry.a8c.com/calypso/ci-e2e:%build.number%
 				""".trimIndent()
 				commandArgs = "--target ci-e2e"
@@ -157,7 +146,7 @@ object BuildBaseImages : BuildType({
 					path = "Dockerfile.base"
 				}
 				namesAndTags = """
-					registry.a8c.com/calypso/ci-wpcom:latest
+					registry.a8c.com/calypso/ci-wpcom:%image_tag%
 					registry.a8c.com/calypso/ci-wpcom:%build.number%
 				""".trimIndent()
 				commandArgs = "--target ci-wpcom"
@@ -168,15 +157,13 @@ object BuildBaseImages : BuildType({
 			name = "Push images"
 			commandType = push {
 				namesAndTags = """
-					registry.a8c.com/calypso/base:latest
+					registry.a8c.com/calypso/base:%image_tag%
 					registry.a8c.com/calypso/base:%build.number%
-					registry.a8c.com/calypso/ci:latest
-					registry.a8c.com/calypso/ci:%build.number%
-					registry.a8c.com/calypso/ci-desktop:latest
+					registry.a8c.com/calypso/ci-desktop:%image_tag%
 					registry.a8c.com/calypso/ci-desktop:%build.number%
-					registry.a8c.com/calypso/ci-e2e:latest
+					registry.a8c.com/calypso/ci-e2e:%image_tag%
 					registry.a8c.com/calypso/ci-e2e:%build.number%
-					registry.a8c.com/calypso/ci-wpcom:latest
+					registry.a8c.com/calypso/ci-wpcom:%image_tag%
 					registry.a8c.com/calypso/ci-wpcom:%build.number%
 				""".trimIndent()
 			}
@@ -197,7 +184,7 @@ object BuildBaseImages : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 20
+		executionTimeoutMin = 30
 	}
 
 	features {
@@ -234,6 +221,9 @@ object BuildDockerImage : BuildType({
 					--label com.a8c.image-builder=teamcity
 					--label com.a8c.target=calypso-live
 					--label com.a8c.build-id=%teamcity.build.id%
+					--build-arg workers=16
+					--build-arg node_memory=32768
+					--build-arg use_cache=true
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
@@ -352,7 +342,8 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Run type checks
-				yarn run tsc --project client/landing/gutenboarding
+				yarn tsc --build packages/tsconfig.json
+				yarn tsc --project client/landing/gutenboarding
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
@@ -814,6 +805,12 @@ object RunCanaryE2eTests : BuildType({
 	name = "Canary e2e tests"
 	description = "Run canary e2e tests"
 
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
 	vcs {
 		root(WpCalypso)
 		cleanCheckout = true
@@ -843,6 +840,120 @@ object RunCanaryE2eTests : BuildType({
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID%"
 		}
+		script {
+			name = "Run e2e tests: Canary (mobile, desktop)"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export LIVEBRANCHES=true
+				export NODE_CONFIG_ENV=test
+				export MAGELLANDEBUG=true
+				export TEST_VIDEO=true
+
+				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
+				MAX_LOOP=10
+				COUNTER=0
+
+				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
+				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
+					COUNTER=${'$'}((COUNTER+1))
+					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
+					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
+
+					# 202 means the image is being downloaded, retry in a few seconds
+					if [[ "${'$'}{HTTP_STATUS}" -eq "202" ]]; then
+						sleep 5
+						continue
+					fi
+
+					break
+				done
+
+				if [[ -z "${'$'}URL" ]]; then
+					echo "Can't redirect to ${'$'}{IMAGE_URL}" >&2
+					echo "Curl response: ${'$'}{REDIRECT}" >&2
+					exit 1
+				fi
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				# Run the test
+				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
+		}
+		script {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+				set -x
+
+				# Collect results
+				mkdir -p reports
+				find test/e2e/temp -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
+
+				mkdir -p screenshots
+				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "junit")
+			param("xmlReportParsing.reportDirs", "reports/*.xml")
+		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
 	}
 
 	dependencies {
@@ -1092,7 +1203,6 @@ object WPComPlugins_EditorToolKit : BuildType({
 	artifactRules = "editing-toolkit.zip"
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
-
 	params {
 		param("build.prefix", "3")
 	}
@@ -1204,14 +1314,21 @@ object WPComPlugins_EditorToolKit : BuildType({
 				cd apps/editing-toolkit
 
 				# Update plugin version in the plugin file.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'PLUGIN_VERSION'/c\define( 'PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
 
 				# Update plugin stable tag in readme.txt.
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 
 				yarn build
-
 				cd editing-toolkit-plugin/
+
+				# Metadata file with info for the download script.
+				tee build_meta.txt <<-EOM
+					commit_hash=%build.vcs.number%
+					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+					build_number=%build.number%
+					EOM
+
 				zip -r ../../../editing-toolkit.zip .
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux

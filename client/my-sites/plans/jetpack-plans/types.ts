@@ -61,6 +61,7 @@ export interface JetpackFreeProps {
 export type SelectorProductSlug = typeof PRODUCTS_WITH_OPTIONS[ number ];
 
 export type SelectorProductCost = {
+	isFree?: boolean;
 	cost?: number;
 	discountCost?: number;
 	loadingCost?: boolean;

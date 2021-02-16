@@ -52,7 +52,7 @@ class Template_Image_Inserter {
 	public function upload_images( $image_urls ) {
 		return array_reduce(
 			$image_urls,
-			function( $accumulator, $url ) {
+			function ( $accumulator, $url ) {
 				// 1. Attempt to sideload the image and get the local URL.
 				$local_url = $this->upload_image( $url );
 

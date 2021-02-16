@@ -295,11 +295,15 @@ class ActivityCard extends Component {
 		const backupTimeDisplay = applySiteOffset
 			? applySiteOffset( activity.activityTs ).format( 'LT' )
 			: '';
-
 		const showActivityContent = this.state.showContent;
+		const hasActivityFailed = activity.activityStatus === 'error';
 
 		return (
-			<div className={ classnames( className, 'activity-card' ) }>
+			<div
+				className={ classnames( className, 'activity-card', {
+					'with-error': hasActivityFailed,
+				} ) }
+			>
 				<QueryRewindState siteId={ siteId } />
 				{ ! summarize && (
 					<div className="activity-card__time">

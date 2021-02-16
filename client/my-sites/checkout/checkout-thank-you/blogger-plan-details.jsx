@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isBlogger, isGoogleApps } from 'calypso/lib/products-values';
+import { isBlogger, isGSuiteOrExtraLicenseOrGoogleWorkspace } from 'calypso/lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 
 const BloggerPlanDetails = ( { selectedSite, sitePlans, purchases } ) => {
 	const plan = find( sitePlans.data, isBlogger );
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	return (
 		<div>

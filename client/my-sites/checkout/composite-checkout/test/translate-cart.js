@@ -320,9 +320,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 			it( 'has the expected label (the domain name)', function () {
 				expect( clientCart.items[ 1 ].label ).toBe( 'foo.cash' );
 			} );
-			it( 'has the expected sublabel', function () {
-				expect( clientCart.items[ 1 ].sublabel ).toBe( '.cash Domain Registration' );
-			} );
 			it( 'has the expected meta (the domain name)', function () {
 				expect( clientCart.items[ 1 ].wpcom_meta?.meta ).toBe( 'foo.cash' );
 			} );

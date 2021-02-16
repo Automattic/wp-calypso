@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -33,7 +32,7 @@ class Reviews extends Component {
 		return (
 			<Main className={ classes } wideLayout>
 				<ActionHeader breadcrumbs={ <span>{ translate( 'Reviews' ) }</span> } />
-				{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
+				{ <StoreDeprecatedNotice /> }
 				<ReviewsList
 					productId={ params && params.product_id && Number( params.product_id ) }
 					currentStatus={ params && params.filter }

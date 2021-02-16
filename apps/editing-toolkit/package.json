@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-editing-toolkit",
-	"version": "2.16.0",
+	"version": "2.19.0",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
@@ -56,9 +56,6 @@
 		"dev:wpcom-block-editor-nux": "yarn run wpcom-block-editor-nux",
 		"build:wpcom-block-editor-nux": "NODE_ENV=production yarn run wpcom-block-editor-nux",
 		"wpcom-block-editor-welcome-tour": "calypso-build --env source='wpcom-block-editor-welcome-tour'",
-		"premium-content": "calypso-build --env source='premium-content'",
-		"dev:premium-content": "yarn run premium-content",
-		"build:premium-content": "NODE_ENV=production yarn run premium-content",
 		"block-inserter-modifications": "npm-run-all --parallel block-inserter-modifications-*",
 		"block-inserter-modifications-contextual-tips": "calypso-build --env source='block-inserter-modifications/contextual-tips'",
 		"dev:block-inserter-modifications": "yarn run block-inserter-modifications",
@@ -69,6 +66,9 @@
 		"block-patterns": "calypso-build --env source='block-patterns'",
 		"dev:block-patterns": "yarn run block-patterns",
 		"build:block-patterns": "NODE_ENV=production yarn run block-patterns",
+		"whats-new": "calypso-build --env source='whats-new'",
+		"dev:whats-new": "yarn run whats-new",
+		"build:whats-new": "NODE_ENV=production yarn run whats-new",
 		"dev": "node bin/npm-run-build.js --dev",
 		"build": "node bin/npm-run-build.js --build",
 		"postbuild": "yarn validate-es5",
@@ -84,7 +84,9 @@
 		"predev": "yarn run clean",
 		"sync:newspack-blocks": "./bin/sync-newspack-blocks.sh",
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
-		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./editing-toolkit-plugin/*/dist/*.js"
+		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./editing-toolkit-plugin/*/dist/*.js",
+		"lint:php": "../../vendor/bin/phpcs --standard=../phpcs.xml ./ ",
+		"lint:php:fix": "../../vendor/bin/phpcbf --standard=../phpcs.xml ./ "
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
@@ -96,6 +98,7 @@
 		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/launch": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
+		"@automattic/page-template-modal": "^1.0.0-alpha.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
@@ -139,7 +142,7 @@
 		"jest": "^26.4.0",
 		"lodash": "*",
 		"moment": "*",
-		"newspack-blocks": "github:Automattic/newspack-blocks#v1.17.1",
+		"newspack-blocks": "github:Automattic/newspack-blocks#v1.20.0",
 		"npm-run-all": "^4.1.5",
 		"puppeteer": "^3.0.4",
 		"react": "^16.12.0",

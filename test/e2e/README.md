@@ -4,59 +4,43 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 
 ## Table of contents
 
-- [Pre-requisites](#pre-requisites)
-  - [Install NodeJS](#install-nodejs)
-  - [Install dependencies](#install-dependencies)
-  - [Configuration](docs/config.md#configuration)
-    - [Test Configuration](docs/config.md#test-configuration)
-    - [Config Values](docs/config.md#config-values)
-    - [Standalone Environment Variables](docs/config.md#standalone-environment-variables)
-    - [CircleCI Environment Variables](docs/config.md#circleci-environment-variables)
-- [Running tests](#running-tests)
-  - [How to run tests](docs/running-tests.md)
-    - [To run the default specs](docs/running-tests.md#to-run-the-default-specs-in-parallel-in-default-browser-sizes---mobile-and-desktop)
-    - [To run an individual spec](docs/running-tests.md#to-run-an-individual-spec)
-    - [To run with different modes](docs/running-tests.md#to-run-with-different-modes)
-    - [To run a specific suite of specs](docs/running-tests.md#to-run-a-specific-suite-of-specs)
-    - [To run headlessly](docs/running-tests.md#to-run-headlessly)
-  - [How to disable tests](docs/disabling-tests.md)
-- [Writing tests](#)
-  - [Gutenberg blocks](docs/gutenberg.md)
+- [Setup](docs/setup.md)
+  - [Software Environment](docs/setup.md#software-environment)
+  - [Configuration](docs/setup.md#configuration)
+  - [Environment Variables](docs/setup.md#environment-variables)
+  - [Naming Branches](docs/setup.md#naming-branches)
+- [Running tests](docs/running-tests.md)
+    - [Local](docs/running-tests.md#local)
+        - [Run all tests default](docs/running-tests.md#run-all-tests-default)
+        - [Run individual spec](docs/running-tests.md#run-individual-spec)
+        - [Run individual case](docs/running-tests.md#run-individual-case)
+        - [Modes](docs/running-tests.md#modes)
+        - [Headless](docs/running-tests.md#headless)
+        - [Other options](docs/running-tests.md#other-options)
+        - [CircleCI docker image](docs/running-tests.md#circleci-docker-image)
+    - [CircleCI](docs/running-tests.md#circleci)
+        - [Canary](docs/running-tests.md#circleci#canary)
+        - [Full suite](docs/running-tests.md#circleci#full-suite)
+    - [Sauce Labs](docs/running-tests.md#sauce-labs)
+- [Writing tests](docs/writing_tests.md)
+  - [Selector](docs/writing_tests.md#selector)
+      - [How](docs/writing_tests.md#how)
+  - [Component](docs/writing_tests.md#component)
+  - [Page Object Model](docs/writing_tests.md#page-object-model)
+      - [Structure](docs/writing_tests.md#structure)
+      - [Guidelines](docs/writing_tests.md#guidelines)
+  - [Flow](docs/writing_tests.md#flow)
+      - [Structure](docs/writing_tests.md#structure)
+      - [Guidelines](docs/writing_tests.md#guidelines)
 - [Style Guide](docs/style-guide.md)
-- [Other information](#other-information)
-  - [NodeJS Version](docs/miscellaneous.md#nodejs-version)
-  - [Git Pre-Commit Hook](docs/miscellaneous.md#git-pre-commit-hook)
-  - [Launch Logged-In Window](docs/miscellaneous.md#launch-logged-in-window)
-  - [User account requirements](docs/miscellaneous.md#user-account-requirements)
-  - [List of wrapper repos & friends](docs/miscellaneous.md#list-of-wrapper-repos--friends)
-  - [How to fix the `chromedriver not found` error when running e2e tests locally](docs/miscellaneous.md#how-to-fix-the-chromedriver-not-found-error-when-running-e2e-tests-locally)
-
-## Pre-requisites
-
-Make sure you are in the /test/e2e directory
-
-### Install NodeJS
-
-```bash
-brew install node #MacOS
-```
-
-Or use [nvm](https://github.com/creationix/nvm) (Recommended)
-
-### Install dependencies
-
-```bash
-yarn install
-```
-
-### Configuration
-
-See the [configuration documentation](docs/config.md) for details on setting configuration values and environment variables.
-
-## Running tests
-
-See the information on [how to run tests](docs/running-tests.md) where you'll find information on the flags and commands used to run the tests.
-
-## Other information
-
-See the [other information](docs/miscellaneous.md) documentation for other details that may be of interest.
+  - [Async / Await](docs/style-guide.md#async--await)
+  - [Tags](docs/style-guide.md#tags)
+  - [Page Objects](docs/style-guide.md#page-objects)
+  - [Use of this, const and lets](docs/style-guide.md#use-of-this-const-and-lets)
+  - [Arrow functions](docs/style-guide.md#arrow-functions)
+  - [Default values using destructuring](docs/style-guide.md#default-values-using-destructuring)
+  - [Nesting step blocks](docs/style-guide.md#nesting-step-blocks)
+  - [Catching errors in a step block](docs/style-guide.md#catching-errors-in-a-step-block)
+  - [Waiting for elements](docs/style-guide.md#waiting-for-elements)
+- [Troubleshooting & Debugging](docs/troubleshooting.md)
+  - [git pre-commit hook/husky](docs/troubleshooting.md#git-pre-commit-hookhusky)

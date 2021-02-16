@@ -15,6 +15,7 @@ import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { controls } from '../wpcom-request-controls';
 
 export * from './types';
+export { getFormattedPrice } from './utils';
 export type { State };
 
 let isRegistered = false;

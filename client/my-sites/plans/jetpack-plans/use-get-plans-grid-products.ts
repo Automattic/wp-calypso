@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { getPlan } from 'calypso/lib/plans';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
-	JETPACK_BACKUP_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
@@ -19,10 +18,9 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
+	JETPACK_CRM_FREE_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { doForCurrentCROIteration, Iterations } from './iterations';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';
@@ -50,8 +48,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// Directly and indirectly owned products
 	const ownedProducts = [ ...purchasedProducts, ...includedInPlanProducts ];
 
-	const currentCROvariant = getJetpackCROActiveVersion();
-
 	// If Jetpack Search is directly or indirectly owned, continue, otherwise make it available.
 	if (
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
@@ -60,56 +56,44 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	// Include Jetpack CRM
-	if (
-		currentCROvariant !== 'spp' &&
-		! ownedProducts.some( ( ownedProduct ) =>
-			[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
-		)
-	) {
-		availableProducts = [ ...availableProducts, PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
-	}
-
-	const backupProductsToShow = [];
-	// In v1, we show the Backup product the site owns or Jetpack Backup Daily.
-	if ( currentCROvariant === 'v1' ) {
+	doForCurrentCROIteration( ( variation: Iterations ) => {
 		if (
-			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
+			variation !== Iterations.SPP &&
+			! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
 		) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_DAILY,
-				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
-			);
+			availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
 		}
-		// We show the Backup product the site owns and the one the site doesn't own. In other words,
-		// we always show both Backup Daily and Backup Real-time.
-	} else {
-		if (
-			! ownedProducts.some( ( ownedProduct ) =>
-				[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes(
-					ownedProduct
-				)
-			)
-		) {
+	} );
+
+	const backupProductsToShow: string[] = [];
+	doForCurrentCROIteration( ( variation: Iterations ) => {
+		const ownsDaily =
+			ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY ) ||
+			ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
+		const ownsRealtime =
+			ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME ) ||
+			ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY );
+
+		// Show the Backup product the site owns, and the one it doesn't own.
+		// In other words, always show both Backup Daily and Backup Real-time.
+		if ( ! ownsDaily ) {
 			backupProductsToShow.push(
 				PRODUCT_JETPACK_BACKUP_DAILY,
 				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
 			);
 		}
 
-		if (
-			currentCROvariant !== 'spp' &&
-			! ownedProducts.some( ( ownedProduct ) =>
-				[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
-					ownedProduct
-				)
-			)
-		) {
+		// ... except in the SPP iteration, which only shows
+		// Backup Real-time if the site owns it.
+
+		if ( variation !== Iterations.SPP && ! ownsRealtime ) {
 			backupProductsToShow.push(
 				PRODUCT_JETPACK_BACKUP_REALTIME,
 				PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
 			);
 		}
-	}
+	} );
+
 	availableProducts = [ ...availableProducts, ...backupProductsToShow ];
 
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying

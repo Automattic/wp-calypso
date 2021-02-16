@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -29,6 +29,7 @@ import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -43,8 +44,25 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
+	noticeType,
 } ) => {
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+
+	useEffect( () => {
+		if ( ! canUserUseCustomerHome || ! layout || ! noticeType ) {
+			return;
+		}
+
+		if ( noticeType === 'difm-success' ) {
+			reduxDispatch( recordTracksEvent( 'calypso_difm_intake_submitted' ) );
+
+			const successMessage = translate( 'Your application has been sent!' );
+			reduxDispatch( successNotice( successMessage ) );
+		}
+
+		return;
+	}, [ noticeType, layout, canUserUseCustomerHome, reduxDispatch, translate ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );

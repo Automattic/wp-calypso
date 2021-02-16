@@ -17,6 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isUpworkBannerDismissed from 'calypso/state/selectors/is-upwork-banner-dismissed';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies
@@ -78,12 +79,12 @@ class UpworkBanner extends PureComponent {
 			return null;
 		}
 		return (
-			<a
+			<ExternalLink
 				className="upwork-banner"
 				role="button"
 				style={ { backgroundColor: '#DAF5FC' } }
 				onClick={ this.onStartNowClick }
-				href={ 'https://wordpress.com/built-by-wordpress-com/' }
+				href="https://wordpress.com/built-by-wordpress-com/"
 			>
 				<QueryPreferences />
 				<h1 className="upwork-banner__title">
@@ -104,7 +105,7 @@ class UpworkBanner extends PureComponent {
 					className="upwork-banner__image"
 					src={ builderIllustration }
 				/>
-			</a>
+			</ExternalLink>
 		);
 	}
 }

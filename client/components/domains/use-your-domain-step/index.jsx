@@ -46,6 +46,7 @@ import {
 	DOMAINS_WITH_PLANS_ONLY,
 	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
 } from 'calypso/state/current-user/constants';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Style dependencies
@@ -462,4 +463,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( localize( UseYourDomainStep ) );
+)( withShoppingCart( localize( UseYourDomainStep ) ) );

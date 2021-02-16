@@ -12,6 +12,7 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
  */
 import { isExternal } from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	hasRenewalItem,
 	getAllCartItems,
@@ -29,9 +30,14 @@ import {
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
-import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_RESET_PLANS,
+	JETPACK_REDIRECT_URL,
+	redirectCloudCheckoutToWpAdmin,
+} from 'calypso/lib/plans/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
@@ -51,6 +57,7 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
 	shouldShowOneClickTreatment,
+	shouldShowDifmUpsell,
 	hideNudge,
 	isInEditor,
 	previousRoute,
@@ -69,6 +76,7 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
 	shouldShowOneClickTreatment?: boolean;
+	shouldShowDifmUpsell?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 	previousRoute?: string;
@@ -113,12 +121,21 @@ export default function getThankYouPageUrl( {
 	const fallbackUrl = getFallbackDestination( {
 		pendingOrReceiptId,
 		siteSlug,
+		adminUrl,
 		feature,
 		cart,
 		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
 		productAliasFromUrl,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
+
+	// If receipt ID is 'noPreviousPurchase', then send the user to a generic page (not post-purchase related).
+	// For example, this case arises when a Skip button is clicked on a concierge upsell
+	// nudge opened by a direct link to /checkout/offer-support-session.
+	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
+		debug( 'receipt ID is "noPreviousPurchase", so returning: ', fallbackUrl );
+		return fallbackUrl;
+	}
 
 	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
 
@@ -149,16 +166,6 @@ export default function getThankYouPageUrl( {
 		return managePurchaseUrl;
 	}
 
-	// If cart is empty, then send the user to a generic page (not post-purchase related).
-	// For example, this case arises when a Skip button is clicked on a concierge upsell
-	// nudge opened by a direct link to /offer-support-session.
-	const isCartEmpty = cart && getAllCartItems( cart ).length === 0;
-	if ( ':receiptId' === pendingOrReceiptId && isCartEmpty ) {
-		const emptyCartUrl = urlFromCookie || fallbackUrl;
-		debug( 'cart is empty or receipt ID is pending, so returning', emptyCartUrl );
-		return emptyCartUrl;
-	}
-
 	// Domain only flow
 	if ( cart?.create_new_blog ) {
 		const newBlogUrl = urlFromCookie || fallbackUrl;
@@ -175,6 +182,7 @@ export default function getThankYouPageUrl( {
 		hideNudge: Boolean( hideNudge ),
 		shouldShowOneClickTreatment,
 		previousRoute,
+		shouldShowDifmUpsell,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -222,6 +230,7 @@ function getPendingOrReceiptId(
 function getFallbackDestination( {
 	pendingOrReceiptId,
 	siteSlug,
+	adminUrl,
 	feature,
 	cart,
 	isJetpackNotAtomic,
@@ -229,6 +238,7 @@ function getFallbackDestination( {
 }: {
 	pendingOrReceiptId: string;
 	siteSlug: string | undefined;
+	adminUrl: string | undefined;
 	feature: string | undefined;
 	cart: ResponseCart | undefined;
 	isJetpackNotAtomic: boolean;
@@ -236,6 +246,11 @@ function getFallbackDestination( {
 } ): string {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
+
+	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
+		debug( 'fallback is just root' );
+		return '/';
+	}
 
 	// We will show the Thank You page if there's a site slug and either one of the following is true:
 	// - has a receipt number
@@ -259,6 +274,20 @@ function getFallbackDestination( {
 			);
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
+
+			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN
+			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
+			if ( isJetpackCloud() ) {
+				if ( redirectCloudCheckoutToWpAdmin() && adminUrl ) {
+					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
+					return `${ adminUrl }admin.php?page=jetpack#/my-plan`;
+				}
+				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
+				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
+					`product=${ purchasedProduct }&thank-you=true`
+				) }`;
+			}
+			// Otherwise if not Jetpack Cloud:
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 		}
 
@@ -273,6 +302,7 @@ function getFallbackDestination( {
 				? `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`
 				: `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 		debug( 'site with receipt or cart; feature is', feature );
+
 		return siteWithReceiptOrCartUrl;
 	}
 
@@ -280,6 +310,7 @@ function getFallbackDestination( {
 		debug( 'just site slug', siteSlug );
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
+
 	debug( 'fallback is just root' );
 	return '/';
 }
@@ -314,6 +345,7 @@ function getRedirectUrlForConciergeNudge( {
 	hideNudge,
 	shouldShowOneClickTreatment,
 	previousRoute,
+	shouldShowDifmUpsell,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
@@ -322,6 +354,7 @@ function getRedirectUrlForConciergeNudge( {
 	hideNudge: boolean;
 	shouldShowOneClickTreatment: boolean | undefined;
 	previousRoute: string | undefined;
+	shouldShowDifmUpsell: boolean | undefined;
 } ): string | undefined {
 	if ( hideNudge ) {
 		return;
@@ -351,6 +384,15 @@ function getRedirectUrlForConciergeNudge( {
 		} );
 		if ( upgradePath ) {
 			return upgradePath;
+		}
+
+		// This is for the DIFM upsell A/B test. Check pcbrnV-Y3-p2.
+		if ( hasBusinessPlan( cart ) ) {
+			recordTracksEvent( 'calypso_eligible_difm_upsell' );
+
+			if ( shouldShowDifmUpsell ) {
+				return `/checkout/${ siteSlug }/offer-difm/${ pendingOrReceiptId }`;
+			}
 		}
 
 		// The conciergeUpsellDial test is used when we need to quickly dial back the volume of concierge sessions
@@ -397,7 +439,7 @@ function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< 
 }
 
 function getUrlWithQueryParam( url: string, queryParams: Record< string, string > ): string {
-	const { protocol, hostname, port, pathname, query } = parseUrl( url, true );
+	const { protocol, hostname, port, pathname, query, hash } = parseUrl( url, true );
 
 	return formatUrl( {
 		protocol,
@@ -408,6 +450,7 @@ function getUrlWithQueryParam( url: string, queryParams: Record< string, string 
 			...query,
 			...queryParams,
 		},
+		hash,
 	} );
 }
 

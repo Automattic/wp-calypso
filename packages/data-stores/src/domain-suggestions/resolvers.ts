@@ -15,8 +15,11 @@ import {
 	receiveDomainAvailability,
 } from './actions';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
+import { getFormattedPrice } from './utils';
+
 import type { Selectors } from './selectors';
 import type { TailParameters } from '../mapped-types';
+import type { DomainSuggestion } from './types';
 
 export const isAvailable = function* isAvailable(
 	domainName: TailParameters< Selectors[ 'isAvailable' ] >[ 0 ]
@@ -79,5 +82,13 @@ export function* __internalGetDomainSuggestions(
 		);
 	}
 
-	return receiveDomainSuggestionsSuccess( queryObject, suggestions );
+	const processedSuggestions = suggestions.map( ( suggestion: DomainSuggestion ) => ( {
+		...suggestion,
+		...( suggestion.raw_price &&
+			suggestion.currency_code && {
+				cost: getFormattedPrice( suggestion.raw_price, suggestion.currency_code ),
+			} ),
+	} ) );
+
+	return receiveDomainSuggestionsSuccess( queryObject, processedSuggestions );
 }

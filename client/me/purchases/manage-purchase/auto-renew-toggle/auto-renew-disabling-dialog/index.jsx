@@ -14,7 +14,7 @@ import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-au
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	isDomainRegistration,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isTitanMail,
 } from 'calypso/lib/products-values';
@@ -57,7 +57,7 @@ class AutoRenewDisablingDialog extends Component {
 			return 'plan';
 		}
 
-		if ( isGoogleApps( purchase ) || isTitanMail( purchase ) ) {
+		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 			return 'email';
 		}
 

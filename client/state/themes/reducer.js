@@ -6,13 +6,9 @@ import { mapValues, omit, map } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
-import {
-	combineReducers,
-	withSchemaValidation,
-	withStorageKey,
-	withoutPersistence,
-} from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,

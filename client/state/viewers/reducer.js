@@ -6,13 +6,14 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	VIEWER_REMOVE_SUCCESS,
 	VIEWERS_REQUEST,
 	VIEWERS_REQUEST_FAILURE,
 	VIEWERS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 export const items = ( state = {}, action ) => {
 	switch ( action.type ) {

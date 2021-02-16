@@ -2,10 +2,7 @@
 <ruleset name="editing-toolkit">
 	<description>Editing Toolkit Plugin Rules</description>
 
-	<rule ref="WordPress"/>
-	<rule ref="WordPress-Core"/>
-	<rule ref="WordPress-Docs"/>
-	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+	<rule ref="Jetpack"/>
 	<rule ref="WordPress.Utils.I18nTextDomainFixer">
 		<properties>
 			<property name="old_text_domain" type="array">
@@ -27,6 +24,17 @@
 
 	<!-- Show sniff codes in all reports. -->
 	<arg value="ps"/>
+
+	<!-- Newspack and ETK don't use exactly the same code standard, so we need to
+		ignore style rules not tracked upstream. (We should not ignore rules
+		which catch actual errors.)
+	-->
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable" >
+		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+	</rule>
+
+	<!-- Ignore assset files and undeployed files. -->
+	<exclude-pattern>*.asset.php</exclude-pattern>
 
 	<!-- Scan it all! -->
 	<file>.</file>

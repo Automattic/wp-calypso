@@ -16,6 +16,14 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
 
+// If JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN is true, checkout will redirect to the site's wp-admin,
+// otherwise it will redirect to the JETPACK_REDIRECT_URL. Checkout references these constants in:
+// client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts
+export const JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN = true;
+export const JETPACK_REDIRECT_URL =
+	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';
+export const redirectCloudCheckoutToWpAdmin = () => !! JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN;
+
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
@@ -238,7 +246,6 @@ export const FEATURE_SECURITY_SCANNING_JETPACK = 'security-scanning-jetpack';
 export const FEATURE_REVENUE_GENERATION_JETPACK = 'revenue-generation-jetpack';
 export const FEATURE_VIDEO_HOSTING_JETPACK = 'vidoe-hosting-jetpack';
 export const FEATURE_SECURITY_ESSENTIALS_JETPACK = 'security-essentials-jetpack';
-export const FEATURE_PRIORITY_SUPPORT_JETPACK = 'priority-support-jetpack';
 export const FEATURE_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
 export const FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
 export const FEATURE_FREE_WORDPRESS_THEMES = 'free-wordpress-themes';
@@ -295,12 +302,10 @@ export const FEATURE_CRM_LEADS_AND_FUNNEL = 'crm-leads-and-funnel';
 export const FEATURE_CRM_PROPOSALS_AND_INVOICES = 'crm-proposals-and-invoices';
 export const FEATURE_CRM_TRACK_TRANSACTIONS = 'crm-track-transactions';
 export const FEATURE_CRM_NO_CONTACT_LIMITS = 'crm-no-contact-limits';
-export const FEATURE_CRM_PRIORITY_SUPPORT = 'crm-priority-support';
 export const FEATURE_SOCIAL_MEDIA_POSTING_V2 = 'social-media-posting-v2';
 export const FEATURE_COLLECT_PAYMENTS_V2 = 'collect-payments-v2';
 export const FEATURE_SITE_MONETIZATION_V2 = 'site-monetization-v2';
 export const FEATURE_PREMIUM_THEMES_V2 = 'premium-themes-v2';
-export const FEATURE_PRIORITY_SUPPORT_V2 = 'priority-support-v2';
 export const FEATURE_SECURE_STORAGE_V2 = 'secure-storage-v2';
 export const FEATURE_ONE_CLICK_RESTORE_V2 = 'one-click-restore-v2';
 export const FEATURE_ONE_CLICK_FIX_V2 = 'one-click-fix-v2';

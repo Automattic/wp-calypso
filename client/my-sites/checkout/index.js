@@ -132,6 +132,14 @@ export default function () {
 		);
 	}
 
+	page(
+		'/checkout/:site/offer-difm/:receiptId?',
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
 	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
 	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );

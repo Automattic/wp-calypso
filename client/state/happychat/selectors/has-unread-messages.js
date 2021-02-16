@@ -6,7 +6,7 @@ import { get, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
 import getLostFocusTimestamp from 'calypso/state/happychat/selectors/get-lostfocus-timestamp';
 

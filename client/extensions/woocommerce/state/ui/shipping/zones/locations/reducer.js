@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, pull } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -97,20 +97,20 @@ function handleLocationsSelectState( state, { stateCode, selected } ) {
 		remove: [],
 		removeAll: false,
 	};
-	const add = [ ...states.add ];
-	const remove = [ ...states.remove ];
+	let add = [ ...states.add ];
+	let remove = [ ...states.remove ];
 	const removeAll = states.removeAll;
 
 	if ( selected ) {
 		if ( ! find( add, stateCode ) ) {
 			add.push( stateCode );
 		}
-		pull( remove, stateCode );
+		remove = remove.filter( ( s ) => s !== stateCode );
 	} else {
 		if ( ! find( remove, stateCode ) ) {
 			remove.push( stateCode );
 		}
-		pull( add, stateCode );
+		add = add.filter( ( s ) => s !== stateCode );
 	}
 	return {
 		...state,

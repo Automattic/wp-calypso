@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import { useSiteDomains } from '../hooks';
 
 export function useCart(): { goToCheckout: () => Promise< void > } {
 	const { siteId, flow, openCheckout } = React.useContext( LaunchContext );
+	const locale = useLocale();
 
 	const { planProductId, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 
@@ -21,7 +23,9 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 		select( PLANS_STORE ).getPlanProductById( planProductId as number )
 	);
 
-	const plan = useSelect( ( select ) => select( PLANS_STORE ).getPlanByProductId( planProductId ) );
+	const plan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanByProductId( planProductId, locale )
+	);
 
 	const isEcommercePlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).isPlanEcommerce( plan?.periodAgnosticSlug )

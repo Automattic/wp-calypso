@@ -20,7 +20,6 @@ import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
-import StoreFooter from './store-footer';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
@@ -69,8 +68,6 @@ import {
 import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
 import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
 import { externalRedirect } from 'calypso/lib/route/path';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
-import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Module variables
@@ -140,10 +137,6 @@ export function offerResetRedirects( context, next ) {
 export function offerResetContext( context, next ) {
 	debug( 'controller: offerResetContext', context.params );
 	context.header = <StoreHeader urlQueryArgs={ context.query } />;
-
-	if ( ! [ Iterations.I5, Iterations.SPP ].includes( getJetpackCROActiveVersion() ) ) {
-		context.footer = <StoreFooter />;
-	}
 
 	next();
 }

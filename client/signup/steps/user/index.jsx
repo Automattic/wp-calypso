@@ -205,6 +205,12 @@ export class UserStep extends Component {
 	};
 
 	isOauth2RedirectValid( oauth2Redirect ) {
+		// Allow Google sign-up to work.
+		// See: https://github.com/Automattic/wp-calypso/issues/49572
+		if ( oauth2Redirect === undefined ) {
+			return true;
+		}
+
 		try {
 			const url = new URL( oauth2Redirect );
 			return url.host === 'public-api.wordpress.com';

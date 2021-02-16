@@ -16,7 +16,7 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect,
@@ -444,7 +444,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 				: translate( 'Manage domains' );
 		}
 
-		if ( isGoogleApps( primaryPurchase ) || isTitanMail( primaryPurchase ) ) {
+		if (
+			isGSuiteOrExtraLicenseOrGoogleWorkspace( primaryPurchase ) ||
+			isTitanMail( primaryPurchase )
+		) {
 			return translate( 'Manage email' );
 		}
 

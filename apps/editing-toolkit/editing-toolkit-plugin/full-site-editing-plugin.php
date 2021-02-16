@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 2.16
+ * Version: 2.19
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '2.16' );
+define( 'A8C_ETK_PLUGIN_VERSION', '2.19' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -270,21 +270,6 @@ function load_wpcom_block_patterns_modifications() {
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 
-
-/**
- * Load Premium Content Block
- */
-function load_premium_content() {
-	/**
-	 * Disabled until we're ready to disable the premium content plugin in mp-plugins/earn
-	 */
-	if ( function_exists( '\A8C\FSE\Earn\PremiumContent\premium_content_block_init' ) ) {
-		return;
-	}
-	require_once __DIR__ . '/premium-content/premium-content.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_premium_content' );
-
 /**
  * Load Block Inserter Modifications module
  */
@@ -326,3 +311,11 @@ function load_coming_soon() {
 	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
+
+/**
+ * What's New section of the Tools menu
+ */
+function load_whats_new() {
+	require_once __DIR__ . '/whats-new/class-whats-new.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );

@@ -13,12 +13,12 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import PlansFeatureList from '../plans-feature-list';
+import { PLANS_STORE } from '../stores';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { PLANS_STORE } from '@automattic/data-stores/src/launch/constants';
 
 const ChevronDown = (
 	<svg width="8" viewBox="0 0 8 4">
@@ -75,6 +75,9 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 		! disabledLabel && onToggle?.( slug, ! isOpen );
 	};
 
+	const planItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
+	const planItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
+
 	return (
 		<div
 			className={ classNames( 'plans-accordion-item', {
@@ -123,8 +126,8 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 
 								{ ! isFree &&
 									( billingPeriod === 'ANNUALLY'
-										? __( 'billed annually', __i18n_text_domain__ )
-										: __( 'per month, billed monthly', __i18n_text_domain__ ) ) }
+										? planItemPriceLabelAnnually
+										: planItemPriceLabelMonthly ) }
 							</div>
 							{ ! isFree && (
 								<div

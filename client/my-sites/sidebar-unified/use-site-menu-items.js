@@ -10,10 +10,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import buildFallbackResponse from './static-data/fallback-menu';
 import allSitesMenu from './static-data/all-sites-menu';
+import jetpackMenu from './static-data/jetpack-fallback-menu';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
@@ -23,25 +25,29 @@ const useSiteMenuItems = () => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
-			dispatch( fetchPlugins( [ selectedSiteId ] ) );
+			if ( isJetpack ) {
+				dispatch( fetchPlugins( [ selectedSiteId ] ) );
+			}
 		}
-	}, [ dispatch, selectedSiteId, siteDomain ] );
+	}, [ dispatch, isJetpack, selectedSiteId, siteDomain ] );
 
 	/**
 	 * As a general rule we allow fallback data to remain as static as possible.
 	 * Therefore we should avoid relying on API responses to determine what is/isn't
-	 * shown in the fallback data as then we have a situatoin where we are waiting on
+	 * shown in the fallback data as then we have a situation where we are waiting on
 	 * network requests to display fallback data when it should be possible to display
 	 * without this. There are a couple of exceptions to this below where the menu items
 	 * are sufficiently important to the UX that it is worth attempting the API request
 	 * to determine whether or not the menu item should show in the fallback data.
 	 */
 	const shouldShowWooCommerce = useSelector(
-		( state ) => !! getPluginOnSite( state, selectedSiteId, 'woocommerce' )?.active
+		( state ) => !! ( isJetpack && getPluginOnSite( state, selectedSiteId, 'woocommerce' )?.active )
 	);
 	const shouldShowThemes = useSelector( ( state ) =>
 		canCurrentUser( state, selectedSiteId, 'edit_theme_options' )
@@ -52,6 +58,13 @@ const useSiteMenuItems = () => {
 	 */
 	if ( ! siteDomain ) {
 		return allSitesMenu();
+	}
+
+	/**
+	 * When we have a jetpack connected site & we cannot retrieve the dynamic menu from that site.
+	 */
+	if ( isJetpack && ! isAtomic && ! menuItems ) {
+		return jetpackMenu( { siteDomain } );
 	}
 
 	/**

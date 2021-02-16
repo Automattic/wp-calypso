@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { omit } from 'lodash';
-import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import React from 'react';
@@ -24,7 +23,7 @@ class FormPasswordInput extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		this.state = { hidePassword: ! props.isBreakpointActive };
+		this.state = { hidePassword: true };
 	}
 
 	togglePasswordVisibility = () => {
@@ -52,8 +51,8 @@ class FormPasswordInput extends React.Component {
 		return (
 			<div className="form-password-input">
 				<FormTextInput
-					{ ...omit( this.props, 'hideToggle', 'submitting', 'isBreakpointActive' ) }
 					autoComplete="off"
+					{ ...omit( this.props, 'hideToggle', 'submitting' ) }
 					ref={ this.textFieldRef }
 					type={ this.hidden() ? 'password' : 'text' }
 				/>
@@ -66,4 +65,4 @@ class FormPasswordInput extends React.Component {
 	}
 }
 
-export default withMobileBreakpoint( FormPasswordInput );
+export default FormPasswordInput;

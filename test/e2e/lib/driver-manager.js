@@ -142,6 +142,8 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				} );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
+				options.addArguments( '--disable-dev-shm-usage' );
+				options.addArguments( '--no-sandbox' );
 
 				if ( useCustomUA ) {
 					options.addArguments( userAgent );
@@ -162,8 +164,16 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				options.addArguments( '--app=https://www.wordpress.com' );
 
-				const service = new chrome.ServiceBuilder( chromedriver.path ).build(); // eslint-disable-line no-case-declarations
+				// eslint-disable-next-line no-case-declarations
+				const service = new chrome.ServiceBuilder( chromedriver.path )
+					.loggingTo( './chromedriver.' + process.pid + '.log' )
+					.enableVerboseLogging()
+					.build();
 				chrome.setDefaultService( service );
+				options.setChromeLogFile( './chrome.' + process.pid + '.log' );
+				options.addArguments( '--enable-logging' );
+				options.addArguments( '--log-level 0' );
+				options.addArguments( '--log-net-log ./chrome.net.' + process.pid + '.log' );
 
 				builder = new webdriver.Builder();
 				builder.setChromeOptions( options );

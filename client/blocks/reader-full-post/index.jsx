@@ -36,7 +36,7 @@ import {
 import Comments from 'calypso/blocks/comments';
 import scrollTo from 'calypso/lib/scroll-to';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import {
@@ -83,7 +83,6 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
-import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 /**
  * Style dependencies
@@ -96,7 +95,6 @@ export class FullPostView extends React.Component {
 		onClose: PropTypes.func.isRequired,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
-		isFollowingItem: PropTypes.bool,
 		isWPForTeamsItem: PropTypes.bool,
 		teams: PropTypes.array,
 	};
@@ -263,7 +261,7 @@ export class FullPostView extends React.Component {
 	};
 
 	attemptToSendPageView = () => {
-		const { post, site, teams, isWPForTeamsItem, isFollowingItem } = this.props;
+		const { post, site, teams, isWPForTeamsItem } = this.props;
 
 		if (
 			post &&
@@ -281,7 +279,7 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) ) {
+			if ( isEligibleForUnseen( { teams, isWPForTeamsItem } ) && canBeMarkedAsSeen( { post } ) ) {
 				this.markAsSeen();
 			}
 
@@ -383,7 +381,6 @@ export class FullPostView extends React.Component {
 			postId,
 			teams,
 			isWPForTeamsItem,
-			isFollowingItem,
 		} = this.props;
 
 		if ( post.is_error ) {
@@ -484,7 +481,8 @@ export class FullPostView extends React.Component {
 								/>
 							) }
 
-							{ isEligibleForUnseen( { teams, isFollowingItem, isWPForTeamsItem } ) &&
+							{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
+								canBeMarkedAsSeen( { post } ) &&
 								this.renderMarkAsSenButton() }
 						</div>
 					</div>
@@ -598,7 +596,6 @@ export default connect(
 		const { site_ID: siteId, is_external: isExternal } = post;
 
 		const props = {
-			isFollowingItem: isFollowing( state, { blogId, feedId } ),
 			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
 			teams: getReaderTeams( state ),
 			post,

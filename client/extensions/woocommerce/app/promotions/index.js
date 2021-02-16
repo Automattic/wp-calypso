@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -111,7 +110,7 @@ class Promotions extends Component {
 						{ translate( 'Add promotion' ) }
 					</Button>
 				</ActionHeader>
-				{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
+				{ <StoreDeprecatedNotice /> }
 				{ content }
 			</Main>
 		);

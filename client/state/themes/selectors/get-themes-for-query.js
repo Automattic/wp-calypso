@@ -6,7 +6,7 @@ import { includes, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { getSerializedThemesQuery } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
