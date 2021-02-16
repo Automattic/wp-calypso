@@ -16,6 +16,7 @@ import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-la
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { NoticeAction } from 'calypso/state/notices/types';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
@@ -56,6 +57,10 @@ export function fetchLicenses( action: HttpAction ): AnyAction {
 			method: 'GET',
 			apiNamespace: 'wpcom/v2',
 			path: '/jetpack-licensing/licenses',
+			query: {
+				...( action.filter !== LicenseFilter.All ? { filter: action.filter } : {} ),
+				...( action.search ? { search: action.search } : {} ),
+			},
 			options: {
 				fetcher: action.fetcher,
 			},

@@ -33,7 +33,7 @@ export function partnerPortalContext( context: PageJS.Context, next: () => void 
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = (
 		<Licenses
-			licenseFilter={ licenseFilter }
+			filter={ licenseFilter }
 			search={ search || '' }
 			sortDirection={ sortDirection }
 			sortField={ sortField }

@@ -15,14 +15,14 @@ import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/typ
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
 
 interface Props {
-	licenseFilter: LicenseFilter;
+	filter: LicenseFilter;
 	search: string;
 	sortDirection?: string;
 	sortField?: string;
 }
 
 export default function Licenses( {
-	licenseFilter,
+	filter,
 	search,
 	sortDirection = 'asc',
 	sortField = 'issued_at',
@@ -35,10 +35,11 @@ export default function Licenses( {
 
 			<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 
-			<LicenseStateFilter licenseFilter={ licenseFilter } search={ search } />
+			<LicenseStateFilter filter={ filter } search={ search } />
 
 			<LicenseList
-				licenseFilter={ licenseFilter }
+				filter={ filter }
+				search={ search }
 				sortDirection={ sortDirection }
 				sortField={ sortField }
 			/>

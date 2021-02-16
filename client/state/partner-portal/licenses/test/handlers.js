@@ -14,6 +14,7 @@ import {
 	WPCOM_HTTP_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 } from 'calypso/state/action-types';
+import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 describe( 'handlers', () => {
 	describe( '#fetchLicenses()', () => {
@@ -21,6 +22,8 @@ describe( 'handlers', () => {
 			const { fetchLicenses } = handlers;
 			const action = {
 				type: 'TEST_ACTION',
+				filter: LicenseState.Detached,
+				search: 'bar',
 				fetcher: 'wpcomJetpackLicensing',
 			};
 			const expected = {
@@ -28,7 +31,11 @@ describe( 'handlers', () => {
 				body: undefined,
 				method: 'GET',
 				path: '/jetpack-licensing/licenses',
-				query: { apiNamespace: 'wpcom/v2' },
+				query: {
+					apiNamespace: 'wpcom/v2',
+					filter: action.filter,
+					search: action.search,
+				},
 				formData: undefined,
 				onSuccess: action,
 				onFailure: action,
@@ -37,6 +44,14 @@ describe( 'handlers', () => {
 				options: { options: { fetcher: action.fetcher } },
 			};
 
+			expect( fetchLicenses( action ) ).toEqual( expected );
+
+			action.filter = LicenseState.Revoked;
+			action.search = '';
+			expected.query = {
+				apiNamespace: 'wpcom/v2',
+				filter: action.filter,
+			};
 			expect( fetchLicenses( action ) ).toEqual( expected );
 		} );
 	} );
