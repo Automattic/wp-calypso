@@ -49,28 +49,6 @@ All the application information and data in Calypso should go through this data 
 
 `state/utils.js` contains a number of helper utilities you may find useful in implementing your state subtree:
 
-### extendAction( action, data )
-
-Use `extendAction` to leverage the behavior of an existing action creator, extending any dispatched action via the original action creator with the provided data object. By using this helper, you avoid unnecessarily duplicating the original logic or tying the original action creator to your new (presumably optional) requirements. This is the equivalent of calling `Object.assign` on a plain-object action creator result, but also accepts an action thunk for which action objects should be extended.
-
-**Example:**
-
-```js
-function original() {
-	return ( dispatch ) => {
-		dispatch( { type: 'example' } );
-		dispatch( { type: 'example' } );
-	};
-}
-
-function extended() {
-	return extendAction( original(), { extended: true } );
-}
-
-dispatch( extended() );
-// Dispatches two actions `{ type: 'example', extended: true }`
-```
-
 ### keyedReducer( keyName, reducer )
 
 Sometimes we have a collection of properties that represent some object or data item and our reducers contain a collection of those items.

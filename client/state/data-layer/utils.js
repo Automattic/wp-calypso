@@ -6,7 +6,7 @@ import { camelCase, isObjectLike, isPlainObject, map, reduce, set, snakeCase } f
 /**
  * Internal dependencies
  */
-import { extendAction } from 'calypso/state/utils';
+import { extendAction } from '@automattic/state-utils';
 
 const doBypassDataLayer = {
 	meta: {

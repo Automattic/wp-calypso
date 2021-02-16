@@ -46,7 +46,7 @@
 		"@automattic/request-external-access": "^1.0.0",
 		"@automattic/shopping-cart": "^1.0.0",
 		"@automattic/social-previews": "^1.0.1",
-		"@automattic/state-utils": "^1.0.0-alpha.1",
+		"@automattic/state-utils": "^1.0.0-alpha.4",
 		"@automattic/tree-select": "^1.0.3",
 		"@automattic/viewport": "^1.0.0",
 		"@automattic/viewport-react": "^1.0.0",

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
+import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -38,7 +38,6 @@ import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import hasPendingCommentRequests from 'calypso/state/selectors/has-pending-comment-requests';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
-import { extendAction } from 'calypso/state/utils';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],

@@ -4,13 +4,13 @@
 
 import { compact, get } from 'lodash';
 import debugModule from 'debug';
+import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import wpcom, { wpcomJetpackLicensing } from 'calypso/lib/wp';
 import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
-import { extendAction } from 'calypso/state/utils';
 import {
 	processInbound as inboundProcessor,
 	processOutbound as outboundProcessor,

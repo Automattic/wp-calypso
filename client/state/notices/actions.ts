@@ -2,6 +2,7 @@
  * External dependencies
  */
 import impureLodash from 'calypso/lib/impure-lodash';
+import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
