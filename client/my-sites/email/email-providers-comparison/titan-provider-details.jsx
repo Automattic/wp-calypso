@@ -12,7 +12,12 @@ import { useTranslate } from 'i18n-calypso';
 import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
 import Gridicon from 'calypso/components/gridicon';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
-import EmailProviderDetails from './index';
+import EmailProviderDetails from 'calypso/my-sites/email/email-providers-comparison/email-provider-details';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default function TitanProviderDetails( {
 	className,
@@ -36,7 +41,7 @@ export default function TitanProviderDetails( {
 		comment: '%(emailProductName)s is the product name, either "Email" or "Titan Mail"',
 	} );
 	const providerEmailLogo = (
-		<Gridicon className="email-provider-details__providers-wordpress-com-email" icon="my-sites" />
+		<Gridicon className="email-providers-comparison__providers-wordpress-com-email" icon="my-sites" />
 	);
 	const badge = <img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />;
 

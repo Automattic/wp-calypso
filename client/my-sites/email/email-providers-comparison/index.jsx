@@ -41,7 +41,7 @@ import emailIllustration from 'calypso/assets/images/email-providers/email-illus
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
-import TitanProviderDetails from 'calypso/my-sites/email/email-providers-comparison/email-provider-details/titan-provider-details';
+import TitanProviderDetails from 'calypso/my-sites/email/email-providers-comparison/titan-provider-details';
 
 /**
  * Style dependencies
