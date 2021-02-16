@@ -148,7 +148,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 					await this.siteSelector.selectFirstSite();
 					return await this.siteSelector.ok();
 				} );
-				
+
 				describe( 'Successful activation dialog', function () {
 					step( 'should show the successful activation dialog', async function () {
 						const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
