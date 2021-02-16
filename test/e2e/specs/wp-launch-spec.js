@@ -63,7 +63,8 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		} );
 	} );
 
-	describe( 'Launch when having multiple sites', function () {
+	// Skip reason: https://github.com/Automattic/wp-calypso/issues/50128
+	describe.skip( 'Launch when having multiple sites', function () {
 		const accountName = dataHelper.getNewBlogName();
 		const firstSiteName = dataHelper.getNewBlogName();
 		const secondSiteName = dataHelper.getNewBlogName();
