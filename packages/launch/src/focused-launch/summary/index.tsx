@@ -689,6 +689,7 @@ const Summary: React.FunctionComponent = () => {
 						isLink
 						href={ localizeUrl( 'https://wordpress.com/help/contact', locale ) }
 						target="_blank"
+						rel="noopener noreferrer"
 					>
 						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
 					</Button>
