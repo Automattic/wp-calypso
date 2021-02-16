@@ -330,11 +330,6 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 } );
 
 describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
-	// should not reload for the next load within ttl
-	// should reload outside of the ttl
-	// should not reload after returning fallback within ttl
-	// should reload after returning fallback outside of the ttl
-	//
 	it( `should respect the ttl`, async () => {
 		mockedConfig.isDevelopmentMode = false;
 		const client = createExPlatClient( mockedConfig );
