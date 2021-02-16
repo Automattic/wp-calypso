@@ -16,6 +16,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SiteOwnership from './site-ownership';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
+import { withQueryClient } from 'calypso/data/with-query-client';
 
 /**
  * Style dependencies
@@ -40,4 +41,4 @@ class ManageConnection extends Component {
 	}
 }
 
-export default flowRight( localize, redirectNonJetpack() )( ManageConnection );
+export default flowRight( localize, withQueryClient, redirectNonJetpack() )( ManageConnection );

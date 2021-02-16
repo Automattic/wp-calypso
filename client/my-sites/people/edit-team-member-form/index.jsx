@@ -21,8 +21,8 @@ import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selec
 import EditUserForm from './edit-user-form';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import useUser from 'calypso/data/users/use-user';
+import { withQueryClient } from 'calypso/data/with-query-client';
 
 /**
  * Style dependencies
@@ -86,16 +86,6 @@ export const EditTeamMemberForm = ( {
 	);
 };
 
-const withQueryClientProvider = ( Component ) => {
-	const queryClient = new QueryClient();
-
-	return ( props ) => (
-		<QueryClientProvider client={ queryClient }>
-			<Component { ...props } />
-		</QueryClientProvider>
-	);
-};
-
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
@@ -109,4 +99,4 @@ export default connect(
 		};
 	},
 	{ recordGoogleEvent: recordGoogleEventAction }
-)( protectForm( withQueryClientProvider( EditTeamMemberForm ) ) );
+)( protectForm( withQueryClient( EditTeamMemberForm ) ) );

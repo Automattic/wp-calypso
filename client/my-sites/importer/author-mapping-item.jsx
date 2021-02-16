@@ -14,6 +14,7 @@ import AuthorSelector from 'calypso/blocks/author-selector';
 import User from 'calypso/components/user';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { withQueryClient } from 'calypso/data/with-query-client';
 
 /**
  * Style dependencies
@@ -94,4 +95,4 @@ class ImporterAuthorMapping extends React.Component {
 
 export default connect( ( state ) => ( {
 	currentUser: getCurrentUser( state ),
-} ) )( ImporterAuthorMapping );
+} ) )( withQueryClient( ImporterAuthorMapping ) );

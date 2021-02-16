@@ -5,7 +5,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 /**
  * Internal dependencies
@@ -25,8 +24,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
-
-const queryClient = new QueryClient();
+import { withQueryClient } from 'calypso/data/with-query-client';
 
 class People extends React.Component {
 	renderPeopleList() {
@@ -99,9 +97,7 @@ class People extends React.Component {
 							site={ site }
 						/>
 					}
-					<QueryClientProvider client={ queryClient }>
-						{ this.renderPeopleList() }
-					</QueryClientProvider>
+					{ this.renderPeopleList() }
 				</div>
 			</Main>
 		);
@@ -118,4 +114,4 @@ export default connect( ( state ) => {
 		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
 	};
-} )( localize( People ) );
+} )( localize( withQueryClient( People ) ) );
