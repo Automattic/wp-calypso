@@ -92,12 +92,16 @@ $grid-wide: 1fr 118px 118px 118px 128px 36px;
 			grid-template-columns: $grid-wide;
 		}
 
-		h2 {
+		h2, h2 button {
 			font-size: 0.875rem;
 			line-height: 1.25rem;
 			font-weight: 600;
 			color: var( --studio-gray-70 );
 			white-space: nowrap;
+		}
+
+		button {
+			cursor: pointer;
 		}
 	}
 }

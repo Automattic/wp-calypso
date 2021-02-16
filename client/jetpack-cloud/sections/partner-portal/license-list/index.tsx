@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -20,6 +20,7 @@ import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/licen
 import LicensePreview, {
 	LicensePreviewPlaceholder,
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -31,6 +32,17 @@ export default function LicenseList(): ReactElement {
 	const hasFetched = useSelector( hasFetchedLicenses );
 	const isFetching = useSelector( isFetchingLicenses );
 	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;
+	const [ sortConfig, setSortConfig ] = useState( { direction: 'asc', field: 'attached_at' } );
+
+	const onSort = ( newSortField: string ): void => {
+		let newSortDirection = 'asc';
+
+		if ( sortConfig.field === newSortField ) {
+			newSortDirection = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+		}
+
+		setSortConfig( { field: newSortField, direction: newSortDirection } );
+	};
 
 	return (
 		<div className="license-list">
@@ -38,9 +50,24 @@ export default function LicenseList(): ReactElement {
 
 			<LicenseListItem header>
 				<h2>{ translate( 'License state' ) }</h2>
-				<h2>{ translate( 'Issued on' ) }</h2>
-				<h2>{ translate( 'Attached on' ) }</h2>
-				<h2>{ translate( 'Revoked on' ) }</h2>
+				<h2>
+					<button onClick={ () => onSort( 'issued_at' ) }>
+						{ translate( 'Issued on' ) }
+						<Gridicon icon="dropdown" />
+					</button>
+				</h2>
+				<h2>
+					<button onClick={ () => onSort( 'attached_at' ) }>
+						{ translate( 'Attached on' ) }
+						<Gridicon icon="dropdown" />
+					</button>
+				</h2>
+				<h2>
+					<button onClick={ () => onSort( 'revoked_at' ) }>
+						{ translate( 'Revoked on' ) }
+						<Gridicon icon="dropdown" />
+					</button>
+				</h2>
 				<div>{ /* Intentionally empty header. */ }</div>
 				<div>{ /* Intentionally empty header. */ }</div>
 			</LicenseListItem>
