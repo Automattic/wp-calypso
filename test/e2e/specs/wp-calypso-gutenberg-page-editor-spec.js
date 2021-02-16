@@ -3,7 +3,6 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -65,13 +64,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( pageTitle );
 			await gEditorComponent.enterText( pageQuote );
-			const imageBlockId = await gEditorComponent.addImage( fileDetails );
-
-			// Force-select the image block. Workaround for  https://github.com/WordPress/gutenberg/issues/28932.
-			// This is needed or the sidebar won't have the contextual settings for the block, and the step will fail.
-			// ToDo: Once the fix for https://github.com/WordPress/gutenberg/issues/28932 is available,
-			// revert this and the assignment above.
-			await driverHelper.clickWhenClickable( driver, By.css( `#${ imageBlockId }` ) );
+			await gEditorComponent.addImage( fileDetails );
 
 			await gEditorComponent.openSidebar();
 			const gEditorSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
