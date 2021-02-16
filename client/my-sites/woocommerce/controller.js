@@ -39,7 +39,7 @@ export function checkPrerequisites( context, next ) {
 export function setup( context, next ) {
 	// Invalid site, redirect to select site.
 	if ( ! getSiteFragment( context.path ) ) {
-		return page.redirect( '/woocommerce' );
+		return page.redirect( '/woocommerce-installation' );
 	}
 
 	context.primary = React.createElement( main );

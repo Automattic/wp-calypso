@@ -11,6 +11,13 @@ import { checkPrerequisites, setup } from './controller';
 import './style.scss';
 
 export default function ( router ) {
-	router( '/woocommerce', siteSelection, sites, makeLayout );
-	router( '/woocommerce/:site', siteSelection, navigation, checkPrerequisites, setup, makeLayout );
+	router( '/woocommerce-installation', siteSelection, sites, makeLayout );
+	router(
+		'/woocommerce-installation/:site',
+		siteSelection,
+		navigation,
+		checkPrerequisites,
+		setup,
+		makeLayout
+	);
 }
