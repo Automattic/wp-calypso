@@ -25,7 +25,7 @@ describe( 'monotonicNow', () => {
 
 describe( 'timeoutPromise', () => {
 	it( 'should resolve promises below the timeout', async () => {
-		const promise1 = Timing.timeoutPromise( new Promise( ( res ) => res( 123 ) ), 1 );
+		const promise1 = Timing.timeoutPromise( Promise.resolve( 123 ), 1 );
 		jest.advanceTimersByTime( 2 );
 		await expect( promise1 ).resolves.toBe( 123 );
 		const promise2 = Timing.timeoutPromise( delayedValue( 123, 1 ), 4 );
