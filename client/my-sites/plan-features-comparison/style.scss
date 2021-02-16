@@ -134,9 +134,14 @@ $plan-features-sidebar-width: 272px;
 			margin-right: 0;
 		}
 
-		.plan-features-comparison__item-title {
-			line-height: 18px;
-			overflow-wrap: break-word;
+		.plan-features-comparison__item-info {
+			&:not( .is-available ) {
+				color: var( --studio-gray-20 );
+			}
+			.plan-features-comparison__item-title {
+				line-height: 18px;
+				overflow-wrap: break-word;
+			}
 		}
 	}
 
@@ -398,7 +403,7 @@ $plan-features-sidebar-width: 272px;
 	width: 56px;
 	height: 56px;
 	margin-right: 15px;
-	border-radius: 50%;
+	border-radius: 50%; /* stylelint-disable-line */
 }
 
 .is-section-plans .plan-features-comparison__header-figure {

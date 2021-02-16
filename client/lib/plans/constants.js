@@ -194,7 +194,6 @@ export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
 export const FEATURE_ALL_PREMIUM_FEATURES_JETPACK = 'all-premium-features-jetpack';
 export const FEATURE_ADVANCED_CUSTOMIZATION = 'advanced-customization';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
-export const FEATURE_WPCOM_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_GOOGLE_ANALYTICS_SIGNUP = 'google-analytics-signup';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
