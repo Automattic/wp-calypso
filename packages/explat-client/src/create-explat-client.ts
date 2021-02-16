@@ -4,7 +4,7 @@
 import { ExperimentAssignment, Config } from './types';
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import * as Request from './internal/requests';
-import * as State from './internal/state';
+import ExperimentAssignmentStore from './internal/experiment-assignment-store';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
 import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
@@ -60,7 +60,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 		throw new Error( 'Running outside of a browser context.' );
 	}
 
-	const store = State.createStore();
+	const experimentAssignmentStore = new ExperimentAssignmentStore();
 
 	/**
 	 * This bit of code is the heavy lifting behind loadExperimentAssignment, allowing it to be used intuitively.
@@ -76,7 +76,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				config,
 				experimentName
 			);
-			State.storeExperimentAssignment( store, fetchedExperimentAssignment );
+			experimentAssignmentStore.store( fetchedExperimentAssignment );
 			return fetchedExperimentAssignment;
 		} );
 	const experimentNameToWrappedExperimentAssignmentFetchAndStore: Record<
@@ -91,10 +91,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					throw new Error( `Invalid experimentName: ${ experimentName }` );
 				}
 
-				const storedExperimentAssignment = State.retrieveExperimentAssignment(
-					store,
-					experimentName
-				);
+				const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
 				if (
 					storedExperimentAssignment &&
 					ExperimentAssignments.isAlive( storedExperimentAssignment )
@@ -132,10 +129,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					}
 
 					// We provide stale ExperimentAssignments, important for offline users.
-					const storedExperimentAssignment = State.retrieveExperimentAssignment(
-						store,
-						experimentName
-					);
+					const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
 					if ( storedExperimentAssignment ) {
 						return storedExperimentAssignment;
 					}
@@ -144,7 +138,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 					// be retrieved by all other loadExperimentAssignments that are currently running or will run,
 					// preventing a run on the server.
 					const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
-					State.storeExperimentAssignment( store, fallbackExperimentAssignment );
+					experimentAssignmentStore.store( fallbackExperimentAssignment );
 					return fallbackExperimentAssignment;
 				} catch ( e2 ) {
 					// The devMode error gets passed through so we have to throw it again.
@@ -170,10 +164,7 @@ export default function createExPlatClient( config: Config ): ExPlatClient {
 				throw new Error( `Invalid experimentName: ${ experimentName }` );
 			}
 
-			const storedExperimentAssignment = State.retrieveExperimentAssignment(
-				store,
-				experimentName
-			);
+			const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
 			if ( ! storedExperimentAssignment ) {
 				throw new MissingExperimentAssignmentError(
 					`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`
