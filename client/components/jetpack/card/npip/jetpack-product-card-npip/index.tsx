@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { isFinite, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
 import React, { createElement, ReactNode } from 'react';
 import { Button, ProductIcon } from '@automattic/components';
 
@@ -56,6 +56,8 @@ type OwnProps = {
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
+
+const FRESHPACK_PERCENTAGE = 1 - 0.4; // 40% off
 
 const DisplayPrice = ( {
 	isOwned,
@@ -120,24 +122,23 @@ const DisplayPrice = ( {
 		);
 	}
 
-	const isDiscounted = isFinite( discountedPrice );
+	const couponOriginalPrice = discountedPrice ?? originalPrice;
+	const couponDiscountedPrice = ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE;
 
 	return (
 		<div className="jetpack-product-card-npip__price">
 			{ currencyCode && originalPrice ? (
 				<>
 					{ displayFrom && <span className="jetpack-product-card-npip__price-from">from</span> }
-					{ isDiscounted && (
-						<PlanPrice
-							original
-							className="jetpack-product-card-npip__original-price"
-							rawPrice={ originalPrice as number }
-							currencyCode={ currencyCode }
-						/>
-					) }
 					<PlanPrice
-						discounted={ isDiscounted }
-						rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
+						original
+						className="jetpack-product-card-npip__original-price"
+						rawPrice={ couponOriginalPrice as number }
+						currencyCode={ currencyCode }
+					/>
+					<PlanPrice
+						discounted
+						rawPrice={ couponDiscountedPrice as number }
 						currencyCode={ currencyCode }
 					/>
 					{ tooltipText && (
