@@ -103,7 +103,7 @@ const wpcom = wp.undocumented();
 // otherwise we get `this is not defined` errors.
 const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
 
-// Can be safely removed after 2021-02-14 when the FRESHPACK coupon expires
+// Can be safely removed after 2021-03-03 when the FRESHPACK coupon expires
 import moment from 'moment';
 import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
 const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[] ) =>
@@ -118,7 +118,7 @@ const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[] ) =>
 			return undefined;
 		}
 
-		const endDate = moment.utc( '2021-02-15' );
+		const endDate = moment.utc( '2021-03-04' );
 
 		return moment().isBefore( endDate ) ? 'FRESHPACK' : undefined;
 	}, [ products ] );
