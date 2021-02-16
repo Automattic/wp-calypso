@@ -2,14 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackAdvancedCredentials from 'calypso/jetpack-cloud/sections/settings/advanced-credentials';
 import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
@@ -24,16 +24,34 @@ import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
+import { isEnabled } from '@automattic/calypso-config';
 
-const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, translate } ) => {
+type Props = {
+	action?: string;
+	host?: string;
+};
+
+const SiteSettingsJetpack: React.FC< Props > = ( { action, host } ) => {
+	const site = useSelector( getSelectedSite );
+	const siteId = useSelector( getSelectedSiteId );
+	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const showCredentials = useSelector(
+		( state ) =>
+			siteId &&
+			( isSiteFailedMigrationSource( state, siteId ) ||
+				isRewindActive( state, siteId ) ||
+				siteHasScanProductPurchase( state, siteId ) )
+	);
+	const translate = useTranslate();
+
 	//todo: this check makes sense in Jetpack section?
 	if ( ! siteIsJetpack ) {
 		return (
 			<JetpackManageErrorPage
 				action={ translate( 'Manage general settings for %(site)s', {
-					args: { site: site.name },
+					args: { site: site?.name },
 				} ) }
-				actionURL={ '/settings/general/' + site.slug }
+				actionURL={ '/settings/general/' + site?.slug }
 				title={ translate( 'No Jetpack configuration is required.' ) }
 				// line={ translate( 'Security management is automatic for WordPress.com sites.' ) }
 				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
@@ -56,29 +74,14 @@ const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, tr
 			/>
 			<SiteSettingsNavigation site={ site } section="jetpack" />
 
-			{ showCredentials && <JetpackCredentials /> }
+			{ showCredentials &&
+				( isEnabled( 'jetpack/server-credentials-advanced-flow' ) ? (
+					<JetpackAdvancedCredentials action={ action } host={ host } role="main" />
+				) : (
+					<JetpackCredentials />
+				) ) }
 		</Main>
 	);
 };
 
-SiteSettingsJetpack.propTypes = {
-	site: PropTypes.object,
-	siteId: PropTypes.number,
-	siteIsJetpack: PropTypes.bool,
-	showCredentials: PropTypes.bool,
-};
-
-export default connect( ( state ) => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		site,
-		siteId,
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		showCredentials:
-			isSiteFailedMigrationSource( state, siteId ) ||
-			isRewindActive( state, siteId ) ||
-			siteHasScanProductPurchase( state, siteId ),
-	};
-} )( localize( SiteSettingsJetpack ) );
+export default SiteSettingsJetpack;

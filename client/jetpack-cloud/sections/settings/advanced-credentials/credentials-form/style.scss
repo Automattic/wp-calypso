@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .credentials-form {
 	margin-top: 24px;
 	margin-bottom: -24px;
@@ -14,10 +17,6 @@
 		background: initial;
 	}
 
-	h3 {
-		margin-bottom: 4px;
-	}
-
 	.credentials-form__intro-text {
 		color: var( --color-text-subtle );
 		font-size: $font-body-small;
@@ -26,6 +25,32 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		.credentials-form__intro-text {
 			font-size: $font-body;
+		}
+	}
+
+	&__heading {
+		margin-bottom: 4px;
+
+		font-size: 1rem;
+		font-weight: 600;
+		line-height: 23px;
+
+		@include break-small {
+			font-size: 1.25rem;
+		}
+	}
+
+	&__row {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	&__server-address,
+	&__username {
+		&.form-fieldset {
+			@include break-large {
+				margin-right: 16px;
+			}
 		}
 	}
 
@@ -71,13 +96,9 @@
 	}
 }
 
-.credentials-form__row {
-	display: flex;
-	flex-wrap: wrap;
-
-	.form-fieldset:last-child {
-		margin-bottom: 24px;
-	}
+// Overwrite `.site-settings fieldset.form-fieldset:last-child`
+.site-settings .credentials-form .form-fieldset:last-child {
+	margin-bottom: 24px;
 }
 
 @include breakpoint-deprecated( '>960px' ) {
