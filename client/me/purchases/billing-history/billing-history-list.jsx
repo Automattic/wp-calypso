@@ -15,7 +15,12 @@ import { capitalPDangit } from 'calypso/lib/formatting';
 import { CompactCard } from '@automattic/components';
 import Pagination from 'calypso/components/pagination';
 import BillingHistoryFilters from 'calypso/me/purchases/billing-history/billing-history-filters';
-import { getTransactionTermLabel, groupDomainProducts, renderTransactionAmount } from './utils';
+import {
+	getTransactionTermLabel,
+	groupDomainProducts,
+	renderTransactionAmount,
+	renderTransactionQuantitySummary,
+} from './utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { setPage } from 'calypso/state/billing-transactions/ui/actions';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
@@ -86,8 +91,8 @@ class BillingHistoryList extends React.Component {
 					<strong>{ transaction.plan }</strong>
 					<small>{ transaction.domain }</small>
 					{ termLabel ? <small>{ termLabel }</small> : null }
-					{ transaction.product_quantity_summary && (
-						<small>{ transaction.product_quantity_summary }</small>
+					{ transaction.licensed_quantity && (
+						<small>{ renderTransactionQuantitySummary( transaction, this.props.translate ) }</small>
 					) }
 				</div>
 			);

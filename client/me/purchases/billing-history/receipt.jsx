@@ -19,7 +19,12 @@ import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/loca
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
-import { getTransactionTermLabel, groupDomainProducts, renderTransactionAmount } from './utils';
+import {
+	getTransactionTermLabel,
+	groupDomainProducts,
+	renderTransactionAmount,
+	renderTransactionQuantitySummary,
+} from './utils';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import {
@@ -199,7 +204,9 @@ function ReceiptLineItems( { transaction } ) {
 					{ termLabel ? <em>{ termLabel }</em> : null }
 					<br />
 					<em>{ item.domain }</em>
-					{ item.product_quantity_summary && <em>{ item.product_quantity_summary }</em> }
+					{ item.licensed_quantity && (
+						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
+					) }
 				</td>
 				<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
 					{ item.amount }
