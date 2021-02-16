@@ -24,6 +24,49 @@ import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
 
+const DomainURL = styled.div`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	font-size: 14px;
+	margin-top: -10px;
+	word-break: break-word;
+
+	.is-summary & {
+		margin-bottom: 10px;
+	}
+`;
+
+const CouponLinkWrapper = styled.div`
+	font-size: 14px;
+	margin: 10px 0 20px;
+
+	.is-summary & {
+		margin-bottom: 0;
+	}
+`;
+
+const CouponField = styled( Coupon )`
+	margin: 20px 30px 20px 0;
+
+	.rtl & {
+		margin: 20px 0 20px 30px;
+	}
+
+	.is-summary & {
+		margin: 10px 0 0;
+	}
+`;
+
+const CouponEnableButton = styled.button`
+	cursor: pointer;
+	text-decoration: underline;
+	color: ${ ( props ) => props.theme.colors.highlight };
+	font-size: 14px;
+
+	:hover {
+		text-decoration: none;
+	}
+`;
+
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
@@ -155,46 +198,3 @@ function CouponFieldArea( {
 		</CouponLinkWrapper>
 	);
 }
-
-const DomainURL = styled.div`
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	font-size: 14px;
-	margin-top: -10px;
-	word-break: break-word;
-
-	.is-summary & {
-		margin-bottom: 10px;
-	}
-`;
-
-const CouponLinkWrapper = styled.div`
-	font-size: 14px;
-	margin: 10px 0 20px;
-
-	.is-summary & {
-		margin-bottom: 0;
-	}
-`;
-
-const CouponField = styled( Coupon )`
-	margin: 20px 30px 20px 0;
-
-	.rtl & {
-		margin: 20px 0 20px 30px;
-	}
-
-	.is-summary & {
-		margin: 10px 0 0;
-	}
-`;
-
-const CouponEnableButton = styled.button`
-	cursor: pointer;
-	text-decoration: underline;
-	color: ${ ( props ) => props.theme.colors.highlight };
-	font-size: 14px;
-
-	:hover {
-		text-decoration: none;
-	}
-`;
