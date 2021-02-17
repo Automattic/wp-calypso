@@ -531,7 +531,7 @@ const Summary: React.FunctionComponent = () => {
 	}, [] );
 
 	const isSelectedPlanPaid = useSelect(
-		( select ) => !! select( LAUNCH_STORE ).getPaidPlanProductId(),
+		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
 		[]
 	);
 
