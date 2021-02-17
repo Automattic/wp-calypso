@@ -21,10 +21,6 @@ import './styles.scss';
 
 interface FocusedLaunchModalProps extends Omit< LaunchContextProps, 'flow' > {
 	locale?: string;
-	siteId: number;
-	openCheckout: ( siteSlug?: string, isEcommerce?: boolean ) => void;
-	redirectTo: ( path: string ) => void;
-	getCurrentLaunchFlowUrl: () => string | undefined;
 	isInIframe: boolean;
 	isLaunchImmediately: boolean;
 }

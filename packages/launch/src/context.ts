@@ -12,7 +12,7 @@ export interface LaunchContextProps {
 		isEcommerce?: boolean,
 		onSuccessCallback?: () => void
 	) => void;
-	getCurrentLaunchFlowUrl: () => string | undefined;
+	getCurrentLaunchFlowUrl: () => string;
 	flow: string;
 	isInIframe: boolean;
 }
