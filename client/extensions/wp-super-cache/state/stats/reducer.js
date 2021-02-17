@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { statsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
@@ -26,7 +26,7 @@ import {
  * @param  {object} action Action object
  * @returns {object} Updated generating state
  */
-export const generating = withoutPersistence( ( state = {}, action ) => {
+export const generating = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_GENERATE_STATS: {
 			const { siteId } = action;
@@ -51,7 +51,7 @@ export const generating = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated deleting state after an action has been dispatched.
@@ -61,7 +61,7 @@ export const generating = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action object
  * @returns {object} Updated deleting state
  */
-const deleting = withoutPersistence( ( state = {}, action ) => {
+const deleting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case WP_SUPER_CACHE_DELETE_FILE: {
 			const { siteId } = action;
@@ -86,7 +86,7 @@ const deleting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Tracks the stats for a particular site.

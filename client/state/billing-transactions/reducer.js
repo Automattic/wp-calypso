@@ -11,7 +11,7 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { billingTransactionsSchema } from './schema';
 import individualTransactions from './individual-transactions/reducer';
 import ui from './ui/reducer';
@@ -43,7 +43,7 @@ export const items = withSchemaValidation( billingTransactionsSchema, ( state = 
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = false, action ) => {
+export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTIONS_REQUEST:
 			return true;
@@ -54,7 +54,7 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated sending email requests state after an action has been dispatched.
@@ -64,7 +64,7 @@ export const requesting = withoutPersistence( ( state = false, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const sendingReceiptEmail = withoutPersistence( ( state = {}, action ) => {
+export const sendingReceiptEmail = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case BILLING_RECEIPT_EMAIL_SEND: {
 			const { receiptId } = action;
@@ -93,7 +93,7 @@ export const sendingReceiptEmail = withoutPersistence( ( state = {}, action ) =>
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = combineReducers( {
 	items,
