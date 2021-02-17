@@ -13,13 +13,14 @@ import * as handlers from 'calypso/state/partner-portal/licenses/handlers';
 import {
 	WPCOM_HTTP_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 describe( 'handlers', () => {
-	describe( '#fetchLicenses()', () => {
+	describe( '#fetchLicensesHandler()', () => {
 		test( 'should return an http request action', () => {
-			const { fetchLicenses } = handlers;
+			const { fetchLicensesHandler } = handlers;
 			const action = {
 				type: 'TEST_ACTION',
 				filter: LicenseState.NotRevoked,
@@ -43,11 +44,11 @@ describe( 'handlers', () => {
 				options: { options: { fetcher: action.fetcher } },
 			};
 
-			expect( fetchLicenses( action ) ).toEqual( expected );
+			expect( fetchLicensesHandler( action ) ).toEqual( expected );
 		} );
 
 		test( 'should return an http request action for a custom filter', () => {
-			const { fetchLicenses } = handlers;
+			const { fetchLicensesHandler } = handlers;
 			const action = {
 				type: 'TEST_ACTION',
 				filter: LicenseState.Revoked,
@@ -71,11 +72,11 @@ describe( 'handlers', () => {
 				options: { options: { fetcher: action.fetcher } },
 			};
 
-			expect( fetchLicenses( action ) ).toEqual( expected );
+			expect( fetchLicensesHandler( action ) ).toEqual( expected );
 		} );
 
 		test( 'should return an http request action for a search and ignore filters', () => {
-			const { fetchLicenses } = handlers;
+			const { fetchLicensesHandler } = handlers;
 			const action = {
 				type: 'TEST_ACTION',
 				filter: LicenseState.Revoked,
@@ -100,26 +101,26 @@ describe( 'handlers', () => {
 				options: { options: { fetcher: action.fetcher } },
 			};
 
-			expect( fetchLicenses( action ) ).toEqual( expected );
+			expect( fetchLicensesHandler( action ) ).toEqual( expected );
 		} );
 	} );
 
-	describe( '#receiveLicenses()', () => {
+	describe( '#receiveLicensesHandler()', () => {
 		test( 'should return a LICENSES_RECEIVE action', () => {
-			const { receiveLicenses } = handlers;
+			const { receiveLicensesHandler } = handlers;
 			const paginatedLicenses = [ 'foo' ];
 			const expected = {
 				type: JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 				paginatedLicenses,
 			};
 
-			expect( receiveLicenses( null, paginatedLicenses ) ).toEqual( expected );
+			expect( receiveLicensesHandler( null, paginatedLicenses ) ).toEqual( expected );
 		} );
 	} );
 
-	describe( '#receiveLicensesError()', () => {
+	describe( '#receiveLicensesErrorHandler()', () => {
 		test( 'should return an error notice action', () => {
-			const { receiveLicensesError } = handlers;
+			const { receiveLicensesErrorHandler } = handlers;
 			const expected = {
 				type: 'NOTICE_CREATE',
 				notice: {
@@ -130,7 +131,47 @@ describe( 'handlers', () => {
 				},
 			};
 
-			expect( receiveLicensesError() ).toEqual( expected );
+			expect( receiveLicensesErrorHandler() ).toEqual( expected );
+		} );
+	} );
+
+	describe( '#fetchLicenseCountsHandler()', () => {
+		test( 'should return an http request action', () => {
+			const { fetchLicenseCountsHandler } = handlers;
+			const action = {
+				type: 'TEST_ACTION',
+				fetcher: 'wpcomJetpackLicensing',
+			};
+			const expected = {
+				type: WPCOM_HTTP_REQUEST,
+				body: undefined,
+				method: 'GET',
+				path: '/jetpack-licensing/licenses/counts',
+				query: {
+					apiNamespace: 'wpcom/v2',
+				},
+				formData: undefined,
+				onSuccess: action,
+				onFailure: action,
+				onProgress: action,
+				onStreamRecord: action,
+				options: { options: { fetcher: action.fetcher } },
+			};
+
+			expect( fetchLicenseCountsHandler( action ) ).toEqual( expected );
+		} );
+	} );
+
+	describe( '#receiveLicenseCountsHandler()', () => {
+		test( 'should return a LICENSE_COUNTS_RECEIVE action', () => {
+			const { receiveLicenseCountsHandler } = handlers;
+			const counts = [ 'foo' ];
+			const expected = {
+				type: JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
+				counts,
+			};
+
+			expect( receiveLicenseCountsHandler( null, counts ) ).toEqual( expected );
 		} );
 	} );
 } );

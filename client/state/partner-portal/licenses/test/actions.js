@@ -8,6 +8,8 @@ import * as actions from 'calypso/state/partner-portal/licenses/actions';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
@@ -32,11 +34,34 @@ describe( 'actions', () => {
 	describe( '#receiveLicenses()', () => {
 		test( 'should return an action when called', () => {
 			const { receiveLicenses } = actions;
-			const licenses = [];
+			const paginatedLicenses = [ 'foo' ];
 
-			expect( receiveLicenses( licenses ) ).toEqual( {
+			expect( receiveLicenses( paginatedLicenses ) ).toEqual( {
 				type: JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
-				licenses,
+				paginatedLicenses,
+			} );
+		} );
+	} );
+
+	describe( '#fetchLicenseCounts()', () => {
+		test( 'should dispatch a request action when called', () => {
+			const { fetchLicenseCounts } = actions;
+
+			expect( fetchLicenseCounts() ).toEqual( {
+				type: JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
+				fetcher: 'wpcomJetpackLicensing',
+			} );
+		} );
+	} );
+
+	describe( '#receiveLicenseCounts()', () => {
+		test( 'should return an action when called', () => {
+			const { receiveLicenseCounts } = actions;
+			const counts = [ 'foo' ];
+
+			expect( receiveLicenseCounts( counts ) ).toEqual( {
+				type: JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
+				counts,
 			} );
 		} );
 	} );
