@@ -275,7 +275,11 @@ class SignupForm extends Component {
 
 			// On Jetpack sign up form, prevent "field is empty" error messages from displaying prematurely
 			// before the form has been submitted or before the field has been interacted with (is dirty).
-			if ( this.isJetpack() && ! this.state.submitting ) {
+			if (
+				config.isEnabled( 'jetpack/simplify-login-signup-flows' ) &&
+				this.isJetpack() &&
+				! this.state.submitting
+			) {
 				messages = this.filterUntouchedFieldErrors( messages );
 			}
 

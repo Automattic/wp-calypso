@@ -45,6 +45,7 @@
 		"jetpack/on-demand-scan": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/simplify-login-signup-flows": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
