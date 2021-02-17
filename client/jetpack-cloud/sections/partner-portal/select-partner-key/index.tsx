@@ -12,7 +12,7 @@ import get from 'lodash/get';
 /**
  * Internal dependencies
  */
-import { PartnerKey } from 'calypso/state/partner-portal';
+import { PartnerKey } from 'calypso/state/partner-portal/types';
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
 import {
 	isFetchingPartner,
