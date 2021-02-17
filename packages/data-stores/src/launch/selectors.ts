@@ -40,8 +40,7 @@ export const getLastPlanBillingPeriod = ( state: State ): Plans.PlanBillingPerio
 	state.planBillingPeriod;
 
 export const isSelectedPlanPaid = ( state: State ): boolean =>
-	Boolean( state.planProductId ) &&
-	! select( PLANS_STORE ).isPlanProductFree( state.planProductId );
+	select( PLANS_STORE ).isPlanProductFree( state.planProductId );
 
 // Check if a domain has been explicitly selected (including free subdomain)
 /**

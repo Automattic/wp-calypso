@@ -412,11 +412,16 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							</span>
 						</p>
 						<div>
-							{ allAvailablePlans.map( ( plan, index ) =>
-								typeof plan === 'undefined' ||
-								typeof allAvailablePlansProducts?.[ index ] === 'undefined' ? (
-									<FocusedLaunchSummaryItem key={ index } isLoading />
-								) : (
+							{ allAvailablePlans.map( ( plan, index ) => {
+								const planProduct = allAvailablePlansProducts[ index ];
+								if (
+									! plan ||
+									! planProduct ||
+									plan.periodAgnosticSlug !== planProduct?.periodAgnosticSlug
+								) {
+									return <FocusedLaunchSummaryItem key={ index } isLoading />;
+								}
+								return (
 									<FocusedLaunchSummaryItem
 										key={ plan.periodAgnosticSlug }
 										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
@@ -454,8 +459,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											</TrailingContentSide>
 										) }
 									</FocusedLaunchSummaryItem>
-								)
-							) }
+								);
+							} ) }
 						</div>
 						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all plans', __i18n_text_domain__ ) }
