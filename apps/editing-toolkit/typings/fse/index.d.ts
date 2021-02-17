@@ -12,6 +12,8 @@ interface Window {
 		anchorFmPodcastId?: string;
 		locale?: string;
 	};
+	// TODO: One of this is correct. Guess which one?
+	currentSiteId?: number;
 	_currentSiteId: number;
 	calypsoifyGutenberg?: {
 		isGutenboarding?: boolean;
