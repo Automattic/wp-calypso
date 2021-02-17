@@ -26315,10 +26315,10 @@ tinycolor2@^1.4.1:
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
   integrity sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g=
 
-tinymce@^4.9.6:
-  version "4.9.6"
-  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-4.9.6.tgz#ffba4fc56e3196f66873b60571b9aa164b2da931"
-  integrity sha512-ZSBxBVvAHhi6KTSWGVsnv7X7drJJbInOrpCiSuvNLQz0Po8lZfeLh8nt7asQ9eGxD7TUD1dD46iXhOH+SsBbNg==
+tinymce@^5.0.0:
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/tinymce/-/tinymce-5.7.0.tgz#bc565877e4041db83848a330dfa7916993110cba"
+  integrity sha512-WikgMpJbqYPaucV3lfstCj+Y4NquZlK61gyuJ2eqDUBlSU+4fFh6rpwnelVTxuvtEyJsAVOl8HZmbzBfDJiLsQ==
 
 title-case-minors@^1.0.0:
   version "1.0.0"
