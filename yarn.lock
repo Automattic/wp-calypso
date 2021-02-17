@@ -4720,7 +4720,7 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-1.2.1.tgz#7513d7a769e3f97958de799b5b49874425ae3396"
   integrity sha512-Zj1z6AyS+vqV6Hfi7ngCjFGdHV5EwZNIHo6QfFTNe9PyW+zBU1zJ9BiOW1pmUEq950RC4+Dym6flyA/61/vhyw==
 
-"@wordpress/a11y@^2.14.0":
+"@wordpress/a11y@^2.14.0", "@wordpress/a11y@^2.9.0":
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/@wordpress/a11y/-/a11y-2.14.0.tgz#69221b956886e290c4a4e47b8645927849befc46"
   integrity sha512-+nYTgB4dOEBxADt+nTGVe2WkaOmLXPrUhuZgosH46IbQw8zbY9Bej91x6DEi/cj+GCn6BLOZZYTHyAxWHeeHwA==
@@ -4728,14 +4728,6 @@
     "@babel/runtime" "^7.12.5"
     "@wordpress/dom-ready" "^2.12.0"
     "@wordpress/i18n" "^3.17.0"
-
-"@wordpress/a11y@^2.9.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/a11y/-/a11y-2.9.0.tgz#5346497a9c5dfd47d8f8fe16c026e63a8f18954b"
-  integrity sha512-1YBqy+yrAnCnQAayvQ6kx4O3vHq4EAyFh8UdNwbK0ZE4f+2Kzj/fD5QoICaTPl3vMzHb8ISeFyGFTxzqqBZh1g==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    "@wordpress/dom-ready" "^2.9.0"
 
 "@wordpress/api-fetch@^3.21.1":
   version "3.21.1"
@@ -5034,16 +5026,7 @@
     moment "^2.22.1"
     moment-timezone "^0.5.31"
 
-"@wordpress/dependency-extraction-webpack-plugin@^2.8.0":
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/dependency-extraction-webpack-plugin/-/dependency-extraction-webpack-plugin-2.8.0.tgz#699ba0b3555217fd9a844e5f9f4de486d4a89cba"
-  integrity sha512-fEOsSl1kYY8gkiAe7OM9IopmSOtaAug37OQwKVeda5fK6xLsnpqprP5iwHHOApNWMEzgmVGS6/iW5IZoi7qv/A==
-  dependencies:
-    json2php "^0.0.4"
-    webpack "^4.8.3"
-    webpack-sources "^1.3.0"
-
-"@wordpress/dependency-extraction-webpack-plugin@^2.9.0":
+"@wordpress/dependency-extraction-webpack-plugin@^2.8.0", "@wordpress/dependency-extraction-webpack-plugin@^2.9.0":
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/@wordpress/dependency-extraction-webpack-plugin/-/dependency-extraction-webpack-plugin-2.9.0.tgz#0b38278afc0429506a1ae6b82a2fc8a88bc25f58"
   integrity sha512-Eo8ByPd3iZ6az4UmdLD2xYLp1/7os/H80l28Y5OlS4DozkD3vcWCBReynWoBax74u3oJ9wWN5b/8oSxGwIKXYQ==
@@ -27970,7 +27953,7 @@ webpack-virtual-modules@^0.2.2:
   dependencies:
     debug "^3.0.0"
 
-webpack@^4.42.0, webpack@^4.44.2, webpack@^4.8.3:
+webpack@^4.42.0, webpack@^4.44.2:
   version "4.44.2"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.44.2.tgz#6bfe2b0af055c8b2d1e90ed2cd9363f841266b72"
   integrity sha512-6KJVGlCxYdISyurpQ0IPTklv+DULv05rs2hseIXer6D7KrUicRDLFb4IUM1S6LUAKypPM/nSiVSuv8jHu1m3/Q==
@@ -28582,7 +28565,7 @@ yamlparser@^0.0.2:
   resolved "https://registry.yarnpkg.com/yamlparser/-/yamlparser-0.0.2.tgz#32393e6afc70c8ca066b6650ac6738b481678ebc"
   integrity sha1-Mjk+avxwyMoGa2ZQrGc4tIFnjrw=
 
-yargs-parser@13.1.2, yargs-parser@^13.1.0, yargs-parser@^13.1.1, yargs-parser@^13.1.2:
+yargs-parser@13.1.2, yargs-parser@^13.1.0, yargs-parser@^13.1.2:
   version "13.1.2"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-13.1.2.tgz#130f09702ebaeef2650d54ce6e3e5706f7a4fb38"
   integrity sha512-3lbsNRf/j+A4QuSZfDRA7HRSfWrzO0YjqTJd5kjAq37Zep1CEgaYmrH9Q3GwPiB9cHyd1Y1UwggGhJGoxipbzg==
@@ -28670,7 +28653,7 @@ yargs@13.2.4:
     y18n "^4.0.0"
     yargs-parser "^13.1.0"
 
-yargs@13.3.2, yargs@^13.3.2:
+yargs@13.3.2, yargs@^13.3.0, yargs@^13.3.2:
   version "13.3.2"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-13.3.2.tgz#ad7ffefec1aa59565ac915f82dccb38a9c31a2dd"
   integrity sha512-AX3Zw5iPruN5ie6xGRIDgqkT+ZhnRlZMLMHAs8tg7nRruy2Nb+i5o9bwghAogtM08q1dpr2LVoS8KSTMYpWXUw==
@@ -28741,22 +28724,6 @@ yargs@^12.0.1, yargs@^12.0.5:
     which-module "^2.0.0"
     y18n "^3.2.1 || ^4.0.0"
     yargs-parser "^11.1.1"
-
-yargs@^13.3.0:
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-13.3.0.tgz#4c657a55e07e5f2cf947f8a366567c04a0dedc83"
-  integrity sha512-2eehun/8ALW8TLoIl7MVaRUrg+yCnenu8B4kBlRxj3GJGDKU1Og7sMXPNm1BYyM1DOJmTZ4YeN/Nwxv+8XJsUA==
-  dependencies:
-    cliui "^5.0.0"
-    find-up "^3.0.0"
-    get-caller-file "^2.0.1"
-    require-directory "^2.1.1"
-    require-main-filename "^2.0.0"
-    set-blocking "^2.0.0"
-    string-width "^3.0.0"
-    which-module "^2.0.0"
-    y18n "^4.0.0"
-    yargs-parser "^13.1.1"
 
 yargs@^14.0.0, yargs@^14.2, yargs@^14.2.2, yargs@^14.2.3:
   version "14.2.3"
