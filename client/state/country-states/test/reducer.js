@@ -114,17 +114,5 @@ describe( 'reducer', () => {
 			} );
 			expect( state.de ).to.eql( false );
 		} );
-
-		test( 'should never persist state', () => {
-			const state = isFetching( true, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should never load persisted state', () => {
-			const state = isFetching( true, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 } );

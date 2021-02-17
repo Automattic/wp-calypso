@@ -10,15 +10,6 @@ import { IMMEDIATE_LOGIN_SAVE_INFO } from 'calypso/state/action-types';
 
 describe( 'immediate-login/reducer', () => {
 	describe( 'reducer', () => {
-		test( 'should return initialState for DESERIALIZE', () => {
-			const initialState = reducer( null, { type: 'DESERIALIZE' } );
-			expect( initialState.attempt ).toEqual( false );
-			expect( initialState.success ).toEqual( false );
-			expect( initialState.reason ).toEqual( null );
-			expect( initialState.email ).toEqual( null );
-			expect( initialState.locale ).toEqual( null );
-		} );
-
 		test( 'should return correctly updated state [1]', () => {
 			const updatedState = reducer( null, { type: IMMEDIATE_LOGIN_SAVE_INFO } );
 			expect( updatedState.attempt ).toEqual( true );

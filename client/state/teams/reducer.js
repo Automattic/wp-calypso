@@ -8,7 +8,7 @@ import { get } from 'lodash';
  */
 import { withStorageKey } from '@automattic/state-utils';
 import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
-import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
@@ -24,7 +24,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
 	return state;
 } );
 
-export const isRequesting = withoutPersistence( ( state = false, action ) => {
+export const isRequesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case TEAMS_REQUEST:
 			return true;
@@ -33,7 +33,7 @@ export const isRequesting = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = combineReducers( {
 	items,

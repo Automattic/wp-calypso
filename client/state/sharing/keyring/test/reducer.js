@@ -46,24 +46,6 @@ describe( 'reducers', () => {
 
 			expect( state ).to.be.false;
 		} );
-
-		describe( 'persistence', () => {
-			test( 'never loads persisted data', () => {
-				const persistedState = deepFreeze( true );
-				const state = isFetching( persistedState, {
-					type: DESERIALIZE,
-				} );
-				expect( state ).to.eql( false );
-			} );
-
-			test( 'never persists data', () => {
-				const state = deepFreeze( true );
-				const persistedState = isFetching( state, {
-					type: SERIALIZE,
-				} );
-				expect( persistedState ).to.be.undefined;
-			} );
-		} );
 	} );
 
 	describe( 'items()', () => {

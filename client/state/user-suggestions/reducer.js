@@ -8,7 +8,7 @@ import {
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -19,7 +19,7 @@ import { itemsSchema } from './schema';
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case USER_SUGGESTIONS_REQUEST: {
 			const { siteId } = action;
@@ -36,7 +36,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. Items
