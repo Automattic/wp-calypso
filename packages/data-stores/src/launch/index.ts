@@ -34,6 +34,7 @@ export function register(): typeof STORE_KEY {
 				'domain',
 				'domainSearch',
 				'planProductId',
+				'planBillingPeriod',
 				'confirmedDomainSelection',
 				'isExperimental',
 				'isAnchorFm',
