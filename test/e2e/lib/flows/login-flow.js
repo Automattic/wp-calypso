@@ -100,7 +100,7 @@ export default class LoginFlow {
 		if ( process.env.FLAGS === 'nav-unification' ) {
 			// Makes sure that the nav-unification welcome modal will be dismissed.
 			const guideComponent = await GuideComponent.Expect( this.driver );
-			await guideComponent.dismissModal( '.nav-unification-modal ' );
+			await guideComponent.dismissModal( '.nav-unification-modal' );
 		}
 
 		return await loginCookieHelper.saveLogin( this.driver, this.account.username );
