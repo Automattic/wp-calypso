@@ -44,10 +44,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 
 		// '?should_launch' query arg is used when the mandatory checkout step
 		// is redirecting to an external payment processing page (eg: Paypal)
-		const shouldLaunch = hasQueryArg(
-			inIframe() ? getCurrentLaunchFlowUrl() : window.location.href,
-			IMMEDIATE_LAUNCH_QUERY_ARG
-		);
+		const shouldLaunch = hasQueryArg( getCurrentLaunchFlowUrl(), IMMEDIATE_LAUNCH_QUERY_ARG );
 
 		React.useEffect( () => {
 			if ( shouldLaunch && ! isSiteLaunched ) {

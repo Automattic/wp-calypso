@@ -14,22 +14,18 @@ import { LocaleProvider } from '@automattic/i18n-utils';
  */
 import FocusedLaunch from '../focused-launch';
 import Success from '../focused-launch/success';
-import LaunchContext from '../context';
+import LaunchContext, { LaunchContextProps } from '../context';
 import { LAUNCH_STORE, SITE_STORE } from '../stores';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../constants';
 import './styles.scss';
 
-interface Props {
+interface FocusedLaunchModalProps extends Omit< LaunchContextProps, 'flow' > {
 	locale?: string;
-	siteId: number;
-	openCheckout: ( siteSlug?: string, isEcommerce?: boolean ) => void;
-	redirectTo: ( path: string ) => void;
-	getCurrentLaunchFlowUrl: () => string | undefined;
 	isInIframe: boolean;
 	isLaunchImmediately: boolean;
 }
 
-const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
+const FocusedLaunchModal: React.FunctionComponent< FocusedLaunchModalProps > = ( {
 	locale = 'en',
 	siteId,
 	openCheckout,

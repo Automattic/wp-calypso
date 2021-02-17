@@ -5,24 +5,10 @@ import { doAction, hasAction } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
 import { FOCUSED_LAUNCH_FLOW, IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 
-interface CalypsoifyWindow extends Window {
-	currentSiteId?: number;
-	calypsoifyGutenberg?: {
-		isFocusedLaunchFlow: boolean;
-		isSiteUnlaunched?: boolean;
-		currentCalypsoUrl?: string;
-		[ key: string ]: unknown;
-	};
-}
-declare const window: CalypsoifyWindow;
-
-export const getCurrentLaunchFlowUrl = (): string => {
-	try {
-		return window?.calypsoifyGutenberg?.currentCalypsoUrl || window.location.href;
-	} catch ( err ) {
-		return '';
-	}
-};
+// When running in Calypso, currentCalypsoUrl is used.
+// When running in WP-Admin, window.location.href is used.
+export const getCurrentLaunchFlowUrl = (): string =>
+	window?.calypsoifyGutenberg?.currentCalypsoUrl ?? window.location.href;
 
 export const redirectParentWindow = ( url: string ): void => {
 	window.top.location.href = url;
