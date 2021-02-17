@@ -170,14 +170,12 @@ class Starter_Page_Templates {
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
 			array(
-				'templates'          => array_merge( $default_templates, $page_templates ),
+				'templates'    => array_merge( $default_templates, $page_templates ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'screenAction'       => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
-				'theme'              => normalize_theme_slug( get_stylesheet() ),
+				'screenAction' => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
+				'theme'        => normalize_theme_slug( get_stylesheet() ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'isFrontPage'        => isset( $_GET['post'] ) && get_option( 'page_on_front' ) === $_GET['post'],
-				'hideFrontPageTitle' => get_theme_mod( 'hide_front_page_title' ),
-				'locale'             => $this->get_verticals_locale(),
+				'locale'       => $this->get_verticals_locale(),
 			)
 		);
 

@@ -14,19 +14,11 @@
 	word-wrap: normal !important;
 }
 
-$template-modal-background-color: #eeeeee;
 $template-selector-border-color: #e2e4e7;
 $template-selector-border-color-selected: #555d66;
 $template-selector-border-color-active: #00a0d2;
 $template-selector-border-color-hover: #c9c9ca;
 $template-selector-empty-background: #fff;
-$template-selector-modal-offset-bottom: 25px;
-$template-selector-modal-offset-right: 32px;
-$template-selector-blank-template-mobile-height: 70px;
-$template-large-preview-title-height: 120px;
-
-// Preview positioning
-$preview-right-margin: 24px;
 
 // Breakpoints
 $breakpoint-mobile: 660px;
@@ -139,23 +131,6 @@ $sidebar-width: 324px;
 
 	&:hover {
 		border: solid 2px $template-selector-border-color-hover;
-	}
-
-	&.is-selected {
-		border: solid 2px $template-selector-border-color-selected;
-		// Windows High Contrast mode will show this outline, but not the box-shadow.
-		outline: 2px solid transparent;
-		outline-offset: -2px;
-
-		&:focus {
-			box-shadow: 0 0 0 1px $template-selector-empty-background,
-				0 0 0 3px $template-selector-border-color-active;
-			border: solid 2px $template-selector-border-color-selected;
-
-			// Windows High Contrast mode will show this outline, but not the box-shadow.
-			outline: 4px solid transparent;
-			outline-offset: -4px;
-		}
 	}
 }
 
@@ -273,75 +248,6 @@ $sidebar-width: 324px;
 	}
 }
 
-// Template Selector Preview
-.template-selector-preview {
-	display: none;
-	position: fixed;
-	top: 111px + $wp-org-admin-bar-mobile;
-	bottom: 24px;
-	left: calc( 20% + #{$preview-right-margin * 2} );
-	right: $preview-right-margin;
-	background: $template-selector-empty-background;
-	border-radius: 2px;
-	overflow: hidden;
-	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
-		0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
-
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		display: block;
-		&.is-blank-preview {
-			align-items: center;
-			display: flex;
-			justify-content: center;
-		}
-	}
-
-	@media screen and ( min-width: $breakpoint-tablet ) {
-		top: 111px + $wp-org-admin-bar-full;
-		left: calc( 30% + #{$preview-right-margin * 1.5 + $wp-org-sidebar-collapsed} );
-		body:not( .auto-fold ):not( .folded ) & {
-			left: calc( 30% + #{$preview-right-margin / 2 + $wp-org-sidebar-full} );
-		}
-	}
-	@media screen and ( min-width: $breakpoint-desktop ) {
-		left: calc( 30% + #{$preview-right-margin / 2 + $wp-org-sidebar-full} );
-		body.folded & {
-			left: calc( 30% + #{$preview-right-margin * 1.5 + $wp-org-sidebar-collapsed} );
-		}
-	}
-
-	body.is-fullscreen-mode & {
-		top: 111px;
-		@media screen and ( min-width: $breakpoint-tablet ) {
-			left: calc( 30% + #{$preview-right-margin * 2} ) !important;
-		}
-	}
-
-	.edit-post-visual-editor {
-		margin: 0;
-		padding: 0;
-	}
-
-	// not-selected template
-	&.not-selected {
-		.editor-styles-wrapper {
-			position: relative;
-			width: 100%;
-			height: 100%;
-
-			.template-selector-preview__empty-state {
-				position: absolute;
-				width: 100%;
-				text-align: center;
-				height: 50px;
-				line-height: 50px;
-				top: 50%;
-				margin: -25px 0 0;
-			}
-		}
-	}
-}
-
 .page-template-modal__loading {
 	position: absolute;
 	top: 50%;
@@ -352,110 +258,5 @@ $sidebar-width: 324px;
 
 	.components-spinner {
 		float: none;
-	}
-}
-
-.block-iframe-preview {
-	position: absolute;
-	top: 0;
-	left: 0;
-	transform-origin: top left;
-	text-align: initial;
-	margin: 0;
-	overflow: visible;
-	min-height: auto;
-
-	// Fallback viewport width.
-	// Used when BlockFramePreview's viewportWidth prop is undefined.
-	// Can be overridden through more specific CSS.
-	width: 1440px;
-}
-
-.block-iframe-preview-body {
-	margin: 0;
-	padding: 0;
-	overflow-x: hidden;
-	overflow-y: auto;
-
-	> .block-editor,
-	> .block-editor > .edit-post-visual-editor {
-		padding: 0;
-		margin: 0;
-	}
-
-	// Hide inserter/appender.
-	.block-list-appender,
-	.block-editor-inserter {
-		display: none !important;
-		visibility: hidden;
-		position: absolute;
-		left: -9999vw;
-	}
-
-	// Preview adjustments.
-	.editor-styles-wrapper {
-		// core/cover.
-		.wp-block-cover {
-			height: auto;
-		}
-
-		// TODO: fix the embed iframe blocks properly.
-		.wp-block-embed__wrapper iframe {
-			height: auto;
-			min-height: 400px;
-		}
-	}
-
-	// Manual CSS Overrides. Remove after better solutions are in place.
-
-	// Removes empty paragraph placeholders, i.e. "Write Title..."
-	[data-type='core/paragraph'] [data-rich-text-placeholder] {
-		display: none;
-	}
-
-	/*
-	* Fixes jetpack .wp-block-jetpack-slideshow styles, as the /wp-content/plugins/jetpack/_inc/blocks/vendors~swiper.[hash].css
-	* file is loaded on block insert, not on page load. After the iframe is grabbing these styles, we can remove this code.
-	*/
-	.swiper-wrapper {
-		display: flex;
-	}
-
-	.swiper-button-prev,
-	.swiper-button-next {
-		display: none;
-	}
-
-	.swiper-pagination {
-		text-align: center;
-	}
-
-	.swiper-pagination-bullet {
-		border-radius: 100%; /* stylelint-disable-line */
-	}
-
-	// Fixes cover image spacing and full-width group spacing
-	.editor-styles-wrapper [data-block] {
-		&[data-type='core/group'],
-		&[data-type='core/cover'][data-align='full'] {
-			margin-top: 0;
-			margin-bottom: 0;
-		}
-	}
-
-	// Tweak template title (post-title) component.
-	.block-iframe-preview__template-title {
-		padding-top: 20px;
-	}
-
-	// flex: column; on the parent and flex-basis: 0; on the child in Safari causes a lot of weird overlapping layout
-	// issues in the iframe preview: https://github.com/Automattic/wp-calypso/issues/39874
-	// Using flex-basis: auto; on the child allows the height to be calculated properly
-	.wp-block-columns
-		> .block-editor-inner-blocks
-		> .block-editor-block-list__layout
-		> [data-type='core/column']
-		.block-core-columns {
-		flex-basis: auto;
 	}
 }

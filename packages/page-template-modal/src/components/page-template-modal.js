@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, reduce, get, keyBy, mapValues, memoize, omit } from 'lodash';
+import { find, reduce, get, memoize } from 'lodash';
 import { __ } from '@wordpress/i18n';
-import { Button, Modal, Spinner, DropdownMenu } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { withInstanceId } from '@wordpress/compose';
@@ -14,22 +14,17 @@ import { withInstanceId } from '@wordpress/compose';
 import TemplateSelectorControl from './template-selector-control';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import replacePlaceholders from '../utils/replace-placeholders';
-import ensureAssets from '../utils/ensure-assets';
 import mapBlocksRecursively from '../utils/map-blocks-recursively';
 import containsMissingBlock from '../utils/contains-missing-block';
 import { sortGroupNames } from '../utils/group-utils';
 
 class PageTemplateModal extends Component {
-	state = {
-		isLoading: false,
-		selectedCategory: null,
-		error: null,
-	};
-
-	// Extract titles for faster lookup.
-	getTitlesByTemplateSlugs = memoize( ( templates ) =>
-		mapValues( keyBy( templates, 'name' ), 'title' )
-	);
+	constructor( props ) {
+		super( props );
+		this.state = {
+			selectedCategory: this.getDefaultSelectedCategory(),
+		};
+	}
 
 	// Parse templates blocks and memoize them.
 	getBlocksByTemplateSlugs = memoize( ( templates ) => {
@@ -68,24 +63,6 @@ class PageTemplateModal extends Component {
 		);
 	}
 
-	getBlocksForPreview = memoize( ( previewedTemplate ) => {
-		const blocks = this.getBlocksByTemplateSlug( previewedTemplate );
-
-		// Modify the existing blocks returning new block object references.
-		return mapBlocksRecursively( blocks, function modifyBlocksForPreview( block ) {
-			// `jetpack/contact-form` has a placeholder to configure form settings
-			// we need to disable this to show the full form in the preview
-			if (
-				'jetpack/contact-form' === block.name &&
-				undefined !== block.attributes.hasFormSettingsSet
-			) {
-				block.attributes.hasFormSettingsSet = true;
-			}
-
-			return block;
-		} );
-	} );
-
 	getBlocksForSelection = ( selectedTemplate ) => {
 		const blocks = this.getBlocksByTemplateSlug( selectedTemplate );
 		// Modify the existing blocks returning new block object references.
@@ -98,23 +75,6 @@ class PageTemplateModal extends Component {
 			return block;
 		} );
 	};
-
-	static getDerivedStateFromProps( props, state ) {
-		// The only time `state.previewedTemplate` isn't set is before `templates`
-		// are loaded. As soon as we have our `templates`, we set it using
-		// `this.getDefaultSelectedTemplate`. Afterwards, the user can select a
-		// different template, but can never un-select it.
-		// This makes it a reliable indicator for whether the modal has just been launched.
-		// It's also possible that `templates` are present during initial mount, in which
-		// case this will be called before `componentDidMount`, which is also fine.
-		if ( ! state.previewedTemplate && ! isEmpty( props.templates ) ) {
-			// Show the modal, and select the first template automatically.
-			return {
-				previewedTemplate: PageTemplateModal.getDefaultSelectedTemplate( props ),
-			};
-		}
-		return null;
-	}
 
 	componentDidMount() {
 		if ( this.props.isOpen ) {
@@ -139,29 +99,19 @@ class PageTemplateModal extends Component {
 		trackView( 'add-page' );
 	}
 
-	static getDefaultSelectedTemplate = ( props ) => {
-		const blankTemplate = get( props.templates, [ 0, 'name' ] );
-		const previouslyChosenTemplate = props._starter_page_template;
-
-		// Usually the "new page" case
-		if ( ! props.isFrontPage && ! previouslyChosenTemplate ) {
-			return blankTemplate;
+	getDefaultSelectedCategory() {
+		const categories = this.getTemplateCategories();
+		if ( ! categories?.length ) {
+			return null;
 		}
 
-		// if the page isn't new, select "Current" as the default template
-		return 'current';
-	};
+		return categories[ 0 ].slug;
+	}
 
 	setTemplate = ( name ) => {
 		// Track selection and mark post as using a template in its postmeta.
 		trackSelection( name );
 		this.props.saveTemplateChoice( name );
-
-		// Skip setting template if user selects current layout
-		if ( 'current' === name ) {
-			this.props.setOpenState( false );
-			return;
-		}
 
 		// Check to see if this is a blank template selection
 		// and reset the template if so.
@@ -171,13 +121,13 @@ class PageTemplateModal extends Component {
 			return;
 		}
 
-		const isHomepageTemplate = find( this.props.templates, { name, category: 'home' } );
+		const template = find( this.props.templates, { name } );
 
 		// Load content.
 		const blocks = this.getBlocksForSelection( name );
 
 		// Only overwrite the page title if the template is not one of the Homepage Layouts
-		const title = isHomepageTemplate ? null : this.getTitleByTemplateSlug( name );
+		const title = template.category === 'home' ? null : template.title || '';
 
 		// Skip inserting if this is not a blank template
 		// and there's nothing to insert.
@@ -186,52 +136,15 @@ class PageTemplateModal extends Component {
 			return;
 		}
 
-		// Show loading state.
-		this.setState( {
-			error: null,
-			isLoading: true,
-		} );
-
-		// Make sure all blocks use local assets before inserting.
-		this.maybePrefetchAssets( blocks )
-			.then( ( blocksWithAssets ) => {
-				this.setState( { isLoading: false } );
-				// Don't insert anything if the user clicked Cancel/Close
-				// before we loaded everything.
-				if ( ! this.props.isOpen ) {
-					return;
-				}
-
-				this.props.insertTemplate( title, blocksWithAssets );
-				this.props.setOpenState( false );
-			} )
-			.catch( ( error ) => {
-				this.setState( {
-					isLoading: false,
-					error,
-				} );
-			} );
-	};
-
-	maybePrefetchAssets = ( blocks ) => {
-		return this.props.shouldPrefetchAssets ? ensureAssets( blocks ) : Promise.resolve( blocks );
-	};
-
-	handleSelection = ( name ) => {
-		this.setTemplate( name );
+		this.props.insertTemplate( title, blocks );
+		this.props.setOpenState( false );
 	};
 
 	handleCategorySelection = ( selectedCategory ) => {
 		this.setState( { selectedCategory } );
 	};
 
-	closeModal = ( event ) => {
-		// Check to see if the Blur event occurred on the buttons inside of the Modal.
-		// If it did then we don't want to dismiss the Modal for this type of Blur.
-		if ( event.target.matches( 'button.template-selector-item__label' ) ) {
-			return false;
-		}
-
+	closeModal = () => {
 		trackDismiss();
 
 		// Try if we have specific URL to go back to, otherwise go to the page list.
@@ -240,14 +153,7 @@ class PageTemplateModal extends Component {
 	};
 
 	getBlocksByTemplateSlug( name ) {
-		if ( name === 'current' ) {
-			return this.props.currentBlocks;
-		}
 		return get( this.getBlocksByTemplateSlugs( this.props.templates ), [ name ], [] );
-	}
-
-	getTitleByTemplateSlug( name ) {
-		return get( this.getTitlesByTemplateSlugs( this.props.templates ), [ name ], '' );
 	}
 
 	getTemplateGroups = () => {
@@ -278,14 +184,6 @@ class PageTemplateModal extends Component {
 			return [ { name: 'blank', title: 'Blank', html: '' } ];
 		}
 
-		if ( 'current' === groupName && '' !== this.props._starter_page_template ) {
-			for ( const template of this.props.templates ) {
-				if ( this.props._starter_page_template === template.name ) {
-					return [ template ];
-				}
-			}
-		}
-
 		const templates = [];
 		for ( const template of this.props.templates ) {
 			for ( const key in template.categories ) {
@@ -298,57 +196,14 @@ class PageTemplateModal extends Component {
 		return templates;
 	};
 
-	renderTemplateGroups = () => {
-		const unfilteredGroups = this.getTemplateGroups();
-		const groups = ! this.props.isFrontPage
-			? unfilteredGroups
-			: omit( unfilteredGroups, 'home-page' );
-
-		if ( ! groups ) {
-			return null;
-		}
-
-		const currentGroup =
-			'blank' !== this.props._starter_page_template
-				? this.renderTemplateGroup( 'current', __( 'Current', __i18n_text_domain__ ) )
-				: null;
-
-		const blankGroup = this.renderTemplateGroup( 'blank', __( 'Blank', __i18n_text_domain__ ) );
-
-		const homePageGroup = this.props.isFrontPage
-			? this.renderTemplateGroup( 'home-page', __( 'Home', __i18n_text_domain__ ) )
-			: null;
-
-		const renderedGroups = [];
-		for ( const key in groups ) {
-			renderedGroups.push( this.renderTemplateGroup( key, groups[ key ].title ) );
-		}
-
-		return (
-			<>
-				{ currentGroup }
-				{ blankGroup }
-				{ homePageGroup }
-				{ renderedGroups }
-			</>
-		);
-	};
-
 	getTemplateCategories = () => {
-		const unfilteredGroups = this.getTemplateGroups();
-		const groups = ! this.props.isFrontPage
-			? unfilteredGroups
-			: omit( unfilteredGroups, 'home-page' );
+		const groups = this.getTemplateGroups();
 
 		if ( ! groups ) {
 			return null;
 		}
 
 		const categories = [];
-
-		if ( this.props.isFrontPage ) {
-			categories.push( { slug: 'home-page', name: __( 'Home Page', __i18n_text_domain__ ) } );
-		}
 
 		for ( const key in groups ) {
 			categories.push( { slug: key, name: groups[ key ].title } );
@@ -372,16 +227,12 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		const isCurrentPreview = templatesList[ 0 ]?.name === 'current';
-
-		const blocksByTemplateSlug = isCurrentPreview
-			? { current: this.props.currentBlocks }
-			: // The raw `templates` prop is not filtered to remove Templates that
-			  // contain missing Blocks. Therefore we compare with the keys of the
-			  // filtered templates from `getBlocksByTemplateSlugs()` and filter this
-			  // list to match. This ensures that the list of Template thumbnails is
-			  // filtered so that it does not include Templates that have missing Blocks.
-			  this.getBlocksByTemplateSlugs( this.props.templates );
+		// The raw `templates` prop is not filtered to remove Templates that
+		// contain missing Blocks. Therefore we compare with the keys of the
+		// filtered templates from `getBlocksByTemplateSlugs()` and filter this
+		// list to match. This ensures that the list of Template thumbnails is
+		// filtered so that it does not include Templates that have missing Blocks.
+		const blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
 
 		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
@@ -398,19 +249,13 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		// Skip rendering current preview if there is no page content.
-		if ( isCurrentPreview && ! blocksByTemplateSlug.current?.length ) {
-			return null;
-		}
-
 		return (
 			<fieldset className="page-template-modal__list">
 				<TemplateSelectorControl
 					label={ __( 'Layout', __i18n_text_domain__ ) }
 					legendLabel={ groupTitle }
 					templates={ filteredTemplatesList }
-					blocksByTemplates={ blocksByTemplateSlug }
-					onTemplateSelect={ this.handleSelection }
+					onTemplateSelect={ this.setTemplate }
 					theme={ this.props.theme }
 					locale={ this.props.locale }
 					siteInformation={ this.props.siteInformation }
@@ -420,24 +265,11 @@ class PageTemplateModal extends Component {
 	};
 
 	render() {
-		const { isLoading, selectedCategory } = this.state;
-		const { isOpen, currentBlocks, instanceId } = this.props;
+		const { selectedCategory } = this.state;
+		const { isOpen, instanceId } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
-		}
-
-		// Sometimes currentBlocks is not loaded before getBlocksForPreview is called
-		// getBlocksForPreview memoizes the function call which causes it to always
-		// call it with an empty array. We delete the the cache for the function
-		// to allow it to memoize the loaded currentBlocks.
-		const currentBlocksPreviewCache = this.getBlocksForPreview.cache.get( 'current' );
-		if (
-			currentBlocksPreviewCache &&
-			currentBlocks &&
-			currentBlocksPreviewCache.length !== currentBlocks.length
-		) {
-			this.getBlocksForPreview.cache.delete( 'current' );
 		}
 
 		return (
@@ -451,71 +283,62 @@ class PageTemplateModal extends Component {
 				} }
 			>
 				<div className="page-template-modal__inner">
-					{ isLoading ? (
-						<div className="page-template-modal__loading">
-							<Spinner />
-							{ __( 'Adding layout…', __i18n_text_domain__ ) }
+					<div className="page-template-modal__sidebar">
+						<h1
+							id={ `page-template-modal__heading-${ instanceId }` }
+							className="page-template-modal__heading"
+						>
+							{ __( 'Add a page', __i18n_text_domain__ ) }
+						</h1>
+						<p
+							id={ `page-template-modal__description-${ instanceId }` }
+							className="page-template-modal__description"
+						>
+							{ __(
+								'Pick a pre-defined layout or start with a blank page.',
+								__i18n_text_domain__
+							) }
+						</p>
+						<div className="page-template-modal__button-container">
+							<Button
+								isSecondary
+								onClick={ () => this.setTemplate( 'blank' ) }
+								className="page-template-modal__blank-button"
+							>
+								{ __( 'Blank page', __i18n_text_domain__ ) }
+							</Button>
+							<select
+								className="page-template-modal__mobile-category-dropdown"
+								value={ selectedCategory }
+								onChange={ ( e ) => this.handleCategorySelection( e.currentTarget.value ) }
+							>
+								{ this.getTemplateCategories().map( ( { slug, name } ) => (
+									<option key={ slug } value={ slug }>
+										{ name }
+									</option>
+								) ) }
+							</select>
 						</div>
-					) : (
-						<>
-							<div className="page-template-modal__sidebar">
-								<h1
-									id={ `page-template-modal__heading-${ instanceId }` }
-									className="page-template-modal__heading"
-								>
-									{ __( 'Add a page', __i18n_text_domain__ ) }
-								</h1>
-								<p
-									id={ `page-template-modal__description-${ instanceId }` }
-									className="page-template-modal__description"
-								>
-									{ __(
-										'Pick a pre-defined layout or start with a blank page.',
-										__i18n_text_domain__
-									) }
-								</p>
-								<div className="page-template-modal__button-container">
+						<ul className="page-template-modal__category-list">
+							{ this.getTemplateCategories().map( ( { slug, name } ) => (
+								<li key={ slug }>
 									<Button
-										isSecondary
-										onClick={ () => this.handleSelection( 'blank' ) }
-										className="page-template-modal__blank-button"
+										isTertiary
+										isPressed={ slug === selectedCategory }
+										onClick={ () => this.handleCategorySelection( slug ) }
 									>
-										{ __( 'Blank page', __i18n_text_domain__ ) }
+										{ name }
 									</Button>
-									<select
-										className="page-template-modal__mobile-category-dropdown"
-										value={ selectedCategory }
-										onChange={ ( e ) => this.handleCategorySelection( e.currentTarget.value ) }
-									>
-										{ this.getTemplateCategories().map( ( { slug, name } ) => (
-											<option key={ slug } value={ slug }>
-												{ name }
-											</option>
-										) ) }
-									</select>
-								</div>
-								<ul className="page-template-modal__category-list">
-									{ this.getTemplateCategories().map( ( { slug, name } ) => (
-										<li key={ slug }>
-											<Button
-												isTertiary
-												isPressed={ slug === selectedCategory }
-												onClick={ () => this.handleCategorySelection( slug ) }
-											>
-												{ name }
-											</Button>
-										</li>
-									) ) }
-								</ul>
-							</div>
-							<div className="page-template-modal__template-list-container">
-								{ this.renderTemplateGroup(
-									selectedCategory,
-									this.getTemplateGroups()[ selectedCategory ]?.title
-								) }
-							</div>
-						</>
-					) }
+								</li>
+							) ) }
+						</ul>
+					</div>
+					<div className="page-template-modal__template-list-container">
+						{ this.renderTemplateGroup(
+							selectedCategory,
+							this.getTemplateGroups()[ selectedCategory ]?.title
+						) }
+					</div>
 				</div>
 			</Modal>
 		);
