@@ -368,7 +368,7 @@ export class SeoForm extends React.Component {
 						</NoticeAction>
 					</Notice>
 				) }
-				{ ! showAdvancedSeo && (
+				{ ! showAdvancedSeo && selectedSite.plan && (
 					<UpsellNudge
 						forceDisplay={ siteIsJetpack }
 						{ ...upsellProps }
