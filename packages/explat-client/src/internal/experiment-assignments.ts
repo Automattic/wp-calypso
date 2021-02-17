@@ -33,11 +33,19 @@ const fallbackExperimentAssignmentTtl = 60;
  */
 export const createFallbackExperimentAssignment = (
 	experimentName: string
-): ExperimentAssignment => ( {
-	experimentName: isName( experimentName ) ? experimentName : 'fallback_experiment_assignment',
-	variationName: null,
-	retrievedTimestamp: Timing.monotonicNow(),
-	ttl: fallbackExperimentAssignmentTtl,
+): ExperimentAssignment => {
+	const experimentAssignment = {
+		experimentName: experimentName,
+		variationName: null,
+		retrievedTimestamp: Timing.monotonicNow(),
+		ttl: fallbackExperimentAssignmentTtl,
+		isFallbackExperimentAssignment: true,
+	};
 
-	isFallbackExperimentAssignment: true,
-} );
+	if ( ! isName( experimentName ) ) {
+		experimentAssignment.experimentName = 'invalid_original_experiment_name';
+		experimentAssignment.originalExperimentName = experimentName;
+	}
+
+	return experimentAssignment;
+};

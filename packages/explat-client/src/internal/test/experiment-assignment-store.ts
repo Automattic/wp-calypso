@@ -4,12 +4,12 @@
 import ExperimentAssignmentStore from '../experiment-assignment-store';
 import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
 
-describe( 'state', () => {
+describe( 'experiment-assignment-store', () => {
 	it( 'should save and retrieve valid ExperimentAssignments', () => {
-		const experimentAssignmentStore = new ExperimentAssignmentStore()
-		expect(
-			experimentAssignmentStore.retrieve( validExperimentAssignment.experimentName )
-		).toBe( undefined );
+		const experimentAssignmentStore = new ExperimentAssignmentStore();
+		expect( experimentAssignmentStore.retrieve( validExperimentAssignment.experimentName ) ).toBe(
+			undefined
+		);
 		experimentAssignmentStore.store( validExperimentAssignment );
 		expect(
 			experimentAssignmentStore.retrieve( validExperimentAssignment.experimentName )
@@ -25,7 +25,7 @@ describe( 'state', () => {
 	} );
 
 	it( 'should throw for storing an ExperimentAssignment for a currently stored Experiment with an older date', () => {
-		const experimentAssignmentStore = new ExperimentAssignmentStore()
+		const experimentAssignmentStore = new ExperimentAssignmentStore();
 		experimentAssignmentStore.store( validFallbackExperimentAssignment );
 		expect(
 			experimentAssignmentStore.retrieve( validFallbackExperimentAssignment.experimentName )
@@ -38,5 +38,15 @@ describe( 'state', () => {
 		).toThrowErrorMatchingInlineSnapshot(
 			`"Trying to store an older experiment assignment than is present in the store, likely a race condition."`
 		);
+	} );
+
+	it( 'should throw for storing an invalid ExperimentAssignment', () => {
+		const experimentAssignmentStore = new ExperimentAssignmentStore();
+		expect( () =>
+			experimentAssignmentStore.store( {
+				...validFallbackExperimentAssignment,
+				experimentName: 'invalid-experiment-name',
+			} )
+		).toThrowErrorMatchingInlineSnapshot( `"Invalid ExperimentAssignment"` );
 	} );
 } );
