@@ -349,7 +349,6 @@ const webpackConfig = {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
 		new RequireChunkCallbackPlugin(),
-		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 		...( ! config.isEnabled( 'desktop' )
 			? [
 					new webpack.NormalModuleReplacementPlugin(
