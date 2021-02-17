@@ -75,8 +75,10 @@ export function useCart(): LaunchCart {
 	};
 
 	const goToCheckoutAndLaunch = async () => {
-		if ( ! isInIframe ) {
-			// if Focused Launch is loaded outside Calypso iframe (in wp-admin), we launch the site and then redirect to /checkout
+		if ( ! isInIframe || isEcommercePlan ) {
+			// We launch the site first and then open Checkout in these cases:
+			// - Focused Launch is loaded outside Calypso iframe (in wp-admin)
+			// - eCommerce plan is selected so Checkout will handle thank-you redirect after purchase
 			await launchSite( siteId );
 		}
 		goToCheckout();
