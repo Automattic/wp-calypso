@@ -21,6 +21,10 @@ export interface ExperimentAssignment {
 	 * A marker for fallback assignments - when we can't retrieve from the server.
 	 */
 	isFallbackExperimentAssignment?: boolean;
+	/**
+	 * For keeping the original experiment name in case it is invalid and we can't put it in experimentName.
+	 */
+	originalExperimentName?: string;
 }
 
 // ## Abstracting the outside world
