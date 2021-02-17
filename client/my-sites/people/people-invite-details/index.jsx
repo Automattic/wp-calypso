@@ -73,7 +73,7 @@ export class PeopleInviteDetails extends React.PureComponent {
 		);
 		const clearMessage = translate(
 			'If you no longer wish to see this record, you can clear it. ' +
-				"It will not effect the person's membership status."
+				"It will not affect the person's membership status."
 		);
 
 		return (
