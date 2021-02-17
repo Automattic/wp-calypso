@@ -21,4 +21,4 @@ jobs:
           # Get issues in ascending (oldest first) order.
           ascending: true
           # Label to apply when issue is marked stale.
-          stale-issue-label: '[Status] - Stale'
+          stale-issue-label: '[Status] Stale'
