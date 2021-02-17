@@ -68,4 +68,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
+	jetpackNewPurchaseIntroPricing: {
+		datestamp: '20210217',
+		variations: {
+			withIntroPricing: 50,
+			withoutIntroPricing: 50,
+		},
+		defaultVariation: 'withoutIntroPricing',
+		allowExistingUsers: true,
+	},
 };
