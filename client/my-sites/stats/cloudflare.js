@@ -34,13 +34,16 @@ const Cloudflare = () => {
 							description={ translate(
 								'Cloudflare Analytics give you deeper insights into your site traffic and performance.'
 							) }
-							showIcon={ true }
-							disableCircle={ true }
-							iconPath={ cloudflareIllustration }
-							href="CLOUDFLARELEARNMORELINK"
-							tracksImpressionName="calypso_stats_cloudflare_banner_view"
-							event="calypso_stats_cloudflare_analytics_learn_more_click"
 							callToAction={ translate( 'Learn more' ) }
+							disableCircle={ true }
+							dismissPreferenceName="cloudflare-banner"
+							event="calypso_stats_cloudflare_analytics_learn_more_click"
+							highlight="info"
+							horizontal={ true }
+							href="CLOUDFLARELEARNMORELINK"
+							iconPath={ cloudflareIllustration }
+							showIcon={ true }
+							tracksImpressionName="calypso_stats_cloudflare_banner_view"
 						/>
 					) }
 					{ sitePlan && showUpsell && (
