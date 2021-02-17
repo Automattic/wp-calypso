@@ -95,6 +95,7 @@ export class PlanFeaturesHeader extends Component {
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
+					{ this.getIntervalDiscount() }
 				</div>
 				{ ! isInSignup && isCurrent && (
 					<PlanPill isInSignup={ isInSignup }>{ translate( 'Your Plan' ) }</PlanPill>
@@ -457,8 +458,11 @@ export class PlanFeaturesHeader extends Component {
 			relatedMonthlyPlan,
 			relatedYearlyPlan,
 			siteSlug,
+			isLoggedInMonthlyPricing,
+			isInSignup,
+			translate,
 		} = this.props;
-		if ( isJetpack && ! isSiteAT ) {
+		if ( isJetpack && ! isSiteAT && isInSignup ) {
 			const [ discountPrice, originalPrice ] = isYearly
 				? [ relatedMonthlyPlan.raw_price * 12, rawPrice ]
 				: [ rawPrice * 12, get( relatedYearlyPlan, 'raw_price' ) ];
@@ -477,8 +481,37 @@ export class PlanFeaturesHeader extends Component {
 				)
 			);
 		}
+		if ( isLoggedInMonthlyPricing ) {
+			const { discountRate } = this.getIntervalDiscountInfo();
+			const classes = classNames( 'plan-features__header-interval-discount', {
+				'is-crossed-out': ! isYearly,
+			} );
+
+			if ( ! discountRate || ! rawPrice ) {
+				return null;
+			}
+
+			return (
+				<div className={ classes }>
+					{ translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } ) }
+				</div>
+			);
+		}
 
 		return null;
+	}
+
+	getIntervalDiscountInfo() {
+		const { isYearly, rawPrice, relatedMonthlyPlan, relatedYearlyPlan } = this.props;
+		const [ originalPrice, discountPrice ] = isYearly
+			? [ relatedMonthlyPlan.raw_price, rawPrice ]
+			: [ rawPrice * 12, get( relatedYearlyPlan, 'raw_price' ) ];
+
+		return {
+			originalPrice,
+			discountPrice,
+			discountRate: Math.round( ( 100 * ( originalPrice - discountPrice ) ) / originalPrice ),
+		};
 	}
 }
 
@@ -507,6 +540,9 @@ PlanFeaturesHeader.propTypes = {
 	currentSitePlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
 	relatedYearlyPlan: PropTypes.object,
+
+	// For Monthly Pricing test
+	annualPricePerMonth: PropTypes.number,
 
 	isLoggedInMonthlyPricing: PropTypes.bool,
 };
