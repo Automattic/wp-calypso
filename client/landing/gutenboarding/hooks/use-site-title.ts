@@ -13,14 +13,14 @@ import usePodcastTitle from './use-podcast-title';
 export default function useSiteTitle(): void {
 	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 	const podcastTitle = usePodcastTitle();
-	const { siteTitle } = useSelect( ( select ) => ( {
-		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+	const { hasSiteTitle } = useSelect( ( select ) => ( {
+		hasSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle().length > 0,
 	} ) );
 
 	useEffect( () => {
-		if ( podcastTitle && ! siteTitle ) {
+		if ( podcastTitle && ! hasSiteTitle ) {
 			// Set initial site title to podcast title
 			setSiteTitle( podcastTitle );
 		}
-	}, [ podcastTitle, setSiteTitle, siteTitle ] );
+	}, [ podcastTitle, setSiteTitle, hasSiteTitle ] );
 }
