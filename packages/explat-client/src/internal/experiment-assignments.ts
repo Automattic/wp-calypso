@@ -43,7 +43,7 @@ export const createFallbackExperimentAssignment = (
 	};
 
 	if ( ! isName( experimentName ) ) {
-		experimentAssignment.experimentName = 'invalid_experiment_name';
+		experimentAssignment.experimentName = 'invalid_original_experiment_name';
 		experimentAssignment.originalExperimentName = experimentName;
 	}
 
