@@ -54,8 +54,10 @@ const Modal = () => {
 	const translate = useTranslate();
 
 	/**
-	 * Translate calls will ensure that the following strings from the Guide component would be extracted
-	 * and their respective translation would be loaded and displayed properly in the nav unifcation modal
+	 * Since we don't extract strings from external packages in node_modules,
+	 * translatable strings from the Guide component are not being extracted.
+	 * In order to get these strings extracted and their translations loaded,
+	 * we need to have the following translate calls included in this component.
 	 */
 	translate( 'Previous' );
 	translate( 'Next' );
