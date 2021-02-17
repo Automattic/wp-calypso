@@ -4720,7 +4720,7 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-1.2.1.tgz#7513d7a769e3f97958de799b5b49874425ae3396"
   integrity sha512-Zj1z6AyS+vqV6Hfi7ngCjFGdHV5EwZNIHo6QfFTNe9PyW+zBU1zJ9BiOW1pmUEq950RC4+Dym6flyA/61/vhyw==
 
-"@wordpress/a11y@^2.14.0":
+"@wordpress/a11y@^2.14.0", "@wordpress/a11y@^2.9.0":
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/@wordpress/a11y/-/a11y-2.14.0.tgz#69221b956886e290c4a4e47b8645927849befc46"
   integrity sha512-+nYTgB4dOEBxADt+nTGVe2WkaOmLXPrUhuZgosH46IbQw8zbY9Bej91x6DEi/cj+GCn6BLOZZYTHyAxWHeeHwA==
@@ -4728,14 +4728,6 @@
     "@babel/runtime" "^7.12.5"
     "@wordpress/dom-ready" "^2.12.0"
     "@wordpress/i18n" "^3.17.0"
-
-"@wordpress/a11y@^2.9.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/a11y/-/a11y-2.9.0.tgz#5346497a9c5dfd47d8f8fe16c026e63a8f18954b"
-  integrity sha512-1YBqy+yrAnCnQAayvQ6kx4O3vHq4EAyFh8UdNwbK0ZE4f+2Kzj/fD5QoICaTPl3vMzHb8ISeFyGFTxzqqBZh1g==
-  dependencies:
-    "@babel/runtime" "^7.9.2"
-    "@wordpress/dom-ready" "^2.9.0"
 
 "@wordpress/api-fetch@^3.21.1":
   version "3.21.1"
