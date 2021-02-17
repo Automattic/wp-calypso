@@ -105,19 +105,20 @@ const INTERFACE_FIELDS = [
 ];
 
 class Account extends React.Component {
+	constructor( props ) {
+		super( props );
+
+		this.props.removeUnsavedUserSetting( 'user_login' );
+	}
+
 	state = {
 		redirect: false,
 		submittingForm: false,
 		formsSubmitting: {},
 		changingUsername: false,
 		usernameAction: 'new',
+		validationResult: false,
 	};
-
-	UNSAFE_componentWillMount() {
-		// Clear any username changes that were previously made
-		this.clearUsernameValidation();
-		this.props.removeUnsavedUserSetting( 'user_login' );
-	}
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' component is mounted.' );
