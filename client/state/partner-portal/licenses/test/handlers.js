@@ -22,8 +22,8 @@ describe( 'handlers', () => {
 			const { fetchLicenses } = handlers;
 			const action = {
 				type: 'TEST_ACTION',
-				filter: LicenseState.Detached,
-				search: 'bar',
+				filter: LicenseState.NotRevoked,
+				search: '',
 				fetcher: 'wpcomJetpackLicensing',
 			};
 			const expected = {
@@ -34,7 +34,6 @@ describe( 'handlers', () => {
 				query: {
 					apiNamespace: 'wpcom/v2',
 					filter: action.filter,
-					search: action.search,
 				},
 				formData: undefined,
 				onSuccess: action,
@@ -45,13 +44,62 @@ describe( 'handlers', () => {
 			};
 
 			expect( fetchLicenses( action ) ).toEqual( expected );
+		} );
 
-			action.filter = LicenseState.Revoked;
-			action.search = '';
-			expected.query = {
-				apiNamespace: 'wpcom/v2',
-				filter: action.filter,
+		test( 'should return an http request action for a custom filter', () => {
+			const { fetchLicenses } = handlers;
+			const action = {
+				type: 'TEST_ACTION',
+				filter: LicenseState.Revoked,
+				search: '',
+				fetcher: 'wpcomJetpackLicensing',
 			};
+			const expected = {
+				type: WPCOM_HTTP_REQUEST,
+				body: undefined,
+				method: 'GET',
+				path: '/jetpack-licensing/licenses',
+				query: {
+					apiNamespace: 'wpcom/v2',
+					filter: action.filter,
+				},
+				formData: undefined,
+				onSuccess: action,
+				onFailure: action,
+				onProgress: action,
+				onStreamRecord: action,
+				options: { options: { fetcher: action.fetcher } },
+			};
+
+			expect( fetchLicenses( action ) ).toEqual( expected );
+		} );
+
+		test( 'should return an http request action for a search and ignore filters', () => {
+			const { fetchLicenses } = handlers;
+			const action = {
+				type: 'TEST_ACTION',
+				filter: LicenseState.Revoked,
+				search: 'foo',
+				fetcher: 'wpcomJetpackLicensing',
+			};
+			const expected = {
+				type: WPCOM_HTTP_REQUEST,
+				body: undefined,
+				method: 'GET',
+				path: '/jetpack-licensing/licenses',
+				query: {
+					apiNamespace: 'wpcom/v2',
+					// No filter present intentionally as search overrides it.
+					search: action.search,
+				},
+				formData: undefined,
+				onSuccess: action,
+				onFailure: action,
+				onProgress: action,
+				onStreamRecord: action,
+				options: { options: { fetcher: action.fetcher } },
+			};
+
 			expect( fetchLicenses( action ) ).toEqual( expected );
 		} );
 	} );
