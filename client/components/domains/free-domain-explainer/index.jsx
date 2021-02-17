@@ -74,6 +74,7 @@ class FreeDomainExplainer extends React.Component {
 
 		return (
 			<Banner
+				className="free-domain-explainer"
 				callToAction={ translate( 'Review our plans to get started' ) }
 				description={ this.getDescription() }
 				dismissPreferenceName="free-domain-explainer"

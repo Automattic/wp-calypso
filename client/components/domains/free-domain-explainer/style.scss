@@ -1,8 +1,17 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-.free-domain-explainer__title {
+.free-domain-explainer {
+	.banner__description {
+		display: none;
 
+		@include break-mobile {
+			display: block;
+		}
+	}
+}
+
+.free-domain-explainer__title {
     color: var( --color-text );
     font-weight: 400;
     font-size: $font-title-small;
