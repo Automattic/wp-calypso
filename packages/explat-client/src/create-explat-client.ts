@@ -84,6 +84,12 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		() => Promise< ExperimentAssignment >
 	> = {};
 
+	const safeLogError: typeof config.logError = ( ...args ) => {
+		try {
+			config.logError( ...args );
+		} catch ( e ) {}
+	};
+
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
 			try {
@@ -117,15 +123,13 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				}
 
 				return fetchedExperimentAssignment;
-			} catch ( e ) {
-				try {
-					config.logError( {
-						message: e.message,
-						experimentName,
-					} );
-				} catch ( e2 ) {}
+			} catch ( initialError ) {
+				safeLogError( {
+					message: initialError.message,
+					experimentName,
+				} );
 				if ( config.isDevelopmentMode ) {
-					throw e;
+					throw initialError;
 				}
 			}
 
@@ -143,17 +147,12 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
 				experimentAssignmentStore.store( fallbackExperimentAssignment );
 				return fallbackExperimentAssignment;
-			} catch ( e ) {
-				try {
-					config.logError( {
-						message: e.message,
-						experimentName,
-						isSecondaryError: 'true',
-					} );
-				} catch ( e2 ) {}
-				if ( config.isDevelopmentMode ) {
-					throw e;
-				}
+			} catch ( fallbackError ) {
+				safeLogError( {
+					message: fallbackError.message,
+					experimentName,
+					isSecondaryError: 'true',
+				} );
 
 				// As a last resort we just keep it very simple
 				return createFallbackExperimentAssignment( experimentName );

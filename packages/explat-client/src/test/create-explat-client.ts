@@ -73,12 +73,6 @@ describe( 'createExPlatClient', () => {
 		);
 	} );
 
-	it( `shouldn't call any deps if only initialized`, () => {
-		createExPlatClient( createMockedConfig() );
-
-		expect( mockedLogError.mock.calls ).toMatchInlineSnapshot( `Array []` );
-	} );
-
 	it( `shouldn't throw if initialized multiple times`, () => {
 		const a = createExPlatClient( createMockedConfig() );
 		const b = createExPlatClient( createMockedConfig() );
@@ -541,30 +535,20 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		const experimentAssignmentD = client.loadExperimentAssignment(
 			validExperimentAssignment.experimentName
 		);
-		let errorA;
-		try {
-			await experimentAssignmentA;
-		} catch ( e ) {
-			errorA = e;
-		}
-		let errorB;
-		try {
-			await experimentAssignmentB;
-		} catch ( e ) {
-			errorB = e;
-		}
-		let errorC;
-		try {
-			await experimentAssignmentC;
-		} catch ( e ) {
-			errorC = e;
-		}
-		let errorD;
-		try {
-			await experimentAssignmentD;
-		} catch ( e ) {
-			errorD = e;
-		}
+
+		const promiseError = async ( promise: Promise< unknown > ) => {
+			try {
+				await promise;
+			} catch ( e ) {
+				return e;
+			}
+			throw new Error( `Promise shouldn't resolve.` );
+		};
+		const errorA = await promiseError( experimentAssignmentA );
+		const errorB = await promiseError( experimentAssignmentB );
+		const errorC = await promiseError( experimentAssignmentC );
+		const errorD = await promiseError( experimentAssignmentD );
+
 		expect( errorA ).toBe( errorB );
 		expect( errorA ).toBe( errorC );
 		expect( errorA ).toBe( errorD );
