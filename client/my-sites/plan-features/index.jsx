@@ -351,6 +351,7 @@ export class PlanFeatures extends Component {
 						isMonthlyPlan={ isMonthlyPlan }
 						audience={ planConstantObj.getAudience() }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
 					/>
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
@@ -474,6 +475,9 @@ export class PlanFeatures extends Component {
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+						isLoggedInMonthlyPricing={
+							! isInSignup && ! isJetpack && this.props.kindOfPlanTypeSelector === 'interval'
+						}
 					/>
 				</th>
 			);
@@ -667,6 +671,7 @@ export class PlanFeatures extends Component {
 				description={ description }
 				hideInfoPopover={ feature.hideInfoPopover }
 				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
+				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
 				<span className={ classes }>
 					{ this.renderAnnualPlansFeatureNotice( feature ) }
@@ -792,6 +797,7 @@ PlanFeatures.propTypes = {
 	purchaseId: PropTypes.number,
 	siteId: PropTypes.number,
 	sitePlan: PropTypes.object,
+	kindOfPlanTypeSelector: PropTypes.oneOf( [ 'interval', 'customer' ] ),
 };
 
 PlanFeatures.defaultProps = {
@@ -802,6 +808,7 @@ PlanFeatures.defaultProps = {
 	selectedSiteSlug: '',
 	siteId: null,
 	onUpgradeClick: noop,
+	kindOfPlanTypeSelector: 'customer',
 };
 
 export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
@@ -846,6 +853,7 @@ export default connect(
 			visiblePlans,
 			popularPlanSpec,
 			withDiscount,
+			kindOfPlanTypeSelector,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -859,11 +867,15 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
+		const isLoggedInMonthlyPricing =
+			! isInSignup && ! isJetpack && kindOfPlanTypeSelector === 'interval';
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
 				let isPlaceholder = false;
-				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
+				const planConstantObj = applyTestFiltersToPlansList( plan, abtest, {
+					isLoggedInMonthlyPricing,
+				} );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
@@ -892,7 +904,7 @@ export default connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
-				let features = planConstantObj.getPlanCompareFeatures( abtest );
+				let features = planConstantObj.getPlanCompareFeatures();
 
 				// TODO: remove this once Quick Start sessions have been removed from Business Plan
 				if ( isWpComBusinessPlan( plan ) ) {
@@ -971,7 +983,7 @@ export default connect(
 				}
 
 				// Strip annual-only features out for the site's /plans page
-				if ( ! isInSignup || isPlaceholder ) {
+				if ( ! isLoggedInMonthlyPricing && ( ! isInSignup || isPlaceholder ) ) {
 					planFeatures = planFeatures.filter(
 						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
 					);
@@ -1031,6 +1043,7 @@ export default connect(
 			siteType,
 			planCredits,
 			hasPlaceholders: hasPlaceholders( planProperties ),
+			isLoggedInMonthlyPricing,
 			showPlanCreditsApplied:
 				sitePlan &&
 				sitePlan.product_slug !== PLAN_FREE &&

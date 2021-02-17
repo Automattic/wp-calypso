@@ -396,6 +396,15 @@ describe( 'PlanIntervalDiscount', () => {
 		translate: identity,
 		billingTimeFrame: '',
 		title: '',
+		planType: PLAN_JETPACK_FREE,
+	};
+	const monthlyPlanProps = {
+		...baseProps,
+		isYearly: false,
+		rawPrice: 14,
+		relatedMonthlyPlan: null,
+		relatedYearlyPlan: { raw_price: 96 },
+		planType: PLAN_PREMIUM_MONTHLY,
 	};
 	test( 'should show interval discount for Jetpack during signup', () => {
 		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup isJetpack /> );
@@ -417,6 +426,22 @@ describe( 'PlanIntervalDiscount', () => {
 			<PlanFeaturesHeader { ...baseProps } isInSignup isJetpack isSiteAT />
 		);
 		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should show interval discount for those eligible for monthly pricing', () => {
+		const wrapper = shallow(
+			<PlanFeaturesHeader { ...baseProps } isLoggedInMonthlyPricing planType={ PLAN_PREMIUM } />
+		);
+		expect( wrapper.find( '.plan-features__header-interval-discount' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should cross out interval discount for monthly plans', () => {
+		const wrapper = shallow(
+			<PlanFeaturesHeader { ...monthlyPlanProps } isLoggedInMonthlyPricing />
+		);
+		expect(
+			wrapper.find( '.plan-features__header-interval-discount' ).hasClass( 'is-crossed-out' )
+		).toBe( true );
 	} );
 } );
 

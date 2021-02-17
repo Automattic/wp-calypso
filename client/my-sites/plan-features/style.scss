@@ -42,27 +42,27 @@ $plan-features-sidebar-width: 272px;
 				border-top: solid 8px;
 				border-radius: 2px 2px 0 0;
 				padding-bottom: 12px;
-		
+
 				&.is-blogger-plan {
 					border-color: var( --color-plan-blogger );
 					border-bottom: solid 2px var( --color-neutral-10 );
 				}
-		
+
 				&.is-personal-plan {
 					border-color: var( --color-plan-personal );
 					border-bottom: solid 2px var( --color-neutral-10 );
 				}
-		
+
 				&.is-premium-plan {
 					border-color: var( --color-plan-premium );
 					border-bottom: solid 2px var( --color-neutral-10 );
 				}
-		
+
 				&.is-business-plan {
 					border-color: var( --color-plan-business );
 					border-bottom: solid 2px var( --color-neutral-10 );
 				}
-		
+
 				&.is-ecommerce-plan {
 					border-color: var( --color-plan-ecommerce );
 					border-bottom: solid 2px var( --color-neutral-10 );
@@ -81,7 +81,7 @@ $plan-features-sidebar-width: 272px;
 					font-size: $font-title-medium;
 					font-weight: 400;
 				}
-				
+
 				.plan-price__integer {
 					font-weight: 600;
 				}
@@ -460,6 +460,19 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__header-interval-discount {
+	margin-top: -1em;
+	margin-bottom: 1.4em;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+	color: var( --color-success );
+	line-height: normal;
+
+	&.is-crossed-out {
+		text-decoration: line-through;
+	}
+}
+
 .plan-features__header-title-free {
 	font-size: 1.5rem;
 	line-height: 1.5;
@@ -586,6 +599,13 @@ $plan-features-sidebar-width: 272px;
 	margin-right: 10px;
 }
 
+.plan-features__item-unavailable {
+	flex: 0 1 auto;
+	fill: var( --color-neutral-30 );
+	margin-right: 10px;
+	transform: translate( 0, 2px );
+}
+
 .plan-features__item-tip-info {
 	flex: 0 1 auto;
 }
@@ -627,6 +647,13 @@ $plan-features-sidebar-width: 272px;
 	flex-direction: column;
 	flex: 1 0 0;
 	width: 100%;
+
+	&.is-annual-plan-feature:not( .is-available ) {
+		.plan-features__item-title {
+			text-decoration: line-through;
+			color: var( --color-neutral-30 );
+		}
+	}
 }
 
 .plan-features__item-title-outlined {

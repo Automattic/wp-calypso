@@ -186,12 +186,14 @@ const getPlanEcommerceDetails = () => ( {
 		i18n.translate(
 			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
 		),
-	getPlanCompareFeatures: () =>
+	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
+			isLoggedInMonthlyPricing && constants.FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_SUPPORT,
 			constants.FEATURE_JETPACK_ADVANCED,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			! isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_200GB_STORAGE,
@@ -288,12 +290,14 @@ const getPlanPremiumDetails = () => ( {
 				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.'
 		),
-	getPlanCompareFeatures: () =>
+	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
+			isLoggedInMonthlyPricing && constants.FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_SUPPORT,
 			constants.FEATURE_JETPACK_ESSENTIAL,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			! isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_13GB_STORAGE,
@@ -369,12 +373,14 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	getPlanCompareFeatures: () =>
+	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			constants.FEATURE_CUSTOM_DOMAIN,
+			isLoggedInMonthlyPricing && constants.FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_SUPPORT,
 			constants.FEATURE_JETPACK_ADVANCED,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			! isLoggedInMonthlyPricing && constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 			constants.FEATURE_ADVANCED_DESIGN,
 			constants.FEATURE_200GB_STORAGE,

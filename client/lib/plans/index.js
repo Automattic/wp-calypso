@@ -488,9 +488,12 @@ export function plansLink( url, siteSlug, intervalType, forceIntervalType = fals
 	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
 }
 
-export function applyTestFiltersToPlansList( planName, abtest ) {
+export function applyTestFiltersToPlansList( planName, abtest, extraArgs = {} ) {
 	const filteredPlanConstantObj = { ...getPlan( planName ) };
-	const filteredPlanFeaturesConstantList = getPlan( planName ).getPlanCompareFeatures( abtest );
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getPlanCompareFeatures(
+		abtest,
+		extraArgs
+	);
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
