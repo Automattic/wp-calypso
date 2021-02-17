@@ -3,6 +3,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import {
 	getPaymentMethodImageURL,
 	getPaymentMethodSummary,
 } from 'calypso/lib/checkout/payment-methods';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -65,17 +67,23 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 					} ) }
 				</span>
 
-				{ isExpired && (
-					<span className="payment-method-details__expiration-date">
-						{ translate( 'Credit card expired' ) }
-					</span>
-				) }
-				{ ! isExpired && displayExpirationDate && (
+				{ displayExpirationDate && (
 					<span className="payment-method-details__expiration-date">
 						{ translate( 'Expires %(date)s', {
 							args: { date: displayExpirationDate },
 							context: 'date is of the form MM/YY',
 						} ) }
+					</span>
+				) }
+
+				{ isExpired && (
+					<span
+						className={ classnames( 'payment-method-details__expiration-notice', {
+							'is-expired': isExpired,
+						} ) }
+					>
+						<Gridicon icon="info-outline" size={ 18 } />
+						{ translate( 'Credit card expired' ) }
 					</span>
 				) }
 				<span className="payment-method-details__name">{ name }</span>
