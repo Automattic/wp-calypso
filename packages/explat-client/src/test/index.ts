@@ -16,11 +16,21 @@ beforeEach( () => {
 	jest.resetModules();
 } );
 
+function setBrowserContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	global.window = {};
+}
+
+function setSsrContext() {
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	global.window = undefined;
+}
+
 describe( 'index.ts', () => {
 	it( 'should return the real client when run in a browser context', () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		global.window = {};
+		setBrowserContext();
 		const exPlatIndex = require( '../index' );
 		expect( exPlatIndex.createExPlatClient.toString() ).toBe(
 			createBrowserExPlatClient.toString()
@@ -28,9 +38,7 @@ describe( 'index.ts', () => {
 	} );
 
 	it( 'should return the mock client when run outside of a browser context', () => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		global.window = undefined;
+		setSsrContext();
 		const exPlatIndex = require( '../index' );
 		expect( exPlatIndex.createExPlatClient.toString() ).toBe(
 			createSsrSafeDummyExPlatClient.toString()
