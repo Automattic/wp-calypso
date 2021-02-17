@@ -241,7 +241,7 @@ class SignupForm extends Component {
 		}
 	};
 
-	filterEmptyFieldErrors = ( errorMessages ) => {
+	filterUntouchedFieldErrors = ( errorMessages ) => {
 		// Don't show "field is empty" error message unless the field is 'dirty' (it has been interacted with).
 		return omitBy(
 			errorMessages,
@@ -276,7 +276,7 @@ class SignupForm extends Component {
 			// On Jetpack sign up form, prevent "field is empty" error messages from displaying prematurely
 			// before the form has been submitted or before the field has been interacted with (is dirty).
 			if ( this.isJetpack() && ! this.state.submitting ) {
-				messages = this.filterEmptyFieldErrors( messages );
+				messages = this.filterUntouchedFieldErrors( messages );
 			}
 
 			forEach( messages, ( fieldError, field ) => {
