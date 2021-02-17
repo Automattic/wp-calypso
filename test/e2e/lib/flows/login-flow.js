@@ -13,6 +13,7 @@ import CustomerHome from '../pages/customer-home-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
+import GuideComponent from '../components/guide-component.js';
 
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
@@ -95,6 +96,13 @@ export default class LoginFlow {
 		}
 
 		await loginPage.login( this.account.email || this.account.username, this.account.password );
+
+		if ( process.env.FLAGS === 'nav-unification' ) {
+			// Makes sure that the nav-unification welcome modal will be dismissed.
+			const guideComponent = await GuideComponent.Expect( this.driver );
+			await guideComponent.dismissModal( '.nav-unification-modal ' );
+		}
+
 		return await loginCookieHelper.saveLogin( this.driver, this.account.username );
 	}
 
