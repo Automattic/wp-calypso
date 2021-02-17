@@ -127,6 +127,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				safeLogError( {
 					message: initialError.message,
 					experimentName,
+					source: 'loadExperimentAssignment-initialError',
 				} );
 				if ( config.isDevelopmentMode ) {
 					throw initialError;
@@ -151,7 +152,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				safeLogError( {
 					message: fallbackError.message,
 					experimentName,
-					isSecondaryError: 'true',
+					source: 'loadExperimentAssignment-fallbackError',
 				} );
 
 				// As a last resort we just keep it very simple
