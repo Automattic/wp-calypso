@@ -32,6 +32,11 @@ import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/typ
  */
 import './style.scss';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface Props {
 	licenseFilter: LicenseFilter;
 	sortDirection: string;
@@ -71,7 +76,7 @@ export default function LicenseList( {
 		<div className="license-list">
 			<QueryJetpackPartnerPortalLicenses />
 
-			<LicenseListItem header>
+			<LicenseListItem header className="license-list__header">
 				<h2>{ translate( 'License state' ) }</h2>
 				<h2 className={ classnames( { 'is-selected': 'issued_at' === sortField } ) }>
 					<button onClick={ () => setSortingConfig( 'issued_at' ) }>

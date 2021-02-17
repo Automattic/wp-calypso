@@ -77,6 +77,8 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 
 		> *:nth-child(#{$column-domain}) {
 			grid-column-end: auto;
+			justify-self: start;
+			padding: 16px 0;
 		}
 
 		> *:nth-child(#{$column-actions}),
@@ -100,6 +102,7 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 		}
 
 		h2 {
+			justify-self: end;
 			font-weight: 400;
 		}
 
@@ -110,6 +113,8 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 		button {
 			display: flex;
 			align-items: center;
+			justify-self: end;
+			padding: 16px 0;
 			font-weight: inherit;
 			cursor: pointer;
 		}
