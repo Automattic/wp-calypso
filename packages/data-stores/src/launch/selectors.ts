@@ -12,6 +12,7 @@ import { STORE_KEY as LAUNCH_STORE, PLANS_STORE } from './constants';
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
 import type * as DomainSuggestions from '../domain-suggestions';
+import type { Plans } from '..';
 
 export const getLaunchSequence = (): typeof LaunchSequence => LaunchSequence;
 export const getLaunchStep = (): typeof LaunchStep => LaunchStep;
@@ -26,6 +27,17 @@ export const hasPaidDomain = ( state: State ): boolean => {
 export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSuggestion | undefined =>
 	state.domain;
 export const getSelectedPlanProductId = ( state: State ): number | undefined => state.planProductId;
+
+/**
+ * This returns the readonly value of the billing period.
+ * This value is automatically inferred from the selected paid plan.
+ * If the user picks a free plan, this value will remain unchanged and
+ * will return the billing period of the previously selected paid plan.
+ *
+ * @param state the state
+ */
+export const getLastPlanBillingPeriod = ( state: State ): Plans.PlanBillingPeriod =>
+	state.planBillingPeriod;
 
 export const isSelectedPlanPaid = ( state: State ): boolean =>
 	Boolean( state.planProductId ) &&

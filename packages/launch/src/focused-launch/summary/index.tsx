@@ -284,9 +284,10 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const selectedPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getSelectedPlanProductId()
-	);
+	const [ selectedPlanProductId, billingPeriod ] = useSelect( ( select ) => [
+		select( LAUNCH_STORE ).getSelectedPlanProductId(),
+		select( LAUNCH_STORE ).getLastPlanBillingPeriod(),
+	] );
 
 	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
 		const plansStore = select( PLANS_STORE );
@@ -302,10 +303,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	const [ nonDefaultPaidPlanProduct, setNonDefaultPaidPlanProduct ] = React.useState<
 		PlanProduct | undefined
 	>();
-
-	const [ billingPeriod, setBillingPeriod ] = React.useState< PlanProduct[ 'billingPeriod' ] >(
-		selectedPlanProduct?.billingPeriod ?? 'ANNUALLY'
-	);
 
 	const {
 		defaultPaidPlan,
@@ -323,9 +320,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		) {
 			setNonDefaultPaidPlan( selectedPlan );
 			setNonDefaultPaidPlanProduct( selectedPlanProduct );
-		}
-		if ( selectedPlanProduct && ! selectedPlan?.isFree ) {
-			setBillingPeriod( selectedPlanProduct?.billingPeriod );
 		}
 	}, [ selectedPlan, defaultPaidPlan, nonDefaultPaidPlan, selectedPlanProduct ] );
 

@@ -2,11 +2,14 @@
  * External dependencies
  */
 import type * as DomainSuggestions from '../domain-suggestions';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import type { LaunchStepType } from './types';
+import { PLANS_STORE } from './constants';
+import type { Plans } from '..';
 
 export const setSidebarFullscreen = () =>
 	( {
@@ -52,11 +55,27 @@ export const setDomainSearch = ( domainSearch: string ) =>
 		domainSearch,
 	} as const );
 
-export const setPlanProductId = ( planProductId: number | undefined ) =>
+const __setBillingPeriod = ( billingPeriod: Plans.PlanBillingPeriod ) =>
 	( {
+		type: 'SET_PLAN_BILLING_PERIOD',
+		billingPeriod,
+	} as const );
+
+export const setPlanProductId = function* setPlanProductId( planProductId: number | undefined ) {
+	const isFree = select( PLANS_STORE ).isPlanProductFree( planProductId );
+
+	if ( ! isFree ) {
+		const planProduct = select( PLANS_STORE ).getPlanProductById( planProductId );
+		const billingPeriod = planProduct?.billingPeriod ?? 'ANNUALLY';
+
+		yield __setBillingPeriod( billingPeriod );
+	}
+
+	return {
 		type: 'SET_PLAN_PRODUCT_ID',
 		planProductId,
-	} as const );
+	} as const;
+};
 
 export const unsetPlanProductId = () =>
 	( {
@@ -124,6 +143,27 @@ export const hideModalTitle = () =>
 		type: 'HIDE_MODAL_TITLE',
 	} as const );
 
+export const enablePersistentSuccessView = () =>
+	( {
+		type: 'ENABLE_SUCCESS_VIEW',
+	} as const );
+
+export const disablePersistentSuccessView = () =>
+	( {
+		type: 'DISABLE_SUCCESS_VIEW',
+	} as const );
+
+// TODO: I feel that there is a better way to type this
+type SetPlanActionParams = () =>
+	| {
+			readonly type: 'SET_PLAN_BILLING_PERIOD';
+			readonly billingPeriod: Plans.PlanBillingPeriod;
+	  }
+	| {
+			readonly type: 'SET_PLAN_PRODUCT_ID';
+			readonly planProductId: number | undefined;
+	  };
+
 export type LaunchAction = ReturnType<
 	| typeof setSiteTitle
 	| typeof unsetDomain
@@ -131,7 +171,7 @@ export type LaunchAction = ReturnType<
 	| typeof setDomain
 	| typeof confirmDomainSelection
 	| typeof setDomainSearch
-	| typeof setPlanProductId
+	| SetPlanActionParams
 	| typeof openFocusedLaunch
 	| typeof closeFocusedLaunch
 	| typeof unsetPlanProductId
