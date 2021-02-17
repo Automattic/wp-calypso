@@ -515,6 +515,8 @@ type StepIndexRenderFunction = ( renderOptions: {
 } ) => React.ReactNode;
 
 const Summary: React.FunctionComponent = () => {
+	const { siteId } = React.useContext( LaunchContext );
+
 	const [
 		hasSelectedDomain,
 		isSiteTitleStepVisible,
@@ -525,37 +527,43 @@ const Summary: React.FunctionComponent = () => {
 		const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
 
 		return [ launchStore.hasSelectedDomain(), isSiteTitleStepVisible, domain, planProductId ];
-	} );
+	}, [] );
 
-	const { isSelectedPlanFree } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-
-		return {
-			isSelectedPlanFree: plansStore.isPlanProductFree( selectedPlanProductId ),
-		};
-	} );
+	const isSelectedPlanPaid = useSelect(
+		( select ) => !! select( LAUNCH_STORE ).getPaidPlanProductId(),
+		[]
+	);
 
 	const { launchSite } = useDispatch( SITE_STORE );
-	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
+	const {
+		setModalDismissible,
+		unsetModalDismissible,
+		showModalTitle,
+		showSiteTitleStep,
+	} = useDispatch( LAUNCH_STORE );
+
 	const { title, updateTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
-	const { isPaidPlan: hasPaidPlan } = useSite();
-
-	const { siteId } = React.useContext( LaunchContext );
-
-	const { goToCheckout } = useCart();
+	const { hasPaidPlan } = useSite();
 
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
 
-	// When the summary view is active, the modal should be dismissible, and
+	const { goToCheckoutAndLaunch, isCartUpdating } = useCart();
+
+	// When the summary view is active, if cart is not updating, the modal should be dismissible, and
 	// the modal title should be visible
 	React.useEffect( () => {
-		setModalDismissible();
+		if ( isCartUpdating ) {
+			unsetModalDismissible();
+		} else {
+			setModalDismissible();
+		}
+
 		showModalTitle();
-	}, [ setModalDismissible, showModalTitle ] );
+	}, [ isCartUpdating, setModalDismissible, showModalTitle, unsetModalDismissible ] );
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
@@ -567,9 +575,12 @@ const Summary: React.FunctionComponent = () => {
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
 	const handleLaunch = () => {
-		launchSite( siteId );
-		if ( selectedDomain || ! isSelectedPlanFree ) {
-			goToCheckout();
+		// Launch the site directly if Free plan and subdomain are selected.
+		// Otherwise, show checkout as the next step.
+		if ( ! selectedDomain && ! isSelectedPlanPaid ) {
+			launchSite( siteId );
+		} else {
+			goToCheckoutAndLaunch();
 		}
 	};
 
@@ -675,8 +686,10 @@ const Summary: React.FunctionComponent = () => {
 			<div className="focused-launch-summary__actions-wrapper">
 				<ActionButtons className="focused-launch-summary__launch-action-bar">
 					<NextButton
-						className="focused-launch-summary__launch-button"
-						disabled={ ! isReadyToLaunch }
+						className={ classNames( 'focused-launch-summary__launch-button', {
+							'focused-launch-summary__launch-button--is-loading': isCartUpdating,
+						} ) }
+						disabled={ ! isReadyToLaunch || isCartUpdating }
 						onClick={ handleLaunch }
 					>
 						{ __( 'Launch your site', __i18n_text_domain__ ) }

@@ -149,19 +149,6 @@ const isModalTitleVisible: Reducer< boolean, LaunchAction > = ( state = true, ac
 	return state;
 };
 
-// Check if launch Success view should be displayed (user didn't dismissed the Success View modal)
-const shouldDisplaySuccessView: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
-	if ( action.type === 'ENABLE_SUCCESS_VIEW' ) {
-		return true;
-	}
-
-	if ( action.type === 'DISABLE_SUCCESS_VIEW' ) {
-		return false;
-	}
-
-	return state;
-};
-
 const reducer = combineReducers( {
 	step,
 	siteTitle,
@@ -177,7 +164,6 @@ const reducer = combineReducers( {
 	isSiteTitleStepVisible,
 	isModalDismissible,
 	isModalTitleVisible,
-	shouldDisplaySuccessView,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -3,7 +3,7 @@
  */
 import { doAction, hasAction } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
-import { FOCUSED_LAUNCH_FLOW } from './constants';
+import { FOCUSED_LAUNCH_FLOW, IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 
 interface CalypsoifyWindow extends Window {
 	currentSiteId?: number;
@@ -16,31 +16,43 @@ interface CalypsoifyWindow extends Window {
 }
 declare const window: CalypsoifyWindow;
 
+export const getCurrentLaunchFlowUrl = (): string => {
+	try {
+		return window?.calypsoifyGutenberg?.currentCalypsoUrl || window.location.href;
+	} catch ( err ) {
+		return '';
+	}
+};
+
 export const redirectParentWindow = ( url: string ): void => {
 	window.top.location.href = url;
 };
 
 export const redirectToWpcomPath = ( url: string ): void => {
-	const origin = 'https://wordpress.com';
+	const origin = new URL( getCurrentLaunchFlowUrl() )?.origin || 'https://wordpress.com';
+
 	const path = url.startsWith( '/' ) ? url : `/${ url }`;
 	redirectParentWindow( `${ origin }${ path }` );
 };
 
-export const getCurrentLaunchFlowUrl = (): string | undefined => {
-	try {
-		return window?.calypsoifyGutenberg?.currentCalypsoUrl;
-	} catch ( err ) {
-		return window.location.href;
-	}
-};
-
-export const openCheckout = ( siteSlug: string, isEcommerce = false ): void => {
+export const openCheckout = (
+	siteSlug: string = window?.currentSiteId?.toString() || '',
+	isEcommerce = false,
+	onSuccessCallback?: () => void
+): void => {
 	const HOOK_OPEN_CHECKOUT_MODAL = 'a8c.wpcom-block-editor.openCheckoutModal';
 	const isFocusedLaunchFlow = window?.wpcomEditorSiteLaunch?.launchFlow === FOCUSED_LAUNCH_FLOW;
+	const urlWithoutArgs = getCurrentLaunchFlowUrl().split( '?' )[ 0 ];
 
 	// only in focused launch, open checkout modal assuming the cart is already updated
 	if ( hasAction( HOOK_OPEN_CHECKOUT_MODAL ) && isFocusedLaunchFlow ) {
-		doAction( HOOK_OPEN_CHECKOUT_MODAL );
+		doAction( HOOK_OPEN_CHECKOUT_MODAL, {
+			checkoutOnSuccessCallback: onSuccessCallback,
+			isFocusedLaunch: true,
+			redirectTo: addQueryArgs( urlWithoutArgs, {
+				[ IMMEDIATE_LAUNCH_QUERY_ARG ]: true,
+			} ),
+		} );
 		return;
 	}
 

@@ -124,16 +124,6 @@ export const hideModalTitle = () =>
 		type: 'HIDE_MODAL_TITLE',
 	} as const );
 
-export const enablePersistentSuccessView = () =>
-	( {
-		type: 'ENABLE_SUCCESS_VIEW',
-	} as const );
-
-export const disablePersistentSuccessView = () =>
-	( {
-		type: 'DISABLE_SUCCESS_VIEW',
-	} as const );
-
 export type LaunchAction = ReturnType<
 	| typeof setSiteTitle
 	| typeof unsetDomain
@@ -156,6 +146,4 @@ export type LaunchAction = ReturnType<
 	| typeof unsetModalDismissible
 	| typeof showModalTitle
 	| typeof hideModalTitle
-	| typeof enablePersistentSuccessView
-	| typeof disablePersistentSuccessView
 >;
