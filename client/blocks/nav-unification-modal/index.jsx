@@ -5,6 +5,7 @@ import React from 'react';
 import { Guide } from '@wordpress/components';
 import { Title } from '@automattic/onboarding';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Image dependencies
@@ -52,6 +52,14 @@ const Modal = () => {
 	const dismissPreference = `nav-unification-modal-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const translate = useTranslate();
+
+	/**
+	 * Translate calls will ensure that the following strings from the Guide component would be extracted
+	 * and their respective translation would be loaded and displayed properly in the nav unifcation modal
+	 */
+	translate( 'Previous' );
+	translate( 'Next' );
+	translate( 'Finish' );
 
 	if ( ! hasPreferences || isDismissed ) {
 		return null;
