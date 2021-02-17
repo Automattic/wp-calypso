@@ -53,7 +53,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	}, [ selectedPlanProductId, planProductIdFromCart, setPlanProductId, hasPaidPlan ] );
 
 	// The user may have previously used the launch flow to pick a paid plan,
-	// but they may have then purchased that paid plan before launching.
+	// but they may have then purchased that paid plan or other plan before deciding to continue Launch flow.
 	// In this scenario, the site has a paid plan but it is not launched yet.
 	// So when launch modal reopens, we need to unset the selected plan product
 	// id (that was previously selected, but is not needed anymore).
