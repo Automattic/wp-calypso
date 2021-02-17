@@ -57,7 +57,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 
 	async clickNewThemeMoreButton() {
 		const selector = by.css(
-			".theme-showcase__all-themes .is-actionable:not(.is-active):not([data-e2e-theme*='twenty-twenty-one']) button"
+			".theme-showcase__all-themes .is-actionable[data-e2e-theme*='twenty-fifteen']:not(.is-active) button"
 		);
 
 		await driverHelper.scrollIntoView( this.driver, selector );
@@ -67,7 +67,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	async getFirstThemeName() {
 		// Get the first theme that isn't the Twenty-Twenty-One theme
 		const selector = by.css(
-			".theme-showcase__all-themes .is-actionable:not(.is-active):not([data-e2e-theme*='twenty-twenty-one']) h2"
+			".theme-showcase__all-themes .is-actionable[data-e2e-theme*='twenty-fifteen']:not(.is-active) h2"
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		await driverHelper.scrollIntoView( this.driver, selector );
