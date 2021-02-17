@@ -127,6 +127,8 @@ class SignupForm extends Component {
 			email: false,
 			username: false,
 			password: false,
+			firstname: false,
+			lastnmae: false,
 		},
 		form: null,
 		signedUp: false,
@@ -242,7 +244,7 @@ class SignupForm extends Component {
 	};
 
 	filterUntouchedFieldErrors = ( errorMessages ) => {
-		// Don't show "field is empty" error message unless the field is 'dirty' (it has been interacted with).
+		// Filter out "field is empty" error messages unless the field is 'dirty' (it has been interacted with).
 		return omitBy(
 			errorMessages,
 			( value, key ) => value.hasOwnProperty( 'argument' ) && ! this.state.isFieldDirty[ key ]
