@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import webdriver, { By, Key, until } from 'selenium-webdriver';
+import webdriver, { By, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -15,6 +15,7 @@ import { ContactFormBlockComponent } from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 import { FileBlockComponent } from './blocks/file-block-component';
+import GuideComponent from '../components/guide-component.js';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
@@ -60,7 +61,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( dismissPageTemplateSelector ) {
 			await this.dismissPageTemplateSelector();
 		}
-		await this.dismissEditorWelcomeModal();
+		const editorWelcomeModal = await GuideComponent.Expect( this.driver );
+		await editorWelcomeModal.dismissModal( '.components-guide' );
 		return await this.closeSidebar();
 	}
 
@@ -665,33 +667,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( '.page-template-modal__buttons .components-button.is-primary' )
 				);
 				await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
-			}
-		}
-	}
-
-	async dismissEditorWelcomeModal() {
-		const welcomeModal = By.css( '.components-guide__container' );
-		if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
-				this.driver,
-				welcomeModal,
-				this.explicitWaitMS / 5
-			)
-		) {
-			try {
-				// Easiest way to dismiss it, but it might not work in IE.
-				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
-			} catch {
-				// Click to the last page of the welcome guide.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( 'ul.components-guide__page-control li:last-child button' )
-				);
-				// Click the finish button.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( '.components-guide__finish-button' )
-				);
 			}
 		}
 	}

@@ -8,6 +8,7 @@ const webdriver = require( 'selenium-webdriver' );
  */
 const driverHelper = require( '../driver-helper' );
 const AsyncBaseContainer = require( '../async-base-container' );
+const GuideComponent = require( './guide-component.js' );
 
 const By = webdriver.By;
 const until = webdriver.until;
@@ -51,7 +52,8 @@ class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( dismissPageTemplateSelector ) {
 			await this.dismissPageTemplateSelector();
 		}
-		await this.dismissEditorWelcomeModal();
+		const editorWelcomeModal = await GuideComponent.Expect( this.driver );
+		await editorWelcomeModal.dismissModal( '.components-guide' );
 		return await this.closeSidebar();
 	}
 
@@ -80,20 +82,6 @@ class GutenbergEditorComponent extends AsyncBaseContainer {
 				By.css( '.page-template-modal__buttons .components-button.is-primary' )
 			);
 			await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
-		}
-	}
-
-	async dismissEditorWelcomeModal() {
-		const welcomeModal = By.css( '.components-guide__container' );
-		if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
-				this.driver,
-				welcomeModal,
-				this.explicitWaitMS / 5
-			)
-		) {
-			// eslint-disable-next-line no-undef
-			await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
 		}
 	}
 
