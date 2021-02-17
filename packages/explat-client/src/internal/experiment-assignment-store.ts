@@ -5,10 +5,13 @@ import type { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
 
 /**
- * Class to hold ExperimentAssignment state
+ * Class to store existing ExperimentAssignments in memory
  */
 export default class ExperimentAssignmentStore {
-	experimentAssigntmentsByExperimentName: Record< string, ExperimentAssignment | undefined > = {};
+	private experimentNameToExperimentAssignment: Record<
+		string,
+		ExperimentAssignment | undefined
+	> = {};
 
 	/**
 	 * Store an ExperimentAssignment.
@@ -18,7 +21,7 @@ export default class ExperimentAssignmentStore {
 	store( experimentAssignment: ExperimentAssignment ): void {
 		Validations.validateExperimentAssignment( experimentAssignment );
 
-		const previousExperimentAssignment = this.experimentAssigntmentsByExperimentName[
+		const previousExperimentAssignment = this.experimentNameToExperimentAssignment[
 			experimentAssignment.experimentName
 		];
 		if (
@@ -30,7 +33,7 @@ export default class ExperimentAssignmentStore {
 			);
 		}
 
-		this.experimentAssigntmentsByExperimentName[
+		this.experimentNameToExperimentAssignment[
 			experimentAssignment.experimentName
 		] = experimentAssignment;
 	}
@@ -41,6 +44,6 @@ export default class ExperimentAssignmentStore {
 	 * @param experimentName The experiment name.
 	 */
 	retrieve( experimentName: string ): ExperimentAssignment | undefined {
-		return this.experimentAssigntmentsByExperimentName[ experimentName ];
+		return this.experimentNameToExperimentAssignment[ experimentName ];
 	}
 }
