@@ -36,7 +36,6 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	expiry,
 	lastDigits,
 	name,
-	selected,
 	email,
 	paymentPartner,
 	isExpired,
@@ -53,7 +52,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	return (
 		<>
 			<img
-				src={ getPaymentMethodImageURL( type, selected ) }
+				src={ getPaymentMethodImageURL( type ) }
 				className="payment-method-details__image"
 				alt=""
 			/>
