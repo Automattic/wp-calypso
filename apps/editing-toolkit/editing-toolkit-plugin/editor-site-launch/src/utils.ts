@@ -5,6 +5,8 @@ import { doAction, hasAction } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
 import { FOCUSED_LAUNCH_FLOW, IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 
+// When running in Calypso, currentCalypsoUrl is used.
+// When running in WP-Admin, window.location.href is used.
 export const getCurrentLaunchFlowUrl = (): string =>
 	window?.calypsoifyGutenberg?.currentCalypsoUrl ?? window.location.href;
 
