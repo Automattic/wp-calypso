@@ -374,6 +374,14 @@ $accent-blue: #117ac9;
 	}
 }
 
+.domain-picker__suggestion-item.is-free {
+	// free domains don't include the wide phrase "Included in paid plans"
+	// they only include "Free" or "Default" word, this shrinks their width 
+	.domain-picker__price {
+		flex-grow: 0;
+	}
+}
+
 .domain-picker__suggestion-item.type-individual-item {
 	.domain-picker__price {
 		display: flex;
