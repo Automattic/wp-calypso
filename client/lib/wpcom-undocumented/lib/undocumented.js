@@ -789,15 +789,17 @@ Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt
 /**
  * Retrieves the auto login link to Titan's control panel.
  *
- * @param orderId the Titan order ID
+ * @param orderId The Titan order ID
+ * @param context Optional context enum to launch into a specific part of the control panel
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, context, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
 			apiNamespace: 'wpcom/v2',
 		},
+		{ context },
 		fn
 	);
 };

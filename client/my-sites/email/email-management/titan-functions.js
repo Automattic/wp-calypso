@@ -7,14 +7,16 @@
  */
 import wpcom from 'calypso/lib/wp';
 
-export const fetchTitanAutoLoginURL = ( orderId ) => {
+export const fetchTitanAutoLoginURL = ( orderId, context ) => {
 	return new Promise( ( resolve ) => {
-		wpcom.undocumented().getTitanControlPanelAutoLoginURL( orderId, ( serverError, result ) => {
-			resolve( {
-				error: serverError?.message,
-				loginURL: serverError ? null : result.auto_login_url,
+		wpcom
+			.undocumented()
+			.getTitanControlPanelAutoLoginURL( orderId, context, ( serverError, result ) => {
+				resolve( {
+					error: serverError?.message,
+					loginURL: serverError ? null : result.auto_login_url,
+				} );
 			} );
-		} );
 	} );
 };
 

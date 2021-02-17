@@ -29,6 +29,7 @@ import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powe
 class TitanControlPanelRedirect extends React.Component {
 	static propTypes = {
 		// Props
+		context: PropTypes.string,
 		domainName: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 
@@ -58,18 +59,20 @@ class TitanControlPanelRedirect extends React.Component {
 		}
 
 		this._fetchTriggered = true;
-		const { domain, translate } = this.props;
+		const { context, domain, translate } = this.props;
 
-		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
-			if ( error ) {
-				this._fetchTriggered = false;
-				this.props.errorNotice(
-					error ?? translate( 'An unknown error occurred. Please try again later.' )
-				);
-			} else {
-				window.location = loginURL;
+		fetchTitanAutoLoginURL( getTitanMailOrderId( domain ), context ).then(
+			( { error, loginURL } ) => {
+				if ( error ) {
+					this._fetchTriggered = false;
+					this.props.errorNotice(
+						error ?? translate( 'An unknown error occurred. Please try again later.' )
+					);
+				} else {
+					window.location = loginURL;
+				}
 			}
-		} );
+		);
 	}
 
 	render() {
