@@ -10,7 +10,6 @@ import { Button, ProductIcon } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { preventWidows } from 'calypso/lib/formatting';
 import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
