@@ -162,7 +162,7 @@ describe( 'fetchExperimentAssignment', () => {
 } );
 
 describe( 'isFetchExperimentAssignmentResponse', () => {
-	it( 'should return true for valid reponses', () => {
+	it( 'should return true for valid responses', () => {
 		expect(
 			Requests.isFetchExperimentAssignmentResponse( {
 				ttl: 1,
@@ -180,7 +180,7 @@ describe( 'isFetchExperimentAssignmentResponse', () => {
 		).toBe( true );
 	} );
 
-	it( 'should return false for reponses with 0 ttl', () => {
+	it( 'should return false for responses with 0 ttl', () => {
 		expect(
 			Requests.isFetchExperimentAssignmentResponse( {
 				ttl: 0,
