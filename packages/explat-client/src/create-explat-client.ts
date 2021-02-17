@@ -142,7 +142,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					return storedExperimentAssignment;
 				}
 
-				// We are syncronously trying to retreive and then store a fallback which means this fallback will
+				// We are syncronously trying to retrieve and then store a fallback which means this fallback will
 				// be retrieved by all other loadExperimentAssignments that are currently running or will run,
 				// preventing a run on the server.
 				const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
