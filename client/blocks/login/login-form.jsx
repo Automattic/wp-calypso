@@ -8,6 +8,7 @@ import ReactDom from 'react-dom';
 import { capitalize, defer, includes, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -98,7 +99,7 @@ export class LoginForm extends Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		const { disableAutoFocus, requestError, handleUsernameChange } = this.props;
+		const { currentRoute, disableAutoFocus, requestError, handleUsernameChange } = this.props;
 
 		if ( handleUsernameChange && prevState.usernameOrEmail !== this.state.usernameOrEmail ) {
 			handleUsernameChange( this.state.usernameOrEmail );
@@ -114,6 +115,16 @@ export class LoginForm extends Component {
 
 		if ( requestError.field === 'usernameOrEmail' ) {
 			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+		}
+
+		// User entered an email address or username that doesn't have a corresponding WPCOM account
+		// and sign-up with magic links is enabled.
+		if (
+			currentRoute.includes( '/log-in/jetpack' ) &&
+			config.isEnabled( 'jetpack/magic-link-signup' ) &&
+			requestError.code === 'unknown_user'
+		) {
+			this.jetpackCreateAccountWithMagicLink();
 		}
 	}
 
@@ -237,6 +248,32 @@ export class LoginForm extends Component {
 	saveUsernameOrEmailRef = ( input ) => {
 		this.usernameOrEmail = input;
 	};
+
+	jetpackCreateAccountWithMagicLink() {
+		// When a user enters a username or an email address that doesn't have a corresponding
+		// WPCOM account, we need to figure out whether the user entered a username or an email
+		// address. If the user entered an email address, we can safely attempt to create a WPCOM
+		// account for this user with the help of magic links. On the other hand, if the user entered
+		// a username, we need to prompt the user specifically for an email address to proceed with
+		// the WPCOM account creation with magic links.
+
+		const isEmailAddress = includes( this.state.usernameOrEmail, '@' );
+		if ( isEmailAddress ) {
+			// With Magic Links, create the user a WPCOM account linked to the entered email address
+			this.props.sendEmailLogin( this.state.usernameOrEmail, {
+				redirectTo: this.props.redirectTo,
+				requestLoginEmailFormFlow: true,
+				createAccount: true,
+			} );
+		}
+
+		// Redirect user to the Magic Link form page
+		page(
+			`/log-in/jetpack/link?${ new globalThis.URLSearchParams( {
+				email_address: this.state.usernameOrEmail,
+			} ).toString() }`
+		);
+	}
 
 	renderPrivateSiteNotice() {
 		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
