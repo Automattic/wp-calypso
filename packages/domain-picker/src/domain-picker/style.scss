@@ -378,7 +378,7 @@ $accent-blue: #117ac9;
 	// free domains don't include the wide phrase "Included in paid plans"
 	// they only include "Free" or "Default" word, this shrinks their width 
 	.domain-picker__price {
-		flex-grow: 0;
+		flex-grow: 0.1 // this is practically the same as 0. But 0 breaks IE.
 	}
 }
 
