@@ -71,6 +71,7 @@
 		"jetpack/on-demand-scan": true,
 		"jetpack/backups-restore": true,
 		"jetpack/personal-plan": false,
+		"jetpack/simplify-login-signup-flows": true,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,

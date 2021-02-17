@@ -145,6 +145,20 @@ export class LoginForm extends Component {
 		} );
 	};
 
+	isJetpackConnectLogin() {
+		const { currentRoute } = this.props;
+		return startsWith( currentRoute, '/log-in/jetpack' );
+	}
+
+	isJetpackCloudLogin() {
+		const { currentRoute, currentQuery } = this.props;
+		return startsWith( currentRoute, '/log-in' ) && currentQuery?.client_id;
+	}
+
+	isJetpackLogin() {
+		return this.isJetpackConnectLogin() || this.isJetpackCloudLogin();
+	}
+
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
@@ -223,12 +237,14 @@ export class LoginForm extends Component {
 	showUsernameError() {
 		const { requestError } = this.props;
 
-		// TODO: add feature flag or Jetpack context condition
-		return (
-			requestError &&
-			requestError.field === 'usernameOrEmail' &&
-			requestError.code !== LOGIN_ERROR_UNKNOWN_USER
-		);
+		if ( config.isEnabled( 'jetpack/simplify-login-signup-flows' ) && this.isJetpackLogin() ) {
+			return (
+				requestError &&
+				requestError.field === 'usernameOrEmail' &&
+				requestError.code !== LOGIN_ERROR_UNKNOWN_USER
+			);
+		}
+		return requestError && requestError.field === 'usernameOrEmail';
 	}
 
 	resetView = ( event ) => {
