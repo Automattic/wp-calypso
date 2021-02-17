@@ -14,8 +14,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { getForCurrentCROIteration } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
-// Fresh Start 2021 promotion; runs from Feb 1 00:00 to Feb 14 23:59 UTC automatically.
-// Safe to remove on or after Feb 15.
+// Fresh Start 2021 promotion; runs from Feb 16 00:00 to Mar 3 23:59 UTC automatically.
+// Safe to remove on or after Mar 4.
 import FreshStart2021SaleBanner from 'calypso/components/jetpack/fresh-start-2021-sale-banner';
 
 /**
