@@ -24,7 +24,7 @@ export interface ExperimentAssignment {
 	/**
 	 * For keeping the original experiment name in case it is invalid and we can't put it in experimentName.
 	 */
-	originalExperimentName?: string;
+	requestedExperimentName?: string;
 }
 
 // ## Abstracting the outside world
