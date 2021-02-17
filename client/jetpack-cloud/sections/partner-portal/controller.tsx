@@ -26,11 +26,19 @@ export function partnerKeyContext( context: PageJS.Context, next: () => void ): 
 }
 
 export function partnerPortalContext( context: PageJS.Context, next: () => void ): void {
+	const { s: search, sort_field: sortField, sort_direction: sortDirection } = context.query;
 	const licenseFilter = stringToLicenseFilter( context.params.state );
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <Licenses licenseFilter={ licenseFilter } search={ context.query.s || '' } />;
+	context.primary = (
+		<Licenses
+			licenseFilter={ licenseFilter }
+			search={ search || '' }
+			sortDirection={ sortDirection }
+			sortField={ sortField }
+		/>
+	);
 	context.footer = <JetpackComFooter />;
 	next();
 }

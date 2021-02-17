@@ -17,9 +17,16 @@ import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/li
 interface Props {
 	licenseFilter: LicenseFilter;
 	search: string;
+	sortDirection?: string;
+	sortField?: string;
 }
 
-export default function Licenses( { licenseFilter, search }: Props ): ReactElement {
+export default function Licenses( {
+	licenseFilter,
+	search,
+	sortDirection = 'asc',
+	sortField = 'issued_at',
+}: Props ): ReactElement {
 	const translate = useTranslate();
 
 	return (
@@ -30,7 +37,11 @@ export default function Licenses( { licenseFilter, search }: Props ): ReactEleme
 
 			<LicenseStateFilter licenseFilter={ licenseFilter } search={ search } />
 
-			<LicenseList />
+			<LicenseList
+				licenseFilter={ licenseFilter }
+				sortDirection={ sortDirection }
+				sortField={ sortField }
+			/>
 		</Main>
 	);
 }

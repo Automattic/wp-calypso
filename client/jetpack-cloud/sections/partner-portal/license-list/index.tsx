@@ -1,9 +1,13 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import { pick } from 'lodash';
+import url from 'url'; // eslint-disable-line no-restricted-imports
+import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -21,27 +25,46 @@ import LicensePreview, {
 	LicensePreviewPlaceholder,
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
 import Gridicon from 'calypso/components/gridicon';
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export default function LicenseList(): ReactElement {
+interface Props {
+	licenseFilter: LicenseFilter;
+	sortDirection: string;
+	sortField: string;
+}
+
+export default function LicenseList( {
+	licenseFilter,
+	sortDirection,
+	sortField,
+}: Props ): ReactElement {
 	const translate = useTranslate();
 	const hasFetched = useSelector( hasFetchedLicenses );
 	const isFetching = useSelector( isFetchingLicenses );
 	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;
-	const [ sortConfig, setSortConfig ] = useState( { direction: 'asc', field: 'attached_at' } );
 
-	const onSort = ( newSortField: string ): void => {
+	const buildSortingUrl = ( field: string, direction: string ): string => {
+		const parsedUrl = pick( url.parse( window.location.href, true ), 'pathname', 'query' );
+
+		return url.format( {
+			...parsedUrl,
+			query: { ...parsedUrl.query, sort_field: field, sort_direction: direction },
+		} );
+	};
+
+	const setSortingConfig = ( newSortField: string ): void => {
 		let newSortDirection = 'asc';
 
-		if ( sortConfig.field === newSortField ) {
-			newSortDirection = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+		if ( sortField === newSortField ) {
+			newSortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
 		}
 
-		setSortConfig( { field: newSortField, direction: newSortDirection } );
+		page( buildSortingUrl( newSortField, newSortDirection ) );
 	};
 
 	return (
@@ -50,24 +73,42 @@ export default function LicenseList(): ReactElement {
 
 			<LicenseListItem header>
 				<h2>{ translate( 'License state' ) }</h2>
-				<h2>
-					<button onClick={ () => onSort( 'issued_at' ) }>
+				<h2 className={ classnames( { 'is-selected': 'issued_at' === sortField } ) }>
+					<button onClick={ () => setSortingConfig( 'issued_at' ) }>
 						{ translate( 'Issued on' ) }
-						<Gridicon icon="dropdown" />
+						<Gridicon
+							icon="dropdown"
+							className={ classnames( 'license-list-item__sort-indicator', {
+								[ `is-sort-${ sortDirection }` ]: sortDirection,
+							} ) }
+						/>
 					</button>
 				</h2>
-				<h2>
-					<button onClick={ () => onSort( 'attached_at' ) }>
-						{ translate( 'Attached on' ) }
-						<Gridicon icon="dropdown" />
-					</button>
-				</h2>
-				<h2>
-					<button onClick={ () => onSort( 'revoked_at' ) }>
-						{ translate( 'Revoked on' ) }
-						<Gridicon icon="dropdown" />
-					</button>
-				</h2>
+				{ licenseFilter !== LicenseFilter.Revoked ? (
+					<h2 className={ classnames( { 'is-selected': 'attached_at' === sortField } ) }>
+						<button onClick={ () => setSortingConfig( 'attached_at' ) }>
+							{ translate( 'Attached on' ) }
+							<Gridicon
+								icon="dropdown"
+								className={ classnames( 'license-list-item__sort-indicator', {
+									[ `is-sort-${ sortDirection }` ]: sortDirection,
+								} ) }
+							/>
+						</button>
+					</h2>
+				) : (
+					<h2 className={ classnames( { 'is-selected': 'revoked_at' === sortField } ) }>
+						<button onClick={ () => setSortingConfig( 'revoked_at' ) }>
+							{ translate( 'Revoked on' ) }
+							<Gridicon
+								icon="dropdown"
+								className={ classnames( 'license-list-item__sort-indicator', {
+									[ `is-sort-${ sortDirection }` ]: sortDirection,
+								} ) }
+							/>
+						</button>
+					</h2>
+				) }
 				<div>{ /* Intentionally empty header. */ }</div>
 				<div>{ /* Intentionally empty header. */ }</div>
 			</LicenseListItem>
@@ -93,6 +134,7 @@ export default function LicenseList(): ReactElement {
 						issuedAt={ license.issuedAt }
 						attachedAt={ license.attachedAt }
 						revokedAt={ license.revokedAt }
+						licenseFilter={ licenseFilter }
 					/>
 				) ) }
 
