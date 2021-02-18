@@ -4,11 +4,11 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import photon from 'photon';
 
 /**
  * Internal dependencies
  */
+import resize from 'calypso/lib/resize-image-url';
 import ListItemFileDetails from './list-item-file-details';
 import Gridicon from 'calypso/components/gridicon';
 import { MEDIA_IMAGE_THUMBNAIL } from 'calypso/lib/media/constants';
@@ -50,7 +50,7 @@ export default class extends React.Component {
 			const url =
 				this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL
 					? thumbnail
-					: photon( thumbnail, { width: this.props.maxImageWidth } );
+					: resize( thumbnail, { w: this.props.maxImageWidth } );
 
 			return <MediaFile src={ url } component={ ListItemVideo } placeholder={ ListItemVideo } />;
 		}
