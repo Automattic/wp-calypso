@@ -42,26 +42,13 @@ function generateGetSuperProps() {
 }
 
 type Site = SiteStore.SiteDetails;
-
 interface AppWindow extends Window {
 	BUILD_TARGET?: string;
 }
+
 declare const window: AppWindow;
 
-/**
- * Handle redirects from development phase
- * TODO: Remove after a few months. See section definition as well.
- */
-const DEVELOPMENT_BASENAME = '/gutenboarding';
-
 window.AppBoot = async () => {
-	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
-		const url = new URL( window.location.href );
-		url.pathname = 'new' + url.pathname.substring( DEVELOPMENT_BASENAME.length );
-		window.location.replace( url.toString() );
-		return;
-	}
-
 	setupWpDataDebug();
 	// User is left undefined here because the user account will not be created
 	// until after the user has completed the gutenboarding flow.
