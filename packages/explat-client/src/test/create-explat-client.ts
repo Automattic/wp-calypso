@@ -122,6 +122,17 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
 			`Array []`
 		);
+		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls )
+			.toMatchInlineSnapshot( `
+		Array [
+		  Array [
+		    Object {
+		      "anonId": "the-anon-id-123",
+		      "experimentName": "experiment_name_a",
+		    },
+		  ],
+		]
+	` );
 	} );
 	it( `[developmentMode] should successfully load an ExperimentAssignment`, async () => {
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
@@ -147,11 +158,12 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			validExperimentAssignment
 		);
 		const client = createExPlatClient( mockedConfig );
-		await expect(
-			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
-		).resolves.toEqual( {
-			experimentName: 'fallback_experiment_assignment',
-			retrievedTimestamp: validExperimentAssignment.retrievedTimestamp,
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
+		await expect( client.loadExperimentAssignment( '' ) ).resolves.toEqual( {
+			experimentName: '',
+			retrievedTimestamp: validExperimentAssignment.retrievedTimestamp + 1000,
 			ttl: 60,
 			variationName: null,
 			isFallbackExperimentAssignment: true,
@@ -160,8 +172,16 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		Array [
 		  Array [
 		    Object {
-		      "experimentName": "the-invalid-experiment-name",
-		      "message": "Invalid experimentName: the-invalid-experiment-name",
+		      "experimentName": "",
+		      "message": "Invalid experimentName: \\"\\"",
+		      "source": "loadExperimentAssignment-initialError",
+		    },
+		  ],
+		  Array [
+		    Object {
+		      "experimentName": "",
+		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-fallbackError",
 		    },
 		  ],
 		]
@@ -174,15 +194,16 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			validExperimentAssignment
 		);
 		const client = createExPlatClient( mockedConfig );
-		await expect(
-			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
-		).rejects.toThrow( 'Invalid experimentName: the-invalid-experiment-name' );
+		await expect( client.loadExperimentAssignment( '' ) ).rejects.toThrow(
+			'Invalid experimentName: ""'
+		);
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
-		      "experimentName": "the-invalid-experiment-name",
-		      "message": "Invalid experimentName: the-invalid-experiment-name",
+		      "experimentName": "",
+		      "message": "Invalid experimentName: \\"\\"",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		]
@@ -213,6 +234,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "some-error-123",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		]
@@ -238,6 +260,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "some-error-123",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		]
@@ -272,6 +295,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Promise has timed-out.",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		]
@@ -298,6 +322,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Promise has timed-out.",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		]
@@ -315,9 +340,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			throw new Error( 'Error logging.' );
 		} );
 		const client = createExPlatClient( mockedConfig );
-		await expect(
-			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
-		).resolves.toEqual( {
+		await expect( client.loadExperimentAssignment( '' ) ).resolves.toEqual( {
 			experimentName: 'fallback_experiment_assignment',
 			retrievedTimestamp: validExperimentAssignment.retrievedTimestamp,
 			ttl: 60,
@@ -346,15 +369,16 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			throw new Error( 'Error while logging.' );
 		} );
 		const client = createExPlatClient( mockedConfig );
-		await expect(
-			client.loadExperimentAssignment( 'the-invalid-experiment-name' )
-		).rejects.toThrow( 'Invalid experimentName: the-invalid-experiment-name' );
+		await expect( client.loadExperimentAssignment( '' ) ).rejects.toThrow(
+			'Invalid experimentName: ""'
+		);
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
-		      "experimentName": "the-invalid-experiment-name",
-		      "message": "Invalid experimentName: the-invalid-experiment-name",
+		      "experimentName": "",
+		      "message": "Invalid experimentName: \\"\\"",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		]
@@ -501,7 +525,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 
 		const invalidExperimentAssignment = {
 			...validExperimentAssignment,
-			experimentName: 'invalid-experiment-name',
+			experimentName: '',
 		};
 		mockFetchExperimentAssignmentToMatchExperimentAssignment(
 			mockedConfig,
@@ -533,24 +557,28 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		  Array [
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		  Array [
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		  Array [
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		]
@@ -602,7 +630,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 
 		const invalidExperimentAssignment = {
 			...validExperimentAssignment,
-			experimentName: 'invalid-experiment-name',
+			experimentName: '',
 		};
 		mockFetchExperimentAssignmentToMatchExperimentAssignment(
 			mockedConfig,
@@ -648,24 +676,28 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		  Array [
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		  Array [
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		  Array [
 		    Object {
 		      "experimentName": "experiment_name_a",
 		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-initialError",
 		    },
 		  ],
 		]
@@ -714,7 +746,9 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		const client = createExPlatClient( mockedConfig );
 		expect( () =>
 			client.dangerouslyGetExperimentAssignment( 'the-invalid-name' )
-		).toThrowErrorMatchingInlineSnapshot( `"Invalid experimentName: the-invalid-name"` );
+		).toThrowErrorMatchingInlineSnapshot(
+			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
+		);
 	} );
 
 	it( `should throw when the matching experiment hasn't loaded yet`, () => {

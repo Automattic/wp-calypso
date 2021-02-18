@@ -94,7 +94,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
 			try {
 				if ( ! Validation.isName( experimentName ) ) {
-					throw new Error( `Invalid experimentName: ${ experimentName }` );
+					throw new Error( `Invalid experimentName: "${ experimentName }"` );
 				}
 
 				const storedExperimentAssignment = experimentAssignmentStore.retrieve( experimentName );
