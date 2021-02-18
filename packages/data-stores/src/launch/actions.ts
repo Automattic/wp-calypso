@@ -153,25 +153,27 @@ export const disablePersistentSuccessView = () =>
 		type: 'DISABLE_SUCCESS_VIEW',
 	} as const );
 
-// TODO: I feel that there is a better way to type this
-type SetPlanActionParams = () =>
-	| {
-			readonly type: 'SET_PLAN_BILLING_PERIOD';
-			readonly billingPeriod: Plans.PlanBillingPeriod;
-	  }
-	| {
-			readonly type: 'SET_PLAN_PRODUCT_ID';
-			readonly planProductId: number | undefined;
-	  };
+/**
+ * Usually we use ReturnType of all the action creators to deduce all the actions.
+ * This works until one of the action creators is a generator and doesn't actually "Return" an action.
+ * This type helper allows for actions to be both functions and generators
+ */
+type ReturnOrGeneratorYieldUnion< T extends ( ...args: any ) => any > = T extends (
+	...args: any
+) => infer Return
+	? Return extends Generator< infer T, infer U, any >
+		? T | U
+		: Return
+	: never;
 
-export type LaunchAction = ReturnType<
+export type LaunchAction = ReturnOrGeneratorYieldUnion<
 	| typeof setSiteTitle
 	| typeof unsetDomain
 	| typeof setStep
 	| typeof setDomain
 	| typeof confirmDomainSelection
 	| typeof setDomainSearch
-	| SetPlanActionParams
+	| typeof setPlanProductId
 	| typeof openFocusedLaunch
 	| typeof closeFocusedLaunch
 	| typeof unsetPlanProductId
