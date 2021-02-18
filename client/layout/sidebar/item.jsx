@@ -20,7 +20,9 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
-	const showAsExternal = isExternalLink && ! props.forceInternalLink;
+	const shouldOpenInNewTab = isExternalLink && ! props.forceInternalLink;
+	const showAsExternal =
+		typeof props.showAsExternal !== 'undefined' ? props.showAsExternal : shouldOpenInNewTab;
 	const classes = classnames( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
@@ -52,7 +54,7 @@ export default function SidebarItem( props ) {
 				className="sidebar__menu-link"
 				onClick={ props.onNavigate }
 				href={ props.link }
-				target={ showAsExternal ? '_blank' : null }
+				target={ shouldOpenInNewTab ? '_blank' : null }
 				rel={ isExternalLink ? 'noopener noreferrer' : null }
 				onMouseEnter={ itemPreload }
 			>
@@ -93,6 +95,7 @@ SidebarItem.propTypes = {
 	expandSection: PropTypes.func,
 	preloadSectionName: PropTypes.string,
 	forceInternalLink: PropTypes.bool,
+	showAsExternal: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,
