@@ -151,8 +151,8 @@ export class LoginForm extends Component {
 	}
 
 	isJetpackCloudLogin() {
-		const { currentRoute, currentQuery } = this.props;
-		return startsWith( currentRoute, '/log-in' ) && currentQuery?.client_id;
+		const { currentRoute, oauth2Client } = this.props;
+		return startsWith( currentRoute, '/log-in' ) && oauth2Client?.name === 'jetpack-cloud';
 	}
 
 	isJetpackLogin() {
