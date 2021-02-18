@@ -106,9 +106,11 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async clearSearch() {
+		const closeSelector = by.css( '.themes-magic-search-card__icon-close' );
+		await driverHelper.scrollIntoView( this.driver, closeSelector );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.themes-magic-search-card__icon-close' )
+			closeSelector
 		);
 	}
 
