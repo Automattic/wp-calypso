@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,11 +15,11 @@ import {
 	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
+	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );

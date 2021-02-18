@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,11 +16,11 @@ import {
 	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -170,7 +168,10 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: [ { name: 'category', label: 'Categories' }, { name: 'post_tag', label: 'Tags' } ],
+					post: [
+						{ name: 'category', label: 'Categories' },
+						{ name: 'post_tag', label: 'Tags' },
+					],
 				},
 			} );
 		} );

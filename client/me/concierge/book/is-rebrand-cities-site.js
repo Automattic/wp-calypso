@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * We have an initiative partnership called Rebrand Cities, where our partners help businesses
  * set up a WordPress.com Business site. The site owners are then encouraged to book a Concierge
@@ -25,7 +23,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import SiteUsersFetcher from 'components/site-users-fetcher';
+import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
 
 const REBRAND_CITIES_ACCOUNT_USERNAME = 'rebrandcities';
 

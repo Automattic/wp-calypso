@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,12 +8,12 @@ import { map, chunk } from 'lodash';
 /**
  * Internal dependencies
  */
-import ComponentPlayground from 'devdocs/design/component-playground';
+import ComponentPlayground from 'calypso/devdocs/design/component-playground';
 import LazyRender from 'react-lazily-render';
-import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
-import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
-import ReadmeViewer from 'components/readme-viewer';
-import Placeholder from 'devdocs/devdocs-async-load/placeholder';
+import DocsExampleWrapper from 'calypso/devdocs/docs-example/wrapper';
+import { camelCaseToSlug, getComponentName } from 'calypso/devdocs/docs-example/util';
+import ReadmeViewer from 'calypso/components/readme-viewer';
+import Placeholder from 'calypso/devdocs/devdocs-async-load/placeholder';
 import { getExampleCodeFromComponent } from './playground-utils';
 
 const shouldShowInstance = ( example, filter, component ) => {
@@ -37,12 +35,21 @@ const shouldShowInstance = ( example, filter, component ) => {
 };
 
 const getReadmeFilePath = ( section, example ) => {
-	switch ( section ) {
-		case 'design':
-			return `/client/components/${ example.props.readmeFilePath }/README.md`;
-		default:
-			return `/client/${ section }/${ example.props.readmeFilePath }/README.md`;
+	let path = example.props.readmeFilePath;
+
+	if ( ! path ) {
+		return null;
 	}
+
+	if ( ! path.startsWith( '/' ) ) {
+		path = `/client/${ section === 'design' ? 'components' : section }/${ path }`;
+	}
+
+	if ( ! path.endsWith( 'README.md' ) ) {
+		path = `${ path }/README.md`;
+	}
+
+	return path;
 };
 
 const Collection = ( {
@@ -55,7 +62,11 @@ const Collection = ( {
 	let showCounter = 0;
 	const summary = [];
 
-	const examples = React.Children.map( children, example => {
+	const scroll = () => {
+		window.scrollTo( 0, 0 );
+	};
+
+	const examples = React.Children.map( children, ( example ) => {
 		if ( ! example || ! shouldShowInstance( example, filter, component ) ) {
 			return null;
 		}
@@ -95,7 +106,12 @@ const Collection = ( {
 
 		return (
 			<div>
-				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
+				<DocsExampleWrapper
+					name={ exampleName }
+					unique={ !! component }
+					url={ exampleLink }
+					onTitleClick={ scroll }
+				>
 					{ example }
 				</DocsExampleWrapper>
 				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
@@ -116,11 +132,11 @@ const Collection = ( {
 
 			{ examples.slice( 0, examplesToMount ) }
 
-			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), exampleGroup => {
-				const groupKey = map( exampleGroup, example => example.key ).join( '_' );
+			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), ( exampleGroup ) => {
+				const groupKey = map( exampleGroup, ( example ) => example.key ).join( '_' );
 				return (
 					<LazyRender key={ groupKey }>
-						{ shouldRender =>
+						{ ( shouldRender ) =>
 							shouldRender ? exampleGroup : <Placeholder count={ examplesToMount } />
 						}
 					</LazyRender>

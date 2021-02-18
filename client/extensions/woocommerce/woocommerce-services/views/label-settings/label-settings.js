@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,19 +8,19 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, isBoolean } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import Button from 'components/button';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import { Button } from '@automattic/components';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import {
@@ -43,15 +41,15 @@ import {
 	userCanEditSettings,
 	userCanManagePayments,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import QueryStoredCards from 'components/data/query-stored-cards';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import AddCardDialog from 'woocommerce/woocommerce-services/views/label-settings/add-credit-card-modal';
 
 class ShippingLabels extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.setState( { expanded: this.isExpanded( this.props ) } );
 	}
 
-	componentWillReceiveProps( props ) {
+	UNSAFE_componentWillReceiveProps( props ) {
 		if ( props.selectedPaymentMethod !== this.props.selectedPaymentMethod ) {
 			this.setState( { expanded: this.isExpanded( props ) } );
 		}
@@ -194,7 +192,7 @@ class ShippingLabels extends Component {
 		} = this.props;
 
 		if ( ! this.state.expanded ) {
-			const expand = event => {
+			const expand = ( event ) => {
 				event.preventDefault();
 				this.setState( { expanded: true } );
 			};
@@ -234,10 +232,11 @@ class ShippingLabels extends Component {
 			);
 		}
 
-		const onPaymentMethodChange = value =>
+		const onPaymentMethodChange = ( value ) =>
 			this.props.setValue( 'selected_payment_method_id', value );
 
-		let description, buttonLabel;
+		let description;
+		let buttonLabel;
 		if ( paymentMethods.length ) {
 			description = translate(
 				'To purchase shipping labels, choose a credit card you have on file or add a new card.'
@@ -356,7 +355,7 @@ class ShippingLabels extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const onPaperSizeChange = event => this.props.setValue( 'paper_size', event.target.value );
+		const onPaperSizeChange = ( event ) => this.props.setValue( 'paper_size', event.target.value );
 		const paperSizes = getPaperSizes( storeOptions.origin_country );
 
 		return (
@@ -371,7 +370,7 @@ class ShippingLabels extends Component {
 						value={ paperSize }
 						disabled={ ! canEditSettings }
 					>
-						{ Object.keys( paperSizes ).map( size => (
+						{ Object.keys( paperSizes ).map( ( size ) => (
 							<option value={ size } key={ size }>
 								{ paperSizes[ size ] }
 							</option>
@@ -415,7 +414,7 @@ export default connect(
 			...getMasterUserInfo( state, siteId ),
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				openAddCardDialog,

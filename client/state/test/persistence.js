@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,12 +6,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { createReduxStore } from 'state';
-import reducer from 'state/reducer';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { createReduxStore } from 'calypso/state';
+import reducer from 'calypso/state/reducer';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'persistence', () => {
 	test( 'initial state should serialize and deserialize without errors or warnings', () => {

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,9 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 import CourseVideo from './course-video';
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 
-export default localize( props => {
+export default localize( ( props ) => {
 	const { videos, translate } = props;
 
 	if ( videos.length === 0 ) {

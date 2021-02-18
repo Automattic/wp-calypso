@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -15,13 +14,13 @@ import {
 	upsellNudge,
 	redirectToSupportSession,
 } from './controller';
-import SiftScience from 'lib/siftscience';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
-import { noSite, siteSelection } from 'my-sites/controller';
-import config from 'config';
-import userFactory from 'lib/user';
+import SiftScience from 'calypso/lib/siftscience';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import { noSite, siteSelection } from 'calypso/my-sites/controller';
+import config from '@automattic/calypso-config';
+import userFactory from 'calypso/lib/user';
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	const user = userFactory();
@@ -29,6 +28,8 @@ export default function() {
 
 	if ( isLoggedOut ) {
 		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
+
+		page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 
 		page( '/checkout*', redirectLoggedOut );
 
@@ -95,14 +96,6 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
-		page(
-			'/checkout/(add|offer)-support-session/pending/:site/:orderId',
-			siteSelection,
-			checkoutPending,
-			makeLayout,
-			clientRender
-		);
-
 		// For backwards compatibility, retaining the old URL structure.
 		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
 
@@ -123,14 +116,6 @@ export default function() {
 		);
 
 		page(
-			'/checkout/offer-quickstart-session/pending/:site/:orderId',
-			siteSelection,
-			checkoutPending,
-			makeLayout,
-			clientRender
-		);
-
-		page(
 			'/checkout/offer-quickstart-session/:site?',
 			siteSelection,
 			upsellNudge,
@@ -146,6 +131,14 @@ export default function() {
 			clientRender
 		);
 	}
+
+	page(
+		'/checkout/:site/offer-difm/:receiptId?',
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
 
 	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
@@ -171,20 +164,12 @@ export default function() {
 	);
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
-	page( '/checkout', '/plans' );
+	page( '/checkout', config.isEnabled( 'jetpack-cloud/connect' ) ? '/plans' : '/pricing' );
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
 		siteSelection,
 		upsellNudge,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/checkout/:site/offer-plan-upgrade/:upgradeItem/pending/:receiptId?',
-		siteSelection,
-		checkoutPending,
 		makeLayout,
 		clientRender
 	);

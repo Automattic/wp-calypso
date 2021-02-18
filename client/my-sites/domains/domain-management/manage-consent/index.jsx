@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,21 +5,21 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Notice from 'components/notice';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import Button from 'components/button';
-import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import SectionHeader from 'components/section-header';
-import { requestGdprConsentManagementLink } from 'lib/upgrades/actions';
+import { Card, Button } from '@automattic/components';
+import Notice from 'calypso/components/notice';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain, requestGdprConsentManagementLink } from 'calypso/lib/domains';
+import SectionHeader from 'calypso/components/section-header';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 class ManageConsent extends React.Component {
 	static propTypes = {
@@ -105,7 +103,7 @@ class ManageConsent extends React.Component {
 
 	requestConsentManagementLink = () => {
 		this.setState( { submitting: true } );
-		requestGdprConsentManagementLink( this.props.selectedDomainName, error => {
+		requestGdprConsentManagementLink( this.props.selectedDomainName, ( error ) => {
 			if ( error ) {
 				this.setState( { error: error.message, success: false, submitting: false } );
 			} else {
@@ -116,9 +114,15 @@ class ManageConsent extends React.Component {
 
 	goToContactsPrivacy = () => {
 		page(
-			domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName )
+			domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
 		);
 	};
 }
 
-export default localize( ManageConsent );
+export default connect( ( state ) => ( {
+	currentRoute: getCurrentRoute( state ),
+} ) )( localize( ManageConsent ) );

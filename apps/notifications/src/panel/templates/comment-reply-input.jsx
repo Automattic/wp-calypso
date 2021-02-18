@@ -9,16 +9,17 @@ import getSiteSuggestions from '../state/selectors/get-site-suggestions';
 /**
  * Internal dependencies
  */
-import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../flux/input-actions';
 import Spinner from './spinner';
 import Suggestions from '../suggestions';
 import repliesCache from '../comment-replies-cache';
 import { wpcom } from '../rest-client/wpcom';
 import { bumpStat } from '../rest-client/bump-stat';
 import { formatString, validURL } from './functions';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
-var debug = require( 'debug' )( 'notifications:reply' );
-var { recordTracksEvent } = require( '../helpers/stats' );
+const debug = require( 'debug' )( 'notifications:reply' );
+const { recordTracksEvent } = require( '../helpers/stats' );
 
 const hasTouch = () =>
 	'ontouchstart' in window || ( window.DocumentTouch && document instanceof DocumentTouch );
@@ -28,15 +29,15 @@ const CommentReplyInput = createReactClass( {
 	mixins: [ repliesCache.LocalStorageMixin, Suggestions ],
 
 	statics: {
-		stopEvent: function( event ) {
+		stopEvent: function ( event ) {
 			event.stopPropagation();
 			event.preventDefault();
 		},
 	},
 
-	getInitialState: function() {
-		var getSavedReply = function() {
-			var savedReply = this.localStorage.getItem( this.savedReplyKey );
+	getInitialState: function () {
+		const getSavedReply = function () {
+			const savedReply = this.localStorage.getItem( this.savedReplyKey );
 
 			return savedReply ? savedReply[ 0 ] : '';
 		};
@@ -52,24 +53,24 @@ const CommentReplyInput = createReactClass( {
 		};
 	},
 
-	componentDidMount: function() {
+	componentDidMount: function () {
 		window.addEventListener( 'keydown', this.handleKeyDown, false );
 		window.addEventListener( 'keydown', this.handleCtrlEnter, false );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount: function () {
 		window.removeEventListener( 'keydown', this.handleKeyDown, false );
 		window.removeEventListener( 'keydown', this.handleCtrlEnter, false );
 
-		enableKeyboardShortcuts();
+		this.props.enableKeyboardShortcuts();
 	},
 
-	handleKeyDown: function( event ) {
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+	handleKeyDown: function ( event ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 
@@ -80,7 +81,7 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleCtrlEnter: function( event ) {
+	handleCtrlEnter: function ( event ) {
 		if ( this.state.isSubmitting ) {
 			return;
 		}
@@ -91,7 +92,7 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleSendEnter: function( event ) {
+	handleSendEnter: function ( event ) {
 		if ( this.state.isSubmitting ) {
 			return;
 		}
@@ -102,10 +103,10 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleChange: function( event ) {
-		var textarea = this.replyInput;
+	handleChange: function ( event ) {
+		const textarea = this.replyInput;
 
-		disableKeyboardShortcuts();
+		this.props.disableKeyboardShortcuts();
 
 		this.setState( {
 			value: event.target.value,
@@ -121,8 +122,8 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleClick: function( event ) {
-		disableKeyboardShortcuts();
+	handleClick: function ( event ) {
+		this.props.disableKeyboardShortcuts();
 
 		if ( ! this.state.hasClicked ) {
 			this.setState( {
@@ -131,12 +132,12 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleFocus: function() {
-		disableKeyboardShortcuts();
+	handleFocus: function () {
+		this.props.disableKeyboardShortcuts();
 	},
 
-	handleBlur: function() {
-		enableKeyboardShortcuts();
+	handleBlur: function () {
+		this.props.enableKeyboardShortcuts();
 
 		// Reset the field if there's no valid user input
 		// The regex strips whitespace
@@ -150,12 +151,12 @@ const CommentReplyInput = createReactClass( {
 	},
 
 	handleSubmit( event ) {
-		var wpObject,
-			submitComment,
-			component = this,
-			statusMessage,
-			successMessage = this.props.translate( 'Reply posted!' ),
-			linkMessage = this.props.translate( 'View your comment.' );
+		let wpObject;
+		let submitComment;
+		const component = this;
+		let statusMessage;
+		const successMessage = this.props.translate( 'Reply posted!' );
+		const linkMessage = this.props.translate( 'View your comment.' );
 
 		if ( event ) {
 			event.preventDefault();
@@ -212,7 +213,7 @@ const CommentReplyInput = createReactClass( {
 						retryCount: component.state.retryCount + 1,
 					} );
 
-					window.setTimeout( function() {
+					window.setTimeout( function () {
 						component.handleSubmit();
 					}, 2000 * component.state.retryCount );
 				} else {
@@ -224,7 +225,7 @@ const CommentReplyInput = createReactClass( {
 					/* Flag submission failure */
 					component.props.global.updateStatusBar( errorMessage, [ 'fail' ], 6000 );
 
-					enableKeyboardShortcuts();
+					component.props.enableKeyboardShortcuts();
 					component.props.global.toggleNavigation( true );
 
 					debug( 'Failed to submit comment reply: %s', error.message );
@@ -256,7 +257,7 @@ const CommentReplyInput = createReactClass( {
 
 			component.props.global.updateStatusBar( statusMessage, [ 'success' ], 12000 );
 
-			enableKeyboardShortcuts();
+			component.props.enableKeyboardShortcuts();
 			component.props.global.toggleNavigation( true );
 
 			component.setState( {
@@ -279,41 +280,40 @@ const CommentReplyInput = createReactClass( {
 		this.replyInput = ref;
 	},
 
-	render: function() {
-		var value = this.state.value;
-		var submitLink = '';
-		var sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );
+	render: function () {
+		const value = this.state.value;
+		let submitLink = '';
+		const sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );
 
 		if ( this.state.isSubmitting ) {
 			submitLink = <Spinner className="wpnc__spinner" />;
+		} else if ( value.length ) {
+			const submitLinkTitle = this.props.translate( 'Submit reply', {
+				context: 'verb: imperative',
+			} );
+			submitLink = (
+				<button
+					title={ submitLinkTitle }
+					className="active"
+					onClick={ this.handleSubmit }
+					onKeyDown={ this.handleSendEnter }
+				>
+					{ sendText }
+				</button>
+			);
 		} else {
-			if ( value.length ) {
-				var submitLinkTitle = this.props.translate( 'Submit reply', {
-					context: 'verb: imperative',
-				} );
-				submitLink = (
-					<button
-						title={ submitLinkTitle }
-						className="active"
-						onClick={ this.handleSubmit }
-						onKeyDown={ this.handleSendEnter }
-					>
-						{ sendText }
-					</button>
-				);
-			} else {
-				var submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
-				submitLink = (
-					<button title={ submitLinkTitle } className="inactive">
-						{ sendText }
-					</button>
-				);
-			}
+			const submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
+			submitLink = (
+				<button title={ submitLinkTitle } className="inactive">
+					{ sendText }
+				</button>
+			);
 		}
 
 		return (
 			<div className="wpnc__reply-box">
 				<textarea
+					className="form-textarea"
 					ref={ this.storeReplyInput }
 					rows={ this.state.rowCount }
 					value={ value }
@@ -332,6 +332,7 @@ const CommentReplyInput = createReactClass( {
 
 const mapStateToProps = ( state, { note } ) => ( {
 	suggestions: getSiteSuggestions( state, note.meta.ids.site ),
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {
@@ -339,11 +340,10 @@ const mapDispatchToProps = {
 	fetchSuggestions: actions.suggestions.fetchSuggestions,
 	selectNote: actions.ui.selectNote,
 	unselectNote: actions.ui.unselectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
+	disableKeyboardShortcuts: actions.ui.disableKeyboardShortcuts,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	null,
-	{ pure: false }
-)( localize( CommentReplyInput ) );
+export default connect( mapStateToProps, mapDispatchToProps, null, { pure: false } )(
+	localize( CommentReplyInput )
+);

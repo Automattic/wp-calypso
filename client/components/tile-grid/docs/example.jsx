@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Tile from 'components/tile-grid/tile';
-import TileGrid from 'components/tile-grid';
+import Tile from 'calypso/components/tile-grid/tile';
+import TileGrid from 'calypso/components/tile-grid';
 
 /**
  * Main

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,7 +19,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { areShippingZoneMethodsLoaded, areShippingZoneMethodsLoading } from './selectors';
 import { fetchShippingZoneMethodSettings } from 'woocommerce/woocommerce-services/state/shipping-zone-method-settings/actions';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 export const fetchShippingZoneMethodsSuccess = ( siteId, zoneId, data ) => {
 	return {
@@ -50,11 +48,11 @@ export const fetchShippingZoneMethods = ( siteId, zoneId ) => ( dispatch, getSta
 
 	return request( siteId )
 		.get( 'shipping/zones/' + zoneId + '/methods' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( fetchShippingZoneMethodsSuccess( siteId, zoneId, data ) );
 			return data;
 		} )
-		.then( data => {
+		.then( ( data ) => {
 			// Only need to check the feature flag. If WCS isn't enabled, no "wc_services_*" methods will be returned in the first place
 			const wcsMethods = config.isEnabled( 'woocommerce/extension-wcservices' )
 				? data.filter( ( { method_id } ) => startsWith( method_id, 'wc_services' ) )
@@ -63,7 +61,7 @@ export const fetchShippingZoneMethods = ( siteId, zoneId ) => ( dispatch, getSta
 				dispatch( fetchShippingZoneMethodSettings( siteId, method_id, id ) )
 			);
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };

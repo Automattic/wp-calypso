@@ -1,21 +1,20 @@
-/** @format */
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { isArray } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import ActionButtons from './actions';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import SiteIcon from 'blocks/site-icon';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import SiteIcon from 'calypso/blocks/site-icon';
 
 class ActionHeader extends React.Component {
 	static propTypes = {
@@ -25,7 +24,7 @@ class ActionHeader extends React.Component {
 		site: PropTypes.object.isRequired,
 	};
 
-	toggleSidebar = event => {
+	toggleSidebar = ( event ) => {
 		event.preventDefault();
 		this.props.setLayoutFocus( 'sidebar' );
 	};
@@ -68,7 +67,7 @@ class ActionHeader extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSiteWithFallback( state ),
 	} ),
 	{ setLayoutFocus }

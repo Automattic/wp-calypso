@@ -1,8 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
-export default state => get( state, 'happychat.ui.currentMessage' );
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/happychat/init';
+
+export default ( state ) => get( state, 'happychat.ui.currentMessage' );

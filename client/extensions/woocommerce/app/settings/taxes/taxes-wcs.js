@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -28,10 +27,10 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import SettingsNavigation from '../navigation';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import StoreAddress from 'woocommerce/components/store-address';
 import TaxesOptions from './taxes-options';
 import TaxesRates from './taxes-rates';
@@ -71,7 +70,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const { siteId } = this.props;
 		const newSiteId = newProps.siteId || null;
 		const oldSiteId = siteId || null;
@@ -90,7 +89,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		this.setState( { taxesEnabled: ! this.state.taxesEnabled, pristine: false } );
 	};
 
-	onCheckboxChange = event => {
+	onCheckboxChange = ( event ) => {
 		const option = event.target.name;
 		const value = event.target.checked;
 		this.setState( { [ option ]: value, pristine: false } );
@@ -133,7 +132,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		);
 	};
 
-	onAddressChange = address => {
+	onAddressChange = ( address ) => {
 		const { siteId } = this.props;
 		this.props.fetchTaxRates( siteId, address, true );
 	};

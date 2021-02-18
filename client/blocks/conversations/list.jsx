@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,26 +6,31 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
 
-/***
+/**
  * Internal dependencies
  */
-import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';
-import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import PostComment from 'calypso/blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import {
 	commentsFetchingStatus,
+	getActiveReplyCommentId,
+	getCommentErrors,
 	getDateSortedPostComments,
 	getExpansionsForPost,
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
-	getCommentErrors,
-} from 'state/comments/selectors';
-import ConversationCaterpillar from 'blocks/conversation-caterpillar';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import PostCommentFormRoot from 'blocks/comments/form-root';
-import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
-import { getErrorKey } from 'state/comments/utils';
-import { getCurrentUserId } from 'state/current-user/selectors';
+} from 'calypso/state/comments/selectors';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
+import {
+	requestPostComments,
+	requestComment,
+	setActiveReply,
+} from 'calypso/state/comments/actions';
+import { getErrorKey } from 'calypso/state/comments/utils';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -71,15 +75,15 @@ export class ConversationCommentList extends React.Component {
 		activeEditCommentId: null,
 	};
 
-	onEditCommentClick = commentId => this.setState( { activeEditCommentId: commentId } );
+	onEditCommentClick = ( commentId ) => this.setState( { activeEditCommentId: commentId } );
 	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
-	onUpdateCommentText = commentText => this.setState( { commentText: commentText } );
+	onUpdateCommentText = ( commentText ) => this.setState( { commentText: commentText } );
 
-	onReplyClick = commentId => {
+	onReplyClick = ( commentId ) => {
 		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: commentId,
 		} );
@@ -89,7 +93,7 @@ export class ConversationCommentList extends React.Component {
 		this.setState( { commentText: null } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: this.props.activeReplyCommentId,
 		} );
@@ -116,7 +120,7 @@ export class ConversationCommentList extends React.Component {
 		this.reqMoreComments();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { hiddenComments, commentsTree, siteId, commentErrors } = nextProps;
 
 		// if we are running low on comments to expand then fetch more
@@ -132,8 +136,8 @@ export class ConversationCommentList extends React.Component {
 			Object.keys( this.getCommentsToShow() )
 		);
 		inaccessible
-			.filter( commentId => ! commentErrors[ getErrorKey( siteId, commentId ) ] )
-			.forEach( commentId => {
+			.filter( ( commentId ) => ! commentErrors[ getErrorKey( siteId, commentId ) ] )
+			.forEach( ( commentId ) => {
 				nextProps.requestComment( {
 					commentId,
 					siteId,
@@ -152,10 +156,10 @@ export class ConversationCommentList extends React.Component {
 			return [];
 		}
 
-		const withParents = filter( commentIds, id => this.commentHasParent( commentsTree, id ) );
-		const parentIds = map( withParents, id => this.getParentId( commentsTree, id ) );
+		const withParents = filter( commentIds, ( id ) => this.commentHasParent( commentsTree, id ) );
+		const parentIds = map( withParents, ( id ) => this.getParentId( commentsTree, id ) );
 
-		const [ accessible, inaccessible ] = partition( parentIds, id =>
+		const [ accessible, inaccessible ] = partition( parentIds, ( id ) =>
 			this.commentIsLoaded( commentsTree, id )
 		);
 
@@ -168,13 +172,13 @@ export class ConversationCommentList extends React.Component {
 
 		const minId = min( commentIds );
 		const startingCommentIds = ( sortedComments || [] )
-			.filter( comment => {
+			.filter( ( comment ) => {
 				return comment.ID >= minId || comment.isPlaceholder;
 			} )
-			.map( comment => comment.ID );
+			.map( ( comment ) => comment.ID );
 
 		const parentIds = compact(
-			map( startingCommentIds, id => this.getParentId( commentsTree, id ) )
+			map( startingCommentIds, ( id ) => this.getParentId( commentsTree, id ) )
 		);
 		const commentExpansions = fill(
 			Array( startingCommentIds.length ),
@@ -190,7 +194,7 @@ export class ConversationCommentList extends React.Component {
 		return { ...startingExpanded, ...expansions };
 	};
 
-	setActiveReplyComment = commentId => {
+	setActiveReplyComment = ( commentId ) => {
 		const siteId = get( this.props, 'post.site_ID' );
 		const postId = get( this.props, 'post.ID' );
 
@@ -224,7 +228,7 @@ export class ConversationCommentList extends React.Component {
 		// if you have finished loading comments, then lets use the comments we have as the final comment count
 		// if we are still loading comments, then assume what the server initially told us is right
 		const commentCount = isDoneLoadingComments
-			? filter( commentsTree, comment => get( comment, 'data.type' ) === 'comment' ).length // filter out pingbacks/trackbacks
+			? filter( commentsTree, ( comment ) => get( comment, 'data.type' ) === 'comment' ).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
 		const showCaterpillar = enableCaterpillar && size( commentsToShow ) < commentCount;
@@ -240,7 +244,7 @@ export class ConversationCommentList extends React.Component {
 							commentsToShow={ commentsToShow }
 						/>
 					) }
-					{ map( commentsTree.children, commentId => {
+					{ map( commentsTree.children, ( commentId ) => {
 						return (
 							<PostComment
 								showNestingReplyArrow
@@ -300,7 +304,7 @@ const ConnectedConversationCommentList = connect(
 			commentErrors: getCommentErrors( state ),
 		};
 	},
-	{ requestPostComments, requestComment, setActiveReply }
+	{ recordReaderTracksEvent, requestPostComments, requestComment, setActiveReply }
 )( ConversationCommentList );
 
 export default ConnectedConversationCommentList;

@@ -1,18 +1,17 @@
-ProductSearch
-=============
+# ProductSearch
 
 This component is used to search through the products on a given site.
 
-#### How to use:
+## How to use
 
 To select multiple products:
 
 ```jsx
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ProductSearch from 'woocommerce/components/product-search';
 
-render: function() {
-	const updateProducts = productIds => {
+function render() {
+	const updateProducts = ( productIds ) => {
 		this.setState( { list: productIds } );
 	};
 
@@ -27,11 +26,11 @@ render: function() {
 To select a single product:
 
 ```jsx
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ProductSearch from 'woocommerce/components/product-search';
 
-render: function() {
-	const updateProduct = productId => {
+function render() {
+	const updateProduct = ( productId ) => {
 		this.setState( { selected: productId } );
 	};
 
@@ -43,10 +42,10 @@ render: function() {
 }
 ```
 
-#### Props
+## Props
 
-* `onChange`: Function called when a result is clicked, with product object as an argument.
+- `onChange`: Function called when a result is clicked, with product object as an argument.
 
-* `singular`: Boolean, If true, this should use radio inputs and only allow for one product/variation to be selected at a time. If false, multiple products and variations can be selected, and value is an array.
+- `singular`: Boolean, If true, this should use radio inputs and only allow for one product/variation to be selected at a time. If false, multiple products and variations can be selected, and value is an array.
 
-* `value`: List of IDs or single ID of a product or variation.
+- `value`: List of IDs or single ID of a product or variation.

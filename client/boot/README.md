@@ -1,15 +1,13 @@
-Boot
-======
+# Boot
 
 This module is where all the client-side magic starts. The core set of application modules that contain the client-side application routes, any additional application bootstrapping occurs, and the page.js router is started triggering the initial route handler.
 
-### Folder structure
+## Folder structure
 
 ```text
 client/boot/
 ├── app.js
 ├── common.js
-├── dev-modules.js
 └── polyfills.js
 ```
 
@@ -18,9 +16,7 @@ There is a single entry point for the Webpack client build: `client/boot/app.js`
 The major ones are shared between all projects and live in `client/boot/common.js` file. Those are in roughly chronological order:
 
 - Initializing i18n
-- Injecting the i18n mixin to React components
 - Boot strapping translation strings
-- Loading development utils _*_
 - Adding touch events
 - Adding accessibility focus features
 - Initializing and configuring Redux store
@@ -28,5 +24,3 @@ The major ones are shared between all projects and live in `client/boot/common.j
 - Loading sections
 - Setting general purpose middlewares (handlers for oauth, logged out, clear notices, unsaved forms)
 - Starting page.js
-
-_*_ All development tools are now located in `client/boot/dev-modules.js` file and are guarded with environment check to make sure they are never bundled into production builds.

@@ -1,15 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 
-import { makeLayout } from 'controller';
-import { siteSelection, navigation, sites } from 'my-sites/controller';
+import { makeLayout } from 'calypso/controller';
+import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import { list, redirect } from './controller';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
-export default function( router ) {
+export default function ( router ) {
 	if ( ! config.isEnabled( 'manage/custom-post-types' ) ) {
 		return;
 	}

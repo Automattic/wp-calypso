@@ -1,13 +1,12 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { locationsFailure, locationsReceive } from 'woocommerce/state/sites/data/locations/actions';
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_LOCATIONS_REQUEST } from 'woocommerce/state/action-types';
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { siteId } = action;
 	return request( siteId, action, '/wc/v3' ).get( 'data/continents' );
 };

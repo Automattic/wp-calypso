@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,8 @@ import { difference, isEmpty, keys } from 'lodash';
 /**
  * Internal dependencies
  */
-import getValidationSchemas from 'state/selectors/get-validation-schemas';
-import { requestValidationSchemas } from 'state/domains/management/validation-schemas/actions';
+import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
+import { requestValidationSchemas } from 'calypso/state/domains/management/validation-schemas/actions';
 
 export class QueryTldValidationSchemas extends Component {
 	static propTypes = {
@@ -42,7 +40,7 @@ export class QueryTldValidationSchemas extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		validationSchemas: getValidationSchemas( state ),
 	} ),
 	{ requestValidationSchemas }

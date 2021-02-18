@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,10 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
+import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 
-import isRequestingBillingTransaction from 'state/selectors/is-requesting-billing-transaction';
-import { requestBillingTransaction } from 'state/billing-transactions/individual-transactions/actions';
+import isRequestingBillingTransaction from 'calypso/state/selectors/is-requesting-billing-transaction';
+import { requestBillingTransaction } from 'calypso/state/billing-transactions/individual-transactions/actions';
 
 class QueryBillingTransaction extends Component {
 	fetch( props ) {
@@ -31,7 +29,7 @@ class QueryBillingTransaction extends Component {
 		this.fetch( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.fetch( nextProps );
 	}
 

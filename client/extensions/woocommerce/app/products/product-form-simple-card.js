@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,19 +5,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isNull, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
 import PriceInput from 'woocommerce/components/price-input';
 
@@ -31,21 +29,21 @@ const ProductFormSimpleCard = ( {
 	translate,
 	storeIsManagingStock,
 } ) => {
-	const setDimension = e => {
+	const setDimension = ( e ) => {
 		const dimensions = { ...product.dimensions, [ e.target.name ]: e.target.value };
 		editProduct( siteId, product, { dimensions } );
 	};
 
-	const setWeight = e => {
+	const setWeight = ( e ) => {
 		const weight = e.target.value;
 		Number( weight ) >= 0 && editProduct( siteId, product, { weight } );
 	};
 
-	const setPrice = e => {
+	const setPrice = ( e ) => {
 		editProduct( siteId, product, { regular_price: e.target.value } );
 	};
 
-	const setStockQuantity = e => {
+	const setStockQuantity = ( e ) => {
 		let stock_quantity;
 		let manage_stock;
 		if ( e.target.value !== '' ) {
@@ -58,7 +56,7 @@ const ProductFormSimpleCard = ( {
 		editProduct( siteId, product, { manage_stock, stock_quantity } );
 	};
 
-	const setBackorders = e => {
+	const setBackorders = ( e ) => {
 		editProduct( siteId, product, { backorders: e.target.value } );
 	};
 
@@ -104,7 +102,7 @@ const ProductFormSimpleCard = ( {
 	} );
 
 	const { stock_quantity } = product;
-	const quantity = isNull( stock_quantity ) || isUndefined( stock_quantity ) ? '' : stock_quantity;
+	const quantity = stock_quantity === null || isUndefined( stock_quantity ) ? '' : stock_quantity;
 
 	const stockDisabled = 'no' === storeIsManagingStock ? true : false;
 	const inventorySettingsUrl =
@@ -152,7 +150,9 @@ const ProductFormSimpleCard = ( {
 								'You can enable it under your {{managementLink}}inventory settings{{/managementLink}}.',
 							{
 								components: {
-									managementLink: <a href={ inventorySettingsUrl } target="_blank" />,
+									managementLink: (
+										<a href={ inventorySettingsUrl } target="_blank" rel="noopener noreferrer" />
+									),
 								},
 							}
 						) }

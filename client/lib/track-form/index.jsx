@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:track-form' );
 
-export const trackForm = WrappedComponent =>
+export const trackForm = ( WrappedComponent ) =>
 	class TrackFormComponent extends Component {
 		state = {
 			dirtyFields: [],

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,14 +18,15 @@ import {
 	PREFERENCES_SAVE,
 	PREFERENCES_SAVE_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -49,7 +48,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchPreferences()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/preferences' )
@@ -73,8 +72,8 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'fetchPreferences()', () => {
-		useNock( nock => {
+	describe( 'fetchPreferences() with error', () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/preferences' )
@@ -101,7 +100,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePreference()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/me/preferences', {
@@ -140,7 +139,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
-			return savePreference( 'preferenceKey', 'preferenceValue' )( spy ).then( () => {
+			return savePreference(
+				'preferenceKey',
+				'preferenceValue'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_RECEIVE,
 					values: responseShape[ USER_SETTING_KEY ],
@@ -149,7 +151,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch PREFERENCES_SAVE_FAILURE action when request fails', () => {
-			return savePreference( 'loggedOut', true )( spy ).then( () => {
+			return savePreference(
+				'loggedOut',
+				true
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_SAVE_FAILURE,
 					error: sinon.match( {
@@ -161,7 +166,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch PREFERENCES_SAVE_SUCCESS action when request completes', () => {
-			return savePreference( 'preferenceKey', 'preferenceValue' )( spy ).then( () => {
+			return savePreference(
+				'preferenceKey',
+				'preferenceValue'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_SAVE_SUCCESS,
 					key: 'preferenceKey',

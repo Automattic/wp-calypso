@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,8 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
-import Card from 'components/card';
+import { Button, Card } from '@automattic/components';
 import CustomerAddressDialog from './dialog';
 import {
 	areLocationsLoaded,
@@ -25,8 +23,8 @@ import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui
 import { isOrderFinished } from 'woocommerce/lib/order-status';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import SectionHeader from 'components/section-header';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
 
 class OrderCustomerInfo extends Component {
 	static propTypes = {
@@ -78,7 +76,7 @@ class OrderCustomerInfo extends Component {
 
 	updateAddress = ( type = 'billing' ) => {
 		const { siteId, order } = this.props;
-		return address => {
+		return ( address ) => {
 			const { copyToShipping = false, ...newAddress } = address;
 			if ( siteId ) {
 				this.props.editOrder( siteId, { id: order.id, [ type ]: newAddress } );
@@ -89,7 +87,7 @@ class OrderCustomerInfo extends Component {
 		};
 	};
 
-	toggleDialog = type => {
+	toggleDialog = ( type ) => {
 		return () => {
 			this.setState( { showDialog: type } );
 		};
@@ -205,5 +203,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder, fetchLocations }, dispatch )
+	( dispatch ) => bindActionCreators( { editOrder, fetchLocations }, dispatch )
 )( localize( OrderCustomerInfo ) );

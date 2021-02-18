@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,16 +5,21 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { identity, startsWith } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { startsWith } from 'lodash';
+import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { getLocaleSlug } from 'lib/i18n-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import TranslatableString from 'components/translatable/proptype';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
+
+/**
+ * Style dependencies
+ */
+import './apps-badge.scss';
 
 // the locale slugs for each stores' image paths follow different rules
 // therefore we have to perform some trickery in getLocaleSlug()
@@ -25,7 +28,11 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
 		tracksEvent: 'calypso_app_download_ios_click',
-		getLocaleSlug: function() {
+		getStoreLink: ( utm_source ) =>
+			`https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=${ utm_source }&mt=8`,
+		getTitleText: () => translate( 'Download the WordPress iOS mobile app.' ),
+		getAltText: () => translate( 'Apple App Store download badge' ),
+		getLocaleSlug: function () {
 			const localeSlug = getLocaleSlug();
 			const localeSlugPrefix = localeSlug.split( '-' )[ 0 ];
 			return localeSlugPrefix === 'en' ? 'en-us' : `${ localeSlugPrefix }-${ localeSlugPrefix }`;
@@ -34,8 +41,16 @@ const APP_STORE_BADGE_URLS = {
 	android: {
 		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
 		src:
-			'http://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
+			'https://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
 		tracksEvent: 'calypso_app_download_android_click',
+		getStoreLink: (
+			utm_source,
+			utm_medium = 'web',
+			utm_campaign = 'mobile-download-promo-pages'
+		) =>
+			`https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3D%${ utm_source }%26utm_medium%3D${ utm_medium }%26utm_campaign%3D${ utm_campaign }`,
+		getTitleText: () => translate( 'Download the WordPress Android mobile app.' ),
+		getAltText: () => translate( 'Google Play Store download badge' ),
 		getLocaleSlug,
 	},
 };
@@ -46,14 +61,15 @@ export class AppsBadge extends PureComponent {
 		storeLink: PropTypes.string,
 		storeName: PropTypes.oneOf( [ 'ios', 'android' ] ).isRequired,
 		titleText: TranslatableString,
-		translate: PropTypes.func,
+		utm_source: PropTypes.string.isRequired,
+		utm_campaign: PropTypes.string,
+		utm_medium: PropTypes.string,
 	};
 
 	static defaultProps = {
 		altText: '',
 		storeLink: null,
 		titleText: '',
-		translate: identity,
 	};
 
 	constructor( props ) {
@@ -77,7 +93,7 @@ export class AppsBadge extends PureComponent {
 	}
 
 	loadImage() {
-		this.image = new Image();
+		this.image = new globalThis.Image();
 		this.image.src = this.state.imageSrc;
 		this.image.onload = this.onLoadImageComplete;
 		this.image.onerror = this.onLoadImageError;
@@ -102,7 +118,15 @@ export class AppsBadge extends PureComponent {
 	};
 
 	render() {
-		const { altText, titleText, storeLink, storeName } = this.props;
+		const {
+			altText,
+			titleText,
+			storeLink,
+			storeName,
+			utm_source,
+			utm_medium,
+			utm_campaign,
+		} = this.props;
 		const { imageSrc, hasExternalImageLoaded } = this.state;
 
 		const figureClassNames = classNames( 'get-apps__app-badge', {
@@ -110,24 +134,29 @@ export class AppsBadge extends PureComponent {
 			'is-external-image': hasExternalImageLoaded,
 		} );
 
+		const badge = APP_STORE_BADGE_URLS[ storeName ];
+
 		return (
 			<figure className={ figureClassNames }>
 				<a
-					href={ storeLink }
+					href={
+						storeLink ? storeLink : badge.getStoreLink( utm_source, utm_medium, utm_campaign )
+					}
 					onClick={ this.onLinkClick }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					<img src={ imageSrc } title={ titleText } alt={ altText } />
+					<img
+						src={ imageSrc }
+						title={ titleText ? titleText : badge.getTitleText() }
+						alt={ altText ? altText : badge.getAltText() }
+					/>
 				</a>
 			</figure>
 		);
 	}
 }
 
-export default connect(
-	null,
-	{
-		recordTracksEvent,
-	}
-)( localize( AppsBadge ) );
+export default connect( null, {
+	recordTracksEvent,
+} )( AppsBadge );

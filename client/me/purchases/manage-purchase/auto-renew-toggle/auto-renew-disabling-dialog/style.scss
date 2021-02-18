@@ -1,16 +1,9 @@
 .dialog.auto-renew-disabling-dialog {
 	max-width: 440px;
-
-	.button {
-		margin-right: 10px;
-		margin-bottom: 8px;
-		padding: 8px 10px;
-		text-align: left;
-	}
 }
 
 .auto-renew-disabling-dialog__header {
-	font-size: 24px;
+	font-size: $font-title-medium;
 	margin-bottom: 14px;
 }
 
@@ -20,5 +13,12 @@
 	ul {
 		list-style-type: none;
 		margin: 0;
+	}
+
+	.button {
+		margin-bottom: 8px;
+		padding: 8px 10px;
+		text-align: center;
+		width: 100%;
 	}
 }

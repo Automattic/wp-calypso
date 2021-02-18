@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,13 +11,20 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class DomainDetailsPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( 'main.domain-management-edit' ) );
+		super( driver, By.css( '.domain-management-header' ) );
 	}
 
 	async viewPaymentSettings() {
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
 			By.css( 'a.subscription-settings' )
+		);
+	}
+
+	async cancelDomain() {
+		return await DriverHelper.clickWhenClickable(
+			this.driver,
+			By.css( 'a svg.material-icon-delete' )
 		);
 	}
 }

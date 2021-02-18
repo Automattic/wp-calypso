@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,9 +13,9 @@ import { difference, debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import accept from 'lib/accept';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import Main from 'calypso/components/main';
+import accept from 'calypso/lib/accept';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	fetchPromotions,
@@ -37,7 +35,7 @@ import {
 import { getSaveErrorMessage } from './save-error-message';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { validateAll } from './promotion-models';
 
@@ -82,7 +80,7 @@ class PromotionUpdate extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -111,12 +109,12 @@ class PromotionUpdate extends React.Component {
 	onTrash = () => {
 		const { translate, site, promotion, deletePromotion: dispatchDelete } = this.props;
 		const areYouSure = translate( 'Are you sure you want to permanently delete this promotion?' );
-		accept( areYouSure, accepted => {
+		accept( areYouSure, ( accepted ) => {
 			if ( ! accepted ) {
 				return;
 			}
 
-			const successAction = dispatch => {
+			const successAction = ( dispatch ) => {
 				this.props.clearPromotionEdits( site.ID );
 
 				dispatch( successNotice( translate( 'Promotion successfully deleted.' ) ) );
@@ -173,13 +171,13 @@ class PromotionUpdate extends React.Component {
 			);
 		};
 
-		const successAction = dispatch => {
+		const successAction = ( dispatch ) => {
 			this.props.clearPromotionEdits( site.ID );
 			dispatch( getSuccessNotice( promotion ) );
 			this.setState( () => ( { busy: false, saveAttempted: false } ) );
 		};
 
-		const failureAction = error => {
+		const failureAction = ( error ) => {
 			this.setState( () => ( { busy: false } ) );
 			const errorSlug = ( error && error.error ) || undefined;
 
@@ -266,7 +264,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PromotionUpdate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PromotionUpdate ) );

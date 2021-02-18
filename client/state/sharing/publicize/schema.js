@@ -1,4 +1,3 @@
-/** @format */
 export const connectionsSchema = {
 	type: 'object',
 	patternProperties: {

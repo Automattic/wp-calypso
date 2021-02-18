@@ -4,8 +4,6 @@
 	.form-text-input {
 		/*!rtl:ignore*/
 		padding-right: 32px;
-		/*!rtl:ignore*/
-		direction: ltr;
 	}
 
 	.form-password-input__toggle {
@@ -22,10 +20,10 @@
 		user-select: none;
 
 		.gridicon {
-			fill: var( --color-neutral-200 );
+			fill: var( --color-neutral-20 );
 
 			&:hover {
-				fill: var( --color-neutral-400 );
+				fill: var( --color-neutral-40 );
 			}
 		}
 	}

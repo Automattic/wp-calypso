@@ -1,8 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
-export const getSegments = state => get( state, [ 'signup', 'segments' ], null );
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/signup/init';
+
+export const getSegments = ( state ) => get( state, [ 'signup', 'segments' ], null );

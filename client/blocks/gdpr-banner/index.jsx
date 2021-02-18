@@ -12,13 +12,12 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import { localizeUrl } from 'lib/i18n-utils';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
-import { decodeEntities, preventWidows } from 'lib/formatting';
-import { isCurrentUserMaybeInGdprZone } from 'lib/analytics/utils';
-import { isWpMobileApp } from 'lib/mobile-app';
+import { Button, Card } from '@automattic/components';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { isCurrentUserMaybeInGdprZone } from 'calypso/lib/analytics/utils';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 
 /**
  * Internal dependencies
@@ -127,7 +126,4 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect(
-	null,
-	mapDispatchToProps
-)( GdprBanner );
+export default connect( null, mapDispatchToProps )( GdprBanner );

@@ -13,11 +13,11 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import detectHistoryNavigation from 'lib/detect-history-navigation';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import ScrollStore from './scroll-store';
 import ScrollHelper from './scroll-helper';
-import scrollTo from 'lib/scroll-to';
-import smartSetState from 'lib/react-smart-set-state';
+import scrollTo from 'calypso/lib/scroll-to';
+import smartSetState from 'calypso/lib/react-smart-set-state';
 
 /**
  * Style dependencies
@@ -55,9 +55,10 @@ export default class InfiniteList extends React.Component {
 	topPlaceholderRef = React.createRef();
 	bottomPlaceholderRef = React.createRef();
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		const url = page.current;
-		let newState, scrollTop;
+		let newState;
+		let scrollTop;
 
 		if ( detectHistoryNavigation.loadedViaHistory() ) {
 			newState = ScrollStore.getPositions( url );
@@ -117,7 +118,7 @@ export default class InfiniteList extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
 
 		// New item may have arrived, should we change the rendered range?
@@ -160,9 +161,12 @@ export default class InfiniteList extends React.Component {
 
 		// we may have guessed item heights wrong - now we have real heights
 		if ( ! this.isScrolling ) {
-			this.cancelAnimationFrame();
-			this.updateScroll( {
-				triggeredByScroll: false,
+			this.scrollUpdate = setTimeout( () => {
+				this.cancelAnimationFrame();
+				this.updateScroll( {
+					triggeredByScroll: false,
+				} );
+				this.scrollUpdate = false;
 			} );
 		}
 	}
@@ -197,6 +201,7 @@ export default class InfiniteList extends React.Component {
 		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		this.cancelAnimationFrame();
+		this.cancelScrollUpdate();
 		this._isMounted = false;
 	}
 
@@ -206,6 +211,13 @@ export default class InfiniteList extends React.Component {
 			this.scrollRAFHandle = null;
 		}
 		this.lastScrollTop = -1;
+	}
+
+	cancelScrollUpdate() {
+		if ( this.scrollUpdate ) {
+			clearTimeout( this.scrollUpdate );
+			this.scrollUpdate = false;
+		}
 	}
 
 	onScroll = () => {
@@ -303,7 +315,7 @@ export default class InfiniteList extends React.Component {
 		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 	}
 
-	boundsForRef = ref => {
+	boundsForRef = ( ref ) => {
 		if ( ref in this.refs ) {
 			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
@@ -317,25 +329,27 @@ export default class InfiniteList extends React.Component {
 		this.bottomPlaceholderRef.current && this.bottomPlaceholderRef.current.getBoundingClientRect();
 
 	/**
-	 * Returns a list of visible item indexes. This includes any items that are
-	 * partially visible in the viewport. Instance method that is called externally
-	 * (via a ref) by a parent component.
-	 * @param {Object} options - offset properties
-	 * @param {Integer} options.offsetTop - in pixels, 0 if unspecified
-	 * @param {Integer} options.offsetBottom - in pixels, 0 if unspecified
+	 * Returns a list of visible item indexes.
+	 *
+	 * This includes any items that are partially visible in the viewport.
+	 * Instance method that is called externally (via a ref) by a parent component.
+	 *
+	 * @param {object} options - offset properties
+	 * @param {number} options.offsetTop - in pixels, 0 if unspecified
+	 * @param {number} options.offsetBottom - in pixels, 0 if unspecified
 	 * @returns {Array} This list of indexes
 	 */
 	getVisibleItemIndexes( options ) {
-		const container = ReactDom.findDOMNode( this ),
-			visibleItemIndexes = [],
-			firstIndex = this.state.firstRenderedIndex,
-			lastIndex = this.state.lastRenderedIndex,
-			offsetTop = options && options.offsetTop ? options.offsetTop : 0;
-		let windowHeight,
-			rect,
-			children,
-			i,
-			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
+		const container = ReactDom.findDOMNode( this );
+		const visibleItemIndexes = [];
+		const firstIndex = this.state.firstRenderedIndex;
+		const lastIndex = this.state.lastRenderedIndex;
+		const offsetTop = options && options.offsetTop ? options.offsetTop : 0;
+		let windowHeight;
+		let rect;
+		let children;
+		let i;
+		let offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
 
 		offsetBottom = offsetBottom || 0;
 		if ( lastIndex > -1 ) {
@@ -376,9 +390,9 @@ export default class InfiniteList extends React.Component {
 			...propsToTransfer
 		} = this.props;
 		const spacerClassName = 'infinite-list__spacer';
-		let i,
-			lastRenderedIndex = this.state.lastRenderedIndex,
-			itemsToRender = [];
+		let i;
+		let lastRenderedIndex = this.state.lastRenderedIndex;
+		let itemsToRender = [];
 
 		if ( lastRenderedIndex === -1 || lastRenderedIndex > items.length - 1 ) {
 			debug(
@@ -441,7 +455,7 @@ export default class InfiniteList extends React.Component {
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
 	}
 
-	_resetScroll = event => {
+	_resetScroll = ( event ) => {
 		const position = this.state.scrollTop;
 		if ( ! this._contextLoaded() ) {
 			return;
@@ -454,7 +468,8 @@ export default class InfiniteList extends React.Component {
 
 	/**
 	 * Determine whether context is available or still being rendered.
-	 * @return {bool} whether context is available
+	 *
+	 * @returns {boolean} whether context is available
 	 */
 	_contextLoaded() {
 		return this.props.context || this.props.context === false || ! ( 'context' in this.props );

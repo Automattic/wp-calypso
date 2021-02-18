@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { spy, match } from 'sinon';
  */
 import { handleRequest } from '../';
 import { get, post, put, del } from '../actions';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_ERROR_SET,
 	WOOCOMMERCE_API_REQUEST_SUCCESS,
@@ -24,7 +22,7 @@ describe( 'handlers', () => {
 	describe( '#get', () => {
 		const getResponse = { name: 'placeholder get response', placeholder: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
 				.query( { path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=get', json: true } )
@@ -79,7 +77,7 @@ describe( 'handlers', () => {
 			} );
 		} );
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
 				.query( { path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=get', json: true } )
@@ -144,7 +142,7 @@ describe( 'handlers', () => {
 	describe( '#post', () => {
 		const postResponse = { name: 'placeholder post response', placeholder: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=post',
@@ -211,7 +209,7 @@ describe( 'handlers', () => {
 	describe( '#put', () => {
 		const putResponse = { name: 'placeholder put response', placeholder: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=put',
@@ -278,7 +276,7 @@ describe( 'handlers', () => {
 	describe( '#delete', () => {
 		const deleteResponse = { name: 'placeholder delete response', placeholder: true };
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=delete',

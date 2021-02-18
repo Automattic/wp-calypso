@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -13,8 +11,8 @@ export function isIE() {
 /**
  * Returns CSS link HTML
  *
- * @param  {String} url 	The css file path
- * @return {String}         The HTML source or an empty string if `url` is absent.
+ * @param  {string} url 	The css file path
+ * @returns {string}         The HTML source or an empty string if `url` is absent.
  */
 export function getCSSLinkHtml( url ) {
 	return url ? `<link type="text/css" media="all" rel="stylesheet" href="${ url }" />` : '';
@@ -23,9 +21,9 @@ export function getCSSLinkHtml( url ) {
 /**
  * Returns Gutenberg theme.css URL based on a style.css URL
  *
- * @param  {String}  url	The css file path of Gutenberg's style.css
- * @param  {Boolean} isRtl	If the current locale is a right-to-left language
- * @return {String}			The Gutenberg theme.css URL
+ * @param  {string}  url	The css file path of Gutenberg's style.css
+ * @param  {boolean} isRtl	If the current locale is a right-to-left language
+ * @returns {string}			The Gutenberg theme.css URL
  */
 export const getGutenbergThemeCssUrl = ( url, isRtl = false ) => {
 	const themeCss = 'theme' + ( isRtl ? '-rtl.css' : '.css' );
@@ -36,7 +34,7 @@ export const getGutenbergThemeCssUrl = ( url, isRtl = false ) => {
  * Releases an existing object URL to let the browser know not to keep the reference to the file any longer.
  * For memory management: https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
  *
- * @param  {String} objectUrl A DOMString containing a URL representing an object
+ * @param  {string} objectUrl A DOMString containing a URL representing an object
  */
 export function revokeObjectURL( objectUrl ) {
 	URL.revokeObjectURL( objectUrl );
@@ -45,14 +43,14 @@ export function revokeObjectURL( objectUrl ) {
 /**
  * Returns a WordPress page shell HTML
  *
- * @param  {Object}  content            Object containing `title`, `tagline` and `body` strings
- * @param  {String}  cssUrl             A URL to the theme CSS file
- * @param  {String}  fontUrl            A URL to the font CSS file
- * @param  {String}  gutenbergStylesUrl A URL to the active Gutenberg plugin's main CSS file.
- * @param  {Boolean} isRtl              If the current locale is a right-to-left language
- * @param  {String}  langSlug           The slug of the current locale
- * @param  {Boolean} scrolling          Whether to allow scrolling on the body
- * @return {String}                     The HTML source.
+ * @param  {object}  content            Object containing `title`, `tagline` and `body` strings
+ * @param  {string}  cssUrl             A URL to the theme CSS file
+ * @param  {string}  fontUrl            A URL to the font CSS file
+ * @param  {string}  gutenbergStylesUrl A URL to the active Gutenberg plugin's main CSS file.
+ * @param  {boolean} isRtl              If the current locale is a right-to-left language
+ * @param  {string}  langSlug           The slug of the current locale
+ * @param  {boolean} scrolling          Whether to allow scrolling on the body
+ * @returns {string}                     The HTML source.
  */
 export function getIframeSource(
 	content,
@@ -102,15 +100,13 @@ export function getIframeSource(
 					pointer-events: none;
 				}
 
-				@media only screen and (min-width: 768px) {
-					/*
-						Some of the themes (business sophisticated) use js to dynamically set the height of the banner
-						Let's set a fixed max-height.
-					*/
-					.entry .entry-content .wp-block-cover-image,
-					.entry .entry-content .wp-block-cover {
-						min-height: 500px !important;
-					}
+				/*
+					Some of the themes (business sophisticated) use js to dynamically set the height of the banner
+					Let's set a fixed max-height.
+				*/
+				.entry .entry-content .wp-block-cover-image,
+				.entry .entry-content .wp-block-cover {
+					height: 480px !important;
 				}
 
 				/*
@@ -189,17 +185,17 @@ export function getIframeSource(
 }
 
 /**
- * @param {String} paramName e.g. "Vertical", "CompanyName"
- * @returns {String} CSS class that will wrap the parameter in the preview DOM
+ * @param {string} paramName e.g. "Vertical", "CompanyName"
+ * @returns {string} CSS class that will wrap the parameter in the preview DOM
  */
 export function getPreviewParamClass( paramName ) {
 	return `signup-site-preview__${ paramName }`;
 }
 
 /**
- * @param {String} title site title
- * @param {String} tagline site tagline
- * @returns {String} String to be used as <title> in preview
+ * @param {string} title site title
+ * @param {string} tagline site tagline
+ * @returns {string} String to be used as <title> in preview
  */
 export function createPreviewDocumentTitle( title, tagline ) {
 	return `${ title } – ${ tagline }`;

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,14 +8,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import Notice from 'components/notice';
-import SectionHeader from 'components/section-header';
-import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
-import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { Button, Card } from '@automattic/components';
+import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
+import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
+import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 /**
  * Style dependencies
@@ -27,7 +25,8 @@ import './style.scss';
 class Security2faBackupCodes extends React.Component {
 	constructor( props ) {
 		super( props );
-		const printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
+
+		const printed = this.props.backupCodesPrinted;
 
 		this.state = {
 			printed,
@@ -53,9 +52,7 @@ class Security2faBackupCodes extends React.Component {
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
-				lastError: this.props.translate(
-					'Unable to obtain backup codes.  Please try again later.'
-				),
+				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
 			} );
 			return;
 		}
@@ -117,7 +114,6 @@ class Security2faBackupCodes extends React.Component {
 			<Security2faBackupCodesList
 				backupCodes={ this.state.backupCodes }
 				onNextStep={ this.onNextStep }
-				userSettings={ this.props.userSettings }
 				showList
 			/>
 		);
@@ -144,13 +140,13 @@ class Security2faBackupCodes extends React.Component {
 	render() {
 		return (
 			<div className="security-2fa-backup-codes">
-				<SectionHeader label={ this.props.translate( 'Backup Codes' ) }>
+				<SectionHeader label={ this.props.translate( 'Backup codes' ) }>
 					<Button
 						compact
 						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
 						onClick={ this.handleGenerateButtonClick }
 					>
-						{ this.props.translate( 'Generate New Backup Codes' ) }
+						{ this.props.translate( 'Generate new backup codes' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
@@ -164,7 +160,9 @@ class Security2faBackupCodes extends React.Component {
 }
 
 export default connect(
-	null,
+	( state ) => ( {
+		backupCodesPrinted: getUserSetting( state, 'two_step_backup_codes_printed' ),
+	} ),
 	{
 		recordGoogleEvent,
 	}

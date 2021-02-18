@@ -6,7 +6,13 @@
 	display: flex;
 	flex-direction: column;
 
-	.social-buttons__button:not(:first-of-type) {
+	.social-buttons__button:not( :first-of-type ) {
 		margin-top: 10px;
 	}
+}
+
+.login__social-tos {
+	font-size: $font-body-extra-small;
+	margin: 1.5em 0 0;
+	text-align: center;
 }

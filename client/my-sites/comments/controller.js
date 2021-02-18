@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,20 +8,20 @@ import { each, isNaN, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { addQueryArgs, getSiteFragment } from 'lib/route';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import CommentsManagement from './main';
-import CommentView from 'my-sites/comment/main';
-import { removeNotice } from 'state/notices/actions';
-import { getNotices } from 'state/notices/selectors';
+import CommentView from 'calypso/my-sites/comment/main';
+import { removeNotice } from 'calypso/state/notices/actions';
+import { getNotices } from 'calypso/state/notices/selectors';
 
-const mapPendingStatusToUnapproved = status => ( 'pending' === status ? 'unapproved' : status );
+const mapPendingStatusToUnapproved = ( status ) => ( 'pending' === status ? 'unapproved' : status );
 
-const sanitizeInt = number => {
+const sanitizeInt = ( number ) => {
 	const integer = parseInt( number, 10 );
 	return ! isNaN( integer ) && integer > 0 ? integer : false;
 };
 
-const sanitizeQueryAction = action => {
+const sanitizeQueryAction = ( action ) => {
 	if ( ! action ) {
 		return null;
 	}
@@ -41,7 +40,7 @@ const sanitizeQueryAction = action => {
 		: null;
 };
 
-const changePage = path => pageNumber => {
+const changePage = ( path ) => ( pageNumber ) => {
 	if ( window ) {
 		window.scrollTo( 0, 0 );
 	}
@@ -116,7 +115,7 @@ export const comment = ( context, next ) => {
 	}
 
 	const action = sanitizeQueryAction( query.action );
-	const redirectToPostView = postId => () =>
+	const redirectToPostView = ( postId ) => () =>
 		page.redirect( `/comments/all/${ siteFragment }/${ postId }` );
 
 	context.primary = <CommentView { ...{ action, commentId, siteFragment, redirectToPostView } } />;

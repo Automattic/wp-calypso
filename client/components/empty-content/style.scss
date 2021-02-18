@@ -5,7 +5,7 @@
 	padding-top: 20px;
 	text-align: center;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding-top: 10px;
 		margin-left: 15px;
 		margin-right: 15px;
@@ -19,23 +19,21 @@
 }
 
 .empty-content__title {
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-size: 34px;
-	font-weight: 300;
 
-	@include breakpoint( '<660px' ) {
-		font-size: 24px;
+	@include breakpoint-deprecated( '<660px' ) {
+		font-size: $font-title-medium;
 	}
 }
 
 .empty-content__line {
-	color: var( --color-neutral-500 );
-	font-size: 22px;
-	font-weight: 300;
+	color: var( --color-neutral-50 );
+	font-size: $font-title-small;
 	margin-bottom: 40px;
 
-	@include breakpoint( '<660px' ) {
-		font-size: 16px;
+	@include breakpoint-deprecated( '<660px' ) {
+		font-size: $font-body;
 	}
 }
 
@@ -51,16 +49,16 @@
 	.empty-content__illustration {
 		margin-top: -130px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-top: -80px;
 		}
 	}
 
 	.empty-content__title {
-		font-size: 30px;
+		font-size: $font-title-large;
 
-		@include breakpoint( '<660px' ) {
-			font-size: 24px;
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-title-medium;
 		}
 	}
 }

@@ -5,15 +5,15 @@
 	animation-fill-mode: backwards;
 
 	.formatted-header__title {
-		font-family: $serif;
-		color: var( --color-neutral-700 );
-		font-size: 34px;
-		font-weight: bold;
+		@extend .wp-brand-font;
+		color: var( --color-neutral-70 );
+		font-size: $font-title-large;
+		font-weight: 600;
 		line-height: 1.2em;
-		margin-bottom: 0.2em;
+		margin-bottom: 0.3em !important;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		.formatted-header__subtitle {
 			margin: 0 10%;
 		}

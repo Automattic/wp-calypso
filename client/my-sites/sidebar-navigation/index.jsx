@@ -9,9 +9,9 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import SidebarNavigation from 'components/sidebar-navigation';
-import SiteIcon from 'blocks/site-icon';
-import { getSelectedSite } from 'state/ui/selectors';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import SiteIcon from 'calypso/blocks/site-icon';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -29,6 +29,6 @@ function MySitesSidebarNavigation( { site } ) {
 	);
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( MySitesSidebarNavigation );

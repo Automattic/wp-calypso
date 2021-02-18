@@ -1,0 +1,45 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"lib": [ "DOM", "ES2015" ],
+
+		"baseUrl": ".",
+		"module": "esnext",
+		"allowJs": false,
+		"jsx": "react",
+		"declaration": true,
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
+		"rootDir": "src",
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+
+		"forceConsistentCasingInFileNames": true,
+
+		"typeRoots": [ "../../node_modules/@types" ],
+		"types": [],
+
+		"importsNotUsedAsValues": "error",
+		"importHelpers": true,
+		"composite": true
+	},
+	"include": [ "src" ],
+	"exclude": [ "**/test/*" ],
+	"references": [
+		{ "path": "../react-i18n" },
+		{ "path": "../data-stores" },
+		{ "path": "../components" },
+		{ "path": "../onboarding" },
+		{ "path": "../domain-picker" },
+		{ "path": "../plans-grid" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../i18n-utils" }
+	]
+}

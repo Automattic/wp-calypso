@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import formatNumberCompact from 'lib/format-number-compact';
+import formatNumberCompact from 'calypso/lib/format-number-compact';
 
 /**
  * Style dependencies

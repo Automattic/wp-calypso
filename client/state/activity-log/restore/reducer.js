@@ -8,8 +8,8 @@ import {
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
-} from 'state/action-types';
-import { createReducer, keyedReducer, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { keyedReducer, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 
 const stubNull = () => null;
 
@@ -25,7 +25,18 @@ const startProgress = ( state, { timestamp } ) => ( {
 
 const updateProgress = (
 	state,
-	{ errorCode, failureReason, message, percent, restoreId, status, timestamp, rewindId, context }
+	{
+		errorCode,
+		failureReason,
+		message,
+		percent,
+		restoreId,
+		status,
+		timestamp,
+		rewindId,
+		context,
+		currentEntry,
+	}
 ) => ( {
 	errorCode,
 	failureReason,
@@ -36,29 +47,44 @@ const updateProgress = (
 	timestamp,
 	rewindId,
 	context,
+	currentEntry,
 } );
 
 export const restoreProgress = withSchemaValidation(
 	restoreProgressSchema,
 	keyedReducer(
 		'siteId',
-		createReducer(
-			{},
-			{
-				[ REWIND_RESTORE ]: startProgress,
-				[ REWIND_RESTORE_DISMISS_PROGRESS ]: stubNull,
-				[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
-				[ REWIND_RESTORE_DISMISS ]: stubNull,
+		withoutPersistence( ( state = {}, action ) => {
+			switch ( action.type ) {
+				case REWIND_RESTORE:
+					return startProgress( state, action );
+				case REWIND_RESTORE_DISMISS_PROGRESS:
+					return stubNull( state, action );
+				case REWIND_RESTORE_UPDATE_PROGRESS:
+					return updateProgress( state, action );
+				case REWIND_RESTORE_DISMISS:
+					return stubNull( state, action );
 			}
-		)
+
+			return state;
+		} )
 	)
 );
 
 export const restoreRequest = keyedReducer(
 	'siteId',
-	createReducer( undefined, {
-		[ REWIND_RESTORE ]: () => undefined,
-		[ REWIND_RESTORE_DISMISS ]: () => undefined,
-		[ REWIND_RESTORE_REQUEST ]: ( state, { activityId } ) => activityId,
+	withoutPersistence( ( state = undefined, action ) => {
+		switch ( action.type ) {
+			case REWIND_RESTORE:
+				return undefined;
+			case REWIND_RESTORE_DISMISS:
+				return undefined;
+			case REWIND_RESTORE_REQUEST: {
+				const { activityId } = action;
+				return activityId;
+			}
+		}
+
+		return state;
 	} )
 );

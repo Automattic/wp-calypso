@@ -1,15 +1,14 @@
-/** @format */
 /**
  * External dependencies
  */
 const babel = require( '@babel/core' );
 
 describe( 'babel-plugin-transform-wpcalypso-async', () => {
-	function transform( code, async = true ) {
+	function transform( code, options = { async: true } ) {
 		return babel.transformSync( code, {
 			configFile: false,
 			parserOpts: { plugins: [ 'jsx' ] },
-			plugins: [ [ require( '..' ), { async } ] ],
+			plugins: [ [ require( '..' ), options ] ],
 		} ).code;
 	}
 
@@ -46,11 +45,25 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 
 		describe( 'sync', () => {
 			test( 'should replace a require string prop with hoisting', () => {
-				const code = transform( 'export default () => <AsyncLoad require="foo" />;', false );
+				const code = transform( 'export default () => <AsyncLoad require="foo" />;', {
+					async: false,
+				} );
 
 				expect( code ).toBe(
 					'var _ref = function (callback) {\n  callback(require("foo").__esModule ? require("foo").default ' +
 						': require("foo"));\n};\n\nexport default (() => <AsyncLoad require={_ref} />);'
+				);
+			} );
+		} );
+
+		describe( 'ignore', () => {
+			test( 'should replace a require string prop with hoisting', () => {
+				const code = transform( 'export default () => <AsyncLoad require="foo" />;', {
+					ignore: true,
+				} );
+
+				expect( code ).toBe(
+					'var _ref = function (callback) {};\n\nexport default (() => <AsyncLoad require={_ref} />);'
 				);
 			} );
 		} );
@@ -87,7 +100,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 
 		describe( 'sync', () => {
 			test( 'should call require directly when no callback', () => {
-				const code = transform( 'asyncRequire( "foo" );', false );
+				const code = transform( 'asyncRequire( "foo" );', { async: false } );
 
 				expect( code ).toBe(
 					'require("foo").__esModule ? require("foo").default : require("foo");'
@@ -95,16 +108,24 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			} );
 
 			test( 'should invoke callback with require', () => {
-				const code = transform( 'asyncRequire( "foo", cb );', false );
+				const code = transform( 'asyncRequire( "foo", cb );', { async: false } );
 
 				expect( code ).toBe(
 					'cb(require("foo").__esModule ? require("foo").default : require("foo"));'
 				);
 			} );
 		} );
+
+		describe( 'ignore', () => {
+			test( 'should simply ignore the asyncRequire call', () => {
+				const code = transform( 'asyncRequire( "foo" );', { ignore: true } );
+
+				expect( code ).toBe( '' );
+			} );
+		} );
 	} );
 
-	describe( 'AsyncLoad with further import transformation', () => {
+	test( 'AsyncLoad with further import transformation', () => {
 		// Babel plugin that transforms import() into patchedImport()
 		const patchImportPlugin = ( { types } ) => ( {
 			visitor: {

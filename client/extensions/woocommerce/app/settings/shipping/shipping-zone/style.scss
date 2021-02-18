@@ -52,7 +52,7 @@
 	.list-header {
 		background: var( --color-neutral-0 );
 		font-weight: 600;
-		font-size: 14px;
+		font-size: $font-body-small;
 
 		.list-item-field {
 			padding-top: 12px;
@@ -62,7 +62,7 @@
 		.shipping-zone__methods-column-title {
 			width: 50%;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				width: 30%;
 			}
 		}
@@ -70,7 +70,7 @@
 		.shipping-zone__methods-column-summary {
 			display: none;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				width: 30%;
 				display: block;
 			}
@@ -80,11 +80,11 @@
 	.list-item.is-placeholder {
 		@include placeholder();
 		pointer-events: none;
-		background: var( --color-white );
+		background: var( --color-surface );
 
 		.shipping-zone__placeholder-flag, .gridicon, p, a, span, button {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-50 );
+			background-color: var( --color-neutral-5 );
 			color: transparent;
 			cursor: default;
 		}
@@ -93,7 +93,7 @@
 			margin-right: 4px;
 			width: 26px;
 			height: 20px;
-			border-radius: 4px;
+			border-radius: 2px;
 		}
 
 		p, span {
@@ -118,19 +118,19 @@
 	}
 
 	.shipping-zone__method-title {
-		font-size: 14px;
+		font-size: $font-body-small;
 		width: 50%;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 30%;
 		}
 	}
 
 	.shipping-zone__method-summary {
-		font-size: 14px;
+		font-size: $font-body-small;
 		width: 30%;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			width: 100%;
 			order: 4;
 			padding-top: 0;
@@ -140,13 +140,13 @@
 	.shipping-zone__enable-container {
 		width: 30%;
 		color: var( --color-neutral-light );
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		font-weight: 400;
 		line-height: 16px;
 		vertical-align: top;
 		text-transform: uppercase;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 25%;
 		}
 
@@ -154,13 +154,8 @@
 			cursor: pointer;
 		}
 
-		.form-toggle__switch {
-			margin-left: 4px;
-			margin-top: -3px;
-		}
-
-		.form-toggle__label-content {
-			margin-left: 8px;
+		.components-base-control__field {
+			margin-bottom: 0;
 		}
 	}
 
@@ -172,25 +167,25 @@
 			flex-shrink: 0;
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 15%;
 		}
 	}
 
 	.shipping-zone__location-title {
-		font-size: 14px;
+		font-size: $font-body-small;
 		width: 100%;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 30%;
 		}
 	}
 
 	.shipping-zone__location-summary {
-		font-size: 14px;
+		font-size: $font-body-small;
 		width: 70%;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			width: 100%;
 			order: 4;
 			padding-top: 0;
@@ -199,7 +194,7 @@
 }
 
 &.shipping-zone__method-dialog {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 660px;
 	}
 
@@ -231,7 +226,7 @@
 .shipping-zone__method-container {
 	position: relative;
 	padding: 20px;
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	margin-bottom: 24px;
 
 	.form-text-input-with-affixes {
@@ -253,8 +248,8 @@
 		padding: 4px 8px;
 	}
 
-	input:disabled {
-		border-color: var( --color-neutral-100 );
+	input.form-text-input:disabled {
+		border-color: var( --color-neutral-10 );
 	}
 }
 
@@ -265,7 +260,7 @@
 
 .shipping-zone__method-dialog-header {
 	padding-bottom: 16px;
-	font-size: 18px;
+	font-size: $font-title-small;
 	display: flex;
 	justify-content: space-between;
 	flex-shrink: 0;
@@ -292,7 +287,7 @@
 	span {
 		margin-left: 6px;
 		color: var( --color-neutral-light );
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		line-height: 16px;
 		vertical-align: top;
 		text-transform: uppercase;
@@ -302,7 +297,7 @@
 }
 
 &.shipping-zone__location-dialog {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 660px;
 	}
 
@@ -313,13 +308,13 @@
 	.form-label,
 	.form-fieldset,
 	.shipping-zone__location-dialog-header {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 	}
 }
 
 .shipping-zone__location-dialog-header {
 	padding: 0 0 24px;
-	font-size: 18px;
+	font-size: $font-title-small;
 }
 
 .shipping-zone__location-dialog-list-item {
@@ -327,9 +322,11 @@
 	padding: 3px 6px;
 	margin: 1px 0;
 
-	label {
+	.form-label {
 		display: block;
 		cursor: pointer;
+		font-weight: 400;
+		margin-bottom: 0;
 	}
 
 	small {

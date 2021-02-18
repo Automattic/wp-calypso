@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -10,7 +8,7 @@ import {
 	WOOCOMMERCE_TAXRATES_REQUEST,
 	WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispatch, getState ) => {
 	if ( areTaxRatesLoading( getState(), siteId ) ) {
@@ -30,14 +28,14 @@ export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispa
 
 	return wp.req
 		.get( { path: `/sites/${ siteId }/tax-rates` }, { ...address } )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };

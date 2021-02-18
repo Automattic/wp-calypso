@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,10 +8,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import ReaderLandingStepContent from './content';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -47,7 +45,6 @@ class ReaderLandingStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ recordTracksEvent, submitSignupStep }
-)( localize( ReaderLandingStep ) );
+export default connect( null, { recordTracksEvent, submitSignupStep } )(
+	localize( ReaderLandingStep )
+);

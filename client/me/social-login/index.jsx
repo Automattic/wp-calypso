@@ -9,20 +9,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AppleIcon from 'components/social-icons/apple';
-import CompactCard from 'components/card/compact';
-import config from 'config';
-import DocumentHead from 'components/data/document-head';
-import { getRequestError } from 'state/login/selectors';
-import GoogleIcon from 'components/social-icons/google';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import ReauthRequired from 'me/reauth-required';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import AppleIcon from 'calypso/components/social-icons/apple';
+import { CompactCard } from '@automattic/components';
+import config from '@automattic/calypso-config';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getRequestError } from 'calypso/state/login/selectors';
+import GoogleIcon from 'calypso/components/social-icons/google';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import ReauthRequired from 'calypso/me/reauth-required';
+import SecuritySectionNav from 'calypso/me/security-section-nav';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import SocialLoginService from './service';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -35,11 +37,15 @@ class SocialLogin extends Component {
 	static propTypes = {
 		errorUpdatingSocialConnection: PropTypes.object,
 		path: PropTypes.string,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 	};
 
 	renderContent() {
-		const { translate, errorUpdatingSocialConnection } = this.props;
+		const { translate, errorUpdatingSocialConnection, path } = this.props;
+
+		const redirectUri = typeof window !== 'undefined' ? window.location.origin + path : null;
 
 		return (
 			<div>
@@ -59,22 +65,38 @@ class SocialLogin extends Component {
 				<SocialLoginService service="google" icon={ <GoogleIcon /> } />
 
 				{ config.isEnabled( 'sign-in-with-apple' ) && (
-					<SocialLoginService service="apple" icon={ <AppleIcon /> } />
+					<SocialLoginService
+						service="apple"
+						icon={ <AppleIcon /> }
+						redirectUri={ redirectUri }
+						socialServiceResponse={
+							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+						}
+					/>
 				) }
 			</div>
 		);
 	}
 
 	render() {
-		const title = this.props.translate( 'Social Login' );
+		const { path, translate } = this.props;
+		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
+		const title = useCheckupMenu ? translate( 'Social Logins' ) : translate( 'Social Login' );
 
 		return (
-			<Main className="social-login">
+			<Main className="security social-login is-wide-layout">
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
 				<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+
+				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
+				{ useCheckupMenu && (
+					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
+						{ title }
+					</HeaderCake>
+				) }
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
@@ -84,6 +106,6 @@ class SocialLogin extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	errorUpdatingSocialConnection: getRequestError( state ),
 } ) )( localize( SocialLogin ) );

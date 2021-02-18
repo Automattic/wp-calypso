@@ -1,0 +1,16 @@
+.wpcom-site__logo {
+	fill: var( --color-neutral-10 );
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+
+	path {
+		fill: var( --color-neutral-10 );
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		width: 100px;
+		height: 100px;
+	}
+}

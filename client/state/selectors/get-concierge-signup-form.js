@@ -1,8 +1,11 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { get } from 'lodash';
 
-export default state => get( state, 'concierge.signupForm', null );
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/concierge/init';
+
+export default ( state ) => get( state, 'concierge.signupForm', null );

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -6,23 +5,23 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import { withLocalizedMoment } from 'components/localized-moment';
-import Button from 'components/button';
-import HappychatButton from 'components/happychat/button';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getSiteUrl from 'state/selectors/get-site-url';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { Button } from '@automattic/components';
+import HappychatButton from 'calypso/components/happychat/button';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import {
 	dismissRewindRestoreProgress,
 	dismissRewindBackupProgress,
-} from 'state/activity-log/actions';
+} from 'calypso/state/activity-log/actions';
 
 /**
  * Style dependencies
@@ -40,10 +39,10 @@ import './success-banner.scss';
  * WordPress so no backups should already
  * exist prior to that date 😉
  *
- * @param {Number} ts timestamp in 's' or 'ms'
- * @returns {Number} timestamp in 'ms'
+ * @param {number} ts timestamp in 's' or 'ms'
+ * @returns {number} timestamp in 'ms'
  */
-const ms = ts =>
+const ms = ( ts ) =>
 	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
 		? ts * 1000 // convert s -> ms
 		: ts;
@@ -116,7 +115,7 @@ class SuccessBanner extends PureComponent {
 					title:
 						'alternate' === context
 							? translate( 'Your site has been successfully cloned' )
-							: translate( 'Your site has been successfully rewound' ),
+							: translate( 'Your site has been successfully restored' ),
 					icon: 'history',
 					track: (
 						<TrackComponentView
@@ -129,7 +128,7 @@ class SuccessBanner extends PureComponent {
 							? translate( 'We successfully cloned your site to the state as of %(date)s!', {
 									args: { date },
 							  } )
-							: translate( 'We successfully rewound your site back to %(date)s!', {
+							: translate( 'We successfully restored your site back to %(date)s!', {
 									args: { date },
 							  } ),
 					actionButton: (

@@ -26,11 +26,11 @@ export class ImageLoader extends Component {
 		status: LoadStatus.PENDING,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.createLoader();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.src !== this.props.src ) {
 			this.createLoader( nextProps );
 		}
@@ -40,7 +40,7 @@ export class ImageLoader extends Component {
 		this.destroyLoader();
 	}
 
-	createLoader = nextProps => {
+	createLoader = ( nextProps ) => {
 		const src = ( nextProps || this.props ).src;
 
 		this.destroyLoader();
@@ -65,7 +65,7 @@ export class ImageLoader extends Component {
 		delete this.image;
 	};
 
-	onLoadComplete = event => {
+	onLoadComplete = ( event ) => {
 		this.destroyLoader();
 
 		this.setState( {

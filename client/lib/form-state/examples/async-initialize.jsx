@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormStateStore from '../';
 import createFormStore from '../store';
 
@@ -30,7 +30,7 @@ function loadFromServer( onComplete ) {
 }
 
 class AsyncInitialize extends React.Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.formStore = createFormStore( {
 			asyncInitialize: {
 				fieldNames: [ 'firstName', 'lastName' ],
@@ -49,25 +49,23 @@ class AsyncInitialize extends React.Component {
 		return (
 			<div>
 				<form onSubmit={ this.handleSubmit.bind( this ) }>
-					<input
+					<FormTextInput
 						name="firstName"
-						type="text"
 						placeholder={ i18n.translate( 'First Name' ) }
 						onChange={ this.handleFieldChange.bind( this ) }
 						disabled={ isFieldDisabled( this.state.form, 'firstName' ) }
 					/>
 
-					<input
+					<FormTextInput
 						name="lastName"
-						type="text"
 						placeholder={ i18n.translate( 'Last Name' ) }
 						onChange={ this.handleFieldChange.bind( this ) }
 						disabled={ isFieldDisabled( this.state.form, 'lastName' ) }
 					/>
 
-					<button type="submit" className="button is-primary">
+					<Button type="submit" primary>
 						Submit
-					</button>
+					</Button>
 				</form>
 
 				<pre>{ JSON.stringify( this.state, null, 2 ) }</pre>

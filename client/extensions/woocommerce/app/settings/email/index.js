@@ -1,7 +1,6 @@
 /**
  * External dependencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -9,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 
 /**
@@ -22,11 +21,11 @@ import { emailSettingsSaveSettings } from 'woocommerce/state/sites/settings/emai
 import { isSavingMailChimpSettings } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import { isSavingEmailSettings } from 'woocommerce/state/sites/settings/email/selectors';
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import EmailSettings from './email-settings';
 import MailChimp from './mailchimp';
-import Main from 'components/main';
-import { ProtectFormGuard } from 'lib/protect-form';
+import Main from 'calypso/components/main';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import SettingsNavigation from '../navigation';
 
 class SettingsEmail extends Component {
@@ -114,7 +113,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SettingsEmail ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SettingsEmail ) );

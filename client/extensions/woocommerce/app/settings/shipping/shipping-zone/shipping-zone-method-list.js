@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormToggle from 'components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import List from 'woocommerce/components/list/list';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListHeader from 'woocommerce/components/list/list-header';

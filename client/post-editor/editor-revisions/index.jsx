@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,17 +10,17 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import getPostRevisions from 'state/selectors/get-post-revisions';
-import getPostRevisionsAuthorsId from 'state/selectors/get-post-revisions-authors-id';
-import getPostRevisionsComparisons from 'state/selectors/get-post-revisions-comparisons';
-import getPostRevisionsSelectedRevisionId from 'state/selectors/get-post-revisions-selected-revision-id';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import EditorDiffViewer from 'post-editor/editor-diff-viewer';
-import EditorRevisionsList from 'post-editor/editor-revisions-list';
-import QueryPostRevisions from 'components/data/query-post-revisions';
-import QueryPostRevisionAuthors from 'components/data/query-post-revision-authors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getPostRevisions } from 'calypso/state/posts/selectors/get-post-revisions';
+import { getPostRevisionsAuthorsId } from 'calypso/state/posts/selectors/get-post-revisions-authors-id';
+import { getPostRevisionsComparisons } from 'calypso/state/posts/selectors/get-post-revisions-comparisons';
+import { getPostRevisionsSelectedRevisionId } from 'calypso/state/posts/selectors/get-post-revisions-selected-revision-id';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import EditorDiffViewer from 'calypso/post-editor/editor-diff-viewer';
+import EditorRevisionsList from 'calypso/post-editor/editor-revisions-list';
+import QueryPostRevisions from 'calypso/components/data/query-post-revisions';
+import QueryPostRevisionAuthors from 'calypso/components/data/query-post-revision-authors';
 
 /**
  * Style dependencies
@@ -90,7 +89,7 @@ EditorRevisions.propTypes = {
 export default flow(
 	localize,
 	connect(
-		state => {
+		( state ) => {
 			const postId = getEditorPostId( state );
 			const siteId = getSelectedSiteId( state );
 

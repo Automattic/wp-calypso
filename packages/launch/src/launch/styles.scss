@@ -1,0 +1,153 @@
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/z-index';
+@import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+@import '../variables';
+
+// =============================================================================
+// Override <Modal> styles
+// =============================================================================
+
+body.has-focused-launch-modal {
+	overflow: hidden;
+}
+
+.launch__focused-modal-overlay {
+	&.launch__focused-modal-overlay--delay-animation-in {
+		animation-delay: 1s;
+		// "fill-mode: both" keeps the modal invisible until the animation starts
+		animation-fill-mode: both;
+
+		.launch__focused-modal {
+			animation-delay: inherit;
+		}
+	}
+}
+
+.launch__focused-modal {
+	&.components-modal__frame {
+		transform: none;
+	}
+
+	.components-modal__header {
+		padding: 0 $launch-padding-h-mobile;
+		margin: 0;
+
+		.components-modal__icon-container {
+			margin-right: 12px;
+		}
+
+		@include break-medium {
+			border-bottom: none;
+
+			// Make sure that the modal title can still be read by screen readers
+			.components-modal__header-heading {
+				@include onboarding-screen-reader-text();
+			}
+		}
+	}
+
+	.components-modal__content {
+		position: fixed;
+		top: 0;
+		left: 0;
+		background: var( --studio-white );
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		// Using overflow-y: scroll for consistent viewport width has an unintended
+		// consequence where if the content height is shorter than the viewport height
+		// the modal header overlaps the scrollbar on Chrome.
+		overflow: auto;
+	}
+
+	&.launch__focused-modal--hide-title {
+		.components-modal__header {
+			border-bottom: none;
+		}
+
+		.components-modal__header-heading {
+			@include onboarding-screen-reader-text();
+		}
+	}
+}
+
+.launch__focused-modal-close-button.components-button.is-link {
+	// This keeps the button on the top right corner even when scrolled down
+	position: sticky;
+	top: 0;
+	z-index: z-index( '.components-modal__header' ) + 3;
+
+	// Give it no dimension so it doesn't take any flex space
+	// but overflow it so the close button is visible
+	width: 0;
+	height: 0;
+	overflow: visible;
+
+	// Anchor the inline content to the top right (instead of middle).
+	display: flex;
+	align-items: flex-start;
+
+	// Close button icon color
+	color: var( --studio-gray-50 );
+	&:hover {
+		color: var( --studio-gray-40 );
+	}
+
+	> span {
+		// Push the icon back out from the right side
+		position: relative;
+		right: $onboarding-header-height;
+
+		// Use padding to create width
+		// (18px left padding + 24px icon width + 18px right padding = 60px width)
+		padding: 0 #{( $onboarding-header-height - 24px ) / 2};
+		height: $onboarding-header-height;
+
+		// Vertically align icon
+		display: flex;
+		align-items: center;
+	}
+}
+
+// =============================================================================
+// Modal content styles
+// =============================================================================
+
+.launch__focused-modal-body {
+	position: relative;
+	width: 100%;
+	min-width: 0;
+	// Fill the page's height without showing scrollbars, if they're not needed
+	min-height: calc( 100% - #{$onboarding-header-height} );
+	padding: 24px $launch-padding-h-mobile;
+
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+
+	@include break-small {
+		padding: 24px $launch-padding-h-small 48px;
+	}
+
+	@include break-medium {
+		border-bottom: none;
+		padding: 24px $launch-padding-h-medium 60px;
+	}
+
+	@include break-large {
+		padding: 32px $launch-padding-h-large 72px;
+	}
+
+	@include break-large {
+		padding: 32px $launch-padding-h-wide 80px;
+	}
+
+	// Direct children of this element are the different modal views
+	& > * {
+		flex: 1;
+	}
+}

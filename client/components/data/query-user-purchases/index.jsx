@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,13 +12,13 @@ import { connect } from 'react-redux';
 import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
-} from 'state/purchases/selectors';
-import { fetchUserPurchases } from 'state/purchases/actions';
+} from 'calypso/state/purchases/selectors';
+import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 
 class QueryUserPurchases extends Component {
 	requestUserPurchases( nextProps ) {
-		const userChanged = nextProps && this.props.userId !== nextProps.userId,
-			props = nextProps || this.props;
+		const userChanged = nextProps && this.props.userId !== nextProps.userId;
+		const props = nextProps || this.props;
 
 		if (
 			( ! props.isFetchingUserPurchases && ! props.hasLoadedUserPurchasesFromServer ) ||
@@ -30,11 +28,11 @@ class QueryUserPurchases extends Component {
 		}
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.requestUserPurchases();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.requestUserPurchases( nextProps );
 	}
 
@@ -51,7 +49,7 @@ QueryUserPurchases.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			isFetchingUserPurchases: isFetchingUserPurchases( state ),

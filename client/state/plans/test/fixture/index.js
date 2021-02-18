@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -9,7 +7,7 @@ import {
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 // WP REST-API error response
 export const ERROR_MESSAGE_RESPONSE =
@@ -530,7 +528,7 @@ export const ACTION_PLANS_REQUEST_FAILURE = {
  * - requesting: false
  * - error: false
  *
- * @return {Object} an state instance
+ * @returns {object} an state instance
  */
 export const getStateInstance = () => {
 	return {

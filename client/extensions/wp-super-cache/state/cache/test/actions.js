@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,13 +18,13 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import { cancelPreloadCache, deleteCache, preloadCache, testCache } from '../actions';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -41,7 +39,7 @@ describe( 'actions', () => {
 	};
 
 	describe( '#testCache()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -91,7 +89,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#deleteCache()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -117,7 +115,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request success action when request completes', () => {
-			return deleteCache( siteId, false, true )( spy ).then( () => {
+			return deleteCache(
+				siteId,
+				false,
+				true
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 					deleteExpired: true,
@@ -127,7 +129,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return deleteCache( failedSiteId, false )( spy ).then( () => {
+			return deleteCache(
+				failedSiteId,
+				false
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
 					siteId: failedSiteId,
@@ -137,7 +142,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#preloadCache()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -183,7 +188,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#cancelPreloadCache()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {

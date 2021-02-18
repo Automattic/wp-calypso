@@ -12,11 +12,11 @@
 }
 
 .domain-search-page-wrapper h3 {
-	color: var( --color-neutral-700 );
-	font-size: 15px;
+	color: var( --color-neutral-70 );
+	font-size: $font-body;
 	word-wrap: break-word;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 17px;
 	}
 }

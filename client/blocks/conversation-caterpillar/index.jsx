@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,15 +7,16 @@ import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-/***
+/**
  * Internal dependencies
  */
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
-import { expandComments } from 'state/comments/actions';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import { isAncestor } from 'blocks/comments/utils';
-import GravatarCaterpillar from 'components/gravatar-caterpillar';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { getPostCommentsTree, getDateSortedPostComments } from 'calypso/state/comments/selectors';
+import { expandComments } from 'calypso/state/comments/actions';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
+import { isAncestor } from 'calypso/blocks/comments/utils';
+import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -43,9 +43,9 @@ class ConversationCaterpillarComponent extends React.Component {
 
 		const childComments = isRoot
 			? comments
-			: filter( comments, child => isAncestor( parentComment, child, commentsTree ) );
+			: filter( comments, ( child ) => isAncestor( parentComment, child, commentsTree ) );
 
-		const commentsToExpand = filter( childComments, comment => ! commentsToShow[ comment.ID ] );
+		const commentsToExpand = filter( childComments, ( comment ) => ! commentsToShow[ comment.ID ] );
 
 		return commentsToExpand;
 	};
@@ -65,12 +65,12 @@ class ConversationCaterpillarComponent extends React.Component {
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
-			commentIds: compact( map( commentsToExpand, c => get( c, 'parent.ID', null ) ) ),
+			commentIds: compact( map( commentsToExpand, ( c ) => get( c, 'parent.ID', null ) ) ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
 		recordAction( 'comment_caterpillar_click' );
 		recordGaEvent( 'Clicked Caterpillar' );
-		recordTrack( 'calypso_reader_comment_caterpillar_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_caterpillar_click', {
 			blog_id: blogId,
 			post_id: postId,
 		} );
@@ -153,7 +153,7 @@ const ConnectedConversationCaterpillar = connect(
 			commentsTree: getPostCommentsTree( state, blogId, postId, 'all' ),
 		};
 	},
-	{ expandComments }
+	{ expandComments, recordReaderTracksEvent }
 )( ConversationCaterpillar );
 
 export default ConnectedConversationCaterpillar;

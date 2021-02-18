@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,24 +6,24 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, some, trim, trimEnd } from 'lodash';
+import { includes, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import Button from 'components/button';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import SupportInfo from 'components/support-info';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import FoldableCard from 'calypso/components/foldable-card';
+import { Button } from '@automattic/components';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import SupportInfo from 'calypso/components/support-info';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 
 class Protect extends Component {
 	static propTypes = {
@@ -42,15 +40,15 @@ class Protect extends Component {
 		fields: {},
 	};
 
-	handleAddToWhitelist = () => {
+	handleAddToAllowedList = () => {
 		const { setFieldValue } = this.props;
-		let whitelist = trimEnd( this.getProtectWhitelist() );
+		let allowedIps = this.getProtectAllowedIps().trimEnd();
 
-		if ( whitelist.length ) {
-			whitelist += '\n';
+		if ( allowedIps.length ) {
+			allowedIps += '\n';
 		}
 
-		setFieldValue( 'jetpack_protect_global_whitelist', whitelist + this.getIpAddress() );
+		setFieldValue( 'jetpack_protect_global_whitelist', allowedIps + this.getIpAddress() );
 	};
 
 	getIpAddress() {
@@ -61,27 +59,27 @@ class Protect extends Component {
 		return null;
 	}
 
-	getProtectWhitelist() {
+	getProtectAllowedIps() {
 		const { jetpack_protect_global_whitelist } = this.props.fields;
 		return jetpack_protect_global_whitelist || '';
 	}
 
-	isIpAddressWhitelisted() {
+	isIpAddressAllowed() {
 		const ipAddress = this.getIpAddress();
 		if ( ! ipAddress ) {
 			return false;
 		}
 
-		const whitelist = this.getProtectWhitelist().split( '\n' );
+		const allowedIps = this.getProtectAllowedIps().split( '\n' );
 
 		return (
-			includes( whitelist, ipAddress ) ||
-			some( whitelist, entry => {
+			includes( allowedIps, ipAddress ) ||
+			some( allowedIps, ( entry ) => {
 				if ( entry.indexOf( '-' ) < 0 ) {
 					return false;
 				}
 
-				const range = entry.split( '-' ).map( trim );
+				const range = entry.split( '-' ).map( ( ip ) => ip.trim() );
 				return includes( range, ipAddress );
 			} )
 		);
@@ -99,7 +97,7 @@ class Protect extends Component {
 		} = this.props;
 
 		const ipAddress = this.getIpAddress();
-		const isIpWhitelisted = this.isIpAddressWhitelisted();
+		const isIpAllowed = this.isIpAddressAllowed();
 		const disabled =
 			isRequestingSettings || isSavingSettings || protectModuleUnavailable || ! protectModuleActive;
 		const protectToggle = (
@@ -139,31 +137,31 @@ class Protect extends Component {
 
 							{ ipAddress && (
 								<Button
-									className="protect__add-to-whitelist site-settings__add-to-whitelist"
-									onClick={ this.handleAddToWhitelist }
-									disabled={ disabled || isIpWhitelisted }
+									className="site-settings__add-to-explicitly-allowed-list"
+									onClick={ this.handleAddToAllowedList }
+									disabled={ disabled || isIpAllowed }
 									compact
 								>
-									{ isIpWhitelisted
-										? translate( 'Already in whitelist' )
-										: translate( 'Add to whitelist' ) }
+									{ isIpAllowed
+										? translate( 'Already in list of allowed IPs' )
+										: translate( 'Add to list of allowed IPs' ) }
 								</Button>
 							) }
 						</p>
 
 						<FormLabel htmlFor="jetpack_protect_global_whitelist">
-							{ translate( 'Whitelisted IP addresses' ) }
+							{ translate( 'Allowed IP addresses' ) }
 						</FormLabel>
 						<FormTextarea
 							id="jetpack_protect_global_whitelist"
-							value={ this.getProtectWhitelist() }
+							value={ this.getProtectAllowedIps() }
 							onChange={ onChangeField( 'jetpack_protect_global_whitelist' ) }
 							disabled={ disabled }
 							placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
 						/>
 						<FormSettingExplanation>
 							{ translate(
-								'You may whitelist an IP address or series of addresses preventing them from ' +
+								'You may explicitly allow an IP address or series of addresses preventing them from ' +
 									'ever being blocked by Jetpack. IPv4 and IPv6 are acceptable. ' +
 									'To specify a range, enter the low value and high value separated by a dash. ' +
 									'Example: 12.12.12.1-12.12.12.100'
@@ -176,7 +174,7 @@ class Protect extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

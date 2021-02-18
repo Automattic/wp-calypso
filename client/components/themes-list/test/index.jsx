@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -14,8 +13,8 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import Theme from 'components/theme';
+import EmptyContent from 'calypso/components/empty-content';
+import Theme from 'calypso/components/theme';
 import { ThemesList } from '../';
 
 const defaultProps = deepFreeze( {

@@ -1,8 +1,9 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { emptyFilter } from 'state/activity-log/reducer';
+import { emptyFilter } from 'calypso/state/activity-log/reducer';
+
+import 'calypso/state/activity-log/init';
 
 export const getActivityLogFilter = ( state, siteId ) => {
 	try {

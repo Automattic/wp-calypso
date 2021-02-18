@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestTags } from 'state/reader/tags/items/actions';
+import { requestTags } from 'calypso/state/reader/tags/items/actions';
 
 const QueryReaderTag = ( { tag, requestTags: request } ) => {
 	useEffect( () => {
@@ -24,7 +22,4 @@ QueryReaderTag.propTypes = {
 	tag: PropTypes.string.isRequired,
 };
 
-export default connect(
-	null,
-	{ requestTags }
-)( QueryReaderTag );
+export default connect( null, { requestTags } )( QueryReaderTag );

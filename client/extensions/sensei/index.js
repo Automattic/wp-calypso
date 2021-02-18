@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,11 +8,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection } from 'my-sites/controller';
-import Main from 'components/main';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
+import Main from 'calypso/components/main';
+import { Card } from '@automattic/components';
+import SectionHeader from 'calypso/components/section-header';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 const render = ( context, next ) => {
 	context.primary = (
@@ -29,6 +27,6 @@ const render = ( context, next ) => {
 	next();
 };
 
-export default function() {
+export default function () {
 	page( '/extensions/sensei/:site?', siteSelection, navigation, render, makeLayout, clientRender );
 }

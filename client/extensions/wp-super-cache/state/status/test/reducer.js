@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,14 +13,14 @@ import {
 	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 } from '../../action-types';
 import reducer from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -82,22 +80,6 @@ describe( 'reducer', () => {
 			expect( state.requesting ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state.requesting ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.requesting ).to.eql( {} );
 		} );
 	} );
 

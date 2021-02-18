@@ -14,8 +14,8 @@ import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 /**
  * Test Data
@@ -38,7 +38,7 @@ const streakQuery = { startDate: '2015-06-01', endDate: '2016-06-01' };
 const streakQueryDos = { startDate: '2014-06-01', endDate: '2015-06-01' };
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -151,40 +151,6 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': {
-							requesting: true,
-							status: 'pending',
-						},
-					},
-				},
-			} );
-
-			const state = requests( original, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': {
-							requesting: true,
-							status: 'pending',
-						},
-					},
-				},
-			} );
-
-			const state = requests( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

@@ -1,45 +1,43 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import MediaListData from 'components/data/media-list-data';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaActions from 'lib/media/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import MediaListData from 'calypso/components/data/media-list-data';
 import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
-} from 'lib/media/constants';
-import { getSiteSlug } from 'state/sites/selectors';
+} from 'calypso/lib/media/constants';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
-import InlineConnection from 'my-sites/marketing/connections/inline-connection';
+import InlineConnection from 'calypso/my-sites/marketing/connections/inline-connection';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
-} from 'state/sharing/keyring/selectors';
-import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions';
-import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
-import { withoutNotice } from 'state/notices/actions';
-import { reduxDispatch } from 'lib/redux-bridge';
+} from 'calypso/state/sharing/keyring/selectors';
+import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
+import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
+import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
@@ -92,7 +90,7 @@ export class MediaLibraryContent extends React.Component {
 		) {
 			// We have transitioned from an invalid Google status to a valid one - migration is complete
 			// Force a refresh of the list - this won't happen automatically as we've cached our previous failed query.
-			MediaActions.sourceChanged( this.props.site.ID );
+			this.props.changeMediaSource( this.props.site.ID );
 		}
 	}
 
@@ -122,14 +120,15 @@ export class MediaLibraryContent extends React.Component {
 	renderErrors() {
 		const { mediaValidationErrorTypes, site, translate } = this.props;
 		return map( groupBy( mediaValidationErrorTypes ), ( occurrences, errorType ) => {
-			let message, onDismiss;
+			let message;
+			let onDismiss;
 			const i18nOptions = {
 				count: occurrences.length,
 				args: occurrences.length,
 			};
 
 			if ( site ) {
-				onDismiss = MediaActions.clearValidationErrorsByType.bind( null, site.ID, errorType );
+				onDismiss = () => this.props.clearMediaErrors( site.ID, errorType );
 			}
 
 			let status = 'is-error';
@@ -197,6 +196,12 @@ export class MediaLibraryContent extends React.Component {
 					message = translate( 'We are unable to retrieve your full media library.' );
 					tryAgain = true;
 					break;
+
+				case MediaValidationErrors.SERVICE_UNAVAILABLE:
+					message = this.getServiceUnavailableMessageForSource();
+					tryAgain = true;
+					break;
+
 				default:
 					message = translate(
 						'%d file could not be uploaded because an error occurred while uploading.',
@@ -228,6 +233,20 @@ export class MediaLibraryContent extends React.Component {
 		return translate( 'Your service has been disconnected. Please reconnect to continue.' );
 	}
 
+	getServiceUnavailableMessageForSource() {
+		const { translate, source } = this.props;
+
+		if ( source === 'pexels' ) {
+			return translate(
+				'We were unable to connect to the Pexels service. Please try again later.'
+			);
+		}
+
+		return translate(
+			'We were unable to connect to the external service. Please try again later.'
+		);
+	}
+
 	renderTryAgain() {
 		return (
 			<NoticeAction onClick={ this.retryList }>{ this.props.translate( 'Retry' ) }</NoticeAction>
@@ -235,7 +254,7 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	retryList = () => {
-		MediaActions.sourceChanged( this.props.site.ID );
+		this.props.changeMediaSource( this.props.site.ID );
 	};
 
 	renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) {
@@ -268,11 +287,11 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	recordPlansNavigation( tracksEvent, tracksData ) {
-		analytics.ga.recordEvent( 'Media', 'Clicked Upload Error Action' );
-		analytics.tracks.recordEvent( tracksEvent, tracksData );
+		gaRecordEvent( 'Media', 'Clicked Upload Error Action' );
+		recordTracksEvent( tracksEvent, tracksData );
 	}
 
-	goToSharing = ev => {
+	goToSharing = ( ev ) => {
 		ev.preventDefault();
 		page( `/marketing/connections/${ this.props.site.slug }` );
 	};
@@ -339,6 +358,14 @@ export class MediaLibraryContent extends React.Component {
 			return this.renderConnectExternalMedia();
 		}
 
+		const listKey = [
+			'list',
+			this.props.site.ID,
+			this.props.search,
+			this.props.filter,
+			this.props.source,
+		].join( '-' );
+
 		return (
 			<MediaListData
 				siteId={ this.props.site.ID }
@@ -347,20 +374,18 @@ export class MediaLibraryContent extends React.Component {
 				search={ this.props.search }
 				source={ this.props.source }
 			>
-				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
-					<MediaLibraryList
-						key={ 'list-' + [ this.props.site.ID, this.props.search, this.props.filter ].join() }
-						site={ this.props.site }
-						filter={ this.props.filter }
-						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
-						search={ this.props.search }
-						containerWidth={ this.props.containerWidth }
-						thumbnailType={ this.getThumbnailType() }
-						single={ this.props.single }
-						scrollable={ this.props.scrollable }
-						onEditItem={ this.props.onEditItem }
-					/>
-				</MediaLibrarySelectedData>
+				<MediaLibraryList
+					key={ listKey }
+					site={ this.props.site }
+					filter={ this.props.filter }
+					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
+					search={ this.props.search }
+					containerWidth={ this.props.containerWidth }
+					thumbnailType={ this.getThumbnailType() }
+					single={ this.props.single }
+					scrollable={ this.props.scrollable }
+					onEditItem={ this.props.onEditItem }
+				/>
 			</MediaListData>
 		);
 	}
@@ -407,8 +432,12 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	render() {
+		const classNames = classnames( 'media-library__content', {
+			'has-no-upload-button': ! this.props.displayUploadMediaButton,
+		} );
+
 		return (
-			<div className="media-library__content">
+			<div className={ classNames }>
 				{ this.renderHeader() }
 				{ this.renderErrors() }
 				{ this.renderMediaList() }
@@ -428,24 +457,21 @@ export default connect(
 		return {
 			siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
 			isRequesting: isKeyringConnectionsFetching( state ),
+			displayUploadMediaButton: canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
 			googleConnection: googleConnection.length === 1 ? googleConnection[ 0 ] : null, // There can be only one
+			selectedItems: getMediaLibrarySelectedItems( state, ownProps.site?.ID ),
 		};
 	},
-	() => ( {
-		toggleGuidedTour: shouldPause => {
-			// We're using `reduxDispatch` to avoid dispatch clashes with the media data Flux implementation.
-			// The eventual Reduxification of the media store should prevent this. See: #26168
-			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
+	{
+		toggleGuidedTour: ( shouldPause ) => ( dispatch ) => {
+			dispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		deleteKeyringConnection: connection => {
-			// We don't want this to trigger a global notice - a notice is shown inline
-			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
-
-			reduxDispatch( deleteKeyring() );
-		},
-	} ),
+		deleteKeyringConnection,
+		clearMediaErrors,
+		changeMediaSource,
+	},
 	null,
 	{ pure: false }
 )( localize( MediaLibraryContent ) );

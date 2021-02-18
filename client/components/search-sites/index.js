@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,20 +9,15 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSites from 'state/selectors/get-sites';
+import getSites from 'calypso/state/selectors/get-sites';
 
 const matches = ( item, term, keys ) =>
-	keys.some(
-		key =>
-			get( item, key, '' )
-				.toLowerCase()
-				.indexOf( term ) > -1
-	);
+	keys.some( ( key ) => get( item, key, '' ).toLowerCase().indexOf( term ) > -1 );
 
 const searchCollection = ( collection, term, keys ) =>
-	collection.filter( item => matches( item, term, keys ) );
+	collection.filter( ( item ) => matches( item, term, keys ) );
 
-const mapState = state => ( {
+const mapState = ( state ) => ( {
 	sites: getSites( state ),
 } );
 
@@ -34,7 +27,7 @@ export default function searchSites( WrappedComponent ) {
 	class Searcher extends Component {
 		state = { term: null };
 
-		setSearchTerm = term => this.setState( { term } );
+		setSearchTerm = ( term ) => this.setState( { term } );
 
 		getSearchResults() {
 			return this.state.term

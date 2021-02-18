@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -9,14 +8,14 @@ import { map, take, filter } from 'lodash';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import resizeImageUrl from 'lib/resize-image-url';
-import cssSafeUrl from 'lib/css-safe-url';
-import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
-import { READER_CONTENT_WIDTH } from 'state/reader/posts/sizes';
+import AutoDirection from 'calypso/components/auto-direction';
+import Emojify from 'calypso/components/emojify';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
+import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
+import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
 function getGalleryWorthyImages( post ) {
 	const numberOfImagesToDisplay = 4;
@@ -37,12 +36,15 @@ const PostGallery = ( { post, children, isDiscover } ) => {
 			w: READER_CONTENT_WIDTH / imagesToDisplay.length,
 		} );
 		const safeCssUrl = cssSafeUrl( imageUrl );
-		const imageStyle = {
-			backgroundImage: 'url(' + safeCssUrl + ')',
-			backgroundSize: 'cover',
-			backgroundPosition: '50% 50%',
-			backgroundRepeat: 'no-repeat',
-		};
+		let imageStyle = { background: 'none' };
+		if ( safeCssUrl ) {
+			imageStyle = {
+				backgroundImage: 'url(' + safeCssUrl + ')',
+				backgroundSize: 'cover',
+				backgroundPosition: '50% 50%',
+				backgroundRepeat: 'no-repeat',
+			};
+		}
 		return (
 			<li key={ `post-${ post.ID }-image-${ index }` } className="reader-post-card__gallery-item">
 				<div className="reader-post-card__gallery-image" style={ imageStyle } />
@@ -54,11 +56,11 @@ const PostGallery = ( { post, children, isDiscover } ) => {
 			<ul className="reader-post-card__gallery">{ listItems }</ul>
 			<div className="reader-post-card__post-details">
 				<AutoDirection>
-					<h1 className="reader-post-card__title">
+					<h2 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
 							<Emojify>{ post.title }</Emojify>
 						</a>
-					</h1>
+					</h2>
 				</AutoDirection>
 				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 				{ children }

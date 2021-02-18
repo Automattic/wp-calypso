@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
 
 const BadgeExample = () => this.props.exampleCode;
 
@@ -19,8 +17,11 @@ BadgeExample.displayName = 'Badge';
 BadgeExample.defaultProps = {
 	exampleCode: (
 		<div>
+			<Badge type="info">Info Badge</Badge>
 			<Badge type="success">Success Badge</Badge>
 			<Badge type="warning">Warning Badge</Badge>
+			<Badge type="info-blue">Info Blue Badge</Badge>
+			<Badge type="error">Error Badge</Badge>
 		</div>
 	),
 };

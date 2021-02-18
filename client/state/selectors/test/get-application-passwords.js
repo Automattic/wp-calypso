@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getApplicationPasswords from 'state/selectors/get-application-passwords';
+import getApplicationPasswords from 'calypso/state/selectors/get-application-passwords';
 
 describe( 'getApplicationPasswords()', () => {
 	test( 'should return application passwords of the current user', () => {

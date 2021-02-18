@@ -3,6 +3,11 @@
  */
 import debugModule from 'debug';
 
+/**
+ * Internal dependencies
+ */
+import { StoredItems } from './types';
+
 const debug = debugModule( 'calypso:support-user' );
 
 // This module defines a series of methods which bypasse all persistent storage.
@@ -11,7 +16,20 @@ const debug = debugModule( 'calypso:support-user' );
 // a user's data while support-user is active, ensuring it does not contaminate
 // the original user, and vice versa.
 
-const memoryStore = new Map< string, any >();
+const memoryStore = new Map();
+
+export async function getAllStoredItems( pattern?: RegExp ): Promise< StoredItems > {
+	debug( 'browser-storage bypass', 'getAllStoredItems' );
+
+	// Return everything.
+	if ( ! pattern ) {
+		return Object.fromEntries( memoryStore.entries() );
+	}
+
+	// Return only the entries that match the pattern.
+	const entries = Array.from( memoryStore.entries() );
+	return Object.fromEntries( entries.filter( ( [ key ] ) => pattern.test( key ) ) );
+}
 
 export async function getStoredItem< T >( key: string ): Promise< T | undefined > {
 	debug( 'browser-storage bypass', 'getStoredItem', key );

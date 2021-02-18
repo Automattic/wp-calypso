@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,7 +16,7 @@ import {
 	getTriedCustomizerDuringInitialSetup,
 	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
-import { Checklist, Task } from 'components/checklist';
+import { Checklist, Task } from 'calypso/components/checklist';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
@@ -49,7 +47,7 @@ class SetupTasks extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const { site, productsLoaded } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -192,7 +190,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( SetupTasks ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasks ) );

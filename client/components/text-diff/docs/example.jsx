@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import TextDiff from 'components/text-diff';
+import TextDiff from 'calypso/components/text-diff';
 
 export default function TextDiffExample() {
 	const operations = [

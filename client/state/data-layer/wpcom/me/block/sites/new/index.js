@@ -1,5 +1,4 @@
 /**
- * @format
  */
 
 /**
@@ -10,14 +9,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_SITE_BLOCK } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { unblockSite } from 'state/reader/site-blocks/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { READER_SITE_BLOCK } from 'calypso/state/reader/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestSiteBlock( action ) {
 	return http(
@@ -44,7 +43,7 @@ export function receiveSiteBlock() {
 	} );
 }
 
-export const receiveSiteBlockError = ( { payload: { siteId } } ) => dispatch => {
+export const receiveSiteBlockError = ( { payload: { siteId } } ) => ( dispatch ) => {
 	dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
 	dispatch( bypassDataLayer( unblockSite( siteId ) ) );
 };

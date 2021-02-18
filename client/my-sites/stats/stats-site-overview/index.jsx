@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,13 +9,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies
@@ -37,7 +35,7 @@ class StatsSiteOverview extends Component {
 		title: PropTypes.string,
 	};
 
-	isValueLow = value => {
+	isValueLow = ( value ) => {
 		return ! value || 0 === value;
 	};
 

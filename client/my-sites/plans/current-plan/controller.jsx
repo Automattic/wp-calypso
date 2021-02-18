@@ -8,8 +8,8 @@ import page from 'page';
  * Internal Dependencies
  */
 import CurrentPlan from './';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isFreePlan } from 'lib/products-values';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isFreePlan } from 'calypso/lib/products-values';
 
 export function currentPlan( context, next ) {
 	const state = context.store.getState();
@@ -28,9 +28,12 @@ export function currentPlan( context, next ) {
 		return null;
 	}
 
+	const product = context.query.product;
 	const requestThankYou = context.query.hasOwnProperty( 'thank-you' );
 
-	context.primary = <CurrentPlan path={ context.path } requestThankYou={ requestThankYou } />;
+	context.primary = (
+		<CurrentPlan path={ context.path } product={ product } requestThankYou={ requestThankYou } />
+	);
 
 	next();
 }

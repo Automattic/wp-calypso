@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,9 +11,9 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import HeaderCake from 'components/header-cake';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { Button } from '@automattic/components';
+import HeaderCake from 'calypso/components/header-cake';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DeleteZoneDialog from './delete-zone-dialog';
 import QueryFeed from '../../data/query-feed';
 import ZoneContentForm from '../../forms/zone-content-form';
@@ -25,11 +23,11 @@ import ZoneLockWarningNotice from './zone-lock-warning-notice';
 import ZoneNotFound from './zone-not-found';
 import { saveFeed } from '../../../state/feeds/actions';
 import { deleteZone, saveZone } from '../../../state/zones/actions';
-import { getFeed, isRequestingFeed } from '../../../state/feeds/selectors';
+import { getFeed, isRequestingFeed, isSavingFeed } from '../../../state/feeds/selectors';
 import { blocked, expires } from '../../../state/locks/selectors';
-import { getZone, isRequestingZones } from '../../../state/zones/selectors';
+import { getZone, isRequestingZones, isSavingZone } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 class Zone extends Component {
 	static propTypes = {
@@ -41,6 +39,7 @@ class Zone extends Component {
 		requestingZones: PropTypes.bool,
 		saveFeed: PropTypes.func.isRequired,
 		saveZone: PropTypes.func.isRequired,
+		savingZone: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -52,7 +51,7 @@ class Zone extends Component {
 		showDeleteDialog: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.lockExpires || nextProps.lockExpires === this.props.lockExpires ) {
 			return;
 		}
@@ -72,18 +71,25 @@ class Zone extends Component {
 	deleteZone = () =>
 		this.props.deleteZone( this.props.siteId, this.props.siteSlug, this.props.zoneId );
 
-	saveZoneDetails = ( form, data ) =>
-		this.props.saveZone( this.props.siteId, this.props.zoneId, form, data );
+	saveZoneDetails = ( data ) => this.props.saveZone( this.props.siteId, this.props.zoneId, data );
 
-	saveZoneFeed = ( form, data ) =>
-		this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
+	saveZoneFeed = ( data ) => this.props.saveFeed( this.props.siteId, this.props.zoneId, data );
 
 	disabled = () =>
 		this.props.lockBlocked ||
 		( this.props.lockExpires !== 0 && this.props.lockExpires < new Date().getTime() );
 
 	renderContent = () => {
-		const { feed, requestingFeed, requestingZones, siteSlug, translate, zone } = this.props;
+		const {
+			feed,
+			requestingFeed,
+			requestingZones,
+			savingFeed,
+			savingZone,
+			siteSlug,
+			translate,
+			zone,
+		} = this.props;
 		const { showDeleteDialog } = this.state;
 
 		if ( ! zone ) {
@@ -111,6 +117,7 @@ class Zone extends Component {
 					requesting={ requestingZones }
 					onSubmit={ this.saveZoneDetails }
 					initialValues={ zone }
+					submitting={ savingZone }
 				/>
 
 				<ZoneContentForm
@@ -118,7 +125,8 @@ class Zone extends Component {
 					label={ translate( 'Zone content' ) }
 					requesting={ requestingFeed }
 					onSubmit={ this.saveZoneFeed }
-					initialValues={ { posts: feed } }
+					initialValues={ feed }
+					submitting={ savingFeed }
 				/>
 			</div>
 		);
@@ -161,6 +169,8 @@ const connectComponent = connect(
 			lockExpires: expires( state, siteId, zoneId ),
 			requestingFeed: isRequestingFeed( state, siteId, zoneId ),
 			requestingZones: isRequestingZones( state, siteId ),
+			savingZone: isSavingZone( state, siteId ),
+			savingFeed: isSavingFeed( state, siteId, zoneId ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
 			zone: getZone( state, siteId, zoneId ),
@@ -170,7 +180,4 @@ const connectComponent = connect(
 	{ deleteZone, saveZone, saveFeed }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( Zone );
+export default flowRight( connectComponent, localize )( Zone );

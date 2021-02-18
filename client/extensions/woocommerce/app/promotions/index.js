@@ -1,7 +1,6 @@
 /**
  * External depedencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -14,17 +13,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
 import { getPromotions } from 'woocommerce/state/selectors/promotions';
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { setPromotionSearch } from 'woocommerce/state/ui/promotions/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import PromotionsList from './promotions-list';
-import SearchCard from 'components/search-card';
+import SearchCard from 'calypso/components/search-card';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 class Promotions extends Component {
 	static propTypes = {
@@ -46,7 +46,7 @@ class Promotions extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -110,6 +110,7 @@ class Promotions extends Component {
 						{ translate( 'Add promotion' ) }
 					</Button>
 				</ActionHeader>
+				{ <StoreDeprecatedNotice /> }
 				{ content }
 			</Main>
 		);
@@ -136,7 +137,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Promotions ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Promotions ) );

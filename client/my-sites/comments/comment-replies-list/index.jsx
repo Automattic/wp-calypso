@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,13 @@ import { map, take } from 'lodash';
 /**
  * Internal dependencies
  */
-import Comment from 'my-sites/comments/comment';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import getSiteCommentParentDepth from 'state/selectors/get-site-comment-parent-depth';
-import getSiteCommentRepliesTree from 'state/selectors/get-site-comment-replies-tree';
+import Comment from 'calypso/my-sites/comments/comment';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import {
+	getSiteCommentParentDepth,
+	getSiteCommentRepliesTree,
+} from 'calypso/state/comments/selectors';
 
 /**
  * Style dependencies

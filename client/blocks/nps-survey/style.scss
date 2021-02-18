@@ -1,4 +1,4 @@
-/** @format */
+
 
 .card.nps-survey {
 	margin: 0;
@@ -13,7 +13,7 @@
 	padding: 16px;
 	padding-right: 36px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 24px;
 		padding-right: 48px;
 	}
@@ -58,12 +58,12 @@
 
 .nps-survey__recommendation-select-wrapper {
 	background-color: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-100 );
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 	padding: 16px 0;
 	text-align: center;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 16px;
 	}
 }
@@ -78,7 +78,7 @@
 	padding: 0 3px;
 	margin-bottom: 8px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 0 6px;
 	}
 }
@@ -92,13 +92,13 @@
 	float: right;
 }
 
-.nps-survey__recommendation-option {
+.nps-survey__recommendation-option.form-label {
 	display: inline-block;
 }
 
 .nps-survey__recommendation-option.is-selected {
-	color: var( --color-primary-400 );
-	font-weight: bold;
+	color: var( --color-primary-40 );
+	font-weight: 600;
 }
 
 .nps-survey__recommendation-option input[type='radio'] {

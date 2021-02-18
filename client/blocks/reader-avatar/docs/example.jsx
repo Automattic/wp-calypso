@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
 
 const ReaderAvatarExample = () => {
 	const author = {

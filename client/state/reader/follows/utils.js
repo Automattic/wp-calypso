@@ -1,8 +1,7 @@
-/** @format */
 /**
  * Internal Dependencies
  */
-import { untrailingslashit } from 'lib/route';
+import { untrailingslashit } from 'calypso/lib/route';
 
 export function prepareComparableUrl( url ) {
 	const preparedUrl = url && untrailingslashit( url );

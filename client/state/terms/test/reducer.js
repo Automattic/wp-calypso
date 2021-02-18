@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { queries, queryRequests } from '../reducer';
-import TermQueryManager from 'lib/query-manager/term';
+import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
 	DESERIALIZE,
 	TERM_REMOVE,
@@ -19,8 +17,8 @@ import {
 	TERMS_REQUEST_FAILURE,
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 /**
  * Test Data
@@ -45,7 +43,7 @@ const testTerms = [
 ];
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

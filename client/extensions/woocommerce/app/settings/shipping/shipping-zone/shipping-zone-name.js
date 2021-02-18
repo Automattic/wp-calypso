@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
@@ -35,7 +33,7 @@ const ShippingZoneName = ( {
 	actions,
 	translate,
 } ) => {
-	const onNameChange = event => {
+	const onNameChange = ( event ) => {
 		actions.changeShippingZoneName( event.target.value );
 	};
 

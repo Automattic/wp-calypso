@@ -1,9 +1,6 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,14 +10,14 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
-import { getEditorPath } from 'state/ui/editor/selectors';
-import { getPostPreviewUrl } from 'state/posts/selectors';
-import { isSitePreviewable } from 'state/sites/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewUrl } from 'state/ui/preview/actions';
-import { setUrlScheme } from 'lib/url';
+import { Button } from '@automattic/components';
+import SectionHeader from 'calypso/components/section-header';
+import { getEditorPath } from 'calypso/state/editor/selectors';
+import { getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { isSitePreviewable } from 'calypso/state/sites/selectors';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { setUrlScheme } from 'calypso/lib/url';
 
 class PostCard extends Component {
 	static propTypes = {
@@ -34,12 +31,12 @@ class PostCard extends Component {
 		dispatch: PropTypes.func.isRequired,
 	};
 
-	handleMouseDown = event => {
+	handleMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 	};
 
-	viewPost = event => {
+	viewPost = ( event ) => {
 		const { dispatch, isPreviewable, previewUrl } = this.props;
 
 		event.preventDefault();
@@ -86,7 +83,4 @@ const connectComponent = connect( ( state, { postId, siteId } ) => ( {
 	previewUrl: getPostPreviewUrl( state, siteId, postId ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( PostCard );
+export default flowRight( connectComponent, localize )( PostCard );

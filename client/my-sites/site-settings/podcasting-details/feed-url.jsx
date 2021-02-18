@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,14 +8,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import PodcastingSupportLink from './support-link';
-import { getTerm } from 'state/terms/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getTerm } from 'calypso/state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 function PodcastFeedUrl( { feedUrl, translate } ) {
 	if ( ! feedUrl ) {
@@ -31,7 +29,7 @@ function PodcastFeedUrl( { feedUrl, translate } ) {
 			<FormSettingExplanation>
 				{ translate(
 					'Copy your feed URL and submit it to Apple Podcasts and other podcasting services.'
-				) }{' '}
+				) }{ ' ' }
 				<PodcastingSupportLink />
 			</FormSettingExplanation>
 		</FormFieldset>

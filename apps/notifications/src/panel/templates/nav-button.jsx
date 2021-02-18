@@ -19,7 +19,7 @@ export class NavButton extends Component {
 		navigate: PropTypes.func.isRequired,
 	};
 
-	navigate = event => {
+	navigate = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 

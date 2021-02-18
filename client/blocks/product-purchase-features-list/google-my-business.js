@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,12 +8,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 /**
  * Image dependencies
  */
-import googleMyBusinessImage from 'assets/images/illustrations/google-my-business-feature.svg';
+import googleMyBusinessImage from 'calypso/assets/images/illustrations/google-my-business-feature.svg';
 
 export default localize( ( { selectedSite, translate } ) => {
 	return (
@@ -24,7 +22,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				icon={ <img alt="" src={ googleMyBusinessImage } /> }
 				title={ translate( 'Google My Business' ) }
 				description={ translate(
-					'See how customers find you on Google -- and whether they visited your site and looked for more info on your business -- by connecting to a Google My Business location.'
+					'Create a Google business listing, connect with customers, and discover how customers find you on Google by connecting to a Google My Business location.'
 				) }
 				buttonText={ translate( 'Connect to Google My Business' ) }
 				href={ '/google-my-business/' + selectedSite.slug }

@@ -1,20 +1,16 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { fromApi, toApi } from './util';
-import { updateFeed } from '../../feeds/actions';
+import { updateFeed, updateFeedError } from '../../feeds/actions';
 import { resetLock } from '../../locks/actions';
 import { getZone } from '../../zones/selectors';
 import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED } from 'zoninator/state/action-types';
@@ -22,7 +18,7 @@ import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED } from 'zoninator/state/act
 const requestFeedNotice = 'zoninator-request-feed';
 const saveFeedNotice = 'zoninator-save-feed';
 
-export const requestZoneFeed = action => [
+export const requestZoneFeed = ( action ) => [
 	removeNotice( requestFeedNotice ),
 	http(
 		{
@@ -37,7 +33,7 @@ export const requestZoneFeed = action => [
 export const updateZoneFeed = ( action, response ) =>
 	updateFeed( action.siteId, action.zoneId, fromApi( response.data, action.siteId ) );
 
-export const requestZoneFeedError = action => ( dispatch, getState ) => {
+export const requestZoneFeedError = ( action ) => ( dispatch, getState ) => {
 	const { name } = getZone( getState(), action.siteId, action.zoneId );
 
 	dispatch(
@@ -50,8 +46,7 @@ export const requestZoneFeedError = action => ( dispatch, getState ) => {
 	);
 };
 
-export const saveZoneFeed = action => [
-	startSubmit( action.form ),
+export const saveZoneFeed = ( action ) => [
 	removeNotice( saveFeedNotice ),
 	resetLock( action.siteId, action.zoneId ),
 	http(
@@ -68,15 +63,13 @@ export const saveZoneFeed = action => [
 	),
 ];
 
-export const announceSuccess = ( { form, posts, siteId, zoneId } ) => [
-	stopSubmit( form ),
-	initialize( form, { posts } ),
+export const announceSuccess = ( { posts, siteId, zoneId } ) => [
 	updateFeed( siteId, zoneId, posts ),
 	successNotice( translate( 'Zone feed saved!' ), { id: saveFeedNotice } ),
 ];
 
-export const announceFailure = action => [
-	stopSubmit( action.form ),
+export const announceFailure = ( { siteId, zoneId } ) => [
+	updateFeedError( siteId, zoneId ),
 	errorNotice( translate( 'There was a problem saving your changes. Please try again' ), {
 		id: saveFeedNotice,
 	} ),

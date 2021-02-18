@@ -3,14 +3,14 @@
 	padding: 1px 6px;
 	border: solid 1px var( --color-border );
 	border-radius: 12px;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	line-height: 14px;
 	color: var( --color-text );
 	text-align: center;
 
 	&.is-primary {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 		border-color: var( --color-accent );
 		background-color: var( --color-accent );
 	}

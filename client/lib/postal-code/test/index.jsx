@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
+import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 
 describe( 'Postal Code Utils', () => {
 	test( 'should format valid GB code, length 7', () => {

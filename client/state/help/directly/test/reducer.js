@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +18,7 @@ import {
 	DIRECTLY_INITIALIZATION_START,
 	DIRECTLY_INITIALIZATION_SUCCESS,
 	DIRECTLY_INITIALIZATION_ERROR,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

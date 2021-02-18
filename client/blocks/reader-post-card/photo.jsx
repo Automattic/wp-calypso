@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -10,16 +9,16 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import cssSafeUrl from 'lib/css-safe-url';
+import AutoDirection from 'calypso/components/auto-direction';
+import Emojify from 'calypso/components/emojify';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 class PostPhoto extends React.Component {
 	state = {
 		cardWidth: 800,
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		if ( this.props.isExpanded ) {
 			this.props.onClick( event );
 			return;
@@ -51,7 +50,7 @@ class PostPhoto extends React.Component {
 		}
 	};
 
-	handleWidthDivLoaded = ref => {
+	handleWidthDivLoaded = ( ref ) => {
 		this.widthDivRef = ref;
 	};
 
@@ -79,7 +78,8 @@ class PostPhoto extends React.Component {
 			backgroundPosition: 'center',
 		};
 
-		let newWidth, newHeight;
+		let newWidth;
+		let newHeight;
 		if ( this.props.isExpanded ) {
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
@@ -115,7 +115,7 @@ class PostPhoto extends React.Component {
 					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } } />
 				</a>
 				<AutoDirection>
-					<h1 className="reader-post-card__title">
+					<h2 className="reader-post-card__title">
 						<a
 							className="reader-post-card__title-link"
 							href={ post.URL }
@@ -123,7 +123,7 @@ class PostPhoto extends React.Component {
 						>
 							<Emojify>{ linkTitle }</Emojify>
 						</a>
-					</h1>
+					</h2>
 				</AutoDirection>
 			</div>
 		);
@@ -131,7 +131,7 @@ class PostPhoto extends React.Component {
 
 	render() {
 		const { post, children } = this.props;
-		const featuredImage = !! post.canonical_media.src ? this.renderFeaturedImage() : null;
+		const featuredImage = post.canonical_media.src ? this.renderFeaturedImage() : null;
 
 		return (
 			<div className="reader-post-card__post">

@@ -27,28 +27,34 @@ import {
 	ERROR_MESSAGE_RESPONSE as errorMessageResponse,
 } from './fixture';
 import {
-	DOMAIN_PRIVACY_TOGGLE,
+	DOMAIN_PRIVACY_ENABLE_SUCCESS,
+	DOMAIN_PRIVACY_DISABLE_SUCCESS,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );
 
 	test( 'should export expected reducer keys', () => {
-		expect( domainsReducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'errors' ] );
+		expect( domainsReducer( undefined, {} ) ).to.have.keys( [
+			'items',
+			'requesting',
+			'errors',
+			'updatingPrivacy',
+		] );
 	} );
 
 	describe( '#items()', () => {
@@ -91,17 +97,41 @@ describe( 'reducer', () => {
 			expect( itemsReducer( newState, action ) ).to.eql( expectedState );
 		} );
 
-		test( 'should toggle privacy for given site and domain', () => {
+		test( 'should enable privacy for given site and domain', () => {
 			const state = {
 				[ siteId ]: [ firstDomain ],
 			};
 			const action = {
-				type: DOMAIN_PRIVACY_TOGGLE,
+				type: DOMAIN_PRIVACY_ENABLE_SUCCESS,
 				siteId,
 				domain: firstDomain.domain,
 			};
 			const expectedDomain = Object.assign( {}, firstDomain, {
-				privateDomain: ! firstDomain.privateDomain,
+				contactInfoDisclosed: false,
+				privateDomain: true,
+			} );
+			const expectedState = {
+				[ siteId ]: [ expectedDomain ],
+			};
+
+			deepFreeze( state );
+			deepFreeze( action );
+
+			expect( itemsReducer( state, action ) ).to.eql( expectedState );
+		} );
+
+		test( 'should disable privacy for given site and domain', () => {
+			const state = {
+				[ siteId ]: [ firstDomain ],
+			};
+			const action = {
+				type: DOMAIN_PRIVACY_DISABLE_SUCCESS,
+				siteId,
+				domain: firstDomain.domain,
+			};
+			const expectedDomain = Object.assign( {}, firstDomain, {
+				contactInfoDisclosed: false,
+				privateDomain: false,
 			} );
 			const expectedState = {
 				[ siteId ]: [ expectedDomain ],

@@ -1,94 +1,64 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { numberFormat } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
 import Label from './label';
 
-export default class ChartXAxis extends React.PureComponent {
-	static displayName = 'ModuleChartXAxis';
+const ModuleChartXAxis = ( { data, isRtl, labelWidth, chartWidth } ) => {
+	const dataCount = data.length || 1;
+	const [ spacing, setSpacing ] = useState( labelWidth );
+	const [ divisor, setDivisor ] = useState( 1 );
 
-	static propTypes = {
-		data: PropTypes.array.isRequired,
-		isRtl: PropTypes.bool,
-		labelWidth: PropTypes.number.isRequired,
-	};
+	useLayoutEffect( () => {
+		const resize = () => {
+			const width = chartWidth;
+			const newSpacing = width / dataCount;
 
-	axisRef = React.createRef();
-	axisSpacerRef = React.createRef();
+			setSpacing( newSpacing );
+			setDivisor( Math.ceil( labelWidth / newSpacing ) );
+		};
 
-	state = {
-		divisor: 1,
-		spacing: this.props.labelWidth,
-	};
+		resize();
 
-	// Add listener for window resize
-	componentDidMount() {
-		this.resize = afterLayoutFlush( this.resize );
-		window.addEventListener( 'resize', this.resize );
-		this.resize();
-	}
+		window.addEventListener( 'resize', resize );
 
-	// Remove listener
-	componentWillUnmount() {
-		if ( this.resize.cancel ) {
-			this.resize.cancel();
+		return () => {
+			window.removeEventListener( 'resize', resize );
+		};
+	}, [ dataCount, labelWidth, chartWidth ] );
+
+	const labels = data.map( function ( item, index ) {
+		const x = index * spacing + ( spacing - labelWidth ) / 2;
+		const rightIndex = data.length - index - 1;
+		let label;
+
+		if ( rightIndex % divisor === 0 ) {
+			label = (
+				<Label isRtl={ isRtl } key={ index } label={ item.label } width={ labelWidth } x={ x } />
+			);
 		}
-		window.removeEventListener( 'resize', this.resize );
-	}
 
-	componentDidUpdate() {
-		this.resize();
-	}
+		return label;
+	} );
 
-	resize = () => {
-		const width = this.axisRef.current.clientWidth - this.axisSpacerRef.current.clientWidth;
-		const dataCount = this.props.data.length || 1;
-		const spacing = width / dataCount;
-		const labelWidth = this.props.labelWidth;
-		const divisor = Math.ceil( labelWidth / spacing );
+	return (
+		<div className="chart__x-axis">
+			{ labels }
+			<div className="chart__x-axis-label chart__x-axis-width-spacer">{ numberFormat( 1e5 ) }</div>
+		</div>
+	);
+};
 
-		this.setState( { divisor, spacing } );
-	};
+ModuleChartXAxis.propTypes = {
+	data: PropTypes.array.isRequired,
+	isRtl: PropTypes.bool,
+	labelWidth: PropTypes.number.isRequired,
+};
 
-	render() {
-		const data = this.props.data;
-
-		const labels = data.map( function( item, index ) {
-			const x = index * this.state.spacing + ( this.state.spacing - this.props.labelWidth ) / 2,
-				rightIndex = data.length - index - 1;
-			let label;
-
-			if ( rightIndex % this.state.divisor === 0 ) {
-				label = (
-					<Label
-						isRtl={ this.props.isRtl }
-						key={ index }
-						label={ item.label }
-						width={ this.props.labelWidth }
-						x={ x }
-					/>
-				);
-			}
-
-			return label;
-		}, this );
-
-		return (
-			<div ref={ this.axisRef } className="chart__x-axis">
-				{ labels }
-				<div ref={ this.axisSpacerRef } className="chart__x-axis-label chart__x-axis-width-spacer">
-					{ numberFormat( 100000 ) }
-				</div>
-			</div>
-		);
-	}
-}
+export default ModuleChartXAxis;

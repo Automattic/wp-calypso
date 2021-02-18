@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -23,14 +21,14 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../../action-types';
 import reducer, { items, restoring } from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -90,22 +88,6 @@ describe( 'reducer', () => {
 			expect( state.requesting ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state.requesting ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.requesting ).to.eql( {} );
 		} );
 	} );
 
@@ -191,22 +173,6 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state.saveStatus ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.saveStatus ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'restoring()', () => {
@@ -263,22 +229,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = restoring( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = restoring( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,10 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import Card from 'components/card';
-import Gridicon from 'gridicons';
+import ButtonGroup from 'calypso/components/button-group';
+import { Button, Card } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 
 class Buttons extends React.PureComponent {
 	static displayName = 'ButtonGroup';

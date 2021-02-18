@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,11 +11,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasTouch } from 'lib/touch-detect';
-import { isMobile } from 'lib/viewport';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { localize } from 'i18n-calypso';
-import RootChild from 'components/root-child';
-import { setPreviewShowing } from 'state/ui/actions';
+import { RootChild } from '@automattic/components';
+import { setPreviewShowing } from 'calypso/state/ui/actions';
 import WebPreviewContent from './content';
 
 /**
@@ -41,6 +38,8 @@ export class WebPreviewModal extends Component {
 		showDeviceSwitcher: PropTypes.bool,
 		// Show edit button
 		showEdit: PropTypes.bool,
+		// Show edit the header link button
+		showEditHeaderLink: PropTypes.bool,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The URL that should be displayed in the iframe
@@ -102,7 +101,7 @@ export class WebPreviewModal extends Component {
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = hasTouch();
 		this._isMobile = isMobile();
@@ -180,10 +179,9 @@ export class WebPreviewModal extends Component {
 	}
 }
 
-const ConnectedWebPreviewModal = connect(
-	null,
-	{ setPreviewShowing }
-)( localize( WebPreviewModal ) );
+const ConnectedWebPreviewModal = connect( null, { setPreviewShowing } )(
+	localize( WebPreviewModal )
+);
 
 const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
 	const WebPreviewComponent = isContentOnly ? WebPreviewContent : ConnectedWebPreviewModal;

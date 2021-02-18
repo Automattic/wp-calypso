@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,14 +10,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SupportInfo from 'components/support-info';
-import Card from 'components/card';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SupportInfo from 'calypso/components/support-info';
+import { Card } from '@automattic/components';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 
 class Latex extends Component {
 	static defaultProps = {
@@ -67,7 +65,7 @@ class Latex extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

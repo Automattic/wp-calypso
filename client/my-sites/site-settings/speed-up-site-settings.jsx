@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,17 +9,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SupportInfo from 'components/support-info';
+import { Card } from '@automattic/components';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SupportInfo from 'calypso/components/support-info';
 
 class SpeedUpSiteSettings extends Component {
 	static propTypes = {
@@ -34,7 +32,6 @@ class SpeedUpSiteSettings extends Component {
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		siteAcceleratorStatus: PropTypes.bool,
-		siteSlug: PropTypes.string,
 	};
 
 	handleCdnChange = () => {
@@ -60,6 +57,7 @@ class SpeedUpSiteSettings extends Component {
 			siteIsJetpack,
 			translate,
 		} = this.props;
+
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
 
 		return (
@@ -80,13 +78,13 @@ class SpeedUpSiteSettings extends Component {
 									'and static files (like CSS and JavaScript) from our global network of servers.'
 							) }
 						</FormSettingExplanation>
-						<CompactFormToggle
+						<FormToggle
 							checked={ siteAcceleratorStatus }
 							disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							onChange={ this.handleCdnChange }
 						>
 							{ translate( 'Enable site accelerator' ) }
-						</CompactFormToggle>
+						</FormToggle>
 						<div className="site-settings__child-settings">
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
@@ -130,7 +128,7 @@ class SpeedUpSiteSettings extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
@@ -149,6 +147,5 @@ export default connect( state => {
 		selectedSiteId,
 		siteAcceleratorStatus,
 		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
-		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
 } )( localize( SpeedUpSiteSettings ) );

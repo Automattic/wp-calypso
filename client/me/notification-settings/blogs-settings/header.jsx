@@ -1,14 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import { countBy, map, omit, values, flatten } from 'lodash';
-import Gridicon from 'gridicons';
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
@@ -16,8 +12,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import SiteInfo from 'blocks/site';
+import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import SiteInfo from 'calypso/blocks/site';
 
 class BlogSettingsHeader extends PureComponent {
 	static propTypes = {
@@ -37,7 +34,7 @@ class BlogSettingsHeader extends PureComponent {
 		const isExpanded = ! this.state.isExpanded;
 		this.setState( { isExpanded } );
 
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Notification Settings',
 			isExpanded ? 'Expanded Site' : 'Collapsed Site',
 			this.props.site.name
@@ -57,7 +54,7 @@ class BlogSettingsHeader extends PureComponent {
 			'timeline.store_order',
 		] );
 		// Ignore the device_id of each device found.
-		const devicesSettings = map( settings.devices, device => omit( device, 'device_id' ) );
+		const devicesSettings = map( settings.devices, ( device ) => omit( device, 'device_id' ) );
 		const { true: onCount, false: offCount } = countBy(
 			// Here we're flattening the values of both sets of settings
 			// as both sets have two 'streams' of settings: 'email' and 'timeline'

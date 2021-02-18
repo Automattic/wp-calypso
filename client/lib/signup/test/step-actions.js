@@ -1,5 +1,6 @@
-/** @format */
-
+/**
+ * @jest-environment jsdom
+ */
 /**
  * Internal dependencies
  */
@@ -10,14 +11,14 @@ import {
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
 } from '../step-actions';
-import { useNock } from 'test/helpers/use-nock';
-import flows from 'signup/config/flows';
-import { isDomainStepSkippable } from 'signup/config/steps';
-import { getUserStub } from 'lib/user';
+import { useNock } from 'calypso/test-helpers/use-nock';
+import flows from 'calypso/signup/config/flows';
+import { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import { getUserStub } from 'calypso/lib/user';
 
-jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
+jest.mock( 'calypso/lib/abtest', () => ( { abtest: () => '' } ) );
 
-jest.mock( 'lib/user', () => {
+jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 
 	const user = () => ( {
@@ -28,20 +29,21 @@ jest.mock( 'lib/user', () => {
 	return user;
 } );
 
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps-pure' ) );
-jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
+jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'calypso/signup/config/flows-pure', () =>
+	require( './mocks/signup/config/flows-pure' )
+);
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
 	// Thus we intentionally mock the failing case here so that the parts we want to test
 	// would be easier to write.
-	useNock( nock => {
+	useNock( ( nock ) => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.post( '/rest/v1.1/sites/new' )
-			.reply( 400, function( uri, requestBody ) {
+			.reply( 400, function ( uri, requestBody ) {
 				return {
 					error: 'error',
 					message: 'something goes wrong!',
@@ -70,7 +72,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.options.site_vertical ).toBeUndefined();
 			},
 			[],
@@ -100,7 +102,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.options.site_vertical ).toEqual( verticalId );
 			},
 			[],
@@ -117,7 +119,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.find_available_url ).toBe( true );
 			},
 			[],
@@ -134,7 +136,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.find_available_url ).toBeFalsy();
 			},
 			[],
@@ -152,7 +154,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'alex' );
 			},
 			[],
@@ -171,7 +173,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'alex' );
 			},
 			[],
@@ -190,7 +192,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'mytitle' );
 			},
 			[],
@@ -209,7 +211,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'blog' );
 			},
 			[],
@@ -228,7 +230,7 @@ describe( 'createSiteWithCart()', () => {
 		};
 
 		createSiteWithCart(
-			response => {
+			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'art' );
 			},
 			[],
@@ -484,5 +486,31 @@ describe( 'isSiteTopicFulfilled()', () => {
 
 		expect( setSurvey ).not.toHaveBeenCalled();
 		expect( submitSiteVertical ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should remove a step with optional dependency not met', () => {
+		const flowName = 'flowWithSiteTopicWithOptionalTheme';
+		const stepName = 'site-topic-with-optional-theme';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-theme' );
+	} );
+
+	test( 'should remove a step with optional dependency met', () => {
+		const flowName = 'flowWithSiteTopicWithOptionalSurveyQuestion';
+		const stepName = 'site-topic-with-optional-survey-question';
+		const initialContext = { query: { vertical: 'verticalSlug' } };
+		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
+
+		expect( flows.excludeStep ).not.toHaveBeenCalled();
+
+		isSiteTopicFulfilled( stepName, undefined, nextProps );
+
+		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-survey-question' );
 	} );
 } );

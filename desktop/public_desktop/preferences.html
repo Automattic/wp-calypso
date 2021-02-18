@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="desktop-preferences">
+<head>
+	<title>Preferences</title>
+	<style type="text/css">
+	/* Try to mimic native window styling */
+	@font-face {
+		font-family: system;
+		font-style: normal;
+		font-weight: 400;
+		src: local(".SFNSText-Regular"), local(".HelveticaNeueDeskInterface-Regular"), local(".LucidaGrandeUI");
+	}
+
+	@font-face {
+		font-family: system;
+		font-style: normal;
+		font-weight: 700;
+		src: local(".SFNSText-Bold"), local(".HelveticaNeueDeskInterface-Bold"), local(".LucidaGrandeUI");
+	}
+
+	body {
+		background: #ebebeb;
+		font-family: "Segoe UI", Segoe, Ubuntu, system, sans-serif;
+		padding: 10px 20px;
+		font-size: 13px;
+	}
+
+	.options {
+		max-width: 600px;
+		width: 100%;
+		margin: 0 auto;
+		border-collapse: collapse;
+	}
+
+	.options label {
+		display: block;
+		padding-left: 19px;
+	}
+
+	.options label input[type="checkbox"] {
+		margin-left: -19px;
+	}
+
+	table.option-group {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+
+	.option-title {
+		text-align: right;
+		width: 120px;
+	}
+
+	.options td {
+		vertical-align: top;
+	}
+
+	.option-group span {
+		margin-right: 5px;
+	}
+
+	.custom-proxy {
+		display: none;
+	}
+
+	body.has-custom-proxy .custom-proxy {
+		display: block;
+	}
+
+	select, option {
+		font-family: "Segoe UI", Segoe, Ubuntu, system, sans-serif;
+		font-size: 13px;
+		border: 1px solid #c9c9c9;
+		box-shadow: 0 1px 0 0 rgba(0,0,0,.05);
+		margin-top: -2px;
+	}
+	</style>
+</head>
+<body>
+
+<div class="options">
+	<table class="option-group spellcheck">
+		<tr class="option-spellcheck">
+			<td class="option-title"><span>Writing: </span></td>
+			<td><label><input type="checkbox" name="spellcheck-enabled"> Enable spell checking </label> </td>
+		</tr>
+	</table>
+	<table class="option-group">
+		<tr class="option-notifications">
+			<td class="option-title"><span>Notifications: </span></td>
+			<td><label><input type="checkbox" name="notification-badge"> Show notification badge </label></td>
+		</tr>
+		<tr class="option-bounce">
+			<td></td>
+			<td><label><input type="checkbox" name="notification-bounce"> Bounce app icon in the dock when a new notification is received </label></td>
+		</tr>
+		<tr class="option-notification-messages">
+			<td></td>
+			<td><label><input type="checkbox" name="notifications">  Show desktop notifications <small> (experimental) </small></label></td>
+		</tr>
+	</table>
+	<table class="option-group">
+		<tr>
+			<td class="option-title"><span>Release Channel: </span></td>
+			<td>
+				<select name="release-channel">
+					<option value="stable">Stable</option>
+					<option value="beta">Beta</option>
+				</select>
+
+				<p>Select <strong>Stable</strong> channel for official, public releases of the app.</p>
+				<p>Select <strong>Beta</strong> channel if you want to get and help test preview releases of the app.</p>
+			</td>
+		</tr>
+	</table>
+
+	<table class="option-group">
+		<tr>
+			<td class="option-title"><span>Proxy: </span></td>
+			<td>
+				<select name="proxy-type">
+					<option value="">No proxy</option>
+					<option value="system">Use system proxy</option>
+					<!--<option value="custom">Custom proxy</option> -->
+				</select>
+			</td>
+		</tr>
+		<tr class="custom-proxy">
+			<td>Proxy URL</td>
+			<td>
+				<input type="text" name="proxy-url"/>
+			</td>
+		</tr>
+		<tr class="custom-proxy">
+			<td>Proxy Port</td>
+			<td>
+				<input type="text" name="proxy-port"/>
+			</td>
+		</tr>
+		<tr class="custom-proxy">
+			<td>Proxy PAC</td>
+			<td>
+				<input type="text" name="proxy-pac"/>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<script>
+	function Preferences( settings ) {
+		this.setValues( settings );
+		this.updateProxyView( settings[ 'proxy-type' ] );
+	}
+
+	Preferences.prototype.setValues = function( settings ) {
+		var inputs = document.querySelectorAll( 'input[type=checkbox]' );
+
+		for ( var i = 0; i < inputs.length; i++ ) {
+			inputs[i].checked = settings[ inputs[i].getAttribute( 'name' ) ];
+		}
+
+		[ 'proxy-url', 'proxy-port', 'proxy-pac' ].forEach( function( item ) {
+			document.querySelector( 'input[name=' + item + ']' ).value = settings[ item ];
+		} );
+
+		if ( navigator.platform === 'Win32' ) {
+			document.querySelector( '.option-bounce' ).style.display = 'none';
+		}
+		else if ( ( navigator.platform === 'Linux x86_64' )  || ( navigator.platform === 'Linux' ) ) {
+			document.querySelector( '.option-bounce' ).style.display = 'none';
+			document.querySelector( '.option-notifications' ).style.display = 'none';
+		}
+
+		this.setSelect( 'select[name=proxy-type]', settings[ 'proxy-type' ] );
+		this.setSelect( 'select[name=release-channel]', settings[ 'release-channel' ] );
+	};
+
+	Preferences.prototype.setSelect = function( item, value ) {
+		item = document.querySelector( item );
+
+		for ( var x = 0; x < item.options.length; x++ ) {
+		    if ( item.options[x].value === value ) {
+				item.selectedIndex = x;
+				break;
+			}
+		}
+	};
+
+	Preferences.prototype.monitorChanges = function() {
+		var that = this;
+
+		[].forEach.call( document.querySelectorAll( 'input[type=text]' ), function( el ) {
+			el.addEventListener( 'blur', that.onChangeText.bind( that ), false );
+		} );
+
+		[].forEach.call( document.querySelectorAll( 'input[type=checkbox]' ), function( el ) {
+			el.addEventListener( 'change', that.onChangeCheckbox.bind( that ), false );
+		} );
+
+		[].forEach.call( document.querySelectorAll( 'select' ), function( el ) {
+			el.addEventListener( 'change', that.onChangeSelect.bind( that ), false );
+		} );
+	};
+
+	Preferences.prototype.save = function( name, value ) {
+		window.electron.send( 'preferences-changed', { name: name, value: value } );
+		window.electron.send( 'preferences-changed-' + name, value );
+	};
+
+	Preferences.prototype.updateProxyView = function( proxyType ) {
+		if ( proxyType === 'custom' ) {
+			document.body.classList.add( 'has-custom-proxy' );
+		}
+		else {
+			document.body.classList.remove( 'has-custom-proxy' );
+		}
+	};
+
+	Preferences.prototype.onChangeCheckbox = function( ev ) {
+		var element = ev.target;
+
+		ev.preventDefault();
+
+		this.save( element.getAttribute( 'name' ), element.checked );
+	};
+
+	Preferences.prototype.onChangeText = function( ev ) {
+		var element = ev.target;
+
+		ev.preventDefault();
+
+		this.save( element.getAttribute( 'name' ), element.value );
+		this.updateProxyView( this.getProxySetting() );
+	};
+
+	Preferences.prototype.onChangeSelect = function( ev ) {
+		var element = ev.target;
+
+		ev.preventDefault();
+
+		this.save( element.getAttribute( 'name' ), element.selectedOptions[0].value );
+		this.updateProxyView( this.getProxySetting() );
+	};
+
+	Preferences.prototype.getProxySetting = function() {
+		return document.querySelector( 'select[name=proxy-type]' ).value
+	};
+
+	var pref = new Preferences ( window.electron.preferences );
+
+	pref.monitorChanges();
+</script>
+
+</body>
+</html>

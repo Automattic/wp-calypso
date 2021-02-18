@@ -1,19 +1,19 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
-import { combineReducers, createReducerWithValidation } from 'state/utils';
+import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { suggestedUsernameSchema } from './schema';
 
-const suggestedUsername = createReducerWithValidation(
-	'',
-	{
-		[ SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET ]: ( state, action ) => {
+const suggestedUsername = withSchemaValidation( suggestedUsernameSchema, ( state = '', action ) => {
+	switch ( action.type ) {
+		case SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET: {
 			return action.data;
-		},
-	},
-	suggestedUsernameSchema
-);
+		}
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	suggestedUsername,

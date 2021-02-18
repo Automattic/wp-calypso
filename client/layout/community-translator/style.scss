@@ -6,24 +6,29 @@
 	background: var( --color-primary );
 	cursor: pointer;
 	padding: 4px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	z-index: z-index( 'root', '.community-translator' );
 
 	&.is-active {
 		background: var( --color-accent );
 	}
+
+	&.is-incompatible {
+		background: var( --color-neutral-5 );
+		border: 1px solid var( --color-neutral-10 );
+	}
 }
 
 .community-translator__button {
 	align-items: center;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	text-decoration: none;
 	outline: 0;
 	display: flex;
 	cursor: pointer;
 
 	&:hover {
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 
 		.community-translator__text {
 			transition: all 0.15s ease-in-out;
@@ -32,6 +37,25 @@
 			padding: 0 2px;
 		}
 	}
+
+	.is-incompatible & {
+		color: var( --color-neutral-20 );
+	}
+}
+
+.community-translator__badge {
+	position: absolute;
+	left: 50%;
+	top: -8px;
+	padding: 1px 3px;
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 2px;
+	background: var( --color-neutral-5 );
+	color: var( --color-neutral-20 );
+	font-size: 0.6em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	transform: translateX( -50% );
 }
 
 .community-translator__text {
@@ -46,11 +70,11 @@ body {
 		border-radius: 2px;
 		padding: 0;
 		text-align: inherit;
-		border-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-10 );
 		z-index: z-index( 'root', 'body .webui-popover' ); // Appear above dialog
 
 		.webui-popover-title {
-			background-color: var( --color-neutral-100 );
+			background-color: var( --color-neutral-10 );
 			border-color: var( --color-neutral-0 );
 			border-radius: 1px 1px 0 0;
 		}
@@ -59,7 +83,7 @@ body {
 		&.top-right,
 		&.top-left {
 			.arrow {
-				border-top-color: var( --color-neutral-100 );
+				border-top-color: var( --color-neutral-10 );
 			}
 		}
 
@@ -67,7 +91,7 @@ body {
 		&.right-top,
 		&.right-bottom {
 			.arrow {
-				border-right-color: var( --color-neutral-100 );
+				border-right-color: var( --color-neutral-10 );
 			}
 		}
 
@@ -75,7 +99,7 @@ body {
 		&.left-top,
 		&.left-bottom {
 			.arrow {
-				border-left-color: var( --color-neutral-100 );
+				border-left-color: var( --color-neutral-10 );
 			}
 		}
 
@@ -83,9 +107,9 @@ body {
 		&.bottom-right,
 		&.bottom-left {
 			.arrow {
-				border-bottom-color: var( --color-neutral-100 );
+				border-bottom-color: var( --color-neutral-10 );
 				&::after {
-					border-bottom-color: var( --color-neutral-100 );
+					border-bottom-color: var( --color-neutral-10 );
 				}
 			}
 		}
@@ -94,4 +118,61 @@ body {
 
 .community-translator__modal {
 	max-width: 400px;
+}
+
+.community-translator__highlight {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1000;
+	margin: -10px;
+	padding: 10px;
+	outline: 1000vw solid rgba( 0, 0, 0, 0.5 );
+	box-shadow: 0 5px 10px 5px rgba( 0, 0, 0, 0.25 );
+	pointer-events: none;
+	transition: all 0.2s;
+}
+
+.community-translator__bar {
+	z-index: 1000;
+	background: var( --studio-orange );
+	border-color: var( --studio-orange-80 );
+
+	&-form {
+		flex: 1 1 auto;
+		display: flex;
+		flex-flow: row nowrap;
+		align-items: center;
+		justify-content: center;
+		padding: 4px 8px;
+
+		.button {
+			flex: 0 0 auto;
+			margin-left: 8px;
+		}
+
+		.form-text-input {
+			max-width: 500px;
+		}
+	}
+
+	&-label {
+		flex: 0 0 auto;
+		margin-right: 8px;
+	}
+}
+
+.has-deliverable-highlighted {
+	// Disable translatable strings highlight when deliverable is highlighted
+	.translator-translatable {
+		text-shadow: none !important;
+	}
+
+	/* stylelint-disable selector-max-id */
+	#notices,
+	.environment-badge,
+	.community-translator,
+	.inline-help {
+		display: none !important;
+	}
 }

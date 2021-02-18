@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import { editPromotion, clearPromotionEdits } from 'woocommerce/state/ui/promotions/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -32,9 +30,9 @@ import {
 import { getSaveErrorMessage } from './save-error-message';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { validateAll } from './promotion-models';
 
 class PromotionCreate extends React.Component {
@@ -76,7 +74,7 @@ class PromotionCreate extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -138,14 +136,14 @@ class PromotionCreate extends React.Component {
 			);
 		};
 
-		const successAction = dispatch => {
+		const successAction = ( dispatch ) => {
 			this.props.clearPromotionEdits( site.ID );
 
 			dispatch( getSuccessNotice( promotion ) );
 			page.redirect( getLink( '/store/promotions/:site', site ) );
 		};
 
-		const failureAction = error => {
+		const failureAction = ( error ) => {
 			this.setState( () => ( { busy: false } ) );
 			const errorSlug = ( error && error.error ) || undefined;
 
@@ -226,7 +224,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PromotionCreate ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( PromotionCreate ) );

@@ -7,7 +7,7 @@
 
 	thead .table-heading,
 	thead .table-item {
-		border-bottom: 1px solid var( --color-neutral-100 );
+		border-bottom: 1px solid var( --color-neutral-10 );
 	}
 
 	tbody .table-heading,
@@ -59,7 +59,7 @@
 			text-align: right;
 			padding: 0 8px;
 			white-space: nowrap;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 
 			&:first-child {
 				padding: 0 8px 0 16px;
@@ -87,7 +87,7 @@
 			overflow: hidden;
 
 			&::after {
-				background-image: linear-gradient( to right, rgba( var( --color-white-rgb ), 0 ) 0%, var( --color-white ) 90% );
+				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
 				position: absolute;
 				z-index: 1;
 				right: 0;
@@ -114,13 +114,13 @@
 				top: 0;
 				background: radial-gradient(
 					ellipse at center,
-					rgba( var( --color-neutral-700-rgb ), 0.125 ) 0%,
-					rgba( var( --color-white-rgb ), 0 ) 75%,
-					rgba( var( --color-white-rgb ), 0 ) 90%
+					rgba( var( --color-neutral-70-rgb ), 0.125 ) 0%,
+					rgba( var( --color-surface-rgb ), 0 ) 75%,
+					rgba( var( --color-surface-rgb ), 0 ) 90%
 				);
 			}
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				&::after {
 					display: none;
 				}
@@ -150,7 +150,7 @@
 	}
 
 	&.is-header {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-weight: 600;
 	}
 
@@ -166,7 +166,7 @@
 
 .table-heading,
 .table-item {
-	font-size: 14px;
+	font-size: $font-body-small;
 	padding: 16px;
 	vertical-align: middle;
 

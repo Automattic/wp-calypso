@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getOrderTransactionError from 'state/selectors/get-order-transaction-error';
+import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 
 describe( 'getOrderTransactionError()', () => {
 	const orderId = 123;

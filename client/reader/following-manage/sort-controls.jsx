@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'calypso/components/forms/form-select';
 
 class FollowingManageSortControls extends React.Component {
 	static propTypes = {
@@ -23,7 +22,7 @@ class FollowingManageSortControls extends React.Component {
 		sortOrder: 'date-followed',
 	};
 
-	handleSelectChange = event => {
+	handleSelectChange = ( event ) => {
 		this.props.onSortChange( event.target.value );
 	};
 

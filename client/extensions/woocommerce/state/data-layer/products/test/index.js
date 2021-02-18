@@ -1,12 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { spy, match } from 'sinon';
 
-jest.mock( 'lib/warn', () => () => {} );
+jest.mock( '@wordpress/warning', () => () => {} );
 
 /**
  * Internal dependencies
@@ -26,7 +24,7 @@ import {
 	productsRequest,
 	receivedProducts,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	WOOCOMMERCE_API_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
@@ -340,7 +338,10 @@ describe( 'handlers', () => {
 		test( 'should dispatch a success action on a good response', () => {
 			const dispatch = spy();
 
-			const products = [ { id: 1, name: 'Mittens' }, { id: 2, name: 'Scarf' } ];
+			const products = [
+				{ id: 1, name: 'Mittens' },
+				{ id: 2, name: 'Scarf' },
+			];
 			const data = {
 				status: 200,
 				body: products,

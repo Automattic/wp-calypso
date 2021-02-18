@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -13,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import {
 	areOrdersLoading,
@@ -29,11 +28,11 @@ import {
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import humanDate from 'lib/human-date';
+import humanDate from 'calypso/lib/human-date';
 import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
 import OrdersFilterNav from './orders-filter-nav';
 import OrderStatus from 'woocommerce/components/order-status';
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -53,7 +52,7 @@ class Orders extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const hasAnythingChanged =
 			newProps.currentPage !== this.props.currentPage ||
 			newProps.currentSearch !== this.props.currentSearch ||
@@ -79,7 +78,7 @@ class Orders extends Component {
 		this.props.fetchOrders( newProps.siteId, query );
 	}
 
-	clearSearch = event => {
+	clearSearch = ( event ) => {
 		const { site, siteId } = this.props;
 		this.search.closeSearch( event );
 		this.props.updateCurrentOrdersQuery( siteId, { page: 1, search: '' } );
@@ -87,7 +86,7 @@ class Orders extends Component {
 	};
 
 	renderPlaceholders = () => {
-		return range( 5 ).map( i => {
+		return range( 5 ).map( ( i ) => {
 			return (
 				<TableRow key={ i } className="orders__row-placeholder">
 					<TableItem className="orders__table-name" isRowHeader>
@@ -157,7 +156,7 @@ class Orders extends Component {
 				<TableItem className="orders__table-total">
 					{ refundValue ? (
 						<span>
-							<span className="orders__table-old-total">{ total }</span>{' '}
+							<span className="orders__table-old-total">{ total }</span>{ ' ' }
 							{ formatCurrency( remainingTotal, order.currency ) }
 						</span>
 					) : (
@@ -195,7 +194,7 @@ class Orders extends Component {
 		);
 	};
 
-	onPageClick = nextPage => {
+	onPageClick = ( nextPage ) => {
 		this.props.updateCurrentOrdersQuery( this.props.siteId, {
 			page: nextPage,
 			status: this.props.currentStatus,
@@ -222,7 +221,7 @@ class Orders extends Component {
 			);
 		}
 
-		const setSearchRef = ref => ( this.search = ref );
+		const setSearchRef = ( ref ) => ( this.search = ref );
 
 		return (
 			<div className="orders__container">
@@ -276,5 +275,5 @@ export default connect(
 			total,
 		};
 	},
-	dispatch => bindActionCreators( { fetchOrders, updateCurrentOrdersQuery }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchOrders, updateCurrentOrdersQuery }, dispatch )
 )( localize( Orders ) );

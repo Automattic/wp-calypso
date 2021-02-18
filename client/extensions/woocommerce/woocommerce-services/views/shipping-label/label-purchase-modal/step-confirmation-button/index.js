@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 
 const StepConfirmationButton = ( { disabled, onClick, children } ) => {
 	return (

@@ -1,44 +1,37 @@
-/** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import classnames from 'classnames';
 import { flowRight as compose, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
-import FollowButton from 'reader/follow-button';
-import { getStreamUrl } from 'reader/route';
-import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import FollowButton from 'calypso/reader/follow-button';
+import { getStreamUrl } from 'calypso/reader/route';
+import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import {
 	getSiteName,
 	getSiteDescription,
 	getSiteAuthorName,
 	getFeedUrl,
 	getSiteUrl,
-} from 'reader/get-helpers';
-import { untrailingslashit } from 'lib/route';
-import ReaderListItemPlaceholder from 'blocks/reader-list-item/placeholder';
-import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
-import ExternalLink from 'components/external-link';
-import { withLocalizedMoment } from 'components/localized-moment';
+} from 'calypso/reader/get-helpers';
+import ReaderListItemPlaceholder from 'calypso/blocks/reader-list-item/placeholder';
+import { recordRailcar } from 'calypso/reader/stats';
+import ExternalLink from 'calypso/components/external-link';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Takes in a string and removes the starting https, www., and removes a trailing slash
- *
- * @param {String} url - the url to format
- * @returns {String} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
- */
-const formatUrlForDisplay = url => untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
 
 function ReaderListItem( {
 	moment,
@@ -66,23 +59,25 @@ function ReaderListItem( {
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
+	const dispatch = useDispatch();
 
 	if ( ! site && ! feed ) {
 		return <ReaderListItemPlaceholder />;
 	}
 
-	function recordEvent( name ) {
-		const props = {
+	const recordEvent = ( eventName ) => {
+		const eventProps = {
 			blog_id: siteId,
 			feed_id: feedId,
 			source: followSource,
 		};
+
+		dispatch( recordReaderTracksEvent( eventName, eventProps ) );
+
 		if ( railcar ) {
-			recordTrackWithRailcar( name, railcar, props );
-		} else {
-			recordTrack( name, props );
+			recordRailcar( eventName, railcar, eventProps );
 		}
-	}
+	};
 
 	const recordTitleClick = () => recordEvent( 'calypso_reader_feed_link_clicked' );
 	const recordAuthorClick = () => recordEvent( 'calypso_reader_author_link_clicked' );
@@ -165,7 +160,4 @@ function ReaderListItem( {
 	);
 }
 
-export default compose(
-	localize,
-	withLocalizedMoment
-)( ReaderListItem );
+export default compose( localize, withLocalizedMoment )( ReaderListItem );

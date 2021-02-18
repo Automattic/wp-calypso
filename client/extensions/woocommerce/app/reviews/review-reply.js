@@ -1,22 +1,21 @@
 /**
  * External depedencies
  *
- * @format
  */
 
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import Button from 'components/button';
-import { decodeEntities, removep } from 'lib/formatting';
+import accept from 'calypso/lib/accept';
+import { Button } from '@automattic/components';
+import { decodeEntities, removep } from 'calypso/lib/formatting';
 import {
 	deleteReviewReply,
 	updateReviewReply,
@@ -30,8 +29,9 @@ import {
 	getReviewReplyEdits,
 } from 'woocommerce/state/ui/review-replies/selectors';
 import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import Gravatar from './gravatar';
-import humanDate from 'lib/human-date';
+import humanDate from 'calypso/lib/human-date';
 
 class ReviewReply extends Component {
 	static propTypes = {
@@ -52,7 +52,7 @@ class ReviewReply extends Component {
 		this.props.clearReviewReplyEdits( siteId );
 	};
 
-	onTextChange = event => {
+	onTextChange = ( event ) => {
 		const { value } = event.target;
 		const { siteId, reviewId, replyId } = this.props;
 		this.props.editReviewReply( siteId, reviewId, { id: replyId, content: value } );
@@ -61,7 +61,7 @@ class ReviewReply extends Component {
 	onDelete = () => {
 		const { siteId, reviewId, replyId, translate } = this.props;
 		const areYouSure = translate( 'Are you sure you want to permanently delete this reply?' );
-		accept( areYouSure, accepted => {
+		accept( areYouSure, ( accepted ) => {
 			if ( ! accepted ) {
 				return;
 			}
@@ -103,7 +103,7 @@ class ReviewReply extends Component {
 		const { translate, editContent } = this.props;
 		return (
 			<div className="reviews__reply-edit">
-				<textarea onChange={ this.onTextChange } value={ editContent } />
+				<FormTextarea onChange={ this.onTextChange } value={ editContent } />
 
 				<div className="reviews__reply-edit-buttons">
 					<Button compact onClick={ this.onCancel }>
@@ -159,18 +159,15 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect(
-	( state, props ) => {
-		const reply = getReviewReply( state, props.reviewId, props.replyId );
-		const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
-		const replyEdits = getReviewReplyEdits( state );
-		const editContent = replyEdits.content || '';
-		return {
-			reply,
-			isEditing,
-			replyEdits,
-			editContent,
-		};
-	},
-	mapDispatchToProps
-)( localize( ReviewReply ) );
+export default connect( ( state, props ) => {
+	const reply = getReviewReply( state, props.reviewId, props.replyId );
+	const isEditing = props.replyId === getCurrentlyEditingReviewReplyId( state );
+	const replyEdits = getReviewReplyEdits( state );
+	const editContent = replyEdits.content || '';
+	return {
+		reply,
+		isEditing,
+		replyEdits,
+		editContent,
+	};
+}, mapDispatchToProps )( localize( ReviewReply ) );

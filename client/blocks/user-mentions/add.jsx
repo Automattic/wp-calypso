@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -18,17 +17,18 @@ const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow:
  *
  * Suggestions can be provided via the suggestions prop, or by the connectUserMentions higher-order component.
  *
- * @example: addUserMentions( Component )
+ * @example addUserMentions( Component )
  *
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-export default WrappedComponent =>
+export default ( WrappedComponent ) =>
 	class AddUserMentions extends React.Component {
 		matchingSuggestions = [];
 
-		static displayName = `withUserMentions( ${ WrappedComponent.displayName ||
-			WrappedComponent.name } )`;
+		static displayName = `withUserMentions( ${
+			WrappedComponent.displayName || WrappedComponent.name
+		} )`;
 		static propTypes = {};
 
 		state = {
@@ -50,7 +50,7 @@ export default WrappedComponent =>
 			}
 		}
 
-		componentWillUpdate( nextProps, nextState ) {
+		UNSAFE_componentWillUpdate( nextProps, nextState ) {
 			// Update position of popover if going from invisible to visible state.
 			if ( ! this.state.showPopover && nextState.showPopover ) {
 				this.updatePosition( nextState );
@@ -80,7 +80,7 @@ export default WrappedComponent =>
 			}
 		}
 
-		handleKeyDown = event => {
+		handleKeyDown = ( event ) => {
 			if ( ! this.state.showPopover ) {
 				return;
 			}
@@ -116,7 +116,7 @@ export default WrappedComponent =>
 			this.setState( { selectedSuggestionId: this.matchingSuggestions[ nextIndex ].ID } );
 		};
 
-		handleKeyUp = event => {
+		handleKeyUp = ( event ) => {
 			if ( includes( [ keys.downArrow, keys.upArrow ], event.keyCode ) ) {
 				return;
 			}
@@ -260,6 +260,14 @@ export default WrappedComponent =>
 
 			// Move the caret to the end of the inserted username
 			node.selectionStart = lastAtSymbolPosition + newTextValue.length;
+
+			// Fire the onChange handler with a simulated event so the new text value is persisted to state
+			if ( ! this.props.onChange ) {
+				return;
+			}
+
+			const changeEvent = { target: { value: newTextValue } };
+			this.props.onChange( changeEvent );
 		};
 
 		updatePosition = ( state = this.state, newPosition ) => {

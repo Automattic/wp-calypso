@@ -1,15 +1,13 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
+import { CONNECTION_LOST, CONNECTION_RESTORED } from 'calypso/state/action-types';
+import { warningNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 
-import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
-
-import { warningNotice, successNotice, removeNotice } from 'state/notices/actions';
+import 'calypso/state/application/init';
 
 export function connectionLost( noticeText ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( removeNotice( 'connectionRestored' ) );
 		dispatch(
 			warningNotice( noticeText, {
@@ -24,7 +22,7 @@ export function connectionLost( noticeText ) {
 }
 
 export function connectionRestored( noticeText ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( removeNotice( 'connectionLost' ) );
 		dispatch(
 			successNotice( noticeText, {

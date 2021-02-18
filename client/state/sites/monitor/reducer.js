@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import { stubFalse, stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,
@@ -18,41 +16,48 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-export const items = createReducer(
-	{},
-	{
-		[ SITE_MONITOR_SETTINGS_RECEIVE ]: ( state, { siteId, settings } ) => ( {
-			...state,
-			[ siteId ]: settings,
-		} ),
+export const items = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_MONITOR_SETTINGS_RECEIVE: {
+			const { siteId, settings } = action;
+
+			return {
+				...state,
+				[ siteId ]: settings,
+			};
+		}
 	}
-);
 
-export const requesting = keyedReducer(
-	'siteId',
-	createReducer(
-		{},
-		{
-			[ SITE_MONITOR_SETTINGS_REQUEST ]: stubTrue,
-			[ SITE_MONITOR_SETTINGS_REQUEST_SUCCESS ]: stubFalse,
-			[ SITE_MONITOR_SETTINGS_REQUEST_FAILURE ]: stubFalse,
-		}
-	)
-);
+	return state;
+};
 
-export const updating = keyedReducer(
-	'siteId',
-	createReducer(
-		{},
-		{
-			[ SITE_MONITOR_SETTINGS_UPDATE ]: stubTrue,
-			[ SITE_MONITOR_SETTINGS_UPDATE_SUCCESS ]: stubFalse,
-			[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: stubFalse,
-		}
-	)
-);
+export const requesting = keyedReducer( 'siteId', ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_MONITOR_SETTINGS_REQUEST:
+			return stubTrue( state, action );
+		case SITE_MONITOR_SETTINGS_REQUEST_SUCCESS:
+			return stubFalse( state, action );
+		case SITE_MONITOR_SETTINGS_REQUEST_FAILURE:
+			return stubFalse( state, action );
+	}
+
+	return state;
+} );
+
+export const updating = keyedReducer( 'siteId', ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_MONITOR_SETTINGS_UPDATE:
+			return stubTrue( state, action );
+		case SITE_MONITOR_SETTINGS_UPDATE_SUCCESS:
+			return stubFalse( state, action );
+		case SITE_MONITOR_SETTINGS_UPDATE_FAILURE:
+			return stubFalse( state, action );
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	items,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -25,13 +23,14 @@ import {
 	areProductsLoaded,
 	areProductsLoading,
 } from 'woocommerce/state/sites/products/selectors';
-import Main from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import Main from 'calypso/components/main';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
-import SectionNav from 'components/section-nav';
-import Search from 'components/search';
+import SectionNav from 'calypso/components/section-nav';
+import Search from 'calypso/components/search';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 class Products extends Component {
 	static propTypes = {
@@ -52,7 +51,7 @@ class Products extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -62,7 +61,7 @@ class Products extends Component {
 		}
 	}
 
-	switchPage = page => {
+	switchPage = ( page ) => {
 		const { site } = this.props;
 		if ( trim( this.state.query ) !== '' ) {
 			this.props.fetchProducts( site.ID, { page, search: this.state.query } );
@@ -71,7 +70,7 @@ class Products extends Component {
 		}
 	};
 
-	onSearch = query => {
+	onSearch = ( query ) => {
 		const { site } = this.props;
 
 		if ( trim( query ) === '' ) {
@@ -128,6 +127,7 @@ class Products extends Component {
 						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
+				{ <StoreDeprecatedNotice /> }
 				{ this.renderSectionNav() }
 				{ productsDisplay }
 			</Main>
@@ -153,7 +153,4 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators( { fetchProducts }, dispatch );
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( Products ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Products ) );

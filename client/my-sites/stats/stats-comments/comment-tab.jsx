@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,12 +12,12 @@ import classNames from 'classnames';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 
-const StatsCommentTab = props => {
-	const { data, followList, isActive, name, value, label } = props;
+const StatsCommentTab = ( props ) => {
+	const { data, isActive, name, value, label } = props;
 	let statsList;
 
 	if ( data ) {
-		statsList = <StatsList moduleName={ name } data={ data } followList={ followList } />;
+		statsList = <StatsList moduleName={ name } data={ data } />;
 	}
 
 	const classes = classNames( 'stats-comments__tab-content', { 'is-active': isActive } );
@@ -34,7 +32,6 @@ const StatsCommentTab = props => {
 
 StatsCommentTab.propTypes = {
 	data: PropTypes.array,
-	followList: PropTypes.object,
 	name: PropTypes.string,
 	value: PropTypes.string,
 	label: PropTypes.string,

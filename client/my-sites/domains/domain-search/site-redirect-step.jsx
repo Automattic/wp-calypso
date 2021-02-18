@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -12,15 +11,16 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-
-import Button from 'components/button';
-import { hasProduct, siteRedirect } from 'lib/cart-values/cart-items';
-import { errorNotice } from 'state/notices/actions';
-import { canRedirect } from 'lib/domains';
-import DomainProductPrice from 'components/domains/domain-product-price';
-import { addItem } from 'lib/upgrades/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { withoutHttp } from 'lib/url';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { Button } from '@automattic/components';
+import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { canRedirect } from 'calypso/lib/domains';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
+import { addItem } from 'calypso/lib/cart/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { withoutHttp } from 'calypso/lib/url';
 
 /**
  * Style dependencies
@@ -55,10 +55,9 @@ class SiteRedirectStep extends React.Component {
 
 					<DomainProductPrice price={ price } requiresPlan={ false } />
 
-					<fieldset>
-						<input
+					<FormFieldset>
+						<FormTextInput
 							className="site-redirect-step__external-domain"
-							type="text"
 							value={ this.state.searchQuery }
 							placeholder={ translate( 'Enter a domain', { textOnly: true } ) }
 							onChange={ this.setSearchQuery }
@@ -74,7 +73,7 @@ class SiteRedirectStep extends React.Component {
 								context: 'Upgrades: Label for adding Site Redirect',
 							} ) }
 						</Button>
-					</fieldset>
+					</FormFieldset>
 				</form>
 			</div>
 		);
@@ -89,11 +88,11 @@ class SiteRedirectStep extends React.Component {
 		this.props.recordGoButtonClick( this.state.searchQuery );
 	};
 
-	setSearchQuery = event => {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: withoutHttp( event.target.value ) } );
 	};
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		const domain = this.state.searchQuery;
@@ -110,7 +109,7 @@ class SiteRedirectStep extends React.Component {
 		canRedirect(
 			this.props.selectedSite.ID,
 			domain,
-			function( error ) {
+			function ( error ) {
 				if ( error ) {
 					this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
 					return;
@@ -121,8 +120,8 @@ class SiteRedirectStep extends React.Component {
 		);
 	};
 
-	addSiteRedirectToCart = domain => {
-		addItem( siteRedirect( { domain: domain } ) );
+	addSiteRedirectToCart = ( domain ) => {
+		addItem( siteRedirect( { domain } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 
@@ -161,7 +160,7 @@ class SiteRedirectStep extends React.Component {
 	};
 }
 
-const recordInputFocus = searchBoxValue =>
+const recordInputFocus = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Focused On Search Box Input in Site Redirect',
@@ -169,7 +168,7 @@ const recordInputFocus = searchBoxValue =>
 		searchBoxValue
 	);
 
-const recordGoButtonClick = searchBoxValue =>
+const recordGoButtonClick = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Clicked "Go" Button in Site Redirect',
@@ -177,7 +176,7 @@ const recordGoButtonClick = searchBoxValue =>
 		searchBoxValue
 	);
 
-const recordFormSubmit = searchBoxValue =>
+const recordFormSubmit = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Submitted Form in Site Redirect',
@@ -185,12 +184,9 @@ const recordFormSubmit = searchBoxValue =>
 		searchBoxValue
 	);
 
-export default connect(
-	null,
-	{
-		errorNotice,
-		recordInputFocus,
-		recordGoButtonClick,
-		recordFormSubmit,
-	}
-)( localize( SiteRedirectStep ) );
+export default connect( null, {
+	errorNotice,
+	recordInputFocus,
+	recordGoButtonClick,
+	recordFormSubmit,
+} )( localize( SiteRedirectStep ) );

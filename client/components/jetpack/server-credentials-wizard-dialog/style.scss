@@ -1,0 +1,58 @@
+.dialog.server-credentials-wizard-dialog {
+	width: 100%;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		max-width: 676px;
+	}
+
+	.server-credentials-wizard-dialog {
+		&__header {
+			font-size: $font-title-small;
+			border-bottom: 1px solid #dcdcde;
+			margin: -8px -24px 16px;
+			padding: 0 24px 16px;
+			color: var( --color-primary-40 );
+		}
+
+		&__subheader {
+			font-weight: 600;
+			margin: 8px 0;
+		}
+
+		&__icon {
+			flex: 0 0 24px;
+			margin-top: -7px;
+			margin-right: 8px;
+		}
+
+		&__warning {
+			display: flex;
+			margin-top: 16px;
+		}
+
+		&__icon--warning {
+			fill: var( --color-error-50 );
+		}
+
+		&__warning-message {
+			color: var( --color-text-subtle );
+			font-size: $font-body-small;
+		}
+
+		&__link-external {
+			display: inline-block;
+			font-size: $font-body-small;
+			font-style: italic;
+			margin-left: 30px;
+			padding-top: 8px;
+		}
+	}
+
+	.dialog__content {
+		overflow-x: hidden;
+	}
+
+	.dialog__action-buttons {
+		background: var( --studio-gray-0 );
+	}
+}

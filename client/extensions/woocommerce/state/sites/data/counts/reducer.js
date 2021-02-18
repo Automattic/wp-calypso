@@ -1,8 +1,7 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_COUNT_REQUEST,
 	WOOCOMMERCE_COUNT_REQUEST_SUCCESS,

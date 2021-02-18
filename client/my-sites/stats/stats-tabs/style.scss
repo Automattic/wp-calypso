@@ -3,7 +3,7 @@
 
 .stats-tabs {
 	@include clear-fix;
-	background: var( --color-white );
+	background: var( --color-surface );
 	border-top: 1px solid var( --color-border-subtle );
 	list-style: none;
 	margin: 0;
@@ -13,12 +13,12 @@
 	}
 
 	.stats-tab {
-		background: var( --color-white );
+		background: var( --color-surface );
 		border-top: 1px solid var( --color-border-subtle );
 		box-sizing: border-box;
 		clear: none;
 		float: none;
-		font-size: 16px;
+		font-size: $font-body;
 		margin: 0;
 		text-align: left;
 
@@ -32,7 +32,7 @@
 			float: none;
 			width: 100%;
 			text-align: left;
-			font-size: 14px;
+			font-size: $font-body-small;
 
 			&:first-child {
 				border-top: none;
@@ -50,7 +50,7 @@
 				float: left;
 				text-transform: none;
 				letter-spacing: 0;
-				font-size: 14px;
+				font-size: $font-body-small;
 			}
 
 			.gridicon {
@@ -71,7 +71,7 @@
 			}
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			border-top: none;
 			border-left: 1px solid var( --color-border-subtle );
 			float: left;
@@ -84,7 +84,7 @@
 		}
 
 		a {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		a,
@@ -93,7 +93,7 @@
 			min-height: 35px;
 			padding-top: 10px;
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				@include mobile-link-element;
 				padding: 5px 0 10px;
 				@include clear-fix;
@@ -106,8 +106,8 @@
 			text-transform: uppercase;
 			letter-spacing: 0.1em;
 
-			@include breakpoint( '>480px' ) {
-				font-size: 11px;
+			@include breakpoint-deprecated( '>480px' ) {
+				font-size: $font-body-extra-small;
 				line-height: inherit;
 				float: none;
 			}
@@ -117,7 +117,7 @@
 			float: left;
 			margin: 3px 8px 0 20px;
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				float: none;
 				vertical-align: middle;
 				margin: -2px 4px 0 0;
@@ -133,15 +133,15 @@
 			text-align: center;
 			transition: font-size 0.3s 0 ease-out;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				clear: none;
 				float: right;
-				font-size: 16px;
+				font-size: $font-body;
 				padding: 0 20px 0 10px;
 			}
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			// Hover state
 			a:hover,
 			a:hover .value,
@@ -151,7 +151,7 @@
 			}
 
 			a:hover {
-				background: var( --color-white );
+				background: var( --color-surface );
 				cursor: pointer;
 			}
 		}
@@ -172,15 +172,15 @@
 
 		// Selected state
 		.stats-module &.is-selected a {
-			background: var( --color-white );
-			border-top: 1px solid var( --color-white );
+			background: var( --color-surface );
+			border-top: 1px solid var( --color-border-inverted );
 			margin-top: -1px;
 			cursor: default;
 		}
 
 		&.is-selected a,
 		&.is-selected.is-low a {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 		}
 
 		&.is-selected a .value,
@@ -192,7 +192,7 @@
 		// Low state ('disabled')
 		.is-low,
 		&.is-low a .value {
-			color: var( --color-neutral-light );
+			color: var( --color-text-subtle );
 		}
 
 		// Individual tab loading state
@@ -202,7 +202,7 @@
 		}
 
 		.no-link .value {
-			color: var( --color-neutral-700 );
+			color: var( --color-neutral-70 );
 
 			&.is-low {
 				color: var( --color-neutral-light );
@@ -236,7 +236,7 @@
 		}
 
 		.label {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 24px;
 			float: left;
 		}

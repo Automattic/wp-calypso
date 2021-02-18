@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,8 +19,8 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class FormStateSelectFromApi extends Component {
@@ -41,11 +39,11 @@ class FormStateSelectFromApi extends Component {
 		value: PropTypes.string,
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.fetchData( this.props );
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		if ( newProps.siteId !== this.props.siteId ) {
 			this.fetchData( newProps );
 		}
@@ -63,7 +61,7 @@ class FormStateSelectFromApi extends Component {
 		}
 	};
 
-	renderOption = option => {
+	renderOption = ( option ) => {
 		return (
 			<option key={ option.code } value={ option.code }>
 				{ option.name }
@@ -145,5 +143,5 @@ export default connect(
 			value,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
 )( localize( FormStateSelectFromApi ) );

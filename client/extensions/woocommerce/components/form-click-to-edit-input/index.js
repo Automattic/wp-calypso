@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -7,14 +5,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { noop, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormTextInput from 'components/forms/form-text-input';
+import { Button } from '@automattic/components';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class FormClickToEditInput extends Component {
 	static propTypes = {
@@ -60,7 +58,7 @@ class FormClickToEditInput extends Component {
 		} );
 	};
 
-	onInputChange = e => {
+	onInputChange = ( e ) => {
 		this.setState( {
 			value: e.target.value,
 		} );

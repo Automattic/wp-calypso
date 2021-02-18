@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,11 +18,11 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -34,6 +32,7 @@ describe( 'reducer', () => {
 			'items',
 			'sendingReceiptEmail',
 			'individualTransactions',
+			'ui',
 		] );
 	} );
 
@@ -63,22 +62,6 @@ describe( 'reducer', () => {
 		test( 'should set requesting to false if request finishes unsuccessfully', () => {
 			const state = requesting( true, {
 				type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
-			} );
-
-			expect( state ).to.eql( false );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting( true, {
-				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.eql( false );
@@ -218,22 +201,6 @@ describe( 'reducer', () => {
 				12345678: false,
 				...state,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

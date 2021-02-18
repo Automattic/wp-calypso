@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -21,13 +20,13 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../../action-types';
 import { receiveSettings, requestSettings, restoreSettings, saveSettings } from '../actions';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -51,7 +50,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSettings()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
@@ -111,7 +110,7 @@ describe( 'actions', () => {
 			},
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -147,13 +146,19 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive action when request completes', () => {
-			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
+			return saveSettings(
+				siteId,
+				updatedSettings
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( receiveSettings( siteId, apiResponse.data ) );
 			} );
 		} );
 
 		test( 'should dispatch save success action when request completes', () => {
-			return saveSettings( siteId, updatedSettings )( spy ).then( () => {
+			return saveSettings(
+				siteId,
+				updatedSettings
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 					siteId,
@@ -162,7 +167,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return saveSettings( failedSiteId, updatedSettings )( spy ).then( () => {
+			return saveSettings(
+				failedSiteId,
+				updatedSettings
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 					siteId: failedSiteId,
@@ -173,7 +181,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#restoreSettings()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {

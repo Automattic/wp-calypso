@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
-} from 'state/happychat/constants';
+} from 'calypso/state/happychat/constants';
 import isHappychatAvailable from '../is-happychat-available';
 
 describe( '#isHappychatAvailable', () => {

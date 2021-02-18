@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { decodeEntities } from 'lib/formatting';
+import { Card } from '@automattic/components';
+import { decodeEntities } from 'calypso/lib/formatting';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import StoreAddress from 'woocommerce/components/store-address';
 import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
 import { fetchCurrencies } from 'woocommerce/state/sites/data/currencies/actions';
@@ -46,7 +44,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const { site } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -57,7 +55,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		}
 	};
 
-	renderOption = currency => {
+	renderOption = ( currency ) => {
 		const { currencies } = this.props;
 		const option = find( currencies, { code: currency } );
 		return (
@@ -67,7 +65,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		);
 	};
 
-	onChange = e => {
+	onChange = ( e ) => {
 		const { site } = this.props;
 		const newCurrency = e.target.value;
 		this.props.changeCurrency( site.ID, newCurrency );
@@ -131,8 +129,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( SettingsPaymentsLocationCurrency )
+	connect( mapStateToProps, mapDispatchToProps )( SettingsPaymentsLocationCurrency )
 );

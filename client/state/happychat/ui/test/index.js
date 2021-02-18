@@ -13,9 +13,9 @@ import {
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { lostFocusAt, currentMessage } from '../reducer';
-jest.mock( 'lib/warn', () => () => {} );
+jest.mock( '@wordpress/warning', () => () => {} );
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;

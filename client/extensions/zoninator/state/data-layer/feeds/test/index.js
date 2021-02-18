@@ -1,10 +1,7 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit, stopSubmit } from 'redux-form';
 import { omit } from 'lodash';
 
 /**
@@ -19,8 +16,8 @@ import {
 	updateZoneFeed,
 } from '../';
 import { fromApi, toApi } from '../util';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { updateFeed } from 'zoninator/state/feeds/actions';
 import { resetLock } from 'zoninator/state/locks/actions';
 
@@ -29,7 +26,10 @@ const dummyAction = {
 	form: 'test-form',
 	siteId: 123,
 	zoneId: 456,
-	posts: [ { ID: 1, title: 'A test post' }, { ID: 2, title: 'Another test post' } ],
+	posts: [
+		{ ID: 1, title: 'A test post' },
+		{ ID: 2, title: 'Another test post' },
+	],
 };
 
 const apiResponse = [
@@ -124,10 +124,6 @@ describe( '#saveZoneFeed()', () => {
 		expect( saveZoneFeed( dummyAction ) ).toContainEqual( removeNotice( 'zoninator-save-feed' ) );
 	} );
 
-	test( 'should return `startSubmit`', () => {
-		expect( saveZoneFeed( dummyAction ) ).toContainEqual( startSubmit( dummyAction.form ) );
-	} );
-
 	test( 'should return `resetLock`', () => {
 		expect( saveZoneFeed( dummyAction ) ).toContainEqual(
 			expect.objectContaining( omit( resetLock( 123, 456 ), [ 'time' ] ) )
@@ -136,16 +132,6 @@ describe( '#saveZoneFeed()', () => {
 } );
 
 describe( '#announceSuccess()', () => {
-	test( 'should return `stopSubmit`', () => {
-		expect( announceSuccess( dummyAction ) ).toContainEqual( stopSubmit( dummyAction.form ) );
-	} );
-
-	test( 'should return `initialize`', () => {
-		expect( announceSuccess( dummyAction ) ).toContainEqual(
-			initialize( dummyAction.form, { posts: dummyAction.posts } )
-		);
-	} );
-
 	test( 'should return `successNotice`', () => {
 		expect( announceSuccess( dummyAction ) ).toContainEqual(
 			successNotice( translate( 'Zone feed saved!' ), { id: 'zoninator-save-feed' } )
@@ -160,10 +146,6 @@ describe( '#announceSuccess()', () => {
 } );
 
 describe( '#announceFailure()', () => {
-	test( 'should return `stopSubmit`', () => {
-		expect( announceFailure( dummyAction ) ).toContainEqual( stopSubmit( dummyAction.form ) );
-	} );
-
 	test( 'should dispatch `errorNotice`', () => {
 		expect( announceFailure( dummyAction ) ).toContainEqual(
 			errorNotice( translate( 'There was a problem saving your changes. Please try again' ), {

@@ -23,6 +23,11 @@
 		background: transparent;
 	}
 
+	&.is-highlighted {
+		animation: highlight 2s ease-in-out;
+		animation-iteration-count: 1;
+	}
+
 	.comments__form {
 		margin-top: 10px;
 	}
@@ -42,7 +47,7 @@
 	cursor: pointer;
 	background-color: var( --color-neutral-0 );
 	width: 100%;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	text-align: left;
 	margin-top: 15px;
 	padding: 5px 10px 10px 12px;
@@ -59,8 +64,8 @@
 	color: var( --color-text );
 	display: flex;
 	flex-wrap: wrap;
-	font-size: 14px;
-	font-weight: 500;
+	font-size: $font-body-small;
+	font-weight: 600;
 
 	.gravatar {
 		border-radius: 48px;
@@ -97,12 +102,12 @@ a.comments__comment-username {
 
 	.gridicon {
 		height: 24px;
-		fill: var( --color-neutral-200 );
+		fill: var( --color-neutral-20 );
 		margin-left: 4px;
 		margin-top: 4px;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		top: -4px;
 	}
 }
@@ -133,7 +138,7 @@ a.comments__comment-username {
 
 .comments__comment-respondee .comments__comment-respondee-link {
 	color: var( --color-text-subtle );
-	font-weight: normal;
+	font-weight: 400;
 	margin-left: -2px;
 
 	&:hover {
@@ -143,7 +148,7 @@ a.comments__comment-username {
 
 .comments__comment-timestamp a {
 	color: var( --color-text-subtle );
-	font-weight: normal;
+	font-weight: 400;
 	text-decoration: none;
 
 	&:hover {
@@ -155,5 +160,5 @@ a.comments__comment-username {
 	color: var( --color-text-subtle );
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

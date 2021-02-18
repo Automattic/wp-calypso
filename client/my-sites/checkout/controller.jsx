@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,27 +9,48 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
-import { getSiteBySlug } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import GSuiteNudge from 'my-sites/checkout/gsuite-nudge';
-import CheckoutContainer from './checkout/checkout-container';
-import CartData from 'components/data/cart';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import GSuiteNudge from './gsuite-nudge';
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
+import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import UpsellNudge from './upsell-nudge';
-import { isGSuiteRestricted } from 'lib/gsuite';
-import { getRememberedCoupon } from 'lib/upgrades/actions';
-import { sites } from 'my-sites/controller';
+import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
+import { getRememberedCoupon } from 'calypso/lib/cart/actions';
+import { setSectionMiddleware } from 'calypso/controller';
+import { sites } from 'calypso/my-sites/controller';
+import CartData from 'calypso/components/data/cart';
+import userFactory from 'calypso/lib/user';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	retrieveSignupDestination,
+	setSignupCheckoutPageUnloaded,
+} from 'calypso/signup/storageUtils';
+import UpsellNudge, {
+	PREMIUM_PLAN_UPGRADE_UPSELL,
+	BUSINESS_PLAN_UPGRADE_UPSELL,
+	CONCIERGE_SUPPORT_SESSION,
+	CONCIERGE_QUICKSTART_SESSION,
+	DIFM_UPSELL,
+} from './upsell-nudge';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	const currentUser = getCurrentUser( state );
+	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+	const isDisallowedForSitePicker =
+		context.pathname.includes( '/checkout/no-site' ) &&
+		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 
-	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
 		sites( context, next );
 		return;
 	}
@@ -49,21 +69,44 @@ export function checkout( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
+	setSectionMiddleware( { name: 'checkout' } )( context );
+
+	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
+	const isLoggedOutCart = isLoggedOut && context.pathname.includes( '/checkout/no-site' );
+	const isNoSiteCart =
+		! isLoggedOut &&
+		context.pathname.includes( '/checkout/no-site' ) &&
+		'no-user' === context.query.cart;
+
+	const searchParams = new URLSearchParams( window.location.search );
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+
+	// Tracks if checkout page was unloaded before purchase completion,
+	// to prevent browser back duplicate sites. Check pau2Xa-1Io-p2#comment-6759.
+	if ( isSignupCheckout && ! isDomainOnlyFlow ) {
+		window.addEventListener( 'beforeunload', function () {
+			const signupDestinationCookieExists = retrieveSignupDestination();
+			signupDestinationCookieExists && setSignupCheckoutPageUnloaded( true );
+		} );
+	}
 
 	context.primary = (
-		<CheckoutContainer
-			product={ product }
-			purchaseId={ purchaseId }
-			selectedFeature={ feature }
-			// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
-			couponCode={ context.query.coupon || context.query.code || getRememberedCoupon() }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			reduxStore={ context.store }
-			redirectTo={ context.query.redirect_to }
-			clearTransaction={ false }
-		/>
+		<CartData>
+			<CheckoutSystemDecider
+				productAliasFromUrl={ product }
+				purchaseId={ purchaseId }
+				selectedFeature={ feature }
+				couponCode={ couponCode }
+				isComingFromUpsell={ !! context.query.upgrade }
+				plan={ plan }
+				selectedSite={ selectedSite }
+				redirectTo={ context.query.redirect_to }
+				isLoggedOutCart={ isLoggedOutCart }
+				isNoSiteCart={ isNoSiteCart }
+			/>
+		</CartData>
 	);
 
 	next();
@@ -73,9 +116,15 @@ export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
-	context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
+	context.primary = (
+		<CheckoutPendingComponent
+			orderId={ orderId }
+			siteSlug={ siteSlug }
+			redirectTo={ context.query.redirectTo }
+		/>
+	);
 
 	next();
 }
@@ -88,7 +137,7 @@ export function checkoutThankYou( context, next ) {
 	const selectedSite = getSelectedSite( state );
 	const displayMode = get( context, 'query.d' );
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
@@ -99,6 +148,9 @@ export function checkoutThankYou( context, next ) {
 			gsuiteReceiptId={ gsuiteReceiptId }
 			domainOnlySiteFlow={ isEmpty( context.params.site ) }
 			selectedFeature={ context.params.feature }
+			redirectTo={ context.query.redirect_to }
+			upgradeIntent={ context.query.intent }
+			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 			selectedSite={ selectedSite }
 			displayMode={ displayMode }
 		/>
@@ -109,7 +161,7 @@ export function checkoutThankYou( context, next ) {
 
 export function gsuiteNudge( context, next ) {
 	const { domain, site, receiptId } = context.params;
-	context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
+	setSectionMiddleware( { name: 'gsuite-nudge' } )( context );
 
 	const state = context.store.getState();
 	const selectedSite =
@@ -119,18 +171,18 @@ export function gsuiteNudge( context, next ) {
 		return null;
 	}
 
-	if ( isGSuiteRestricted() ) {
+	if ( ! canUserPurchaseGSuite() ) {
 		next();
 	}
 
 	context.primary = (
-		<CartData>
+		<CalypsoShoppingCartProvider>
 			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
 				selectedSiteId={ selectedSite.ID }
 			/>
-		</CartData>
+		</CalypsoShoppingCartProvider>
 	);
 
 	next();
@@ -139,33 +191,45 @@ export function gsuiteNudge( context, next ) {
 export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	let upsellType, upgradeItem;
+	let upsellType;
+	let upgradeItem;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
-		upsellType = 'concierge-quickstart-session';
+		upsellType = CONCIERGE_QUICKSTART_SESSION;
 		upgradeItem = 'concierge-session';
 	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
-		upsellType = 'concierge-support-session';
+		upsellType = CONCIERGE_SUPPORT_SESSION;
 		upgradeItem = 'concierge-session';
 	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
-		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
+
+		switch ( upgradeItem ) {
+			case 'business':
+				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
+				break;
+
+			case 'premium':
+				upsellType = PREMIUM_PLAN_UPGRADE_UPSELL;
+				break;
+
+			default:
+				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
+		}
+	} else if ( context.path.includes( 'offer-difm' ) ) {
+		upsellType = DIFM_UPSELL;
 	}
-	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
+
+	setSectionMiddleware( { name: upsellType } )( context );
 
 	context.primary = (
-		<CheckoutContainer
-			shouldShowCart={ false }
-			clearTransaction={ true }
-			purchaseId={ Number( receiptId ) }
-		>
+		<CalypsoShoppingCartProvider>
 			<UpsellNudge
 				siteSlugParam={ site }
 				receiptId={ Number( receiptId ) }
 				upsellType={ upsellType }
 				upgradeItem={ upgradeItem }
 			/>
-		</CheckoutContainer>
+		</CalypsoShoppingCartProvider>
 	);
 
 	next();

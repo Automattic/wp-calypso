@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { setSiteVertical } from '../actions';
-import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'state/action-types';
+import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'calypso/state/action-types';
 
 describe( 'setSiteVertical()', () => {
 	test( 'should return the expected action object', () => {

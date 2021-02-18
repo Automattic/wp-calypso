@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { first, includes } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -32,18 +31,17 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import Button from 'components/button';
+import { Button, Dialog } from '@automattic/components';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormTextInput from 'components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { isOrderFinished } from 'woocommerce/lib/order-status';
 import { isOrderUpdating } from 'woocommerce/state/sites/orders/selectors';
 import { isWcsEnabled, isWcsInternationalLabelsEnabled } from 'woocommerce/state/selectors/plugins';
 import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
@@ -67,14 +65,14 @@ class OrderFulfillment extends Component {
 		trackingNumber: '',
 	};
 
-	toggleDialog = event => {
+	toggleDialog = ( event ) => {
 		event && event.preventDefault();
 		this.setState( {
 			showDialog: ! this.state.showDialog,
 		} );
 	};
 
-	updateTrackingNumber = event => {
+	updateTrackingNumber = ( event ) => {
 		this.setState( {
 			errorMessage: false,
 			trackingNumber: event.target.value,
@@ -316,5 +314,5 @@ export default connect(
 			storeAddress,
 		};
 	},
-	dispatch => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
+	( dispatch ) => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
 )( localize( OrderFulfillment ) );

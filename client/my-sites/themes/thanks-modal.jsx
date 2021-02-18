@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,13 +6,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import PulsingDot from 'components/pulsing-dot';
+import { Dialog } from '@automattic/components';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import PulsingDot from 'calypso/components/pulsing-dot';
 import { trackClick } from './helpers';
 import {
 	getActiveTheme,
@@ -23,13 +22,20 @@ import {
 	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
+	isThemeGutenbergFirst,
 	isWpcomTheme,
-} from 'state/themes/selectors';
-import { clearActivated } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestSite } from 'state/sites/actions';
-import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
-
+} from 'calypso/state/themes/selectors';
+import { clearActivated } from 'calypso/state/themes/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import { requestSite } from 'calypso/state/sites/actions';
+import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { addQueryArgs } from 'calypso/lib/route';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
 /**
  * Style dependencies
  */
@@ -75,7 +81,7 @@ class ThanksModal extends Component {
 
 	visitSite = () => {
 		this.trackClick( 'visit site' );
-		page( this.props.visitSiteUrl );
+		window.open( this.props.siteUrl, '_blank' );
 	};
 
 	goBack = () => {
@@ -83,7 +89,7 @@ class ThanksModal extends Component {
 		this.onCloseModal();
 	};
 
-	onLinkClick = link => {
+	onLinkClick = ( link ) => {
 		return () => {
 			this.onCloseModal();
 			this.trackClick( link, 'click' );
@@ -108,9 +114,12 @@ class ThanksModal extends Component {
 	};
 
 	goToCustomizer = () => {
+		const { customizeUrl, shouldEditHomepageWithGutenberg } = this.props;
+
 		this.trackClick( 'thanks modal customize' );
 		this.onCloseModal();
-		window.open( this.props.customizeUrl, '_blank' );
+
+		shouldEditHomepageWithGutenberg ? page( customizeUrl ) : window.open( customizeUrl, '_blank' );
 	};
 
 	renderThemeInfo = () => {
@@ -153,6 +162,8 @@ class ThanksModal extends Component {
 
 	renderContent = () => {
 		const { name: themeName, author: themeAuthor } = this.props.currentTheme;
+		const { isUsingClassicEditor, isGutenbergTheme } = this.props;
+		const promptSwitchingEditors = isUsingClassicEditor && isGutenbergTheme;
 
 		return (
 			<div>
@@ -160,7 +171,7 @@ class ThanksModal extends Component {
 					{ translate( 'Thanks for choosing {{br/}} %(themeName)s', {
 						args: { themeName },
 						components: {
-							br: <br />,
+							br: promptSwitchingEditors ? null : <br />,
 						},
 					} ) }
 				</h1>
@@ -169,6 +180,26 @@ class ThanksModal extends Component {
 						args: { themeAuthor },
 					} ) }
 				</span>
+				{ promptSwitchingEditors && (
+					<p className="thanks-modal__gutenberg-prompt">
+						{ translate(
+							'This theme is intended to work with the new WordPress editor. We recommend activating that first. {{supportLink/}}.',
+							{
+								components: {
+									supportLink: (
+										<InlineSupportLink
+											supportPostId={ 167510 }
+											supportLink="https://wordpress.com/support/replacing-the-older-wordpress-com-editor-with-the-wordpress-block-editor/"
+											showIcon={ false }
+										>
+											{ translate( 'Learn more' ) }
+										</InlineSupportLink>
+									),
+								},
+							}
+						) }
+					</p>
+				) }
 			</div>
 		);
 	};
@@ -181,36 +212,72 @@ class ThanksModal extends Component {
 		);
 	};
 
-	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
-		const customizeSiteText = hasActivated ? (
-			<span className="thanks-modal__button-customize">
+	getEditSiteLabel = () => {
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+		if ( ! hasActivated ) {
+			return translate( 'Activating theme…' );
+		}
+
+		const gutenbergContent = translate( 'Edit homepage' );
+		const customizerContent = (
+			<>
 				<Gridicon icon="external" />
 				{ translate( 'Customize site' ) }
-			</span>
-		) : (
-			translate( 'Activating theme…' )
+			</>
 		);
-		const buttons = [
+
+		return (
+			<span className="thanks-modal__button-customize">
+				{ shouldEditHomepageWithGutenberg ? gutenbergContent : customizerContent }
+			</span>
+		);
+	};
+
+	getViewSiteLabel = () => (
+		<span className="thanks-modal__button-customize">
+			<Gridicon icon="external" />
+			{ translate( 'View site' ) }
+		</span>
+	);
+
+	getButtons = () => {
+		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+
+		const firstButton = shouldEditHomepageWithGutenberg
+			? {
+					action: 'view',
+					label: this.getViewSiteLabel(),
+					onClick: this.visitSite,
+			  }
+			: {
+					action: 'learn',
+					label: translate( 'Learn about this theme' ),
+					onClick: this.learnThisTheme,
+			  };
+
+		return [
 			{
-				action: 'learn',
-				label: translate( 'Learn about this theme' ),
-				onClick: this.learnThisTheme,
+				...firstButton,
+				disabled: ! hasActivated,
 			},
 			{
 				action: 'customizeSite',
-				label: customizeSiteText,
+				label: this.getEditSiteLabel(),
 				isPrimary: true,
 				disabled: ! hasActivated,
 				onClick: this.goToCustomizer,
 			},
 		];
+	};
+
+	render() {
+		const { currentTheme, hasActivated, isActivating } = this.props;
 
 		return (
 			<Dialog
 				className="themes__thanks-modal"
 				isVisible={ isActivating || hasActivated }
-				buttons={ buttons }
+				buttons={ this.getButtons() }
 				onClose={ this.onCloseModal }
 			>
 				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
@@ -220,26 +287,47 @@ class ThanksModal extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteUrl = getSiteUrl( state, siteId );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 
+		// Note: Gutenberg buttons will only show if the homepage is a page.
+		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
+
+		const isAtomic = isSiteAtomic( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId );
+
+		// Atomic & Jetpack do not have auto-loading-homepage behavior, so we trigger the layout picker for them.
+		const customizeUrl =
+			( isAtomic || isJetpack ) && hasAutoLoadingHomepage
+				? addQueryArgs(
+						{ 'new-homepage': true },
+						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId )
+				  )
+				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId );
+
 		return {
 			siteId,
+			siteUrl,
 			currentTheme,
+			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
-			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
+			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
+			isUsingClassicEditor: getSelectedEditor( state, siteId ) === 'classic',
+			isGutenbergTheme: isThemeGutenbergFirst( state, currentThemeId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
-			clearActivated: siteId => dispatch( clearActivated( siteId ) ),
-			refreshSite: siteId => dispatch( requestSite( siteId ) ),
+			clearActivated: ( siteId ) => dispatch( clearActivated( siteId ) ),
+			refreshSite: ( siteId ) => dispatch( requestSite( siteId ) ),
 		};
 	}
 )( ThanksModal );

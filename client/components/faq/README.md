@@ -1,5 +1,4 @@
-FAQ Component
-=============
+# FAQ Component
 
 FAQ component is a React component to display questions with answers in a neat way. The FAQ questions/answers are left
 aligned to each other and they automatically move to the next line if there's no more available space on the current line.
@@ -7,12 +6,13 @@ aligned to each other and they automatically move to the next line if there's no
 ## Usage
 
 The FAQ component is made of two parts:
+
 - FAQ parent component which has an optional `heading` prop
 - FAQItem child component(s) which has a `question` and an `answer` props
 
 ```jsx
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
+import FAQ from 'calypso/components/faq';
+import FAQItem from 'calypso/components/faq/faq-item';
 import i18n from 'i18n-calypso';
 
 export default class MyFaq extends React.Component {
@@ -33,7 +33,6 @@ export default class MyFaq extends React.Component {
 		);
 	}
 }
-
 ```
 
 ## Props

@@ -1,9 +1,7 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import getProfileLinks from 'state/selectors/get-profile-links';
+import getProfileLinks from 'calypso/state/selectors/get-profile-links';
 
 describe( 'getProfileLinks()', () => {
 	const profileLinks = [

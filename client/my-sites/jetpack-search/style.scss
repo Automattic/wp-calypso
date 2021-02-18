@@ -1,0 +1,5 @@
+.jetpack-search__placeholder {
+	.action-panel__title, .jetpack-search__placeholder-description, .jetpack-search__placeholder-button {
+		@include placeholder( --color-neutral-10 );
+	}
+}

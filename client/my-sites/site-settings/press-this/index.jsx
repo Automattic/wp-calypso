@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Gridicon from 'gridicons';
+import { Card } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 import PressThisLink from './link';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -79,7 +77,7 @@ class PressThis extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSite( state ),
 	} ),
 	{

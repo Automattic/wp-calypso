@@ -1,6 +1,6 @@
 .product-categories__list-placeholder {
 	@include placeholder();
-	background: var( --color-white );
+	background: var( --color-surface );
 	height: 525px;
 }
 
@@ -60,7 +60,7 @@
 .product-categories__form {
 	&.is-placeholder div {
 		@include placeholder();
-		background: var( --color-white );
+		background: var( --color-surface );
 		margin-bottom: 8px;
 
 		&:first-child {
@@ -72,7 +72,7 @@
 .product-categories__form-info-fields {
 	display: flex;
 	flex-direction: column;
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -98,23 +98,23 @@
 	margin-bottom: 16px;
 
 	.product-image-uploader__wrapper {
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			width: 175px;
 			height: 175px;
 		}
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint-deprecated( '>1040px' ) {
 			width: 225px;
 			height: 225px;
 		}
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-bottom: 0;
 		width: 175px;
 		margin-right: 24px;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		width: 225px;
 	}
 
@@ -170,7 +170,7 @@
 		width: 28px;
 		height: 28px;
 		transform: translate( 25%, -25% );
-		border: 1px solid var( --color-neutral-200 );
+		border: 1px solid var( --color-neutral-20 );
 		border-radius: 50%;
 		background-color: var( --color-neutral-0 );
 		cursor: pointer;
@@ -188,7 +188,7 @@
 		width: 24px;
 		height: 24px;
 		margin: 0;
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 
 		&:hover {
 			color: var( --color-neutral-light );

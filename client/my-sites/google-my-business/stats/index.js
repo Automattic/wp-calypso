@@ -1,34 +1,35 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import DocumentHead from 'components/data/document-head';
-import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
-import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
-import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import QueryKeyringServices from 'components/data/query-keyring-services';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StatsNavigation from 'blocks/stats-navigation';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { withEnhancers } from 'state/utils';
+import { Button } from '@automattic/components';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
+import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
+import { withEnhancers } from 'calypso/state/utils';
 
 /**
  * Style dependencies
@@ -82,7 +83,7 @@ class GoogleMyBusinessStats extends Component {
 					count: viewCount,
 					args: {
 						value: viewCount,
-						monday: moment( date ).format( 'LL' ),
+						monday: this.props.moment( date ).format( 'LL' ),
 					},
 				}
 			);
@@ -92,7 +93,7 @@ class GoogleMyBusinessStats extends Component {
 			count: viewCount,
 			args: {
 				value: viewCount,
-				day: moment( date ).format( 'LL' ),
+				day: this.props.moment( date ).format( 'LL' ),
 			},
 		} );
 	};
@@ -107,7 +108,7 @@ class GoogleMyBusinessStats extends Component {
 					count: actionCount,
 					args: {
 						value: actionCount,
-						monday: moment( date ).format( 'LL' ),
+						monday: this.props.moment( date ).format( 'LL' ),
 					},
 				}
 			);
@@ -117,7 +118,7 @@ class GoogleMyBusinessStats extends Component {
 			count: actionCount,
 			args: {
 				value: actionCount,
-				day: moment( date ).format( 'LL' ),
+				day: this.props.moment( date ).format( 'LL' ),
 			},
 		} );
 	};
@@ -130,8 +131,8 @@ class GoogleMyBusinessStats extends Component {
 		}
 
 		return (
-			<div className="gmb-stats__metrics">
-				<div className="gmb-stats__metric">
+			<div className="stats__metrics">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'How customers search for your business' ) }
 						statType="queries"
@@ -154,7 +155,7 @@ class GoogleMyBusinessStats extends Component {
 					/>
 				</div>
 
-				<div className="gmb-stats__metric">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'Where your customers view your business on Google' ) }
 						description={ translate(
@@ -174,7 +175,7 @@ class GoogleMyBusinessStats extends Component {
 					/>
 				</div>
 
-				<div className="gmb-stats__metric">
+				<div className="stats__metric">
 					<GoogleMyBusinessStatsChart
 						title={ translate( 'Customer Actions' ) }
 						description={ translate(
@@ -220,7 +221,17 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringConnections forceRefresh />
 				<QueryKeyringServices />
 
-				{ ! isLocationVerified && (
+				{ ! locationData && (
+					<Notice
+						status="is-error"
+						showDismiss={ false }
+						text={ translate( 'There is an error with your Google My Business account.' ) }
+					>
+						<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Contact Support' ) }</NoticeAction>
+					</Notice>
+				) }
+
+				{ !! locationData && ! isLocationVerified && (
 					<Notice
 						status="is-error"
 						text={ translate(
@@ -258,7 +269,7 @@ class GoogleMyBusinessStats extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const locationData = getGoogleMyBusinessConnectedLocation( state, siteId );
 		const isLocationVerified = get( locationData, 'meta.state.isVerified', false );
@@ -273,4 +284,4 @@ export default connect(
 	{
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 	}
-)( localize( GoogleMyBusinessStats ) );
+)( localize( withLocalizedMoment( GoogleMyBusinessStats ) ) );

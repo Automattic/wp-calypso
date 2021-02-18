@@ -9,7 +9,7 @@
 }
 
 .email-verification__status {
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 	line-height: 21px;
 	padding-left: 50px;
@@ -27,19 +27,19 @@
 }
 
 .email-verification__sent-to {
-	color: var( --color-neutral-500 );
-	font-size: 14px;
+	color: var( --color-neutral-50 );
+	font-size: $font-body-small;
 }
 
 .email-verification__heading {
-	font-size: 21px;
-	font-weight: bold;
+	font-size: $font-title-small;
+	font-weight: 600;
 	line-height: 26px;
 	margin: 0 0 10px;
 }
 
 .email-verification__status-container {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	margin: 25px -24px -16px -21px;
 	padding: 24px 24px 24px 21px;
 	position: relative;
@@ -53,7 +53,7 @@
 			margin-right: 0;
 		}
 		&.is-busy:disabled {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 		}
 	}
 
@@ -63,6 +63,15 @@
 
 	&.sent .gridicon {
 		color: var( --color-success );
+	}
+}
+
+.email-verification__actions {
+	display: flex;
+	align-items: center;
+
+	a {
+		margin-left: 16px;
 	}
 }
 

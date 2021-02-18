@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,9 +7,9 @@ import { get } from 'lodash';
 /**
  * Given a settingName, returns that setting if it exists or null
  *
- * @param  {Object} state Global state tree
- * @param  {String} settingName - setting name
- * @return {*} setting name value
+ * @param  {object} state Global state tree
+ * @param  {string} settingName - setting name
+ * @returns {*} setting name value
  */
 export default function getUserSetting( state, settingName ) {
 	const { settings, unsavedSettings } = state.userSettings;

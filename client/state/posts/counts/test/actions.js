@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,8 +13,8 @@ import {
 	POST_COUNTS_REQUEST,
 	POST_COUNTS_REQUEST_SUCCESS,
 	POST_COUNTS_REQUEST_FAILURE,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -42,7 +41,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostCounts()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/wpcom/v2/sites/2916284/post-counts/post' )
@@ -70,7 +69,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive action when request succeeds', () => {
-			return requestPostCounts( 2916284, 'post' )( spy ).then( () => {
+			return requestPostCounts(
+				2916284,
+				'post'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_COUNTS_RECEIVE,
 					siteId: 2916284,
@@ -84,7 +86,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch success action when request succeeds', () => {
-			return requestPostCounts( 2916284, 'post' )( spy ).then( () => {
+			return requestPostCounts(
+				2916284,
+				'post'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_COUNTS_REQUEST_SUCCESS,
 					siteId: 2916284,
@@ -94,7 +99,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return requestPostCounts( 2916284, 'foo' )( spy ).then( () => {
+			return requestPostCounts(
+				2916284,
+				'foo'
+			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_COUNTS_REQUEST_FAILURE,
 					siteId: 2916284,

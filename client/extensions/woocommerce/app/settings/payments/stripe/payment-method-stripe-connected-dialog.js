@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,11 +16,11 @@ import {
 	clearCompletedNotification,
 	deauthorizeAccount,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
+import { Dialog } from '@automattic/components';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import {
 	getIsDeauthorizing,
 	getNotifyCompleted,
@@ -30,7 +28,7 @@ import {
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import StripeConnectAccount from './payment-method-stripe-connect-account';
 
@@ -248,8 +246,5 @@ function mapDispatchToProps( dispatch ) {
 }
 
 export default localize(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps
-	)( PaymentMethodStripeConnectedDialog )
+	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeConnectedDialog )
 );

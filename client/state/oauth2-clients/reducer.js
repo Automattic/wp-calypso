@@ -1,11 +1,10 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-
-import { createReducer } from 'state/utils';
-import { OAUTH2_CLIENT_DATA_REQUEST_SUCCESS } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
+import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
+import ui from './ui/reducer';
 
 export const initialClientsData = {
 	930: {
@@ -50,12 +49,41 @@ export const initialClientsData = {
 		title: 'WooCommerce.com',
 		icon: 'https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
 	},
+	68663: {
+		id: 68663,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
+	69040: {
+		id: 69040,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
+	69041: {
+		id: 69041,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
 };
 
-export default createReducer( initialClientsData, {
-	[ OAUTH2_CLIENT_DATA_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		const newData = Object.assign( {}, state[ data.id ], data );
+export function clients( state = initialClientsData, action ) {
+	switch ( action.type ) {
+		case OAUTH2_CLIENT_DATA_RECEIVE:
+			return {
+				...state,
+				[ action.data.id ]: {
+					...state[ action.data.id ],
+					...action.data,
+				},
+			};
+		default:
+			return state;
+	}
+}
 
-		return Object.assign( {}, state, { [ data.id ]: newData } );
-	},
+const combinedReducer = combineReducers( {
+	clients,
+	ui,
 } );
+
+export default withStorageKey( 'oauth2Clients', combinedReducer );

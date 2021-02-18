@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -26,7 +25,7 @@ export class ReaderSidebarTagsList extends Component {
 
 	renderItems() {
 		const { path, currentTag, tags } = this.props;
-		return map( tags, tag => (
+		return map( tags, ( tag ) => (
 			<ReaderSidebarTagsListItem
 				key={ tag.id }
 				tag={ tag }
@@ -37,7 +36,11 @@ export class ReaderSidebarTagsList extends Component {
 	}
 
 	render() {
-		return <ul className="reader-sidebar-tags__list">{ this.renderItems() }</ul>;
+		return (
+			<li className="reader-sidebar-tags__list">
+				<ul>{ this.renderItems() }</ul>
+			</li>
+		);
 	}
 }
 

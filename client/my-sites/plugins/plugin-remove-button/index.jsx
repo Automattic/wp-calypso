@@ -1,20 +1,28 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+
 /**
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import accept from 'lib/accept';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import PluginsActions from 'lib/plugins/actions';
-import ExternalLink from 'components/external-link';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import accept from 'calypso/lib/accept';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import ExternalLink from 'calypso/components/external-link';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import { removePlugin } from 'calypso/state/plugins/installed/actions';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
  * Style dependencies
@@ -47,30 +55,30 @@ class PluginRemoveButton extends React.Component {
 		);
 	};
 
-	processRemovalConfirmation = accepted => {
+	processRemovalConfirmation = ( accepted ) => {
 		if ( accepted ) {
-			PluginsActions.removePluginsNotices( 'completed', 'error' );
-			PluginsActions.removePlugin( this.props.site, this.props.plugin );
+			this.props.removePluginStatuses( 'completed', 'error' );
+			this.props.removePlugin( this.props.site.ID, this.props.plugin );
 
 			if ( this.props.isEmbed ) {
-				analytics.ga.recordEvent(
+				gaRecordEvent(
 					'Plugins',
 					'Remove plugin with no selected site',
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_sites_list', {
+				recordTracksEvent( 'calypso_plugin_remove_click_from_sites_list', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
 				} );
 			} else {
-				analytics.ga.recordEvent(
+				gaRecordEvent(
 					'Plugins',
 					'Remove plugin on selected Site',
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_plugin_info', {
+				recordTracksEvent( 'calypso_plugin_remove_click_from_plugin_info', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
 				} );
@@ -82,12 +90,6 @@ class PluginRemoveButton extends React.Component {
 		if ( ! this.props.site ) {
 			// we don't have enough info
 			return null;
-		}
-
-		if ( ! this.props.site.hasMinimumJetpackVersion ) {
-			return this.props.translate( '%(site)s is not running an up to date version of Jetpack', {
-				args: { site: this.props.site.title },
-			} );
 		}
 
 		if ( this.props.site.options.is_multi_network ) {
@@ -157,15 +159,12 @@ class PluginRemoveButton extends React.Component {
 	};
 
 	handleHowDoIFixThisButtonClick = () => {
-		analytics.ga.recordEvent( 'Plugins', 'Clicked How do I fix disabled plugin removal.' );
+		gaRecordEvent( 'Plugins', 'Clicked How do I fix disabled plugin removal.' );
 	};
 
 	renderButton = () => {
-		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
-			'REMOVE_PLUGIN',
-		] );
 		const disabledInfo = this.getDisabledInfo();
-		const disabled = !! disabledInfo;
+		const disabled = !! disabledInfo || this.props.disabled;
 		const label = disabled
 			? this.props.translate( 'Removal Disabled', {
 					context:
@@ -174,7 +173,7 @@ class PluginRemoveButton extends React.Component {
 			: this.props.translate( 'Remove', {
 					context: 'Verb. Presented to user as a label for a button.',
 			  } );
-		if ( inProgress ) {
+		if ( this.props.inProgress ) {
 			return (
 				<span className="plugin-action plugin-remove-button__remove">
 					{ this.props.translate( 'Removing…' ) }
@@ -213,4 +212,9 @@ class PluginRemoveButton extends React.Component {
 	}
 }
 
-export default localize( PluginRemoveButton );
+export default connect(
+	( state, { site, plugin } ) => ( {
+		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, REMOVE_PLUGIN ),
+	} ),
+	{ removePlugin, removePluginStatuses }
+)( localize( PluginRemoveButton ) );

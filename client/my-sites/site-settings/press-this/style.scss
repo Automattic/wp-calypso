@@ -16,12 +16,12 @@
 			cursor: move;
 			padding: 10px;
 			font-style: normal;
-			font-size: 14px;
+			font-size: $font-body-small;
 			text-decoration: none;
-			color: var( --color-neutral-700 );
-			background:var( --color-neutral-0 );
-			border-radius: 3px;
-			border: 1px solid var( --color-neutral-100 );
+			color: var( --color-neutral-70 );
+			background: var( --color-neutral-0 );
+			border-radius: 2px;
+			border: 1px solid var( --color-neutral-10 );
 		}
 
 		a .gridicon {

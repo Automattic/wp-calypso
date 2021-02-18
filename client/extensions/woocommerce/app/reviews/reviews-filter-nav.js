@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -18,12 +16,12 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getProduct } from 'woocommerce/state/sites/products/selectors';
 import { getReviewsCurrentSearch } from 'woocommerce/state/ui/reviews/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
 import { updateCurrentReviewsQuery } from 'woocommerce/state/ui/reviews/actions';
 
 class ReviewsFilterNav extends Component {
@@ -46,7 +44,7 @@ class ReviewsFilterNav extends Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
+	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { site, productId } = this.props;
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
@@ -55,7 +53,7 @@ class ReviewsFilterNav extends Component {
 		}
 	}
 
-	doSearch = search => {
+	doSearch = ( search ) => {
 		const { productId } = this.props;
 		const updatedStateQuery = { search, status: 'any' };
 		if ( productId ) {
@@ -167,5 +165,5 @@ export default connect(
 		search: getReviewsCurrentSearch( state ),
 		product: ownProps.productId && getProduct( state, ownProps.productId ),
 	} ),
-	dispatch => bindActionCreators( { updateCurrentReviewsQuery, fetchProduct }, dispatch )
+	( dispatch ) => bindActionCreators( { updateCurrentReviewsQuery, fetchProduct }, dispatch )
 )( localize( ReviewsFilterNav ) );

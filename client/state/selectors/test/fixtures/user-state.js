@@ -1,4 +1,3 @@
-/** @format */
 export const userState = {
 	currentUser: {
 		id: 12345678,

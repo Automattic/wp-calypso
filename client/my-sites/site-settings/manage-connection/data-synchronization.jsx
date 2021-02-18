@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,12 +9,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ApiCache from './api-cache';
-import CompactCard from 'components/card/compact';
-import JetpackSyncPanel from 'my-sites/site-settings/jetpack-sync-panel';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import getSiteUrl from 'state/selectors/get-site-url';
+import { CompactCard } from '@automattic/components';
+import JetpackSyncPanel from 'calypso/my-sites/site-settings/jetpack-sync-panel';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 const DataSynchronization = ( { siteUrl, siteIsJetpack, translate } ) => {
 	if ( ! siteIsJetpack ) {
@@ -37,7 +35,7 @@ const DataSynchronization = ( { siteUrl, siteIsJetpack, translate } ) => {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

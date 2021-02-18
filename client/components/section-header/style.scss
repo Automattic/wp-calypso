@@ -23,13 +23,19 @@
 	position: relative;
 	overflow: hidden;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		line-height: 1.4;
 		margin: 4px 0;
 	}
 
-	.count {
+	.count,
+	.support-info {
 		margin-left: 8px;
+	}
+
+	.support-info {
+		position: relative;
+		top: 3px;
 	}
 }
 
@@ -41,8 +47,8 @@
 }
 
 .section-header__label {
-	color: var( --color-neutral-700 );
-	font-size: 14px;
+	color: var( --color-neutral-70 );
+	font-size: $font-body-small;
 }
 
 .section-header__actions {
@@ -58,6 +64,6 @@
 
 .is-placeholder {
 	.section-header__label {
-		@include placeholder;
+		@include placeholder();
 	}
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,14 +10,14 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { getPost } from 'state/posts/selectors';
-import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
-import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { getPost } from 'calypso/state/posts/selectors';
+import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
+import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuDuplicate( {
@@ -41,7 +39,7 @@ function PostActionsEllipsisMenuDuplicate( {
 	return (
 		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="clipboard">
 			<QueryJetpackModules siteId={ siteId } />
-			{ translate( 'Copy', { context: 'verb' } ) }
+			{ translate( 'Copy post' ) }
 		</PopoverMenuItem>
 	);
 }

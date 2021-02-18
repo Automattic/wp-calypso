@@ -1,5 +1,4 @@
-StripeConnectAccount Settings
-=============================
+# StripeConnectAccount Settings
 
 This module works with WooCommerce Services to create Stripe Connect accounts.
 
@@ -7,7 +6,7 @@ This module works with WooCommerce Services to create Stripe Connect accounts.
 
 ### `createAccount( siteId: number, emailAddress: string, countryCode: string )`
 
-Attempts to create a Stripe Connect account using the deferred flow. See https://github.com/Automattic/woocommerce-services/pull/1137
+Attempts to create a Stripe Connect account using the deferred flow. See <https://github.com/Automattic/woocommerce-services/pull/1137>
 
 ## Reducer
 
@@ -16,38 +15,38 @@ Updates state in the stripeConnectAccount node under extensions.woocommerce.site
 When requesting:
 
 ```js
-{
-	"stripeConnectAccount": {
-		connectedUserID: "",
-		email: "",
+const object = {
+	stripeConnectAccount: {
+		connectedUserID: '',
+		email: '',
 		isActivated: false,
 		isRequesting: true,
-	}
-}
+	},
+};
 ```
 
 On success:
 
 ```js
-{
-	"stripeConnectAccount": {
-		connectedUserID: "acct_14qyt6Alijdnw0EA",
-		email: "user@domain.com",
+const object = {
+	stripeConnectAccount: {
+		connectedUserID: 'acct_14qyt6Alijdnw0EA',
+		email: 'user@domain.com',
 		isActivated: false,
 		isRequesting: false,
-	}
-}
+	},
+};
 ```
 
 On failure:
 
 ```js
-{
-	"stripeConnectAccount": {
-		connectedUserID: "",
-		email: "",
+const object = {
+	stripeConnectAccount: {
+		connectedUserID: '',
+		email: '',
 		isActivated: false,
 		isRequesting: false,
-	}
-}
+	},
+};
 ```

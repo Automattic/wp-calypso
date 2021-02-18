@@ -1,5 +1,5 @@
 .designated-agent-notice {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 	margin: 16px 0;
 	padding: 0;
 	text-align: left;
@@ -10,7 +10,7 @@
 }
 
 .designated-agent-notice__copy {
-	font-size: 12px;
-	font-weight: 100;
+	font-size: $font-body-small;
+	font-weight: 400;
 	margin-left: 24px;
 }

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -40,11 +38,11 @@ describe( 'selectors', () => {
 						jetpack_support: true,
 						type: 'publicize',
 					},
-					eventbrite: {
-						ID: 'eventbrite',
+					googlePhotos: {
+						ID: 'google-photos',
 						jetpack_support: true,
-						type: 'other',
 						jetpack_module_required: 'publicize',
+						type: 'other',
 					},
 				},
 				isFetching: true,
@@ -73,8 +71,8 @@ describe( 'selectors', () => {
 					jetpack_support: true,
 					type: 'publicize',
 				},
-				eventbrite: {
-					ID: 'eventbrite',
+				googlePhotos: {
+					ID: 'google-photos',
 					jetpack_support: true,
 					jetpack_module_required: 'publicize',
 					type: 'other',
@@ -108,9 +106,9 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return the named keyring service', () => {
-			const service = getKeyringServiceByName( activeState, 'eventbrite' );
+			const service = getKeyringServiceByName( activeState, 'facebook' );
 
-			expect( service ).to.eql( activeState.sharing.services.items.eventbrite );
+			expect( service ).to.eql( activeState.sharing.services.items.facebook );
 		} );
 	} );
 
@@ -159,14 +157,6 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		test( 'should omit eventbrite if user can not manage_options', () => {
-			state.currentUser.capabilities[ 2916284 ].manage_options = false;
-			const services = getEligibleKeyringServices( state, 2916284, 'other' );
-			state.currentUser.capabilities[ 2916284 ].manage_options = true;
-
-			expect( services ).to.eql( [] );
-		} );
-
 		test( 'should omit publicize services if user can not publish_posts', () => {
 			state.currentUser.capabilities[ 2916284 ].publish_posts = false;
 			const services = getEligibleKeyringServices( state, 2916284, 'publicize' );
@@ -177,10 +167,9 @@ describe( 'selectors', () => {
 
 		test( 'should include services if required module is activated', () => {
 			const services = getEligibleKeyringServices( state, 2916284, 'other' );
-
 			expect( services ).to.eql( [
 				{
-					ID: 'eventbrite',
+					ID: 'google-photos',
 					jetpack_support: true,
 					jetpack_module_required: 'publicize',
 					type: 'other',

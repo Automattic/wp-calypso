@@ -24,49 +24,49 @@ const host = dataHelper.getJetpackHost();
 
 let driver;
 
-before( function() {
+before( function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Jetpack Connection: (${ screenSize }) @jetpack`, function() {
+describe( `[${ host }] Jetpack Connection: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Activate Jetpack Plugin:', function() {
-		before( async function() {
+	describe( 'Activate Jetpack Plugin:', function () {
+		before( async function () {
 			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );
 
-		step( 'Can log into WordPress.com', async function() {
+		step( 'Can log into WordPress.com', async function () {
 			this.loginFlow = new LoginFlow( driver, 'jetpackUserCI' );
 			return await this.loginFlow.login();
 		} );
 
-		step( 'Can log into site via wp-login.php', async function() {
+		step( 'Can log into site via wp-login.php', async function () {
 			const user = dataHelper.getAccountConfig( 'jetpackUserCI' );
 			const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
 			await loginPage.login( user[ 0 ], user[ 1 ] );
 		} );
 
-		step( 'Can open Plugins page', async function() {
+		step( 'Can open Plugins page', async function () {
 			await WPAdminSidebar.refreshIfJNError( driver );
 			this.wpAdminSidebar = await WPAdminSidebar.Expect( driver );
 			return await this.wpAdminSidebar.selectPlugins();
 		} );
 
-		step( 'Can activate Jetpack', async function() {
+		step( 'Can activate Jetpack', async function () {
 			await driverHelper.refreshIfJNError( driver );
 			this.wpAdminPlugins = await WPAdminPluginsPage.Expect( driver );
 			return await this.wpAdminPlugins.activateJetpack();
 		} );
 
-		step( 'Can connect Jetpack', async function() {
+		step( 'Can connect Jetpack', async function () {
 			this.wpAdminPlugins.connectJetpackAfterActivation();
 			this.jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
 			await this.jetpackAuthorizePage.approveConnection();
 		} );
 
-		step( 'Can select Free plan', async function() {
+		step( 'Can select Free plan', async function () {
 			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlan();
 		} );

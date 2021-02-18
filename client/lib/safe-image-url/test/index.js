@@ -1,5 +1,3 @@
-/** @format */
-
 describe( 'safeImageUrl()', () => {
 	let safeImageUrl;
 
@@ -14,9 +12,9 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( dataImageUrl ) ).toEqual( dataImageUrl );
 		} );
 
-		test( 'should make a non-whitelisted protocol safe', () => {
+		test( 'should make a disallowed protocol safe', () => {
 			[ 'javascript:alert("foo")', 'data:application/json;base64,', 'about:config' ].forEach(
-				url => {
+				( url ) => {
 					expect( safeImageUrl( url ) ).toMatch( /^https:\/\/i[0-2]\.wp.com\// );
 				}
 			);
@@ -56,6 +54,18 @@ describe( 'safeImageUrl()', () => {
 
 		test( 'should make a non-wpcom protocol relative url safe', () => {
 			expect( safeImageUrl( '//example.com/foo' ) ).toEqual( 'https://i1.wp.com/example.com/foo' );
+		} );
+
+		test( 'should make a non-wpcom http protocol url with params safe', () => {
+			expect( safeImageUrl( 'http://example.com/foo?w=100' ) ).toEqual(
+				'https://i1.wp.com/example.com/foo'
+			);
+		} );
+
+		test( 'should make a non-wpcom protocol relative url with params safe', () => {
+			expect( safeImageUrl( '//example.com/foo?w=100' ) ).toEqual(
+				'https://i1.wp.com/example.com/foo?ssl=1'
+			);
 		} );
 
 		test( 'should promote an http wpcom url to https', () => {
@@ -98,6 +108,27 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( 'https://example.com/foo.png?width=90' ) ).toBeNull();
 		} );
 
+		test( 'should remove known resize parameters from urls', () => {
+			expect( safeImageUrl( 'https://example.com/foo.jpg?w=123' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?h=123' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?resize=width' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?fit=min' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+		} );
+
+		test( 'should ignore authuser=0 param in an image URL', () => {
+			expect( safeImageUrl( 'https://example.com/foo.jpg?authuser=0' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+		} );
+
 		test( 'should return null for SVG images', () => {
 			expect( safeImageUrl( 'https://example.com/foo.svg' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.svg?ssl=1' ) ).toBeNull();
@@ -107,8 +138,8 @@ describe( 'safeImageUrl()', () => {
 	describe( 'browser', () => {
 		beforeAll( () => {
 			global.location = { origin: 'https://wordpress.com' };
-			delete require.cache[ require.resolve( '../' ) ];
-			safeImageUrl = require( '../' );
+			jest.resetModules();
+			safeImageUrl = require( '../' ).default;
 		} );
 
 		afterAll( () => {
@@ -133,7 +164,7 @@ describe( 'safeImageUrl()', () => {
 
 	describe( 'node', () => {
 		beforeAll( () => {
-			safeImageUrl = require( '../' );
+			safeImageUrl = require( '../' ).default;
 		} );
 
 		test( 'should make a blob url safe', () => {

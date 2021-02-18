@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -20,8 +18,8 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	DESERIALIZE,
 	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducers', () => {
 	describe( 'isFetching()', () => {
@@ -172,7 +170,7 @@ describe( 'reducers', () => {
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
+			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

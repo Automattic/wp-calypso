@@ -1,10 +1,8 @@
-/** @format */
-
 /**
- * External dependencies
+ * Internal dependencies
  */
-import { get } from 'lodash';
+import 'calypso/state/rewind/init';
 
 export default function getSiteThreats( state, siteId ) {
-	return get( state, [ 'rewind', siteId, 'alerts', 'threats' ], [] );
+	return state.rewind?.[ siteId ]?.state?.alerts?.threats ?? [];
 }

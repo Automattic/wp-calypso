@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import UploadButton from './upload-button';
-import { userCan } from 'lib/site/utils';
+import { userCan } from 'calypso/lib/site/utils';
+
+/**
+ * Image dependencies
+ */
+import mediaImage from 'calypso/assets/images/illustrations/media.svg';
 
 class MediaLibraryListNoContent extends Component {
 	static propTypes = {
@@ -72,14 +75,17 @@ class MediaLibraryListNoContent extends Component {
 	}
 
 	render() {
-		let line = '',
-			action = '';
+		let line = '';
+		let action = '';
 
 		if ( userCan( 'upload_files', this.props.site ) && ! this.props.source ) {
 			line = this.props.translate( 'Would you like to upload something?' );
 			action = (
-				<UploadButton className="button is-primary" site={ this.props.site }>
-					{ this.props.translate( 'Upload Media' ) }
+				<UploadButton
+					className="media-library__no-content-upload-button is-primary"
+					site={ this.props.site }
+				>
+					{ this.props.translate( 'Upload media' ) }
 				</UploadButton>
 			);
 		} else if ( 'google_photos' === this.props.source ) {
@@ -91,7 +97,7 @@ class MediaLibraryListNoContent extends Component {
 				title={ this.getLabel() }
 				line={ line }
 				action={ action }
-				illustration={ '/calypso/images/media/illustration-media.svg' }
+				illustration={ mediaImage }
 				illustrationWidth={ 150 }
 			/>
 		);

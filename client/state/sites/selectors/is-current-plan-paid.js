@@ -6,9 +6,9 @@ import getSitePlan from './get-site-plan';
 /**
  * Returns true if the current site plan is a paid one
  *
- * @param  {Object}   state         Global state tree
- * @param  {Number}   siteId        Site ID
- * @return {?Boolean}               Whether the current plan is paid
+ * @param  {object}   state         Global state tree
+ * @param  {number}   siteId        Site ID
+ * @returns {?boolean}               Whether the current plan is paid
  */
 export default function isCurrentPlanPaid( state, siteId ) {
 	const sitePlan = getSitePlan( state, siteId );

@@ -30,7 +30,7 @@ function loadSources() {
 	const fileNames = glob.sync( SOURCE_PATTERN );
 	const files = {};
 
-	fileNames.forEach( fileName => {
+	fileNames.forEach( ( fileName ) => {
 		const relativeFileName = fileName.substring( filePrefixChars );
 		const url = BUNDLE_URL_ROOT + relativeFileName;
 		const text = fs.readFileSync( fileName );
@@ -46,7 +46,7 @@ function loadSourceMaps() {
 	const fileNames = glob.sync( SOURCEMAP_PATTERN );
 	const files = {};
 
-	fileNames.forEach( fileName => {
+	fileNames.forEach( ( fileName ) => {
 		const url = BUNDLE_URL_ROOT + fileName.substring( filePrefixChars );
 		const text = fs.readFileSync( fileName );
 		const data = JSON.parse( text );
@@ -61,7 +61,7 @@ function loadFiles( filePattern, urlPrefix ) {
 	const fileNames = glob.sync( filePattern );
 	const files = {};
 
-	fileNames.forEach( fileName => {
+	fileNames.forEach( ( fileName ) => {
 		const url = urlPrefix + fileName.substring( filePrefixChars );
 		const data = fs.readFileSync( fileName );
 		files[ url ] = data;
@@ -82,7 +82,7 @@ function readStackTraceText( text, sourceCache, sourceMapConsumerCache ) {
 			columnNumber: originalStackFrame.column,
 		} );
 
-		gps.getMappedLocation( stackFrame ).then( mappedStackFrame => {
+		gps.getMappedLocation( stackFrame ).then( ( mappedStackFrame ) => {
 			printStackFrame( originalStackFrame, mappedStackFrame, index );
 		} );
 	} );
@@ -106,7 +106,7 @@ function printStackFrame( minified, mapped, index ) {
 function translatePosition( rawSourceMap, line, column ) {
 	const consumerCreate = new sourceMap.SourceMapConsumer( rawSourceMap );
 
-	return consumerCreate.then( consumer => {
+	return consumerCreate.then( ( consumer ) => {
 		const info = consumer.originalPositionFor( { line, column } );
 		consumer.destroy();
 		return info;
@@ -161,7 +161,7 @@ function readFromStdin() {
 	if ( verbose ) {
 		console.log( 'Paste stacktrace array from error log: ' );
 	}
-	rl.on( 'line', line => {
+	rl.on( 'line', ( line ) => {
 		readStackTraceText( line, sources, sourceMaps );
 		rl.close();
 	} );

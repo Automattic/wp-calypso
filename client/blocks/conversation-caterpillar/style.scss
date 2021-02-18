@@ -3,12 +3,13 @@
 }
 
 .conversation-caterpillar__count {
+	align-items: center;
 	cursor: pointer;
 	color: var( --color-primary );
 	display: flex;
 	margin-left: 8px;
 	flex: 1 1 auto;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	overflow: hidden;
 	position: relative;
@@ -25,7 +26,7 @@
 		z-index: 1;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 0;
 		text-align: left;
 	}

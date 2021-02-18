@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,12 +8,15 @@ import { identity } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import { preventWidows } from 'lib/formatting';
-import analytics from 'lib/analytics';
-import { localizeUrl } from 'lib/i18n-utils';
+import { Button } from '@automattic/components';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-const trackForumOpen = () => analytics.tracks.recordEvent( 'calypso_inlinehelp_forums_open' );
+const trackForumOpen = () =>
+	recordTracksEvent( 'calypso_inlinehelp_forums_open', {
+		location: 'inline-help-popover',
+	} );
 
 const InlineHelpForumView = ( { translate = identity } ) => (
 	<div className="inline-help__forum-view">

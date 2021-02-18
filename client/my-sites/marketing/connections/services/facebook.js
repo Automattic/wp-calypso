@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,10 +6,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
+import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export class Facebook extends SharingService {
 	static propTypes = {
+		// This foreign propTypes access should be safe because we expect all of them to be removed
+		// eslint-disable-next-line react/forbid-foreign-prop-types
 		...SharingService.propTypes,
 	};
 
@@ -38,7 +39,9 @@ export class Facebook extends SharingService {
 							components: {
 								a: (
 									<a
-										href="https://en.support.wordpress.com/publicize/#facebook-pages"
+										href={ localizeUrl(
+											'https://wordpress.com/support/publicize/#facebook-pages'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>

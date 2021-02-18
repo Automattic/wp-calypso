@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Emojify from 'components/emojify';
+import Emojify from 'calypso/components/emojify';
 
 const EmojifyExample = () => {
 	const textToEmojify = 'This 🙈 will be converted 🙉🙊🙂';

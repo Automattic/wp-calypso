@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,15 +10,14 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormInputValidation from 'components/forms/form-input-validation';
-import ExternalLink from 'components/external-link';
-import { localizeUrl } from 'lib/i18n-utils';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { Card, Button } from '@automattic/components';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import ExternalLink from 'calypso/components/external-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -234,7 +232,4 @@ class CloneDestinationStep extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ submitSignupStep }
-)( localize( CloneDestinationStep ) );
+export default connect( null, { submitSignupStep } )( localize( CloneDestinationStep ) );

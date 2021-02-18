@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -79,7 +77,6 @@ describe( 'selectors', () => {
 							paths: [ '/', '/read' ],
 							module: 'reader',
 							group: 'reader',
-							secondary: true,
 						},
 					},
 				} );
@@ -108,7 +105,6 @@ describe( 'selectors', () => {
 							paths: [ '/', '/read' ],
 							module: 'reader',
 							group: 'reader',
-							secondary: true,
 						},
 					},
 				} );
@@ -138,7 +134,6 @@ describe( 'selectors', () => {
 							paths: [ '/', '/read' ],
 							module: 'reader',
 							group: 'reader',
-							secondary: true,
 						},
 					},
 				} );
@@ -167,7 +162,6 @@ describe( 'selectors', () => {
 							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
-							secondary: true,
 						},
 					},
 				} );
@@ -196,7 +190,6 @@ describe( 'selectors', () => {
 							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
-							secondary: true,
 						},
 					},
 				} );
@@ -223,7 +216,6 @@ describe( 'selectors', () => {
 							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
-							secondary: true,
 						},
 					},
 				} );
@@ -252,7 +244,6 @@ describe( 'selectors', () => {
 							paths: [ '/themes' ],
 							module: 'my-sites/themes',
 							group: 'sites',
-							secondary: true,
 						},
 					},
 				} );

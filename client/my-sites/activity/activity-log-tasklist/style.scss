@@ -1,6 +1,6 @@
 .card.activity-log-tasklist {
 	padding-bottom: 4px;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	.activity-log-tasklist__heading {
 		display: flex;
@@ -21,7 +21,7 @@
 
 .card.activity-log-tasklist__task {
 	align-items: center;
-	box-shadow: 0 -1px 0 rgba( var( --color-neutral-100-rgb ), 0.5 );
+	box-shadow: 0 -1px 0 rgba( var( --color-neutral-10-rgb ), 0.5 );
 	display: flex;
 	justify-content: flex-end;
 	padding: 16px 0;
@@ -41,19 +41,18 @@
 
 .activity-log-tasklist__update-text {
 	margin-bottom: 8px;
-	a, span {
-		font-weight: 500;
+	a,
+	span {
+		font-weight: 600;
 	}
 }
-.activity-log-tasklist__update-text
-
-.activity-log-tasklist__update-version {
+.activity-log-tasklist__update-text .activity-log-tasklist__update-version {
 	color: var( --color-text-subtle );
 }
 
 .activity-log-tasklist__update-bullet,
 .activity-log-tasklist__update-type {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 }
 
 .activity-log-tasklist__update-bullet {
@@ -78,7 +77,7 @@
 .activity-log-tasklist__footer {
 	display: flex;
 	justify-content: space-between;
-	box-shadow: 0 -1px 0 rgba( var( --color-neutral-100-rgb ), 0.5 );
+	box-shadow: 0 -1px 0 rgba( var( --color-neutral-10-rgb ), 0.5 );
 	padding: 16px 0;
 	color: var( --color-text-subtle );
 

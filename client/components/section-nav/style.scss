@@ -5,31 +5,32 @@
 	margin: 0 0 17px;
 	background: var( --color-surface );
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		&.is-open {
-			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-100 );
+			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		&.has-pinned-items {
 			padding-right: 60px;
 		}
 	}
 
-	@include breakpoint( '480px-660px' ) {
+	@include breakpoint-deprecated( '480px-660px' ) {
 		&.has-pinned-items {
 			padding-right: 50px;
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-bottom: 9px;
 	}
 }
@@ -38,16 +39,16 @@
 	display: flex;
 	width: 100%;
 	padding: 15px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 16px;
 	height: 46px;
 	box-sizing: border-box;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 	font-weight: 600;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: var( --color-neutral-500 );
+		fill: var( --color-neutral-50 );
 		flex: none;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
@@ -59,21 +60,20 @@
 	}
 
 	.section-nav.has-pinned-items & {
-		padding-right: 50px;
+		padding-right: 85px;
 
 		&::after {
 			margin-left: 8px;
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: none;
 	}
 }
 
 .section-nav__mobile-header-text {
-	margin-right: 4px;
-	flex: auto;
+	margin-right: 8px;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -81,7 +81,7 @@
 
 	small {
 		margin-left: 5px;
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		color: var( --color-neutral-light );
 		font-weight: 600;
 		text-transform: uppercase;
@@ -92,15 +92,19 @@
 	box-sizing: border-box;
 	width: 100%;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		.section-nav.is-open & {
 			padding-bottom: 15px;
-			border-top: solid 1px var( --color-neutral-100 );
-			background: linear-gradient( to bottom, var( --color-neutral-0 ) 0%, var( --color-white ) 4px );
+			border-top: solid 1px var( --color-neutral-10 );
+			background: linear-gradient(
+				to bottom,
+				var( --color-neutral-0 ) 0%,
+				var( --color-surface ) 4px
+			);
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: flex;
 		align-items: center;
 
@@ -115,14 +119,14 @@
 	position: relative;
 	margin-top: 16px;
 	padding-top: 16px;
-	border-top: solid 1px var( --color-neutral-100 );
+	border-top: solid 1px var( --color-neutral-10 );
 
 	&:first-child {
 		padding-top: 0;
 		border-top: none;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 
 		.section-nav.is-open & {
@@ -130,7 +134,7 @@
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-top: 0;
 		padding-top: 0;
 		border-top: none;
@@ -158,13 +162,13 @@
 	display: none;
 	margin-bottom: 8px;
 	padding: 0 15px;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 	font-weight: 600;
 	text-transform: uppercase;
 	line-height: 12px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		.has-siblings & {
 			display: block;
 		}
@@ -194,16 +198,6 @@
 }
 
 // -------- Search --------
-.section-nav {
-	.search {
-		overflow: hidden;
-	}
-
-	.search.is-expanded-to-container {
-		height: 50px;
-
-		@include breakpoint( '<480px' ) {
-			height: 46px;
-		}
-	}
+.section-nav .search {
+	overflow: hidden;
 }

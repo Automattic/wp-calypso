@@ -1,0 +1,21 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.jetpack-faq-i5 {
+	max-width: 750px;
+	margin: 30px auto 70px;
+}
+
+.jetpack-faq-i5__heading {
+	margin-top: 56px;
+	margin-bottom: 28px;
+
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: -1px;
+	text-align: center;
+
+	@include break-mobile {
+		font-size: 2.25rem;
+	}
+}

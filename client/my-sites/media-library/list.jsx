@@ -1,12 +1,9 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment } from 'i18n-calypso';
+import { withRtl } from 'i18n-calypso';
 import { clone, filter, findIndex, min, noop } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -14,16 +11,17 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
-import { getMimePrefix } from 'lib/media/utils';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { getMimePrefix } from 'calypso/lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
-
-import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
-import { getPreference } from 'state/preferences/selectors';
-import isRtlSelector from 'state/selectors/is-rtl';
+import SortedGrid from 'calypso/components/sorted-grid';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -31,7 +29,7 @@ export class MediaLibraryList extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		media: PropTypes.arrayOf( PropTypes.object ),
-		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
+		selectedItems: PropTypes.arrayOf( PropTypes.object ),
 		filter: PropTypes.string,
 		filterRequiresUpgrade: PropTypes.bool.isRequired,
 		search: PropTypes.string,
@@ -40,7 +38,7 @@ export class MediaLibraryList extends React.Component {
 		mediaScale: PropTypes.number.isRequired,
 		thumbnailType: PropTypes.string,
 		mediaHasNextPage: PropTypes.bool,
-		mediaFetchingNextPage: PropTypes.bool,
+		isFetchingNextPage: PropTypes.bool,
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
@@ -48,11 +46,10 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	static defaultProps = {
-		mediaLibrarySelectedItems: Object.freeze( [] ),
 		containerWidth: 0,
 		rowPadding: 10,
 		mediaHasNextPage: false,
-		mediaFetchingNextPage: false,
+		isFetchingNextPage: false,
 		mediaOnFetchNextPage: noop,
 		single: false,
 		scrollable: false,
@@ -61,7 +58,7 @@ export class MediaLibraryList extends React.Component {
 
 	state = {};
 
-	setListContext = component => {
+	setListContext = ( component ) => {
 		if ( ! component ) {
 			return;
 		}
@@ -79,7 +76,7 @@ export class MediaLibraryList extends React.Component {
 		return Math.floor( 1 / this.props.mediaScale );
 	};
 
-	getMediaItemStyle = index => {
+	getMediaItemStyle = ( index ) => {
 		const itemsPerRow = this.getItemsPerRow();
 		const isFillingEntireRow = itemsPerRow === 1 / this.props.mediaScale;
 		const isLastInRow = 0 === ( index + 1 ) % itemsPerRow;
@@ -108,9 +105,9 @@ export class MediaLibraryList extends React.Component {
 		// seeking to select a single item
 		let selectedItems;
 		if ( this.props.single ) {
-			selectedItems = filter( this.props.mediaLibrarySelectedItems, { ID: item.ID } );
+			selectedItems = filter( this.props.selectedItems, { ID: item.ID } );
 		} else {
-			selectedItems = clone( this.props.mediaLibrarySelectedItems );
+			selectedItems = clone( this.props.selectedItems );
 		}
 
 		const selectedItemsIndex = findIndex( selectedItems, { ID: item.ID } );
@@ -142,31 +139,24 @@ export class MediaLibraryList extends React.Component {
 		} );
 
 		if ( this.props.site ) {
-			MediaActions.setLibrarySelectedItems( this.props.site.ID, selectedItems );
+			this.props.setMediaLibrarySelectedItems( this.props.site.ID, selectedItems );
 		}
 	};
 
-	getItemRef = item => {
+	getItemRef = ( item ) => {
 		return 'item-' + item.ID;
 	};
 
-	getGroupLabel = date => {
-		const itemDate = new Date( date );
-		const currentDate = new Date();
-
-		if ( itemDate.getFullYear() === currentDate.getFullYear() ) {
-			return moment( date ).format( 'MMM D' );
-		}
-
-		return moment( date ).format( 'MMM D, YYYY' );
+	getGroupLabel = ( date ) => {
+		return this.props.moment( date ).format( 'LL' );
 	};
 
-	getItemGroup = item =>
-		min( [ item.date.slice( 0, 10 ), moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
+	getItemGroup = ( item ) =>
+		min( [ item.date.slice( 0, 10 ), this.props.moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
 
-	renderItem = item => {
+	renderItem = ( item ) => {
 		const index = findIndex( this.props.media, { ID: item.ID } );
-		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const selectedItems = this.props.selectedItems;
 		const selectedIndex = findIndex( selectedItems, { ID: item.ID } );
 		const ref = this.getItemRef( item );
 
@@ -198,7 +188,7 @@ export class MediaLibraryList extends React.Component {
 		const placeholders = itemsPerRow - ( itemsVisible % itemsPerRow );
 
 		// We render enough placeholders to occupy the remainder of the row
-		return Array.apply( null, new Array( placeholders ) ).map( function( value, i ) {
+		return Array.apply( null, new Array( placeholders ) ).map( function ( value, i ) {
 			return (
 				<ListItem
 					key={ 'placeholder-' + i }
@@ -231,7 +221,7 @@ export class MediaLibraryList extends React.Component {
 			} );
 		}
 
-		const onFetchNextPage = function() {
+		const onFetchNextPage = function () {
 			// InfiniteList passes its own parameter which would interfere
 			// with the optional parameters expected by mediaOnFetchNextPage
 			this.props.mediaOnFetchNextPage();
@@ -253,7 +243,7 @@ export class MediaLibraryList extends React.Component {
 				items={ this.props.media || [] }
 				itemsPerRow={ this.getItemsPerRow() }
 				lastPage={ ! this.props.mediaHasNextPage }
-				fetchingNextPage={ this.props.mediaFetchingNextPage }
+				fetchingNextPage={ this.props.isFetchingNextPage }
 				guessedItemHeight={ this.getMediaItemHeight() }
 				fetchNextPage={ onFetchNextPage }
 				getItemRef={ this.getItemRef }
@@ -266,11 +256,10 @@ export class MediaLibraryList extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state, { site } ) => ( {
 		mediaScale: getPreference( state, 'mediaScale' ),
-		isRtl: isRtlSelector( state ),
+		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
+		isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
 	} ),
-	null,
-	null,
-	{ pure: false }
-)( MediaLibraryList );
+	{ setMediaLibrarySelectedItems }
+)( withRtl( withLocalizedMoment( MediaLibraryList ) ) );

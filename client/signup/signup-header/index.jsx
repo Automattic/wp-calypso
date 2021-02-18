@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,8 +10,8 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 
-import WordPressLogo from 'components/wordpress-logo';
-import FlowProgressIndicator from 'signup/flow-progress-indicator';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 
 /**
  * Style dependencies
@@ -28,16 +26,13 @@ export default class SignupHeader extends Component {
 		flowName: PropTypes.string,
 		showProgressIndicator: PropTypes.bool,
 		shouldShowLoadingScreen: PropTypes.bool,
+		isReskinned: PropTypes.bool,
 	};
-
-	constructor( props ) {
-		super( props );
-	}
 
 	render() {
 		const logoClasses = classnames( {
 			'wordpress-logo': true,
-			'is-large': this.props.shouldShowLoadingScreen,
+			'is-large': this.props.shouldShowLoadingScreen && ! this.props.isReskinned,
 		} );
 
 		return (

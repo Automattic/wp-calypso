@@ -1,14 +1,13 @@
 /**
  * External dependencis
  *
- * @format
  */
-
 import { pick, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
@@ -16,8 +15,8 @@ import {
 	JETPACK_SYNC_STATUS_REQUEST,
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 import { getExpectedResponseKeys } from './utils';
 
 export function fullSyncRequest( state = {}, action ) {
@@ -52,17 +51,19 @@ export function fullSyncRequest( state = {}, action ) {
 
 export function syncStatus( state = {}, action ) {
 	switch ( action.type ) {
-		case JETPACK_SYNC_START_REQUEST:
+		case JETPACK_SYNC_START_REQUEST: {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: {},
 			} );
-		case JETPACK_SYNC_STATUS_REQUEST:
+		}
+		case JETPACK_SYNC_STATUS_REQUEST: {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign( {}, get( state, [ action.siteId ], {} ), {
 					isRequesting: true,
 				} ),
 			} );
-		case JETPACK_SYNC_STATUS_SUCCESS:
+		}
+		case JETPACK_SYNC_STATUS_SUCCESS: {
 			const thisState = get( state, [ action.siteId ], {} );
 
 			// lastSuccessfulStatus is any status after we have started sycing
@@ -71,6 +72,14 @@ export function syncStatus( state = {}, action ) {
 			if ( lastSuccessfulStatus || isFullSyncing ) {
 				lastSuccessfulStatus = Date.now();
 			}
+
+			// Check if Sync Completed before seeing a successful status request
+			if ( false === lastSuccessfulStatus ) {
+				if ( get( action, 'data.started' ) < get( action, 'data.finished' ) ) {
+					lastSuccessfulStatus = Date.now();
+				}
+			}
+
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
 					{
@@ -82,7 +91,8 @@ export function syncStatus( state = {}, action ) {
 					pick( action.data, getExpectedResponseKeys() )
 				),
 			} );
-		case JETPACK_SYNC_STATUS_ERROR:
+		}
+		case JETPACK_SYNC_STATUS_ERROR: {
 			const errorCounter = get( state, [ action.siteId, 'errorCounter' ], 0 );
 			return Object.assign( {}, state, {
 				[ action.siteId ]: Object.assign(
@@ -94,11 +104,14 @@ export function syncStatus( state = {}, action ) {
 					pick( action.data, getExpectedResponseKeys() )
 				),
 			} );
+		}
 	}
 	return state;
 }
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	syncStatus,
 	fullSyncRequest,
 } );
+
+export default withStorageKey( 'jetpackSync', combinedReducer );

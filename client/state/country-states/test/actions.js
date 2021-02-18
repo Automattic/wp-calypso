@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,35 +13,44 @@ import {
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#receiveCountryStates()', () => {
 		test( 'should return an action object', () => {
 			const action = receiveCountryStates(
-				[ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ],
+				[
+					{ code: 'AK', name: 'Alaska' },
+					{ code: 'AS', name: 'American Samoa' },
+				],
 				'US'
 			);
 
 			expect( action ).to.eql( {
 				type: COUNTRY_STATES_RECEIVE,
 				countryCode: 'us',
-				countryStates: [ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ],
+				countryStates: [
+					{ code: 'AK', name: 'Alaska' },
+					{ code: 'AS', name: 'American Samoa' },
+				],
 			} );
 		} );
 	} );
 
 	describe( '#requestCountryStates()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/domains/supported-states/us' )
-				.reply( 200, [ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ] )
+				.reply( 200, [
+					{ code: 'AK', name: 'Alaska' },
+					{ code: 'AS', name: 'American Samoa' },
+				] )
 				.get( '/rest/v1.1/domains/supported-states/ca' )
 				.reply( 500, {
 					error: 'server_error',
@@ -64,7 +72,10 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: COUNTRY_STATES_RECEIVE,
 					countryCode: 'us',
-					countryStates: [ { code: 'AK', name: 'Alaska' }, { code: 'AS', name: 'American Samoa' } ],
+					countryStates: [
+						{ code: 'AK', name: 'Alaska' },
+						{ code: 'AS', name: 'American Samoa' },
+					],
 				} );
 			} );
 		} );

@@ -16,7 +16,7 @@
 		bottom: 0;
 		left: 0;
 		right: 0;
-	background: var( --color-neutral-800 );
+	background: var( --color-neutral-90 );
 }
 
 .image-editor__toolbar {
@@ -31,9 +31,9 @@
 }
 
 .image-editor__toolbar-button {
-	background: $transparent;
+	background: rgba( var( --color-surface-rgb ), 0 );
 	border: none;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	margin: 0 10px;
 	cursor: pointer;
 	&.is-disabled {
@@ -63,20 +63,20 @@
 	top: 50%;
 	left: 50%;
 	&.is-placeholder {
-		@include placeholder-dark();
+		@include placeholder( --color-neutral-70 );
 	}
 }
 
 .image-editor__crop {
 	position: absolute;
-	border: 1px solid var( --color-white );
+	border: 1px solid var( --color-border-inverted );
 	cursor: move;
 	box-sizing: border-box;
 }
 
 .image-editor__crop-background {
 	position: absolute;
-	background: var( --color-neutral-800 );
+	background: var( --color-neutral-90 );
 	opacity: 0.5;
 }
 
@@ -87,8 +87,8 @@
 	margin-top: -4px;
 	margin-left: -4px;
 	border-radius: 50%;
-	border: 2px solid var( --color-white );
-	background: var( --color-neutral-800 );
+	border: 2px solid var( --color-border-inverted );
+	background: var( --color-neutral-90 );
 
 	&::before {
 		border-radius: 100%;
@@ -109,7 +109,7 @@
 }
 
 .image-editor__buttons {
-	border-top: 1px solid var( --color-neutral-700 );
+	border-top: 1px solid var( --color-neutral-70 );
 	padding: 16px;
 	text-align: right;
 }

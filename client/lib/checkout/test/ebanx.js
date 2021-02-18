@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -14,32 +13,17 @@ import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
 	isValidCNPJ,
-	shouldRenderAdditionalCountryFields,
 } from '../processor-specific';
-import { isPaymentMethodEnabled } from 'lib/cart-values';
-
-jest.mock( 'lib/cart-values', () => {
-	const cartValues = {};
-
-	cartValues.isPaymentMethodEnabled = jest.fn( false, false );
-
-	return cartValues;
-} );
 
 describe( 'Ebanx payment processing methods', () => {
-	describe( 'isEbanxCreditCardProcessingEnabledForCountry', () => {
-		beforeAll( () => {
-			isPaymentMethodEnabled.mockReturnValue( true );
-		} );
-		afterAll( () => {
-			isPaymentMethodEnabled.mockReturnValue( false );
-		} );
+	const cart = { allowed_payment_methods: [ 'WPCOM_Billing_Ebanx' ] };
 
+	describe( 'isEbanxCreditCardProcessingEnabledForCountry', () => {
 		test( 'should return false for non-ebanx country', () => {
-			expect( isEbanxCreditCardProcessingEnabledForCountry( 'AU' ) ).toEqual( false );
+			expect( isEbanxCreditCardProcessingEnabledForCountry( 'AU', cart ) ).toEqual( false );
 		} );
 		test( 'should return true for ebanx country', () => {
-			expect( isEbanxCreditCardProcessingEnabledForCountry( 'BR' ) ).toEqual( true );
+			expect( isEbanxCreditCardProcessingEnabledForCountry( 'BR', cart ) ).toEqual( true );
 		} );
 	} );
 
@@ -62,23 +46,6 @@ describe( 'Ebanx payment processing methods', () => {
 		test( 'should return false for invalid CPF', () => {
 			expect( isValidCNPJ( '94065313000170' ) ).toEqual( false );
 			expect( isValidCNPJ( '94.065.313/0001-70' ) ).toEqual( false );
-		} );
-	} );
-
-	describe( 'shouldRenderAdditionalCountryFields', () => {
-		beforeAll( () => {
-			isPaymentMethodEnabled.mockReturnValue( true );
-		} );
-		afterAll( () => {
-			isPaymentMethodEnabled.mockReturnValue( false );
-		} );
-
-		test( 'should return false for non-ebanx country', () => {
-			expect( shouldRenderAdditionalCountryFields( 'AU' ) ).toEqual( false );
-		} );
-		test( 'should return true for ebanx country that requires additional fields', () => {
-			expect( shouldRenderAdditionalCountryFields( 'BR' ) ).toEqual( true );
-			expect( shouldRenderAdditionalCountryFields( 'MX' ) ).toEqual( true );
 		} );
 	} );
 } );

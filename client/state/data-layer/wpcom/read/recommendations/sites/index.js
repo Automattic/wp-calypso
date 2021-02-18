@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External Dependencies
  */
@@ -7,15 +6,15 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { READER_RECOMMENDED_SITES_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { receiveRecommendedSites } from 'state/reader/recommended-sites/actions';
-import { decodeEntities } from 'lib/formatting';
+import { READER_RECOMMENDED_SITES_REQUEST } from 'calypso/state/reader/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { receiveRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
+import { decodeEntities } from 'calypso/lib/formatting';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-export const requestRecommendedSites = action => {
+export const requestRecommendedSites = ( action ) => {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;
 	return http( {
 		method: 'GET',
@@ -28,7 +27,7 @@ export const requestRecommendedSites = action => {
 };
 
 export const fromApi = ( { algorithm, sites } ) =>
-	sites.map( site => ( {
+	sites.map( ( site ) => ( {
 		feedId: site.feed_id,
 		blogId: site.blog_id,
 		title: decodeEntities( site.blog_title ),

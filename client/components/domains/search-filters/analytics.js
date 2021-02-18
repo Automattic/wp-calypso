@@ -1,9 +1,11 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 export function recordTldFilterSelected( tld, position, isSelecting ) {
 	return composeAnalytics(

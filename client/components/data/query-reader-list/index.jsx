@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,17 +10,17 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingList } from 'state/reader/lists/selectors';
-import { requestList } from 'state/reader/lists/actions';
+import { isRequestingList } from 'calypso/state/reader/lists/selectors';
+import { requestList } from 'calypso/state/reader/lists/actions';
 
 class QueryReaderList extends Component {
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		if ( ! this.props.isRequestingList ) {
 			this.props.requestList( this.props.owner, this.props.slug );
 		}
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.isRequestingList ||
 			( this.props.owner === nextProps.owner && this.props.slug === nextProps.slug )
@@ -56,7 +54,7 @@ export default connect(
 			isRequestingList: isRequestingList( state, owner, slug ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestList,

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,7 +11,7 @@ import { omit, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextarea from 'components/forms/form-textarea';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 
 /**
  * Style dependencies

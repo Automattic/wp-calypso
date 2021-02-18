@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import WordPressLogo from 'components/wordpress-logo';
+import { Card } from '@automattic/components';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 
 /**
  *

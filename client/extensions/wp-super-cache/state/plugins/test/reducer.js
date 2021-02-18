@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -19,14 +17,14 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../../action-types';
 import { items, requesting, toggling } from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -84,22 +82,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -162,22 +144,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				[ primarySiteId ]: { no_adverts_for_friends: false },
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = toggling( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = toggling( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

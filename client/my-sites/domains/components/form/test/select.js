@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -15,14 +14,17 @@ import React from 'react';
 import Select from '../select';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( '<Select />', () => {
 	const defaultProps = {
 		label: 'Select label',
 		name: 'select',
 		onChange: jest.fn(),
-		options: [ { label: 'uno', value: 1 }, { label: 'due', value: 2 } ],
+		options: [
+			{ label: 'uno', value: 1 },
+			{ label: 'due', value: 2 },
+		],
 		value: '',
 		additionalClasses: 'mega-selectzilla',
 		errorMessage: null,

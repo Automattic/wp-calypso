@@ -4,7 +4,7 @@
 	overflow: hidden;
 	transition: background 0.05s ease-in-out;
 	text-decoration: none;
-	color: var( --color-neutral-700 );
+	color: var( --color-neutral-70 );
 
 	.card__link-indicator {
 		display: none;
@@ -14,7 +14,7 @@
 		background: var( --color-neutral-0 );
 
 		.draft__title {
-			color: var( --color-neutral-500 );
+			color: var( --color-neutral-50 );
 		}
 	}
 
@@ -42,19 +42,18 @@
 }
 
 .draft__title {
-	font-family: $serif;
-	font-weight: bold;
-	font-size: 15px;
+	font-weight: 600;
+	font-size: $font-body;
 	line-height: 1.4;
 }
 
 .draft__time {
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 }
 
 .draft__empty-text {
-	color: var( --color-neutral-500 );
+	color: var( --color-neutral-50 );
 	font-weight: 400;
 	font-style: italic;
 }
@@ -63,13 +62,13 @@
 .draft__featured-image {
 	display: block;
 	position: absolute;
-		top: 8px;
-		right: 8px;
-		bottom: 8px;
+	top: 8px;
+	right: 8px;
+	bottom: 8px;
 	overflow: hidden;
 	transition: height 0.15s ease-in-out;
 	width: 72px;
-	border-radius: 3px;
+	border-radius: 2px;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -83,7 +82,7 @@
 	}
 
 	.draft__title {
-		background: var( --color-neutral-100 );
+		background: var( --color-neutral-10 );
 		color: transparent;
 		height: 16px;
 		width: 30%;

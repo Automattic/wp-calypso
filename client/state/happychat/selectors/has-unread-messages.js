@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,12 +6,12 @@ import { get, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
-import getLostFocusTimestamp from 'state/happychat/selectors/get-lostfocus-timestamp';
+import { createSelector } from '@automattic/state-utils';
+import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
+import getLostFocusTimestamp from 'calypso/state/happychat/selectors/get-lostfocus-timestamp';
 
 export default createSelector(
-	state => {
+	( state ) => {
 		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' );
 		const lostFocusAt = getLostFocusTimestamp( state );
 

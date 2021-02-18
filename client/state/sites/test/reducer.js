@@ -25,16 +25,16 @@ import {
 	SITES_REQUEST_SUCCESS,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_UPDATE,
-	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -47,9 +47,9 @@ describe( 'reducer', () => {
 			'items',
 			'mediaStorage',
 			'plans',
+			'products',
 			'guidedTransfer',
 			'monitor',
-			'vouchers',
 			'requesting',
 			'sharingButtons',
 			'blogStickers',

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,10 +10,10 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExtensionRedirect from 'blocks/extension-redirect';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import ExtensionRedirect from 'calypso/blocks/extension-redirect';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ZONINATOR_MIN_VERSION } from '../../app/constants';
 import QueryZones from '../data/query-zones';
 
@@ -36,11 +34,8 @@ const Settings = ( { children, siteId, translate } ) => {
 	);
 };
 
-const connectComponent = connect( state => ( {
+const connectComponent = connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( Settings );
+export default flowRight( connectComponent, localize )( Settings );

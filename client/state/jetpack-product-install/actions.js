@@ -5,18 +5,19 @@ import {
 	JETPACK_PRODUCT_INSTALL_REQUEST,
 	JETPACK_PRODUCT_INSTALL_STATUS_RECEIVE,
 	JETPACK_PRODUCT_INSTALL_STATUS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/jetpack-blogs/product-install';
-import 'state/data-layer/wpcom/jetpack-blogs/product-install-status';
+import 'calypso/state/data-layer/wpcom/jetpack-blogs/product-install';
+import 'calypso/state/data-layer/wpcom/jetpack-blogs/product-install-status';
+import 'calypso/state/jetpack-product-install/init';
 
 /**
  * Start the Jetpack product install process for that site.
  *
- * @param {Number}  siteId        The ID of the site.
+ * @param {number}  siteId        The ID of the site.
  * @param {(string|null)}  akismetKey    Akismet key.
  * @param {(string|null)}  vaultpressKey VaultPress key.
- * @return {Object}               Action object.
+ * @returns {object}               Action object.
  */
 export const startJetpackProductInstall = ( siteId, akismetKey, vaultpressKey ) => ( {
 	type: JETPACK_PRODUCT_INSTALL_REQUEST,
@@ -28,10 +29,10 @@ export const startJetpackProductInstall = ( siteId, akismetKey, vaultpressKey ) 
 /**
  * Retrieve the current status of the Jetpack product install for that site.
  *
- * @param {Number} siteId The ID of the site.
- * @return {Object}       Action object.
+ * @param {number} siteId The ID of the site.
+ * @returns {object}       Action object.
  */
-export const requestJetpackProductInstallStatus = siteId => ( {
+export const requestJetpackProductInstallStatus = ( siteId ) => ( {
 	type: JETPACK_PRODUCT_INSTALL_STATUS_REQUEST,
 	siteId,
 } );
@@ -39,9 +40,9 @@ export const requestJetpackProductInstallStatus = siteId => ( {
 /**
  * Receive current Jetpack product installation status.
  *
- * @param {Number} siteId The ID of the site.
- * @param {Object} status Product installation status.
- * @return {Object}       Action object.
+ * @param {number} siteId The ID of the site.
+ * @param {object} status Product installation status.
+ * @returns {object}       Action object.
  */
 export const receiveJetpackProductInstallStatus = ( siteId, status ) => ( {
 	type: JETPACK_PRODUCT_INSTALL_STATUS_RECEIVE,

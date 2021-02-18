@@ -7,17 +7,17 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import { getSerializedDomainsSuggestionsQuery } from './utils';
 
 /**
  * Tracks domains suggestions, indexed by a serialized query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -36,9 +36,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 /**
  * Tracks domains suggestions request state, indexed by a serialized query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -59,9 +59,9 @@ export function requesting( state = {}, action ) {
 /**
  * Tracks domains suggestions error state, indexed by a serialized query.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function errors( state = {}, action ) {
 	const serializedQuery =

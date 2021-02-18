@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,7 @@ import {
 	requestFeedSearch,
 	SORT_BY_LAST_UPDATED,
 	SORT_BY_RELEVANCE,
-} from 'state/reader/feed-searches/actions';
+} from 'calypso/state/reader/feed-searches/actions';
 
 class QueryFeedSearch extends Component {
 	static propTypes = {
@@ -24,7 +22,7 @@ class QueryFeedSearch extends Component {
 		sort: PropTypes.oneOf( [ SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE ] ),
 	};
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			excludeFollowed: this.props.excludeFollowed,
@@ -32,7 +30,7 @@ class QueryFeedSearch extends Component {
 		} );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		nextProps.requestFeedSearch( {
 			query: nextProps.query,
 			excludeFollowed: nextProps.excludeFollowed,
@@ -45,7 +43,4 @@ class QueryFeedSearch extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestFeedSearch }
-)( QueryFeedSearch );
+export default connect( null, { requestFeedSearch } )( QueryFeedSearch );

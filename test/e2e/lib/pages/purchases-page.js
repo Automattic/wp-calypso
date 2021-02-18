@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -35,7 +33,7 @@ export default class PurchasesPage extends AsyncBaseContainer {
 	}
 
 	async selectPremiumPlanOnConnectedSite() {
-		return await this._selectPlanOnConnectedSite( 'premium' );
+		return await this._selectPlanOnConnectedSite();
 	}
 
 	async selectTheme() {
@@ -70,11 +68,11 @@ export default class PurchasesPage extends AsyncBaseContainer {
 		);
 	}
 
-	async _selectPlanOnConnectedSite( planName ) {
+	async _selectPlanOnConnectedSite() {
 		await this._waitForPurchases();
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( `a.purchase-item[data-e2e-connected-site=true] img.is-${ planName }-plan` )
+			by.css( `a.purchase-item[data-e2e-connected-site=true] svg` )
 		);
 	}
 }

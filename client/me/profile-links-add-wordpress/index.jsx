@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,14 +10,14 @@ import { find, map, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 import ProfileLinksAddWordPressSite from './site';
-import { addUserProfileLinks } from 'state/profile-links/actions';
-import getPublicSites from 'state/selectors/get-public-sites';
-import getSites from 'state/selectors/get-sites';
-import isSiteInProfileLinks from 'state/selectors/is-site-in-profile-links';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
+import getPublicSites from 'calypso/state/selectors/get-public-sites';
+import getSites from 'calypso/state/selectors/get-sites';
+import isSiteInProfileLinks from 'calypso/state/selectors/is-site-in-profile-links';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -31,31 +29,31 @@ class ProfileLinksAddWordPress extends Component {
 	// code simpler / easier to maintain
 	state = {};
 
-	handleCheckedChanged = event => {
+	handleCheckedChanged = ( event ) => {
 		const updates = {};
 		updates[ event.target.name ] = event.target.checked;
 		this.setState( updates );
 	};
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.recordClickEvent( action );
 	};
 
-	handleCancelButtonClick = event => {
+	handleCancelButtonClick = ( event ) => {
 		this.recordClickEvent( 'Cancel Add WordPress Sites Button' );
 		this.onCancel( event );
 	};
 
-	handleJetpackLinkClick = event => {
+	handleJetpackLinkClick = ( event ) => {
 		this.recordClickEvent( 'Jetpack Link in Profile Links' );
 		this.onJetpackMe( event );
 	};
 
-	handleCreateSiteButtonClick = event => {
+	handleCreateSiteButtonClick = ( event ) => {
 		this.recordClickEvent( 'Create Sites Button in Profile Links' );
 		this.onCreateSite( event );
 	};
@@ -77,7 +75,7 @@ class ProfileLinksAddWordPress extends Component {
 		return checkedCount;
 	}
 
-	onAddableSubmit = event => {
+	onAddableSubmit = ( event ) => {
 		event.preventDefault();
 		const { sites } = this.props;
 
@@ -89,8 +87,8 @@ class ProfileLinksAddWordPress extends Component {
 		const profileLinks = map( links, ( inputValue, inputName ) =>
 			parseInt( inputName.substr( 5 ), 10 )
 		)
-			.map( siteId => find( sites, [ 'ID', siteId ] ) )
-			.map( site => ( {
+			.map( ( siteId ) => find( sites, [ 'ID', siteId ] ) )
+			.map( ( site ) => ( {
 				title: site.name,
 				value: site.URL,
 			} ) );
@@ -101,25 +99,23 @@ class ProfileLinksAddWordPress extends Component {
 		}
 	};
 
-	onCancel = event => {
+	onCancel = ( event ) => {
 		event.preventDefault();
 		this.props.onCancel();
 	};
 
-	onCreateSite = event => {
+	onCreateSite = ( event ) => {
 		event.preventDefault();
-		window.open( config( 'signup_url' ) + '?ref=me-profile-links' );
+		window.open( this.props.onboardingUrl + '?ref=me-profile-links' );
 		this.props.onCancel();
 	};
 
-	onJetpackMe = event => {
-		event.preventDefault();
-		window.open( 'http://jetpack.me/' );
+	onJetpackMe = () => {
 		this.props.onCancel();
 	};
 
 	renderAddableSites() {
-		return this.props.publicSitesNotInProfileLinks.map( site => {
+		return this.props.publicSitesNotInProfileLinks.map( ( site ) => {
 			const inputName = 'site-' + site.ID;
 			const checkedState = this.state[ inputName ];
 
@@ -174,7 +170,9 @@ class ProfileLinksAddWordPress extends Component {
 							components: {
 								jetpackLink: (
 									<a
-										href="#"
+										href="https://jetpack.me"
+										target="_blank"
+										rel="noreferrer"
 										className="profile-links-add-wordpress__jetpack-link"
 										onClick={ this.handleJetpackLinkClick }
 									/>
@@ -209,17 +207,18 @@ class ProfileLinksAddWordPress extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const publicSites = getPublicSites( state );
 		const publicSitesNotInProfileLinks = publicSites.filter(
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			site => ! isSiteInProfileLinks( state, site.domain )
+			( site ) => ! isSiteInProfileLinks( state, site.domain )
 		);
 
 		return {
 			publicSites,
 			publicSitesNotInProfileLinks,
 			sites: getSites( state ),
+			onboardingUrl: getOnboardingUrl( state ),
 		};
 	},
 	{

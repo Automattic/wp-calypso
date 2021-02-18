@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,18 +8,21 @@ import { connect } from 'react-redux';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import titlecase from 'to-title-case';
-import Button from 'components/button';
-import { getSiteStatsCSVData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { Button } from '@automattic/components';
+import {
+	getSiteStatsCSVData,
+	isRequestingSiteStatsForQuery,
+} from 'calypso/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class StatsDownloadCsv extends Component {
 	static propTypes = {
@@ -36,7 +37,7 @@ class StatsDownloadCsv extends Component {
 		borderless: PropTypes.bool,
 	};
 
-	downloadCsv = event => {
+	downloadCsv = ( event ) => {
 		event.preventDefault();
 		const { siteSlug, path, period, data } = this.props;
 
@@ -52,7 +53,7 @@ class StatsDownloadCsv extends Component {
 		this.props.recordGoogleEvent( 'Stats', 'CSV Download ' + titlecase( path ) );
 
 		const csvData = data
-			.map( row => {
+			.map( ( row ) => {
 				return row.join( ',' );
 			} )
 			.join( '\n' );
@@ -82,7 +83,7 @@ class StatsDownloadCsv extends Component {
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				<Gridicon icon="cloud-download" />{' '}
+				<Gridicon icon="cloud-download" />{ ' ' }
 				{ translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.',
 				} ) }
@@ -115,7 +116,4 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-export default flowRight(
-	connectComponent,
-	localize
-)( StatsDownloadCsv );
+export default flowRight( connectComponent, localize )( StatsDownloadCsv );

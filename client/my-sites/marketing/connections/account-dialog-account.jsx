@@ -1,24 +1,23 @@
-/** @format */
-
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import Image from 'components/image';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import Gridicon from 'calypso/components/gridicon';
+import Image from 'calypso/components/image';
 
 /**
  * Style dependencies
  */
 import './account-dialog-account.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 const AccountDialogAccount = ( { account, conflicting, onChange, selected, defaultIcon } ) => {
 	const classes = classNames( 'account-dialog-account', {
 		'is-connected': account.isConnected,
@@ -27,11 +26,10 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 
 	return (
 		<li className={ classes }>
-			<label className="account-dialog-account__label">
+			<FormLabel className="account-dialog-account__label">
 				{ conflicting && <Gridicon icon="notice" /> }
 				{ ! account.isConnected && (
-					<input
-						type="radio"
+					<FormRadio
 						onChange={ onChange }
 						checked={ selected }
 						className="account-dialog-account__input"
@@ -52,11 +50,10 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 						<div className="account-dialog-account__description">{ account.description }</div>
 					) }
 				</span>
-			</label>
+			</FormLabel>
 		</li>
 	);
 };
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 AccountDialogAccount.propTypes = {
 	account: PropTypes.shape( {

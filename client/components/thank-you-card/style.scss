@@ -2,15 +2,15 @@
 	position: relative;
 	width: 100%;
 	max-width: 500px;
-	background-color: var( --color-success-400 );
+	background-color: var( --color-success-40 );
 	border-radius: 8px 8px 6px 6px;
 	overflow: hidden;
 	margin: 12px auto 24px;
-	color: var( --color-white );
+	color: var( --color-text-inverted );
 	font-family: $sans;
 	text-align: center;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-top: 28px;
 	}
 }
@@ -24,7 +24,7 @@
 	overflow: hidden;
 	z-index: z-index( 'root', '.thank-you-card__header' );
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 32px 0;
 	}
 }
@@ -37,7 +37,7 @@
 .thank-you-card__body {
 	padding: 24px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 40px;
 	}
 }
@@ -49,21 +49,21 @@
 	position: relative;
 	z-index: z-index( '.thank-you-card__header', '.thank-you-card__main-icon' );
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		width: 96px;
 		height: 96px;
 	}
 }
 
 .thank-you-card__name {
-	font-size: 18px;
-	font-weight: 500;
+	font-size: $font-title-small;
+	font-weight: 600;
 	margin-bottom: 5px;
 
 	&.is-placeholder {
 		@include placeholder();
 
-		background-color: var( --color-success-50 );
+		background-color: var( --color-success-5 );
 		margin-left: auto;
 		margin-right: auto;
 		width: 35%;
@@ -71,14 +71,14 @@
 }
 
 .thank-you-card__price {
-	font-size: 15px;
-	font-weight: 500;
-	color: var( --color-success-50 );
+	font-size: $font-body;
+	font-weight: 600;
+	color: var( --color-success-5 );
 
 	&.is-placeholder {
 		@include placeholder();
 
-		background-color: var( --color-success-50 );
+		background-color: var( --color-success-5 );
 		margin-left: auto;
 		margin-right: auto;
 		width: 10%;
@@ -86,34 +86,34 @@
 }
 
 .thank-you-card__heading {
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	margin-bottom: 8px;
 
-	@include breakpoint( '>480px' ) {
-		font-size: 26px;
+	@include breakpoint-deprecated( '>480px' ) {
+		font-size: $font-title-medium;
 	}
 }
 
 .thank-you-card__description {
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	width: 280px;
 	max-width: 100%;
 	margin: 0 auto 30px;
 	line-height: 20px;
 
-	@include breakpoint( '>480px' ) {
-		font-size: 15px;
+	@include breakpoint-deprecated( '>480px' ) {
+		font-size: $font-body;
 	}
 }
 
 .thank-you-card__button,
 .thank-you-card__button:visited {
 	display: inline-block;
-	border-radius: 4px;
-	background-color: var( --color-white );
-	font-size: 14px;
+	border-radius: 2px;
+	background-color: var( --color-surface );
+	font-size: $font-body-small;
 	max-width: 280px;
 	padding: 8px 24px;
 	margin: 0 auto;
@@ -130,7 +130,7 @@
 }
 
 .thank-you-card__button:focus {
-	outline: 1px dotted var( --color-white );
+	outline: 1px dotted var( --color-surface );
 }
 
 .thank-you-card__button:active {
@@ -158,7 +158,7 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	color: rgba( var( --color-white-rgb ), 0.4 );
+	color: rgba( var( --color-surface-rgb ), 0.4 );
 
 	.gridicon {
 		position: absolute;

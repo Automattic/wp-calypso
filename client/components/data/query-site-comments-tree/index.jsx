@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestCommentsTreeForSite } from 'state/comments/actions';
+import { requestCommentsTreeForSite } from 'calypso/state/comments/actions';
 
 export class QuerySiteCommentsTree extends Component {
 	static propTypes = {
@@ -47,7 +46,4 @@ export class QuerySiteCommentsTree extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestCommentsTreeForSite }
-)( QuerySiteCommentsTree );
+export default connect( null, { requestCommentsTreeForSite } )( QuerySiteCommentsTree );

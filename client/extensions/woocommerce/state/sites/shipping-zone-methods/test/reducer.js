@@ -1,10 +1,3 @@
-/** @format */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
 /**
  * Internal dependencies
  */
@@ -27,9 +20,7 @@ describe( 'fetch shipping zone methods', () => {
 			zoneId: 7,
 			siteId,
 		} );
-		expect( newSiteData[ siteId ].shippingZones ).to.deep.equal( [
-			{ id: 7, methodIds: LOADING },
-		] );
+		expect( newSiteData[ siteId ].shippingZones ).toEqual( [ { id: 7, methodIds: LOADING } ] );
 	} );
 } );
 
@@ -63,12 +54,12 @@ describe( 'fetch shipping zone methods - success', () => {
 			},
 		];
 		const newState = reducer( state, fetchShippingZoneMethodsSuccess( siteId, 1, methods ) );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].shippingZoneMethods ).to.deep.equal( {
+		expect( newState[ siteId ] ).toBeTruthy();
+		expect( newState[ siteId ].shippingZoneMethods ).toEqual( {
 			4: { id: 4, methodType: 'free_shipping', enabled: true, order: 1, field: 'hello' },
 			7: { id: 7, methodType: 'local_pickup', enabled: false, order: 2, field: 'goodbye' },
 		} );
-		expect( newState[ siteId ].shippingZones ).to.deep.equal( [ { id: 1, methodIds: [ 4, 7 ] } ] );
+		expect( newState[ siteId ].shippingZones ).toEqual( [ { id: 1, methodIds: [ 4, 7 ] } ] );
 	} );
 
 	test( 'should overwrite previous methods with the same ID', () => {
@@ -94,12 +85,12 @@ describe( 'fetch shipping zone methods - success', () => {
 			{ id: 7, enabled: false, method_id: 'local_pickup', order: 2 },
 		];
 		const newState = reducer( state, fetchShippingZoneMethodsSuccess( siteId, 1, methods ) );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].shippingZoneMethods ).to.deep.equal( {
+		expect( newState[ siteId ] ).toBeTruthy();
+		expect( newState[ siteId ].shippingZoneMethods ).toEqual( {
 			4: { id: 4, enabled: true, methodType: 'free_shipping', order: 1 },
 			7: { id: 7, enabled: false, methodType: 'local_pickup', order: 2 },
 			42: { id: 42, enabled: false, methodType: 'local_pickup', order: 1 },
 		} );
-		expect( newState[ siteId ].shippingZones ).to.deep.equal( [ { id: 1, methodIds: [ 4, 7 ] } ] );
+		expect( newState[ siteId ].shippingZones ).toEqual( [ { id: 1, methodIds: [ 4, 7 ] } ] );
 	} );
 } );

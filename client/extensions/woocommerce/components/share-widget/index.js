@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 
@@ -12,7 +11,7 @@ import url from 'url';
  * Internal dependencies
  */
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'calypso/components/social-logo';
 
 class ShareWidget extends Component {
 	static propTypes = {
@@ -90,7 +89,7 @@ class ShareWidget extends Component {
 
 		return (
 			<ul className="share-widget__services">
-				{ services.map( service => {
+				{ services.map( ( service ) => {
 					const link = url.format( service.urlProperties );
 					return (
 						<li className="share-widget__service" key={ service.icon }>

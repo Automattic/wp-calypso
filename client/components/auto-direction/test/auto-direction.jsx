@@ -1,5 +1,4 @@
 /**
- * @format
  * @jest-environment jsdom
  */
 
@@ -13,8 +12,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { AutoDirection } from '..';
-import Emojify from 'components/emojify';
+import AutoDirection from '..';
+import Emojify from 'calypso/components/emojify';
 
 describe( 'AutoDirection', () => {
 	describe( 'component rendering', () => {

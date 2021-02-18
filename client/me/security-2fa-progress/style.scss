@@ -1,7 +1,7 @@
 .security-2fa-progress__container {
 	margin: 0 -16px 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin: 0 -24px 24px;
 	}
 
@@ -10,7 +10,7 @@
 		position: relative;
 
 		&::before {
-			background-color: var( --color-neutral-100 );
+			background-color: var( --color-neutral-10 );
 			content: ' ';
 			display: block;
 			height: 1px;
@@ -38,7 +38,7 @@
 
 				.gridicon {
 					background: var( --color-primary );
-					color: var( --color-white );
+					color: var( --color-text-inverted );
 					border-color: var( --color-primary );
 				}
 
@@ -61,7 +61,7 @@
 				}
 
 				.gridicon {
-					background: var( --color-neutral-100 );
+					background: var( --color-neutral-10 );
 					color: var( --color-neutral-light );
 				}
 
@@ -71,26 +71,26 @@
 			}
 
 			.gridicon {
-				background: var( --color-white );
-				border: 1px var( --color-neutral-100 ) solid;
+				background: var( --color-surface );
+				border: 1px var( --color-neutral-10 ) solid;
 				border-radius: 50%;
-				color: var( --color-neutral-100 );
+				color: var( --color-neutral-10 );
 				display: block;
 				margin: 0 auto;
 				position: relative;
 				padding: 12px;
 
 				&::before {
-					font-size: 32px;
+					font-size: $font-title-large;
 					position: relative;
 					top: 8px;
 				}
 			}
 
 			label {
-				color: var( --color-neutral-100 );
+				color: var( --color-neutral-10 );
 				display: inline-block;
-				font-size: 14px;
+				font-size: $font-body-small;
 				line-height: 1;
 				margin-top: 8px;
 				max-width: 112px;

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,8 +13,8 @@ import {
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
 	POST_STATS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -38,7 +37,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostStat()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/stats/post/2454?fields=views%2Cyears' )

@@ -1,57 +1,55 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { some } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { generateGalleryShortcode } from 'lib/media/utils';
-import GalleryShortcode from 'components/gallery-shortcode';
+import { generateGalleryShortcode } from 'calypso/lib/media/utils';
+import GalleryShortcode from 'calypso/components/gallery-shortcode';
 
-export default createReactClass( {
-	displayName: 'EditorMediaModalGalleryPreviewShortcode',
-
-	propTypes: {
+export default class EditorMediaModalGalleryPreviewShortcode extends React.Component {
+	static propTypes = {
 		siteId: PropTypes.number,
 		settings: PropTypes.object,
-	},
+	};
 
-	getInitialState() {
-		return {
-			isLoading: true,
-			shortcode: generateGalleryShortcode( this.props.settings ),
-		};
-	},
+	state = {
+		isLoading: true,
+		shortcode: generateGalleryShortcode( this.props.settings ),
+	};
 
-	componentWillReceiveProps( nextProps ) {
+	isMounted = false;
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
 		const shortcode = generateGalleryShortcode( nextProps.settings );
-		if ( this.state.shortcode === shortcode ) {
+		if ( prevState.shortcode === shortcode ) {
+			return null;
+		}
+
+		return { isLoading: true, shortcode };
+	}
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	setLoaded = () => {
+		if ( ! this.isMounted ) {
 			return;
 		}
 
-		this.setState( {
-			isLoading: true,
-			shortcode,
-		} );
-	},
-
-	setLoaded() {
-		if ( ! this.isMounted() ) {
-			return;
-		}
-
-		this.setState( {
-			isLoading: false,
-		} );
-	},
+		this.setState( { isLoading: false } );
+	};
 
 	render() {
 		const { siteId, settings } = this.props;
@@ -67,5 +65,5 @@ export default createReactClass( {
 				</GalleryShortcode>
 			</div>
 		);
-	},
-} );
+	}
+}

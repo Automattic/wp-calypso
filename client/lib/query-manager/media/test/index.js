@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
@@ -29,7 +27,7 @@ const DEFAULT_MEDIA = {
 	exif: {},
 };
 
-const makeComparator = query => ( a, b ) => MediaQueryManager.compare( query, a, b );
+const makeComparator = ( query ) => ( a, b ) => MediaQueryManager.compare( query, a, b );
 
 describe( 'MediaQueryManager', () => {
 	describe( '#matches()', () => {
@@ -230,7 +228,7 @@ describe( 'MediaQueryManager', () => {
 			test( 'should return false if query is not ISO 8601', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
-						before: '2018',
+						before: '18',
 					},
 					DEFAULT_MEDIA
 				);
@@ -265,7 +263,7 @@ describe( 'MediaQueryManager', () => {
 			test( 'should return false if query is not ISO 8601', () => {
 				const isMatch = MediaQueryManager.matches(
 					{
-						after: '2010',
+						after: '10',
 					},
 					DEFAULT_MEDIA
 				);

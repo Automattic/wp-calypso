@@ -1,16 +1,15 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const JetpackConnectExampleActivate = ( { isInstall, url, translate, onClick } ) => {
 	return (

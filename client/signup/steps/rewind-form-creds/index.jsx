@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -11,12 +10,12 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import FormattedHeader from 'components/formatted-header';
-import RewindCredentialsForm from 'components/rewind-credentials-form';
-import getRewindState from 'state/selectors/get-rewind-state';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { Card } from '@automattic/components';
+import FormattedHeader from 'calypso/components/formatted-header';
+import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -40,7 +39,7 @@ class RewindFormCreds extends Component {
 	 *
 	 * @param {object} nextProps Props received by component for next update.
 	 */
-	componentWillUpdate( nextProps ) {
+	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.rewindIsNowActive ) {
 			this.props.submitSignupStep( { stepName: this.props.stepName }, { rewindconfig: true } );
 			this.props.goToNextStep();

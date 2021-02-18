@@ -16,22 +16,24 @@ import {
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'id',
+			'user',
 			'currencyCode',
 			'capabilities',
 			'flags',
 			'gravatarStatus',
 			'emailVerification',
+			'lasagnaJwt',
 		] );
 	} );
 

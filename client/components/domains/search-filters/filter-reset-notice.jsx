@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Card from 'components/card';
+import config from '@automattic/calypso-config';
+import { Card } from '@automattic/components';
 
 export class FilterResetNotice extends Component {
 	static propTypes = {

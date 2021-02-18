@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,12 +7,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { Button } from '@automattic/components';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const postId = 143180;
-const postUrl =
-	'https://en.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/';
+const postUrl = localizeUrl(
+	'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/'
+);
 
 class SupportArticleDialogExample extends Component {
 	handleClick = () => {
@@ -29,12 +30,9 @@ class SupportArticleDialogExample extends Component {
 	}
 }
 
-const ConnectedExample = connect(
-	null,
-	{
-		openSupportArticleDialog,
-	}
-)( SupportArticleDialogExample );
+const ConnectedExample = connect( null, {
+	openSupportArticleDialog,
+} )( SupportArticleDialogExample );
 
 ConnectedExample.displayName = 'SupportArticleDialog';
 

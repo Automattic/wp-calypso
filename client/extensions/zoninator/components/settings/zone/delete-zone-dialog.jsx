@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { Button, Dialog } from '@automattic/components';
 
 const DeleteZoneDialog = ( { onCancel, onConfirm, translate, zoneName } ) => {
 	const buttons = [

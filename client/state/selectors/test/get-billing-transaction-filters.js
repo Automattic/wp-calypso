@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -7,12 +6,12 @@ import { cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 
 describe( 'getBillingTransactionFilters()', () => {
 	const state = {
-		ui: {
-			billingTransactions: {
+		billingTransactions: {
+			ui: {
 				past: {
 					app: 'test app',
 					date: { month: '2018-03', operator: 'equal' },
@@ -45,7 +44,7 @@ describe( 'getBillingTransactionFilters()', () => {
 
 	test( 'fills missing values', () => {
 		const testState = cloneDeep( state );
-		testState.ui.billingTransactions.past = {
+		testState.billingTransactions.ui.past = {
 			app: 'test app',
 		};
 		const output = getBillingTransactionFilters( testState, 'past' );

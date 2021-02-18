@@ -1,10 +1,8 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { SIGNUP_SEGMENTS_SET } from 'state/action-types';
+import { SIGNUP_SEGMENTS_SET } from 'calypso/state/action-types';
 
 describe( 'state/signup/segments/reducer', () => {
 	test( 'should default to `null`', () => {

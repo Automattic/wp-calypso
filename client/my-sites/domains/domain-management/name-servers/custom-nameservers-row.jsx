@@ -1,19 +1,23 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { Button } from '@automattic/components';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 class CustomNameserversRow extends React.PureComponent {
 	static propTypes = {
@@ -38,9 +42,8 @@ class CustomNameserversRow extends React.PureComponent {
 	render() {
 		return (
 			<div className="name-servers__custom-nameservers-row">
-				<fieldset>
-					<input
-						type="text"
+				<FormFieldset>
+					<FormTextInput
 						placeholder={ this.props.placeholder }
 						onChange={ this.handleChange }
 						onFocus={ this.handleFocus }
@@ -48,12 +51,12 @@ class CustomNameserversRow extends React.PureComponent {
 					/>
 
 					{ this.renderRemoveIcon() }
-				</fieldset>
+				</FormFieldset>
 			</div>
 		);
 	}
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		if ( this.props.onChange ) {
 			this.props.onChange( event.target.value, this.props.index );
 		}
@@ -63,7 +66,7 @@ class CustomNameserversRow extends React.PureComponent {
 		this.props.customNameserverInputFocus( this.props.selectedDomainName );
 	};
 
-	handleRemove = event => {
+	handleRemove = ( event ) => {
 		event.preventDefault();
 
 		this.props.removeNameserversClick( this.props.selectedDomainName );
@@ -72,7 +75,7 @@ class CustomNameserversRow extends React.PureComponent {
 	};
 }
 
-const customNameserverInputFocus = domainName =>
+const customNameserverInputFocus = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -85,7 +88,7 @@ const customNameserverInputFocus = domainName =>
 		} )
 	);
 
-const removeNameserversClick = domainName =>
+const removeNameserversClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -98,10 +101,7 @@ const removeNameserversClick = domainName =>
 		} )
 	);
 
-export default connect(
-	null,
-	{
-		customNameserverInputFocus,
-		removeNameserversClick,
-	}
-)( CustomNameserversRow );
+export default connect( null, {
+	customNameserverInputFocus,
+	removeNameserversClick,
+} )( CustomNameserversRow );

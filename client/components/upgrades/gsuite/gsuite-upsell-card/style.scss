@@ -1,21 +1,31 @@
 .gsuite-upsell-card__product-details {
-	@include breakpoint( '>960px' ) {
-		display: flex;
+	margin-bottom: 1.5em;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		.gsuite-price {
+			margin-left: 2em;
+		}
 	}
 }
 
 .gsuite-upsell-card__product-intro {
-	@include breakpoint( '>960px' ) {
-		max-width: 350px;
-		margin-right: 50px;
+	@include breakpoint-deprecated( '<960px' ) {
+		margin-bottom: 10px;
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		display: flex;
 	}
 }
 
-.gsuite-upsell-card__product-name {
-	color: #888;
-	font-size: 25px;
-	font-weight: 100;
-	margin: 0;
+.gsuite-upsell-card__product-presentation {
+	flex-basis: 55%;
+
+	img {
+		margin-bottom: 10px;
+		margin-top: 10px;
+		max-width: 270px;
+	}
 }
 
 .gsuite-upsell-card__product-logo {
@@ -32,7 +42,7 @@
 	text-align: center;
 
 	.gsuite-upsell-card__title {
-		color: var( --color-neutral-700 );
+		color: var( --color-neutral-70 );
 		font-weight: 600;
 		margin: 0;
 	}
@@ -48,37 +58,39 @@
 	}
 }
 
+// See .gsuite-add-users__buttons as well
 .gsuite-upsell-card__buttons {
 	display: flex;
 	flex-direction: column;
 
 	button {
-		margin: 5px 0 0;
-		width: 100%;
+		margin-top: 10px;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 
 		button {
-			margin: 0 0 0 5px;
-			width: auto;
+			margin-left: 10px;
+			margin-top: 0;
 		}
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: column;
+
 		button {
-			margin: 5px 0 0;
-			width: 100%;
+			margin-left: 0;
+			margin-top: 10px;
 		}
 	}
 
-	@include breakpoint( '>800px' ) {
+	@include breakpoint-deprecated( '>800px' ) {
 		flex-direction: row;
+
 		button {
-			margin: 0 0 0 5px;
-			width: auto;
+			margin-left: 10px;
+			margin-top: 0;
 		}
 	}
 }

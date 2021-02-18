@@ -1,20 +1,19 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { requestRewindState } from 'state/rewind/actions';
-import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
+import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'calypso/state/action-types';
 import { rewindStatus } from './schema';
 import { transformApi } from './api-transformer';
 
-const getType = o => ( o && o.constructor && o.constructor.name ) || typeof o;
+const getType = ( o ) => ( o && o.constructor && o.constructor.name ) || typeof o;
 
-const fetchRewindState = action =>
+const fetchRewindState = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -41,7 +40,7 @@ const updateRewindState = ( { siteId }, data ) => {
 		return stateUpdate;
 	}
 
-	const delayedStateRequest = dispatch =>
+	const delayedStateRequest = ( dispatch ) =>
 		setTimeout( () => dispatch( requestRewindState( siteId ) ), 3000 );
 
 	return [ stateUpdate, delayedStateRequest ];
@@ -59,9 +58,9 @@ const setUnknownState = ( { siteId }, error ) => {
 	) {
 		return withAnalytics(
 			recordTracksEvent( 'calypso_rewind_state_bad_response', {
-				code: error.code,
-				message: error.message,
-				status: error.status,
+				error_code: error.code,
+				error_message: error.message,
+				error_status: error.status,
 			} ),
 			{
 				type: REWIND_STATE_UPDATE,

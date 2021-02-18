@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -14,10 +13,9 @@ import {
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { captureConsole } from 'test/helpers/console';
+} from 'calypso/state/reader/action-types';
+import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { captureConsole } from 'calypso/test-helpers/console';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -50,6 +48,8 @@ describe( 'reducer', () => {
 				description: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
@@ -78,6 +78,8 @@ describe( 'reducer', () => {
 				subscribers_count: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
@@ -107,6 +109,8 @@ describe( 'reducer', () => {
 				subscribers_count: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
@@ -191,6 +195,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: 'http://example.com/image',
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 			} );
 		} );
@@ -229,6 +235,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 				1: {
 					feed_ID: 1,
@@ -241,6 +249,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 				2: {
 					feed_ID: 2,
@@ -253,6 +263,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 			} );
 		} );
@@ -288,9 +300,7 @@ describe( 'reducer', () => {
 				type: READER_FEED_REQUEST_SUCCESS,
 				payload: { feed_ID: 1 },
 			};
-			expect( lastFetched( original, action ) )
-				.to.have.a.property( 1 )
-				.that.is.a( 'number' );
+			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 
 		test( 'should update the last fetched time on feed update', () => {
@@ -299,9 +309,7 @@ describe( 'reducer', () => {
 				type: READER_FEED_UPDATE,
 				payload: [ { feed_ID: 1 } ],
 			};
-			expect( lastFetched( original, action ) )
-				.to.have.a.property( 1 )
-				.that.is.a( 'number' );
+			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );
 	} );
 } );

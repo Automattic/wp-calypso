@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width">
+
+		<link
+			rel="shortcut icon"
+			type="image/vnd.microsoft.icon"
+			href="//s1.wp.com/i/favicon-stacked.ico?m=1311976025g"
+			sizes="16x16 32x32 48x48" />
+
+		<link
+			rel="shortcut icon"
+			type="image/x-icon"
+			href="//s2.wp.com/i/favicon.ico?m=1311976025g"
+			sizes="16x16" />
+
+		<link
+			rel="icon"
+			type="image/x-icon"
+			href="//s2.wp.com/i/favicon.ico?m=1311976025g" />
+
+		<link rel="stylesheet" href="style.css">
+
+		<link
+			href="http://fonts.googleapis.com/css?family=Merriweather|Open+Sans:400,300,600"
+			rel="stylesheet"
+			type="text/css" />
+
+		<script type="text/javascript" src="webapp-bundle.js"></script>
+
+		<title>WPCOM.js - Official JavaScript library for the WordPress.com REST API</title>
+	</head>
+
+	<body>
+		<section id="wrapper">
+		<div class="main-title center">
+			WPCOM.JS
+			<div id="wpcom-version"></div>
+		</div>
+
+		<div class="project-title center">
+			JavaScript API for WordPress
+		</div>
+
+		<div class="project-desc center">
+			Official JavaScript library for the WordPress.com REST API.<br />
+			Compatible with Node.js and web browsers. </div>
+
+			<div class="center">
+				<a href="https://github.com/Automattic/wpcom.js" class="button git-button">
+					<span>source on github</span>
+				</a>
+			</div>
+
+			<div class="editor-outer center">
+				<div class="editor-inner">
+					<div class="editor-block">
+						<script src="https://gist.github.com/retrofox/ff047b2c231c68ad914e.js"></script>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="footer">
+			<a href="https://github.com/Automattic" target="_blank" class="center">
+				<div class="foot-desc">
+					Check out more open-source goodness from
+					<div class="foot-img"></div>
+				</div>
+			</a>
+		</section>
+
+		<script>
+			// create a client WPCOM instance
+			var wpcom = WPCOM();
+
+			// retrieve a listing of the most recent
+			// 5 posts on "en.blog.wordpress.com"
+			wpcom
+			.site( 'en.blog.wordpress.com' )
+			.postsList({ number: 5 }, function( err, data ) {
+				if ( err ) throw err;
+
+				console.log(' the newest 5 blog post titles are:\n' );
+				data.posts.forEach(function( post, i ) {
+					console.log( '  %d: "%s"', i+1, post.title );
+				} );
+			} );
+
+			var elVersion = document.getElementById( 'wpcom-version' );
+			if ( elVersion ) {
+				elVersion.innerHTML = pkg.version;
+			}
+		</script>
+	</body>
+</html>

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { partial, isArray, isPlainObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { savePreference } from 'state/preferences/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import ArrayPreference from './array-preference';
 import ObjectPreference from './object-preference';
 import BooleanPreference from './boolean-preference';
@@ -58,9 +56,6 @@ class Preference extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{
-		unsetPreference: savePreference,
-	}
-)( localize( Preference ) );
+export default connect( null, {
+	unsetPreference: savePreference,
+} )( localize( Preference ) );

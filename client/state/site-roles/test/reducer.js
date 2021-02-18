@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,11 +15,11 @@ import {
 	SITE_ROLES_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -76,32 +74,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				12345678: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: true,
-				} ),
-				{
-					type: SERIALIZE,
-				}
-			);
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: true,
-				} ),
-				{
-					type: DESERIALIZE,
-				}
-			);
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

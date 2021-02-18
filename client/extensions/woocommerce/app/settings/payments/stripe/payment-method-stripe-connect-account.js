@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Image from 'components/image';
-import resizeImageUrl from 'lib/resize-image-url';
+import { Button } from '@automattic/components';
+import Image from 'calypso/components/image';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 
 class StripeConnectAccount extends Component {
 	static propTypes = {
@@ -61,7 +60,7 @@ class StripeConnectAccount extends Component {
 		);
 	};
 
-	onDeauthorize = event => {
+	onDeauthorize = ( event ) => {
 		event.preventDefault();
 		this.props.onDeauthorize();
 	};

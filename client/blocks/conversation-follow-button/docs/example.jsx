@@ -1,5 +1,4 @@
 /*
- * @format
  */
 
 /**
@@ -10,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ConversationFollowButton from 'blocks/conversation-follow-button/button';
-import Card from 'components/card/compact';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/button';
+import { CompactCard as Card } from '@automattic/components';
 
 export default class ConversationFollowButtonExample extends React.PureComponent {
 	static displayName = 'ConversationFollowButton';

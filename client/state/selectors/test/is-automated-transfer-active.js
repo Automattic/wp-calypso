@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isActive } from '../is-automated-transfer-active';
-import { transferStates } from 'state/automated-transfer/constants';
+import { isActive } from 'calypso/state/automated-transfer/selectors/is-automated-transfer-active';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 
 describe( 'Automated Transfer', () => {
 	describe( 'isActive()', () => {

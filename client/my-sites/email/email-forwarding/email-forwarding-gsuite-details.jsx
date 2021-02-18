@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
-import { emailManagement } from 'my-sites/email/paths';
+import { CompactCard as Card } from '@automattic/components';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 
 const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate } ) => {
 	return (

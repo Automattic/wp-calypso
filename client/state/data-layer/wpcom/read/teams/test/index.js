@@ -1,11 +1,9 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { handleTeamsRequest, teamRequestFailure, teamRequestReceived } from '../';
-import { READER_TEAMS_RECEIVE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 const action = { type: 'DUMMY_ACTION' };
 
@@ -24,17 +22,17 @@ test( 'should return an action for an HTTP request to teams endpoint', () => {
 	);
 } );
 
-test( 'should return a READER_TEAMS_RECEIVE action with error when request errors', () => {
+test( 'should return a TEAMS_RECEIVE action with error when request errors', () => {
 	const result = teamRequestFailure( action );
 
 	expect( result ).toEqual( {
-		type: READER_TEAMS_RECEIVE,
+		type: TEAMS_RECEIVE,
 		payload: action,
 		error: true,
 	} );
 } );
 
-test( 'should return a READER_TEAMS_RECEIVE action without error when request succeeds', () => {
+test( 'should return a TEAMS_RECEIVE action without error when request succeeds', () => {
 	const apiResponse = {
 		teams: [
 			{
@@ -46,7 +44,7 @@ test( 'should return a READER_TEAMS_RECEIVE action without error when request su
 	const result = teamRequestReceived( action, apiResponse );
 
 	expect( result ).toEqual( {
-		type: READER_TEAMS_RECEIVE,
+		type: TEAMS_RECEIVE,
 		payload: apiResponse,
 	} );
 } );

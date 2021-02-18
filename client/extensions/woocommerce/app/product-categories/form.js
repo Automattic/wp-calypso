@@ -1,28 +1,27 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { isNumber, head, isNull } from 'lodash';
+import { isNumber, head } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import ImagePreloader from 'components/image-preloader';
+import { Button, Card } from '@automattic/components';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
+
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
-import Spinner from 'components/spinner';
-import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
+import Spinner from 'calypso/components/spinner';
+import TermTreeSelectorTerms from 'calypso/blocks/term-tree-selector/terms';
 
 class ProductCategoryForm extends Component {
 	static propTypes = {
@@ -56,7 +55,7 @@ class ProductCategoryForm extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.category.image !== this.props.category.image ) {
 			const image = ( nextProps.category && nextProps.category.image ) || {};
 			this.setState( {
@@ -66,7 +65,7 @@ class ProductCategoryForm extends Component {
 		}
 
 		if ( nextProps.category.parent !== this.props.category.parent ) {
-			if ( isNull( nextProps.category.parent ) ) {
+			if ( nextProps.category.parent === null ) {
 				this.setState( {
 					selectedParent: [],
 					isTopLevel: false,
@@ -82,18 +81,18 @@ class ProductCategoryForm extends Component {
 		}
 	}
 
-	setName = e => {
+	setName = ( e ) => {
 		const { siteId, category, editProductCategory } = this.props;
 		const name = e.target.value;
 		editProductCategory( siteId, category, { name } );
 	};
 
-	setDescription = event => {
+	setDescription = ( event ) => {
 		const { siteId, category, editProductCategory } = this.props;
 		editProductCategory( siteId, category, { description: event.target.value } );
 	};
 
-	setParent = parent => {
+	setParent = ( parent ) => {
 		const { siteId, category, editProductCategory } = this.props;
 		editProductCategory( siteId, category, { parent: parent.ID } );
 	};
@@ -114,7 +113,7 @@ class ProductCategoryForm extends Component {
 		}
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
 				search: searchTerm,
@@ -122,7 +121,7 @@ class ProductCategoryForm extends Component {
 		}
 	};
 
-	onSelect = files => {
+	onSelect = ( files ) => {
 		const file = head( files );
 		this.setState( {
 			placeholder: file.preview,
@@ -132,7 +131,7 @@ class ProductCategoryForm extends Component {
 		this.props.onUploadStart();
 	};
 
-	onUpload = file => {
+	onUpload = ( file ) => {
 		const { siteId, editProductCategory, category } = this.props;
 		const image = {
 			src: file.URL,
@@ -171,7 +170,7 @@ class ProductCategoryForm extends Component {
 		if ( src && ! isUploading ) {
 			image = (
 				<figure>
-					<ImagePreloader
+					<MediaImage
 						src={ src }
 						alt={ translate( 'Category thumbnail' ) }
 						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
@@ -271,11 +270,11 @@ class ProductCategoryForm extends Component {
 										{ translate( 'Top level category', {
 											context:
 												'Categories: New category being created is top level i.e. has no parent',
-										} ) }{' '}
+										} ) }{ ' ' }
 									</span>
 								</FormLabel>
 
-								{ ( ! isTopLevel || isNull( category.parent ) ) && (
+								{ ( ! isTopLevel || category.parent === null ) && (
 									<div>
 										<FormLabel>{ translate( 'Select a parent category' ) }</FormLabel>
 										<TermTreeSelectorTerms

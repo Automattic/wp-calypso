@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import CompactCard from 'components/card/compact';
-import PaymentLogo from 'components/payment-logo';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { CompactCard } from '@automattic/components';
+import PaymentLogo from 'calypso/components/payment-logo';
 
 export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {
 	const supportedTypes = {

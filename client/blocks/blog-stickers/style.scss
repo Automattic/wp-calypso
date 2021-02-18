@@ -8,7 +8,7 @@
 }
 
 .blog-stickers__list-title {
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 3px;
 }
 
@@ -22,7 +22,7 @@
 	position: relative;
 
 	&::before {
-		color: var( --color-neutral-200 );
+		color: var( --color-neutral-20 );
 		content: ' • ';
 		position: absolute;
 			left: 0;

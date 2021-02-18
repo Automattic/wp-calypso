@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,7 +9,7 @@ import { union } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
+import SiteIcon from 'calypso/blocks/site-icon';
 
 /**
  * Style dependencies
@@ -30,12 +28,12 @@ export default class AllSitesIcon extends React.Component {
 	}
 
 	getSitesWithIcons() {
-		return this.props.sites.filter( site => site.icon ).slice( 0, MAX_ICONS );
+		return this.props.sites.filter( ( site ) => site.icon ).slice( 0, MAX_ICONS );
 	}
 
 	getIcons() {
 		const sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
-		return sites.map( site => <SiteIcon site={ site } key={ site.ID } size={ 14 } /> );
+		return sites.map( ( site ) => <SiteIcon site={ site } key={ site.ID } size={ 14 } /> );
 	}
 
 	render() {

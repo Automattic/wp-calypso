@@ -9,11 +9,11 @@
 	margin-top: 14px;
 	margin-bottom: 14px;
 
-	border: 1px solid var( --color-primary-200 );
+	border: 1px solid var( --color-primary-20 );
 	box-shadow: none;
 	box-sizing: border-box;
-	border-radius: 3px;
-	background: var( --color-white );
+	border-radius: 2px;
+	background: var( --color-surface );
 
 	.text-control__input {
 		width: 100%;
@@ -34,7 +34,7 @@
 		left: 16px;
 		display: initial;
 
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		line-height: 16px;
 		color: var( --color-text );
 	}
@@ -50,13 +50,18 @@
 		box-shadow: none;
 		padding: 0;
 
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 24px;
+	}
+
+	input[type='password'] {
+		appearance: none;
 	}
 
 	input[type='text']:focus, input[type='email']:focus, input[type='password']:focus {
 		box-shadow: none;
 		border: 0;
+		outline: 0;
 	}
 
 	&.active {
@@ -81,7 +86,7 @@
 		}
 		input[type='text'], input[type='email'], input[type='password'] {
 			top: 15px;
-			color: var( --color-primary-500 );
+			color: var( --color-primary-50 );
 		}
 	}
 
@@ -91,9 +96,9 @@
 		}
 		input[type='text'], input[type='email'], input[type='password'] {
 			top: 17px;
-			color: var( --color-primary-200 );
+			color: var( --color-primary-20 );
 			&::placeholder {
-				color: var( --color-primary-200 );
+				color: var( --color-primary-20 );
 				opacity: 1;
 			}
 		}

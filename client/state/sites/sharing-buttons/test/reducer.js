@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -21,11 +19,11 @@ import {
 	SHARING_BUTTONS_UPDATE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -89,28 +87,6 @@ describe( 'reducer', () => {
 				2916284: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requesting( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requesting( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'saveRequests()', () => {
@@ -173,28 +149,6 @@ describe( 'reducer', () => {
 				2916284: { saving: false, status: 'error' },
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending' },
-			} );
-			const state = saveRequests( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending' },
-			} );
-			const state = saveRequests( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'items()', () => {
@@ -256,7 +210,10 @@ describe( 'reducer', () => {
 				{ ID: 'twitter', name: 'Twitter' },
 			];
 			const previousState = deepFreeze( {
-				2916284: [ { ID: 'facebook', name: 'Facebook' }, { ID: 'pinterest', name: 'Pinterest' } ],
+				2916284: [
+					{ ID: 'facebook', name: 'Facebook' },
+					{ ID: 'pinterest', name: 'Pinterest' },
+				],
 			} );
 			const state = items( previousState, {
 				type: SHARING_BUTTONS_UPDATE,

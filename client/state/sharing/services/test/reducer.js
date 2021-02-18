@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,8 +15,8 @@ import {
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 	DESERIALIZE,
 	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 const originalKeyringServices = {
 	facebook: {
@@ -57,7 +55,7 @@ const originalKeyringServices = {
 };
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
+	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
@@ -84,15 +82,15 @@ describe( 'reducer', () => {
 
 		describe( 'persistence', () => {
 			test( 'persists state', () => {
-				const original = deepFreeze( originalKeyringServices ),
-					services = items( original, { type: SERIALIZE } );
+				const original = deepFreeze( originalKeyringServices );
+				const services = items( original, { type: SERIALIZE } );
 
 				expect( services ).to.eql( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
-				const original = deepFreeze( originalKeyringServices ),
-					services = items( original, { type: DESERIALIZE } );
+				const original = deepFreeze( originalKeyringServices );
+				const services = items( original, { type: DESERIALIZE } );
 
 				expect( services ).to.eql( original );
 			} );

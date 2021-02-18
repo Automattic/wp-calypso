@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -13,15 +11,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Notice from 'components/notice';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { Card } from '@automattic/components';
+import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+} from 'calypso/state/stats/lists/selectors';
 
 /**
  * Style dependencies
@@ -94,7 +92,7 @@ class StatsMostPopular extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const statType = 'statsInsights';
 	const siteId = getSelectedSiteId( state );
 	const mostPopularData = getSiteStatsNormalizedData( state, siteId, statType, {} );

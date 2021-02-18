@@ -1,19 +1,17 @@
-/** @format */
-
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
-import FoldableCard from 'components/foldable-card';
+import Spinner from 'calypso/components/spinner';
+import FoldableCard from 'calypso/components/foldable-card';
 
 const StepContainer = ( {
 	isSuccess,

@@ -1,5 +1,4 @@
-PaymentCountrySelect
-====================
+# PaymentCountrySelect
 
 `PaymentCountrySelect` is a React component that displays a form for selecting a country used in a payment or billing address.
 

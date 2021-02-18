@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,17 +7,23 @@ import { isEmpty, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { errorNotice } from 'state/notices/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';
-import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activity-log/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	REWIND_BACKUP_PROGRESS_REQUEST,
+	REWIND_BACKUP_DISMISS_PROGRESS,
+} from 'calypso/state/action-types';
+import {
+	updateRewindBackupProgress,
+	rewindBackupUpdateError,
+} from 'calypso/state/activity-log/actions';
 
-/** @type {Number} how many ms between polls for same data */
+/** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
-/** @type {Map<String, Number>} stores most-recent polling times */
+/** @type {Map<string, number>} stores most-recent polling times */
 const recentRequests = new Map();
 
 /**
@@ -28,9 +33,9 @@ const recentRequests = new Map();
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param {Object} action Redux action
+ * @param {object} action Redux action
  */
-const fetchProgress = action => {
+const fetchProgress = ( action ) => {
 	const { downloadId, siteId } = action;
 	const key = `${ siteId }-${ downloadId }`;
 
@@ -55,10 +60,11 @@ const fetchProgress = action => {
 
 /**
  * Parse and merge response data for backup creation status with defaults.
+ *
  * @param   {object} data The data received from API response.
  * @returns {object}      Parsed response data.
  */
-const fromApi = data => ( {
+const fromApi = ( data ) => ( {
 	backupPoint: data.backupPoint,
 	downloadId: +data.downloadId,
 	progress: +data.progress,
@@ -81,8 +87,9 @@ const fromApi = data => ( {
  */
 export const updateProgress = ( { siteId }, apiData ) => {
 	const [ latestDownloadableBackup ] = apiData;
+
 	if ( isEmpty( latestDownloadableBackup ) ) {
-		return;
+		return updateRewindBackupProgress( siteId );
 	}
 
 	const data = fromApi( latestDownloadableBackup );
@@ -94,7 +101,7 @@ export const updateProgress = ( { siteId }, apiData ) => {
 /**
  * If the backup creation progress request fails, an error notice will be shown.
  *
- * @returns {function}          The dispatched action.
+ * @returns {Function}          The dispatched action.
  */
 export const announceError = () =>
 	errorNotice(
@@ -108,7 +115,7 @@ export const announceError = () =>
  * @param   {object}   action   Changeset to update state.
  * @returns {object}          The dispatched action.
  */
-export const dismissBackup = action =>
+export const dismissBackup = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -136,7 +143,7 @@ export const backupSilentlyDismissed = ( action, data ) =>
 /**
  * If a dismiss request fails, an error notice will be shown.
  *
- * @returns {function} The dispatched action.
+ * @returns {Function} The dispatched action.
  */
 export const backupDismissFailed = () =>
 	errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) );
@@ -147,7 +154,7 @@ export const backupDismissFailed = () =>
  * @param   {object} data   The data received from API response.
  * @returns {object} Parsed response data.
  */
-const fromBackupDismiss = data => ( {
+const fromBackupDismiss = ( data ) => ( {
 	downloadId: +data.download_id,
 	dismissed: data.is_dismissed,
 } );

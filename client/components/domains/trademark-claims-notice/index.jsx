@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -12,12 +10,15 @@ import { defer, get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
-import HeaderCake from 'components/header-cake';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { checkDomainAvailability } from 'lib/domains';
-import { getSelectedSite } from 'state/ui/selectors';
+import { Button, CompactCard } from '@automattic/components';
+import HeaderCake from 'calypso/components/header-cake';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { checkDomainAvailability } from 'calypso/lib/domains';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import TrademarkNotice from './trademark-notice';
 
 /**
@@ -73,7 +74,7 @@ class TrademarkClaimsNotice extends React.Component {
 	checkDomainAvailability = () => {
 		const { domain } = this.props;
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{
 					domainName: domain,
@@ -246,7 +247,7 @@ class TrademarkClaimsNotice extends React.Component {
 	}
 }
 
-export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = domainName =>
+export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -260,7 +261,7 @@ export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = domainName 
 		} )
 	);
 
-export const recordChooseAnotherDomainButtonClickInTrademarkNotice = domainName =>
+export const recordChooseAnotherDomainButtonClickInTrademarkNotice = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -274,7 +275,7 @@ export const recordChooseAnotherDomainButtonClickInTrademarkNotice = domainName 
 		} )
 	);
 
-export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName =>
+export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -288,11 +289,8 @@ export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName
 		} )
 	);
 
-export default connect(
-	state => ( { selectedSite: getSelectedSite( state ) } ),
-	{
-		recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
-		recordChooseAnotherDomainButtonClickInTrademarkNotice,
-		recordShowTrademarkNoticeButtonClickInTrademarkNotice,
-	}
-)( localize( TrademarkClaimsNotice ) );
+export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ), {
+	recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
+	recordChooseAnotherDomainButtonClickInTrademarkNotice,
+	recordShowTrademarkNoticeButtonClickInTrademarkNotice,
+} )( localize( TrademarkClaimsNotice ) );

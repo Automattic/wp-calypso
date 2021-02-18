@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -11,6 +9,7 @@ import config from 'config';
 import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
+import { readFileSync } from 'fs';
 
 import * as remote from 'selenium-webdriver/remote';
 
@@ -81,13 +80,16 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	let driver;
 	let options;
 	let builder;
+	const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
+	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 	const pref = new webdriver.logging.Preferences();
-	pref.setLevel( 'browser', webdriver.logging.Level.SEVERE );
+	pref.setLevel( 'browser', webdriver.logging.Level.ALL );
 	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
 		const sauceConfig = config.get( 'sauceConfig' );
 		const caps = config.get( 'sauceConfigurations' )[ sauceConfig ];
+		builder = new webdriver.Builder();
 
 		caps.username = config.get( 'sauceUsername' );
 		caps.accessKey = config.get( 'sauceAccessKey' );
@@ -108,22 +110,24 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		if ( process.env.CIRCLE_BUILD_NUM ) {
 			caps.name += ' - CircleCI Build #' + process.env.CIRCLE_BUILD_NUM;
 		}
+		if ( caps.browserName === 'chrome' ) {
+			options = new chrome.Options();
+			options.addArguments( '--app=https://www.wordpress.com' );
+			options.addArguments( userAgent );
+			builder.setChromeOptions( options );
+		}
 
 		global._sauceLabs = new SauceLabs( {
 			username: caps.username,
 			password: caps.accessKey,
 		} );
 
-		builder = new webdriver.Builder();
 		global.browserName = caps.browserName;
-		global.__BROWSER__ = driver = builder
-			.usingServer( sauceURL )
-			.withCapabilities( caps )
-			.build();
+		global.__BROWSER__ = driver = builder.usingServer( sauceURL ).withCapabilities( caps ).build();
 
 		driver.setFileDetector( new remote.FileDetector() );
 
-		driver.getSession().then( function( sessionid ) {
+		driver.getSession().then( function ( sessionid ) {
 			driver.allPassed = true;
 			driver.sessionID = sessionid.id_;
 		} );
@@ -138,11 +142,11 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				} );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
+				options.addArguments( '--disable-dev-shm-usage' );
+				options.addArguments( '--no-sandbox' );
 
 				if ( useCustomUA ) {
-					options.addArguments(
-						'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
-					);
+					options.addArguments( userAgent );
 				}
 				if (
 					process.env.HEADLESS ||
@@ -160,8 +164,16 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				options.addArguments( '--app=https://www.wordpress.com' );
 
-				const service = new chrome.ServiceBuilder( chromedriver.path ).build(); // eslint-disable-line no-case-declarations
+				// eslint-disable-next-line no-case-declarations
+				const service = new chrome.ServiceBuilder( chromedriver.path )
+					.loggingTo( './chromedriver.' + process.pid + '.log' )
+					.enableVerboseLogging()
+					.build();
 				chrome.setDefaultService( service );
+				options.setChromeLogFile( './chrome.' + process.pid + '.log' );
+				options.addArguments( '--enable-logging' );
+				options.addArguments( '--log-level 0' );
+				options.addArguments( '--log-net-log ./chrome.net.' + process.pid + '.log' );
 
 				builder = new webdriver.Builder();
 				builder.setChromeOptions( options );
@@ -214,28 +226,16 @@ export async function resizeBrowser( driver, screenSize ) {
 	if ( typeof screenSize === 'string' ) {
 		switch ( screenSize.toLowerCase() ) {
 			case 'mobile':
-				await driver
-					.manage()
-					.window()
-					.setRect( { width: 400, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 400, height: 1000 } );
 				break;
 			case 'tablet':
-				await driver
-					.manage()
-					.window()
-					.setRect( { width: 1024, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1024, height: 1000 } );
 				break;
 			case 'desktop':
-				await driver
-					.manage()
-					.window()
-					.setRect( { width: 1440, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1440, height: 1000 } );
 				break;
 			case 'laptop':
-				await driver
-					.manage()
-					.window()
-					.setRect( { width: 1400, height: 790 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1400, height: 790 } );
 				break;
 			default:
 				throw new Error(
@@ -260,8 +260,12 @@ export async function clearCookiesAndDeleteLocalStorage( driver, siteURL = null 
 	const url = await driver.getCurrentUrl();
 	await driver.manage().deleteAllCookies();
 	if ( url.startsWith( 'data:' ) === false && url !== 'about:blank' ) {
-		return await driver.executeScript( 'window.localStorage.clear();' );
+		return deleteLocalStorage( driver );
 	}
+}
+
+export function deleteLocalStorage( driver ) {
+	return driver.executeScript( 'window.localStorage.clear();' );
 }
 
 export async function ensureNotLoggedIn( driver ) {
@@ -283,9 +287,10 @@ export async function ensureNotLoggedIn( driver ) {
 		await driver.executeScript( 'window.document.cookie = "sensitive_pixel_option=no;";' );
 	}
 
-	return await driver.executeScript(
-		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com";'
+	await driver.executeScript(
+		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;SameSite=None;Secure"'
 	);
+	return driver.sleep( 500 );
 }
 
 export async function dismissAllAlerts( driver ) {
@@ -317,4 +322,8 @@ export async function acceptAllAlerts( driver ) {
 export function quitBrowser( driver ) {
 	global.__BROWSER__ = null;
 	return driver.quit();
+}
+
+export function enableDebugMode( driver ) {
+	driver.executeScript( 'window.localStorage.debug="*";' );
 }

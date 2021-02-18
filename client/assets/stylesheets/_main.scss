@@ -5,27 +5,14 @@
  *
  */
 
-.wpcom-site__logo {
-	fill: var( --color-neutral-100 );
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate( -50%, -50% );
-
-	@include breakpoint( '>960px' ) {
-		width: 100px;
-		height: 100px;
-	}
-}
-
 .wpcom-site__global-noscript {
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	right: 0;
 	padding: 6px;
-	color: var( --color-white );
-	background: rgba( var( --color-neutral-700-rgb ), 0.8 );
+	color: var( --color-text-inverted );
+	background: rgba( var( --color-neutral-70-rgb ), 0.8 );
 	text-align: center;
 	z-index: z-index( 'root', '.wpcom-site__global-noscript' );
 }
@@ -63,14 +50,14 @@ body,
 body {
 	background: var( --color-surface-backdrop );
 	color: var( --color-text );
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 1.5;
 
 	-ms-overflow-style: scrollbar;
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
 	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		cursor: pointer;
 	}
 }
@@ -78,6 +65,10 @@ body {
 ::selection {
 	background: rgba( var( --color-primary-light-rgb ), 0.7 );
 	color: var( --color-text );
+}
+
+button {
+	font-size: $font-body-small;
 }
 
 body,
@@ -149,7 +140,7 @@ h6 {
 	clear: both;
 }
 hr {
-	background: var( --color-neutral-100 );
+	background: var( --color-neutral-10 );
 	border: 0;
 	height: 1px;
 	margin-bottom: 1.5em;
@@ -204,7 +195,7 @@ address {
 pre {
 	background: var( --color-neutral-0 );
 	font-family: $monospace;
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 1.6;
 	margin-bottom: 1.6em;
 	padding: 1.6em;
@@ -215,11 +206,12 @@ code,
 kbd,
 tt,
 var {
+	/* stylelint-disable-next-line scales/font-size */
 	font: 15px $code;
 }
 abbr,
 acronym {
-	border-bottom: 1px dotted var( --color-neutral-100 );
+	border-bottom: 1px dotted var( --color-neutral-10 );
 	cursor: help;
 	// Prevent double underline in Chrome
 	text-decoration: none;
@@ -252,6 +244,10 @@ th {
 }
 
 /* Links */
+a {
+	text-decoration: none;
+}
+
 a,
 a:visited {
 	color: var( --color-link );

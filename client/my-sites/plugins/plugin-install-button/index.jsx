@@ -1,4 +1,7 @@
-/** @format */
+/* eslint-disable react/no-string-refs */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+
 /**
  * External dependencies
  */
@@ -7,19 +10,23 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
-import Button from 'components/button';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
+import { Button } from '@automattic/components';
+import InfoPopover from 'calypso/components/info-popover';
+import ExternalLink from 'calypso/components/external-link';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { isCompatiblePlugin } from '../plugin-compatibility';
+import { installPlugin } from 'calypso/state/plugins/installed/actions';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
  * Style dependencies
@@ -30,7 +37,6 @@ export class PluginInstallButton extends Component {
 	installAction = () => {
 		const {
 			isEmbed,
-			selectedSite,
 			siteId,
 			isInstalling,
 			plugin,
@@ -42,8 +48,8 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
-		PluginsActions.installPlugin( selectedSite, plugin );
+		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.installPlugin( siteId, plugin );
 
 		if ( isEmbed ) {
 			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
@@ -86,7 +92,7 @@ export class PluginInstallButton extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked How do I fix disabled plugin installs' );
 	};
 
-	togglePopover = event => {
+	togglePopover = ( event ) => {
 		this.refs.infoPopover._onClick( event );
 	};
 
@@ -128,6 +134,7 @@ export class PluginInstallButton extends Component {
 					<li key={ 'reason-i' + i + '-' + siteId }>{ reason }</li>
 				) );
 				html.push(
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
 						{ list }
 					</ul>
@@ -191,29 +198,42 @@ export class PluginInstallButton extends Component {
 		);
 	}
 
+	renderIncompatiblePluginNotice() {
+		const { translate, isEmbed } = this.props;
+		return (
+			<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
+				<span
+					onClick={ this.togglePopover }
+					ref="disabledInfoLabel"
+					className="plugin-install-button__warning"
+				>
+					{ translate( 'Incompatible Plugin' ) }
+				</span>
+				<InfoPopover
+					position="bottom left"
+					popoverName={ 'Plugin Action Disabled Install' }
+					gaEventCategory="Plugins"
+					ref="infoPopover"
+					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
+				>
+					<div>
+						<p>{ translate( 'This plugin is not supported on WordPress.com.' ) }</p>
+						<ExternalLink
+							key="external-link"
+							href={ localizeUrl( 'https://en.support.wordpress.com/incompatible-plugins' ) }
+						>
+							{ translate( 'Learn more.' ) }
+						</ExternalLink>
+					</div>
+				</InfoPopover>
+			</div>
+		);
+	}
+
 	renderDisabledNotice() {
 		const { translate, selectedSite, isEmbed } = this.props;
 
 		if ( ! selectedSite.canUpdateFiles ) {
-			if ( ! selectedSite.hasMinimumJetpackVersion ) {
-				return (
-					<div
-						className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }
-					>
-						<span className="plugin-install-button__warning">
-							{ translate( 'Jetpack 3.7 is required' ) }
-						</span>
-						<Button
-							compact={ true }
-							onClick={ this.updateJetpackAction }
-							href={ selectedSite.options.admin_url + 'plugins.php?plugin_status=upgrade' }
-						>
-							{ translate( 'update', { context: 'verb, update plugin button label' } ) }
-						</Button>
-					</div>
-				);
-			}
-
 			if ( this.getDisabledInfo() ) {
 				return (
 					<div
@@ -276,10 +296,14 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const { selectedSite, siteIsConnected } = this.props;
+		const { plugin, selectedSite, siteIsConnected, siteIsWpcomAtomic } = this.props;
 
 		if ( siteIsConnected === false ) {
 			return this.renderUnreachableNotice();
+		}
+
+		if ( ! isCompatiblePlugin( plugin.slug ) && siteIsWpcomAtomic ) {
+			return this.renderIncompatiblePluginNotice();
 		}
 
 		if ( ! selectedSite.canUpdateFiles ) {
@@ -317,9 +341,12 @@ export default connect(
 		return {
 			siteId,
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
+			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
 		};
 	},
 	{
+		installPlugin,
+		removePluginStatuses,
 		recordGoogleEvent,
 		recordTracksEvent,
 	}

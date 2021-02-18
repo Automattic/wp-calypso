@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,8 +8,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import { CompactCard } from '@automattic/components';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 
 const SettingsGroupCard = ( { heading, children } ) => {
 	return (

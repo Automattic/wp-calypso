@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -10,9 +9,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import Card from 'components/card';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
+import { Card } from '@automattic/components';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 class ActivityLogTaskUpdate extends Component {
 	static propTypes = {
@@ -62,11 +62,11 @@ class ActivityLogTaskUpdate extends Component {
 					<div className="activity-log-tasklist__update-text">
 						{ linked ? (
 							<a href={ url } onClick={ this.handleNameClick }>
-								{ name }
+								{ decodeEntities( name ) }
 							</a>
 						) : (
 							// Add button classes so unlinked names look the same.
-							<span className="activity-log-tasklist__unlinked">{ name }</span>
+							<span className="activity-log-tasklist__unlinked">{ decodeEntities( name ) }</span>
 						) }
 						<span className="activity-log-tasklist__update-bullet">&bull;</span>
 						<span className="activity-log-tasklist__update-version">{ version }</span>

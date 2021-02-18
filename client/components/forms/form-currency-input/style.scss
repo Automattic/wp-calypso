@@ -1,5 +1,6 @@
-.form-currency-input {
+input[type='number'].form-currency-input {
 	-webkit-appearance: none;
+	border-radius: 0 2px 2px 0;
 }
 
 .form-currency-input__affix {
@@ -16,7 +17,7 @@
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
 	&:hover .form-currency-input__select-icon {
-		color: var( --color-neutral-500 );
+		color: var( --color-neutral-50 );
 	}
 }
 

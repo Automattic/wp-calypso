@@ -1,8 +1,7 @@
-/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
@@ -15,9 +14,9 @@ import {
  * dispatched. The state reflects a mapping of order ID to a
  * boolean indicating whether there is a save in progress.
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
  */
 export function isSaving( state = null, action ) {
 	switch ( action.type ) {

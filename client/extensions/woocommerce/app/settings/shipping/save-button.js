@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import { Button } from '@automattic/components';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
@@ -22,7 +20,7 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { saveWeightAndDimensionsUnits } from 'woocommerce/state/sites/settings/products/actions';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
@@ -36,7 +34,7 @@ class ShippingSettingsSaveButton extends Component {
 		} ),
 	};
 
-	onSaveSuccess = dispatch => {
+	onSaveSuccess = ( dispatch ) => {
 		const { translate } = this.props;
 
 		this.props.onSaveSuccess( 'shipping' );
@@ -51,7 +49,7 @@ class ShippingSettingsSaveButton extends Component {
 	saveUnits = () => {
 		const { translate, site } = this.props;
 
-		const unitsSaveSuccessNotice = dispatch => {
+		const unitsSaveSuccessNotice = ( dispatch ) => {
 			this.props.onSaveSuccess( 'units' );
 
 			dispatch(

@@ -1,4 +1,3 @@
-/** @format */
 /**
  * External dependencies
  */
@@ -8,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, isUndefined, omitBy } from 'lodash';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
@@ -22,12 +21,12 @@ import {
 	RESULT_TYPE,
 	RESULT_VIDEO,
 } from './constants';
-import Button from 'components/button';
-import { decodeEntities, preventWidows } from 'lib/formatting';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSearchQuery } from 'state/inline-help/selectors';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { Button } from '@automattic/components';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
@@ -61,7 +60,7 @@ class InlineHelpRichResult extends Component {
 		showDialog: false,
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
 		const { type, tour, link, searchQuery, postId } = this.props;
 
@@ -70,6 +69,7 @@ class InlineHelpRichResult extends Component {
 				search_query: searchQuery,
 				tour,
 				result_url: link,
+				location: 'inline-help-popover',
 			},
 			isUndefined
 		);
@@ -103,7 +103,9 @@ class InlineHelpRichResult extends Component {
 
 		return (
 			<div>
-				<h2 className={ classes }>{ preventWidows( decodeEntities( title ) ) }</h2>
+				<h2 className={ classes } tabIndex="-1">
+					{ preventWidows( decodeEntities( title ) ) }
+				</h2>
 				<p>{ preventWidows( decodeEntities( description ) ) }</p>
 				<Button primary onClick={ this.handleClick } href={ link }>
 					{ buttonIcon && <Gridicon icon={ buttonIcon } size={ 12 } /> }
@@ -131,7 +133,4 @@ const mapDispatchToProps = {
 	openSupportArticleDialog,
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( InlineHelpRichResult ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );

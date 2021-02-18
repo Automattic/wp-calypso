@@ -1,23 +1,23 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
-const SECTION_NAME_WHITELIST = [
+import 'calypso/state/nps-survey/init';
+
+const ALLOWED_SECTION_NAMES = [
 	'discover',
 	'menus',
 	'people',
 	'plugins',
-	'posts-pages',
+	'posts',
+	'pages',
 	'reader',
 	'reader-activities',
 	'reader-list',
@@ -34,7 +34,7 @@ export function isSessionEligibleForNpsSurvey( state ) {
 
 export function isSectionEligibleForNpsSurvey( state ) {
 	const sectionName = getSectionName( state );
-	return SECTION_NAME_WHITELIST.indexOf( sectionName ) > -1;
+	return ALLOWED_SECTION_NAMES.indexOf( sectionName ) > -1;
 }
 
 export function isSectionAndSessionEligibleForNpsSurvey( state ) {

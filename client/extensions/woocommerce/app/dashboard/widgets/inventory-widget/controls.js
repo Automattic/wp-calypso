@@ -1,10 +1,9 @@
-/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
 import { isNaN } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -16,16 +15,16 @@ import {
 	areSettingsProductsLoaded,
 	getProductsSettingValue,
 } from 'woocommerce/state/sites/settings/products/selectors';
-import Button from 'components/button';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
+import { Button } from '@automattic/components';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Range from 'components/forms/range';
+import Range from 'calypso/components/forms/range';
 import { updateSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';
 
 class InventoryControls extends Component {
@@ -50,12 +49,12 @@ class InventoryControls extends Component {
 		};
 	}
 
-	setValue = name => event => {
+	setValue = ( name ) => ( event ) => {
 		const value = parseInt( event.target.value );
 		this.setState( { [ name ]: isNaN( value ) ? 0 : value } );
 	};
 
-	increaseValue = name => () => {
+	increaseValue = ( name ) => () => {
 		const value = this.state[ name ];
 		if ( value >= 99 ) {
 			return;
@@ -63,7 +62,7 @@ class InventoryControls extends Component {
 		this.setState( { [ name ]: value + 1 } );
 	};
 
-	decreaseValue = name => () => {
+	decreaseValue = ( name ) => () => {
 		const value = this.state[ name ];
 		if ( value < 1 ) {
 			return;
@@ -71,15 +70,15 @@ class InventoryControls extends Component {
 		this.setState( { [ name ]: value - 1 } );
 	};
 
-	setChecked = name => () => {
-		this.setState( state => ( { [ name ]: ! state[ name ] } ) );
+	setChecked = ( name ) => () => {
+		this.setState( ( state ) => ( { [ name ]: ! state[ name ] } ) );
 	};
 
 	close = () => {
 		this.props.close();
 	};
 
-	saveSettings = event => {
+	saveSettings = ( event ) => {
 		event.preventDefault();
 		const { site, translate } = this.props;
 		this.props.save(
@@ -112,7 +111,7 @@ class InventoryControls extends Component {
 		}, 150 );
 	};
 
-	renderPlus = name => {
+	renderPlus = ( name ) => {
 		return (
 			<span onClick={ this.increaseValue( name ) } tabIndex="-1" aria-hidden>
 				<Gridicon icon="plus-small" />
@@ -120,7 +119,7 @@ class InventoryControls extends Component {
 		);
 	};
 
-	renderMinus = name => {
+	renderMinus = ( name ) => {
 		return (
 			<span onClick={ this.decreaseValue( name ) } tabIndex="-1" aria-hidden>
 				<Gridicon icon="minus-small" />
@@ -217,7 +216,7 @@ class InventoryControls extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const isLoaded = areSettingsProductsLoaded( state );
 		const lowStockThreshold = parseInt(

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +15,7 @@ import reducer, {
 	siteRequests,
 	edits,
 } from '../reducer';
-import PostQueryManager from 'lib/query-manager/post';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -38,11 +36,11 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -1394,14 +1392,14 @@ describe( 'reducer', () => {
 				},
 			};
 
-			const editsStateWithStatus = status =>
+			const editsStateWithStatus = ( status ) =>
 				deepFreeze( {
 					2916284: {
 						841: [ { status } ],
 					},
 				} );
 
-			const receivePostActionWithStatus = status => ( {
+			const receivePostActionWithStatus = ( status ) => ( {
 				type: POSTS_RECEIVE,
 				posts: [
 					{

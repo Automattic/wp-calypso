@@ -1,13 +1,13 @@
 .order-details__table {
 	margin: 0 -24px;
 	box-shadow: none;
-	border-bottom: 1px solid var( --color-neutral-50 );
+	border-bottom: 1px solid var( --color-neutral-5 );
 
 	.order-details__item-sku {
 		display: block;
 		margin-top: 6px;
 		color: var( --color-text-subtle );
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		text-transform: uppercase;
 	}
 
@@ -96,7 +96,7 @@
 	& + .form-setting-explanation {
 		padding-right: 55px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding-right: 0;
 		}
 	}
@@ -108,7 +108,7 @@
 	}
 
 	.table-item {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.order-details__coupon-list {
@@ -189,7 +189,7 @@
 			width: 13em;
 			padding-right: 79px;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				padding-right: 24px;
 			}
 		}
@@ -215,7 +215,7 @@
 	text-align: right;
 }
 
-@include breakpoint( '<660px' ) {
+@include breakpoint-deprecated( '<660px' ) {
 	.order-details__table,
 	.order-details__totals {
 		table,

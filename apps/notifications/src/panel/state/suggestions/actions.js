@@ -1,6 +1,9 @@
+/**
+ * Internal dependencies
+ */
 import * as types from '../action-types';
 
-export const fetchSuggestions = siteId => ( {
+export const fetchSuggestions = ( siteId ) => ( {
 	type: types.SUGGESTIONS_FETCH,
 	siteId,
 } );

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestConnectedApplications } from 'state/connected-applications/actions';
+import { requestConnectedApplications } from 'calypso/state/connected-applications/actions';
 
 class QueryConnectedApplications extends Component {
 	static propTypes = {
@@ -26,7 +24,4 @@ class QueryConnectedApplications extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ requestConnectedApplications }
-)( QueryConnectedApplications );
+export default connect( null, { requestConnectedApplications } )( QueryConnectedApplications );

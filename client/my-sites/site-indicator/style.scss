@@ -48,22 +48,17 @@
 
 	.is-update & {
 		background: var( --color-warning );
-		color: var( --color-white );
-	}
-
-	.is-warning & {
-		background: var( --color-warning );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-error & {
 		background: var( --color-error );
-		color: var( --color-white );
+		color: var( --color-text-inverted );
 	}
 
 	.is-expanded & {
 		.accessible-focus &:focus {
-			border: 1px dotted var( --color-white );
+			border: 1px dotted var( --color-surface );
 			&::before {
 				top: 6px;
 				left: 6px;
@@ -71,7 +66,7 @@
 		}
 		.site-indicator__button {
 			position: absolute;
-				right: 0;
+			right: 0;
 		}
 	}
 
@@ -84,19 +79,18 @@
 
 // Displayed on top of a Site element once the user clicks on the button
 .site-indicator__message {
-	color: var( --color-white );
-	font-size: 12px;
+	color: var( --color-text-inverted );
+	font-size: $font-body-extra-small;
 	line-height: 1.4;
 	padding: 5px 16px;
 	position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	display: flex;
 	justify-content: space-between;
 
-	.is-warning &,
 	.is-update & {
 		background: var( --color-warning );
 	}
@@ -110,14 +104,13 @@
 	vertical-align: middle;
 
 	// Links within the action message
-	a,
+	a:link,
+	a.is-borderless.button:hover,
 	a:visited,
 	.button.is-borderless.is-scary,
 	.site-indicator__action-button {
-		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
-		border-radius: 0;
-		color: var( --color-white );
-		text-decoration: none;
+		color: var( --color-text-inverted );
+		text-decoration: underline;
 	}
 
 	a > .gridicons-external {

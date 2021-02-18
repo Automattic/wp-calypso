@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,9 +8,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import { rebootNormally } from 'lib/user/support-user-interop';
-import { isSupportSession } from 'state/support/selectors';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import { rebootNormally } from 'calypso/lib/user/support-user-interop';
+import { isSupportSession } from 'calypso/state/support/selectors';
 
 class SupportUser extends Component {
 	componentDidMount() {
@@ -34,6 +32,6 @@ class SupportUser extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isSupportSession: isSupportSession( state ),
 } ) )( SupportUser );

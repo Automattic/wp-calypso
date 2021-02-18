@@ -12,7 +12,7 @@
 }
 
 .following-manage__input-card.card.is-compact {
-	box-shadow: 0 0 0 2px var( --color-neutral-100 ), 0 1px 2px var( --color-neutral-100 );
+	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 }
 
 .following-manage__subscriptions {
@@ -22,7 +22,7 @@
 
 // Load more results
 .following-manage__show-more {
-	border-top: 1px solid var( --color-neutral-100 );
+	border-top: 1px solid var( --color-neutral-10 );
 	display: flex;
 	justify-content: center;
 	margin-top: 10px;
@@ -33,7 +33,7 @@
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	padding: 2px 9px 6px 11px;
 	position: relative;
 	top: -1px;
@@ -46,7 +46,7 @@
 	}
 
 	&:hover {
-		color: var( --color-neutral-400 );
+		color: var( --color-neutral-40 );
 		cursor: pointer;
 	}
 }
@@ -55,11 +55,11 @@
 .following-manage__subscriptions-controls {
 	display: flex;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		flex-wrap: wrap;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin: 0 15px;
 	}
 
@@ -72,7 +72,7 @@
 		font-weight: 600;
 		padding: 4px 0 15px;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			flex: 0 0 auto;
 			width: 100%;
 		}
@@ -82,7 +82,7 @@
 		position: relative;
 
 		&::before {
-			@include breakpoint( '<960px' ) {
+			@include breakpoint-deprecated( '<960px' ) {
 				@include long-content-fade( $size: 20% );
 				height: 30px;
 				right: 30px;
@@ -93,19 +93,19 @@
 
 	.following-manage__subscriptions-sort,
 	.following-manage__subscriptions-search {
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			flex: 1;
 		}
 	}
 
 	.following-manage__subscriptions-sort .following-manage__sort-controls {
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		font-weight: normal;
 		padding-top: 8px;
 		width: 100%;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			min-width: 200px;
 		}
 	}
@@ -113,18 +113,18 @@
 	.following-manage__subscriptions-search {
 		margin-top: 1px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-right: 0;
 		}
 	}
 
 	.following-manage__subscriptions-search .search-card {
-		box-shadow: 0 0 0 1px rgba( var( --color-neutral-100-rgb ), 0.3 );
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.3 );
 
 		.following-manage__search-followed-input.is-compact {
 			height: 32px;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				min-width: 0;
 			}
 		}
@@ -138,39 +138,51 @@
 	.following-manage__subscriptions-import-export {
 		margin-right: 0;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 
 		.gridicon.gridicons-ellipsis {
-			fill: var( --color-neutral-200 );
+			fill: var( --color-neutral-20 );
 			top: 0;
 		}
 	}
 }
 
 .following-manage__subscriptions-import-export-menu-item {
+	.reader-import-button,
+	.reader-export-button {
+		padding: 0;
+		font-weight: 400;
+	}
+
 	.reader-import-button__icon,
 	.reader-export-button__icon {
+		fill: var( --color-neutral-light );
 		vertical-align: middle;
+	}
+
+	.reader-import-button__label,
+	.reader-export-button__label {
+		color: var( --color-text-subtle );
 	}
 
 	&:hover,
 	&:focus {
 		.reader-import-button__icon,
 		.reader-export-button__icon {
-			fill: var( --color-white );
+			fill: var( --color-text-inverted );
 		}
 
 		.reader-import-button__label,
 		.reader-export-button__label {
-			color: var( --color-white );
+			color: var( --color-text-inverted );
 		}
 	}
 }
 
 .following-manage .reader-recommended-sites {
-	border-bottom: 1px solid var( --color-neutral-100 );
+	border-bottom: 1px solid var( --color-neutral-10 );
 }
 
 .following-manage__search-followed {
@@ -178,7 +190,7 @@
 }
 
 .following-manage__search-followed-input {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		min-width: 200px;
 	}
 }
@@ -194,7 +206,7 @@
 
 .following-manage__search-results.is-empty,
 .following-manage__subscriptions-list.is-empty {
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .following-manage__search-results .reader-subscription-list-item__options {
@@ -202,12 +214,12 @@
 	flex-direction: column;
 	min-width: 24px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		min-width: 90px;
 	}
 
 	.button.follow-button {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: flex;
 		}
 	}
@@ -234,7 +246,7 @@
 .following-manage__url-follow-no-search-results-message {
 	margin-top: -5px;
 	padding-bottom: 15px;
-	color: var( --color-neutral-400 );
+	color: var( --color-neutral-40 );
 }
 
 .following-manage__url-follow {
@@ -254,7 +266,7 @@
 		.follow-button__label {
 			color: var( --color-primary );
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: inline;
 			}
 		}

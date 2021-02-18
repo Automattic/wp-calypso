@@ -1,13 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
-
 import { find } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { thumbIsLikelyImage, isCandidateForCanonicalImage } from './utils';
 

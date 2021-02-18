@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,34 +8,32 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { SITES_BLOG_STICKER_REMOVE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { addBlogSticker } from 'state/sites/blog-stickers/actions';
-import { errorNotice, plainNotice } from 'state/notices/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { SITES_BLOG_STICKER_REMOVE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { addBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
+import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-export const requestBlogStickerRemove = action =>
+export const requestBlogStickerRemove = ( action ) =>
 	http(
 		{
 			method: 'POST',
-			path: `/sites/${ action.payload.blogId }/blog-stickers/remove/${
-				action.payload.stickerName
-			}`,
+			path: `/sites/${ action.payload.blogId }/blog-stickers/remove/${ action.payload.stickerName }`,
 			body: {}, // have to have an empty body to make wpcom-http happy
 			apiVersion: '1.1',
 		},
 		action
 	);
 
-export const receiveBlogStickerRemoveError = action => [
+export const receiveBlogStickerRemoveError = ( action ) => [
 	errorNotice( translate( 'Sorry, we had a problem removing that sticker. Please try again.' ) ),
 	bypassDataLayer( addBlogSticker( action.payload.blogId, action.payload.stickerName ) ),
 ];
 
-export const receiveBlogStickerRemove = action =>
+export const receiveBlogStickerRemove = ( action ) =>
 	plainNotice(
 		translate( 'The sticker {{i}}%s{{/i}} has been removed.', {
 			args: action.payload.stickerName,
@@ -50,7 +46,7 @@ export const receiveBlogStickerRemove = action =>
 		}
 	);
 
-export const fromApi = response => {
+export const fromApi = ( response ) => {
 	if ( ! response.success ) {
 		throw new Error( 'Blog sticker removal was unsuccessful on the server' );
 	}

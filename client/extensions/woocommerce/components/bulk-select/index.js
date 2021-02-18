@@ -1,11 +1,11 @@
-/** @format */
 /**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import Gridicon from 'calypso/components/gridicon';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 
 const BulkSelect = ( {
 	className,
@@ -21,7 +21,7 @@ const BulkSelect = ( {
 	const inputClasses = classNames( 'bulk-select__box', { 'is-checked': hasAllElementsSelected } );
 	const iconClasses = classNames( 'bulk-select__some-checked-icon', { 'is-disabled': disabled } );
 	const containerClasses = classNames( 'bulk-select', className );
-	const handleToggle = event => {
+	const handleToggle = ( event ) => {
 		if ( readOnly ) {
 			return;
 		}
@@ -32,9 +32,8 @@ const BulkSelect = ( {
 	return (
 		<span className={ containerClasses }>
 			<span className="bulk-select__container">
-				<input
+				<FormInputCheckbox
 					id={ id }
-					type="checkbox"
 					className={ inputClasses }
 					onChange={ handleToggle }
 					checked={ hasAllElementsSelected }

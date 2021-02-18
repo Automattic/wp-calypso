@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -8,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getTimezones from 'state/selectors/get-timezones';
+import getTimezones from 'calypso/state/selectors/get-timezones';
 
 describe( 'getTimezones()', () => {
 	test( "should return [] if `timezones` aren't synced", () => {
@@ -48,7 +46,10 @@ describe( 'getTimezones()', () => {
 
 			[
 				'America',
-				[ [ 'America/Blanc-Sablon', 'Blanc-Sablon' ], [ 'America/Boa_Vista', 'Boa Vista' ] ],
+				[
+					[ 'America/Blanc-Sablon', 'Blanc-Sablon' ],
+					[ 'America/Boa_Vista', 'Boa Vista' ],
+				],
 			],
 
 			[ 'Indian', [ [ 'Indian/Comoro', 'Comoro' ] ] ],

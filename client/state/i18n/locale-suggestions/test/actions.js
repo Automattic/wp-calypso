@@ -1,10 +1,11 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { receiveLocaleSuggestions, requestLocaleSuggestions } from '../actions';
-import { I18N_LOCALE_SUGGESTIONS_REQUEST, I18N_LOCALE_SUGGESTIONS_ADD } from 'state/action-types';
+import {
+	I18N_LOCALE_SUGGESTIONS_REQUEST,
+	I18N_LOCALE_SUGGESTIONS_ADD,
+} from 'calypso/state/action-types';
 
 describe( 'locale suggestions actions', () => {
 	test( '#requestLocaleSuggestions()', () => {

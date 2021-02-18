@@ -4,39 +4,36 @@
 	width: 40px;
 	height: 40px;
 	padding: 2px;
-	margin-right: 16px;
+	margin-right: 1em;
 
-	background-color: var( --color-neutral-700 );
-	fill: var( --color-white );
-	border-radius: 4px;
+	background-color: var( --color-neutral-70 );
+	fill: var( --color-text-inverted );
+	border-radius: 2px;
 
 	&.wordpress {
-		background-color: var( --color-wpcom );
+		background-color: var( --color-wordpress-com );
 	}
 
 	&.medium-logo {
-		background-color: #12100e;
+		background-color: var( --color-medium );
 	}
 
 	&.blogger-alt {
-		background-color: #ff5722;
-	}
-
-	&.godaddy-gocentral {
-		background-color: #5ea95a;
+		background-color: var( --color-blogger );
 	}
 
 	&.wix-logo {
-		background-color: #faad4d;
+		background-color: var( --color-wix );
 	}
 
 	&.squarespace {
-		background-color: #222;
+		background-color: var( --color-squarespace );
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		width: 56px;
 		height: 56px;
 		padding: 4px;
+		margin-right: 1.5em;
 	}
 }

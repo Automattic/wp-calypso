@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import './style.scss';
 
 class DomainSkipSuggestion extends React.Component {

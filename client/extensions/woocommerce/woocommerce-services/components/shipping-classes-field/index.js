@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * External dependencies
  */
@@ -10,10 +8,10 @@ import { uniq, map, find, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import TokenField from 'components/token-field';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import TokenField from 'calypso/components/token-field';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 export default class ShippingClassesField extends React.Component {
 	static propTypes = {
@@ -50,33 +48,33 @@ export default class ShippingClassesField extends React.Component {
 		);
 	}
 
-	prepareValueForTokenField = value => {
+	prepareValueForTokenField = ( value ) => {
 		return filter( map( value, this.getNameFromId ) );
 	};
 
-	getNameFromId = id => {
+	getNameFromId = ( id ) => {
 		const found = find( this.props.options, { id } );
 
 		return found ? found.name : null;
 	};
 
-	getIdFromName = name => {
+	getIdFromName = ( name ) => {
 		const lowerCaseName = name.toLowerCase();
 
-		const found = find( this.props.options, option => {
+		const found = find( this.props.options, ( option ) => {
 			return option.name.toLowerCase() === lowerCaseName;
 		} );
 
 		return found ? found.id : null;
 	};
 
-	transformForDisplay = token => {
+	transformForDisplay = ( token ) => {
 		const option = find( this.props.options, { slug: token } );
 
 		return option ? option.name : token;
 	};
 
-	onChange = strings => {
+	onChange = ( strings ) => {
 		const { updateValue } = this.props;
 
 		const updatedValue = uniq( filter( map( strings, this.getIdFromName ) ) );

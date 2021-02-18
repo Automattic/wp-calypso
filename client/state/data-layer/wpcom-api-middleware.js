@@ -1,19 +1,17 @@
-/** @format */
-
 /**
  * Internal dependencies
  */
 import { bypassDataLayer } from './utils';
-import { getHandlers, registerHandlers } from 'state/data-layer/handler-registry';
+import { getHandlers, registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
-import httpHandlers from 'state/http';
+import httpHandlers from 'calypso/state/http';
 
 registerHandlers( 'declarative resource loader', httpData );
 registerHandlers( 'raw HTTP request loader', httpHandlers );
 registerHandlers( 'WordPress API request loader', wpcomHttpHandlers );
 
-const shouldNext = action => {
+const shouldNext = ( action ) => {
 	const meta = action.meta;
 	if ( ! meta ) {
 		return true;
@@ -56,15 +54,15 @@ const shouldNext = action => {
  * @param {Function} handlersFor returns list of handlers for given action type
  * @returns {Function} middleware handler
  */
-export const middleware = handlersFor => store => next => {
+export const middleware = ( handlersFor ) => ( store ) => ( next ) => {
 	/**
 	 * Middleware handler
 	 *
 	 * @function
-	 * @param {Object} action Redux action
+	 * @param {object} action Redux action
 	 * @returns {undefined} please do not use
 	 */
-	return action => {
+	return ( action ) => {
 		const handlerChain = handlersFor( action.type );
 
 		// if no handler is defined for the action type
@@ -85,7 +83,7 @@ export const middleware = handlersFor => store => next => {
 			}
 		}
 
-		handlerChain.forEach( handler => handler( store, action ) );
+		handlerChain.forEach( ( handler ) => handler( store, action ) );
 
 		if ( shouldNext( action ) ) {
 			next( bypassDataLayer( action ) );

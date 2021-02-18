@@ -5,8 +5,8 @@
 The app is currently built by directly coupling the data from the WordPress.com API for notifications with the internal data structures.
 In addition to this it has a data augmentation system to handle the inherent race conditions existing with synchronizing local state with remote polling.
 
-
 ### Notes from the API
+
 ```
 const note =
 	{ id: [number]                  // note id as a number
@@ -29,6 +29,7 @@ Polling is always active in the background while the app is visible.
 This means that whenever we make changes in the app we create a race condition between our local changes and updates which started to transfer across the network before we made the change.
 
 <!-- the following diagram was generated in draw.io - it can be edited by pasting in the contents of the SVG itself -->
+
 ![network conversation exposing race when deleting a note](https://cldup.com/unQOzvDkjtq/UlbjwC.svg)
 
 In the diagram you can see where these conditions form and the challenge we have to work around in the app to make sure that the return of a previous request doesn't cause "flickering" in the app where, for example, a note may disappear, reappear, then suddenly disappear again.
@@ -42,18 +43,18 @@ We maintain a "hidden notes" list of note ids which shouldn't be rendered.
 When undoing a _trash_ or _spam_ action we should remove the id from this list.
 
 ```js
-state.notes.hiddenNoteIds = [ id1, id2, id3, … ]
+state.notes.hiddenNoteIds = [ id1, id2, id3 /*...*/ ];
 
-getIsNoteHidden( store.getState(), noteId )
+getIsNoteHidden( store.getState(), noteId );
 ```
 
 The list of hidden ids is maintained in the `state/notes/reducers.js#hiddenNoteIds` reducer.
 
 Anything that uses the list of "visible notes" should filter out any note matching an id in this list:
 
- - List of actually rendered notes in the list
- - Determining where the "highlight" goes (keyboard navigation through the note list)
- - Finding the "next note"
+- List of actually rendered notes in the list
+- Determining where the "highlight" goes (keyboard navigation through the note list)
+- Finding the "next note"
 
 #### Liked notes
 
@@ -61,9 +62,9 @@ When comments or posts inside of notifications are _liked_ or _unliked_ then tha
 We maintain these local likes in the Redux state.
 
 ```js
-store.dispatch( actions.notes.likeNote( noteId, isLiked ) )
+store.dispatch( actions.notes.likeNote( noteId, isLiked ) );
 
-getIsNoteLiked( store.getState(), note )
+getIsNoteLiked( store.getState(), note );
 ```
 
 This is maintained entirely within the `rest-client` and has no corresponding "undo" as with the hidden notes.
@@ -76,7 +77,7 @@ See the description for liking and unliking above.
 This works the same way except that the function is different.
 
 ```js
-store.dispatch( actions.notes.approveNote( noteId, isApproved )
+store.dispatch( actions.notes.approveNote( noteId, isApproved ) );
 
-getIsNoteApproved( store.getState(), note )
+getIsNoteApproved( store.getState(), note );
 ```
