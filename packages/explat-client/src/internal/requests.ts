@@ -72,7 +72,7 @@ export async function fetchExperimentAssignment(
 	}
 
 	if ( fetchedExperimentAssignments.length === 0 ) {
-		throw new Error( 'Received no experiment assignments while trying to fetch exactly one.' );
+		return ExperimentAssignments.createFallbackExperimentAssignment( experimentName );
 	}
 
 	const fetchedExperimentAssignment = fetchedExperimentAssignments[ 0 ];

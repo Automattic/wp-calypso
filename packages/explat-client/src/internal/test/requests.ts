@@ -120,9 +120,12 @@ describe( 'fetchExperimentAssignment', () => {
 		);
 	} );
 
-	it( 'should throw for no experiments in the response', async () => {
+	it( 'should return a fallbackExperimentAssignment for no experiments in the response', async () => {
 		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
 		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
 			delayedValue(
 				{
@@ -134,7 +137,13 @@ describe( 'fetchExperimentAssignment', () => {
 		);
 		await expect(
 			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
-		).rejects.toThrow( 'Received no experiment assignments while trying to fetch exactly one.' );
+		).resolves.toEqual( {
+			experimentName: 'experiment_name_a',
+			variationName: null,
+			retrievedTimestamp: validExperimentAssignment.retrievedTimestamp + 1000,
+			ttl: 60,
+			isFallbackExperimentAssignment: true,
+		} );
 	} );
 
 	it( 'should throw for response experiment not matching the requested name', async () => {
