@@ -165,8 +165,10 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
-			shouldShowPlansRedesign,
+			isTreatmentPlansRedesign,
 		} = this.props;
+
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
 
 		return (
 			<div>
@@ -205,25 +207,28 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		if ( this.props.isLoadingExperiment ) {
+		const { isLoadingExperiment, isTreatmentPlansRedesign, headerText, translate } = this.props;
+		if ( isLoadingExperiment ) {
 			return '';
 		}
 
-		if ( this.props.shouldShowPlansRedesign ) {
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
+		if ( shouldShowPlansRedesign ) {
 			return 'Choose a plan';
 		}
 
-		return this.props.headerText || this.props.translate( "Pick a plan that's right for you." );
+		return headerText || translate( "Pick a plan that's right for you." );
 	}
 
 	getSubHeaderText() {
 		const {
 			hideFreePlan,
 			subHeaderText,
-			shouldShowPlansRedesign,
+			isTreatmentPlansRedesign,
 			isLoadingExperiment,
 			translate,
 		} = this.props;
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
 
 		if ( isLoadingExperiment ) {
 			return '';
@@ -301,9 +306,11 @@ export class PlansStep extends Component {
 	}
 
 	render() {
+		const shouldShowPlansRedesign =
+			this.props.isTreatmentPlansRedesign && this.state.plansWithScroll;
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
-			'in-plans-redesign-experiment': this.props.shouldShowPlansRedesign,
+			'in-plans-redesign-experiment': shouldShowPlansRedesign,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
@@ -364,9 +371,9 @@ export default connect(
 		isLoadingExperiment: isLoading( state ),
 		isInVerticalScrollingPlansExperiment:
 			'treatment' === getVariationForUser( state, 'vertical_plan_listing_v2' ),
-		shouldShowPlansRedesign:
-			'treatment' === getVariationForUser( state, 'signup_plans_step_redesign_v1' ) &&
-			flowName === 'onboarding',
+		isTreatmentPlansRedesign:
+			flowName === 'onboarding' &&
+			'treatment' === getVariationForUser( state, 'signup_plans_step_redesign_v1' ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
