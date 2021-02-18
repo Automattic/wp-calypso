@@ -67,7 +67,6 @@
 		"jetpack/anti-spam-product": true,
 		"jetpack/on-demand-scan": true,
 		"jetpack/personal-plan": false,
-		"jetpack/simplify-login-signup-flows": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"lasagna": true,
