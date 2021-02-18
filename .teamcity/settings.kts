@@ -891,7 +891,7 @@ object RunCanaryE2eTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
+				./run.sh -R -a %E2E_WORKERS% -g -s "mobile,desktop" -u "${'$'}{URL%/}"
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
