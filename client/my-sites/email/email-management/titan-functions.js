@@ -7,11 +7,11 @@
  */
 import wpcom from 'calypso/lib/wp';
 
-export const fetchTitanAutoLoginURL = ( orderId, context ) => {
+export const fetchTitanAutoLoginURL = ( emailAccountId, context ) => {
 	return new Promise( ( resolve ) => {
 		wpcom
 			.undocumented()
-			.getTitanControlPanelAutoLoginURL( orderId, context, ( serverError, result ) => {
+			.getTitanControlPanelAutoLoginURL( emailAccountId, context, ( serverError, result ) => {
 				resolve( {
 					error: serverError?.message,
 					loginURL: serverError ? null : result.auto_login_url,
@@ -20,9 +20,9 @@ export const fetchTitanAutoLoginURL = ( orderId, context ) => {
 	} );
 };
 
-export const fetchTitanIframeURL = ( orderId ) => {
+export const fetchTitanIframeURL = ( emailAccountId ) => {
 	return new Promise( ( resolve ) => {
-		wpcom.undocumented().getTitanControlPanelIframeURL( orderId, ( serverError, result ) => {
+		wpcom.undocumented().getTitanControlPanelIframeURL( emailAccountId, ( serverError, result ) => {
 			resolve( {
 				error: serverError?.message,
 				iframeURL: serverError ? null : result.iframe_url,
