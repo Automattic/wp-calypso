@@ -119,20 +119,15 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		await expect(
 			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
 		).resolves.toEqual( validExperimentAssignment );
+		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls.length ).toBe(
+			1
+		);
+		expect(
+			( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls[ 0 ][ 0 ].anonId
+		).toBe( 'the-anon-id-123' );
 		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
 			`Array []`
 		);
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls )
-			.toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "anonId": "the-anon-id-123",
-		      "experimentName": "experiment_name_a",
-		    },
-		  ],
-		]
-	` );
 	} );
 	it( `[developmentMode] should successfully load an ExperimentAssignment`, async () => {
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
