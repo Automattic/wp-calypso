@@ -9,12 +9,11 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { items, isFetching } from '../reducer';
 import {
-	DESERIALIZE,
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
-	SERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -76,7 +75,7 @@ describe( 'reducer', () => {
 						cost_display: '$129',
 					},
 				} );
-				const state = items( original, { type: SERIALIZE } );
+				const state = serialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -94,7 +93,7 @@ describe( 'reducer', () => {
 						cost_display: '$129',
 					},
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -107,7 +106,7 @@ describe( 'reducer', () => {
 						slug: 'guided_transfer',
 					},
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );

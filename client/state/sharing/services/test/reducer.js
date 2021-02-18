@@ -13,9 +13,8 @@ import {
 	KEYRING_SERVICES_REQUEST,
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
-	DESERIALIZE,
-	SERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 const originalKeyringServices = {
@@ -83,21 +82,21 @@ describe( 'reducer', () => {
 		describe( 'persistence', () => {
 			test( 'persists state', () => {
 				const original = deepFreeze( originalKeyringServices );
-				const services = items( original, { type: SERIALIZE } );
+				const services = serialize( items, original );
 
 				expect( services ).to.eql( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( originalKeyringServices );
-				const services = items( original, { type: DESERIALIZE } );
+				const services = deserialize( items, original );
 
 				expect( services ).to.eql( original );
 			} );
 
 			test( 'loads default state when schema does not match', () => {
 				const original = deepFreeze( [ { ID: 'facebook' }, { ID: 'twitter' } ] );
-				const services = items( original, { type: DESERIALIZE } );
+				const services = deserialize( items, original );
 
 				expect( services ).to.eql( {} );
 			} );

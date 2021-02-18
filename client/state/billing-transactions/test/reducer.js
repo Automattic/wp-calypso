@@ -16,9 +16,8 @@ import {
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -127,30 +126,19 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = items( deepFreeze( billingTransactions ), {
-				type: SERIALIZE,
-			} );
+			const state = serialize( items, deepFreeze( billingTransactions ) );
 
 			expect( state ).to.eql( billingTransactions );
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = items( deepFreeze( billingTransactions ), {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( items, deepFreeze( billingTransactions ) );
 
 			expect( state ).to.eql( billingTransactions );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = items(
-				deepFreeze( {
-					example: 'test',
-				} ),
-				{
-					type: DESERIALIZE,
-				}
-			);
+			const state = deserialize( items, deepFreeze( { example: 'test' } ) );
 
 			expect( state ).to.eql( {} );
 		} );

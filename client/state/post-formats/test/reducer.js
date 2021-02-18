@@ -13,9 +13,8 @@ import {
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_FAILURE,
 	POST_FORMATS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -178,15 +177,13 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = items(
+			const state = serialize(
+				items,
 				deepFreeze( {
 					12345678: {
 						status: 'Status',
 					},
-				} ),
-				{
-					type: SERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {
@@ -197,15 +194,13 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					12345678: {
 						status: 'Status',
 					},
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {
@@ -216,13 +211,11 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					status: 'Status',
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {} );
