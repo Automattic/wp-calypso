@@ -203,6 +203,10 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
+		if ( this.props.isLoadingExperiment ) {
+			return '';
+		}
+
 		if ( this.props.shouldShowPlansRedesign ) {
 			return 'Choose a plan';
 		}
@@ -211,7 +215,17 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, shouldShowPlansRedesign, translate } = this.props;
+		const {
+			hideFreePlan,
+			subHeaderText,
+			shouldShowPlansRedesign,
+			isLoadingExperiment,
+			translate,
+		} = this.props;
+
+		if ( isLoadingExperiment ) {
+			return '';
+		}
 
 		if ( ! hideFreePlan ) {
 			if ( shouldShowPlansRedesign ) {
