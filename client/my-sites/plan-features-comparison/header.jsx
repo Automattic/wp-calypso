@@ -271,7 +271,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 		return this.renderPriceGroup( rawPrice );
 	}
 
-	renderPriceGroup( fullPrice, discountedPrice = null ) {
+	renderPriceGroup( fullPrice ) {
 		const {
 			currencyCode,
 			isInSignup,
@@ -281,30 +281,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 		const displayFlatPrice =
 			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
 
-		if ( fullPrice && discountedPrice ) {
-			return (
-				<span className="plan-features-comparison__header-price-group">
-					<div className="plan-features-comparison__header-price-group-prices">
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ fullPrice }
-							displayFlatPrice={ displayFlatPrice }
-							isInSignup={ isInSignup }
-							original
-						/>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ discountedPrice }
-							displayFlatPrice={ displayFlatPrice }
-							isInSignup={ isInSignup }
-							discounted
-						/>
-					</div>
-					{ plansWithScroll ? null : this.renderCreditLabel() }
-				</span>
-			);
-		}
-
+		// TODO: If the experiment wins, then we need to plan on how to show the 1st year promotional price for INR and MX
 		return (
 			<PlanPrice
 				currencyCode={ currencyCode }
