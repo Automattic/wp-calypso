@@ -93,6 +93,7 @@ export const getTask = (
 							'Now that you’ve created your site, we’ll guide you through completing a few additional steps to continue building your site.'
 					  )
 					: translate( 'Next, we’ll guide you through setting up and launching your site.' );
+				taskData.completeOnView = false;
 			}
 			break;
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
