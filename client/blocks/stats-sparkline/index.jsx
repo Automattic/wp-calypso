@@ -19,12 +19,14 @@ import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors'
  */
 import './style.scss';
 
-const StatsSparklineChart = ( { className, hourlyViews } ) => {
+const DEFAULT_HEIGHT = 20;
+
+const StatsSparklineChart = ( { className, hourlyViews, height = DEFAULT_HEIGHT } ) => {
 	const translate = useTranslate();
 	const highestViews = Math.max( ...hourlyViews );
 	const title = translate( 'Highest hourly views %(highestViews)s', { args: { highestViews } } );
 
-	const chartHeight = 24 - 7; // 24px is the desired height, 7px is the total top+bottom padding
+	const chartHeight = height - 7; // remove the 5px + 2px = 7px total top+bottom padding
 	const chartWidth = 2 * hourlyViews.length - 1; // 1px bars with 1px space in between
 
 	return (
