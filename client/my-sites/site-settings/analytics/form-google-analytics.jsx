@@ -46,7 +46,7 @@ import './style.scss';
 
 const validateGoogleAnalyticsCode = ( code ) =>
 	! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i );
-export function GoogleAnalyticsSettings( {
+export const GoogleAnalyticsForm = ( {
 	fields,
 	updateFields,
 	isRequestingSettings,
@@ -63,7 +63,7 @@ export function GoogleAnalyticsSettings( {
 	site,
 	siteId,
 	sitePlugins,
-} ) {
+} ) => {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ isGoogleEnabled, setIsGoogleEnabled ] = useState( false );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
@@ -345,7 +345,7 @@ export function GoogleAnalyticsSettings( {
 		return null;
 	}
 	return renderForm();
-}
+};
 
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
@@ -379,4 +379,4 @@ const getFormSettings = partialRight( pick, [ 'wga' ] );
 export default flowRight(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
-)( GoogleAnalyticsSettings );
+)( GoogleAnalyticsForm );
