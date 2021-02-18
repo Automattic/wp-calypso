@@ -16,20 +16,13 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import { hasSiteAnalyticsFeature } from '../utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo.svg';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_GOOGLE_ANALYTICS } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies
@@ -47,12 +40,10 @@ export function CloudflareAnalyticsSettings( {
 	eventTracker,
 	handleSubmitForm,
 	path,
-	showUpgradeNudge,
 	translate,
 	trackTracksEvent,
 	uniqueEventTracker,
 	site,
-	siteSlug,
 } ) {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedCloudflareAnalyticsModified, setLoggedCloudflareAnalyticsModified ] = useState(
@@ -66,7 +57,6 @@ export function CloudflareAnalyticsSettings( {
 		} );
 		updateFields( { cloudflare_analytics: updatedCloudflareFields } );
 	};
-	const upgradeLink = `/plans/${ siteSlug }?customerType=premium`;
 
 	const handleCodeChange = ( event ) => {
 		const code = event.target.value.trim();
@@ -87,20 +77,6 @@ export function CloudflareAnalyticsSettings( {
 		uniqueEventTracker( 'Typed In Analytics Key Field' )();
 	};
 
-	const nudge = (
-		<UpsellNudge
-			title={ translate( 'Available with Premium plans or higher' ) }
-			description={ translate(
-				'Choose an additional analytics tool to connect and get unique insights about your site traffic.'
-			) }
-			event={ 'calypso_settings_cloudflare_analytics_upsell_nudge_click' }
-			href={ upgradeLink }
-			feature={ FEATURE_GOOGLE_ANALYTICS }
-			plan={ site.plan }
-			showIcon={ true }
-		/>
-	);
-
 	const renderForm = () => {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 		const analyticsSupportUrl = 'https://wordpress.com/support/CLOUDFLARE_SUPPORT_URL/'; // TODO: add support link
@@ -111,67 +87,64 @@ export function CloudflareAnalyticsSettings( {
 					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
-					showButton={ ! showUpgradeNudge }
+					showButton
 					title={ translate( 'Cloudflare Analytics' ) }
 				/>
-				{ showUpgradeNudge ? (
-					nudge
-				) : (
-					<Card className="cloudflare-analytics site-settings__analytics-settings">
-						<div className="cloudflare-analytics site-settings__cloudflare-description">
-							<div className="cloudflare-analytics site-settings__cloudflare-description-text">
-								<p>
-									{ translate(
-										'At Cloudflare, our mission is to help build a better internet - and part of that ' +
-											'is to deliver essential web analytics to everyone with a website without ' +
-											'compromising user privacy. For free.'
-									) }
-								</p>
-							</div>
 
-							{ isDesktop() && (
-								<div className="cloudflare-analytics site-settings__cloudflare-description-illustration">
-									<img src={ cloudflareIllustration } alt="" />
-								</div>
-							) }
+				<Card className="cloudflare-analytics site-settings__analytics-settings">
+					<div className="cloudflare-analytics site-settings__cloudflare-description">
+						<div className="cloudflare-analytics site-settings__cloudflare-description-text">
+							<p>
+								{ translate(
+									'At Cloudflare, our mission is to help build a better internet - and part of that ' +
+										'is to deliver essential web analytics to everyone with a website without ' +
+										'compromising user privacy. For free.'
+								) }
+							</p>
 						</div>
-						<FormFieldset>
-							<FormLabel htmlFor="cloudflareCode">
-								{ translate( 'Tracking ID', { context: 'site setting' } ) }
-							</FormLabel>
-							<FormTextInput
-								name="cloudflareCode"
-								id="cloudflareCode"
-								value={ fields.cloudflare_analytics ? fields.cloudflare_analytics.code : '' }
-								onChange={ handleCodeChange }
-								placeholder={ placeholderText }
-								disabled={ isRequestingSettings || ! enableForm }
-								onFocus={ handleFieldFocus }
-								onKeyPress={ handleFieldKeypress }
-								isError={ ! isCodeValid }
+
+						{ isDesktop() && (
+							<div className="cloudflare-analytics site-settings__cloudflare-description-illustration">
+								<img src={ cloudflareIllustration } alt="" />
+							</div>
+						) }
+					</div>
+					<FormFieldset>
+						<FormLabel htmlFor="cloudflareCode">
+							{ translate( 'Tracking ID', { context: 'site setting' } ) }
+						</FormLabel>
+						<FormTextInput
+							name="cloudflareCode"
+							id="cloudflareCode"
+							value={ fields.cloudflare_analytics ? fields.cloudflare_analytics.code : '' }
+							onChange={ handleCodeChange }
+							placeholder={ placeholderText }
+							disabled={ isRequestingSettings || ! enableForm }
+							onFocus={ handleFieldFocus }
+							onKeyPress={ handleFieldKeypress }
+							isError={ ! isCodeValid }
+						/>
+						{ ! isCodeValid && (
+							<FormTextValidation
+								isError
+								text={ translate( 'Invalid Cloudflare Analytics ID.' ) }
 							/>
-							{ ! isCodeValid && (
-								<FormTextValidation
-									isError
-									text={ translate( 'Invalid Cloudflare Analytics ID.' ) }
-								/>
-							) }
-						</FormFieldset>
-						<p>
-							{ translate( '{{a}}Learn more{{/a}}', {
-								components: {
-									a: (
-										<a
-											href={ localizeUrl( analyticsSupportUrl ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							} ) }
-						</p>
-					</Card>
-				) }
+						) }
+					</FormFieldset>
+					<p>
+						{ translate( '{{a}}Learn more{{/a}}', {
+							components: {
+								a: (
+									<a
+										href={ localizeUrl( analyticsSupportUrl ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
+					</p>
+				</Card>
 			</form>
 		);
 	};
@@ -187,20 +160,16 @@ export function CloudflareAnalyticsSettings( {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-	const isAnalyticsEligible = hasSiteAnalyticsFeature( site );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {
 		path,
-		showUpgradeNudge: ! isAnalyticsEligible,
 		site,
 		siteId,
 		siteIsJetpack,
 		sitePlugins,
-		siteSlug,
 		enableForm: true, // TODO: make this mutually exclusive with Google Analytics?
 	};
 };
