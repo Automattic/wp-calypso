@@ -52,6 +52,7 @@ import { getSignupUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 
@@ -269,9 +270,12 @@ export class LoginForm extends Component {
 
 		// Redirect user to the Magic Link form page
 		page(
-			`/log-in/jetpack/link?${ new globalThis.URLSearchParams( {
-				email_address: this.state.usernameOrEmail,
-			} ).toString() }`
+			addQueryArgs(
+				{
+					email_address: this.state.usernameOrEmail,
+				},
+				'/log-in/jetpack/link'
+			)
 		);
 	}
 
