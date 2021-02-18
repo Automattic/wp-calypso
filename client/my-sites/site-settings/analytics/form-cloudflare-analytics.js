@@ -99,7 +99,7 @@ export function CloudflareAnalyticsSettings( {
 	const processCloudflareCode = () => {
 		const token = fields.jetpack_cloudflare_analytics?.code?.match( /(?<=token":\s").*?(?=")/ );
 		if ( token ) {
-			handleFieldChange( token );
+			handleFieldChange( token[ 0 ] );
 		}
 	};
 
