@@ -11,6 +11,8 @@ import { createExPlatClient } from '../create-explat-client';
 import {
 	delayedValue,
 	ONE_DELAY,
+	setBrowserContext,
+	setSsrContext,
 	validExperimentAssignment,
 	ZERO_DELAY,
 } from '../internal/test-common';
@@ -47,18 +49,6 @@ function mockFetchExperimentAssignmentToMatchExperimentAssignment(
 	);
 }
 
-function setBrowserContext() {
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	global.window = {};
-}
-
-function setSsrContext() {
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	global.window = undefined;
-}
-
 beforeEach( () => {
 	jest.resetAllMocks();
 	setBrowserContext();
@@ -67,7 +57,6 @@ beforeEach( () => {
 describe( 'createExPlatClient', () => {
 	it( `should throw if initialized outside of a browser context`, () => {
 		setSsrContext();
-
 		expect( () => createExPlatClient( createMockedConfig() ) ).toThrowErrorMatchingInlineSnapshot(
 			`"Running outside of a browser context."`
 		);
