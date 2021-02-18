@@ -331,7 +331,7 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 	} );
 	it( `logError throws/secondary error: should attempt to log secondary error and return fallback`, async () => {
 		// Using invalid name as the initial error
-		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
+		const mockedConfig = createMockedConfig();
 		mockFetchExperimentAssignmentToMatchExperimentAssignment(
 			mockedConfig,
 			validExperimentAssignment
@@ -339,10 +339,13 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		( mockedConfig.logError as MockedFunction ).mockImplementation( () => {
 			throw new Error( 'Error logging.' );
 		} );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
 		const client = createExPlatClient( mockedConfig );
 		await expect( client.loadExperimentAssignment( '' ) ).resolves.toEqual( {
-			experimentName: 'fallback_experiment_assignment',
-			retrievedTimestamp: validExperimentAssignment.retrievedTimestamp,
+			experimentName: '',
+			retrievedTimestamp: validExperimentAssignment.retrievedTimestamp + 1000,
 			ttl: 60,
 			variationName: null,
 			isFallbackExperimentAssignment: true,
@@ -351,8 +354,16 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		Array [
 		  Array [
 		    Object {
-		      "experimentName": "the-invalid-experiment-name",
-		      "message": "Invalid experimentName: the-invalid-experiment-name",
+		      "experimentName": "",
+		      "message": "Invalid experimentName: \\"\\"",
+		      "source": "loadExperimentAssignment-initialError",
+		    },
+		  ],
+		  Array [
+		    Object {
+		      "experimentName": "",
+		      "message": "Invalid ExperimentAssignment",
+		      "source": "loadExperimentAssignment-fallbackError",
 		    },
 		  ],
 		]
