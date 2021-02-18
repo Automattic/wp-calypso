@@ -99,7 +99,7 @@ export default class LoginFlow {
 
 		if ( process.env.FLAGS === 'nav-unification' ) {
 			// Makes sure that the nav-unification welcome modal will be dismissed.
-			const guideComponent = await GuideComponent.Expect( this.driver );
+			const guideComponent = new GuideComponent( this.driver, 1000 );
 			await guideComponent.dismissModal( '.nav-unification-modal' );
 		}
 
