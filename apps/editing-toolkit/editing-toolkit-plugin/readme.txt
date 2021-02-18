@@ -51,6 +51,8 @@ View the commit history here: https://github.com/Automattic/wp-calypso/commits/t
 * Remove Anchor-specific welcome guide (https://github.com/Automattic/wp-calypso/pull/50161)
 * Patterns: Allow custom viewport width when registering patterns (https://github.com/Automattic/wp-calypso/pull/49906)
 * Disable premium block patterns feature due to performance issues (https://github.com/Automattic/wp-calypso/pull/50111)
+* Focused Launch: Fix billing period tracking in summary (https://github.com/Automattic/wp-calypso/pull/49930)
+* Focused Launch: Fix domain picker item flex spacing (https://github.com/Automattic/wp-calypso/pull/49883)
 
 = 2.19 =
 * Unhide draft button when site hasn't launched yet. (https://github.com/Automattic/wp-calypso/pull/49766)
