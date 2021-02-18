@@ -177,7 +177,10 @@ const TemplateEdit = compose(
 							{ navigateToTemplate && (
 								<div className="template-block__loading">
 									<Spinner />{ ' ' }
-									{ sprintf( __( 'Loading editor for: %s', 'full-site-editing' ), templateTitle ) }
+									{
+										/* translators: %s is a template title. */
+										sprintf( __( 'Loading editor for: %s', 'full-site-editing' ), templateTitle )
+									}
 								</div>
 							) }
 							<Button
@@ -188,7 +191,10 @@ const TemplateEdit = compose(
 								isLarge
 								ref={ navButton }
 							>
-								{ sprintf( __( 'Edit %s', 'full-site-editing' ), templateTitle ) }
+								{
+									/* translators: %s is a template title. */
+									sprintf( __( 'Edit %s', 'full-site-editing' ), templateTitle )
+								}
 							</Button>
 						</Placeholder>
 					</Fragment>
