@@ -22,7 +22,7 @@ export default class UpsellPage extends AsyncBaseContainer {
 	async declineOffer() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'button[data-e2e-button="decline"]' )
+			By.css( 'button.difm-upsell__decline-offer-button' )
 		);
 	}
 }
