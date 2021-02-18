@@ -1,6 +1,20 @@
 {
 	"featured": [
 		{
+			"title": "Start with an empty page",
+			"slug": "blank-canvas",
+			"template": "blank-canvas",
+			"theme": "blank-canvas",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"is_fse": false,
+			"features": []
+		},
+		{
 			"title": "Seedlet",
 			"slug": "seedlet-blocks",
 			"template": "seedlet-blocks",
@@ -12,6 +26,7 @@
 			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": true,
+			"is_alpha": true,
 			"features": []
 		},
 		{
