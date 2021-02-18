@@ -13,17 +13,14 @@ import type { Config } from '../types';
 
 const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
 
-const mockedFetchExperimentAssignment = jest.fn();
-const mockedGetAnonId = jest.fn();
-const mockedLogError = jest.fn();
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore; Not using the full Config
-const mockedConfig: Config = {
-	logError: mockedLogError,
-	fetchExperimentAssignment: mockedFetchExperimentAssignment,
-	getAnonId: mockedGetAnonId,
+type MockedFunction = ReturnType< typeof jest.fn >;
+const createMockedConfig = ( override: Partial< Config > = {} ): Config => ( {
+	logError: jest.fn(),
+	fetchExperimentAssignment: jest.fn(),
+	getAnonId: jest.fn(),
 	isDevelopmentMode: false,
-};
+	...override,
+} );
 
 beforeEach( () => {
 	jest.resetAllMocks();
@@ -32,6 +29,7 @@ beforeEach( () => {
 describe( 'loadExperimentAssignment', () => {
 	it( 'should behave as expected', async () => {
 		spiedMonotonicNow.mockImplementationOnce( () => 123456 );
+		const mockedConfig = createMockedConfig();
 		const client = createSsrSafeDummyExPlatClient( mockedConfig );
 
 		await expect( client.loadExperimentAssignment( 'experiment_name' ) ).resolves.toEqual( {
@@ -42,9 +40,11 @@ describe( 'loadExperimentAssignment', () => {
 			variationName: null,
 		} );
 
-		expect( mockedFetchExperimentAssignment.mock.calls ).toHaveLength( 0 );
-		expect( mockedGetAnonId.mock.calls ).toHaveLength( 0 );
-		expect( mockedLogError.mock.calls ).toMatchInlineSnapshot( `
+		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
+			0
+		);
+		expect( ( mockedConfig.getAnonId as MockedFunction ).mock.calls ).toHaveLength( 0 );
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
@@ -60,7 +60,7 @@ describe( 'loadExperimentAssignment', () => {
 describe( 'dangerouslyGetExperimentAssignment', () => {
 	it( 'should behave as expected', () => {
 		spiedMonotonicNow.mockImplementationOnce( () => 123456 );
-
+		const mockedConfig = createMockedConfig();
 		const client = createSsrSafeDummyExPlatClient( mockedConfig );
 		expect( client.dangerouslyGetExperimentAssignment( 'experiment_name' ) ).toEqual( {
 			experimentName: 'experiment_name',
@@ -70,9 +70,11 @@ describe( 'dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 		} );
 
-		expect( mockedFetchExperimentAssignment.mock.calls ).toHaveLength( 0 );
-		expect( mockedGetAnonId.mock.calls ).toHaveLength( 0 );
-		expect( mockedLogError.mock.calls ).toMatchInlineSnapshot( `
+		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
+			0
+		);
+		expect( ( mockedConfig.getAnonId as MockedFunction ).mock.calls ).toHaveLength( 0 );
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
