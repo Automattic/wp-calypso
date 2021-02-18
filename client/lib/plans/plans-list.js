@@ -152,19 +152,6 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_COLLECT_PAYMENTS_V2,
 		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 	],
-	getSignupCompareMissingFeatures: () => [
-		constants.FEATURE_LIVE_CHAT_SUPPORT,
-		constants.FEATURE_EARN_AD,
-		constants.FEATURE_PREMIUM_THEMES,
-		constants.FEATURE_GOOGLE_ANALYTICS,
-		constants.FEATURE_INSTALL_PLUGINS,
-		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
-		constants.FEATURE_SFTP_DATABASE,
-		constants.FEATURE_ACCEPT_PAYMENTS,
-		constants.FEATURE_SHIPPING_CARRIERS,
-		constants.PREMIUM_DESIGN_FOR_STORES,
-	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 	getInferiorHiddenFeatures: () => [],
@@ -266,7 +253,6 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_SHIPPING_CARRIERS,
 		constants.PREMIUM_DESIGN_FOR_STORES,
 	],
-	getSignupCompareMissingFeatures: () => [],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [
 		constants.FEATURE_AUDIO_UPLOADS,
@@ -350,15 +336,6 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_EARN_AD,
 		constants.FEATURE_PREMIUM_THEMES,
 		constants.FEATURE_GOOGLE_ANALYTICS,
-	],
-	getSignupCompareMissingFeatures: () => [
-		constants.FEATURE_INSTALL_PLUGINS,
-		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
-		constants.FEATURE_SFTP_DATABASE,
-		constants.FEATURE_ACCEPT_PAYMENTS,
-		constants.FEATURE_SHIPPING_CARRIERS,
-		constants.PREMIUM_DESIGN_FOR_STORES,
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
@@ -451,11 +428,6 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
 		constants.FEATURE_SFTP_DATABASE,
-	],
-	getSignupCompareMissingFeatures: () => [
-		constants.FEATURE_ACCEPT_PAYMENTS,
-		constants.FEATURE_SHIPPING_CARRIERS,
-		constants.PREMIUM_DESIGN_FOR_STORES,
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [

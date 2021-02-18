@@ -16,7 +16,7 @@ import { localize } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
-import { PlanFeaturesAvailableItem, PlanFeaturesMissingItem } from './item';
+import { PlanFeaturesAvailableItem } from './item';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { abtest } from 'calypso/lib/abtest';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -375,7 +375,7 @@ export class PlanFeaturesComparison extends Component {
 		return reduce(
 			planProperties,
 			( longest, properties ) => {
-				const currentFeatures = Object.keys( properties.availableAndMissingFeatures );
+				const currentFeatures = Object.keys( properties.features );
 				return currentFeatures.length > longest.length ? currentFeatures : longest;
 			},
 			[]
@@ -407,18 +407,15 @@ export class PlanFeaturesComparison extends Component {
 		);
 	}
 
-	renderFeatureItem( feature, index, type ) {
+	renderFeatureItem( feature, index ) {
 		const classes = classNames( 'plan-features-comparison__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
 		} );
 
-		const FeatureDisplayComponent =
-			type === 'availableFeature' ? PlanFeaturesAvailableItem : PlanFeaturesMissingItem;
-
 		return (
 			<>
-				<FeatureDisplayComponent
+				<PlanFeaturesAvailableItem
 					key={ index }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
 				>
@@ -427,7 +424,7 @@ export class PlanFeaturesComparison extends Component {
 							{ feature.getTitle( this.props.domainName ) }
 						</span>
 					</span>
-				</FeatureDisplayComponent>
+				</PlanFeaturesAvailableItem>
 			</>
 		);
 	}
@@ -436,21 +433,10 @@ export class PlanFeaturesComparison extends Component {
 		const { planProperties, selectedFeature, withScroll } = this.props;
 
 		return map( planProperties, ( properties, mapIndex ) => {
-			const features = properties.availableAndMissingFeatures;
-			const { missingFeaturesForAnnualPlans, planName } = properties;
-
+			const { features, planName } = properties;
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
 			const currentFeature = features[ key ];
-
-			if ( ! currentFeature ) {
-				return;
-			}
-
-			const isFeatureMissingForPlan =
-				missingFeaturesForAnnualPlans.includes( currentFeature.getSlug() ) ||
-				! currentFeature.availableForCurrentPlan;
-			const type = isFeatureMissingForPlan ? 'missingFeature' : 'availableFeature';
 
 			const classes = classNames(
 				'plan-features-comparison__table-item',
@@ -466,7 +452,7 @@ export class PlanFeaturesComparison extends Component {
 
 			return currentFeature ? (
 				<td key={ `${ planName }-${ key }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature, mapIndex, type ) }
+					{ this.renderFeatureItem( currentFeature, mapIndex ) }
 				</td>
 			) : (
 				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
@@ -690,11 +676,6 @@ export default connect(
 					} );
 				}
 
-				const missingFeaturesForAnnualPlans = planConstantObj.getSignupCompareMissingFeatures();
-				const missingFeaturesForAnnualPlansObj = planConstantObj.getSignupCompareMissingFeatures
-					? getPlanFeaturesObject( missingFeaturesForAnnualPlans )
-					: [];
-
 				// Strip annual-only features out for the site's /plans page
 				if ( ! isInSignup || isPlaceholder ) {
 					planFeatures = planFeatures.filter(
@@ -710,8 +691,6 @@ export default connect(
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,
-					missingFeaturesForAnnualPlans,
-					availableAndMissingFeatures: [ ...planFeatures, ...missingFeaturesForAnnualPlansObj ],
 					isLandingPage,
 					isPlaceholder,
 					planConstantObj,
