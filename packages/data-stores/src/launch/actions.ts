@@ -55,20 +55,27 @@ export const setDomainSearch = ( domainSearch: string ) =>
 		domainSearch,
 	} as const );
 
-const __setBillingPeriod = ( billingPeriod: Plans.PlanBillingPeriod ) =>
+/**
+ * It's not recommended to export this function. We need the billing period
+ * to be a side-effect of the plan. Please don't export this action creator as you might
+ * create a discrepancy between the selected plan and the selected billing period
+ *
+ * @param billingPeriod the period
+ */
+const __internalSetBillingPeriod = ( billingPeriod: Plans.PlanBillingPeriod ) =>
 	( {
 		type: 'SET_PLAN_BILLING_PERIOD',
 		billingPeriod,
 	} as const );
 
-export const setPlanProductId = function* setPlanProductId( planProductId: number | undefined ) {
+export const setPlanProductId = function* ( planProductId: number | undefined ) {
 	const isFree = select( PLANS_STORE ).isPlanProductFree( planProductId );
 
 	if ( ! isFree ) {
 		const planProduct = select( PLANS_STORE ).getPlanProductById( planProductId );
 		const billingPeriod = planProduct?.billingPeriod ?? 'ANNUALLY';
 
-		yield __setBillingPeriod( billingPeriod );
+		yield __internalSetBillingPeriod( billingPeriod );
 	}
 
 	return {
