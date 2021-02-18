@@ -15,7 +15,13 @@ export const redirectParentWindow = ( url: string ): void => {
 };
 
 export const redirectToWpcomPath = ( url: string ): void => {
-	const origin = new URL( getCurrentLaunchFlowUrl() )?.origin || 'https://wordpress.com';
+	let origin = 'https://wordpress.com';
+
+	try {
+		origin = new URL( window?.calypsoifyGutenberg?.currentCalypsoUrl || '' ).origin;
+	} catch {
+		// do nothing, since origin already has a fallback value
+	}
 
 	const path = url.startsWith( '/' ) ? url : `/${ url }`;
 	redirectParentWindow( `${ origin }${ path }` );
