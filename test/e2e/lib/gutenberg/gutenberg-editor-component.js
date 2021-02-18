@@ -61,8 +61,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( dismissPageTemplateSelector ) {
 			await this.dismissPageTemplateSelector();
 		}
-		const editorWelcomeModal = new GuideComponent( this.driver, 4000 );
-		await editorWelcomeModal.dismissModal( '.components-guide' );
+		const editorWelcomeModal = new GuideComponent( this.driver );
+		await editorWelcomeModal.dismissModal( '.components-guide', 4000 );
 		return await this.closeSidebar();
 	}
 
