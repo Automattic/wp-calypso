@@ -329,7 +329,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
-				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed-' };
+				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed\\/' };
 				break;
 			case 'Form':
 				blockSettings = { prefix: 'jetpack-', blockClass: 'contact-form' };
@@ -388,8 +388,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			title
 		);
 
-		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.1 on production.
-		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
+		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 10.x on production.
+		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix.replace(
+			'/',
+			'-'
+		) }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
 		);
