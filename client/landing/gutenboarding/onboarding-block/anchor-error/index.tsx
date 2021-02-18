@@ -17,7 +17,7 @@ import './style.scss';
 
 const AnchorError: React.FunctionComponent = () => {
 	return (
-		<div className="anchor-error__container">
+		<div className="anchor-error__flex-container">
 			<div className="anchor-error__center">
 				<Title>{ __( 'We’re sorry!' ) }</Title>
 				<div className="anchor-error__text-container">
