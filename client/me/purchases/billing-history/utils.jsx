@@ -91,29 +91,29 @@ function renderTransactionQuantitySummaryForTitanMail(
 	translate
 ) {
 	if ( isRenewal ) {
-		return translate( 'Renewal for %(quantity)s mailbox', 'Renewal for %(quantity)s mailboxes', {
+		return translate( 'Renewal for %(quantity)d mailbox', 'Renewal for %(quantity)d mailboxes', {
 			args: { quantity: licensed_quantity },
 			count: licensed_quantity,
-			comment: '%(quantity)s is number of mailboxes renewed',
+			comment: '%(quantity)d is number of mailboxes renewed',
 		} );
 	}
 
 	if ( isUpgrade ) {
 		return translate(
-			'Purchase of %(quantity)s new mailbox',
-			'Purchase of %(quantity)s new mailboxes',
+			'Purchase of %(quantity)d additional mailbox',
+			'Purchase of %(quantity)d additional mailboxes',
 			{
 				args: { quantity: new_quantity },
 				count: new_quantity,
-				comment: '%(quantity)s is additional number of mailboxes purchased',
+				comment: '%(quantity)d is additional number of mailboxes purchased',
 			}
 		);
 	}
 
-	return translate( 'Purchase of %(quantity)s mailbox', 'Purchase of %(quantity)s mailboxes', {
+	return translate( 'Purchase of %(quantity)d mailbox', 'Purchase of %(quantity)d mailboxes', {
 		args: { quantity: licensed_quantity },
 		count: licensed_quantity,
-		comment: '%(quantity)s is number of mailboxes purchased',
+		comment: '%(quantity)d is number of mailboxes purchased',
 	} );
 }
 
@@ -125,25 +125,29 @@ function renderTransactionQuantitySummaryForGoogleWorkspace(
 	translate
 ) {
 	if ( isRenewal ) {
-		return translate( 'Renewal for %(quantity)s user', 'Renewal for %(quantity)s users', {
+		return translate( 'Renewal for %(quantity)d user', 'Renewal for %(quantity)d users', {
 			args: { quantity: licensed_quantity },
 			count: licensed_quantity,
-			comment: '%(quantity)s is number of users renewed',
+			comment: '%(quantity)d is number of users renewed',
 		} );
 	}
 
 	if ( isUpgrade ) {
-		return translate( 'Purchase of %(quantity)s new user', 'Purchase of %(quantity)s new users', {
-			args: { quantity: new_quantity },
-			count: new_quantity,
-			comment: '%(quantity)s is additional number of users purchased',
-		} );
+		return translate(
+			'Purchase of %(quantity)d additional user',
+			'Purchase of %(quantity)d additional users',
+			{
+				args: { quantity: new_quantity },
+				count: new_quantity,
+				comment: '%(quantity)d is additional number of users purchased',
+			}
+		);
 	}
 
-	return translate( 'Purchase of %(quantity)s user', 'Purchase of %(quantity)s users', {
+	return translate( 'Purchase of %(quantity)d user', 'Purchase of %(quantity)d users', {
 		args: { quantity: licensed_quantity },
 		count: licensed_quantity,
-		comment: '%(quantity)s is number of users purchased',
+		comment: '%(quantity)d is number of users purchased',
 	} );
 }
 
@@ -179,25 +183,29 @@ export function renderTransactionQuantitySummary(
 		);
 	}
 	if ( isRenewal ) {
-		return translate( 'Renewal for %(quantity)s item', 'Renewal for %(quantity)s items', {
+		return translate( 'Renewal for %(quantity)d item', 'Renewal for %(quantity)d items', {
 			args: { quantity: licensed_quantity },
 			count: licensed_quantity,
-			comment: '%(quantity)s is number of items renewed',
+			comment: '%(quantity)d is number of items renewed',
 		} );
 	}
 
 	if ( isUpgrade ) {
-		return translate( 'Purchase of %(quantity)s new item', 'Purchase of %(quantity)s new items', {
-			args: { quantity: new_quantity },
-			count: new_quantity,
-			comment: '%(quantity)s is additional number of items purchased',
-		} );
+		return translate(
+			'Purchase of %(quantity)d additional item',
+			'Purchase of %(quantity)d additional items',
+			{
+				args: { quantity: new_quantity },
+				count: new_quantity,
+				comment: '%(quantity)d is additional number of items purchased',
+			}
+		);
 	}
 
-	return translate( 'Purchase of %(quantity)s item', 'Purchase of %(quantity)s items', {
+	return translate( 'Purchase of %(quantity)d item', 'Purchase of %(quantity)d items', {
 		args: { quantity: licensed_quantity },
 		count: licensed_quantity,
-		comment: '%(quantity)s is number of items purchased',
+		comment: '%(quantity)d is number of items purchased',
 	} );
 }
 
