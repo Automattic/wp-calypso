@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
@@ -9,6 +10,7 @@ import { Button } from '@wordpress/components';
  * Internal dependencies
  */
 import { Title } from '@automattic/onboarding';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 /**
  * Style dependencies
@@ -16,6 +18,14 @@ import { Title } from '@automattic/onboarding';
 import './style.scss';
 
 const AnchorError: React.FunctionComponent = () => {
+	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
+
+	// If displaying this error, we don't want a title to display in the header.
+	// Clear title on load.
+	React.useEffect( () => {
+		setSiteTitle( '' );
+	}, [ setSiteTitle ] );
+
 	return (
 		<div className="anchor-error__flex-container">
 			<div className="anchor-error__center">
