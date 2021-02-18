@@ -52,7 +52,13 @@ const FocusedLaunch: React.FunctionComponent = () => {
 		}
 	}, [ selectedPlanProductId, planProductIdFromCart, setPlanProductId, hasPaidPlan ] );
 
-	// If there is a purchased plan, remove any selected plan from Launch store
+	// The user may have previously used the launch flow to pick a paid plan,
+	// but they may have then purchased that paid plan or other plan before deciding to continue Launch flow.
+	// In this scenario, the site has a paid plan but it is not launched yet.
+	// So when launch modal reopens, we need to unset the selected plan product
+	// id (that was previously selected, but is not needed anymore).
+	// This is one of the cases mentioned in
+	// https://github.com/Automattic/wp-calypso/issues/49958
 	const { unsetPlanProductId } = useDispatch( LAUNCH_STORE );
 	React.useEffect( () => {
 		if ( hasPaidPlan ) {

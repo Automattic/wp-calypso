@@ -21,8 +21,19 @@ export const redirectToWpcomPath = ( url: string ): void => {
 	redirectParentWindow( `${ origin }${ path }` );
 };
 
+/**
+ * Opens the checkout.
+ *
+ * If possible, the checkout is opened as a modal without a page redirect (for Focused Launch).
+ * Otherwise, as a fallback, the user is redirected to the /checkout page or the /home page
+ * (in this case, `siteSlug` and `isEcommerce` params are used to construct the redirect url)
+ *
+ * @param siteSlug The slug (id) of the current site.
+ * @param isEcommerce True if the eCommerce plan is going to be in the checkout.
+ * @param onSuccessCallback Called when the checkout opens as a modal and is completed successfully
+ */
 export const openCheckout = (
-	siteSlug: string = window?.currentSiteId?.toString() || '',
+	siteSlug = window._currentSiteId.toString(),
 	isEcommerce = false,
 	onSuccessCallback?: () => void
 ): void => {

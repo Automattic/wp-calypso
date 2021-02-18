@@ -43,8 +43,12 @@ const FocusedLaunchModal: React.FunctionComponent< FocusedLaunchModalProps > = (
 
 	React.useEffect( () => {
 		if ( isLaunchImmediately ) {
-			// if there was a plan in cart before redirect to payment processing,
+			// This happens when the user enters the block editor again after
+			// checkout redirection (i.e. when in Calypso, paying with paypal).
+			// If there was a plan in cart before redirect to payment processing,
 			// remove it now since we don't need to reload the page when dismissing Success view
+			// Calling `unsetPlanProductId()` won't be needed after
+			// https://github.com/Automattic/wp-calypso/issues/50185 is fixed.
 			unsetPlanProductId();
 			launchSite( siteId );
 		}

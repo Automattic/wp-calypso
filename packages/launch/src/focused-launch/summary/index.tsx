@@ -574,9 +574,11 @@ const Summary: React.FunctionComponent = () => {
 		}
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
+	// Launch the site directly if Free plan and subdomain are selected.
+	// Otherwise, show checkout as the next step.
 	const handleLaunch = () => {
-		// Launch the site directly if Free plan and subdomain are selected.
-		// Otherwise, show checkout as the next step.
+		// checking for not having a selected paid plan instead of checking for a selected Free plan because
+		// user may be entering the launch flow after they have paid for a plan.
 		if ( ! selectedDomain && ! isSelectedPlanPaid ) {
 			launchSite( siteId );
 		} else {
