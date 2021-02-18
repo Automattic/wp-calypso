@@ -584,7 +584,7 @@ function handleCloseEditor( calypsoPort ) {
 		} );
 	}
 
-	if ( typeof MainDashboardButton !== 'undefined' ) {
+	if ( ! MainDashboardButton ) {
 		return;
 	}
 
