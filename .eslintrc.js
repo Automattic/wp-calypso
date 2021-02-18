@@ -10,6 +10,7 @@ module.exports = {
 		'plugin:prettier/recommended',
 		'prettier/react',
 		'plugin:md/prettier',
+		'plugin:@wordpress/eslint-plugin/i18n',
 	],
 	overrides: [
 		{
@@ -385,5 +386,8 @@ module.exports = {
 				'@wordpress/components': [ '__experimentalNavigationBackButton' ],
 			},
 		],
+
+		// Disabled, because in packages we are using globally defined `__i18n_text_domain__` constant at compile time
+		'@wordpress/i18n-text-domain': 'off',
 	},
 };
