@@ -33,7 +33,7 @@ export const redirectToWpcomPath = ( url: string ): void => {
  * @param onSuccessCallback Called when the checkout opens as a modal and is completed successfully
  */
 export const openCheckout = (
-	siteSlug: string = window?.currentSiteId?.toString() || '',
+	siteSlug = window._currentSiteId.toString(),
 	isEcommerce = false,
 	onSuccessCallback?: () => void
 ): void => {
