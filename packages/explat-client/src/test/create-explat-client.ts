@@ -103,6 +103,34 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 			`Array []`
 		);
 	} );
+	it( `should return a fallback for a disabled Experiment`, async () => {
+		const mockedConfig = createMockedConfig();
+		const timestamp0 = 0;
+		const timestamp1 = 1;
+		spiedMonotonicNow.mockImplementationOnce( () => timestamp0 );
+		spiedMonotonicNow.mockImplementationOnce( () => timestamp1 );
+		( mockedConfig.fetchExperimentAssignment as MockedFunction ).mockImplementationOnce( () =>
+			delayedValue(
+				{
+					ttl: 60,
+					variations: {},
+				},
+				ONE_DELAY
+			)
+		);
+		const client = createExPlatClient( mockedConfig );
+		await expect(
+			client.loadExperimentAssignment( validExperimentAssignment.experimentName )
+		).resolves.toEqual( {
+			...validExperimentAssignment,
+			variationName: null,
+			retrievedTimestamp: timestamp1,
+			isFallbackExperimentAssignment: true,
+		} );
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
+			`Array []`
+		);
+	} );
 	it( `[anonId] should successfully load an ExperimentAssignment`, async () => {
 		const mockedConfig = createMockedConfig();
 		( mockedConfig.getAnonId as MockedFunction ).mockImplementationOnce( () =>
