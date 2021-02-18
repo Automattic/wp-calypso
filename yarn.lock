@@ -28246,6 +28246,13 @@ wp-error@^1.3.0:
     builtin-status-codes "^2.0.0"
     uppercamelcase "^1.1.0"
 
+wpcom-oauth-cors@^1.0.2-beta:
+  version "1.0.2-beta"
+  resolved "https://registry.yarnpkg.com/wpcom-oauth-cors/-/wpcom-oauth-cors-1.0.2-beta.tgz#1f0469e455bc0c342faaf1a7f3038d4a6f3eff54"
+  integrity sha512-ZZLlpmUF8gh7VSx7gC1HrXRDNl/2cA7QXowIoUjNg0VnkeRpZKxHfgzYNfWoG7egoHWDw6h2uVBzmyW+2M2F3w==
+  dependencies:
+    debug "3.1.0"
+
 wpcom-xhr-request@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/wpcom-xhr-request/-/wpcom-xhr-request-1.2.0.tgz#522cbe099ce64be6f7b4c1d14ca7a211c39bca48"
