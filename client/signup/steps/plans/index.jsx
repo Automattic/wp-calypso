@@ -205,6 +205,10 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
+		if ( this.props.isLoadingExperiment ) {
+			return '';
+		}
+
 		if ( this.props.shouldShowPlansRedesign ) {
 			return 'Choose a plan';
 		}
@@ -213,12 +217,22 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, shouldShowPlansRedesign, translate } = this.props;
+		const {
+			hideFreePlan,
+			subHeaderText,
+			shouldShowPlansRedesign,
+			isLoadingExperiment,
+			translate,
+		} = this.props;
+
+		if ( isLoadingExperiment ) {
+			return '';
+		}
 
 		if ( ! hideFreePlan ) {
 			if ( shouldShowPlansRedesign ) {
 				return translate(
-					'Cancel for a full refund within 30 days risk-free. Or {{link}}start with a free site{{/link}}.',
+					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
 					{
 						components: {
 							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
@@ -235,7 +249,7 @@ export class PlansStep extends Component {
 		}
 
 		if ( shouldShowPlansRedesign ) {
-			return "Cancel for a full refund within 30 days. There's no risk.";
+			return "Pick one that's right for you and unlock features that help you grow.";
 		}
 
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
