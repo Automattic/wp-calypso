@@ -33,7 +33,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import './style.scss';
 
 const validateTrackingId = ( code ) =>
-	! code || code.match( /^[a-fA-F0-9]+$/i ) || code.match( /(?<=token":\s").*?(?=")/ );
+	! code || code.match( /^[a-fA-F0-9]+$/i ) || code.match( /(.*?)(token":\s")(.*?)(")/ );
 
 export function CloudflareAnalyticsSettings( {
 	fields,
@@ -97,9 +97,9 @@ export function CloudflareAnalyticsSettings( {
 	};
 
 	const processCloudflareCode = () => {
-		const token = fields.jetpack_cloudflare_analytics?.code?.match( /(?<=token":\s").*?(?=")/ );
+		const token = fields.jetpack_cloudflare_analytics?.code?.match( /(.*?)(token":\s")(.*?)(")/ );
 		if ( token ) {
-			handleFieldChange( token[ 0 ] );
+			handleFieldChange( token[ 3 ] );
 		}
 	};
 
