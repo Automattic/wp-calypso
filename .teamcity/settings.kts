@@ -344,7 +344,7 @@ object RunAllUnitTests : BuildType({
 				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
 					echo "Repository contains duplicated packages: "
 					echo ""
-					echo ${'$'}DUPLICATED_PACKAGES
+					echo "${'$'}DUPLICATED_PACKAGES"
 					echo ""
 					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
 					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
