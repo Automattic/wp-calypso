@@ -45,7 +45,7 @@ describe( 'experiment-assignment-store', () => {
 		expect( () =>
 			experimentAssignmentStore.store( {
 				...validFallbackExperimentAssignment,
-				experimentName: 'invalid-experiment-name',
+				experimentName: undefined,
 			} )
 		).toThrowErrorMatchingInlineSnapshot( `"Invalid ExperimentAssignment"` );
 	} );
