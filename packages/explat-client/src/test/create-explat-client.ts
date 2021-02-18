@@ -393,138 +393,82 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 } );
 
 describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
-	it( `should respect the ttl`, async () => {
-		const mockedConfig = createMockedConfig();
-		mockFetchExperimentAssignmentToMatchExperimentAssignment(
-			mockedConfig,
-			validExperimentAssignment
-		);
-		const client = createExPlatClient( mockedConfig );
+	it( `should respect the ttl (including developmentMode)`, async () => {
+		const [ runTest, runDevelopmentModeTest ] = [
+			createMockedConfig(),
+			createMockedConfig( { isDevelopmentMode: true } ),
+		].map( ( mockedConfig ) => async () => {
+			mockFetchExperimentAssignmentToMatchExperimentAssignment(
+				mockedConfig,
+				validExperimentAssignment
+			);
+			const client = createExPlatClient( mockedConfig );
 
-		const firstDate = Date.now();
-		spiedMonotonicNow.mockImplementation( () => firstDate );
-		const experimentAssignmentA = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentB = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentC = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentD = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentB );
-		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentC );
-		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentD );
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			1
-		);
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			`Array []`
-		);
+			const firstDate = Date.now();
+			spiedMonotonicNow.mockImplementation( () => firstDate );
+			const experimentAssignmentA = client.loadExperimentAssignment(
+				validExperimentAssignment.experimentName
+			);
+			const experimentAssignmentB = client.loadExperimentAssignment(
+				validExperimentAssignment.experimentName
+			);
+			const experimentAssignmentC = client.loadExperimentAssignment(
+				validExperimentAssignment.experimentName
+			);
+			const experimentAssignmentD = client.loadExperimentAssignment(
+				validExperimentAssignment.experimentName
+			);
+			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentB );
+			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentC );
+			expect( await experimentAssignmentA ).toEqual( await experimentAssignmentD );
+			expect(
+				( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls
+			).toHaveLength( 1 );
+			expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
+				`Array []`
+			);
 
-		const dateIncreasePastTtl = validExperimentAssignment.ttl * 1000 + 1;
-		const refreshedValidExperimentAssignment = {
-			...validExperimentAssignment,
-			variationName: null,
-			retrievedTimestamp: Date.now() + dateIncreasePastTtl,
-		};
-		mockFetchExperimentAssignmentToMatchExperimentAssignment(
-			mockedConfig,
-			refreshedValidExperimentAssignment
-		);
-		spiedMonotonicNow.mockImplementation( () => Date.now() + dateIncreasePastTtl );
-		const experimentAssignmentE = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentF = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentG = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentH = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		expect( await experimentAssignmentE ).toEqual( await experimentAssignmentF );
-		expect( await experimentAssignmentE ).toEqual( await experimentAssignmentG );
-		expect( await experimentAssignmentE ).toEqual( await experimentAssignmentH );
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			2
-		);
-		expect( ( await experimentAssignmentA ).retrievedTimestamp ).toBeLessThan(
-			( await experimentAssignmentE ).retrievedTimestamp
-		);
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
-			`Array []`
-		);
+			const dateIncreasePastTtl = validExperimentAssignment.ttl * 1000 + 1;
+			const refreshedValidExperimentAssignment = {
+				...validExperimentAssignment,
+				variationName: null,
+				retrievedTimestamp: Date.now() + dateIncreasePastTtl,
+			};
+			mockFetchExperimentAssignmentToMatchExperimentAssignment(
+				mockedConfig,
+				refreshedValidExperimentAssignment
+			);
+			spiedMonotonicNow.mockImplementation( () => Date.now() + dateIncreasePastTtl );
+			const experimentAssignmentE = client.loadExperimentAssignment(
+				validExperimentAssignment.experimentName
+			);
+			const experimentAssignmentF = client.loadExperimentAssignment(
+				validExperimentAssignment.experimentName
+			);
+			const experimentAssignmentG = client.loadExperimentAssignment(
+				validExperimentAssignment.experimentName
+			);
+			const experimentAssignmentH = client.loadExperimentAssignment(
+				validExperimentAssignment.experimentName
+			);
+			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentF );
+			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentG );
+			expect( await experimentAssignmentE ).toEqual( await experimentAssignmentH );
+			expect(
+				( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls
+			).toHaveLength( 2 );
+			expect( ( await experimentAssignmentA ).retrievedTimestamp ).toBeLessThan(
+				( await experimentAssignmentE ).retrievedTimestamp
+			);
+			expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot(
+				`Array []`
+			);
+		} );
+
+		await runTest();
+		await runDevelopmentModeTest();
 	} );
 
-	it( `[developmentMode] should respect the ttl`, async () => {
-		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
-		mockFetchExperimentAssignmentToMatchExperimentAssignment(
-			mockedConfig,
-			validExperimentAssignment
-		);
-		const client = createExPlatClient( mockedConfig );
-
-		const firstDate = Date.now();
-		spiedMonotonicNow.mockImplementation( () => firstDate );
-		const experimentAssignmentA = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentB = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentC = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentD = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentB );
-		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentC );
-		expect( await experimentAssignmentA ).toEqual( await experimentAssignmentD );
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			1
-		);
-
-		jest.resetAllMocks();
-		const dateIncreasePastTtl = validExperimentAssignment.ttl * 1000 + 1;
-		const refreshedValidExperimentAssignment = {
-			...validExperimentAssignment,
-			variationName: null,
-			retrievedTimestamp: Date.now() + dateIncreasePastTtl,
-		};
-		mockFetchExperimentAssignmentToMatchExperimentAssignment(
-			mockedConfig,
-			refreshedValidExperimentAssignment
-		);
-		spiedMonotonicNow.mockImplementation( () => Date.now() + dateIncreasePastTtl );
-		const experimentAssignmentE = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentF = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentG = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		const experimentAssignmentH = client.loadExperimentAssignment(
-			validExperimentAssignment.experimentName
-		);
-		expect( await experimentAssignmentE ).toEqual( await experimentAssignmentF );
-		expect( await experimentAssignmentE ).toEqual( await experimentAssignmentG );
-		expect( await experimentAssignmentE ).toEqual( await experimentAssignmentH );
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			1
-		);
-		expect( ( await experimentAssignmentA ).retrievedTimestamp ).toBeLessThan(
-			( await experimentAssignmentE ).retrievedTimestamp
-		);
-	} );
 	it( `should only make one request even if it fails, returning the same fallback - until ttl is over with successful next`, async () => {
 		const mockedConfig = createMockedConfig();
 		const client = createExPlatClient( mockedConfig );
@@ -630,6 +574,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 			`Array []`
 		);
 	} );
+
 	it( `[developmentMode] should only make one request even if it fails, throwing the same error`, async () => {
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
@@ -766,6 +711,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
 		);
 	} );
+
 	it( `should throw when the matching experiment hasn't loaded yet but is currently loading`, () => {
 		const mockedConfig = createMockedConfig();
 		const client = createExPlatClient( mockedConfig );
@@ -779,6 +725,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			`"Trying to dangerously get an ExperimentAssignment that hasn't loaded."`
 		);
 	} );
+
 	it( `should return a loaded ExperimentAssignment`, async () => {
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
@@ -794,6 +741,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			client.dangerouslyGetExperimentAssignment( validExperimentAssignment.experimentName )
 		).toEqual( validExperimentAssignment );
 	} );
+
 	it( `[developerMode] should throw when run too soon after loading an ExperimentAssignment`, async () => {
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
@@ -814,6 +762,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 			`"Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it."`
 		);
 	} );
+
 	it( `[developmentMode] should return a loaded ExperimentAssignment when not run too soon after`, async () => {
 		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
