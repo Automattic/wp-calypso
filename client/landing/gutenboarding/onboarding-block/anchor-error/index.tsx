@@ -27,13 +27,13 @@ const AnchorError: React.FunctionComponent = () => {
 				</div>
 
 				<div className="anchor-error__button-container">
-					<Button isPrimary href="/new" className="anchor-error__button">
-						{ __( 'Continue' ) }
+					<Button className="anchor-error__button" isPrimary href="/new">
+						<span>{ __( 'Continue' ) }</span>
 					</Button>
 				</div>
 				<div className="anchor-error__link-container">
-					<Button isLink href="https://anchor.fm">
-						{ __( 'Back to Anchor.fm' ) }
+					<Button className="anchor-error__link" isLink href="https://anchor.fm">
+						<span>{ __( 'Back to Anchor.fm' ) }</span>
 					</Button>
 				</div>
 			</div>
