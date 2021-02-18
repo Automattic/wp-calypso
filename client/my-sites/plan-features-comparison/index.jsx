@@ -396,7 +396,11 @@ export class PlanFeaturesComparison extends Component {
 	renderAnnualPlansFeatureNotice( feature ) {
 		const { translate, isInSignup } = this.props;
 
-		if ( ! isInSignup || ! feature.availableOnlyForAnnualPlans ) {
+		if (
+			! isInSignup ||
+			! feature.availableOnlyForAnnualPlans ||
+			feature.availableForCurrentPlan
+		) {
 			return '';
 		}
 
