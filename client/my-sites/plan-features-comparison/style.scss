@@ -173,6 +173,12 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-comparison__table-item.is-bold {
 		font-weight: bold;
 	}
+
+	.plan-features-comparison__row:last-of-type  .plan-features-comparison__table-item.is-last-feature {
+		.plan-features-comparison__item-info {
+			padding-bottom: 30px;
+		}
+	}
 }
 
 
