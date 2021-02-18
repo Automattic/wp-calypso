@@ -616,9 +616,11 @@ export default connect(
 
 							break;
 						default:
-							planFeatures = getPlanFeaturesObject(
-								planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
-							);
+							if ( planConstantObj.getSignupCompareAvailableFeatures ) {
+								planFeatures = getPlanFeaturesObject(
+									planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
+								);
+							}
 					}
 				}
 
