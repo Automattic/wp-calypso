@@ -4,8 +4,6 @@
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { pick } from 'lodash';
-import url from 'url'; // eslint-disable-line no-restricted-imports
 import page from 'page';
 import classnames from 'classnames';
 
@@ -26,6 +24,7 @@ import LicensePreview, {
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
 import Gridicon from 'calypso/components/gridicon';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Style dependencies
@@ -53,15 +52,6 @@ export default function LicenseList( {
 	const isFetching = useSelector( isFetchingLicenses );
 	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;
 
-	const buildSortingUrl = ( field: string, direction: string ): string => {
-		const parsedUrl = pick( url.parse( window.location.href, true ), 'pathname', 'query' );
-
-		return url.format( {
-			...parsedUrl,
-			query: { ...parsedUrl.query, sort_field: field, sort_direction: direction },
-		} );
-	};
-
 	const setSortingConfig = ( newSortField: string ): void => {
 		let newSortDirection = 'asc';
 
@@ -69,7 +59,10 @@ export default function LicenseList( {
 			newSortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
 		}
 
-		page( buildSortingUrl( newSortField, newSortDirection ) );
+		const queryParams = { sort_direction: newSortDirection, sort_field: newSortField };
+		const currentPath = window.location.pathname + window.location.search;
+
+		page( addQueryArgs( queryParams, currentPath ) );
 	};
 
 	return (
