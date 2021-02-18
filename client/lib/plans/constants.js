@@ -162,6 +162,8 @@ export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS =
 	'email-live-chat-support-business-days';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS = 'email-live-chat-support-all-days';
+export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
+export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS = 'live-chat-support-business-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';

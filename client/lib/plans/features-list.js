@@ -1622,6 +1622,18 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Premium design options customized for online stores' ),
 		getDescription: () => {},
 	},
+
+	[ constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
+		getSlug: () => constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		getTitle: () => i18n.translate( 'Live chat support 24X5' ),
+		getDescription: () => {},
+	},
+
+	[ constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
+		getSlug: () => constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
+		getDescription: () => {},
+	},
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
