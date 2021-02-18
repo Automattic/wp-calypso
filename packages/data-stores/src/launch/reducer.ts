@@ -11,6 +11,7 @@ import type * as DomainSuggestions from '../domain-suggestions';
 import { LaunchStep } from './data';
 import type { LaunchStepType } from './types';
 import type { LaunchAction } from './actions';
+import type { Plans } from '..';
 
 const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name, action ) => {
 	if ( action.type === 'SET_STEP' ) {
@@ -59,6 +60,16 @@ const planProductId: Reducer< number | undefined, LaunchAction > = ( state, acti
 	}
 	if ( action.type === 'UNSET_PLAN_PRODUCT_ID' ) {
 		return undefined;
+	}
+	return state;
+};
+
+const planBillingPeriod: Reducer< Plans.PlanBillingPeriod, LaunchAction > = (
+	state = 'ANNUALLY',
+	action
+) => {
+	if ( action.type === 'SET_PLAN_BILLING_PERIOD' ) {
+		return action.billingPeriod;
 	}
 	return state;
 };
@@ -155,6 +166,7 @@ const reducer = combineReducers( {
 	domain,
 	confirmedDomainSelection,
 	domainSearch,
+	planBillingPeriod,
 	planProductId,
 	isSidebarOpen,
 	isSidebarFullscreen,

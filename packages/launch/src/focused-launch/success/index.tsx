@@ -28,7 +28,7 @@ const Success: React.FunctionComponent = () => {
 	const isSiteLaunching = useSelect( ( select ) => select( SITE_STORE ).isSiteLaunching( siteId ) );
 
 	const isSelectedPlanPaid = useSelect(
-		( select ) => !! select( LAUNCH_STORE ).getPaidPlanProductId(),
+		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
 		[]
 	);
 

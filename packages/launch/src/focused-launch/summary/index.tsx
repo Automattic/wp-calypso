@@ -32,13 +32,13 @@ import FocusedLaunchSummaryItem, {
 	LeadingContentSide,
 	TrailingContentSide,
 } from './focused-launch-summary-item';
-import { LAUNCH_STORE, SITE_STORE, Plan } from '../../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../../stores';
 import LaunchContext from '../../context';
 import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
+import type { Plan, PlanProduct } from '../../stores';
 
 import './style.scss';
-import { PLANS_STORE } from '@automattic/data-stores/src/launch/constants';
 
 const bulb = (
 	<SVG viewBox="0 0 24 24">
@@ -284,39 +284,44 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const selectedPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getSelectedPlanProductId()
-	);
+	const [ selectedPlanProductId, billingPeriod ] = useSelect( ( select ) => [
+		select( LAUNCH_STORE ).getSelectedPlanProductId(),
+		select( LAUNCH_STORE ).getLastPlanBillingPeriod(),
+	] );
 
-	const selectedPaidPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getPaidPlanProductId()
-	);
-
-	const { selectedPlan, selectedPaidPlan, billingPeriod } = useSelect( ( select ) => {
+	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
 		const plansStore = select( PLANS_STORE );
 
 		return {
 			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
-			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
-			billingPeriod:
-				plansStore.getPlanProductById( selectedPlanProductId )?.billingPeriod || 'ANNUALLY',
+			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
 		};
 	} );
 
-	const { defaultPaidPlan, defaultFreePlan } = usePlans();
-
 	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
+	const [ nonDefaultPaidPlanProduct, setNonDefaultPaidPlanProduct ] = React.useState<
+		PlanProduct | undefined
+	>();
+
+	const {
+		defaultPaidPlan,
+		defaultFreePlan,
+		defaultPaidPlanProduct,
+		defaultFreePlanProduct,
+	} = usePlans( billingPeriod );
 
 	React.useEffect( () => {
 		if (
-			selectedPaidPlan &&
+			selectedPlan &&
 			defaultPaidPlan &&
-			selectedPaidPlan.periodAgnosticSlug !== defaultPaidPlan.periodAgnosticSlug
+			! selectedPlan.isFree &&
+			selectedPlan.periodAgnosticSlug !== defaultPaidPlan.periodAgnosticSlug
 		) {
-			setNonDefaultPaidPlan( selectedPaidPlan );
+			setNonDefaultPaidPlan( selectedPlan );
+			setNonDefaultPaidPlanProduct( selectedPlanProduct );
 		}
-	}, [ selectedPaidPlan, defaultPaidPlan, nonDefaultPaidPlan ] );
+	}, [ selectedPlan, defaultPaidPlan, nonDefaultPaidPlan, selectedPlanProduct ] );
 
 	const isPlanSelected = ( plan: Plan ) =>
 		plan && plan.periodAgnosticSlug === selectedPlan?.periodAgnosticSlug;
@@ -327,13 +332,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
 		: [ defaultPaidPlan, defaultFreePlan ];
 
-	const allAvailablePlansProducts = useSelect(
-		( select ) =>
-			allAvailablePlans.map( ( plan ) =>
-				select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, billingPeriod )
-			),
-		[ allAvailablePlans, billingPeriod ]
-	);
+	const allAvailablePlansProducts: ( PlanProduct | undefined )[] = nonDefaultPaidPlanProduct
+		? [ defaultPaidPlanProduct, nonDefaultPaidPlanProduct, defaultFreePlanProduct ]
+		: [ defaultPaidPlanProduct, defaultFreePlanProduct ];
 
 	const popularLabel = __( 'Popular', __i18n_text_domain__ );
 
@@ -411,11 +412,16 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							</span>
 						</p>
 						<div>
-							{ allAvailablePlans.map( ( plan, index ) =>
-								typeof plan === 'undefined' ||
-								typeof allAvailablePlansProducts?.[ index ] === 'undefined' ? (
-									<FocusedLaunchSummaryItem key={ index } isLoading />
-								) : (
+							{ allAvailablePlans.map( ( plan, index ) => {
+								const planProduct = allAvailablePlansProducts[ index ];
+								if (
+									! plan ||
+									! planProduct ||
+									plan.periodAgnosticSlug !== planProduct?.periodAgnosticSlug
+								) {
+									return <FocusedLaunchSummaryItem key={ index } isLoading />;
+								}
+								return (
 									<FocusedLaunchSummaryItem
 										key={ plan.periodAgnosticSlug }
 										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
@@ -453,8 +459,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											</TrailingContentSide>
 										) }
 									</FocusedLaunchSummaryItem>
-								)
-							) }
+								);
+							} ) }
 						</div>
 						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all plans', __i18n_text_domain__ ) }
@@ -530,7 +536,7 @@ const Summary: React.FunctionComponent = () => {
 	}, [] );
 
 	const isSelectedPlanPaid = useSelect(
-		( select ) => !! select( LAUNCH_STORE ).getPaidPlanProductId(),
+		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
 		[]
 	);
 
