@@ -31,9 +31,9 @@ const AnchorError: React.FunctionComponent = () => {
 			<div className="anchor-error__center">
 				<Title>{ __( 'We’re sorry!' ) }</Title>
 				<div className="anchor-error__text-container">
-					We’re unable to locate your podcast.
+					{ __( 'We’re unable to locate your podcast.' ) }
 					<br />
-					Return to Anchor or continue with site creation.
+					{ __( 'Return to Anchor or continue with site creation.' ) }
 				</div>
 
 				<div className="anchor-error__button-container">
