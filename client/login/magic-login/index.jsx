@@ -13,6 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import { login } from 'calypso/lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -141,8 +142,15 @@ class MagicLogin extends React.Component {
 	}
 
 	render() {
-		const formProps = {
+		// If this is part of the Jetpack login flow and the feature flag is enabled,
+		// instruct the magic link API to create a user account when the email address
+		// doesn't have a corresponding WP.com account.
+		const allowUserAccountCreation =
+			this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' );
+
+		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
+			allowUserAccountCreation,
 		};
 
 		return (
@@ -158,7 +166,7 @@ class MagicLogin extends React.Component {
 
 				<GlobalNotices id="notices" />
 
-				<RequestLoginEmailForm { ...formProps } />
+				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
 
 				{ this.renderLinks() }
 			</Main>

@@ -34,6 +34,7 @@ import { sendEmailLogin } from 'calypso/state/auth/actions';
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {
 		// mapped to state
+		allowUserAccountCreation: PropTypes.bool,
 		currentUser: PropTypes.object,
 		emailRequested: PropTypes.bool,
 		isFetching: PropTypes.bool,
@@ -89,6 +90,7 @@ class RequestLoginEmailForm extends React.Component {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
 			...( this.props.flow ? { flow: this.props.flow } : {} ),
+			createAccount: this.props.allowUserAccountCreation,
 		} );
 	};
 
