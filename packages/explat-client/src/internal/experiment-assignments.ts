@@ -3,7 +3,6 @@
  */
 import type { ExperimentAssignment } from '../types';
 import * as Timing from './timing';
-import { isName } from './validations';
 
 /**
  * Check if an ExperimentAssignment is still alive (as in the TTL).
@@ -33,19 +32,10 @@ const fallbackExperimentAssignmentTtl = 60;
  */
 export const createFallbackExperimentAssignment = (
 	experimentName: string
-): ExperimentAssignment => {
-	const experimentAssignment = {
-		experimentName: experimentName,
-		variationName: null,
-		retrievedTimestamp: Timing.monotonicNow(),
-		ttl: fallbackExperimentAssignmentTtl,
-		isFallbackExperimentAssignment: true,
-	};
-
-	if ( ! isName( experimentName ) ) {
-		experimentAssignment.experimentName = 'invalid_original_experiment_name';
-		experimentAssignment.originalExperimentName = experimentName;
-	}
-
-	return experimentAssignment;
-};
+): ExperimentAssignment => ( {
+	experimentName: experimentName,
+	variationName: null,
+	retrievedTimestamp: Timing.monotonicNow(),
+	ttl: fallbackExperimentAssignmentTtl,
+	isFallbackExperimentAssignment: true,
+} );
