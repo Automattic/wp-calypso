@@ -18,6 +18,7 @@ import './style.scss';
 const blockPatternsImage = 'https://s0.wp.com/i/whats-new/block-patterns.png';
 const dragDropImage = 'https://s0.wp.com/i/whats-new/drag-drop.png';
 const singlePageSiteImage = 'https://s0.wp.com/i/whats-new/single-page-website.png';
+const anchorFmImage = 'https://s0.wp.com/i/whats-new/single-page-website.png';
 
 function WhatsNewMenuItem() {
 	const { toggleWhatsNew } = useDispatch( 'automattic/whats-new' );
@@ -108,6 +109,27 @@ function getWhatsNewPages() {
 				/* translators: the embed is a link */
 				__(
 					'<p>Introducing our freshly-launched Blank Canvas theme, which is optimized for single-page websites.</p><p><Link>Learn more</Link></p>',
+					'full-site-editing'
+				),
+				{
+					Link: (
+						<a
+							href="https://wordpress.com/blog/2021/01/25/building-single-page-websites-on-wordpress-com/"
+							target="_blank"
+							rel="noreferrer"
+						/>
+					),
+					p: <p />,
+				}
+			),
+		},
+		{
+			imgSrc: anchorFmImage,
+			heading: __( 'Create podcast episodes automatically', 'full-site-editing' ),
+			description: createInterpolateElement(
+				/* translators: the embed is a link */
+				__(
+					'<p>Instantly convert any page or post’s text into an Anchor podcast. This new text-to-speech feature automatically transforms your written words into speech – no voice recording required.</p><p><Link>Learn more</Link></p>',
 					'full-site-editing'
 				),
 				{
