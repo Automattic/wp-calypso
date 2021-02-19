@@ -119,7 +119,7 @@ export function useIsAnchorFm(): boolean {
 	return isAnchorPodcastIdValid( anchorFmPodcastId );
 }
 
-function isAnchorPodcastIdValid( anchorFmPodcastId: string | null ): boolean {
+export function isAnchorPodcastIdValid( anchorFmPodcastId: string | null ): boolean {
 	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
 }
 
