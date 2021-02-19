@@ -18,11 +18,14 @@ jest.mock( 'calypso/lib/analytics/tracks' );
 const mockedRecordTracksEvent = Tracks.recordTracksEvent as jest.MockedFunction<
 	( event: string ) => void
 >;
-jest.mock( 'calypso/lib/analytics/ad-tracking' );
-// const mockedTracksAnonymousUserId = mockedAdTracking.tracksAnonymousUserId as jest.MockedFunction<
-// 	() => string | null
-// >;
-const mockedTracksAnonymousUserId = jest.spyOn( AdTracking, 'tracksAnonymousUserId' );
+// We have to mock this lib like this as automocking will try to pull in external packages and
+// that doesn't seem to work.
+jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
+	tracksAnonymousUserId: jest.fn(),
+} ) );
+const mockedTracksAnonymousUserId = AdTracking.tracksAnonymousUserId as jest.MockedFunction<
+	() => string | null
+>;
 jest.mock( 'calypso/lib/user/utils' );
 const mockedIsLoggedIn = jest.spyOn( userUtils, 'isLoggedIn' );
 
@@ -38,18 +41,25 @@ function setBrowserContext() {
 
 beforeEach( () => {
 	jest.resetAllMocks();
+	setBrowserContext();
 } );
 
 describe( 'initializeAnonId', () => {
-	it( 'should throw error when run under SSR', async () => {
+	it( 'should return null and log error when run under SSR', async () => {
 		setSsrContext();
-		await expect( AnonId.initializeAnonId() ).rejects.toThrowErrorMatchingInlineSnapshot(
-			`"Trying to initialize anonId outside of a browser context."`
-		);
+		await expect( AnonId.initializeAnonId() ).resolves.toBe( null );
+		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
+		Array [
+		  Array [
+		    Object {
+		      "message": "Trying to initialize anonId outside of a browser context.",
+		    },
+		  ],
+		]
+	` );
 	} );
 
 	it( 'should work as expected when the anonId is immediately available', async () => {
-		setBrowserContext();
 		mockedTracksAnonymousUserId.mockImplementationOnce( () => 'anon-id-123' );
 		expect( await AnonId.initializeAnonId() ).toBe( 'anon-id-123' );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
@@ -58,7 +68,6 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should work as expected when the anonId is available after a few tries', async () => {
 		jest.useFakeTimers();
-		setBrowserContext();
 		mockedTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedTracksAnonymousUserId.mockImplementationOnce( () => undefined );
 		mockedTracksAnonymousUserId.mockImplementationOnce( () => '' );
@@ -73,18 +82,16 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should give up after many polling attempts and return null', async () => {
 		jest.useFakeTimers();
-		setBrowserContext();
 		mockedTracksAnonymousUserId.mockImplementation( () => null );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
 		jest.runAllTimers();
 		expect( await initializeAnonIdPromise ).toBe( null );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
-		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 100 );
+		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 50 );
 		jest.useRealTimers();
 	} );
 
 	it( 'should give up immediately and return null if immediately logged in', async () => {
-		setBrowserContext();
 		mockedTracksAnonymousUserId.mockImplementation( () => `anon-id-shouldn't-appear` );
 		mockedIsLoggedIn.mockImplementationOnce( () => true );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
@@ -95,7 +102,6 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should give up and return null if logged in', async () => {
 		jest.useFakeTimers();
-		setBrowserContext();
 		mockedTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedTracksAnonymousUserId.mockImplementationOnce( () => `anon-id-should't-appear` );
@@ -127,10 +133,13 @@ describe( 'getAnonId', () => {
 	} );
 
 	it( 'should return the anonId from initialisation', async () => {
-		setBrowserContext();
 		const anonId = 'anon-id-234';
 		mockedTracksAnonymousUserId.mockImplementationOnce( () => anonId );
 		expect( await AnonId.initializeAnonId() ).toBe( anonId );
 		expect( await AnonId.getAnonId() ).toBe( anonId );
+
+		mockedIsLoggedIn.mockImplementationOnce( () => true );
+		expect( await AnonId.initializeAnonId() ).toBe( null );
+		expect( await AnonId.getAnonId() ).toBe( null );
 	} );
 } );

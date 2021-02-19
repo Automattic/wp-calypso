@@ -48,6 +48,7 @@ const anonIdPollingIntervalMaxAttempts = 50; // 100 * 50 = 5000 = 5 seconds
 export const initializeAnonId = async (): Promise< string | null > => {
 	if ( typeof window === 'undefined' ) {
 		logErrorOrThrowInDevelopmentMode( 'Trying to initialize anonId outside of a browser context.' );
+		return null;
 	}
 
 	recordTracksEvent( 'calypso_explat_initialization' );
