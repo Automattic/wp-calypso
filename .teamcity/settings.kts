@@ -1338,20 +1338,20 @@ object WPComPlugins_EditorToolKit : BuildType({
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../editing-toolkit-last-build/readme.txt
 
 				if diff -rq ./editing-toolkit-plugin/ ../../editing-toolkit-last-build/ ; then
-					echo "The build matches trunk. Therefore, this build has no effect."
-				else
-					echo "The build is different from trunk."
-					cd editing-toolkit-plugin/
-
-					# Metadata file with info for the download script.
-					tee build_meta.txt <<-EOM
-						commit_hash=%build.vcs.number%
-						commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
-						build_number=%build.number%
-						EOM
-
-					zip -r ../../../editing-toolkit.zip .
+					# Cancel build.
+					echo "##teamcity[buildStop comment='The build matches trunk. Therefore, this build has no effect.' readdToQueue='true']"
 				fi
+				echo "The build is different from trunk."
+				cd editing-toolkit-plugin/
+
+				# Metadata file with info for the download script.
+				tee build_meta.txt <<-EOM
+					commit_hash=%build.vcs.number%
+					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+					build_number=%build.number%
+					EOM
+
+				zip -r ../../../editing-toolkit.zip .
 
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
