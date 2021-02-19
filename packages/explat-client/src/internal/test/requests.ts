@@ -82,6 +82,35 @@ describe( 'fetchExperimentAssignment', () => {
 		] );
 	} );
 
+	it( 'should return an experiment assignment with a ttl as the maximum of the ttl provided from the server and the set minimum ttl', async () => {
+		const outputTtl = async ( inputTtl: number ) => {
+			mockedFetchExperimentAssignment.mockReset();
+			mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
+			mockFetchExperimentAssignmentToMatchExperimentAssignment( {
+				...validExperimentAssignment,
+				ttl: inputTtl,
+			} );
+			const { ttl } = await Requests.fetchExperimentAssignment(
+				mockedConfig,
+				validExperimentAssignment.experimentName
+			);
+			return ttl;
+		};
+
+		await expect( outputTtl( ExperimentAssignments.minimumTtl - 1 ) ).resolves.toBe(
+			ExperimentAssignments.minimumTtl
+		);
+		await expect( outputTtl( ExperimentAssignments.minimumTtl ) ).resolves.toBe(
+			ExperimentAssignments.minimumTtl
+		);
+		await expect( outputTtl( ExperimentAssignments.minimumTtl + 1 ) ).resolves.toBe(
+			ExperimentAssignments.minimumTtl + 1
+		);
+		await expect( outputTtl( ExperimentAssignments.minimumTtl + 1000 ) ).resolves.toBe(
+			ExperimentAssignments.minimumTtl + 1000
+		);
+	} );
+
 	it( 'should throw for an invalid response', async () => {
 		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
