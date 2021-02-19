@@ -175,8 +175,8 @@ export const FEATURES_LIST = {
 	},
 
 	[ constants.FEATURE_HOSTING ]: {
-		getSlug: () => constants.FEATURE_HOSTING,
-		getTitle: () => i18n.translate( 'Fully hosted site' ),
+		getSlug: () => constants.FEATURE_SITE_HOSTING,
+		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'Site hosting is included with your plan, eliminating additional cost and technical hassle.'
