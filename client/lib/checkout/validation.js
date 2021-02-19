@@ -141,16 +141,21 @@ export function tokenFieldRules() {
  * Returns a validation ruleset to use for the given payment type
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe
+ * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
-		case 'credit-card':
+		case 'ebanx':
 			return mergeValidationRules(
 				getCreditCardFieldRules(),
 				getConditionalCreditCardRules( paymentDetails ),
 				getEbanxCreditCardRules( paymentDetails )
+			);
+		case 'credit-card':
+			return mergeValidationRules(
+				getCreditCardFieldRules(),
+				getConditionalCreditCardRules( paymentDetails )
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
