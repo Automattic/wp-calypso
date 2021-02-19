@@ -7,6 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -18,9 +19,10 @@ import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { canRedirect } from 'calypso/lib/domains';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
-import { addItem } from 'calypso/lib/cart/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { withoutHttp } from 'calypso/lib/url';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 
 /**
  * Style dependencies
@@ -35,6 +37,16 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	state = { searchQuery: '' };
+
+	isMounted = false;
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
 
 	render() {
 		const price = get( this.props, 'products.offsite_redirect.cost_display', null );
@@ -121,8 +133,13 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	addSiteRedirectToCart = ( domain ) => {
-		addItem( siteRedirect( { domain } ) );
-		page( '/checkout/' + this.props.selectedSite.slug );
+		this.props.shoppingCartManager
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( siteRedirect( { domain } ), this.props.productsList ),
+			] )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
+			} );
 	};
 
 	getValidationErrorMessage = ( domain, error ) => {
@@ -184,9 +201,16 @@ const recordFormSubmit = ( searchBoxValue ) =>
 		searchBoxValue
 	);
 
-export default connect( null, {
-	errorNotice,
-	recordInputFocus,
-	recordGoButtonClick,
-	recordFormSubmit,
-} )( localize( SiteRedirectStep ) );
+export default connect(
+	( state ) => {
+		return {
+			productsList: getProductsList( state ),
+		};
+	},
+	{
+		errorNotice,
+		recordInputFocus,
+		recordGoButtonClick,
+		recordFormSubmit,
+	}
+)( withShoppingCart( localize( SiteRedirectStep ) ) );
