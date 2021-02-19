@@ -12,7 +12,7 @@ import {
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_FAILURE,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 export const initialState = {
 	hasFetched: false,
@@ -49,10 +49,7 @@ export const isFetching = withoutPersistence(
 	}
 );
 
-export const activePartnerKey = withSchemaValidation(
-	{
-		type: 'number',
-	},
+export const activePartnerKey = withoutPersistence(
 	( state = initialState.activePartnerKey, action: AnyAction ) => {
 		switch ( action.type ) {
 			case JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE:
