@@ -61,35 +61,39 @@ export const MySitesSidebarUnifiedMenu = ( {
 			hasAutoExpanded.current = true;
 		}
 	}, [ selected, childIsSelected, reduxDispatch, sectionId, sidebarCollapsed ] );
+
+	const onClick = () => {
+		if ( isWithinBreakpoint( '>782px' ) ) {
+			if ( link ) {
+				if ( isExternal( link ) ) {
+					// If the URL is external, page() will fail to replace state between different domains.
+					externalRedirect( link );
+					return;
+				}
+
+				// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
+				page( link );
+			}
+
+			if ( ! sidebarCollapsed ) {
+				// Keep only current submenu open.
+				reduxDispatch( collapseAllMySitesSidebarSections() );
+			}
+		}
+
+		reduxDispatch( toggleSection( sectionId ) );
+	};
+
 	return (
 		<li>
 			<ExpandableSidebarMenu
-				onClick={ () => {
-					if ( isWithinBreakpoint( '>782px' ) ) {
-						if ( link ) {
-							if ( isExternal( link ) ) {
-								// If the URL is external, page() will fail to replace state between different domains.
-								externalRedirect( link );
-								return;
-							}
-
-							// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
-							page( link );
-						}
-
-						if ( ! sidebarCollapsed ) {
-							// Keep only current submenu open.
-							reduxDispatch( collapseAllMySitesSidebarSections() );
-						}
-					}
-
-					reduxDispatch( toggleSection( sectionId ) );
-				} }
+				onClick={ () => onClick() }
 				expanded={ ! sidebarCollapsed && isExpanded }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
 				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
 				count={ count }
+				hideExpandableIcon={ true }
 			>
 				{ children.map( ( item ) => {
 					const isSelected = selectedMenuItem?.url === item.url;
