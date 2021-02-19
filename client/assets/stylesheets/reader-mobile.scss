@@ -4,3 +4,10 @@
 @import 'shared/utils';
 
 @import 'blocks/reader-full-post/_content';
+
+p,
+div,
+li,
+.has-inline-color {
+	color: var( --color-text ) !important;
+}
