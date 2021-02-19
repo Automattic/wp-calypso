@@ -9,12 +9,11 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { items, requests } from '../reducer';
 import {
-	DESERIALIZE,
-	SERIALIZE,
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 /**
@@ -163,7 +162,7 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
-			const state = items( original, { type: SERIALIZE } );
+			const state = serialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -176,7 +175,7 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -187,7 +186,7 @@ describe( 'reducer', () => {
 					'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse,
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( {} );
 		} );

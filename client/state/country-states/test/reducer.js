@@ -13,9 +13,8 @@ import {
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
-	DESERIALIZE,
-	SERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 const originalCountryStates = [
@@ -61,13 +60,13 @@ describe( 'reducer', () => {
 		describe( 'persistence', () => {
 			test( 'persists state', () => {
 				const original = deepFreeze( { us: originalCountryStates } );
-				const state = items( original, { type: SERIALIZE } );
+				const state = serialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( { us: originalCountryStates } );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 
 				expect( state ).to.eql( original );
 			} );
@@ -78,7 +77,7 @@ describe( 'reducer', () => {
 					AK: 'Alaska',
 					AS: 'American Samoa',
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );

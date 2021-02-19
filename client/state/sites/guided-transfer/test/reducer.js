@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { status, isFetching, isSaving } from '../reducer';
 import {
-	DESERIALIZE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
@@ -17,8 +16,8 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-	SERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -70,7 +69,7 @@ describe( 'reducer', () => {
 						host_details_entered: false,
 					},
 				} );
-				const state = status( original, { type: SERIALIZE } );
+				const state = serialize( status, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -81,7 +80,7 @@ describe( 'reducer', () => {
 						host_details_entered: false,
 					},
 				} );
-				const state = status( original, { type: DESERIALIZE } );
+				const state = deserialize( status, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -92,7 +91,7 @@ describe( 'reducer', () => {
 						host_details_entered: false,
 					},
 				} );
-				const state = status( original, { type: DESERIALIZE } );
+				const state = deserialize( status, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );

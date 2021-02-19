@@ -8,14 +8,13 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { settingsReducer } from '../reducer';
 import {
-	DESERIALIZE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
-	SERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -275,7 +274,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				[ 12345678 ]: settings,
 			} );
-			const state = settingsReducer( original, { type: SERIALIZE } );
+			const state = serialize( settingsReducer, original );
 
 			expect( state.root() ).toEqual( original );
 		} );
@@ -285,7 +284,7 @@ describe( 'reducer', () => {
 				[ 12345678 ]: settings,
 			} );
 
-			const state = settingsReducer( original, { type: DESERIALIZE } );
+			const state = deserialize( settingsReducer, original );
 
 			expect( state ).toEqual( original );
 		} );
@@ -294,7 +293,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				[ 12345678 ]: [ 'test' ],
 			} );
-			const state = settingsReducer( original, { type: DESERIALIZE } );
+			const state = deserialize( settingsReducer, original );
 
 			expect( state ).toEqual( {} );
 		} );

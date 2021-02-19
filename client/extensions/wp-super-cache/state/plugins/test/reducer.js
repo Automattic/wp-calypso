@@ -17,8 +17,8 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../../action-types';
 import { items, requesting, toggling } from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -227,9 +227,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = items( previousState, {
-				type: SERIALIZE,
-			} );
+			const state = serialize( items, previousState );
 
 			expect( state ).to.eql( {
 				[ primarySiteId ]: primaryPlugins,
@@ -237,9 +235,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = items( previousState, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( items, previousState );
 
 			expect( state ).to.eql( {
 				[ primarySiteId ]: primaryPlugins,
@@ -252,9 +248,7 @@ describe( 'reducer', () => {
 					[ primarySiteId ]: 2,
 				},
 			} );
-			const state = items( previousInvalidState, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( items, previousInvalidState );
 
 			expect( state ).to.eql( {} );
 		} );

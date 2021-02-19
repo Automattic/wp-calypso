@@ -19,9 +19,8 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	DESERIALIZE,
-	SERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -306,7 +305,7 @@ describe( 'reducer', () => {
 					1: { ID: 1, site_ID: 2916284 },
 					2: { ID: 2, site_ID: 2916284 },
 				} );
-				const persistedState = connections( state, { type: SERIALIZE } );
+				const persistedState = serialize( connections, state );
 				expect( persistedState ).to.eql( state );
 			} );
 
@@ -315,9 +314,7 @@ describe( 'reducer', () => {
 					1: { ID: 1, site_ID: 2916284 },
 					2: { ID: 2, site_ID: 2916284 },
 				} );
-				const state = connections( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( connections, persistedState );
 				expect( state ).to.eql( persistedState );
 			} );
 
@@ -326,9 +323,7 @@ describe( 'reducer', () => {
 					foo: { ID: 1, site_ID: 2916284 },
 					bar: { ID: 2, site_ID: 2916284 },
 				} );
-				const state = connections( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( connections, persistedState );
 				expect( state ).to.eql( {} );
 			} );
 
@@ -337,9 +332,7 @@ describe( 'reducer', () => {
 					1: { ID: 1, site_ID: 'foo' },
 					2: { ID: 2, site_ID: 2916284 },
 				} );
-				const state = connections( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( connections, persistedState );
 				expect( state ).to.eql( {} );
 			} );
 		} );

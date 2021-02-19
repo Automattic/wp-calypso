@@ -9,7 +9,7 @@ import deepfreeze from 'deep-freeze';
  */
 import { items, isRequesting } from '../reducer';
 import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
-import { DESERIALIZE } from 'calypso/state/action-types';
+import { deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 const TEAM1 = { slug: 'team one slug', title: 'team one title' };
@@ -66,13 +66,13 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'deserialize: should succeed with good data', () => {
-			assert.deepEqual( validState, items( validState, { type: DESERIALIZE } ) );
+			assert.deepEqual( validState, deserialize( items, validState ) );
 		} );
 
 		test( 'deserialize: should ignore bad data', () => {
 			let state;
 			try {
-				state = items( invalidState, { type: DESERIALIZE } );
+				state = deserialize( items, invalidState );
 				assert.fail();
 			} catch ( err ) {
 				assert.deepEqual( [], state );

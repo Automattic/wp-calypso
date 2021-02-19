@@ -19,6 +19,7 @@ import secureYourBrandReducer, {
 } from '../reducer';
 
 import { WPCOM_RESPONSE } from './fixture';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -72,13 +73,12 @@ describe( 'reducer', () => {
 		test( 'should persist state', () => {
 			const secureYourBrand = WPCOM_RESPONSE;
 			const initialState = secureYourBrand;
-			const action = { type: 'SERIALIZE' };
 			const expectedState = secureYourBrand;
 
 			deepFreeze( initialState );
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = serialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -86,12 +86,11 @@ describe( 'reducer', () => {
 		test( 'should load persisted state', () => {
 			const secureYourBrand = WPCOM_RESPONSE;
 			const initialState = secureYourBrand;
-			const action = { type: 'DESERIALIZE' };
 			const expectedState = secureYourBrand;
 			deepFreeze( initialState );
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = deserialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );
@@ -100,12 +99,11 @@ describe( 'reducer', () => {
 			// each entry should be `string`
 			const secureYourBrand = [ 1234 ];
 			const initialState = secureYourBrand;
-			const action = { type: 'DESERIALIZE' };
 			deepFreeze( initialState );
 			const expectedState = [];
 			deepFreeze( expectedState );
 
-			const newState = itemsReducer( initialState, action );
+			const newState = deserialize( itemsReducer, initialState );
 
 			expect( newState ).to.eql( expectedState );
 		} );

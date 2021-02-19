@@ -21,7 +21,7 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../../action-types';
 import reducer, { items, restoring } from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -298,9 +298,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
+			const state = serialize( reducer, previousState );
 
 			expect( state.root().items ).to.eql( {
 				[ primarySiteId ]: primarySettings,
@@ -308,9 +306,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( reducer, previousState );
 
 			expect( state.items ).to.eql( {
 				[ primarySiteId ]: primarySettings,
@@ -323,9 +319,7 @@ describe( 'reducer', () => {
 					[ primarySiteId ]: 2,
 				},
 			} );
-			const state = reducer( previousInvalidState, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( reducer, previousInvalidState );
 
 			expect( state.items ).to.eql( {} );
 		} );
