@@ -139,6 +139,23 @@ class AutoRenewDisablingDialog extends Component {
 							'%(expiryDate)s is a date string, e.g. May 14, 2020',
 					}
 				);
+			default:
+				return translate(
+					'By canceling auto-renewal, your %(productName)s plan for %(siteDomain)s will expire on %(expiryDate)s. ' +
+						"When it does, you'll lose access to key features you may be using on your site. " +
+						'To avoid that, turn auto-renewal back on or manually renew your plan before the expiration date.',
+					{
+						args: {
+							productName: purchase.productName,
+							siteDomain,
+							expiryDate,
+						},
+						comment:
+							'%(productName)s is the name of a WordPress.com product. ' +
+							'%(siteDomain)s is a domain name, e.g. example.com, example.wordpress.com. ' +
+							'%(expiryDate)s is a date string, e.g. May 14, 2020',
+					}
+				);
 		}
 	}
 
