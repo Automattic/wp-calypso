@@ -47,10 +47,10 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
 	// Once there is a selected plan, do not retrieve plan from from cart anymore.
-	const canUsePlanProductIdFromCart = React.useRef( false );
+	const canUsePlanProductIdFromCart = React.useRef( true );
 	React.useEffect( () => {
 		if ( selectedPlanProductId ) {
-			canUsePlanProductIdFromCart.current = true;
+			canUsePlanProductIdFromCart.current = false;
 		}
 	}, [ selectedPlanProductId ] );
 
@@ -59,7 +59,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 			! selectedPlanProductId &&
 			planProductIdFromCart &&
 			! hasPaidPlan &&
-			! canUsePlanProductIdFromCart.current
+			canUsePlanProductIdFromCart.current
 		) {
 			setPlanProductId( planProductIdFromCart );
 		}
