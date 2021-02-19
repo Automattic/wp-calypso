@@ -359,6 +359,13 @@ const webpackConfig = {
 			  ]
 			: [] ),
 		/*
+		 * ExPlat: Don't import the server logger when we are in the browser
+		 */
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/server\/lib\/logger$/,
+			'calypso/lib/explat/internals/logger-browser-replacement'
+		),
+		/*
 		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
 		 */
 		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {

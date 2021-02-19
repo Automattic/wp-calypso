@@ -102,5 +102,12 @@ module.exports = {
 			'calypso/components/empty-component'
 		), // Depends on BOM
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
+		/*
+		 * ExPlat: Don't import the server logger when we are in the browser
+		 */
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/server\/lib\/logger$/,
+			'calypso/lib/explat/internals/logger-browser-replacement'
+		),
 	],
 };

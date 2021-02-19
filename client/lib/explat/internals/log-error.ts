@@ -38,10 +38,10 @@ export const logError = ( error: Record< string, string > & { message: string } 
 				body,
 			} );
 		}
-	} catch {
+	} catch ( e ) {
 		if ( isDevelopmentMode ) {
 			// eslint-disable-next-line no-console
-			console.error( '[ExPlat] Unable to send error to server.' );
+			console.error( '[ExPlat] Unable to send error to server:', e );
 		}
 	}
 };
