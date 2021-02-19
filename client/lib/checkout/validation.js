@@ -10,7 +10,6 @@ import { isValidPostalCode } from 'calypso/lib/postal-code';
  * Internal dependencies
  */
 import {
-	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
 	isValidCNPJ,
 	countrySpecificFieldRules,
@@ -415,11 +414,7 @@ function getErrors( field, value, paymentDetails ) {
 }
 
 function getEbanxCreditCardRules( { country } ) {
-	return (
-		country &&
-		isEbanxCreditCardProcessingEnabledForCountry( country ) &&
-		countrySpecificFieldRules( country )
-	);
+	return country && countrySpecificFieldRules( country );
 }
 
 /**
