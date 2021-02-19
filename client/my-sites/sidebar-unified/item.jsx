@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
@@ -35,27 +34,26 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	continueInCalypso,
 } ) => {
 	const reduxDispatch = useDispatch();
 	const isHappychatSessionActive = useSelector( ( state ) => hasActiveHappychatSession( state ) );
+
+	const onNavigate = () => {
+		reduxDispatch( collapseAllMySitesSidebarSections() );
+		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
+	};
 
 	return (
 		<SidebarItem
 			count={ count }
 			label={ title }
 			link={ url }
-			onNavigate={ () => {
-				if ( isHappychatSessionActive && isExternal( url ) ) {
-					// TODO
-				}
-
-				reduxDispatch( collapseAllMySitesSidebarSections() );
-				reduxDispatch( expandMySitesSidebarSection( sectionId ) );
-			} }
+			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink={ ! isHappychatSessionActive }
-			showAsExternal={ false }
+			forceInternalLink
+			showAsExternal={ isHappychatSessionActive && isExternal( url ) }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />

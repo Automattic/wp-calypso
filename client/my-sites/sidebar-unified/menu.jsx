@@ -40,6 +40,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	link,
 	selected,
 	sidebarCollapsed,
+	continueInCalypso,
 } ) => {
 	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
@@ -87,7 +88,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	return (
 		<li>
 			<ExpandableSidebarMenu
-				onClick={ () => onClick() }
+				onClick={ () => continueInCalypso( link ) && onClick() }
 				expanded={ ! sidebarCollapsed && isExpanded }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
@@ -104,6 +105,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 							selected={ isSelected }
 							sectionId={ sectionId }
 							isSubItem={ true }
+							continueInCalypso={ continueInCalypso }
 						/>
 					);
 				} ) }
