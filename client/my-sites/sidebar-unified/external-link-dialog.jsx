@@ -9,10 +9,10 @@ import { translate } from 'i18n-calypso';
  */
 import { Dialog } from '@automattic/components';
 
-export const ExternalLinkDialog = ( { closeModalHandler } ) => {
+export const ExternalLinkDialog = ( { isVisible, closeModalHandler } ) => {
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible={ isVisible }
 			buttons={ [
 				{
 					action: 'cancel',
@@ -31,10 +31,10 @@ export const ExternalLinkDialog = ( { closeModalHandler } ) => {
 		>
 			<p>
 				{ translate(
-					'There is a Chat session in progress. Clicking OK will open this link in a new tab.'
+					'There is a Support Chat session in progress. Clicking OK will open this link in a new tab.'
 				) }
 			</p>
-			<p>{ translate( 'Please come back to this tab to continue.' ) }</p>
+			<p>{ translate( 'Please come back to this tab to continue chatting.' ) }</p>
 		</Dialog>
 	);
 };
