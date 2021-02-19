@@ -130,11 +130,12 @@ class SignupForm extends Component {
 	};
 
 	getInitialFields() {
+		// this.props.email can be email or username.
 		return {
 			firstName: '',
 			lastName: '',
-			email: this.props.email || '',
-			username: '',
+			email: ( includes( this.props.email, '@' ) && this.props.email ) || '',
+			username: ( ! includes( this.props.email, '@' ) && this.props.email ) || '',
 			password: '',
 		};
 	}
