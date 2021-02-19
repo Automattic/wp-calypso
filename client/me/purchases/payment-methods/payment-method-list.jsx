@@ -16,7 +16,7 @@ import config from '@automattic/calypso-config';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {
-	getStoredCards,
+	getAllStoredCards,
 	getUniquePaymentAgreements,
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
@@ -104,7 +104,7 @@ PaymentMethodList.propTypes = {
 };
 
 export default connect( ( state ) => ( {
-	cards: getStoredCards( state ),
+	cards: getAllStoredCards( state ),
 	paymentAgreements: getUniquePaymentAgreements( state ),
 	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
 	isFetching: isFetchingStoredCards( state ),

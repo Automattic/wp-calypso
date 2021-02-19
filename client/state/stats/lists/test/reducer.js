@@ -152,40 +152,6 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': {
-							requesting: true,
-							status: 'pending',
-						},
-					},
-				},
-			} );
-
-			const state = requests( original, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: {
-					statsStreak: {
-						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': {
-							requesting: true,
-							status: 'pending',
-						},
-					},
-				},
-			} );
-
-			const state = requests( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'items()', () => {

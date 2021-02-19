@@ -46,19 +46,27 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
 		body: document.createDocumentFragment(), // eslint-disable-line no-undef
 	};
 
-	each( Object.keys( targetDOMFragment ), ( domReference ) => {
-		return each(
-			filter( srcDocument[ domReference ].children, ( { localName } ) =>
-				// Only return specific style-related Nodes
-				styleNodes.includes( localName )
-			),
-			( targetNode ) => {
-				// Clone the original node and append to the appropriate Fragement
-				const deep = true;
-				targetDOMFragment[ domReference ].appendChild( targetNode.cloneNode( deep ) );
-			}
-		);
-	} );
+	// To avoid loading too many styles in the iframe that could potentially break
+	// global styles, only copy over the styles that target the editor.
+	const visualStyles = srcDocument.querySelectorAll( '.edit-post-visual-editor style' );
+	if ( visualStyles ) {
+		visualStyles.forEach( ( targetNode ) => {
+			// Clone the original node and append to the appropriate Fragment.
+			const deep = true;
+			targetDOMFragment.body.appendChild( targetNode.cloneNode( deep ) );
+		} );
+	}
+
+	each(
+		filter( srcDocument.head.children, ( node ) => {
+			return styleNodes.includes( node.localName );
+		} ),
+		( targetNode ) => {
+			// Clone the original node and append to the appropriate Fragment.
+			const deep = true;
+			targetDOMFragment.head.appendChild( targetNode.cloneNode( deep ) );
+		}
+	);
 
 	// Consolidate updates to iframe DOM
 	targetiFrameDocument.head.appendChild( targetDOMFragment.head );

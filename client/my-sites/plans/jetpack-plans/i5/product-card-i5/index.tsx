@@ -11,7 +11,12 @@ import { useTranslate } from 'i18n-calypso';
 import PlanRenewalMessage from '../../plan-renewal-message';
 import useItemPrice from '../../use-item-price';
 import { productAboveButtonText, productButtonLabel, productTooltip } from '../../utils';
-import JetpackProductCard from 'calypso/components/jetpack/card/i5/jetpack-product-card-i5';
+import {
+	getForCurrentCROIteration,
+	Iterations,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import JetpackProductCardNPIP from 'calypso/components/jetpack/card/npip/jetpack-product-card-npip';
+import JetpackProductCardI5 from 'calypso/components/jetpack/card/i5/jetpack-product-card-i5';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
@@ -55,6 +60,13 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+
+	const JetpackProductCard = useMemo(
+		() =>
+			getForCurrentCROIteration( { [ Iterations.NPIP ]: JetpackProductCardNPIP } ) ||
+			JetpackProductCardI5,
+		[]
+	);
 
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const isMultisite = useSelector( ( state ) => siteId && isJetpackSiteMultiSite( state, siteId ) );
@@ -148,6 +160,7 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			isAligned={ isAligned }
 			features={ item.features }
 			displayFrom={ ! siteId && priceTiers !== null }
+			belowPriceText={ item.belowPriceText }
 			tooltipText={ priceTiers && productTooltip( item, priceTiers ) }
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }

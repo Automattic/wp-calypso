@@ -7,7 +7,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isLineItemADomain } from 'calypso/my-sites/checkout/composite-checkout/hooks/has-domains';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 import {
 	prepareDomainContactValidationRequest,
@@ -18,6 +17,7 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import wp from 'calypso/lib/wp';
+import { getDomain, isDomainTransfer, isDomainProduct } from 'calypso/lib/products-values';
 
 const wpcom = wp.undocumented();
 
@@ -92,10 +92,10 @@ export function prepareContactDetailsForValidation( type, contactDetails ) {
 	throw new Error( `Unknown validation type: ${ type }` );
 }
 
-export async function getDomainValidationResult( items, contactInfo ) {
-	const domainNames = items
-		.filter( isLineItemADomain )
-		.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
+export async function getDomainValidationResult( products, contactInfo ) {
+	const domainNames = products
+		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
+		.map( getDomain );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
 	return wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
 }
@@ -121,10 +121,10 @@ export async function getSignupEmailValidationResult( email, emailTakenLoginRedi
 	return validationResponse;
 }
 
-export async function getGSuiteValidationResult( items, contactInfo ) {
-	const domainNames = items
-		.filter( ( item ) => isGSuiteOrGoogleWorkspaceProductSlug( item.wpcom_meta?.product_slug ) )
-		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
+export async function getGSuiteValidationResult( products, contactInfo ) {
+	const domainNames = products
+		.filter( ( item ) => isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) )
+		.map( getDomain );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
 	return wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
 }

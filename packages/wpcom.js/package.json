@@ -44,6 +44,7 @@
 		"qs": "^6.5.2"
 	},
 	"devDependencies": {
+		"wpcom-oauth-cors": "^1.0.2-beta",
 		"wpcom-proxy-request": "^6.0.0"
 	}
 }

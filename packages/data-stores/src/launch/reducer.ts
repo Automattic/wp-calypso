@@ -11,6 +11,7 @@ import type * as DomainSuggestions from '../domain-suggestions';
 import { LaunchStep } from './data';
 import type { LaunchStepType } from './types';
 import type { LaunchAction } from './actions';
+import type { Plans } from '..';
 
 const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name, action ) => {
 	if ( action.type === 'SET_STEP' ) {
@@ -59,6 +60,16 @@ const planProductId: Reducer< number | undefined, LaunchAction > = ( state, acti
 	}
 	if ( action.type === 'UNSET_PLAN_PRODUCT_ID' ) {
 		return undefined;
+	}
+	return state;
+};
+
+const planBillingPeriod: Reducer< Plans.PlanBillingPeriod, LaunchAction > = (
+	state = 'ANNUALLY',
+	action
+) => {
+	if ( action.type === 'SET_PLAN_BILLING_PERIOD' ) {
+		return action.billingPeriod;
 	}
 	return state;
 };
@@ -149,25 +160,13 @@ const isModalTitleVisible: Reducer< boolean, LaunchAction > = ( state = true, ac
 	return state;
 };
 
-// Check if launch Success view should be displayed (user didn't dismissed the Success View modal)
-const shouldDisplaySuccessView: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
-	if ( action.type === 'ENABLE_SUCCESS_VIEW' ) {
-		return true;
-	}
-
-	if ( action.type === 'DISABLE_SUCCESS_VIEW' ) {
-		return false;
-	}
-
-	return state;
-};
-
 const reducer = combineReducers( {
 	step,
 	siteTitle,
 	domain,
 	confirmedDomainSelection,
 	domainSearch,
+	planBillingPeriod,
 	planProductId,
 	isSidebarOpen,
 	isSidebarFullscreen,
@@ -177,7 +176,6 @@ const reducer = combineReducers( {
 	isSiteTitleStepVisible,
 	isModalDismissible,
 	isModalTitleVisible,
-	shouldDisplaySuccessView,
 } );
 
 export type State = ReturnType< typeof reducer >;

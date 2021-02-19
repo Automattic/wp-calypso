@@ -2,11 +2,11 @@
 @import '~@wordpress/base-styles/_mixins.scss';
 
 $column-domain: 1;
-$column-actions: 5;
-$column-toggle: 6;
+$column-actions: 4;
+$column-toggle: 5;
 
-$grid-xlarge: 1fr 104px 104px 104px 128px 30px;
-$grid-wide: 1fr 118px 118px 118px 128px 36px;
+$grid-xlarge: 1fr 114px 114px 128px 30px;
+$grid-wide: 1fr 128px 128px 128px 36px;
 
 .license-list-item {
 	display: grid;
@@ -77,6 +77,8 @@ $grid-wide: 1fr 118px 118px 118px 128px 36px;
 
 		> *:nth-child(#{$column-domain}) {
 			grid-column-end: auto;
+			justify-self: start;
+			padding: 16px 0;
 		}
 
 		> *:nth-child(#{$column-actions}),
@@ -92,12 +94,42 @@ $grid-wide: 1fr 118px 118px 118px 128px 36px;
 			grid-template-columns: $grid-wide;
 		}
 
-		h2 {
+		h2, h2 button {
 			font-size: 0.875rem;
 			line-height: 1.25rem;
-			font-weight: 600;
-			color: var( --studio-gray-70 );
 			white-space: nowrap;
+			color: var( --studio-gray-70 );
+		}
+
+		h2 {
+			justify-self: end;
+			font-weight: 400;
+		}
+
+		h2.is-selected {
+			font-weight: 600;
+		}
+
+		button {
+			display: flex;
+			align-items: center;
+			justify-self: end;
+			padding: 16px 0;
+			font-weight: inherit;
+			cursor: pointer;
+		}
+	}
+
+	.is-selected &__sort-indicator {
+		opacity: 1;
+	}
+
+	&__sort-indicator {
+		transition: transform 0.2s ease;
+		opacity: 0;
+
+		&.is-sort-asc {
+			transform: rotateZ( 180deg );
 		}
 	}
 }

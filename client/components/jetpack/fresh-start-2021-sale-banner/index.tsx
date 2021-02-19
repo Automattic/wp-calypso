@@ -36,10 +36,10 @@ const TimeGatedFreshStart2021SaleBanner: React.FC< Props > = ( { urlQueryArgs } 
 	const moment = useLocalizedMoment();
 
 	if ( ! paramValue ) {
-		// Start at midnight UTC on Feb 1,
-		// and continue until 23:59:59 UTC on Feb 14
-		const start = moment.utc( '2021-02-01' );
-		const end = moment.utc( '2021-02-15' );
+		// Start at midnight UTC on Feb 16,
+		// and continue until 23:59:59 UTC on Mar 3
+		const start = moment.utc( '2021-02-16' );
+		const end = moment.utc( '2021-03-04' );
 
 		return (
 			<TimeWindowWrapper start={ start } end={ end }>

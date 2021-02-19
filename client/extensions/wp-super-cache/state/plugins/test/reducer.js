@@ -83,22 +83,6 @@ describe( 'reducer', () => {
 				[ primarySiteId ]: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'toggling()', () => {
@@ -160,22 +144,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				[ primarySiteId ]: { no_adverts_for_friends: false },
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = toggling( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = toggling( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

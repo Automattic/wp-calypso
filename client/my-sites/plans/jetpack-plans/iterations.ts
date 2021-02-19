@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { abtest } from 'calypso/lib/abtest';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 /**
@@ -9,7 +10,8 @@ import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 export enum Iterations {
 	I5 = 'i5',
-	SPP = 'spp',
+	SPP = 'spp', // Simplify pricing page
+	NPIP = 'npip', // New purchase intro pricing
 }
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -40,10 +42,9 @@ const getCurrentCROIterationName = (): Iterations => {
 		}
 	}
 
-	// Iterations.SPP still exists for now,
-	// but the test is over, so we don't need (or want) to call `abtest`.
-	// Instead, always return the default iteration, Iterations.I5.
-	return Iterations.I5;
+	const newPurchaseIntroPricing = abtest( 'jetpackNewPurchaseIntroPricing' ) === 'withIntroPricing';
+
+	return newPurchaseIntroPricing ? Iterations.NPIP : Iterations.I5;
 };
 
 type IterationValueFunction< T > = ( key: Iterations ) => T | undefined;

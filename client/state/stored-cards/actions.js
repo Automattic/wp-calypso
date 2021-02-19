@@ -39,7 +39,7 @@ export const fetchStoredCards = () => ( dispatch ) => {
 
 	return wp
 		.undocumented()
-		.getPaymentMethods()
+		.getPaymentMethods( { expired: 'include' } )
 		.then( ( data ) => {
 			dispatch( {
 				type: STORED_CARDS_FETCH_COMPLETED,

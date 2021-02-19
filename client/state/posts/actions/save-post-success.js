@@ -19,9 +19,10 @@ import 'calypso/state/posts/init';
  * @param  {number}   postId     Post ID
  * @param  {object}   savedPost  Updated post
  * @param  {object}   post       Post attributes
+ * @param  {boolean}  silent     Whether to stop related notices from appearing
  * @returns {object}              Action thunk
  */
-export function savePostSuccess( siteId, postId = null, savedPost, post ) {
+export function savePostSuccess( siteId, postId = null, savedPost, post, silent = false ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: POST_SAVE_SUCCESS,
@@ -30,6 +31,10 @@ export function savePostSuccess( siteId, postId = null, savedPost, post ) {
 			savedPost,
 			post,
 		} );
+
+		if ( silent ) {
+			return;
+		}
 
 		switch ( post.status ) {
 			case 'trash': {

@@ -33,8 +33,8 @@ describe( 'timeoutPromise', () => {
 		await expect( promise2 ).resolves.toBe( 123 );
 	} );
 	it( 'should reject if promises rejected below the timeout', async () => {
-		const promise = Timing.timeoutPromise( Promise.reject( new Error( 'error-123' ) ), 1 )
-		jest.advanceTimersByTime( 1 )
+		const promise = Timing.timeoutPromise( Promise.reject( new Error( 'error-123' ) ), 1 );
+		jest.advanceTimersByTime( 1 );
 		await expect( promise ).rejects.toThrowError( 'error-123' );
 	} );
 	it( 'should throw if promise gets timed-out', async () => {
