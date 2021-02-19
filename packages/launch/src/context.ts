@@ -4,12 +4,17 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 
-interface LaunchContext {
+export interface LaunchContextProps {
 	siteId: number;
 	redirectTo: ( url: string ) => void;
-	openCheckout: ( siteSlug: string, isEcommerce?: boolean ) => void;
-	getCurrentLaunchFlowUrl: () => string | undefined;
+	openCheckout: (
+		siteSlug?: string,
+		isEcommerce?: boolean,
+		onSuccessCallback?: () => void
+	) => void;
+	getCurrentLaunchFlowUrl: () => string;
 	flow: string;
+	isInIframe: boolean;
 }
 
 const defaultRedirectTo = ( url: string ) => {
@@ -17,15 +22,9 @@ const defaultRedirectTo = ( url: string ) => {
 	window.location.href = url;
 };
 
-const defaultCurrentLaunchFlowUrl = (): string | undefined => {
-	try {
-		return window.location.href;
-	} catch ( err ) {
-		return undefined;
-	}
-};
+const defaultCurrentLaunchFlowUrl = (): string => window.location.href;
 
-const LaunchContext = React.createContext< LaunchContext >( {
+const LaunchContext = React.createContext< LaunchContextProps >( {
 	siteId: 0,
 	redirectTo: defaultRedirectTo,
 	getCurrentLaunchFlowUrl: defaultCurrentLaunchFlowUrl,
@@ -39,6 +38,7 @@ const LaunchContext = React.createContext< LaunchContext >( {
 		);
 	},
 	flow: 'launch',
+	isInIframe: false,
 } );
 
 export default LaunchContext;

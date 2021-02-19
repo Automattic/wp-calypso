@@ -113,13 +113,18 @@ class Block_Patterns_From_API {
 			if ( $this->can_register_pattern( $pattern ) ) {
 				$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
 
+				// Set custom viewport width for the pattern preview with a
+				// default width of 1280 and ensure a safe minimum width of 320.
+				$viewport_width = isset( $pattern['pattern_meta']['viewport_width'] ) ? intval( $pattern['pattern_meta']['viewport_width'] ) : 1280;
+				$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
+
 				register_block_pattern(
 					self::PATTERN_NAMESPACE . $pattern['name'],
 					array(
 						'title'         => $pattern['title'],
 						'description'   => $pattern['description'],
 						'content'       => $pattern['html'],
-						'viewportWidth' => 1280,
+						'viewportWidth' => $viewport_width,
 						'categories'    => array_keys(
 							$pattern['categories']
 						),

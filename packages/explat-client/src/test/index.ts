@@ -11,22 +11,11 @@ import {
 	createExPlatClient as createBrowserExPlatClient,
 	createSsrSafeDummyExPlatClient,
 } from '../create-explat-client';
+import { setBrowserContext, setSsrContext } from '../internal/test-common';
 
 beforeEach( () => {
 	jest.resetModules();
 } );
-
-function setBrowserContext() {
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	global.window = {};
-}
-
-function setSsrContext() {
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	global.window = undefined;
-}
 
 describe( 'index.ts', () => {
 	it( 'should return the real client when run in a browser context', () => {

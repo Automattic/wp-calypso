@@ -18,3 +18,8 @@ if ( config.isEnabled( 'support-user' ) ) {
 wpcom = injectLocalization( wpcom );
 
 export default wpcom;
+
+/**
+ * Expose `wpcomJetpackLicensing` which uses a different auth token than wpcom.
+ */
+export const wpcomJetpackLicensing = wpcomUndocumented( wpcomXhrRequest );

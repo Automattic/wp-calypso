@@ -116,6 +116,10 @@ export function useNewQueryParam() {
 
 export function useIsAnchorFm(): boolean {
 	const { anchorFmPodcastId } = useAnchorFmParams();
+	return isAnchorPodcastIdValid( anchorFmPodcastId );
+}
+
+function isAnchorPodcastIdValid( anchorFmPodcastId: string | null ): boolean {
 	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
 }
 
@@ -133,6 +137,7 @@ export interface AnchorFmParams {
 	anchorFmSite: string | null;
 	anchorFmPost: string | null;
 	anchorFmIsNewSite: string | null;
+	isAnchorFmPodcastIdError: boolean;
 }
 export function useAnchorFmParams(): AnchorFmParams {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
@@ -141,6 +146,8 @@ export function useAnchorFmParams(): AnchorFmParams {
 		locationStateParamName: 'anchorFmPodcastId',
 		sanitize: sanitizePodcast,
 	} );
+	const isAnchorFmPodcastIdError =
+		anchorFmPodcastId !== null && ! isAnchorPodcastIdValid( anchorFmPodcastId );
 
 	// Allow all characters allowed in urls
 	// Reserved characters: !*'();:@&=+$,/?#[]
@@ -194,6 +201,7 @@ export function useAnchorFmParams(): AnchorFmParams {
 
 	return {
 		anchorFmPodcastId,
+		isAnchorFmPodcastIdError,
 		anchorFmEpisodeId,
 		anchorFmSpotifyUrl,
 		anchorFmSite,

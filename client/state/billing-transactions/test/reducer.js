@@ -66,22 +66,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( false );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting( true, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( false );
-		} );
 	} );
 
 	describe( '#items()', () => {
@@ -217,22 +201,6 @@ describe( 'reducer', () => {
 				12345678: false,
 				...state,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

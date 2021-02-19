@@ -1,0 +1,13 @@
+.license-list {
+	&__header {
+		&.card.is-compact {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+	}
+
+	&__message {
+		color: var( --color-neutral-light );
+		font-style: italic;
+	}
+}

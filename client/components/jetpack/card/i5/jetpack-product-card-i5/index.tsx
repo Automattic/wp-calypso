@@ -14,6 +14,7 @@ import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Type dependencies

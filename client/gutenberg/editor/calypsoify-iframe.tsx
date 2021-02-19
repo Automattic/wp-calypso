@@ -57,7 +57,7 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
-import type { RequestCart } from '@automattic/shopping-cart';
+import type { CheckoutModalOptions } from 'calypso/blocks/editor-checkout-modal';
 
 /**
  * Types
@@ -100,7 +100,7 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-	cartData?: RequestCart;
+	checkoutModalOptions?: CheckoutModalOptions;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -144,7 +144,7 @@ class CalypsoifyIframe extends Component<
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
-		cartData: {},
+		checkoutModalOptions: undefined,
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -152,6 +152,7 @@ class CalypsoifyIframe extends Component<
 	mediaSelectPort: MessagePort | null = null;
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
+	checkoutPort: MessagePort | null = null;
 	successfulIframeLoad = false;
 	waitForIframeToInit: ReturnType< typeof setInterval > | undefined = undefined;
 	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
@@ -165,7 +166,7 @@ class CalypsoifyIframe extends Component<
 		// a 3rd party cookie auth issue fix in place https://github.com/Automattic/jetpack/pull/16167
 		this.waitForIframeToInit = setInterval( () => {
 			if ( this.props.shouldLoadIframe ) {
-				clearInterval( this.waitForIframeToInit );
+				clearInterval( ( this.waitForIframeToInit as unknown ) as number );
 				this.waitForIframeToLoad = setTimeout( () => {
 					isDesktop
 						? this.props.notifyDesktopCannotOpenEditor(
@@ -293,7 +294,11 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
-			this.setState( { isCheckoutModalVisible: true, cartData: payload } );
+			this.checkoutPort = ports[ 0 ];
+			this.setState( {
+				isCheckoutModalVisible: true,
+				checkoutModalOptions: payload,
+			} );
 		}
 
 		if ( EditorActions.GetCheckoutModalStatus === action ) {
@@ -376,22 +381,10 @@ class CalypsoifyIframe extends Component<
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding';
-			const isSiteUnlaunched = this.props.isSiteUnlaunched;
-			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
-			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' ); // TODO: remove after ETK 2.8.6 is released
-			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' ); // TODO: remove after ETK 2.8.6 is released
-			const isPersistentLaunchButton = config.isEnabled( 'create/persistent-launch-button' ); // TODO: remove after ETK 2.8.6 is released
-			const isFocusedLaunchFlow = config.isEnabled( 'create/focused-launch-flow' );
 			const currentCalypsoUrl = window.location.href; // Used to pass in the Calypso URL to Focused Launch for the "Domain I Own" flow Back Button
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				isSiteUnlaunched,
-				launchUrl,
-				isNewLaunchMobile,
-				isExperimental,
-				isPersistentLaunchButton,
-				isFocusedLaunchFlow,
 				currentCalypsoUrl,
 			} );
 		}
@@ -691,6 +684,22 @@ class CalypsoifyIframe extends Component<
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
 	};
 
+	handleCheckoutSuccess = () => {
+		if ( this.checkoutPort ) {
+			this.checkoutPort.postMessage( 'checkout complete' );
+
+			// this is a once-only port
+			// after sending our message we want to close it out
+			// and prevent sending more messages (which will be ignored)
+
+			this.checkoutPort.close();
+
+			this.checkoutPort = null;
+
+			this.setState( { isCheckoutModalVisible: false } );
+		}
+	};
+
 	render() {
 		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
@@ -705,7 +714,7 @@ class CalypsoifyIframe extends Component<
 			postUrl,
 			editedPost,
 			currentIFrameUrl,
-			cartData,
+			checkoutModalOptions,
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
@@ -749,11 +758,14 @@ class CalypsoifyIframe extends Component<
 				/>
 				{ isCheckoutOverlayEnabled && (
 					<AsyncLoad
+						checkoutOnSuccessCallback={ this.handleCheckoutSuccess }
 						require="calypso/blocks/editor-checkout-modal"
 						onClose={ this.closeCheckoutModal }
-						cartData={ cartData }
 						placeholder={ null }
 						isOpen={ isCheckoutModalVisible }
+						cartData={ checkoutModalOptions?.cartData }
+						redirectTo={ checkoutModalOptions?.redirectTo }
+						isFocusedLaunch={ checkoutModalOptions?.isFocusedLaunch }
 					/>
 				) }
 				<AsyncLoad

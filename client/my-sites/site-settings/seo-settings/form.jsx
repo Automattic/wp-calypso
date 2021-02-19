@@ -33,6 +33,7 @@ import {
 } from 'calypso/state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -47,7 +48,6 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	JETPACK_RESET_PLANS,
 } from 'calypso/lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -368,19 +368,17 @@ export class SeoForm extends React.Component {
 						</NoticeAction>
 					</Notice>
 				) }
-
-				{ ! this.props.hasSeoPreviewFeature &&
-					! this.props.hasAdvancedSEOFeature &&
-					selectedSite.plan && (
-						<UpsellNudge
-							{ ...upsellProps }
-							description={ translate(
-								'Get tools to optimize your site for improved search engine results.'
-							) }
-							event={ 'calypso_seo_settings_upgrade_nudge' }
-							showIcon={ true }
-						/>
-					) }
+				{ ! showAdvancedSeo && selectedSite.plan && (
+					<UpsellNudge
+						forceDisplay={ siteIsJetpack }
+						{ ...upsellProps }
+						description={ translate(
+							'Get tools to optimize your site for improved search engine results.'
+						) }
+						event={ 'calypso_seo_settings_upgrade_nudge' }
+						showIcon={ true }
+					/>
+				) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo && ! conflictedSeoPlugin && (
 						<div>
@@ -482,13 +480,15 @@ export class SeoForm extends React.Component {
 
 const mapStateToProps = ( state ) => {
 	const selectedSite = getSelectedSite( state );
-	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
-	const isAdvancedSeoEligible =
-		selectedSite.plan &&
-		( hasSiteSeoFeature( selectedSite ) ||
-			JETPACK_RESET_PLANS.includes( selectedSite.plan.product_slug ) );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
+	// SEO Tools are available with Business plan on WordPress.com, and
+	// will soon be available on all Jetpack sites, so we're checking
+	// the availability of the module.
+	const isAdvancedSeoEligible =
+		selectedSite.plan &&
+		hasSiteSeoFeature( selectedSite ) &&
+		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
 	const conflictedSeoPlugin = siteIsJetpack
