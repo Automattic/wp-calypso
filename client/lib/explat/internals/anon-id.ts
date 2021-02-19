@@ -29,8 +29,8 @@ const immediateStartSetInterval = ( f: () => void, intervalMs: number ) => {
 };
 
 let initializeAnonIdPromise: null | Promise< string | null > = null;
-const anonIdPollingIntervalMilliseconds = 100;
-const anonIdPollingIntervalMaxAttempts = 50; // 100 * 50 = 5000 = 5 seconds
+const anonIdPollingIntervalMilliseconds = 50;
+const anonIdPollingIntervalMaxAttempts = 100; // 50 * 100 = 5000 = 5 seconds
 /**
  * Initialized the anonId
  * - Polls for AnonId receival

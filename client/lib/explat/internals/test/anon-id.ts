@@ -87,7 +87,7 @@ describe( 'initializeAnonId', () => {
 		jest.runAllTimers();
 		expect( await initializeAnonIdPromise ).toBe( null );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
-		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 50 );
+		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 100 );
 		jest.useRealTimers();
 	} );
 
