@@ -23,7 +23,6 @@ import {
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
-import { isExternal } from 'calypso/lib/url';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
@@ -52,8 +51,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink
-			showAsExternal={ isHappychatSessionActive && isExternal( url ) }
+			forceInternalLink={ ! isHappychatSessionActive }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
