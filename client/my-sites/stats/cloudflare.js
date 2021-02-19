@@ -40,7 +40,7 @@ const Cloudflare = () => {
 							event="calypso_stats_cloudflare_analytics_learn_more_click"
 							highlight="info"
 							horizontal={ true }
-							href="CLOUDFLARELEARNMORELINK"
+							href="https://www.cloudflare.com/pg-lp/cloudflare-for-wordpress-dot-com?utm_source=wordpress.com&utm_medium=affiliate&utm_campaign=paygo_2021-02_a8_pilot&utm_content=stats"
 							iconPath={ cloudflareIllustration }
 							showIcon={ true }
 							tracksImpressionName="calypso_stats_cloudflare_banner_view"

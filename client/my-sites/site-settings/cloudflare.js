@@ -88,7 +88,7 @@ const Cloudflare = () => {
 								<p>
 									<a
 										onClick={ recordClick }
-										href="https://www.CLOUDFLARELINK.com"
+										href="https://www.cloudflare.com/pg-lp/cloudflare-for-wordpress-dot-com?utm_source=wordpress.com&utm_medium=affiliate&utm_campaign=paygo_2021-02_a8_pilot&utm_content=site-settings"
 										target="_blank"
 										rel="noreferrer"
 									>

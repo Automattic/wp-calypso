@@ -25,7 +25,7 @@ const Cloudflare = () => {
 						'Create a faster experience for your visitors regardless of their device or location.'
 					) }
 					actionText={ translate( 'Learn more' ) }
-					actionUrl="CLOUDFLAREURL"
+					actionUrl="https://www.cloudflare.com/pg-lp/cloudflare-for-wordpress-dot-com?utm_source=wordpress.com&utm_medium=affiliate&utm_campaign=paygo_2021-02_a8_pilot&utm_content=home"
 					actionTarget="_blank"
 					completeOnStart={ false }
 					illustration={ growthSummitIllustration }
