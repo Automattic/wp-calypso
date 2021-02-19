@@ -71,7 +71,12 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 
 	async selectDomainAddress( domainAddress ) {
 		const selector = By.css( `[data-e2e-domain="${ domainAddress }"]` );
-		await driverHelper.clickWhenClickable( this.driver, By.css( `button[value="com"]` ) );
+		const comTldButtonSelector = By.css( By.css( `button[value="com"]` ) );
+
+		// Click on the .com TLD button, as the .com TLD suggestion is not always made by default.
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, comTldButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, comTldButtonSelector );
+
 		await this.driver.wait(
 			until.elementLocated( selector ),
 			this.explicitWaitMS,
