@@ -30,7 +30,6 @@ import './site-redirect-step.scss';
 
 class SiteRedirectStep extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object.isRequired,
 		products: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 	};
