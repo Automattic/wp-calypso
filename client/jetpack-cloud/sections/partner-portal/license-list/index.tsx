@@ -27,7 +27,6 @@ import LicensePreview, {
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
 import Gridicon from 'calypso/components/gridicon';
 import { addQueryArgs } from 'calypso/lib/route';
-import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 /**
  * Style dependencies
