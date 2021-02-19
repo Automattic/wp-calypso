@@ -55,30 +55,6 @@ describe( 'reducer', () => {
 
 			expect( state[ 2 ] ).to.be.false;
 		} );
-
-		describe( 'persistence', () => {
-			test( 'never loads persisted data', () => {
-				const persistedState = deepFreeze( {
-					2: false,
-					123456: undefined,
-				} );
-				const state = fetchingConnection( persistedState, {
-					type: DESERIALIZE,
-				} );
-				expect( state ).to.eql( {} );
-			} );
-
-			test( 'never persists data', () => {
-				const state = deepFreeze( {
-					2: false,
-					123456: undefined,
-				} );
-				const persistedState = fetchingConnection( state, {
-					type: SERIALIZE,
-				} );
-				expect( persistedState ).to.be.undefined;
-			} );
-		} );
 	} );
 
 	describe( '#fetchingConnections()', () => {
@@ -107,30 +83,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state[ 2916284 ] ).to.be.false;
-		} );
-
-		describe( 'persistence', () => {
-			test( 'never loads persisted data', () => {
-				const persistedState = deepFreeze( {
-					2916284: false,
-					123456: undefined,
-				} );
-				const state = fetchingConnections( persistedState, {
-					type: DESERIALIZE,
-				} );
-				expect( state ).to.eql( {} );
-			} );
-
-			test( 'never persists data', () => {
-				const state = deepFreeze( {
-					2916284: false,
-					123456: undefined,
-				} );
-				const persistedState = fetchingConnections( state, {
-					type: SERIALIZE,
-				} );
-				expect( persistedState ).to.be.undefined;
-			} );
 		} );
 	} );
 

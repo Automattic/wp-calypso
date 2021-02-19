@@ -128,28 +128,6 @@ describe( 'reducer', () => {
 			} );
 			expect( state[ testSiteId ] ).to.be.false;
 		} );
-
-		test( 'should never persist state', () => {
-			const state = isFetching(
-				{
-					[ testSiteId ]: true,
-				},
-				{ type: SERIALIZE }
-			);
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should never load persisted state', () => {
-			const state = isFetching(
-				{
-					[ testSiteId ]: true,
-				},
-				{ type: DESERIALIZE }
-			);
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( '#isSaving()', () => {
