@@ -1212,6 +1212,16 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 	artifactRules = "editing-toolkit.zip"
 
+	dependencies {
+		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
+			buildRule = lastSuccessful("+:trunk")
+			artifactRules = """
+				+:editing-toolkit.zip!** => editing-toolkit-last-build
+				-:editing-toolkit.zip!build_meta.txt
+			""".trimIndent()
+		}
+	}
+
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 	params {
 		param("build.prefix", "3")
@@ -1224,12 +1234,10 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 	triggers {
 		vcs {
-			triggerRules = "+:apps/editing-toolkit/**"
 			branchFilter = """
 				+:*
 				-:pull*
 			""".trimIndent()
-
 		}
 	}
 
@@ -1322,24 +1330,29 @@ object WPComPlugins_EditorToolKit : BuildType({
 				export NODE_ENV="production"
 
 				cd apps/editing-toolkit
-
-				# Update plugin version in the plugin file.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
-
-				# Update plugin stable tag in readme.txt.
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
-
 				yarn build
-				cd editing-toolkit-plugin/
 
-				# Metadata file with info for the download script.
-				tee build_meta.txt <<-EOM
-					commit_hash=%build.vcs.number%
-					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
-					build_number=%build.number%
-					EOM
+				# Update plugin version in the plugin file and readme.txt.
+				# Note: we also update the latest build from trunk to this version to restore idempotence
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../editing-toolkit-last-build/full-site-editing-plugin.php
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../editing-toolkit-last-build/readme.txt
 
-				zip -r ../../../editing-toolkit.zip .
+				if diff -rq ./editing-toolkit-plugin/ ../../editing-toolkit-last-build/ ; then
+					echo "The build matches trunk. Therefore, this build has no effect."
+				else
+					echo "The build is different from trunk."
+					cd editing-toolkit-plugin/
+
+					# Metadata file with info for the download script.
+					tee build_meta.txt <<-EOM
+						commit_hash=%build.vcs.number%
+						commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+						build_number=%build.number%
+						EOM
+
+					zip -r ../../../editing-toolkit.zip .
+				fi
+
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
