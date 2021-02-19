@@ -175,14 +175,26 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.notouch & .segmented-control.price-toggle {
-		background-color: #dcdcde;
-		border-color: #dcdcde;
+		background-color: var( --studio-gray-5 );
+		border-color: var( --studio-gray-5 );
 		border-radius: 6px; /* stylelint-disable-line */
 		color: var( --color-text );
 
 		.segmented-control__item {
+			border: 1px solid;
+			border-radius: 6px; /* stylelint-disable-line */
+			border-color: var( --studio-gray-5 );
+			
 			&.is-selected {
 				padding: 1px 0 0 1px;
+			}
+
+			&:hover:not( .is-selected ) {
+				border-color: var( --studio-gray-30 );
+			}
+
+			&:first-child {
+				margin-right: 5px;
 			}
 
 			& .segmented-control__link {
