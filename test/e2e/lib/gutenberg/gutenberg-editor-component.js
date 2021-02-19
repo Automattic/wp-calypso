@@ -68,6 +68,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async publish( { visit = false, closePanel = true } = {} ) {
 		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.prePublishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
