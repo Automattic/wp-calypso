@@ -125,4 +125,12 @@ describe( 'getAnonId', () => {
 		]
 	` );
 	} );
+
+	it( 'should return the anonId from initialisation', async () => {
+		setBrowserContext();
+		const anonId = 'anon-id-234';
+		mockedTracksAnonymousUserId.mockImplementationOnce( () => anonId );
+		expect( await AnonId.initializeAnonId() ).toBe( anonId );
+		expect( await AnonId.getAnonId() ).toBe( anonId );
+	} );
 } );
