@@ -201,6 +201,22 @@ $commentary-column-gap-wide: 100px;
 
 	.focused-launch-summary__launch-button {
 		flex-grow: 1;
+		background-color: $onboarding-accent-blue;
+
+		&:disabled,
+		&:hover:not( :disabled ),
+		&:active:not( :disabled ),
+		&:focus:not( :disabled ) {
+			background: $onboarding-accent-blue;
+		}
+
+		&:focus:not( :disabled ) {
+			box-shadow: inset 0 0 0 1px #fff, 0 0 0 var( --wp-admin-border-width-focus ) $onboarding-accent-blue;
+		}
+
+		&--is-loading {
+			@include onboarding-loading( $onboarding-accent-blue );
+		}
 	}
 
 	@include break-small {

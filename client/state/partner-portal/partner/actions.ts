@@ -14,9 +14,12 @@ import {
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { ReduxDispatch } from 'calypso/state/redux-store';
-import { APIError, Partner, PartnerPortalStore } from 'calypso/state/partner-portal';
-import { isFetchingPartner } from 'calypso/state/partner-portal/partner/selectors';
-import wpcom from 'calypso/lib/wp';
+import { APIError, Partner, PartnerPortalStore } from 'calypso/state/partner-portal/types';
+import {
+	getActivePartnerKey,
+	isFetchingPartner,
+} from 'calypso/state/partner-portal/partner/selectors';
+import wpcom, { wpcomJetpackLicensing } from 'calypso/lib/wp';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
@@ -30,6 +33,9 @@ export function setActivePartnerKey(
 		}
 
 		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE, partnerKeyId } );
+
+		const key = getActivePartnerKey( getState() );
+		wpcomJetpackLicensing.loadToken( key ? key.oauth2_token : '' );
 	};
 }
 

@@ -931,10 +931,12 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		border-color: var( --color-success );
 	}
 
-	.plan-price,
-	.plan-price.is-original {
-		font-size: $font-body;
-	}
+	/* TODO: If the plans-redesign experiment wins, this may need to be included depending on whether we want to show the promotional pricing for INR, MX*/
+
+	// .plan-price,
+	// .plan-price.is-original {
+	// 	font-size: $font-body;
+	// }
 
 	.plan-features-comparison__header-price-group {
 		display: inline;

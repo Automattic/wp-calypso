@@ -4,6 +4,8 @@
 
 export const STORE_KEY = 'automattic/onboard/plans';
 
+export const FREE_PLAN_PRODUCT_ID = 1;
+
 // plans constants
 export const TIMELESS_PLAN_FREE = 'free';
 export const TIMELESS_PLAN_PERSONAL = 'personal';

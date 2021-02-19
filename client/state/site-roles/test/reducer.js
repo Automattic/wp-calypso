@@ -75,32 +75,6 @@ describe( 'reducer', () => {
 				12345678: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: true,
-				} ),
-				{
-					type: SERIALIZE,
-				}
-			);
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: true,
-				} ),
-				{
-					type: DESERIALIZE,
-				}
-			);
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( '#items()', () => {

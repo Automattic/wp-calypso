@@ -61,7 +61,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 			hasAutoExpanded.current = true;
 		}
 	}, [ selected, childIsSelected, reduxDispatch, sectionId, sidebarCollapsed ] );
-
 	return (
 		<li>
 			<ExpandableSidebarMenu
@@ -96,7 +95,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 					const isSelected = selectedMenuItem?.url === item.url;
 					return (
 						<MySitesSidebarUnifiedItem
-							key={ item.slug }
+							key={ item.title }
 							{ ...item }
 							selected={ isSelected }
 							sectionId={ sectionId }

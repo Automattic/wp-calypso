@@ -1103,13 +1103,6 @@ workflows:
           requires:
             - wait-calypso-live
           test-flags: '-y -S $CIRCLE_SHA1'
-      - test-e2e-canary:
-          name: test-e2e-canary-woo
-          requires:
-            - wait-calypso-live
-          test-flags: '-W -S $CIRCLE_SHA1'
-          test-target: 'WOO'
-          slack-webhook: '$SLACK_WOO'
   wp-desktop:
     jobs:
       - wp-desktop-source:

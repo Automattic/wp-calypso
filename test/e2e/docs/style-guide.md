@@ -71,6 +71,30 @@ Some examples of tags:
 - jetpack
 - signup
 
+## Modes
+
+All tests should be written to work in three modes: desktop (1440 wide), tablet (1024 wide) and mobile (375 wide).
+
+Tests can be run in different modes by setting an environment variable `BROWSERSIZE` to either `desktop`, `tablet` or `mobile`.
+
+### Specify one mode
+
+```
+env BROWSERSIZE=<mode> ./node_modules/.bin/mocha <path_to_e2e_spec>
+```
+
+Alternatively, use the `-s` flag when calling `run.sh`:
+
+```
+./run.sh -g -s <mode>
+```
+
+### Specify multiple modes
+
+```
+./run.sh -g -s <mode1>,<mode2>
+```
+
 ## Page Objects
 
 All pages have asynchronous functions. Constructors for pages can't be asynchronous so we never construct a page object directly (using something like `new PageObjectPage(...)`), instead we use the static methods `Expect` and `Visit`, which are on the asyncBaseContainer and hence available for every page, to construct the page object.

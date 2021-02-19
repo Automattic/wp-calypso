@@ -13,10 +13,6 @@
 		border-bottom: none;
 	}
 
-	.bulk-editing & {
-		padding-left: 40px;
-	}
-
 	&:focus {
 		outline: 2px solid var( --color-primary-light );
 		z-index: z-index( 'root', '.people-list-item.card.is-compact:focus' );

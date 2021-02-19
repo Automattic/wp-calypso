@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 2.18
+ * Version: 2.19
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'A8C_ETK_PLUGIN_VERSION', '2.18' );
+define( 'A8C_ETK_PLUGIN_VERSION', '2.19' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -264,9 +264,12 @@ add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
  * are loaded via load_block_patterns_from_api.
  */
 function load_wpcom_block_patterns_modifications() {
-	if ( apply_filters( 'a8c_enable_block_patterns_modifications', true ) ) {
-		require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
-	}
+	// Disable the premium patterns feature temporarily due to performance issues (#50069).
+	// phpcs:disable
+	// if ( apply_filters( 'a8c_enable_block_patterns_modifications', false ) ) {
+	// 	require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
+	// }
+	// phpcs:enable
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 

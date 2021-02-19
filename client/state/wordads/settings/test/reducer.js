@@ -189,27 +189,5 @@ describe( 'reducer', () => {
 				2916284: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: false,
-			} );
-			const state = requests( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).toBeUndefined();
-		} );
-
-		test( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: false,
-			} );
-			const state = requests( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).toEqual( {} );
-		} );
 	} );
 } );

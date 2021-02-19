@@ -21,29 +21,13 @@ import { useDomainSuggestionFromCart, usePlanProductIdFromCart } from '../hooks'
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
-	const { isSiteLaunched, isSiteLaunching } = useSite();
-	const { enablePersistentSuccessView } = useDispatch( LAUNCH_STORE );
+	const { hasPaidPlan, isSiteLaunched, isSiteLaunching } = useSite();
 
-	const [ hasSelectedDomain, selectedPlanProductId, shouldDisplaySuccessView ] = useSelect(
-		( select ) => {
-			const { planProductId, shouldDisplaySuccessView } = select( LAUNCH_STORE ).getState();
+	const [ hasSelectedDomain, selectedPlanProductId ] = useSelect( ( select ) => {
+		const { planProductId } = select( LAUNCH_STORE ).getState();
 
-			return [
-				select( LAUNCH_STORE ).hasSelectedDomain(),
-				planProductId,
-				shouldDisplaySuccessView,
-			];
-		}
-	);
-
-	// Force Success view to be the default view when opening Focused Launch modal.
-	// This is used in case the user opens the Focused Launch modal after launching
-	// the site (e.g. when redirected back after the checkout screen)
-	React.useEffect( () => {
-		if ( isSiteLaunched ) {
-			enablePersistentSuccessView();
-		}
-	}, [ isSiteLaunched, enablePersistentSuccessView ] );
+		return [ select( LAUNCH_STORE ).hasSelectedDomain(), planProductId ];
+	} );
 
 	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
 	// If there is no selected domain, but there is a domain in cart,
@@ -57,22 +41,33 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	}, [ hasSelectedDomain, domainSuggestionFromCart, setDomain ] );
 
 	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
-	// If there is no selected plan, but there is a plan in cart,
+	// If there is no selected plan and the site has no paid plan, but there is a plan in cart,
 	// set the plan from cart as the selected plan.
 	const planProductIdFromCart = usePlanProductIdFromCart();
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
 	React.useEffect( () => {
-		if ( ! selectedPlanProductId && planProductIdFromCart ) {
+		if ( ! selectedPlanProductId && planProductIdFromCart && ! hasPaidPlan ) {
 			setPlanProductId( planProductIdFromCart );
 		}
-	}, [ selectedPlanProductId, planProductIdFromCart, setPlanProductId ] );
+	}, [ selectedPlanProductId, planProductIdFromCart, setPlanProductId, hasPaidPlan ] );
+
+	// The user may have previously used the launch flow to pick a paid plan,
+	// but they may have then purchased that paid plan or other plan before deciding to continue Launch flow.
+	// In this scenario, the site has a paid plan but it is not launched yet.
+	// So when launch modal reopens, we need to unset the selected plan product
+	// id (that was previously selected, but is not needed anymore).
+	// This is one of the cases mentioned in
+	// https://github.com/Automattic/wp-calypso/issues/49958
+	const { unsetPlanProductId } = useDispatch( LAUNCH_STORE );
+	React.useEffect( () => {
+		if ( hasPaidPlan ) {
+			unsetPlanProductId();
+		}
+	}, [ hasPaidPlan, unsetPlanProductId ] );
 
 	return (
-		<Router
-			initialEntries={ [ FocusedLaunchRoute.Summary, FocusedLaunchRoute.Success ] }
-			initialIndex={ shouldDisplaySuccessView ? 1 : 0 }
-		>
+		<Router>
 			<ScrollToTop selector=".components-modal__content" />
 			{ ( isSiteLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
 			<Switch>
