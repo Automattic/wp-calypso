@@ -19,7 +19,6 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import CartData from 'calypso/components/data/cart';
 import DomainSearch from './domain-search';
 import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'calypso/my-sites/domains/map-domain';
@@ -97,9 +96,7 @@ const siteRedirect = ( context, next ) => {
 				title="Domain Search > Site Redirect"
 			/>
 			<DocumentHead title={ translate( 'Redirect a Site' ) } />
-			<CartData>
-				<SiteRedirect />
-			</CartData>
+			<SiteRedirect />
 		</Main>
 	);
 	next();
