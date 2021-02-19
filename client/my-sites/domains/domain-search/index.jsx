@@ -144,6 +144,7 @@ class DomainSearch extends Component {
 		this.props.shoppingCartManager.addProductsToCart( [
 			fillInSingleCartItemAttributes( planItem( PLAN_PERSONAL, {} ), this.props.productsList ),
 		] );
+		page.replace( this.props.context.pathname );
 	}
 
 	addDomain( suggestion ) {
