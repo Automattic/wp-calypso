@@ -8,6 +8,7 @@ import '@automattic/calypso-polyfills';
  * Internal dependencies
  */
 import * as Timing from '../timing';
+import { delayedValue } from '../test-common';
 
 jest.useFakeTimers();
 
@@ -22,12 +23,9 @@ describe( 'monotonicNow', () => {
 	} );
 } );
 
-const delayedValue = < T >( value, delayMilliseconds ): Promise< T > =>
-	new Promise( ( res ) => setTimeout( () => res( value ), delayMilliseconds ) );
-
 describe( 'timeoutPromise', () => {
 	it( 'should resolve promises below the timeout', async () => {
-		const promise1 = Timing.timeoutPromise( new Promise( ( res ) => res( 123 ) ), 1 );
+		const promise1 = Timing.timeoutPromise( Promise.resolve( 123 ), 1 );
 		jest.advanceTimersByTime( 2 );
 		await expect( promise1 ).resolves.toBe( 123 );
 		const promise2 = Timing.timeoutPromise( delayedValue( 123, 1 ), 4 );
