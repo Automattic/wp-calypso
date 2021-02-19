@@ -25,7 +25,7 @@ import {
 	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import ProductsGridI5 from './i5/products-grid-i5';
-import ProductsGridSpp from './spp/products-grid-spp';
+import ProductsGridNpip from './npip/products-grid-npip';
 
 /**
  * Type dependencies
@@ -58,9 +58,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const Grid = useMemo(
 		() =>
 			getForCurrentCROIteration( {
-				[ Iterations.I5 ]: ProductsGridI5,
-				[ Iterations.SPP ]: ProductsGridSpp,
-			} ),
+				[ Iterations.NPIP ]: ProductsGridNpip,
+			} ) || ProductsGridI5,
 		[]
 	);
 

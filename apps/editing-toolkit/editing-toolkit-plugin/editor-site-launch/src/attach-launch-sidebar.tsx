@@ -15,6 +15,7 @@ import LaunchModal from './launch-modal';
 import { LAUNCH_STORE } from './stores';
 import { FLOW_ID } from './constants';
 import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
+import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,6 +55,7 @@ registerPlugin( 'a8c-editor-site-launch', {
 						redirectTo: redirectToWpcomPath,
 						openCheckout,
 						getCurrentLaunchFlowUrl,
+						isInIframe: inIframe(),
 					} }
 				>
 					<LaunchModal onClose={ closeSidebar } isLaunchImmediately={ isAnchorFm } />

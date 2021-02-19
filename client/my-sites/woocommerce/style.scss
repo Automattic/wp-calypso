@@ -1,0 +1,11 @@
+.woocommerce {
+	@import 'dashboard/setup/style';
+
+	.main {
+		padding-top: 72px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			padding-top: 35px;
+		}
+	}
+}

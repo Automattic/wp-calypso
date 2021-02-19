@@ -9,22 +9,19 @@
 
 @mixin onboarding-heading-text {
 	@include onboarding-font-recoleta;
-	/* stylelint-disable-line */
-	font-size: 42px;
+	font-size: 42px; /* stylelint-disable-line */
 	line-height: 57px;
 }
 
 @mixin onboarding-heading-text-tablet {
 	@include onboarding-font-recoleta;
-	/* stylelint-disable-line */
-	font-size: 36px;
+	font-size: 36px; /* stylelint-disable-line */
 	line-height: 40px;
 }
 
 @mixin onboarding-heading-text-mobile {
 	@include onboarding-font-recoleta;
-	/* stylelint-disable-line */
-	font-size: 32px;
+	font-size: 32px; /* stylelint-disable-line */
 	line-height: 40px;
 }
 
@@ -42,8 +39,7 @@
 }
 
 @mixin onboarding-large-text {
-	/* stylelint-disable-line */
-	font-size: 16px;
+	font-size: 16px; /* stylelint-disable-line */
 	line-height: 24px;
 }
 
@@ -205,13 +201,17 @@
 // onaboarding-placeholder() mixin is a copy of 'client/assets/stylesheets/shared/mixins/placeholder'
 
 @mixin onboarding-placeholder( $color-property: $gray-100 ) {
-	animation: onboarding-loading-pulse 1.6s ease-in-out infinite;
-	background: $color-property;
+	@include onboarding-loading( $color-property );
 	color: transparent;
 
 	&::after {
 		content: '\00a0';
 	}
+}
+
+@mixin onboarding-loading( $color-property: $gray-100 ) {
+	animation: onboarding-loading-pulse 1.6s ease-in-out infinite;
+	background: $color-property;
 }
 
 // a pulsing animation for placeholders

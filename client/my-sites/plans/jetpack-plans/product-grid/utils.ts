@@ -22,9 +22,8 @@ export const getPlansToDisplay = ( {
 } ): SelectorProduct[] => {
 	const plans =
 		getForCurrentCROIteration( {
-			[ Iterations.I5 ]: SELECTOR_PLANS_I5,
 			[ Iterations.SPP ]: SELECTOR_PLANS_SPP,
-		} ) || [];
+		} ) || SELECTOR_PLANS_I5;
 	const currentPlanTerms = currentPlanSlug
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];

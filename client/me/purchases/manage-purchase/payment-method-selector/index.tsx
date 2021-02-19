@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useStripe } from '@automattic/calypso-stripe';
 import {
@@ -36,6 +36,8 @@ import {
 import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
 import TosText from './tos-text';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 import './style.scss';
 
@@ -50,7 +52,7 @@ export default function PaymentMethodSelector( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
+	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
 	const showErrorMessage = useCallback(
@@ -88,6 +90,17 @@ export default function PaymentMethodSelector( {
 		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
 	} );
 
+	const [ useForAllSubscriptions, setUseForAllSubscriptions ] = useState< boolean >( ! purchase );
+	const assignAllSubscriptionsText = String(
+		translate( 'Assign this payment method to all of my subscriptions' )
+	);
+
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			showErrorMessage( stripeLoadingError );
+		}
+	}, [ stripeLoadingError, showErrorMessage ] );
+
 	return (
 		<CheckoutProvider
 			onPaymentComplete={ () =>
@@ -104,6 +117,7 @@ export default function PaymentMethodSelector( {
 					assignNewCardProcessor(
 						{
 							purchase,
+							useForAllSubscriptions,
 							translate,
 							stripe,
 							stripeConfiguration,
@@ -131,9 +145,45 @@ export default function PaymentMethodSelector( {
 					</p>
 				</div>
 
+				{ ! purchase && (
+					<FormLabel className="payment-method-selector__all-subscriptions-checkbox-label">
+						<FormInputCheckbox
+							className="payment-method-selector__all-subscriptions-checkbox"
+							checked={ useForAllSubscriptions }
+							onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
+							aria-label={ assignAllSubscriptionsText }
+						/>
+						{ assignAllSubscriptionsText }
+						<AllSubscriptionsEffectWarning useForAllSubscriptions={ useForAllSubscriptions } />
+					</FormLabel>
+				) }
+
 				<CheckoutSubmitButton />
 			</Card>
 		</CheckoutProvider>
+	);
+}
+
+function AllSubscriptionsEffectWarning( {
+	useForAllSubscriptions,
+}: {
+	useForAllSubscriptions: boolean;
+} ) {
+	const translate = useTranslate();
+
+	if ( useForAllSubscriptions ) {
+		return (
+			<span className="payment-method-selector__all-subscriptions-effect-warning">
+				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
+			</span>
+		);
+	}
+	return (
+		<span className="payment-method-selector__all-subscriptions-effect-warning">
+			{ translate(
+				'This card will not be assigned to any subscriptions. You can assign it to a subscription from the subscription page.'
+			) }
+		</span>
 	);
 }
 

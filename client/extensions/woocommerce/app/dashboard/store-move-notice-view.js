@@ -21,18 +21,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import megaphoneImage from 'calypso/assets/images/woocommerce/megaphone.svg';
 
-function getStoreStatus( isStoreDeprecated, isStoreRemoved ) {
-	if ( isStoreDeprecated ) {
-		return 'store-deprecated';
-	}
-
-	if ( isStoreRemoved ) {
-		return 'store-removed';
-	}
-
-	return '';
-}
-
 class StoreMoveNoticeView extends Component {
 	trackTryWooCommerceClick = () => {
 		this.props.recordTracksEvent( 'calypso_store_try_woocommerce_click' );
@@ -44,37 +32,43 @@ class StoreMoveNoticeView extends Component {
 
 	render = () => {
 		const { site, isStoreRemoved } = this.props;
-		const status = getStoreStatus( true, isStoreRemoved );
 
 		return (
-			<Card className={ classNames( 'dashboard__store-move-notice', status ) }>
+			<Card
+				className={ classNames( 'dashboard__store-move-notice', {
+					'store-removed': isStoreRemoved,
+				} ) }
+			>
 				<img src={ megaphoneImage } alt="" />
 				<h1>{ translate( 'Find all of your business features in WooCommerce' ) }</h1>
 				<p>
-					{ translate(
-						'We’re retiring Store on February 22. With WooCommerce, discover a more flexible store management experience — including top-level access to your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what to expect.',
-						{
-							components: {
-								link: (
-									<a href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/" />
-								),
-							},
-						}
-					) }
-					{ isStoreRemoved &&
-						translate(
-							'We’ve rolled your favorite Store features into WooCommerce. In addition to Products and Orders, you have top-level access for managing your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what has changed.',
-							{
-								components: {
-									link: (
-										<a
-											onClick={ this.trackLearnMoreAboutWooCommerceClick }
-											href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
-										/>
-									),
-								},
-							}
-						) }
+					{ isStoreRemoved
+						? translate(
+								'We’ve rolled your favorite Store features into WooCommerce. In addition to Products and Orders, you have top-level access for managing your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what has changed.',
+								{
+									components: {
+										link: (
+											<a
+												onClick={ this.trackLearnMoreAboutWooCommerceClick }
+												href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
+											/>
+										),
+									},
+								}
+						  )
+						: translate(
+								'We’re retiring Store on February 22. With WooCommerce, discover a more flexible store management experience — including top-level access to your Analytics, Marketing, and Customers. {{link}}Learn more{{/link}} about what to expect.',
+								{
+									components: {
+										link: (
+											<a
+												onClick={ this.trackLearnMoreAboutWooCommerceClick }
+												href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
+											/>
+										),
+									},
+								}
+						  ) }
 				</p>
 				<Button
 					primary

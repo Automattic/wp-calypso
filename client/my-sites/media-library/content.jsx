@@ -37,7 +37,6 @@ import {
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
-import { withoutNotice } from 'calypso/state/notices/actions';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
 
 /**
@@ -469,12 +468,7 @@ export default connect(
 		toggleGuidedTour: ( shouldPause ) => ( dispatch ) => {
 			dispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		deleteKeyringConnection: ( connection ) => ( dispatch ) => {
-			// We don't want this to trigger a global notice - a notice is shown inline
-			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
-
-			dispatch( deleteKeyring() );
-		},
+		deleteKeyringConnection,
 		clearMediaErrors,
 		changeMediaSource,
 	},

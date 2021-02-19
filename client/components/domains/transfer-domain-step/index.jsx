@@ -55,6 +55,7 @@ import {
 	isNextDomainFree,
 	hasToUpgradeToPayForADomain,
 } from 'calypso/lib/cart-values/cart-items';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Style dependencies
@@ -727,4 +728,4 @@ export default connect(
 		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
-)( localize( TransferDomainStep ) );
+)( withShoppingCart( localize( TransferDomainStep ) ) );

@@ -211,6 +211,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 											isLink
 											href={ localizeUrl( 'https://wordpress.com/help/contact', locale ) }
 											target="_blank"
+											rel="noopener noreferrer"
 										>
 											{ __( 'Ask a Happiness Engineer', 'full-site-editing' ) }
 										</Button>

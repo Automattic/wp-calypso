@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { fetchUsers } from 'calypso/lib/users/actions';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -26,27 +25,13 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
 class Team extends React.Component {
-	static displayName = 'Team';
-
-	constructor() {
-		super();
-
-		this.infiniteList = React.createRef();
-	}
-
-	state = {
-		bulkEditing: false,
-	};
+	infiniteList = React.createRef();
 
 	isLastPage = () =>
 		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	render() {
 		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
-		const listClass = classNames( {
-			'bulk-editing': this.state.bulkEditing,
-			'people-invites__invites-list': true,
-		} );
 		let people;
 		let headerText;
 		if ( this.props.totalUsers ) {
@@ -124,23 +109,15 @@ class Team extends React.Component {
 					site={ this.props.site }
 					isPlaceholder={ this.props.fetchingUsers || this.props.fetchOptions.search }
 				/>
-				<Card className={ listClass }>{ people }</Card>
+				<Card className="people-invites__invites-list">{ people }</Card>
 				{ this.isLastPage() && <ListEnd /> }
 			</div>
 		);
 	}
 
-	renderPerson = ( user ) => {
-		return (
-			<PeopleListItem
-				key={ user.ID }
-				user={ user }
-				type="user"
-				site={ this.props.site }
-				isSelectable={ this.state.bulkEditing }
-			/>
-		);
-	};
+	renderPerson = ( user ) => (
+		<PeopleListItem key={ user.ID } user={ user } type="user" site={ this.props.site } />
+	);
 
 	fetchNextPage = () => {
 		const offset = this.props.users.length;

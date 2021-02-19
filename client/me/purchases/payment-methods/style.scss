@@ -36,7 +36,7 @@
 .payment-method-details__number {
 	color: var( --color-neutral-80 );
 	display: block;
-	margin-right: 8px;
+	margin-right: 12px;
 
 	@include breakpoint-deprecated( '>960px' ) {
 		display: inline;
@@ -44,7 +44,30 @@
 }
 
 .payment-method-details__expiration-date {
-	font-style: italic;
+	margin-right: 12px;
+	display: block;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		display: inline;
+	}
+}
+
+.payment-method-details__expiration-notice {
+	font-size: 0.875rem;
+	display: block;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		display: inline;
+	}
+
+	.gridicon {
+		vertical-align: text-bottom;
+		margin-right: 4px;
+	}
+
+	&.is-expired {
+		color: var( --color-error );
+	}
 }
 
 .payment-method-details__name {

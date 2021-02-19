@@ -7,7 +7,7 @@ import { merge, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
 import {
@@ -24,7 +24,7 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requests = withoutPersistence( ( state = {}, action ) => {
+export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_STATS_REQUEST: {
 			const { siteId, statType, query } = action;
@@ -62,7 +62,7 @@ export const requests = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. The

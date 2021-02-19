@@ -49,7 +49,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 
 	describe( 'Inviting new user as an Editor: @parallel @jetpack', function () {
 		const newUserName = 'e2eflowtestingeditora' + new Date().getTime().toString();
-		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId, true );
+		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 		let inviteCreated = false;
 		let inviteAccepted = false;
@@ -178,7 +178,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 
 	describe( 'Inviting new user as an Editor and revoke invite: @parallel @jetpack', function () {
 		const newUserName = 'e2eflowtestingeditorb' + new Date().getTime().toString();
-		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId, true );
+		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		let acceptInviteURL = '';
 
 		step( 'Can log in and navigate to Invite People page', async function () {
@@ -236,7 +236,7 @@ describe( `[${ host }] Invites:  (${ screenSize })`, function () {
 
 	describe( 'Inviting New User as a Viewer of a WordPress.com Private Site: @parallel', function () {
 		const newUserName = 'e2eflowtestingviewer' + new Date().getTime().toString();
-		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId, true );
+		const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 		const siteName = config.get( 'privateSiteForInvites' );
 		const siteUrl = `https://${ siteName }/`;
 		let removedViewerFlag = true;

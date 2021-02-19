@@ -49,10 +49,14 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 
 		if (
 			windowHeight >= secondaryElHeight + masterbarHeight &&
-			content.style.minHeight !== 'initial'
+			content !== null &&
+			secondaryEl !== null &&
+			( content.style.minHeight !== 'initial' || secondaryEl.style.position )
 		) {
 			// In case that window is taller than the sidebar we reinstate the content min-height. CSS code: client/layout/style.scss:30.
 			content.style.minHeight = 'initial';
+			// In case that window is taller than the sidebar after resize we need to clean up any previously set inline styles
+			secondaryEl.removeAttribute( 'style' );
 		}
 	}
 
