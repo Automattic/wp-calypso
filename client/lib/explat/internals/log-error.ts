@@ -18,17 +18,18 @@ export const isDevelopmentMode = process.env.NODE_ENV === 'development';
  */
 export const logError = ( error: Record< string, string > & { message: string } ): void => {
 	try {
-		if ( isDevelopmentMode ) {
-			// eslint-disable-next-line no-console
-			console.error( '[ExPlat]', error.message, error );
-		}
-
 		error[ 'context' ] = 'explat';
 		error[ 'explat_client' ] = 'calypso';
 
 		if ( typeof window === 'undefined' ) {
+			// Bunyan logger will log to the console in development mode.
 			getLogger().error( error );
 		} else {
+			if ( isDevelopmentMode ) {
+				// eslint-disable-next-line no-console
+				console.error( '[ExPlat]', error.message, error );
+			}
+
 			const body = new window.FormData();
 			body.append( 'error', JSON.stringify( error ) );
 
