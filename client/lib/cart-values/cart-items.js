@@ -16,7 +16,6 @@ import {
 	merge,
 	reject,
 	some,
-	toLower,
 	uniq,
 } from 'lodash';
 import emailValidator from 'email-validator';
@@ -24,7 +23,13 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'lib/gsuite/constants';
+import config from '@automattic/calypso-config';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+	GSUITE_EXTRA_LICENSE_SLUG,
+} from 'calypso/lib/gsuite/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	formatProduct,
 	getDomain,
@@ -39,7 +44,8 @@ import {
 	isEcommerce,
 	isFreeTrial,
 	isFreeWordPressComDomain,
-	isGoogleApps,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
 	isNoAds,
@@ -47,16 +53,20 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
+	isBusiness,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
 	isConciergeSession,
-} from 'lib/products-values';
-import sortProducts from 'lib/products-values/sort';
-import { getTld } from 'lib/domains';
-import { domainProductSlugs } from 'lib/domains/constants';
+	isTrafficGuide,
+	isTitanMail,
+	isMonthly,
+} from 'calypso/lib/products-values';
+import sortProducts from 'calypso/lib/products-values/sort';
+import { getTld } from 'calypso/lib/domains';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import {
 	getPlan,
 	isBloggerPlan,
@@ -65,11 +75,12 @@ import {
 	isPremiumPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
-} from 'lib/plans';
-import { getTermDuration } from 'lib/plans/constants';
+} from 'calypso/lib/plans';
+import { getTermDuration } from 'calypso/lib/plans/constants';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
+ * @typedef { import("./types").CartItemExtra} CartItemExtra
  * @typedef { import("./types").CartValue } CartValue
  */
 
@@ -161,7 +172,9 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( isJetpackProduct( cartItem ) ) {
 		// adding a Jetpack product should replace the cart
-		return true;
+
+		// Jetpack Offer Reset allows users to purchase multiple Jetpack products at the same time.
+		return false;
 	}
 
 	return false;
@@ -348,8 +361,16 @@ export function hasPremiumPlan( cart ) {
 	return some( getAllCartItems( cart ), isPremium );
 }
 
+export function hasBusinessPlan( cart ) {
+	return some( getAllCartItems( cart ), isBusiness );
+}
+
 export function hasDomainCredit( cart ) {
 	return cart.has_bundle_credit || hasPlan( cart );
+}
+
+export function hasMonthlyCartItem( cart ) {
+	return some( getAllCartItems( cart ), isMonthly );
 }
 
 /**
@@ -515,11 +536,13 @@ export function getDomainTransfers( cart ) {
 /**
  * Determines whether all items are renewal items in the specified shopping cart.
  *
+ * Ignores partial credits, which aren't really a line item in this sense.
+ *
  * @param {CartValue} cart - cart as `CartValue` object
  * @returns {boolean} true if there are only renewal items, false otherwise
  */
 export function hasOnlyRenewalItems( cart ) {
-	return every( getAllCartItems( cart ), isRenewal );
+	return getAllCartItems( cart ).every( ( item ) => isRenewal( item ) || isPartialCredits( item ) );
 }
 
 /**
@@ -530,6 +553,16 @@ export function hasOnlyRenewalItems( cart ) {
  */
 export function hasConciergeSession( cart ) {
 	return some( getAllCartItems( cart ), isConciergeSession );
+}
+
+/**
+ * Determines whether there is a traffic guide item in the specified shopping cart.
+ *
+ * @param {CartValue} cart - cart as `CartValue` object
+ * @returns {boolean} true if there is a traffic guide item, false otherwise
+ */
+export function hasTrafficGuide( cart ) {
+	return some( getAllCartItems( cart ), isTrafficGuide );
 }
 
 /**
@@ -716,21 +749,28 @@ export function domainTransfer( properties ) {
 }
 
 /**
- * Retrieves all the G Suite items in the specified shopping cart.
- * Out-dated name Google Apps is still used here for consistency in naming.
+ * Retrieves all the items in the specified shopping cart for G Suite or Google Workspace.
  *
  * @param {CartValue} cart - cart as `CartValue` object
  * @returns {CartItemValue[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 export function getGoogleApps( cart ) {
-	return filter( getAllCartItems( cart ), isGoogleApps );
+	return filter( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
 export function googleApps( properties ) {
-	const productSlug = properties.product_slug || GSUITE_BASIC_SLUG,
-		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
+	const productSlug =
+		properties.product_slug ||
+		( config.isEnabled( 'google-workspace-migration' )
+			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			: GSUITE_BASIC_SLUG );
 
-	return assign( item, { extra: { google_apps_users: properties.users } } );
+	return assign( domainItem( productSlug, properties.meta ?? properties.domain ), {
+		extra: { google_apps_users: properties.users },
+		...( productSlug === GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			? { quantity: properties.quantity }
+			: {} ),
+	} );
 }
 
 export function googleAppsExtraLicenses( properties ) {
@@ -739,14 +779,19 @@ export function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
-export function fillGoogleAppsRegistrationData( cart, registrationData ) {
-	const googleAppsItems = filter( getAllCartItems( cart ), isGoogleApps );
-	return flow.apply(
-		null,
-		googleAppsItems.map( function ( item ) {
-			item.extra = assign( item.extra, { google_apps_registration_data: registrationData } );
-			return addCartItem( item );
-		} )
+/**
+ * Creates a new shopping cart item for Titan Mail Monthly.
+ *
+ * @param {object} properties - list of properties
+ * @returns {CartItemValue} the new item as `CartItemValue` object
+ */
+export function titanMailMonthly( properties ) {
+	return assign(
+		domainItem( TITAN_MAIL_MONTHLY_SLUG, properties.meta ?? properties.domain, properties.source ),
+		{
+			quantity: properties.quantity,
+			extra: properties.extra,
+		}
 	);
 }
 
@@ -793,7 +838,11 @@ export function hasInvalidAlternateEmailDomain( cart, contactDetails ) {
 }
 
 export function hasGoogleApps( cart ) {
-	return some( getAllCartItems( cart ), isGoogleApps );
+	return some( getAllCartItems( cart ), isGSuiteOrExtraLicenseOrGoogleWorkspace );
+}
+
+export function hasTitanMail( cart ) {
+	return some( getAllCartItems( cart ), isTitanMail );
 }
 
 export function customDesignItem() {
@@ -936,8 +985,12 @@ export function getRenewalItemFromProduct( product, properties ) {
 		cartItem = planItem( product.product_slug );
 	}
 
-	if ( isGoogleApps( product ) ) {
+	if ( isGSuiteOrGoogleWorkspace( product ) ) {
 		cartItem = googleApps( product );
+	}
+
+	if ( isTitanMail( product ) ) {
+		cartItem = titanMailMonthly( product );
 	}
 
 	if ( isSiteRedirect( product ) ) {
@@ -1100,9 +1153,19 @@ export function removePrivacyFromAllDomains( cart ) {
 }
 
 /**
- * Determines whether a cart item is a renewal
+ * Determines whether a cart item is partial credits
  *
  * @param {CartItemValue} cartItem - `CartItemValue` object
+ * @returns {boolean} true if item is credits
+ */
+export function isPartialCredits( cartItem ) {
+	return cartItem.product_slug === 'wordpress-com-credits';
+}
+
+/**
+ * Determines whether a cart item is a renewal
+ *
+ * @param {{extra?: CartItemExtra}} cartItem - object with `CartItemExtra` `extra` property
  * @returns {boolean} true if item is a renewal
  */
 export function isRenewal( cartItem ) {
@@ -1153,7 +1216,7 @@ export function isNextDomainFree( cart, domain = '' ) {
 export function isDomainBundledWithPlan( cart, domain ) {
 	const bundledDomain = get( cart, 'bundled_domain', '' );
 
-	return '' !== bundledDomain && toLower( domain ) === toLower( get( cart, 'bundled_domain', '' ) );
+	return '' !== bundledDomain && ( domain ?? '' ).toLowerCase() === bundledDomain.toLowerCase();
 }
 
 /**
@@ -1172,8 +1235,8 @@ export function isDomainBeingUsedForPlan( cart, domain ) {
 		return false;
 	}
 
-	const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
-		domainProduct = domainProducts.shift() || {};
+	const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) );
+	const domainProduct = domainProducts.shift() || {};
 	const processedDomainInCart = domain === domainProduct.meta;
 	if ( ! processedDomainInCart ) {
 		return false;
@@ -1248,6 +1311,10 @@ export function isPaidDomain( domainPriceRule ) {
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
+	}
+
+	if ( suggestion?.is_premium ) {
+		return 'PRICE';
 	}
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {

@@ -11,8 +11,8 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Button from '../../components/button';
 import {
-	useEvents,
-	usePaymentProcessor,
+	FormStatus,
+	TransactionStatus,
 	useTransactionStatus,
 	useLineItems,
 } from '../../public-api';
@@ -21,23 +21,23 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
 const debug = debugFactory( 'composite-checkout:paypal' );
 
-export function createPayPalMethod() {
+export function createPayPalMethod( { labelText = null } ) {
 	debug( 'creating new paypal payment method' );
 	return {
 		id: 'paypal',
-		label: <PaypalLabel />,
+		label: <PaypalLabel labelText={ labelText } />,
 		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
 		getAriaLabel: ( __ ) => __( 'PayPal' ),
 	};
 }
 
-export function PaypalLabel() {
+export function PaypalLabel( { labelText = null } ) {
 	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<span>{ __( 'PayPal' ) }</span>
+			<span>{ labelText || __( 'PayPal' ) }</span>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
 				<PaypalLogo />
 			</PaymentMethodLogos>
@@ -45,46 +45,22 @@ export function PaypalLabel() {
 	);
 }
 
-export function PaypalSubmitButton( { disabled } ) {
+export function PaypalSubmitButton( { disabled, onClick } ) {
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
-	const {
-		transactionStatus,
-		setTransactionPending,
-		setTransactionRedirecting,
-		setTransactionError,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'paypal' );
+	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
-	const { __ } = useI18n();
 
-	const onClick = () => {
-		onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'paypal' } } );
-		setTransactionPending();
-		submitTransaction( {
+	const handleButtonPress = () => {
+		onClick( 'paypal', {
 			items,
-		} )
-			.then( ( response ) => {
-				if ( ! response ) {
-					setTransactionError(
-						__(
-							'An error occurred while redirecting to PayPal. Please try again or contact support.'
-						)
-					);
-					return;
-				}
-				setTransactionRedirecting( response );
-			} )
-			.catch( ( error ) => {
-				setTransactionError( error.message );
-			} );
+		} );
 	};
 	return (
 		<Button
 			disabled={ disabled }
-			onClick={ onClick }
+			onClick={ handleButtonPress }
 			buttonType="paypal"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<PayPalButtonContents formStatus={ formStatus } transactionStatus={ transactionStatus } />
@@ -94,13 +70,13 @@ export function PaypalSubmitButton( { disabled } ) {
 
 function PayPalButtonContents( { formStatus, transactionStatus } ) {
 	const { __ } = useI18n();
-	if ( transactionStatus === 'redirecting' ) {
+	if ( transactionStatus === TransactionStatus.REDIRECTING ) {
 		return <span>{ __( 'Redirecting to PayPal…' ) }</span>;
 	}
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <span>{ __( 'Processing…' ) }</span>;
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return <ButtonPayPalIcon />;
 	}
 	return <span>{ __( 'Please wait…' ) }</span>;

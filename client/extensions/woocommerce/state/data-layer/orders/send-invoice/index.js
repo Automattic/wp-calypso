@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { createNoteSuccess } from 'woocommerce/state/sites/orders/notes/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	orderInvoiceFailure,
 	orderInvoiceSuccess,

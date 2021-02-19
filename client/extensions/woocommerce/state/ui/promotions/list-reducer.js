@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 	WOOCOMMERCE_PROMOTIONS_SEARCH,

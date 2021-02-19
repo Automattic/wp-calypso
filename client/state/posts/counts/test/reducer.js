@@ -18,10 +18,9 @@ import {
 	POST_DELETE,
 	POST_SAVE,
 	POSTS_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -413,7 +412,7 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
-			const state = counts( original, { type: SERIALIZE } );
+			const state = serialize( counts, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -431,7 +430,7 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
-			const state = counts( original, { type: DESERIALIZE } );
+			const state = deserialize( counts, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -449,7 +448,7 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
-			const state = counts( original, { type: DESERIALIZE } );
+			const state = deserialize( counts, original );
 
 			expect( state ).to.eql( {} );
 		} );

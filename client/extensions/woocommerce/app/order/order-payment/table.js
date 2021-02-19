@@ -10,7 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import {
 	getOrderDiscountTax,
@@ -154,11 +155,11 @@ class OrderRefundTable extends Component {
 		const inputId = `quantity-${ item.id }`;
 		return (
 			<OrderLineItem key={ item.id } isEditing item={ item } order={ order } site={ site }>
-				<label htmlFor={ inputId }>
+				<FormLabel htmlFor={ inputId }>
 					<ScreenReaderText>
 						{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
 					</ScreenReaderText>
-				</label>
+				</FormLabel>
 
 				<FormTextInput
 					type="number"
@@ -190,11 +191,11 @@ class OrderRefundTable extends Component {
 					</span>
 				</TableItem>
 				<TableItem colSpan="2" className="order-payment__item-total order-details__item-total">
-					<label htmlFor={ inputId }>
+					<FormLabel htmlFor={ inputId }>
 						<ScreenReaderText>
 							{ translate( 'Value of fee %(item)s', { args: { item: item.name } } ) }
 						</ScreenReaderText>
-					</label>
+					</FormLabel>
 					<PriceInput
 						id={ inputId }
 						currency={ order.currency }

@@ -7,13 +7,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const likeComment = ( action ) =>
 	http(

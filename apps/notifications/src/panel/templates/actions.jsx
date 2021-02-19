@@ -1,11 +1,16 @@
+/**
+ * External dependencies
+ */
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../state/selectors/get-is-note-liked';
-
 import ApproveButton from './button-approve';
 import EditButton from './button-edit';
 import LikeButton from './button-like';
@@ -18,7 +23,8 @@ import { getActions, getReferenceId } from '../helpers/notes';
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
 
 const getInitialReplyValue = ( note, translate ) => {
-	let ranges, username;
+	let ranges;
+	let username;
 
 	if ( 'user' === note.subject[ 0 ].ranges[ 0 ].type ) {
 		// Build the username from the subject line

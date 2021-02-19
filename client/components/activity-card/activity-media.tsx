@@ -6,7 +6,7 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 interface Props {
 	icon?: string;

@@ -9,18 +9,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getAvailableProductsList } from 'state/products-list/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
-import { managePurchase } from 'me/purchases/paths';
-import { isJetpackProduct } from 'lib/products-values';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Notice from 'calypso/components/notice';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { planHasFeature, planHasSuperiorFeature } from 'calypso/lib/plans';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import { isJetpackProduct } from 'calypso/lib/products-values';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 

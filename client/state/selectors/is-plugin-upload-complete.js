@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 
-import getUploadedPluginId from 'state/selectors/get-uploaded-plugin-id';
+import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 
-import isPluginUploadInProgress from 'state/selectors/is-plugin-upload-in-progress';
+import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 
 /**
  * Indicates whether a plugin upload has completed

@@ -1,16 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`webpack-inline-constant-exports-plugin should produce expected output: Output bundle should match snapshot 1`] = `
-"(window[\\"webpackJsonp\\"] = window[\\"webpackJsonp\\"] || []).push([[\\"main\\"],{
+"(window[\\"webpackChunk\\"] = window[\\"webpackChunk\\"] || []).push([[\\"main\\"],{
 
 /***/ \\"./index.js\\":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function() {
 
 \\"use strict\\";
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: ./plans.js
+;// CONCATENATED MODULE: ./plans.js
 /*
  * Export two plan constants and a a constant array of all plans. The array should not be inlined
  * and the module should stay in the dependency graph.
@@ -19,17 +17,25 @@ const BLOGGER = 'BLOGGER_PLAN';
 const PREMIUM = 'PREMIUM_PLAN';
 /* harmony default export */ var plans = ([ BLOGGER, PREMIUM ]);
 
-// CONCATENATED MODULE: ./paths.js
+;// CONCATENATED MODULE: ./paths.js
 /*
  * The export is eligible for inlining, but the module is not specified in the plugin config.
  * Therefore no inlining should happen.
  */
 const HOME_PATH = '/';
 
-// CONCATENATED MODULE: ./index.js
+;// CONCATENATED MODULE: ./constants2.js
+/*
+ * The export is eligible for inlining, but the module is not used directly but re-exported from \`./export.js\`.
+ * Re-exporting is not supported, therefore no inlining should happen.
+ */
+const FOO = 'bar';
+
+;// CONCATENATED MODULE: ./index.js
 /**
  * Internal dependencies
  */
+
 
 
 
@@ -40,9 +46,11 @@ console.log( /* inline */ 'PLANS_REQUEST', /* inline */ 'PLANS_RECEIVE' );
 console.log( /* inline */ 'BLOGGER_PLAN', /* inline */ 'PREMIUM_PLAN', plans );
 console.log( /* inline */ 42, /* inline */ 3.14159, /* inline */ true, /* inline */ false, /* inline */ null );
 console.log( HOME_PATH );
+console.log( FOO );
 
 
 /***/ })
 
-},[[\\"./index.js\\",\\"runtime~main\\"]]]);"
+},
+0,[[\\"./index.js\\",\\"runtime~main\\"]]]);"
 `;

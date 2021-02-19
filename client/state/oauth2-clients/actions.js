@@ -6,10 +6,10 @@ import LRU from 'lru';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { OAUTH2_CLIENT_DATA_RECEIVE } from 'state/action-types';
+import wpcom from 'calypso/lib/wp';
+import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
 
-import 'state/oauth2-clients/init';
+import 'calypso/state/oauth2-clients/init';
 
 // Store the REST endpoint responses in a LRU cache. That's useful in a server context,
 // where the fetch is done when handling SSR-ed login and signup routes. Cache is shared

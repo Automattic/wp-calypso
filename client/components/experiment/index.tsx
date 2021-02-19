@@ -3,19 +3,24 @@
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { AppState } from 'types';
+import { AppState } from 'calypso/types';
 
 /**
  * Internal Dependencies
  */
-import { getVariationForUser, isLoading } from 'state/experiments/selectors';
-import QueryExperiments from 'components/data/query-experiments';
+import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
+import QueryExperiments from 'calypso/components/data/query-experiments';
 import { ExperimentProps } from './experiment-props';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export { default as Variation } from './variation';
 export { default as DefaultVariation } from './default-variation';
 export { default as LoadingVariations } from './loading-variations';
+
+/**
+ * Type Dependencies
+ */
+import { LoadingProps } from './loading-props';
 
 /**
  * The experiment component to display the experiment variations
@@ -42,8 +47,19 @@ export const Experiment: FunctionComponent< ExperimentProps > = ( props ) => {
 	return (
 		<>
 			<QueryExperiments />
-			{ React.Children.map( children, ( elem ) => {
-				return React.cloneElement( elem, { variation, isLoading: loading } );
+			{ React.Children.map( children as JSX.Element[], ( elem ) => {
+				if ( elem ) {
+					const props: LoadingProps = { variation };
+
+					// Unless element is a DOM element
+					if ( 'string' !== typeof elem.type ) {
+						props.isLoading = loading;
+					}
+
+					return React.cloneElement( elem, props );
+				}
+
+				return null;
 			} ) }
 		</>
 	);
@@ -63,7 +79,7 @@ function mapStateToProps( state: AppState, ownProps?: ExperimentProps ): Experim
 	const { name: experimentName } = ownProps;
 	return {
 		isLoading: isLoading( state ),
-		variation: getVariationForUser( state, experimentName ),
+		variation: getVariationForUser( state, experimentName ) ?? undefined,
 		...ownProps,
 	};
 }

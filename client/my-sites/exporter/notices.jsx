@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompletePurchaseNotice from './guided-transfer-card/complete-purchase-notice';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import { getExportingState, getDownloadUrl } from 'state/exporter/selectors';
-import { isGuidedTransferAwaitingPurchase } from 'state/sites/guided-transfer/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { States } from 'state/exporter/constants';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { getExportingState, getDownloadUrl } from 'calypso/state/exporter/selectors';
+import { isGuidedTransferAwaitingPurchase } from 'calypso/state/sites/guided-transfer/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { States } from 'calypso/state/exporter/constants';
 
 /**
  * Displays local notices for the Export tab of Site Settings

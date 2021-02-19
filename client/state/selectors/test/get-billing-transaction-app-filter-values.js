@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
+import getBillingTransactionAppFilterValues from 'calypso/state/selectors/get-billing-transaction-app-filter-values';
 
 describe( 'getBillingTransactionAppFilterValues()', () => {
 	const state = {

@@ -1,0 +1,66 @@
+@import '../../../variables.scss';
+@import '../../../mixins';
+
+$placeholder-color: #ccd0d4; // former light-gray-700
+
+.acquire-intent-text-input__wrapper {
+	display: block;
+}
+
+.acquire-intent-text-input__input {
+	width: 100%;
+
+	@include onboarding-heading-text-mobile;
+	height: auto;
+	background: transparent;
+	border: none;
+	padding: 0;
+	color: var( --mainColor );
+	caret-color: var( --mainColor );
+
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
+
+	&::-ms-clear {
+		display: none;
+	}
+
+	@include break-small {
+		@include onboarding-heading-text;
+	}
+
+	@include break-medium {
+		font-size: 64px;
+	}
+
+	&::placeholder {
+		color: $placeholder-color;
+		line-height: normal;
+	}
+
+	&::-ms-clear {
+		display: none;
+	}
+}
+
+.acquire-intent-text-input__underline {
+	height: 2px;
+	background: var( --mainColor );
+	margin-top: -5px;
+	max-width: 100%;
+
+	@include break-medium {
+		margin-top: -12px;
+	}
+
+	&.is-empty {
+		max-width: 550px;
+		background: linear-gradient(
+			90deg,
+			$placeholder-color 0%,
+			lighten( $placeholder-color, 10% ) 100%
+		);
+	}
+}

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -10,8 +9,6 @@ import { debounce } from 'lodash';
 import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@wordpress/block-editor';
-
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies

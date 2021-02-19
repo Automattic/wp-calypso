@@ -233,15 +233,34 @@
 	margin-top: 20px;
 }
 
-.memberships__module-products-title {
-	margin-bottom: 10px;
+.memberships__module-plans-title {
 	color: var( --color-neutral-100 );
 }
 
-.memberships__module-products-list {
-	color: var( --color-neutral );
+.memberships__module-settings-title {
+	color: var( --color-neutral-100 );
+	display: flex;
+	align-items: center;
+}
+
+.memberships__module-plans-description {
+	color: var( --color-neutral-100 );
 	font-size: $font-body-small;
 }
+
+.memberships__module-plans-content {
+	display: flex;
+	flex-direction: row;
+}
+
+.memberships__module-plans-icon {
+	padding-right: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var( --color-neutral-60 );
+}
+
 .memberships__module-products-list-icon {
 	margin-right: 6px;
 }
@@ -293,7 +312,10 @@
 	background-color: var( --color-surface );
 
 	&.is-visible {
-		z-index: z-index( '.dialog__backdrop', '.memberships__dialog-section.is-visible' );  // Visible section is placed above so it hides the ones below.
+		z-index: z-index(
+			'.dialog__backdrop',
+			'.memberships__dialog-section.is-visible'
+		); // Visible section is placed above so it hides the ones below.
 	}
 }
 
@@ -302,7 +324,6 @@
 	font-weight: 600;
 	margin-bottom: 1.5em;
 }
-
 
 /**
  * Delete Site Options

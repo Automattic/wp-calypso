@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ListEnd from 'components/list-end';
-import { bumpStat } from 'state/analytics/actions';
+import ListEnd from 'calypso/components/list-end';
+import { bumpStat } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

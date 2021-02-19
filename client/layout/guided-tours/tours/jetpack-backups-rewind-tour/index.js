@@ -2,14 +2,14 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
-import getRewindState from 'state/selectors/get-rewind-state';
+import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import meta from './meta';
 import {
 	ButtonRow,
@@ -20,9 +20,9 @@ import {
 	SiteLink,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
-import { not } from 'layout/guided-tours/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/layout/guided-tours/config-elements';
+import { not } from 'calypso/layout/guided-tours/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function whenWeCanAutoconfigure( state ) {
 	const siteId = getSelectedSiteId( state );

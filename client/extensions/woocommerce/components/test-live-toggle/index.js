@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import SegmentedControl from 'components/segmented-control';
+import FormLabel from 'calypso/components/forms/form-label';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 class TestLiveToggle extends Component {
 	static propTypes = {

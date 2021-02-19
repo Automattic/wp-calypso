@@ -8,18 +8,18 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import RegisterDomainStep from 'components/domains/register-domain-step';
-import PlansNavigation from 'my-sites/plans/navigation';
-import Main from 'components/main';
-import { addItem, removeItem } from 'lib/cart/actions';
-import { canDomainAddGSuite } from 'lib/gsuite';
+import EmptyContent from 'calypso/components/empty-content';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
+import Main from 'calypso/components/main';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { canDomainAddGSuite } from 'calypso/lib/gsuite';
 import {
 	hasPlan,
 	hasDomainInCart,
@@ -27,23 +27,33 @@ import {
 	domainTransfer,
 	domainRegistration,
 	updatePrivacyForDomain,
-} from 'lib/cart-values/cart-items';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import { getProductsList } from 'state/products-list/selectors';
-import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
-import NewDomainsRedirectionNoticeUpsell from 'my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
+} from 'calypso/lib/cart-values/cart-items';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import {
+	recordAddDomainButtonClick,
+	recordRemoveDomainButtonClick,
+} from 'calypso/state/domains/actions';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
+import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import 'calypso/my-sites/domains/style.scss';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -57,6 +67,8 @@ class DomainSearch extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
 	};
+
+	isMounted = false;
 
 	state = {
 		domainRegistrationAvailable: true,
@@ -79,13 +91,23 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		addItem( domainMapping( { domain } ) );
-		page( '/checkout/' + this.props.selectedSiteSlug );
+		this.props.shoppingCartManager
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( domainMapping( { domain } ), this.props.productsList ),
+			] )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
+			} );
 	};
 
 	handleAddTransfer = ( domain ) => {
-		addItem( domainTransfer( { domain } ) );
-		page( '/checkout/' + this.props.selectedSiteSlug );
+		this.props.shoppingCartManager
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( domainTransfer( { domain } ), this.props.productsList ),
+			] )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
+			} );
 	};
 
 	UNSAFE_componentWillMount() {
@@ -96,6 +118,14 @@ class DomainSearch extends Component {
 		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
 			this.checkSiteIsUpgradeable( nextProps );
 		}
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	componentDidMount() {
+		this.isMounted = true;
 	}
 
 	checkSiteIsUpgradeable( props ) {
@@ -109,9 +139,10 @@ class DomainSearch extends Component {
 			domain_name: domain,
 			product_slug: productSlug,
 			supports_privacy: supportsPrivacy,
+			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains' );
+		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
 
 		let registration = domainRegistration( {
 			domain,
@@ -123,23 +154,30 @@ class DomainSearch extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		addItem( registration );
-
-		if ( canDomainAddGSuite( domain ) ) {
-			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
-		} else {
-			page( '/checkout/' + this.props.selectedSiteSlug );
-		}
+		this.props.shoppingCartManager
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( registration, this.props.productsList ),
+			] )
+			.then( () => {
+				if ( canDomainAddGSuite( domain ) ) {
+					page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
+				} else {
+					page( '/checkout/' + this.props.selectedSiteSlug );
+				}
+			} );
 	}
 
 	removeDomain( suggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
-		removeItem(
-			domainRegistration( {
-				domain: suggestion.domain_name,
-				productSlug: suggestion.product_slug,
-			} )
+
+		const productToRemove = this.props.cart.products.find(
+			( product ) =>
+				product.meta === suggestion.domain_name && product.product_slug === suggestion.product_slug
 		);
+		if ( productToRemove ) {
+			const uuidToRemove = productToRemove.uuid;
+			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove );
+		}
 	}
 
 	getInitialSuggestion() {
@@ -155,7 +193,7 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate } = this.props;
+		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains } = this.props;
 		const classes = classnames( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
@@ -188,7 +226,24 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<div className="domains__header">
+							<FormattedHeader
+								brandFont
+								headerText={
+									isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
+								}
+								align="left"
+							/>
+							{ ! isManagingAllDomains /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ && (
+								<div className="domains__header-buttons">
+									<HeaderCart
+										selectedSite={ this.props.selectedSite }
+										currentRoute={ this.props.currentRoute }
+									/>
+								</div>
+							) }
+						</div>
 
 						<EmailVerificationGate
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
@@ -202,7 +257,7 @@ class DomainSearch extends Component {
 								onAddDomain={ this.handleAddRemoveDomain }
 								onAddMapping={ this.handleAddMapping }
 								onAddTransfer={ this.handleAddTransfer }
-								cart={ this.props.cart }
+								isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 								offerUnavailableOption
 								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
@@ -245,4 +300,4 @@ export default connect(
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
 	}
-)( localize( DomainSearch ) );
+)( withShoppingCart( localize( DomainSearch ) ) );

@@ -10,18 +10,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarFollowingItem from './item';
-import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
-import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
-import getReaderFollowedSites from 'state/reader/follows/selectors/get-reader-followed-sites';
-import ReaderSidebarHelper from 'reader/sidebar/helper';
-import SidebarItem from 'layout/sidebar/item';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import Count from 'components/count';
+import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
+import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import Count from 'calypso/components/count';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
- * Styles
+ * Style dependencies
  */
 import '../style.scss';
 
@@ -32,19 +33,15 @@ export class ReaderSidebarFollowedSites extends Component {
 		isFollowingOpen: PropTypes.bool,
 	};
 
-	handleReaderSidebarFollowedSitesClicked() {
+	handleReaderSidebarFollowedSitesClicked = () => {
 		recordAction( 'clicked_reader_sidebar_followed_sites' );
 		recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
-		recordTrack( 'calypso_reader_sidebar_followed_sites_clicked' );
-	}
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' );
+	};
 
 	renderAll() {
 		const { path, translate, sites } = this.props;
-		// have a selector
-		const sum = sites.reduce( ( acc, item ) => {
-			acc = acc + item.unseen_count;
-			return acc;
-		}, 0 );
+		const sum = sites.reduce( ( acc, { unseen_count } ) => acc + ( unseen_count | 0 ), 0 );
 		return (
 			<SidebarItem
 				className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
@@ -79,6 +76,7 @@ export class ReaderSidebarFollowedSites extends Component {
 				title={ translate( 'Followed Sites' ) }
 				onClick={ this.props.toggleReaderSidebarFollowing }
 				materialIcon="check_circle"
+				disableFlyout={ true }
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }
@@ -95,6 +93,7 @@ export default connect(
 		};
 	},
 	{
+		recordReaderTracksEvent,
 		toggleReaderSidebarFollowing,
 	}
 )( localize( ReaderSidebarFollowedSites ) );

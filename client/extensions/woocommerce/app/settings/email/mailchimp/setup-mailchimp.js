@@ -11,11 +11,11 @@ import React from 'react';
  * Internal dependencies
  */
 import { Dialog, ProgressBar } from '@automattic/components';
-import { getSiteTitle } from 'state/sites/selectors';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import {
 	isSubmittingApiKey,
 	isApiKeyCorrect,
@@ -25,7 +25,7 @@ import {
 import KeyInputStep from './setup-steps/key-input.js';
 import LogIntoMailchimp from './setup-steps/log-into-mailchimp.js';
 import NewsletterSettings from './setup-steps/newsletter-settings.js';
-import ProgressIndicator from 'components/wizard/progress-indicator';
+import ProgressIndicator from 'calypso/components/wizard/progress-indicator';
 import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import StoreInfoStep from './setup-steps/store-info.js';
 import {

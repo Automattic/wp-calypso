@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getJetpackSettings from 'state/selectors/get-jetpack-settings';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
 
 /**
  * Returns a certain Jetpack setting on a specified site.

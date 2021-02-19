@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { pick, set, isEqual } from 'lodash';
+import { pick, set, isEqual, first } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
-import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import { countsSchema } from './schema';
 import { QUERY_FIELDS } from './constants';
 
@@ -27,7 +27,10 @@ export const counts = withSchemaValidation(
 				case STATS_CHART_COUNTS_RECEIVE: {
 					// Workaround to prevent new data from being appended to previous data when range period differs.
 					// See https://github.com/Automattic/wp-calypso/pull/41441#discussion_r415918092
-					if ( action.data.length !== state.length ) {
+					if (
+						action.data.length !== state.length ||
+						! isEqual( first( action.data ).period, first( state ).period )
+					) {
 						return action.data;
 					}
 

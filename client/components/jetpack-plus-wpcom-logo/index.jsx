@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { colors as PALETTE } from '@automattic/color-studio';
+import colorStudio from '@automattic/color-studio';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -9,6 +9,7 @@ import classNames from 'classnames';
 /**
  * Module constants
  */
+const PALETTE = colorStudio.colors;
 const COLOR_JETPACK = PALETTE[ 'Jetpack Green 40' ];
 const COLOR_WORDPRESS = PALETTE[ 'WordPress Blue 40' ];
 const COLOR_WHITE = PALETTE[ 'White' ]; // eslint-disable-line dot-notation

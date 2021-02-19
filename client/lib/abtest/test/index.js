@@ -10,8 +10,8 @@ import { get as getStoreStub, set as setSpy } from 'store';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { getUserStub } from 'lib/user';
+import { abtest } from 'calypso/lib/abtest';
+import { getUserStub } from 'calypso/lib/user';
 
 const NODE_ENV = process.env.NODE_ENV;
 beforeAll( () => {
@@ -22,7 +22,7 @@ afterAll( () => {
 	process.env.NODE_ENV = NODE_ENV;
 } );
 
-jest.mock( 'lib/abtest/active-tests', () => ( {
+jest.mock( 'calypso/lib/abtest/active-tests', () => ( {
 	mockedTest: {
 		datestamp: '20160627',
 		variations: {
@@ -78,7 +78,7 @@ jest.mock( 'lib/abtest/active-tests', () => ( {
 		allowExistingUsers: true,
 	},
 } ) );
-jest.mock( 'lib/user', () => {
+jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 
 	const user = () => ( {

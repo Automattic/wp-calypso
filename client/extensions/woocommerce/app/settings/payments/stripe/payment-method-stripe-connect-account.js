@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Image from 'components/image';
-import resizeImageUrl from 'lib/resize-image-url';
+import Image from 'calypso/components/image';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 
 class StripeConnectAccount extends Component {
 	static propTypes = {

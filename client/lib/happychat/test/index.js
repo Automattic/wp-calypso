@@ -22,7 +22,7 @@ import {
 	receiveUnauthorized,
 	requestTranscript,
 	sendTyping,
-} from 'state/happychat/connection/actions';
+} from 'calypso/state/happychat/connection/actions';
 import buildConnection from '../connection';
 
 describe( 'connection', () => {
@@ -34,7 +34,9 @@ describe( 'connection', () => {
 			const groups = 'groups';
 			const geoLocation = 'location';
 
-			let socket, dispatch, openSocket;
+			let socket;
+			let dispatch;
+			let openSocket;
 			beforeEach( () => {
 				socket = new EventEmitter();
 				dispatch = jest.fn();
@@ -79,14 +81,15 @@ describe( 'connection', () => {
 
 			test( 'unauthorized event', () => {
 				socket.close = jest.fn();
-				openSocket.catch( () => {
+				expect.assertions( 3 );
+				socket.emit( 'unauthorized' );
+				return openSocket.catch( () => {
 					expect( dispatch ).toHaveBeenCalledTimes( 1 );
 					expect( dispatch ).toHaveBeenCalledWith(
 						receiveUnauthorized( 'User is not authorized' )
 					);
 					expect( socket.close ).toHaveBeenCalled();
 				} );
-				socket.emit( 'unauthorized' );
 			} );
 
 			test( 'disconnect event', () => {
@@ -132,7 +135,10 @@ describe( 'connection', () => {
 		} );
 
 		describe( 'should not bind SocketIO events upon config promise rejection', () => {
-			let connection, socket, dispatch, openSocket;
+			let connection;
+			let socket;
+			let dispatch;
+			let openSocket;
 			const rejectMsg = 'no auth';
 			beforeEach( () => {
 				socket = new EventEmitter();
@@ -224,7 +230,10 @@ describe( 'connection', () => {
 		const groups = 'groups';
 		const geoLocation = 'location';
 
-		let socket, dispatch, connection, config;
+		let socket;
+		let dispatch;
+		let connection;
+		let config;
 		beforeEach( () => {
 			socket = new EventEmitter();
 			dispatch = jest.fn();
@@ -301,7 +310,10 @@ describe( 'connection', () => {
 	} );
 
 	describe( 'when auth promise chain is rejected', () => {
-		let socket, dispatch, connection, config;
+		let socket;
+		let dispatch;
+		let connection;
+		let config;
 		beforeEach( () => {
 			socket = new EventEmitter();
 			dispatch = jest.fn();

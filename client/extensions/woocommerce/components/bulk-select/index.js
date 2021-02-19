@@ -4,7 +4,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 
 const BulkSelect = ( {
 	className,
@@ -31,9 +32,8 @@ const BulkSelect = ( {
 	return (
 		<span className={ containerClasses }>
 			<span className="bulk-select__container">
-				<input
+				<FormInputCheckbox
 					id={ id }
-					type="checkbox"
 					className={ inputClasses }
 					onChange={ handleToggle }
 					checked={ hasAllElementsSelected }

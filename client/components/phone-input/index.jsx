@@ -11,7 +11,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import FormCountrySelect from 'components/forms/form-country-select';
+import FormCountrySelect from 'calypso/components/forms/form-country-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import {
 	formatNumber,
 	toIcannFormat,
@@ -19,9 +20,9 @@ import {
 	processNumber,
 	getUpdatedCursorPosition,
 	MIN_LENGTH_TO_FORMAT,
-} from 'components/phone-input/phone-number';
-import CountryFlag from 'components/phone-input/country-flag';
-import { countries } from 'components/phone-input/data';
+} from 'calypso/components/phone-input/phone-number';
+import CountryFlag from 'calypso/components/phone-input/country-flag';
+import { countries } from 'calypso/components/phone-input/data';
 
 /**
  * Style dependencies
@@ -80,14 +81,14 @@ function PhoneInput( {
 
 	return (
 		<div className={ classnames( className, 'phone-input' ) }>
-			<input
+			<FormTextInput
 				placeholder={ translate( 'Phone' ) }
 				onChange={ handleInput }
 				onClick={ handleCursorMove }
 				onKeyUp={ handleCursorMove }
 				name={ name }
 				value={ displayValue }
-				ref={ numberInputRef }
+				inputRef={ numberInputRef }
 				type="tel"
 				disabled={ disabled }
 				className={ classnames( 'phone-input__number-input', {
@@ -284,13 +285,13 @@ function recordCursorPosition( oldCursorPosition, newPosition ) {
  */
 function calculateInputAndCountryCode( value, countryCode, countriesList, freezeSelection ) {
 	const calculatedCountry = guessCountryFromValueOrGetSelected(
-			value,
-			countryCode,
-			countriesList,
-			freezeSelection
-		),
-		calculatedValue = format( value, calculatedCountry.isoCode, countriesList ),
-		calculatedCountryCode = calculatedCountry.isoCode;
+		value,
+		countryCode,
+		countriesList,
+		freezeSelection
+	);
+	const calculatedValue = format( value, calculatedCountry.isoCode, countriesList );
+	const calculatedCountryCode = calculatedCountry.isoCode;
 
 	return { value: calculatedValue, countryCode: calculatedCountryCode };
 }

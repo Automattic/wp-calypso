@@ -7,13 +7,17 @@ import { localize } from 'i18n-calypso';
 import { concat } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
 import FormField from '../form-field';
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'calypso/components/forms/form-select';
 import AppliesToFilteredList from './applies-to-filtered-list';
 import ProductSearch from 'woocommerce/components/product-search';
-import warn from 'lib/warn';
 
 class PromotionAppliesToField extends React.Component {
 	static propTypes = {

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/happiness-engineers/init';
+import 'calypso/state/happiness-engineers/init';
 
 /**
  * Returns happiness engineers

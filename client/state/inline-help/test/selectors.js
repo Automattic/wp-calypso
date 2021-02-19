@@ -6,10 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isInlineHelpPopoverVisible from 'state/inline-help/selectors/is-inline-help-popover-visible';
-import getSearhQuery from 'state/inline-help/selectors/get-search-query';
-import getInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
-import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
+import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
+import getSearhQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import getInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
+import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 
 describe( '#isInlineHelpPopoverVisible()', () => {
 	test( 'should return if the popover is visible', () => {

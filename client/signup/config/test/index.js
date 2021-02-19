@@ -9,11 +9,11 @@ import { intersection, isEmpty, keys } from 'lodash';
 import flows from '../flows';
 import steps from '../steps';
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
-jest.mock( 'lib/signup/step-actions', () => ( {} ) );
-jest.mock( 'lib/user', () => () => {
+jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
+jest.mock( 'calypso/lib/user', () => () => {
 	return {
 		get() {
 			return {};
@@ -22,6 +22,7 @@ jest.mock( 'lib/user', () => () => {
 } );
 
 describe( 'index', () => {
+	// eslint-disable-next-line jest/expect-expect
 	test( 'should not have overlapping step/flow names', () => {
 		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
 

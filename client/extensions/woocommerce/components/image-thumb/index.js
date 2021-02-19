@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import MediaImage from 'my-sites/media-library/media-image';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
 
 const ImageThumb = ( { width, height, src, alt, placeholder, ...props } ) => {
 	const style = {

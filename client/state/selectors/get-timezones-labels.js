@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/timezones/init';
+import 'calypso/state/timezones/init';
 
 /**
  * Return an object of timezones.

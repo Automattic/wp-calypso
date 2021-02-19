@@ -8,12 +8,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { ConnectedThemesSelection } from './themes-selection';
-import Spinner from 'components/spinner';
-import { getRecommendedThemes } from 'state/themes/actions';
+import Spinner from 'calypso/components/spinner';
+import { getRecommendedThemes } from 'calypso/state/themes/actions';
 import {
 	getRecommendedThemes as getRecommendedThemesSelector,
 	areRecommendedThemesLoading,
-} from 'state/themes/selectors';
+} from 'calypso/state/themes/selectors';
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {

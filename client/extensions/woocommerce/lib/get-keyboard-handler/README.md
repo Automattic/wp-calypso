@@ -1,5 +1,4 @@
-getKeyboardHandler
-==================
+# getKeyboardHandler
 
 ## `getKeyboardHandler( callback: function )`
 
@@ -8,14 +7,36 @@ This is an accessibility helper function for lists of items which have onClick e
 This is meant to be used on a list of elements (`<tr>`, `<li>`, …), so that they can be made keyboard-accessible. Example:
 
 ```jsx
+/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
 import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
 
 export default function ExampleNavList() {
 	return (
 		<ul>
-			<li role="button" tabIndex="0" onClick={ onClick } onKeyDown={ getKeyboardHandler( onClick ) }>{ complexChild }</li>
-			<li role="button" tabIndex="0" onClick={ onClick } onKeyDown={ getKeyboardHandler( onClick ) }>{ complexChild }</li>
-			<li role="button" tabIndex="0" onClick={ onClick } onKeyDown={ getKeyboardHandler( onClick ) }>{ complexChild }</li>
+			<li
+				role="button"
+				tabIndex="0"
+				onClick={ onClick }
+				onKeyDown={ getKeyboardHandler( onClick ) }
+			>
+				{ complexChild }
+			</li>
+			<li
+				role="button"
+				tabIndex="0"
+				onClick={ onClick }
+				onKeyDown={ getKeyboardHandler( onClick ) }
+			>
+				{ complexChild }
+			</li>
+			<li
+				role="button"
+				tabIndex="0"
+				onClick={ onClick }
+				onKeyDown={ getKeyboardHandler( onClick ) }
+			>
+				{ complexChild }
+			</li>
 		</ul>
 	);
 }

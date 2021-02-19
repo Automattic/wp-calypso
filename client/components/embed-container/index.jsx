@@ -10,7 +10,7 @@ import { assign, filter, forEach, forOwn, noop } from 'lodash';
  * Internal Dependencies
  */
 import { loadScript } from '@automattic/load-script';
-import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
+import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -21,6 +21,7 @@ const embedsToLookFor = {
 	'fb\\:post, [class^=fb-]': embedFacebook,
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
+	'.wp-block-jetpack-story': embedStory,
 	'.embed-reddit': embedReddit,
 };
 
@@ -196,6 +197,17 @@ function embedSlideshow( domNode ) {
 		loadjQueryDependentScriptDesktopWrapper( SLIDESHOW_URLS.CYCLE_JS, () => {
 			createSlideshow();
 		} );
+	}
+}
+
+function embedStory( domNode ) {
+	debug( 'processing story for ', domNode );
+
+	const storyLink = domNode.querySelector( 'a.wp-story-overlay' );
+
+	// Open story in a new tab
+	if ( storyLink ) {
+		storyLink.setAttribute( 'target', '_blank' );
 	}
 }
 

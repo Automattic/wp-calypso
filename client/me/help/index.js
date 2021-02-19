@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 import * as helpController from './controller';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import page from 'page';
-import { makeLayout, render as clientRender } from 'controller';
-import { sidebar } from 'me/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { sidebar } from 'calypso/me/controller';
 
 export default function () {
 	if ( config.isEnabled( 'help' ) ) {
@@ -27,14 +27,12 @@ export default function () {
 		);
 	}
 
-	if ( config.isEnabled( 'help/courses' ) ) {
-		page(
-			'/help/courses',
-			helpController.loggedOut,
-			sidebar,
-			helpController.courses,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/help/courses',
+		helpController.loggedOut,
+		sidebar,
+		helpController.courses,
+		makeLayout,
+		clientRender
+	);
 }

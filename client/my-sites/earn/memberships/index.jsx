@@ -11,45 +11,55 @@ import { saveAs } from 'browser-filesaver';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { Card, Button, CompactCard, Dialog } from '@automattic/components';
-import InfiniteScroll from 'components/infinite-scroll';
-import QueryMembershipsEarnings from 'components/data/query-memberships-earnings';
-import QueryMembershipsSettings from 'components/data/query-memberships-settings';
-import { requestDisconnectStripeAccount } from 'state/memberships/settings/actions';
-import { requestSubscribers, requestSubscriptionStop } from 'state/memberships/subscribers/actions';
-import { decodeEntities, preventWidows } from 'lib/formatting';
-import Gravatar from 'components/gravatar';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_MEMBERSHIPS, PLAN_PERSONAL, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import SectionHeader from 'components/section-header';
-import QueryMembershipProducts from 'components/data/query-memberships';
-import Gridicon from 'components/gridicon';
-import { userCan } from 'lib/site/utils';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import ExternalLink from 'components/external-link';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { localizeUrl } from 'lib/i18n-utils';
-import { getEarningsWithDefaultsForSiteId } from 'state/memberships/earnings/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { Card, Button, Dialog } from '@automattic/components';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import { requestDisconnectStripeAccount } from 'calypso/state/memberships/settings/actions';
+import {
+	requestSubscribers,
+	requestSubscriptionStop,
+} from 'calypso/state/memberships/subscribers/actions';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import Gravatar from 'calypso/components/gravatar';
+import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import {
+	FEATURE_MEMBERSHIPS,
+	PLAN_PERSONAL,
+	PLAN_JETPACK_PERSONAL,
+} from 'calypso/lib/plans/constants';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import SectionHeader from 'calypso/components/section-header';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
+import Gridicon from 'calypso/components/gridicon';
+import { userCan } from 'calypso/lib/site/utils';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import ExternalLink from 'calypso/components/external-link';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import {
 	getTotalSubscribersForSiteId,
 	getOwnershipsForSiteId,
-} from 'state/memberships/subscribers/selectors';
+} from 'calypso/state/memberships/subscribers/selectors';
 import {
 	getConnectedAccountIdForSiteId,
 	getConnectUrlForSiteId,
-} from 'state/memberships/settings/selectors';
-import { getProductsForSiteId } from 'state/memberships/product-list/selectors';
+} from 'calypso/state/memberships/settings/selectors';
 
 /**
  * Image dependencies
  */
-import paymentsImage from 'assets/images/earn/payments-illustration.svg';
+import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
 
 /**
  * Style dependencies
@@ -75,11 +85,11 @@ class MembershipsSection extends Component {
 		}
 	}
 	renderEarnings() {
-		const { translate } = this.props;
+		const { commission, currency, forecast, lastMonth, siteId, total, translate } = this.props;
 		return (
 			<div>
-				<SectionHeader label={ this.props.translate( 'Earnings' ) } />
-				<QueryMembershipsEarnings siteId={ this.props.siteId } />
+				<SectionHeader label={ translate( 'Earnings' ) } />
+				<QueryMembershipsEarnings siteId={ siteId } />
 				<Card>
 					<div className="memberships__module-content module-content">
 						<ul className="memberships__earnings-breakdown-list">
@@ -88,7 +98,7 @@ class MembershipsSection extends Component {
 									{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
 								</span>
 								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( this.props.total, this.props.currency ) }
+									{ formatCurrency( total, currency ) }
 								</span>
 							</li>
 							<li className="memberships__earnings-breakdown-item">
@@ -96,7 +106,7 @@ class MembershipsSection extends Component {
 									{ translate( 'Last 30 days', { context: 'Sum of earnings over last 30 days' } ) }
 								</span>
 								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( this.props.lastMonth, this.props.currency ) }
+									{ formatCurrency( lastMonth, currency ) }
 								</span>
 							</li>
 							<li className="memberships__earnings-breakdown-item">
@@ -106,31 +116,32 @@ class MembershipsSection extends Component {
 									} ) }
 								</span>
 								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( this.props.forecast, this.props.currency ) }
+									{ formatCurrency( forecast, currency ) }
 								</span>
 							</li>
 						</ul>
 					</div>
 					<div className="memberships__earnings-breakdown-notes">
-						{ translate(
-							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
-							{
-								args: {
-									commission: '' + parseFloat( this.props.commission ) * 100 + '%',
-									stripe: '2.9%+30c',
-								},
-								components: {
-									em: <em />,
-									br: <br />,
-									a: (
-										<ExternalLink
-											href="https://wordpress.com/support/recurring-payments-button/#related-fees"
-											icon={ true }
-										/>
-									),
-								},
-							}
-						) }
+						{ commission !== null &&
+							translate(
+								'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
+								{
+									args: {
+										commission: '' + parseFloat( commission ) * 100 + '%',
+										stripe: '2.9%+30c',
+									},
+									components: {
+										em: <em />,
+										br: <br />,
+										a: (
+											<ExternalLink
+												href="https://wordpress.com/support/recurring-payments-button/#related-fees"
+												icon={ true }
+											/>
+										),
+									},
+								}
+							) }
 					</div>
 				</Card>
 			</div>
@@ -302,37 +313,51 @@ class MembershipsSection extends Component {
 		);
 	}
 
+	renderManagePlans() {
+		return (
+			<div>
+				<SectionHeader label={ this.props.translate( 'Manage plans' ) } />
+				<Card href={ '/earn/payments-plans/' + this.props.siteSlug }>
+					<QueryMembershipProducts siteId={ this.props.siteId } />
+					<div className="memberships__module-plans-content">
+						<div className="memberships__module-plans-icon">
+							<Gridicon size={ 24 } icon={ 'credit-card' } />
+						</div>
+						<div>
+							<div className="memberships__module-plans-title">
+								{ this.props.translate( 'Payment plans' ) }
+							</div>
+							<div className="memberships__module-plans-description">
+								{ this.props.translate(
+									'Single and recurring payments for goods, services, and subscriptions'
+								) }
+							</div>
+						</div>
+					</div>
+				</Card>
+			</div>
+		);
+	}
+
 	renderSettings() {
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Settings' ) } />
-				<CompactCard href={ '/earn/payments-plans/' + this.props.siteSlug }>
-					<QueryMembershipProducts siteId={ this.props.siteId } />
-					<div className="memberships__module-products-title">
-						{ this.props.translate( 'Payment plans' ) }
-					</div>
-					<div className="memberships__module-products-list">
-						<Gridicon icon="tag" size={ 12 } className="memberships__module-products-list-icon" />
-						{ this.props.products
-							.map( ( product ) => formatCurrency( product.price, product.currency ) )
-							.join( ', ' ) }
-					</div>
-				</CompactCard>
-				<CompactCard
+				<Card
 					onClick={ () =>
 						this.setState( { disconnectedConnectedAccountId: this.props.connectedAccountId } )
 					}
 					className="memberships__settings-link"
 				>
-					<div className="memberships__settings-content">
-						<p className="memberships__settings-section-title is-warning">
+					<div className="memberships__module-plans-content">
+						<div className="memberships__module-plans-icon">
+							<Gridicon size={ 24 } icon={ 'link-break' } />
+						</div>
+						<div className="memberships__module-settings-title">
 							{ this.props.translate( 'Disconnect Stripe Account' ) }
-						</p>
-						<p className="memberships__settings-section-desc">
-							{ this.props.translate( 'Disconnect Payments from your Stripe account' ) }
-						</p>
+						</div>
 					</div>
-				</CompactCard>
+				</Card>
 				<Dialog
 					isVisible={ !! this.state.disconnectedConnectedAccountId }
 					buttons={ [
@@ -372,32 +397,50 @@ class MembershipsSection extends Component {
 	}
 
 	renderSubscriberSubscriptionSummary( subscriber ) {
+		const title = subscriber.plan.title ? ` (${ subscriber.plan.title }) ` : ' ';
 		if ( subscriber.plan.renew_interval === 'one-time' ) {
-			return this.props.translate( 'Paid %(amount)s once on %(formattedDate)s', {
+			/* translators: Information about a one-time payment made by a subscriber to a site owner.
+				%(amount)s - the amount paid,
+				%(formattedDate) - the date it was paid
+				%(title) - description of the payment plan, or a blank space if no description available. */
+			return this.props.translate( 'Paid %(amount)s once on %(formattedDate)s%(title)s', {
 				args: {
 					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+					title,
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === '1 year' ) {
+			/* translators: Information about a recurring yearly payment made by a subscriber to a site owner.
+				%(amount)s - the amount paid,
+				%(formattedDate)s - the date it was first paid
+				%(title)s - description of the payment plan, or a blank space if no description available
+				%(total)s - the total amount subscriber has paid thus far */
 			return this.props.translate(
-				'Paying %(amount)s/year since %(formattedDate)s. Total of %(total)s.',
+				'Paying %(amount)s/year%(title)ssince %(formattedDate)s. Total of %(total)s.',
 				{
 					args: {
 						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
 						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+						title,
 					},
 				}
 			);
 		} else if ( subscriber.plan.renew_interval === '1 month' ) {
+			/* translators: Information about a recurring monthly payment made by a subscriber to a site owner.
+				%(amount)s - the amount paid,
+				%(formattedDate)s - the date it was first paid
+				%(title)s - description of the payment plan, or a blank space if no description available
+				%(total)s - the total amount subscriber has paid thus far */
 			return this.props.translate(
-				'Paying %(amount)s/month since %(formattedDate)s. Total of %(total)s.',
+				'Paying %(amount)s/month%(title)ssince %(formattedDate)s. Total of %(total)s.',
 				{
 					args: {
 						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
 						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+						title,
 					},
 				}
 			);
@@ -459,26 +502,9 @@ class MembershipsSection extends Component {
 						</NoticeAction>
 					</Notice>
 				) }
-				{ this.props.query.stripe_connect_success === 'gutenberg' && (
-					<Notice
-						status="is-success"
-						showDismiss={ false }
-						text={ this.props.translate(
-							'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
-						) }
-					>
-						<NoticeAction
-							href={ localizeUrl(
-								'https://wordpress.com/support/recurring-payments-button/#stripe-account-connected'
-							) }
-							icon="external"
-						>
-							{ this.props.translate( 'Learn how' ) }
-						</NoticeAction>
-					</Notice>
-				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
+				{ this.renderManagePlans() }
 				{ this.renderSettings() }
 			</div>
 		);
@@ -621,8 +647,6 @@ class MembershipsSection extends Component {
 		);
 	}
 }
-//Used to avoid re-renders. Do not mutate!
-const emptyArray = [];
 
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
@@ -644,7 +668,6 @@ const mapStateToProps = ( state ) => {
 		connectUrl: getConnectUrlForSiteId( state, siteId ),
 		paidPlan: isSiteOnPaidPlan( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
-		products: getProductsForSiteId( state, siteId ) ?? emptyArray,
 	};
 };
 

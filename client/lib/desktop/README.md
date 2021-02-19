@@ -1,12 +1,11 @@
-Desktop
-==========
+# Desktop
 
 Provides an interface between Calypso and [Electron](https://github.com/atom/electron) using Electron's [IPC](https://github.com/atom/electron/blob/HEAD/docs/api/ipc-main.md) mechanism.
 
 Note this module only runs when the `desktop` feature is enabled. The `ipc` module is defined as an external in Calypso, and so will only
 run inside Electron (where `ipc` is defined).
 
-#### Input Events
+## Input Events
 
 The following events can be sent to Calypso from Electron via IPC:
 
@@ -19,7 +18,7 @@ The following events can be sent to Calypso from Electron via IPC:
 - `cookie-auth-complete` - Forces the notification client to refresh (with new cookie details)
 - `page-help` - Navigate to the help page
 
-#### Output Events
+## Output Events
 
 The following events are sent from Calypso to Electron via IPC:
 
@@ -28,5 +27,6 @@ The following events are sent from Calypso to Electron via IPC:
 - `editor-iframe-loaded` - Sent when the post editor (Gutenberg or classic/TinyMCE) iframe is loaded
 
 These events are sent once at startup:
+
 - `user-login-status( loggedIn )` - A boolean indicating whether the user is logged in
 - `user-auth( user, oAuthToken )` - Sends the Calypso user and OAuth token (both may be false)

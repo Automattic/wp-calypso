@@ -13,9 +13,9 @@ import * as driverHelper from '../lib/driver-helper.js';
 
 import LoginFlow from '../lib/flows/login-flow.js';
 import * as dataHelper from '../lib/data-helper';
-import InlineHelpPopoverComponent from '../lib/components/inline-help-popover-component';
 import SupportSearchComponent from '../lib/components/support-search-component';
 import SidebarComponent from '../lib/components/sidebar-component';
+
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
@@ -23,7 +23,6 @@ const host = dataHelper.getJetpackHost();
 
 let driver;
 let supportSearchComponent;
-let inlineHelpPopoverComponent;
 
 const helpCardSelector = By.css( '.help-search' );
 
@@ -35,29 +34,13 @@ before( async function () {
 describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, async function () {
 	this.timeout( mochaTimeOut );
 
-	step( 'Login and select a non My Home page', async function () {
+	step( 'Login and select the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );
 
-		// The "inline help" FAB should not appear on the My Home
-		// because there is already a support search "Card" on that
-		// page. Therefore we select the "Themes" page for our tests
-		// and then we will switch away to the Homepage to verify
-		// that the Inline Help is not shown
-		await loginFlow.loginAndSelectThemes();
+		await loginFlow.loginAndSelectMySite();
 
-		// Initialize the helper component for the Inline Popover
-		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
-
-		// Check the InlineHelp toggle is actually visible in the first instance...
-		const isToggleVisible = await inlineHelpPopoverComponent.isToggleVisible();
-		assert.equal(
-			isToggleVisible,
-			true,
-			'Inline Help support search was not displayed on a non My Home page.'
-		);
-	} );
-
-	step( 'Select the My Home page', async function () {
+		// The "/home" route is the only one this support search
+		// "Card" will show on
 		const sidebarComponent = await SidebarComponent.Expect( driver );
 		await sidebarComponent.selectMyHome();
 	} );
@@ -78,48 +61,63 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 		);
 	} );
 
-	step( 'Verify Inline Help support search is not displayed on My Home', async function () {
-		// The toggle only hides once the "Get help" card is rendered so
-		// we need to give it a little time to be removed.
-		await inlineHelpPopoverComponent.waitForToggleNotToBePresent();
-
-		// Once removed we can assert is is invisible.
-		const isToggleVisible = await inlineHelpPopoverComponent.isToggleVisible();
-		assert.equal(
-			isToggleVisible,
-			false,
-			'Inline Help support search was not correctly hidden on Home page.'
-		);
-	} );
-
-	step( 'Displays contextual search results by default', async function () {
+	step( 'Displays Default Results initially', async function () {
 		supportSearchComponent = await SupportSearchComponent.Expect( driver );
-		const resultsCount = await supportSearchComponent.getSearchResultsCount();
-		assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
+		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
+		assert.equal( resultsCount, 6, 'There are not 6 Default Results displayed.' );
 	} );
 
-	step( 'Returns search results for valid search query', async function () {
-		await supportSearchComponent.searchFor( 'Podcast' );
-		const resultsCount = await supportSearchComponent.getSearchResultsCount();
+	step( 'Returns API Search Results for valid search query', async function () {
+		await supportSearchComponent.searchFor( 'Domain' );
+
+		const searchResultsCount = await supportSearchComponent.getSearchResultsCount();
+
+		const adminResultsCount = await supportSearchComponent.getAdminSearchResultsCount();
+
+		const defaultResults = await supportSearchComponent.waitForDefaultResultsNotToBePresent();
 
 		assert.equal(
-			resultsCount <= 5,
+			defaultResults,
 			true,
-			`Too many search results displayed. Should be less than or equal to 5 (was ${ resultsCount }).`
+			'The Default Results are displayed. They should not be present after we have API Search Results.'
+		);
+
+		assert.equal(
+			searchResultsCount <= 5,
+			true,
+			`Too many API Search Results displayed. Should be less than or equal to 5.`
 		);
 		assert.equal(
-			resultsCount >= 1,
+			searchResultsCount >= 1,
 			true,
-			`Too few search results displayed. Should be more than or equal to 1 (was ${ resultsCount }).`
+			`Too few API Search Results displayed. Should be more than or equal to 1.`
+		);
+		assert.equal(
+			adminResultsCount <= 3,
+			true,
+			`Too many Admin Results displayed. Should be less than or equal to 3.`
+		);
+		assert.equal(
+			adminResultsCount >= 1,
+			true,
+			`Too few Admin Results displayed. Should be more than or equal to 1.`
 		);
 	} );
 
-	step( 'Resets search UI to default state when search input is cleared ', async function () {
+	step( 'Resets search UI to default state when search input is cleared', async function () {
 		await supportSearchComponent.clearSearchField();
 
-		const resultsCount = await supportSearchComponent.getSearchResultsCount();
+		const searchResults = await supportSearchComponent.waitForSearchResultsNotToBePresent();
 
-		assert.equal( resultsCount, 5, 'There are no contextual results displayed' );
+		const adminResults = await supportSearchComponent.waitForAdminResultsNotToBePresent();
+
+		const defaultResultsCount = await supportSearchComponent.getDefaultResultsCount();
+
+		assert.equal( searchResults, true, 'The API Search Results are not displayed.' );
+
+		assert.equal( adminResults, true, 'The Admin Results are not displayed.' );
+
+		assert.equal( defaultResultsCount, 6, 'The 6 Default Results are not displayed.' );
 	} );
 
 	step(
@@ -128,19 +126,34 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 			const invalidSearchQueryReturningNoResults = ';;;ppp;;;';
 
 			await supportSearchComponent.searchFor( invalidSearchQueryReturningNoResults );
-			const resultsCount = await supportSearchComponent.getSearchResultsCount();
+
+			const searchResults = await supportSearchComponent.waitForSearchResultsNotToBePresent();
+
+			const resultsCount = await supportSearchComponent.getErrorResultsCount();
 
 			const hasNoResultsMessage = await supportSearchComponent.hasNoResultsMessage();
 
+			assert.equal( searchResults, true, 'The API Search Results are not displayed.' );
+
 			assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
-			assert.equal( resultsCount, 5, 'There are no contextual results displayed.' );
+			assert.equal( resultsCount, 6, 'The 6 default Error Results are not displayed.' );
 		}
 	);
 
-	step( 'Does not request search results for empty search queries', async function () {
+	step( 'Clearing search resets to default state', async function () {
 		await supportSearchComponent.clearSearchField();
 
+		const errorResults = await supportSearchComponent.waitForErrorResultsNotToBePresent();
+
+		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
+
+		assert.equal( errorResults, true, 'The default Error Results are not displayed.' );
+
+		assert.equal( resultsCount, 6, 'The 6 Default Results are not displayed.' );
+	} );
+
+	step( 'Does not request API Search Results for empty search queries', async function () {
 		const emptyWhitespaceQuery = '         ';
 
 		await supportSearchComponent.searchFor( emptyWhitespaceQuery );

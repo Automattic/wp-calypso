@@ -1,19 +1,9 @@
 @import 'jetpack-connect/colors.scss';
 @import 'woocommerce/components/text-control/style.scss';
 @import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/fonts';
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
-
-@font-face {
-	font-display: swap;
-	font-family: 'Recoleta';
-	font-weight: 400;
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
-}
 
 $image-height: 47px;
 
@@ -174,16 +164,6 @@ $image-height: 47px;
 }
 
 .layout.is-jetpack-login {
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.login__form-header,
-	.magic-login__form-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.jetpack-logo__text {
-		fill: var( --color-jetpack-onboarding-text );
-	}
 
 	.login__form input:focus,
 	.logged-out-form input:focus {
@@ -203,21 +183,6 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__links a,
-	.wp-login__links button,
-	.logged-out-form__links a,
-	.logged-out-form__link-item,
-	.translator-invite__content a,
-	.magic-login__footer a {
-		color: var( --color-neutral-20 );
-		border-bottom-color: var( --color-neutral-70 );
-
-		&:hover,
-		&:focus {
-			color: var( --color-primary-20 );
-		}
-	}
-
 	.translator-invite__content a {
 		border: none;
 	}
@@ -229,8 +194,8 @@ $image-height: 47px;
 	.wp-login__site-return-link::after {
 		background: linear-gradient(
 			to right,
-			rgba( var( --color-jetpack-onboarding-background-rgb ), 0 ),
-			var( --color-jetpack-onboarding-background ) 90%
+			rgba( var( --color-surface-backdrop-rgb ), 0 ),
+			var( --color-surface-backdrop ) 90%
 		);
 	}
 }
@@ -376,13 +341,13 @@ $image-height: 47px;
 		font-weight: 600;
 		letter-spacing: 0;
 		transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		border-radius: 4px;
+		border-radius: 2px;
 		box-shadow: none;
 
 		&:hover,
 		&:active {
-			background: #72aee6;
-			border-color: #72aee6;
+			background: var( --studio-blue-20 );
+			border-color: var( --studio-blue-20 );
 			color: #fff;
 			outline-color: transparent;
 			box-shadow: none;

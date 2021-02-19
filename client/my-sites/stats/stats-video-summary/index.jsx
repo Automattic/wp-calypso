@@ -11,13 +11,13 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import SummaryChart from '../stats-summary';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class StatsVideoSummary extends Component {
 	static propTypes = {

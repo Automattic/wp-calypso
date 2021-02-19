@@ -1,5 +1,4 @@
-Query Backup Restore Status
-===========================
+# Query Backup Restore Status
 
 `QueryBackupRestoreStatus` is a React component which dispatches actions for querying the status of a Backup backup.
 
@@ -9,7 +8,7 @@ Render the component, passing `siteId` and `backupId`. It does not accept any ch
 
 ```jsx
 import React from 'react';
-import QueryBackupRestoreStatus from 'components/data/query-backup-backup-status';
+import QueryBackupRestoreStatus from 'calypso/components/data/query-backup-backup-status';
 
 export default function MyComponent( props ) {
 	return (

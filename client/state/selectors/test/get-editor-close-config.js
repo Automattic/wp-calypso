@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
-import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import PostQueryManager from 'lib/query-manager/post';
+import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
+import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
+import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 
 const postType = 'post';
 const pagePostType = 'page';

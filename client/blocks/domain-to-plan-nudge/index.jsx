@@ -10,20 +10,20 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'calypso/lib/plans/constants';
+import { getPlan } from 'calypso/lib/plans';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import {
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 	getPlanRawDiscount,
 	getPlansBySiteId,
-} from 'state/sites/plans/selectors';
-import QuerySitePlans from 'components/data/query-site-plans';
-import isEligibleForDomainToPaidPlanUpsell from 'state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
+} from 'calypso/state/sites/plans/selectors';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import isEligibleForDomainToPaidPlanUpsell from 'calypso/state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
 
 /**
  * Style dependencies
@@ -72,7 +72,7 @@ class DomainToPlanNudge extends Component {
 				href={ `/checkout/${ siteId }/personal` }
 				list={ [
 					translate( 'Remove WordPress.com Ads' ),
-					translate( 'Email & Live Chat Support' ),
+					translate( 'Access unlimited email support' ),
 					translate( 'Use with your Current Custom Domain' ),
 				] }
 				plan={ PLAN_PERSONAL }
@@ -96,9 +96,9 @@ class DomainToPlanNudge extends Component {
 }
 
 export default connect( ( state, props ) => {
-	const siteId = props.siteId || getSelectedSiteId( state ),
-		productSlug = PLAN_PERSONAL,
-		productId = getPlan( PLAN_PERSONAL ).getProductId();
+	const siteId = props.siteId || getSelectedSiteId( state );
+	const productSlug = PLAN_PERSONAL;
+	const productId = getPlan( PLAN_PERSONAL ).getProductId();
 
 	return {
 		isEligible: isEligibleForDomainToPaidPlanUpsell( state, siteId ),

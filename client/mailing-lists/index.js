@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 /**
  * Style dependencies

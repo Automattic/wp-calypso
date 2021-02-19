@@ -9,9 +9,9 @@ import { find, map } from 'lodash';
 /**
  * Internal depencencies
  */
-import QueryPosts from 'components/data/query-posts';
-import { getPostsForQuery } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryPosts from 'calypso/components/data/query-posts';
+import { getPostsForQuery } from 'calypso/state/posts/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Suggestions } from '@automattic/components';
 
 class PostSuggestions extends Component {

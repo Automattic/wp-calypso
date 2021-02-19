@@ -1,13 +1,13 @@
 /**
  * Internal dependencies
  */
-import { activeDiscounts } from 'lib/discounts';
-import { abtest } from 'lib/abtest';
-import { planMatches } from 'lib/plans';
-import { hasActivePromotion } from 'state/active-promotions/selectors';
-import { getSitePlanSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import memoizeLast from 'lib/memoize-last';
+import { activeDiscounts } from 'calypso/lib/discounts';
+import { abtest } from 'calypso/lib/abtest';
+import { planMatches } from 'calypso/lib/plans';
+import { hasActivePromotion } from 'calypso/state/active-promotions/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import memoizeLast from 'calypso/lib/memoize-last';
 
 export const isDiscountActive = ( discount, state ) => {
 	const now = new Date();

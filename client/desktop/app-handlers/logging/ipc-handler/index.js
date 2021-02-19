@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { ipcMain: ipc } = require( 'electron' );
 
 module.exports = {
 	/**
@@ -22,7 +22,7 @@ module.exports = {
 	getLogger: function ( namespace, options ) {
 		let logger = this.loggers[ namespace ];
 		if ( ! logger ) {
-			logger = require( 'desktop/lib/logger' )( namespace, options );
+			logger = require( 'calypso/desktop/lib/logger' )( namespace, options );
 			this.loggers[ namespace ] = logger;
 		}
 		return logger;

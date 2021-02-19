@@ -21,7 +21,7 @@
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 
 		p {
 			font-size: $font-body;

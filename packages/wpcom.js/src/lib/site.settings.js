@@ -39,7 +39,7 @@ class SiteSettings {
 	 * @returns {Function} request handler
 	 */
 	getOption( option, fn = () => {} ) {
-		let query = { fields: 'settings' };
+		const query = { fields: 'settings' };
 		return new Promise( ( resolve, reject ) => {
 			this.wpcom.req.get( this.path, query, ( err, data ) => {
 				if ( err ) {
@@ -52,7 +52,7 @@ class SiteSettings {
 					return resolve();
 				}
 
-				let settings = data.settings;
+				const settings = data.settings;
 
 				if ( settings && typeof settings[ option ] !== 'undefined' ) {
 					fn( null, settings[ option ] );

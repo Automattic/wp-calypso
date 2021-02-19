@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import Tooltip from 'components/tooltip';
+import Gridicon from 'calypso/components/gridicon';
+import Tooltip from 'calypso/components/tooltip';
 
 function LanguagePickerItemTooltip( { children } ) {
 	const [ isVisible, setVisible ] = useState( false );

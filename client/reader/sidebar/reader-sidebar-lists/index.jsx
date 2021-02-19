@@ -9,8 +9,13 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarListsList from './list';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class ReaderSidebarLists extends Component {
 	static propTypes = {
@@ -30,17 +35,19 @@ export class ReaderSidebarLists extends Component {
 	render() {
 		const { translate, isOpen, onClick, ...passedProps } = this.props;
 		return (
-			<div>
+			<li>
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Lists' ) }
 					onClick={ onClick }
 					materialIcon={ 'list' }
-					hideAddButton
+					disableFlyout={ true }
 				>
-					<ReaderSidebarListsList { ...passedProps } />
+					<li>
+						<ReaderSidebarListsList { ...passedProps } />
+					</li>
 				</ExpandableSidebarMenu>
-			</div>
+			</li>
 		);
 	}
 }

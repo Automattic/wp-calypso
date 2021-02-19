@@ -6,10 +6,10 @@ import { some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isJetpackBackup } from 'lib/products-values';
+import { isJetpackBackup } from 'calypso/lib/products-values';
 import { getSitePurchases } from './get-site-purchases';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 /**
  * Whether a site has an active Jetpack backup purchase.

@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getTheme } from 'state/themes/selectors/get-theme';
+import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Whether a theme is present in the WordPress.com Theme Directory

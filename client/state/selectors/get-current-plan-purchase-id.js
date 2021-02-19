@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { get, isNaN } from 'lodash';
+import { isNaN } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 
 /**
  * Returns a site's current plan purchase ID or null if the site doesn't exist or the purchase ID
@@ -21,7 +21,7 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
  * @returns {?number}        Purchase ID if known
  */
 export default function getCurrentPlanPurchaseId( state, siteId ) {
-	const result = get( getCurrentPlan( state, siteId ), 'id', null );
+	const result = getCurrentPlan( state, siteId )?.id ?? null;
 
 	// getCurrentPlan uses an "assembler" which may have NaN in the `id`.
 	if ( isNaN( result ) ) {

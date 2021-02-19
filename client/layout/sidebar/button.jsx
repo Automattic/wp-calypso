@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { isExternal } from 'lib/url';
-import { preload } from 'sections-helper';
+import { isExternal } from 'calypso/lib/url';
+import { preload } from 'calypso/sections-helper';
 
 class SidebarButton extends React.Component {
 	static propTypes = {

@@ -13,7 +13,7 @@ const fontTitles: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
 };
 
-export const PAID_DOMAINS_TO_SHOW = 5;
+export const domainIsAvailableStatus = [ 'available', 'available_premium' ];
 
 export function getFontTitle( fontFamily: string ): string {
 	return fontTitles[ fontFamily as Font ] ?? fontFamily;
@@ -44,6 +44,22 @@ export const fontPairings = [
 	{
 		headings: 'Space Mono',
 		base: 'Roboto',
+	},
+] as const;
+
+/**
+ * Pairings of fontFamilies for AnchorFM onboarding
+ *
+ * To get the name of the font for display, use `getFontTitle( fontName )`.
+ */
+export const anchorFmFontPairings = [
+	{
+		headings: 'Roboto',
+		base: 'Roboto',
+	},
+	{
+		headings: 'Raleway',
+		base: 'Cabin',
 	},
 ] as const;
 

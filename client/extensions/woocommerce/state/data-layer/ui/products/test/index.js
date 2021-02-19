@@ -28,7 +28,7 @@ import {
 	editProductRemoveCategory,
 } from 'woocommerce/state/ui/products/actions';
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 
 describe( 'handlers', () => {
 	describe( '#actionAppendProductVariations', () => {
@@ -240,11 +240,6 @@ describe( 'handlers', () => {
 					},
 				},
 			};
-		} );
-
-		test.skip( 'should return null when there are no edits', () => {
-			// skipped by blowery because this used to pass due to a bad assertion
-			expect( makeProductActionList( null, 123, undefined ) ).to.be.null;
 		} );
 
 		test( 'should return a single product create request', () => {

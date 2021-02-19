@@ -6,13 +6,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { APPLICATION_PASSWORD_DELETE } from 'state/action-types';
-import { deleteApplicationPasswordSuccess } from 'state/application-passwords/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { APPLICATION_PASSWORD_DELETE } from 'calypso/state/action-types';
+import { deleteApplicationPasswordSuccess } from 'calypso/state/application-passwords/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Dispatches a request to delete an application password for the current user

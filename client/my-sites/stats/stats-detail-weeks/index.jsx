@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -15,11 +15,11 @@ import Gridicon from 'components/gridicon';
 import { Card } from '@automattic/components';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
-import QueryPostStats from 'components/data/query-post-stats';
-import QueryPosts from 'components/data/query-posts';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
-import { getSitePost } from 'state/posts/selectors';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
+import QueryPosts from 'calypso/components/data/query-posts';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import toggleInfo from '../toggle-info';
 
 const StatsPostDetailWeeks = ( props ) => {
@@ -38,7 +38,10 @@ const StatsPostDetailWeeks = ( props ) => {
 	const noData = ! stats;
 	const infoIcon = opened ? 'info' : 'info-outline';
 	const isLoading = isRequesting && noData;
-	let tableHeader, tableRows, tableBody, highest;
+	let tableHeader;
+	let tableRows;
+	let tableBody;
+	let highest;
 
 	const classes = {
 		'is-loading': isLoading,

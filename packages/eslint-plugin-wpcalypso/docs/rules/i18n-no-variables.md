@@ -4,7 +4,7 @@ Translate strings cannot be variables or functions, but rather must always be st
 
 This limitation applies to the translatable string itself, as well as the plural form and 'context' and 'comment' options if they are present.
 
-More information: https://github.com/Automattic/i18n-calypso/blob/HEAD/README.md#strings-only
+More information: <https://github.com/Automattic/i18n-calypso/blob/HEAD/README.md#strings-only>
 
 ## Rule Details
 

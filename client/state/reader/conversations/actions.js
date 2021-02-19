@@ -5,13 +5,13 @@ import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-} from 'state/reader/action-types';
-import { getReaderConversationFollowStatus } from 'state/reader/conversations/selectors';
+} from 'calypso/state/reader/action-types';
+import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
 
-import 'state/data-layer/wpcom/read/sites/posts/follow';
-import 'state/data-layer/wpcom/read/sites/posts/mute';
+import 'calypso/state/data-layer/wpcom/read/sites/posts/follow';
+import 'calypso/state/data-layer/wpcom/read/sites/posts/mute';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 export function followConversation( { siteId, postId } ) {
 	return ( dispatch, getState ) => {

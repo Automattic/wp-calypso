@@ -8,33 +8,33 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import FoldableCard from 'calypso/components/foldable-card';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
-} from 'state/sites/selectors';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import { getGSuiteSupportedDomains } from 'lib/gsuite';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { navigate } from 'state/ui/actions';
+} from 'calypso/state/sites/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { navigate } from 'calypso/state/ui/actions';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 import ActionBox from './action-box';
-import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expanded';
-import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'state/home/actions';
+import isHomeQuickLinksExpanded from 'calypso/state/selectors/is-home-quick-links-expanded';
+import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home/actions';
 
 /**
  * Image dependencies
  */
-import logoIcon from 'assets/images/customer-home/looka-logo-60.svg';
+import logoIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 
 /**
  * Style dependencies
@@ -142,7 +142,7 @@ export const QuickLinks = ( {
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
-				label={ translate( 'Create a logo with Looka' ) }
+				label={ translate( 'Create a logo with Fiverr' ) }
 				external
 				iconSrc={ logoIcon }
 			/>
@@ -272,8 +272,7 @@ const mapStateToProps = ( state ) => {
 		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
-	const editHomePageUrl =
-		isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
+	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;
 
 	return {
 		customizeUrl: getCustomizerUrl( state, siteId ),

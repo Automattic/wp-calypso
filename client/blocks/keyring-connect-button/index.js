@@ -14,14 +14,14 @@ import { Button } from '@automattic/components';
 import {
 	deleteStoredKeyringConnection,
 	requestKeyringConnections,
-} from 'state/sharing/keyring/actions';
-import { getKeyringServiceByName } from 'state/sharing/services/selectors';
-import QueryKeyringServices from 'components/data/query-keyring-services';
+} from 'calypso/state/sharing/keyring/actions';
+import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import requestExternalAccess from '@automattic/request-external-access';
 import {
 	getKeyringConnectionsByName,
 	isKeyringConnectionsFetching,
-} from 'state/sharing/keyring/selectors';
+} from 'calypso/state/sharing/keyring/selectors';
 
 class KeyringConnectButton extends Component {
 	static propTypes = {
@@ -170,9 +170,9 @@ class KeyringConnectButton extends Component {
 		const { primary, service, translate } = this.props;
 		const { isConnecting, isRefreshing } = this.state;
 		const status = service ? this.getConnectionStatus() : 'unknown';
-		let localPrimary = false,
-			warning = false,
-			label;
+		let localPrimary = false;
+		let warning = false;
+		let label;
 
 		const isPending = 'unknown' === status || isRefreshing || isConnecting;
 

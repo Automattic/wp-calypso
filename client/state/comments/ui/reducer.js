@@ -12,10 +12,10 @@ import {
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_QUERY_UPDATE,
 	COMMENTS_TREE_SITE_REQUEST,
-} from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
-import { getFiltersKey } from 'state/comments/ui/utils';
-import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { getFiltersKey } from 'calypso/state/comments/ui/utils';
+import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const deepUpdateComments = ( state, comments, query ) => {
 	const { page = 1, postId } = query;

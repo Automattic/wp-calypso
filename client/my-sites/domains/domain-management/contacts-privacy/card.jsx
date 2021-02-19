@@ -11,16 +11,16 @@ import { connect } from 'react-redux';
  */
 import { Card } from '@automattic/components';
 import ContactDisplay from './contact-display';
-import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
-import FormToggle from 'components/forms/form-toggle';
-import Gridicon from 'components/gridicon';
+import { PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	enableDomainPrivacy,
 	disableDomainPrivacy,
 	discloseDomainContactInfo,
 	redactDomainContactInfo,
-} from 'state/sites/domains/actions';
-import { isUpdatingDomainPrivacy } from 'state/sites/domains/selectors';
+} from 'calypso/state/sites/domains/actions';
+import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
 
 class ContactsPrivacyCard extends React.Component {
 	static propTypes = {
@@ -71,9 +71,7 @@ class ContactsPrivacyCard extends React.Component {
 			<React.Fragment>
 				<div className="contacts-privacy__settings">
 					<FormToggle
-						wrapperClassName="edit__privacy-protection-toggle"
 						checked={ privateDomain }
-						toggling={ isUpdatingPrivacy }
 						disabled={ isUpdatingPrivacy || ! privacyAvailable }
 						onChange={ this.togglePrivacy }
 					>
@@ -115,9 +113,7 @@ class ContactsPrivacyCard extends React.Component {
 			<React.Fragment>
 				<div className="contacts-privacy__settings">
 					<FormToggle
-						wrapperClassName="edit__disclose-contact-information"
 						checked={ contactInfoDisclosed }
-						toggling={ isUpdatingPrivacy }
 						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
 						onChange={ this.toggleContactInfo }
 					>

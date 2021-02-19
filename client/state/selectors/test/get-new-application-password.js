@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getNewApplicationPassword from 'state/selectors/get-new-application-password';
+import getNewApplicationPassword from 'calypso/state/selectors/get-new-application-password';
 
 describe( 'getNewApplicationPassword()', () => {
 	test( 'should return the new application password if it exists', () => {

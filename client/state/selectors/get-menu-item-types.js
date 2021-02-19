@@ -2,14 +2,14 @@
  * External dependencies
  */
 
-import { endsWith, filter, find, get } from 'lodash';
+import { filter, find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSiteAdminUrl } from 'state/sites/selectors';
-import getRawSite from 'state/selectors/get-raw-site';
-import { getPostTypes } from 'state/post-types/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getPostTypes } from 'calypso/state/post-types/selectors';
 
 function getDefaultItemTypes( state, siteId ) {
 	const site = getRawSite( state, siteId );
@@ -97,7 +97,7 @@ export default function getMenuItemTypes( state, siteId ) {
 			show: true,
 			label: type.label, //FIXME: how do we handle i18n here?
 			notFoundLabel:
-				notFoundLabel && endsWith( notFoundLabel, '.' ) ? notFoundLabel : notFoundLabel + '.',
+				notFoundLabel && notFoundLabel.endsWith( '.' ) ? notFoundLabel : notFoundLabel + '.',
 			createLink: `/edit/${ type.name }/${ site.slug }`, // TODO: Use the getEditorNewPostPath() selector.
 			gaEventLabel: type.label,
 		};

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
@@ -19,14 +19,7 @@ import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
 import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
-import { showStripeModalAuth } from '../stripe';
-import {
-	usePaymentProcessor,
-	useTransactionStatus,
-	useMessages,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import Spinner from '../../components/spinner';
 import { useFormStatus } from '../form-status';
@@ -149,7 +142,6 @@ export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
 function StripeCreditCardFields() {
 	const { __ } = useI18n();
 	const theme = useTheme();
-	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
 	const brand = useSelect( ( select ) => select( 'stripe' ).getBrand() );
@@ -169,14 +161,6 @@ function StripeCreditCardFields() {
 		}
 
 		if ( input.error && input.error.message ) {
-			onEvent( {
-				type: 'a8c_checkout_stripe_field_invalid_error',
-				payload: {
-					type: 'Stripe field error',
-					field: input.elementType,
-					message: input.error.message,
-				},
-			} );
 			setCardDataError( input.elementType, input.error.message );
 			return;
 		}
@@ -384,93 +368,28 @@ function LoadingFields() {
 	);
 }
 
-function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
+function StripePayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage, showInfoMessage } = useMessages();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
 	const { formStatus } = useFormStatus();
-	const {
-		transactionStatus,
-		transactionLastResponse,
-		resetTransaction,
-		setTransactionComplete,
-		setTransactionAuthorizing,
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'card' );
-	const onEvent = useEvents();
-
-	useEffect( () => {
-		let isSubscribed = true;
-
-		if ( transactionStatus === 'authorizing' ) {
-			debug( 'showing auth' );
-			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionLastResponse,
-			} )
-				.then( ( authenticationResponse ) => {
-					debug( 'stripe auth is complete', authenticationResponse );
-					isSubscribed && setTransactionComplete();
-				} )
-				.catch( ( error ) => {
-					isSubscribed && setTransactionError( error.message );
-				} );
-		}
-
-		return () => ( isSubscribed = false );
-	}, [
-		onEvent,
-		setTransactionComplete,
-		resetTransaction,
-		showInfoMessage,
-		showErrorMessage,
-		transactionStatus,
-		transactionLastResponse,
-		setTransactionError,
-		stripeConfiguration,
-	] );
 
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
 				if ( isCreditCardFormValid( store, __ ) ) {
-					debug( 'submitting stripe payment' );
-					setTransactionPending();
-					onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
-					submitTransaction( {
+					onClick( 'card', {
 						stripe,
 						name: cardholderName?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( stripeResponse?.message?.payment_intent_client_secret ) {
-								debug( 'stripe transaction requires auth' );
-								setTransactionAuthorizing( stripeResponse );
-								return;
-							}
-							if ( stripeResponse?.redirect_url ) {
-								debug( 'stripe transaction requires redirect' );
-								setTransactionRedirecting( stripeResponse.redirect_url );
-								return;
-							}
-							debug( 'stripe transaction is successful' );
-							setTransactionComplete();
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -480,10 +399,11 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -535,9 +455,8 @@ function CreditCardLabel() {
 }
 
 function CreditCardLogos() {
-	//TODO: Determine which logos to show
 	return (
-		<PaymentMethodLogos>
+		<PaymentMethodLogos className="credit-card__logo payment-logos">
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />

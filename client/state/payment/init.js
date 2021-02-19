@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { registerReducer } from 'state/redux-store';
+import { registerReducer } from 'calypso/state/redux-store';
 import reducer from './reducer';
 
 registerReducer( [ 'payment' ], reducer );

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Dialog } from '@automattic/components';
-import ResizableIframe from 'components/resizable-iframe';
+import ResizableIframe from 'calypso/components/resizable-iframe';
 
 /**
  * Style dependencies

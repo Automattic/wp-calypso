@@ -17,10 +17,9 @@ import {
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'items', () => {
 	useSandbox( ( sandbox ) => {
@@ -163,7 +162,7 @@ describe( 'items', () => {
 		test( 'should persist state', () => {
 			const originalState = deepFreeze( STORED_CARDS_FROM_API );
 
-			const state = items( originalState, { type: SERIALIZE } );
+			const state = serialize( items, originalState );
 
 			expect( state ).to.eql( originalState );
 		} );
@@ -171,7 +170,7 @@ describe( 'items', () => {
 		test( 'should load valid persisted state', () => {
 			const originalState = deepFreeze( STORED_CARDS_FROM_API );
 
-			const state = items( originalState, { type: DESERIALIZE } );
+			const state = deserialize( items, originalState );
 
 			expect( state ).to.eql( originalState );
 		} );
@@ -185,7 +184,7 @@ describe( 'items', () => {
 				},
 			] );
 
-			const state = items( originalState, { type: DESERIALIZE } );
+			const state = deserialize( items, originalState );
 
 			expect( state ).to.eql( [] );
 		} );

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/data-layer/wpcom/sites/scan';
+import 'calypso/state/data-layer/wpcom/sites/scan';
 
 /**
  * Returns the current Jetpack Scan Progress for a given site only if the

@@ -6,8 +6,8 @@ import { has } from 'lodash';
 /**
  * Internal dependencies
  */
-import displayTypes from 'state/reader/posts/display-types';
-import { getUrlParts } from 'lib/url';
+import displayTypes from 'calypso/state/reader/posts/display-types';
+import { getUrlParts } from 'calypso/lib/url';
 
 const { X_POST } = displayTypes;
 

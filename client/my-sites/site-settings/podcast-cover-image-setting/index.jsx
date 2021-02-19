@@ -5,29 +5,33 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, isEqual, partial, uniqueId } from 'lodash';
+import { head, isEqual, partial } from 'lodash';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 import { Button } from '@automattic/components';
-import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import getMediaItem from 'state/media/thunks/get-media-item';
-import Image from 'components/image';
-import { addMedia } from 'state/media/thunks';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { resetAllImageEditorState } from 'state/editor/image-editor/actions';
-import { getImageEditorCrop, getImageEditorTransform } from 'state/editor/image-editor/selectors';
-import { setEditorMediaModalView } from 'state/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import resizeImageUrl from 'lib/resize-image-url';
-import { AspectRatios } from 'state/editor/image-editor/constants';
-import Spinner from 'components/spinner';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import getMediaItem from 'calypso/state/media/thunks/get-media-item';
+import Image from 'calypso/components/image';
+import { addMedia } from 'calypso/state/media/thunks';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
+import {
+	getImageEditorCrop,
+	getImageEditorTransform,
+} from 'calypso/state/editor/image-editor/selectors';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import Spinner from 'calypso/components/spinner';
+import { createTransientMediaId } from 'calypso/lib/media/utils';
 
 /**
  * Debug
@@ -85,7 +89,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	async uploadCoverImage( blob, fileName ) {
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
-		const transientMediaId = uniqueId( 'podcast-cover-image' );
+		const transientMediaId = createTransientMediaId( 'podcast-cover-image' );
 
 		this.setState( { transientMediaId } );
 		this.onUploadStateChange( true );
@@ -163,7 +167,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	}
 
 	preloadModal() {
-		asyncRequire( 'post-editor/media-modal' );
+		asyncRequire( 'calypso/post-editor/media-modal' );
 	}
 
 	renderChangeButton() {
@@ -225,7 +229,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		return (
 			hasToggledModal && (
 				<AsyncLoad
-					require="post-editor/media-modal"
+					require="calypso/post-editor/media-modal"
 					placeholder={ <EditorMediaModalDialog isVisible /> }
 					siteId={ siteId }
 					onClose={ this.editSelectedMedia }

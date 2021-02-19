@@ -10,13 +10,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarTagsList from './list';
-import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { requestFollowTag } from 'state/reader/tags/items/actions';
-import { getReaderFollowedTags } from 'state/reader/tags/selectors';
+import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
+import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
+import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 export class ReaderSidebarTags extends Component {
 	static propTypes = {
@@ -45,7 +46,7 @@ export class ReaderSidebarTags extends Component {
 		this.props.followTag( decodeURIComponent( tag ) );
 		recordAction( 'followed_topic' );
 		recordGaEvent( 'Clicked Follow Topic', tag );
-		recordTrack( 'calypso_reader_reader_tag_followed', { tag } );
+		this.props.recordReaderTracksEvent( 'calypso_reader_reader_tag_followed', { tag } );
 		this.props.onFollowTag( tag );
 
 		// reset the FormTextInputWithAction field to empty by rerendering it with a new `key`
@@ -55,13 +56,14 @@ export class ReaderSidebarTags extends Component {
 	render() {
 		const { tags, isOpen, translate, onClick } = this.props;
 		return (
-			<ul>
+			<li>
 				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
 					onClick={ onClick }
 					materialIcon="local_offer"
+					disableFlyout={ true }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 
@@ -72,7 +74,7 @@ export class ReaderSidebarTags extends Component {
 						onAction={ this.followTag }
 					/>
 				</ExpandableSidebarMenu>
-			</ul>
+			</li>
 		);
 	}
 }
@@ -83,5 +85,6 @@ export default connect(
 	} ),
 	{
 		followTag: requestFollowTag,
+		recordReaderTracksEvent,
 	}
 )( localize( ReaderSidebarTags ) );

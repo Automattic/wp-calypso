@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -13,28 +13,36 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormRadio from 'components/forms/form-radio';
-import DomainNotice from 'my-sites/domains/domain-management/components/domain-notice';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
-import { withoutHttp } from 'lib/url';
-import { type as domainTypes } from 'lib/domains/constants';
-import { handleRenewNowClick } from 'lib/purchases';
-import { resolveDomainStatus, isDomainInGracePeriod, isDomainUpdateable } from 'lib/domains';
-import InfoPopover from 'components/info-popover';
-import { emailManagement } from 'my-sites/email/paths';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormRadio from 'calypso/components/forms/form-radio';
+import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import { withoutHttp } from 'calypso/lib/url';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
 import {
+	resolveDomainStatus,
+	isDomainInGracePeriod,
+	isDomainUpdateable,
+	getDomainTypeText,
+} from 'calypso/lib/domains';
+import InfoPopover from 'calypso/components/info-popover';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import {
+	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementNameServers,
 	domainManagementTransfer,
 	domainManagementDns,
 	domainManagementSecurity,
-} from 'my-sites/domains/paths';
-import Spinner from 'components/spinner';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/my-sites/domains/paths';
+import Spinner from 'calypso/components/spinner';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getMaxTitanMailboxCount } from 'calypso/lib/titan/get-max-titan-mailbox-count';
+import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -57,6 +65,7 @@ class DomainItem extends PureComponent {
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
 		enableSelection: PropTypes.bool,
+		isChecked: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -66,6 +75,7 @@ class DomainItem extends PureComponent {
 		onToggle: null,
 		isLoadingDomainDetails: false,
 		isBusy: false,
+		isChecked: false,
 	};
 
 	handleClick = ( e ) => {
@@ -225,6 +235,14 @@ class DomainItem extends PureComponent {
 							{ translate( 'DNS Records' ) }
 						</PopoverMenuItem>
 					) }
+					{ domain.type === domainTypes.WPCOM && ! domainDetails?.isWpcomStagingDomain && (
+						<PopoverMenuItem
+							icon="reblog"
+							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
+						>
+							{ translate( 'Change site address' ) }
+						</PopoverMenuItem>
+					) }
 					{ domain.type === domainTypes.REGISTERED &&
 						( isDomainUpdateable( domainDetails ) || isDomainInGracePeriod( domainDetails ) ) && (
 							<PopoverMenuItem
@@ -285,6 +303,17 @@ class DomainItem extends PureComponent {
 			} );
 		}
 
+		if ( hasTitanMailWithUs( domainDetails ) ) {
+			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
+			return translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
+				args: {
+					titanMailboxCount,
+				},
+				count: titanMailboxCount,
+				comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
+			} );
+		}
+
 		if ( domainDetails?.emailForwardsCount > 0 ) {
 			return translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
 				count: domainDetails.emailForwardsCount,
@@ -339,20 +368,19 @@ class DomainItem extends PureComponent {
 	}
 
 	renderSiteMeta() {
+		return <div className="domain-item__meta">{ this.getSiteMeta() }</div>;
+	}
+
+	getSiteMeta() {
 		const { domainDetails, isManagingAllSites, site, translate } = this.props;
 
 		if ( isManagingAllSites ) {
-			return (
-				<div className="domain-item__meta">
-					{ translate( 'Site: %(siteName)s', {
-						args: {
-							siteName: this.getSiteName( site ),
-						},
-						comment:
-							'%(siteName)s is the site name and URL or just the URL used to identify a site',
-					} ) }
-				</div>
-			);
+			return translate( 'Site: %(siteName)s', {
+				args: {
+					siteName: this.getSiteName( site ),
+				},
+				comment: '%(siteName)s is the site name and URL or just the URL used to identify a site',
+			} );
 		}
 
 		if ( domainDetails.isWPCOMDomain ) {
@@ -371,7 +399,7 @@ class DomainItem extends PureComponent {
 			);
 		}
 
-		return null;
+		return <React.Fragment>{ getDomainTypeText( domainDetails, translate ) }</React.Fragment>;
 	}
 
 	busyMessage() {
@@ -404,10 +432,19 @@ class DomainItem extends PureComponent {
 	}
 
 	render() {
-		const { domain, domainDetails, isManagingAllSites, showCheckbox, enableSelection } = this.props;
+		const {
+			domain,
+			domainDetails,
+			isChecked,
+			isManagingAllSites,
+			showCheckbox,
+			enableSelection,
+		} = this.props;
 		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
-		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
+		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
+			'domain-item__enable-selection': enableSelection,
+		} );
 		const domainTitleClass = classNames( 'domain-item__title', {
 			'domain-item__primary': ! isManagingAllSites && domainDetails?.isPrimary,
 		} );
@@ -422,7 +459,11 @@ class DomainItem extends PureComponent {
 					/>
 				) }
 				{ enableSelection && (
-					<FormRadio className="domain-item__checkbox" onClick={ this.onSelect } />
+					<FormRadio
+						className="domain-item__checkbox"
+						checked={ isChecked }
+						onClick={ this.onSelect }
+					/>
 				) }
 				<div className="list__domain-link">
 					<div className="domain-item__status">

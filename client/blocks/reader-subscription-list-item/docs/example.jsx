@@ -8,8 +8,8 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import ConnectedReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
-import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
+import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
+import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
 import { Card } from '@automattic/components';
 
 const sites = {

@@ -20,7 +20,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async expandDrawerItem( itemName ) {
-		const selector = await driverHelper.getElementByText(
+		const selector = driverHelper.getElementByText(
 			this.driver,
 			By.css( '.sidebar__heading' ),
 			itemName
@@ -37,11 +37,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		}
 	}
 
-	async selectDomains() {
-		await this.expandDrawerItem( 'Manage' );
-		return await this._scrollToAndClickMenuItem( 'domains' );
-	}
-
 	async selectPeople() {
 		await this.expandDrawerItem( 'Manage' );
 		return await this._scrollToAndClickMenuItem( 'people' );
@@ -55,12 +50,30 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		); // TODO: data-tip-target target is missing
 	}
 
+	async selectSiteEditor() {
+		await this.expandDrawerItem( 'Design' );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.menu-link-text[data-e2e-sidebar="Site Editor (beta)"]' )
+		);
+	}
+
+	async selectWPAdmin() {
+		return await this._scrollToAndClickMenuItem( 'wpadmin' );
+	}
+
 	async customizeTheme() {
 		return await this._scrollToAndClickMenuItem( 'themes' );
 	}
 
-	async selectPlan() {
-		return await this._scrollToAndClickMenuItem( 'plan' );
+	async selectPlans() {
+		await this.expandDrawerItem( 'Upgrades' );
+		return await this._scrollToAndClickMenuItem( 'plans' );
+	}
+
+	async selectDomains() {
+		await this.expandDrawerItem( 'Upgrades' );
+		return await this._scrollToAndClickMenuItem( 'domains' );
 	}
 
 	async selectMyHome() {
@@ -175,10 +188,20 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async ensureSidebarMenuVisible() {
 		const allSitesSelector = By.css( '.current-section button' );
 		const sidebarSelector = By.css( '.sidebar .sidebar__region' );
-		const sidebarVisible = await this.driver.findElement( sidebarSelector ).isDisplayed();
+		const sidebar = await this.driver.findElement( sidebarSelector );
+		const sidebarRect = await sidebar.getRect();
+		const sidebarVisible = sidebar.isDisplayed() && sidebarRect.x >= -100;
 
 		if ( ! sidebarVisible ) {
-			await driverHelper.clickWhenClickable( this.driver, allSitesSelector );
+			try {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					allSitesSelector,
+					this.explicitWaitMS / 4
+				);
+			} catch ( e ) {
+				console.log( 'All sites button did not click' );
+			}
 		}
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, sidebarSelector );
 	}

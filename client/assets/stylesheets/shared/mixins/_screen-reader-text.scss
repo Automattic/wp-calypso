@@ -1,0 +1,16 @@
+// ==========================================================================
+// Screen Reader Text mixin
+// To hide text visually without concealing from screen reader users
+// https://make.wordpress.org/accessibility/handbook/markup/the-css-class-screen-reader-text/
+// ==========================================================================
+@mixin screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect( 0, 0, 0, 0 );
+	white-space: nowrap;
+	border-width: 0;
+}

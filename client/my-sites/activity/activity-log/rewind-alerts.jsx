@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import ThreatAlert from './threat-alert';
-import getSiteThreats from 'state/selectors/get-site-threats';
+import getSiteThreats from 'calypso/state/selectors/get-site-threats';
 
 /**
  * Style dependencies

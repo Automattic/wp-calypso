@@ -42,7 +42,6 @@
 }
 
 .draft__title {
-	font-family: $serif;
 	font-weight: 600;
 	font-size: $font-body;
 	line-height: 1.4;
@@ -63,13 +62,13 @@
 .draft__featured-image {
 	display: block;
 	position: absolute;
-		top: 8px;
-		right: 8px;
-		bottom: 8px;
+	top: 8px;
+	right: 8px;
+	bottom: 8px;
 	overflow: hidden;
 	transition: height 0.15s ease-in-out;
 	width: 72px;
-	border-radius: 3px;
+	border-radius: 2px;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center;

@@ -3,7 +3,7 @@
  */
 import { find, flatten, includes, map, startsWith } from 'lodash';
 import debugFactory from 'debug';
-import { countries, dialCodeMap } from 'components/phone-input/data';
+import { countries, dialCodeMap } from 'calypso/components/phone-input/data';
 
 /**
  * Internal Dependencies
@@ -129,8 +129,8 @@ export function makeTemplate( phoneNumber, patterns ) {
  * @returns {string} The formatted number
  */
 export function applyTemplate( phoneNumber, template, positionTracking = { pos: 0 } ) {
-	let res = '',
-		phoneNumberIndex = 0;
+	let res = '';
+	let phoneNumberIndex = 0;
 
 	const originalPosition = positionTracking.pos;
 	for ( let i = 0; i < template.length && phoneNumberIndex < phoneNumber.length; i++ ) {
@@ -255,9 +255,9 @@ export function toIcannFormat( inputNumber, country ) {
 		return inputNumber;
 	}
 
-	const { nationalNumber } = processNumber( inputNumber, country ),
-		countryCode = country.countryDialCode || country.dialCode,
-		dialCode = country.countryDialCode && country.regionCode ? country.regionCode : '';
+	const { nationalNumber } = processNumber( inputNumber, country );
+	const countryCode = country.countryDialCode || country.dialCode;
+	const dialCode = country.countryDialCode && country.regionCode ? country.regionCode : '';
 
 	return '+' + countryCode + '.' + dialCode + nationalNumber;
 }

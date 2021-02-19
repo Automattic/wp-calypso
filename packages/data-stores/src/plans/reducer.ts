@@ -1,43 +1,67 @@
 /**
+ * External dependencies
+ */
+import type { Reducer } from 'redux';
+import { combineReducers } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
 import type { PlanAction } from './actions';
-import type { PlanSlug } from './types';
-import { PLANS_LIST } from './plans-data';
+import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
 
-type PricesMap = {
-	[ slug in PlanSlug ]: string;
-};
+// create a Locale type just for code readability
+type Locale = string;
 
-export const supportedPlanSlugs = Object.keys( PLANS_LIST );
-
-const DEFAUlT_STATE: {
-	supportedPlanSlugs: PlanSlug[];
-	prices: PricesMap;
-} = {
-	supportedPlanSlugs,
-	prices: {
-		[ PLAN_FREE ]: '',
-		[ PLAN_PERSONAL ]: '',
-		[ PLAN_PREMIUM ]: '',
-		[ PLAN_BUSINESS ]: '',
-		[ PLAN_ECOMMERCE ]: '',
-	},
-};
-
-const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
+export const features: Reducer< Record< Locale, Record< string, PlanFeature > >, PlanAction > = (
+	state = {},
+	action
+) => {
 	switch ( action.type ) {
-		case 'SET_PRICES':
-			return {
-				...state,
-				prices: action.prices,
-			};
+		case 'SET_FEATURES':
+			return { ...state, [ action.locale ]: action.features };
 		default:
 			return state;
 	}
 };
 
-export type State = typeof DEFAUlT_STATE;
+export const featuresByType: Reducer< Record< Locale, Array< FeaturesByType > >, PlanAction > = (
+	state = {},
+	action
+) => {
+	switch ( action.type ) {
+		case 'SET_FEATURES_BY_TYPE':
+			return { ...state, [ action.locale ]: action.featuresByType };
+		default:
+			return state;
+	}
+};
+
+export const plans: Reducer< Record< Locale, Plan[] >, PlanAction > = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case 'SET_PLANS':
+			return { ...state, [ action.locale ]: action.plans };
+		default:
+			return state;
+	}
+};
+
+export const planProducts: Reducer< PlanProduct[], PlanAction > = ( state = [], action ) => {
+	switch ( action.type ) {
+		case 'SET_PLAN_PRODUCTS':
+			return action.products;
+		default:
+			return state;
+	}
+};
+
+const reducer = combineReducers( {
+	features,
+	featuresByType,
+	planProducts,
+	plans,
+} );
+
+export type State = ReturnType< typeof reducer >;
 
 export default reducer;

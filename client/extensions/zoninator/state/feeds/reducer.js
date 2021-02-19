@@ -2,11 +2,13 @@
  * Internal dependencies
  */
 
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
 import {
 	ZONINATOR_REQUEST_FEED,
 	ZONINATOR_REQUEST_FEED_ERROR,
+	ZONINATOR_SAVE_FEED,
 	ZONINATOR_UPDATE_FEED,
+	ZONINATOR_UPDATE_FEED_ERROR,
 } from '../action-types';
 
 const isRequesting = withoutPersistence( ( state = {}, action ) => {
@@ -37,7 +39,24 @@ const feed = withoutPersistence( ( state = {}, action ) => {
 
 export const items = keyedReducer( 'siteId', keyedReducer( 'zoneId', feed ) );
 
+const savingFeed = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case ZONINATOR_SAVE_FEED: {
+			return true;
+		}
+		case ZONINATOR_UPDATE_FEED:
+		case ZONINATOR_UPDATE_FEED_ERROR: {
+			return false;
+		}
+	}
+
+	return state;
+} );
+
+export const saving = keyedReducer( 'siteId', keyedReducer( 'zoneId', savingFeed ) );
+
 export default combineReducers( {
-	requesting,
 	items,
+	requesting,
+	saving,
 } );

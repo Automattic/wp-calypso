@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app } = require( 'electron' );
 const path = require( 'path' );
 const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
 
@@ -9,7 +9,7 @@ const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
  * Internal dependencies
  */
 const Config = require( '../config' );
-const log = require( 'desktop/lib/logger' )( 'desktop:settings' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:settings' );
 
 let firstRun = false;
 
@@ -30,7 +30,7 @@ module.exports = {
 			try {
 				return JSON.parse( fs.readFileSync( settingsFile ) );
 			} catch ( e ) {
-				log.error( 'Failed to read settings file' );
+				log.error( 'Failed to load settings file: ', e );
 			}
 		}
 
@@ -38,7 +38,7 @@ module.exports = {
 		try {
 			createSettingsFile( getSettingsFile() );
 		} catch ( e ) {
-			log.error( 'Failed to create settings file' );
+			log.error( 'Failed to create settings file: ', e );
 		}
 		return {};
 	},
@@ -52,18 +52,15 @@ module.exports = {
 				createSettingsFile( settingsFile );
 			}
 
-			// Read the existing settings
+			// Read existing settings
 			data = fs.readFileSync( settingsFile );
-
-			log.info( `Read settings from '${ settingsFile }': ${ data.toString( 'utf-8' ) }` );
 
 			data = JSON.parse( data );
 			data[ group ] = groupData;
 
-			log.info( `Updating settings: '${ group }': `, groupData );
 			fs.writeFileSync( settingsFile, JSON.stringify( data ) );
 		} catch ( error ) {
-			log.error( 'Failed to read settings file', error );
+			log.error( `Failed to write settings '${ group }' to file:`, error );
 		}
 
 		return data;

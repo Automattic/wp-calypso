@@ -1,7 +1,15 @@
 /**
+ * External dependencies
+ */
+import { isString, isNumber } from 'lodash';
+
+/**
  * Internal dependencies
  */
-import getNextPageHandle from 'state/selectors/get-next-page-handle';
+import getNextPageHandle from 'calypso/state/selectors/get-next-page-handle';
+import getCurrentMediaQuery from 'calypso/state/selectors/get-current-media-query';
+
+import 'calypso/state/media/init';
 
 const DEFAULT_QUERY = Object.freeze( { number: 20 } );
 
@@ -16,11 +24,20 @@ export default function getNextPageQuery( state, siteId ) {
 		return DEFAULT_QUERY;
 	}
 
-	const currentQuery = state.media.fetching[ siteId ]?.query ?? null;
+	const currentQuery = getCurrentMediaQuery( state, siteId );
+
+	const pageHandle = getNextPageHandle( state, siteId );
+
+	if ( [ isString, isNumber ].some( ( pred ) => pred( pageHandle ) ) ) {
+		return {
+			...DEFAULT_QUERY,
+			...currentQuery,
+			page_handle: pageHandle,
+		};
+	}
 
 	return {
 		...DEFAULT_QUERY,
 		...currentQuery,
-		page_handle: getNextPageHandle( state, siteId ),
 	};
 }

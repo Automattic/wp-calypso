@@ -3,7 +3,12 @@
  */
 import i18n from 'i18n-calypso';
 import { get } from 'lodash';
-import { withoutHttp } from 'lib/url';
+import { withoutHttp } from 'calypso/lib/url';
+
+/**
+ * Internal dependencies
+ */
+import { planHasFeature } from 'calypso/lib/plans';
 
 export function userCan( capability, site ) {
 	return site && site.capabilities && site.capabilities[ capability ];
@@ -157,4 +162,17 @@ export function getUnmappedUrl( site ) {
 	}
 
 	return site.options.main_network_site || site.options.unmapped_url;
+}
+
+/**
+ * Checks if the plan of a site includes a specific feature.
+ *
+ * @param {object} site Site to check
+ * @param {string} feature Feature
+ * @returns {boolean} True if does
+ */
+export function hasSiteFeature( site, feature ) {
+	if ( site && site.plan ) {
+		return planHasFeature( site.plan.product_slug, feature );
+	}
 }

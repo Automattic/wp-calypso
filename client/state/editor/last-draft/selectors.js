@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getEditedPost } from 'state/posts/selectors';
+import { getEditedPost } from 'calypso/state/posts/selectors';
 
-import 'state/editor/init';
+import 'calypso/state/editor/init';
 
 /**
  * Returns the edited post object for the last draft post, or null if there is

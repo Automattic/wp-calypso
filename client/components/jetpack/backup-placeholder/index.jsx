@@ -8,10 +8,10 @@ import React from 'react';
  */
 import './style.scss';
 
-export default function BackupPlaceholder() {
+export default function BackupPlaceholder( { showDatePicker = true } ) {
 	return (
 		<div className="backup-placeholder">
-			<div className="backup-placeholder__backup-date-picker" />
+			{ showDatePicker && <div className="backup-placeholder__backup-date-picker" /> }
 			<div className="backup-placeholder__daily-backup-status" />
 		</div>
 	);

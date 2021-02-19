@@ -7,10 +7,10 @@ import config from 'config';
 /**
  * Internal dependencies
  */
+
 import LoginFlow from '../lib/flows/login-flow';
 import SignUpFlow from '../lib/flows/sign-up-flow';
 
-import AddNewSitePage from '../lib/pages/add-new-site-page';
 import JetpackAuthorizePage from '../lib/pages/jetpack-authorize-page';
 import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page';
 import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page.js';
@@ -18,16 +18,11 @@ import WPAdminDashboardPage from '../lib/pages/wp-admin/wp-admin-dashboard-page'
 import WPAdminNewUserPage from '../lib/pages/wp-admin/wp-admin-new-user-page';
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar.js';
-import SidebarComponent from '../lib/components/sidebar-component';
 import JetpackConnectFlow from '../lib/flows/jetpack-connect-flow';
 import JetpackConnectPage from '../lib/pages/jetpack/jetpack-connect-page';
-import JetpackConnectAddCredentialsPage from '../lib/pages/jetpack/jetpack-connect-add-credentials-page';
-import PlansPage from '../lib/pages/plans-page';
 import LoginPage from '../lib/pages/login-page';
 import JetpackComPage from '../lib/pages/external/jetpackcom-page';
 import JetpackComFeaturesDesignPage from '../lib/pages/external/jetpackcom-features-design-page';
-import WooWizardSetupPage from '../lib/pages/woocommerce/woo-wizard-setup-page';
-import WooWizardJetpackPage from '../lib/pages/woocommerce/woo-wizard-jetpack-page';
 
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
@@ -37,13 +32,7 @@ import SecurePaymentComponent from '../lib/components/secure-payment-component';
 import WPHomePage from '../lib/pages/wp-home-page';
 import ThankYouModalComponent from '../lib/components/thank-you-modal-component';
 import MyPlanPage from '../lib/pages/my-plan-page';
-import WooWizardWelcomePage from '../lib/pages/woocommerce/woo-wizard-welcome-page';
-import WooWizardIndustryPage from '../lib/pages/woocommerce/woo-wizard-industry-page';
-import WooWizardProductPage from '../lib/pages/woocommerce/woo-wizard-product-page';
-import WooWizardBusinessDetailsPage from '../lib/pages/woocommerce/woo-wizard-business-details-page';
-import WooWizardThemePage from '../lib/pages/woocommerce/woo-wizard-theme-page';
 import WPAdminInPlaceApprovePage from '../lib/pages/wp-admin/wp-admin-in-place-approve-page';
-import WPAdminInPlacePlansPage from '../lib/pages/wp-admin/wp-admin-in-place-plans-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -63,67 +52,6 @@ before( async function () {
 
 describe( `Jetpack Connect: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-
-	// Expired sites cleanup is moved to async job: `e2e_jetpack_cleanup_user`
-	describe.skip( 'Disconnect expired sites: @parallel @jetpack @canary', function () {
-		const timeout = mochaTimeOut * 10;
-
-		this.timeout( timeout );
-
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can disconnect any expired sites', async function () {
-			return await new JetpackConnectFlow( driver, 'jetpackConnectUser' ).removeSites( timeout );
-		} );
-	} );
-
-	describe( 'Connect From Calypso: @parallel @jetpack @canary', function () {
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can create wporg site', async function () {
-			this.timeout( mochaTimeOut * 12 );
-
-			this.jnFlow = new JetpackConnectFlow( driver, null );
-			return await this.jnFlow.createJNSite();
-		} );
-
-		step( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
-			await loginFlow.loginAndSelectMySite();
-		} );
-
-		step( 'Can add new site', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.addNewSite( driver );
-			const addNewSitePage = await AddNewSitePage.Expect( driver );
-			await addNewSitePage.addSiteUrl( this.jnFlow.url );
-			const connectPage = await JetpackConnectPage.Expect( driver );
-			return await connectPage.waitToDisappear();
-		} );
-
-		step( 'Can wait for connection on the authorization page', async function () {
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
-			return await jetpackAuthorizePage.waitToDisappear();
-		} );
-
-		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlanJetpack();
-		} );
-
-		step( 'Has site URL in route', async function ( done ) {
-			const siteSlug = this.jnFlow.url.replace( /^https?:\/\//, '' );
-			const url = await driver.getCurrentUrl();
-			if ( url.includes( siteSlug ) ) {
-				return done();
-			}
-			return done( `Route ${ url } does not include site slug ${ siteSlug }` );
-		} );
-	} );
 
 	describe( 'Connect From wp-admin: @parallel @jetpack @canary', function () {
 		before( async function () {
@@ -160,8 +88,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 
 		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await WPAdminInPlacePlansPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlan();
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
 		step( 'Can assert we are on Jetpack Dashboard', async function () {
@@ -284,9 +212,9 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 			return await jnFlow.createJNSite();
 		} );
 
-		step( 'Can select buy Premium on Pricing Page', async function () {
+		step( 'Can select buy Jetpack Security on Pricing Page', async function () {
 			const jetpackComPricingPage = await JetpackComPricingPage.Visit( driver );
-			return await jetpackComPricingPage.buyPremium();
+			return await jetpackComPricingPage.buyJetpackPlan( 'jetpack_security_daily' );
 		} );
 
 		step( 'Can start connection flow using JN site', async function () {
@@ -309,163 +237,27 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 			'Can see the secure payment page and enter/submit test payment details',
 			async function () {
 				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+				const securityPlanInCart = await securePaymentComponent.containsPlan(
+					'jetpack_security_daily'
+				);
+				assert.strictEqual(
+					securityPlanInCart,
+					true,
+					"The cart doesn't contain the security plan"
+				);
 				await securePaymentComponent.payWithStoredCardIfPossible( testCreditCardDetails );
 				await securePaymentComponent.waitForCreditCardPaymentProcessing();
 				return await securePaymentComponent.waitForPageToDisappear();
 			}
 		);
 
-		step( 'Can see Premium plan', async function () {
+		step( 'Can see Jetpack Security plan', async function () {
 			const thankYouModal = await ThankYouModalComponent.Expect( driver );
 			await thankYouModal.continue();
 
 			const myPlanPage = await MyPlanPage.Expect( driver );
-			const isPremium = await myPlanPage.isPremium();
-			assert( isPremium, 'Can not verify Premium plan' );
-		} );
-	} );
-
-	// The Woo wizard is just not reliable.
-	describe.skip( 'Connect From WooCommerce plugin when Jetpack is not installed: @parallel @jetpack', function () {
-		const countryCode = 'US';
-		const stateCode = 'CO';
-		const address = '2101 Blake St';
-		const address2 = '';
-		const city = 'Denver';
-		const postalCode = '80205';
-
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can login into WordPress.com', async function () {
-			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
-			return await loginFlow.login();
-		} );
-
-		step( 'Can create wporg site', async function () {
-			this.timeout( mochaTimeOut * 12 );
-
-			this.jnFlow = new JetpackConnectFlow( driver, null, 'wooCommerceNoJetpack' );
-			return await this.jnFlow.createJNSite();
-		} );
-
-		step( 'Can enter WooCommerce Wizard', async function () {
-			await WPAdminDashboardPage.refreshIfJNError( driver );
-			const wPAdminDashboardPage = await WPAdminDashboardPage.Expect( driver );
-			return await wPAdminDashboardPage.enterWooCommerceWizard();
-		} );
-
-		step( 'Can fill out and submit store information form', async function () {
-			await ( await WooWizardWelcomePage.Expect( driver ) ).start();
-			const wooWizardSetupPage = await WooWizardSetupPage.Expect( driver );
-			return await wooWizardSetupPage.enterStoreDetailsAndSubmit( {
-				countryCode,
-				stateCode,
-				address,
-				address2,
-				city,
-				postalCode,
-			} );
-		} );
-
-		step( 'Can select fashion industry', async function () {
-			await ( await WooWizardIndustryPage.Expect( driver ) ).selectFashionIndustry();
-		} );
-		step( 'Can select product type', async function () {
-			await ( await WooWizardProductPage.Expect( driver ) ).selectPhysicalProduct();
-		} );
-
-		step( 'Can fill business details', async function () {
-			await ( await WooWizardBusinessDetailsPage.Expect( driver ) ).fillBusinessInfo();
-		} );
-
-		step( 'Can skip theme step', async function () {
-			await ( await WooWizardThemePage.Expect( driver ) ).skip();
-		} );
-
-		// @TODO: Fix me! Disabled on May 23rd 2019 since the flow was getting stuck there.
-		// Passes locally and in manual testing, so we suspect it's the way how
-		// Calypso live-branches URL is passed to this step.
-		// /*
-		step( 'Can continue with Jetpack', async function () {
-			this.timeout( mochaTimeOut * 5 );
-
-			const wooWizardJetpackPage = await WooWizardJetpackPage.Expect( driver );
-			return await wooWizardJetpackPage.selectContinueWithJetpack();
-		} );
-
-		step( 'Can wait for Jetpack get connected', async function () {
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
-			// HACKY. Connection should be auto-approved, but it fails all the time, so we need to manually click the button
-			return await jetpackAuthorizePage.approveConnection();
-		} );
-
-		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlanJetpack();
-		} );
-
-		// Ignored for now. Discussion (internal ref): p1556635263170900-slack-proton
-		// step( 'Can see the Woo wizard ready page', async function() {
-		// 	return await WooWizardReadyPage.Expect( driver );
-		// } );
-		// */
-	} );
-
-	describe( 'Remote Installation Connect From Calypso, when Jetpack not installed: @parallel @jetpack', function () {
-		let jnFlow;
-
-		before( async function () {
-			// This test relies on Jetpack plugin remote installation, which is possible only for Jetpack stable
-			if ( dataHelper.getJetpackHost() === 'PRESSABLEBLEEDINGEDGE' ) {
-				this.skip();
-			}
-
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can create wporg site', async function () {
-			this.timeout( mochaTimeOut * 12 );
-
-			jnFlow = new JetpackConnectFlow( driver, null, 'noJetpack' );
-			return await jnFlow.createJNSite();
-		} );
-
-		step( 'Can log in', async function () {
-			return await new LoginFlow( driver, 'jetpackConnectUser' ).loginAndSelectMySite();
-		} );
-
-		step( 'Can add new site', async function () {
-			const sideBarComponent = await SidebarComponent.Expect( driver );
-			await sideBarComponent.addNewSite();
-			const addNewSitePage = await AddNewSitePage.Expect( driver );
-			return await addNewSitePage.addSiteUrl( jnFlow.url );
-		} );
-
-		step( 'Can enter the Jetpack credentials and install Jetpack', async function () {
-			const jetpackConnectAddCredentialsPage = await JetpackConnectAddCredentialsPage.Expect(
-				driver
-			);
-			await jetpackConnectAddCredentialsPage.enterDetailsAndConnect(
-				jnFlow.username,
-				jnFlow.password
-			);
-			await jetpackConnectAddCredentialsPage.waitToDisappear();
-		} );
-
-		step( 'Can wait for Jetpack get connected', async function () {
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
-			return await jetpackAuthorizePage.waitToDisappear();
-		} );
-
-		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlanJetpack();
-		} );
-
-		step( 'Can then see the Jetpack plan page in Calypso', async function () {
-			return await PlansPage.Expect( driver );
+			const isSecurity = await myPlanPage.isSecurityPlan();
+			assert( isSecurity, 'Can not verify Security plan' );
 		} );
 	} );
 } );

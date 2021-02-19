@@ -1,5 +1,4 @@
-Auto Updater
-=========
+# Auto Updater
 
 Handles Squirrel auto-update events. Note that the app must be signed for this to work.
 

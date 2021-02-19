@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getCommentsPage from 'state/selectors/get-comments-page';
+import getCommentsPage from 'calypso/state/selectors/get-comments-page';
 
 const SITE_ID = 12345678;
 const POST_ID = 1234;

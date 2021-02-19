@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { receiveMediaStorage, requestMediaStorage } from '../actions';
-import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST } from 'state/action-types';
+import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST } from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#receiveMediaStorage()', () => {

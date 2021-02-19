@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@automattic/components';
-import { handleRenewNowClick, getRenewalPrice } from 'lib/purchases';
+import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
 
 /**
  * Style dependencies
@@ -36,11 +36,9 @@ class RenewButton extends React.Component {
 	};
 
 	handleRenew = () => {
-		handleRenewNowClick(
-			this.props.purchase,
-			this.props.selectedSite.slug,
-			this.props.tracksProps
-		);
+		handleRenewNowClick( this.props.purchase, this.props.selectedSite.slug, {
+			tracksProps: this.props.tracksProps,
+		} );
 	};
 
 	render() {

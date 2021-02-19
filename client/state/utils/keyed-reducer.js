@@ -6,8 +6,8 @@ import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { SerializationResult } from 'state/serialization-result';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { SerializationResult } from 'calypso/state/serialization-result';
 
 /**
  * Creates a super-reducer as a map of reducers over keyed objects
@@ -65,7 +65,7 @@ export const keyedReducer = ( keyPath, reducer ) => {
 	// some keys are invalid
 	if ( 'string' !== typeof keyPath ) {
 		throw new TypeError(
-			'Key name passed into '`keyedReducer`` must be a string but I detected a ${ typeof keyName }`
+			`Key name passed into \`keyedReducer\` must be a string but I detected a ${ typeof keyName }`
 		);
 	}
 
@@ -77,7 +77,7 @@ export const keyedReducer = ( keyPath, reducer ) => {
 
 	if ( 'function' !== typeof reducer ) {
 		throw new TypeError(
-			'Reducer passed into '`keyedReducer`` must be a function but I detected a ${ typeof reducer }`
+			`Reducer passed into \`keyedReducer\` must be a function but I detected a ${ typeof reducer }`
 		);
 	}
 

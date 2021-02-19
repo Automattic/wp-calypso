@@ -76,13 +76,13 @@ The colors for both internal and external brands have also been defined [in one 
 
 Please note that `--color-primary` in the default color scheme is a different shade of blue than WordPress.com’s primary brand color.
 
-# Dashboard Color Schemes
+## Dashb#oard Color Schemes
 
 All of the above has been systematized with WordPress.com’s dashboard color schemes in mind. Please test new designs under of all them.
 
 ![Color scheme thumbnails](../packages/calypso-color-schemes/screenshot@2x.png)
 
-## Adding a New Scheme
+### Adding a New Scheme
 
 New color schemes overwrite the theme properties defined by the [default theme](https://github.com/Automattic/wp-calypso/blob/HEAD/packages/calypso-color-schemes/src/shared/color-schemes/_default.scss) called Classic Bright. Not every single property has to be redefined by a new scheme, but please remember to include the `-rgb` counterpart for each overwritten theme property.
 

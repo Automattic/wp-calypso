@@ -1,4 +1,5 @@
-.earnings_breakdown, .earnings_history {
+.earnings_breakdown,
+.earnings_history {
 	.module-content {
 		display: block;
 	}
@@ -120,7 +121,8 @@
 	text-align: center;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		&:first-child, &:last-child {
+		&:first-child,
+		&:last-child {
 			font-size: $font-body-extra-small;
 		}
 	}
@@ -131,10 +133,6 @@
 	}
 }
 
-.ads__settings-display-toggles .form-toggle__wrapper {
-	display: block;
-}
-
 .ads__activate-header-title {
 	font-weight: 600;
 }
@@ -143,7 +141,8 @@
 	margin: 0;
 }
 
-.ads__activate-header-toggle, .ads__activate-header-title {
+.ads__activate-header-toggle,
+.ads__activate-header-title {
 	margin: auto 0;
 }
 .ads__activate-wrapper {
@@ -162,5 +161,5 @@
 }
 
 .ads__child-settings {
-	margin: 16px 36px 0;
+	margin: 16px 48px 0;
 }

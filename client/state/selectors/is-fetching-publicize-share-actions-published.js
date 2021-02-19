@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/sharing/init';
+import 'calypso/state/sharing/init';
 
 /**
  * @param {object} state Global state tree

@@ -14,7 +14,7 @@ import { createStore } from 'redux';
  * Internal Dependencies
  */
 import Experiment, { Variation, DefaultVariation } from '../index';
-import { LoadingVariations } from 'components/experiment';
+import { LoadingVariations } from 'calypso/components/experiment';
 
 function renderWithStore( element, initialState ) {
 	const store = createStore( ( state ) => state, initialState );

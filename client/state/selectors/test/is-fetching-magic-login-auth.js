@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isFetchingMagicLoginAuth from 'state/selectors/is-fetching-magic-login-auth';
+import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 
 describe( 'isFetchingMagicLoginAuth()', () => {
 	test( 'should return false if there is no fetching information yet', () => {

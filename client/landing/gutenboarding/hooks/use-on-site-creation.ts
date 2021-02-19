@@ -11,8 +11,11 @@ import wp from '../../../lib/wp';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
+import { PLANS_STORE } from '../stores/plans';
 import { recordOnboardingComplete } from '../lib/analytics';
-import { useSelectedPlan, useShouldSiteBePublic } from './use-selected-plan';
+import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
+import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
+import { useOnboardingFlow } from '../path';
 
 const wpcom = wp.undocumented();
 
@@ -54,15 +57,22 @@ interface Cart {
  * 3. The user is still seeing 'Free Plan' label on PlansButton => redirect to editor
  **/
 
-export default function useOnSiteCreation() {
+export default function useOnSiteCreation(): void {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const selectedPlan = useSelectedPlan();
-	const shouldSiteBePublic = useShouldSiteBePublic();
+	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getPlanProductId()
+	);
+	const planProductSource = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProductById( selectedPlanProductId )
+	);
+
+	const flow = useOnboardingFlow();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const flowCompleteTrackingParams = {
@@ -79,8 +89,8 @@ export default function useOnSiteCreation() {
 
 			if ( selectedPlan && ! selectedPlan?.isFree ) {
 				const planProduct = {
-					product_id: selectedPlan.productId,
-					product_slug: selectedPlan.storeSlug,
+					product_id: planProductSource?.productId,
+					product_slug: planProductSource?.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
@@ -101,36 +111,44 @@ export default function useOnSiteCreation() {
 						products: [ ...cart.products, planProduct, domainProduct ],
 					} );
 					resetOnboardStore();
+					clearLastNonEditorRoute();
 					setSelectedSite( newSite.blogid );
 
 					const editorUrl = design?.is_fse
 						? `site-editor%2F${ newSite.site_slug }`
 						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 
-					const redirectionUrl = shouldSiteBePublic
-						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
-						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
+					const redirectionUrl = shouldRedirectToEditorAfterCheckout
+						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`
+						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
+					flow,
 				} );
 				go();
 				return;
 			}
-
-			recordOnboardingComplete( flowCompleteTrackingParams );
+			recordOnboardingComplete( {
+				...flowCompleteTrackingParams,
+				flow,
+			} );
 			resetOnboardStore();
+			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = design?.is_fse
-				? `/site-editor/${ newSite.site_slug }/`
-				: `/block-editor/page/${ newSite.site_slug }/home`;
+			let destination;
+			if ( design?.is_fse ) {
+				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else {
+				destination = `/page/${ newSite.site_slug }/home`;
+			}
+			window.location.href = destination;
 		}
 	}, [
 		domain,
-		hasPaidDomain,
 		selectedPlan,
 		isRedirecting,
 		newSite,
@@ -139,7 +157,7 @@ export default function useOnSiteCreation() {
 		setIsRedirecting,
 		setSelectedSite,
 		flowCompleteTrackingParams,
-		shouldSiteBePublic,
+		shouldRedirectToEditorAfterCheckout,
 		design,
 	] );
 }

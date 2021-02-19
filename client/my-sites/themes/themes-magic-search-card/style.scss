@@ -1,4 +1,3 @@
-
 /*
  * Search card and text input
  */
@@ -10,7 +9,8 @@
 	display: flex;
 	align-items: center;
 	background: white;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 	transition: all 0.15s ease-in-out;
 
 	&.has-highlight {
@@ -22,7 +22,8 @@
 		margin: 0;
 		height: 58px;
 
-		&.has-focus, &.has-focus:hover {
+		&.has-focus,
+		&.has-focus:hover {
 			box-shadow: none;
 		}
 	}
@@ -70,7 +71,6 @@
 		padding: 8px 14px;
 	}
 }
-
 
 /*
  * Tokens
@@ -138,14 +138,14 @@
 	white-space: pre;
 }
 
-
 /*
  * Suggestions: Welcome Card
  */
 .themes-magic-search-card__welcome {
 	color: var( --color-neutral-light );
 	background-color: var( --color-surface );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 	display: flex;
 	flex-direction: column;
 }

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 export function checkAuthCode( domainName, authCode, onComplete ) {
 	if ( ! domainName || ! authCode ) {

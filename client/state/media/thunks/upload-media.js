@@ -7,13 +7,13 @@ import { castArray, noop, zip } from 'lodash';
  * Internal dependencies
  */
 import {
-	dispatchFluxFetchMediaLimits,
-	dispatchFluxReceiveMediaItemError,
-	dispatchFluxReceiveMediaItemSuccess,
-} from 'state/media/utils/flux-adapter';
-import { receiveMedia, successMediaItemRequest, failMediaItemRequest } from 'state/media/actions';
-import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
-import { isFileList } from 'state/media/utils/is-file-list';
+	receiveMedia,
+	successMediaItemRequest,
+	failMediaItemRequest,
+} from 'calypso/state/media/actions';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
+import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
+import { isFileList } from 'calypso/state/media/utils/is-file-list';
 
 /**
  * Add media items serially (one at a time) but dispatch creation
@@ -68,18 +68,14 @@ export const uploadMedia = (
 				transientId: transientMedia.ID,
 			};
 
-			dispatchFluxReceiveMediaItemSuccess( transientMedia.ID, siteId, uploadedMedia );
-
 			dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 			dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
-			dispatchFluxFetchMediaLimits( siteId );
+			dispatch( requestMediaStorage( siteId ) );
 
 			onItemUploaded( uploadedMediaWithTransientId, file );
 			uploadedItems.push( uploadedMediaWithTransientId );
 		} catch ( error ) {
-			dispatchFluxReceiveMediaItemError( transientMedia.ID, siteId, error );
-
 			dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
 			onItemFailure( file );
 		}

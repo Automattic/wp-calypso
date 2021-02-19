@@ -4,16 +4,18 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PostSchedule from 'components/post-schedule';
-import Timezone from 'components/timezone';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import PostSchedule from 'calypso/components/post-schedule';
+import Timezone from 'calypso/components/timezone';
 import { Card } from '@automattic/components';
-import EventsTooltip from 'components/date-picker/events-tooltip';
-import { withLocalizedMoment } from 'components/localized-moment';
+import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 // Date Picker Demo
 const PostScheduleExample = localize(
@@ -160,7 +162,7 @@ const PostScheduleExample = localize(
 								</h3>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										state.timezone
 										<div
 											className="state-value"
@@ -168,7 +170,7 @@ const PostScheduleExample = localize(
 										>
 											{ this.state.timezone || 'not defined' }
 										</div>
-									</label>
+									</FormLabel>
 
 									<Timezone selectedZone={ this.state.timezone } onSelect={ this.setTimezone } />
 
@@ -186,15 +188,14 @@ const PostScheduleExample = localize(
 								</div>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										state.gmtOffset
-										<input
+										<FormTextInput
 											className="editable-property"
-											type="text"
 											onChange={ this.setGMTOffset }
 											value={ this.state.gmtOffset }
 										/>
-									</label>
+									</FormLabel>
 
 									<button
 										className="card__property-action"
@@ -206,12 +207,12 @@ const PostScheduleExample = localize(
 								</div>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										state.date
 										<div className="state-value" style={ { fontSize: '11px' } }>
 											{ this.state.date ? this.state.date.format() : 'not defined' }
 										</div>
-									</label>
+									</FormLabel>
 
 									<button
 										className="card__property-action"
@@ -231,29 +232,29 @@ const PostScheduleExample = localize(
 								</h3>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										prop.onDateChange( date )
 										<div className="state-value" style={ { fontSize: '11px' } }>
 											{ this.state.date ? this.state.date.format() : 'not defined' }
 										</div>
-									</label>
+									</FormLabel>
 								</div>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										prop.onMonthChange( date )
 										<div className="state-value" style={ { fontSize: '11px' } }>
 											{ this.state.month ? this.state.month.format() : 'not defined' }
 										</div>
-									</label>
+									</FormLabel>
 								</div>
 							</Card>
 
 							<Card className="card__component-instance">
-								<label>
+								<FormLabel>
 									chronologically:
 									{ this.renderDateReference() }
-								</label>
+								</FormLabel>
 							</Card>
 						</div>
 					</div>

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/hosting/init';
+import 'calypso/state/hosting/init';
 
 /**
  * Returns the PHP version used for given siteId

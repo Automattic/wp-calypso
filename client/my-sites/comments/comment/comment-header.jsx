@@ -8,11 +8,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CommentAuthor from 'my-sites/comments/comment/comment-author';
-import CommentAuthorMoreInfo from 'my-sites/comments/comment/comment-author-more-info';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { getSiteComment } from 'state/comments/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import CommentAuthor from 'calypso/my-sites/comments/comment/comment-author';
+import CommentAuthorMoreInfo from 'calypso/my-sites/comments/comment/comment-author-more-info';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export class CommentHeader extends PureComponent {
 	render() {

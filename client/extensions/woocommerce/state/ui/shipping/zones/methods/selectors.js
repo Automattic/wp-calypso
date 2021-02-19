@@ -19,8 +19,8 @@ import {
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getAPIShippingZones,
 	areShippingZonesLoaded,
@@ -249,18 +249,16 @@ export const getCurrentlyOpenShippingZoneMethod = (
 	 * in standard mode `merge` does not always allow the elements of
 	 * standard arrays to be removed.
 	 *
-	 * Example:
-
-	const openMethod              = { shipping_classes: [ 19 ] };
-	const currentlyEditingChanges = { shipping_classes: [] };
-
-	_.merge( {}, openMethod, currentlyEditingChanges );
-	// { shipping_classes: [ 19 ] }
-
-	_.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
-	// { shipping_classes: [] }
-	*/
-
+	 * @example
+	 * const openMethod = { shipping_classes: [ 19 ] };
+	 * const currentlyEditingChanges = { shipping_classes: [] };
+	 *
+	 * _.merge( {}, openMethod, currentlyEditingChanges );
+	 * // { shipping_classes: [ 19 ] }
+	 *
+	 * _.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
+	 * // { shipping_classes: [] }
+	 */
 	return mergeWith(
 		{},
 		defaultValues,

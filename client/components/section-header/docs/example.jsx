@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 import { translate } from 'i18n-calypso';
 
 class SectionHeaderExample extends PureComponent {

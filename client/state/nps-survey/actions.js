@@ -2,13 +2,13 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { bumpStat } from 'lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
 	NPS_SURVEY_SET_CONCIERGE_SESSION_AVAILABILITY,
@@ -22,9 +22,9 @@ import {
 	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/nps-survey/init';
+import 'calypso/state/nps-survey/init';
 
 const debug = debugFactory( 'calypso:nps-survey' );
 

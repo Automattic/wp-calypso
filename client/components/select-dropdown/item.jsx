@@ -5,17 +5,17 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
-import TranslatableString from 'components/translatable/proptype';
+import Count from 'calypso/components/count';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 class SelectDropdownItem extends Component {
 	static propTypes = {
-		children: TranslatableString.isRequired,
+		children: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 		compactCount: PropTypes.bool,
 		path: PropTypes.string,
 		selected: PropTypes.bool,

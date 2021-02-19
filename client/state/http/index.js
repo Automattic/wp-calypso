@@ -6,9 +6,9 @@ import { fromPairs, identity, toPairs } from 'lodash';
 /**
  * Internal dependencies
  */
-import { extendAction } from 'state/utils';
-import { HTTP_REQUEST } from 'state/action-types';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
+import { extendAction } from 'calypso/state/utils';
+import { HTTP_REQUEST } from 'calypso/state/action-types';
+import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
 
 const encodeQueryParameters = ( queryParams ) => {
 	return queryParams
@@ -78,7 +78,8 @@ export const httpHandler = async ( { dispatch }, action ) => {
 
 	const queryString = encodeQueryParameters( queryParams );
 
-	let response, json;
+	let response;
+	let json;
 	try {
 		response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
 			method,

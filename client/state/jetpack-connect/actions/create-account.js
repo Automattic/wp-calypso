@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
-import wpcom from 'lib/wp';
-import { recordTracksEvent } from 'state/analytics/actions';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Create a user account

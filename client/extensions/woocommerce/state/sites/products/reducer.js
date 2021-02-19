@@ -7,7 +7,7 @@ import { difference, forEach, get, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import { getSerializedProductsQuery } from './utils';
 import {
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
@@ -16,7 +16,7 @@ import {
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 export default withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

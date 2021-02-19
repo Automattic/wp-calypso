@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ANALYTICS_TRACKING_ON } from 'state/action-types';
+import { ANALYTICS_TRACKING_ON } from 'calypso/state/action-types';
 
 export function loadTrackingTool( trackingTool ) {
 	return {

@@ -7,9 +7,9 @@ const debug = debugFactory( 'calypso:media' );
 /**
  * Internal dependencies
  */
-import { reduxGetState } from 'lib/redux-bridge';
-import wpcom from 'lib/wp';
-import { getEditorPostId } from 'state/editor/selectors';
+import { reduxGetState } from 'calypso/lib/redux-bridge';
+import wpcom from 'calypso/lib/wp';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
 
 export const getFileUploader = () => ( file, siteId ) => {
 	// Determine upload mechanism by object type

@@ -7,15 +7,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { reduxGetState } from 'lib/redux-bridge';
-import LikeButtonContainer from 'blocks/like-button';
-import PostLikesPopover from 'blocks/post-likes/popover';
-import { markPostSeen } from 'state/reader/posts/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import { getPostByKey } from 'state/reader/posts/selectors';
-import QueryPostLikes from 'components/data/query-post-likes';
-import { getPostLikeCount } from 'state/posts/selectors/get-post-like-count';
-import { isLikedPost } from 'state/posts/selectors/is-liked-post';
+import { reduxGetState } from 'calypso/lib/redux-bridge';
+import LikeButtonContainer from 'calypso/blocks/like-button';
+import PostLikesPopover from 'calypso/blocks/post-likes/popover';
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
+import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 
 /**
  * Style dependencies

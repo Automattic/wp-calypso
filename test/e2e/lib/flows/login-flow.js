@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { By } from 'selenium-webdriver';
-
-/**
  * Internal dependencies
  */
 import LoginPage from '../pages/login-page.js';
@@ -20,7 +15,6 @@ import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
 
 import * as dataHelper from '../data-helper';
-import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
 import PagesPage from '../pages/pages-page';
@@ -57,26 +51,30 @@ export default class LoginFlow {
 		}
 	}
 
-	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
+	async login( { emailSSO = false, jetpackSSO = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
+		process.env.FLAGS &&
+			( await this.driver.manage().addCookie( { name: 'flags', value: process.env.FLAGS } ) );
 
-		if (
-			! useFreshLogin &&
-			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
-		) {
-			console.log( 'Reusing login cookie for ' + this.account.username );
-			await this.driver.navigate().refresh();
-			const continueSelector = By.css( 'div.continue-as-user a' );
-			if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, continueSelector );
-			}
-			return;
-		}
+		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
+		// We can check later to see if we can find a different way to support it.
+		// if (
+		// 	! useFreshLogin &&
+		// 	( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
+		// ) {
+		// 	console.log( 'Reusing login cookie for ' + this.account.username );
+		// 	await this.driver.navigate().refresh();
+		// 	const continueSelector = By.css( 'div.continue-as-user a' );
+		// 	if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
+		// 		await driverHelper.clickWhenClickable( this.driver, continueSelector );
+		// 	}
+		// 	return;
+		// }
 
 		console.log( 'Logging in as ' + this.account.username );
 
-		let loginURL = this.account.loginURL,
-			loginPage;
+		let loginURL = this.account.loginURL;
+		let loginPage;
 
 		if ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) {
 			loginURL = `http://${ dataHelper.getJetpackSiteName() }/wp-admin`;
@@ -261,6 +259,12 @@ export default class LoginFlow {
 		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
 		await this.sideBarComponent.selectStoreOption();
 		return await StoreDashboardPage.Expect( this.driver );
+	}
+
+	async loginAndSelectWPAdmin() {
+		await this.loginAndSelectMySite();
+		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
+		return await this.sideBarComponent.selectWPAdmin();
 	}
 
 	end() {

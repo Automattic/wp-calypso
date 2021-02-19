@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isFetchingSiteBlocks } from 'state/reader/site-blocks/selectors';
+import { isFetchingSiteBlocks } from 'calypso/state/reader/site-blocks/selectors';
 
 describe( 'isFetchingSiteBlocks()', () => {
 	test( 'should return true if there is a fetch in progress', () => {

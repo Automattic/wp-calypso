@@ -21,10 +21,10 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
 	SITE_PLAN_OWNERSHIP_TRANSFER,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
+} from 'calypso/state/action-types';
+import wpcom from 'calypso/lib/wp';
 
-import 'state/data-layer/wpcom/sites/plan-transfer';
+import 'calypso/state/data-layer/wpcom/sites/plan-transfer';
 
 /**
  * Cancels the specified plan trial for the given site.

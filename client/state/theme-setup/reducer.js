@@ -5,8 +5,8 @@ import {
 	THEME_SETUP_REQUEST,
 	THEME_SETUP_RESULT,
 	THEME_SETUP_TOGGLE_DIALOG,
-} from 'state/themes/action-types';
-import { withStorageKey } from 'state/utils';
+} from 'calypso/state/themes/action-types';
+import { withStorageKey } from '@automattic/state-utils';
 
 const initialState = {
 	active: false,

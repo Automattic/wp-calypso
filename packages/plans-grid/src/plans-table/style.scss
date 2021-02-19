@@ -1,7 +1,11 @@
 @import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 @import '~@automattic/typography/styles/variables';
 @import '../variables.scss';
+
+/* stylelint-disable scales/font-size */
+// @TODO: re-enable lint rule in https://github.com/Automattic/wp-calypso/issues/44933
 
 .plans-table {
 	width: 100%;
@@ -15,6 +19,11 @@
 	flex-grow: 1;
 	flex-basis: 0;
 	flex-direction: column;
+
+	// in this variation, text isn't the default #444 color
+	&.badge-next-to-name {
+		color: var( --studio-gray-100 );
+	}
 
 	@media ( min-width: $break-mobile ) {
 		// to collapse double borders into one
@@ -58,6 +67,11 @@
 	}
 }
 
+.plan-item__heading.badge-next-to-name {
+	display: flex;
+	justify-content: space-between;
+}
+
 .plan-item__name {
 	font-weight: 700;
 	font-size: 18px;
@@ -69,25 +83,35 @@
 	}
 }
 
+.plan-item__badge-next-to-name {
+	height: 20px;
+	background: rgba( 184, 230, 191, 0.64 ); // --studio-green-5 with 0.64 opacity
+
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 4px;
+
+	color: var( --studio-green-80 );
+	padding: 2px 5px;
+	font-size: $font-body-extra-small;
+}
+
+.plan-item__tagline {
+	color: var( --studio-gray-80 );
+	font-size: $font-body-small;
+	margin: 4px 0;
+}
+
 .plan-item:not( .is-popular ) .plan-item__name {
 	@media ( max-width: $break-mobile ) {
 		font-weight: normal;
 	}
 }
 
-.plan-item__domain-name {
-	font-size: $font-body-small;
-}
-
-ul.plan-item__feature-item-group {
-	margin: 0;
-}
-
 .plan-item__mobile-expand-all-plans {
 	// increase specificity
 	&.components-button.is-link {
 		margin: 20px auto;
-		color: $dark-gray-500;
+		color: $gray-700;
 	}
 }
 
@@ -164,7 +188,7 @@ ul.plan-item__feature-item-group {
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-left: 10px;
-	color: $dark-gray-500;
+	color: $gray-700;
 }
 
 .plan-item__actions {
@@ -180,129 +204,107 @@ ul.plan-item__feature-item-group {
 	display: none;
 }
 
-.plan-item__domain-summary {
-	font-size: $font-body-small;
-	line-height: 22px;
-	margin-top: 10px;
-
-	// overwrite button styles
-	&.components-button.is-link {
-		text-decoration: none;
-		font-size: 14px;
-		color: var( --studio-blue-40 );
-		display: flex;
-		align-items: flex-start;
-		padding: 0;
-	}
-
-	// the tick
-	svg:first-child {
-		// we use a margin because there is a space,
-		// the strike-through will look dirty over it
-		margin-right: 5px;
-		vertical-align: middle;
-		margin-top: 4px;
-		flex: none;
-	}
-
-	svg:first-child path {
-		fill: rgb( 74, 161, 80 );
-
-		// to make the tick thicker
-		stroke: rgb( 74, 161, 80 );
-	}
-}
-
 .plan-item.is-popular {
 	@media ( max-width: $break-mobile ) {
 		order: -3;
 	}
 }
 
-.plan-item__domain-summary.is-picked {
-	font-weight: bold;
-}
-
-.plan-item__domain-summary.is-cta {
-	font-weight: bold;
-	padding: 0;
-
-	// overwrite button styles
-	&.components-button.is-link {
-		color: var( --studio-blue-40 );
-	}
-
-	// the tick
-	svg:first-child path {
-		fill: rgb( 74, 161, 80 );
-		stroke: rgb( 74, 161, 80 );
-		margin-top: 5px;
-	}
-
-	// the chevron
-	svg:last-child {
-		fill: var( --studio-blue-40 );
-		stroke: var( --studio-blue-40 );
-		margin-left: 8px;
-		margin-top: 8px;
-	}
-}
-
-.plan-item__domain-summary.components-button.is-link.is-free {
-	font-weight: bold;
-	color: rgb( 206, 134, 61 );
-	text-decoration: line-through; // the tick
-	svg path {
-		fill: rgb( 206, 134, 61 );
-		stroke: rgb( 206, 134, 61 );
-	}
-}
-
 .plan-item__select-button.components-button {
-	padding: 0 24px;
+	justify-content: center;
 	height: 40px;
+	margin-top: 15px;
+	padding: 0 24px;
 
-	svg {
-		margin-left: -8px;
-		margin-right: 10px;
+	font-size: $font-body-small;
+	color: var( --studio-gray-90 );
+
+	// stylelint-disable-next-line scales/radii
+	border-radius: 4px;
+	border: 1px solid var( --studio-gray-10 );
+
+	&:active,
+	&:hover {
+		background: inherit;
+		color: inherit;
+	}
+
+	&:focus {
+		border-color: inherit;
+		box-shadow: 0 0 0 1.5px $onboarding-accent-blue;
+	}
+
+	&:disabled {
+		border-color: var( --studio-gray-5 );
+		text-decoration: line-through;
+		opacity: 0.5;
+	}
+
+	&.is-primary,
+	&.is-popular {
+		background: $onboarding-accent-blue;
+		border-color: $onboarding-accent-blue;
+
+		color: var( --studio-white );
+
+		&:active:not( :disabled ),
+		&:hover {
+			background: $onboarding-accent-blue;
+			border-color: inherit;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 1.5px $onboarding-accent-blue;
+		}
+
+		&:not( .full-width ) svg {
+			margin-left: -8px;
+			margin-right: 10px;
+		}
+	}
+
+	&.is-selected {
+		border-color: $onboarding-accent-blue;
+		color: $onboarding-accent-blue;
+		background: $onboarding-accent-blue-background;
+
+		& svg {
+			fill: currentColor;
+			stroke: currentColor;
+
+			// makes it look more vertically centered
+			transform: translateY( -1px );
+			vertical-align: middle;
+			margin-right: 4px;
+		}
+	}
+
+	&.full-width {
+		width: 100%;
 	}
 }
 
-.plan-item__domain-picker-button.components-button {
-	font-size: $font-body-small;
-	line-height: 19px;
+.plan-item__price-discount {
+	display: block;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+	line-height: 1.3;
 	letter-spacing: 0.2px;
-	word-break: break-word;
+	text-transform: uppercase;
+	color: var( --studio-green-60 );
 
-	&.has-domain {
-		color: var( --studio-gray-50 );
-		text-decoration: none;
+	margin-bottom: 8px;
+
+	&--disabled {
+		color: var( --studio-gray-40 );
+		text-decoration: line-through;
 	}
 
-	svg {
-		margin-left: 2px;
-	}
-}
-
-.plan-item__feature-item {
-	font-size: $font-body-small;
-	line-height: 20px;
-	letter-spacing: 0.2px;
-	margin: 4px 0;
-	vertical-align: middle;
-	color: $dark-gray-500;
-	display: flex;
-	align-items: flex-start;
-
-	svg {
-		display: block;
-		margin-right: 6px;
-		margin-top: 2px;
+	&--hidden {
+		visibility: hidden;
 	}
 
-	// the tick
-	svg path {
-		fill: rgb( 74, 161, 80 );
-		stroke: rgb( 74, 161, 80 );
+	.plan-item:not( .is-open ) & {
+		display: none;
 	}
 }

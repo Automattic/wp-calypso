@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-import { CONNECTIONS_SET_EXPANDED_SERVICE } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
+import { CONNECTIONS_SET_EXPANDED_SERVICE } from 'calypso/state/action-types';
 import keyring from './keyring/reducer';
-import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import publicize from './publicize/reducer';
 import services from './services/reducer';
 

@@ -7,7 +7,7 @@ import { find, get, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING, ERROR } from 'woocommerce/state/constants';
 
 const getRawGeneralSettings = ( state, siteId ) => {

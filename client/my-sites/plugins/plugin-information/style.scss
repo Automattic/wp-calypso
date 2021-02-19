@@ -58,7 +58,6 @@
 }
 
 .plugin-information__version-info.is-singlesite {
-
 	.plugin-information__last-updated,
 	.plugin-information__versions,
 	.version {
@@ -116,7 +115,6 @@
 }
 
 .plugin-information.is-placeholder {
-
 	.plugin-information__wrapper {
 		@include placeholder();
 		@include breakpoint-deprecated( '>480px' ) {
@@ -136,7 +134,7 @@
 	.plugin-information__version-limit,
 	.plugin-information__last-updated {
 		width: 99%;
-		margin-top:8px;
+		margin-top: 8px;
 	}
 
 	.rating {

@@ -38,7 +38,8 @@ class ExtensiveLodashReplacementPlugin {
 	}
 
 	async initBaseLodashData() {
-		let baseLodash, baseLodashVersion;
+		let baseLodash;
+		let baseLodashVersion;
 
 		try {
 			baseLodash = await getModuleForPath( this.moduleResolver, this.baseDir, 'lodash' );

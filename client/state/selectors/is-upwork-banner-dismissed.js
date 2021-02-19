@@ -6,7 +6,7 @@ import { last } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPreference } from 'state/preferences/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
 const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 

@@ -6,9 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import earnController from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	page( '/earn', siteSelection, sites, makeLayout, clientRender );

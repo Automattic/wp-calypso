@@ -7,20 +7,24 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Animate from 'components/animate';
+import Animate from 'calypso/components/animate';
 import { Button } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import { getUpdatesBySiteId, isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import ExternalLink from 'calypso/components/external-link';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
+import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies

@@ -14,31 +14,57 @@ import formatCurrency from '@automattic/format-currency';
  **/
 import { ProductIcon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import InfoPopover from 'components/info-popover';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import PlanPrice from 'my-sites/plan-price';
-import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
-import PlanPill from 'components/plans/plan-pill';
-import { TYPE_FREE } from 'lib/plans/constants';
-import { PLANS_LIST } from 'lib/plans/plans-list';
-import { getYearlyPlanByMonthly, planMatches, getPlanClass } from 'lib/plans';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getPlanBySlug } from 'state/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { planLevelsMatch } from 'lib/plans/index';
+import InfoPopover from 'calypso/components/info-popover';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
+import PlanPill from 'calypso/components/plans/plan-pill';
+import {
+	TYPE_FREE,
+	GROUP_WPCOM,
+	TERM_ANNUALLY,
+	PLAN_P2_FREE,
+	PLAN_P2_PLUS,
+} from 'calypso/lib/plans/constants';
+import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
+import { getYearlyPlanByMonthly, planMatches, getPlanClass, isFreePlan } from 'calypso/lib/plans';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getPlanBySlug } from 'calypso/state/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { planLevelsMatch } from 'calypso/lib/plans/index';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const { isInSignup, plansWithScroll } = this.props;
+		const {
+			isInSignup,
+			plansWithScroll,
+			planType,
+			isInVerticalScrollingPlansExperiment,
+		} = this.props;
+
+		if ( planType === PLAN_P2_FREE ) {
+			return this.renderPlansHeaderP2Free();
+		}
+
 		// Do not use the signup-specific header, unify plans for the plansWithScroll test
 		if ( plansWithScroll ) {
 			return this.renderPlansHeaderNoTabs();
 		} else if ( isInSignup ) {
+			if ( isInVerticalScrollingPlansExperiment ) {
+				return this.renderPlansHeaderNoTabs();
+			}
 			return this.renderSignupHeader();
 		}
-
 		return this.renderPlansHeader();
+	}
+
+	resolveIsPillInCorner() {
+		const { isInSignup, isInVerticalScrollingPlansExperiment, plansWithScroll } = this.props;
+		return (
+			( isInVerticalScrollingPlansExperiment && isInSignup && plansWithScroll ) ||
+			( ! isInVerticalScrollingPlansExperiment && isInSignup )
+		);
 	}
 
 	renderPlansHeader() {
@@ -53,29 +79,37 @@ export class PlanFeaturesHeader extends Component {
 			translate,
 		} = this.props;
 
-		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ), {
+			'is-p2-plus': planType === PLAN_P2_PLUS,
+		} );
 		const isCurrent = this.isPlanCurrent();
 
 		return (
 			<header className={ headerClasses }>
-				<div className="plan-features__header-figure">
-					<ProductIcon slug={ planType } />
-				</div>
+				{ planType !== PLAN_P2_PLUS && (
+					<div className="plan-features__header-figure">
+						<ProductIcon slug={ planType } />
+					</div>
+				) }
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
-				{ ! isInSignup && isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+				{ ! isInSignup && isCurrent && (
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Your Plan' ) }</PlanPill>
+				) }
 				{ planLevelsMatch( selectedPlan, planType ) && ! isCurrent && (
-					<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
 				) }
 				{ popular && ! selectedPlan && ! isCurrent && (
-					<PlanPill>{ translate( 'Popular' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 				) }
-				{ newPlan && ! selectedPlan && ! isCurrent && <PlanPill>{ translate( 'New' ) }</PlanPill> }
+				{ newPlan && ! selectedPlan && ! isCurrent && (
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'New' ) }</PlanPill>
+				) }
 				{ bestValue && ! selectedPlan && ! isCurrent && (
-					<PlanPill>{ translate( 'Best Value' ) }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Best Value' ) }</PlanPill>
 				) }
 			</header>
 		);
@@ -94,6 +128,7 @@ export class PlanFeaturesHeader extends Component {
 		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+		const isPillInCorner = this.resolveIsPillInCorner();
 
 		return (
 			<span>
@@ -101,17 +136,42 @@ export class PlanFeaturesHeader extends Component {
 					<h4 className="plan-features__header-title">{ title }</h4>
 					<div className="plan-features__audience">{ audience }</div>
 					{ planLevelsMatch( selectedPlan, planType ) && (
-						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Suggested' ) }</PlanPill>
 					) }
-					{ popular && ! selectedPlan && <PlanPill>{ translate( 'Popular' ) }</PlanPill> }
-					{ newPlan && ! selectedPlan && <PlanPill>{ translate( 'New' ) }</PlanPill> }
-					{ bestValue && ! selectedPlan && <PlanPill>{ translate( 'Best Value' ) }</PlanPill> }
+					{ popular && ! selectedPlan && (
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Popular' ) }</PlanPill>
+					) }
+					{ newPlan && ! selectedPlan && (
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'New' ) }</PlanPill>
+					) }
+					{ bestValue && ! selectedPlan && (
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Best Value' ) }</PlanPill>
+					) }
 				</header>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
 					{ this.getIntervalDiscount() }
 				</div>
 			</span>
+		);
+	}
+
+	renderPlansHeaderP2Free() {
+		const { planType, isInSignup, translate } = this.props;
+
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ), {
+			'is-p2-free': true,
+		} );
+		const isCurrent = this.isPlanCurrent();
+
+		return (
+			<header className={ headerClasses }>
+				<div className="plan-features__header-text">
+					<h4 className="plan-features__header-title">P2</h4>
+					<h4 className="plan-features__header-title-free">{ translate( 'Free' ) }</h4>
+				</div>
+				{ ! isInSignup && isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+			</header>
 		);
 	}
 
@@ -143,13 +203,18 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	getDiscountTooltipMessage() {
-		const { currencyCode, currentSitePlan, translate, rawPrice } = this.props;
+		const { currencyCode, currentSitePlan, translate, rawPrice, discountPrice } = this.props;
+		const price = formatCurrency( rawPrice, currencyCode );
+		const isDiscounted = !! discountPrice;
 
 		if ( planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } ) ) {
-			return translate( 'Price for the next 12 months' );
+			return isDiscounted
+				? translate(
+						"You'll receive a discount for the first year. The plan will renew at %(price)s.",
+						{ args: { price } }
+				  )
+				: translate( 'Price for the next 12 months' );
 		}
-
-		const price = formatCurrency( rawPrice, currencyCode );
 
 		return translate(
 			"You'll receive a discount from the full price of %(price)s because you already have a plan.",
@@ -157,9 +222,53 @@ export class PlanFeaturesHeader extends Component {
 		);
 	}
 
+	getPerMonthDescription() {
+		const {
+			discountPrice,
+			rawPrice,
+			translate,
+			planType,
+			currentSitePlan,
+			annualPricePerMonth,
+			isInSignup,
+			isMonthlyPlan,
+		} = this.props;
+
+		if ( isInSignup && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
+			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
+		}
+
+		if ( isInSignup && ! isMonthlyPlan ) {
+			return translate( 'billed annually' );
+		}
+
+		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
+			return null;
+		}
+		if ( ! planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) ) {
+			return null;
+		}
+		if ( ! currentSitePlan || ! isFreePlan( currentSitePlan.productSlug ) ) {
+			return null;
+		}
+
+		const discountPercent = Math.round( ( 100 * ( rawPrice - discountPrice ) ) / rawPrice );
+		if ( discountPercent <= 0 ) {
+			return null;
+		}
+
+		return translate(
+			'Save %(discountPercent)s%% for 12 months!{{br/}} Per month, billed yearly.',
+			{
+				args: { discountPercent },
+				components: { br: <br /> },
+			}
+		);
+	}
+
 	getBillingTimeframe() {
 		const {
-			currentSitePlan,
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
@@ -175,17 +284,15 @@ export class PlanFeaturesHeader extends Component {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder,
 		} );
-
+		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 		if ( isInSignup || plansWithScroll ) {
 			return (
 				<div className={ 'plan-features__header-billing-info' }>
-					<span>{ billingTimeFrame }</span>
+					<span>{ perMonthDescription }</span>
 				</div>
 			);
 		}
 
-		const isUserCurrentlyOnAFreePlan =
-			currentSitePlan && planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } );
 		if (
 			isSiteAT ||
 			! isJetpack ||
@@ -194,8 +301,8 @@ export class PlanFeaturesHeader extends Component {
 		) {
 			return (
 				<p className={ timeframeClasses }>
-					{ ! isPlaceholder ? billingTimeFrame : '' }
-					{ isDiscounted && ! isUserCurrentlyOnAFreePlan && ! isPlaceholder && (
+					{ ! isPlaceholder ? perMonthDescription : '' }
+					{ isDiscounted && ! isPlaceholder && (
 						<InfoPopover
 							className="plan-features__header-tip-info"
 							position={ isMobile() ? 'top' : 'bottom left' }
@@ -257,8 +364,14 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup, plansWithScroll } = this.props;
-		const displayFlatPrice = isInSignup && ! plansWithScroll;
+		const {
+			currencyCode,
+			isInSignup,
+			plansWithScroll,
+			isInVerticalScrollingPlansExperiment,
+		} = this.props;
+		const displayFlatPrice =
+			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
 
 		if ( fullPrice && discountedPrice ) {
 			return (
@@ -267,13 +380,15 @@ export class PlanFeaturesHeader extends Component {
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ fullPrice }
-							isInSignup={ displayFlatPrice }
+							displayFlatPrice={ displayFlatPrice }
+							isInSignup={ isInSignup }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountedPrice }
-							isInSignup={ displayFlatPrice }
+							displayFlatPrice={ displayFlatPrice }
+							isInSignup={ isInSignup }
 							discounted
 						/>
 					</div>
@@ -286,7 +401,8 @@ export class PlanFeaturesHeader extends Component {
 			<PlanPrice
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
-				isInSignup={ displayFlatPrice }
+				displayFlatPrice={ displayFlatPrice }
+				isInSignup={ isInSignup }
 			/>
 		);
 	}
@@ -383,6 +499,9 @@ PlanFeaturesHeader.propTypes = {
 	currentSitePlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
 	relatedYearlyPlan: PropTypes.object,
+
+	// For Monthly Pricing test
+	annualPricePerMonth: PropTypes.number,
 };
 
 PlanFeaturesHeader.defaultProps = {

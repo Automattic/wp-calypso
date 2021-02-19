@@ -10,8 +10,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSubscribedLists } from 'state/reader/lists/selectors';
-import { requestSubscribedLists } from 'state/reader/lists/actions';
+import { isRequestingSubscribedLists } from 'calypso/state/reader/lists/selectors';
+import { requestSubscribedLists } from 'calypso/state/reader/lists/actions';
 
 class QueryReaderLists extends Component {
 	UNSAFE_componentWillMount() {

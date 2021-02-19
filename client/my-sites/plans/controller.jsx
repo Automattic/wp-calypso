@@ -9,9 +9,28 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import Plans from './plans';
-import { isValidFeatureKey } from 'lib/plans/features-list';
+import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
+import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
+
+function showJetpackPlans( context ) {
+	const getState = context.store.getState();
+	const siteId = getSelectedSiteId( getState );
+	const isWpcom = isSiteWpcom( getState, siteId );
+	return ! isWpcom;
+}
 
 export function plans( context, next ) {
+	if ( showJetpackPlans( context ) ) {
+		if ( context.params.intervalType ) {
+			return page.redirect( `/plans/${ context.params.site }` );
+		}
+		setJetpackPlansHeader( context );
+		return productSelect( '/plans' )( context, next );
+	}
+
 	context.primary = (
 		<Plans
 			context={ context }
@@ -53,4 +72,11 @@ export function redirectToPlans( context ) {
 	}
 
 	return page.redirect( '/plans' );
+}
+
+export function redirectToPlansIfNotJetpack( context, next ) {
+	if ( ! showJetpackPlans( context ) ) {
+		page.redirect( `/plans/${ context.params.site }` );
+	}
+	next();
 }

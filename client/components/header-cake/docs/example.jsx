@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 
 /**
  * Module vars

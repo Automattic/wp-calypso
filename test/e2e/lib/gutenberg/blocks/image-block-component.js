@@ -10,10 +10,6 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class ImageBlockComponent extends GutenbergBlockComponent {
-	constructor( driver, blockID ) {
-		super( driver, blockID );
-	}
-
 	async uploadImage( fileDetails ) {
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,

@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { settingsPath } from 'lib/jetpack/paths';
-import Banner from 'components/banner';
-import getRewindState from 'state/selectors/get-rewind-state';
-import QueryRewindState from 'components/data/query-rewind-state';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import jetpackDisconnected from 'assets/images/jetpack/disconnected.svg';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import Banner from 'calypso/components/banner';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import jetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
 
 /**
  * Style dependencies

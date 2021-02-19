@@ -1,13 +1,13 @@
 // Stats Overview
 // (for the site list and the post detail view)
-.stats__overview, .stats__latest-post-summary {
+.stats__overview,
+.stats__latest-post-summary {
 	.module-header__link {
 		display: block;
 		white-space: nowrap;
 		overflow: hidden;
 
 		@include breakpoint-deprecated( '<480px' ) {
-
 			&:focus {
 				color: var( --color-link-dark );
 			}
@@ -27,7 +27,7 @@
 
 		// Fade out value if text is very long
 		&::before {
-			@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface) );
+			@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
 		}
 
 		.gridicon {
@@ -39,12 +39,11 @@
 		font-size: $font-title-medium;
 		padding: 16px 0;
 	}
-
 }
 
 //TODO see if this is used anywhere
 .stats__latest-post-summary {
-		.value {
-			font-size: $font-title-large;
-		}
+	.value {
+		font-size: $font-title-large;
+	}
 }

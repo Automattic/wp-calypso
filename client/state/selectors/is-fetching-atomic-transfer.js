@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/atomic-transfer/init';
 
 /**
  * Returns whether we are already fetching the Atomic transfer for given siteId.

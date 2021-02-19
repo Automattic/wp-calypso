@@ -5,12 +5,12 @@ import classNames from 'classnames';
 import moment from 'moment';
 import { capitalize } from 'lodash';
 import { numberFormat, translate } from 'i18n-calypso';
-import memoizeLast from 'lib/memoize-last';
+import memoizeLast from 'calypso/lib/memoize-last';
 
 /**
  * Internal dependencies
  */
-import { rangeOfPeriod } from 'state/stats/lists/utils';
+import { rangeOfPeriod } from 'calypso/state/stats/lists/utils';
 
 export function formatDate( date, period ) {
 	// NOTE: Consider localizing the dates, especially for the 'week' case.

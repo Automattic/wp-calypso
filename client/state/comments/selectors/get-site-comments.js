@@ -6,9 +6,9 @@ import { filter, orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 function filterCommentsByStatus( comments, status ) {
 	return 'all' === status

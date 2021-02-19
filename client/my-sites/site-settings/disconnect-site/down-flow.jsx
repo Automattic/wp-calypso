@@ -8,14 +8,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Gridicon from 'components/gridicon';
-import Main from 'components/main';
-import NavigationLink from 'components/wizard/navigation-link';
-import { addQueryArgs } from 'lib/url';
-import { localizeUrl } from 'lib/i18n-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import NavigationLink from 'calypso/components/wizard/navigation-link';
+import { addQueryArgs } from 'calypso/lib/url';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useTranslate } from 'i18n-calypso';
 
 function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) {

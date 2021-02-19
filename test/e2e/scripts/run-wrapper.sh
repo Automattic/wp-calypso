@@ -33,7 +33,7 @@ elif [[ "$CIRCLE_BRANCH" =~ .*[Ww][Oo][Oo].* ]]; then
 elif [[ "$CIRCLE_BRANCH" =~ .*[Ii][Ee][1][1].* ]]; then
   export TARGET=IE11
   TESTARGS="-R -w" # Execute IE11 tests
-elif [ "$CIRCLE_BRANCH" == "master" ]; then
+elif [ "$CIRCLE_BRANCH" == "trunk" ]; then
   TESTARGS="-R -p" # Parallel execution, implies -g -s mobile,desktop
 fi
 

@@ -7,9 +7,7 @@ In its current state, the middleware allows for triggering redirects within the 
 Dispatching a `NAVIGATE` action and providing a `path` will trigger a redirect, just like calling `page()`.
 
 ```js
-import { navigate } from 'state/ui/actions';
-
-...
+import { navigate } from 'calypso/state/ui/actions';
 
 dispatch( navigate( '/your/path/here' ) );
 ```

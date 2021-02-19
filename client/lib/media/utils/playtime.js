@@ -13,9 +13,9 @@ export function playtime( duration ) {
 		return;
 	}
 
-	const hours = Math.floor( duration / 3600 ),
-		minutes = Math.floor( duration / 60 ) % 60,
-		seconds = Math.floor( duration ) % 60;
+	const hours = Math.floor( duration / 3600 );
+	const minutes = Math.floor( duration / 60 ) % 60;
+	const seconds = Math.floor( duration ) % 60;
 
 	let runtime = [ minutes, seconds ]
 		.map( function ( value ) {

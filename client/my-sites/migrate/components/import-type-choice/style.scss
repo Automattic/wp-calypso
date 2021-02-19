@@ -10,7 +10,7 @@
 		cursor: pointer;
 
 		border: 1px solid var( --color-border ); /* TODO fix color */
-		border-radius: 4px;
+		border-radius: 2px;
 
 		margin-bottom: 8px;
 		transition: all 150ms;
@@ -29,7 +29,6 @@
 			border-color: var( --color-primary );
 			box-shadow: 0 0 0 2px var( --color-primary );
 		}
-
 
 		.import-type-choice__option-data {
 			margin-left: 5px;

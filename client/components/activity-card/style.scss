@@ -1,7 +1,7 @@
 .activity-card {
 	.card {
-		border-radius: 3px;
 		padding: 16px;
+		border-radius: var( --jetpack-corners-sharp );
 	}
 
 	.activity-card__actor {
@@ -14,14 +14,13 @@
 			flex-direction: row;
 			flex-wrap: wrap;
 			margin-left: 8px;
+
+			&:first-child {
+				margin-left: 0;
+			}
 			> *:not( :last-child ) {
 				margin-right: 8px;
 			}
-		}
-		> img.gravatar,
-		> svg {
-			max-height: 24px;
-			max-width: 24px;
 		}
 	}
 
@@ -35,6 +34,20 @@
 	.activity-card__activity-title {
 		margin: 8px 0;
 		font-style: italic;
+	}
+
+	&.with-error {
+		.activity-card__time-icon {
+			fill: var( --color-error );
+		}
+
+		.activity-card__time-text {
+			color: var( --color-error );
+		}
+
+		.card {
+			border: solid 1px var( --color-error );
+		}
 	}
 }
 
@@ -64,7 +77,7 @@
 	word-wrap: break-word;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 	}
 }
 

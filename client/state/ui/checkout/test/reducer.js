@@ -1,12 +1,8 @@
 /**
  * Internal dependencies
  */
-import {
-	CHECKOUT_TOGGLE_CART_ON_MOBILE,
-	DESERIALIZE,
-	SECTION_SET,
-	SERIALIZE,
-} from 'state/action-types';
+import { CHECKOUT_TOGGLE_CART_ON_MOBILE, SECTION_SET } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, { isShowingCartOnMobile, upgradeIntent } from '../reducer';
 
 describe( 'reducer', () => {
@@ -41,12 +37,12 @@ describe( 'reducer', () => {
 
 	describe( '#upgradeIntent()', () => {
 		test( 'should persist value', () => {
-			const state = upgradeIntent( 'hallows', { type: SERIALIZE } );
+			const state = serialize( upgradeIntent, 'hallows' );
 			expect( state ).toBe( 'hallows' );
 		} );
 
 		test( 'should restore value', () => {
-			const state = upgradeIntent( 'always', { type: DESERIALIZE } );
+			const state = deserialize( upgradeIntent, 'always' );
 			expect( state ).toBe( 'always' );
 		} );
 

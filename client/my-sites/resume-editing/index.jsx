@@ -11,20 +11,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { resetEditorLastDraft } from 'state/editor/last-draft/actions';
+import { resetEditorLastDraft } from 'calypso/state/editor/last-draft/actions';
 import {
 	getEditorLastDraftPost,
 	getEditorLastDraftSiteId,
 	getEditorLastDraftPostId,
-} from 'state/editor/last-draft/selectors';
-import { isRequestingSitePost } from 'state/posts/selectors';
-import { getEditorPath } from 'state/editor/selectors';
-import { getSectionName } from 'state/ui/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat } from 'lib/analytics/mc';
-import QueryPosts from 'components/data/query-posts';
-import SiteIcon from 'blocks/site-icon';
+} from 'calypso/state/editor/last-draft/selectors';
+import { isRequestingSitePost } from 'calypso/state/posts/selectors';
+import { getEditorPath } from 'calypso/state/editor/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import QueryPosts from 'calypso/components/data/query-posts';
+import SiteIcon from 'calypso/blocks/site-icon';
 
 /**
  * Style dependencies

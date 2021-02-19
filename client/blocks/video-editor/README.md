@@ -28,6 +28,7 @@ This object needs to contain the following property:
 `media.videopress_guid` `{string}`: The unique identifier of the video (e.g. 'kUJmAcSf').
 
 It can also contain these optional properties (with defaults set by VideoPress):
+
 - `media.width` `{number}`: The width of the video. Defaults to `854`.
 - `media.height` `{number}`: The height of the video. Defaults to `480`.
 
@@ -50,19 +51,16 @@ button won't be rendered.
 
 A function which will get called after selecting a frame or uploading a custom image.
 It receives one argument:
+
 - the props of the video editor which include the poster URL and the ID of the media item.
 
 ## Example
 
 ```js
-import VideoEditor from 'blocks/video-editor';
+import VideoEditor from 'calypso/blocks/video-editor';
 
-render() {
-	return (
-		<VideoEditor
-			media={ { videopress_guid: 'kUJmAcSf' } }
-		/>
-	);
+function render() {
+	return <VideoEditor media={ { videopress_guid: 'kUJmAcSf' } } />;
 }
-``
-
+``;
+```

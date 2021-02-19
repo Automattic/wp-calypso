@@ -6,7 +6,7 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import { normalizeTermsForApi } from 'state/posts/utils/normalize-terms-for-api';
+import { normalizeTermsForApi } from 'calypso/state/posts/utils/normalize-terms-for-api';
 
 const normalizeApiFlow = flow( [ normalizeTermsForApi ] );
 

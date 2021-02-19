@@ -1,5 +1,4 @@
-Textarea Autosize
-=================
+# Textarea Autosize
 
 `<TextareaAutosize />` is a drop-in replacement for a `<textarea />` element which automatically grows or shrinks to accommodate its content.
 
@@ -8,14 +7,10 @@ Textarea Autosize
 Since it is a drop-in replacement, use as you would a regular `<textarea />` element.
 
 ```jsx
-import TextareaAutosize from 'components/textarea-autosize';
+import TextareaAutosize from 'calypso/components/textarea-autosize';
 
 export default function MyForm( { onTextareaChange } ) {
-	return (
-		<TextareaAutosize
-			onChange={ onTextareaChange }
-			rows="1" />
-	);
+	return <TextareaAutosize onChange={ onTextareaChange } rows="1" />;
 }
 ```
 

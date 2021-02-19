@@ -15,6 +15,7 @@ import {
 	NextButton,
 	SkipButton,
 } from '@automattic/onboarding';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -23,7 +24,10 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { FLOW_ID } from '../../constants';
+import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
+import { USER_STORE } from '../../stores/user';
+import { FLOW_ID, domainIsAvailableStatus } from '../../constants';
+import waitForDomainAvailability from './wait-for-domain-availability';
 
 /**
  * Style dependencies
@@ -31,6 +35,7 @@ import { FLOW_ID } from '../../constants';
 import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+type DomainAvailability = DomainSuggestions.DomainAvailability;
 
 interface Props {
 	isModal?: boolean;
@@ -38,18 +43,28 @@ interface Props {
 
 const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __ } = useI18n();
-
+	const locale = useLocale();
 	const history = useHistory();
 	const { goBack, goNext } = useStepNavigation();
 
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+
+	// using the selector will get the explicit domain search query with site title and vertical as fallbacks
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
+
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+
+	const isCheckingDomainAvailability = useSelect( ( select ): boolean =>
+		select( 'core/data' ).isResolving( DOMAIN_SUGGESTIONS_STORE, 'isAvailable', [
+			domain?.domain_name,
+		] )
+	);
 
 	const { setDomain, setDomainSearch, setHasUsedDomainsStep } = useDispatch( ONBOARD_STORE );
 
 	React.useEffect( () => {
 		! isModal && setHasUsedDomainsStep( true );
-	}, [] );
+	}, [ isModal, setHasUsedDomainsStep ] );
 
 	// Keep a copy of the selected domain locally so it's available when the component is unmounting
 	const selectedDomainRef = React.useRef< string | undefined >();
@@ -72,6 +87,27 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			goNext();
 		}
 	};
+	const handleDomainAvailabilityCheck = async () => {
+		if ( domain ) {
+			if ( domain?.is_free ) {
+				// is this a reliable way to check for .wordpress.com subdomains?
+				handleNext();
+			} else {
+				try {
+					const availability: DomainAvailability | undefined = await waitForDomainAvailability(
+						domain?.domain_name
+					);
+					if ( domainIsAvailableStatus.includes( availability?.status ) ) {
+						// If the selected domain is available, proceed to next step.
+						handleNext();
+					}
+				} catch {
+					// if there is an error checking the domain availability, do we continue as normal?
+					handleNext();
+				}
+			}
+		}
+	};
 
 	const onDomainSelect = ( suggestion: DomainSuggestion | undefined ) => {
 		setDomain( suggestion );
@@ -85,7 +121,14 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			</div>
 			<ActionButtons>
 				<BackButton onClick={ handleBack } />
-				{ domain ? <NextButton onClick={ handleNext } /> : <SkipButton onClick={ handleNext } /> }
+				{ domain ? (
+					<NextButton
+						onClick={ handleDomainAvailabilityCheck }
+						disabled={ isCheckingDomainAvailability }
+					/>
+				) : (
+					<SkipButton onClick={ handleNext } />
+				) }
 			</ActionButtons>
 		</div>
 	);
@@ -97,6 +140,13 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		} );
 	};
 
+	const handleUseYourDomain = () => {
+		trackEventWithFlow( 'calypso_newsite_use_your_domain_click', {
+			where: isModal ? 'domain_modal' : 'domain_page',
+		} );
+		window.location.href = `/start/domains/use-your-domain?source=${ window.location.href }`;
+	};
+
 	return (
 		<div className="gutenboarding-page domains">
 			<DomainPicker
@@ -105,9 +155,12 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				initialDomainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
 				onDomainSearchBlur={ trackDomainSearchInteraction }
-				currentDomain={ domain?.domain_name }
+				currentDomain={ domain }
+				isCheckingDomainAvailability={ isCheckingDomainAvailability }
 				onDomainSelect={ onDomainSelect }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
+				locale={ locale }
+				onUseYourDomainClick={ currentUser ? handleUseYourDomain : undefined }
 			/>
 		</div>
 	);

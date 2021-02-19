@@ -13,10 +13,9 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;
@@ -205,7 +204,7 @@ describe( 'reducer', () => {
 						},
 					],
 				} );
-				const state = items( original, { type: SERIALIZE } );
+				const state = serialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -226,7 +225,7 @@ describe( 'reducer', () => {
 						},
 					],
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( original );
 			} );
 
@@ -237,7 +236,7 @@ describe( 'reducer', () => {
 						{ cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
 					],
 				} );
-				const state = items( original, { type: DESERIALIZE } );
+				const state = deserialize( items, original );
 				expect( state ).to.eql( {} );
 			} );
 		} );

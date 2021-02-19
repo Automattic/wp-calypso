@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ANALYTICS_MULTI_TRACK } from 'state/action-types';
+import { ANALYTICS_MULTI_TRACK } from 'calypso/state/action-types';
 
 /**
  * External dependencies

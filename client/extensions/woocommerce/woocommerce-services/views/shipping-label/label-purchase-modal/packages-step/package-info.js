@@ -14,10 +14,10 @@ import { isEmpty, map, some } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import FieldError from 'woocommerce/woocommerce-services/components/field-error';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSelect from 'components/forms/form-select';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import ItemInfo from './item-info';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
 import {

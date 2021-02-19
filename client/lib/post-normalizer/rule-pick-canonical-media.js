@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-
 import { find, get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { isUrlLikelyAnImage } from './utils';
+import safeImageUrl from 'calypso/lib/safe-image-url';
 
 /** Returns true if an image is large enough to be a featured asset
  *
@@ -30,7 +30,7 @@ function isCandidateForFeature( media ) {
 	}
 
 	if ( media.mediaType === 'image' ) {
-		return isImageLargeEnoughForFeature( media );
+		return isImageLargeEnoughForFeature( media ) && safeImageUrl( media.src );
 	} else if ( media.mediaType === 'video' ) {
 		// we need to know how to autoplay it which probably means we know how to get a thumbnail
 		return media.autoplayIframe;
@@ -54,7 +54,8 @@ export default function pickCanonicalMedia( post ) {
 	if (
 		isUrlLikelyAnImage( post.featured_image ) &&
 		( ( ! post.post_thumbnail && post.is_jetpack ) || // some jetpack sites dont create post_thumbnail
-			isImageLargeEnoughForFeature( post.post_thumbnail ) )
+			isImageLargeEnoughForFeature( post.post_thumbnail ) ) &&
+		safeImageUrl( post.featured_image )
 	) {
 		post.canonical_media = {
 			src: post.featured_image,

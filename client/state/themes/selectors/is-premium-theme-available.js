@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'calypso/lib/plans/constants';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Whether a WPCOM premium theme can be activated on a site.

@@ -1,8 +1,3 @@
-.security-2fa-enable .security-2fa-enable__cancel {
-	float: left;
-	margin-left: 0;
-}
-
 .security-2fa-enable__code-block {
 	margin-bottom: 16px;
 }
@@ -32,6 +27,8 @@
 .security-2fa-enable__toggle {
 	cursor: pointer;
 	display: block;
+	color: var( --color-link );
+	font-size: 1rem;
 }
 
 .security-2fa-enable .notice {

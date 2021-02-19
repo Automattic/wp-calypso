@@ -162,13 +162,11 @@ export default class PostEditorSidebarComponent extends AsyncBaseContainer {
 	}
 
 	async setPublicizeMessage( message ) {
-		await driverHelper.setWhenSettable(
-			this.driver,
-			this.publicizeMessageSelector,
-			message
-		);
+		await driverHelper.setWhenSettable( this.driver, this.publicizeMessageSelector, message );
 		// This seems to help with https://github.com/Automattic/wp-calypso/issues/38697
-		return this.driver.findElement( By.css( '.editor-sharing__publicize-options-description' ) ).click();
+		return this.driver
+			.findElement( By.css( '.editor-sharing__publicize-options-description' ) )
+			.click();
 	}
 
 	async setSharingButtons( allow = true ) {

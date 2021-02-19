@@ -1,0 +1,12 @@
+.publicize-message {
+	.info-popover {
+		float: right;
+	}
+}
+
+.info-popover__tooltip.publicize-message__counter-info {
+	.popover__inner {
+		max-width: 210px;
+		text-align: left;
+	}
+}

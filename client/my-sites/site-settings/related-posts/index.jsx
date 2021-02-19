@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import SupportInfo from 'components/support-info';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import SupportInfo from 'calypso/components/support-info';
 import RelatedContentPreview from './related-content-preview';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 
 /**
  * Style dependencies
@@ -42,16 +42,16 @@ const RelatedPosts = ( {
 						link="https://jetpack.com/support/related-posts/"
 					/>
 
-					<CompactFormToggle
+					<FormToggle
 						checked={ !! fields.jetpack_relatedposts_enabled }
 						disabled={ isRequestingSettings || isSavingSettings }
 						onChange={ handleAutosavingToggle( 'jetpack_relatedposts_enabled' ) }
 					>
 						{ translate( 'Show related content after posts' ) }
-					</CompactFormToggle>
+					</FormToggle>
 
 					<div className="related-posts__module-settings site-settings__child-settings">
-						<CompactFormToggle
+						<FormToggle
 							checked={ !! fields.jetpack_relatedposts_show_headline }
 							disabled={
 								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
@@ -59,9 +59,9 @@ const RelatedPosts = ( {
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_headline' ) }
 						>
 							{ translate( 'Highlight related content with a heading' ) }
-						</CompactFormToggle>
+						</FormToggle>
 
-						<CompactFormToggle
+						<FormToggle
 							checked={ !! fields.jetpack_relatedposts_show_thumbnails }
 							disabled={
 								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
@@ -69,7 +69,7 @@ const RelatedPosts = ( {
 							onChange={ handleAutosavingToggle( 'jetpack_relatedposts_show_thumbnails' ) }
 						>
 							{ translate( 'Show a thumbnail image where available' ) }
-						</CompactFormToggle>
+						</FormToggle>
 					</div>
 
 					<FormSettingExplanation>

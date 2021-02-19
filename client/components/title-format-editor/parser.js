@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import {
 	compact,
 	flowRight as compose,

@@ -374,6 +374,7 @@
 	.site-icon {
 		width: 32px !important;
 		height: 32px !important;
+		/* stylelint-disable-next-line scales/font-size */
 		font-size: 32px !important;
 		line-height: 32px !important;
 	}
@@ -515,7 +516,9 @@
 
 	.reader-share__button .gridicon {
 		position: relative;
-		top: 1px;
+		top: 0;
+		margin-right: 0;
+		margin-top: 0;
 	}
 
 	.like-button .gridicon {
@@ -539,11 +542,11 @@
 	.comment-button__label-status,
 	.like-button__label-status {
 		@include breakpoint-deprecated( '>960px' ) {
-			display: none;
+			@include screen-reader-text();
 		}
 
 		@include breakpoint-deprecated( '<660px' ) {
-			display: none;
+			@include screen-reader-text();
 		}
 	}
 }

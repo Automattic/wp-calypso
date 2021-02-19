@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/jetpack-remote-install/init';
+import 'calypso/state/jetpack-remote-install/init';
 
 /**
  * Returns success status of an attempted remote install

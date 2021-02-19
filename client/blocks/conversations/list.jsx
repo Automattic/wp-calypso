@@ -9,8 +9,8 @@ import { map, zipObject, fill, size, filter, get, compact, partition, min, noop 
 /**
  * Internal dependencies
  */
-import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import PostComment from 'calypso/blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import {
 	commentsFetchingStatus,
 	getActiveReplyCommentId,
@@ -19,13 +19,18 @@ import {
 	getExpansionsForPost,
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
-} from 'state/comments/selectors';
-import ConversationCaterpillar from 'blocks/conversation-caterpillar';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import PostCommentFormRoot from 'blocks/comments/form-root';
-import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
-import { getErrorKey } from 'state/comments/utils';
-import { getCurrentUserId } from 'state/current-user/selectors';
+} from 'calypso/state/comments/selectors';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
+import {
+	requestPostComments,
+	requestComment,
+	setActiveReply,
+} from 'calypso/state/comments/actions';
+import { getErrorKey } from 'calypso/state/comments/utils';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -78,7 +83,7 @@ export class ConversationCommentList extends React.Component {
 		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: commentId,
 		} );
@@ -88,7 +93,7 @@ export class ConversationCommentList extends React.Component {
 		this.setState( { commentText: null } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: this.props.activeReplyCommentId,
 		} );
@@ -299,7 +304,7 @@ const ConnectedConversationCommentList = connect(
 			commentErrors: getCommentErrors( state ),
 		};
 	},
-	{ requestPostComments, requestComment, setActiveReply }
+	{ recordReaderTracksEvent, requestPostComments, requestComment, setActiveReply }
 )( ConversationCommentList );
 
 export default ConnectedConversationCommentList;

@@ -55,7 +55,7 @@
 }
 
 .annual-site-stats__stat-figure {
-	font-size: 18px;
+	font-size: $font-title-small;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		font-size: $font-body-small;

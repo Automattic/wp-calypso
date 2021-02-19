@@ -9,16 +9,16 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
+import { addQueryArgs } from 'calypso/lib/url';
 import { Button } from '@automattic/components';
-import { getPlan } from 'lib/plans';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getPlan } from 'calypso/lib/plans';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 /**
  * Types
  */
-import * as T from 'types';
+import * as T from 'calypso/types';
 
 interface ConnectedProps {
 	hasPlanFeature: boolean;

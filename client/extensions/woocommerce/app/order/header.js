@@ -3,7 +3,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,12 +12,12 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
+import accept from 'calypso/lib/accept';
 import ActionHeader from 'woocommerce/components/action-header';
 import { Button } from '@automattic/components';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { deleteOrder, saveOrder } from 'woocommerce/state/sites/orders/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {

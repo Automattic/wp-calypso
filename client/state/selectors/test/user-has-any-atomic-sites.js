@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
+import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
 
 describe( 'userHasAnyAtomicSites()', () => {
 	test( 'should return false if no sites in state', () => {

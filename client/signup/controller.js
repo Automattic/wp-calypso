@@ -8,9 +8,9 @@ import { isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route';
-import { recordPageView } from 'lib/analytics/page-view';
+import config from '@automattic/calypso-config';
+import { sectionify } from 'calypso/lib/route';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupComponent from './main';
 import { getStepComponent } from './config/step-components';
 import {
@@ -23,27 +23,29 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import store from 'store';
-import { setCurrentFlowName } from 'state/signup/flow/actions';
-import { setSelectedSiteId } from 'state/ui/actions';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getSignupProgress } from 'state/signup/progress/selectors';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	getSiteVerticalId,
 	getSiteVerticalIsUserInput,
-} from 'state/signup/steps/site-vertical/selectors';
-import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { setSiteType } from 'state/signup/steps/site-type/actions';
-import { login } from 'lib/paths';
-import { waitForData } from 'state/data-layer/http-data';
-import { requestGeoLocation } from 'state/data-getters';
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { login } from 'calypso/lib/paths';
+import { waitForHttpData } from 'calypso/state/data-layer/http-data';
+import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { abtest } from 'lib/abtest';
-import Experiment, { DefaultVariation, Variation } from 'components/experiment';
-import user from 'lib/user';
+import { abtest } from 'calypso/lib/abtest';
+import user from 'calypso/lib/user';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 
 /**
  * Constants
@@ -61,6 +63,20 @@ const removeWhiteBackground = function () {
 	}
 
 	document.body.classList.remove( 'is-white-signup' );
+};
+
+const gutenbergRedirect = function ( flowName, locale ) {
+	const url = new URL( window.location );
+	let path = '/new';
+	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		path += `/${ flowName }`;
+	}
+	if ( locale ) {
+		path += `/${ locale }`;
+	}
+
+	url.pathname = path;
+	window.location.replace( url.toString() );
 };
 
 export const addP2SignupClassName = () => {
@@ -86,13 +102,15 @@ export default {
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
-			context.pathname.indexOf( 'onboarding-plan-first' ) >= 0 ||
 			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
+			context.pathname.indexOf( 'launch-only' ) >= 0 ||
 			context.params.flowName === 'user' ||
 			context.params.flowName === 'account' ||
-			context.params.flowName === 'crowdsignal'
+			context.params.flowName === 'crowdsignal' ||
+			context.params.flowName === 'pressable-nux' ||
+			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
 			next();
@@ -109,14 +127,18 @@ export default {
 
 			next();
 		} else {
-			waitForData( {
-				geo: () => requestGeoLocation(),
-			} )
+			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
-					const countryCode = geo.data.body.country_short;
-					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						window.location.replace( window.location.origin + '/new' + window.location.search );
-					} else if (
+					const countryCode = geo.data;
+					const localeFromParams = context.params.lang;
+					const flowName = getFlowName( context.params );
+
+					if ( flowName === 'free' && 'newOnboarding' === abtest( 'newUsersWithFreePlan' ) ) {
+						gutenbergRedirect( flowName, localeFromParams );
+						return;
+					}
+
+					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
 						-1 === context.pathname.indexOf( 'personal' ) &&
@@ -129,7 +151,6 @@ export default {
 						removeWhiteBackground();
 						const stepName = getStepName( context.params );
 						const stepSectionName = getStepSectionName( context.params );
-						const localeFromParams = context.params.lang;
 						const urlWithLocale = getStepUrl(
 							'onboarding-registrationless',
 							stepName,
@@ -267,47 +288,8 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( flowName !== 'launch-site' ) {
+		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
-		}
-
-		if ( flowName === 'onboarding' || flowName === 'onboarding-plan-first' ) {
-			context.primary = (
-				<Experiment name="signup_domain_plan_step_swap">
-					<DefaultVariation>
-						<SignupComponent
-							store={ context.store }
-							path={ context.path }
-							initialContext={ initialContext }
-							locale={ context.params.lang }
-							flowName={ flowName }
-							queryObject={ query }
-							refParameter={ query && query.ref }
-							stepName={ stepName }
-							stepSectionName={ stepSectionName }
-							stepComponent={ stepComponent }
-							pageTitle={ getFlowPageTitle( flowName ) }
-						/>
-					</DefaultVariation>
-					<Variation name="variant_plans_first">
-						<SignupComponent
-							store={ context.store }
-							path={ context.path }
-							initialContext={ initialContext }
-							locale={ context.params.lang }
-							flowName="onboarding-plan-first"
-							queryObject={ query }
-							refParameter={ query && query.ref }
-							stepName={ stepName }
-							stepSectionName={ stepSectionName }
-							stepComponent={ stepComponent }
-							pageTitle={ getFlowPageTitle( flowName ) }
-						/>
-					</Variation>
-				</Experiment>
-			);
-
-			next();
 		}
 
 		context.primary = React.createElement( SignupComponent, {
@@ -325,6 +307,33 @@ export default {
 		} );
 
 		next();
+	},
+	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
+		const { getState, dispatch } = signupStore;
+		const signupDependencies = getSignupDependencyStore( getState() );
+
+		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
+		const siteId = getSiteId( getState(), siteSlug );
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
+			next();
+		} else {
+			// Fetch the site by siteSlug and then try to select again
+			dispatch( requestSite( siteSlug ) ).then( () => {
+				let freshSiteId = getSiteId( getState(), siteSlug );
+
+				if ( ! freshSiteId ) {
+					const wpcomStagingFragment = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+				}
+
+				if ( freshSiteId ) {
+					dispatch( setSelectedSiteId( freshSiteId ) );
+					next();
+				}
+			} );
+			next();
+		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
 		const state = signupStore.getState();

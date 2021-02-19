@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -67,3 +66,10 @@ export const getPages = async () =>
 			}
 		} );
 	} );
+
+// All end-to-end tests use a custom user agent containing this string.
+const E2E_USER_AGENT = 'wp-e2e-tests';
+
+export const isE2ETest = () => {
+	return typeof navigator !== 'undefined' && navigator.userAgent.includes( E2E_USER_AGENT ); //eslint-disable-line no-undef
+};

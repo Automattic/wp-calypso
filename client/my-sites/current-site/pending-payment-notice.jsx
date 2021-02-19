@@ -7,9 +7,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { hasPendingPayment } from 'lib/cart-values';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { hasPendingPayment } from 'calypso/lib/cart-values';
 
 export const PendingPaymentNotice = ( { translate, cart = {} } ) => {
 	if ( ! hasPendingPayment( cart ) ) {

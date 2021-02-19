@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import { DomainSuggestions } from '@automattic/data-stores';
+
 export const PAID_DOMAINS_TO_SHOW = 5;
 export const PAID_DOMAINS_TO_SHOW_EXPANDED = 10;
 
@@ -11,4 +16,10 @@ export const PAID_DOMAINS_TO_SHOW_EXPANDED = 10;
  */
 export const DOMAIN_SEARCH_DEBOUNCE_INTERVAL = 300;
 
-export const DOMAIN_SUGGESTIONS_STORE = 'automattic/domains/suggestions';
+// TODO: Check domain suggestions store registration discrepancies
+// (see https://github.com/Automattic/wp-calypso/issues/46869)
+export const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register( {
+	vendor: 'variation2_front',
+} );
+
+export const domainIsAvailableStatus = [ 'available', 'available_premium' ];

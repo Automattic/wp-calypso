@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { hasDefaultSiteTitle } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { hasDefaultSiteTitle } from 'calypso/state/sites/selectors';
 
 /**
  * Returns true if the selected site has an unchanged site title

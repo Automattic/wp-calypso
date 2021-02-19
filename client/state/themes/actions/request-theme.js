@@ -6,23 +6,23 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { fetchThemeInformation as fetchWporgThemeInformation } from 'lib/wporg';
+import wpcom from 'calypso/lib/wp';
+import { fetchThemeInformation as fetchWporgThemeInformation } from 'calypso/lib/wporg';
 import {
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
 	THEME_REQUEST_FAILURE,
-} from 'state/themes/action-types';
-import { receiveTheme } from 'state/themes/actions/receive-theme';
-import { receiveThemes } from 'state/themes/actions/receive-themes';
-import { themeRequestFailure } from 'state/themes/actions/theme-request-failure';
+} from 'calypso/state/themes/action-types';
+import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
+import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
+import { themeRequestFailure } from 'calypso/state/themes/actions/theme-request-failure';
 import {
 	normalizeJetpackTheme,
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
-} from 'state/themes/utils';
+} from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to fetch a specific theme from a site.

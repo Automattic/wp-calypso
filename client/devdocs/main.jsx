@@ -11,10 +11,10 @@ import { isFunction } from 'lodash';
  * Internal dependencies
  */
 import DocService from './service';
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import { Card } from '@automattic/components';
-import Main from 'components/main';
-import SearchCard from 'components/search-card';
+import Main from 'calypso/components/main';
+import SearchCard from 'calypso/components/search-card';
 
 /**
  * Style dependencies

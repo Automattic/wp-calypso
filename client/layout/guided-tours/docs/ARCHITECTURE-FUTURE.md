@@ -2,7 +2,6 @@
 
 As Guided Tours as a framework is made available to parties interested in [writing their own tours](TUTORIAL.md), it seemed pertinent to gather some thoughts and make them available in this document in the hope of reducing any sort of [bus factor](https://en.wikipedia.org/wiki/Bus_factor).
 
-
 ## Lazy loading
 
 In the interest of keeping Calypso's main bundles small and free of pieces that users aren't likely to need, it becomes important that Guided Tours be lazily loaded. Right now, the obvious offenses are:
@@ -34,23 +33,20 @@ In my mind, there are two ways to achieve this:
 - Simply decouple the logic manually by going through every tour config and porting that tour's top-level attributes (`name, version, path, when`) into a common place. Pro: easy enough. Con: requires a change of GT's developer interface.
 - Have a Webpack loader programatically group the tours' triggering conditions in a module. Prior art can be found in `server/bundler`, notably [`loader`][bundlerloader], which rewrites `sections.js`. Pro: "magic", doesn't require tour authors to think about chunking and write their configs in separate places. Con: "magic", harder to implement, has the potential to generate confusion.
 
-
 ## State-aware steps
 
 When the day comes that we decide we need proper dynamic, state-aware steps for Guided Tours, [PR #10436][editortourpr] will contain useful material to inform that enhancement; notably, the diff at hand and the last couple of comments before the closing of the pull request. In a nutshell:
 
 ```js
 // default behavior would be unaffected
-<Step name="…" when={ isSomethingSomething } …>
-  <p>Welcome!</p>
-  …
-</Step>
+<Step name="…" when={ isSomethingSomething }>
+	<p>Welcome!</p>…
+</Step>;
+```
 
+```js
 // new "realtime" state-based behavior
-<Step name="…" …>
-  { ( state ) => isSomethingSomething( state ) &&
-    <p>Welcome!</p> }
-</Step>
+<Step name="…">{ ( state ) => isSomethingSomething( state ) && <p>Welcome!</p> }}</Step>;
 ```
 
 ## On the nature of `actionLog`
@@ -93,7 +89,7 @@ You probably saw this one coming. Calypso does not use [streams][rxjs], but, sho
 The following approach, leveraging persistent or linked data structures, could be a simple replacement for streams. It aims to replace standard array traversal functions with a suite of functions optimized for `actionLog`: `mapActionLog`, `filterActionLog`, etc. Since `actionLog` is a [monoid][monoids], any operation _f_ on `actionLog` can be decomposable to [divide and conquer][divideconquer]. Notably,
 
 ```js
-f( [ A, B, C ] ) === join( f( [ A, B ] ), f( [ C ] ) )
+f( [ A, B, C ] ) === join( f( [ A, B ] ), f( [ C ] ) );
 ```
 
 where `join` is a specific function for `f`.
@@ -101,7 +97,7 @@ where `join` is a specific function for `f`.
 Now, since selectors are run for each new version of `actionLog`, it is expected that, by the time we need to eval `f( [ A, B, C ] )`, we've already eval'd `f( [ A, B ] )`, meaning we can benefit from memoization:
 
 ```js
-f( [ A, B, C ] ) === join( cached, f( [ C ] ) )
+f( [ A, B, C ] ) === join( cached, f( [ C ] ) );
 ```
 
 thus avoiding a traversal of the entire `actionLog`.
@@ -109,35 +105,30 @@ thus avoiding a traversal of the entire `actionLog`.
 Let's look at the basic functions we use for traversal and how they can be decomposed, starting from the easiest:
 
 ```js
-get( [ A, B, C ] ) === join( get( [ A, B ] ), get( [ C ] ) )
-join = ( a, b ) => a.concat( b )
+get( [ A, B, C ] ) === join( get( [ A, B ] ), get( [ C ] ) );
+join = ( a, b ) => a.concat( b );
 ```
 
 ```js
-map( [ A, B, C ] ) === join( map( [ A, B ] ), map( [ C ] ) )
-join = ( a, b ) => a.concat( b )
+map( [ A, B, C ] ) === join( map( [ A, B ] ), map( [ C ] ) );
+join = ( a, b ) => a.concat( b );
 ```
 
 ```js
-filter( [ A, B, C ] ) === join( filter( [ A, B ] ), filter( [ C ] ) )
-join = ( a, b ) => a.concat( b )
+filter( [ A, B, C ] ) === join( filter( [ A, B ] ), filter( [ C ] ) );
+join = ( a, b ) => a.concat( b );
 ```
 
 ```js
-find( [ A, B, C ], f ) === join( find( [ A, B ], f ), find( [ C ], f ) )
-join = ( a, b ) => a || b
+find( [ A, B, C ], f ) === join( find( [ A, B ], f ), find( [ C ], f ) );
+join = ( a, b ) => a || b;
 ```
 
 ```js
-reduce( [ A, B, C ], f, initial ) === reduce(
-	[ C ],
-	f,
-	reduce( [ A, B ], f, initial )
-) // simpler to express without `join`, unless we had lazy eval
+reduce( [ A, B, C ], f, initial ) === reduce( [ C ], f, reduce( [ A, B ], f, initial ) ); // simpler to express without `join`, unless we had lazy eval
 ```
 
 **A sad caveat.** JS collections are implemented with arrays and not [linked lists][linkedlists], meaning we have no built-in way to express a collection in terms of its _head_ (new item) + _tail_ (the rest, _i.e._ the "previous version" of the list). Implementing the above suite in a way that would allows us to benefit from caching (the whole point of this!) would require also implementing `actionLog` as a basic [doubly linked list][doublylinked], be it homemade or with a library. It shouldn't be hard, but it's disappointing.
-
 
 ### A deep map of actions
 
@@ -146,30 +137,42 @@ The last potential approach would be to completely replace `actionLog` with a de
 - Instead of collecting `ROUTE_SET`, a branch of the structure would look like:
 
 ```js
-navigation: {
-	lastSection: 'theme',
-	lastPath: '/theme/twentysixteen',
-	history: [ … ]
-}
+const object = {
+	navigation: {
+		lastSection: 'theme',
+		lastPath: '/theme/twentysixteen',
+		history: [
+			/*...*/
+		],
+	},
+};
 ```
 
 - Instead of collecting `THEMES_RECEIVE` or `SITE_SETTINGS_RECEIVE`, a branch of the structure would look like:
 
 ```js
-requests: {
-	themes: {
-		timestamp: 123456789 // last update
+const object = {
+	requests: {
+		themes: {
+			timestamp: 123456789, // last update
+		},
+		sites: {
+			/*...*/
+		},
 	},
-	sites: { … }
-}
+};
 ```
 
 - Instead of collecting `GUIDED_TOUR_UPDATE`, a branch of the structure would look like:
 
 ```js
-guidedTours: {
-	lastState: { … }
-}
+const object = {
+	guidedTours: {
+		lastState: {
+			/*...*/
+		},
+	},
+};
 ```
 
 The major benefits of this approach are:
@@ -190,7 +193,7 @@ This is a small potential enhancement to `actionLog` that, contrary to the other
 
 With this distinction, assuming we could keep `relevantTourEntryTypes` small, many more selector calls could be skipped when we know that no tour is ongoing.
 
-* * *
+---
 
 <a name="note-1"><sup>1</sup></a>: Having read and understood the [architecture] is a prerequisite.
 

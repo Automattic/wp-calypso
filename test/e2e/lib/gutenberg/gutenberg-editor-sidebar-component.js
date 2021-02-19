@@ -25,7 +25,8 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 			names.map( ( name ) => `.edit-post-sidebar__panel-tab[aria-label^=${ name }]` ).join()
 		);
 		await driverHelper.scrollIntoView( this.driver, by );
-		return driverHelper.clickWhenClickable( this.driver, by );
+		await driverHelper.clickWhenClickable( this.driver, by );
+		return driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.components-panel' ) );
 	}
 
 	async selectDocumentTab() {
@@ -33,10 +34,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		// Older versions use "Document"
 		// @TODO: Remove "Document"
 		await this.selectTab( 'Post', 'Page', 'Document' );
-		return await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.components-panel' )
-		);
+	}
+
+	async selectBlockTab() {
+		await this.selectTab( 'Block' );
 	}
 
 	async expandStatusAndVisibility() {
@@ -56,7 +57,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async expandFeaturedImage() {
-		return await this._expandOrCollapseSectionByText( 'Featured Image', true );
+		return await this._expandOrCollapseSectionByText( 'Featured image', true );
 	}
 
 	async expandExcerpt() {
@@ -164,7 +165,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async tagEventuallyDisplayed( tag ) {
-		const selector = await driverHelper.getElementByText( this.driver, By.css( 'span' ), tag );
+		const selector = By.xpath( `//span[text()='${ tag }']` );
 		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
 	}
 
@@ -190,6 +191,12 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
 		await gEditorComponent.openSidebar();
 		return this.selectDocumentTab();
+	}
+
+	async chooseBlockSettings() {
+		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		await gEditorComponent.openSidebar();
+		return this.selectBlockTab();
 	}
 
 	async setVisibilityToPasswordProtected( password ) {
@@ -295,6 +302,20 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.edit-post-last-revision__panel' )
+		);
+	}
+
+	async openFeaturedImageDialog() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-post-featured-image__container button' )
+		);
+	}
+
+	async removeFeaturedImage() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-post-featured-image button.is-destructive' )
 		);
 	}
 }

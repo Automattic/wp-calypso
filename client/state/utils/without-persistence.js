@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import { getInitialState } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { getInitialState } from './get-initial-state';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 
 /**
  * Wraps a reducer such that it won't persist any state to the browser's local storage

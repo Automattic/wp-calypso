@@ -7,7 +7,7 @@ import { omit, mapValues, isArray, isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 const omitDeep = ( input, props ) => {
 	if ( isArray( input ) ) {

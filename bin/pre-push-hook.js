@@ -11,8 +11,8 @@ console.log(
 
 const currentBranch = execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().trim();
 
-if ( 'master' === currentBranch ) {
-	if ( ! readline.keyInYN( "You're about to push !!![ master ]!!!, is that what you intended?" ) ) {
+if ( 'trunk' === currentBranch ) {
+	if ( ! readline.keyInYN( "You're about to push !!![ trunk ]!!!, is that what you intended?" ) ) {
 		process.exit( 1 );
 	}
 }

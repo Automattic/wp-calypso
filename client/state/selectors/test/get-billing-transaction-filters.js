@@ -6,7 +6,7 @@ import { cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 
 describe( 'getBillingTransactionFilters()', () => {
 	const state = {

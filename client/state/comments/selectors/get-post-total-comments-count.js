@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Get total number of comments on the server for a given post

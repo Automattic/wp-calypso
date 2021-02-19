@@ -6,9 +6,9 @@ import { sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
-import createSelector from 'lib/create-selector';
-import getSitesItems from 'state/selectors/get-sites-items';
+import { getSite } from 'calypso/state/sites/selectors';
+import { createSelector } from '@automattic/state-utils';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
 /**
  * Get the newest site of the current user

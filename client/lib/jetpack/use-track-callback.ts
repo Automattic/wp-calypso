@@ -8,8 +8,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const useTrackCallback = ( callback: Function = noop, eventName: string, eventProps = {} ) => {
 	const dispatch = useDispatch();

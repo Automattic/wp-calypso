@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ThemesList from 'components/themes-list';
+import ThemesList from 'calypso/components/themes-list';
 
 const demoThemes = [
 	{

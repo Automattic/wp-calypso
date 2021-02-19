@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { CONNECTIONS_SET_EXPANDED_SERVICE } from 'state/action-types';
+import { CONNECTIONS_SET_EXPANDED_SERVICE } from 'calypso/state/action-types';
 
-import 'state/sharing/init';
+import 'calypso/state/sharing/init';
 
 /**
  * Triggers a network request for a user's connected services.

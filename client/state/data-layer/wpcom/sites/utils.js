@@ -11,12 +11,12 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_WRITE_ERROR,
-} from 'state/action-types';
-import { requestCommentsList } from 'state/comments/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getSitePost } from 'state/posts/selectors';
-import { errorNotice } from 'state/notices/actions';
+} from 'calypso/state/action-types';
+import { requestCommentsList } from 'calypso/state/comments/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getSitePost } from 'calypso/state/posts/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Creates a placeholder comment for a given text and postId

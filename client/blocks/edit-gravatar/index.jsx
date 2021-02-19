@@ -7,30 +7,34 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import path from 'path';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
-import { AspectRatios } from 'state/editor/image-editor/constants';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { Dialog } from '@automattic/components';
-import FilePicker from 'components/file-picker';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Gravatar from 'components/gravatar';
-import { isCurrentUserUploadingGravatar } from 'state/current-user/gravatar-status/selectors';
-import { resetAllImageEditorState } from 'state/editor/image-editor/actions';
-import Spinner from 'components/spinner';
+import FilePicker from 'calypso/components/file-picker';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import Gravatar from 'calypso/components/gravatar';
+import { isCurrentUserUploadingGravatar } from 'calypso/state/current-user/gravatar-status/selectors';
+import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
+import Spinner from 'calypso/components/spinner';
 import {
 	receiveGravatarImageFailed,
 	uploadGravatar,
-} from 'state/current-user/gravatar-status/actions';
-import ImageEditor from 'blocks/image-editor';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import DropZone from 'components/drop-zone';
-import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
+} from 'calypso/state/current-user/gravatar-status/actions';
+import ImageEditor from 'calypso/blocks/image-editor';
+import InfoPopover from 'calypso/components/info-popover';
+import ExternalLink from 'calypso/components/external-link';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
+import DropZone from 'calypso/components/drop-zone';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

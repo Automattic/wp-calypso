@@ -84,7 +84,7 @@
 	display: flex;
 	white-space: nowrap;
 
-	.form-text-input {
+	input[type='text'].form-text-input {
 		line-height: 1em;
 		margin-left: 8px;
 	}

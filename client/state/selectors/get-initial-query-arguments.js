@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/route/init';
+import 'calypso/state/route/init';
 
 /**
  * Gets the initial query parameters set by a ROUTE_SET action

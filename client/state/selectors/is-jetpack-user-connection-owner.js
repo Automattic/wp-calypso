@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getJetpackUserConnection from 'state/selectors/get-jetpack-user-connection';
+import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-connection';
 
 /**
  * Returns true if the Jetpack site current user is the user who owns the connection. False otherwise.

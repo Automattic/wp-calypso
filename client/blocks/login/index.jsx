@@ -12,9 +12,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import config from 'config';
-import { sendEmailLogin } from 'state/auth/actions';
+import Gridicon from 'calypso/components/gridicon';
+import config from '@automattic/calypso-config';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import {
 	getAuthAccountType,
 	getRedirectToOriginal,
@@ -25,29 +25,30 @@ import {
 	isTwoFactorAuthTypeSupported,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
-} from 'state/login/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/selectors';
-import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import { rebootAfterLogin } from 'state/login/actions';
-import { isPasswordlessAccount } from 'state/login/utils';
+} from 'calypso/state/login/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
+import { isPasswordlessAccount } from 'calypso/state/login/utils';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
-} from 'lib/oauth2-clients';
-import { login } from 'lib/paths';
-import Notice from 'components/notice';
-import AsyncLoad from 'components/async-load';
-import VisitSite from 'blocks/visit-site';
-import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
+} from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
+import Notice from 'calypso/components/notice';
+import AsyncLoad from 'calypso/components/async-load';
+import VisitSite from 'calypso/blocks/visit-site';
+import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import { isWebAuthnSupported } from 'lib/webauthn';
-import JetpackPlusWpComLogo from 'components/jetpack-plus-wpcom-logo';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
+import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
+import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 
 /**
  * Style dependencies
@@ -94,7 +95,9 @@ class Login extends Component {
 	componentDidMount() {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
 			// Disallow access to the 2FA pages unless the user has 2FA enabled
-			page( login( { isNative: true, isJetpack: this.props.isJetpack } ) );
+			page(
+				login( { isNative: true, isJetpack: this.props.isJetpack, locale: this.props.locale } )
+			);
 		}
 
 		window.scrollTo( 0, 0 );
@@ -152,6 +155,7 @@ class Login extends Component {
 					isGutenboarding: this.props.isGutenboarding,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
+					locale: this.props.locale,
 				} )
 			);
 		}
@@ -165,6 +169,7 @@ class Login extends Component {
 				login( {
 					isNative: true,
 					socialConnect: true,
+					locale: this.props.locale,
 				} )
 			);
 		}
@@ -222,6 +227,7 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			fromSite,
+			isAnchorFmSignup,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -288,7 +294,7 @@ class Login extends Component {
 								<div className={ classNames( 'login__woocommerce-logo' ) }>
 									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 										<AsyncLoad
-											require="components/jetpack-header/woocommerce"
+											require="calypso/components/jetpack-header/woocommerce"
 											darkColorScheme={ false }
 											placeholder={ null }
 										/>
@@ -341,7 +347,7 @@ class Login extends Component {
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
-						require="components/jetpack-header"
+						require="calypso/components/jetpack-header"
 						placeholder={ null }
 						partnerSlug={ this.props.partnerSlug }
 						isWoo
@@ -362,12 +368,20 @@ class Login extends Component {
 			preHeader = (
 				<div className="login__jetpack-logo">
 					<AsyncLoad
-						require="components/jetpack-header"
+						require="calypso/components/jetpack-header"
 						placeholder={ null }
 						partnerSlug={ this.props.partnerSlug }
 						darkColorScheme
 					/>
 				</div>
+			);
+		} else if ( isAnchorFmSignup ) {
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate(
+						'Log in to your WordPress.com account to transcribe and save your Anchor.fm podcasts.'
+					) }
+				</p>
 			);
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
@@ -435,7 +449,7 @@ class Login extends Component {
 		if ( socialConnect ) {
 			return (
 				<AsyncLoad
-					require="blocks/login/social-connect-prompt"
+					require="calypso/blocks/login/social-connect-prompt"
 					onSuccess={ this.handleValidLogin }
 				/>
 			);
@@ -444,7 +458,7 @@ class Login extends Component {
 		if ( twoFactorEnabled ) {
 			return (
 				<AsyncLoad
-					require="blocks/login/two-factor-authentication/two-factor-content"
+					require="calypso/blocks/login/two-factor-authentication/two-factor-content"
 					isBrowserSupported={ this.state.isBrowserSupported }
 					isJetpack={ isJetpack }
 					isGutenboarding={ isGutenboarding }
@@ -522,6 +536,9 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isAnchorFmSignup: getIsAnchorFmSignup(
+			get( getCurrentQueryArguments( state ), 'redirect_to' )
+		),
 	} ),
 	{
 		rebootAfterLogin,

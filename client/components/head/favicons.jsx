@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const wordPressFavicons = () => {
 	const cdn = '//s1.wp.com';

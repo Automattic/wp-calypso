@@ -11,8 +11,8 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
-} from 'state/action-types';
-import { keyedReducer, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { keyedReducer, withoutPersistence } from 'calypso/state/utils';
 
 export const activationRequesting = keyedReducer(
 	'siteId',

@@ -155,6 +155,10 @@
 		margin-right: 3px;
 		vertical-align: text-bottom;
 	}
+
+	&.button.is-borderless .gridicon {
+		top: 3px;
+	}
 }
 
 .login__form .form-input-validation {

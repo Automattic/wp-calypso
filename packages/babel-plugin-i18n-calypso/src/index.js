@@ -219,10 +219,10 @@ function mergeStrings( source, target ) {
 }
 
 module.exports = function () {
-	let strings = {},
-		nplurals = 2,
-		baseData,
-		functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
+	let strings = {};
+	let nplurals = 2;
+	let baseData;
+	let functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
 
 	return {
 		visitor: {

@@ -15,7 +15,7 @@ import {
 	getPreviewParamClass,
 	isIE,
 	revokeObjectURL,
-} from 'components/signup-site-preview/utils';
+} from 'calypso/components/signup-site-preview/utils';
 
 export default class SignupSitePreviewIframe extends Component {
 	static propTypes = {

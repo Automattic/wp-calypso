@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FilteredList from 'woocommerce/components/filtered-list';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import {
 	getShippingZoneLocationsWithEdits,
@@ -71,7 +71,7 @@ const ShippingZoneLocationDialogSettings = ( {
 		}
 
 		const radios = [
-			<label key={ 1 } htmlFor="include-postcodes">
+			<FormLabel key={ 1 } htmlFor="include-postcodes">
 				<FormRadio
 					id="include-postcodes"
 					name="include"
@@ -79,12 +79,12 @@ const ShippingZoneLocationDialogSettings = ( {
 					checked={ filteredByPostcode }
 				/>
 				{ translate( 'Include specific postcodes in the zone' ) }
-			</label>,
+			</FormLabel>,
 		];
 
 		if ( ! countryOwner ) {
 			radios.unshift(
-				<label key={ 0 } htmlFor="include-all">
+				<FormLabel key={ 0 } htmlFor="include-all">
 					<FormRadio
 						id="include-all"
 						name="include"
@@ -92,13 +92,13 @@ const ShippingZoneLocationDialogSettings = ( {
 						checked={ unfiltered }
 					/>
 					{ translate( 'Include entire country in the zone' ) }
-				</label>
+				</FormLabel>
 			);
 		}
 
 		if ( canFilterByState ) {
 			radios.push(
-				<label key={ 2 } htmlFor="include-states">
+				<FormLabel key={ 2 } htmlFor="include-states">
 					<FormRadio
 						id="include-states"
 						name="include"
@@ -106,7 +106,7 @@ const ShippingZoneLocationDialogSettings = ( {
 						checked={ filteredByState }
 					/>
 					{ translate( 'Include specific states in the zone' ) }
-				</label>
+				</FormLabel>
 			);
 		}
 
@@ -128,7 +128,7 @@ const ShippingZoneLocationDialogSettings = ( {
 
 		return (
 			<li key={ index } className="shipping-zone__location-dialog-list-item">
-				<label htmlFor={ inputId }>
+				<FormLabel htmlFor={ inputId }>
 					<FormCheckbox
 						id={ inputId }
 						onChange={ onToggle }
@@ -137,7 +137,7 @@ const ShippingZoneLocationDialogSettings = ( {
 						disabled={ disabled }
 					/>
 					{ name }
-				</label>
+				</FormLabel>
 			</li>
 		);
 	};

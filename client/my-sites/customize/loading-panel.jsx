@@ -10,7 +10,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
+import Spinner from 'calypso/components/spinner';
 
 class CustomizerLoadingPanel extends React.Component {
 	static displayName = 'CustomizerLoadingPanel';

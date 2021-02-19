@@ -33,6 +33,7 @@
 $z-layers: (
 	'.onboarding__header': 30,
 	'.onboarding__footer': 30,
+	'.vertical-select__suggestions-wrapper': 2,
 );
 
 @function onboarding-z-index( $keys... ) {

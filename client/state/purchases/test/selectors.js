@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { createPurchasesArray } from 'lib/purchases/assembler';
+import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 import {
 	getByPurchaseId,
 	getIncludedDomainPurchase,
@@ -14,7 +14,7 @@ import {
 } from '../selectors';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'selectors', () => {
 	describe( 'getPurchases', () => {
@@ -103,6 +103,7 @@ describe( 'selectors', () => {
 					countryName: undefined,
 					name: undefined,
 					type: undefined,
+					storedDetailsId: undefined,
 				},
 				priceText: undefined,
 				productId: NaN,
@@ -120,6 +121,7 @@ describe( 'selectors', () => {
 				tagLine: undefined,
 				taxAmount: undefined,
 				taxText: undefined,
+				purchaseRenewalQuantity: null,
 				userId: NaN,
 			} );
 		} );

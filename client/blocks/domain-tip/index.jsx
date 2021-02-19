@@ -9,16 +9,16 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { getDomainsSuggestions } from 'state/domains/suggestions/selectors';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
-import { isFreePlan } from 'lib/products-values';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
+import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import { getDomainsSuggestions } from 'calypso/state/domains/suggestions/selectors';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_CUSTOM_DOMAIN } from 'calypso/lib/plans/constants';
+import { isFreePlan } from 'calypso/lib/products-values';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 
 function getQueryObject( site, siteSlug, vendor ) {
 	if ( ! site || ! siteSlug ) {

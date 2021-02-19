@@ -1,39 +1,41 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
-import { capitalize, defer, includes, get, startsWith } from 'lodash';
-import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
+import { capitalize, defer, includes, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
-import config from 'config';
-import FormsButton from 'components/forms/form-button';
-import FormInputValidation from 'components/forms/form-input-validation';
+import config from '@automattic/calypso-config';
 import Divider from './divider';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormsButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import Gridicon from 'calypso/components/gridicon';
+import Notice from 'calypso/components/notice';
+import SocialLoginForm from './social';
+import TextControl from 'calypso/extensions/woocommerce/components/text-control';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { Button, Card } from '@automattic/components';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	formUpdate,
 	getAuthAccountType,
 	loginUser,
 	resetAuthAccountType,
-} from 'state/login/actions';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { preventWidows } from 'lib/formatting';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/state/login/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
@@ -42,14 +44,14 @@ import {
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
-} from 'state/login/selectors';
-import { isRegularAccount } from 'state/login/utils';
-import Notice from 'components/notice';
-import SocialLoginForm from './social';
-import { localizeUrl } from 'lib/i18n-utils';
-import TextControl from 'extensions/woocommerce/components/text-control';
-import { sendEmailLogin } from 'state/auth/actions';
-import wooDnaConfig from 'jetpack-connect/woo-dna-config';
+} from 'calypso/state/login/selectors';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getSignupUrl } from 'calypso/lib/login';
+import { isRegularAccount } from 'calypso/state/login/utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -302,7 +304,7 @@ export class LoginForm extends Component {
 							</p>
 						) }
 
-						<label htmlFor="usernameOrEmail">
+						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<Button
 									borderless
@@ -316,7 +318,7 @@ export class LoginForm extends Component {
 										: this.props.translate( 'Change Username' ) }
 								</Button>
 							) : null }
-						</label>
+						</FormLabel>
 
 						<TextControl
 							autoCapitalize="off"
@@ -407,7 +409,6 @@ export class LoginForm extends Component {
 		const {
 			accountType,
 			oauth2Client,
-			redirectTo,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
@@ -422,49 +423,14 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
-		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-
-		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
-
-		// copied from login-links.jsx
-		if (
-			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
-		) {
-			// Basic validation that we're in a valid Jetpack Authorization flow
-			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
-			) {
-				/**
-				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
-				 * this case, the redirect_to will handle signups as part of the flow. Use the
-				 * `redirect_to` parameter directly for signup.
-				 */
-				signupUrl = currentQuery.redirect_to;
-			} else {
-				signupUrl = '/jetpack/new';
-			}
-		} else if ( '/jetpack-connect' === pathname ) {
-			signupUrl = '/jetpack/new';
-		} else if ( signupFlow ) {
-			signupUrl += '/' + signupFlow;
-		}
-
-		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
-			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
-			const oauth2Params = new globalThis.URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo || '',
-			} );
-
-			signupUrl = `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
-		}
-
-		if ( isGutenboarding ) {
-			signupUrl = '/new' + langFragment;
-		}
+		const signupUrl = getSignupUrl(
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
@@ -509,8 +475,7 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
-
-						<label htmlFor="usernameOrEmail">
+						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<button
 									type="button"
@@ -525,12 +490,13 @@ export class LoginForm extends Component {
 							) : (
 								this.props.translate( 'Email Address or Username' )
 							) }
-						</label>
+						</FormLabel>
 
 						<FormTextInput
 							autoCapitalize="off"
 							autoCorrect="off"
 							spellCheck="false"
+							autoComplete="username"
 							className={ classNames( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
@@ -561,11 +527,11 @@ export class LoginForm extends Component {
 								'is-hidden': isPasswordHidden,
 							} ) }
 						>
-							<label htmlFor="password">{ this.props.translate( 'Password' ) }</label>
+							<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
 
 							<FormPasswordInput
 								autoCapitalize="off"
-								autoComplete="off"
+								autoComplete="current-password"
 								className={ classNames( {
 									'is-error': requestError && requestError.field === 'password',
 								} ) }

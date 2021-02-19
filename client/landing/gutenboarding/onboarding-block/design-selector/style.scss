@@ -21,14 +21,19 @@
 	}
 
 	.design-selector__grid {
-		margin: 0 -32px 30px;
+		margin: 0 -24px 30px;
+	}
+
+	.design-selector__grid-minimal {
+		margin: 0 -24px 30px;
 	}
 
 	.design-selector__design-option {
 		cursor: pointer;
+		font-family: inherit;
 		float: left;
 		width: 100%;
-		margin: 32px; // only applies in IE
+		margin: 24px; // only applies in IE
 
 		&:hover,
 		&:focus {
@@ -38,15 +43,15 @@
 		}
 
 		@include break-mobile {
-			width: calc( 50% - 32px );
+			width: calc( 50% - 24px );
 		}
 
-		@include break-large {
-			width: calc( 33.33% - 64px );
+		@include break-xlarge {
+			width: calc( 33.33% - 32px );
 		}
 
 		@include onboarding-break-gigantic {
-			width: calc( 25% - 64px );
+			width: calc( 25% - 32px );
 		}
 	}
 
@@ -59,12 +64,12 @@
 
 			@include break-mobile {
 				grid-template-columns: 1fr 1fr;
-				column-gap: 32px;
+				column-gap: 24px;
 			}
 
-			@include break-large {
+			@include break-xlarge {
 				grid-template-columns: 1fr 1fr 1fr;
-				column-gap: 64px;
+				column-gap: 32px;
 			}
 
 			@include onboarding-break-gigantic {
@@ -72,11 +77,27 @@
 			}
 		}
 
+		.design-selector__grid-minimal {
+			display: grid;
+			grid-template-columns: 1fr;
+			row-gap: 48px;
+			margin: 0 0 30px;
+
+			@include break-mobile {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 24px;
+			}
+
+			@include break-xlarge {
+				column-gap: 32px;
+			}
+		}
+
 		.design-selector__design-option {
 			width: auto;
 			margin: 0;
 
-			@include break-large {
+			@include break-xlarge {
 				width: auto;
 			}
 
@@ -90,8 +111,7 @@
 		display: block;
 		width: 100%;
 		height: 0;
-		padding-top: 360px / 480px * 200%;
-		border: 2px solid var( --studio-gray-5 );
+		border: 1px solid var( --studio-gray-5 );
 		position: relative;
 		overflow: hidden;
 
@@ -106,12 +126,29 @@
 		}
 	}
 
+	.design-selector__landscape {
+		padding-top: 65%;
+
+		img {
+			transition: all 1s;
+		}
+
+		&.design-selector__scrollable img:hover {
+			margin-top: -100px;
+		}
+	}
+
+	.design-selector__portrait {
+		padding-top: 360px / 480px * 200%;
+	}
+
 	.design-selector__option-meta {
-		display: inline-grid;
+		align-items: center;
+		display: inline-flex;
+		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
+		justify-content: center;
 		margin-top: 8px;
 		width: 100%;
-		gap: 6px;
-		grid-template-columns: 1fr [name] auto [badge] 1fr;
 
 		> * {
 			// This is to create space between Tooltip component and other elements
@@ -120,21 +157,26 @@
 	}
 
 	.design-selector__option-name {
-		@include onboarding-medium-text;
-		align-self: center;
+		align-items: center;
 		color: var( --studio-gray-40 );
-		grid-area: name;
-		padding: 2px 0; // To match line-alignment with premium badge
-		text-align: center;
+		display: inline-flex;
+		font-size: $font-body-small;
+		margin-top: -0.1em;
 	}
 
 	.design-selector__premium-container {
-		grid-area: badge;
-		text-align: left;
+		margin-left: 6px;
+		/* stylelint-disable-next-line scales/font-size */
+		font-size: rem( 10px ); //typography-exception
+
+		.components-popover__content {
+			background-color: var( --studio-gray-80 );
+		}
 	}
 
 	.design-selector__premium-badge {
-		background-color: var( --studio-black );
+		background-color: var( --studio-gray-80 );
+		/* stylelint-disable-next-line scales/radii */
 		border-radius: 1em;
 		color: var( --studio-white );
 		margin: 0;
@@ -143,7 +185,9 @@
 	}
 
 	.design-selector__premium-badge-logo {
+		height: auto;
 		margin-left: -4px;
+		width: 14px;
 
 		.jetpack-logo__icon-circle {
 			fill: transparent;
@@ -152,5 +196,11 @@
 		.jetpack-logo__icon-triangle {
 			fill: var( --studio-white );
 		}
+	}
+
+	.design-selector__premium-badge-text {
+		display: inline-block;
+		margin-top: -0.05em;
+		text-transform: uppercase;
 	}
 }

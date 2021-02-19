@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ManageSite from './manage-site';
-import { SECTION_MANAGE_SITE } from 'my-sites/customer-home/cards/constants';
+import { SECTION_MANAGE_SITE } from 'calypso/my-sites/customer-home/cards/constants';
 
 const cardComponents = {
 	[ SECTION_MANAGE_SITE ]: ManageSite,

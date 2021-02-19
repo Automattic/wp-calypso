@@ -1,18 +1,18 @@
 /**
  * External Dependencies
  */
-const { Tray, Menu, app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { Tray, Menu, app } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
 const windowsTrayMenu = require( './tray-menu' );
-const Settings = require( 'desktop/lib/settings' );
-const appQuit = require( 'desktop/lib/app-quit' );
-const platform = require( 'desktop/lib/platform' );
-const menuSetter = require( 'desktop/lib/menu-setter' );
-const assets = require( 'desktop/lib/assets' );
-const log = require( 'desktop/lib/logger' )( 'platform:windows' );
+const Settings = require( 'calypso/desktop/lib/settings' );
+const appQuit = require( 'calypso/desktop/lib/app-quit' );
+const platform = require( 'calypso/desktop/lib/platform' );
+const menuSetter = require( 'calypso/desktop/lib/menu-setter' );
+const assets = require( 'calypso/desktop/lib/assets' );
+const log = require( 'calypso/desktop/lib/logger' )( 'platform:windows' );
 
 /**
  * Module variables
@@ -40,11 +40,12 @@ function WindowsPlatform( mainWindow ) {
 
 WindowsPlatform.prototype.onClosed = function ( ev ) {
 	if ( appQuit.shouldQuitToBackground() ) {
-		log.info( 'Window close puts app into background & creates tray' );
+		log.info( `User clicked 'close': hiding main window and creating tray...` );
 
 		ev.preventDefault();
 
 		this.window.hide();
+		this.window.webContents.send( 'notifications-panel-show', false );
 		this.showBackgroundBubble();
 
 		return;

@@ -7,14 +7,14 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import EducationalContent from '../educational-content';
-import { EDUCATION_FREE_PHOTO_LIBRARY } from 'my-sites/customer-home/cards/constants';
+import { EDUCATION_FREE_PHOTO_LIBRARY } from 'calypso/my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
  */
-import freePhotoLibraryVideoPrompt from 'assets/images/customer-home/illustration--secondary-free-photo-library.svg';
+import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-free-photo-library.svg';
 
 const FreePhotoLibrary = () => {
 	const translate = useTranslate();

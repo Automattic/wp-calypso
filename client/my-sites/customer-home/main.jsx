@@ -2,8 +2,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -11,24 +11,25 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import { preventWidows } from 'lib/formatting';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUserUseCustomerHome, getSiteOption } from 'state/sites/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import QueryHomeLayout from 'components/data/query-home-layout';
-import { getHomeLayout } from 'state/selectors/get-home-layout';
-import Primary from 'my-sites/customer-home/locations/primary';
-import Secondary from 'my-sites/customer-home/locations/secondary';
-import Tertiary from 'my-sites/customer-home/locations/tertiary';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import { preventWidows } from 'calypso/lib/formatting';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import QueryHomeLayout from 'calypso/components/data/query-home-layout';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
+import Primary from 'calypso/my-sites/customer-home/locations/primary';
+import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
+import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -43,8 +44,25 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
+	noticeType,
 } ) => {
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+
+	useEffect( () => {
+		if ( ! canUserUseCustomerHome || ! layout || ! noticeType ) {
+			return;
+		}
+
+		if ( noticeType === 'difm-success' ) {
+			reduxDispatch( recordTracksEvent( 'calypso_difm_intake_submitted' ) );
+
+			const successMessage = translate( 'Your application has been sent!' );
+			reduxDispatch( successNotice( successMessage ) );
+		}
+
+		return;
+	}, [ noticeType, layout, canUserUseCustomerHome, reduxDispatch, translate ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );

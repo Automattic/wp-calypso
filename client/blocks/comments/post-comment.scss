@@ -23,6 +23,11 @@
 		background: transparent;
 	}
 
+	&.is-highlighted {
+		animation: highlight 2s ease-in-out;
+		animation-iteration-count: 1;
+	}
+
 	.comments__form {
 		margin-top: 10px;
 	}

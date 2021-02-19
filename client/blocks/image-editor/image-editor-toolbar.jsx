@@ -6,22 +6,22 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { noop, values as objectValues } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { AspectRatios, MinimumImageDimensions } from 'state/editor/image-editor/constants';
-import { getImageEditorAspectRatio } from 'state/editor/image-editor/selectors';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { AspectRatios, MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
+import { getImageEditorAspectRatio } from 'calypso/state/editor/image-editor/selectors';
 import {
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
 	setImageEditorAspectRatio,
-} from 'state/editor/image-editor/actions';
-import getImageEditorIsGreaterThanMinimumDimensions from 'state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
+} from 'calypso/state/editor/image-editor/actions';
+import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 
 export class ImageEditorToolbar extends Component {
 	static propTypes = {

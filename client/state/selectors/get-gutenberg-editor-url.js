@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
-import { getEditorPath } from 'state/editor/selectors';
-import { addQueryArgs } from 'lib/route';
+import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getEditorPath } from 'calypso/state/editor/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
 
 export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( shouldRedirectGutenberg( state, siteId ) ) {
+	if ( ! isEligibleForGutenframe( state, siteId ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
 
@@ -24,15 +24,15 @@ export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 
 	}
 
 	if ( postId ) {
-		return `/block-editor${ getEditorPath( state, siteId, postId, postType ) }`;
+		return getEditorPath( state, siteId, postId, postType );
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );
 
 	if ( 'post' === postType || 'page' === postType ) {
-		return `/block-editor/${ postType }/${ siteSlug }`;
+		return `/${ postType }/${ siteSlug }`;
 	}
-	return `/block-editor/edit/${ postType }/${ siteSlug }`;
+	return `/edit/${ postType }/${ siteSlug }`;
 };
 
 export default getGutenbergEditorUrl;

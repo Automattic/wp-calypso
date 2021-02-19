@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { bumpStat } from 'lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
@@ -15,10 +15,10 @@ import {
 	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 // mock modules
-jest.mock( 'lib/wp', () => ( {
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		// TODO: use mockResolvedValue instead when we update jest to 22.2 or later
 		submitNPSSurvey: jest.fn().mockReturnValue( Promise.resolve() ),
@@ -26,10 +26,10 @@ jest.mock( 'lib/wp', () => ( {
 		sendNPSSurveyFeedback: jest.fn().mockReturnValue( Promise.resolve() ),
 	} ),
 } ) );
-jest.mock( 'lib/analytics/tracks', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
-jest.mock( 'lib/analytics/mc', () => ( {
+jest.mock( 'calypso/lib/analytics/mc', () => ( {
 	bumpStat: jest.fn(),
 } ) );
 

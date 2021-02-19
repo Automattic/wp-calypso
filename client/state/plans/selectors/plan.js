@@ -6,9 +6,9 @@ import { get, find } from 'lodash';
 /**
  * Internal Dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
-import 'state/plans/init';
+import 'calypso/state/plans/init';
 
 /**
  * Return WordPress plans getting from state object

@@ -6,11 +6,11 @@ import { flow } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getLastRouteAction } from 'state/ui/action-log/selectors';
-import pathToSection from 'lib/path-to-section';
-import { getContextResults } from 'blocks/inline-help/contextual-help';
+import { getLastRouteAction } from 'calypso/state/ui/action-log/selectors';
+import pathToSection from 'calypso/lib/path-to-section';
+import { getContextResults } from 'calypso/blocks/inline-help/contextual-help';
 
-import 'state/inline-help/init';
+import 'calypso/state/inline-help/init';
 
 /**
  * Returns an array of contextual results

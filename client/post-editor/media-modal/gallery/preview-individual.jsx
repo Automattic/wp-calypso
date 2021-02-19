@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import markup from '../markup';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 class EditorMediaModalGalleryPreviewIndividual extends React.Component {
 	static propTypes = {

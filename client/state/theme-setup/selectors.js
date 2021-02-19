@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/theme-setup/init';
+import 'calypso/state/theme-setup/init';
 
 export function isThemeSetupDialogVisible( state ) {
 	return state.themeSetup.isDialogVisible;

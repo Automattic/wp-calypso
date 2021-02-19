@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { defaultRegistry } from '@automattic/composite-checkout';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -11,21 +10,33 @@ import { localize } from 'i18n-calypso';
  */
 import Masterbar from './masterbar';
 import Item from './item';
-import WordPressLogo from 'components/wordpress-logo';
-import WordPressWordmark from 'components/wordpress-wordmark';
-import { recordTracksEvent } from 'state/analytics/actions';
+import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 
 class CheckoutMasterbar extends React.Component {
 	clickClose = () => {
-		const { select } = defaultRegistry;
-		const siteSlug = select( 'wpcom' )?.getSiteSlug();
-		const closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
+		const { previousPath, siteSlug } = this.props;
+		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
 		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
+		const searchParams = new URLSearchParams( window.location.search );
+		searchParams.has( 'signup' ) && clearSignupDestinationCookie();
+
+		if (
+			previousPath &&
+			'' !== previousPath &&
+			previousPath !== window.location.href &&
+			! previousPath.includes( '/checkout/no-site' )
+		) {
+			closeUrl = previousPath;
+		}
+
 		window.location = closeUrl;
 	};
 
 	render() {
-		const { translate, title } = this.props;
+		const { translate, title, isJetpackNotAtomic } = this.props;
 		return (
 			<Masterbar>
 				<div className="masterbar__secure-checkout">
@@ -37,10 +48,8 @@ class CheckoutMasterbar extends React.Component {
 						tooltip={ translate( 'Close Checkout' ) }
 						tipTarget="close"
 					/>
-					<Item className="masterbar__item-logo">
-						<WordPressLogo className="masterbar__wpcom-logo" />
-						<WordPressWordmark className="masterbar__wpcom-wordmark" />
-					</Item>
+					{ ! isJetpackNotAtomic && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
+					{ isJetpackNotAtomic && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
 					<span className="masterbar__secure-checkout-text">
 						{ translate( 'Secure checkout' ) }
 					</span>
@@ -51,4 +60,4 @@ class CheckoutMasterbar extends React.Component {
 	}
 }
 
-export default connect( () => (null, { recordTracksEvent }) )( localize( CheckoutMasterbar ) );
+export default connect( null, { recordTracksEvent } )( localize( CheckoutMasterbar ) );

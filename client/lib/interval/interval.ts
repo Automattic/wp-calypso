@@ -6,7 +6,7 @@ import { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import { TimeoutMS } from 'client/types';
+import { TimeoutMS } from 'calypso/types';
 import { useInterval } from './use-interval';
 
 interface Props {

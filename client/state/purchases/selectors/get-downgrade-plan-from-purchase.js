@@ -1,10 +1,10 @@
 /**
  * Internal Dependencies
  */
-import { getPlan, findPlansKeys } from 'lib/plans';
-import { TYPE_PERSONAL } from 'lib/plans/constants';
+import { getPlan, findPlansKeys } from 'calypso/lib/plans';
+import { TYPE_PERSONAL } from 'calypso/lib/plans/constants';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 export const getDowngradePlanFromPurchase = ( purchase ) => {
 	const plan = getPlan( purchase.productSlug );

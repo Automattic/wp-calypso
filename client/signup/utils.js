@@ -1,40 +1,19 @@
 /**
- * Exernal dependencies
+ * External dependencies
  */
-import cookie from 'cookie';
 import { filter, find, includes, indexOf, isEmpty, pick, sortBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import steps from 'signup/config/steps-pure';
-import flows from 'signup/config/flows';
-import user from 'lib/user';
-import { abtest } from 'lib/abtest';
+import steps from 'calypso/signup/config/steps-pure';
+import flows from 'calypso/signup/config/flows';
+import user from 'calypso/lib/user';
 
 const { defaultFlowName } = flows;
 
-function isEligibleForSwapStepsTest() {
-	const cookies = cookie.parse( document.cookie );
-	const countryCodeFromCookie = cookies.country_code;
-	const isUserFromUS = 'US' === countryCodeFromCookie;
-
-	if ( user() && user().get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
-		return true;
-	}
-
-	return false;
-}
-
 function getDefaultFlowName() {
-	if (
-		isEligibleForSwapStepsTest() &&
-		'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
-	) {
-		return 'onboarding-plan-first';
-	}
-
 	return defaultFlowName;
 }
 
@@ -65,13 +44,13 @@ function isStepSectionName( pathFragment ) {
 }
 
 export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
-	const flow = flowName ? `/${ flowName }` : '',
-		step = stepName ? `/${ stepName }` : '',
-		section = stepSectionName ? `/${ stepSectionName }` : '',
-		// when the user is logged in, the locale slug is meaningless in a
-		// signup URL, as the page will be translated in the language the user
-		// has in their settings.
-		locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
+	const flow = flowName ? `/${ flowName }` : '';
+	const step = stepName ? `/${ stepName }` : '';
+	const section = stepSectionName ? `/${ stepSectionName }` : '';
+	// when the user is logged in, the locale slug is meaningless in a
+	// signup URL, as the page will be translated in the language the user
+	// has in their settings.
+	const locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route
@@ -226,26 +205,6 @@ export function canResumeFlow( flowName, progress ) {
 	} );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
-
-export const persistSignupDestination = ( url ) => {
-	const WEEK_IN_SECONDS = 3600 * 24 * 7;
-	const expirationDate = new Date( new Date().getTime() + WEEK_IN_SECONDS * 1000 );
-	const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
-	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', url, options );
-};
-
-export const retrieveSignupDestination = () => {
-	const cookies = cookie.parse( document.cookie );
-	return cookies.wpcom_signup_complete_destination;
-};
-
-export const clearSignupDestinationCookie = () => {
-	// Set expiration to a random time in the past so that the cookie gets removed.
-	const expirationDate = new Date( new Date().getTime() - 1000 );
-	const options = { path: '/', expires: expirationDate };
-
-	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
-};
 
 export const shouldForceLogin = ( flowName ) => {
 	const flow = flows.getFlow( flowName );

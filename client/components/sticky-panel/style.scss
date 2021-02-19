@@ -16,9 +16,3 @@
 	position: fixed;
 	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
 }
-
-@include breakpoint-deprecated( '<960px' ) {
-	.sticky-panel.is-sticky .sticky-panel__content {
-		margin-top: 8px;
-	}
-}

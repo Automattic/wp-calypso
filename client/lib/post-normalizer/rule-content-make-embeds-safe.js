@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { some, forEach, startsWith, endsWith } from 'lodash';
-import { iframeIsAllowed } from './utils';
-import { getUrlParts } from 'lib/url';
+import { some, forEach, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { iframeIsAllowed } from './utils';
+import { getUrlParts } from 'calypso/lib/url';
 
 /** Given an iframe, is it okay to have it run without a sandbox?
  *
@@ -26,7 +26,7 @@ function doesNotNeedSandbox( iframe ) {
 	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeHost = hostName && hostName.toLowerCase();
 
-	return some( trustedHosts, ( trustedHost ) => endsWith( '.' + iframeHost, '.' + trustedHost ) );
+	return some( trustedHosts, ( trustedHost ) => `.${ iframeHost }`.endsWith( '.' + trustedHost ) );
 }
 
 export default function makeEmbedsSafe( post, dom ) {

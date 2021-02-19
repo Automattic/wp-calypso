@@ -13,9 +13,9 @@ import { startsWith, uniqueId } from 'lodash';
  */
 import BulkSelect from 'woocommerce/components/bulk-select';
 import FilteredList from 'woocommerce/components/filtered-list';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import LocationFlag from 'woocommerce/components/location-flag';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import {
@@ -56,7 +56,7 @@ const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, a
 
 		return (
 			<li key={ index } className={ listItemClass }>
-				<label htmlFor={ inputId }>
+				<FormLabel htmlFor={ inputId }>
 					{ isCountry ? (
 						<FormCheckbox
 							id={ inputId }
@@ -78,7 +78,7 @@ const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, a
 					{ isCountry ? <LocationFlag code={ code } /> : null }
 					<span>{ name }</span>
 					{ disabled && <small>{ translate( '(An existing zone covers this location)' ) }</small> }
-				</label>
+				</FormLabel>
 			</li>
 		);
 	};

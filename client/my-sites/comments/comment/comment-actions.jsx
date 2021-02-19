@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 import { get, includes, isEqual, isUndefined, noop } from 'lodash';
 
@@ -13,22 +13,22 @@ import { get, includes, isEqual, isUndefined, noop } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import scrollTo from 'lib/scroll-to';
-import { getMinimumComment } from 'my-sites/comments/comment/utils';
+import scrollTo from 'calypso/lib/scroll-to';
+import { getMinimumComment } from 'calypso/my-sites/comments/comment/utils';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 import {
 	changeCommentStatus,
 	deleteComment,
 	likeComment,
 	unlikeComment,
-} from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/comments/selectors';
+} from 'calypso/state/comments/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],

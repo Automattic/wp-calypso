@@ -1,5 +1,4 @@
-Windows Platform
-==========
+# Windows Platform
 
 Provides Windows specific platform features.
 

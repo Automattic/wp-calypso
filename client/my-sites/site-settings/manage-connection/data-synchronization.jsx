@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
  */
 import ApiCache from './api-cache';
 import { CompactCard } from '@automattic/components';
-import JetpackSyncPanel from 'my-sites/site-settings/jetpack-sync-panel';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import getSiteUrl from 'state/selectors/get-site-url';
+import JetpackSyncPanel from 'calypso/my-sites/site-settings/jetpack-sync-panel';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 const DataSynchronization = ( { siteUrl, siteIsJetpack, translate } ) => {
 	if ( ! siteIsJetpack ) {

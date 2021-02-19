@@ -2,6 +2,18 @@
  * External dependencies
  */
 import React, { useCallback, useRef } from 'react';
+import { noop } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 type OptionValue = number | string;
 
@@ -30,7 +42,7 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 		checked,
 		defaultChecked = [] as OptionValue[],
 		disabled = false,
-		onChange = () => {},
+		onChange = noop,
 		name = 'multiCheckbox',
 		options,
 		...otherProps
@@ -61,17 +73,16 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 	return (
 		<div className="multi-checkbox" { ...otherProps }>
 			{ options.map( ( option ) => (
-				<label key={ option.value }>
-					<input
+				<FormLabel key={ option.value }>
+					<FormInputCheckbox
 						name={ name + '[]' }
-						type="checkbox"
 						value={ option.value }
 						checked={ checkedItems.includes( option.value ) }
 						onChange={ handleChange }
 						disabled={ disabled }
 					/>
 					<span>{ option.label }</span>
-				</label>
+				</FormLabel>
 			) ) }
 		</div>
 	);

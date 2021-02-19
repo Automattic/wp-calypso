@@ -18,8 +18,14 @@ class AsyncBaseContainer {
 	}
 
 	async _expectInit() {
+		if ( typeof this._preInit === 'function' ) {
+			await this._preInit();
+		}
 		await this.waitForPage();
 		await this.checkForConsoleErrors();
+		if ( typeof this._postInit === 'function' ) {
+			await this._postInit();
+		}
 	}
 
 	async waitForPage() {

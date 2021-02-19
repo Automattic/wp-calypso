@@ -6,11 +6,11 @@ import { difference } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { STATS_CHART_COUNTS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveChartCounts } from 'state/stats/chart-tabs/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { STATS_CHART_COUNTS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receiveChartCounts } from 'calypso/state/stats/chart-tabs/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import fromApi from './from-api';
 
 export const fetch = ( action ) => {

@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
-import { addQueryArgs } from 'lib/url';
+import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import { addQueryArgs } from 'calypso/lib/url';
 
 /**
  * Creates a URL that refers to the Jetpack 'Contact Support' page,
  * with accompanying useful information about the reason for the
  * support request.
  *
- * @param {string} [siteUrl]	A site URL
- * @param {string} [scanState]	The current state of Jetpack Scan/Backup
+ * @param {string?} [siteUrl]	A site URL
+ * @param {string?} [scanState]	The current state of Jetpack Scan/Backup
  * @returns {string} 			The support request URL
  */
 export default function contactSupportUrl( siteUrl, scanState ) {

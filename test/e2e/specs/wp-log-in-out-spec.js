@@ -108,7 +108,9 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		! dataHelper.isRunningOnLiveBranch()
 	) {
 		describe( 'Can Log in on a 2fa account @secure-auth', function () {
-			let loginFlow, twoFALoginPage, twoFACode;
+			let loginFlow;
+			let twoFALoginPage;
+			let twoFACode;
 
 			before( async function () {
 				return await driverManager.ensureNotLoggedIn( driver );
@@ -158,7 +160,8 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		! dataHelper.isRunningOnLiveBranch()
 	) {
 		describe( 'Can Log in on with 2fa push account @secure-auth', function () {
-			let loginFlow, twoFALoginPage;
+			let loginFlow;
+			let twoFALoginPage;
 
 			before( async function () {
 				await driverManager.ensureNotLoggedIn( driver );
@@ -192,7 +195,8 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 		! dataHelper.isRunningOnLiveBranch()
 	) {
 		describe( 'Can Log in on a 2fa account @secure-auth', function () {
-			let loginFlow, twoFALoginPage;
+			let loginFlow;
+			let twoFALoginPage;
 
 			before( async function () {
 				await driverManager.ensureNotLoggedIn( driver );
@@ -231,7 +235,10 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 			} );
 
 			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function () {
-				let magicLoginLink, loginFlow, magicLinkEmail, emailClient;
+				let magicLoginLink;
+				let loginFlow;
+				let magicLinkEmail;
+				let emailClient;
 				before( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '-2fa' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
@@ -289,7 +296,10 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 			} );
 
 			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function () {
-				let magicLoginLink, loginFlow, magicLinkEmail, emailClient;
+				let magicLoginLink;
+				let loginFlow;
+				let magicLinkEmail;
+				let emailClient;
 				before( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '+2fa-sms' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
@@ -310,7 +320,9 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				} );
 
 				describe( 'Can use the magic link and the code received via sms to log in', function () {
-					let magicLoginPage, twoFALoginPage, twoFACode;
+					let magicLoginPage;
+					let twoFALoginPage;
+					let twoFACode;
 					before( async function () {
 						await driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );
@@ -378,7 +390,10 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 			} );
 
 			describe( 'Can request a magic link email by entering the email of an account which does not have a password defined', function () {
-				let magicLoginLink, loginFlow, magicLinkEmail, emailClient;
+				let magicLoginLink;
+				let loginFlow;
+				let magicLinkEmail;
+				let emailClient;
 				before( async function () {
 					loginFlow = new LoginFlow( driver, [ '+passwordless', '+2fa-sms' ] );
 					emailClient = new EmailClient( get( loginFlow.account, 'mailosaur.inboxId' ) );
@@ -399,7 +414,8 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 				} );
 
 				describe( 'Can use the magic link and the code received via sms to log in', function () {
-					let magicLoginPage, twoFALoginPage;
+					let magicLoginPage;
+					let twoFALoginPage;
 					before( async function () {
 						driver.get( magicLoginLink );
 						magicLoginPage = new MagicLoginPage( driver );

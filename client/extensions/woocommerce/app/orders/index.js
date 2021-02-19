@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -13,8 +13,9 @@ import ActionHeader from 'woocommerce/components/action-header';
 import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import OrdersList from './orders-list';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 function Orders( { className, params, site, translate } ) {
 	let addButton = null;
@@ -32,6 +33,7 @@ function Orders( { className, params, site, translate } ) {
 			<ActionHeader breadcrumbs={ <span>{ translate( 'Orders' ) }</span> }>
 				{ addButton }
 			</ActionHeader>
+			{ <StoreDeprecatedNotice /> }
 			<OrdersList currentStatus={ params && params.filter } />
 		</Main>
 	);

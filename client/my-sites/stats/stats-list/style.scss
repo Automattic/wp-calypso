@@ -123,7 +123,11 @@
 		}
 
 		.module-content-list-item-right::before {
-			background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+			background-image: linear-gradient(
+				to right,
+				rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
+				var( --color-neutral-0 ) 90%
+			);
 		}
 
 		// Display hidden actions
@@ -157,7 +161,11 @@
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient(
+			to right,
+			rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
+			var( --color-neutral-0 ) 90%
+		);
 	}
 
 	// Display hidden actions
@@ -169,13 +177,17 @@
 // Highlight toggle icon if item has a sublist
 
 @include breakpoint-deprecated( '>480px' ) {
-	.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:hover
+	.module-content-list
+		> .module-content-list-item-toggle
+		> .stats-list__module-content-list-item-wrapper:hover
 		.stats-list__module-content-list-item-label::before {
 		color: var( --color-link-dark );
 	}
 }
 
-.module-content-list > .module-content-list-item-toggle > .stats-list__module-content-list-item-wrapper:focus
+.module-content-list
+	> .module-content-list-item-toggle
+	> .stats-list__module-content-list-item-wrapper:focus
 	.stats-list__module-content-list-item-label::before {
 	color: var( --color-link-dark );
 }
@@ -648,12 +660,16 @@ ul.module-content-list-legend {
 		}
 	}
 
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.avatar {
 		font-size: $font-title-large;
 		margin-right: 10px;
 	}
 
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .stats-list__icon {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.stats-list__icon {
 		font-size: $font-title-large;
 		line-height: 32px;
 		width: 32px;
@@ -668,14 +684,17 @@ ul.module-content-list-legend {
 
 	@include breakpoint-deprecated( '>960px' ) {
 		.stats__module-list
-			& > .stats-list__module-content-list-item-wrapper
+			&
+			> .stats-list__module-content-list-item-wrapper
 			.stats-list__module-content-list-item-label
 			.stats-list__icon {
 			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar
 		}
 	}
 
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.avatar {
 		width: 32px;
 		height: 32px;
 		@include breakpoint-deprecated( '>960px' ) {
@@ -686,7 +705,9 @@ ul.module-content-list-legend {
 		}
 	}
 
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .avatar-user {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.avatar-user {
 		border-radius: 16px;
 	}
 }
@@ -709,7 +730,8 @@ ul.module-content-list-legend {
 	// Highlight main action (usually what's indicated in the label)
 
 	@include breakpoint-deprecated( '>480px' ) {
-		.stats-list__module-content-list-item-wrapper:hover .stats-list__module-content-list-item-label {
+		.stats-list__module-content-list-item-wrapper:hover
+			.stats-list__module-content-list-item-label {
 			color: var( --color-link-dark );
 		}
 	}
@@ -726,7 +748,9 @@ ul.module-content-list-legend {
 	position: relative;
 
 	// Toggle icon
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .gridicons-chevron-down {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.gridicons-chevron-down {
 		vertical-align: middle;
 		transition: 0.2s transform ease-out;
 		transform: translate3d( 0, 0, 0 );
@@ -753,11 +777,17 @@ ul.module-content-list-legend {
 	}
 
 	> .stats-list__module-content-list-item-wrapper .module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-0-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient(
+			to right,
+			rgba( var( --color-neutral-0-rgb ), 0 ) 0%,
+			var( --color-neutral-0 ) 90%
+		);
 	}
 
 	// Rotate toggle icon
-	> .stats-list__module-content-list-item-wrapper .stats-list__module-content-list-item-label .gridicons-chevron-down {
+	> .stats-list__module-content-list-item-wrapper
+		.stats-list__module-content-list-item-label
+		.gridicons-chevron-down {
 		transform: rotate( 180deg );
 	}
 
@@ -776,7 +806,11 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
+				background-image: linear-gradient(
+					to right,
+					rgba( var( --color-surface-rgb ), 0 ) 0%,
+					var( --color-surface ) 90%
+				);
 			}
 		}
 	}
@@ -803,7 +837,11 @@ ul.module-content-list-legend {
 	}
 
 	.module-content-list-item-right::before {
-		background-image: linear-gradient( to right, rgba( var( --color-neutral-rgb ), 0 ) 0%, var( --color-neutral-0 ) 90% );
+		background-image: linear-gradient(
+			to right,
+			rgba( var( --color-neutral-rgb ), 0 ) 0%,
+			var( --color-neutral-0 ) 90%
+		);
 	}
 
 	// Hover changes
@@ -817,7 +855,11 @@ ul.module-content-list-legend {
 			}
 
 			span.module-content-list-item-right::before {
-				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
+				background-image: linear-gradient(
+					to right,
+					rgba( var( --color-surface-rgb ), 0 ) 0%,
+					var( --color-surface ) 90%
+				);
 			}
 		}
 	}

@@ -9,17 +9,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import GeneralSettings from './section-general';
-import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
+import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
-import Main from 'components/main';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
+import Main from 'calypso/components/main';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSettingsNavigation from './navigation';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies

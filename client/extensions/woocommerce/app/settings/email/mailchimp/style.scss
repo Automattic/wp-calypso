@@ -29,7 +29,7 @@
 }
 
 .mailchimp__getting-started-title-text {
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	padding-bottom: 4px;
 }
@@ -124,7 +124,7 @@
 }
 
 .setup-steps__login-title {
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	margin-bottom: 8px;
 }
@@ -212,7 +212,7 @@
 
 .mailchimp__dashboard-title {
 	flex-grow: 1;
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 400;
 }
 

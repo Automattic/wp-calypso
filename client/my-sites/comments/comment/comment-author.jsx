@@ -5,23 +5,23 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CommentLink from 'my-sites/comments/comment/comment-link';
-import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
-import Emojify from 'components/emojify';
-import ExternalLink from 'components/external-link';
-import Gravatar from 'components/gravatar';
-import Tooltip from 'components/tooltip';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { decodeEntities } from 'lib/formatting';
-import { urlToDomainAndPath } from 'lib/url';
-import { getSiteComment } from 'state/comments/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
+import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
+import Emojify from 'calypso/components/emojify';
+import ExternalLink from 'calypso/components/external-link';
+import Gravatar from 'calypso/components/gravatar';
+import Tooltip from 'calypso/components/tooltip';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { urlToDomainAndPath } from 'calypso/lib/url';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export class CommentAuthor extends Component {
 	static propTypes = {

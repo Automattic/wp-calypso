@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import StoreConnection from 'components/data/store-connection';
-import CartStore from 'lib/cart/store';
+import StoreConnection from 'calypso/components/data/store-connection';
+import CartStore from 'calypso/lib/cart/store';
 
 const stores = [ CartStore ];
 

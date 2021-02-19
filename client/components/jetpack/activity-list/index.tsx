@@ -8,7 +8,7 @@ import React, { ReactNode } from 'react';
  */
 import { ActivityDescriptionPart, LogData } from './types';
 import LogItem, { Props as LogItemProps } from '../log-item';
-import FormattedBlock from 'components/notes-formatted-block';
+import FormattedBlock from 'calypso/components/notes-formatted-block';
 
 interface Props {
 	logs?: LogData;

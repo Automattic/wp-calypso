@@ -1,12 +1,13 @@
 /**
  * External Dependencies
  */
-const { dialog, ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { dialog, ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const Settings = require( 'desktop/lib/settings' );
+const log = require( 'calypso/desktop/lib/logger' )( 'preferences' );
+const Settings = require( 'calypso/desktop/lib/settings' );
 
 function promptForRestart( title, message ) {
 	// Warn user they need to restart the app
@@ -23,6 +24,7 @@ function promptForRestart( title, message ) {
 
 module.exports = function () {
 	ipc.on( 'preferences-changed', function ( event, { name, value } ) {
+		log.info( `Changed setting '${ name }': `, value ? value : 'none' );
 		if ( 'proxy-type' === name ) {
 			promptForRestart( 'Proxy changed', 'You have changed the proxy settings.' );
 		} else if ( 'spellcheck-enabled' === name ) {

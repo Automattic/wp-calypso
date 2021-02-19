@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 
-import getRawSite from 'state/selectors/get-raw-site';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import { AppState } from 'types';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { AppState } from 'calypso/types';
 
 /**
  * Returns true if the site is private

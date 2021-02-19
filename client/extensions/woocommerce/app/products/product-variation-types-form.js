@@ -5,17 +5,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, debounce, isNumber, indexOf, pull } from 'lodash';
+import { find, debounce, isNumber, indexOf } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import TokenField from 'components/token-field';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import TokenField from 'calypso/components/token-field';
 
 class ProductVariationTypesForm extends Component {
 	state = {
@@ -68,8 +68,7 @@ class ProductVariationTypesForm extends Component {
 	};
 
 	removeAttributeNameError = ( id ) => {
-		const attributeNameErrors = this.state.attributeNameErrors;
-		pull( attributeNameErrors, id );
+		const attributeNameErrors = this.state.attributeNameErrors.filter( ( e ) => e !== id );
 		this.setState( { attributeNameErrors } );
 	};
 

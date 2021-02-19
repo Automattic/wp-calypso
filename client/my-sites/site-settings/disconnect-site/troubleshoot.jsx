@@ -2,22 +2,22 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import HelpButton from 'jetpack-connect/help-button';
-import JetpackConnectHappychatButton from 'jetpack-connect/happychat-button';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import { addQueryArgs } from 'lib/route';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import getSiteUrl from 'state/selectors/get-site-url';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import HelpButton from 'calypso/jetpack-connect/help-button';
+import JetpackConnectHappychatButton from 'calypso/jetpack-connect/happychat-button';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import { addQueryArgs } from 'calypso/lib/route';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, translate } ) => (
 	<LoggedOutFormLinks>

@@ -9,7 +9,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { intervals } from './constants';
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 /**
  * Style dependencies

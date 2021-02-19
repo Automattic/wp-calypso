@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import coupons from './coupons/reducer';
 import customers from './customers/reducer';
 import data from './data/reducer';

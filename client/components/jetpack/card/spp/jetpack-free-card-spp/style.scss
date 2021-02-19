@@ -1,0 +1,44 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.jetpack-free-card-spp {
+	padding: 24px 32px;
+	margin-block-end: 16px;
+
+	@include break-small {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.jetpack-free-card-spp__title {
+	color: var( --studio-gray-100 );
+
+	font-size: 1.875rem;
+	font-weight: 700;
+	margin: 12px 0 20px;
+}
+
+.jetpack-free-card-spp__subheadline {
+	color: var( --studio-gray-60 );
+	min-height: 48px;
+	margin-bottom: 32px;
+}
+
+.jetpack-free-card-spp__button.button {
+	display: block;
+
+	width: 100%;
+	margin: 24px 0;
+
+	color: var( --color-accent );
+	border: solid 2px currentColor;
+	border-radius: 4px;
+
+	font-size: 1rem;
+	font-weight: 700;
+
+	@include break-small {
+		margin-bottom: 0;
+	}
+}

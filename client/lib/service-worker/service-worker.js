@@ -29,13 +29,11 @@ self.addEventListener( 'activate', function ( event ) {
 } );
 
 self.addEventListener( 'push', function ( event ) {
-	let notification;
-
 	if ( typeof event.data !== 'object' && typeof event.data.json !== 'function' ) {
 		return;
 	}
 
-	notification = event.data.json();
+	const notification = event.data.json();
 
 	event.waitUntil(
 		self.registration

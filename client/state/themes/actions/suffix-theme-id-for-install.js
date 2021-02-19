@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isDownloadableFromWpcom } from 'state/themes/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isDownloadableFromWpcom } from 'calypso/state/themes/selectors';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Install of any theme hosted as a zip on wpcom must

@@ -1,5 +1,4 @@
-client/my-sites/stats/post-trends/style.scss
-.post-trends {
+client/my-sites/stats/post-trends/style.scss .post-trends {
 	display: inline-block;
 	user-select: none;
 	position: relative;
@@ -27,8 +26,8 @@ client/my-sites/stats/post-trends/style.scss
 
 .post-trends__year {
 	position: relative;
-		top: 0;
-		left: 0;
+	top: 0;
+	left: 0;
 	display: block;
 	white-space: nowrap;
 	transition: left, 1s, ease-in-out;
@@ -45,10 +44,15 @@ client/my-sites/stats/post-trends/style.scss
 .post-trends__scroll-left,
 .post-trends__scroll-right {
 	position: absolute;
-		top: 0;
+	top: 0;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient( to right, var( --color-surface ), rgba( var( --color-surface-rgb ), 0.92 ), rgba( var( --color-surface-rgb ), 0 ) );
+	background: linear-gradient(
+		to right,
+		var( --color-surface ),
+		rgba( var( --color-surface-rgb ), 0.92 ),
+		rgba( var( --color-surface-rgb ), 0 )
+	);
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
@@ -86,7 +90,12 @@ client/my-sites/stats/post-trends/style.scss
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient( to left, var( --color-surface ), rgba( var( --color-surface-rgb ), 0.92 ), rgba( var( --color-surface-rgb ), 0 ) );
+	background: linear-gradient(
+		to left,
+		var( --color-surface ),
+		rgba( var( --color-surface-rgb ), 0.92 ),
+		rgba( var( --color-surface-rgb ), 0 )
+	);
 	text-align: right;
 }
 
@@ -175,7 +184,6 @@ client/my-sites/stats/post-trends/style.scss
 }
 
 @include breakpoint-deprecated( '>1040px' ) {
-
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
 		display: none;

@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
-
-import { html as toHtml } from '../indices-to-html';
 import { pickBy, get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { html as toHtml } from '../indices-to-html';
 
 /**
  * Adds markup to some common text patterns
@@ -25,7 +31,29 @@ import { pickBy, get } from 'lodash';
  */
 const toBlocks = ( text ) =>
 	text.split( '\n' ).reduce(
-		( { out, inFence, inList }, raw ) => {
+		( { out, inFence, inList }, raw, index, src ) => {
+			if ( ! raw ) {
+				if ( ! src[ index + 1 ] ) {
+					return { out, inFence, inList };
+				}
+				return {
+					out: out + '<br />',
+					inFence,
+					inList,
+				};
+			}
+
+			// Blockquote and list start/end tags do not need to be wrapped in div/p
+			const skipRegex = /(blockquote|ol|ul|li|div)(.*)>/i;
+			const shouldSkipWrap = skipRegex.test( raw );
+			if ( shouldSkipWrap ) {
+				return {
+					out: out + raw,
+					inFence,
+					inList,
+				};
+			}
+
 			// detect code fences
 			// ```js
 			// doFoo()
@@ -138,6 +166,7 @@ export function internalP( html ) {
 		return (
 			<div
 				key={ key }
+				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={ {
 					__html: blocks,
 				} }
@@ -150,22 +179,18 @@ export function p( html, className ) {
 	if ( undefined === className ) {
 		className = 'wpnc__paragraph';
 	}
-	return html.split( '\n\n' ).map( ( chunk, i ) => {
-		const key = `block-text-${ i }-${ chunk.length }-${ chunk.slice( 0, 3 ) }-${ chunk.slice(
-			-3
-		) }`;
-		const blocks = toBlocks( chunk );
+	const blocks = toBlocks( html );
 
-		return (
-			<div
-				className={ className }
-				key={ key }
-				dangerouslySetInnerHTML={ {
-					__html: blocks,
-				} }
-			/>
-		);
-	} );
+	const result = (
+		<div
+			className={ className }
+			// eslint-disable-next-line react/no-danger
+			dangerouslySetInnerHTML={ {
+				__html: blocks,
+			} }
+		/>
+	);
+	return result;
 }
 
 export const pSoup = ( items ) => items.map( toHtml ).map( internalP );
@@ -176,8 +201,8 @@ export function getSignature( blocks, note ) {
 	}
 
 	return blocks.map( function ( block ) {
-		var type = 'text';
-		var id = null;
+		let type = 'text';
+		let id = null;
 
 		if ( 'undefined' !== typeof block.type ) {
 			type = block.type;
@@ -187,7 +212,7 @@ export function getSignature( blocks, note ) {
 			if (
 				block.ranges &&
 				block.ranges.length > 1 &&
-				block.ranges[ 1 ].id == note.meta.ids.reply_comment
+				block.ranges[ 1 ].id === note.meta.ids.reply_comment
 			) {
 				type = 'reply';
 				id = block.ranges[ 1 ].id;
@@ -218,16 +243,16 @@ export function getSignature( blocks, note ) {
 }
 
 export function formatString() {
-	var args = [].slice.apply( arguments );
-	var str = args.shift();
+	const args = [].slice.apply( arguments );
+	const str = args.shift();
 
 	return str.replace( /{(\d+)}/g, function ( match, number ) {
-		return typeof args[ number ] != 'undefined' ? args[ number ] : match;
+		return typeof args[ number ] !== 'undefined' ? args[ number ] : match;
 	} );
 }
 
 export function zipWithSignature( blocks, note ) {
-	var signature = getSignature( blocks, note );
+	const signature = getSignature( blocks, note );
 
 	return blocks.map( function ( block, i ) {
 		return {
@@ -237,7 +262,7 @@ export function zipWithSignature( blocks, note ) {
 	} );
 }
 
-export const validURL = /^(?:http(?:s?)\:\/\/|~\/|\/)?(?:\w+:\w+@)?((?:(?:[-\w\d{1-3}]+\.)+(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|edu|co\.uk|ac\.uk|it|fr|tv|museum|asia|local|travel|blog|[a-z]{2}))|((\b25[0-5]\b|\b[2][0-4][0-9]\b|\b[0-1]?[0-9]?[0-9]\b)(\.(\b25[0-5]\b|\b[2][0-4][0-9]\b|\b[0-1]?[0-9]?[0-9]\b)){3}))(?::[\d]{1,5})?(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?:#(?:[-\w~!$ |\/.,*:;=]|%[a-f\d]{2})*)?$/i;
+export const validURL = /^(?:http(?:s?):\/\/|~\/|\/)?(?:\w+:\w+@)?((?:(?:[-\w\d{1-3}]+\.)+(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|edu|co\.uk|ac\.uk|it|fr|tv|museum|asia|local|travel|blog|[a-z]{2}))|((\b25[0-5]\b|\b[2][0-4][0-9]\b|\b[0-1]?[0-9]?[0-9]\b)(\.(\b25[0-5]\b|\b[2][0-4][0-9]\b|\b[0-1]?[0-9]?[0-9]\b)){3}))(?::[\d]{1,5})?(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?:#(?:[-\w~!$ |/.,*:;=]|%[a-f\d]{2})*)?$/i;
 
 export const linkProps = ( note, block ) => {
 	const { site: noteSite, comment, post } = get( note, 'meta.ids', {} );

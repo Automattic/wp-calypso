@@ -13,8 +13,8 @@ import { trim, uniqueId } from 'lodash';
  */
 import { Button, Dialog } from '@automattic/components';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -121,7 +121,6 @@ class OrderFeeDialog extends Component {
 				<FormTextInput
 					id="new_fee_name"
 					name="new_fee_name"
-					type="text"
 					value={ this.state.name }
 					onChange={ this.handleChange }
 				/>

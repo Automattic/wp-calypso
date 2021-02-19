@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Rating from 'components/rating';
+import Rating from 'calypso/components/rating';
 
 describe( '<Rating />', () => {
 	describe( 'check props size', () => {
@@ -21,17 +21,17 @@ describe( '<Rating />', () => {
 		} );
 
 		test( 'should use size if passed', () => {
-			const size = 48,
-				wrapper = shallow( <Rating size={ size } /> );
+			const size = 48;
+			const wrapper = shallow( <Rating size={ size } /> );
 
 			const component = wrapper.find( 'div.rating' );
 			expect( component.props().style.width ).to.equal( size * 5 + 'px' );
 		} );
 
 		test( 'should use size in each star', () => {
-			const rating = 30,
-				size = 48,
-				wrapper = shallow( <Rating rating={ rating } size={ size } /> );
+			const rating = 30;
+			const size = 48;
+			const wrapper = shallow( <Rating rating={ rating } size={ size } /> );
 
 			wrapper.find( 'svg' ).forEach( ( node ) => {
 				expect( node.props().style.width ).to.equal( size + 'px' );
@@ -41,8 +41,8 @@ describe( '<Rating />', () => {
 
 	describe( 'check props rating', () => {
 		test( 'should render full width mask for no rating', () => {
-			const size = 24, // use default size
-				wrapper = shallow( <Rating size={ size } /> );
+			const size = 24; // use default size
+			const wrapper = shallow( <Rating size={ size } /> );
 
 			const component = wrapper.find( 'div.rating__overlay' );
 			expect( component.props().style.clipPath ).to.equal( 'inset(0 ' + size * 5 + 'px 0 0 )' );

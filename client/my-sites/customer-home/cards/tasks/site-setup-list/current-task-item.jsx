@@ -7,18 +7,19 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
-import Gridicon from 'components/gridicon';
+import Badge from 'calypso/components/badge';
+import Gridicon from 'calypso/components/gridicon';
 
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
 	return (
 		<div className="site-setup-list__task task">
 			<div className="site-setup-list__task-text task__text">
-				{ currentTask.isCompleted ? (
+				{ currentTask.isCompleted && ! currentTask.hideLabel && (
 					<Badge type="info" className="site-setup-list__task-badge task__badge">
 						{ translate( 'Complete' ) }
 					</Badge>
-				) : (
+				) }
+				{ currentTask.timing && ! currentTask.isCompleted && (
 					<div className="site-setup-list__task-timing task__timing">
 						<Gridicon icon="time" size={ 18 } />
 						{ translate( '%d minute', '%d minutes', {

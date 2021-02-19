@@ -1,5 +1,4 @@
-Preferences
-=========
+# Preferences
 
 Monitors for preference IPC messages and updates the settings file.
 

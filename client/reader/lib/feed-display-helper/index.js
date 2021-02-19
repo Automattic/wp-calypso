@@ -1,16 +1,21 @@
 /**
  * Internal dependencies
  */
-import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'reader/route';
-import { withoutHttp } from 'lib/url';
+import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'calypso/reader/route';
 
 const exported = {
+	/**
+	 * Remove the starting https, www. and trailing slash from a URL string
+	 *
+	 * @param {string} url URL to format
+	 * @returns {string} Formatted URL e.g. "https://www.wordpress.com/" --> "wordpress.com"
+	 */
 	formatUrlForDisplay: function ( url ) {
 		if ( ! url ) {
 			return;
 		}
 
-		return withoutHttp( url ).replace( /\/$/, '' );
+		return url.replace( /^https?:\/\/(www\.)?/, '' ).replace( /\/$/, '' );
 	},
 
 	// Use either the site name, feed name or display URL for the feed name

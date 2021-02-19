@@ -8,11 +8,11 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import NavTabs from 'components/section-nav/tabs';
-import NavSegmented from 'components/section-nav/segmented';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavSegmented from 'calypso/components/section-nav/segmented';
+import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
 
 /**
  * Main
@@ -72,7 +72,7 @@ class SectionNavigation extends PureComponent {
 	};
 
 	render() {
-		var demoSections = {};
+		const demoSections = {};
 
 		forEach(
 			omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ),
@@ -136,15 +136,15 @@ class SectionNavigation extends PureComponent {
 	}
 
 	getSelectedText = ( section ) => {
-		var selected = this.state[ section + 'SelectedIndex' ],
-			text = this.props[ section ][ selected ];
+		const selected = this.state[ section + 'SelectedIndex' ];
+		const text = this.props[ section ][ selected ];
 
 		return 'object' === typeof text ? text.name : text;
 	};
 
 	getSelectedCount = ( section ) => {
-		var selected = this.state[ section + 'SelectedIndex' ],
-			selectedItem = this.props[ section ][ selected ];
+		const selected = this.state[ section + 'SelectedIndex' ];
+		const selectedItem = this.props[ section ][ selected ];
 
 		return 'object' === typeof selectedItem ? selectedItem.count || null : null;
 	};
@@ -160,7 +160,7 @@ class SectionNavigation extends PureComponent {
 
 	handleNavItemClick = ( section, index ) => {
 		return function () {
-			var stateUpdate = {};
+			const stateUpdate = {};
 
 			stateUpdate[ section + 'SelectedIndex' ] = index;
 			this.setState( stateUpdate );

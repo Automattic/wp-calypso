@@ -5,10 +5,12 @@
 			"type": "array",
 			"items": {
 				"type": "integer"
-			}
+			},
+			"optional": true
 		},
 		"appointment_timespan": {
-			"type": "number"
+			"type": "number",
+			"optional": true
 		},
 		"next_appointment": {
 			"type": [ "object", "null" ],
@@ -29,9 +31,6 @@
 		},
 		"schedule_id": {
 			"type": "number"
-		},
-		"has_available_concierge_sessions": {
-			"type": "boolean"
 		}
 	}
 }

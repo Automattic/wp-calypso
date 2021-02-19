@@ -12,14 +12,14 @@ import { isUndefined } from 'lodash';
  */
 import ActivityLogBanner from './index';
 import { Button } from '@automattic/components';
-import HappychatButton from 'components/happychat/button';
-import Gridicon from 'components/gridicon';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import HappychatButton from 'calypso/components/happychat/button';
+import Gridicon from 'calypso/components/gridicon';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	dismissRewindBackupProgress,
 	dismissRewindRestoreProgress as dismissRewindRestoreProgressAction,
-} from 'state/activity-log/actions';
+} from 'calypso/state/activity-log/actions';
 
 class ErrorBanner extends PureComponent {
 	static propTypes = {

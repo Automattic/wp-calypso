@@ -1,22 +1,22 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * site.postType
  */
 describe( 'wpcom.site.postType', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var postType = site.postType( 'post' );
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	const postType = site.postType( 'post' );
 
 	describe( 'wpcom.site.postType.taxonomiesList', function () {
 		it( 'should return a list of taxonomies', function () {
 			return postType.taxonomiesList().then( function ( data ) {
-				var taxonomy = data.taxonomies[ 0 ];
+				const taxonomy = data.taxonomies[ 0 ];
 				assert.ok( data );
 				assert.equal( 'number', typeof data.found );
 				assert.ok( data.taxonomies.length >= 1 );

@@ -12,7 +12,7 @@ import { assign, isArray, isEmpty } from 'lodash';
  */
 import { first, when, forEach } from './functional';
 import autoscroll from './autoscroll';
-import Emojify from 'components/emojify';
+import Emojify from 'calypso/components/emojify';
 import scrollbleed from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 

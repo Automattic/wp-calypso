@@ -27,25 +27,25 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
-jest.mock( 'lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'components/main', () => 'Main' );
-jest.mock( 'components/section-header', () => 'SectionHeader' );
-jest.mock( 'me/sidebar-navigation', () => 'MeSidebarNavigation' );
-jest.mock( 'state/current-user/selectors', () => ( {
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/user', () => () => {} );
+jest.mock( 'calypso/components/main', () => 'Main' );
+jest.mock( 'calypso/components/section-header', () => 'SectionHeader' );
+jest.mock( 'calypso/me/sidebar-navigation', () => 'MeSidebarNavigation' );
+jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserId: jest.fn( () => 12 ),
 	isCurrentUserEmailVerified: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'state/purchases/selectors', () => ( {
+jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getUserPurchases: jest.fn(),
 	isFetchingUserPurchases: jest.fn( () => false ),
 	hasLoadedUserPurchasesFromServer: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'state/help/courses/selectors', () => ( {
+jest.mock( 'calypso/state/help/courses/selectors', () => ( {
 	getHelpCourses: jest.fn( () => [] ),
 } ) );
 
@@ -62,7 +62,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	numberFormat: ( x ) => x,
 } ) );
 
-import purchasesSelectors from 'state/purchases/selectors';
+import purchasesSelectors from 'calypso/state/purchases/selectors';
 
 describe( 'mapStateToProps should return correct value for isBusinessPlanUser', () => {
 	[

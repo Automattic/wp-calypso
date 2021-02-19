@@ -6,12 +6,12 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveSiteChecklist } from 'state/checklist/actions';
+import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receiveSiteChecklist } from 'calypso/state/checklist/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const CHECKLIST_KNOWN_TASKS = {
 	START_SITE_SETUP: 'start_site_setup',
@@ -22,6 +22,7 @@ export const CHECKLIST_KNOWN_TASKS = {
 	SITE_LAUNCHED: 'site_launched',
 	FRONT_PAGE_UPDATED: 'front_page_updated',
 	SITE_MENU_UPDATED: 'site_menu_updated',
+	SITE_THEME_SELECTED: 'site_theme_selected',
 	JETPACK_BACKUPS: 'jetpack_backups',
 	JETPACK_MONITOR: 'jetpack_monitor',
 	JETPACK_PLUGIN_UPDATES: 'jetpack_plugin_updates',

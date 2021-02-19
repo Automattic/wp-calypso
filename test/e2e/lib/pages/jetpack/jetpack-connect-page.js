@@ -11,7 +11,7 @@ import AsyncBaseContainer from '../../async-base-container';
 
 export default class JetpackConnectPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
-		super( driver, By.css( '.jetpack-connect__main' ), url );
+		super( driver, By.css( '.is-section-jetpack-connect' ), url );
 	}
 
 	async addSiteUrl( url ) {

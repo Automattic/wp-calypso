@@ -7,14 +7,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { REWIND_ACTIVATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
-import { rewindActivateFailure, rewindActivateSuccess } from 'state/activity-log/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
+import { REWIND_ACTIVATE_REQUEST, REWIND_STATE_UPDATE } from 'calypso/state/action-types';
+import { rewindActivateFailure, rewindActivateSuccess } from 'calypso/state/activity-log/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const activateRewind = ( action ) =>
 	http(

@@ -8,17 +8,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import InlineSupportLink from 'components/inline-support-link';
-import Gridicon from 'components/gridicon';
-import MaterialIcon from 'components/material-icon';
+import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Gridicon from 'calypso/components/gridicon';
+import MaterialIcon from 'calypso/components/material-icon';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { navigate } from 'state/ui/actions';
+} from 'calypso/state/analytics/actions';
+import { navigate } from 'calypso/state/ui/actions';
 
 /**
  * Style dependencies

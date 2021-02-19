@@ -15,7 +15,7 @@ import * as selectors from './selectors';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export * from './types';
-export { State };
+export type { State };
 
 let isRegistered = false;
 export function register(): typeof STORE_KEY {

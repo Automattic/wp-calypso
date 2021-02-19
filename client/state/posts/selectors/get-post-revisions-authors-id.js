@@ -6,9 +6,9 @@ import { get, map, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 export const getPostRevisionsAuthorsId = createSelector(
 	( state, siteId, postId ) =>

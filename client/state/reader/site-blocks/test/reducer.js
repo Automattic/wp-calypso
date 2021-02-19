@@ -13,7 +13,7 @@ import {
 	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_UNBLOCK,
 	READER_SITE_REQUEST_SUCCESS,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

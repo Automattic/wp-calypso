@@ -14,11 +14,11 @@ import {
 	upsellNudge,
 	redirectToSupportSession,
 } from './controller';
-import SiftScience from 'lib/siftscience';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
-import { noSite, siteSelection } from 'my-sites/controller';
-import config from 'config';
-import userFactory from 'lib/user';
+import SiftScience from 'calypso/lib/siftscience';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import { noSite, siteSelection } from 'calypso/my-sites/controller';
+import config from '@automattic/calypso-config';
+import userFactory from 'calypso/lib/user';
 
 export default function () {
 	SiftScience.recordUser();
@@ -132,6 +132,14 @@ export default function () {
 		);
 	}
 
+	page(
+		'/checkout/:site/offer-difm/:receiptId?',
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
 	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
 
 	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
@@ -156,7 +164,7 @@ export default function () {
 	);
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
-	page( '/checkout', '/plans' );
+	page( '/checkout', config.isEnabled( 'jetpack-cloud/connect' ) ? '/plans' : '/pricing' );
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',

@@ -1,33 +1,33 @@
 /**
  * External Dependencies
  */
-const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const platform = require( 'desktop/lib/platform' );
-const Config = require( 'desktop/lib/config' );
-const settings = require( 'desktop/lib/settings' );
+const platform = require( 'calypso/desktop/lib/platform' );
+const Config = require( 'calypso/desktop/lib/config' );
+const settings = require( 'calypso/desktop/lib/settings' );
 const AutoUpdater = require( './auto-updater' );
 const ManualUpdater = require( './manual-updater' );
-const log = require( 'desktop/lib/logger' )( 'desktop:updater' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:updater' );
 
 let updater = false;
 
-module.exports = function () {
+function init() {
 	log.info( 'Updater config: ', Config.updater );
 	if ( Config.updater ) {
 		app.on( 'will-finish-launching', function () {
 			const beta = settings.getSetting( 'release-channel' ) === 'beta';
 			log.info( `Update channel: '${ settings.getSetting( 'release-channel' ) }'` );
 			if ( platform.isOSX() || platform.isWindows() || process.env.APPIMAGE ) {
-				log.info( 'Auto Update' );
+				log.info( 'Initializing auto updater...' );
 				updater = new AutoUpdater( {
 					beta,
 				} );
 			} else {
-				log.info( 'Manual Update' );
+				log.info( 'Initializing manual updater...' );
 				updater = new ManualUpdater( {
 					downloadUrl: Config.updater.downloadUrl,
 					apiUrl: Config.updater.apiUrl,
@@ -47,4 +47,13 @@ module.exports = function () {
 	} else {
 		log.info( 'Skipping Update – no configuration' );
 	}
-};
+}
+
+function getUpdater() {
+	return updater;
+}
+
+// !! Syntax: assignment via intermediary module const is
+// necessary to support both unnamed (default) and named exports !!
+const main = ( module.exports = init );
+main.getUpdater = getUpdater;

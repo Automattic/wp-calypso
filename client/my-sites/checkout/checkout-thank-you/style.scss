@@ -28,7 +28,7 @@
 
 	&:first-child {
 		border-bottom: none;
-		border-radius: 3px 3px 0 0;
+		border-radius: 2px 2px 0 0;
 		margin-top: 16px;
 
 		.purchase-detail__required-notice {
@@ -38,7 +38,7 @@
 
 	&:last-child {
 		border-bottom: 1px solid var( --color-neutral-0 );
-		border-radius: 0 0 3px 3px;
+		border-radius: 0 0 2px 2px;
 	}
 }
 
@@ -176,9 +176,10 @@
 
 .checkout-thank-you__header-text,
 .checkout-thank-you__success-message-item {
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 400;
 	margin-top: 15px;
+	word-break: break-word;
 }
 
 .checkout-thank-you__header.is-placeholder {
@@ -322,7 +323,8 @@
 			.thank-you-card {
 				color: var( --color-text );
 				background-color: var( --color-surface );
-				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+					0 1px 2px var( --color-neutral-0 );
 			}
 		}
 	}

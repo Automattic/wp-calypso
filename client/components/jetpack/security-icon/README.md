@@ -4,12 +4,12 @@ This is a component that is used for security icons to indicate state in Jetpack
 
 ## Usage
 
-```es6
-import SecurityIcon from 'components/jetpack/security-icon';
+```jsx
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 
 const SecurityIconExample = () => (
 	<div>
-		<SecurityIcon icon="okay">
+		<SecurityIcon icon="okay" />
 		<h1>Your site looks great!</h1>
 	</div>
 );

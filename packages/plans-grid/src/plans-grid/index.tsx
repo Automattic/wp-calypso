@@ -2,62 +2,150 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import type { Plans, DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, WPCOMFeatures, Plans } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import PlansTable from '../plans-table';
+import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
+import type {
+	CTAVariation,
+	CustomTagLinesMap,
+	DisabledPlansMap,
+	PopularBadgeVariation,
+} from '../plans-table/types';
+import PlansIntervalToggle from '../plans-interval-toggle';
+import { useSupportedPlans } from '../hooks';
+import { PLANS_STORE } from '../stores';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-type PlansSlug = Plans.PlanSlug;
+
+type FeatureId = WPCOMFeatures.FeatureId;
+
+const debug = debugFactory( 'plans-grid' );
 
 export interface Props {
 	header?: React.ReactElement;
-	currentPlan?: Plans.Plan;
-	onPlanSelect: ( plan: PlansSlug ) => void;
+	selectedFeatures?: FeatureId[];
+	currentPlanProductId: number | undefined;
+	onPlanSelect: ( planProductId: number | undefined ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
+	disabledPlans?: DisabledPlansMap;
+	isAccordion?: boolean;
+	locale: string;
+	showPlanTaglines?: boolean;
+	CTAVariation?: CTAVariation;
+	popularBadgeVariation?: PopularBadgeVariation;
+	customTagLines?: CustomTagLinesMap;
+	hidePlansComparison?: boolean;
+	defaultAllPlansExpanded?: boolean;
+	onBillingPeriodChange?: ( billingPeriod: Plans.PlanBillingPeriod ) => void;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
 	header,
-	currentPlan,
+	selectedFeatures,
+	currentPlanProductId,
 	currentDomain,
 	onPlanSelect,
 	onPickDomainClick,
+	disabledPlans,
+	isAccordion,
+	locale,
+	showPlanTaglines = false,
+	CTAVariation = 'NORMAL',
+	popularBadgeVariation = 'ON_TOP',
+	customTagLines,
+	hidePlansComparison = false,
+	defaultAllPlansExpanded = false,
+	onBillingPeriodChange,
 } ) => {
 	const { __ } = useI18n();
+
+	const selectedPlanBillingPeriod = useSelect(
+		( select ) => select( PLANS_STORE ).getPlanProductById( currentPlanProductId )?.billingPeriod
+	);
+
+	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >(
+		selectedPlanBillingPeriod || 'ANNUALLY'
+	);
+
+	React.useEffect( () => {
+		if ( onBillingPeriodChange ) {
+			onBillingPeriodChange( billingPeriod );
+		}
+	}, [ billingPeriod, onBillingPeriodChange ] );
+
+	const { maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
+
+	isAccordion && debug( 'PlansGrid accordion version is active' );
 
 	return (
 		<div className="plans-grid">
 			{ header && <div className="plans-grid__header">{ header }</div> }
 
+			<PlansIntervalToggle
+				intervalType={ billingPeriod }
+				onChange={ setBillingPeriod }
+				maxMonthlyDiscountPercentage={ maxAnnualDiscount }
+				className="plans-grid__toggle"
+			/>
+
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
-					<PlansTable
-						selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
-						onPlanSelect={ onPlanSelect }
-						currentDomain={ currentDomain }
-						onPickDomainClick={ onPickDomainClick }
-					></PlansTable>
+					{ isAccordion ? (
+						<PlansAccordion
+							selectedFeatures={ selectedFeatures }
+							selectedPlanProductId={ currentPlanProductId }
+							onPlanSelect={ onPlanSelect }
+							currentDomain={ currentDomain }
+							onPickDomainClick={ onPickDomainClick }
+							disabledPlans={ disabledPlans }
+							locale={ locale }
+							billingPeriod={ billingPeriod }
+						></PlansAccordion>
+					) : (
+						<PlansTable
+							popularBadgeVariation={ popularBadgeVariation }
+							CTAVariation={ CTAVariation }
+							selectedPlanProductId={ currentPlanProductId }
+							onPlanSelect={ onPlanSelect }
+							customTagLines={ customTagLines }
+							currentDomain={ currentDomain }
+							onPickDomainClick={ onPickDomainClick }
+							disabledPlans={ disabledPlans }
+							locale={ locale }
+							showTaglines={ showPlanTaglines }
+							defaultAllPlansExpanded={ defaultAllPlansExpanded }
+							billingPeriod={ billingPeriod }
+						></PlansTable>
+					) }
 				</div>
 			</div>
-
-			<div className="plans-grid__details">
-				<div className="plans-grid__details-heading">
-					<Title>{ __( 'Detailed comparison' ) }</Title>
+			{ ! hidePlansComparison && (
+				<div className="plans-grid__details">
+					<div className="plans-grid__details-heading">
+						<Title tagName="h2">{ __( 'Detailed comparison', __i18n_text_domain__ ) }</Title>
+					</div>
+					<div className="plans-grid__details-container">
+						<PlansDetails
+							onSelect={ onPlanSelect }
+							locale={ locale }
+							billingPeriod={ billingPeriod }
+						/>
+					</div>
 				</div>
-				<div className="plans-grid__details-container">
-					<PlansDetails onSelect={ onPlanSelect } />
-				</div>
-			</div>
+			) }
 		</div>
 	);
 };

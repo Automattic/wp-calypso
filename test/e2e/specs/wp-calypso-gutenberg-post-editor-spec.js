@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -281,22 +282,53 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can see the Earn blocks', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
-				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Earn' ),
-					true,
-					'Earn (Jetpack) blocks are not present'
+				const shownItems = await gEditorComponent.getShownBlockInserterItems();
+
+				[
+					'Donations',
+					'OpenTable',
+					'Payments',
+					'Pay with PayPal',
+					'Pricing Table',
+				].forEach( ( block ) =>
+					assert.ok(
+						shownItems.includes( block ),
+						`Block inserter doesn't show the ${ block } block`
+					)
 				);
+
 				await gEditorComponent.closeBlockInserter();
 			} );
 
 			step( 'Can see the Grow blocks', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
-				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
-					true,
-					'Grow (Jetpack) blocks are not present'
+				const shownItems = await gEditorComponent.getShownBlockInserterItems();
+
+				[
+					'Business Hours',
+					'Calendly',
+					'Form',
+					'Contact Info',
+					'Mailchimp',
+					'Revue',
+					'Subscription Form',
+					'Premium Content',
+					'Click to Tweet',
+					'Logos',
+					'Contact Form',
+					'RSVP Form',
+					'Registration Form',
+					'Appointment Form',
+					'Feedback Form',
+					'WhatsApp Button',
+				].forEach( ( block ) =>
+					assert.ok(
+						shownItems.includes( block ),
+						`Block inserter doesn't show the ${ block } block`
+					)
 				);
+
 				await gEditorComponent.closeBlockInserter();
 			} );
 
@@ -317,7 +349,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Check Activity Log for Public Post @parallel', function () {
+	describe.skip( 'Check Activity Log for Public Post @parallel', function () {
 		const blogPostTitle = dataHelper.randomPhrase();
 		const blogPostQuote =
 			'“We are what we pretend to be, so we must be careful about what we pretend to be”\n- Kurt Vonnegut';
@@ -923,6 +955,32 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					);
 				} );
 
+				step( 'Can see the Line Height setting for the paragraph', async function () {
+					const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
+					// Give focus to the first paragraph block found
+					await driverHelper.clickWhenClickable(
+						driver,
+						By.css( 'p.block-editor-rich-text__editable:first-of-type' )
+					);
+
+					await gSidebarComponent.displayComponentIfNecessary();
+					await gSidebarComponent.chooseBlockSettings();
+
+					const lineHeighSettingPresent = await driverHelper.isElementPresent(
+						driver,
+						By.css( '.block-editor-line-height-control' )
+					);
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
+					assert.ok( lineHeighSettingPresent, 'Line height setting not found' );
+				} );
+
 				step(
 					'Can set the new title and update it, and link to the updated post',
 					async function () {
@@ -1166,7 +1224,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( 'Embeds: ' + blogPostTitle );
 
-			this.instagramEditorSelector = '.wp-block-embed-instagram';
+			this.instagramEditorSelector =
+				'.wp-block-embed iframe[title="Embedded content from instagram.com"]';
 			const blockIdInstagram = await gEditorComponent.addBlock( 'Instagram' );
 			const gEmbedsComponentInstagram = await EmbedsBlockComponent.Expect(
 				driver,
@@ -1175,7 +1234,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			await gEmbedsComponentInstagram.embedUrl( 'https://www.instagram.com/p/BlDOZMil933/' );
 			await gEmbedsComponentInstagram.isEmbeddedInEditor( this.instagramEditorSelector );
 
-			this.twitterEditorSelector = '.wp-block-embed-twitter';
+			this.twitterEditorSelector = '.wp-block-embed iframe[title="Embedded content from twitter"]';
 			const blockIdTwitter = await gEditorComponent.addBlock( 'Twitter' );
 			const gEmbedsComponentTwitter = await EmbedsBlockComponent.Expect( driver, blockIdTwitter );
 			await gEmbedsComponentTwitter.embedUrl(
@@ -1183,7 +1242,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			);
 			await gEmbedsComponentTwitter.isEmbeddedInEditor( this.twitterEditorSelector );
 
-			this.youtubeEditorSelector = '.wp-block-embed-youtube';
+			this.youtubeEditorSelector =
+				'.wp-block-embed iframe[title="Embedded content from youtube.com"]';
 			const blockIdYouTube = await gEditorComponent.addBlock( 'YouTube' );
 			const gEmbedsComponentYouTube = await EmbedsBlockComponent.Expect( driver, blockIdYouTube );
 			await gEmbedsComponentYouTube.embedUrl( 'https://www.youtube.com/watch?v=xifhQyopjZM' );

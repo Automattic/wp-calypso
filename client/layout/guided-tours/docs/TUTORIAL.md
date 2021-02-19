@@ -50,25 +50,25 @@ We only want our tour to show for users who have registered in the past 7 days. 
 
 Now we're ready to actually start writing our tour.
 
+<!--eslint ignore no-heading-punctuation-->
+
 ### Scaffolding, etc.
 
 First we'll need to create a directory tour, under `tours`. In there, we create two files: `meta.js` and `index.js`.
 `meta.js` contains the metadata for a tour. Here's an empty boilerplate:
 
-```JavaScript
+```javascript
 /**
  * Internal dependencies
  */
-import { and } from 'layout/guided-tours/utils';
+import { and } from 'calypso/layout/guided-tours/utils';
 
-export default {
-};
+export default {};
 ```
 
 For `index.js`, this is the essential boilerplate, which comprises the imports and the `makeTour` wrapping:
 
-
-```JavaScript
+```javascript
 /**
  * External dependencies
  */
@@ -85,15 +85,14 @@ import {
 	ButtonRow,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 import {
 	isNewUser,
 	isEnabled,
 	isSelectedSitePreviewable,
-} from 'state/guided-tours/contexts';
+} from 'calypso/state/guided-tours/contexts';
 
-export const TutorialSitePreviewTour = makeTour(
-);
+export const TutorialSitePreviewTour = makeTour();
 ```
 
 Now add that tour to the [config list](../config.js):
@@ -130,16 +129,12 @@ And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/HEAD/conf
 
 Now we need to configure the metadata for the tour. In `meta.js`:
 
-```JavaScript
+```javascript
 export default {
 	name: 'sitePreview',
 	version: '20170104',
 	path: '/stats',
-	when: and(
-		isEnabled( 'guided-tours/main' ),
-		isSelectedSitePreviewable,
-		isNewUser,
-	)
+	when: and( isEnabled( 'guided-tours/main' ), isSelectedSitePreviewable, isNewUser ),
 };
 ```
 
@@ -165,7 +160,8 @@ To assess the impact of a tour, it can be helpful to run it as an A/B test. If t
 
 Open up `client/lib/abtest/active-tests.js` and add a new test such as this one:
 
-```JavaScript
+```javascript
+export default {
 	designShowcaseWelcomeTour: {
 		datestamp: '20170101',
 		variations: {
@@ -175,6 +171,7 @@ Open up `client/lib/abtest/active-tests.js` and add a new test such as this one:
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
+};
 ```
 
 Note that we've set the `enabled` variation to 0% so we don't show the tour to any user until we've tested it thoroughly.
@@ -185,12 +182,14 @@ First, add an import for `isAbTestInVariant` to the list of things we import fro
 
 Now, use the import in the `when` property like so:
 
-```JavaScript
-when: and(
-	isNewUser,
-	isEnabled( 'guided-tours/main' ),
-	isAbTestInVariant( 'tutorialSitePreviewTour', 'enabled' ),
-)
+```javascript
+export default {
+	when: and(
+		isNewUser,
+		isEnabled( 'guided-tours/main' ),
+		isAbTestInVariant( 'tutorialSitePreviewTour', 'enabled' )
+	),
+};
 ```
 
 **Important:** note that we want to put the call to `isAbTestInVariant` last — it puts users into an A/B test variant, and having later parts of the function return false would taint our results. We want to assign the user to an A/B test variant if and only if the tour would have triggered based on all the other conditions.
@@ -230,7 +229,7 @@ A few notes:
 - The first step of a tour needs to have a name of `init` to be recognizable as the first step by the framework.
 - The `target` is the DOM element the step should be "glued" to or will point at. There are two ways to do that: either the element has a `data-tip-target` attribute, and we pass that name, or we pass a CSS selector that selects that element (cf. method `targetForSlug`). In this case, it's a `data-tip-target`.
 - The `scrollContainer` tells the framework which container it should attempt to scroll in case the `target` isn't visible. In this case, the framework will attempt to scroll the sidebar until the site preview button is in view.
-- `translate` calls: we'd add those only after multiple iterations over the copy. Once you merge something with a `translate` call into `master`, the strings will be translated -- and we don't want to waste anyone's time with translating strings that will still change a few times.
+- `translate` calls: we'd add those only after multiple iterations over the copy. Once you merge something with a `translate` call into `trunk`, the strings will be translated -- and we don't want to waste anyone's time with translating strings that will still change a few times.
 - The `Continue` steps attributes basically say: when the user `click`s the `target`, proceed to the step called `close-preview` (the next step, below). The `hidden` attribute tells the framework to not add an explanatory text below the step.
 - The `ButtonRow` with the `Quit` button doesn't really look nice, but it's important to provide a way for the user to get out of the tour. The framework will quit a tour if it believes that the user is trying to navigate away from it, but in this case we thought an explicit way to quit would be good to provide.
 

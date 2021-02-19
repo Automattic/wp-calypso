@@ -1,6 +1,6 @@
 # Component Tests
 
-Calypso has a lot of React UI components. (Try for example running `find . -name '*.js?'` from the `client` folder).  It can be difficult to test components and UI. This guide will help make it as easy and focused as possible.
+Calypso has a lot of React UI components. (Try for example running `find . -name '*.js?'` from the `client` folder). It can be difficult to test components and UI. This guide will help make it as easy and focused as possible.
 
 ## [Getting started](#getting-started)
 
@@ -54,27 +54,19 @@ Or by accessing the wrapper's `instance()`:
 expect( wrapper.instance().shouldShowPlaceholder() ).toBe( true );
 ```
 
-
 #### Is interaction handled correctly
 
 When a user for example clicks an element does the component react like it should?
 
-Example test from `client/components/Accordion`:
+Example test from `calypso/client/components/token-field`:
 
 ```javascript
-test( 'should accept an onToggle function handler to be invoked when toggled', () => {
-	const toggleSpy = jest.fn();
-	const wrapper = shallow(
-		<Accordion title="Section" onToggle={ toggleSpy }>
-			Content
-		</Accordion>
-	);
+test( 'should remove tokens when X icon clicked', () => {
+	const wrapper = mount( <TokenFieldWrapper /> );
+	const tokenFieldNode = wrapper.find( '.token-field' );
 
-	wrapper.find( '.accordion__toggle' ).simulate( 'click' );
-
-	expect( toggleSpy ).toHaveBeenCalledTimes( 1 );
-	expect( toggleSpy ).toHaveBeenCalledWith( true );
-	expect( wrapper.state( 'isExpanded' ) ).toBe( true );
+	tokenFieldNode.find( '.token-field__remove-token' ).first().simulate( 'click' );
+	expect( wrapper.state( 'tokens' ) ).toEqual( [ 'bar' ] );
 } );
 ```
 
@@ -91,7 +83,7 @@ Shallow rendering helps with inspecting whether our component renders correctly,
 > without worrying about the behavior of child components, which are not instantiated or rendered.
 > This does not require a DOM.
 >
-> https://reactjs.org/docs/shallow-renderer.html#overview
+> <https://reactjs.org/docs/shallow-renderer.html#overview>
 
 For a complete example of usage, see `client/components/themes-list/test/index.jsx`.
 
@@ -103,11 +95,8 @@ class ThemesList extends React.Component {
 	render() {
 		return (
 			<div className="themes-list">
-				{ this.props.themes.map( function( theme ) {
-					return (
-						<Theme key={ 'theme' + theme.name }>
-							<Theme theme={ theme } />
-					);
+				{ this.props.themes.map( function ( theme ) {
+					return <Theme key={ 'theme' + theme.name } theme={ theme } />;
 				} ) }
 			</div>
 		);
@@ -118,8 +107,8 @@ class ThemesList extends React.Component {
 So we test it like this:
 
 ```javascript
-import EmptyContent from 'components/empty-content';
-import Theme from 'components/theme';
+import EmptyContent from 'calypso/components/empty-content';
+import Theme from 'calypso/components/theme';
 import { shallow } from 'enzyme';
 import { ThemesList } from '../';
 
@@ -131,37 +120,39 @@ const defaultProps = deepFreeze( {
 	// …
 } );
 
-	test( 'should render a div with a className of "themes-list"', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
-		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
-	} );
+test( 'should render a div with a className of "themes-list"', () => {
+	const wrapper = shallow( <ThemesList { ...defaultProps } /> );
+	expect( wrapper ).toMatchSnapshot();
+	expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
+	expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+} );
 
-	test( 'should render a <Theme /> child for each provided theme', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
-	} );
+test( 'should render a <Theme /> child for each provided theme', () => {
+	const wrapper = shallow( <ThemesList { ...defaultProps } /> );
+	expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+} );
 
-	test( 'should display the EmptyContent component when no themes are provided', () => {
-		const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
-		expect( wrapper.type() ).toBe( EmptyContent );
-	} );
+test( 'should display the EmptyContent component when no themes are provided', () => {
+	const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
+	expect( wrapper.type() ).toBe( EmptyContent );
+} );
 ```
 
 By using `shallow`, we avoid rendering the `Theme` components when testing `ThemesList`.
 
 ## Troubleshooting
 
-* Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not its children.
+- Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not its children.
 
 The best practice is to test the unwrapped component, with external dependencies mocked, so that the results aren't influenced by anything outside the component being tested:
 
 ```javascript
 // Bad. Tests cannot access the unwrapped component.
-export default localize( class SomeComponent extends React.Component {
-	// ...
-} );
+export default localize(
+	class SomeComponent extends React.Component {
+		// ...
+	}
+);
 ```
 
 ```javascript

@@ -6,7 +6,7 @@ import { filter, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 
 /**
  * Returns the Google My Business location/external user the given site

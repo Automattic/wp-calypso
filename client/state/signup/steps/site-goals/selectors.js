@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/signup/init';
+import 'calypso/state/signup/init';
 
 export function getSiteGoals( state ) {
 	return get( state, 'signup.steps.siteGoals', '' );

@@ -7,37 +7,38 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { trim, trimEnd } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Header from 'my-sites/domains/domain-management/components/header';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormLabel from 'components/forms/form-label';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import notices from 'notices';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import {
 	domainManagementSiteRedirect,
 	domainManagementRedirectSettings,
-} from 'my-sites/domains/paths';
+} from 'calypso/my-sites/domains/paths';
 import {
 	closeSiteRedirectNotice,
 	fetchSiteRedirect,
 	updateSiteRedirect,
-} from 'state/domains/site-redirect/actions';
+} from 'calypso/state/domains/site-redirect/actions';
 import { CompactCard as Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteRedirectLocation } from 'state/domains/site-redirect/selectors';
-import { withoutHttp } from 'lib/url';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { SITE_REDIRECT } from 'lib/url/support';
+import SectionHeader from 'calypso/components/section-header';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSiteRedirectLocation } from 'calypso/state/domains/site-redirect/selectors';
+import { withoutHttp } from 'calypso/lib/url';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { SITE_REDIRECT } from 'calypso/lib/url/support';
 
 /**
  * Style dependencies
@@ -95,7 +96,7 @@ class SiteRedirect extends React.Component {
 					page(
 						domainManagementRedirectSettings(
 							this.props.selectedSite.slug,
-							trim( trimEnd( this.state.redirectUrl, '/' ) ),
+							this.state.redirectUrl.replace( /\/+$/, '' ).trim(),
 							this.props.currentRoute
 						)
 					);
@@ -106,6 +107,16 @@ class SiteRedirect extends React.Component {
 	handleFocus = () => {
 		this.props.recordLocationFocus( this.props.selectedDomainName );
 	};
+
+	getNoticeStatus( notice ) {
+		if ( notice?.error ) {
+			return 'is-error';
+		}
+		if ( notice?.success ) {
+			return 'is-success';
+		}
+		return 'is-info';
+	}
 
 	render() {
 		const { location, translate } = this.props;
@@ -124,7 +135,7 @@ class SiteRedirect extends React.Component {
 					{ notice && (
 						<Notice
 							onDismissClick={ this.closeRedirectNotice }
-							status={ notices.getStatusHelper( notice ) }
+							status={ this.getNoticeStatus( notice ) }
 							text={ notice.text }
 						/>
 					) }
@@ -143,7 +154,6 @@ class SiteRedirect extends React.Component {
 									onChange={ this.handleChange }
 									onFocus={ this.handleFocus }
 									prefix="http://"
-									type="text"
 									value={ this.state.redirectUrl }
 									id="site-redirect__input"
 								/>
@@ -163,7 +173,7 @@ class SiteRedirect extends React.Component {
 								</p>
 							</FormFieldset>
 
-							<FormFooter>
+							<div>
 								<FormButton disabled={ isFetching || isUpdating } onClick={ this.handleClick }>
 									{ translate( 'Update Site Redirect' ) }
 								</FormButton>
@@ -176,7 +186,7 @@ class SiteRedirect extends React.Component {
 								>
 									{ translate( 'Cancel' ) }
 								</FormButton>
-							</FormFooter>
+							</div>
 						</form>
 					</Card>
 				</Main>

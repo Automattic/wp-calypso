@@ -10,18 +10,19 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import PostTypeFilter from 'my-sites/post-type-filter';
-import PostTypeList from 'my-sites/post-type-list';
+import Main from 'calypso/components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PostTypeFilter from 'calypso/my-sites/post-type-filter';
+import PostTypeList from 'calypso/my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
 import PostTypeForbidden from './post-type-forbidden';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 
 function Types( {
 	siteId,
@@ -34,17 +35,17 @@ function Types( {
 } ) {
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ get( postType, 'label' ) } />
+			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="types__page-heading"
-				headerText={ get( postType, 'label' ) }
+				headerText={ get( postType, 'label', '' ) }
 				align="left"
 			/>
-			{ false !== userCanEdit &&
-				false !== postTypeSupported && [
+			{ userCanEdit &&
+				postTypeSupported && [
 					<PostTypeFilter
 						key="filter"
 						query={ userCanEdit ? query : null }
@@ -57,8 +58,9 @@ function Types( {
 						scrollContainer={ document.body }
 					/>,
 				] }
-			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
-			{ false === userCanEdit && <PostTypeForbidden /> }
+			{ ! postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
+			{ ! userCanEdit && <PostTypeForbidden /> }
+			{ siteId && <QueryPostTypes siteId={ siteId } /> }
 		</Main>
 	);
 }

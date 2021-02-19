@@ -9,9 +9,9 @@ import { castArray } from 'lodash';
 import {
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/domains/validation-schemas/index.js';
+import 'calypso/state/data-layer/wpcom/domains/validation-schemas/index.js';
 
 /**
  * Action creator function: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD

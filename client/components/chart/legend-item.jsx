@@ -4,6 +4,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+
 export default class ChartLegendItem extends React.PureComponent {
 	static propTypes = {
 		attr: PropTypes.string.isRequired,
@@ -19,16 +25,15 @@ export default class ChartLegendItem extends React.PureComponent {
 	render() {
 		return (
 			<li className="chart__legend-option">
-				<label className="chart__legend-label is-selectable">
-					<input
+				<FormLabel className="chart__legend-label is-selectable">
+					<FormInputCheckbox
 						checked={ this.props.checked }
 						className="chart__legend-checkbox"
 						onChange={ this.clickHandler }
-						type="checkbox"
 					/>
 					<span className={ this.props.className } />
 					{ this.props.label }
-				</label>
+				</FormLabel>
 			</li>
 		);
 	}

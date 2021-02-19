@@ -4,7 +4,7 @@
 import creditcards from 'creditcards';
 import { capitalize, compact, isArray, isEmpty, mergeWith, union, isString } from 'lodash';
 import i18n from 'i18n-calypso';
-import { isValidPostalCode } from 'lib/postal-code';
+import { isValidPostalCode } from 'calypso/lib/postal-code';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import {
 	isValidCPF,
 	isValidCNPJ,
 	countrySpecificFieldRules,
-} from 'lib/checkout/processor-specific';
+} from 'calypso/lib/checkout/processor-specific';
 
 /**
  * Returns the credit card validation rule set
@@ -91,7 +91,6 @@ export function getStripeElementsRules() {
 
 /**
  * Returns the tef payment validation rule set
- * See: client/my-sites/checkout/checkout/redirect-payment-box.jsx
  *
  * @returns {object} the ruleset
  */
@@ -106,6 +105,10 @@ export function tefPaymentFieldRules() {
 			'tef-bank': {
 				description: i18n.translate( 'Bank' ),
 				rules: [ 'required' ],
+			},
+
+			country: {
+				rules: [ 'isBrazil' ],
 			},
 		},
 		countrySpecificFieldRules( 'BR' )
@@ -139,7 +142,7 @@ export function tokenFieldRules() {
  * Returns a validation ruleset to use for the given payment type
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token|stripe
+ * @param {string} paymentType credit-card(default)|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
@@ -242,6 +245,17 @@ validators.validExpirationDate = {
 	error: validationError,
 };
 
+validators.isBrazil = {
+	isValid( value ) {
+		return value === 'BR';
+	},
+	error: function () {
+		return i18n.translate(
+			'Country code is invalid. This payment method is only available in Brazil.'
+		);
+	},
+};
+
 validators.validBrazilTaxId = {
 	isValid( value ) {
 		if ( ! value ) {
@@ -330,7 +344,7 @@ validators.validStreetNumber = {
  * property of that object is an array of error strings.
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|ideal|p24|tef|token|stripe
+ * @param {string} paymentType credit-card(default)|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe
  * @returns {object} validation errors, if any
  */
 export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {
@@ -410,7 +424,7 @@ function getEbanxCreditCardRules( { country } ) {
 
 /**
  *
- * @param {object} cardDetails - a map of credit card field key value pairs
+ * @param {{country: string}} cardDetails - a map of credit card field key value pairs
  * @returns {object|null} If match is found,
  * an object containing rule sets for specific credit card processing providers,
  * otherwise `null`

@@ -4,28 +4,26 @@
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { CardNumberElement } from 'react-stripe-elements';
-import { useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, useSelect, PaymentLogo } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import PaymentLogo from 'my-sites/checkout/composite-checkout/wpcom/components/payment-logo';
-import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
-import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
+import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 
 export default function CreditCardNumberField( {
 	setIsStripeFullyLoaded,
 	handleStripeFieldChange,
 	stripeElementStyle,
-	countryCode,
+	shouldUseEbanx = false,
 	getErrorMessagesForField,
 	setFieldValue,
 	getFieldValue,
 } ) {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const brand = useSelect( ( select ) => select( 'credit-card' ).getBrand() );
 	const { cardNumber: cardNumberError } = useSelect( ( select ) =>
 		select( 'credit-card' ).getCardDataErrors()
@@ -33,7 +31,7 @@ export default function CreditCardNumberField( {
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
 
-	if ( countryCode && shouldRenderAdditionalCountryFields( countryCode ) ) {
+	if ( shouldUseEbanx ) {
 		return (
 			<CreditCardNumberInput
 				isError={ !! errorMessage }

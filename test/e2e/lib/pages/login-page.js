@@ -104,6 +104,7 @@ export default class LoginPage extends AsyncBaseContainer {
 			this.driver,
 			By.css( 'a[data-e2e-link="magic-login-link"]' )
 		);
+		await this.driver.sleep( 500 );
 		await driverHelper.setWhenSettable(
 			this.driver,
 			By.css( '.magic-login__email-fields input[name="usernameOrEmail"]' ),

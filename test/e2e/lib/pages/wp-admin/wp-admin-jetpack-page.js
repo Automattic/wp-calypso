@@ -24,7 +24,9 @@ export default class WPAdminJetpackPage extends AsyncBaseContainer {
 
 	async inPlaceConnect() {
 		const selector = By.css( ".jp-connect-full__button-container a[href*='register']" );
-		const spinnerSelector = By.css( '.jp-connect-full__button-container:not([style="display: none;"]) .jp-spinner' );
+		const spinnerSelector = By.css(
+			'.jp-connect-full__button-container:not([style="display: none;"]) .jp-spinner'
+		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		await this.driver.sleep( 1000 );
 		await driverHelper.clickWhenClickable( this.driver, selector );

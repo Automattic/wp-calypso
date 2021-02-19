@@ -2,10 +2,11 @@
  * External dependencies
  */
 import * as React from 'react';
-import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
+import { Button } from '@wordpress/components';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -13,8 +14,8 @@ import { useSelect } from '@wordpress/data';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
-import { useCurrentStep, Step } from '../../path';
-import { isEnabled } from '../../../../config';
+import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
+import { isEnabled } from '@automattic/calypso-config';
 import Link from '../link';
 
 /**
@@ -23,40 +24,43 @@ import Link from '../link';
 import './style.scss';
 
 const Header: React.FunctionComponent = () => {
-	const { __, i18nLocale } = useI18n();
+	const { __ } = useI18n();
+	const locale = useLocale();
 	const currentStep = useCurrentStep();
+	const isAnchorFmSignup = useIsAnchorFm();
+	const makePath = usePath();
 
-	const { domain, siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const domainElement = domain ? (
-		domain.domain_name
-	) : (
-		<span className="gutenboarding__header-domain-picker-button-domain">
-			{ __( 'Choose a domain' ) }
-		</span>
-	);
+	// steps (including modals) where we show Domains button
+	const showDomainsButton =
+		[ 'DesignSelection', 'Style', 'Features', 'Plans', 'PlansModal' ].includes( currentStep ) &&
+		! isAnchorFmSignup;
 
-	const hideFullHeader = [
-		'IntentGathering',
-		'Domains',
-		'DomainsModal',
-		'Plans',
-		'PlansModal',
-		'LanguageModal',
-		'CreateSite',
-	].includes( currentStep );
+	// steps (including modals) where we show Plans button
+	const showPlansButton =
+		[ 'DesignSelection', 'Style', 'Features' ].includes( currentStep ) && ! isAnchorFmSignup;
+
+	// locale button is hidden on DomainsModal, PlansModal, and AnchorFM flavored gutenboarding
+	const showLocaleButton =
+		! [ 'DomainsModal', 'PlansModal' ].includes( currentStep ) && ! isAnchorFmSignup;
 
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
 
+	const homeLink = '/';
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 	const changeLocaleButton = () => {
 		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
 			return (
-				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
-					<Link to={ Step.LanguageModal }>
-						<span>{ __( 'Site Language' ) } </span>
-						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
+				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right gutenboarding__header-language-section">
+					<Link to={ makePath( Step.LanguageModal ) }>
+						<span className="gutenboarding__header-site-language-label">
+							{ __( 'Site Language' ) }
+						</span>
+						<span className="gutenboarding__header-site-language-badge">{ locale }</span>
 					</Link>
 				</div>
 			);
@@ -71,15 +75,13 @@ const Header: React.FunctionComponent = () => {
 			aria-label={ __( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<section
-				className={ classnames( 'gutenboarding__header-section', {
-					'gutenboarding__header-section--compact': hideFullHeader,
-				} ) }
-			>
-				<div className="gutenboarding__header-section-item">
-					<div className="gutenboarding__header-wp-logo">
-						<Icon icon={ wordpress } size={ 28 } />
-					</div>
+			<section className="gutenboarding__header-section">
+				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--wp-logo">
+					<Button href={ homeLink }>
+						<div className="gutenboarding__header-wp-logo">
+							<Icon icon={ wordpress } size={ 28 } />
+						</div>
+					</Button>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">
@@ -87,27 +89,14 @@ const Header: React.FunctionComponent = () => {
 					</div>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
-					{
-						// We display the DomainPickerButton as soon as we have a domain suggestion,
-						// unless we're still at the IntentGathering step. In that case, we only
-						// show it comes from a site title (but hide it if it comes from a vertical).
-						domainElement && (
-							<div
-								className={ classnames( 'gutenboarding__header-domain-picker-button-container', {
-									'no-domain': ! domain,
-								} ) }
-							>
-								<DomainPickerButton className="gutenboarding__header-domain-picker-button">
-									{ domainElement }
-								</DomainPickerButton>
-							</div>
-						)
-					}
+					{ showDomainsButton && <DomainPickerButton /> }
 				</div>
-				{ changeLocaleButton() }
-				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
-					<PlansButton />
-				</div>
+				{ showLocaleButton && changeLocaleButton() }
+				{ showPlansButton && (
+					<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
+						<PlansButton />
+					</div>
+				) }
 			</section>
 		</div>
 	);

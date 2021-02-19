@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { assign, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -10,19 +10,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
-import MediaListStore from 'lib/media/list-store';
-import passToChildren from 'lib/react-pass-to-children';
+import passToChildren from 'calypso/lib/react-pass-to-children';
 import utils from './utils';
-import { setQuery } from 'state/media/actions';
-import { fetchNextMediaPage } from 'state/media/thunks';
-
-function getStateData( siteId ) {
-	return {
-		media: MediaListStore.getAll( siteId ),
-		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
-	};
-}
+import { setQuery } from 'calypso/state/media/actions';
+import { fetchNextMediaPage } from 'calypso/state/media/thunks';
+import getMediaSortedByDate from 'calypso/state/selectors/get-media-sorted-by-date';
+import hasNextMediaPage from 'calypso/state/selectors/has-next-media-page';
 
 export class MediaListData extends React.Component {
 	static displayName = 'MediaListData';
@@ -35,26 +28,15 @@ export class MediaListData extends React.Component {
 		search: PropTypes.string,
 	};
 
-	state = getStateData( this.props.siteId );
-
 	UNSAFE_componentWillMount() {
-		MediaActions.setQuery( this.props.siteId, this.getQuery() );
 		this.props.setQuery( this.props.siteId, this.getQuery() );
-		MediaListStore.on( 'change', this.updateStateData );
-		this.updateStateData();
-	}
-
-	componentWillUnmount() {
-		MediaListStore.off( 'change', this.updateStateData );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const nextQuery = this.getQuery( nextProps );
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
-			MediaActions.setQuery( nextProps.siteId, nextQuery );
 			this.props.setQuery( nextProps.siteId, nextQuery );
-			this.setState( getStateData( nextProps.siteId ) );
 		}
 	}
 
@@ -94,17 +76,11 @@ export class MediaListData extends React.Component {
 		this.props.fetchNextMediaPage( this.props.siteId );
 	};
 
-	updateStateData = () => {
-		this.setState( getStateData( this.props.siteId ) );
-	};
-
 	render() {
-		return passToChildren(
-			this,
-			assign( {}, this.state, {
-				mediaOnFetchNextPage: this.fetchData,
-			} )
-		);
+		return passToChildren( this, {
+			mediaHasNextPage: this.props.hasNextPage,
+			mediaOnFetchNextPage: this.fetchData,
+		} );
 	}
 }
 
@@ -112,4 +88,9 @@ MediaListData.defaultProps = {
 	setQuery: () => {},
 };
 
-export default connect( null, { fetchNextMediaPage, setQuery } )( MediaListData );
+const mapStateToProps = ( state, ownProps ) => ( {
+	media: getMediaSortedByDate( state, ownProps.siteId ),
+	hasNextPage: hasNextMediaPage( state, ownProps.siteId ),
+} );
+
+export default connect( mapStateToProps, { fetchNextMediaPage, setQuery } )( MediaListData );

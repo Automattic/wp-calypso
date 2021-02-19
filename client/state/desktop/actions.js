@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import { CANNOT_USE_EDITOR, EDITOR_VIEW_POST_CLICKED, SEND_TO_PRINTER } from 'state/action-types';
+import {
+	CANNOT_USE_EDITOR,
+	EDITOR_VIEW_POST_CLICKED,
+	SEND_TO_PRINTER,
+} from 'calypso/state/action-types';
 
 /**
  * Notify the desktop that the editor cannot be opened.

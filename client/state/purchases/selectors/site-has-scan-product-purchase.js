@@ -6,10 +6,10 @@ import { some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isJetpackScan } from 'lib/products-values';
+import { isJetpackScan } from 'calypso/lib/products-values';
 import { getSitePurchases } from './get-site-purchases';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 /**
  * Whether a site has an active Jetpack Scan purchase.

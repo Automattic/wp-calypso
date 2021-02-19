@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 export const isFetchingUserPurchases = ( state ) => state.purchases.isFetchingUserPurchases;
 export const isFetchingSitePurchases = ( state ) => state.purchases.isFetchingSitePurchases;

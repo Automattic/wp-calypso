@@ -1,18 +1,20 @@
 /**
  * External Dependencies
  */
-const { dialog } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { dialog } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const ipc = require( 'desktop/lib/calypso-commands' );
-const Config = require( 'desktop/lib/config' );
-const Settings = require( 'desktop/lib/settings' );
-const WindowManager = require( 'desktop/lib/window-manager' );
-const platform = require( 'desktop/lib/platform' );
-const AppQuit = require( 'desktop/lib/app-quit' );
+const ipc = require( 'calypso/desktop/lib/calypso-commands' );
+const Config = require( 'calypso/desktop/lib/config' );
+const Settings = require( 'calypso/desktop/lib/settings' );
+const WindowManager = require( 'calypso/desktop/lib/window-manager' );
+const platform = require( 'calypso/desktop/lib/platform' );
+const AppQuit = require( 'calypso/desktop/lib/app-quit' );
 const debugMenu = require( './debug-menu' );
+const { getUpdater } = require( 'calypso/desktop/app-handlers/updater' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:menu' );
 
 /**
  * Module variables
@@ -120,9 +122,28 @@ module.exports = function ( app, mainWindow ) {
 			},
 			{
 				type: 'separator',
+			},
+			{
+				label: 'Check For Updates',
+				click: function () {
+					checkForUpdates();
+				},
+			},
+			{
+				type: 'separator',
 			}
 		);
 	}
 
 	return menuItems;
 };
+
+function checkForUpdates() {
+	log.info( `User clicked 'Check For Updates'` );
+	const updater = getUpdater();
+	if ( updater ) {
+		updater.ping( true );
+	} else {
+		log.error( 'Updater not set' );
+	}
+}

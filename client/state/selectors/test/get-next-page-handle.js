@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getNextPageHandle from 'state/selectors/get-next-page-handle';
+import getNextPageHandle from 'calypso/state/selectors/get-next-page-handle';
 
 describe( 'getNextPageHandle', () => {
 	const siteId = 23478323;
@@ -12,7 +12,7 @@ describe( 'getNextPageHandle', () => {
 		).toEqual( nextPageHandle );
 	} );
 
-	it( 'should return null when the handle does not exist', () => {
-		expect( getNextPageHandle( { media: { fetching: {} } }, siteId ) ).toBeNull();
+	it( 'should return undefined when the handle does not exist', () => {
+		expect( getNextPageHandle( { media: { fetching: {} } }, siteId ) ).toBeUndefined();
 	} );
 } );

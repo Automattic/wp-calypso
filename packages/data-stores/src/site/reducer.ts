@@ -7,7 +7,14 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails } from './types';
+import {
+	NewSiteBlogDetails,
+	NewSiteErrorResponse,
+	SiteDetails,
+	Domain,
+	SiteLaunchState,
+	SiteLaunchStatus,
+} from './types';
 import type { Action } from './actions';
 
 export const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
@@ -57,6 +64,20 @@ export const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = 
 	return state;
 };
 
+export const isFetchingSiteDetails: Reducer< boolean | undefined, Action > = (
+	state = false,
+	action
+) => {
+	switch ( action.type ) {
+		case 'FETCH_SITE':
+			return true;
+		case 'RECEIVE_SITE':
+		case 'RECEIVE_SITE_FAILED':
+			return false;
+	}
+	return state;
+};
+
 export const sites: Reducer< { [ key: number ]: SiteDetails | undefined }, Action > = (
 	state = {},
 	action
@@ -68,16 +89,49 @@ export const sites: Reducer< { [ key: number ]: SiteDetails | undefined }, Actio
 		return { ...remainingState };
 	} else if ( action.type === 'RESET_SITE_STORE' ) {
 		return {};
+	} else if ( action.type === 'RECEIVE_SITE_TITLE' ) {
+		return {
+			...state,
+			[ action.siteId ]: { ...( state[ action.siteId ] as SiteDetails ), name: action.title },
+		};
 	}
 	return state;
 };
 
-export const launchStatus: Reducer< { [ key: number ]: boolean }, Action > = (
+export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
 	state = {},
 	action
 ) => {
-	if ( action.type === 'LAUNCHED_SITE' ) {
-		return { ...state, [ action.siteId ]: true };
+	if ( action.type === 'RECEIVE_SITE_DOMAINS' ) {
+		return { ...state, [ action.siteId ]: action.domains };
+	}
+	return state;
+};
+
+export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'LAUNCH_SITE_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: { status: SiteLaunchStatus.IN_PROGRESS, errorCode: undefined },
+		};
+	}
+	if ( action.type === 'LAUNCH_SITE_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: { status: SiteLaunchStatus.SUCCESS, errorCode: undefined },
+		};
+	}
+	if ( action.type === 'LAUNCH_SITE_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: SiteLaunchStatus.FAILURE,
+				errorCode: action.error,
+			},
+		};
 	}
 	return state;
 };
@@ -88,7 +142,13 @@ const newSite = combineReducers( {
 	isFetching: isFetchingSite,
 } );
 
-const reducer = combineReducers( { newSite, sites, launchStatus } );
+const reducer = combineReducers( {
+	isFetchingSiteDetails,
+	newSite,
+	sites,
+	launchStatus,
+	sitesDomains,
+} );
 
 export type State = ReturnType< typeof reducer >;
 

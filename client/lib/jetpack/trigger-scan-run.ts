@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	requestJetpackScanEnqueue,
 	startScanOptimistically,
-} from 'state/jetpack-scan/enqueue/actions';
+} from 'calypso/state/jetpack-scan/enqueue/actions';
 
 export const triggerScanRun = ( siteId: number ) => ( dispatch: Function ) => {
 	dispatch(

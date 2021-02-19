@@ -5,16 +5,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { find, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
-import { getSiteSlug } from 'state/sites/selectors';
-import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
-import getRewindState from 'state/selectors/get-rewind-state';
-import QueryRewindState from 'components/data/query-rewind-state';
+import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
+import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 
 const INITIAL_FORM_STATE = {
 	protocol: 'ssh',
@@ -28,13 +28,13 @@ const INITIAL_FORM_STATE = {
 
 function mergeFormWithCredentials( form, credentials, siteSlug ) {
 	const newForm = Object.assign( {}, form );
-	// Replace empty fields with what comes from the rewind state
+	// Replace empty fields with what comes from the state.
 	if ( credentials ) {
-		newForm.protocol = credentials.type || newForm.protocol;
+		newForm.protocol = credentials.protocol || newForm.protocol;
 		newForm.host = credentials.host || newForm.host;
 		newForm.port = credentials.port || newForm.port;
 		newForm.user = credentials.user || newForm.user;
-		newForm.path = credentials.path || newForm.path;
+		newForm.path = credentials.abspath || newForm.path;
 	}
 	// Populate the host field with the site slug if needed
 	newForm.host = isEmpty( newForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : newForm.host;
@@ -58,8 +58,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 
 		constructor( props ) {
 			super( props );
-			const { rewindState, role, siteSlug } = props;
-			const credentials = find( rewindState.credentials, { role: role } );
+			const { credentials, siteSlug } = props;
 			const form = Object.assign( {}, INITIAL_FORM_STATE );
 
 			this.state = {
@@ -132,8 +131,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 			this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
 		UNSAFE_componentWillReceiveProps( nextProps ) {
-			const { rewindState, role, siteSlug } = nextProps;
-			const credentials = find( rewindState.credentials, { role: role } );
+			const { credentials, siteSlug } = nextProps;
 			const siteHasChanged = this.props.siteId !== nextProps.siteId;
 			const nextForm = Object.assign(
 				{},
@@ -153,7 +151,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 			} = this.props;
 			return (
 				<>
-					<QueryRewindState siteId={ siteId } />
+					<QuerySiteCredentials siteId={ siteId } />
 					<WrappedComponent
 						form={ form }
 						formErrors={ formErrors }
@@ -172,13 +170,13 @@ function withServerCredentialsForm( WrappedComponent ) {
 		}
 	};
 
-	const mapStateToProps = ( state, { siteId } ) => {
+	const mapStateToProps = ( state, { siteId, role } ) => {
 		const formSubmissionStatus = getJetpackCredentialsUpdateStatus( state, siteId );
 		return {
 			formSubmissionStatus,
 			formIsSubmitting: 'pending' === formSubmissionStatus,
 			siteSlug: getSiteSlug( state, siteId ),
-			rewindState: getRewindState( state, siteId ),
+			credentials: getJetpackCredentials( state, siteId, role ),
 		};
 	};
 

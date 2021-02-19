@@ -6,9 +6,9 @@ import {
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/billing-transactions/init';
+import 'calypso/state/billing-transactions/init';
 
 /**
  * Sets the app filter on the given transactionType table

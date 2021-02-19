@@ -1,4 +1,3 @@
-
 @import '~@wordpress/edit-post/build-style/style';
 
 .is-group-gutenberg.layout {
@@ -43,7 +42,6 @@
 }
 
 .layout.is-section-gutenberg-editor {
-
 	.edit-post-layout {
 		.edit-post-layout__content {
 			//fixes a notice display issue in Safari
@@ -75,7 +73,6 @@
 		left: 0;
 		top: 0;
 	}
-
 }
 
 // End Placeholder styles
@@ -100,7 +97,7 @@ html.is-iframe {
 	top: 0;
 	width: auto;
 
-	@supports (-webkit-overflow-scrolling: touch) {
+	@supports ( -webkit-overflow-scrolling: touch ) {
 		/* iOS devices only */
 		-webkit-overflow-scrolling: touch;
 		overflow: auto;
@@ -111,11 +108,6 @@ html.is-iframe {
 		top: 0;
 		width: 100%;
 		height: 100%;
-		display: none;
-
-		&.is-iframe-loaded {
-			display: block;
-		}
 	}
 }
 

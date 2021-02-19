@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting/decode-entities';
-import { getLanguage } from 'lib/i18n-utils/utils';
-import { withoutHttp } from 'lib/url';
+import { decodeEntities } from 'calypso/lib/formatting/decode-entities';
+import { getLanguage } from 'calypso/lib/i18n-utils/utils';
+import { withoutHttp } from 'calypso/lib/url';
 
 function getSiteSlug( url ) {
 	const slug = withoutHttp( url );
@@ -16,7 +16,9 @@ const allowedKeys = [
 	'username',
 	'avatar_URL',
 	'site_count',
+	'jetpack_site_count',
 	'visible_site_count',
+	'jetpack_visible_site_count',
 	'date',
 	'has_unseen_notes',
 	'newest_note_type',

@@ -8,7 +8,7 @@ import { get, isObject, merge } from 'lodash';
  * Internal dependencies
  */
 import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * @param {object} state Whole Redux state tree

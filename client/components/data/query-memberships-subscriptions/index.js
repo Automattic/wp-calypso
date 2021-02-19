@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSubscriptionsList } from 'state/memberships/subscriptions/actions';
+import { requestSubscriptionsList } from 'calypso/state/memberships/subscriptions/actions';
 
 class QueryMembershipsSubscriptions extends Component {
 	componentDidMount() {

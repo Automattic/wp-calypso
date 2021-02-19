@@ -123,7 +123,7 @@ export async function initGoogleRecaptcha( elementId: string, action: string, si
 		return null;
 	}
 
-	await new Promise( ( resolve ) => window.grecaptcha?.ready( resolve ) );
+	await new Promise< void >( ( resolve ) => window.grecaptcha?.ready( resolve as () => void ) );
 
 	try {
 		const clientId = await renderRecaptchaClient( elementId, siteKey );

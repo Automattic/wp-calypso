@@ -9,8 +9,8 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import MultipleChoiceAnswer from './answer';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
 
 /**
  * Style dependencies

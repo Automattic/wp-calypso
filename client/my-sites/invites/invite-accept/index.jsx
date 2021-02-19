@@ -12,20 +12,20 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
-import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
-import { login } from 'lib/paths';
-import { fetchInvite } from 'lib/invites/actions';
-import InvitesStore from 'lib/invites/stores/invites-accept-validation';
-import EmptyContent from 'components/empty-content';
-import { successNotice, infoNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { getRedirectAfterAccept } from 'my-sites/invites/utils';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import userUtils from 'lib/user/utils';
-import LocaleSuggestions from 'components/locale-suggestions';
-import { getCurrentUser } from 'state/current-user/selectors';
+import LoggedIn from 'calypso/my-sites/invites/invite-accept-logged-in';
+import LoggedOut from 'calypso/my-sites/invites/invite-accept-logged-out';
+import { login } from 'calypso/lib/paths';
+import EmptyContent from 'calypso/components/empty-content';
+import { successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import userUtils from 'calypso/lib/user/utils';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import wpcom from 'calypso/lib/wp';
+import normalizeInvite from './utils/normalize-invite';
 
 /**
  * Style dependencies
@@ -35,7 +35,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import whoopsImage from 'assets/images/illustrations/whoops.svg';
+import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
 
 /**
  * Module variables
@@ -49,32 +49,54 @@ class InviteAccept extends React.Component {
 		matchEmailError: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	mounted = false;
+
+	componentDidMount() {
+		this.mounted = true;
+
 		// The site ID and invite key are required, so only fetch if set
 		if ( this.props.siteId && this.props.inviteKey ) {
-			fetchInvite( this.props.siteId, this.props.inviteKey );
+			this.fetchInvite();
 		}
-
-		InvitesStore.on( 'change', this.refreshInvite );
 	}
 
 	componentWillUnmount() {
-		InvitesStore.off( 'change', this.refreshInvite );
+		this.mounted = false;
 	}
 
-	refreshInvite = () => {
-		const invite = InvitesStore.getInvite( this.props.siteId, this.props.inviteKey );
-		const error = InvitesStore.getInviteError( this.props.siteId, this.props.inviteKey );
+	async fetchInvite() {
+		try {
+			const response = await wpcom
+				.undocumented()
+				.getInvite( this.props.siteId, this.props.inviteKey );
 
-		if ( invite ) {
-			// add subscription-related keys to the invite
-			Object.assign( invite, {
+			const invite = {
+				...normalizeInvite( response ),
 				activationKey: this.props.activationKey,
 				authKey: this.props.authKey,
+			};
+
+			// Replace the plain invite key with the strengthened key
+			// from the url: invite key + secret
+			invite.inviteKey = this.props.inviteKey;
+
+			this.handleFetchInvite( false, invite );
+		} catch ( error ) {
+			this.handleFetchInvite( error );
+
+			recordTracksEvent( 'calypso_invite_validation_failure', {
+				error: error.error,
 			} );
 		}
-		this.setState( { invite, error } );
-	};
+	}
+
+	handleFetchInvite( error, invite = false ) {
+		if ( ! this.mounted ) {
+			return;
+		}
+
+		this.setState( { error, invite } );
+	}
 
 	isMatchEmailError = () => {
 		const { invite } = this.state;
@@ -197,8 +219,8 @@ class InviteAccept extends React.Component {
 			return;
 		}
 
-		let props,
-			actionText = this.props.translate( 'Switch Accounts' );
+		let props;
+		let actionText = this.props.translate( 'Switch Accounts' );
 
 		if ( ! user ) {
 			actionText = this.props.translate( 'Sign In' );
@@ -242,9 +264,7 @@ class InviteAccept extends React.Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		user: getCurrentUser( state ),
-	} ),
-	{ successNotice, infoNotice }
-)( localize( InviteAccept ) );
+export default connect( ( state ) => ( { user: getCurrentUser( state ) } ), {
+	successNotice,
+	infoNotice,
+} )( localize( InviteAccept ) );

@@ -1,35 +1,42 @@
 /**
  * External dependencies
  */
-import { defaultRegistry } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
+import {
+	defaultRegistry,
+	makeSuccessResponse,
+	makeRedirectResponse,
+	makeManualResponse,
+} from '@automattic/composite-checkout';
+import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
+import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
 import {
-	getPostalCode,
-	getDomainDetails,
 	createStripePaymentMethodToken,
 	wpcomTransaction,
 	wpcomPayPalExpress,
 	submitApplePayPayment,
 	submitStripeCardTransaction,
 	submitEbanxCardTransaction,
-	submitStripeRedirectTransaction,
+	submitRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
-	submitExistingCardPayment,
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
-import { createEbanxToken } from 'lib/store-transactions';
+import getPostalCode from './lib/get-postal-code';
+import getDomainDetails from './lib/get-domain-details';
+import { createEbanxToken } from 'calypso/lib/store-transactions';
+import userAgent from 'calypso/lib/user-agent';
+import { recordTransactionBeginAnalytics } from './lib/analytics';
 
-const { select, dispatch } = defaultRegistry;
+const { select } = defaultRegistry;
 
-export function genericRedirectProcessor(
+export async function genericRedirectProcessor(
 	paymentMethodId,
 	submitData,
-	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
@@ -56,34 +63,93 @@ export function genericRedirectProcessor(
 		pathname,
 		query: cancelUrlQuery,
 	} );
-	const pending = submitStripeRedirectTransaction(
+
+	recordTransactionBeginAnalytics( {
+		paymentMethodId,
+		reduxDispatch,
+	} );
+
+	return submitRedirectTransaction(
 		paymentMethodId,
 		{
 			...submitData,
 			successUrl,
 			cancelUrl,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: getPostalCode(),
+			postalCode: submitData.postalCode || getPostalCode(),
 			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
-		dispatch( 'wpcom' ).setTransactionResponse( result );
+	).then( ( response ) => {
+		return makeRedirectResponse( response?.redirect_url );
 	} );
-	return pending;
 }
 
-export function applePayProcessor(
+export async function weChatProcessor(
+	submitData,
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
+) {
+	const paymentMethodId = 'wechat';
+	recordTransactionBeginAnalytics( {
+		reduxDispatch,
+		paymentMethodId,
+	} );
+	const { protocol, hostname, port, pathname } = parseUrl(
+		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
+		true
+	);
+	const cancelUrlQuery = {};
+	const redirectToSuccessUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname: getThankYouUrl(),
+	} );
+	const successUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname: `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`,
+		query: { redirectTo: redirectToSuccessUrl },
+	} );
+	const cancelUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname,
+		query: cancelUrlQuery,
+	} );
+	return submitRedirectTransaction(
+		paymentMethodId,
+		{
+			...submitData,
+			successUrl,
+			cancelUrl,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: submitData.postalCode || getPostalCode(),
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+			siteId: select( 'wpcom' )?.getSiteId?.(),
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+		},
+		wpcomTransaction
+	).then( ( response ) => {
+		// The WeChat payment type should only redirect when on mobile as redirect urls
+		// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
+		if ( userAgent.isMobile ) {
+			return makeRedirectResponse( response?.redirect_url );
+		}
+		return makeManualResponse( response );
+	} );
+}
+
+export async function applePayProcessor(
 	submitData,
 	{ includeDomainDetails, includeGSuiteDetails },
 	transactionOptions
 ) {
-	const pending = submitApplePayPayment(
+	return submitApplePayPayment(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -93,18 +159,12 @@ export function applePayProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( makeSuccessResponse );
 }
 
 export async function stripeCardProcessor(
 	submitData,
-	{ includeDomainDetails, includeGSuiteDetails },
+	{ includeDomainDetails, includeGSuiteDetails, recordEvent: onEvent },
 	transactionOptions
 ) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
@@ -112,7 +172,7 @@ export async function stripeCardProcessor(
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 		postalCode: getPostalCode(),
 	} );
-	const pending = submitStripeCardTransaction(
+	return submitStripeCardTransaction(
 		{
 			...submitData,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -124,13 +184,24 @@ export async function stripeCardProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	)
+		.then( ( stripeResponse ) => {
+			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				// 3DS authentication required
+				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+				return confirmStripePaymentIntent(
+					submitData.stripeConfiguration,
+					stripeResponse?.message?.payment_intent_client_secret
+				);
+			}
+			return stripeResponse;
+		} )
+		.then( ( stripeResponse ) => {
+			if ( stripeResponse?.redirect_url ) {
+				return makeRedirectResponse( stripeResponse.redirect_url );
+			}
+			return makeSuccessResponse( stripeResponse );
+		} );
 }
 
 export async function ebanxCardProcessor(
@@ -144,7 +215,7 @@ export async function ebanxCardProcessor(
 		cvv: submitData.cvv,
 		'expiration-date': submitData[ 'expiration-date' ],
 	} );
-	const pending = submitEbanxCardTransaction(
+	return submitEbanxCardTransaction(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -153,66 +224,37 @@ export async function ebanxCardProcessor(
 			paymentMethodToken,
 		},
 		wpcomTransaction
-	);
-	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( makeSuccessResponse );
 }
 
 export async function multiPartnerCardProcessor(
 	submitData,
-	{ includeDomainDetails, includeGSuiteDetails },
+	{ includeDomainDetails, includeGSuiteDetails, recordEvent },
 	transactionOptions
 ) {
 	const paymentPartner = submitData.paymentPartner;
-
 	if ( paymentPartner === 'stripe' ) {
 		return stripeCardProcessor(
 			submitData,
-			{ includeDomainDetails, includeGSuiteDetails },
+			{ includeDomainDetails, includeGSuiteDetails, recordEvent },
 			transactionOptions
 		);
 	}
-
 	if ( paymentPartner === 'ebanx' ) {
-		return ebanxCardProcessor( submitData, { includeDomainDetails, includeGSuiteDetails } );
+		return ebanxCardProcessor( submitData, {
+			includeDomainDetails,
+			includeGSuiteDetails,
+			recordEvent,
+		} );
 	}
-
 	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
-}
-
-export async function existingCardProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails },
-	transactionOptions
-) {
-	const pending = submitExistingCardPayment(
-		{
-			...submitData,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: getPostalCode(),
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-		},
-		wpcomTransaction,
-		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
 }
 
 export async function freePurchaseProcessor(
 	submitData,
 	{ includeDomainDetails, includeGSuiteDetails }
 ) {
-	const pending = submitFreePurchaseTransaction(
+	return submitFreePurchaseTransaction(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -222,12 +264,7 @@ export async function freePurchaseProcessor(
 			postalCode: null,
 		},
 		wpcomTransaction
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( makeSuccessResponse );
 }
 
 export async function fullCreditsProcessor(
@@ -235,39 +272,38 @@ export async function fullCreditsProcessor(
 	{ includeDomainDetails, includeGSuiteDetails },
 	transactionOptions
 ) {
-	const pending = submitCreditsTransaction(
+	return submitCreditsTransaction(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			// this data is intentionally empty so we do not charge taxes
-			country: null,
-			postalCode: null,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: submitData.postalCode || getPostalCode(),
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 		},
 		wpcomTransaction,
 		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( makeSuccessResponse );
 }
 
-export async function payPalProcessor(
-	submitData,
-	{ getThankYouUrl, couponItem, includeDomainDetails, includeGSuiteDetails },
-	transactionOptions
-) {
-	const { createUserAndSiteBeforeTransaction } = transactionOptions;
-	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-	const successUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname: getThankYouUrl(),
+export async function payPalProcessor( submitData, transactionOptions ) {
+	const {
+		getThankYouUrl,
+		couponItem,
+		includeDomainDetails,
+		includeGSuiteDetails,
+		createUserAndSiteBeforeTransaction,
+		reduxDispatch,
+	} = transactionOptions;
+	recordTransactionBeginAnalytics( {
+		reduxDispatch,
+		paymentMethodId: 'paypal',
 	} );
+
+	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
+
+	const successUrl = resolveUrl( window.location.href, getThankYouUrl() );
+
 	const cancelUrl = formatUrl( {
 		protocol,
 		hostname,
@@ -276,7 +312,7 @@ export async function payPalProcessor(
 		query: createUserAndSiteBeforeTransaction ? { cart: 'no-user' } : {},
 	} );
 
-	const pending = submitPayPalExpressRequest(
+	return submitPayPalExpressRequest(
 		{
 			...submitData,
 			successUrl,
@@ -290,11 +326,5 @@ export async function payPalProcessor(
 		},
 		wpcomPayPalExpress,
 		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( makeRedirectResponse );
 }

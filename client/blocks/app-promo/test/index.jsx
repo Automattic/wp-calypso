@@ -6,7 +6,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import React from 'react';
 
 describe( 'AppPromo', () => {
@@ -42,7 +42,7 @@ describe( 'AppPromo', () => {
 		} );
 
 		test( 'should render the promo text', () => {
-			const wrapper = shallow( AppPromoComponent );
+			const wrapper = mount( AppPromoComponent );
 
 			expect( wrapper.text() ).to.contain( appPromoDetails.message );
 		} );

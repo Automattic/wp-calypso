@@ -1,5 +1,4 @@
-Mac Platform
-==========
+# Mac Platform
 
 Provides Mac specific platform features.
 

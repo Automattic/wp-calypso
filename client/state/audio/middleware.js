@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'state/action-types';
+import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'calypso/state/action-types';
 
 const isAudioSupported = () => typeof window === 'object' && typeof window.Audio === 'function';
 

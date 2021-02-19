@@ -8,9 +8,9 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getStreamUrl } from 'reader/route';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import Emojify from 'components/emojify';
+import { getStreamUrl } from 'calypso/reader/route';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import Emojify from 'calypso/components/emojify';
 
 class ReaderSiteStreamLink extends React.Component {
 	static propTypes = {

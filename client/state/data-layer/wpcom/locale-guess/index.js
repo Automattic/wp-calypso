@@ -6,12 +6,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { I18N_LOCALE_SUGGESTIONS_REQUEST } from 'state/action-types';
-import { receiveLocaleSuggestions } from 'state/i18n/locale-suggestions/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { I18N_LOCALE_SUGGESTIONS_REQUEST } from 'calypso/state/action-types';
+import { receiveLocaleSuggestions } from 'calypso/state/i18n/locale-suggestions/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * @module state/data-layer/wpcom/locale-guess

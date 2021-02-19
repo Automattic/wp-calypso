@@ -7,10 +7,12 @@
 .DS_Store
 .idea
 .vscode
+.nova
 *.code-workspace
 *.iml
 *.iws
 /.tsc-cache/
+/.cache/
 /tags
 node_modules
 /npm-debug.log*
@@ -22,6 +24,7 @@ test-results*.xml
 /chart.json
 /style.json
 /client/stats.json
+/client/stats-server.json
 /client/chart.json
 /client/style.json
 spec-xunit-reporter-0.0.1.tgz
@@ -65,6 +68,7 @@ cached-requests.json
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+/apps/*/.cache/
 
 # webpack assets
 /assets*.json
@@ -77,10 +81,14 @@ cached-requests.json
 /desktop/client
 /desktop/config
 /desktop/public
-/desktop/release
+/desktop/release*
 /desktop/resource/certificates/mac.p12
 /desktop/resource/certificates/win.p12
 /client/desktop/config.json
 /desktop/id_rsa
 /desktop/e2e/logs
 /desktop/e2e/screenshots
+/desktop/e2e/result.xml
+
+# Typescript
+*.tsbuildinfo

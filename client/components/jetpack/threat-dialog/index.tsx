@@ -9,16 +9,16 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import ThreatItemHeader from 'components/jetpack/threat-item-header';
-import ServerCredentialsWizardDialog from 'components/jetpack/server-credentials-wizard-dialog';
-import { Threat } from 'components/jetpack/threat-item/types';
-import { getThreatFix } from 'components/jetpack/threat-item/utils';
+import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
+import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
+import { Threat } from 'calypso/components/jetpack/threat-item/types';
+import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
 
 interface Props {
 	threat: Threat;
@@ -90,7 +90,7 @@ const ThreatDialog: React.FC< Props > = ( {
 						{ action === 'fix'
 							? getThreatFix( threat.fixable )
 							: translate(
-									'You shouldn’t ignore a security unless you are absolute sure it’s harmless. If you choose to ignore this threat, it will remain on your site "{{strong}}%s{{/strong}}".',
+									'You shouldn’t ignore a security issue unless you are absolutely sure it’s harmless. If you choose to ignore this threat, it will remain on your site "{{strong}}%s{{/strong}}".',
 									{
 										args: [ siteName ],
 										components: {

@@ -5,44 +5,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { entries } from 'lodash';
 import { CURRENCIES } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormCountrySelect from 'components/forms/form-country-select';
-import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormPhoneInput from 'components/forms/form-phone-input';
-import FormRadio from 'components/forms/form-radio';
-import FormRadiosBarExample from 'components/forms/form-radios-bar/docs/example';
-import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormStateSelector from 'components/forms/us-state-selector';
-import FormTelInput from 'components/forms/form-tel-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormToggle from 'components/forms/form-toggle';
-import getCountries from 'state/selectors/get-countries';
-import PhoneInput from 'components/phone-input';
-import QuerySmsCountries from 'components/data/query-countries/sms';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormCountrySelect from 'calypso/components/forms/form-country-select';
+import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormPhoneInput from 'calypso/components/forms/form-phone-input';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormRadiosBarExample from 'calypso/components/forms/form-radios-bar/docs/example';
+import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormStateSelector from 'calypso/components/forms/us-state-selector';
+import FormTelInput from 'calypso/components/forms/form-tel-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import getCountries from 'calypso/state/selectors/get-countries';
+import PhoneInput from 'calypso/components/phone-input';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 
-const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
-const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
+const currencyList = Object.entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
+const visualCurrencyList = Object.entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
 	code,
 	label: `${ code } ${ symbol }`,
 } ) );
@@ -55,7 +53,6 @@ class FormFields extends React.PureComponent {
 	state = {
 		checkedRadio: 'first',
 		toggled: false,
-		compactToggled: false,
 		phoneInput: { countryCode: 'US', value: '' },
 		currencyInput: { currency: 'USD', value: '' },
 	};
@@ -68,12 +65,8 @@ class FormFields extends React.PureComponent {
 		this.setState( { toggled: ! this.state.toggled } );
 	};
 
-	handleCompactToggle = () => {
-		this.setState( { compactToggled: ! this.state.compactToggled } );
-	};
-
 	handleAction = () => {
-		alert( 'Thank you.' );
+		window.alert( 'Thank you.' );
 	};
 
 	handlePhoneInputChange = ( data ) => {
@@ -218,12 +211,6 @@ class FormFields extends React.PureComponent {
 					<br />
 					<FormToggle checked={ true } disabled />
 					<br />
-					<CompactFormToggle
-						checked={ this.state.compactToggled }
-						onChange={ this.handleCompactToggle }
-					/>
-					<br />
-					<CompactFormToggle checked={ false } disabled />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
@@ -255,8 +242,8 @@ class FormFields extends React.PureComponent {
 								value="first"
 								checked={ 'first' === this.state.checkedRadio }
 								onChange={ this.handleRadioChange }
+								label="First radio"
 							/>
-							<span>First radio</span>
 						</FormLabel>
 
 						<FormLabel>
@@ -264,8 +251,8 @@ class FormFields extends React.PureComponent {
 								value="second"
 								checked={ 'second' === this.state.checkedRadio }
 								onChange={ this.handleRadioChange }
+								label="Second radio"
 							/>
-							<span>Second radio</span>
 						</FormLabel>
 					</FormFieldset>
 

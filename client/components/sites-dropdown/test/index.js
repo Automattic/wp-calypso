@@ -16,7 +16,7 @@ import sinon from 'sinon';
  */
 import { SitesDropdown } from '..';
 
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'index', () => {
 	describe( 'component rendering', () => {
@@ -106,19 +106,6 @@ describe( 'index', () => {
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
 			sinon.assert.calledOnce( onCloseSpy );
-		} );
-	} );
-
-	describe( 'getSelectedSite', () => {
-		xit( 'should return a site on the basis of the component `selectedSiteSlug` state property', function () {
-			const fakeState = {
-				selectedSiteId: 42,
-			};
-			const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
-			expect( selectedSite ).to.be.eql( {
-				ID: 42,
-				slug: 'foo.wordpress.com',
-			} );
 		} );
 	} );
 } );

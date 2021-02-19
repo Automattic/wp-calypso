@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
+import { createSelector } from '@automattic/state-utils';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 
 /**
  * Returns a site specific plan

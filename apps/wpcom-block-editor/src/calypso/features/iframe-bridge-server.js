@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
 /**
@@ -11,18 +10,29 @@ import { createBlock, parse } from '@wordpress/blocks';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { registerPlugin } from '@wordpress/plugins';
-import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
-import { Button } from '@wordpress/components';
+import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
+import {
+	Button,
+	__experimentalNavigationBackButton as NavigationBackButton,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
-import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editing/full-site-editing-plugin/wpcom-block-editor-nav-sidebar/src/constants';
+import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 
 /**
  * Internal dependencies
  */
 import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
+
+/**
+ * Conditional dependency.  We cannot use the standard 'import' since this package is
+ * not available in the post editor and causes WSOD in that case.  Instead, we can
+ * define it from 'require' and conditionally check if it is available for use.
+ */
+const editSitePackage = require( '@wordpress/edit-site' );
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -550,6 +560,34 @@ function handleCloseEditor( calypsoPort ) {
 
 	handleCloseInLegacyEditors( dispatchAction );
 
+	// Add back to dashboard fill for Site Editor when edit-site package is available.
+	if ( editSitePackage ) {
+		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
+			render: () => {
+				const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
+				if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
+					return null;
+				}
+
+				return (
+					<SiteEditorDashboardFill>
+						<NavigationBackButton
+							backButtonLabel={ __( 'Dashboard' ) }
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							className="edit-site-navigation-panel__back-to-dashboard"
+							href={ calypsoifyGutenberg.closeUrl }
+							onClick={ dispatchAction }
+						/>
+					</SiteEditorDashboardFill>
+				);
+			},
+		} );
+	}
+
+	if ( ! MainDashboardButton ) {
+		return;
+	}
+
 	if ( isNavSidebarPresent() ) {
 		return;
 	}
@@ -605,10 +643,7 @@ function handleCloseInLegacyEditors( handleClose ) {
 	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
 	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
 
-	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
-
 	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
-	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, handleClose );
 }
 
 /**
@@ -755,9 +790,9 @@ function getGutenboardingStatus( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { isGutenboarding, frankenflowUrl } = data;
+		const { isGutenboarding, currentCalypsoUrl } = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
-		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
+		calypsoifyGutenberg.currentCalypsoUrl = currentCalypsoUrl;
 		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
 	};
@@ -911,6 +946,69 @@ async function preselectParentPage() {
 	}
 }
 
+function handleCheckoutModalOpened( calypsoPort, data ) {
+	const { port1, port2 } = new MessageChannel();
+
+	// Remove checkoutOnSuccessCallback from data to prevent
+	// the `data` object could not be cloned in postMessage()
+	const { checkoutOnSuccessCallback, ...checkoutModalOptions } = data;
+
+	calypsoPort.postMessage(
+		{
+			action: 'openCheckoutModal',
+			payload: checkoutModalOptions,
+		},
+		[ port2 ]
+	);
+
+	port1.onmessage = () => {
+		checkoutOnSuccessCallback?.();
+		// this is a once-only port
+		// to send more messages we have to re-open the
+		// modal and create a new channel
+		port1.close();
+	};
+}
+
+function handleCheckoutModal( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCheckoutModalStatus',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( message ) => {
+		const { isCheckoutOverlayEnabled } = message.data;
+
+		// Conditionally add the hook if the feature flag is enabled.
+		if ( isCheckoutOverlayEnabled ) {
+			addAction(
+				'a8c.wpcom-block-editor.openCheckoutModal',
+				'a8c/wpcom-block-editor/openCheckoutModal',
+				( data ) => {
+					handleCheckoutModalOpened( calypsoPort, data );
+				}
+			);
+		}
+	};
+}
+
+function handleInlineHelpButton( calypsoPort ) {
+	addAction(
+		'a8c.wpcom-block-editor.toggleInlineHelpButton',
+		'a8c/wpcom-block-editor/toggleInlineHelpButton',
+		/** @type {({ hidden: boolean }) => void} */
+		( data ) => {
+			calypsoPort.postMessage( {
+				action: 'toggleInlineHelpButton',
+				payload: data,
+			} );
+		}
+	);
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -932,6 +1030,7 @@ function initPort( message ) {
 						multiple: this.props.multiple,
 						value: this.props.value,
 					},
+					ports: [ mediaSelectChannel.port2, mediaCancelChannel.port2 ],
 				},
 				[ mediaSelectChannel.port2, mediaCancelChannel.port2 ]
 			);
@@ -1012,6 +1111,10 @@ function initPort( message ) {
 		handleUncaughtErrors( calypsoPort );
 
 		handleEditorLoaded( calypsoPort );
+
+		handleCheckoutModal( calypsoPort );
+
+		handleInlineHelpButton( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

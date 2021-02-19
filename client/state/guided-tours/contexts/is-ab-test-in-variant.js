@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+import { abtest } from 'calypso/lib/abtest';
 
 /**
  * Returns a selector that tests whether an A/B test is in a given variant.

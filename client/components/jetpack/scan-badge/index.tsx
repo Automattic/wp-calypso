@@ -9,7 +9,7 @@ import { isNumber } from 'lodash';
  * Internal dependencies
  */
 import { ScreenReaderText } from '@automattic/components';
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
 import './style.scss';
 
 interface Props {

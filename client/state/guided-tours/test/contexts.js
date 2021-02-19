@@ -20,13 +20,13 @@ import {
 import {
 	SOURCE_GOOGLE_DOCS,
 	SOURCE_UNKNOWN,
-} from 'components/tinymce/plugins/wpcom-track-paste/sources';
-import { EDITOR_PASTE_EVENT } from 'state/action-types';
+} from 'calypso/components/tinymce/plugins/wpcom-track-paste/sources';
+import { EDITOR_PASTE_EVENT } from 'calypso/state/action-types';
 
-jest.mock( 'layout/guided-tours/config', () => {
-	return require( 'state/guided-tours/test/fixtures/config' );
+jest.mock( 'calypso/layout/guided-tours/config', () => {
+	return require( 'calypso/state/guided-tours/test/fixtures/config' );
 } );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
@@ -41,26 +41,14 @@ describe( 'selectors', () => {
 		const oldUser = {
 			currentUser: {
 				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: {
-						ID: 73705554,
-						login: 'testonesite2016',
-						date: moment().subtract( 8, 'days' ),
-					},
-				},
+				user: { ID: 73705554, login: 'testonesite2016', date: moment().subtract( 8, 'days' ) },
 			},
 		};
 
 		const newUser = {
 			currentUser: {
 				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: moment() },
-				},
+				user: { ID: 73705554, login: 'testonesite2016', date: moment() },
 			},
 		};
 
@@ -79,22 +67,14 @@ describe( 'selectors', () => {
 		const oldUser = {
 			currentUser: {
 				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: '2014-10-18T17:14:52+00:00' },
-				},
+				user: { ID: 73705554, login: 'testonesite2016', date: '2014-10-18T17:14:52+00:00' },
 			},
 		};
 
 		const newUser = {
 			currentUser: {
 				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' },
-				},
+				user: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' },
 			},
 		};
 

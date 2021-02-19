@@ -8,10 +8,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import Wizard from 'components/wizard/docs/example';
-import ReadmeViewer from 'components/readme-viewer';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import Wizard from 'calypso/components/wizard/docs/example';
+import ReadmeViewer from 'calypso/components/readme-viewer';
 
 class WizardComponent extends Component {
 	backToComponents = () => page( '/devdocs/design/' );

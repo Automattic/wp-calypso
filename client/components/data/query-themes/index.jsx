@@ -10,8 +10,8 @@ import { isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { requestThemes } from 'state/themes/actions';
-import { getThemesForQuery, isRequestingThemesForQuery } from 'state/themes/selectors';
+import { requestThemes } from 'calypso/state/themes/actions';
+import { getThemesForQuery, isRequestingThemesForQuery } from 'calypso/state/themes/selectors';
 
 class QueryThemes extends Component {
 	static propTypes = {

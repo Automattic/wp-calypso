@@ -1,5 +1,4 @@
-VerticalNav
-===========
+# VerticalNav
 
 These are two components to display rows of links.
 
@@ -9,13 +8,18 @@ These are two components to display rows of links.
 // actual links items
 <VerticalNav>
 	<VerticalNavItem path="/stats">Stats</VerticalNavItem>
-	<VerticalNavItem path="https://google.com" external>Google</VerticalNavItem>
-	<VerticalNavItem path="/posts" onClick={ this.handleClickPosts }>Posts</VerticalNavItem>
+	<VerticalNavItem path="https://google.com" external>
+		Google
+	</VerticalNavItem>
+	<VerticalNavItem path="/posts" onClick={ this.handleClickPosts }>
+		Posts
+	</VerticalNavItem>
 	<VerticalNavItem isPlaceholder />
-</VerticalNav>
+</VerticalNav>;
 ```
 
 ## Props
+
 `VerticalNavItem` is the only component thats behavior changes based on the given props.
 
 - **external** - Boolean _optional_ - determines whether or not the link is opened in a new window.

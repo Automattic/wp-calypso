@@ -6,17 +6,17 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import withUserMentions from 'blocks/user-mentions/index';
-import withPasteToLink from 'lib/paste-to-link';
-import { isEnabled } from 'config';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import withUserMentions from 'calypso/blocks/user-mentions/index';
+import withPasteToLink from 'calypso/lib/paste-to-link';
 
 /* eslint-disable jsx-a11y/no-autofocus */
 const PostCommentFormTextarea = React.forwardRef( ( props, ref ) => (
-	<textarea
+	<FormTextarea
 		className="comments__form-textarea"
 		value={ props.value }
 		placeholder={ props.placeholder }
-		ref={ ref }
+		forwardedRef={ ref }
 		onKeyUp={ props.onKeyUp }
 		onKeyDown={ props.onKeyDown }
 		onFocus={ props.onFocus }
@@ -28,10 +28,4 @@ const PostCommentFormTextarea = React.forwardRef( ( props, ref ) => (
 ) );
 /* eslint-enable jsx-a11y/no-autofocus */
 
-let component = withPasteToLink( PostCommentFormTextarea );
-
-if ( isEnabled( 'reader/user-mention-suggestions' ) ) {
-	component = withUserMentions( component );
-}
-
-export default component;
+export default withUserMentions( withPasteToLink( PostCommentFormTextarea ) );

@@ -9,8 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
-import { FLOW_TYPES } from 'state/jetpack-connect/constants';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { getPlan } from 'calypso/lib/plans';
+import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import {
+	getJetpackProductShortName,
+	getJetpackProductDescription,
+} from 'calypso/lib/products-values';
+import { PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { retrievePlan } from './persistence-utils';
 
 class JetpackConnectMainHeader extends Component {
@@ -74,14 +82,36 @@ class JetpackConnectMainHeader extends Component {
 			};
 		}
 
-		if ( type === 'jetpack_search' ) {
-			return {
-				title: translate( 'Get Jetpack Search' ),
-				subtitle: translate(
-					'Incredibly powerful and customizable, Jetpack Search helps your visitors ' +
-						'instantly find the right content – right when they need it.'
-				),
-			};
+		if ( JETPACK_RESET_PLANS.includes( type ) ) {
+			const plan = getPlan( type );
+
+			if ( plan ) {
+				return {
+					title: translate( 'Get {{name/}}', {
+						components: {
+							name: <>{ plan.getTitle() }</>,
+						},
+						comment: '{{name/}} is the name of a plan',
+					} ),
+					subtitle: plan.getDescription(),
+				};
+			}
+		}
+
+		if ( JETPACK_PRODUCTS_LIST.includes( type ) ) {
+			const product = PRODUCTS_LIST[ type ];
+
+			if ( product ) {
+				return {
+					title: translate( 'Get {{name/}}', {
+						components: {
+							name: <>{ getJetpackProductShortName( product ) }</>,
+						},
+						comment: '{{name/}} is the name of a plan',
+					} ),
+					subtitle: getJetpackProductDescription( product ),
+				};
+			}
 		}
 
 		return {

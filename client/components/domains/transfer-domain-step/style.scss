@@ -137,7 +137,7 @@
 	border: 1px solid var( --color-neutral-10 );
 	background-color: var( --color-neutral-0 );
 	color: var( --color-neutral-50 );
-	font-size: 18px;
+	font-size: $font-title-small;
 	text-align: center;
 	margin-right: 15px;
 	flex-shrink: 0;
@@ -248,7 +248,7 @@
 	}
 }
 
-input {
+input[type='text'].form-text-input {
 	&.transfer-domain-step__auth-code-input {
 		width: 200px;
 		margin-top: 15px;

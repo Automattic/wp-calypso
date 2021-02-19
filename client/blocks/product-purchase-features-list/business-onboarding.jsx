@@ -9,12 +9,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 /**
  * Image dependencies
  */
-import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
+import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 
 export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) => {
 	return (

@@ -36,7 +36,11 @@ export class ReaderSidebarTagsList extends Component {
 	}
 
 	render() {
-		return <ul className="reader-sidebar-tags__list">{ this.renderItems() }</ul>;
+		return (
+			<li className="reader-sidebar-tags__list">
+				<ul>{ this.renderItems() }</ul>
+			</li>
+		);
 	}
 }
 

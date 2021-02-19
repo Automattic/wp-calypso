@@ -14,7 +14,7 @@ import { identity } from 'lodash';
  */
 import { AppsBadge } from '../apps-badge';
 
-jest.mock( 'lib/i18n-utils', () => ( {
+jest.mock( 'calypso/lib/i18n-utils', () => ( {
 	getLocaleSlug: () => {
 		return 'en';
 	},

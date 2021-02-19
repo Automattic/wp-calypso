@@ -24,7 +24,7 @@ const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
 const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
-const screenshotsPath = './static/page-templates/design-screenshots'; // Folder to store output images
+const screenshotsPath = './static/images/design-screenshots'; // Folder to store output images
 
 // image output variables
 const captureMaxHeight = 2200; // Cap long pages to  this pixel height when capturing
@@ -73,14 +73,28 @@ async function run() {
 					: [];
 
 			console.log( `Taking screenshot of ${ url }` );
-			const screenshot = await captureWebsite.buffer( url, {
-				fullPage: true,
-				height: viewportHeight,
-				scaleFactor: viewportScaleFactor,
-				styles,
-				type: 'png',
-				width: viewportWidth,
-			} );
+
+			let screenshot;
+			try {
+				screenshot = await captureWebsite.buffer( url, {
+					fullPage: true,
+					height: viewportHeight,
+					scaleFactor: viewportScaleFactor,
+					styles,
+					type: 'png',
+					width: viewportWidth,
+				} );
+			} catch ( e ) {
+				if (
+					typeof e.message === 'string' &&
+					e.message.includes( 'Run "npm install" or "yarn install" to download a browser binary.' )
+				) {
+					console.error(
+						'\n\nPlease run `node ./bin/install-gutenboarding-design-thumbnails-dependencies.js` to install the dependencies for this script and then try again.'
+					);
+					process.exit( 1 );
+				}
+			}
 
 			[ 'webp', 'jpg' ].forEach( async ( extension ) => {
 				let image = await sharp( screenshot );

@@ -20,8 +20,9 @@ properties.
 When importing, you can do
 
 ```js
-import '@automattic/calypso-color-schemes'
+import '@automattic/calypso-color-schemes';
 ```
+
 And this will give you the CSS.
 
 ### Using the JS output
@@ -29,7 +30,7 @@ And this will give you the CSS.
 Sometimes, `calypso-color-schemes` properties are consumed in JavaScript. To avoid parsing CSS syntax on your own, or to help `postcss-custom-properties` use them without parsing the CSS (much faster), use the JS output as follows:
 
 ```js
-import { customProperties } import '@automattic/calypso-color-schemes/js' // mind the js suffix
+import { customProperties } from '@automattic/calypso-color-schemes/js'; // mind the js suffix
 ```
 
 Or with `postcss-custom-properties`, and `postcss.config.js` can look like this:
@@ -38,10 +39,10 @@ Or with `postcss-custom-properties`, and `postcss.config.js` can look like this:
 module.exports = () => ( {
 	plugins: {
 		'postcss-custom-properties': {
-            importFrom: [ require.resolve( '@automattic/calypso-color-schemes/js' ) ],
-        }
-    }
-});
+			importFrom: [ require.resolve( '@automattic/calypso-color-schemes/js' ) ],
+		},
+	},
+} );
 ```
 
 ### Note on using the JS output

@@ -9,35 +9,40 @@ import { get, includes, map, noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import { sectionify } from 'lib/route';
-import Main from 'components/main';
-import getSites from 'state/selectors/get-sites';
-import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import CartData from 'components/data/cart';
+import DocumentHead from 'calypso/components/data/document-head';
+import { sectionify } from 'calypso/lib/route';
+import Main from 'calypso/components/main';
+import getSites from 'calypso/state/selectors/get-sites';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import CartData from 'calypso/components/data/cart';
 import DomainSearch from './domain-search';
 import SiteRedirect from './domain-search/site-redirect';
-import MapDomain from 'my-sites/domains/map-domain';
-import TransferDomain from 'my-sites/domains/transfer-domain';
-import TransferDomainStep from 'components/domains/transfer-domain-step';
-import UseYourDomainStep from 'components/domains/use-your-domain-step';
-import GSuiteUpgrade from 'components/upgrades/gsuite';
+import MapDomain from 'calypso/my-sites/domains/map-domain';
+import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
+import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
+import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
+import GSuiteUpgrade from 'calypso/components/upgrades/gsuite';
 import {
 	domainManagementTransferIn,
 	domainManagementTransferInPrecheck,
 	domainMapping,
 	domainTransferIn,
 	domainUseYourDomain,
-} from 'my-sites/domains/paths';
-import { isATEnabled } from 'lib/automated-transfer';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { makeLayout, render as clientRender } from 'controller';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { canUserPurchaseGSuite } from 'lib/gsuite';
-import { addItem } from 'lib/cart/actions';
-import { planItem } from 'lib/cart-values/cart-items';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
+} from 'calypso/my-sites/domains/paths';
+import { isATEnabled } from 'calypso/lib/automated-transfer';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
+import { addItem } from 'calypso/lib/cart/actions';
+import { planItem } from 'calypso/lib/cart-values/cart-items';
+import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -76,9 +81,9 @@ const domainSearch = ( context, next ) => {
 		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<DomainSearch basePath={ sectionify( context.path ) } context={ context } />
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -105,9 +110,9 @@ const mapDomain = ( context, next ) => {
 		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<MapDomain initialQuery={ context.query.initialQuery } />
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -124,13 +129,13 @@ const transferDomain = ( context, next ) => {
 				title="Domain Search > Domain Transfer"
 			/>
 			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
 					useStandardBack={ useStandardBack }
 				/>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -152,13 +157,13 @@ const useYourDomain = ( context, next ) => {
 				title="Domain Search > Use Your Own Domain"
 			/>
 			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<UseYourDomainStep
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
 					goBack={ handleGoBack }
 				/>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -178,7 +183,7 @@ const transferDomainPrecheck = ( context, next ) => {
 				path={ domainManagementTransferInPrecheck( ':site', ':domain' ) }
 				title="My Sites > Domains > Selected Domain"
 			/>
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<div>
 					<TransferDomainStep
 						forcePrecheck={ true }
@@ -186,7 +191,7 @@ const transferDomainPrecheck = ( context, next ) => {
 						goBack={ handleGoBack }
 					/>
 				</div>
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -205,9 +210,9 @@ const googleAppsWithRegistration = ( context, next ) => {
 						args: { domain: context.params.registerDomain },
 					} ) }
 				/>
-				<CartData>
+				<CalypsoShoppingCartProvider>
 					<GSuiteUpgrade domain={ context.params.registerDomain } />
-				</CartData>
+				</CalypsoShoppingCartProvider>
 			</Main>
 		);
 	}

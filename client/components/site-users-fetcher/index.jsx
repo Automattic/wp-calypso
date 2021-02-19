@@ -11,9 +11,9 @@ const debug = debugFactory( 'calypso:site-users-fetcher' );
 /**
  * Internal dependencies
  */
-import UsersStore from 'lib/users/store';
-import { fetchUpdated, fetchUsers } from 'lib/users/actions';
-import pollers from 'lib/data-poller';
+import UsersStore from 'calypso/lib/users/store';
+import { fetchUpdated, fetchUsers } from 'calypso/lib/users/actions';
+import pollers from 'calypso/lib/data-poller';
 
 /**
  * Module variables
@@ -73,10 +73,10 @@ export default class extends React.Component {
 	};
 
 	_getState = ( fetchOptions ) => {
-		let paginationData, users;
+		let users;
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		fetchOptions = Object.assign( {}, defaultOptions, fetchOptions );
-		paginationData = UsersStore.getPaginationData( fetchOptions );
+		const paginationData = UsersStore.getPaginationData( fetchOptions );
 		users = UsersStore.getUsers( fetchOptions );
 
 		if ( this.props.exclude ) {

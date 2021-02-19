@@ -1,12 +1,12 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const WindowManager = require( 'desktop/lib/window-manager' );
+const WindowManager = require( 'calypso/desktop/lib/window-manager' );
 
 ipc.on( 'secrets', function ( ev, which ) {
 	which = parseInt( which, 10 );

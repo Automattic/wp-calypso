@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { AspectRatios } from 'state/editor/image-editor/constants';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { getDefaultAspectRatio } from '../utils';
 
 describe( 'getDefaultAspectRatio', () => {

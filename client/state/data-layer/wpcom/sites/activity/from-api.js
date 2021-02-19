@@ -7,8 +7,8 @@ import { get, isUndefined } from 'lodash';
  * Internal dependencies
  */
 import apiResponseSchema from './schema';
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
-import { parseBlock } from 'lib/notifications/note-block-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
+import { parseBlock } from 'calypso/lib/notifications/note-block-parser';
 
 /**
  * Module constants

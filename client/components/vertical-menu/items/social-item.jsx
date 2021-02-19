@@ -11,7 +11,7 @@ import { get, identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'calypso/components/social-logo';
 
 /**
  * Style dependencies

@@ -6,9 +6,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getThemeFilterTermsTable } from 'state/themes/selectors/get-theme-filter-terms-table';
+import { getThemeFilterTermsTable } from 'calypso/state/themes/selectors/get-theme-filter-terms-table';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Given the 'term' part, returns a complete filter

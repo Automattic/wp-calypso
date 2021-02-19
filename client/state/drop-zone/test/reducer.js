@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import dropZone from '../reducer';
-import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
+import { DROPZONE_SHOW, DROPZONE_HIDE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should show DropZone', () => {

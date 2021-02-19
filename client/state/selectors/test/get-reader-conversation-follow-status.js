@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getReaderConversationFollowStatus } from 'state/reader/conversations/selectors';
+import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
 
 describe( 'getReaderConversationFollowStatus()', () => {
 	test( 'should return F for a known followed post', () => {

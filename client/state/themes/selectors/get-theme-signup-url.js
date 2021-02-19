@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
+import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { setPaymentCountryCode } from '../actions';
-import { PAYMENT_COUNTRY_CODE_SET } from 'state/action-types';
+import { PAYMENT_COUNTRY_CODE_SET } from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setPaymentCountryCode', () => {

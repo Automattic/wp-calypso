@@ -3,26 +3,37 @@
  */
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
-import type { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
-import { isEnabled } from 'config';
+import type { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
+import {
+	GutenLocationStateType,
+	Step,
+	StepType,
+	useIsAnchorFm,
+	useCurrentStep,
+	usePath,
+	useNewQueryParam,
+	useAnchorFmParams,
+} from '../path';
+import { usePrevious } from '../hooks/use-previous';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
-import type { Attributes } from './types';
-import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
+import AnchorError from './anchor-error';
 import StylePreview from './style-preview';
 import Features from './features';
 import Plans from './plans';
 import Domains from './domains';
 import Language from './language';
+
+import type { Attributes } from './types';
 
 import './colors.scss';
 import './style.scss';
@@ -33,14 +44,41 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
 	const shouldTriggerCreate = useNewQueryParam();
+	const isAnchorFmSignup = useIsAnchorFm();
+	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
 
 	const makePath = usePath();
+	const currentStep = useCurrentStep();
+	const previousStep = usePrevious( currentStep );
 
-	const { pathname } = useLocation();
+	const { state: locationState = {} } = useLocation< GutenLocationStateType >();
 
-	React.useEffect( () => {
-		window.scrollTo( 0, 0 );
-	}, [ pathname ] );
+	React.useLayoutEffect( () => {
+		// Runs some navigation related side-effects when the step changes
+		// We only want to run when a real transition happens:
+		// - not on first load when `previousStep === undefined` and,
+		// - during an intermediate state when `previousStep === currentStep`
+		if ( previousStep && previousStep !== currentStep ) {
+			setTimeout( () => window.scrollTo( 0, 0 ), 0 );
+
+			if ( window.getSelection && window.getSelection()?.empty ) {
+				window.getSelection()?.empty();
+			}
+		}
+	}, [ currentStep, previousStep ] );
+
+	// makePathWithState( path: StepType ) - A wrapper around makePath() that preserves location state.
+	// This uses makePath() to generate a string path, then transforms that
+	// string path into an object that also contains the location state.
+	const makePathWithState = React.useCallback(
+		( path: StepType ) => {
+			return {
+				pathname: makePath( path ),
+				state: locationState,
+			};
+		},
+		[ makePath, locationState ]
+	);
 
 	const canUseDesignStep = React.useCallback( (): boolean => {
 		return !! siteTitle;
@@ -54,16 +92,16 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
-	const getLatestStepPath = (): string => {
-		if ( canUseStyleStep() ) {
-			return makePath( Step.Plans );
+	const getLatestStepPath = () => {
+		if ( canUseStyleStep() && ! isAnchorFmSignup ) {
+			return makePathWithState( Step.Plans );
 		}
 
 		if ( canUseDesignStep() ) {
-			return makePath( Step.DesignSelection );
+			return makePathWithState( Step.DesignSelection );
 		}
 
-		return makePath( Step.IntentGathering );
+		return makePathWithState( Step.IntentGathering );
 	};
 
 	const redirectToLatestStep = <Redirect to={ getLatestStepPath() } />;
@@ -83,12 +121,12 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }
-					to={ makePath( Step.CreateSite ) }
+					to={ makePathWithState( Step.CreateSite ) }
 				/>
 			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
-					<AcquireIntent />
+					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>
@@ -100,7 +138,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Features ) }>
-					{ isEnabled( 'gutenboarding/feature-picker' ) ? <Features /> : redirectToLatestStep }
+					{ canUseStyleStep() ? <Features /> : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.Domains ) }>
@@ -120,7 +158,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.LanguageModal ) }>
-					<Language />
+					<Language previousStep={ previousStep } />
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>{ createSiteOrError() }</Route>

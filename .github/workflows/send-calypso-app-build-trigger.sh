@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 # cd here so that the parent directories are not included in the zip file.
-cd apps/full-site-editing/full-site-editing-plugin
+cd apps/editing-toolkit/editing-toolkit-plugin
 
 echo -e "Creating archive file...\n"
 

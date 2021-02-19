@@ -7,9 +7,9 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
-import { createSitePlanObject } from 'state/sites/plans/assembler';
-import { getPlansBySiteId } from 'state/sites/plans/selectors/get-plans-by-site';
+import { getSite } from 'calypso/state/sites/selectors';
+import { createSitePlanObject } from 'calypso/state/sites/plans/assembler';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 
 /**
  * Module dependencies

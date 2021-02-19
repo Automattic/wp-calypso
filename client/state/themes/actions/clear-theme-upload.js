@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { THEME_UPLOAD_CLEAR } from 'state/themes/action-types';
+import { THEME_UPLOAD_CLEAR } from 'calypso/state/themes/action-types';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Clears any state remaining from a previous

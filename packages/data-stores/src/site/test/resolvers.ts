@@ -17,7 +17,7 @@ beforeAll( () => {
 } );
 
 describe( 'getSite', () => {
-	it( 'should return a receiveExistingSite action object on success', async () => {
+	it( 'should dispatch a fetchSite action object on boot and should return a receiveExistingSite action object on success', async () => {
 		const siteId = 123456;
 		const apiResponse = {
 			ID: 1,
@@ -28,7 +28,12 @@ describe( 'getSite', () => {
 
 		const generator = getSite( siteId );
 
-		expect( generator.next().value ).toEqual( {
+		// getSite dispatches a FETCH_SITE action on boot
+		expect( await generator.next().value ).toEqual( {
+			type: 'FETCH_SITE',
+		} );
+
+		expect( await generator.next().value ).toEqual( {
 			type: 'WPCOM_REQUEST',
 			request: expect.objectContaining( {
 				path: `/sites/${ siteId }`,
@@ -53,6 +58,11 @@ describe( 'getSite', () => {
 		};
 
 		const generator = getSite( siteId );
+
+		// getSite dispatches a FETCH_SITE action on boot
+		expect( await generator.next().value ).toEqual( {
+			type: 'FETCH_SITE',
+		} );
 
 		expect( generator.next().value ).toEqual( {
 			type: 'WPCOM_REQUEST',

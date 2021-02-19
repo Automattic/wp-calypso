@@ -6,6 +6,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class FormTextInput extends PureComponent {
 	static propTypes = {
 		isError: PropTypes.bool,
@@ -26,7 +31,7 @@ export default class FormTextInput extends PureComponent {
 
 	updateValueIfNeeded( oldValue ) {
 		const { value } = this.props;
-		if ( oldValue !== value && value !== this.state.value ) {
+		if ( oldValue !== value || value !== this.state.value ) {
 			this.setState( { value } );
 		}
 	}

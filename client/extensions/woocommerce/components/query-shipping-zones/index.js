@@ -17,7 +17,7 @@ import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/s
 import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { areLocationsLoaded } from 'woocommerce/state/sites/data/locations/selectors';
 import { areShippingClassesLoaded } from 'woocommerce/state/sites/shipping-classes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import QueryLocations from 'woocommerce/components/query-locations';
 
 class QueryShippingZones extends Component {

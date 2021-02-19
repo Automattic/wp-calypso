@@ -12,12 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import {
-	usePaymentProcessor,
-	useTransactionStatus,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -78,7 +73,7 @@ function EpsFields() {
 	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'eps' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<EpsFormWrapper>
@@ -126,17 +121,9 @@ const EpsField = styled( Field )`
 	}
 `;
 
-function EpsPayButton( { disabled, store, stripe, stripeConfiguration } ) {
-	const { __ } = useI18n();
+function EpsPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'eps' );
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
 
 	return (
@@ -145,34 +132,17 @@ function EpsPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting eps payment' );
-					setTransactionPending();
-					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'eps' } } );
-					submitTransaction( {
+					onClick( 'eps', {
 						stripe,
 						name: customerName?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'eps transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -182,10 +152,11 @@ function EpsPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -219,16 +190,16 @@ function EpsLabel() {
 		<React.Fragment>
 			<span>{ __( 'EPS e-Pay' ) }</span>
 			<PaymentMethodLogos className="eps__logo payment-logos">
-				<EpsLogoUI />
+				<EpsLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const EpsLogoUI = styled( EpsLogo )`
+const EpsLogo = styled( EpsLogoImg )`
 	width: 28px;
 `;
 
-function EpsLogo( { className } ) {
+function EpsLogoImg( { className } ) {
 	return <img src="/calypso/images/upgrades/eps.svg" alt="EPS e-Pay" className={ className } />;
 }

@@ -13,16 +13,15 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import Followers from '../stats-comment-followers-page';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class StatsCommentFollows extends Component {
 	static propTypes = {
-		followList: PropTypes.object,
 		page: PropTypes.number,
 		perPage: PropTypes.number,
 		slug: PropTypes.string,
@@ -48,7 +47,7 @@ class StatsCommentFollows extends Component {
 	};
 
 	render() {
-		const { followList, perPage, translate } = this.props;
+		const { perPage, translate } = this.props;
 
 		return (
 			<Main wideLayout={ true }>
@@ -61,7 +60,6 @@ class StatsCommentFollows extends Component {
 					<HeaderCake onClick={ this.goBack }>{ translate( 'Comments Followers' ) }</HeaderCake>
 					<Followers
 						path="comment-follow-summary"
-						followList={ followList }
 						page={ this.props.page }
 						perPage={ perPage }
 						pageClick={ this.paginationHandler }

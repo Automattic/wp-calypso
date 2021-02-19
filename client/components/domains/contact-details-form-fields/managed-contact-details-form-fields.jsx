@@ -5,29 +5,29 @@
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
-import { camelCase } from 'lodash';
+import { camelCase, deburr } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { getCountryStates } from 'state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import { countries } from 'components/phone-input/data';
-import { toIcannFormat } from 'components/phone-input/phone-number';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
+import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import { countries } from 'calypso/components/phone-input/data';
+import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
-import getCountries from 'state/selectors/get-countries';
-import QueryDomainCountries from 'components/data/query-countries/domains';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
+import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 
 /**
  * Style dependencies
@@ -151,7 +151,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			isError: !! form[ camelName ]?.errors?.length,
 			errorMessage: customErrorMessage || getFirstError( form[ camelName ] ),
 			onChange: this.handleFieldChangeEvent,
-			onBlur: this.handleBlur,
+			onBlur: this.handleBlur( name ),
 			value: form[ camelName ]?.value ?? '',
 			name,
 			eventFormName,
@@ -165,7 +165,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handleBlur = () => {
+	handleBlur = ( name ) => () => {
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -181,6 +181,10 @@ export class ManagedContactDetailsFormFields extends Component {
 				this.handleFieldChange( 'postal-code', formattedPostalCode );
 			}
 		} );
+
+		// Strip leading and trailing whitespace
+		const sanitizedValue = deburr( form[ camelCase( name ) ]?.value.trim() );
+		this.handleFieldChange( name, sanitizedValue );
 	};
 
 	renderContactDetailsEmailPhone() {
@@ -323,18 +327,7 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 
 	renderAlternateEmailFieldForGSuite() {
-		let customErrorMessage = this.props.contactDetailsErrors?.alternateEmail;
-		// We also show 'email' field errors because this field will only be shown
-		// if email is invalid (and email will not be shown) so we should show
-		// those errors somewhere. However, only show them if the `alternateEmail`
-		// has not been entered.
-		if (
-			! customErrorMessage &&
-			this.props.contactDetailsErrors?.email &&
-			! this.props.contactDetails?.alternateEmail?.length > 0
-		) {
-			customErrorMessage = this.props.contactDetailsErrors.email;
-		}
+		const customErrorMessage = this.props.contactDetailsErrors?.alternateEmail;
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input
@@ -394,7 +387,9 @@ export class ManagedContactDetailsFormFields extends Component {
 					this.renderContactDetailsFields()
 				) }
 
-				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				{ this.props.children && (
+					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				) }
 
 				<QueryDomainCountries />
 			</FormFieldset>

@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { managePurchase, purchasesRoot } from 'me/purchases/paths';
-import { type as domainTypes } from 'lib/domains/constants';
+import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 /**
  * Style dependencies

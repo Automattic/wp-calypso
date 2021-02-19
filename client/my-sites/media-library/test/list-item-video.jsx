@@ -13,7 +13,7 @@ import React from 'react';
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import ListItemVideo from 'my-sites/media-library/list-item-video';
+import ListItemVideo from 'calypso/my-sites/media-library/list-item-video';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 

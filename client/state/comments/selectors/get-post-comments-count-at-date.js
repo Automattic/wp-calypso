@@ -6,9 +6,9 @@ import { filter, isDate, size } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getStateKey } from 'state/comments/utils';
+import { getStateKey } from 'calypso/state/comments/utils';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Get total number of comments in state at a given date and time

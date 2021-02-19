@@ -8,16 +8,15 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { id, capabilities, currencyCode } from '../reducer';
+import { serialize, deserialize } from 'calypso/state/utils';
 import {
 	CURRENT_USER_RECEIVE,
-	DESERIALIZE,
 	PLANS_RECEIVE,
-	SERIALIZE,
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -27,6 +26,7 @@ describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'id',
+			'user',
 			'currencyCode',
 			'capabilities',
 			'flags',
@@ -53,34 +53,22 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should validate ID is positive', () => {
-			const state = id( -1, {
-				type: DESERIALIZE,
-			} );
-
+			const state = deserialize( id, -1 );
 			expect( state ).to.equal( null );
 		} );
 
 		test( 'should validate ID is a number', () => {
-			const state = id( 'foobar', {
-				type: DESERIALIZE,
-			} );
-
+			const state = deserialize( id, 'foobar' );
 			expect( state ).to.equal( null );
 		} );
 
 		test( 'returns valid ID', () => {
-			const state = id( 73705554, {
-				type: DESERIALIZE,
-			} );
-
+			const state = deserialize( id, 73705554 );
 			expect( state ).to.equal( 73705554 );
 		} );
 
 		test( 'will SERIALIZE current user', () => {
-			const state = id( 73705554, {
-				type: SERIALIZE,
-			} );
-
+			const state = serialize( id, 73705554 );
 			expect( state ).to.equal( 73705554 );
 		} );
 	} );
@@ -154,23 +142,17 @@ describe( 'reducer', () => {
 		} );
 		test( 'should persist state', () => {
 			const original = 'JPY';
-			const state = currencyCode( original, {
-				type: SERIALIZE,
-			} );
+			const state = serialize( currencyCode, original );
 			expect( state ).to.equal( original );
 		} );
 		test( 'should restore valid persisted state', () => {
 			const original = 'JPY';
-			const state = currencyCode( original, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( currencyCode, original );
 			expect( state ).to.equal( original );
 		} );
 		test( 'should ignore invalid persisted state', () => {
 			const original = 1234;
-			const state = currencyCode( original, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( currencyCode, original );
 			expect( state ).to.equal( null );
 		} );
 	} );
@@ -296,9 +278,7 @@ describe( 'reducer', () => {
 					manage_options: false,
 				},
 			} );
-			const state = capabilities( original, {
-				type: SERIALIZE,
-			} );
+			const state = serialize( capabilities, original );
 
 			expect( state ).to.equal( original );
 		} );
@@ -309,9 +289,7 @@ describe( 'reducer', () => {
 					manage_options: false,
 				},
 			} );
-			const state = capabilities( original, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( capabilities, original );
 
 			expect( state ).to.equal( original );
 		} );
@@ -322,9 +300,7 @@ describe( 'reducer', () => {
 					manage_options: false,
 				},
 			} );
-			const state = capabilities( original, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( capabilities, original );
 
 			expect( state ).to.eql( {} );
 		} );

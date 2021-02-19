@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { initial, isEmpty, isString, last } from 'lodash';
+import { isEmpty, isString, last } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { mergePostEdits } from 'state/posts/utils/merge-post-edits';
+import { mergePostEdits } from 'calypso/state/posts/utils/merge-post-edits';
 
 /**
  * Appends a new edits object to existing edits log. If the last one is
@@ -29,7 +29,7 @@ export function appendToPostEditsLog( postEditsLog, newPostEdits ) {
 		return [ ...postEditsLog, newPostEdits ];
 	}
 
-	const newEditsLog = initial( postEditsLog );
+	const newEditsLog = postEditsLog.slice( 0, -1 );
 	newEditsLog.push( mergePostEdits( lastEdits, newPostEdits ) );
 	return newEditsLog;
 }

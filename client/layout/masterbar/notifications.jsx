@@ -12,13 +12,13 @@ import { partial } from 'lodash';
  * Internal dependencies
  */
 import MasterbarItem from './item';
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 import store from 'store';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { toggleNotificationsPanel } from 'state/ui/actions';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import TranslatableString from 'components/translatable/proptype';
-import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 
 class MasterbarItemNotifications extends Component {
 	static propTypes = {
@@ -134,7 +134,7 @@ class MasterbarItemNotifications extends Component {
 					/>
 				</MasterbarItem>
 				<AsyncLoad
-					require="../../../apps/notifications/index.jsx"
+					require="calypso/notifications"
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }

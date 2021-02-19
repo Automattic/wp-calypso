@@ -13,10 +13,10 @@ import { constant, times } from 'lodash';
  */
 import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
 
-jest.mock( 'layout/guided-tours/config', () => {
-	return require( 'state/guided-tours/test/fixtures/config' );
+jest.mock( 'calypso/layout/guided-tours/config', () => {
+	return require( 'calypso/state/guided-tours/test/fixtures/config' );
 } );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'selectors', () => {
 	describe( '#hasTourJustBeenVisible', () => {
@@ -103,13 +103,12 @@ describe( 'selectors', () => {
 					'guided-tours-history': toursHistory,
 				},
 			},
-			currentUser: { id: 1337 },
-			users: {
-				items: {
-					1337: {
-						date: '2015-11-20T00:00:00+00:00',
-						...userData,
-					},
+			currentUser: {
+				id: 1337,
+				user: {
+					ID: 1337,
+					date: '2015-11-20T00:00:00+00:00',
+					...userData,
 				},
 			},
 		} );

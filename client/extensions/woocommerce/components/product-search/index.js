@@ -14,8 +14,9 @@ import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/prod
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import NoResults from 'my-sites/no-results';
-import Search from 'components/search';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import NoResults from 'calypso/my-sites/no-results';
+import Search from 'calypso/components/search';
 import ProductSearchRow from './row';
 import {
 	addProductId,
@@ -122,7 +123,7 @@ class ProductSearch extends Component {
 			<div className="product-search__list">
 				<div className="product-search__row is-placeholder">
 					<div className="product-search__row-item">
-						<input type="checkbox" disabled />
+						<FormInputCheckbox disabled />
 						<span className="product-search__list-image is-thumb-placeholder" />
 						<span className="product-search__row-title" />
 					</div>

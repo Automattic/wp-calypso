@@ -1,0 +1,59 @@
+@import '~@automattic/onboarding/styles/mixins';
+
+.nux-launch-menu {
+	h4 {
+		text-transform: uppercase;
+		margin-bottom: 16px;
+	}
+}
+
+.nux-launch-menu__item-group {
+	margin: 0 -12px;
+}
+
+.nux-launch-menu__item.components-button.is-link {
+	@include onboarding-medium-text;
+	display: flex;
+	color: var( --studio-gray-30 );
+	width: 100%;
+	text-align: left;
+	text-decoration: none;
+	padding: 16px 14px;
+
+	&:hover {
+		color: initial;
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	svg {
+		margin-right: 10px;
+		color: var( --studio-gray-10 );
+		// cosmetic alignment
+		position: relative;
+		top: 1px;
+		left: -1px;
+	}
+
+	// This is only highlighted when sidebar is not fullscreen
+	@include break-medium {
+		&.is-current {
+			background: var( --studio-blue-0 );
+			color: initial;
+
+			svg {
+				color: initial;
+			}
+		}
+	}
+
+	&.is-completed {
+		svg {
+			color: var( --studio-green-40 );
+			top: 0;
+			left: 0;
+		}
+	}
+}

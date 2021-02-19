@@ -4,6 +4,9 @@ export const remoteValuesSchema = {
 		'^dismissible-card-.+$': {
 			type: [ 'boolean', 'object' ],
 		},
+		'^time-mismatch-warning-\\d+$': {
+			type: [ 'boolean', 'number' ],
+		},
 	},
 	properties: {
 		'editor-mode': {
@@ -12,20 +15,6 @@ export const remoteValuesSchema = {
 		},
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean',
-		},
-		'google-my-business-dismissible-nudge': {
-			type: 'object',
-			'^[1-9]+$': {
-				type: 'array',
-				items: {
-					type: 'object',
-					properties: {
-						dismissedAt: { type: 'number', minimum: 0 },
-						type: { type: 'string', enum: [ 'dismiss' ] },
-					},
-					required: [ 'dismissedAt', 'type' ],
-				},
-			},
 		},
 		'guided-tours-history': {
 			type: 'array',
@@ -61,14 +50,21 @@ export const remoteValuesSchema = {
 		colorScheme: {
 			type: 'string',
 			enum: [
+				'aquatic',
+				'blue',
 				'classic-blue',
 				'classic-bright',
+				'coffee',
 				'contrast',
+				'ectoplasm',
+				'light',
 				'midnight',
+				'modern',
 				'nightfall',
 				'ocean',
 				'powder-snow',
 				'sakura',
+				'sunrise',
 				'sunset',
 			],
 		},

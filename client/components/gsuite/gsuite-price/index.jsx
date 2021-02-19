@@ -9,8 +9,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
+import Badge from 'calypso/components/badge';
+import { getAnnualPrice, getMonthlyPrice } from 'calypso/lib/gsuite';
 
 /**
  * Style dependencies
@@ -23,7 +23,7 @@ import './style.scss';
  * @param {object} product - G Suite product
  * @returns {boolean} - true if a discount can be applied, false otherwise
  */
-const hasDiscount = ( product ) => {
+export const hasDiscount = ( product ) => {
 	if (
 		! product ||
 		! product.sale_cost ||
@@ -54,7 +54,7 @@ const GSuitePrice = ( { currencyCode, product } ) => {
 	return (
 		<div className="gsuite-price">
 			<h4 className="gsuite-price__monthly-price">
-				{ translate( '{{strong}}%(price)s{{/strong}} per user/month', {
+				{ translate( '{{strong}}%(price)s{{/strong}} /user /month', {
 					args: {
 						price: monthlyPrice,
 					},

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getDismissedSites } from 'state/reader/site-dismissals/selectors';
+import { getDismissedSites } from 'calypso/state/reader/site-dismissals/selectors';
 
 describe( 'getDismissedSites()', () => {
 	test( 'should return an array of dismissed site IDs', () => {

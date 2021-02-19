@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getOAuth2Client } from 'state/oauth2-clients/selectors';
+import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 
-import 'state/oauth2-clients/init';
+import 'calypso/state/oauth2-clients/init';
 
 /**
  * Returns the ID of the current OAuth2 client.

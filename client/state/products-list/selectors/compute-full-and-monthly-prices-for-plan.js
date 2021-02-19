@@ -6,7 +6,7 @@ import { max } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPlanRawPrice } from 'state/plans/selectors';
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getPlanPrice } from './get-plan-price';
 
 /**

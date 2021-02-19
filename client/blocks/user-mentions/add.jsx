@@ -260,6 +260,14 @@ export default ( WrappedComponent ) =>
 
 			// Move the caret to the end of the inserted username
 			node.selectionStart = lastAtSymbolPosition + newTextValue.length;
+
+			// Fire the onChange handler with a simulated event so the new text value is persisted to state
+			if ( ! this.props.onChange ) {
+				return;
+			}
+
+			const changeEvent = { target: { value: newTextValue } };
+			this.props.onChange( changeEvent );
 		};
 
 		updatePosition = ( state = this.state, newPosition ) => {

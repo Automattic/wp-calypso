@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/domains/init';
+import 'calypso/state/domains/init';
 
 /**
  * Return a boolean value indicating whether a request for domain contact details

@@ -10,10 +10,10 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
-import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
-import RelatedPost from 'blocks/reader-related-card';
-import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
+import { relatedPostsForPost } from 'calypso/state/reader/related-posts/selectors';
+import { SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
+import RelatedPost from 'calypso/blocks/reader-related-card';
+import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';
 
 function RelatedPosts( {
 	siteId,

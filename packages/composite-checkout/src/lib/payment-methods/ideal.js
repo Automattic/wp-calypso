@@ -12,12 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import {
-	usePaymentProcessor,
-	useTransactionStatus,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -92,7 +87,7 @@ function IdealFields() {
 	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
 	const { changeCustomerName, changeCustomerBank } = useDispatch( 'ideal' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<IdealFormWrapper>
@@ -123,7 +118,6 @@ function IdealFields() {
 function BankSelector( { id, value, onChange, label, isError, errorMessage, disabled } ) {
 	const { __ } = useI18n();
 	const bankOptions = getBankOptions( __ );
-	/* eslint-disable jsx-a11y/no-onchange */
 	return (
 		<SelectWrapper>
 			<label htmlFor={ id } disabled={ disabled }>
@@ -142,7 +136,6 @@ function BankSelector( { id, value, onChange, label, isError, errorMessage, disa
 			<ErrorMessage isError={ isError } errorMessage={ errorMessage } />
 		</SelectWrapper>
 	);
-	/* eslint-enable jsx-a11y/no-onchange */
 }
 
 function BankOption( { value, label } ) {
@@ -201,17 +194,9 @@ const SelectWrapper = styled.div`
 	}
 `;
 
-function IdealPayButton( { disabled, store, stripe, stripeConfiguration } ) {
-	const { __ } = useI18n();
+function IdealPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'ideal' );
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'ideal' ).getCustomerName() );
 	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
 
@@ -221,35 +206,18 @@ function IdealPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting ideal payment' );
-					setTransactionPending();
-					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'ideal' } } );
-					submitTransaction( {
+					onClick( 'ideal', {
 						stripe,
 						name: customerName?.value,
 						idealBank: customerBank?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'ideal transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -259,10 +227,11 @@ function IdealPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -304,30 +273,30 @@ function IdealLabel() {
 		<React.Fragment>
 			<span>{ __( 'iDEAL' ) }</span>
 			<PaymentMethodLogos className="ideal__logo payment-logos">
-				<IdealLogoUI />
+				<IdealLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const IdealLogoUI = styled( IdealLogo )`
+const IdealLogo = styled( IdealLogoSvg )`
 	width: 28px;
 `;
 
-function IdealLogo( { className } ) {
+function IdealLogoSvg( { className } ) {
 	return (
 		<svg
 			className={ className }
-			enable-background="new 0 0 52.4 45.4"
+			enableBackground="new 0 0 52.4 45.4"
 			viewBox="0 0 52.4 45.4"
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<path d="m5.8 39.2h8.6v-13.6h-8.6zm39.1-34.8c-6.4-4.7-15.1-4.4-15.1-4.4h-29.8v45.4h29.8s9.2.6 16.1-5.1c5.6-4.7 6.5-13.2 6.5-18.1 0-4.8-1.7-13.4-7.5-17.8zm0 32.5c-5.6 5.9-14.4 5.5-14.4 5.5h-27.4v-39.3h27.4s7.5-.3 13 4.4c5.3 4.5 5.8 10.6 5.8 15 .1 4-.5 10.3-4.4 14.4zm-34.8-22.9c-2.6 0-4.6 2.1-4.6 4.6s2.1 4.6 4.6 4.6c2.6 0 4.6-2.1 4.6-4.6s-2-4.6-4.6-4.6z" />
 			<path
-				clip-rule="evenodd"
+				clipRule="evenodd"
 				d="m34.4 19.5h1.5l-.8-2zm5.9-4.8h2.1v6.5h3.8c-.2-3.4-1.5-8.4-4.8-10.9-4.3-3.4-11-3.8-11-3.8h-12.7v8.2h2.4s2.7.2 2.7 4.1c0 4-2.7 4.1-2.7 4.1h-2.4v16h12.7s7.5 0 12-4.1c2.9-2.7 3.6-8.3 3.8-11.9h-5.8v-8.2zm-9.9 1.7h-4.5v1.4h4.1v1.7h-4.1v1.7h4.5v1.7h-6.2v-8.2h6.2zm6.8 6.5-.6-1.7h-2.8l-.6 1.7h-2.2l3.1-8.2h2.1l3.4 8.2zm-16.4-4.1c0-2.2-1.4-2.4-1.4-2.4h-1.7v4.8h1.7s1.4 0 1.4-2.4z"
 				fill="#cc2e74"
-				fill-rule="evenodd"
+				fillRule="evenodd"
 			/>
 		</svg>
 	);

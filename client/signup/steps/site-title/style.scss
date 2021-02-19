@@ -9,7 +9,7 @@
 
 	// Mimic a card
 	.form-fieldset {
-		border-radius: 4px;
+		border-radius: 2px;
 		background: var( --color-surface );
 		@include elevation ( 2dp );
 	}
@@ -20,12 +20,12 @@
 		display: none;
 	}
 
-	input {
+	input.form-text-input {
 		// Extra padding to account for the button
 		padding: 10px 90px 12px 16px;
 
 		// Match the radious of the fieldset
-		border-radius: 4px;
+		border-radius: 2px;
 
 		// No need for a border here
 		border: none;

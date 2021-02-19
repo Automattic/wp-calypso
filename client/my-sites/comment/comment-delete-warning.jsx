@@ -15,11 +15,11 @@ import {
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { deleteComment } from 'state/comments/actions';
-import { getSiteComment } from 'state/comments/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+} from 'calypso/state/analytics/actions';
+import { deleteComment } from 'calypso/state/comments/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 const CommentDeleteWarning = ( { isLoading, destroyComment, translate } ) =>
 	! isLoading && (

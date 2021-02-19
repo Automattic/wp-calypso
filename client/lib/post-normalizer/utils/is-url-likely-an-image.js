@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { some, endsWith } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'lib/url';
+import { getUrlParts } from 'calypso/lib/url';
 
 /** Determine if url is likely pointed to an image
  *
@@ -19,5 +19,5 @@ export function isUrlLikelyAnImage( uri ) {
 	}
 
 	const withoutQuery = getUrlParts( uri ).pathname;
-	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ( ext ) => endsWith( withoutQuery, ext ) );
+	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], ( ext ) => withoutQuery.endsWith( ext ) );
 }

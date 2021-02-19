@@ -16,10 +16,9 @@ import {
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
-	DESERIALIZE,
-	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducers', () => {
 	describe( 'isFetching()', () => {
@@ -45,24 +44,6 @@ describe( 'reducers', () => {
 			} );
 
 			expect( state ).to.be.false;
-		} );
-
-		describe( 'persistence', () => {
-			test( 'never loads persisted data', () => {
-				const persistedState = deepFreeze( true );
-				const state = isFetching( persistedState, {
-					type: DESERIALIZE,
-				} );
-				expect( state ).to.eql( false );
-			} );
-
-			test( 'never persists data', () => {
-				const state = deepFreeze( true );
-				const persistedState = isFetching( state, {
-					type: SERIALIZE,
-				} );
-				expect( persistedState ).to.be.undefined;
-			} );
 		} );
 	} );
 
@@ -177,9 +158,7 @@ describe( 'reducers', () => {
 					1: { ID: 1, sites: [ '2916284' ] },
 					2: { ID: 2, sites: [ '77203074' ] },
 				} );
-				const persistedState = items( state, {
-					type: SERIALIZE,
-				} );
+				const persistedState = serialize( items, state );
 				expect( persistedState ).to.eql( state );
 			} );
 
@@ -188,9 +167,7 @@ describe( 'reducers', () => {
 					1: { ID: 1, sites: [ '2916284' ] },
 					2: { ID: 2, sites: [ '77203074' ] },
 				} );
-				const state = items( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( items, persistedState );
 				expect( state ).to.eql( persistedState );
 			} );
 
@@ -199,9 +176,7 @@ describe( 'reducers', () => {
 					foo: { ID: 1, sites: [ '2916284' ] },
 					bar: { ID: 2, sites: [ '77203074' ] },
 				} );
-				const state = items( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( items, persistedState );
 				expect( state ).to.eql( {} );
 			} );
 
@@ -210,9 +185,7 @@ describe( 'reducers', () => {
 					1: { ID: 1, sites: 'foo' },
 					2: { ID: 2, sites: [ '77203074' ] },
 				} );
-				const state = items( persistedState, {
-					type: DESERIALIZE,
-				} );
+				const state = deserialize( items, persistedState );
 				expect( state ).to.eql( {} );
 			} );
 		} );

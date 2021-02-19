@@ -13,9 +13,9 @@ import { identity, includes, noop, without } from 'lodash';
  * Internal dependencies
  */
 import { RootChild } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import { hideDropZone, showDropZone } from 'state/drop-zone/actions';
-import TranslatableString from 'components/translatable/proptype';
+import Gridicon from 'calypso/components/gridicon';
+import { hideDropZone, showDropZone } from 'calypso/state/drop-zone/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies
@@ -139,9 +139,9 @@ export class DropZone extends React.Component {
 		// as the `detail` property.
 		//
 		// See: https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
-		const detail = window.CustomEvent && event instanceof window.CustomEvent ? event.detail : event,
-			isValidDrag = this.props.onVerifyValidTransfer( detail.dataTransfer ),
-			isDraggingOverDocument = isValidDrag && this.dragEnterNodes.length;
+		const detail = window.CustomEvent && event instanceof window.CustomEvent ? event.detail : event;
+		const isValidDrag = this.props.onVerifyValidTransfer( detail.dataTransfer );
+		const isDraggingOverDocument = isValidDrag && this.dragEnterNodes.length;
 
 		this.setState( {
 			isDraggingOverDocument: isDraggingOverDocument,

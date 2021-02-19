@@ -6,24 +6,24 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, some, trim, trimEnd } from 'lodash';
+import { includes, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 import { Button } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import SupportInfo from 'components/support-info';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import SupportInfo from 'calypso/components/support-info';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 
 class Protect extends Component {
 	static propTypes = {
@@ -42,7 +42,7 @@ class Protect extends Component {
 
 	handleAddToAllowedList = () => {
 		const { setFieldValue } = this.props;
-		let allowedIps = trimEnd( this.getProtectAllowedIps() );
+		let allowedIps = this.getProtectAllowedIps().trimEnd();
 
 		if ( allowedIps.length ) {
 			allowedIps += '\n';
@@ -79,7 +79,7 @@ class Protect extends Component {
 					return false;
 				}
 
-				const range = entry.split( '-' ).map( trim );
+				const range = entry.split( '-' ).map( ( ip ) => ip.trim() );
 				return includes( range, ipAddress );
 			} )
 		);

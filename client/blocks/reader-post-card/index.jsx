@@ -8,35 +8,38 @@ import { noop, truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
-import config from 'config';
 
 /**
  * Internal Dependencies
  */
 import { Card } from '@automattic/components';
-import DisplayTypes from 'state/reader/posts/display-types';
-import * as stats from 'reader/stats';
-import ReaderPostActions from 'blocks/reader-post-actions';
+import DisplayTypes from 'calypso/state/reader/posts/display-types';
+import * as stats from 'calypso/reader/stats';
+import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import PostByline from './byline';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
 import ConversationPost from './conversation-post';
-import FollowButton from 'reader/follow-button';
-import DailyPostButton from 'blocks/daily-post-button';
-import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
+import FollowButton from 'calypso/reader/follow-button';
+import DailyPostButton from 'calypso/blocks/daily-post-button';
+import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import {
 	getDiscoverBlogName,
 	getSourceFollowUrl as getDiscoverFollowUrl,
-} from 'reader/discover/helper';
-import DiscoverFollowButton from 'reader/discover/follow-button';
-import { expandCard as expandCardAction } from 'state/reader-ui/card-expansions/actions';
-import isReaderCardExpanded from 'state/selectors/is-reader-card-expanded';
+} from 'calypso/reader/discover/helper';
+import DiscoverFollowButton from 'calypso/reader/discover/follow-button';
+import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
+import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {
@@ -54,6 +57,8 @@ class ReaderPostCard extends React.Component {
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -70,8 +75,8 @@ class ReaderPostCard extends React.Component {
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = ReactDom.findDOMNode( this ),
-			selection = window.getSelection && window.getSelection();
+		const rootNode = ReactDom.findDOMNode( this );
+		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
@@ -130,9 +135,14 @@ class ReaderPostCard extends React.Component {
 			isExpanded,
 			expandCard,
 			compact,
+			teams,
+			isWPForTeamsItem,
 		} = this.props;
 
-		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
+		let isSeen = true;
+		if ( canBeMarkedAsSeen( { post } ) ) {
+			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && post.is_seen;
+		}
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
@@ -261,7 +271,7 @@ class ReaderPostCard extends React.Component {
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
 		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
 		return (
-			<Card className={ classes } onClick={ onClick }>
+			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ showPrimaryFollowButton && followUrl && (
 					<FollowButton
@@ -279,6 +289,11 @@ class ReaderPostCard extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
+		isWPForTeamsItem:
+			ownProps.postKey &&
+			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
+				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
+		teams: getReaderTeams( state ),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
 	{ expandCard: expandCardAction }

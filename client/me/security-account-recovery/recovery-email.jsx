@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import ManageContact from './manage-contact';
 import EditEmail from './edit-email';
-import accept from 'lib/accept';
+import accept from 'calypso/lib/accept';
 
 class RecoveryEmail extends Component {
 	render() {

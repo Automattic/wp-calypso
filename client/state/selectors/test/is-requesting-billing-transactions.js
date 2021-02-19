@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isRequestingBillingTransactions from 'state/selectors/is-requesting-billing-transactions';
+import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
 
 describe( 'isRequestingBillingTransactions()', () => {
 	test( 'should return true if the billing transactions are being fetched', () => {

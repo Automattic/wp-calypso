@@ -1,5 +1,4 @@
-Manual Updater
-=========
+# Manual Updater
 
 Provides a manual updater on platforms where the auto updater does not work.
 

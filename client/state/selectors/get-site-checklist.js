@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/checklist/init';
+import 'calypso/state/checklist/init';
 
 /**
  * Returns the checklist for the specified site ID

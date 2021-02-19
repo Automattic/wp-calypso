@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
 import meta from './meta';
 import {
 	ButtonRow,
@@ -16,14 +16,14 @@ import {
 	SiteLink,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackSiteAcceleratorTour = makeTour(
 	<Tour { ...meta }>
 		<Step
 			name="init"
-			target=".jetpack-site-accelerator-settings .form-toggle__switch"
+			target=".jetpack-site-accelerator-settings .components-form-toggle"
 			arrow="top-left"
 			placement="below"
 			style={ {
@@ -42,7 +42,7 @@ export const JetpackSiteAcceleratorTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue
-							target=".jetpack-site-accelerator-settings .form-toggle__switch"
+							target=".jetpack-site-accelerator-settings .components-form-toggle"
 							step="finish"
 							click
 							hidden

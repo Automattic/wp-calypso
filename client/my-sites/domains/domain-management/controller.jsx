@@ -8,7 +8,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import DomainManagement from '.';
-import DomainManagementData from 'components/data/domain-management';
+import DomainManagementData from 'calypso/components/data/domain-management';
 import {
 	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
@@ -28,14 +28,14 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
-} from 'my-sites/domains/paths';
+} from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
-} from 'my-sites/email/paths';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { decodeURIComponentIfValid } from 'lib/url';
+} from 'calypso/my-sites/email/paths';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { decodeURIComponentIfValid } from 'calypso/lib/url';
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -45,7 +45,6 @@ export default {
 				analyticsTitle="Domain Management"
 				component={ DomainManagement.List }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -74,7 +73,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.Edit }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -92,7 +90,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.SiteRedirect }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -110,7 +107,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ DomainManagement.TransferIn }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -142,7 +138,6 @@ export default {
 				analyticsTitle="Domain Management > Contacts and Privacy > Manage Consent for Personal Data Use"
 				component={ DomainManagement.ManageConsent }
 				context={ pageContext }
-				needsCart
 				needsContactDetails
 				needsDomains
 				needsPlans
@@ -212,7 +207,6 @@ export default {
 				component={ DomainManagement.NameServers }
 				context={ pageContext }
 				needsDomains
-				needsNameservers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -267,7 +261,6 @@ export default {
 				component={ DomainManagement.Transfer }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
@@ -283,7 +276,6 @@ export default {
 				component={ DomainManagement.TransferToOtherSite }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
@@ -299,7 +291,6 @@ export default {
 				component={ DomainManagement.TransferToOtherUser }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
@@ -315,7 +306,6 @@ export default {
 				component={ DomainManagement.TransferOut }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>

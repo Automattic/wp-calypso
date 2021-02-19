@@ -7,18 +7,18 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_AUTOCONFIGURE,
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
-} from 'state/action-types';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
-import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
+} from 'calypso/state/action-types';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetch = ( action ) => {
 	const notice = successNotice( i18n.translate( 'Obtaining your credentials…' ) );

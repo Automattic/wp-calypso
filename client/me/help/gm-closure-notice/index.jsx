@@ -11,13 +11,13 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEcommercePlan, isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'lib/plans';
-import FoldableCard from 'components/foldable-card';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { useLocalizedMoment } from 'components/localized-moment';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getUserPurchases } from 'state/purchases/selectors';
-import { localizeUrl } from 'lib/i18n-utils';
+import { isEcommercePlan, isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'calypso/lib/plans';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

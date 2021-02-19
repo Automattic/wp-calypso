@@ -1,4 +1,4 @@
-const log = require( 'desktop/lib/logger' )( 'desktop:analytics' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:analytics' );
 const fetch = require( 'electron-fetch' ).default;
 
 function buildQuerystring( group, name ) {
@@ -30,10 +30,8 @@ export async function bumpStat( group, name ) {
 	const url = `https://pixel.wp.com/g.gif?v=wpcom-no-pv${ uriComponent }&t=${ Math.random() }`;
 
 	const resp = await fetch( url );
-	if ( resp.status === 200 ) {
-		log.info( 'Sent analytics ping' );
-	} else {
-		log.warn( 'Analytics ping failed', resp.status, resp.statusText );
+	if ( resp.status !== 200 ) {
+		log.warn( `Analytics ping failed (${ resp.status }): `, resp.statusText );
 	}
 }
 

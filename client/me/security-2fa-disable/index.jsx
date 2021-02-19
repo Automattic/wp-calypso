@@ -10,13 +10,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import Security2faStatus from 'me/security-2fa-status';
-import Security2faCodePrompt from 'me/security-2fa-code-prompt';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { successNotice } from 'state/notices/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+import FormButton from 'calypso/components/forms/form-button';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import Security2faStatus from 'calypso/me/security-2fa-status';
+import Security2faCodePrompt from 'calypso/me/security-2fa-code-prompt';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -59,7 +60,7 @@ class Security2faDisable extends Component {
 
 	renderVerificationCodeMeansMessage() {
 		const { userSettings, translate } = this.props;
-		if ( userSettings.settings.two_step_sms_enabled ) {
+		if ( userSettings.two_step_sms_enabled ) {
 			return (
 				<div>
 					<p>
@@ -83,7 +84,7 @@ class Security2faDisable extends Component {
 									strong: <strong />,
 								},
 								args: {
-									smsNumber: userSettings.getSetting( 'two_step_sms_phone_number' ),
+									smsNumber: userSettings.two_step_sms_phone_number,
 								},
 							}
 						) }
@@ -144,7 +145,7 @@ class Security2faDisable extends Component {
 									strong: <strong />,
 								},
 								args: {
-									userlogin: userSettings.settings.user_login,
+									userlogin: userSettings.user_login,
 								},
 							}
 						) }
@@ -169,8 +170,7 @@ class Security2faDisable extends Component {
 						action="disable-two-step"
 						onCancel={ this.onCancelCodePrompt }
 						onSuccess={ this.onCodePromptSuccess }
-						requestSMSOnMount={ userSettings.settings.two_step_sms_enabled }
-						userSettings={ userSettings }
+						requestSMSOnMount={ userSettings.two_step_sms_enabled }
 					/>
 				</div>
 			);
@@ -187,7 +187,7 @@ class Security2faDisable extends Component {
 		return (
 			<div>
 				{ this.renderVerificationCodeMeansMessage() }
-				<Security2faStatus twoStepEnabled={ this.props.userSettings.settings.two_step_enabled } />
+				<Security2faStatus twoStepEnabled={ this.props.userSettings.two_step_enabled } />
 				{ this.renderCodePromptToggle() }
 			</div>
 		);
@@ -195,7 +195,9 @@ class Security2faDisable extends Component {
 }
 
 export default connect(
-	null,
+	( state ) => ( {
+		userSettings: getUserSettings( state ),
+	} ),
 	{
 		successNotice,
 		recordGoogleEvent,

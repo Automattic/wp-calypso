@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import { ROUTE_SET } from 'state/action-types';
+import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 /**
  * Returns an action object signalling that the current route is to be changed
@@ -15,5 +17,14 @@ export function setRoute( path, query = {} ) {
 		type: ROUTE_SET,
 		path,
 		query,
+	};
+}
+
+/**
+ * Action to forget what the last non-editor route was.
+ */
+export function clearLastNonEditorRoute() {
+	return {
+		type: ROUTE_CLEAR_LAST_NON_EDITOR,
 	};
 }

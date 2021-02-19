@@ -81,6 +81,29 @@ msgstr[1] \\"\\"
 # THIS IS THE END OF THE GENERATED FILE."
 `;
 
+exports[`makePot concatenated pot should only contain allowed strings when line filter is provided 1`] = `
+"# THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY.
+
+msgid \\"\\"
+msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
+
+#: test/examples/translate-1.js:2
+#: test/examples/translate-2.js:7
+#: test/examples/wordpress-i18n.js:2
+#. Second occurrence of \`Simple string\` should also be extracted.
+msgid \\"Simple string\\"
+msgstr \\"\\"
+
+#: test/examples/translate-1.js:4
+#: test/examples/wordpress-i18n.js:4
+msgid \\"Singular\\"
+msgid_plural \\"Plural\\"
+msgstr[0] \\"\\"
+msgstr[1] \\"\\"
+
+# THIS IS THE END OF THE GENERATED FILE."
+`;
+
 exports[`makePot pot files should match their snapshots 1`] = `
 Array [
   "output/test-examples-react-1.jsx.pot",

@@ -1,5 +1,4 @@
-Menu
-=========
+# Menu
 
 Provides all the app system menus.
 
@@ -12,6 +11,7 @@ Any menu item with `requiresUser: true` will be toggled by `enableLoggedInItems`
 `set( app, mainWindow)` - called after the app has been initialized and we have access to the window
 
 Where:
+
 - `app` - the Electron app instance
 - `mainWindow` - the app's main BrowserWindow
 

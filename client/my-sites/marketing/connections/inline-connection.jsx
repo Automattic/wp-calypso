@@ -9,10 +9,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { getKeyringServiceByName } from 'state/sharing/services/selectors';
-import QueryKeyringServices from 'components/data/query-keyring-services';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import InlineConnectionAction from 'my-sites/marketing/connections/inline-connection-action';
+import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import InlineConnectionAction from 'calypso/my-sites/marketing/connections/inline-connection-action';
 
 class InlineConnection extends Component {
 	static propTypes = {

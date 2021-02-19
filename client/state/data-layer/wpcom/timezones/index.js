@@ -6,12 +6,12 @@ import { fromPairs, map, mapValues, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { TIMEZONES_REQUEST } from 'state/action-types';
-import { timezonesReceive } from 'state/timezones/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
+import { timezonesReceive } from 'calypso/state/timezones/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Converts an value/label pairs from API into object whose

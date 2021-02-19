@@ -7,8 +7,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import FoldableCard from 'components/foldable-card';
+import CardHeading from 'calypso/components/card-heading';
+import FoldableCard from 'calypso/components/foldable-card';
 
 import './style.scss';
 

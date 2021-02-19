@@ -5,7 +5,9 @@ import React from 'react';
 
 import './index.stories.scss';
 import ProductIcon from '.';
-import { supportedSlugs } from './config';
+import { iconToProductSlugMap } from './config';
+
+const supportedSlugs = Object.values( iconToProductSlugMap ).flat();
 
 export default { title: 'ProductIcon' };
 

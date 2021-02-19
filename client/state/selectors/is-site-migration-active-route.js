@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import getCurrentRoute from 'state/selectors/get-current-route';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Returns true if the current route is the status page of an active migration.

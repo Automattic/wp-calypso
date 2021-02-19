@@ -4,12 +4,10 @@
 
 import {
 	THEME_BACK_PATH_SET,
-	THEMES_BANNER_HIDE,
 	THEMES_SHOWCASE_OPEN,
 	THEMES_BOOKMARK_SET,
-} from 'state/themes/action-types';
-import { themesBannerVisibleSchema } from '../schema';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/themes/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 // Destination for 'back' button on theme sheet
 export function backPath( state = '/themes', action ) {
@@ -19,19 +17,6 @@ export function backPath( state = '/themes', action ) {
 	}
 	return state;
 }
-
-// Themes banner visible state
-export function themesBannerVisibleReducer( state = true, { type } ) {
-	if ( THEMES_BANNER_HIDE === type ) {
-		return false;
-	}
-	return state;
-}
-
-export const themesBannerVisible = withSchemaValidation(
-	themesBannerVisibleSchema,
-	themesBannerVisibleReducer
-);
 
 // "More Themes" button state.
 export function themesShowcaseOpen( state = false, action ) {
@@ -50,7 +35,6 @@ export function themesBookmark( state = '', action ) {
 
 export default combineReducers( {
 	backPath,
-	themesBannerVisible,
 	themesShowcaseOpen,
 	themesBookmark,
 } );

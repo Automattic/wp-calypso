@@ -10,16 +10,12 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPostType, getPostTypeLabel } from 'state/post-types/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import QueryPostTypes from 'components/data/query-post-types';
-import EmptyContent from 'components/empty-content';
-import { preload } from 'sections-helper';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
+import { getPostType, getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import EmptyContent from 'calypso/components/empty-content';
+import { preloadEditor } from 'calypso/sections-preloaders';
 
 function PostTypeListEmptyContent( {
 	siteId,
@@ -29,7 +25,8 @@ function PostTypeListEmptyContent( {
 	editPath,
 	addNewItemLabel,
 } ) {
-	let title, action;
+	let title;
+	let action;
 
 	if ( 'draft' === status ) {
 		title = translate( "You don't have any drafts." );

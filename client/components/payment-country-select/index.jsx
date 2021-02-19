@@ -9,10 +9,10 @@ import { isFunction, noop, omit, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import CountrySelect from 'my-sites/domains/components/form/country-select';
-import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
-import { setPaymentCountryCode } from 'state/payment/actions';
-import { setTaxCountryCode } from 'lib/cart/actions';
+import CountrySelect from 'calypso/my-sites/domains/components/form/country-select';
+import getPaymentCountryCode from 'calypso/state/selectors/get-payment-country-code';
+import { setPaymentCountryCode } from 'calypso/state/payment/actions';
+import { setTaxCountryCode } from 'calypso/lib/cart/actions';
 
 export class PaymentCountrySelect extends Component {
 	static propTypes = {

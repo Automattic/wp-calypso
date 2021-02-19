@@ -27,7 +27,7 @@ import {
 import * as api from 'woocommerce/woocommerce-services/api';
 import printDocument from 'woocommerce/woocommerce-services/lib/utils/print-document';
 import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
-import * as NoticeActions from 'state/notices/actions';
+import * as NoticeActions from 'calypso/state/notices/actions';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';

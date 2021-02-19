@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getWordadsSettings from 'state/selectors/get-wordads-settings';
+import getWordadsSettings from 'calypso/state/selectors/get-wordads-settings';
 
 describe( 'getWordadsSettings()', () => {
 	const settings = {

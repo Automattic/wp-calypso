@@ -135,6 +135,15 @@
 		fill: var( --color-text-inverted );
 	}
 
+	.gridicons-my-sites {
+		background: unset;
+		fill: var( --color-wordpress-com );
+		margin-left: -3px;
+		margin-top: -3px;
+		padding: 0;
+		transform: scale( 1.1 );
+	}
+
 	.gridicons-themes {
 		border-radius: 8px;
 	}
@@ -143,7 +152,7 @@
 .manage-purchase__title {
 	color: var( --color-text );
 	display: block;
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 400;
 	clear: none;
 
@@ -258,6 +267,10 @@
 
 	display: block;
 
+	.components-toggle-control {
+		display: inline-block;
+	}
+
 	.payment-logo {
 		margin-right: 5px;
 	}
@@ -265,6 +278,10 @@
 	a {
 		display: block;
 		cursor: pointer;
+	}
+
+	&.is-expiring .manage-purchase__detail-date-span {
+		color: var( --studio-pink-50 );
 	}
 }
 

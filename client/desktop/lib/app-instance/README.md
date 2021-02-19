@@ -1,9 +1,9 @@
-App Instance
-=========
+# App Instance
 
 Provides a small wrapper around Electron's `app.requestSingleInstanceLock`.
 
 When a duplicate app instance is detected it will:
+
 - Quit the second app
 - Bring the original app to the foreground
 

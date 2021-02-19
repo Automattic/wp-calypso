@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { By, Key, until } from 'selenium-webdriver';
+
+import webdriver, { By, Key, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -10,9 +11,10 @@ import { kebabCase } from 'lodash';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
-import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
+import { ContactFormBlockComponent } from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
+import { FileBlockComponent } from './blocks/file-block-component';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
@@ -41,6 +43,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			return;
 		}
 		await this.driver.switchTo().defaultContent();
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.editoriFrameSelector );
 		await this.driver.wait(
 			until.ableToSwitchToFrame( this.editoriFrameSelector ),
 			this.explicitWaitMS,
@@ -71,7 +74,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		if ( closePanel ) {
-			await this.closePublishedPanel();
+			try {
+				await this.closePublishedPanel();
+			} catch ( e ) {
+				console.log( 'Publish panel already closed' );
+			}
 		}
 		await this.waitForSuccessViewPostNotice();
 		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
@@ -80,7 +87,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			const snackbar = await this.driver.findElement( snackBarNoticeLinkSelector );
 			await this.driver.executeScript( 'arguments[0].click();', snackbar );
 		}
-
+		await this.driver.sleep( 1000 );
 		await driverHelper.acceptAlertIfPresent( this.driver );
 		return url;
 	}
@@ -145,19 +152,77 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const contactFormBlock = await ContactFormBlockComponent.Expect( this.driver, blockID );
 		await contactFormBlock.openEditSettings();
 		await contactFormBlock.insertEmail( email );
-		return await contactFormBlock.insertSubject( subject );
+		return contactFormBlock.insertSubject( subject );
 	}
 
-	async contactFormDisplayedInEditor() {
-		return await driverHelper.isEventuallyPresentAndDisplayed(
+	async toggleOptionsMenu() {
+		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '[data-type="jetpack/contact-form"]' )
+			By.css( ".edit-post-more-menu button[aria-label='Options']" )
+		);
+
+		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
+		// but it doesn't seem to work consistently, but this is pending improvement as this adds up on total time.
+		await this.driver.sleep( 2000 );
+	}
+
+	async switchToCodeEditor() {
+		await this.toggleOptionsMenu();
+
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.xpath(
+				"//div[@aria-label='Options']//button[text()='Code editor']|//button[./span='Code editor']"
+			)
+		);
+
+		// Wait for the code editor element.
+		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
+
+		// Close the menu.
+		await this.toggleOptionsMenu();
+
+		return textAreaSelector;
+	}
+
+	async exitCodeEditor() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.xpath( "//button[text()='Exit code editor']" )
 		);
 	}
 
+	async getBlocksCode() {
+		const textAreaSelector = await this.switchToCodeEditor();
+		const blocksCode = this.driver.findElement( textAreaSelector ).getAttribute( 'value' );
+		await this.exitCodeEditor();
+
+		return blocksCode;
+	}
+
+	async setBlocksCode( blocksCode ) {
+		const textAreaSelector = await this.switchToCodeEditor();
+		await driverHelper.setWhenSettable( this.driver, textAreaSelector, blocksCode );
+		await this.exitCodeEditor();
+	}
+
+	blockDisplayedInEditor( dataTypeSelectorVal ) {
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( `[data-type="${ dataTypeSelectorVal }"]` )
+		);
+	}
+
+	contactFormDisplayedInEditor() {
+		return this.blockDisplayedInEditor( 'jetpack/contact-form' );
+	}
+
 	async errorDisplayed() {
-		await this.driver.sleep( 1000 );
-		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-error-boundary' ) );
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '.editor-error-boundary' )
+		);
 	}
 
 	async hasInvalidBlocks() {
@@ -212,59 +277,133 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillNotPresent( this.driver, inserterMenuSelector );
 	}
 
-	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
-	async addBlock( name ) {
-		name = name.charAt( 0 ).toUpperCase() + name.slice( 1 ); // Capitalize block name
-		let blockClass = kebabCase( name.toLowerCase() );
-		let hasChildBlocks = false;
-		let prefix = '';
-		switch ( name ) {
+	/**
+	 * Returns a list of titles for the block items currently shown in the main inserter.
+	 *
+	 * @returns {string[]} Array of block titles (i.e ['Open Table', 'Paypal']);
+	 */
+	async getShownBlockInserterItems() {
+		return this.driver
+			.findElements(
+				By.css(
+					'.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
+				)
+			)
+			.then( ( els ) => webdriver.promise.map( els, ( el ) => el.getAttribute( 'innerText' ) ) );
+	}
+
+	/**
+	 * @typedef {Object} BlockSelectorSettings
+	 * @property {string} title The block title as it appears in the inserter
+	 * @property {string} blockClass The suffix that's part of a wrapper CSS class that's used to select the block button in the inserter.
+	 * Calcualted from the title if not present.
+	 * @property {string} prefix Also used to build the CSS class that's used to select the block in the inserter.
+	 * @property {string} ariaLabel The aria label text used to select the block element wrapper in the editor. Calculated from the title if not present.
+	 * @property {boolean} initsWithChildFocus Whether or not the block gives focus to its first child upon being created/rendered in the editor.
+	 */
+
+	/**
+	 * Returns an object with settings to be used to select the block button in
+	 * the inserter or the actual block in the editor. This is used by @see {@link addBlock}
+	 * to translate the title of a block into something it can use to select/find them.
+	 *
+	 * NOTE: In the future it'd be nice to return the actual block class (in `lib/gutenberg/blocks`) and move those attributes
+	 * there instead of creating yet another value object, like it's being done now. We might then rethink or remove
+	 * the @see {@link insertBlock} function, too.
+	 *
+	 * @param {string} title The block title.
+	 * @returns {BlockSelectorSettings} the selector settings for the given block, to be used by {@link addBlock}.
+	 */
+	getBlockSelectorSettings( title ) {
+		const defaultSettings = {
+			title: title.charAt( 0 ).toUpperCase() + title.slice( 1 ), // Capitalize block name
+			blockClass: kebabCase( title.toLowerCase() ),
+			initsWithChildFocus: false,
+			ariaLabel: `Block: ${ title }`,
+			prefix: '',
+		};
+
+		let blockSettings;
+
+		switch ( title ) {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
-				prefix = 'embed-';
+				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed\\/' };
 				break;
 			case 'Form':
-				prefix = 'jetpack-';
-				blockClass = 'contact-form';
+				blockSettings = { prefix: 'jetpack-', blockClass: 'contact-form' };
 				break;
 			case 'Simple Payments':
 			case 'Pay with PayPal':
-				prefix = 'jetpack-';
-				blockClass = 'simple-payments';
+				blockSettings = {
+					ariaLabel: 'Block: Pay with PayPal',
+					prefix: 'jetpack-',
+					blockClass: 'simple-payments',
+				};
 				break;
 			case 'Markdown':
-				prefix = 'jetpack-';
+				blockSettings = { prefix: 'jetpack-' };
 				break;
 			case 'Buttons':
 			case 'Click to Tweet':
 			case 'Hero':
-				prefix = 'coblocks-';
-				break;
 			case 'Pricing Table':
-				prefix = 'coblocks-';
-				hasChildBlocks = true;
+				blockSettings = { prefix: 'coblocks-' };
 				break;
-			case 'Logos & Badges':
-				prefix = 'coblocks-';
-				blockClass = 'logos';
+			case 'Masonry':
+				blockSettings = { prefix: 'coblocks-', blockClass: 'gallery-masonry' };
+				break;
+			case 'Logos':
+				blockSettings = { prefix: 'coblocks-', blockClass: 'logos' };
 				break;
 			case 'Dynamic HR':
-				prefix = 'coblocks-';
-				blockClass = 'dynamic-separator';
+				blockSettings = { prefix: 'coblocks-', blockClass: 'dynamic-separator' };
+				break;
+			case 'Blog Posts':
+				blockSettings = { prefix: 'a8c-' };
+				break;
+			case 'Subscription Form':
+				blockSettings = { prefix: 'jetpack-', blockClass: 'subscriptions' };
+				break;
+			case 'Layout Grid':
+			case 'Tiled Gallery':
+			case 'Contact Info':
+			case 'Slideshow':
+				blockSettings = { prefix: 'jetpack-' };
+				break;
+			case 'Star Rating':
+				blockSettings = { prefix: 'jetpack-', blockClass: 'rating-star' };
+				break;
+			case 'Premium Content':
+				blockSettings = { blockClass: 'premium-content-container' };
 				break;
 		}
 
-		const inserterBlockItemSelector = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
-		);
-		const insertedBlockSelector = By.css(
-			`.block-editor-block-list__block.${
-				hasChildBlocks ? 'has-child-selected' : 'is-selected'
-			}[aria-label*='Block: ${ name }']`
+		return { ...defaultSettings, ...blockSettings };
+	}
+	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
+	async addBlock( title ) {
+		const { ariaLabel, prefix, blockClass, initsWithChildFocus } = this.getBlockSelectorSettings(
+			title
 		);
 
-		await this.openBlockInserterAndSearch( name );
+		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 10.x on production.
+		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix.replace(
+			'\\/',
+			'-'
+		) }${ blockClass }`;
+		const inserterBlockItemSelector = By.css(
+			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
+		);
+
+		const insertedBlockSelector = By.css(
+			`.block-editor-block-list__block.${
+				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
+			}[aria-label*='${ ariaLabel }']`
+		);
+
+		await this.openBlockInserterAndSearch( title );
 
 		if ( await driverHelper.elementIsNotPresent( this.driver, inserterBlockItemSelector ) ) {
 			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterBlockItemSelector );
@@ -273,9 +412,24 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// The normal click is needed to avoid hovering the element, which seems
 		// to cause the element to become stale.
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
-
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
-		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
+
+		return this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
+	}
+
+	/**
+	 * An alternative way of adding blocks to the editor by accepting the actual constructor
+	 * class for the block, adding it to the editor, and returning an instance of this class.
+	 *
+	 * This allows for adding new blocks without the need to create new factory method in this class.
+	 * You can just import the class of the block(s) you want to add and pass it to this function, which
+	 * also means we don't need to couple the block class with this one.
+	 *
+	 * @param { Function } blockClass A block class
+	 */
+	async insertBlock( blockClass ) {
+		const blockID = await this.addBlock( blockClass.blockTitle );
+		return blockClass.Expect( this.driver, blockID );
 	}
 
 	async titleShown() {
@@ -289,7 +443,44 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const blockID = await this.addBlock( 'Image' );
 
 		const imageBlock = await ImageBlockComponent.Expect( this.driver, blockID );
-		return await imageBlock.uploadImage( fileDetails );
+		await imageBlock.uploadImage( fileDetails );
+
+		return blockID;
+	}
+
+	async addFile( fileDetails ) {
+		const blockID = await this.addBlock( 'File' );
+
+		const fileBlock = await FileBlockComponent.Expect( this.driver, blockID );
+		await fileBlock.uploadFile( fileDetails );
+
+		return blockID;
+	}
+
+	async removeBlock( blockID ) {
+		const blockSelector = By.css( `.wp-block[id="${ blockID }"]` );
+		await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			blockSelector,
+			this.explicitWaitMS / 5
+		);
+		await this.driver.findElement( blockSelector ).click();
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.block-editor-block-settings-menu' )
+		);
+		await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '.components-menu-group' ),
+			this.explicitWaitMS / 5
+		);
+		await this.driver.sleep( 1000 );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				'.components-menu-group:last-of-type button.components-menu-item__button:last-of-type'
+			)
+		);
 	}
 
 	async addImageFromMediaModal( fileDetails ) {
@@ -441,17 +632,33 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			return await this.driver.navigate().back();
 		}
-		return await driverHelper.clickWhenClickable(
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
 				'.edit-post-header .edit-post-fullscreen-mode-close, .edit-post-header-toolbar__back'
 			)
+		);
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button' )
 		);
 	}
 
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				// For some reason, when the screensize is set to mobile,
+				// the welcome guide modal is not closed when the template button
+				// is clicked, causing the test to fail with a timeout.
+				//
+				// The same doesn't seem to happen if I run the test
+				// in the Desktop screen size, but resize to a mobileish size.
+				// For this reason, when in the mobile screen size, we force-close
+				// the welcome modal before trying to click the template selector.
+				await driverHelper.clickIfPresent(
+					this.driver,
+					By.css( '.edit-post-welcome-guide button[aria-label="Close dialog"]' )
+				);
 				await driverHelper.clickWhenClickable(
 					this.driver,
 					By.css( 'button.template-selector-item__label[value="blank"]' )
@@ -490,5 +697,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				);
 			}
 		}
+	}
+
+	async clickUpgradeOnPremiumBlock() {
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css(
+				'.jetpack-upgrade-plan-banner__wrapper .is-primary:not(.jetpack-upgrade-plan__hidden)'
+			)
+		);
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				'.jetpack-upgrade-plan-banner__wrapper .is-primary:not(.jetpack-upgrade-plan__hidden)'
+			)
+		);
 	}
 }

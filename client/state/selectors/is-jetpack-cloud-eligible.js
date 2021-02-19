@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getSiteOptions from 'state/selectors/get-site-options';
+import getSiteOptions from 'calypso/state/selectors/get-site-options';
 
 /**
  * Indicates whether a site is eligible for Jetpack Cloud.

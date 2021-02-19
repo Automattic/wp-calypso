@@ -1,107 +1,225 @@
 /*
  * CSS values in this file are specific and
- * designed to match the CSS on external sites,
- * such as Google and Facebook. Therefore there
+ * designed to match the CSS on Twitter. Therefore there
  * will be exceptions to our CSS guidelines here
- * but please do not "update" this file to
- * conform.
+ * but please do not "update" this file to conform.
  *
- * @blame: dmsnell
-*/
+ * @blame: pento
+ */
 
 @import '../variables.scss';
 
+/* stylelint-disable scales/font-size */
+
 .twitter-preview {
-	width: inherit;
-	overflow-x: auto;
-	-webkit-overflow-scrolling: touch;
-	margin: 20px;
+	background-color: #fff;
+	padding: 20px;
+	width: 635px;
 }
 
-.twitter-preview__summary {
-	width: 506px;
-	height: 125px;
-	margin: 0 auto;
-	overflow: hidden;
-	border: 1px solid #e1e8ed;
-	border-radius: 0.42857em;
-}
+.twitter-preview__container {
+	display: grid;
+	grid-template-columns: 65px auto;
+	margin-bottom: 5px;
+	margin-right: 24px;
 
-.twitter-preview__large_image_summary {
-	width: 506px;
-	height: auto;
-	margin: 0 auto;
-	overflow: hidden;
-	border: 1px solid #e1e8ed;
-	border-radius: 0.42857em;
-}
+	.twitter-preview__sidebar {
+		display: grid;
+		grid-template-rows: 35px auto;
+		justify-items: center;
 
-.twitter-preview__image {
-	background-size: cover;
-	background-position: center;
-}
+		.twitter-preview__profile-image {
+			img {
+				height: 30px;
+				width: 30px;
+				border-radius: 15px;
+				object-fit: cover;
+			}
+		}
 
-.twitter-preview__summary
-.twitter-preview__image {
-	float: left;
-	width: 125px;
-	height: 125px;
-}
+		.twitter-preview__connector {
+			width: 2px;
+			background-color: #8c8f94;
+		}
+	}
 
-.twitter-preview__large_image_summary
-.twitter-preview__image {
-	width: 506px;
-	height: 254px;
-	border-bottom: 1px solid #e1e8ed;
-}
+	.twitter-preview__name {
+		font-weight: bold;
+		font-size: 16px;
+		line-height: 19px;
+	}
 
-.twitter-preview__body {
-	padding: 0.75em;
-	text-decoration: none;
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-size: $font-body-small;
-	color: black;
-	text-align: left;
-	line-height: 1.3em;
-	overflow: hidden;
-}
+	.twitter-preview__screen-name,
+	.twitter-preview__date {
+		color: #667886;
+		font-size: 16px;
+		line-height: 18px;
+		letter-spacing: -0.3px;
+		margin-left: 15px;
+	}
 
-.twitter-preview__summary
-.twitter-preview__body {
-	margin-left: 125px;
-	border-left: 1px solid #e1e8ed;
-	height: 100%;
-}
+	.twitter-preview__content {
+		margin: 7px 0;
 
-.twitter-preview__large_image_summary
-.twitter-preview__body {
-	padding-left: 1em;
-	padding-right: 1em;
-}
+		.twitter-preview__text {
+			font-size: 14px;
+			line-height: 18px;
+			letter-spacing: -0.3px;
+			color: #787c82;
+			white-space: pre-wrap;
+		}
 
-.twitter-preview__title {
-	max-height: 1.3em;
-	white-space: nowrap;
-	font-weight: bold;
-	font-size: 1em;
-	margin: 0 0 0.15em;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
+		.twitter-preview__media {
+			border-radius: 15px;
+			overflow: hidden;
+			display: grid;
+			grid-gap: 2px;
+			grid-template-areas: 'a';
+			height: 300px;
+			margin-top: 10px;
 
-.twitter-preview__description {
-	margin-top: 0.32333em;
-	max-height: 3.9em;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
+			img,
+			video {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
 
-.twitter-preview__url {
-	text-transform: lowercase;
-	color: #8899a6;
-	max-height: 1.3em;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	margin-top: 0.32333em;
+				&:nth-child( 1 ) {
+					grid-area: a;
+				}
+				&:nth-child( 2 ) {
+					grid-area: b;
+				}
+				&:nth-child( 3 ) {
+					grid-area: c;
+				}
+				&:nth-child( 4 ) {
+					grid-area: d;
+				}
+			}
+
+			&.twitter-preview__media-children-2 {
+				grid-template-areas: 'a b';
+			}
+
+			&.twitter-preview__media-children-3 {
+				grid-template-areas: 'a b'
+				                     'a c';
+			}
+
+			&.twitter-preview__media-children-4 {
+				grid-template-areas: 'a b'
+				                     'c d';
+			}
+		}
+
+		.twitter-preview__quote-tweet {
+			margin-top: 10px;
+			min-height: 200px;
+
+			.twitter-preview__quote-tweet-overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				opacity: 0;
+			}
+		}
+
+		.twitter-preview__card {
+			margin-top: 10px;
+			overflow: hidden;
+			border: 1px solid #e1e8ed;
+			border-radius: 12px;
+
+			.twitter-preview__card-summary {
+				&.twitter-preview__card-has-image {
+					height: 125px;
+					display: grid;
+					grid-template-columns: 125px auto;
+
+					.twitter-preview__card-body {
+						border-left: 1px solid #e1e8ed;
+						height: 100%;
+					}
+
+					.twitter-preview__card-description {
+						-webkit-line-clamp: 3;
+					}
+				}
+			}
+
+			.twitter-preview__card-summary_large_image {
+				display: grid;
+				grid-template-rows: 254px auto;
+			}
+
+			.twitter-preview__card-image {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+			.twitter-preview__card-body {
+				padding: 0.75em;
+				text-decoration: none;
+				font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+				font-size: $font-body-small;
+				color: black;
+				text-align: left;
+				line-height: 1.3em;
+				overflow: hidden;
+			}
+
+			.twitter-preview__card-title {
+				max-height: 1.3em;
+				white-space: nowrap;
+				font-weight: bold;
+				font-size: 1em;
+				margin: 0 0 0.15em;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.twitter-preview__card-description {
+				margin-top: 0.32333em;
+				max-height: 3.9em;
+				text-overflow: ellipsis;
+				//clamp after two lines
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+
+			.twitter-preview__card-url {
+				text-transform: lowercase;
+				color: #8899a6;
+				max-height: 1.3em;
+				white-space: nowrap;
+				overflow-inline: hidden;
+				text-overflow: ellipsis;
+				margin-top: 0.32333em;
+
+				svg {
+					fill: #8899a6;
+					height: 15px;
+					width: 15px;
+					margin: 0 2px -4px 0;
+				}
+			}
+		}
+	}
+
+	.twitter-preview__footer {
+		display: grid;
+		grid-template-columns: repeat( 4, auto );
+
+		svg {
+			fill: #787c82;
+			height: 16px;
+			width: 16px;
+		}
+	}
 }

@@ -3,51 +3,24 @@
  */
 
 import Debug from 'debug';
-import { get, isEmpty } from 'lodash';
-import i18n from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import { action as ActionTypes } from 'lib/invites/constants';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { acceptedNotice } from 'my-sites/invites/utils';
-import { requestSites, receiveSites } from 'state/sites/actions';
-import { requestSiteInvites } from 'state/invites/actions';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
+import { action as ActionTypes } from 'calypso/lib/invites/constants';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { acceptedNotice } from 'calypso/my-sites/invites/utils';
+import { requestSites, receiveSites } from 'calypso/state/sites/actions';
+import { requestSiteInvites } from 'calypso/state/invites/actions';
 
 /**
  * Module variables
  */
 const debug = new Debug( 'calypso:invites-actions' );
-
-export function fetchInvite( siteId, inviteKey ) {
-	debug( 'fetchInvite', siteId, inviteKey );
-
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_INVITE,
-		siteId,
-		inviteKey,
-	} );
-
-	wpcom.undocumented().getInvite( siteId, inviteKey, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: error ? ActionTypes.RECEIVE_INVITE_ERROR : ActionTypes.RECEIVE_INVITE,
-			siteId,
-			inviteKey,
-			data,
-			error,
-		} );
-
-		if ( error ) {
-			recordTracksEvent( 'calypso_invite_validation_failure', {
-				error: error.error,
-			} );
-		}
-	} );
-}
 
 export function createAccount( userData, invite, callback ) {
 	const send_verification_email = userData.email !== invite.sentTo;
@@ -67,7 +40,10 @@ export function createAccount( userData, invite, callback ) {
 							error: error.error,
 						} );
 					} else {
-						recordTracksEvent( 'calypso_invite_account_created' );
+						recordTracksEvent( 'calypso_invite_account_created', {
+							is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+							inviter_blog_id: get( invite, 'site.ID', false ),
+						} );
 					}
 					callback( error, bearerToken );
 				}
@@ -145,99 +121,4 @@ export function acceptInvite( invite, callback ) {
 			}
 		} );
 	};
-}
-
-export function sendInvites( siteId, usernamesOrEmails, role, message, formId, isExternal ) {
-	return ( dispatch ) => {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.SENDING_INVITES,
-			siteId,
-			usernamesOrEmails,
-			role,
-			message,
-			isExternal,
-		} );
-		wpcom
-			.undocumented()
-			.sendInvites( siteId, usernamesOrEmails, role, message, isExternal, ( error, data ) => {
-				const validationErrors = get( data, 'errors' );
-				const isErrored = !! error || ! isEmpty( validationErrors );
-
-				Dispatcher.handleServerAction( {
-					type: isErrored
-						? ActionTypes.RECEIVE_SENDING_INVITES_ERROR
-						: ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS,
-					error,
-					siteId,
-					usernamesOrEmails,
-					role,
-					message,
-					formId,
-					data,
-					isExternal,
-				} );
-
-				if ( isErrored ) {
-					// If there are no validation errors but the form errored, assume that all errored
-					const countErrors =
-						error || isEmpty( validationErrors ) || 'object' !== typeof validationErrors
-							? usernamesOrEmails.length
-							: Object.keys( data.errors ).length;
-
-					if ( countErrors === usernamesOrEmails.length ) {
-						message = i18n.translate( 'Invitation failed to send', 'Invitations failed to send', {
-							count: countErrors,
-							context: 'Displayed in a notice when all invitations failed to send.',
-						} );
-					} else {
-						message = i18n.translate(
-							'An invitation failed to send',
-							'Some invitations failed to send',
-							{
-								count: countErrors,
-								context: 'Displayed in a notice when some invitations failed to send.',
-							}
-						);
-					}
-
-					dispatch( errorNotice( message ) );
-					recordTracksEvent( 'calypso_invite_send_failed' );
-				} else {
-					dispatch(
-						successNotice(
-							i18n.translate( 'Invitation sent successfully', 'Invitations sent successfully', {
-								count: usernamesOrEmails.length,
-							} )
-						)
-					);
-					recordTracksEvent( 'calypso_invite_send_success', { role } );
-				}
-			} );
-	};
-}
-
-export function createInviteValidation( siteId, usernamesOrEmails, role ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.CREATE_INVITE_VALIDATION,
-		siteId,
-		usernamesOrEmails,
-		role,
-	} );
-	wpcom.undocumented().createInviteValidation( siteId, usernamesOrEmails, role, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: error
-				? ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_ERROR
-				: ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
-			error,
-			siteId,
-			usernamesOrEmails,
-			role,
-			data,
-		} );
-		if ( error ) {
-			recordTracksEvent( 'calypso_invite_create_validation_failed' );
-		} else {
-			recordTracksEvent( 'calypso_invite_create_validation_success' );
-		}
-	} );
 }

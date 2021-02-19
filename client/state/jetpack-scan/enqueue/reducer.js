@@ -6,8 +6,8 @@ import {
 	JETPACK_SCAN_ENQUEUE_REQUEST,
 	JETPACK_SCAN_ENQUEUE_REQUEST_SUCCESS,
 	JETPACK_SCAN_ENQUEUE_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	switch ( type ) {

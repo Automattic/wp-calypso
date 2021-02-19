@@ -12,12 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import {
-	usePaymentProcessor,
-	useTransactionStatus,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -82,7 +77,7 @@ function AlipayFields() {
 	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'alipay' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<AlipayFormWrapper>
@@ -130,17 +125,9 @@ const AlipayField = styled( Field )`
 	}
 `;
 
-function AlipayPayButton( { disabled, store, stripe, stripeConfiguration } ) {
-	const { __ } = useI18n();
+function AlipayPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'alipay' );
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
 
 	return (
@@ -149,34 +136,17 @@ function AlipayPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting alipay payment' );
-					setTransactionPending();
-					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'alipay' } } );
-					submitTransaction( {
+					onClick( 'alipay', {
 						stripe,
 						name: customerName?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'alipay transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -186,10 +156,11 @@ function AlipayPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -220,7 +191,7 @@ function AlipayLabel() {
 function AlipayLogo() {
 	return (
 		<svg width="58" height="16" viewBox="0 0 58 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<g clip-path="url(#alipay-logo-clip)">
+			<g clipPath="url(#alipay-logo-clip)">
 				<path
 					d="M33.3289 4.27654C33.9371 4.27654 34.4302 3.83697 34.4302 3.29473C34.4302 2.7525 33.9371 2.31293 33.3289 2.31293C32.7207 2.31293 32.2276 2.7525 32.2276 3.29473C32.2276 3.83697 32.7207 4.27654 33.3289 4.27654Z"
 					fill="#009FE3"

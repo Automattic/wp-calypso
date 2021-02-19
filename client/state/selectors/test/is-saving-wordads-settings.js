@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import isSavingWordadsSettings from 'state/selectors/is-saving-wordads-settings';
+import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
 
 describe( 'isSavingWordadsSettings()', () => {
 	const siteId = 12345678;

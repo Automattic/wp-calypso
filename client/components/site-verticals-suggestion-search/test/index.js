@@ -8,14 +8,14 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { SiteVerticalsSuggestionSearch } from '../';
-import SuggestionSearch from 'components/suggestion-search';
-import PopularTopics from 'components/site-verticals-suggestion-search/popular-topics';
+import SuggestionSearch from 'calypso/components/suggestion-search';
+import PopularTopics from 'calypso/components/site-verticals-suggestion-search/popular-topics';
 
 jest.mock( 'uuid', () => ( {
 	v4: () => 'fake-uuid',
 } ) );
 
-jest.mock( 'components/data/query-verticals', () => 'QueryVerticals' );
+jest.mock( 'calypso/components/data/query-verticals', () => 'QueryVerticals' );
 
 const defaultProps = {
 	onChange: jest.fn(),

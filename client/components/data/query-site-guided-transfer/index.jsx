@@ -10,8 +10,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingGuidedTransferStatus } from 'state/sites/guided-transfer/selectors';
-import { requestGuidedTransferStatus } from 'state/sites/guided-transfer/actions';
+import { isRequestingGuidedTransferStatus } from 'calypso/state/sites/guided-transfer/selectors';
+import { requestGuidedTransferStatus } from 'calypso/state/sites/guided-transfer/actions';
 
 class QuerySiteGuidedTransfer extends Component {
 	constructor( props ) {

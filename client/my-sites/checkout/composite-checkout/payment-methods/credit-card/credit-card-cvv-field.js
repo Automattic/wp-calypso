@@ -4,16 +4,15 @@
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { CardCvcElement } from 'react-stripe-elements';
-import { useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/ie-fallback';
+} from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
 import {
 	GridRow,
 	Label,
@@ -21,27 +20,27 @@ import {
 	StripeFieldWrapper,
 	StripeErrorMessage,
 } from './form-layout-components';
-import { Input } from 'my-sites/domains/components/form';
+import { Input } from 'calypso/my-sites/domains/components/form';
 import CVVImage from './cvv-image';
 
 export default function CreditCardCvvField( {
 	handleStripeFieldChange,
 	stripeElementStyle,
-	countryCode,
+	shouldUseEbanx,
 	getErrorMessagesForField,
 	setFieldValue,
 	getFieldValue,
 } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const { cardCvc: cardCvcError } = useSelect( ( select ) =>
 		select( 'credit-card' ).getCardDataErrors()
 	);
 	const errorMessages = getErrorMessagesForField( 'cvv' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
 
-	if ( countryCode && shouldRenderAdditionalCountryFields( countryCode ) ) {
+	if ( shouldUseEbanx ) {
 		return (
 			<Input
 				inputMode="numeric"

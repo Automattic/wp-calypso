@@ -2,11 +2,11 @@
  * Internal dependencies
  */
 
-import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
-import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
-import isVipSite from 'state/selectors/is-vip-site';
+import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
+import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 /**
  * Returns true if the current user is eligible for a domain to paid plan upsell for the site

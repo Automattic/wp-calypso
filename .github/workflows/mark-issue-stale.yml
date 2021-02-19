@@ -1,0 +1,24 @@
+
+name: 'Mark stale issues'
+on:
+  schedule:
+    - cron: '30 0 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: 'This issue is stale because it has been 180 days with no activity. You can keep the issue open by adding a comment. If you do, please provide additional context and explain why you’d like it to remain open. You can also close the issue yourself — if you do, please add a brief explanation and apply one of relevant issue close labels.'
+          # Days before issue is considered stale.
+          days-before-stale: 180
+          # Exempt issue labels.
+          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open'
+          # Disable auto-close of both issues and PRs.
+          days-before-close: -1
+          # Get issues in ascending (oldest first) order.
+          ascending: true
+          # Label to apply when issue is marked stale.
+          stale-issue-label: '[Status] Stale'

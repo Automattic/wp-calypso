@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 /**
  * Returns an object with a key/property for each site ID in the sites list.

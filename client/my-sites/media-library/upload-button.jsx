@@ -11,11 +11,14 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { bumpStat } from 'lib/analytics/mc';
-import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
-import { VideoPressFileTypes } from 'lib/media/constants';
-import { clearMediaItemErrors } from 'state/media/actions';
-import { addMedia } from 'state/media/thunks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import {
+	getAllowedFileTypesForSite,
+	isSiteAllowedFileTypesToBeTrusted,
+} from 'calypso/lib/media/utils';
+import { VideoPressFileTypes } from 'calypso/lib/media/constants';
+import { clearMediaItemErrors } from 'calypso/state/media/actions';
+import { addMedia } from 'calypso/state/media/thunks';
 
 /**
  * Style dependencies

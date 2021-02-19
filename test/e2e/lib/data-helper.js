@@ -154,8 +154,8 @@ export function getAllAccountsWithFeatures( features = [] ) {
 		allAccounts = config.get( 'accounts' );
 	}
 
-	const mustHaveFeatures = [],
-		mustNotHaveFeatures = [];
+	const mustHaveFeatures = [];
+	const mustNotHaveFeatures = [];
 	features.forEach( function ( feature ) {
 		if ( feature.indexOf( '-' ) === 0 ) {
 			mustNotHaveFeatures.push( feature.substring( 1 ) );

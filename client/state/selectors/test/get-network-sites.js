@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getNetworkSites from 'state/selectors/get-network-sites';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import { userState } from './fixtures/user-state';
 
 describe( 'getNetworkSites()', () => {

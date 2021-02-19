@@ -27,16 +27,19 @@ registerStore< State >( STORE_KEY, {
 	persist: [
 		'domain',
 		'domainSearch',
-		'siteTitle',
-		'siteVertical',
 		'hasUsedDomainsStep',
 		'hasUsedPlansStep',
+		'isExperimental',
 		'pageLayouts',
+		'planProductId',
+		'randomizedDesigns',
 		'selectedDesign',
+		'selectedFeatures',
 		'selectedFonts',
 		'selectedSite',
-		'selectedFeatures',
-		'plan',
+		'siteTitle',
+		'siteVertical',
+		'wasVerticalSkipped',
 	],
 } );
 

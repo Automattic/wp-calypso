@@ -12,14 +12,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard, ProgressBar } from '@automattic/components';
-import Notice from 'components/notice';
-import { getSelectedSite } from 'state/ui/selectors';
-import syncSelectors from 'state/jetpack-sync/selectors';
-import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
-import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
-import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import Notice from 'calypso/components/notice';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import syncSelectors from 'calypso/state/jetpack-sync/selectors';
+import { getSyncStatus, scheduleJetpackFullysync } from 'calypso/state/jetpack-sync/actions';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -197,8 +197,8 @@ class JetpackSyncPanel extends React.Component {
 
 export default connect(
 	( state ) => {
-		const site = getSelectedSite( state ),
-			siteId = site.ID;
+		const site = getSelectedSite( state );
+		const siteId = site.ID;
 		return {
 			site,
 			siteId,

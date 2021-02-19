@@ -4,6 +4,7 @@
 	"description": "Proxied cookie-authenticated REST API requests to WordPress.com",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": false,
 	"keywords": [
 		"browser",
@@ -36,12 +37,12 @@
 	],
 	"types": "types",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && npm run clean",
-		"prepare": "check-npm-client && transpile"
+		"clean": "npx rimraf dist",
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"debug": "^4.1.1",
 		"progress-event": "^1.0.0",
 		"uuid": "^7.0.1",

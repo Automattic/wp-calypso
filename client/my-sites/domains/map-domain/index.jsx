@@ -7,24 +7,29 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import MapDomainStep from 'components/domains/map-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { domainRegistration, domainMapping } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
-import wp from 'lib/wp';
-import { domainManagementList } from 'my-sites/domains/paths';
-import Notice from 'components/notice';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
-import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+import HeaderCake from 'calypso/components/header-cake';
+import MapDomainStep from 'calypso/components/domains/map-domain-step';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import wp from 'calypso/lib/wp';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import Notice from 'calypso/components/notice';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 const wpcom = wp.undocumented();
 
@@ -32,7 +37,6 @@ export class MapDomain extends Component {
 	static propTypes = {
 		initialQuery: PropTypes.string,
 		query: PropTypes.string,
-		cart: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isSiteUpgradeable: PropTypes.bool,
 		productsList: PropTypes.object.isRequired,
@@ -41,6 +45,8 @@ export class MapDomain extends Component {
 		selectedSiteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
+
+	isMounted = false;
 
 	state = {
 		errorMessage: null,
@@ -67,14 +73,19 @@ export class MapDomain extends Component {
 	addDomainToCart = ( suggestion ) => {
 		const { selectedSiteSlug } = this.props;
 
-		addItem(
-			domainRegistration( {
-				productSlug: suggestion.product_slug,
-				domain: suggestion.domain_name,
-			} )
-		);
-
-		page( '/checkout/' + selectedSiteSlug );
+		this.props.shoppingCartManager
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes(
+					domainRegistration( {
+						productSlug: suggestion.product_slug,
+						domain: suggestion.domain_name,
+					} ),
+					this.props.productsList
+				),
+			] )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + selectedSiteSlug );
+			} );
 	};
 
 	handleRegisterDomain = ( suggestion ) => {
@@ -106,9 +117,7 @@ export class MapDomain extends Component {
 			return;
 		}
 
-		addItem( domainMapping( { domain } ) );
-
-		page( '/checkout/' + selectedSiteSlug );
+		page( '/checkout/' + selectedSiteSlug + '/domain-mapping:' + domain );
 	};
 
 	UNSAFE_componentWillMount() {
@@ -117,6 +126,14 @@ export class MapDomain extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
+	}
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
 	}
 
 	checkSiteIsUpgradeable( props ) {
@@ -157,7 +174,6 @@ export class MapDomain extends Component {
 		}
 
 		const {
-			cart,
 			domainsWithPlansOnly,
 			initialQuery,
 			productsList,
@@ -176,7 +192,6 @@ export class MapDomain extends Component {
 				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
 
 				<MapDomainStep
-					cart={ cart }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					products={ productsList }
@@ -197,4 +212,4 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
-} ) )( localize( MapDomain ) );
+} ) )( withShoppingCart( localize( MapDomain ) ) );

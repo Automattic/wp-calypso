@@ -6,19 +6,22 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { defer, flow, includes, noop, truncate } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { includes, noop, truncate } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { startMappingAuthors, startUpload } from 'lib/importer/actions';
-import { appStates } from 'state/imports/constants';
-import { getUploadFilename, getUploadPercentComplete } from 'state/imports/uploads/selectors';
-import DropZone from 'components/drop-zone';
+import { startMappingAuthors, startUpload } from 'calypso/state/imports/actions';
+import { appStates } from 'calypso/state/imports/constants';
+import {
+	getUploadFilename,
+	getUploadPercentComplete,
+} from 'calypso/state/imports/uploads/selectors';
+import DropZone from 'calypso/components/drop-zone';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import { ProgressBar } from '@automattic/components';
-import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
-import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
 
 /**
  * Style dependencies
@@ -47,15 +50,14 @@ class UploadingPane extends React.PureComponent {
 
 	componentDidUpdate( prevProps ) {
 		const { importerStatus } = this.props;
-		const { importerState, importerId } = importerStatus;
 		const { importerStatus: prevImporterStatus } = prevProps;
 
 		if (
 			( prevImporterStatus.importerState === appStates.UPLOADING ||
 				prevImporterStatus.importerState === appStates.UPLOAD_PROCESSING ) &&
-			importerState === appStates.UPLOAD_SUCCESS
+			importerStatus.importerState === appStates.UPLOAD_SUCCESS
 		) {
-			defer( () => startMappingAuthors( importerId ) );
+			this.props.startMappingAuthors( importerStatus.importerId );
 		}
 	}
 
@@ -126,7 +128,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	startUpload = ( file ) => {
-		startUpload( this.props.importerStatus, file );
+		this.props.startUpload( this.props.importerStatus, file );
 	};
 
 	render() {
@@ -148,7 +150,7 @@ class UploadingPane extends React.PureComponent {
 					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
 					<div className={ importerStatusClasses }>
-						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
+						<Gridicon size="48" className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>
 					{ isReadyForImport && (
@@ -173,10 +175,10 @@ class UploadingPane extends React.PureComponent {
 	}
 }
 
-export default flow(
-	connect( ( state ) => ( {
+export default connect(
+	( state ) => ( {
 		filename: getUploadFilename( state ),
 		percentComplete: getUploadPercentComplete( state ),
-	} ) ),
-	localize
-)( UploadingPane );
+	} ),
+	{ startMappingAuthors, startUpload }
+)( localize( UploadingPane ) );

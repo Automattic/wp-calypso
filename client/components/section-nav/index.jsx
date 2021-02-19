@@ -6,15 +6,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { includes } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
+import CommentNavigationTab from 'calypso/my-sites/comments/comment-navigation/comment-navigation-tab';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
 
 /**
  * Style dependencies
@@ -39,6 +39,8 @@ class SectionNav extends Component {
 	state = {
 		mobileOpen: false,
 	};
+
+	hasPinnedSearch = false;
 
 	UNSAFE_componentWillMount() {
 		this.checkForSiblingControls( this.props.children );
@@ -95,6 +97,7 @@ class SectionNav extends Component {
 	}
 
 	getChildren() {
+		this.hasPinnedSearch = false;
 		return React.Children.map( this.props.children, ( child ) => {
 			const extraProps = {
 				hasSiblingControls: this.hasSiblingControls,

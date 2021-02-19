@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { castArray } from 'lodash';
 
 /**
@@ -27,9 +26,11 @@ import {
 	MEDIA_ITEM_EDIT,
 	MEDIA_ITEM_DELETE,
 	MEDIA_SET_QUERY,
-} from 'state/action-types';
+	MEDIA_CLEAR_SITE,
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/media';
+import 'calypso/state/data-layer/wpcom/sites/media';
+import 'calypso/state/media/init';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site
@@ -175,12 +176,16 @@ export function createMediaItem( site, transientMedia ) {
  * are to be edited.
  *
  * @param {number} siteId site identifier
- * @param {object} item media item
+ * @param {object} mediaItem media item with updated properties
+ * @param {object} data binary updated item data (to be sent to the server)
+ * @param {object} originalMediaItem original media item without updated properties
  */
-export const editMediaItem = ( siteId, item ) => ( {
+export const editMediaItem = ( siteId, mediaItem, data, originalMediaItem ) => ( {
 	type: MEDIA_ITEM_EDIT,
 	siteId,
-	item,
+	mediaItem,
+	data,
+	originalMediaItem,
 } );
 
 /**
@@ -189,11 +194,13 @@ export const editMediaItem = ( siteId, item ) => ( {
  *
  * @param {number} siteId site identifier
  * @param {object} item media item
+ * @param {object} originalMediaItem media item without updated properties
  */
-export const updateMediaItem = ( siteId, item ) => ( {
+export const updateMediaItem = ( siteId, item, originalMediaItem ) => ( {
 	type: MEDIA_ITEM_UPDATE,
 	siteId,
 	item,
+	originalMediaItem,
 } );
 
 /**
@@ -324,5 +331,17 @@ export function setQuery( siteId, query ) {
 		type: MEDIA_SET_QUERY,
 		siteId,
 		query,
+	};
+}
+
+/**
+ * Returns an action object used in signallying that a media data from a given site
+ *
+ * @param {number} siteId Site ID
+ */
+export function clearSite( siteId ) {
+	return {
+		type: MEDIA_CLEAR_SITE,
+		siteId,
 	};
 }

@@ -7,7 +7,7 @@ import { isFinite, keyBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { getSerializedOrdersQuery } from './utils';
 import invoice from './send-invoice/reducer';
 import notes from './notes/reducer';

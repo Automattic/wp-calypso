@@ -1,0 +1,15 @@
+body.hide-homepage-title {
+	.editor-post-title {
+		display: none;
+	}
+
+	// When the title is hidden in the block editor while editing the homepage,
+	// leave enough space above the first block for the toolbar to show correctly.
+	.block-editor-block-list__layout.is-root-container > .wp-block:first-child {
+		margin-top: 64px;
+	}
+}
+
+.interface-interface-skeleton__editor {
+	max-width: 100%;
+}

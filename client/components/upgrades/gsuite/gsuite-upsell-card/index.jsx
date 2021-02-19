@@ -10,12 +10,13 @@ import React, { useState } from 'react';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
+import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import GSuiteUpsellProductDetails from './product-details';
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import { GSUITE_SLUG_PROP_TYPES } from 'lib/gsuite/constants';
-import QueryProducts from 'components/data/query-products-list';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
+import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -85,10 +86,12 @@ const GSuiteUpsellCard = ( {
 			<CompactCard>
 				<header className="gsuite-upsell-card__header">
 					<h2 className="gsuite-upsell-card__title">
-						{ translate( 'Add professional email from G Suite by Google Cloud to %(domain)s', {
+						{ translate( 'Add professional email from %(productFamily)s to %(domain)s', {
 							args: {
 								domain,
+								productFamily: getGoogleMailServiceFamily( productSlug ),
 							},
+							comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
 						} ) }
 					</h2>
 
@@ -119,7 +122,10 @@ const GSuiteUpsellCard = ( {
 							disabled={ ! canContinue }
 							onClick={ handleAddEmailClick }
 						>
-							{ translate( 'Purchase G Suite' ) }
+							{ translate( 'Purchase %(productFamily)s', {
+								args: { productFamily: getGoogleMailServiceFamily( productSlug ) },
+								comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
+							} ) }
 						</Button>
 					</div>
 				</GSuiteNewUserList>

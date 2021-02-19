@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import {
 	READER_LIST_CREATE,
-	READER_LIST_DISMISS_NOTICE,
+	READER_LIST_DELETE,
+	READER_LIST_FOLLOW,
+	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_DELETE_FEED,
@@ -13,6 +14,8 @@ import {
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_UNFOLLOW,
+	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
@@ -22,22 +25,15 @@ import {
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_REQUEST_SUCCESS,
-	READER_LISTS_REQUEST_FAILURE,
-	READER_LISTS_FOLLOW,
-	READER_LISTS_FOLLOW_SUCCESS,
-	READER_LISTS_FOLLOW_FAILURE,
-	READER_LISTS_UNFOLLOW,
-	READER_LISTS_UNFOLLOW_SUCCESS,
-	READER_LISTS_UNFOLLOW_FAILURE,
-} from 'state/reader/action-types';
-
-import 'state/data-layer/wpcom/read/lists';
-import 'state/data-layer/wpcom/read/lists/items';
-import 'state/data-layer/wpcom/read/lists/feeds/delete';
-import 'state/data-layer/wpcom/read/lists/tags/delete';
-import 'state/data-layer/wpcom/read/lists/feeds/new';
-import 'state/reader/init';
+} from 'calypso/state/reader/action-types';
+import 'calypso/state/data-layer/wpcom/read/lists';
+import 'calypso/state/data-layer/wpcom/read/lists/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/items';
+import 'calypso/state/data-layer/wpcom/read/lists/feeds/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
+import 'calypso/state/reader/init';
 
 /**
  * Returns an action object to signal that list objects have been received.
@@ -53,34 +49,13 @@ export function receiveLists( lists ) {
 }
 
 /**
- * Triggers a network request to fetch the current user's lists.
+ * Request the current user's subscribed lists.
  *
- * @returns {Function}        Action thunk
+ * @returns {object}       Action object
  */
 export function requestSubscribedLists() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LISTS_REQUEST,
-		} );
-
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().readLists( ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-		} )
-			.then( ( data ) => {
-				dispatch( receiveLists( data.lists ) );
-				dispatch( {
-					type: READER_LISTS_REQUEST_SUCCESS,
-					data,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: READER_LISTS_REQUEST_FAILURE,
-					error,
-				} );
-			} );
+	return {
+		type: READER_LISTS_REQUEST,
 	};
 }
 
@@ -89,39 +64,14 @@ export function createReaderList( list ) {
 }
 
 /**
- * Triggers a network request to fetch a single Reader list.
+ * Request a single Reader list.
  *
- * @param  {string}  owner List owner
- * @param  {string}  slug List slug
- * @returns {Function}        Action thunk
+ * @param  {string}  listOwner List owner
+ * @param  {string}  listSlug List slug
+ * @returns {object}       Action object
  */
-export function requestList( owner, slug ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_REQUEST,
-		} );
-
-		const query = createQuery( owner, slug );
-
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().readList( query, ( error, data ) => {
-				if ( error ) {
-					const errorInfo = {
-						error,
-						owner,
-						slug,
-					};
-					reject( errorInfo );
-				} else {
-					resolve( data );
-				}
-			} );
-		} )
-			.then( ( data ) => {
-				dispatch( receiveReaderList( data ) );
-			} )
-			.catch( ( errorInfo ) => dispatch( handleReaderListRequestFailure( errorInfo ) ) );
-	};
+export function requestList( listOwner, listSlug ) {
+	return { type: READER_LIST_REQUEST, listOwner, listSlug };
 }
 
 export function receiveReaderList( data ) {
@@ -141,76 +91,58 @@ export function handleReaderListRequestFailure( errorInfo ) {
 }
 
 /**
- * Triggers a network request to follow a list.
+ * Follow a list.
  *
- * @param  {string}  owner List owner
- * @param  {string}  slug List slug
- * @returns {Function} Action promise
+ * @param  {string}  listOwner List owner
+ * @param  {string}  listSlug List slug
+ * @returns {object}       Action object
  */
-export function followList( owner, slug ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LISTS_FOLLOW,
-			owner,
-			slug,
-		} );
-
-		const query = createQuery( owner, slug );
-
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().followList( query, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-		} )
-			.then( ( data ) => {
-				dispatch( {
-					type: READER_LISTS_FOLLOW_SUCCESS,
-					data,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: READER_LISTS_FOLLOW_FAILURE,
-					error,
-				} );
-			} );
+export function followList( listOwner, listSlug ) {
+	return {
+		type: READER_LIST_FOLLOW,
+		listOwner,
+		listSlug,
 	};
 }
 
 /**
- * Triggers a network request to unfollow a list.
+ * Receive a successful list follow.
  *
- * @param  {string}  owner List owner
- * @param  {string}  slug List slug
- * @returns {Function} Action promise
+ * @param  {object} list Followed list
+ * @returns {object} Action object
  */
-export function unfollowList( owner, slug ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LISTS_UNFOLLOW,
-			owner,
-			slug,
-		} );
+export function receiveFollowList( list ) {
+	return {
+		type: READER_LIST_FOLLOW_RECEIVE,
+		list,
+	};
+}
 
-		const query = createQuery( owner, slug );
+/**
+ * Unfollow a list.
+ *
+ * @param  {string}  listOwner List owner
+ * @param  {string}  listSlug List slug
+ * @returns {object}       Action object
+ */
+export function unfollowList( listOwner, listSlug ) {
+	return {
+		type: READER_LIST_UNFOLLOW,
+		listOwner,
+		listSlug,
+	};
+}
 
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().unfollowList( query, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-		} )
-			.then( ( data ) => {
-				dispatch( {
-					type: READER_LISTS_UNFOLLOW_SUCCESS,
-					data,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: READER_LISTS_UNFOLLOW_FAILURE,
-					error,
-				} );
-			} );
+/**
+ * Receive a successful list unfollow.
+ *
+ * @param  {object} list Unfollowed list
+ * @returns {object}    Action object
+ */
+export function receiveUnfollowList( list ) {
+	return {
+		type: READER_LIST_UNFOLLOW_RECEIVE,
+		list,
 	};
 }
 
@@ -248,27 +180,14 @@ export function receiveUpdatedListDetails( data ) {
  * Handle an error from the list update API.
  *
  * @param   {Error}  error Error during the list update process
+ * @param   {object} list List details to save
  * @returns {object} Action object
  */
-export function handleUpdateListDetailsError( error ) {
+export function handleUpdateListDetailsError( error, list ) {
 	return {
 		type: READER_LIST_UPDATE_FAILURE,
 		error,
-	};
-}
-
-/**
- * Trigger an action to dismiss a list update notice.
- *
- * @param  {number}  listId List ID
- * @returns {Function} Action thunk
- */
-export function dismissListNotice( listId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_DISMISS_NOTICE,
-			listId,
-		} );
+		list,
 	};
 }
 
@@ -358,8 +277,9 @@ export const receiveAddReaderListTag = ( listId, listOwner, listSlug, tagSlug, t
 	tagId,
 } );
 
-function createQuery( owner, slug ) {
-	const preparedOwner = decodeURIComponent( owner );
-	const preparedSlug = decodeURIComponent( slug );
-	return { owner: preparedOwner, slug: preparedSlug };
-}
+export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
+	type: READER_LIST_DELETE,
+	listId,
+	listOwner,
+	listSlug,
+} );

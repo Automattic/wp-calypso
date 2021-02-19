@@ -1,6 +1,5 @@
 .invite-accept-logged-in__join-as {
 	color: var( --color-neutral-60 );
-	font-family: $sans;
 	font-size: $font-title-small;
 	line-height: 24px;
 	margin-bottom: 16px;
@@ -12,7 +11,6 @@
 }
 
 .invite-accept-logged-in__join-as-username {
-	font-family: $serif;
 	font-weight: 600;
 }
 

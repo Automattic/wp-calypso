@@ -13,11 +13,11 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import detectHistoryNavigation from 'lib/detect-history-navigation';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import ScrollStore from './scroll-store';
 import ScrollHelper from './scroll-helper';
-import scrollTo from 'lib/scroll-to';
-import smartSetState from 'lib/react-smart-set-state';
+import scrollTo from 'calypso/lib/scroll-to';
+import smartSetState from 'calypso/lib/react-smart-set-state';
 
 /**
  * Style dependencies
@@ -57,7 +57,8 @@ export default class InfiniteList extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		const url = page.current;
-		let newState, scrollTop;
+		let newState;
+		let scrollTop;
 
 		if ( detectHistoryNavigation.loadedViaHistory() ) {
 			newState = ScrollStore.getPositions( url );
@@ -339,16 +340,16 @@ export default class InfiniteList extends React.Component {
 	 * @returns {Array} This list of indexes
 	 */
 	getVisibleItemIndexes( options ) {
-		const container = ReactDom.findDOMNode( this ),
-			visibleItemIndexes = [],
-			firstIndex = this.state.firstRenderedIndex,
-			lastIndex = this.state.lastRenderedIndex,
-			offsetTop = options && options.offsetTop ? options.offsetTop : 0;
-		let windowHeight,
-			rect,
-			children,
-			i,
-			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
+		const container = ReactDom.findDOMNode( this );
+		const visibleItemIndexes = [];
+		const firstIndex = this.state.firstRenderedIndex;
+		const lastIndex = this.state.lastRenderedIndex;
+		const offsetTop = options && options.offsetTop ? options.offsetTop : 0;
+		let windowHeight;
+		let rect;
+		let children;
+		let i;
+		let offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
 
 		offsetBottom = offsetBottom || 0;
 		if ( lastIndex > -1 ) {
@@ -389,9 +390,9 @@ export default class InfiniteList extends React.Component {
 			...propsToTransfer
 		} = this.props;
 		const spacerClassName = 'infinite-list__spacer';
-		let i,
-			lastRenderedIndex = this.state.lastRenderedIndex,
-			itemsToRender = [];
+		let i;
+		let lastRenderedIndex = this.state.lastRenderedIndex;
+		let itemsToRender = [];
 
 		if ( lastRenderedIndex === -1 || lastRenderedIndex > items.length - 1 ) {
 			debug(

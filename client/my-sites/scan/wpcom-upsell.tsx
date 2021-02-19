@@ -8,25 +8,25 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { isPersonalPlan, isPremiumPlan } from 'lib/plans';
-import FormattedHeader from 'components/formatted-header';
-import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
-import PromoCard from 'components/promo-section/promo-card';
-import PromoCardCTA from 'components/promo-section/promo-card/cta';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
-import Gridicon from 'components/gridicon';
-import { getSitePlan } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isPersonalPlan, isPremiumPlan } from 'calypso/lib/plans';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import Gridicon from 'calypso/components/gridicon';
+import { getSitePlan } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 
 /**
  * Asset dependencies
  */
-import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
+import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import './style.scss';
 
 const promos = [

@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	WP_SUPER_CACHE_DELETE_FILE,
 	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
@@ -16,8 +16,8 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../action-types';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteTitle } from 'state/sites/selectors';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 
 /*
  * Retrieves stats for a site.

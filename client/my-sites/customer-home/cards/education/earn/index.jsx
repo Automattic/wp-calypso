@@ -9,13 +9,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import EducationalContent from '../educational-content';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 export const EDUCATION_EARN = 'home-education-earn';
 
 /**
  * Image dependencies
  */
-import earnCardPrompt from 'assets/images/customer-home/illustration--secondary-earn.svg';
+import earnCardPrompt from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
 
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();

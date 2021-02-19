@@ -29,7 +29,7 @@ import {
 	DOMAINS_DNS_FETCH,
 	DOMAINS_DNS_FETCH_COMPLETED,
 	DOMAINS_DNS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 function isWpcomRecord( record ) {
 	return startsWith( record.id, 'wpcom:' );

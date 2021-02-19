@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import { NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
+import { NOTIFICATIONS_PANEL_TOGGLE } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 /**
  * Sets ui state to toggle the notifications panel

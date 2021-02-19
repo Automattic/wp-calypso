@@ -10,8 +10,9 @@ import { isEmpty, merge, minBy } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import config from 'config';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import config from '@automattic/calypso-config';
+import { getAddNewPaymentMethodPath } from '../utils';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -31,20 +32,20 @@ import {
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
-} from 'lib/purchases';
+} from 'calypso/lib/purchases';
 import {
 	isDomainTransfer,
 	isConciergeSession,
 	isPlan,
 	isDomainRegistration,
-} from 'lib/products-values';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { isMonthly } from 'lib/plans/constants';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { managePurchase } from 'me/purchases/paths';
-import UpcomingRenewalsDialog from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+} from 'calypso/lib/products-values';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { isMonthly } from 'calypso/lib/plans/constants';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 
 /**
  * Style dependencies
@@ -60,9 +61,17 @@ class PurchaseNotice extends Component {
 		handleRenewMultiplePurchases: PropTypes.func,
 		purchase: PropTypes.object,
 		purchaseAttachedTo: PropTypes.object,
-		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		selectedSite: PropTypes.object,
-		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		changePaymentMethodPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		getManagePurchaseUrlFor: PropTypes.func,
+		getAddNewPaymentMethodUrlFor: PropTypes.func,
+		isProductOwner: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		getManagePurchaseUrlFor: managePurchase,
+		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
 	};
 
 	state = {
@@ -126,13 +135,13 @@ class PurchaseNotice extends Component {
 		if ( isPaidWithCredits( purchase ) ) {
 			if ( autoRenewingUpgradesLink ) {
 				return translate(
-					"You purchased %(purchaseName)s with credits – please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
+					"You purchased %(purchaseName)s with credits – please update your payment information before your plan expires %(expiry)s so that you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 					translateOptions
 				);
 			}
 
 			return translate(
-				"You purchased %(purchaseName)s with credits. Please add a credit card before your plan expires %(expiry)s so that you don't lose out on your paid features!",
+				"You purchased %(purchaseName)s with credits. Please update your payment information before your plan expires %(expiry)s so that you don't lose out on your paid features!",
 				translateOptions
 			);
 		}
@@ -167,19 +176,19 @@ class PurchaseNotice extends Component {
 
 		if ( autoRenewingUpgradesLink ) {
 			return translate(
-				"%(purchaseName)s will expire and be removed from your site %(expiry)s – add a credit card so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
+				"%(purchaseName)s will expire and be removed from your site %(expiry)s – update your payment information so you don't lose out on your paid features! You also have {{link}}other upgrades{{/link}} on this site that are scheduled to renew soon.",
 				translateOptions
 			);
 		}
 
 		return translate(
-			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Add a credit card so you don't lose out on your paid features!",
+			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Update your payment information so you don't lose out on your paid features!",
 			translateOptions
 		);
 	}
 
 	renderRenewNoticeAction( onClick ) {
-		const { editCardDetailsPath, purchase, translate } = this.props;
+		const { changePaymentMethodPath, purchase, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
 			return null;
@@ -190,7 +199,26 @@ class PurchaseNotice extends Component {
 			( ! canExplicitRenew( purchase ) || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
 		) {
 			return (
-				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Add Credit Card' ) }</NoticeAction>
+				<NoticeAction href={ changePaymentMethodPath }>
+					{ config.isEnabled( 'purchases/new-payment-methods' )
+						? translate( 'Add Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</NoticeAction>
+			);
+		}
+
+		// isExpiring(), which leads here (along with isExpired()) returns true
+		// when expiring, when auto-renew is disabled, or when the payment method
+		// was credits but we don't want to show "Add Payment Method" if the
+		// subscription is actually expiring or expired; we want to show "Renew
+		// Now" in that case.
+		if ( isPaidWithCredits( purchase ) && purchase.expiryStatus === 'manualRenew' ) {
+			return (
+				<NoticeAction href={ changePaymentMethodPath }>
+					{ config.isEnabled( 'purchases/new-payment-methods' )
+						? translate( 'Add Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</NoticeAction>
 			);
 		}
 
@@ -248,7 +276,14 @@ class PurchaseNotice extends Component {
 	};
 
 	renderPurchaseExpiringNotice() {
-		const { moment, purchase, purchaseAttachedTo, selectedSite, translate } = this.props;
+		const {
+			moment,
+			purchase,
+			purchaseAttachedTo,
+			selectedSite,
+			translate,
+			getManagePurchaseUrlFor,
+		} = this.props;
 
 		// For purchases included with a plan (for example, a domain mapping
 		// bundled with the plan), the plan purchase is used on this page when
@@ -274,11 +309,12 @@ class PurchaseNotice extends Component {
 			noticeStatus = 'is-error';
 		}
 
-		let noticeText = '';
-		let showNoticeAction = false;
+		if ( usePlanInsteadOfIncludedPurchase && ! selectedSite ) {
+			return null;
+		}
 
 		if ( usePlanInsteadOfIncludedPurchase ) {
-			noticeText = translate(
+			const noticeText = translate(
 				'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire and be removed from your site %(expiry)s.',
 				{
 					args: {
@@ -287,7 +323,9 @@ class PurchaseNotice extends Component {
 						expiry: moment( currentPurchase.expiryDate ).fromNow(),
 					},
 					components: {
-						managePurchase: <a href={ managePurchase( selectedSite.slug, currentPurchase.id ) } />,
+						managePurchase: (
+							<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
+						),
 					},
 				}
 			);
@@ -295,12 +333,19 @@ class PurchaseNotice extends Component {
 			// included purchase (rather than the plan that it is attached to).
 			// So we have to rely on the user going to the manage purchase page
 			// for the plan to renew it there.
-			showNoticeAction = false;
-		} else {
-			noticeText = this.getExpiringText( currentPurchase );
-			showNoticeAction = true;
+			return (
+				<Notice
+					className="manage-purchase__purchase-expiring-notice"
+					showDismiss={ false }
+					status={ noticeStatus }
+					text={ noticeText }
+				>
+					{ this.trackImpression( 'purchase-expiring' ) }
+				</Notice>
+			);
 		}
 
+		const noticeText = this.getExpiringText( currentPurchase );
 		return (
 			<Notice
 				className="manage-purchase__purchase-expiring-notice"
@@ -308,7 +353,7 @@ class PurchaseNotice extends Component {
 				status={ noticeStatus }
 				text={ noticeText }
 			>
-				{ showNoticeAction && this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
+				{ this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
 		);
@@ -322,6 +367,8 @@ class PurchaseNotice extends Component {
 			purchaseAttachedTo,
 			selectedSite,
 			renewableSitePurchases,
+			getManagePurchaseUrlFor,
+			getAddNewPaymentMethodUrlFor,
 		} = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/upcoming-renewals-notices' ) ) {
@@ -392,7 +439,9 @@ class PurchaseNotice extends Component {
 						onClick={ this.openUpcomingRenewalsDialog }
 					/>
 				),
-				managePurchase: <a href={ managePurchase( selectedSite.slug, currentPurchase.id ) } />,
+				managePurchase: (
+					<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
+				),
 			},
 		};
 
@@ -625,7 +674,7 @@ class PurchaseNotice extends Component {
 				);
 			} else {
 				noticeStatus = showCreditCardExpiringWarning( currentPurchase ) ? 'is-error' : 'is-info';
-				noticeActionHref = '/me/purchases/add-credit-card';
+				noticeActionHref = getAddNewPaymentMethodUrlFor( selectedSite.slug );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-soon-others-renew-soon-cc-expiring';
@@ -644,7 +693,7 @@ class PurchaseNotice extends Component {
 		) {
 			noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 			noticeActionOnClick = this.handleExpiringNoticeRenewAll;
-			noticeActionText = translate( 'Renew now' );
+			noticeActionText = translate( 'Renew Now' );
 			noticeImpressionName = 'current-expires-later-others-expire-soon';
 
 			if ( anotherPurchaseIsExpired ) {
@@ -687,7 +736,7 @@ class PurchaseNotice extends Component {
 		) {
 			noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 			noticeActionOnClick = this.handleExpiringNoticeRenewAll;
-			noticeActionText = translate( 'Renew now' );
+			noticeActionText = translate( 'Renew Now' );
 			noticeImpressionName = 'current-renews-later-others-expire-soon';
 
 			if ( anotherPurchaseIsExpired ) {
@@ -719,7 +768,7 @@ class PurchaseNotice extends Component {
 				);
 			} else {
 				noticeStatus = 'is-info';
-				noticeActionHref = '/me/purchases/add-credit-card';
+				noticeActionHref = getAddNewPaymentMethodUrlFor( selectedSite.slug );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-later-others-renew-soon-cc-expiring';
@@ -740,6 +789,7 @@ class PurchaseNotice extends Component {
 					isVisible={ this.state.showUpcomingRenewalsDialog }
 					purchases={ renewableSitePurchases }
 					site={ selectedSite }
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					onConfirm={ this.handleExpiringNoticeRenewSelection }
 					onClose={ this.closeUpcomingRenewalsDialog }
 				/>
@@ -794,7 +844,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderCreditCardExpiringNotice() {
-		const { editCardDetailsPath, purchase, translate } = this.props;
+		const { changePaymentMethodPath, purchase, translate } = this.props;
 
 		if (
 			isExpired( purchase ) ||
@@ -806,8 +856,8 @@ class PurchaseNotice extends Component {
 		}
 
 		if ( creditCardExpiresBeforeSubscription( purchase ) ) {
-			const linkComponent = editCardDetailsPath ? (
-				<a onClick={ this.onClickUpdateCreditCardDetails } href={ editCardDetailsPath } />
+			const linkComponent = changePaymentMethodPath ? (
+				<a onClick={ this.onClickUpdateCreditCardDetails } href={ changePaymentMethodPath } />
 			) : (
 				<span />
 			);
@@ -841,7 +891,13 @@ class PurchaseNotice extends Component {
 	};
 
 	renderExpiredRenewNotice() {
-		const { purchase, purchaseAttachedTo, selectedSite, translate } = this.props;
+		const {
+			purchase,
+			purchaseAttachedTo,
+			selectedSite,
+			translate,
+			getManagePurchaseUrlFor,
+		} = this.props;
 
 		// For purchases included with a plan (for example, a domain mapping
 		// bundled with the plan), the plan purchase is used on this page when
@@ -861,55 +917,61 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		let noticeText = '';
-		let showNoticeAction = false;
-
-		if ( ! isRenewable( purchase ) ) {
-			if ( ! usePlanInsteadOfIncludedPurchase ) {
-				return null;
-			}
-
-			noticeText = translate(
-				'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
-				{
-					args: {
-						purchaseName: getName( currentPurchase ),
-						includedPurchaseName: getName( includedPurchase ),
-					},
-					components: {
-						managePurchase: <a href={ managePurchase( selectedSite.slug, currentPurchase.id ) } />,
-					},
-				}
+		if ( isRenewable( purchase ) ) {
+			const noticeText = translate( 'This purchase has expired and is no longer in use.' );
+			return (
+				<Notice showDismiss={ false } status="is-error" text={ noticeText }>
+					{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
+					{ this.trackImpression( 'purchase-expired' ) }
+				</Notice>
 			);
-			// We can't show the action here, because it would try to renew the
-			// included purchase (rather than the plan that it is attached to).
-			// So we have to rely on the user going to the manage purchase page
-			// for the plan to renew it there.
-			showNoticeAction = false;
-		} else {
-			noticeText = translate( 'This purchase has expired and is no longer in use.' );
-			showNoticeAction = true;
 		}
 
+		if ( ! usePlanInsteadOfIncludedPurchase ) {
+			return null;
+		}
+		if ( ! selectedSite ) {
+			return null;
+		}
+
+		const noticeText = translate(
+			'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
+			{
+				args: {
+					purchaseName: getName( currentPurchase ),
+					includedPurchaseName: getName( includedPurchase ),
+				},
+				components: {
+					managePurchase: (
+						<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
+					),
+				},
+			}
+		);
+		// We can't show the action here, because it would try to renew the
+		// included purchase (rather than the plan that it is attached to).
+		// So we have to rely on the user going to the manage purchase page
+		// for the plan to renew it there.
 		return (
 			<Notice showDismiss={ false } status="is-error" text={ noticeText }>
-				{ showNoticeAction && this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expired' ) }
 			</Notice>
 		);
 	}
 
-	renderConciergeConsumedNotice() {
-		const { purchase, translate } = this.props;
-
+	shouldRenderConciergeConsumedNotice() {
+		const { purchase } = this.props;
 		if ( ! isConciergeSession( purchase ) ) {
-			return null;
+			return false;
 		}
-
 		if ( ! isExpired( purchase ) ) {
-			return null;
+			return false;
 		}
+		return true;
+	}
 
+	renderConciergeConsumedNotice() {
+		const { translate } = this.props;
 		return (
 			<Notice
 				showDismiss={ false }
@@ -921,18 +983,35 @@ class PurchaseNotice extends Component {
 		);
 	}
 
+	renderNonProductOwnerNotice() {
+		const { translate } = this.props;
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-info"
+				text={ translate(
+					'This product was purchased by a different WordPress.com account. To manage this product, log in to that account or contact the account owner.'
+				) }
+			></Notice>
+		);
+	}
+
 	render() {
 		if ( this.props.isDataLoading ) {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) || isPartnerPurchase( this.props.purchase ) ) {
+		if ( isDomainTransfer( this.props.purchase ) ) {
 			return null;
 		}
 
-		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();
-		if ( consumedConciergeSessionNotice ) {
-			return consumedConciergeSessionNotice;
+		if ( ! this.props.isProductOwner ) {
+			return this.renderNonProductOwnerNotice();
+		}
+
+		if ( this.shouldRenderConciergeConsumedNotice() ) {
+			return this.renderConciergeConsumedNotice();
 		}
 
 		const otherRenewablePurchasesNotice = this.renderOtherRenewablePurchasesNotice();
@@ -943,6 +1022,10 @@ class PurchaseNotice extends Component {
 		const expiredNotice = this.renderExpiredRenewNotice();
 		if ( expiredNotice ) {
 			return expiredNotice;
+		}
+
+		if ( isPartnerPurchase( this.props.purchase ) ) {
+			return null;
 		}
 
 		const expiringNotice = this.renderPurchaseExpiringNotice();

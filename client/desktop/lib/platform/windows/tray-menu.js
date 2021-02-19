@@ -1,12 +1,12 @@
 /**
  * External Dependencies
  */
-const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const AppQuit = require( 'desktop/lib/app-quit' );
+const AppQuit = require( 'calypso/desktop/lib/app-quit' );
 
 module.exports = function ( restoreApp ) {
 	return [

@@ -6,12 +6,12 @@
 /**
  * Internal Dependencies
  */
-import { STATS_RECENT_POST_VIEWS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveRecentPostViews } from 'state/stats/recent-post-views/actions';
+import { STATS_RECENT_POST_VIEWS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receiveRecentPostViews } from 'calypso/state/stats/recent-post-views/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetch = ( action ) => {
 	const { siteId, postIds, num, date, offset } = action;

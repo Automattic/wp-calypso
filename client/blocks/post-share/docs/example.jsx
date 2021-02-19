@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PostShare from 'blocks/post-share';
-import QueryPosts from 'components/data/query-posts';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getSite, getSitePlanSlug } from 'state/sites/selectors';
-import { getSitePosts } from 'state/posts/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import Notice from 'calypso/components/notice';
+import PostShare from 'calypso/blocks/post-share';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySites from 'calypso/components/data/query-sites';
 import { Card } from '@automattic/components';
-import QuerySites from 'components/data/query-sites';
-import FormToggle from 'components/forms/form-toggle/compact';
-import Notice from 'components/notice';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSitePosts } from 'calypso/state/posts/selectors';
 
 class PostShareExample extends Component {
 	state = {
@@ -46,11 +45,9 @@ class PostShareExample extends Component {
 					</p>
 				) }
 
-				<p onClick={ this.toggleEnable }>
-					<label>
-						Enabled: <FormToggle checked={ this.state.isEnabled } />
-					</label>
-				</p>
+				<FormToggle onChange={ this.toggleEnable } checked={ this.state.isEnabled }>
+					Live Sharing Enabled
+				</FormToggle>
 
 				{ this.state.isEnabled && (
 					<Notice

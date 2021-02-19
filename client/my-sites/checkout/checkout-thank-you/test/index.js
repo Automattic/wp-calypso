@@ -21,28 +21,28 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Internal dependencies
  */
 import { CheckoutThankYou } from '../index';
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.unmock( 'lib/plans' );
-const plans = require( 'lib/plans' );
+jest.unmock( 'calypso/lib/plans' );
+const plans = require( 'calypso/lib/plans' );
 plans.getFeatureByKey = () => null;
 plans.shouldFetchSitePlans = () => false;
 
-jest.unmock( 'lib/products-values' );
-const productValues = require( 'lib/products-values' );
-const isDotComPlan = require( 'lib/products-values/is-dot-com-plan' );
+jest.unmock( 'calypso/lib/products-values' );
+const productValues = require( 'calypso/lib/products-values' );
+const isDotComPlan = require( 'calypso/lib/products-values/is-dot-com-plan' );
 isDotComPlan.isDotComPlan = jest.fn( () => false );
 
-jest.mock( 'lib/analytics/tracks', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
 jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
@@ -50,17 +50,17 @@ jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => 'component--jetpack-plan-details' );
 jest.mock( '../rebrand-cities-thank-you', () => 'component--RebrandCitiesThankYou' );
 jest.mock( '../atomic-store-thank-you-card', () => 'component--AtomicStoreThankYouCard' );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( '../header', () => 'CheckoutThankYouHeader' );
-jest.mock( 'components/happiness-support', () => 'HappinessSupport' );
-jest.mock( 'lib/rebrand-cities', () => ( {
+jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
+jest.mock( 'calypso/lib/rebrand-cities', () => ( {
 	isRebrandCitiesSiteUrl: jest.fn( () => false ),
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
-import RebrandCities from 'lib/rebrand-cities';
+import RebrandCities from 'calypso/lib/rebrand-cities';
 
 const translate = ( x ) => x;
 

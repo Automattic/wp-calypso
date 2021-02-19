@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import getConnectedApplications from 'state/selectors/get-connected-applications';
-import QueryConnectedApplications from 'components/data/query-connected-applications';
+import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
+import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
 import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupConnectedApplications extends React.Component {

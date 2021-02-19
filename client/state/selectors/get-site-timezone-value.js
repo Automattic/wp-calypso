@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/site-settings/init';
+import 'calypso/state/site-settings/init';
 
 /**
  * Returns the site's timezone value, in the format of 'America/Araguaina.'

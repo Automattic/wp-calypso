@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -13,38 +13,38 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Dialog, Button, CompactCard } from '@automattic/components';
-import config from 'config';
-import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
-import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
-import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
-import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
+import config from '@automattic/calypso-config';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
+import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
+import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'calypso/lib/purchases';
 import { isDataLoading } from '../utils';
 import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleApps,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
-} from 'lib/products-values';
-import { isJetpackSearch } from 'lib/products-values/constants';
-import notices from 'notices';
+	isJetpackSearch,
+} from 'calypso/lib/products-values';
 import { purchasesRoot } from '../paths';
-import { getPurchasesError } from 'state/purchases/selectors';
-import { removePurchase } from 'state/purchases/actions';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import isDomainOnly from 'state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { receiveDeletedSite } from 'state/sites/actions';
-import { setAllSitesSelected } from 'state/ui/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import { removePurchase } from 'calypso/state/purchases/actions';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { receiveDeletedSite } from 'calypso/state/sites/actions';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
-import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
-import VerticalNavItem from 'components/vertical-nav/item';
+import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 /**
  * Style dependencies
@@ -65,6 +65,11 @@ class RemovePurchase extends Component {
 		userId: PropTypes.number.isRequired,
 		useVerticalNavItem: PropTypes.bool,
 		onClickTracks: PropTypes.func,
+		purchaseListUrl: PropTypes.string,
+	};
+
+	static defaultProps = {
+		purchaseListUrl: purchasesRoot,
 	};
 
 	state = {
@@ -120,21 +125,21 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	removePurchase = ( closeDialog ) => {
+	removePurchase = () => {
 		this.setState( { isRemoving: true } );
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
 
 		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
 			const productName = getName( purchase );
-			const { purchasesError } = this.props;
+			const { purchasesError, purchaseListUrl } = this.props;
 
 			if ( purchasesError ) {
 				this.setState( { isRemoving: false } );
 
-				closeDialog();
+				this.closeDialog();
 
-				notices.error( purchasesError );
+				this.props.errorNotice( purchasesError );
 			} else {
 				if ( isDomainRegistration( purchase ) ) {
 					if ( isDomainOnlySite ) {
@@ -142,23 +147,23 @@ class RemovePurchase extends Component {
 						this.props.setAllSitesSelected();
 					}
 
-					notices.success(
+					this.props.successNotice(
 						translate( 'The domain {{domain/}} was removed from your account.', {
 							components: { domain: <em>{ productName }</em> },
 						} ),
-						{ persistent: true }
+						{ isPersistent: true }
 					);
 				} else {
-					notices.success(
+					this.props.successNotice(
 						translate( '%(productName)s was removed from {{siteName/}}.', {
 							args: { productName },
 							components: { siteName: <em>{ purchase.domain }</em> },
 						} ),
-						{ persistent: true }
+						{ isPersistent: true }
 					);
 				}
 
-				page( purchasesRoot );
+				page( purchaseListUrl );
 			}
 		} );
 	};
@@ -266,15 +271,10 @@ class RemovePurchase extends Component {
 							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 						} )
 					}{ ' ' }
-					{ isGoogleApps( purchase )
-						? translate(
-								'Your G Suite account will continue working without interruption. ' +
-									'You will be able to manage your G Suite billing directly through Google.'
-						  )
-						: translate(
-								'You will not be able to reuse it again without purchasing a new subscription.',
-								{ comment: "'it' refers to a product purchased by a user" }
-						  ) }
+					{ translate(
+						'You will not be able to reuse it again without purchasing a new subscription.',
+						{ comment: "'it' refers to a product purchased by a user" }
+					) }
 				</p>
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
@@ -331,7 +331,7 @@ class RemovePurchase extends Component {
 			return this.renderPlanDialog();
 		}
 
-		if ( isGoogleApps( purchase ) ) {
+		if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 			return (
 				<GSuiteCancellationPurchaseDialog
 					isVisible={ this.state.isDialogVisible }
@@ -341,7 +341,8 @@ class RemovePurchase extends Component {
 				/>
 			);
 		}
-		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase.productSlug ) ) {
+
+		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 
@@ -403,9 +404,11 @@ export default connect(
 		};
 	},
 	{
+		errorNotice,
 		receiveDeletedSite,
 		recordTracksEvent,
 		removePurchase,
 		setAllSitesSelected,
+		successNotice,
 	}
 )( localize( RemovePurchase ) );

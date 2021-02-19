@@ -10,10 +10,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ConversationFollowButton from './button';
-import { isFollowingReaderConversation } from 'state/reader/conversations/selectors';
-import { followConversation, muteConversation } from 'state/reader/conversations/actions';
-import { getTracksPropertiesForPost } from 'reader/stats';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
+import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
+import { getTracksPropertiesForPost } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -42,13 +42,16 @@ class ConversationFollowButtonContainer extends Component {
 		} );
 
 		if ( isRequestingFollow ) {
-			this.props.recordTracksEvent(
+			this.props.recordReaderTracksEvent(
 				'calypso_reader_conversations_post_followed',
 				tracksProperties
 			);
 			this.props.followConversation( { siteId, postId } );
 		} else {
-			this.props.recordTracksEvent( 'calypso_reader_conversations_post_muted', tracksProperties );
+			this.props.recordReaderTracksEvent(
+				'calypso_reader_conversations_post_muted',
+				tracksProperties
+			);
 			this.props.muteConversation( { siteId, postId } );
 		}
 
@@ -77,6 +80,6 @@ export default connect(
 	{
 		followConversation,
 		muteConversation,
-		recordTracksEvent,
+		recordReaderTracksEvent,
 	}
 )( ConversationFollowButtonContainer );

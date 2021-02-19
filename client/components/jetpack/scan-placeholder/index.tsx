@@ -6,7 +6,7 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import SecurityIcon from 'components/jetpack/security-icon';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 
 /**
  * Style dependencies

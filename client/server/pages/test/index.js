@@ -8,21 +8,21 @@ jest.mock( 'child_process', () => ( {
 
 jest.mock( 'superagent', () => jest.fn() );
 
-jest.mock( 'config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const impl = jest.fn();
 	impl.isEnabled = jest.fn();
 	return impl;
 } );
 
-jest.mock( 'server/sanitize', () => jest.fn() );
+jest.mock( 'calypso/server/sanitize', () => jest.fn() );
 
-jest.mock( 'server/bundler/utils', () => ( {
+jest.mock( 'calypso/server/bundler/utils', () => ( {
 	hashFile: jest.fn( () => 'hash' ),
-	getUrl: jest.fn( jest.requireActual( 'server/bundler/utils' ).getUrl ),
+	getUrl: jest.fn( jest.requireActual( 'calypso/server/bundler/utils' ).getUrl ),
 } ) );
 
-jest.mock( 'sections', () => {
-	const sections = jest.requireActual( 'sections' );
+jest.mock( 'calypso/sections', () => {
+	const sections = jest.requireActual( 'calypso/sections' );
 	sections
 		.filter( ( section ) => section.isomorphic )
 		.forEach( ( section ) => {
@@ -33,27 +33,26 @@ jest.mock( 'sections', () => {
 	return sections;
 } );
 
-jest.mock( 'sections-filter', () => jest.fn( () => true ) );
+jest.mock( 'calypso/sections-filter', () => jest.fn( () => true ) );
 
-jest.mock( 'login', () => {
+jest.mock( 'calypso/login', () => {
 	const impl = jest.fn();
 	impl.LOGIN_SECTION_DEFINITION = {
 		name: 'login',
 		paths: [ '/log-in' ],
 		module: 'login',
 		enableLoggedOut: true,
-		secondary: false,
 		isomorphic: true,
 	};
 	return impl;
 } );
 
-jest.mock( 'server/isomorphic-routing', () => ( {
+jest.mock( 'calypso/server/isomorphic-routing', () => ( {
 	serverRouter: jest.fn(),
 	getNormalizedPath: jest.fn(),
 } ) );
 
-jest.mock( 'server/render', () => ( {
+jest.mock( 'calypso/server/render', () => ( {
 	serverRender: jest.fn(),
 	renderJsx: jest.fn(),
 	attachBuildTimestamp: jest.fn(),
@@ -61,30 +60,30 @@ jest.mock( 'server/render', () => ( {
 	attachI18n: jest.fn(),
 } ) );
 
-jest.mock( 'server/state-cache', () => jest.fn() );
+jest.mock( 'calypso/server/state-cache', () => jest.fn() );
 
-jest.mock( 'server/user-bootstrap', () => jest.fn() );
+jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
 
-jest.mock( 'state', () => ( {
+jest.mock( 'calypso/state', () => ( {
 	createReduxStore: jest.fn(),
 } ) );
 
-jest.mock( 'state/redux-store', () => ( {
+jest.mock( 'calypso/state/redux-store', () => ( {
 	setStore: jest.fn(),
 } ) );
 
-jest.mock( 'state/reducer', () => jest.fn() );
+jest.mock( 'calypso/state/reducer', () => jest.fn() );
 
-jest.mock( 'state/action-types', () => ( {
+jest.mock( 'calypso/state/action-types', () => ( {
 	DESERIALIZE: 'DESERIALIZE',
 	LOCALE_SET: 'LOCALE_SET',
 } ) );
 
-jest.mock( 'state/current-user/actions', () => ( {
+jest.mock( 'calypso/state/current-user/actions', () => ( {
 	setCurrentUser: jest.fn(),
 } ) );
 
-jest.mock( 'lib/paths', () => ( {
+jest.mock( 'calypso/lib/paths', () => ( {
 	login: jest.fn(),
 } ) );
 
@@ -92,27 +91,26 @@ jest.mock( './analytics', () => ( {
 	logSectionResponse: jest.fn(),
 } ) );
 
-jest.mock( 'server/lib/analytics', () => ( {
+jest.mock( 'calypso/server/lib/analytics', () => ( {
 	tracks: {
 		recordEvent: jest.fn(),
 	},
 } ) );
 
-jest.mock( 'lib/i18n-utils', () => ( {
+jest.mock( 'calypso/lib/i18n-utils', () => ( {
 	getLanguage: jest.fn( ( lang ) => ( { langSlug: lang } ) ),
 	filterLanguageRevisions: jest.fn(),
 } ) );
 
-jest.mock( 'lib/oauth2-clients', () => ( {
+jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
 
-jest.mock( 'landing/gutenboarding/section', () => ( {
+jest.mock( 'calypso/landing/gutenboarding/section', () => ( {
 	GUTENBOARDING_SECTION_DEFINITION: {
 		name: 'gutenboarding',
 		paths: [ '/new' ],
 		module: 'gutenboarding',
-		secondary: false,
 		group: 'gutenboarding',
 		enableLoggedOut: true,
 	},
@@ -127,7 +125,7 @@ import cloneDeep from 'lodash/cloneDeep';
 /**
  * Internal dependencies
  */
-import sections from 'sections';
+import sections from 'calypso/sections';
 
 /**
  * Builds an app for an specific environment.
@@ -157,7 +155,7 @@ const buildApp = ( environment ) => {
 		// When the app requries these modules, they are loaded from its isolated registry.
 		// Requiring them here will give us the same instance used by the app, this will allow
 		// us to change the mock implementation later or make assertions about it.
-		mocks.config = require( 'config' );
+		mocks.config = require( '@automattic/calypso-config' );
 		mocks.matchesUA = require( 'browserslist-useragent' ).matchesUA;
 		const {
 			attachBuildTimestamp,
@@ -165,15 +163,15 @@ const buildApp = ( environment ) => {
 			attachHead,
 			renderJsx,
 			serverRender,
-		} = require( 'server/render' );
+		} = require( 'calypso/server/render' );
 		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
-		mocks.sanitize = require( 'sanitize' );
-		mocks.createReduxStore = require( 'state' ).createReduxStore;
+		mocks.sanitize = require( 'calypso/server/sanitize' );
+		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
 		mocks.execSync = require( 'child_process' ).execSync;
-		mocks.login = require( 'lib/paths' ).login;
-		mocks.getBootstrappedUser = require( 'server/user-bootstrap' );
-		mocks.setCurrentUser = require( 'state/current-user/actions' ).setCurrentUser;
-		mocks.analytics = require( 'server/lib/analytics' );
+		mocks.login = require( 'calypso/lib/paths' ).login;
+		mocks.getBootstrappedUser = require( 'calypso/server/user-bootstrap' );
+		mocks.setCurrentUser = require( 'calypso/state/current-user/actions' ).setCurrentUser;
+		mocks.analytics = require( 'calypso/server/lib/analytics' );
 
 		// Set the environment. This has to be done before requiring `../index.js`
 		mocks.config.mockImplementation(
@@ -191,7 +189,7 @@ const buildApp = ( environment ) => {
 				}[ key ] )
 		);
 
-		appFactory = require( '../index' );
+		appFactory = require( '../index' ).default;
 	} );
 	const app = appFactory();
 
@@ -216,9 +214,7 @@ const buildApp = ( environment ) => {
 				'/calypso/evergreen/entry-main.4.min.rtl.css',
 			];
 			const assetsFallback = {
-				manifests: {
-					manifest: '/* webpack manifest for fallback */',
-				},
+				manifests: [ '/* webpack manifest for fallback */', '/* webpack runtime for fallback */' ],
 				entrypoints: {
 					'entry-main': {
 						assets: [ ...assets ],
@@ -247,8 +243,8 @@ const buildApp = ( environment ) => {
 				],
 			};
 			mockFs( {
-				'./client/server/bundler/assets-fallback.json': JSON.stringify( assetsFallback ),
-				'./client/server/bundler/assets-evergreen.json': JSON.stringify( assetsFallback ).replace(
+				'./build/assets-fallback.json': JSON.stringify( assetsFallback ),
+				'./build/assets-evergreen.json': JSON.stringify( assetsFallback ).replace(
 					/fallback/g,
 					'evergreen'
 				),
@@ -336,6 +332,9 @@ const buildApp = ( environment ) => {
 					method: 'GET',
 					get: jest.fn(),
 					connection: {},
+					logger: {
+						error: jest.fn(),
+					},
 					...request,
 				};
 
@@ -458,13 +457,19 @@ const assertDefaultContext = ( { url, entry } ) => {
 	it( 'sets the manifest for evergreen browsers', async () => {
 		app.withEvergreenBrowser();
 		const { request } = await app.run();
-		expect( request.context.manifest ).toEqual( '/* webpack manifest for evergreen */' );
+		expect( request.context.manifests ).toEqual( [
+			'/* webpack manifest for evergreen */',
+			'/* webpack runtime for evergreen */',
+		] );
 	} );
 
 	it( 'sets the manifest for non-evergreen browsers', async () => {
 		app.withNonEvergreenBrowser();
 		const { request } = await app.run();
-		expect( request.context.manifest ).toEqual( '/* webpack manifest for fallback */' );
+		expect( request.context.manifests ).toEqual( [
+			'/* webpack manifest for fallback */',
+			'/* webpack runtime for fallback */',
+		] );
 	} );
 
 	it( 'sets the abTestHepler when config is enabled', async () => {
@@ -554,25 +559,25 @@ const assertDefaultContext = ( { url, entry } ) => {
 	} );
 
 	describe( 'sets the target in desktop mode', () => {
-		it( 'defaults to fallback in desktop mode', async () => {
+		it( 'defaults to evergreen in desktop mode', async () => {
 			const customApp = buildApp( 'desktop' );
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
 
 			const { request } = await customApp.run( { customApp } );
 
-			expect( request.context.target ).toEqual( 'fallback' );
+			expect( request.context.target ).toEqual( 'evergreen' );
 			expect( request.context.env ).toEqual( 'desktop' );
 		} );
 
-		it( 'defaults to fallback in desktop-development mode', async () => {
+		it( 'defaults to evergreen in desktop-development mode', async () => {
 			const customApp = buildApp( 'desktop-development' );
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
 
 			const { request } = await customApp.run( { customApp } );
 
-			expect( request.context.target ).toEqual( 'fallback' );
+			expect( request.context.target ).toEqual( 'evergreen' );
 			expect( request.context.env ).toEqual( 'desktop-development' );
 		} );
 	} );
@@ -639,7 +644,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const { request } = await app.run();
 		const staticUrls = request.context.app.staticUrls;
 		expect( staticUrls ).toEqual( {
-			'editor.css': '/calypso/editor.css?v=hash',
 			'tinymce/skins/wordpress/wp-content.css':
 				'/calypso/tinymce/skins/wordpress/wp-content.css?v=hash',
 		} );
@@ -863,7 +867,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 	} );
 };
 
-const assertSection = ( { url, entry, sectionName, secondaryContent, sectionGroup } ) => {
+const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	let app;
 
 	beforeAll( () => {
@@ -885,11 +889,6 @@ const assertSection = ( { url, entry, sectionName, secondaryContent, sectionGrou
 	it( `handles path ${ url } with section "${ sectionName }"`, async () => {
 		const { request } = await app.run();
 		expect( request.context.sectionName ).toBe( sectionName );
-	} );
-
-	it( 'allows sections to declare secondary content', async () => {
-		const { request } = await app.run();
-		expect( request.context.hasSecondary ).toBe( secondaryContent );
 	} );
 
 	it( 'captures the group of the section', async () => {
@@ -943,7 +942,8 @@ const assertSection = ( { url, entry, sectionName, secondaryContent, sectionGrou
 	} );
 
 	describe( 'for authenticated users', () => {
-		let theStore, theAction;
+		let theStore;
+		let theAction;
 
 		beforeEach( () => {
 			theStore = {
@@ -1321,7 +1321,6 @@ describe( 'main app', () => {
 		assertSection( {
 			url: '/sites',
 			sectionName: 'sites',
-			secondaryContent: true,
 			sectionGroup: 'sites',
 		} );
 	} );
@@ -1330,7 +1329,6 @@ describe( 'main app', () => {
 		assertSection( {
 			url: '/',
 			sectionName: 'root',
-			secondaryContent: true,
 			sectionGroup: 'root',
 		} );
 
@@ -1433,7 +1431,6 @@ describe( 'main app', () => {
 		assertSection( {
 			url: '/new',
 			sectionName: 'gutenboarding',
-			secondaryContent: undefined,
 			sectionGroup: 'gutenboarding',
 			entry: 'entry-gutenboarding',
 		} );
@@ -1705,11 +1702,9 @@ describe( 'main app', () => {
 		} );
 
 		it( 'logs the error in development mode', async () => {
-			app.withMockedVariable( process.env, 'NODE_ENV', 'development' );
+			const { request } = await forceError();
 
-			await forceError();
-
-			expect( console.error ).toHaveBeenCalledWith( { error: 'fake error' } );
+			expect( request.logger.error ).toHaveBeenCalledWith( { error: 'fake error' } );
 		} );
 	} );
 } );

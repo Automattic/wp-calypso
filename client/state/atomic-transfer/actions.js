@@ -1,15 +1,15 @@
 /**
  * Internal dependencies
  */
-
 import {
 	ATOMIC_TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_REQUEST_FAILURE,
 	ATOMIC_TRANSFER_COMPLETE,
 	ATOMIC_TRANSFER_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/transfers/latest';
+import 'calypso/state/data-layer/wpcom/sites/transfers/latest';
+import 'calypso/state/atomic-transfer/init';
 
 /**
  * Query the atomic transfer for a given site.

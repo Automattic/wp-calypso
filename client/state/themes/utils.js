@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { every, get, includes, map, mapKeys, omit, omitBy, some, split, startsWith } from 'lodash';
+import { every, get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -118,7 +118,7 @@ export function normalizeWporgTheme( theme ) {
  * @returns {?string}            Theme ID
  */
 export function getThemeIdFromStylesheet( stylesheet ) {
-	const [ , slug ] = split( stylesheet, '/', 2 );
+	const [ , slug ] = stylesheet?.split( '/', 2 ) ?? [];
 	if ( ! slug ) {
 		return stylesheet;
 	}
@@ -162,7 +162,8 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
  * @returns {object}                 Deserialized themes query details
  */
 export function getDeserializedThemesQueryDetails( serializedQuery ) {
-	let siteId, query;
+	let siteId;
+	let query;
 
 	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
 	if ( matches ) {

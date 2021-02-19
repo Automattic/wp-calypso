@@ -6,8 +6,8 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { createSiteDomainObject } from 'state/sites/domains/assembler';
+} from 'calypso/state/action-types';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 
 // first testing-site ID
 export const SITE_ID_FIRST = 2916284;
@@ -40,6 +40,9 @@ export const DOMAIN_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
+	titanMailSubscription: {
+		status: 'no_subscription',
+	},
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
@@ -51,6 +54,7 @@ export const DOMAIN_PRIMARY = {
 	isSubdomain: false,
 	isWpcomStagingDomain: false,
 	isLocked: false,
+	isPremium: false,
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
@@ -107,6 +111,9 @@ export const DOMAIN_NOT_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
+	titanMailSubscription: {
+		status: 'no_subscription',
+	},
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
@@ -118,6 +125,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	isSubdomain: true,
 	isWpcomStagingDomain: false,
 	isLocked: false,
+	isPremium: false,
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	newRegistration: false,
@@ -174,6 +182,9 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	google_apps_subscription: {
 		status: 'no_subscription',
 	},
+	titan_mail_subscription: {
+		status: 'no_subscription',
+	},
 	has_private_registration: false,
 	privacyAvailable: false,
 	has_registration: false,
@@ -183,6 +194,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	is_redeemable: false,
 	is_renewable: false,
 	is_locked: false,
+	is_premium: false,
 	redeemable_until: '',
 	renewable_until: '',
 	is_eligible_for_inbound_transfer: true,
@@ -232,6 +244,9 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	google_apps_subscription: {
 		status: 'no_subscription',
 	},
+	titan_mail_subscription: {
+		status: 'no_subscription',
+	},
 	has_private_registration: false,
 	privacyAvailable: false,
 	has_registration: false,
@@ -239,6 +254,7 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	has_zone: false,
 	current_user_can_manage: true,
 	is_locked: false,
+	is_premium: false,
 	is_redeemable: false,
 	is_renewable: false,
 	redeemable_until: '',

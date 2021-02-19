@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { isEcommercePlan } from 'lib/plans';
-import { assertValidProduct } from 'lib/products-values/utils/assert-valid-product';
-import { formatProduct } from 'lib/products-values/format-product';
+import { isEcommercePlan } from 'calypso/lib/plans';
+import { assertValidProduct } from 'calypso/lib/products-values/utils/assert-valid-product';
+import { formatProduct } from 'calypso/lib/products-values/format-product';
 
 export function isEcommerce( product ) {
 	product = formatProduct( product );

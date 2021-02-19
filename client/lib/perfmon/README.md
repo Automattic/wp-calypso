@@ -1,5 +1,4 @@
-Performance Monitoring
-======
+# Performance Monitoring
 
 `perfmon` records how much time one or more loading indicators spend on the screen (currently timings are only sent to Google Analytics, but the goal is to get them into statsd or Kibana pronto). This includes those flashing grey divs, and the "pulsing dot", but could be extended to any component.
 
@@ -18,7 +17,7 @@ You can enable this in development by running `ENABLE_FEATURES=perfmon yarn star
 You can see how many active placeholders (visible and non visible) there detected during each check by running this in your console:
 
 ```js
-localStorage.setItem('debug', 'calypso:perfmon')
+localStorage.setItem( 'debug', 'calypso:perfmon' );
 ```
 
 and then reloading the browser.
@@ -32,7 +31,7 @@ To enable monitoring for a page, import and run `recordPlaceholdersTiming` as
 part of its load:
 
 ```js
-import { recordPlaceholdersTiming } from 'lib/perfmon';
+import { recordPlaceholdersTiming } from 'calypso/lib/perfmon';
 
 recordPlaceholdersTiming();
 ```

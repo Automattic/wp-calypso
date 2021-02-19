@@ -11,13 +11,12 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import InviteAccept from 'my-sites/invites/invite-accept';
-import { hideSidebar } from 'state/ui/actions';
-import { getRedirectAfterAccept } from 'my-sites/invites/utils';
-import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
-import user from 'lib/user';
-import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import InviteAccept from 'calypso/my-sites/invites/invite-accept';
+import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import { acceptInvite as acceptInviteAction } from 'calypso/lib/invites/actions';
+import user from 'calypso/lib/user';
+import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 
 /**
  * Module variables
@@ -35,8 +34,6 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 export function acceptInvite( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) );
-
-	context.store.dispatch( hideSidebar() );
 
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {

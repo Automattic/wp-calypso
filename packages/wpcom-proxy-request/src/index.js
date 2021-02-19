@@ -160,6 +160,16 @@ const makeRequest = ( originalParams, fn ) => {
 		xhr.addEventListener( 'error', xhrOnError );
 	}
 
+	if ( 'function' === typeof params.onStreamRecord ) {
+		// remove onStreamRecord param, which can’t be cloned
+		delete params.onStreamRecord;
+
+		// FIXME @azabani implement stream mode processing
+		// Hint: port the algorithm from wpcom-xhr-request@1.2.0 to /public.api/rest-proxy/provider-
+		// v2.0.js in rWP, then plumb stream records from onmessage below to onStreamRecord (or add
+		// the XMLHttpRequest#response to ondownloadprogress there, then parse the chunks here).
+	}
+
 	if ( loaded ) {
 		submitRequest( params );
 	} else {
@@ -351,9 +361,15 @@ function onload() {
 function onmessage( e ) {
 	debug( 'onmessage' );
 
-	// safeguard...
+	// Filter out messages from different origins
 	if ( e.origin !== proxyOrigin ) {
 		debug( 'ignoring message... %o !== %o', e.origin, proxyOrigin );
+		return;
+	}
+
+	// Filter out messages from different iframes
+	if ( e.source !== iframe.contentWindow ) {
+		debug( 'ignoring message... iframe elements do not match' );
 		return;
 	}
 
@@ -411,9 +427,18 @@ function onmessage( e ) {
 		statusCode = body === 'metaAPIupdated' ? 200 : 500;
 	}
 
-	// add statusCode into headers object
 	if ( typeof headers === 'object' ) {
+		// add statusCode into headers object
 		headers.status = statusCode;
+
+		// FIXME @azabani remove once stream mode processing is implemented
+		if ( shouldProcessInStreamMode( headers[ 'Content-Type' ] ) ) {
+			const error = new Error(
+				'stream mode processing is not yet implemented for wpcom-proxy-request'
+			);
+			reject( xhr, error, headers );
+			return;
+		}
 	}
 
 	if ( statusCode && 2 === Math.floor( statusCode / 100 ) ) {
@@ -424,6 +449,15 @@ function onmessage( e ) {
 		const wpe = WPError( params, statusCode, body );
 		reject( xhr, wpe, headers );
 	}
+}
+
+/**
+ * Returns true iff stream mode processing is required (see wpcom-xhr-request@1.2.0).
+ *
+ * @param {string} contentType response Content-Type header value
+ */
+function shouldProcessInStreamMode( contentType ) {
+	return /^application[/]x-ndjson($|;)/.test( contentType );
 }
 
 /**

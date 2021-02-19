@@ -7,15 +7,15 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,
 	NAVIGATE,
 	HISTORY_REPLACE,
-} from 'state/action-types';
-import { filterStateToQuery } from 'state/activity-log/utils';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+} from 'calypso/state/action-types';
+import { filterStateToQuery } from 'calypso/state/activity-log/utils';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 
 export const navigationMiddleware = ( store ) => {
 	return ( next ) => ( action ) => {

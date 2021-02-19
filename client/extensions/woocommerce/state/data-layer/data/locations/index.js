@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { locationsFailure, locationsReceive } from 'woocommerce/state/sites/data/locations/actions';
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_LOCATIONS_REQUEST } from 'woocommerce/state/action-types';

@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import FormButton from 'calypso/components/forms/form-button';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const views = {
 	VIEWING: 'VIEWING',

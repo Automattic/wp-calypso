@@ -9,10 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import PeopleSearch from 'my-sites/people/people-section-nav/people-search';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import PeopleSearch from 'calypso/my-sites/people/people-section-nav/people-search';
 
 class PeopleNavTabs extends React.Component {
 	static displayName = 'PeopleNavTabs';
@@ -104,7 +104,12 @@ class PeopleSectionNav extends Component {
 			return false;
 		}
 
-		if ( 'viewers' === this.props.filter || ( ! this.props.isJetpack && this.props.isPrivate ) ) {
+		const isPrivateOrPublicComingSoon = this.props.isPrivate || this.props.isComingSoon;
+
+		if (
+			'viewers' === this.props.filter ||
+			( ! this.props.isJetpack && isPrivateOrPublicComingSoon )
+		) {
 			return true;
 		}
 		return false;

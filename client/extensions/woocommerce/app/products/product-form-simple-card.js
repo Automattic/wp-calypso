@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isNull, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,11 +13,11 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
 import PriceInput from 'woocommerce/components/price-input';
 
@@ -102,7 +102,7 @@ const ProductFormSimpleCard = ( {
 	} );
 
 	const { stock_quantity } = product;
-	const quantity = isNull( stock_quantity ) || isUndefined( stock_quantity ) ? '' : stock_quantity;
+	const quantity = stock_quantity === null || isUndefined( stock_quantity ) ? '' : stock_quantity;
 
 	const stockDisabled = 'no' === storeIsManagingStock ? true : false;
 	const inventorySettingsUrl =

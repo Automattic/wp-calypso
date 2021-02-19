@@ -5,32 +5,32 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Emojify from 'components/emojify';
-import ExternalLink from 'components/external-link';
-import Popover from 'components/popover';
-import { decodeEntities } from 'lib/formatting';
-import { urlToDomainAndPath } from 'lib/url';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSiteComment } from 'state/comments/selectors';
-import getSiteSetting from 'state/selectors/get-site-setting';
-import isAuthorsEmailBlocked from 'state/selectors/is-authors-email-blocked';
+import Emojify from 'calypso/components/emojify';
+import ExternalLink from 'calypso/components/external-link';
+import Popover from 'calypso/components/popover';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { urlToDomainAndPath } from 'calypso/lib/url';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
+import isAuthorsEmailBlocked from 'calypso/state/selectors/is-authors-email-blocked';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { successNotice } from 'state/notices/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'calypso/state/analytics/actions';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export class CommentAuthorMoreInfo extends Component {
 	static propTypes = {
@@ -220,7 +220,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorUrl: get( comment, 'author.URL', '' ),
 		isAuthorBlocked: isAuthorsEmailBlocked( state, siteId, authorEmail ),
 		showBlockUser,
-		blockedCommentAuthorKeys: getSiteSetting( state, siteId, 'blacklist_keys' ),
+		blockedCommentAuthorKeys: getSiteSetting( state, siteId, 'disallowed_keys' ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
@@ -240,7 +240,7 @@ const mapDispatchToProps = ( dispatch ) => ( {
 							: 'comment_author_unblocked'
 					)
 				),
-				saveSiteSettings( siteId, { blacklist_keys: blockedCommentAuthorKeys } )
+				saveSiteSettings( siteId, { disallowed_keys: blockedCommentAuthorKeys } )
 			)
 		),
 	trackAnonymousModeration: () =>

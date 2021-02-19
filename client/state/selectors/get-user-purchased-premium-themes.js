@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getUserPurchases } from 'state/purchases/selectors';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 /**
  * Return the details of any premium themes the user has purchased

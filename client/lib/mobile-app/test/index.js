@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isWpMobileApp } from 'lib/mobile-app';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 
 describe( 'mobile-app', () => {
 	test( 'should identify the iOS mobile app', () => {

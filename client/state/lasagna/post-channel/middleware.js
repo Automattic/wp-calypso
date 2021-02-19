@@ -9,10 +9,10 @@ import debugFactory from 'debug';
 import {
 	READER_VIEWING_FULL_POST_SET,
 	READER_VIEWING_FULL_POST_UNSET,
-} from 'state/reader/action-types';
-import { getPostByKey } from 'state/reader/posts/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import { receiveComments } from 'state/comments/actions';
+} from 'calypso/state/reader/action-types';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import { receiveComments } from 'calypso/state/comments/actions';
 import { lasagna } from '../middleware';
 
 const debug = debugFactory( 'lasagna:channel' );
@@ -85,6 +85,8 @@ const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
  * @param store middleware store
  */
 export default ( store ) => ( next ) => ( action ) => {
+	const mwResult = next( action );
+
 	switch ( action.type ) {
 		case READER_VIEWING_FULL_POST_SET: {
 			const joinParams = getJoinParams( store, action.postKey );
@@ -112,5 +114,5 @@ export default ( store ) => ( next ) => ( action ) => {
 		}
 	}
 
-	return next( action );
+	return mwResult;
 };

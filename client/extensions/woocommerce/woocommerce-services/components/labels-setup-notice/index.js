@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	areSettingsLoaded,

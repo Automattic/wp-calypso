@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import { HISTORY_REPLACE } from 'state/action-types';
+import { HISTORY_REPLACE } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 /**
  * Replaces the current url and modifies the browser history entry. Equivalent to window.replaceHistory

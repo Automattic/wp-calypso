@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getTransientMediaItem from 'state/selectors/get-transient-media-item';
+import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-item';
 
 describe( 'getTransientMediaItem()', () => {
 	const siteId = 443234;

@@ -3,13 +3,15 @@
  */
 import { intersection, words, memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { getCustomizerUrl } from 'state/sites/selectors';
 
 /**
  * Internal Dependencies
  */
-import { getLocaleSlug } from 'lib/i18n-utils';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 /**
  * Returns admin section items with site-based urls.
@@ -103,7 +105,12 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		icon: 'plans',
 	},
 	{
-		title: translate( 'Cancel G Suite' ),
+		title: translate( 'Cancel %(googleMailService)s', {
+			args: {
+				googleMailService: getGoogleMailServiceFamily(),
+			},
+			comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+		} ),
 		link: `/me/purchases/${ siteSlug }`,
 		synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
 		icon: 'plans',
@@ -173,21 +180,21 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( "Change my site's timezone" ),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-settings__blogtimezone`,
 		synonyms: [ 'time', 'date' ],
 		icon: 'cog',
 	},
 	{
 		title: translate( 'Launch my site' ),
 		description: translate( 'Switch your site from private to public.' ),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-privacy-settings`,
 		synonyms: [ 'private', 'public' ],
 		icon: 'cog',
 	},
 	{
 		title: translate( "Delete a site or a site's content" ),
 		description: translate( 'Remove all posts, pages, and media, or delete a site completely.' ),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-tools__header`,
 		icon: 'cog',
 	},
 	{
@@ -201,7 +208,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		description: translate(
 			'You can customize your website by changing the footer credit in customizer.'
 		),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-settings__footer-credit-header`,
 		synonyms: [ 'remove footer', 'update footer' ],
 		icon: 'cog',
 	},
@@ -214,9 +221,6 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Manage sharing and social media connections' ),
-		description: translate(
-			'You can customize your website by changing the footer credit in customizer.'
-		),
 		link: `/sharing/${ siteSlug }`,
 		synonyms: [ 'facebook', 'twitter', 'twitter', 'tumblr', 'eventbrite' ],
 		icon: 'share',
@@ -232,9 +236,6 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Install, manage, and search for site Plugins' ),
-		description: translate(
-			'You can customize your website by changing the footer credit in customizer.'
-		),
 		link: `/plugins/${ siteSlug }`,
 		synonyms: [ 'upload' ],
 		icon: 'plugins',
@@ -265,13 +266,13 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Set up a podcast' ),
-		link: `/settings/writing/${ siteSlug }`,
+		link: `/settings/writing/${ siteSlug }#podcasting-details__link-header`,
 		synonyms: [ 'podcast', 'radio', 'audio' ],
 		icon: 'cog',
 	},
 	{
 		title: translate( "Change my site's privacy settings" ),
-		link: `/settings/general/${ siteSlug }`,
+		link: `/settings/general/${ siteSlug }#site-privacy-settings`,
 		synonyms: [ 'privacy' ],
 		icon: 'cog',
 	},
@@ -296,7 +297,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Change the dashboard color scheme' ),
-		link: '/me/account',
+		link: '/me/account#account__color_scheme',
 		synonyms: [ 'theme' ],
 		icon: 'cog',
 	},
@@ -305,7 +306,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		description: translate(
 			'Update the language of the interface you see across WordPress.com as a whole.'
 		),
-		link: '/me/account',
+		link: '/me/account#account__language',
 		synonyms: [ 'dashboard', 'change', 'language' ],
 		icon: 'cog',
 	},
@@ -343,7 +344,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Manage my blog posts' ),
-		link: '/posts/${ siteSlug }',
+		link: `/posts/${ siteSlug }`,
 		synonyms: [ 'lists', 'posts' ],
 		icon: 'my-sites',
 	},
@@ -373,7 +374,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Create a new site' ),
-		link: '/jetpack/new?ref=calypso-selector',
+		link: `${ getOnboardingUrl( state ) }?ref=calypso-inline-help`,
 		synonyms: [ 'site' ],
 		icon: 'cog',
 	},

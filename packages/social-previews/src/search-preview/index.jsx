@@ -17,8 +17,20 @@ import {
  */
 import './style.scss';
 
+const URL_LENGTH = 68;
 const TITLE_LENGTH = 63;
 const DESCRIPTION_LENGTH = 160;
+
+const googleUrl = ( url ) => {
+	const breadcrumb = url
+		.replace( /^[^/]+[/]*/, '' )
+		.split( '/' )
+		.join( ' › ' );
+
+	const truncateBreadcrumb = firstValid( shortEnough( URL_LENGTH ), hardTruncation( URL_LENGTH ) );
+
+	return truncateBreadcrumb( breadcrumb );
+};
 
 const googleTitle = firstValid(
 	shortEnough( TITLE_LENGTH ),
@@ -32,14 +44,12 @@ const googleDescription = firstValid(
 	hardTruncation( DESCRIPTION_LENGTH )
 );
 
-const googleUrl = hardTruncation( 79 );
-
 export default function SearchPreview( { description, title, url } ) {
 	return (
 		<div className="search-preview">
 			<div className="search-preview__display">
-				<div className="search-preview__title">{ googleTitle( title ) }</div>
 				<div className="search-preview__url">{ googleUrl( url ) } ▾</div>
+				<div className="search-preview__title">{ googleTitle( title ) }</div>
 				<div className="search-preview__description">
 					{ googleDescription( stripHtmlTags( description ) ) }
 				</div>

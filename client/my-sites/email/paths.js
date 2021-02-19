@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
-import { isUnderDomainManagementAll, domainManagementRoot } from 'my-sites/domains/paths';
+import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
@@ -48,6 +48,22 @@ export function emailManagementNewGSuiteAccount(
 	relativeTo = null
 ) {
 	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType, relativeTo );
+}
+
+export function emailManagementManageTitanAccount( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'titan/manage', relativeTo );
+}
+
+export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
+}
+
+export function emailManagementTitanControlPanelRedirect(
+	siteName,
+	domainName,
+	relativeTo = null
+) {
+	return emailManagementEdit( siteName, domainName, 'titan/control-panel', relativeTo );
 }
 
 export function emailManagement( siteName, domainName, relativeTo = null ) {

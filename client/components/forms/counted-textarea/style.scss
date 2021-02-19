@@ -1,5 +1,6 @@
 .counted-textarea {
 	border: 1px solid var( --color-neutral-10 );
+	border-radius: 2px;
 	background-color: var( --color-neutral-0 );
 
 	&.is-exceeding-acceptable-length {

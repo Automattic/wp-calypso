@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
+import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 
 describe( '#getPartnerIdFromQuery', () => {
 	test( 'should return null when no argument', () => {

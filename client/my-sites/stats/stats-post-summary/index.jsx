@@ -11,11 +11,11 @@ import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash
  * Internal dependencies
  */
 import SummaryChart from '../stats-summary';
-import SectionNav from 'components/section-nav';
-import SegmentedControl from 'components/segmented-control';
-import QueryPostStats from 'components/data/query-post-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
+import SectionNav from 'calypso/components/section-nav';
+import SegmentedControl from 'calypso/components/segmented-control';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 
 /**
  * Style dependencies

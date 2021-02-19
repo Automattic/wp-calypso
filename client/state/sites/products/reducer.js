@@ -12,7 +12,7 @@ import {
 	SITE_PRODUCTS_FETCH_COMPLETED,
 	SITE_PRODUCTS_FETCH_FAILED,
 	SITE_PRODUCTS_REMOVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const initialSiteState = {
 	data: null,

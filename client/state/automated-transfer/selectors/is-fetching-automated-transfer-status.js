@@ -6,9 +6,9 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getAutomatedTransfer } from 'state/automated-transfer/selectors/get-automated-transfer';
+import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
 
-import 'state/automated-transfer/init';
+import 'calypso/state/automated-transfer/init';
 
 /**
  * Returns whether we are already fetching the Automated Transfer status for given siteId.

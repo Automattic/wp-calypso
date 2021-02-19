@@ -1,8 +1,10 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSectionName } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSectionName } from 'calypso/state/ui/selectors';
+
+import 'calypso/state/happychat/init';
 
 /**
  * Returns whether the docked happychat client UI should be displayed

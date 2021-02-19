@@ -5,13 +5,14 @@
 	width: 300px;
 	display: flex;
 	flex: 1 0 auto;
-	font-size: $font-body-small;
-	height: 64px;
+	font-size: $font-body;
+	height: 40px;
 	align-items: stretch;
 	cursor: pointer;
 	transition: border-color 150ms ease-in-out;
 	text-align: left;
 	line-height: inherit;
+	color: var( --color-neutral-70 );
 
 	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
@@ -19,26 +20,10 @@
 
 	&[disabled] {
 		cursor: default;
-
-		&,
-		.language-picker__icon {
-			border-color: var( --color-neutral-0 );
-		}
-
-		&,
-		.language-picker__name-change {
-			color: var( --color-neutral-0 );
-		}
+		color: var( --color-neutral-40 );
 	}
 
 	&:not( [disabled] ) {
-		&:hover {
-			&,
-			.language-picker__icon {
-				border-color: var( --color-neutral-20 );
-			}
-		}
-
 		&:focus {
 			&,
 			.language-picker__icon {
@@ -70,7 +55,6 @@
 
 .language-picker__icon {
 	width: 64px;
-	margin: 4px 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -81,27 +65,28 @@
 
 .language-picker__icon-inner {
 	text-transform: uppercase;
-	font-weight: 600;
 	line-height: 1;
+	white-space: nowrap;
 }
 
 .language-picker__name {
-	flex: auto;
+	flex: 1 0 auto;
 	margin: 4px 16px;
 	display: flex;
 	align-items: center;
+	position: relative;
+	width: 0;
 }
 
 .language-picker__name-inner {
-	font-weight: 600;
 	overflow: hidden;
 }
 
 .language-picker__name-label {
+	overflow: hidden;
 	white-space: nowrap;
-}
 
-.language-picker__name-change {
-	text-transform: uppercase;
-	color: var( --color-text-subtle );
+	&::after {
+		@include long-content-fade( $color: var( --color-surface-rgb ) );
+	}
 }

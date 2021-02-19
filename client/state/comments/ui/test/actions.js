@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
-import { updateCommentsQuery } from 'state/comments/ui/actions';
+import { COMMENTS_QUERY_UPDATE } from 'calypso/state/action-types';
+import { updateCommentsQuery } from 'calypso/state/comments/ui/actions';
 
 describe( 'actions', () => {
 	describe( '#updateCommentsQuery()', () => {

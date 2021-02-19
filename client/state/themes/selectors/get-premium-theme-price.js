@@ -6,12 +6,12 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isJetpackSite } from 'state/sites/selectors';
-import { getTheme } from 'state/themes/selectors/get-theme';
-import { isPremiumThemeAvailable } from 'state/themes/selectors/is-premium-theme-available';
-import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getTheme } from 'calypso/state/themes/selectors/get-theme';
+import { isPremiumThemeAvailable } from 'calypso/state/themes/selectors/is-premium-theme-available';
+import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the price string to display for a given theme on a given site.

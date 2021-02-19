@@ -7,7 +7,8 @@
 }
 
 .export-card .foldable-card__header,
-.export-media-card .foldable-card__header {
+.export-media-card .foldable-card__header,
+.export-card .foldable-card.is-expanded .foldable-card__content {
 	padding: 24px;
 }
 
@@ -22,16 +23,8 @@
 	padding: 8px;
 }
 
-.export-card__export-button {
-	float: right;
-}
-
 .export-card__placeholder-select {
 	animation: loading-fade 1.6s ease-in-out infinite;
-}
-
-.export-card__advanced-settings {
-	padding-bottom: 50px;
 }
 
 .export-card__advanced-settings-title {
@@ -45,6 +38,8 @@
 }
 
 .export-card__advanced-settings-row {
+	margin-bottom: 1.5em;
+
 	@include breakpoint-deprecated( '>960px' ) {
 		display: flex;
 		flex-wrap: wrap;

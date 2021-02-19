@@ -6,9 +6,9 @@ import { filter, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSitePosts } from 'state/posts/selectors/get-site-posts';
+import { getSitePosts } from 'calypso/state/posts/selectors/get-site-posts';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 export function getSitePostsByTerm( state, siteId, taxonomy, termId ) {
 	return filter( getSitePosts( state, siteId ), ( post ) => {

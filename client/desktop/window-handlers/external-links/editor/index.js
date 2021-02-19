@@ -3,16 +3,16 @@
  */
 const { URL } = require( 'url' );
 const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
-const { dialog, ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { dialog, ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const Settings = require( 'desktop/lib/settings' );
+const Settings = require( 'calypso/desktop/lib/settings' );
 const openInBrowser = require( '../open-in-browser' );
-const { showMySites } = require( 'desktop/lib/calypso-commands' );
-const settingConstants = require( 'desktop/lib/settings/constants' );
-const log = require( 'desktop/lib/logger' )( 'desktop:external-links:handle-jetpack' );
+const { showMySites } = require( 'calypso/desktop/lib/calypso-commands' );
+const settingConstants = require( 'calypso/desktop/lib/settings/constants' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:external-links:handle-jetpack' );
 
 /**
  * Module variables
@@ -61,7 +61,7 @@ function selectedEnableSSOandContinue( mainWindow, info ) {
 
 function selectedProceedInBrowser( mainWindow, { origin, wpAdminLoginUrl } ) {
 	log.info( "User selected 'Proceed in Browser'..." );
-	openInBrowser( null, wpAdminLoginUrl );
+	openInBrowser( wpAdminLoginUrl );
 	navigateToShowMySites( mainWindow, origin );
 }
 
@@ -109,7 +109,7 @@ async function handleJetpackEnableSSO( mainWindow, info ) {
 
 	try {
 		// Allow sufficient time for Gutenberg's "placeholder" UI to render.
-		// Otherwise, exiting the placeholder UI will make Calypso's master- and
+		// Otherwise, exiting the placeholder UI will make Calypso's masterbar and
 		// sidebars disappear.
 		await delay( 300 );
 
@@ -175,10 +175,10 @@ function handleUndefined( mainWindow, info ) {
 		log.info(
 			`Falling back to opening editor in browser with admin login URL: '${ wpAdminLoginUrl }'`
 		);
-		openInBrowser( null, wpAdminLoginUrl );
+		openInBrowser( wpAdminLoginUrl );
 	} else if ( editorUrl ) {
 		log.info( `Falling back to opening editor in browser with editor URL: '${ editorUrl }'` );
-		openInBrowser( null, editorUrl );
+		openInBrowser( editorUrl );
 	} else {
 		log.error( 'Failed to open editor in browser as fallback: invalid admin and editor urls' );
 	}

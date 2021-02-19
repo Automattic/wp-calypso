@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { keyedReducer, withoutPersistence } from 'state/utils';
+import { keyedReducer, withoutPersistence } from 'calypso/state/utils';
 import {
 	CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 	CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const appointmentDetails = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
