@@ -22,7 +22,6 @@ import DomainProductPrice from 'calypso/components/domains/domain-product-price'
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { withoutHttp } from 'calypso/lib/url';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 
 /**
  * Style dependencies
@@ -135,7 +134,7 @@ class SiteRedirectStep extends React.Component {
 	addSiteRedirectToCart = ( domain ) => {
 		this.props.shoppingCartManager
 			.addProductsToCart( [
-				fillInSingleCartItemAttributes( siteRedirect( { domain } ), this.props.productsList ),
+				fillInSingleCartItemAttributes( siteRedirect( { domain } ), this.props.products ),
 			] )
 			.then( () => {
 				this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
@@ -201,16 +200,9 @@ const recordFormSubmit = ( searchBoxValue ) =>
 		searchBoxValue
 	);
 
-export default connect(
-	( state ) => {
-		return {
-			productsList: getProductsList( state ),
-		};
-	},
-	{
-		errorNotice,
-		recordInputFocus,
-		recordGoButtonClick,
-		recordFormSubmit,
-	}
-)( withShoppingCart( localize( SiteRedirectStep ) ) );
+export default connect( null, {
+	errorNotice,
+	recordInputFocus,
+	recordGoButtonClick,
+	recordFormSubmit,
+} )( withShoppingCart( localize( SiteRedirectStep ) ) );
