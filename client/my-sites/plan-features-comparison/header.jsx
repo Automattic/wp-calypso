@@ -163,7 +163,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			const discountRate = Math.round(
 				( 100 * ( rawPriceForMonthlyPlan - annualPricePerMonth ) ) / rawPriceForMonthlyPlan
 			);
-			const annualDiscountText = translate( `You're saving %(discountRate)s%%`, {
+			const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
 				args: { discountRate },
 			} );
 
