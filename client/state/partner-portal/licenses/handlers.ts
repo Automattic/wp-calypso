@@ -56,6 +56,10 @@ export function fetchLicenses( action: HttpAction ): AnyAction {
 			method: 'GET',
 			apiNamespace: 'wpcom/v2',
 			path: '/jetpack-licensing/licenses',
+			query: {
+				// Do not apply filters during search as search takes over (matches Calypso Blue Post search behavior).
+				...( action.search ? { search: action.search } : { filter: action.filter } ),
+			},
 			options: {
 				fetcher: action.fetcher,
 			},

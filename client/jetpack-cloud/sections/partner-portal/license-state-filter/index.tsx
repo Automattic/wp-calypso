@@ -23,7 +23,7 @@ import UrlSearch from 'calypso/lib/url-search';
 import './style.scss';
 
 interface Props {
-	licenseFilter: LicenseFilter;
+	filter: LicenseFilter;
 	search: string;
 	doSearch: ( query: string ) => void;
 	getSearchOpen: () => boolean;
@@ -34,7 +34,7 @@ function LicenseStateFilter( props: Props ): ReactElement {
 	const basePath = '/partner-portal/';
 
 	const navItems = [
-		{ key: LicenseFilter.All, label: translate( 'All Active' ), count: 4 },
+		{ key: LicenseFilter.NotRevoked, label: translate( 'All Active' ), count: 4 },
 		{
 			key: LicenseFilter.Detached,
 			label: translate( 'Detached' ),
@@ -48,8 +48,8 @@ function LicenseStateFilter( props: Props ): ReactElement {
 		{ key: LicenseFilter.Revoked, label: translate( 'Revoked' ), count: 5 },
 	].map( ( navItem ) => ( {
 		...navItem,
-		selected: props.licenseFilter === navItem.key,
-		path: basePath + ( 'all' !== navItem.key ? navItem.key : '' ),
+		selected: props.filter === navItem.key,
+		path: basePath + ( LicenseFilter.NotRevoked !== navItem.key ? navItem.key : '' ),
 		children: navItem.label,
 	} ) );
 

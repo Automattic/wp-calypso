@@ -10,8 +10,8 @@ import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 } from 'calypso/state/action-types';
-import { ReduxDispatch } from 'calypso/state/redux-store';
 import { HttpAction, License } from 'calypso/state/partner-portal/types';
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
@@ -23,12 +23,12 @@ function createHttpAction( action: AnyAction ): HttpAction {
 	};
 }
 
-export function fetchLicenses( dispatch: ReduxDispatch ): void {
-	dispatch(
-		createHttpAction( {
-			type: JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
-		} )
-	);
+export function fetchLicenses( filter: LicenseFilter, search: string ): HttpAction {
+	return createHttpAction( {
+		type: JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
+		filter,
+		search,
+	} );
 }
 
 export function receiveLicenses( licenses: License[] ): AnyAction {

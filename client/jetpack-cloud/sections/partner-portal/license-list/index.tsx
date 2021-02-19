@@ -6,11 +6,14 @@ import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import classnames from 'classnames';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import {
@@ -23,7 +26,6 @@ import LicensePreview, {
 	LicensePreviewPlaceholder,
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
 import Gridicon from 'calypso/components/gridicon';
-import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/route';
 
 /**
@@ -31,19 +33,24 @@ import { addQueryArgs } from 'calypso/lib/route';
  */
 import './style.scss';
 
-/**
- * Style dependencies
- */
-import './style.scss';
+interface LicenseTransitionProps {
+	key?: string;
+}
+
+const LicenseTransition = ( props: React.PropsWithChildren< LicenseTransitionProps > ) => (
+	<CSSTransition { ...props } classNames="license-list__license-transition" timeout={ 150 } />
+);
 
 interface Props {
-	licenseFilter: LicenseFilter;
+	filter: LicenseFilter;
+	search: string;
 	sortDirection: string;
 	sortField: string;
 }
 
 export default function LicenseList( {
-	licenseFilter,
+	filter,
+	search,
 	sortDirection,
 	sortField,
 }: Props ): ReactElement {
@@ -51,6 +58,8 @@ export default function LicenseList( {
 	const hasFetched = useSelector( hasFetchedLicenses );
 	const isFetching = useSelector( isFetchingLicenses );
 	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;
+	const showLicenses = hasFetched && ! isFetching && !! licenses;
+	const showNoResults = hasFetched && ! isFetching && licenses && licenses.items.length === 0;
 
 	const setSortingConfig = ( newSortField: string ): void => {
 		let newSortDirection = 'asc';
@@ -67,7 +76,7 @@ export default function LicenseList( {
 
 	return (
 		<div className="license-list">
-			<QueryJetpackPartnerPortalLicenses />
+			<QueryJetpackPartnerPortalLicenses filter={ filter } search={ search } />
 
 			<LicenseListItem header className="license-list__header">
 				<h2>{ translate( 'License state' ) }</h2>
@@ -82,7 +91,7 @@ export default function LicenseList( {
 						/>
 					</button>
 				</h2>
-				{ licenseFilter !== LicenseFilter.Revoked ? (
+				{ filter !== LicenseFilter.Revoked ? (
 					<h2 className={ classnames( { 'is-selected': 'attached_at' === sortField } ) }>
 						<button onClick={ () => setSortingConfig( 'attached_at' ) }>
 							{ translate( 'Attached on' ) }
@@ -111,36 +120,38 @@ export default function LicenseList( {
 				<div>{ /* Intentionally empty header. */ }</div>
 			</LicenseListItem>
 
-			{ ! hasFetched && isFetching && (
-				<>
-					<LicensePreviewPlaceholder />
-					<LicensePreviewPlaceholder />
-					<LicensePreviewPlaceholder />
-				</>
-			) }
+			<TransitionGroup className="license-list__transition-group">
+				{ showLicenses &&
+					licenses.items.map( ( license ) => (
+						<LicenseTransition key={ license.licenseKey }>
+							<LicensePreview
+								licenseKey={ license.licenseKey }
+								product={ license.product }
+								username={ license.username }
+								blogId={ license.blogId }
+								siteUrl={ license.siteUrl }
+								issuedAt={ license.issuedAt }
+								attachedAt={ license.attachedAt }
+								revokedAt={ license.revokedAt }
+								filter={ filter }
+							/>
+						</LicenseTransition>
+					) ) }
 
-			{ hasFetched &&
-				licenses &&
-				licenses.items.map( ( license ) => (
-					<LicensePreview
-						key={ license.licenseKey }
-						licenseKey={ license.licenseKey }
-						product={ license.product }
-						username={ license.username }
-						blogId={ license.blogId }
-						siteUrl={ license.siteUrl }
-						issuedAt={ license.issuedAt }
-						attachedAt={ license.attachedAt }
-						revokedAt={ license.revokedAt }
-						licenseFilter={ licenseFilter }
-					/>
-				) ) }
+				{ isFetching && (
+					<LicenseTransition>
+						<LicensePreviewPlaceholder />
+					</LicenseTransition>
+				) }
 
-			{ hasFetched && licenses && licenses.items.length === 0 && (
-				<Card className="license-list__message" compact>
-					{ translate( 'No licenses found.' ) }
-				</Card>
-			) }
+				{ showNoResults && (
+					<LicenseTransition>
+						<Card className="license-list__message" compact>
+							<p>{ translate( 'No licenses found.' ) }</p>
+						</Card>
+					</LicenseTransition>
+				) }
+			</TransitionGroup>
 		</div>
 	);
 }

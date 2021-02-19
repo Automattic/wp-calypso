@@ -28,7 +28,7 @@ export function getLicenseState(
 }
 /**
  * Get the state of a license based on a string.
- * If the given string is not a valid LicenseState, it returns `LicenseFilter.All`
+ * If the given string is not a valid LicenseState, it returns `LicenseFilter.NotRevoked`
  *
  * @param {string?} value The filter string matching the `state` param in the URL
  * @returns {LicenseFilter} State matching one of LicenseFilter values.
@@ -36,5 +36,5 @@ export function getLicenseState(
 export function stringToLicenseFilter( value?: string ): LicenseFilter {
 	return Object.values( LicenseFilter ).includes( value as LicenseFilter )
 		? ( value as LicenseFilter )
-		: LicenseFilter.All;
+		: LicenseFilter.NotRevoked;
 }

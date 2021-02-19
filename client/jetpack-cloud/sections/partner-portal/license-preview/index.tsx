@@ -33,7 +33,7 @@ interface Props {
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
-	licenseFilter: LicenseFilter;
+	filter: LicenseFilter;
 }
 
 export default function LicensePreview( {
@@ -45,7 +45,7 @@ export default function LicensePreview( {
 	issuedAt,
 	attachedAt,
 	revokedAt,
-	licenseFilter,
+	filter,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const [ isOpen, setOpen ] = useState( false );
@@ -103,7 +103,7 @@ export default function LicensePreview( {
 					<FormattedDate date={ issuedAt } format="YYYY-MM-DD" />
 				</div>
 
-				{ licenseFilter !== LicenseFilter.Revoked ? (
+				{ filter !== LicenseFilter.Revoked ? (
 					<div>
 						<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
 
@@ -192,7 +192,9 @@ export function LicensePreviewPlaceholder(): ReactElement {
 					<div />
 				</div>
 
-				<div />
+				<div>
+					<div className="license-preview__copy-license-key" />
+				</div>
 
 				<div />
 			</LicenseListItem>
