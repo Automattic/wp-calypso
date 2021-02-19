@@ -15,7 +15,7 @@ export function sortGroupNames( preferredGroupOrder, groupsObject ) {
 
 	const orderedGroups = intersection( preferredGroupOrder, groups );
 	const remainingGroups = difference( groups, preferredGroupOrder );
-	const allGroups = orderedGroups.concat( remainingGroups );
+	const allGroups = orderedGroups.concat( remainingGroups.sort() );
 
 	return allGroups.reduce( ( result, groupName ) => {
 		result[ groupName ] = groupsObject[ groupName ];
