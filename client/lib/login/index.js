@@ -39,7 +39,8 @@ export function getSignupUrl(
 	oauth2Client,
 	locale,
 	pathname,
-	isGutenboarding
+	isGutenboarding,
+	isAnchorFmSignup
 ) {
 	let signupUrl = config( 'signup_url' );
 
@@ -98,6 +99,10 @@ export function getSignupUrl(
 	if ( isGutenboarding ) {
 		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
 		signupUrl = '/new/plans?signup' + langFragment;
+	}
+
+	if ( isAnchorFmSignup ) {
+		signupUrl = signupFlow;
 	}
 
 	if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
