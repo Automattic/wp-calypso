@@ -15,7 +15,11 @@ import {
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
-import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 describe( 'handlers', () => {
 	describe( '#fetchLicensesHandler()', () => {
@@ -23,8 +27,10 @@ describe( 'handlers', () => {
 			const { fetchLicensesHandler } = handlers;
 			const action = {
 				type: 'TEST_ACTION',
-				filter: LicenseState.NotRevoked,
+				filter: LicenseFilter.NotRevoked,
 				search: '',
+				sortField: LicenseSortField.IssuedAt,
+				sortDirection: LicenseSortDirection.Descending,
 				fetcher: 'wpcomJetpackLicensing',
 			};
 			const expected = {
@@ -34,7 +40,9 @@ describe( 'handlers', () => {
 				path: '/jetpack-licensing/licenses',
 				query: {
 					apiNamespace: 'wpcom/v2',
-					filter: action.filter,
+					filter: 'not_revoked',
+					sort_field: 'issued_at',
+					sort_direction: 'desc',
 				},
 				formData: undefined,
 				onSuccess: action,
@@ -51,8 +59,10 @@ describe( 'handlers', () => {
 			const { fetchLicensesHandler } = handlers;
 			const action = {
 				type: 'TEST_ACTION',
-				filter: LicenseState.Revoked,
+				filter: LicenseFilter.Revoked,
 				search: '',
+				sortField: LicenseSortField.IssuedAt,
+				sortDirection: LicenseSortDirection.Descending,
 				fetcher: 'wpcomJetpackLicensing',
 			};
 			const expected = {
@@ -62,7 +72,9 @@ describe( 'handlers', () => {
 				path: '/jetpack-licensing/licenses',
 				query: {
 					apiNamespace: 'wpcom/v2',
-					filter: action.filter,
+					filter: 'revoked',
+					sort_field: 'issued_at',
+					sort_direction: 'desc',
 				},
 				formData: undefined,
 				onSuccess: action,
@@ -79,8 +91,10 @@ describe( 'handlers', () => {
 			const { fetchLicensesHandler } = handlers;
 			const action = {
 				type: 'TEST_ACTION',
-				filter: LicenseState.Revoked,
+				filter: LicenseFilter.Revoked,
 				search: 'foo',
+				sortField: LicenseSortField.IssuedAt,
+				sortDirection: LicenseSortDirection.Descending,
 				fetcher: 'wpcomJetpackLicensing',
 			};
 			const expected = {
@@ -92,6 +106,39 @@ describe( 'handlers', () => {
 					apiNamespace: 'wpcom/v2',
 					// No filter present intentionally as search overrides it.
 					search: action.search,
+					sort_field: 'issued_at',
+					sort_direction: 'desc',
+				},
+				formData: undefined,
+				onSuccess: action,
+				onFailure: action,
+				onProgress: action,
+				onStreamRecord: action,
+				options: { options: { fetcher: action.fetcher } },
+			};
+
+			expect( fetchLicensesHandler( action ) ).toEqual( expected );
+		} );
+
+		test( 'should return an http request action with sort params', () => {
+			const { fetchLicensesHandler } = handlers;
+			const action = {
+				type: 'TEST_ACTION',
+				filter: LicenseFilter.Revoked,
+				search: '',
+				sortField: LicenseSortField.RevokedAt,
+				sortDirection: LicenseSortDirection.Ascending,
+			};
+			const expected = {
+				type: WPCOM_HTTP_REQUEST,
+				body: undefined,
+				method: 'GET',
+				path: '/jetpack-licensing/licenses',
+				query: {
+					apiNamespace: 'wpcom/v2',
+					filter: 'revoked',
+					sort_field: 'revoked_at',
+					sort_direction: 'asc',
 				},
 				formData: undefined,
 				onSuccess: action,

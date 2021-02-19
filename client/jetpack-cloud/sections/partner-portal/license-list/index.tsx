@@ -13,13 +13,17 @@ import CSSTransition from 'react-transition-group/CSSTransition';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import {
+	getPaginatedLicenses,
 	hasFetchedLicenses,
 	isFetchingLicenses,
-	getPaginatedLicenses,
 } from 'calypso/state/partner-portal/licenses/selectors';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import LicensePreview, {
@@ -44,15 +48,15 @@ const LicenseTransition = ( props: React.PropsWithChildren< LicenseTransitionPro
 interface Props {
 	filter: LicenseFilter;
 	search: string;
-	sortDirection: string;
-	sortField: string;
+	sortField: LicenseSortField;
+	sortDirection: LicenseSortDirection;
 }
 
 export default function LicenseList( {
 	filter,
 	search,
-	sortDirection,
 	sortField,
+	sortDirection,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const hasFetched = useSelector( hasFetchedLicenses );
@@ -61,14 +65,14 @@ export default function LicenseList( {
 	const showLicenses = hasFetched && ! isFetching && !! licenses;
 	const showNoResults = hasFetched && ! isFetching && licenses && licenses.items.length === 0;
 
-	const setSortingConfig = ( newSortField: string ): void => {
-		let newSortDirection = 'asc';
+	const setSortingConfig = ( field: LicenseSortField ): void => {
+		let direction = LicenseSortDirection.Descending;
 
-		if ( sortField === newSortField ) {
-			newSortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+		if ( field === sortField && sortDirection === direction ) {
+			direction = LicenseSortDirection.Ascending;
 		}
 
-		const queryParams = { sort_direction: newSortDirection, sort_field: newSortField };
+		const queryParams = { sort_field: field, sort_direction: direction };
 		const currentPath = window.location.pathname + window.location.search;
 
 		page( addQueryArgs( queryParams, currentPath ) );
@@ -76,41 +80,50 @@ export default function LicenseList( {
 
 	return (
 		<div className="license-list">
-			<QueryJetpackPartnerPortalLicenses filter={ filter } search={ search } />
+			<QueryJetpackPartnerPortalLicenses
+				filter={ filter }
+				search={ search }
+				sortField={ sortField }
+				sortDirection={ sortDirection }
+			/>
 
 			<LicenseListItem header className="license-list__header">
 				<h2>{ translate( 'License state' ) }</h2>
-				<h2 className={ classnames( { 'is-selected': 'issued_at' === sortField } ) }>
-					<button onClick={ () => setSortingConfig( 'issued_at' ) }>
+				<h2 className={ classnames( { 'is-selected': LicenseSortField.IssuedAt === sortField } ) }>
+					<button onClick={ () => setSortingConfig( LicenseSortField.IssuedAt ) }>
 						{ translate( 'Issued on' ) }
 						<Gridicon
 							icon="dropdown"
 							className={ classnames( 'license-list-item__sort-indicator', {
-								[ `is-sort-${ sortDirection }` ]: sortDirection,
+								[ `is-sort-${ sortDirection }` ]: true,
 							} ) }
 						/>
 					</button>
 				</h2>
 				{ filter !== LicenseFilter.Revoked ? (
-					<h2 className={ classnames( { 'is-selected': 'attached_at' === sortField } ) }>
-						<button onClick={ () => setSortingConfig( 'attached_at' ) }>
+					<h2
+						className={ classnames( { 'is-selected': LicenseSortField.AttachedAt === sortField } ) }
+					>
+						<button onClick={ () => setSortingConfig( LicenseSortField.AttachedAt ) }>
 							{ translate( 'Attached on' ) }
 							<Gridicon
 								icon="dropdown"
 								className={ classnames( 'license-list-item__sort-indicator', {
-									[ `is-sort-${ sortDirection }` ]: sortDirection,
+									[ `is-sort-${ sortDirection }` ]: true,
 								} ) }
 							/>
 						</button>
 					</h2>
 				) : (
-					<h2 className={ classnames( { 'is-selected': 'revoked_at' === sortField } ) }>
-						<button onClick={ () => setSortingConfig( 'revoked_at' ) }>
+					<h2
+						className={ classnames( { 'is-selected': LicenseSortField.RevokedAt === sortField } ) }
+					>
+						<button onClick={ () => setSortingConfig( LicenseSortField.RevokedAt ) }>
 							{ translate( 'Revoked on' ) }
 							<Gridicon
 								icon="dropdown"
 								className={ classnames( 'license-list-item__sort-indicator', {
-									[ `is-sort-${ sortDirection }` ]: sortDirection,
+									[ `is-sort-${ sortDirection }` ]: true,
 								} ) }
 							/>
 						</button>

@@ -18,7 +18,11 @@ import {
 	LicenseCounts,
 	PaginatedItems,
 } from 'calypso/state/partner-portal/types';
-import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
@@ -30,11 +34,18 @@ function createHttpAction( action: AnyAction ): HttpAction {
 	};
 }
 
-export function fetchLicenses( filter: LicenseFilter, search: string ): HttpAction {
+export function fetchLicenses(
+	filter: LicenseFilter,
+	search: string,
+	sortField: LicenseSortField,
+	sortDirection: LicenseSortDirection
+): HttpAction {
 	return createHttpAction( {
 		type: JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 		filter,
 		search,
+		sortField,
+		sortDirection,
 	} );
 }
 

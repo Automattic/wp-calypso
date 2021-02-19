@@ -11,21 +11,25 @@ import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
-import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
 
 interface Props {
 	filter: LicenseFilter;
 	search: string;
-	sortDirection?: string;
-	sortField?: string;
+	sortField: LicenseSortField;
+	sortDirection: LicenseSortDirection;
 }
 
 export default function Licenses( {
 	filter,
 	search,
-	sortDirection = 'asc',
-	sortField = 'issued_at',
+	sortDirection,
+	sortField,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 

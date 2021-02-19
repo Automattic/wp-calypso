@@ -11,7 +11,11 @@ import {
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
-import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseState,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 jest.mock( 'calypso/state/partner-portal/partner/selectors', () => ( {
 	getActivePartnerKey: () => ( { oauth2_token: 'fake_oauth2_token' } ),
@@ -22,11 +26,20 @@ describe( 'actions', () => {
 		test( 'should dispatch a request action when called', () => {
 			const { fetchLicenses } = actions;
 
-			expect( fetchLicenses( LicenseState.Detached, 'bar' ) ).toEqual( {
+			expect(
+				fetchLicenses(
+					LicenseState.Detached,
+					'bar',
+					LicenseSortField.IssuedAt,
+					LicenseSortDirection.Descending
+				)
+			).toEqual( {
 				type: JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 				filter: LicenseState.Detached,
 				search: 'bar',
 				fetcher: 'wpcomJetpackLicensing',
+				sortField: LicenseSortField.IssuedAt,
+				sortDirection: LicenseSortDirection.Descending,
 			} );
 		} );
 	} );

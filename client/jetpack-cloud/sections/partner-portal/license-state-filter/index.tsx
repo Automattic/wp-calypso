@@ -32,7 +32,7 @@ interface Props {
 	getSearchOpen: () => boolean;
 }
 
-function LicenseStateFilter( props: Props ): ReactElement {
+function LicenseStateFilter( { filter, search, doSearch }: Props ): ReactElement {
 	const translate = useTranslate();
 	const counts = useSelector( getLicenseCounts );
 	const basePath = '/partner-portal/';
@@ -57,7 +57,7 @@ function LicenseStateFilter( props: Props ): ReactElement {
 	].map( ( navItem ) => ( {
 		...navItem,
 		count: counts[ navItem.key ] || 0,
-		selected: props.filter === navItem.key,
+		selected: filter === navItem.key,
 		path: basePath + ( LicenseFilter.NotRevoked !== navItem.key ? navItem.key : '' ),
 		children: navItem.label,
 	} ) );
@@ -90,8 +90,8 @@ function LicenseStateFilter( props: Props ): ReactElement {
 			<Search
 				pinned
 				fitsContainer
-				initialValue={ props.search }
-				onSearch={ props.doSearch }
+				initialValue={ search }
+				onSearch={ doSearch }
 				placeholder={ translate( 'Search licenses' ) }
 				delaySearch={ true }
 			/>
