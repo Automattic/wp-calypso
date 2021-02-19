@@ -23,15 +23,15 @@ export const logError = ( error: Record< string, string > & { message: string } 
 			console.error( '[ExPlat]', error.message, error );
 		}
 
-		error[ 'exPlatClientImplementation' ] = 'calypso';
+		error[ 'context' ] = 'explat';
+		error[ 'explat_client' ] = 'calypso';
 
 		if ( typeof window === 'undefined' ) {
-			getLogger()( error, `[ExPlat] ${ error.message }` );
+			getLogger().error( error );
 		} else {
 			const body = new window.FormData();
 			body.append( 'error', JSON.stringify( error ) );
 
-			// TODO: Use wp.req.post here too
 			window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
 				method: 'POST',
 				body,
