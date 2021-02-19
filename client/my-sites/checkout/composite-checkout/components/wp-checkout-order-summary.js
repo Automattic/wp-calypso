@@ -39,6 +39,10 @@ export default function WPCheckoutOrderSummary( {
 	const taxLineItem = getTaxLineItem( responseCart );
 	const totalLineItem = getTotalLineItem( responseCart );
 
+	const hasRenewalInCart = responseCart.products.some(
+		( product ) => product.extra.purchaseType === 'renewal'
+	);
+
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
@@ -62,7 +66,7 @@ export default function WPCheckoutOrderSummary( {
 						nextDomainIsFree={ nextDomainIsFree }
 					/>
 				) }
-				{ ! isCartUpdating && hasMonthlyPlan && (
+				{ ! isCartUpdating && hasMonthlyPlan && ! hasRenewalInCart && (
 					<SwitchToAnnualPlan plan={ plan } onChangePlanLength={ onChangePlanLength } />
 				) }
 			</CheckoutSummaryFeatures>

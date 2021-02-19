@@ -3,7 +3,7 @@ Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
-Stable tag: 2.19
+Stable tag: 2.20
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -40,6 +40,20 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 View the commit history here: https://github.com/Automattic/wp-calypso/commits/trunk/apps/editing-toolkit
+
+= 2.20 =
+* Page layout picker: Fix broken web fonts in page layout picker large preview (https://github.com/Automattic/wp-calypso/pull/50253)
+* Move page template modal into its own package (https://github.com/Automattic/wp-calypso/pull/49661)
+* Patterns: Reveal the Featured pattern category and make it the first in the list (https://github.com/Automattic/wp-calypso/pull/49907)
+* Focused Launch - Summary View: Fix incorrect HE support link (https://github.com/Automattic/wp-calypso/pull/50115)
+* Update Newspack Blocks to v1.21.0 (https://github.com/Automattic/wp-calypso/pull/50154)
+* Focused Launch: Only launch site if checkout is complete (https://github.com/Automattic/wp-calypso/pull/48452)
+* Launch: Cleanup calypsoifyGutenberg (https://github.com/Automattic/wp-calypso/pull/49067)
+* Remove Anchor-specific welcome guide (https://github.com/Automattic/wp-calypso/pull/50161)
+* Patterns: Allow custom viewport width when registering patterns (https://github.com/Automattic/wp-calypso/pull/49906)
+* Disable premium block patterns feature due to performance issues (https://github.com/Automattic/wp-calypso/pull/50111)
+* Focused Launch: Fix billing period tracking in summary (https://github.com/Automattic/wp-calypso/pull/49930)
+* Focused Launch: Fix domain picker item flex spacing (https://github.com/Automattic/wp-calypso/pull/49883)
 
 = 2.19 =
 * Unhide draft button when site hasn't launched yet. (https://github.com/Automattic/wp-calypso/pull/49766)

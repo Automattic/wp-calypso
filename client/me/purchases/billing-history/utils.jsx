@@ -9,6 +9,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import { getPlanTermLabel } from 'calypso/lib/plans';
+import { isGoogleWorkspace, isTitanMail } from 'calypso/lib/products-values';
 
 export const groupDomainProducts = ( originalItems, translate ) => {
 	const transactionItems = Object.keys( originalItems ).map( ( key ) => {
@@ -80,6 +81,132 @@ export function renderTransactionAmount( transaction, { translate, addingTax = f
 			<div className="billing-history__transaction-tax-amount">{ taxAmount }</div>
 		</Fragment>
 	);
+}
+
+function renderTransactionQuantitySummaryForTitanMail(
+	licensed_quantity,
+	new_quantity,
+	isRenewal,
+	isUpgrade,
+	translate
+) {
+	if ( isRenewal ) {
+		return translate( 'Renewal for %(quantity)d mailbox', 'Renewal for %(quantity)d mailboxes', {
+			args: { quantity: licensed_quantity },
+			count: licensed_quantity,
+			comment: '%(quantity)d is number of mailboxes renewed',
+		} );
+	}
+
+	if ( isUpgrade ) {
+		return translate(
+			'Purchase of %(quantity)d additional mailbox',
+			'Purchase of %(quantity)d additional mailboxes',
+			{
+				args: { quantity: new_quantity },
+				count: new_quantity,
+				comment: '%(quantity)d is additional number of mailboxes purchased',
+			}
+		);
+	}
+
+	return translate( 'Purchase of %(quantity)d mailbox', 'Purchase of %(quantity)d mailboxes', {
+		args: { quantity: licensed_quantity },
+		count: licensed_quantity,
+		comment: '%(quantity)d is number of mailboxes purchased',
+	} );
+}
+
+function renderTransactionQuantitySummaryForGoogleWorkspace(
+	licensed_quantity,
+	new_quantity,
+	isRenewal,
+	isUpgrade,
+	translate
+) {
+	if ( isRenewal ) {
+		return translate( 'Renewal for %(quantity)d user', 'Renewal for %(quantity)d users', {
+			args: { quantity: licensed_quantity },
+			count: licensed_quantity,
+			comment: '%(quantity)d is number of users renewed',
+		} );
+	}
+
+	if ( isUpgrade ) {
+		return translate(
+			'Purchase of %(quantity)d additional user',
+			'Purchase of %(quantity)d additional users',
+			{
+				args: { quantity: new_quantity },
+				count: new_quantity,
+				comment: '%(quantity)d is additional number of users purchased',
+			}
+		);
+	}
+
+	return translate( 'Purchase of %(quantity)d user', 'Purchase of %(quantity)d users', {
+		args: { quantity: licensed_quantity },
+		count: licensed_quantity,
+		comment: '%(quantity)d is number of users purchased',
+	} );
+}
+
+export function renderTransactionQuantitySummary(
+	{ licensed_quantity, new_quantity, type, wpcom_product_slug },
+	translate
+) {
+	if ( ! licensed_quantity ) {
+		return null;
+	}
+
+	licensed_quantity = parseInt( licensed_quantity );
+	new_quantity = parseInt( new_quantity );
+	const product = { product_slug: wpcom_product_slug };
+	const isRenewal = 'recurring' === type;
+	const isUpgrade = 'new purchase' === type && new_quantity > 0;
+
+	if ( isTitanMail( product ) ) {
+		return renderTransactionQuantitySummaryForTitanMail(
+			licensed_quantity,
+			new_quantity,
+			isRenewal,
+			isUpgrade,
+			translate
+		);
+	} else if ( isGoogleWorkspace( product ) ) {
+		return renderTransactionQuantitySummaryForGoogleWorkspace(
+			licensed_quantity,
+			new_quantity,
+			isRenewal,
+			isUpgrade,
+			translate
+		);
+	}
+	if ( isRenewal ) {
+		return translate( 'Renewal for %(quantity)d item', 'Renewal for %(quantity)d items', {
+			args: { quantity: licensed_quantity },
+			count: licensed_quantity,
+			comment: '%(quantity)d is number of items renewed',
+		} );
+	}
+
+	if ( isUpgrade ) {
+		return translate(
+			'Purchase of %(quantity)d additional item',
+			'Purchase of %(quantity)d additional items',
+			{
+				args: { quantity: new_quantity },
+				count: new_quantity,
+				comment: '%(quantity)d is additional number of items purchased',
+			}
+		);
+	}
+
+	return translate( 'Purchase of %(quantity)d item', 'Purchase of %(quantity)d items', {
+		args: { quantity: licensed_quantity },
+		count: licensed_quantity,
+		comment: '%(quantity)d is number of items purchased',
+	} );
 }
 
 export function getTransactionTermLabel( transaction, translate ) {

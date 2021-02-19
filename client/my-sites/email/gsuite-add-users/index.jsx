@@ -223,7 +223,11 @@ class GSuiteAddUsers extends React.Component {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
 
-				<SectionHeader label={ translate( 'Add New Users' ) } />
+				<SectionHeader
+					label={ translate( 'Add New Users', {
+						comments: "'Users' refers to Google Workspace user accounts",
+					} ) }
+				/>
 
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>

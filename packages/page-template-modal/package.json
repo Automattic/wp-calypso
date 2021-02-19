@@ -28,19 +28,19 @@
 		"src"
 	],
 	"dependencies": {
-		"@wordpress/api-fetch": "^3.3.0",
+		"@wordpress/api-fetch": "^3.21.1",
 		"@wordpress/block-editor": "^5.2.1",
 		"@wordpress/blocks": "^6.25.1",
 		"@wordpress/components": "^12.0.1",
 		"@wordpress/compose": "^3.23.1",
 		"@wordpress/data": "^4.26.1",
-		"@wordpress/editor": "^9.25",
-		"@wordpress/element": "^2.19.01",
+		"@wordpress/editor": "^9.25.1",
+		"@wordpress/element": "^2.19.0",
 		"@wordpress/i18n": "^3.17.0",
 		"@wordpress/nux": "^3.24.1",
 		"@wordpress/url": "^2.21.0",
 		"classnames": "^2.2.6",
-		"lodash": "^4.17.19"
+		"lodash": "^4.17.20"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^7.0.0"

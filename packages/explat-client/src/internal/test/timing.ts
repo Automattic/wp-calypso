@@ -8,6 +8,7 @@ import '@automattic/calypso-polyfills';
  * Internal dependencies
  */
 import * as Timing from '../timing';
+import { delayedValue } from '../test-common';
 
 jest.useFakeTimers();
 
@@ -22,17 +23,19 @@ describe( 'monotonicNow', () => {
 	} );
 } );
 
-const delayedValue = < T >( value, delayMilliseconds ): Promise< T > =>
-	new Promise( ( res ) => setTimeout( () => res( value ), delayMilliseconds ) );
-
 describe( 'timeoutPromise', () => {
 	it( 'should resolve promises below the timeout', async () => {
-		const promise1 = Timing.timeoutPromise( new Promise( ( res ) => res( 123 ) ), 1 );
+		const promise1 = Timing.timeoutPromise( Promise.resolve( 123 ), 1 );
 		jest.advanceTimersByTime( 2 );
 		await expect( promise1 ).resolves.toBe( 123 );
 		const promise2 = Timing.timeoutPromise( delayedValue( 123, 1 ), 4 );
 		jest.advanceTimersByTime( 5 );
 		await expect( promise2 ).resolves.toBe( 123 );
+	} );
+	it( 'should reject if promises rejected below the timeout', async () => {
+		const promise = Timing.timeoutPromise( Promise.reject( new Error( 'error-123' ) ), 1 );
+		jest.advanceTimersByTime( 1 );
+		await expect( promise ).rejects.toThrowError( 'error-123' );
 	} );
 	it( 'should throw if promise gets timed-out', async () => {
 		const promise1 = Timing.timeoutPromise( delayedValue( null, 4 ), 1 );
@@ -52,6 +55,13 @@ describe( 'asyncOneAtATime', () => {
 		await expect( promise ).resolves.toBe( 123 );
 	} );
 
+	it( 'it should wrap an async function and behave the same (rejection)', async () => {
+		const f = Timing.asyncOneAtATime( async () => {
+			throw new Error( 'error-123' );
+		} );
+		await expect( f() ).rejects.toThrowError( 'error-123' );
+	} );
+
 	it( 'it should return the same promise when called multiple times', async () => {
 		const f = Timing.asyncOneAtATime( async () => delayedValue( 123, 1 ) );
 		const a = f();
@@ -61,6 +71,18 @@ describe( 'asyncOneAtATime', () => {
 		expect( b ).toBe( c );
 		jest.advanceTimersByTime( 2 );
 		await expect( a ).resolves.toBe( 123 );
+	} );
+
+	it( 'it should return the same promise when called multiple times (rejection)', async () => {
+		const f = Timing.asyncOneAtATime( async () => {
+			throw new Error( 'error-123' );
+		} );
+		const a = f();
+		const b = f();
+		const c = f();
+		expect( a ).toBe( b );
+		expect( b ).toBe( c );
+		await expect( a ).rejects.toThrowError( 'error-123' );
 	} );
 
 	it( 'it should return a different promise after the last has resolved', async () => {
@@ -77,6 +99,27 @@ describe( 'asyncOneAtATime', () => {
 		expect( a ).not.toBe( c );
 		expect( c ).toBe( d );
 		jest.advanceTimersByTime( 4 );
+		await expect( c ).resolves.toBe( 123 );
+	} );
+
+	it( 'it should return a different promise after the last has resolved (rejection)', async () => {
+		let isReject = true;
+		const f = Timing.asyncOneAtATime( async () => {
+			if ( isReject ) {
+				throw new Error( 'error-123' );
+			}
+			return 123;
+		} );
+		const a = f();
+		const b = f();
+		expect( a ).toBe( b );
+		await expect( a ).rejects.toThrowError( 'error-123' );
+
+		isReject = false;
+		const c = f();
+		const d = f();
+		expect( a ).not.toBe( c );
+		expect( c ).toBe( d );
 		await expect( c ).resolves.toBe( 123 );
 	} );
 } );

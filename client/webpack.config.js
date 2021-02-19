@@ -302,6 +302,9 @@ const webpackConfig = {
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
 		} ),
+		new webpack.ProvidePlugin( {
+			process: 'process/browser',
+		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		...SassConfig.plugins( {
@@ -349,7 +352,6 @@ const webpackConfig = {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
 		new RequireChunkCallbackPlugin(),
-		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 		...( ! config.isEnabled( 'desktop' )
 			? [
 					new webpack.NormalModuleReplacementPlugin(

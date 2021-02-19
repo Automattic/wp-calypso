@@ -300,8 +300,9 @@ if (
 	// Intercept dispatch function and add tracking for actions that need it.
 	use( ( registry ) => ( {
 		dispatch: ( namespace ) => {
-			const actions = { ...registry.dispatch( namespace ) };
-			const trackers = REDUX_TRACKING[ namespace ];
+			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
+			const actions = { ...registry.dispatch( namespaceName ) };
+			const trackers = REDUX_TRACKING[ namespaceName ];
 
 			if ( trackers ) {
 				Object.keys( trackers ).forEach( ( actionName ) => {

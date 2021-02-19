@@ -5,17 +5,17 @@
 <!-- TOC -->
 
 - [Overview](#overview)
-    - [Table of contents](#table-of-contents)
-    - [What is this?](#what-is-this)
-    - [Our Goals](#our-goals)
-    - [Technology](#technology)
-    - [What is tested?](#what-is-tested)
+  - [Table of contents](#table-of-contents)
+  - [What is this?](#what-is-this)
+  - [Our Goals](#our-goals)
+  - [Technology](#technology)
+  - [What is tested?](#what-is-tested)
 
 <!-- /TOC -->
 
 ## What is this?
 
-End-to-end tests (`e2e` for short) describes the automated functional tests that simulate user interaction with the system under test. 
+End-to-end tests (`e2e` for short) describes the automated functional tests that simulate user interaction with the system under test.
 
 A well-maintained suite of e2e tests, in conjunction with CI (continuous integration) pipelines will ensure that regressions to key user flows are caught as early as possible in the development cycle.
 
@@ -33,9 +33,10 @@ These e2e tests use the same technology as the `wp-calypso` GitHub repository, n
 
 At the high level, each test file (or `spec`) fall under one of the following flows:
 
-| Flow | Directory |
-| WordPress.com | `specs/` |
-| Jetpack | `specs-jetpack/` |
-| WooCommerce | `specs-woocommerce/` |
+| Flow          | Directory            |
+| ------------- | -------------------- |
+| WordPress.com | `specs/`             |
+| Jetpack       | `specs-jetpack/`     |
+| WooCommerce   | `specs-woocommerce/` |
 
 Note that Jetpack and WooCommerce tests test interactions between `wp-calypso` and the respective features.

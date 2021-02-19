@@ -13,8 +13,6 @@ import {
 	SITE_CONNECTION_STATUS_REQUEST,
 	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
@@ -77,24 +75,6 @@ describe( 'reducer', () => {
 				2916284: false,
 				77203074: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = items( original, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = items( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -161,24 +141,6 @@ describe( 'reducer', () => {
 				2916284: false,
 				77203074: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requesting( original, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requesting( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

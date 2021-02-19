@@ -172,6 +172,10 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__menu-item-parent.selected .sidebar__menu-link {
+			.stats-sparkline {
+				--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+			}
+
 			.sidebar__menu-icon {
 				color: var( --color-sidebar-menu-selected-text );
 			}
@@ -238,6 +242,10 @@ $font-size: rem( 14px );
 			&.sidebar__menu--selected .sidebar__heading {
 				background: var( --color-sidebar-menu-selected-background );
 				color: var( --color-sidebar-menu-selected-text );
+
+				.stats-sparkline {
+					--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+				}
 
 				.sidebar__menu-icon {
 					color: var( --color-sidebar-menu-selected-text );
@@ -458,8 +466,6 @@ $font-size: rem( 14px );
 	}
 
 	.sidebar-unified__sparkline {
-		width: 80px;
-		height: 21px;
 		margin-right: 8px;
 	}
 
@@ -496,19 +502,6 @@ $font-size: rem( 14px );
 				}
 			}
 		}
-	}
-
-	/*
-	 * Because the sparkline is an image, there's an exception here
-	 * where specific color schemes are targeted instead of using
-	 * CSS variables. This ensures that the sparkline can still be
-	 * seen (as white) on some of the darker color schemes.
-	 */
-	.is-classic-blue .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
-	.is-powder-snow .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
-	.is-nightfall .sidebar__menu li.stats.selected .sidebar-unified__sparkline {
-		filter: brightness( 100 );
-		-webkit-filter: brightness( 100 );
 	}
 }
 

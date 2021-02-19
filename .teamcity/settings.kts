@@ -952,6 +952,16 @@ object RunCanaryE2eTests : BuildType({
 		}
 	}
 
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:trunk
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
 	failureConditions {
 		executionTimeoutMin = 20
 	}

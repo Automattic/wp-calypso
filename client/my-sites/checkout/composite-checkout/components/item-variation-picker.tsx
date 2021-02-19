@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { RadioButton } from '@automattic/composite-checkout';
@@ -12,7 +12,7 @@ export type WPCOMProductSlug = string;
 
 export type WPCOMProductVariant = {
 	variantLabel: string;
-	variantDetails: Component;
+	variantDetails: React.ReactNode;
 	productSlug: WPCOMProductSlug;
 	productId: number;
 };

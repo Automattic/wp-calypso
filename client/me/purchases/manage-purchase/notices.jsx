@@ -61,7 +61,7 @@ class PurchaseNotice extends Component {
 		handleRenewMultiplePurchases: PropTypes.func,
 		purchase: PropTypes.object,
 		purchaseAttachedTo: PropTypes.object,
-		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ).isRequired,
 		selectedSite: PropTypes.object,
 		changePaymentMethodPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		getManagePurchaseUrlFor: PropTypes.func,
@@ -207,6 +207,21 @@ class PurchaseNotice extends Component {
 			);
 		}
 
+		// isExpiring(), which leads here (along with isExpired()) returns true
+		// when expiring, when auto-renew is disabled, or when the payment method
+		// was credits but we don't want to show "Add Payment Method" if the
+		// subscription is actually expiring or expired; we want to show "Renew
+		// Now" in that case.
+		if ( isPaidWithCredits( purchase ) && purchase.expiryStatus === 'manualRenew' ) {
+			return (
+				<NoticeAction href={ changePaymentMethodPath }>
+					{ config.isEnabled( 'purchases/new-payment-methods' )
+						? translate( 'Add Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</NoticeAction>
+			);
+		}
+
 		return (
 			! isRechargeable( purchase ) && (
 				<NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>
@@ -294,11 +309,12 @@ class PurchaseNotice extends Component {
 			noticeStatus = 'is-error';
 		}
 
-		let noticeText = '';
-		let showNoticeAction = false;
+		if ( usePlanInsteadOfIncludedPurchase && ! selectedSite ) {
+			return null;
+		}
 
 		if ( usePlanInsteadOfIncludedPurchase ) {
-			noticeText = translate(
+			const noticeText = translate(
 				'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) will expire and be removed from your site %(expiry)s.',
 				{
 					args: {
@@ -317,12 +333,19 @@ class PurchaseNotice extends Component {
 			// included purchase (rather than the plan that it is attached to).
 			// So we have to rely on the user going to the manage purchase page
 			// for the plan to renew it there.
-			showNoticeAction = false;
-		} else {
-			noticeText = this.getExpiringText( currentPurchase );
-			showNoticeAction = true;
+			return (
+				<Notice
+					className="manage-purchase__purchase-expiring-notice"
+					showDismiss={ false }
+					status={ noticeStatus }
+					text={ noticeText }
+				>
+					{ this.trackImpression( 'purchase-expiring' ) }
+				</Notice>
+			);
 		}
 
+		const noticeText = this.getExpiringText( currentPurchase );
 		return (
 			<Notice
 				className="manage-purchase__purchase-expiring-notice"
@@ -330,7 +353,7 @@ class PurchaseNotice extends Component {
 				status={ noticeStatus }
 				text={ noticeText }
 			>
-				{ showNoticeAction && this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
+				{ this.renderRenewNoticeAction( this.handleExpiringNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expiring' ) }
 			</Notice>
 		);
@@ -670,7 +693,7 @@ class PurchaseNotice extends Component {
 		) {
 			noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 			noticeActionOnClick = this.handleExpiringNoticeRenewAll;
-			noticeActionText = translate( 'Renew now' );
+			noticeActionText = translate( 'Renew Now' );
 			noticeImpressionName = 'current-expires-later-others-expire-soon';
 
 			if ( anotherPurchaseIsExpired ) {
@@ -713,7 +736,7 @@ class PurchaseNotice extends Component {
 		) {
 			noticeStatus = suppressErrorStylingForOtherPurchases ? 'is-info' : 'is-error';
 			noticeActionOnClick = this.handleExpiringNoticeRenewAll;
-			noticeActionText = translate( 'Renew now' );
+			noticeActionText = translate( 'Renew Now' );
 			noticeImpressionName = 'current-renews-later-others-expire-soon';
 
 			if ( anotherPurchaseIsExpired ) {
@@ -894,57 +917,61 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		let noticeText = '';
-		let showNoticeAction = false;
-
-		if ( ! isRenewable( purchase ) ) {
-			if ( ! usePlanInsteadOfIncludedPurchase ) {
-				return null;
-			}
-
-			noticeText = translate(
-				'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
-				{
-					args: {
-						purchaseName: getName( currentPurchase ),
-						includedPurchaseName: getName( includedPurchase ),
-					},
-					components: {
-						managePurchase: (
-							<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
-						),
-					},
-				}
+		if ( isRenewable( purchase ) ) {
+			const noticeText = translate( 'This purchase has expired and is no longer in use.' );
+			return (
+				<Notice showDismiss={ false } status="is-error" text={ noticeText }>
+					{ this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
+					{ this.trackImpression( 'purchase-expired' ) }
+				</Notice>
 			);
-			// We can't show the action here, because it would try to renew the
-			// included purchase (rather than the plan that it is attached to).
-			// So we have to rely on the user going to the manage purchase page
-			// for the plan to renew it there.
-			showNoticeAction = false;
-		} else {
-			noticeText = translate( 'This purchase has expired and is no longer in use.' );
-			showNoticeAction = true;
 		}
 
+		if ( ! usePlanInsteadOfIncludedPurchase ) {
+			return null;
+		}
+		if ( ! selectedSite ) {
+			return null;
+		}
+
+		const noticeText = translate(
+			'Your {{managePurchase}}%(purchaseName)s plan{{/managePurchase}} (which includes your %(includedPurchaseName)s subscription) has expired and is no longer in use.',
+			{
+				args: {
+					purchaseName: getName( currentPurchase ),
+					includedPurchaseName: getName( includedPurchase ),
+				},
+				components: {
+					managePurchase: (
+						<a href={ getManagePurchaseUrlFor( selectedSite.slug, currentPurchase.id ) } />
+					),
+				},
+			}
+		);
+		// We can't show the action here, because it would try to renew the
+		// included purchase (rather than the plan that it is attached to).
+		// So we have to rely on the user going to the manage purchase page
+		// for the plan to renew it there.
 		return (
 			<Notice showDismiss={ false } status="is-error" text={ noticeText }>
-				{ showNoticeAction && this.renderRenewNoticeAction( this.handleExpiredNoticeRenewal ) }
 				{ this.trackImpression( 'purchase-expired' ) }
 			</Notice>
 		);
 	}
 
-	renderConciergeConsumedNotice() {
-		const { purchase, translate } = this.props;
-
+	shouldRenderConciergeConsumedNotice() {
+		const { purchase } = this.props;
 		if ( ! isConciergeSession( purchase ) ) {
-			return null;
+			return false;
 		}
-
 		if ( ! isExpired( purchase ) ) {
-			return null;
+			return false;
 		}
+		return true;
+	}
 
+	renderConciergeConsumedNotice() {
+		const { translate } = this.props;
 		return (
 			<Notice
 				showDismiss={ false }
@@ -983,9 +1010,8 @@ class PurchaseNotice extends Component {
 			return this.renderNonProductOwnerNotice();
 		}
 
-		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();
-		if ( consumedConciergeSessionNotice ) {
-			return consumedConciergeSessionNotice;
+		if ( this.shouldRenderConciergeConsumedNotice() ) {
+			return this.renderConciergeConsumedNotice();
 		}
 
 		const otherRenewablePurchasesNotice = this.renderOtherRenewablePurchasesNotice();
