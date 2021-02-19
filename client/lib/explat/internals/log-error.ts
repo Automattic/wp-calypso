@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-// TODO: Replace module in browser SSR context
 import { getLogger } from 'calypso/server/lib/logger';
 
 // Using typescript to ensure we are being safe in SSR
