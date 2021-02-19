@@ -42,6 +42,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 View the commit history here: https://github.com/Automattic/wp-calypso/commits/trunk/apps/editing-toolkit
 
 = 2.20 =
+* Page layout picker: Fix broken web fonts in page layout picker large preview (https://github.com/Automattic/wp-calypso/pull/50253)
 * Move page template modal into its own package (https://github.com/Automattic/wp-calypso/pull/49661)
 * Patterns: Reveal the Featured pattern category and make it the first in the list (https://github.com/Automattic/wp-calypso/pull/49907)
 * Focused Launch - Summary View: Fix incorrect HE support link (https://github.com/Automattic/wp-calypso/pull/50115)
