@@ -77,22 +77,46 @@ class Block_Patterns_From_API {
 
 		foreach ( (array) $block_patterns as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
-				// Temporarily skip the 'featured' category so that we can expose it at another time.
-				if ( 'featured' !== $slug ) {
-					$pattern_categories[ $slug ] = $category['title'];
-				}
+				$pattern_categories[ $slug ] = array( 'label' => $category['title'] );
 			}
 		}
 
-		// Order categories alphabetically and register them.
-		asort( $pattern_categories );
-		foreach ( (array) $pattern_categories as $slug => $label ) {
-			register_block_pattern_category( $slug, array( 'label' => $label ) );
+		// Unregister existing categories so that we can insert them in the desired order (alphabetically).
+		$existing_categories = array();
+		foreach ( \WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered() as $existing_category ) {
+			$existing_categories[ $existing_category['name'] ] = $existing_category;
+			unregister_block_pattern_category( $existing_category['name'] );
+		}
+
+		$pattern_categories = array_merge( $pattern_categories, $existing_categories );
+
+		// Order categories alphabetically by their label.
+		uasort(
+			$pattern_categories,
+			function ( $a, $b ) {
+				return strnatcasecmp( $a['label'], $b['label'] );
+			}
+		);
+
+		// Move the Featured category to be the first category.
+		if ( isset( $pattern_categories['featured'] ) ) {
+			$featured_category  = $pattern_categories['featured'];
+			$pattern_categories = array( 'featured' => $featured_category ) + $pattern_categories;
+		}
+
+		// Register categories (and re-register existing categories).
+		foreach ( (array) $pattern_categories as $slug => $category_properties ) {
+			register_block_pattern_category( $slug, $category_properties );
 		}
 
 		foreach ( (array) $block_patterns as $pattern ) {
 			if ( $this->can_register_pattern( $pattern ) ) {
 				$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
+
+				// Set custom viewport width for the pattern preview with a
+				// default width of 1280 and ensure a safe minimum width of 320.
+				$viewport_width = isset( $pattern['pattern_meta']['viewport_width'] ) ? intval( $pattern['pattern_meta']['viewport_width'] ) : 1280;
+				$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
 
 				register_block_pattern(
 					self::PATTERN_NAMESPACE . $pattern['name'],
@@ -100,7 +124,7 @@ class Block_Patterns_From_API {
 						'title'         => $pattern['title'],
 						'description'   => $pattern['description'],
 						'content'       => $pattern['html'],
-						'viewportWidth' => 1280,
+						'viewportWidth' => $viewport_width,
 						'categories'    => array_keys(
 							$pattern['categories']
 						),

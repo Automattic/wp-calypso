@@ -961,6 +961,14 @@ Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 };
 
 /**
+ * Get a list of the user's allowed payment methods
+ */
+Undocumented.prototype.getAllowedPaymentMethods = function () {
+	debug( '/me/allowed-payment-methods query' );
+	return this.wpcom.req.get( { path: '/me/allowed-payment-methods' } );
+};
+
+/**
  * Assign a stored payment method to a subscription.
  *
  * @param {string} subscriptionId The subscription ID (a.k.a. purchase ID) to be assigned

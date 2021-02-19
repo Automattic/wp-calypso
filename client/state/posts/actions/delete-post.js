@@ -21,9 +21,10 @@ import 'calypso/state/posts/init';
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
+ * @param  {boolean}  silent Whether to stop related notices from appearing
  * @returns {Function}        Action thunk
  */
-export function deletePost( siteId, postId ) {
+export function deletePost( siteId, postId, silent = false ) {
 	return ( dispatch, getState ) => {
 		dispatch( {
 			type: POST_DELETE,
@@ -41,6 +42,10 @@ export function deletePost( siteId, postId ) {
 					postId,
 				} );
 
+				if ( silent ) {
+					return;
+				}
+
 				dispatch( successNotice( translate( 'Post successfully deleted' ) ) );
 			},
 			( error ) => {
@@ -50,6 +55,10 @@ export function deletePost( siteId, postId ) {
 					postId,
 					error,
 				} );
+
+				if ( silent ) {
+					return;
+				}
 
 				const post = getSitePost( getState(), siteId, postId );
 

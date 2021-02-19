@@ -5,6 +5,7 @@ import React from 'react';
 import { Guide } from '@wordpress/components';
 import { Title } from '@automattic/onboarding';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Image dependencies
@@ -52,6 +52,16 @@ const Modal = () => {
 	const dismissPreference = `nav-unification-modal-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const translate = useTranslate();
+
+	/**
+	 * Since we don't extract strings from external packages in node_modules,
+	 * translatable strings from the Guide component are not being extracted.
+	 * In order to get these strings extracted and their translations loaded,
+	 * we need to have the following translate calls included in this component.
+	 */
+	translate( 'Previous' );
+	translate( 'Next' );
+	translate( 'Finish' );
 
 	if ( ! hasPreferences || isDismissed ) {
 		return null;

@@ -82,22 +82,6 @@ describe( 'reducer', () => {
 				[ primarySiteId ]: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
 	} );
 
 	describe( 'items()', () => {

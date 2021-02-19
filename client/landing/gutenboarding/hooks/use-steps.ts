@@ -3,6 +3,7 @@
  */
 import { useSelect } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -41,6 +42,11 @@ export default function useSteps(): Array< StepType > {
 			Step.Features,
 			Step.Plans,
 		];
+	}
+
+	// Remove the Style (fonts) step from the Site Editor flow.
+	if ( isEnabled( 'gutenboarding/site-editor' ) ) {
+		steps = steps.filter( ( step ) => step !== Step.Style );
 	}
 
 	// Logic necessary to skip Domains or Plans steps

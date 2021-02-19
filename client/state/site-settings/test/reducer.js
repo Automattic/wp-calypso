@@ -88,28 +88,6 @@ describe( 'reducer', () => {
 				2916284: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requesting( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requesting( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'saveRequests()', () => {
@@ -172,28 +150,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: { saving: false, status: 'error', error: 'my error' },
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending', error: false },
-			} );
-			const state = saveRequests( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending', error: false },
-			} );
-			const state = saveRequests( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
@@ -73,11 +72,6 @@ function ChangePaymentMethod( props ) {
 		);
 	}
 
-	const recordFormSubmitEvent = () =>
-		void props.recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-			product_slug: props.purchase.productSlug,
-		} );
-
 	const successCallback = () => {
 		props.clearPurchases();
 		page( props.getManagePurchaseUrlFor( props.siteSlug, props.purchase.id ) );
@@ -104,22 +98,13 @@ function ChangePaymentMethod( props ) {
 
 			<Layout>
 				<Column type="main">
-					{ isEnabled( 'purchases/new-payment-methods' ) ? (
+					{
 						<PaymentMethodSelector
 							purchase={ props.purchase }
 							paymentMethods={ paymentMethods }
 							successCallback={ successCallback }
 						/>
-					) : (
-						<PaymentMethodForm
-							apiParams={ { purchaseId: props.purchase.id } }
-							initialValues={ props.card }
-							purchase={ props.purchase }
-							recordFormSubmitEvent={ recordFormSubmitEvent }
-							siteSlug={ props.siteSlug }
-							successCallback={ successCallback }
-						/>
-					) }
+					}
 				</Column>
 				<Column type="sidebar">
 					<PaymentMethodSidebar purchase={ props.purchase } />

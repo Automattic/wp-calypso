@@ -89,22 +89,6 @@ describe( 'reducer', () => {
 				[ primarySiteId ]: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state.requesting ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.requesting ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'saveStatus()', () => {
@@ -189,22 +173,6 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state.saveStatus ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.saveStatus ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'restoring()', () => {
@@ -261,22 +229,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = restoring( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = restoring( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
