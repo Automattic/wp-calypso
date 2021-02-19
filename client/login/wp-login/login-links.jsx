@@ -44,6 +44,7 @@ export class LoginLinks extends React.Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		isGutenboarding: PropTypes.bool.isRequired,
+		isAnchorFmSignup: PropTypes.bool,
 	};
 
 	recordBackToWpcomLinkClick = () => {

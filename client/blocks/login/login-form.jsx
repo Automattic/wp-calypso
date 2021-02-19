@@ -79,6 +79,7 @@ export class LoginForm extends Component {
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
 		isGutenboarding: PropTypes.bool,
+		isAnchorFmSignup: PropTypes.bool,
 		locale: PropTypes.string,
 	};
 
