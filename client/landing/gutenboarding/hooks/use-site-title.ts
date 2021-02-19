@@ -22,7 +22,8 @@ export default function useSiteTitle(): void {
 	// When first loading a url including an ?anchor_podcast query param, clear
 	// the title.
 	// This allows the title retrieved from from backend to be applied, since
-	// we only load it over blank titles to prevent wiping out custom titles.
+	// we only apply it over blank titles to prevent wiping out custom titles
+	// set by the user.
 	// This also retains the ability to keep custom titles when reloading the
 	// browser during steps after "acquire-intent".
 	const { search } = useLocation();
