@@ -18,24 +18,26 @@ export function isAlive( experimentAssignment: ExperimentAssignment ): boolean {
 }
 
 /**
- * The ttl (in seconds) for a fallback assignment.
+ * The minimum ttl (in seconds) for any ExperimentAssignment.
  * This limits the number of requests being sent to our server in the case of our server failing to return a working assignment
  * and will be the minimum amount of time in-between requests per experiment.
  */
-const fallbackExperimentAssignmentTtl = 60;
+export const minimumTtl = 60;
 
 /**
  * A fallback ExperimentAssignment we return when we can't retrieve one.
  * As it is used in fallback situations, this function must never throw.
  *
  * @param experimentName The name of the experiment
+ * @param ttl The time-to-live for the ExperimentAssignment, defaults to 60s
  */
 export const createFallbackExperimentAssignment = (
-	experimentName: string
+	experimentName: string,
+	ttl: number = minimumTtl
 ): ExperimentAssignment => ( {
 	experimentName: experimentName,
 	variationName: null,
 	retrievedTimestamp: Timing.monotonicNow(),
-	ttl: fallbackExperimentAssignmentTtl,
+	ttl: Math.max( minimumTtl, ttl ),
 	isFallbackExperimentAssignment: true,
 } );

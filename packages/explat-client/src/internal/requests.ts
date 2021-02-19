@@ -49,12 +49,14 @@ export async function fetchExperimentAssignment(
 ): Promise< ExperimentAssignment > {
 	const retrievedTimestamp = monotonicNow();
 
-	const { variations, ttl } = validateFetchExperimentAssignmentResponse(
+	const { variations, ttl: responseTtl } = validateFetchExperimentAssignmentResponse(
 		await config.fetchExperimentAssignment( {
 			anonId: await config.getAnonId(),
 			experimentName,
 		} )
 	);
+
+	const ttl = Math.max( ExperimentAssignments.minimumTtl, responseTtl );
 
 	const fetchedExperimentAssignments = Object.entries( variations )
 		.map( ( [ experimentName, variationName ] ) => ( {
@@ -72,7 +74,7 @@ export async function fetchExperimentAssignment(
 	}
 
 	if ( fetchedExperimentAssignments.length === 0 ) {
-		throw new Error( 'Received no experiment assignments while trying to fetch exactly one.' );
+		return ExperimentAssignments.createFallbackExperimentAssignment( experimentName, ttl );
 	}
 
 	const fetchedExperimentAssignment = fetchedExperimentAssignments[ 0 ];

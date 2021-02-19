@@ -46,7 +46,43 @@ describe( 'createFallbackExperimentAssignment', () => {
 			experimentName: 'experiment_name',
 			variationName: null,
 			retrievedTimestamp: now,
-			ttl: 60,
+			ttl: ExperimentAssignments.minimumTtl,
+			isFallbackExperimentAssignment: true,
+		} );
+	} );
+
+	it( 'creates a fallback ExperimentAssignment correctly with a provided ttl under the minimum', () => {
+		const now = Date.now();
+		const fallbackExperimentAssignment = ExperimentAssignments.createFallbackExperimentAssignment(
+			'experiment_name',
+			ExperimentAssignments.minimumTtl - 1
+		);
+		expect( {
+			...fallbackExperimentAssignment,
+			retrievedTimestamp: now,
+		} ).toEqual( {
+			experimentName: 'experiment_name',
+			variationName: null,
+			retrievedTimestamp: now,
+			ttl: ExperimentAssignments.minimumTtl,
+			isFallbackExperimentAssignment: true,
+		} );
+	} );
+
+	it( 'creates a fallback ExperimentAssignment correctly with a provided ttl over the minimum', () => {
+		const now = Date.now();
+		const fallbackExperimentAssignment = ExperimentAssignments.createFallbackExperimentAssignment(
+			'experiment_name',
+			ExperimentAssignments.minimumTtl + 1
+		);
+		expect( {
+			...fallbackExperimentAssignment,
+			retrievedTimestamp: now,
+		} ).toEqual( {
+			experimentName: 'experiment_name',
+			variationName: null,
+			retrievedTimestamp: now,
+			ttl: ExperimentAssignments.minimumTtl + 1,
 			isFallbackExperimentAssignment: true,
 		} );
 	} );

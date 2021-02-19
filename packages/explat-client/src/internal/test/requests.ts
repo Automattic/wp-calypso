@@ -82,6 +82,35 @@ describe( 'fetchExperimentAssignment', () => {
 		] );
 	} );
 
+	it( 'should return an experiment assignment with a ttl as the maximum of the ttl provided from the server and the set minimum ttl', async () => {
+		const outputTtl = async ( inputTtl: number ) => {
+			mockedFetchExperimentAssignment.mockReset();
+			mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
+			mockFetchExperimentAssignmentToMatchExperimentAssignment( {
+				...validExperimentAssignment,
+				ttl: inputTtl,
+			} );
+			const { ttl } = await Requests.fetchExperimentAssignment(
+				mockedConfig,
+				validExperimentAssignment.experimentName
+			);
+			return ttl;
+		};
+
+		await expect( outputTtl( ExperimentAssignments.minimumTtl - 1 ) ).resolves.toBe(
+			ExperimentAssignments.minimumTtl
+		);
+		await expect( outputTtl( ExperimentAssignments.minimumTtl ) ).resolves.toBe(
+			ExperimentAssignments.minimumTtl
+		);
+		await expect( outputTtl( ExperimentAssignments.minimumTtl + 1 ) ).resolves.toBe(
+			ExperimentAssignments.minimumTtl + 1
+		);
+		await expect( outputTtl( ExperimentAssignments.minimumTtl + 1000 ) ).resolves.toBe(
+			ExperimentAssignments.minimumTtl + 1000
+		);
+	} );
+
 	it( 'should throw for an invalid response', async () => {
 		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
@@ -120,9 +149,12 @@ describe( 'fetchExperimentAssignment', () => {
 		);
 	} );
 
-	it( 'should throw for no experiments in the response', async () => {
+	it( 'should return a fallbackExperimentAssignment for no experiments in the response', async () => {
 		mockedGetAnonId.mockImplementationOnce( () => delayedValue( null, ONE_DELAY ) );
 		spiedMonotonicNow.mockImplementationOnce( () => validExperimentAssignment.retrievedTimestamp );
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1000
+		);
 		mockedFetchExperimentAssignment.mockImplementationOnce( () =>
 			delayedValue(
 				{
@@ -134,7 +166,13 @@ describe( 'fetchExperimentAssignment', () => {
 		);
 		await expect(
 			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
-		).rejects.toThrow( 'Received no experiment assignments while trying to fetch exactly one.' );
+		).resolves.toEqual( {
+			experimentName: 'experiment_name_a',
+			variationName: null,
+			retrievedTimestamp: validExperimentAssignment.retrievedTimestamp + 1000,
+			ttl: 60,
+			isFallbackExperimentAssignment: true,
+		} );
 	} );
 
 	it( 'should throw for response experiment not matching the requested name', async () => {
