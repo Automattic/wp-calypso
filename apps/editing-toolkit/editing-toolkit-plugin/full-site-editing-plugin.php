@@ -141,7 +141,7 @@ function load_common_module() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
 
 /**
- * Load Editor Site Launch
+ * Load Editor Site Launch.
  */
 function load_editor_site_launch() {
 	require_once __DIR__ . '/editor-site-launch/index.php';
