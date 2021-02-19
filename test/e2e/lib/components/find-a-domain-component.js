@@ -71,6 +71,7 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 
 	async selectDomainAddress( domainAddress ) {
 		const selector = By.css( `[data-e2e-domain="${ domainAddress }"]` );
+		await driverHelper.clickWhenClickable( this.driver, By.css( `button[value="com"]` ) );
 		await this.driver.wait(
 			until.elementLocated( selector ),
 			this.explicitWaitMS,
