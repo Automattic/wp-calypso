@@ -80,7 +80,12 @@ export default function LicenseList( {
 
 	return (
 		<div className="license-list">
-			<QueryJetpackPartnerPortalLicenses filter={ filter } search={ search } />
+			<QueryJetpackPartnerPortalLicenses
+				filter={ filter }
+				search={ search }
+				sortField={ sortField }
+				sortDirection={ sortDirection }
+			/>
 
 			<LicenseListItem header className="license-list__header">
 				<h2>{ translate( 'License state' ) }</h2>

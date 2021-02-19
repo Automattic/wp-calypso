@@ -21,8 +21,8 @@ import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/li
 interface Props {
 	filter: LicenseFilter;
 	search: string;
-	sortDirection: LicenseSortDirection;
 	sortField: LicenseSortField;
+	sortDirection: LicenseSortDirection;
 }
 
 export default function Licenses( {

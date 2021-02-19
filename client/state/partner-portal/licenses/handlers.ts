@@ -81,6 +81,8 @@ export function fetchLicensesHandler( action: HttpAction ): AnyAction {
 			query: {
 				// Do not apply filters during search as search takes over (matches Calypso Blue Post search behavior).
 				...( action.search ? { search: action.search } : { filter: action.filter } ),
+				sort_field: action.sortField,
+				sort_direction: action.sortDirection,
 			},
 		},
 		action
