@@ -10,7 +10,6 @@ import type { ValuesType } from 'utility-types';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import { FLOW_ID } from '../gutenboarding/constants';
 
 type PlanPath = Plans.PlanPath;
@@ -236,11 +235,6 @@ function useAnchorParameter( {
 	sanitize,
 }: UseAnchorParameterType ): string | null {
 	const { state: locationState = {}, search } = useLocation< GutenLocationStateType >();
-
-	// Feature flag 'anchor-fm-dev' is required for anchor podcast id to be read
-	if ( ! config.isEnabled( 'anchor-fm-dev' ) ) {
-		return null;
-	}
 
 	// Use location state if available
 	const locationStateParamValue = locationState[ locationStateParamName ];
