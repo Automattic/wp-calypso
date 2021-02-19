@@ -9,13 +9,22 @@ import { translate } from 'i18n-calypso';
  */
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
-	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 } from 'calypso/state/action-types';
-import { HttpAction, License, PaginatedItems } from 'calypso/state/partner-portal/types';
+import {
+	HttpAction,
+	License,
+	LicenseCounts,
+	PaginatedItems,
+} from 'calypso/state/partner-portal/types';
 import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { http as coreHttp } from 'calypso/state/data-layer/wpcom-http/actions';
 import { NoticeAction } from 'calypso/state/notices/types';
 import { errorNotice } from 'calypso/state/notices/actions';
+import {
+	receiveLicenseCounts,
+	receiveLicenses,
+} from 'calypso/state/partner-portal/licenses/actions';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
@@ -50,7 +59,20 @@ interface APIItemFormatter< FormattedType, APIType > {
 // Avoid TypeScript warnings and be explicit about the type of dispatchRequest being mostly unknown.
 const dispatchRequest = vanillaDispatchRequest as ( options: unknown ) => unknown;
 
-export function fetchLicenses( action: HttpAction ): AnyAction {
+function http( options, action: HttpAction ): AnyAction {
+	return coreHttp(
+		{
+			...options,
+			options: {
+				fetcher: action.fetcher,
+				...( options.options || {} ),
+			},
+		},
+		action
+	) as AnyAction;
+}
+
+export function fetchLicensesHandler( action: HttpAction ): AnyAction {
 	return http(
 		{
 			method: 'GET',
@@ -60,25 +82,19 @@ export function fetchLicenses( action: HttpAction ): AnyAction {
 				// Do not apply filters during search as search takes over (matches Calypso Blue Post search behavior).
 				...( action.search ? { search: action.search } : { filter: action.filter } ),
 			},
-			options: {
-				fetcher: action.fetcher,
-			},
 		},
 		action
 	) as AnyAction;
 }
 
-export function receiveLicenses(
+export function receiveLicensesHandler(
 	action: AnyAction,
 	paginatedLicenses: PaginatedItems< License >
-): AnyAction {
-	return {
-		type: JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
-		paginatedLicenses,
-	};
+) {
+	return receiveLicenses( paginatedLicenses );
 }
 
-export function receiveLicensesError(): NoticeAction {
+export function receiveLicensesErrorHandler(): NoticeAction {
 	return errorNotice( translate( 'Failed to retrieve your licenses. Please try again later.' ) );
 }
 
@@ -112,14 +128,38 @@ function formatPaginatedItems< FormattedType, APIType >(
 	};
 }
 
+export function fetchLicenseCountsHandler( action: HttpAction ): AnyAction {
+	return http(
+		{
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack-licensing/licenses/counts',
+		},
+		action
+	) as AnyAction;
+}
+
+export function receiveLicenseCountsHandler( action: AnyAction, counts: LicenseCounts ) {
+	return receiveLicenseCounts( counts );
+}
+
 export default {
 	[ JETPACK_PARTNER_PORTAL_LICENSES_REQUEST ]: [
 		dispatchRequest( {
-			fetch: fetchLicenses,
-			onSuccess: receiveLicenses,
-			onError: receiveLicensesError,
+			fetch: fetchLicensesHandler,
+			onSuccess: receiveLicensesHandler,
+			onError: receiveLicensesErrorHandler,
 			fromApi: ( paginatedItems: APIPaginatedItems< APILicense > ) =>
 				formatPaginatedItems( formatLicenses, paginatedItems ),
+		} ),
+	],
+	[ JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST ]: [
+		dispatchRequest( {
+			fetch: fetchLicenseCountsHandler,
+			onSuccess: receiveLicenseCountsHandler,
+			onError: () => {
+				// TODO this is a failure or relatively low importance - how do we log these?
+			},
 		} ),
 	],
 };

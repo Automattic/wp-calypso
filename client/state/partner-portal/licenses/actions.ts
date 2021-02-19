@@ -9,8 +9,15 @@ import { AnyAction } from 'redux';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 } from 'calypso/state/action-types';
-import { HttpAction, License } from 'calypso/state/partner-portal/types';
+import {
+	HttpAction,
+	License,
+	LicenseCounts,
+	PaginatedItems,
+} from 'calypso/state/partner-portal/types';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 // Required for modular state.
@@ -31,6 +38,16 @@ export function fetchLicenses( filter: LicenseFilter, search: string ): HttpActi
 	} );
 }
 
-export function receiveLicenses( licenses: License[] ): AnyAction {
-	return { type: JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE, licenses };
+export function receiveLicenses( paginatedLicenses: PaginatedItems< License > ): AnyAction {
+	return { type: JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE, paginatedLicenses };
+}
+
+export function fetchLicenseCounts(): HttpAction {
+	return createHttpAction( {
+		type: JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
+	} );
+}
+
+export function receiveLicenseCounts( counts: LicenseCounts ): AnyAction {
+	return { type: JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE, counts };
 }
