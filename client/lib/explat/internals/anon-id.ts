@@ -44,6 +44,7 @@ const anonIdPollingIntervalMaxAttempts = 100; // 50 * 100 = 5000 = 5 seconds
  *
  * TODO: More error checking?
  * TODO: Better timing?
+ * TODO: Maybe look further into the tracks event system to see if there is an alternative method for this.
  */
 export const initializeAnonId = async (): Promise< string | null > => {
 	if ( typeof window === 'undefined' ) {
