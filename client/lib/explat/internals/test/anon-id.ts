@@ -42,6 +42,7 @@ function setBrowserContext() {
 beforeEach( () => {
 	jest.resetAllMocks();
 	setBrowserContext();
+	jest.useRealTimers();
 } );
 
 describe( 'initializeAnonId', () => {
@@ -77,7 +78,25 @@ describe( 'initializeAnonId', () => {
 		expect( await initializeAnonIdPromise ).toBe( 'anon-id-123' );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 4 );
-		jest.useRealTimers();
+	} );
+
+	it( 'should poll at intervals', async () => {
+		jest.useFakeTimers();
+		AnonId.initializeAnonId();
+		const intervalMs = 50;
+		jest.advanceTimersByTime( 0 );
+		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
+		jest.advanceTimersByTime( intervalMs - 1 );
+		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
+		jest.advanceTimersByTime( 1 );
+		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 2 );
+		jest.advanceTimersByTime( intervalMs - 1 );
+		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 2 );
+		jest.advanceTimersByTime( 1 );
+		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 3 );
+		jest.advanceTimersByTime( intervalMs - 1 );
+		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 3 );
+		jest.clearAllTimers();
 	} );
 
 	it( 'should give up after many polling attempts and return null', async () => {
@@ -88,7 +107,6 @@ describe( 'initializeAnonId', () => {
 		expect( await initializeAnonIdPromise ).toBe( null );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 100 );
-		jest.useRealTimers();
 	} );
 
 	it( 'should give up immediately and return null if immediately logged in', async () => {
@@ -113,7 +131,6 @@ describe( 'initializeAnonId', () => {
 		expect( await initializeAnonIdPromise ).toBe( null );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedTracksAnonymousUserId.mock.calls.length ).toBe( 2 );
-		jest.useRealTimers();
 	} );
 } );
 
