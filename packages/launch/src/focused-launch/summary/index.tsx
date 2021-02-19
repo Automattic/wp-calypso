@@ -8,12 +8,12 @@ import { Link } from 'react-router-dom';
 import { ActionButtons, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
-import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
+import { TextControl, SVG, Path, Tooltip, Circle, Rect, Button } from '@wordpress/components';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import classNames from 'classnames';
 import { Icon, check } from '@wordpress/icons';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -32,13 +32,13 @@ import FocusedLaunchSummaryItem, {
 	LeadingContentSide,
 	TrailingContentSide,
 } from './focused-launch-summary-item';
-import { LAUNCH_STORE, SITE_STORE, Plan } from '../../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../../stores';
 import LaunchContext from '../../context';
 import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
+import type { Plan, PlanProduct } from '../../stores';
 
 import './style.scss';
-import { PLANS_STORE } from '@automattic/data-stores/src/launch/constants';
 
 const bulb = (
 	<SVG viewBox="0 0 24 24">
@@ -284,39 +284,44 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const selectedPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getSelectedPlanProductId()
-	);
+	const [ selectedPlanProductId, billingPeriod ] = useSelect( ( select ) => [
+		select( LAUNCH_STORE ).getSelectedPlanProductId(),
+		select( LAUNCH_STORE ).getLastPlanBillingPeriod(),
+	] );
 
-	const selectedPaidPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getPaidPlanProductId()
-	);
-
-	const { selectedPlan, selectedPaidPlan, billingPeriod } = useSelect( ( select ) => {
+	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
 		const plansStore = select( PLANS_STORE );
 
 		return {
 			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
-			selectedPaidPlan: plansStore.getPlanByProductId( selectedPaidPlanProductId, locale ),
-			billingPeriod:
-				plansStore.getPlanProductById( selectedPlanProductId )?.billingPeriod || 'ANNUALLY',
+			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
 		};
 	} );
 
-	const { defaultPaidPlan, defaultFreePlan } = usePlans();
-
 	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
+	const [ nonDefaultPaidPlanProduct, setNonDefaultPaidPlanProduct ] = React.useState<
+		PlanProduct | undefined
+	>();
+
+	const {
+		defaultPaidPlan,
+		defaultFreePlan,
+		defaultPaidPlanProduct,
+		defaultFreePlanProduct,
+	} = usePlans( billingPeriod );
 
 	React.useEffect( () => {
 		if (
-			selectedPaidPlan &&
+			selectedPlan &&
 			defaultPaidPlan &&
-			selectedPaidPlan.periodAgnosticSlug !== defaultPaidPlan.periodAgnosticSlug
+			! selectedPlan.isFree &&
+			selectedPlan.periodAgnosticSlug !== defaultPaidPlan.periodAgnosticSlug
 		) {
-			setNonDefaultPaidPlan( selectedPaidPlan );
+			setNonDefaultPaidPlan( selectedPlan );
+			setNonDefaultPaidPlanProduct( selectedPlanProduct );
 		}
-	}, [ selectedPaidPlan, defaultPaidPlan, nonDefaultPaidPlan ] );
+	}, [ selectedPlan, defaultPaidPlan, nonDefaultPaidPlan, selectedPlanProduct ] );
 
 	const isPlanSelected = ( plan: Plan ) =>
 		plan && plan.periodAgnosticSlug === selectedPlan?.periodAgnosticSlug;
@@ -327,13 +332,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		? [ defaultPaidPlan, nonDefaultPaidPlan, defaultFreePlan ]
 		: [ defaultPaidPlan, defaultFreePlan ];
 
-	const allAvailablePlansProducts = useSelect(
-		( select ) =>
-			allAvailablePlans.map( ( plan ) =>
-				select( PLANS_STORE ).getPlanProduct( plan?.periodAgnosticSlug, billingPeriod )
-			),
-		[ allAvailablePlans, billingPeriod ]
-	);
+	const allAvailablePlansProducts: ( PlanProduct | undefined )[] = nonDefaultPaidPlanProduct
+		? [ defaultPaidPlanProduct, nonDefaultPaidPlanProduct, defaultFreePlanProduct ]
+		: [ defaultPaidPlanProduct, defaultFreePlanProduct ];
 
 	const popularLabel = __( 'Popular', __i18n_text_domain__ );
 
@@ -411,11 +412,16 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							</span>
 						</p>
 						<div>
-							{ allAvailablePlans.map( ( plan, index ) =>
-								typeof plan === 'undefined' ||
-								typeof allAvailablePlansProducts?.[ index ] === 'undefined' ? (
-									<FocusedLaunchSummaryItem key={ index } isLoading />
-								) : (
+							{ allAvailablePlans.map( ( plan, index ) => {
+								const planProduct = allAvailablePlansProducts[ index ];
+								if (
+									! plan ||
+									! planProduct ||
+									plan.periodAgnosticSlug !== planProduct?.periodAgnosticSlug
+								) {
+									return <FocusedLaunchSummaryItem key={ index } isLoading />;
+								}
+								return (
 									<FocusedLaunchSummaryItem
 										key={ plan.periodAgnosticSlug }
 										isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
@@ -453,8 +459,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											</TrailingContentSide>
 										) }
 									</FocusedLaunchSummaryItem>
-								)
-							) }
+								);
+							} ) }
 						</div>
 						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all plans', __i18n_text_domain__ ) }
@@ -515,6 +521,8 @@ type StepIndexRenderFunction = ( renderOptions: {
 } ) => React.ReactNode;
 
 const Summary: React.FunctionComponent = () => {
+	const { siteId } = React.useContext( LaunchContext );
+
 	const [
 		hasSelectedDomain,
 		isSiteTitleStepVisible,
@@ -525,34 +533,43 @@ const Summary: React.FunctionComponent = () => {
 		const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
 
 		return [ launchStore.hasSelectedDomain(), isSiteTitleStepVisible, domain, planProductId ];
-	} );
+	}, [] );
 
-	const { isSelectedPlanFree } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-
-		return {
-			isSelectedPlanFree: plansStore.isPlanProductFree( selectedPlanProductId ),
-		};
-	} );
+	const isSelectedPlanPaid = useSelect(
+		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
+		[]
+	);
 
 	const { launchSite } = useDispatch( SITE_STORE );
-	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
+	const {
+		setModalDismissible,
+		unsetModalDismissible,
+		showModalTitle,
+		showSiteTitleStep,
+	} = useDispatch( LAUNCH_STORE );
+
 	const { title, updateTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
-	const { isPaidPlan: hasPaidPlan } = useSite();
+	const { hasPaidPlan } = useSite();
 
-	const { siteId, redirectTo } = React.useContext( LaunchContext );
+	const locale = useLocale();
+	const localizeUrl = useLocalizeUrl();
 
-	const { goToCheckout } = useCart();
+	const { goToCheckoutAndLaunch, isCartUpdating } = useCart();
 
-	// When the summary view is active, the modal should be dismissible, and
+	// When the summary view is active, if cart is not updating, the modal should be dismissible, and
 	// the modal title should be visible
 	React.useEffect( () => {
-		setModalDismissible();
+		if ( isCartUpdating ) {
+			unsetModalDismissible();
+		} else {
+			setModalDismissible();
+		}
+
 		showModalTitle();
-	}, [ setModalDismissible, showModalTitle ] );
+	}, [ isCartUpdating, setModalDismissible, showModalTitle, unsetModalDismissible ] );
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
@@ -563,22 +580,16 @@ const Summary: React.FunctionComponent = () => {
 		}
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
+	// Launch the site directly if Free plan and subdomain are selected.
+	// Otherwise, show checkout as the next step.
 	const handleLaunch = () => {
-		launchSite( siteId );
-		if ( selectedDomain || ! isSelectedPlanFree ) {
-			goToCheckout();
+		// checking for not having a selected paid plan instead of checking for a selected Free plan because
+		// user may be entering the launch flow after they have paid for a plan.
+		if ( ! selectedDomain && ! isSelectedPlanPaid ) {
+			launchSite( siteId );
+		} else {
+			goToCheckoutAndLaunch();
 		}
-	};
-
-	const onAskForHelpClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
-		const helpHref = ( event.target as HTMLAnchorElement ).getAttribute( 'href' );
-
-		if ( ! helpHref ) {
-			return;
-		}
-
-		redirectTo( helpHref );
-		event.preventDefault();
 	};
 
 	// Prepare Steps
@@ -683,8 +694,10 @@ const Summary: React.FunctionComponent = () => {
 			<div className="focused-launch-summary__actions-wrapper">
 				<ActionButtons className="focused-launch-summary__launch-action-bar">
 					<NextButton
-						className="focused-launch-summary__launch-button"
-						disabled={ ! isReadyToLaunch }
+						className={ classNames( 'focused-launch-summary__launch-button', {
+							'focused-launch-summary__launch-button--is-loading': isCartUpdating,
+						} ) }
+						disabled={ ! isReadyToLaunch || isCartUpdating }
 						onClick={ handleLaunch }
 					>
 						{ __( 'Launch your site', __i18n_text_domain__ ) }
@@ -693,9 +706,14 @@ const Summary: React.FunctionComponent = () => {
 
 				<div className="focused-launch-summary__ask-for-help">
 					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
-					<a href="/help" onClick={ onAskForHelpClick }>
+					<Button
+						isLink
+						href={ localizeUrl( 'https://wordpress.com/help/contact', locale ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
 						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
-					</a>
+					</Button>
 				</div>
 			</div>
 		</div>

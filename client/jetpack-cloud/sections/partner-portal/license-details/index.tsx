@@ -87,12 +87,12 @@ export default function LicenseDetails( {
 
 				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( "Owner's User ID" ) }</h4>
-					<span>{ username }</span>
+					{ username ? <span>{ username }</span> : <Gridicon icon="minus" /> }
 				</li>
 
 				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( 'Blog ID' ) }</h4>
-					<span>{ blogId }</span>
+					{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }
 				</li>
 			</ul>
 			<div className="license-details__actions">

@@ -16,6 +16,7 @@ import MaterialIcon from 'calypso/components/material-icon';
 import Count from 'calypso/components/count';
 import { preload } from 'calypso/sections-helper';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
@@ -69,7 +70,7 @@ export default function SidebarItem( props ) {
 
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
-					{ props.label }
+					{ stripHTML( decodeEntities( props.label ) ) }
 					{ !! count && <Count count={ count } /> }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }

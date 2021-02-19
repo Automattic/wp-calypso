@@ -31,12 +31,14 @@ const wpcomCreatePayPalAgreement = (
 export async function assignNewCardProcessor(
 	{
 		purchase,
+		useForAllSubscriptions,
 		translate,
 		stripe,
 		stripeConfiguration,
 		reduxDispatch,
 	}: {
 		purchase: Purchase | undefined;
+		useForAllSubscriptions?: boolean;
 		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
@@ -83,6 +85,7 @@ export async function assignNewCardProcessor(
 	const result = await saveCreditCard( {
 		token,
 		stripeConfiguration,
+		useForAllSubscriptions,
 	} );
 
 	return makeSuccessResponse( result );

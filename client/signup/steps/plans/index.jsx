@@ -208,6 +208,7 @@ export class PlansStep extends Component {
 
 	getHeaderText() {
 		const { isLoadingExperiment, isTreatmentPlansRedesign, headerText, translate } = this.props;
+
 		if ( isLoadingExperiment ) {
 			return '';
 		}

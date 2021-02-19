@@ -356,7 +356,8 @@ describe( 'actions', () => {
 					2916284,
 					null,
 					{ ID: 13640, title: 'Hello World' },
-					{ title: 'Hello World' }
+					{ title: 'Hello World' },
+					false
 				);
 			} );
 		} );
@@ -394,7 +395,8 @@ describe( 'actions', () => {
 					2916284,
 					13640,
 					{ ID: 13640, title: 'Updated' },
-					{ title: 'Updated' }
+					{ title: 'Updated' },
+					false
 				);
 			} );
 		} );

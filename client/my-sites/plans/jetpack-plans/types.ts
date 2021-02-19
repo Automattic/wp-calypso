@@ -119,6 +119,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	displayPrice?: number;
 	displayCurrency?: string;
 	displayFrom?: boolean;
+	belowPriceText?: TranslateResult;
 }
 
 export type SiteProduct = {
