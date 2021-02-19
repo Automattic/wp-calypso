@@ -554,3 +554,4 @@ View the commit history here: https://github.com/Automattic/wp-calypso/commits/t
 
 = 0.1 =
 * Initial Release
+
