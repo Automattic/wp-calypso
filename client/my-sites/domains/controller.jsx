@@ -96,7 +96,9 @@ const siteRedirect = ( context, next ) => {
 				title="Domain Search > Site Redirect"
 			/>
 			<DocumentHead title={ translate( 'Redirect a Site' ) } />
-			<SiteRedirect />
+			<CalypsoShoppingCartProvider>
+				<SiteRedirect />
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
