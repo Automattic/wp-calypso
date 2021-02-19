@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useLineItems } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -39,13 +39,8 @@ const PrePurchaseNotices = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
 
-	// We used to directly reference the cart itself here (passed in as a prop),
-	// but for some reason, cart items take ~20 seconds to populate in some cases,
-	// whereas line items are immediately available on page load.
-	const [ lineItems ] = useLineItems();
-	const cartItemSlugs = lineItems
-		.map( ( item ) => item.wpcom_meta?.product_slug )
-		.filter( ( item ) => item );
+	const { responseCart } = useShoppingCart();
+	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
 
 	const currentSitePlan = useSelector( ( state ) => {
 		if ( ! siteId ) {

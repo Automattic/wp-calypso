@@ -11,10 +11,10 @@ import { Button, ProductIcon } from '@automattic/components';
  * Internal dependencies
  */
 import JetpackProductCardTimeFrame from './time-frame';
-import { preventWidows } from 'calypso/lib/formatting';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Type dependencies
@@ -56,6 +56,74 @@ type OwnProps = {
 
 export type Props = OwnProps & Partial< FeaturesProps >;
 
+const DisplayPrice = ( {
+	isOwned,
+	isIncludedInPlan,
+	isFree,
+	discountedPrice,
+	currencyCode,
+	originalPrice,
+	displayFrom,
+	expiryDate,
+	billingTerm,
+	tooltipText,
+} ) => {
+	const translate = useTranslate();
+
+	if ( isOwned ) {
+		return (
+			<p className="jetpack-product-card-i5__you-own-this">
+				{ translate( 'You own this product' ) }
+			</p>
+		);
+	}
+
+	if ( isIncludedInPlan ) {
+		return (
+			<p className="jetpack-product-card-i5__you-own-this">
+				{ translate( 'Part of your current plan' ) }
+			</p>
+		);
+	}
+
+	if ( isFree ) {
+		return (
+			<div className="jetpack-product-card-i5__price">
+				<span className="jetpack-product-card-i5__price-free">{ translate( 'Free' ) }</span>
+			</div>
+		);
+	}
+
+	const isDiscounted = isFinite( discountedPrice );
+
+	return (
+		<div className="jetpack-product-card-i5__price">
+			{ currencyCode && originalPrice ? (
+				<>
+					{ displayFrom && <span className="jetpack-product-card-i5__price-from">from</span> }
+					<span className="jetpack-product-card-i5__raw-price">
+						<PlanPrice
+							rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
+							currencyCode={ currencyCode }
+						/>
+					</span>
+					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+					{ tooltipText && (
+						<InfoPopover position="top" className="jetpack-product-card-i5__price-tooltip">
+							{ tooltipText }
+						</InfoPopover>
+					) }
+				</>
+			) : (
+				<>
+					<div className="jetpack-product-card-i5__price-placeholder" />
+					<div className="jetpack-product-card-i5__time-frame-placeholder" />
+				</>
+			) }
+		</div>
+	);
+};
+
 const JetpackProductCardAlt2: React.FC< Props > = ( {
 	iconSlug,
 	productSlug,
@@ -73,6 +141,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	isFeatured,
 	isOwned,
 	isIncludedInPlan,
+	isFree,
 	isDeprecated,
 	isAligned,
 	features,
@@ -83,7 +152,6 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	aboveButtonText = null,
 }: Props ) => {
 	const translate = useTranslate();
-	const isDiscounted = isFinite( discountedPrice );
 	const parsedHeadingLevel = isNumber( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel ), 1 ), 6 )
 		: 2;
@@ -111,62 +179,39 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 				{ createElement(
 					`h${ parsedHeadingLevel }`,
 					{ className: 'jetpack-product-card-i5__product-name' },
-					<>{ preventWidows( productName ) }</>
+					<>{ productName }</>
 				) }
 				<p className="jetpack-product-card-i5__description">{ description }</p>
-				{ isOwned && (
-					<p className="jetpack-product-card-i5__you-own-this">
-						{ translate( 'You own this product' ) }
-					</p>
-				) }
-				{ isIncludedInPlan && (
-					<p className="jetpack-product-card-i5__you-own-this">
-						{ translate( 'Part of your current plan' ) }
-					</p>
-				) }
-				{ ! isOwned && ! isIncludedInPlan && (
-					<div className="jetpack-product-card-i5__price">
-						{ currencyCode && originalPrice ? (
-							<>
-								{ displayFrom && <span className="jetpack-product-card-i5__price-from">from</span> }
-								<span className="jetpack-product-card-i5__raw-price">
-									<PlanPrice
-										rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
-										currencyCode={ currencyCode }
-									/>
-								</span>
-								<JetpackProductCardTimeFrame
-									expiryDate={ expiryDate }
-									billingTerm={ billingTerm }
-								/>
-								{ tooltipText && (
-									<InfoPopover position="top" className="jetpack-product-card-i5__price-tooltip">
-										{ tooltipText }
-									</InfoPopover>
-								) }
-							</>
-						) : (
-							<>
-								<div className="jetpack-product-card-i5__price-placeholder" />
-								<div className="jetpack-product-card-i5__time-frame-placeholder" />
-							</>
-						) }
-					</div>
-				) }
+				<DisplayPrice
+					isOwned={ isOwned }
+					isIncludedInPlan={ isIncludedInPlan }
+					isFree={ isFree }
+					discountedPrice={ discountedPrice }
+					currencyCode={ currencyCode }
+					originalPrice={ originalPrice }
+					displayFrom={ displayFrom }
+					expiryDate={ expiryDate }
+					billingTerm={ billingTerm }
+					tooltipText={ tooltipText }
+				/>
 				{ aboveButtonText && (
 					<p className="jetpack-product-card-i5__above-button">{ aboveButtonText }</p>
 				) }
 				{ isDisabled && disabledMessage && (
-					<p className="jetpack-product-card-i5__disabled-message">{ disabledMessage }</p>
+					<p className="jetpack-product-card-i5__disabled-message">
+						{ preventWidows( disabledMessage ) }
+					</p>
 				) }
-				<Button
-					primary={ buttonPrimary }
-					className="jetpack-product-card-i5__button"
-					onClick={ onButtonClick }
-					disabled={ isDisabled }
-				>
-					{ buttonLabel }
-				</Button>
+				{ ! isDisabled && (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card-i5__button"
+						onClick={ onButtonClick }
+						disabled={ isDisabled }
+					>
+						{ buttonLabel }
+					</Button>
+				) }
 				{ features && features.items.length > 0 && (
 					<JetpackProductCardFeatures features={ features } />
 				) }

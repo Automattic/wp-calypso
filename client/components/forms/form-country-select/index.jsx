@@ -17,7 +17,6 @@ import FormSelect from 'calypso/components/forms/form-select';
  */
 import './style.scss';
 
-/* eslint-disable jsx-a11y/no-onchange */
 export class FormCountrySelect extends Component {
 	static propTypes = {
 		countriesList: PropTypes.array.isRequired,
@@ -74,6 +73,5 @@ export class FormCountrySelect extends Component {
 		);
 	}
 }
-/* eslint-enable jsx-a11y/no-onchange */
 
 export default localize( FormCountrySelect );

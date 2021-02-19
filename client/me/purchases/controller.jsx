@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
-import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -53,34 +52,6 @@ function noSites( context, analyticsPath ) {
 	context.primary = <NoSitesWrapper />;
 	makeLayout( context, noop );
 	clientRender( context );
-}
-
-export function addCardDetails( context, next ) {
-	const state = context.store.getState();
-
-	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment/add' );
-	}
-
-	const AddCardDetailsWrapper = localize( () => {
-		return (
-			<PurchasesWrapper title={ titles.addCardDetails }>
-				<Main className="purchases__add-cart-details is-wide-layout">
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<AddPaymentMethod
-						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-						siteSlug={ context.params.site }
-						getManagePurchaseUrlFor={ managePurchaseUrl }
-						purchaseListUrl={ purchasesRoot }
-						isFullWidth={ true }
-					/>
-				</Main>
-			</PurchasesWrapper>
-		);
-	} );
-
-	context.primary = <AddCardDetailsWrapper />;
-	next();
 }
 
 export function addCreditCard( context, next ) {

@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import page from 'page';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
-import { capitalize, defer, includes, get, startsWith } from 'lodash';
+import { capitalize, defer, includes, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { addQueryArgs } from '@wordpress/url';
@@ -48,6 +48,7 @@ import {
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getSignupUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -505,7 +506,15 @@ export class LoginForm extends Component {
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
-		const signupUrl = this.getSignupUrl();
+
+		const signupUrl = getSignupUrl(
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();

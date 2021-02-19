@@ -11,17 +11,28 @@ import { useTranslate } from 'i18n-calypso';
 import PlanRenewalMessage from '../../plan-renewal-message';
 import useItemPrice from '../../use-item-price';
 import { productAboveButtonText, productButtonLabel, productTooltip } from '../../utils';
-import JetpackProductCard from 'calypso/components/jetpack/card/i5/jetpack-product-card-i5';
+import {
+	getForCurrentCROIteration,
+	Iterations,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import JetpackProductCardNPIP from 'calypso/components/jetpack/card/npip/jetpack-product-card-npip';
+import JetpackProductCardI5 from 'calypso/components/jetpack/card/i5/jetpack-product-card-i5';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-import { PRODUCT_JETPACK_CRM_MONTHLY } from 'calypso/lib/products-values/constants';
+import {
+	PRODUCT_JETPACK_CRM_MONTHLY,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
+} from 'calypso/lib/products-values/constants';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { isJetpackPlanSlug } from 'calypso/lib/products-values/is-jetpack-plan-slug';
 
 /**
  * Type dependencies
@@ -50,7 +61,15 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
+	const JetpackProductCard = useMemo(
+		() =>
+			getForCurrentCROIteration( { [ Iterations.NPIP ]: JetpackProductCardNPIP } ) ||
+			JetpackProductCardI5,
+		[]
+	);
+
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
+	const isMultisite = useSelector( ( state ) => siteId && isJetpackSiteMultiSite( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
@@ -94,14 +113,30 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 	// Sets the currency. This is needed for the tooltip below.
 	item.displayCurrency = item.displayCurrency ?? currencyCode ?? undefined;
 
-	// Disable CRM Monthly card because only offered with yearly subscription
-	const disabledProps = {
-		isDisabled: item.productSlug === PRODUCT_JETPACK_CRM_MONTHLY,
-		disabledMessage:
-			item.productSlug === PRODUCT_JETPACK_CRM_MONTHLY
-				? translate( 'Only available in yearly billing' )
-				: null,
-	};
+	const isCrmMonthlyProduct = item.productSlug === PRODUCT_JETPACK_CRM_MONTHLY;
+
+	const isMultisiteCompatible = useMemo( () => {
+		if ( isJetpackPlanSlug( item.productSlug ) ) {
+			// plans containing Jetpack Backup and/or Jetpack Scan are incompatible with multisite installs
+			return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].filter( ( productSlug ) =>
+				planHasFeature( item.productSlug, productSlug )
+			).length;
+		}
+		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].includes( item.productSlug );
+	}, [ item.productSlug ] );
+
+	// Disable the product card if it's an incompatible multisite product or CRM monthly product
+	// (CRM is not offered with "Monthly" billing. Only Yearly.)
+	const isDisabled = ( ( isMultisite && ! isMultisiteCompatible ) || isCrmMonthlyProduct ) ?? false;
+
+	let disabledMessage;
+	if ( isDisabled ) {
+		if ( ! isMultisiteCompatible ) {
+			disabledMessage = translate( 'Not available for multisite WordPress installs' );
+		} else if ( isCrmMonthlyProduct ) {
+			disabledMessage = translate( 'Only available in yearly billing' );
+		}
+	}
 
 	return (
 		<JetpackProductCard
@@ -120,13 +155,16 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
 			isOwned={ isOwned }
 			isIncludedInPlan={ ! isOwned && isItemPlanFeature }
+			isFree={ item.isFree }
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
 			displayFrom={ ! siteId && priceTiers !== null }
+			belowPriceText={ item.belowPriceText }
 			tooltipText={ priceTiers && productTooltip( item, priceTiers ) }
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
-			{ ...disabledProps }
+			isDisabled={ isDisabled }
+			disabledMessage={ disabledMessage }
 		/>
 	);
 };

@@ -121,4 +121,11 @@
 	&__toggle {
 		padding: 0;
 	}
+
+	&--placeholder &__domain,
+	&--placeholder &__product,
+	&--placeholder &__label + div,
+	&--placeholder &__copy-license-key {
+		@include placeholder( --color-neutral-10 );
+	}
 }

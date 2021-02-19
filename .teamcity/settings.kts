@@ -62,6 +62,7 @@ project {
 		text("calypso.run_full_eslint", "false", label = "Run full eslint", description = "True will lint all files, empty/false will lint only changed files", allowEmpty = true)
 		text("env.DOCKER_BUILDKIT", "1", label = "Enable Docker BuildKit", description = "Enables BuildKit (faster image generation). Values 0 or 1", allowEmpty = true)
 		password("CONFIG_E2E_ENCRYPTION_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", display = ParameterDisplay.HIDDEN)
+		text("env.SKIP_TSC", "true", label = "Skip TS type generation", description = "Skips running `tsc` on yarn install", allowEmpty = true)
 	}
 
 	features {
@@ -341,7 +342,8 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Run type checks
-				yarn run tsc --project client/landing/gutenboarding
+				yarn tsc --build packages/tsconfig.json
+				yarn tsc --project client/landing/gutenboarding
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
@@ -857,9 +859,8 @@ object RunCanaryE2eTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
-
-				## Uncomment to debug Magellan
-				#export MAGELLANDEBUG=true
+				export MAGELLANDEBUG=true
+				export TEST_VIDEO=true
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -888,9 +889,6 @@ object RunCanaryE2eTests : BuildType({
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-				# Start framebuffer
-				Xvfb ${'$'}{DISPLAY} -screen 0 1440x1000x24 &
 
 				# Run the test
 				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
@@ -954,9 +952,18 @@ object RunCanaryE2eTests : BuildType({
 		}
 	}
 
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:trunk
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
 	failureConditions {
 		executionTimeoutMin = 20
-		supportTestRetry = true
 	}
 
 	dependencies {
@@ -1206,7 +1213,6 @@ object WPComPlugins_EditorToolKit : BuildType({
 	artifactRules = "editing-toolkit.zip"
 
 	buildNumberPattern = "%build.prefix%.%build.counter%"
-
 	params {
 		param("build.prefix", "3")
 	}
@@ -1324,8 +1330,15 @@ object WPComPlugins_EditorToolKit : BuildType({
 				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
 
 				yarn build
-
 				cd editing-toolkit-plugin/
+
+				# Metadata file with info for the download script.
+				tee build_meta.txt <<-EOM
+					commit_hash=%build.vcs.number%
+					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+					build_number=%build.number%
+					EOM
+
 				zip -r ../../../editing-toolkit.zip .
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux

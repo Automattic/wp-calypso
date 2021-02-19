@@ -1,10 +1,6 @@
-process.env.SELENIUM_PROMISE_MANAGER = '0';
-
-/**
- * External dependencies (can also be listed in the root package.json)
- */
-// eslint-disable-next-line import/no-extraneous-dependencies
 const execa = require( 'execa' );
+
+process.env.SELENIUM_PROMISE_MANAGER = '0';
 
 // Make sure that chromedriver is installed before running tests
 try {

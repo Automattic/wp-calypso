@@ -1,17 +1,17 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
+const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 
 module.exports = {
 	entry: './packages/composite-checkout/demo/index.js',
 	mode: 'development',
 	module: {
 		rules: [
-			{
-				test: /\.(js|jsx)$/,
-				exclude: /(node_modules|bower_components)/,
-				loader: 'babel-loader',
-				options: { presets: [ '@babel/env' ] },
-			},
+			TranspileConfig.loader( {
+				workerCount: 1,
+				configFile: path.resolve( 'babel.config.js' ),
+				exclude: /node_modules\//,
+			} ),
 			{
 				test: /\.css$/,
 				use: [ 'style-loader', 'css-loader' ],
@@ -19,8 +19,11 @@ module.exports = {
 		],
 	},
 	resolve: {
-		extensions: [ '*', '.js', '.jsx' ],
+		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
+		alias: {
+			'@automattic/composite-checkout': path.join( __dirname, 'src/public-api.ts' ),
+		},
 	},
 	output: {
 		path: path.resolve( __dirname, '/dist/' ),
@@ -28,10 +31,8 @@ module.exports = {
 		filename: 'bundle.js',
 	},
 	devServer: {
-		contentBase: path.join( __dirname, '/demo/' ),
+		static: path.join( __dirname, '/demo/' ),
 		port: 3000,
-		publicPath: 'http://localhost:3000/dist/',
-		hotOnly: true,
 	},
 	plugins: [ new webpack.HotModuleReplacementPlugin() ],
 };

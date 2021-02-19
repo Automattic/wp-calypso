@@ -10,6 +10,7 @@ module.exports = {
 		'plugin:prettier/recommended',
 		'prettier/react',
 		'plugin:md/prettier',
+		'plugin:@wordpress/eslint-plugin/i18n',
 	],
 	overrides: [
 		{
@@ -45,7 +46,7 @@ module.exports = {
 		{
 			files: [ 'packages/**/*' ],
 			rules: {
-				// These two rules are to ensure packages don't import form calypso by accident to avoid circular deps.
+				// These two rules are to ensure packages don't import from calypso by accident to avoid circular deps.
 				'no-restricted-imports': [
 					'error',
 					{
@@ -263,6 +264,10 @@ module.exports = {
 		// i18n-calypso translate triggers false failures
 		'jsx-a11y/anchor-has-content': 'off',
 
+		// Deprecated rule, the problems using <select> with keyboards this addressed don't appear to be an issue anymore
+		// https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/issues/398
+		'jsx-a11y/no-onchange': 'off',
+
 		'no-restricted-imports': [
 			2,
 			{
@@ -381,5 +386,8 @@ module.exports = {
 				'@wordpress/components': [ '__experimentalNavigationBackButton' ],
 			},
 		],
+
+		// Disabled, because in packages we are using globally defined `__i18n_text_domain__` constant at compile time
+		'@wordpress/i18n-text-domain': 'off',
 	},
 };

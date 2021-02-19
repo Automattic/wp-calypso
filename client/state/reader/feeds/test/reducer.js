@@ -14,7 +14,7 @@ import {
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
 } from 'calypso/state/reader/action-types';
-import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { captureConsole } from 'calypso/test-helpers/console';
 
 describe( 'reducer', () => {
@@ -116,7 +116,7 @@ describe( 'reducer', () => {
 
 		test( 'should serialize feed entries', () => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
-			expect( items( unvalidatedObject, { type: SERIALIZE } ) ).to.deep.equal( unvalidatedObject );
+			expect( serialize( items, unvalidatedObject ) ).to.deep.equal( unvalidatedObject );
 		} );
 
 		test( 'should not serialize errors', () => {
@@ -127,7 +127,7 @@ describe( 'reducer', () => {
 					is_error: true,
 				},
 			} );
-			expect( items( stateWithErrors, { type: SERIALIZE } ) ).to.deep.equal( {
+			expect( serialize( items, stateWithErrors ) ).to.deep.equal( {
 				12: { feed_ID: 12 },
 			} );
 		} );
@@ -136,7 +136,7 @@ describe( 'reducer', () => {
 			'should reject deserializing entries it cannot validate',
 			captureConsole( () => {
 				const unvalidatedObject = deepFreeze( { hi: 'there' } );
-				expect( items( unvalidatedObject, { type: DESERIALIZE } ) ).to.deep.equal( {} );
+				expect( deserialize( items, unvalidatedObject ) ).to.deep.equal( {} );
 			} )
 		);
 
@@ -154,7 +154,7 @@ describe( 'reducer', () => {
 					image: 'http://example.com/favicon',
 				},
 			} );
-			expect( items( validState, { type: DESERIALIZE } ) ).to.deep.equal( validState );
+			expect( deserialize( items, validState ) ).to.deep.equal( validState );
 		} );
 
 		test( 'should stash an error object in the map if the request fails', () => {

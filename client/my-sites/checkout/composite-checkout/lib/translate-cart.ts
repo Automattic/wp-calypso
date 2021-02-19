@@ -24,6 +24,7 @@ import {
 	isDomainTransferProduct,
 	isDomainProduct,
 	isDotComPlan,
+	isGSuiteOrGoogleWorkspace,
 	isTitanMail,
 } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
@@ -449,6 +450,14 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): i18nCalypso.
 
 	if ( isPlan( serverCartItem ) ) {
 		return isRenewalItem ? translate( 'Plan Renewal' ) : translate( 'Plan Subscription' );
+	}
+
+	if ( isGSuiteOrGoogleWorkspace( serverCartItem ) ) {
+		if ( isRenewalItem ) {
+			return translate( 'Productivity and Collaboration Tools Renewal' );
+		}
+
+		return translate( 'Productivity and Collaboration Tools' );
 	}
 
 	if (

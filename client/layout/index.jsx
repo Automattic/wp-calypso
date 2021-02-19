@@ -32,7 +32,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import KeyboardShortcutsMenu from 'calypso/lib/keyboard-shortcuts/menu';
 import SupportUser from 'calypso/support/support-user';
-import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
+import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import BodySectionCssClass from './body-section-css-class';
@@ -265,7 +265,7 @@ class Layout extends Component {
 					</div>
 				</div>
 				{ config.isEnabled( 'i18n/community-translator' )
-					? isCommunityTranslatorEnabled() && (
+					? this.props.isCommunityTranslatorEnabled && (
 							<AsyncLoad require="calypso/components/community-translator" />
 					  )
 					: config( 'restricted_me_access' ) && (
@@ -347,6 +347,7 @@ export default compose(
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isEligibleForJITM,
+			isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
 			oauth2Client,
 			wccomFrom,
 			isSupportSession: isSupportSession( state ),

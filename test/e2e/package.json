@@ -37,6 +37,7 @@
 		"esformatter-semicolons": "^1.1.2",
 		"esformatter-special-bangs": "^1.0.1",
 		"esm": "^3.2.25",
+		"execa": "^5.0.0",
 		"ffmpeg-static": "^2.4.0",
 		"fs-extra": "^0.22.1",
 		"grunt": "^1.0.3",

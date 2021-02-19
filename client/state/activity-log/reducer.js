@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { activationRequesting } from './activation/reducer';
 import { restoreProgress, restoreRequest } from './restore/reducer';
 import { backupRequest, backupProgress } from './backup/reducer';

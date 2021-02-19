@@ -20,7 +20,6 @@ import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import WixImporter from 'calypso/my-sites/importer/importer-wix';
-import GoDaddyGoCentralImporter from 'calypso/my-sites/importer/importer-godaddy-gocentral';
 import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
@@ -58,7 +57,6 @@ import './section-import.scss';
  */
 const importerComponents = {
 	blogger: BloggerImporter,
-	'godaddy-gocentral': GoDaddyGoCentralImporter,
 	medium: MediumImporter,
 	squarespace: SquarespaceImporter,
 	wix: WixImporter,

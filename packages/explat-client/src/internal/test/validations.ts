@@ -21,13 +21,11 @@ describe( 'isObject', () => {
 describe( 'isName', () => {
 	it( 'returns true for a valid name', () => {
 		expect( Validations.isName( 'experiment_name' ) ).toBe( true );
-		expect( Validations.isName( 'experiment_123_name' ) ).toBe( true );
-		expect( Validations.isName( 'experiment_123_123' ) ).toBe( true );
+		expect( Validations.isName( 'asdfkjhkjh09182lk_asdf[-123=@#$%^' ) ).toBe( true );
+		expect( Validations.isName( '!@#$%^&*(IO)_asdfkjn.;```' ) ).toBe( true );
 	} );
 	it( 'returns false for an invalid name', () => {
-		expect( Validations.isName( 'experiment_123_123_' ) ).toBe( false );
-		expect( Validations.isName( '_experiment_123_123' ) ).toBe( false );
-		expect( Validations.isName( 'a' ) ).toBe( false );
+		expect( Validations.isName( '' ) ).toBe( false );
 		expect( Validations.isName( 123 ) ).toBe( false );
 		expect( Validations.isName( {} ) ).toBe( false );
 		expect( Validations.isName( undefined ) ).toBe( false );

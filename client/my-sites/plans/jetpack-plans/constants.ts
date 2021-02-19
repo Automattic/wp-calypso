@@ -15,6 +15,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
+	PRODUCT_JETPACK_CRM_FREE,
+	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
@@ -40,14 +42,12 @@ import {
 	FEATURE_SOCIAL_MEDIA_POSTING_V2,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_SITE_MONETIZATION_V2,
-	FEATURE_PRIORITY_SUPPORT_V2,
 	FEATURE_ONE_CLICK_RESTORE_V2,
 	FEATURE_SECURE_STORAGE_V2,
 	FEATURE_CRM_LEADS_AND_FUNNEL,
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_NO_CONTACT_LIMITS,
-	FEATURE_CRM_PRIORITY_SUPPORT,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_SEARCH_V2,
@@ -144,7 +144,6 @@ export const OPTION_PLAN_SECURITY: ( variation: Iterations ) => SelectorProduct 
 						FEATURE_SOCIAL_MEDIA_POSTING_V2,
 						FEATURE_COLLECT_PAYMENTS_V2,
 						FEATURE_SITE_MONETIZATION_V2,
-						FEATURE_PRIORITY_SUPPORT_V2,
 					],
 				},
 				undefined,
@@ -214,7 +213,6 @@ export const OPTION_PRODUCT_BACKUP: ( variation: Iterations ) => SelectorProduct
 					FEATURE_ONE_CLICK_RESTORE_V2,
 					FEATURE_SECURE_STORAGE_V2,
 					FEATURE_ACTIVITY_LOG_V2,
-					FEATURE_PRIORITY_SUPPORT_V2,
 				],
 				{ withoutDescription: true, withoutIcon: true },
 				variation
@@ -257,6 +255,56 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: ( variation: Iterations ) => Selecto
 const CRM_ENTREPRENEUR_PRICE = 17;
 const CRM_ENTREPRENEUR_CURRENCY = 'USD';
 
+export const EXTERNAL_PRODUCT_CRM_FREE: ( variation: Iterations ) => SelectorProduct = (
+	variation
+) => ( {
+	productSlug: PRODUCT_JETPACK_CRM_FREE,
+	term: TERM_ANNUALLY,
+	type: ITEM_TYPE_PRODUCT,
+	subtypes: [],
+	isFree: true,
+	costProductSlug: PRODUCT_JETPACK_CRM_FREE,
+	monthlyProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	belowPriceText: translate( 'from %(minPrice)s - %(maxPrice)s (Entrepreneur bundle)', {
+		args: { minPrice: '$0', maxPrice: '$17' },
+	} ),
+	iconSlug: 'jetpack_crm',
+	displayName: translate( 'CRM' ),
+	shortName: translate( 'CRM' ),
+	tagline: translate( 'Manage contacts effortlessly' ),
+	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
+	// available via the API). Rather like a third-party product.
+	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
+	description: translate(
+		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
+	),
+	buttonLabel: translate( 'Get CRM' ),
+	features: {
+		items: buildCardFeaturesFromItem(
+			[
+				FEATURE_CRM_LEADS_AND_FUNNEL,
+				FEATURE_CRM_PROPOSALS_AND_INVOICES,
+				FEATURE_CRM_TRACK_TRANSACTIONS,
+				FEATURE_CRM_NO_CONTACT_LIMITS,
+			],
+			{ withoutDescription: true, withoutIcon: true },
+			variation
+		),
+	},
+	hidePrice: true,
+	externalUrl: 'https://jetpackcrm.com/pricing/',
+} );
+
+export const EXTERNAL_PRODUCT_CRM_FREE_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
+	variation
+) => ( {
+	...EXTERNAL_PRODUCT_CRM_FREE( variation ),
+	term: TERM_MONTHLY,
+	productSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	costProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	monthlyProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+} );
+
 export const EXTERNAL_PRODUCT_CRM: ( variation: Iterations ) => SelectorProduct = (
 	variation
 ) => ( {
@@ -286,7 +334,6 @@ export const EXTERNAL_PRODUCT_CRM: ( variation: Iterations ) => SelectorProduct 
 				FEATURE_CRM_PROPOSALS_AND_INVOICES,
 				FEATURE_CRM_TRACK_TRANSACTIONS,
 				FEATURE_CRM_NO_CONTACT_LIMITS,
-				FEATURE_CRM_PRIORITY_SUPPORT,
 			],
 			{ withoutDescription: true, withoutIcon: true },
 			variation
@@ -319,13 +366,20 @@ export const OPTIONS_SLUG_MAP: Record<
 };
 
 // List of products showcased in the Plans grid but not sold through Calypso
-export const EXTERNAL_PRODUCTS_LIST = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
+export const EXTERNAL_PRODUCTS_LIST = [
+	PRODUCT_JETPACK_CRM_FREE,
+	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
+];
 
 // External Product slugs to SelectorProduct.
 export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
 	string,
 	( variation: Iterations ) => SelectorProduct
 > = {
+	[ PRODUCT_JETPACK_CRM_FREE ]: EXTERNAL_PRODUCT_CRM_FREE,
+	[ PRODUCT_JETPACK_CRM_FREE_MONTHLY ]: EXTERNAL_PRODUCT_CRM_FREE_MONTHLY,
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
 };

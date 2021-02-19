@@ -189,6 +189,121 @@
 	.components-base-control .components-base-control__field {
 		margin-bottom: 10px;
 	}
+
+	//// Anchor Specific ////
+
+	// 1024 wide container
+	.signup-form__anchor-body {
+		position: relative;
+		padding: 44px 20px 0;
+		text-align: center;
+
+		@include break-small {
+			padding: 64px 20px 0;
+		}
+		@include break-medium {
+			padding: 0 20px 20px;
+			position: absolute;
+			top: 24%;
+			left: 50%;
+			width: 100%;
+			max-width: 1024px;
+			transform: translateX( -50% );
+		}
+	}
+
+	// "Create a WordPress.com account.." under main header
+	.signup-form__anchor-subheading {
+		padding-bottom: 64px;
+
+		& > p {
+			@include onboarding-large-text;
+			color: var( --studio-gray-40 );
+		}
+	}
+
+	// Flexbox Row used for 2 column layout
+	.signup-form__anchor-row {
+		// One column for small displays
+		display: block;
+
+		// Two column for medium and larger
+		@include break-medium {
+			display: flex;
+		}
+
+		flex-direction: row;
+		flex-wrap: wrap;
+		width: 100%;
+	}
+
+	// Flexbox Col used for 2 column layout
+	.signup-form__anchor-col {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 100%;
+		flex: 1;
+		justify-content: center;
+	}
+
+	// Thin line between Flexbox Cols
+	.signup-form__anchor-separator {
+		background: var( --studio-gray-5 );
+		width: 0;
+		@include break-medium {
+			width: 1px;
+		}
+	}
+
+	// Container of left+right columns
+	.signup-form__anchor-col-container {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		@include break-small {
+			padding-left: 1rem;
+			padding-right: 1rem;
+		}
+		@include break-medium {
+			padding-left: 2rem;
+			padding-right: 2rem;
+		}
+		@include break-large {
+			padding-left: 4rem;
+			padding-right: 4rem;
+		}
+
+		&.is-right-col {
+			text-align: left;
+			margin-top: 3rem;
+			@include break-medium {
+				margin-top: 0;
+			}
+		}
+	}
+
+	// Div grouping together right heading "Turn your listeners.." with bullet points
+	.signup-form__anchor-col-right-group {
+		margin-bottom: 2em;
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	// Right heading like "Turn your listeners.."
+	.signup-form__anchor-right-heading {
+		font-size: 1.25rem;
+		margin-bottom: 0.5rem;
+	}
+
+	// UL with Right bullet points
+	ul.signup-form__anchor-list {
+		list-style: disc inside;
+		color: var( --studio-gray-70 );
+		font-size: 0.875rem;
+		& > li {
+			margin-bottom: 0.5rem;
+		}
+	}
 }
 
 .grecaptcha-badge {

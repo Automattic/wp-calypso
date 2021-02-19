@@ -15,7 +15,6 @@ import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { Card, Button } from '@automattic/components';
-import classNames from 'classnames';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
@@ -35,15 +34,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 const MAX_FOLLOWERS = 1000;
 
 class Followers extends Component {
-	constructor() {
-		super();
-
-		this.infiniteList = React.createRef();
-	}
-
-	state = {
-		bulkEditing: false,
-	};
+	infiniteList = React.createRef();
 
 	renderPlaceholders() {
 		return <PeopleListItem key="people-list-item-placeholder" />;
@@ -95,7 +86,6 @@ class Followers extends Component {
 				user={ follower }
 				type="follower"
 				site={ this.props.site }
-				isSelectable={ this.state.bulkEditing }
 				onRemove={ () => this.removeFollower( follower ) }
 			/>
 		);
@@ -138,10 +128,6 @@ class Followers extends Component {
 
 	render() {
 		const key = deterministicStringify( omit( this.props.query, [ 'max', 'page' ] ) );
-		const listClass = classNames( {
-			'bulk-editing': this.state.bulkEditing,
-			'people-invites__invites-list': true,
-		} );
 
 		if ( this.noFollowerSearchResults() ) {
 			return (
@@ -254,7 +240,7 @@ class Followers extends Component {
 						</Button>
 					) }
 				</PeopleListSectionHeader>
-				<Card className={ listClass }>{ followers }</Card>
+				<Card className="people-invites__invites-list">{ followers }</Card>
 				{ this.isLastPage() && <ListEnd /> }
 			</>
 		);

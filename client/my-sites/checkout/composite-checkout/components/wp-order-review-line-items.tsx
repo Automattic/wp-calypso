@@ -25,7 +25,6 @@ import type {
  * Internal dependencies
  */
 import joinClasses from './join-classes';
-import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 import {
 	isGoogleWorkspaceProductSlug,
@@ -298,7 +297,7 @@ export function WPNonProductLineItem( {
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
 			data-e2e-product-slug={ lineItem.id }
-			data-product-type={ lineItem.id }
+			data-product-type={ lineItem.type }
 		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
@@ -707,7 +706,10 @@ function WPLineItem( {
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const hasDomainsInCart = useHasDomainsInCart();
+	const { responseCart } = useShoppingCart();
+	const hasDomainsInCart = responseCart.products.some(
+		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const deleteButtonId = `checkout-delete-button-${ id }`;

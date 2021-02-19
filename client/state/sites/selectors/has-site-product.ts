@@ -36,6 +36,6 @@ export default createSelector(
 		if ( ! Array.isArray( productSlug ) ) {
 			productSlug = [ productSlug ];
 		}
-		return `{ siteId || 0 }-${ productSlug.join( '-' ) }`;
+		return `${ siteId }-${ productSlug.join( '-' ) }`;
 	}
 );

@@ -97,7 +97,6 @@ function getAggregation( props ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/* eslint-disable jsx-a11y/no-onchange */
 
 class GoogleMyBusinessStatsChart extends Component {
 	static propTypes = {
@@ -311,7 +310,6 @@ class GoogleMyBusinessStatsChart extends Component {
 	}
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
-/* eslint-enable jsx-a11y/no-onchange */
 
 export default connect(
 	( state, ownProps ) => {

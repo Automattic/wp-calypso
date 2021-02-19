@@ -913,12 +913,6 @@ export const FEATURES_LIST = {
 		hideInfoPopover: true,
 	},
 
-	[ constants.FEATURE_PRIORITY_SUPPORT_JETPACK ]: {
-		getSlug: () => constants.FEATURE_PRIORITY_SUPPORT_JETPACK,
-		getTitle: () => i18n.translate( 'Priority support' ),
-		getDescription: () => i18n.translate( 'Faster response times from our security experts.' ),
-		hideInfoPopover: true,
-	},
 	[ constants.FEATURE_TRAFFIC_TOOLS_JETPACK ]: {
 		getSlug: () => constants.FEATURE_TRAFFIC_TOOLS_JETPACK,
 		getTitle: () => i18n.translate( 'Advanced traffic tools' ),
@@ -1074,11 +1068,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'Backup (real-time, off-site)' ),
-				spp: i18n.translate( 'Backup (real-time, off-site)' ),
-			}[ variation ] || i18n.translate( 'Automated real-time site backups' ) ),
+		getTitle: () => i18n.translate( 'Backup (real-time, off-site)' ),
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_V2 ]: {
@@ -1175,16 +1165,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'Scan (daily, automated)' ),
-				spp: i18n.translate( 'Scan (daily, automated)' ),
-			}[ variation ] ||
-			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Scan (daily, automated)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated daily scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
@@ -1203,16 +1184,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'Scan (real-time, automated)' ),
-				spp: i18n.translate( 'Scan (real-time, automated)' ),
-			}[ variation ] ||
-			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) ),
+		getTitle: () => i18n.translate( 'Scan (real-time, automated)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated real-time scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
@@ -1357,11 +1329,6 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'No contact limits' ),
 	},
 
-	[ constants.FEATURE_CRM_PRIORITY_SUPPORT ]: {
-		getSlug: () => constants.FEATURE_CRM_PRIORITY_SUPPORT,
-		getTitle: () => i18n.translate( 'Priority support' ),
-	},
-
 	[ constants.FEATURE_SOCIAL_MEDIA_POSTING_V2 ]: {
 		getSlug: () => constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
 		getTitle: () => i18n.translate( 'Scheduled social media posting' ),
@@ -1428,25 +1395,6 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ constants.FEATURE_PRIORITY_SUPPORT_V2 ]: {
-		getSlug: () => constants.FEATURE_PRIORITY_SUPPORT_V2,
-		getTitle: () => i18n.translate( 'Priority support' ),
-		getDescription: () =>
-			i18n.translate(
-				'Get fast WordPress support from the WordPress experts. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://jetpack.com/features/security/expert-priority-support/"
-							/>
-						),
-					},
-				}
-			),
-	},
-
 	[ constants.FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => constants.FEATURE_SECURE_STORAGE_V2,
 		getTitle: () => i18n.translate( 'Unlimited site storage' ),
@@ -1454,11 +1402,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {
 		getSlug: () => constants.FEATURE_ONE_CLICK_RESTORE_V2,
-		getTitle: ( variation ) =>
-			( {
-				i5: i18n.translate( 'One-click restores' ),
-				spp: i18n.translate( 'One-click restores' ),
-			}[ variation ] || i18n.translate( 'One-click restores from desktop or mobile' ) ),
+		getTitle: () => i18n.translate( 'One-click restores' ),
 	},
 
 	[ constants.FEATURE_ONE_CLICK_FIX_V2 ]: {

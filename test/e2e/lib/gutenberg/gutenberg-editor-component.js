@@ -158,7 +158,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async toggleOptionsMenu() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='Options']" )
+			By.css( ".edit-post-more-menu button[aria-label='Options']" )
 		);
 
 		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
@@ -329,7 +329,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
-				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed-' };
+				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed\\/' };
 				break;
 			case 'Form':
 				blockSettings = { prefix: 'jetpack-', blockClass: 'contact-form' };
@@ -388,8 +388,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			title
 		);
 
-		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.1 on production.
-		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
+		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 10.x on production.
+		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix.replace(
+			'\\/',
+			'-'
+		) }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
 		);
@@ -644,6 +647,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				// For some reason, when the screensize is set to mobile,
+				// the welcome guide modal is not closed when the template button
+				// is clicked, causing the test to fail with a timeout.
+				//
+				// The same doesn't seem to happen if I run the test
+				// in the Desktop screen size, but resize to a mobileish size.
+				// For this reason, when in the mobile screen size, we force-close
+				// the welcome modal before trying to click the template selector.
+				await driverHelper.clickIfPresent(
+					this.driver,
+					By.css( '.edit-post-welcome-guide button[aria-label="Close dialog"]' )
+				);
 				await driverHelper.clickWhenClickable(
 					this.driver,
 					By.css( 'button.template-selector-item__label[value="blank"]' )

@@ -7,12 +7,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	STATE_ATTACHED,
-	STATE_DETACHED,
-	STATE_REVOKED,
-	getLicenseState,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { Button, Card } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
@@ -68,21 +64,21 @@ export default function LicenseDetails( {
 					<FormattedDate date={ issuedAt } format="LLL" />
 				</li>
 
-				{ licenseState === STATE_ATTACHED && (
+				{ licenseState === LicenseState.Attached && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Attached on' ) }</h4>
 						<FormattedDate date={ attachedAt } format="LLL" />
 					</li>
 				) }
 
-				{ licenseState === STATE_DETACHED && (
+				{ licenseState === LicenseState.Detached && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Attached on' ) }</h4>
 						<Gridicon icon="minus" />
 					</li>
 				) }
 
-				{ licenseState === STATE_REVOKED && (
+				{ licenseState === LicenseState.Revoked && (
 					<li className="license-details__list-item">
 						<h4 className="license-details__label">{ translate( 'Revoked on' ) }</h4>
 						<FormattedDate date={ revokedAt } format="LLL" />
@@ -91,12 +87,12 @@ export default function LicenseDetails( {
 
 				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( "Owner's User ID" ) }</h4>
-					<span>{ username }</span>
+					{ username ? <span>{ username }</span> : <Gridicon icon="minus" /> }
 				</li>
 
 				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( 'Blog ID' ) }</h4>
-					<span>{ blogId }</span>
+					{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }
 				</li>
 			</ul>
 			<div className="license-details__actions">

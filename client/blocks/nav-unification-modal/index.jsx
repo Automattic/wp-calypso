@@ -5,6 +5,7 @@ import React from 'react';
 import { Guide } from '@wordpress/components';
 import { Title } from '@automattic/onboarding';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,17 +13,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Image dependencies
  */
-import desktopOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-1.jpg';
-import desktopTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-2.jpg';
-import desktopThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-3.jpg';
-import mobileOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-1.jpg';
-import mobileTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-2.jpg';
-import mobileThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-3.jpg';
+import desktopOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-1.png';
+import desktopTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-2.png';
+import desktopThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-3.png';
+import mobileOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-1.png';
+import mobileTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-2.png';
+import mobileThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-3.png';
 
 /**
  * Style dependencies
@@ -52,6 +52,16 @@ const Modal = () => {
 	const dismissPreference = `nav-unification-modal-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const translate = useTranslate();
+
+	/**
+	 * Since we don't extract strings from external packages in node_modules,
+	 * translatable strings from the Guide component are not being extracted.
+	 * In order to get these strings extracted and their translations loaded,
+	 * we need to have the following translate calls included in this component.
+	 */
+	translate( 'Previous' );
+	translate( 'Next' );
+	translate( 'Finish' );
 
 	if ( ! hasPreferences || isDismissed ) {
 		return null;
@@ -109,7 +119,12 @@ const Modal = () => {
 							}
 							heading={ translate( 'Make it your own' ) }
 							content={ translate(
-								'Customize the appearance of your navigation from your account settings.'
+								'Customize the appearance of your navigation from your {{a}}account settings{{/a}}.',
+								{
+									components: {
+										a: <a href="/me/account" />,
+									},
+								}
 							) }
 						/>
 					),

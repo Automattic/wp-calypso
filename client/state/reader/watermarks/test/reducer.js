@@ -3,7 +3,7 @@
  */
 import { viewStream } from '../actions';
 import { watermarks } from '../reducer';
-import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 jest.mock( '@wordpress/warning', () => () => {} );
 
@@ -42,16 +42,16 @@ describe( '#watermarks', () => {
 
 	test( 'will skip deserializing invalid marks', () => {
 		const invalidState = { [ streamKey ]: 'invalid' };
-		expect( watermarks( invalidState, { type: DESERIALIZE } ) ).toEqual( {} );
+		expect( deserialize( watermarks, invalidState ) ).toEqual( {} );
 	} );
 
 	test( 'will deserialize valid mark', () => {
 		const validState = { [ streamKey ]: 42 };
-		expect( watermarks( validState, { type: DESERIALIZE } ) ).toEqual( validState );
+		expect( deserialize( watermarks, validState ) ).toEqual( validState );
 	} );
 
 	test( 'will serialize', () => {
 		const validState = { [ streamKey ]: 42 };
-		expect( watermarks( validState, { type: SERIALIZE } ).root() ).toEqual( validState );
+		expect( serialize( watermarks, validState ).root() ).toEqual( validState );
 	} );
 } );

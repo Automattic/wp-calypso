@@ -1,9 +1,7 @@
 /**
- * Possible license states.
+ * Internal dependencies
  */
-export const STATE_ATTACHED = 'attached';
-export const STATE_DETACHED = 'detached';
-export const STATE_REVOKED = 'revoked';
+import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 /**
  * Get the state of a license based on its properties.
@@ -12,16 +10,39 @@ export const STATE_REVOKED = 'revoked';
  *
  * @param {string | null} attachedAt Date the license was attached on, if any.
  * @param {string | null} revokedAt Date the license was revoked on, if any.
- * @returns {string} State matching one of the STATE_* constant values.
+ * @returns {LicenseState} State matching one of the `LicenseState` values.
  */
-export function getLicenseState( attachedAt: string | null, revokedAt: string | null ): string {
+export function getLicenseState(
+	attachedAt: string | null,
+	revokedAt: string | null
+): LicenseState {
 	if ( revokedAt ) {
-		return STATE_REVOKED;
+		return LicenseState.Revoked;
 	}
 
 	if ( attachedAt ) {
-		return STATE_ATTACHED;
+		return LicenseState.Attached;
 	}
 
-	return STATE_DETACHED;
+	return LicenseState.Detached;
+}
+
+/**
+ * Convert a value to a the enum member with that value or a fallback.
+ * This is a hack around TypeScript's poor support of enums as types.
+ *
+ * @example const enumMember = valueToEnum< SomeEnumType >( SomeEnumType, 'foo', SomeEnumType.SomeMember );
+ *
+ * @template T
+ * @param {Record< string, * >} enumType Enum type to search in.
+ * @param {*} value The enum value we are looking to get the member for.
+ * @param {*} fallback The fallback value in case value is not a member of enumType.
+ * @returns {T} T for value or fallback
+ */
+export function valueToEnum< T >(
+	enumType: Record< string, unknown >,
+	value: unknown,
+	fallback: unknown
+): T {
+	return Object.values( enumType ).includes( value ) ? ( value as T ) : ( fallback as T );
 }

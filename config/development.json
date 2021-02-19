@@ -30,7 +30,6 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
-		"anchor-fm-dev": true,
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": true,
@@ -39,8 +38,6 @@
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management/threaded-view": false,
-		"create/focused-launch-flow": false,
-		"create/persistent-launch-button": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
@@ -72,8 +69,6 @@
 		"google-workspace-migration": true,
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/language-picker": true,
-		"gutenboarding/feature-picker": true,
-		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/show-vertical-input": false,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
@@ -218,7 +213,7 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
-		"woocommerce/store-removed": false,
+		"woocommerce/store-removed": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
 	}

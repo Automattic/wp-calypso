@@ -1,92 +1,170 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import classnames from 'classnames';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 
 /**
  * Internal dependencies
  */
-import Main from 'calypso/components/main';
-import CardHeading from 'calypso/components/card-heading';
-import DocumentHead from 'calypso/components/data/document-head';
+import { Card } from '@automattic/components';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
+import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
+import {
+	getPaginatedLicenses,
+	hasFetchedLicenses,
+	isFetchingLicenses,
+} from 'calypso/state/partner-portal/licenses/selectors';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
-import LicensePreview from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
+import LicensePreview, {
+	LicensePreviewPlaceholder,
+} from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
+import Gridicon from 'calypso/components/gridicon';
+import { addQueryArgs } from 'calypso/lib/route';
 
-export default function LicenseList() {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+interface LicenseTransitionProps {
+	key?: string;
+}
+
+const LicenseTransition = ( props: React.PropsWithChildren< LicenseTransitionProps > ) => (
+	<CSSTransition { ...props } classNames="license-list__license-transition" timeout={ 150 } />
+);
+
+interface Props {
+	filter: LicenseFilter;
+	search: string;
+	sortField: LicenseSortField;
+	sortDirection: LicenseSortDirection;
+}
+
+export default function LicenseList( {
+	filter,
+	search,
+	sortField,
+	sortDirection,
+}: Props ): ReactElement {
 	const translate = useTranslate();
+	const hasFetched = useSelector( hasFetchedLicenses );
+	const isFetching = useSelector( isFetchingLicenses );
+	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;
+	const showLicenses = hasFetched && ! isFetching && !! licenses;
+	const showNoResults = hasFetched && ! isFetching && licenses && licenses.items.length === 0;
 
-	const data = [
-		{
-			licenseKey: 'jetpack-security-daily_AcNAyEhPaSXeFVgRj0gZkgn0Z',
-			siteUrl: 'https://yetanothersite.net',
-			product: 'Jetpack Security Daily',
-			issuedAt: '2020-11-26 18:24:52',
-			attachedAt: '2020-11-27 18:24:52',
-			revokedAt: '',
-			username: 'ianramosc',
-			blogId: 883882032,
-		},
-		{
-			licenseKey: 'jetpack-backup-daily_AcNAyEhPaSXeFVgRj0gZkgn0Z',
-			siteUrl: '',
-			product: 'Jetpack Backup Daily',
-			issuedAt: '2020-11-26 18:24:52',
-			attachedAt: '',
-			revokedAt: '',
-			username: 'ianramosc',
-			blogId: 883882032,
-		},
-		{
-			licenseKey: 'jetpack-security-realtime_AcNAyEhPaSXeFVgRj0gZkgn0Z',
-			siteUrl: 'https://mygroovysite.co.uk',
-			product: 'Jetpack Security Real-time',
-			issuedAt: '2020-11-24 18:24:52',
-			attachedAt: '2020-11-25 18:24:52',
-			revokedAt: '',
-			username: 'ianramosc',
-			blogId: 883882032,
-		},
-		{
-			licenseKey: 'security-daily_AcNAyEhPaSXeFVgRj0gZkgn0Z',
-			siteUrl: 'https://mylicenselesssite.com',
-			product: 'Security Daily',
-			issuedAt: '2020-11-24 18:24:52',
-			attachedAt: '2020-11-25 18:24:52',
-			revokedAt: '2020-11-25 18:24:52',
-			username: 'ianramosc',
-			blogId: 883882032,
-		},
-	];
+	const setSortingConfig = ( field: LicenseSortField ): void => {
+		let direction = LicenseSortDirection.Descending;
+
+		if ( field === sortField && sortDirection === direction ) {
+			direction = LicenseSortDirection.Ascending;
+		}
+
+		const queryParams = { sort_field: field, sort_direction: direction };
+		const currentPath = window.location.pathname + window.location.search;
+
+		page( addQueryArgs( queryParams, currentPath ) );
+	};
 
 	return (
-		<Main wideLayout={ true } className="license-list">
-			<DocumentHead title={ translate( 'Licenses' ) } />
+		<div className="license-list">
+			<QueryJetpackPartnerPortalLicenses
+				filter={ filter }
+				search={ search }
+				sortField={ sortField }
+				sortDirection={ sortDirection }
+			/>
 
-			<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
-
-			<LicenseListItem header>
+			<LicenseListItem header className="license-list__header">
 				<h2>{ translate( 'License state' ) }</h2>
-				<h2>{ translate( 'Issued on' ) }</h2>
-				<h2>{ translate( 'Attached on' ) }</h2>
-				<h2>{ translate( 'Revoked on' ) }</h2>
+				<h2 className={ classnames( { 'is-selected': LicenseSortField.IssuedAt === sortField } ) }>
+					<button onClick={ () => setSortingConfig( LicenseSortField.IssuedAt ) }>
+						{ translate( 'Issued on' ) }
+						<Gridicon
+							icon="dropdown"
+							className={ classnames( 'license-list-item__sort-indicator', {
+								[ `is-sort-${ sortDirection }` ]: true,
+							} ) }
+						/>
+					</button>
+				</h2>
+				{ filter !== LicenseFilter.Revoked ? (
+					<h2
+						className={ classnames( { 'is-selected': LicenseSortField.AttachedAt === sortField } ) }
+					>
+						<button onClick={ () => setSortingConfig( LicenseSortField.AttachedAt ) }>
+							{ translate( 'Attached on' ) }
+							<Gridicon
+								icon="dropdown"
+								className={ classnames( 'license-list-item__sort-indicator', {
+									[ `is-sort-${ sortDirection }` ]: true,
+								} ) }
+							/>
+						</button>
+					</h2>
+				) : (
+					<h2
+						className={ classnames( { 'is-selected': LicenseSortField.RevokedAt === sortField } ) }
+					>
+						<button onClick={ () => setSortingConfig( LicenseSortField.RevokedAt ) }>
+							{ translate( 'Revoked on' ) }
+							<Gridicon
+								icon="dropdown"
+								className={ classnames( 'license-list-item__sort-indicator', {
+									[ `is-sort-${ sortDirection }` ]: true,
+								} ) }
+							/>
+						</button>
+					</h2>
+				) }
 				<div>{ /* Intentionally empty header. */ }</div>
 				<div>{ /* Intentionally empty header. */ }</div>
 			</LicenseListItem>
 
-			{ data.map( ( license ) => (
-				<LicensePreview
-					key={ license.licenseKey }
-					licenseKey={ license.licenseKey }
-					product={ license.product }
-					username={ license.username }
-					blogId={ license.blogId }
-					siteUrl={ license.siteUrl }
-					issuedAt={ license.issuedAt }
-					attachedAt={ license.attachedAt }
-					revokedAt={ license.revokedAt }
-				/>
-			) ) }
-		</Main>
+			<TransitionGroup className="license-list__transition-group">
+				{ showLicenses &&
+					licenses.items.map( ( license ) => (
+						<LicenseTransition key={ license.licenseKey }>
+							<LicensePreview
+								licenseKey={ license.licenseKey }
+								product={ license.product }
+								username={ license.username }
+								blogId={ license.blogId }
+								siteUrl={ license.siteUrl }
+								issuedAt={ license.issuedAt }
+								attachedAt={ license.attachedAt }
+								revokedAt={ license.revokedAt }
+								filter={ filter }
+							/>
+						</LicenseTransition>
+					) ) }
+
+				{ isFetching && (
+					<LicenseTransition>
+						<LicensePreviewPlaceholder />
+					</LicenseTransition>
+				) }
+
+				{ showNoResults && (
+					<LicenseTransition>
+						<Card className="license-list__message" compact>
+							<p>{ translate( 'No licenses found.' ) }</p>
+						</Card>
+					</LicenseTransition>
+				) }
+			</TransitionGroup>
+		</div>
 	);
 }

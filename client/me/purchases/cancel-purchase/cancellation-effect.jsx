@@ -7,6 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getName, getSubscriptionEndDate, isRefundable } from 'calypso/lib/purchases';
 import {
 	isDomainMapping,
@@ -66,12 +67,14 @@ function refundableCancellationEffectDetail( purchase, translate, overrides ) {
 
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return translate(
-			'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
-				'You will be able to manage your G Suite billing directly through Google.',
+			'You will be refunded %(cost)s, and your %(googleMailService)s account will continue working without interruption. ' +
+				'You will be able to set up billing for your account directly with Google.',
 			{
 				args: {
+					googleMailService: getGoogleMailServiceFamily( purchase.productSlug ),
 					cost: refundText,
 				},
+				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 			}
 		);
 	}
@@ -111,11 +114,13 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return translate(
-			'Your G Suite account remains active until it expires on %(subscriptionEndDate)s.',
+			'Your %(googleMailService)s account remains active until it expires on %(subscriptionEndDate)s.',
 			{
 				args: {
+					googleMailService: getGoogleMailServiceFamily( purchase.productSlug ),
 					subscriptionEndDate,
 				},
+				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 			}
 		);
 	}

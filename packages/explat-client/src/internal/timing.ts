@@ -41,20 +41,12 @@ export function timeoutPromise< T >(
  * @param f The function to wrap
  */
 export function asyncOneAtATime< T >( f: () => Promise< T > ): () => Promise< T > {
-	let isRunning = false;
 	let lastPromise: Promise< T > | null = null;
 	return () => {
-		if ( ! isRunning ) {
-			isRunning = true;
-			lastPromise = f();
-			const afterwards = () => {
-				isRunning = false;
-			};
-			lastPromise.then( afterwards );
-			lastPromise.catch( afterwards );
-		}
-		if ( lastPromise === null ) {
-			throw new Error( 'Invalid state: lastPromise should not be null.' );
+		if ( ! lastPromise ) {
+			lastPromise = f().finally( () => {
+				lastPromise = null;
+			} );
 		}
 		return lastPromise;
 	};

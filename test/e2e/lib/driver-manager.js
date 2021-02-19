@@ -166,10 +166,14 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				// eslint-disable-next-line no-case-declarations
 				const service = new chrome.ServiceBuilder( chromedriver.path )
-					.loggingTo( './chromedriver.' + Math.random() + '.log' )
+					.loggingTo( './chromedriver.' + process.pid + '.log' )
 					.enableVerboseLogging()
 					.build();
 				chrome.setDefaultService( service );
+				options.setChromeLogFile( './chrome.' + process.pid + '.log' );
+				options.addArguments( '--enable-logging' );
+				options.addArguments( '--log-level 0' );
+				options.addArguments( '--log-net-log ./chrome.net.' + process.pid + '.log' );
 
 				builder = new webdriver.Builder();
 				builder.setChromeOptions( options );

@@ -71,6 +71,7 @@
 
 	color: var( --studio-gray-100 );
 
+	font-family: 'Noto Sans SemiCondensed Bold', 'Noto Sans', $sans;
 	font-size: 2rem;
 	font-weight: 700;
 	line-height: 1.2;
@@ -107,7 +108,7 @@
 	padding-top: 6px;
 	padding-bottom: 6px;
 
-	border-radius: 4px;
+	border-radius: ( 2px * 2 );
 
 	text-align: center;
 	background-color: rgba( var( --color-success-10-rgb ), 0.1 );
@@ -149,6 +150,7 @@
 	font-size: 1.5rem;
 }
 
+.jetpack-product-card-i5__price-free,
 .jetpack-product-card-i5 .plan-price__integer {
 	font-size: 3.375rem;
 	font-weight: 700;
@@ -192,8 +194,6 @@
 
 .jetpack-product-card-i5__disabled-message {
 	color: var( --color-accent );
-
-	text-align: center;
 	font-weight: 600;
 }
 
@@ -244,8 +244,6 @@
 	margin: 0;
 
 	color: var( --studio-gray-100 );
-
-	font-weight: 700;
 }
 
 /* Prices Loading state */

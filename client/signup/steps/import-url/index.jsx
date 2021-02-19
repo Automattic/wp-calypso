@@ -36,7 +36,6 @@ import './style.scss';
 const IMPORT_HELP_LINK = 'https://wordpress.com/support/import/';
 const EXAMPLE_CUSTOM_DOMAIN_URL = 'https://example.com';
 const EXAMPLE_WIX_URL = 'https://username.wixsite.com/my-site';
-const EXAMPLE_GOCENTRAL_URL = 'https://example.godaddysites.com';
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -97,9 +96,7 @@ class ImportURLStepComponent extends Component {
 				} ) => {
 					if ( ! includes( importerTypes, 'url' ) ) {
 						return this.setUrlError(
-							translate(
-								"That doesn't seem to be a Wix or GoDaddy site. Please check the URL and try again."
-							)
+							translate( "That doesn't seem to be a Wix site. Please check the URL and try again." )
 						);
 					}
 
@@ -255,14 +252,13 @@ class ImportURLStepComponent extends Component {
 						} ) }
 						<li className="import-url__example-url">{ EXAMPLE_CUSTOM_DOMAIN_URL }</li>
 						<li className="import-url__example-url">{ EXAMPLE_WIX_URL }</li>
-						<li className="import-url__example-url">{ EXAMPLE_GOCENTRAL_URL }</li>
 					</ul>
 					<ExampleDomainBrowser className="import-url__example-browser" />
 				</div>
 
 				<div className="import-url__escape">
 					{ translate(
-						"Don't have a Wix or GoDaddy GoCentral site? We also support importing from {{a}}other sources{{/a}}.",
+						"Don't have a Wix site? We also support importing from {{a}}other sources{{/a}}.",
 						{
 							components: {
 								a: (
@@ -289,7 +285,7 @@ class ImportURLStepComponent extends Component {
 
 		const headerText = translate( 'Where can we find your old site?' );
 		const subHeaderText = translate(
-			'Enter your Wix or GoDaddy GoCentral site URL, sometimes called a domain name or site address.'
+			"Enter your Wix site's URL, sometimes called a domain name or site address."
 		);
 
 		return (

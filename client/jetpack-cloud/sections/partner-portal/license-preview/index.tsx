@@ -9,12 +9,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import {
-	STATE_ATTACHED,
-	STATE_DETACHED,
-	STATE_REVOKED,
-	getLicenseState,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+
+import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { Button } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
@@ -36,6 +33,7 @@ interface Props {
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
+	filter: LicenseFilter;
 }
 
 export default function LicensePreview( {
@@ -47,12 +45,14 @@ export default function LicensePreview( {
 	issuedAt,
 	attachedAt,
 	revokedAt,
+	filter,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const [ isOpen, setOpen ] = useState( false );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname : '';
-	const showDomain = domain && [ STATE_ATTACHED, STATE_REVOKED ].indexOf( licenseState ) !== -1;
+	const showDomain =
+		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -68,22 +68,22 @@ export default function LicensePreview( {
 			<LicenseListItem
 				className={ classnames( {
 					'license-preview__card': true,
-					'license-preview__card--is-detached': licenseState === STATE_DETACHED,
-					'license-preview__card--is-revoked': licenseState === STATE_REVOKED,
+					'license-preview__card--is-detached': licenseState === LicenseState.Detached,
+					'license-preview__card--is-revoked': licenseState === LicenseState.Revoked,
 				} ) }
 			>
 				<div>
 					<h3 className="license-preview__domain">
 						{ showDomain && <span>{ domain }</span> }
 
-						{ licenseState === STATE_DETACHED && (
+						{ licenseState === LicenseState.Detached && (
 							<span className="license-preview__tag license-preview__tag--is-detached">
 								<Gridicon icon="info-outline" size={ 18 } />
 								{ translate( 'Detached' ) }
 							</span>
 						) }
 
-						{ licenseState === STATE_REVOKED && (
+						{ licenseState === LicenseState.Revoked && (
 							<span className="license-preview__tag license-preview__tag--is-revoked">
 								<Gridicon icon="block" size={ 18 } />
 								{ translate( 'Revoked' ) }
@@ -103,32 +103,34 @@ export default function LicensePreview( {
 					<FormattedDate date={ issuedAt } format="YYYY-MM-DD" />
 				</div>
 
+				{ filter !== LicenseFilter.Revoked ? (
+					<div>
+						<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
+
+						{ licenseState === LicenseState.Attached && (
+							<FormattedDate date={ attachedAt } format="YYYY-MM-DD" />
+						) }
+
+						{ licenseState !== LicenseState.Attached && (
+							<Gridicon icon="minus" className="license-preview__no-value" />
+						) }
+					</div>
+				) : (
+					<div>
+						<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
+
+						{ licenseState === LicenseState.Revoked && (
+							<FormattedDate date={ revokedAt } format="YYYY-MM-DD" />
+						) }
+
+						{ licenseState !== LicenseState.Revoked && (
+							<Gridicon icon="minus" className="license-preview__no-value" />
+						) }
+					</div>
+				) }
+
 				<div>
-					<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
-
-					{ licenseState === STATE_ATTACHED && (
-						<FormattedDate date={ attachedAt } format="YYYY-MM-DD" />
-					) }
-
-					{ licenseState !== STATE_ATTACHED && (
-						<Gridicon icon="minus" className="license-preview__no-value" />
-					) }
-				</div>
-
-				<div>
-					<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
-
-					{ licenseState === STATE_REVOKED && (
-						<FormattedDate date={ revokedAt } format="YYYY-MM-DD" />
-					) }
-
-					{ licenseState !== STATE_REVOKED && (
-						<Gridicon icon="minus" className="license-preview__no-value" />
-					) }
-				</div>
-
-				<div>
-					{ licenseState === STATE_DETACHED && (
+					{ licenseState === LicenseState.Detached && (
 						<ClipboardButton
 							text={ licenseKey }
 							className="license-preview__copy-license-key"
@@ -156,6 +158,46 @@ export default function LicensePreview( {
 					revokedAt={ revokedAt }
 				/>
 			) }
+		</div>
+	);
+}
+
+export function LicensePreviewPlaceholder(): ReactElement {
+	const translate = useTranslate();
+
+	return (
+		<div className="license-preview license-preview--placeholder">
+			<LicenseListItem className="license-preview__card">
+				<div>
+					<h3 className="license-preview__domain">{ translate( 'Loading' ) }</h3>
+
+					<div className="license-preview__product" />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div>
+					<div className="license-preview__label">{ translate( 'Revoked on:' ) }</div>
+
+					<div />
+				</div>
+
+				<div>
+					<div className="license-preview__copy-license-key" />
+				</div>
+
+				<div />
+			</LicenseListItem>
 		</div>
 	);
 }

@@ -115,14 +115,24 @@ export function durationToString( duration: Duration ): DurationString {
 
 export function durationToText( duration: Duration ): TranslateResult {
 	if ( duration === TERM_MONTHLY ) {
-		return translate( 'per month{{br/}}billed monthly', {
-			components: { br: createElement( 'br' ) },
-		} );
+		return (
+			getForCurrentCROIteration( {
+				[ Iterations.NPIP ]: translate( '/month, paid monthly' ),
+			} ) ||
+			translate( 'per month{{br/}}billed monthly', {
+				components: { br: createElement( 'br' ) },
+			} )
+		);
 	}
 
-	return translate( 'per month{{br/}}billed yearly', {
-		components: { br: createElement( 'br' ) },
-	} );
+	return (
+		getForCurrentCROIteration( {
+			[ Iterations.NPIP ]: translate( '/month, paid yearly' ),
+		} ) ||
+		translate( 'per month{{br/}}billed yearly', {
+			components: { br: createElement( 'br' ) },
+		} )
+	);
 }
 
 // In the case of products that have options (daily and real-time), we want to display
@@ -668,7 +678,7 @@ export function checkout(
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
-		page.redirect( addQueryArgs( urlQueryArgs, path ) );
+		page( addQueryArgs( urlQueryArgs, path ) );
 	}
 }
 
@@ -685,7 +695,7 @@ export function manageSitePurchase( siteSlug: string, purchaseId: number ): void
 	if ( isJetpackCloud() ) {
 		window.location.href = `https://wordpress.com${ relativePath }`;
 	} else {
-		page.redirect( relativePath );
+		page( relativePath );
 	}
 }
 

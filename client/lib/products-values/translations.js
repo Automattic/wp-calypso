@@ -29,25 +29,25 @@ export const getJetpackProductsShortNames = () => {
 		} ),
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Backup {{em}}Real-time{{/em}}', {
 			components: {
-				em: createElement( 'em' ),
+				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
 			'Backup {{em}}Real-time{{/em}}',
 			{
 				components: {
-					em: createElement( 'em' ),
+					em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 				},
 			}
 		),
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
 			components: {
-				em: createElement( 'em' ),
+				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: translate( 'Scan {{em}}Real-time{{/em}}', {
 			components: {
-				em: createElement( 'em' ),
+				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
 		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
@@ -76,9 +76,9 @@ export const getJetpackProductsDisplayNames = () => {
 
 	const backupRealtime = (
 		<>
-			{ translate( 'Backup {{em}}Real-Time{{/em}}', {
+			{ translate( 'Backup {{em}}Real-time{{/em}}', {
 				components: {
-					em: <em />,
+					em: <em style={ { whiteSpace: 'nowrap' } } />,
 				},
 			} ) }
 		</>
@@ -88,9 +88,9 @@ export const getJetpackProductsDisplayNames = () => {
 
 	const scanRealtime = (
 		<>
-			{ translate( 'Scan {{em}}Real-Time{{/em}}', {
+			{ translate( 'Scan {{em}}Real-time{{/em}}', {
 				components: {
-					em: <em />,
+					em: <em style={ { whiteSpace: 'nowrap' } } />,
 				},
 			} ) }
 		</>
@@ -133,9 +133,9 @@ export const getJetpackProductsCallToAction = () => {
 
 	const backupRealtime = (
 		<>
-			{ translate( 'Get Backup {{em}}Real-Time{{/em}}', {
+			{ translate( 'Get Backup {{em}}Real-time{{/em}}', {
 				components: {
-					em: <em />,
+					em: <em style={ { whiteSpace: 'nowrap' } } />,
 				},
 			} ) }
 		</>

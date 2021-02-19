@@ -11,7 +11,7 @@ import {
 import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
-	JETPACK_CRM_PRODUCTS,
+	JETPACK_CRM_FREE_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -42,7 +42,7 @@ const PRODUCT_POSITION_IN_GRID_I5: Record< string, number > = {
 	...setProductsInPosition( JETPACK_SCAN_PRODUCTS, 50 ),
 	...setProductsInPosition( JETPACK_ANTI_SPAM_PRODUCTS, 60 ),
 	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 70 ),
-	...setProductsInPosition( JETPACK_CRM_PRODUCTS, 80 ),
+	...setProductsInPosition( JETPACK_CRM_FREE_PRODUCTS, 80 ),
 };
 
 const PRODUCT_POSITION_IN_GRID_SPP: Record< string, number > = {
@@ -58,6 +58,7 @@ const PRODUCT_POSITION_IN_GRID_SPP: Record< string, number > = {
 
 export const getProductPosition = ( slug: JetpackPlanSlugs | JetpackProductSlug ): number =>
 	getForCurrentCROIteration( {
-		[ Iterations.I5 ]: PRODUCT_POSITION_IN_GRID_I5[ slug ],
 		[ Iterations.SPP ]: PRODUCT_POSITION_IN_GRID_SPP[ slug ],
-	} ) ?? 100;
+	} ) ??
+	PRODUCT_POSITION_IN_GRID_I5[ slug ] ??
+	100;
