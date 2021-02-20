@@ -46,12 +46,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 
 		step( 'Can visit Gutenboarding page and see Onboarding block', async function () {
-			const page = await NewPage.Visit(
-				driver,
-				NewPage.getGutenboardingURL( {
-					query: 'flags=gutenboarding/language-picker',
-				} )
-			);
+			const page = await NewPage.Visit( driver, NewPage.getGutenboardingURL() );
 			const blockExists = await page.waitForBlock();
 			assert( blockExists, 'Onboarding block is not rendered' );
 		} );
