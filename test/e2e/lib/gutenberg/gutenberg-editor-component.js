@@ -70,11 +70,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.prePublishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
+		await this.driver.sleep( 1000 );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
 		await this.driver.sleep( 1000 );
 		const button = await this.driver.findElement( this.publishSelector );
 		await this.driver.executeScript( 'arguments[0].click();', button );
+		await this.driver.sleep( 1000 );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		if ( closePanel ) {
 			try {
