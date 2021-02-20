@@ -1214,9 +1214,9 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 	dependencies {
 		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
-			buildRule = lastSuccessful("+:trunk")
+			buildRule = tag("etk-release-build", "+:trunk")
 			artifactRules = """
-				+:editing-toolkit.zip!** => editing-toolkit-last-build
+				+:editing-toolkit.zip!** => etk-release-build
 				-:editing-toolkit.zip!build_meta.txt
 			""".trimIndent()
 		}
@@ -1333,25 +1333,26 @@ object WPComPlugins_EditorToolKit : BuildType({
 				yarn build
 
 				# Update plugin version in the plugin file and readme.txt.
-				# Note: we also update the latest build from trunk to this version to restore idempotence
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../editing-toolkit-last-build/full-site-editing-plugin.php
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../editing-toolkit-last-build/readme.txt
+				# Note: we also update the previous release build to the same version to restore idempotence
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
 
-				if diff -rq ./editing-toolkit-plugin/ ../../editing-toolkit-last-build/ ; then
-					echo "The build matches trunk. Therefore, this build has no effect."
-				else
-					echo "The build is different from trunk."
-					cd editing-toolkit-plugin/
-
-					# Metadata file with info for the download script.
-					tee build_meta.txt <<-EOM
-						commit_hash=%build.vcs.number%
-						commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
-						build_number=%build.number%
-						EOM
-
-					zip -r ../../../editing-toolkit.zip .
+				if ! diff -rq ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
+					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
+					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
 				fi
+
+				echo "The build is different from trunk; creating artifact."
+				cd editing-toolkit-plugin/
+
+				# Metadata file with info for the download script.
+				tee build_meta.txt <<-EOM
+					commit_hash=%build.vcs.number%
+					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+					build_number=%build.number%
+					EOM
+
+				zip -r ../../../editing-toolkit.zip .
 
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
