@@ -67,16 +67,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async publish( { visit = false, closePanel = true } = {} ) {
-		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.prePublishButtonSelector );
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-		await this.driver.sleep( 1000 );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
-		await this.driver.sleep( 1000 );
 		const button = await this.driver.findElement( this.publishSelector );
 		await this.driver.executeScript( 'arguments[0].click();', button );
-		await this.driver.sleep( 1000 );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		if ( closePanel ) {
 			try {
@@ -86,12 +81,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			}
 		}
 		await this.waitForSuccessViewPostNotice();
+
+		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
 
 		if ( visit ) {
-			const snackbar = await this.driver.findElement( snackBarNoticeLinkSelector );
-			await this.driver.executeScript( 'arguments[0].click();', snackbar );
+			await driverHelper.clickWhenClickable( this.driver, snackBarNoticeLinkSelector );
 		}
+
 		await this.driver.sleep( 1000 );
 		await driverHelper.acceptAlertIfPresent( this.driver );
 		return url;
@@ -531,10 +528,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closePublishedPanel() {
-		const closeButton = await this.driver.findElement(
+		return await driverHelper.clickWhenClickable(
+			this.driver,
 			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
 		);
-		return await this.driver.executeScript( 'arguments[0].click();', closeButton );
 	}
 
 	async ensureSaved() {
