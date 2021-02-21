@@ -1,19 +1,24 @@
 /**
- * External dependecies
+ * External dependencies
  */
 
 const webpackMiddleware = require( 'webpack-dev-middleware' );
 const webpack = require( 'webpack' );
-const chalk = require( 'chalk' );
 const hotMiddleware = require( 'webpack-hot-middleware' );
-const webpackConfig = require( 'webpack.config' );
 
-const config = require( 'config' );
+const chalk = require( 'chalk' );
+const webpackConfig = require( 'calypso/webpack.config' );
+const { execSync } = require( 'child_process' );
 
-const protocol = process.env.PROTOCOL || config( 'protocol' );
-const host = process.env.HOST || config( 'hostname' );
-const port = process.env.PORT || config( 'port' );
+const config = require( '@automattic/calypso-config' );
+
+const protocol = config( 'protocol' );
+const host = config( 'hostname' );
+const port = config( 'port' );
 const shouldProfile = process.env.PROFILE === 'true';
+const shouldBuildChunksMap =
+	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
+	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 
 function middleware( app ) {
 	const compiler = webpack( webpackConfig );
@@ -33,7 +38,16 @@ function middleware( app ) {
 		);
 	}
 
-	compiler.hooks.done.tap( 'Calypso', function() {
+	// In development environment we need to wait for initial webpack compile
+	// to finish and execute the build-languages script if translation chunks
+	// feature is enabled.
+	if ( shouldBuildChunksMap ) {
+		callbacks.push( () => {
+			execSync( 'yarn run build-languages' );
+		} );
+	}
+
+	compiler.hooks.done.tap( 'Calypso', function () {
 		built = true;
 
 		// Dequeue and call request handlers
@@ -45,8 +59,8 @@ function middleware( app ) {
 		// we need to skip two event loop ticks, because webpack's callback is
 		// also hooked on the "done" event, it calls nextTick to print the message
 		// and runs before our callback (calls app.use earlier in the code)
-		process.nextTick( function() {
-			process.nextTick( function() {
+		process.nextTick( function () {
+			process.nextTick( function () {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
 					console.info(
@@ -85,7 +99,7 @@ function middleware( app ) {
 					</p>
 					<p>
 						In the meantime, try to follow all the emotions of the allmoji:
-						<img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/fa5781cf7a8c5685.gif"
+						<img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/15b93529a828705f.gif"
 							width="36" style="vertical-align: middle;">
 				</body>
 			` );
@@ -96,27 +110,7 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-	app.use(
-		webpackMiddleware( compiler, {
-			mode: 'development',
-			// Development is always evergreen.
-			publicPath: '/calypso/evergreen/',
-			stats: {
-				colors: true,
-				hash: true,
-				version: false,
-				timings: true,
-				assets: false,
-				chunks: false,
-				modules: false,
-				cached: false,
-				reasons: false,
-				source: false,
-				errorDetails: true,
-				entrypoints: false,
-			},
-		} )
-	);
+	app.use( webpackMiddleware( compiler ) );
 }
 
 module.exports = middleware;

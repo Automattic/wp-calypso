@@ -23,7 +23,7 @@ import {
 	canPurchase,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const getPurchaseButtonLabel = props => {
+const getPurchaseButtonLabel = ( props ) => {
 	const { form, ratesTotal, translate } = props;
 
 	if ( form.needsPrintConfirmation ) {
@@ -51,7 +51,7 @@ const getPurchaseButtonLabel = props => {
 	return translate( 'Buy & Print' );
 };
 
-const PurchaseButton = props => {
+const PurchaseButton = ( props ) => {
 	const { form } = props;
 	return (
 		<Button

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -14,26 +13,26 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import CloseOnEscape from 'components/close-on-escape';
-import Notice from 'components/notice';
+import CloseOnEscape from 'calypso/components/close-on-escape';
+import Notice from 'calypso/components/notice';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
-import { getMimeType, url } from 'lib/media/utils';
+import { getMimeType, url } from 'calypso/lib/media/utils';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
 	setImageEditorFileInfo,
 	setImageEditorDefaultAspectRatio,
-} from 'state/ui/editor/image-editor/actions';
+} from 'calypso/state/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
 	isImageEditorImageLoaded,
-} from 'state/ui/editor/image-editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import QuerySites from 'components/data/query-sites';
-import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
+} from 'calypso/state/editor/image-editor/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import QuerySites from 'calypso/components/data/query-sites';
+import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
 import { getDefaultAspectRatio } from './utils';
 
 /**
@@ -106,13 +105,13 @@ class ImageEditor extends React.Component {
 		);
 	};
 
-	updateFileInfo = media => {
+	updateFileInfo = ( media ) => {
 		const { site } = this.props;
 
-		let src,
-			fileName = 'default',
-			mimeType = 'image/png',
-			title = 'default';
+		let src;
+		let fileName = 'default';
+		let mimeType = 'image/png';
+		let title = 'default';
 
 		if ( media ) {
 			src =
@@ -132,7 +131,7 @@ class ImageEditor extends React.Component {
 		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
 	};
 
-	convertBlobToImage = blob => {
+	convertBlobToImage = ( blob ) => {
 		const { onDone } = this.props;
 
 		// Create a new image from the canvas blob

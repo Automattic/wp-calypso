@@ -10,8 +10,12 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import { isRequestingPostsForQuery, isRequestingSitePost } from 'state/posts/selectors';
-import { requestSitePosts, requestSitePost, requestAllSitesPosts } from 'state/posts/actions';
+import { isRequestingPostsForQuery, isRequestingSitePost } from 'calypso/state/posts/selectors';
+import {
+	requestSitePosts,
+	requestSitePost,
+	requestAllSitesPosts,
+} from 'calypso/state/posts/actions';
 
 /**
  * Module variables
@@ -68,7 +72,7 @@ export default connect(
 			requestingPosts: isRequestingPostsForQuery( state, siteId, query ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestSitePosts,

@@ -5,10 +5,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { omit } from 'lodash';
 
-const Checkbox = props => {
+const Checkbox = ( props ) => {
 	const { className, disabled, checked, partialChecked } = props;
 	const otherProps = omit( props, [ 'className', 'partialChecked' ] );
 

@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const isRequesting = ( state = false, action ) => {
 	switch ( action.type ) {

@@ -222,7 +222,7 @@ export default function GridiconExample() {
 				<a href="/devdocs/design/social-logo">Social Logo</a>
 			</h2>
 			<div>
-				{ icons.map( icon => (
+				{ icons.map( ( icon ) => (
 					<Gridicon key={ icon } icon={ icon } size={ 48 } onClick={ () => handleClick( icon ) } />
 				) ) }
 			</div>

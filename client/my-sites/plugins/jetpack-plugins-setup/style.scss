@@ -32,16 +32,6 @@
 	text-align: center;
 }
 
-.jetpack-plugins-setup__need-manage {
-	.button {
-		float: right;
-	}
-
-	.button + .button {
-		margin-right: 16px;
-	}
-}
-
 .jetpack-plugins-setup .plugin-item {
 	width: 100%;
 
@@ -52,7 +42,7 @@
 
 .jetpack-plugins-setup .plugin-item__finished {
 	color: var( --color-neutral-light );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 1;
 	padding: 6px 0;
 }

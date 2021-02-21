@@ -10,10 +10,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import TileGrid from 'components/tile-grid';
-import Tile from 'components/tile-grid/tile';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import TileGrid from 'calypso/components/tile-grid';
+import Tile from 'calypso/components/tile-grid/tile';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies

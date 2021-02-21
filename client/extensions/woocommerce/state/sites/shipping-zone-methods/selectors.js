@@ -7,7 +7,7 @@ import { every, find, get, isArray, isObject, some, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAPIShippingZones } from '../shipping-zones/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
@@ -57,7 +57,7 @@ export const areShippingZoneMethodsLoaded = (
 		return true;
 	}
 	const wcsMethods = zone.methodIds
-		.map( id => {
+		.map( ( id ) => {
 			const method = getShippingZoneMethod( state, id, siteId );
 			if ( ! method || ! startsWith( method.methodType, 'wc_services' ) ) {
 				return null;
@@ -94,7 +94,7 @@ export const areShippingZoneMethodsLoading = (
 		return false;
 	}
 	const wcsMethods = zone.methodIds
-		.map( id => {
+		.map( ( id ) => {
 			const method = getShippingZoneMethod( state, id, siteId );
 			if ( ! method || ! startsWith( method.methodType, 'wc_services' ) ) {
 				return null;

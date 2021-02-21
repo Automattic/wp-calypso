@@ -10,9 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import Main from 'components/main';
-import SiteSelector from 'components/site-selector';
-import VisitSite from 'blocks/visit-site';
+import Main from 'calypso/components/main';
+import SiteSelector from 'calypso/components/site-selector';
+import VisitSite from 'calypso/blocks/visit-site';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -24,7 +25,17 @@ class Sites extends Component {
 		siteBasePath: PropTypes.string.isRequired,
 	};
 
-	filterSites = site => {
+	componentDidMount() {
+		const path = this.getPath();
+		if ( this.props.fromSite && path ) {
+			recordTracksEvent( 'calypso_site_selector_site_missing', {
+				path,
+				site: this.props.fromSite,
+			} );
+		}
+	}
+
+	filterSites = ( site ) => {
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
@@ -37,11 +48,6 @@ class Sites extends Component {
 			return ! site.jetpack || site.isSiteUpgradeable;
 		}
 
-		// No support for Gutenberg on VIP.
-		if ( /^\/block-editor/.test( path ) ) {
-			return ! site.is_vip;
-		}
-
 		if ( /^\/hosting-config/.test( path ) ) {
 			if ( ! site.capabilities.view_hosting ) {
 				return false;
@@ -51,18 +57,34 @@ class Sites extends Component {
 			return true;
 		}
 
+		// Supported on Simple and Atomic Sites
+		if ( /^\/home/.test( path ) ) {
+			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
+		}
+
 		return site;
 	};
+
+	/**
+	 * Get the site path the user is trying to access.
+	 *
+	 * @returns {string} The path.
+	 */
+	getPath() {
+		let path = this.props.siteBasePath.split( '?' )[ 0 ].split( '/' )[ 1 ];
+		if ( typeof path !== 'undefined' ) {
+			path = path.toLowerCase();
+		}
+
+		return path;
+	}
 
 	getHeaderText() {
 		if ( this.props.getSiteSelectionHeaderText ) {
 			return this.props.getSiteSelectionHeaderText();
 		}
 
-		let path = this.props.siteBasePath.split( '?' )[ 0 ].split( '/' )[ 1 ];
-		if ( typeof path !== 'undefined' ) {
-			path = path.toLowerCase();
-		}
+		let path = this.getPath();
 
 		const { translate } = this.props;
 
@@ -102,6 +124,9 @@ class Sites extends Component {
 				break;
 			case 'hosting-config':
 				path = translate( 'Hosting Configuration' );
+				break;
+			case 'jetpack-search':
+				path = 'Jetpack Search';
 				break;
 		}
 

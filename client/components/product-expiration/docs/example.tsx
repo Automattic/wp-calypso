@@ -20,6 +20,7 @@ function ProductExpirationExample() {
 					<ProductExpiration
 						purchaseDateMoment={ moment() }
 						expiryDateMoment={ moment() }
+						renewDateMoment={ moment() }
 						isRefundable
 					/>
 				</em>
@@ -35,7 +36,7 @@ function ProductExpirationExample() {
 				Product subscription expires in future:
 				<br />
 				<em>
-					<ProductExpiration expiryDateMoment={ moment().add( 1, 'day' ) } />
+					<ProductExpiration renewDateMoment={ moment().add( 1, 'day' ) } />
 				</em>
 			</p>
 		</>

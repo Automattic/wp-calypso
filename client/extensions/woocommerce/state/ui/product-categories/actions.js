@@ -15,6 +15,7 @@ import {
 /**
  * Generates a new product category placeholder ID
  * This is used for new creates.
+ *
  * @returns {object} A new unique placeholder ID.
  */
 export function generateProductCategoryId() {

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestConciergeAppointmentDetails } from 'state/concierge/actions';
+import { requestConciergeAppointmentDetails } from 'calypso/state/concierge/actions';
 
 class QueryConciergeAppointmentDetails extends Component {
 	UNSAFE_componentWillMount() {
@@ -20,6 +20,6 @@ class QueryConciergeAppointmentDetails extends Component {
 	}
 }
 
-export default connect( state => state, { requestConciergeAppointmentDetails } )(
+export default connect( ( state ) => state, { requestConciergeAppointmentDetails } )(
 	QueryConciergeAppointmentDetails
 );

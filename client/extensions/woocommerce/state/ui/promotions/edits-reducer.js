@@ -6,7 +6,7 @@ import { uniqueId, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_PROMOTION_EDIT,
 	WOOCOMMERCE_PROMOTION_EDIT_CLEAR,
@@ -56,7 +56,7 @@ function editPromotion( promotionsArray, promotion, data ) {
 	let found = false;
 
 	// Look for this object in the array first.
-	const updatedArray = prevArray.map( p => {
+	const updatedArray = prevArray.map( ( p ) => {
 		if ( isEqual( promotion.id, p.id ) ) {
 			found = true;
 			return { ...p, ...data };

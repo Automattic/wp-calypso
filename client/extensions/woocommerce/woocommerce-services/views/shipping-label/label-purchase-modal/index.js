@@ -17,7 +17,7 @@ import CustomsStep from './customs-step';
 import RatesStep from './rates-step';
 import Sidebar from './sidebar';
 import PurchaseButton from './purchase-button';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { exitPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
@@ -25,7 +25,7 @@ import {
 	isCustomsFormRequired,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const PurchaseDialog = props => {
+const PurchaseDialog = ( props ) => {
 	const { loaded, translate } = props;
 
 	if ( ! loaded ) {
@@ -97,12 +97,12 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	return {
 		loaded,
 		form: loaded && shippingLabel.form,
-		showPurchaseDialog: shippingLabel.showPurchaseDialog,
+		showPurchaseDialog: shippingLabel && shippingLabel.showPurchaseDialog,
 		isCustomsFormRequired: isCustomsFormRequired( state, orderId, siteId ),
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { exitPrintingFlow }, dispatch );
 };
 

@@ -7,7 +7,7 @@ import { get, omit, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSerializedReviewsQuery } from './utils';
 
 /**
@@ -69,7 +69,7 @@ export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state
 		[]
 	);
 	if ( reviewIdsOnPage.length ) {
-		return reviewIdsOnPage.map( id => reviews[ id ] );
+		return reviewIdsOnPage.map( ( id ) => reviews[ id ] );
 	}
 	return false;
 };
@@ -78,7 +78,7 @@ export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state
  * @param {object} state Whole Redux state tree
  * @param {number} reviewId ID number of a review
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @returns {object|Null} The requested review object, or null if not available
+ * @returns {object|null} The requested review object, or null if not available
  */
 export const getReview = ( state, reviewId, siteId = getSelectedSiteId( state ) ) => {
 	return get(

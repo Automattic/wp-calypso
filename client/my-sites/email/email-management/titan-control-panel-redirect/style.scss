@@ -1,0 +1,25 @@
+.titan-control-panel-redirect__main {
+	.empty-content__illustration {
+		/* Convert image to 70% grey */
+		filter: invert( 0.3 );
+		max-height: 120px;
+	}
+	.empty-content {
+		.card {
+			border: 1px solid var( --color-border-subtle );
+			box-shadow: none;
+		}
+		.spinner {
+			margin-top: 16px;
+		}
+		h1 {
+			font-size: $font-title-medium;
+			margin-top: 40px;
+		}
+		hr {
+			margin-bottom: 40px;
+			margin-top: 40px;
+			width: 100px;
+		}
+	}
+}

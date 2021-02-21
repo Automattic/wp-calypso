@@ -10,7 +10,7 @@ import { forEach, get, omit } from 'lodash';
  * @param  {object}   settings   Raw settings.
  * @returns {object}              Normalized settings.
  */
-export const normalizeSettings = settings => {
+export const normalizeSettings = ( settings ) => {
 	return Object.keys( settings ).reduce( ( memo, key ) => {
 		switch ( key ) {
 			case 'carousel_background_color':
@@ -22,10 +22,11 @@ export const normalizeSettings = settings => {
 			case 'jetpack_testimonial_posts_per_page':
 			case 'jetpack_portfolio_posts_per_page':
 				break;
-			case 'jetpack_protect_global_whitelist':
-				const whitelist = get( settings[ key ], [ 'local' ], [] );
-				memo[ key ] = whitelist.join( '\n' );
+			case 'jetpack_protect_global_whitelist': {
+				const explicitlyAllowedIps = get( settings[ key ], [ 'local' ], [] );
+				memo[ key ] = explicitlyAllowedIps.join( '\n' );
 				break;
+			}
 			case 'infinite-scroll':
 				break;
 			case 'infinite_scroll':
@@ -52,7 +53,7 @@ export const normalizeSettings = settings => {
  * @param  {object}   settings   Settings.
  * @returns {object}              Normalized settings.
  */
-export const sanitizeSettings = settings => {
+export const sanitizeSettings = ( settings ) => {
 	return Object.keys( settings ).reduce( ( memo, key ) => {
 		switch ( key ) {
 			// Jetpack's settings endpoint in version 4.9 does not support receiving 'akismet' among the settings
@@ -90,7 +91,7 @@ export const sanitizeSettings = settings => {
  * @param  {object}   settings   Settings.
  * @returns {object}              Normalized settings.
  */
-export const filterSettingsByActiveModules = settings => {
+export const filterSettingsByActiveModules = ( settings ) => {
 	const moduleSettingsList = {
 		minileven: [ 'wp_mobile_excerpt', 'wp_mobile_featured_images', 'wp_mobile_app_promos' ],
 		subscriptions: [ 'stb_enabled', 'stc_enabled' ],

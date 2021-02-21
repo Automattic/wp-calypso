@@ -39,7 +39,7 @@
 	bottom: 0;
 	left: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		top: 5%;
 		bottom: 5%;
 		left: 5%;
@@ -47,7 +47,7 @@
 		width: 90%;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		left: 12.5%;
 		right: 12.5%;
 		width: 75%;
@@ -87,7 +87,7 @@
 
 .edit-gravatar__explanation {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 	font-weight: 400;
 	display: inline-block;

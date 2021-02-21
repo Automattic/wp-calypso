@@ -15,11 +15,11 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { DateRange } from '../index.js';
-import DatePicker from 'components/date-picker';
-import DateRangeTrigger from 'components/date-range/trigger';
-import DateRangeInputs from 'components/date-range/inputs';
-import DateRangeHeader from 'components/date-range/header';
-import Popover from 'components/popover';
+import DatePicker from 'calypso/components/date-picker';
+import DateRangeTrigger from 'calypso/components/date-range/trigger';
+import DateRangeInputs from 'calypso/components/date-range/inputs';
+import DateRangeHeader from 'calypso/components/date-range/header';
+import Popover from 'calypso/components/popover';
 
 function dateToLocaleString( date ) {
 	return moment.isDate( date ) || moment.isMoment( date ) ? moment( date ).format( 'L' ) : date;
@@ -30,7 +30,7 @@ describe( 'DateRange', () => {
 
 	beforeEach( () => {
 		// Mock matchMedia
-		window.matchMedia = jest.fn().mockImplementation( query => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
 			return {
 				matches: true,
 				media: query,
@@ -282,7 +282,7 @@ describe( 'DateRange', () => {
 		} );
 
 		test( 'should set 2 month calendar view on screens >480px by default', () => {
-			window.matchMedia = jest.fn().mockImplementation( query => {
+			window.matchMedia = jest.fn().mockImplementation( ( query ) => {
 				return {
 					...matchMediaDefaults,
 					matches: true, // > 480px
@@ -297,7 +297,7 @@ describe( 'DateRange', () => {
 		} );
 
 		test( 'should set 1 month calendar view on screens <480px by default', () => {
-			window.matchMedia = jest.fn().mockImplementation( query => {
+			window.matchMedia = jest.fn().mockImplementation( ( query ) => {
 				return {
 					...matchMediaDefaults,
 					matches: false, // < 480px

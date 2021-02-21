@@ -10,10 +10,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { Card } from '@automattic/components';
 import Header from './header';
-import SettingsForm from 'me/notification-settings/settings-form';
+import SettingsForm from 'calypso/me/notification-settings/settings-form';
 
 class BlogSettings extends Component {
 	static propTypes = {

@@ -10,9 +10,9 @@ import { useTranslate } from 'i18n-calypso';
  */
 import ActivityLogBanner from './index';
 import { ProgressBar } from '@automattic/components';
-import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
-import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import { useLocalizedMoment } from 'components/localized-moment';
+import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
+import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Normalize timestamp values
@@ -28,7 +28,7 @@ import { useLocalizedMoment } from 'components/localized-moment';
  * @param {number} ts timestamp in 's' or 'ms'
  * @returns {number} timestamp in 'ms'
  */
-const ms = ts =>
+const ms = ( ts ) =>
 	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
 		? ts * 1000 // convert s -> ms
 		: ts;

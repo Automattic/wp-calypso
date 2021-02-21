@@ -1,4 +1,8 @@
 Dockerfile
+Dockerfile.base
+bin/build-docker.sh
+/.tsc-cache
+/.cache
 .dockerignore
 .git
 .npm-debug.log*
@@ -8,10 +12,6 @@ Dockerfile
 /cached-requests.json
 **/node_modules
 /public
-/server/bundler/*.json
-/server/devdocs/components-usage-stats.json
-/server/devdocs/proptypes-index.json
-/server/devdocs/search-index.js
 /client/server/bundler/*.json
 /client/server/devdocs/components-usage-stats.json
 /client/server/devdocs/proptypes-index.json
@@ -24,4 +24,3 @@ Dockerfile
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
-/packages/*/types/

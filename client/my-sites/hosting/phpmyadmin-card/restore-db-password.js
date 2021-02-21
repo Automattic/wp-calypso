@@ -9,15 +9,15 @@ import { localize } from 'i18n-calypso';
  */
 import { Dialog } from '@automattic/components';
 import { connect } from 'react-redux';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { restoreDatabasePassword } from 'state/hosting/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { restoreDatabasePassword } from 'calypso/state/hosting/actions';
 import {
 	withAnalytics,
 	composeAnalytics,
 	recordTracksEvent,
 	recordGoogleEvent,
 	bumpStat,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 
 const RestorePasswordDialog = ( {
 	isVisible,
@@ -64,7 +64,7 @@ const RestorePasswordDialog = ( {
 	);
 };
 
-const restore = siteId =>
+const restore = ( siteId ) =>
 	withAnalytics(
 		composeAnalytics(
 			recordGoogleEvent(
@@ -78,7 +78,7 @@ const restore = siteId =>
 	);
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteId: getSelectedSiteId( state ),
 	} ),
 	{

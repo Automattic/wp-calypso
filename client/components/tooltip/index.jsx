@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -9,8 +9,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import { useMobileBreakpoint } from 'lib/viewport/react';
+import Popover from 'calypso/components/popover';
 
 /**
  * Style dependencies
@@ -55,6 +54,8 @@ Tooltip.propTypes = {
 	status: PropTypes.string,
 	showDelay: PropTypes.number,
 	showOnMobile: PropTypes.bool,
+	children: PropTypes.element,
+	context: PropTypes.any,
 };
 
 Tooltip.defaultProps = {

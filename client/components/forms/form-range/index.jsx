@@ -44,7 +44,7 @@ export default class extends React.Component {
 		return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.props.onChange( event );
 	};
 

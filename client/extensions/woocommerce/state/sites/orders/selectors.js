@@ -7,7 +7,7 @@ import { filter, get, isFinite, omit, sumBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSerializedOrdersQuery } from './utils';
 
 /**
@@ -157,7 +157,7 @@ export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state 
 		[]
 	);
 	if ( orderIdsOnPage.length ) {
-		return orderIdsOnPage.map( id => orders[ id ] );
+		return orderIdsOnPage.map( ( id ) => orders[ id ] );
 	}
 	return false;
 };
@@ -166,7 +166,7 @@ export const getOrders = ( state, query = {}, siteId = getSelectedSiteId( state 
  * @param {object} state Whole Redux state tree
  * @param {number} orderId ID number of an order
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @returns {object|Null} The requested order object, or null if not available
+ * @returns {object|null} The requested order object, or null if not available
  */
 export const getOrder = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -208,7 +208,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 		[ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'items' ],
 		{}
 	);
-	return filter( orders, function( order ) {
+	return filter( orders, function ( order ) {
 		const { status } = order;
 		return 'pending' === status || 'processing' === status || 'on-hold' === status;
 	} );
@@ -222,7 +222,7 @@ export const getNewOrders = ( state, siteId = getSelectedSiteId( state ) ) => {
 export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
 
-	return filter( orders, function( order ) {
+	return filter( orders, function ( order ) {
 		const { status, payment_method } = order;
 		return ! ( 'pending' === status && 'paypal' === payment_method );
 	} );
@@ -235,7 +235,7 @@ export const getNewOrdersWithoutPayPalPending = ( state, siteId = getSelectedSit
  */
 export const getNewOrdersRevenue = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const orders = getNewOrders( state, siteId );
-	return sumBy( orders, order => parseFloat( order.total ) );
+	return sumBy( orders, ( order ) => parseFloat( order.total ) );
 };
 
 /**
@@ -248,5 +248,5 @@ export const getNewOrdersWithoutPayPalPendingRevenue = (
 	siteId = getSelectedSiteId( state )
 ) => {
 	const orders = getNewOrdersWithoutPayPalPending( state, siteId );
-	return sumBy( orders, order => parseFloat( order.total ) );
+	return sumBy( orders, ( order ) => parseFloat( order.total ) );
 };

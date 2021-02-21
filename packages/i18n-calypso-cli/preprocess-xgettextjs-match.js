@@ -21,7 +21,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 	const args = match.arguments;
 	let options;
 
-	[ 'single', 'plural', 'options' ].slice( 0, args.length ).forEach( function( field, i ) {
+	[ 'single', 'plural', 'options' ].slice( 0, args.length ).forEach( function ( field, i ) {
 		if ( 'StringLiteral' === args[ i ].type ) {
 			finalProps[ field ] = makeDoubleQuoted( args[ i ].extra.raw );
 		} else if ( 'BinaryExpression' === args[ i ].type ) {
@@ -35,7 +35,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 
 	if ( 'undefined' !== typeof options ) {
 		// map options to finalProps object
-		options.properties.forEach( function( property ) {
+		options.properties.forEach( function ( property ) {
 			// key might be an  Identifier (name), or a StringLiteral (value)
 			const key = property.key.name || property.key.value;
 			if ( 'StringLiteral' === property.value.type ) {
@@ -45,7 +45,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 			} else if ( 'ObjectExpression' === property.value.type && 'original' === key ) {
 				// Get pluralization strings. This clause can be removed when all translations
 				// are updated to the new approach for plurals.
-				property.value.properties.forEach( function( innerProp ) {
+				property.value.properties.forEach( function ( innerProp ) {
 					if ( 'StringLiteral' === innerProp.value.type ) {
 						finalProps[ innerProp.key.name || innerProp.key.value ] = makeDoubleQuoted(
 							innerProp.value.extra.raw
@@ -76,6 +76,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 /**
  * Long translation strings can be broken into multiple strings concatenated with the + operator.
  * This function concatenates the substrings into a single string.
+ *
  * @param  {object} ASTNode - the BinaryExpression object returned from the AST parser
  * @returns {string}          - the concatenated string
  */
@@ -143,6 +144,7 @@ function makeDoubleQuoted( literal ) {
 /**
  * Takes a string argument and turns it into a valid string representation for most languages/format (with double quotes)
  * Anything else than a string is left unchanged
+ *
  * @param  {string} input  - origin string or other type of input
  * @returns {string}        - universal representation of string or input unchanged
  */

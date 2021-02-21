@@ -14,11 +14,11 @@ export const openPaymentMethodForEdit = ( siteId, id ) => {
 	return { type: WOOCOMMERCE_PAYMENT_METHOD_OPEN, siteId, id };
 };
 
-export const closeEditingPaymentMethod = siteId => {
+export const closeEditingPaymentMethod = ( siteId ) => {
 	return { type: WOOCOMMERCE_PAYMENT_METHOD_CLOSE, siteId };
 };
 
-export const cancelEditingPaymentMethod = siteId => {
+export const cancelEditingPaymentMethod = ( siteId ) => {
 	return { type: WOOCOMMERCE_PAYMENT_METHOD_CANCEL, siteId };
 };
 

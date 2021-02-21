@@ -7,7 +7,7 @@ import { reject, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 	WOOCOMMERCE_REVIEW_REPLY_CREATED,
@@ -71,7 +71,7 @@ export function replyUpdated( state, action ) {
 
 	const repliesForReview = existingReplies[ reviewId ];
 
-	const updatedReplies = repliesForReview.map( reviewReply => {
+	const updatedReplies = repliesForReview.map( ( reviewReply ) => {
 		if ( isEqual( replyId, reviewReply.id ) ) {
 			return reply;
 		}

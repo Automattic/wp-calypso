@@ -9,7 +9,6 @@ export { default as getSectionName } from './get-section-name';
 export { default as getSectionGroup } from './get-section-group';
 export { default as isSiteSection } from './is-site-section';
 export { default as isSectionLoading } from './is-section-loading';
-export { default as isSectionIsomorphic } from './is-section-isomorphic';
 export { default as isPreviewShowing } from './is-preview-showing';
-export { default as hasSidebar } from './has-sidebar';
 export { default as masterbarIsVisible } from './masterbar-is-visible';
+export { default as getSidebarIsCollapsed } from './sidebar-visibility';

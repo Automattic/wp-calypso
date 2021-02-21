@@ -1,8 +1,12 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import { noop } from 'lodash';
 
 /**
@@ -16,7 +20,7 @@ describe( '<Composer />', () => {
 			const onSendNotTyping = jest.fn();
 			const onSendTyping = jest.fn();
 			const onSetCurrentMessage = jest.fn();
-			const wrapper = shallow(
+			const wrapper = mount(
 				<Composer
 					message={ 'hey' }
 					onSetCurrentMessage={ onSetCurrentMessage }
@@ -35,7 +39,7 @@ describe( '<Composer />', () => {
 			const onSendNotTyping = jest.fn();
 			const onSendTyping = jest.fn();
 			const onSetCurrentMessage = jest.fn();
-			const wrapper = shallow(
+			const wrapper = mount(
 				<Composer
 					message={ '' }
 					onSetCurrentMessage={ onSetCurrentMessage }
@@ -55,7 +59,7 @@ describe( '<Composer />', () => {
 		test( 'should call message and noTyping props if message is not empty', () => {
 			const onSendMessage = jest.fn();
 			const onSendNotTyping = jest.fn();
-			const wrapper = shallow(
+			const wrapper = mount(
 				<Composer
 					message={ 'hey' }
 					onSendMessage={ onSendMessage }
@@ -71,7 +75,7 @@ describe( '<Composer />', () => {
 		test( 'should call message and noTyping props if message is empty', () => {
 			const onSendMessage = jest.fn();
 			const onSendNotTyping = jest.fn();
-			const wrapper = shallow(
+			const wrapper = mount(
 				<Composer
 					message={ '' }
 					onSendMessage={ onSendMessage }

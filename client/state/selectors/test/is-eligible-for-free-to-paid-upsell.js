@@ -6,18 +6,20 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isEligibleForFreeToPaidUpsell from '../is-eligible-for-free-to-paid-upsell';
-import { isJetpackSite } from 'state/sites/selectors';
-import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
-import isVipSite from 'state/selectors/is-vip-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
+import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
-jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
-jest.mock( 'state/sites/selectors', () => ( { isJetpackSite: require( 'sinon' ).stub() } ) );
-jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
-jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
-jest.mock( 'state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
+jest.mock( 'calypso/state/selectors/can-current-user', () => require( 'sinon' ).stub() );
+jest.mock( 'calypso/state/sites/selectors', () => ( {
+	isJetpackSite: require( 'sinon' ).stub(),
+} ) );
+jest.mock( 'calypso/state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
+jest.mock( 'calypso/state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
+jest.mock( 'calypso/state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
 
 describe( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';

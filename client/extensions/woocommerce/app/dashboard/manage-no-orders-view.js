@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -135,7 +135,7 @@ class ManageNoOrdersView extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	hasProducts: getCountProducts( state ) > 0,
 	shopPageId: getProductsSettingValue( state, 'woocommerce_shop_page_id' ),
 } ) )( localize( ManageNoOrdersView ) );

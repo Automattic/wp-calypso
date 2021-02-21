@@ -1,177 +1,148 @@
 /**
  * External dependencies
  */
-import { __ as NO__ } from '@wordpress/i18n';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { useLayoutEffect, useRef, FunctionComponent } from 'react';
 import classnames from 'classnames';
-import PageLayoutSelector from './page-layout-selector';
-import { partition } from 'lodash';
-import { Portal } from 'reakit/Portal';
-import { useDialogState, Dialog, DialogBackdrop } from 'reakit/Dialog';
-import { useSpring, animated } from 'react-spring';
+import { Tooltip } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
+import React from 'react';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import DesignCard from './design-card';
 
+import { useTrackStep } from '../../hooks/use-track-step';
+import useStepNavigation from '../../hooks/use-step-navigation';
+import Badge from '../../components/badge';
+import MShotsImage from '../../components/mshots-image';
+import { getDesignImageUrl, getDesignUrl, mShotOptions } from '../../available-designs';
+import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
+import type { Design } from '../../stores/onboard/types';
+import { useIsAnchorFm } from '../../path';
+import { isEnabled } from '@automattic/calypso-config';
+
+/**
+ * Style dependencies
+ */
 import './style.scss';
-import { VerticalsTemplates } from '@automattic/data-stores';
 
-type Template = VerticalsTemplates.Template;
+const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
-const VERTICALS_TEMPLATES_STORE = VerticalsTemplates.register();
+const DesignSelector: React.FunctionComponent = () => {
+	const { __ } = useI18n();
+	const locale = useLocale();
+	const { goBack, goNext } = useStepNavigation();
 
-const DesignSelector: FunctionComponent = () => {
-	const { selectedDesign, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE ).getState()
+	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
+	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
+		select( ONBOARD_STORE )
 	);
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+	const isAnchorFmSignup = useIsAnchorFm();
 
-	// @FIXME: If we don't have an ID (because we're dealing with a user-supplied vertical that
-	// WordPress.com doesn't know about), fall back to the 'm1' (Business) vertical. This is the
-	// vertical that the endpoint would fall back to anyway if an unknown ID is passed.
-	// This seems okay since the list of templates currently appears to be the same for all verticals
-	// anyway.
-	// We should modify the endpoint (or rather, add a `verticals/templates` route that doesn't require
-	// a vertical ID) for this case.
-	const templates =
-		useSelect( select =>
-			select( VERTICALS_TEMPLATES_STORE ).getTemplates( siteVertical?.id ?? 'm1' )
-		) ?? [];
-
-	const [ designs, otherTemplates ] = partition(
-		templates,
-		( { category } ) => category === 'home'
-	);
-
-	const resetState = () => {
-		setSelectedDesign( undefined );
-	};
-
-	const hasSelectedDesign = !! selectedDesign;
-
-	const headingContainer = useRef< HTMLDivElement >( null );
-	const selectionTransitionShift = useRef< number >( 0 );
-	useLayoutEffect( () => {
-		if ( headingContainer.current ) {
-			// We'll use this height to move the heading up out of the viewport.
-			const rect = headingContainer.current.getBoundingClientRect();
-			selectionTransitionShift.current = rect.height;
-		}
-	}, [ selectedDesign ] );
-
-	const dialogId = 'page-selector-modal';
-	const dialog = useDialogState( { visible: false, baseId: dialogId } );
-
-	const descriptionOnRight: boolean =
-		!! selectedDesign &&
-		designs.findIndex( ( { slug } ) => slug === selectedDesign.slug ) % 2 === 0;
-
-	const designSelectorSpring = useSpring( {
-		transform: `translate3d( 0, ${
-			hasSelectedDesign ? -selectionTransitionShift.current : 0
-		}px, 0 )`,
-	} );
-
-	const descriptionContainerSpring = useSpring( {
-		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0 )`,
-		visibility: hasSelectedDesign ? 'visible' : 'hidden',
-	} );
-
-	const pageSelectorSpring = useSpring( {
-		transform: `translate3d( 0, ${ hasSelectedDesign ? '0' : '100vh' }, 0 )`,
-		onStart: () => {
-			hasSelectedDesign && dialog.show();
-		},
-		onRest: () => {
-			! hasSelectedDesign && dialog.hide();
-		},
-	} );
+	useTrackStep( 'DesignSelection', () => ( {
+		selected_design: getSelectedDesign()?.slug,
+		is_selected_design_premium: hasPaidDesign(),
+	} ) );
 
 	return (
-		<animated.div style={ designSelectorSpring }>
-			<div
-				className="design-selector__header-container"
-				aria-hidden={ hasSelectedDesign ? 'true' : undefined }
-				ref={ headingContainer }
-			>
-				<h1 className="design-selector__title">
-					{ NO__( 'Choose a starting design for your site' ) }
-				</h1>
-				<h2 className="design-selector__subtitle">
-					{ NO__( "You'll be able to customize your new site in hundreds of ways." ) }
-				</h2>
-			</div>
-			<div
-				className={ classnames( 'design-selector__grid-container', {
-					'has-selected-design': hasSelectedDesign,
-				} ) }
-			>
-				<div className="design-selector__grid">
-					{ designs.map( design => (
-						<DesignCard
-							key={ design.slug }
-							dialogId={ dialogId }
-							design={ design }
-							style={
-								selectedDesign?.slug === design.slug
-									? {
-											gridRow: 1,
-											gridColumn: descriptionOnRight ? 1 : 2,
-									  }
-									: {
-											visibility: hasSelectedDesign ? 'hidden' : undefined,
-									  }
-							}
-							onClick={ () => {
-								window.scrollTo( 0, 0 );
-								setSelectedDesign( design );
-							} }
-						/>
-					) ) }
+		<div className="gutenboarding-page design-selector">
+			<div className="design-selector__header">
+				<div className="design-selector__heading">
+					<Title>{ __( 'Choose a design' ) }</Title>
+					<SubTitle>
+						{ isAnchorFmSignup
+							? __(
+									'Pick a homepage layout for your podcast site. You can customize or change it later.'
+							  )
+							: __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
+					</SubTitle>
 				</div>
+				<ActionButtons>
+					<BackButton onClick={ goBack } />
+				</ActionButtons>
 			</div>
-
-			<animated.div
-				className={ classnames( 'design-selector__description-container', {
-					'on-right-side': descriptionOnRight,
-				} ) }
-				style={ descriptionContainerSpring }
-			>
-				<div className="design-selector__description-title">{ selectedDesign?.title }</div>
-				<div className="design-selector__description-description">
-					{ /* @TODO: Real description? */ }
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-					ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-					ullamco laboris nisi ut aliquip ex ea commodo consequat.
-				</div>
-			</animated.div>
-
-			<Portal>
-				<DialogBackdrop
-					visible={ hasSelectedDesign }
-					className="design-selector__page-layout-backdrop"
-				/>
-			</Portal>
-
-			<Dialog
-				{ ...dialog }
-				hide={ resetState }
-				aria-labelledby="page-layout-selector__title"
-				hideOnClickOutside
-				hideOnEsc
-			>
-				<animated.div
-					className="design-selector__page-layout-container"
-					style={ pageSelectorSpring }
+			<div className="design-selector__design-grid">
+				<div
+					className={ isAnchorFmSignup ? 'design-selector__grid-minimal' : 'design-selector__grid' }
 				>
-					<PageLayoutSelector templates={ otherTemplates } />
-				</animated.div>
-			</Dialog>
-		</animated.div>
+					{ getRandomizedDesigns()
+						.featured.filter(
+							( design ) =>
+								// TODO Add finalized design templates to client/landing/gutenboarding/available-designs-config.json
+								// along with is_anchorfm prop
+								isAnchorFmSignup === design.features.includes( 'anchorfm' )
+						)
+						.map( ( design ) => (
+							<button
+								key={ design.slug }
+								className="design-selector__design-option"
+								data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
+								onClick={ () => {
+									setSelectedDesign( design );
+
+									// Update fonts to the design defaults
+									setFonts( design.fonts );
+
+									goNext();
+								} }
+							>
+								<span
+									className={ classnames(
+										'design-selector__image-frame',
+										isEnabled( 'gutenboarding/landscape-preview' )
+											? 'design-selector__landscape'
+											: 'design-selector__portrait',
+										design.preview === 'static'
+											? 'design-selector__static'
+											: 'design-selector__scrollable'
+									) }
+								>
+									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
+										<MShotsImage
+											url={ getDesignUrl( design, locale ) }
+											aria-labelledby={ makeOptionId( design ) }
+											alt=""
+											options={ mShotOptions() }
+										/>
+									) : (
+										<img
+											alt=""
+											aria-labelledby={ makeOptionId( design ) }
+											src={ getDesignImageUrl( design ) }
+										/>
+									) }
+								</span>
+								<span className="design-selector__option-overlay">
+									<span id={ makeOptionId( design ) } className="design-selector__option-meta">
+										<span className="design-selector__option-name">{ design.title }</span>
+										{ design.is_premium && (
+											<Tooltip
+												position="bottom center"
+												text={ __( 'Requires a Personal plan or above' ) }
+											>
+												<div className="design-selector__premium-container">
+													<Badge className="design-selector__premium-badge">
+														<JetpackLogo
+															className="design-selector__premium-badge-logo"
+															size={ 20 }
+														/>
+														<span className="design-selector__premium-badge-text">
+															{ __( 'Premium' ) }
+														</span>
+													</Badge>
+												</div>
+											</Tooltip>
+										) }
+									</span>
+								</span>
+							</button>
+						) ) }
+				</div>
+			</div>
+		</div>
 	);
 };
 

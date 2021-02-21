@@ -16,8 +16,8 @@ import {
 	POST_DELETE,
 	POST_SAVE,
 	POSTS_RECEIVE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { countsSchema } from './schema';
 
 /**
@@ -147,7 +147,7 @@ export const counts = ( () => {
 				return state;
 			}
 			case POSTS_RECEIVE: {
-				action.posts.forEach( post => {
+				action.posts.forEach( ( post ) => {
 					const postStatusKey = getPostStatusKey( post.site_ID, post.ID );
 					const postStatus = postStatuses[ postStatusKey ];
 

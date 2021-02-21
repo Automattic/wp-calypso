@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
 
 import {
 	ORDER_TRANSACTION_FETCH,
 	ORDER_TRANSACTION_FETCH_ERROR,
 	ORDER_TRANSACTION_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const items = keyedReducer(
 	'orderId',
@@ -59,8 +60,10 @@ export const errors = keyedReducer(
 	} )
 );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	isFetching,
 	errors,
 } );
+
+export default withStorageKey( 'orderTransactions', combinedReducer );

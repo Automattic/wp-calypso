@@ -16,8 +16,10 @@ describe( 'getNormalizedPath', () => {
 		];
 
 		// Cartesian product: paths * queries
-		pathnames.forEach( pathname =>
-			queries.forEach( query => expect( getNormalizedPath( pathname, query ) ).toMatchSnapshot() )
+		pathnames.forEach( ( pathname ) =>
+			queries.forEach( ( query ) =>
+				expect( getNormalizedPath( pathname, query ) ).toMatchSnapshot()
+			)
 		);
 	} );
 

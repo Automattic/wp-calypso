@@ -17,7 +17,7 @@ export default class ShareButtonExample extends PureComponent {
 		return (
 			<div>
 				<div>
-					{ keys( services ).map( service => (
+					{ keys( services ).map( ( service ) => (
 						<ShareButton
 							key={ service }
 							size={ 48 }
@@ -28,7 +28,7 @@ export default class ShareButtonExample extends PureComponent {
 					) ) }
 				</div>
 				<div>
-					{ keys( services ).map( service => (
+					{ keys( services ).map( ( service ) => (
 						<ShareButton
 							key={ service }
 							size={ 48 }

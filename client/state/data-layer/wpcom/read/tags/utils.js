@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { map, compact, concat, isObject, isArray } from 'lodash';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Normalize response from the api so whether we get back a single tag or a list of tags
@@ -29,7 +29,7 @@ export function fromApi( apiResponse ) {
 		)
 	);
 
-	return map( tags, tag => ( {
+	return map( tags, ( tag ) => ( {
 		id: tag.ID,
 		displayName: decodeEntities( tag.display_name ),
 		url: `/tag/${ tag.slug }`,

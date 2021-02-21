@@ -6,18 +6,18 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import FilePicker from 'components/file-picker';
-import DropZone from 'components/drop-zone';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import notices from 'notices';
+import FilePicker from 'calypso/components/file-picker';
+import DropZone from 'calypso/components/drop-zone';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import debugFactory from 'debug';
-import { MAX_UPLOAD_ZIP_SIZE } from 'lib/automated-transfer/constants';
+import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 
 /**
  * Style dependencies
@@ -34,11 +34,11 @@ class UploadDropZone extends Component {
 		siteId: PropTypes.number,
 	};
 
-	onFileSelect = files => {
+	onFileSelect = ( files ) => {
 		const { translate, siteId, doUpload } = this.props;
 
 		if ( files.length !== 1 ) {
-			notices.error( translate( 'Please drop a single zip file' ) );
+			this.props.errorNotice( translate( 'Please drop a single zip file' ) );
 			return;
 		}
 
@@ -47,7 +47,9 @@ class UploadDropZone extends Component {
 		debug( 'zip file:', file );
 
 		if ( file.size > MAX_UPLOAD_ZIP_SIZE ) {
-			notices.error( translate( 'Zip file is too large. Please upload a file under 50 MB.' ) );
+			this.props.errorNotice(
+				translate( 'Zip file is too large. Please upload a file under 50 MB.' )
+			);
 			return;
 		}
 
@@ -78,6 +80,11 @@ class UploadDropZone extends Component {
 	}
 }
 
-export default connect( state => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( UploadDropZone ) );
+export default connect(
+	( state ) => ( {
+		siteId: getSelectedSiteId( state ),
+	} ),
+	{
+		errorNotice,
+	}
+)( localize( UploadDropZone ) );

@@ -1,0 +1,84 @@
+.quick-links.foldable-card.card {
+	.foldable-card__header {
+		padding: 16px;
+		min-height: auto;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			padding: 16px 24px;
+		}
+	}
+
+	.foldable-card__action {
+		margin-right: 8px;
+	}
+
+	.foldable-card__content {
+		border: 0;
+		padding-bottom: 0;
+		padding-top: 0;
+	}
+}
+
+.quick-links__boxes {
+	margin-left: -16px;
+	margin-right: -16px;
+}
+
+.card.quick-links__action-box {
+	display: flex;
+	align-items: center;
+	transition: all 0.1s;
+	padding-top: 12px;
+	padding-bottom: 12px;
+
+	.quick-links__action-box-image {
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		width: 20px;
+		margin-right: 12px;
+	}
+
+	.quick-links__action-box-icon {
+		width: 24px;
+		height: 24px;
+		fill: var( --color-neutral-60 );
+		transition: all 0.1s;
+	}
+
+	.quick-links__action-box-label {
+		color: var( --color-text );
+		font-size: $font-body;
+	}
+
+	.quick-links__action-box-subtitle {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+		display: none;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			display: block;
+		}
+	}
+
+	.card__link-indicator {
+		fill: var( --color-neutral-20 );
+		right: 20px;
+	}
+
+	&:hover {
+		background: var( --color-neutral-0 );
+
+		.quick-links__action-box-icon {
+			fill: var( --color-neutral-80 );
+		}
+	}
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+}
+
+.quick-links__action-box-label {
+	font-size: $font-body;
+}

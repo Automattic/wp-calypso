@@ -8,8 +8,8 @@ import {
 	REWIND_BACKUP_DISMISS_PROGRESS,
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_UPDATE_ERROR,
-} from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type, rewindId } ) => {
 	switch ( type ) {
@@ -43,16 +43,18 @@ export const backupProgress = keyedReducer( 'siteId', ( state = undefined, actio
 			};
 
 		case REWIND_BACKUP_UPDATE_PROGRESS:
-			return {
-				backupPoint: action.backupPoint,
-				downloadId: action.downloadId,
-				progress: action.progress,
-				rewindId: action.rewindId,
-				startedAt: action.startedAt,
-				downloadCount: action.downloadCount,
-				validUntil: action.validUntil,
-				url: action.url,
-			};
+			return ! action.rewindId
+				? null
+				: {
+						backupPoint: action.backupPoint,
+						downloadId: action.downloadId,
+						progress: action.progress,
+						rewindId: action.rewindId,
+						startedAt: action.startedAt,
+						downloadCount: action.downloadCount,
+						validUntil: action.validUntil,
+						url: action.url,
+				  };
 
 		case REWIND_BACKUP_UPDATE_ERROR:
 			return {

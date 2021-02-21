@@ -12,8 +12,9 @@ import { forEach } from 'lodash';
  * Internal dependencies
  */
 import BulkSelect from 'woocommerce/components/bulk-select';
-import FoldableCard from 'components/foldable-card';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import PackagesListItem from './packages-list-item';
 import { getCurrentlyEditingPredefinedPackages } from '../../state/packages/selectors';
 
@@ -27,7 +28,7 @@ const PredefinedPackages = ( {
 } ) => {
 	const { dimensionUnit } = form;
 
-	const renderGroupHeader = group => {
+	const renderGroupHeader = ( group ) => {
 		const onToggle = ( state, event ) => {
 			event.stopPropagation();
 			toggleAll( siteId, group.serviceId, group.groupId, event.target.checked );
@@ -40,7 +41,7 @@ const PredefinedPackages = ( {
 		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<div className="packages__group-header">
-				<label htmlFor={ inputId } onClick={ event => event.stopPropagation() }>
+				<FormLabel htmlFor={ inputId } onClick={ ( event ) => event.stopPropagation() }>
 					<BulkSelect
 						id={ inputId }
 						totalElements={ group.total }
@@ -49,7 +50,7 @@ const PredefinedPackages = ( {
 						className="packages__group-header-checkbox"
 					/>
 					{ group.title }
-				</label>
+				</FormLabel>
 			</div>
 		);
 		/* eslint-enable jsx-a11y/click-events-have-key-events */
@@ -67,7 +68,7 @@ const PredefinedPackages = ( {
 		} );
 	};
 
-	const renderServicePackages = group => {
+	const renderServicePackages = ( group ) => {
 		return group.packages.map( ( pckg, index ) => {
 			const onToggle = () => togglePackage( siteId, pckg.serviceId, pckg.id );
 
@@ -123,6 +124,6 @@ PredefinedPackages.propTypes = {
 	} ).isRequired,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentlyEditingPredefinedPackages: getCurrentlyEditingPredefinedPackages( state ),
 } ) )( localize( PredefinedPackages ) );

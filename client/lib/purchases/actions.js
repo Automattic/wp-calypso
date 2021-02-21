@@ -6,8 +6,9 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import notices from 'notices';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 
 const debug = debugFactory( 'calypso:purchases:actions' );
 
@@ -32,13 +33,13 @@ export function submitSurvey( surveyName, siteID, surveyData ) {
 	debug( 'Survey responses', survey );
 	return survey
 		.submit()
-		.then( res => {
+		.then( ( res ) => {
 			debug( 'Survey submit response', res );
 			if ( ! res.success ) {
-				notices.error( res.err );
+				reduxDispatch( errorNotice( res.err ) );
 			}
 		} )
-		.catch( err => debug( err ) ); // shouldn't get here
+		.catch( ( err ) => debug( err ) ); // shouldn't get here
 }
 
 export function disableAutoRenew( purchaseId, onComplete ) {

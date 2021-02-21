@@ -12,9 +12,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Dialog, Button } from '@automattic/components';
-import Spinner from 'components/spinner';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { verifyEmail, resetVerifyEmailState } from 'state/current-user/email-verification/actions';
+import Spinner from 'calypso/components/spinner';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import {
+	verifyEmail,
+	resetVerifyEmailState,
+} from 'calypso/state/current-user/email-verification/actions';
 
 /**
  * Style dependencies
@@ -125,7 +128,7 @@ VerifyEmailDialog.defaultProps = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		email: getCurrentUserEmail( state ),
 		emailVerificationStatus: get( state, 'currentUser.emailVerification.status' ),
 	} ),

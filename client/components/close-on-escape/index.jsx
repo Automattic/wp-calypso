@@ -37,7 +37,7 @@ function startCloseOnEscForComponent( component, onEscape ) {
 }
 
 function stopCloseOnEscForComponent( component ) {
-	components = filter( components, item => item.component !== component );
+	components = filter( components, ( item ) => item.component !== component );
 	if ( isEmpty( components ) ) {
 		removeKeydownListener();
 	}

@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteRoles } from 'state/site-roles/selectors';
-import { requestSiteRoles } from 'state/site-roles/actions';
+import { isRequestingSiteRoles } from 'calypso/state/site-roles/selectors';
+import { requestSiteRoles } from 'calypso/state/site-roles/actions';
 
 class QuerySiteRoles extends Component {
 	static propTypes = {

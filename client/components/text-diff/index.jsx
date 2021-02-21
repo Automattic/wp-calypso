@@ -11,7 +11,7 @@ import { isArray, isEmpty, map, partialRight } from 'lodash';
  */
 import './style.scss';
 
-const addLinesToOperations = operations => {
+const addLinesToOperations = ( operations ) => {
 	if ( ! isArray( operations ) || isEmpty( operations ) ) {
 		return operations;
 	}

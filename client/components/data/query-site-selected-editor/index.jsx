@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSelectedEditor } from 'state/selected-editor/actions';
+import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
 
 export default function QuerySiteSelectedEditor( { siteId } ) {
 	const dispatch = useDispatch();

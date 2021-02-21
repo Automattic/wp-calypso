@@ -21,7 +21,7 @@ const suffixes = [
 	'100',
 ];
 
-suffixes.forEach( suffix => {
+suffixes.forEach( ( suffix ) => {
 	const propertyName = _.compact( [ '--color', baseName, suffix ] ).join( '-' );
 	const variableName = _.compact( [ '--studio', colorName, determineShadeIndex( suffix ) ] ).join(
 		'-'

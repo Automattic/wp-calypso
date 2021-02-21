@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
+import config from '@automattic/calypso-config';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
@@ -25,8 +28,10 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
-} from 'state/action-types';
-import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
+} from 'calypso/state/action-types';
+import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
+
+import 'calypso/state/data-layer/wpcom/sites/homepage';
 
 /**
  * Returns an action object to be used in signalling that a site has been
@@ -76,10 +81,11 @@ export function receiveSites( sites ) {
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITES_REQUEST,
 		} );
+		const siteFilter = config( 'site_filter' );
 
 		return wpcom
 			.me()
@@ -90,14 +96,15 @@ export function requestSites() {
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,
 				options: SITE_REQUEST_OPTIONS,
+				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( receiveSites( response.sites ) );
 				dispatch( {
 					type: SITES_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITES_REQUEST_FAILURE,
 					error,
@@ -110,28 +117,32 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  *
- * @param  {number}   siteFragment Site ID or slug
+ * @param {number|string} siteFragment Site ID or slug
+ * @param {boolean} forceWpcom explicitly get info from WPCOM vs Jetpack site
  * @returns {Function}              Action thunk
  */
-export function requestSite( siteFragment ) {
-	return dispatch => {
+export function requestSite( siteFragment, forceWpcom = false ) {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_REQUEST,
 			siteId: siteFragment,
 		} );
-
+		const siteFilter = config( 'site_filter' );
 		return wpcom
 			.site( siteFragment )
 			.get( {
 				apiVersion: '1.2',
+				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
+				force: forceWpcom ? 'wpcom' : undefined,
 			} )
-			.then( site => {
+			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
 				if ( ! ( site && site.capabilities ) ) {
 					return dispatch( {
 						type: SITE_REQUEST_FAILURE,
 						siteId: siteFragment,
-						error: i18n.translate( 'No access to manage the site' ),
+						site,
+						error: translate( 'No access to manage the site' ),
 					} );
 				}
 
@@ -142,7 +153,14 @@ export function requestSite( siteFragment ) {
 					siteId: siteFragment,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
+				if (
+					error?.status === 403 &&
+					error?.message === 'API calls to this blog have been disabled.' &&
+					! forceWpcom
+				) {
+					return dispatch( requestSite( siteFragment, true ) );
+				}
 				dispatch( {
 					type: SITE_REQUEST_FAILURE,
 					siteId: siteFragment,
@@ -152,6 +170,12 @@ export function requestSite( siteFragment ) {
 	};
 }
 
+const siteDeletionNoticeId = 'site-delete';
+const siteDeletionNoticeOptions = {
+	duration: 5000,
+	id: siteDeletionNoticeId,
+};
+
 /**
  * Returns a function which, when invoked, triggers a network request to delete
  * a site.
@@ -160,11 +184,21 @@ export function requestSite( siteFragment ) {
  * @returns {Function}        Action thunk
  */
 export function deleteSite( siteId ) {
-	return dispatch => {
+	return ( dispatch, getState ) => {
+		const siteDomain = getSiteDomain( getState(), siteId );
+
 		dispatch( {
 			type: SITE_DELETE,
 			siteId,
 		} );
+
+		dispatch(
+			successNotice(
+				translate( '%(siteDomain)s is being deleted.', { args: { siteDomain } } ),
+				siteDeletionNoticeOptions
+			)
+		);
+
 		return wpcom
 			.undocumented()
 			.deleteSite( siteId )
@@ -174,18 +208,40 @@ export function deleteSite( siteId ) {
 					type: SITE_DELETE_SUCCESS,
 					siteId,
 				} );
+				dispatch(
+					successNotice(
+						translate( '%(siteDomain)s has been deleted.', { args: { siteDomain } } ),
+						siteDeletionNoticeOptions
+					)
+				);
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_DELETE_FAILURE,
 					siteId,
 					error,
 				} );
+				if ( error.error === 'active-subscriptions' ) {
+					dispatch(
+						errorNotice(
+							translate( 'You must cancel any active subscriptions prior to deleting your site.' ),
+							{
+								id: siteDeletionNoticeId,
+								showDismiss: false,
+								button: translate( 'Manage Purchases' ),
+								href: purchasesRoot,
+							}
+						)
+					);
+					return;
+				}
+
+				dispatch( errorNotice( error.message, siteDeletionNoticeOptions ) );
 			} );
 	};
 }
 
-export const sitePluginUpdated = siteId => ( {
+export const sitePluginUpdated = ( siteId ) => ( {
 	type: SITE_PLUGIN_UPDATED,
 	siteId,
 } );
@@ -211,10 +267,12 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
  *
  * @param  {number} siteId Site ID
  * @param  {string} migrationStatus The status of the migration.
+ * @param {string} lastModified Optional timestamp from the migration DB record
  * @returns {object} Action object
  */
-export const updateSiteMigrationStatus = ( siteId, migrationStatus ) => ( {
+export const updateSiteMigrationMeta = ( siteId, migrationStatus, lastModified = null ) => ( {
 	siteId,
 	type: SITE_MIGRATION_STATUS_UPDATE,
 	migrationStatus,
+	lastModified,
 } );

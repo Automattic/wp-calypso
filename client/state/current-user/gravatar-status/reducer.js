@@ -7,10 +7,10 @@ import {
 	GRAVATAR_UPLOAD_REQUEST,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
-export const isUploading = withoutPersistence( ( state = false, action ) => {
+export const isUploading = ( state = false, action ) => {
 	switch ( action.type ) {
 		case GRAVATAR_UPLOAD_REQUEST:
 			return true;
@@ -21,9 +21,9 @@ export const isUploading = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const tempImage = withoutPersistence( ( state = {}, action ) => {
+export const tempImage = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case GRAVATAR_UPLOAD_RECEIVE: {
 			return {
@@ -33,7 +33,7 @@ export const tempImage = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	isUploading,

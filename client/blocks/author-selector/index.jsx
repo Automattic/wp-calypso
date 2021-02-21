@@ -10,7 +10,7 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteUsersFetcher from 'components/site-users-fetcher';
+import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
 import SwitcherShell from './switcher-shell';
 
 /**
@@ -37,7 +37,7 @@ class AuthorSelector extends React.Component {
 
 	static defaultProps = {
 		showAuthorMenu: false,
-		onClose: function() {},
+		onClose: function () {},
 		allowSingleUser: false,
 		popoverPosition: 'bottom left',
 	};
@@ -75,7 +75,7 @@ class AuthorSelector extends React.Component {
 		);
 	}
 
-	_updateSearch = searchTerm => {
+	_updateSearch = ( searchTerm ) => {
 		searchTerm = searchTerm ? '*' + searchTerm + '*' : '';
 		this.setState( {
 			search: searchTerm,

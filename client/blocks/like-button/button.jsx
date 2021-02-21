@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { omitBy, isNull } from 'lodash';
+import { omitBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,7 +24,7 @@ class LikeButton extends PureComponent {
 		showZeroCount: PropTypes.bool,
 		likeCount: PropTypes.number,
 		showLabel: PropTypes.bool,
-		tagName: PropTypes.string,
+		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 		onLikeToggle: PropTypes.func,
 		likedLabel: PropTypes.string,
 		iconSize: PropTypes.number,
@@ -122,7 +122,7 @@ class LikeButton extends PureComponent {
 					onMouseEnter,
 					onMouseLeave,
 				},
-				isNull
+				( prop ) => prop === null
 			),
 			<LikeIcons size={ this.props.iconSize } />,
 			labelElement

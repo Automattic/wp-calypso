@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { shouldShowTax } from 'lib/cart-values';
-import { hasOnlyFreeTrial } from 'lib/cart-values/cart-items';
+import { shouldShowTax } from 'calypso/lib/cart-values';
+import { hasOnlyFreeTrial } from 'calypso/lib/cart-values/cart-items';
 
 class CartTotal extends React.Component {
 	static propTypes = {

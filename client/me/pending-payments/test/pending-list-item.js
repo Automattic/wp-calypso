@@ -9,15 +9,15 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { PendingListItem } from '../pending-list-item';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import * as localizedMoment from 'components/localized-moment';
+import { PLAN_BUSINESS } from 'calypso/lib/plans/constants';
+import * as localizedMoment from 'calypso/components/localized-moment';
 
-jest.mock( 'components/localized-moment' );
+jest.mock( 'calypso/components/localized-moment' );
 localizedMoment.useLocalizedMoment.mockReturnValue( moment );
 
 describe( 'PendingListItem', () => {
 	const defaultProps = {
-		translate: x => x,
+		translate: ( x ) => x,
 		products: [ { productName: 'WordPress.com Business Plan', productSlug: PLAN_BUSINESS } ],
 		paymentType: 'Sofort',
 		totalCostDisplay: '€204',
@@ -32,10 +32,10 @@ describe( 'PendingListItem', () => {
 		'.pending-payments__list-item-details .pending-payments__list-item-product',
 		'.pending-payments__list-item-details .pending-payments__list-item-payment',
 		'.pending-payments__list-item-details .pending-payments__list-item-actions',
-		'.pending-payments__list-item-actions Button[href="/help/contact"]',
+		'.pending-payments__list-item-actions ForwardRef(Button)[href="/help/contact"]',
 	];
 
-	assertions.forEach( rule => {
+	assertions.forEach( ( rule ) => {
 		test( rule, () => {
 			expect( wrapper.find( rule ) ).toHaveLength( 1 );
 		} );

@@ -7,7 +7,7 @@ import { get, find, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getProductCategory,
 	getAllProductCategories,
@@ -79,7 +79,7 @@ export function getProductCategoryWithLocalEdits(
 export function getProductCategoriesWithLocalEdits( state, siteId = getSelectedSiteId( state ) ) {
 	const categoryCreates = getAllProductCategoryEdits( state, siteId ).creates || [];
 	const fetchedCategories = getAllProductCategories( state, siteId );
-	const categoriesWithUpdates = fetchedCategories.map( c =>
+	const categoriesWithUpdates = fetchedCategories.map( ( c ) =>
 		getProductCategoryWithLocalEdits( state, c.id, siteId )
 	);
 

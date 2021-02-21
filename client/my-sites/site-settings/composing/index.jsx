@@ -15,8 +15,8 @@ import { Card, CompactCard } from '@automattic/components';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import PublishConfirmation from './publish-confirmation';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 const Composing = ( {
 	eventTracker,
@@ -93,6 +93,6 @@ Composing.propTypes = {
 	updateFields: PropTypes.func.isRequired,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 } ) )( Composing );

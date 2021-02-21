@@ -12,8 +12,9 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import ReviewsList from './reviews-list';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 class Reviews extends Component {
 	static propTypes = {
@@ -31,6 +32,7 @@ class Reviews extends Component {
 		return (
 			<Main className={ classes } wideLayout>
 				<ActionHeader breadcrumbs={ <span>{ translate( 'Reviews' ) }</span> } />
+				{ <StoreDeprecatedNotice /> }
 				<ReviewsList
 					productId={ params && params.product_id && Number( params.product_id ) }
 					currentStatus={ params && params.filter }

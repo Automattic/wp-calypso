@@ -14,7 +14,7 @@ import {
 	DOMAINS_SITE_REDIRECT_UPDATE,
 	DOMAINS_SITE_REDIRECT_UPDATE_COMPLETED,
 	DOMAINS_SITE_REDIRECT_UPDATE_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 function updateStateForSite( state, siteId, data ) {
 	const command = state[ siteId ] ? '$merge' : '$set';

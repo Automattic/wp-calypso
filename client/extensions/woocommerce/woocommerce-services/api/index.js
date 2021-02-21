@@ -6,7 +6,7 @@ import request from 'woocommerce/state/sites/request';
 import * as urlModule from './url';
 export { urlModule as url };
 
-const handleError = jsonError => {
+const handleError = ( jsonError ) => {
 	if ( jsonError && jsonError.message ) {
 		throw jsonError.message;
 	}

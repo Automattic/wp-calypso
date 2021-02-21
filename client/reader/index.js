@@ -14,14 +14,15 @@ import {
 	incompleteUrlRedirects,
 	initAbTests,
 	legacyRedirects,
-	preloadReaderBundle,
 	prettyRedirects,
 	readA8C,
+	readFollowingP2,
 	sidebar,
 	updateLastRoute,
 } from './controller';
-import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
+import config from '@automattic/calypso-config';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { addMiddleware } from 'redux-dynamic-middlewares';
 
 /**
  * Style dependencies
@@ -33,18 +34,21 @@ function forceTeamA8C( context, next ) {
 	next();
 }
 
-export default function() {
-	if ( config.isEnabled( 'reader' ) ) {
-		page(
-			'/read',
-			preloadReaderBundle,
-			initAbTests,
-			updateLastRoute,
-			sidebar,
-			following,
-			makeLayout,
-			clientRender
+export async function lazyLoadDependencies() {
+	const isBrowser = typeof window === 'object';
+	if ( isBrowser && config.isEnabled( 'lasagna' ) && config.isEnabled( 'reader' ) ) {
+		const lasagnaMiddleware = await import(
+			/* webpackChunkName: "lasagnaMiddleware" */ 'calypso/state/lasagna/middleware.js'
 		);
+		addMiddleware( lasagnaMiddleware.default );
+	}
+}
+
+export default async function () {
+	await lazyLoadDependencies();
+
+	if ( config.isEnabled( 'reader' ) ) {
+		page( '/read', initAbTests, updateLastRoute, sidebar, following, makeLayout, clientRender );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/read' );
@@ -55,7 +59,7 @@ export default function() {
 		page( '/read/feed', '/read' );
 
 		// Feed stream
-		page( '/read/*', preloadReaderBundle, initAbTests );
+		page( '/read/*', initAbTests );
 		page( '/read/blog/feed/:feed_id', legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
@@ -86,10 +90,13 @@ export default function() {
 		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
 		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 
-		// old recommendations page
-		page( '/recommendations', '/read/search' );
+		// Old Freshly Pressed
+		page( '/read/fresh', '/discover' );
 	}
 
 	// Automattic Employee Posts
 	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
+
+	// new P2 Posts
+	page( '/read/p2', updateLastRoute, sidebar, readFollowingP2, makeLayout, clientRender );
 }

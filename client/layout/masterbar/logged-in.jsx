@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { parse } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,29 +10,35 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Masterbar from './masterbar';
 import Item from './item';
-import Publish from './publish';
 import Notifications from './notifications';
-import Gravatar from 'components/gravatar';
-import config from 'config';
-import { preload } from 'sections-helper';
-import ResumeEditing from 'my-sites/resume-editing';
-import { getCurrentUserSiteCount, getCurrentUser } from 'state/current-user/selectors';
-import { isSupportSession } from 'state/support/selectors';
-import AsyncLoad from 'components/async-load';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import { getStatsPathForTab } from 'lib/route';
-import { domainManagementList } from 'my-sites/domains/paths';
-import WordPressWordmark from 'components/wordpress-wordmark';
+import Gravatar from 'calypso/components/gravatar';
+import config from '@automattic/calypso-config';
+import { preload } from 'calypso/sections-helper';
+import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
+import AsyncLoad from 'calypso/components/async-load';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import { getStatsPathForTab } from 'calypso/lib/route';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
+import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
+import { requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { hasUnseen } from 'calypso/state/reader-ui/seen-posts/selectors';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -39,23 +46,83 @@ class MasterbarLoggedIn extends React.Component {
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		setNextLayoutFocus: PropTypes.func.isRequired,
+		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
+		hasUnseen: PropTypes.bool,
 	};
+
+	handleLayoutFocus = ( currentSection ) => {
+		if ( ! config.isEnabled( 'nav-unification' ) ) {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		} else if ( currentSection !== this.props.section ) {
+			// When current section is not focused then open the sidebar.
+			this.props.setNextLayoutFocus( 'sidebar' );
+		} else {
+			// When current section is focused then open or close the sidebar depending on current state.
+			'sidebar' === this.props.currentLayoutFocus
+				? this.props.setNextLayoutFocus( 'content' )
+				: this.props.setNextLayoutFocus( 'sidebar' );
+		}
+	};
+
+	componentDidMount() {
+		// Give a chance to direct URLs to open the sidebar on page load ( eg by clicking 'me' in wp-admin ).
+		const qryString = parse( document.location.search.replace( /^\?/, '' ) );
+		if ( qryString?.openSidebar === 'true' ) {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		}
+	}
 
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
-		this.props.setNextLayoutFocus( 'sidebar' );
+		this.handleLayoutFocus( 'sites' );
+
+		/**
+		 * Site Migration: Reset a failed migration when clicking on My Sites
+		 *
+		 * If the site migration has failed, clicking on My Sites sends the customer in a loop
+		 * until they click the Try Again button on the migration screen.
+		 *
+		 * This code makes it possible to reset the failed migration state when clicking My Sites too.
+		 */
+		if ( config.isEnabled( 'tools/migrate' ) ) {
+			const { migrationStatus, currentSelectedSiteId } = this.props;
+
+			if ( currentSelectedSiteId && migrationStatus === 'error' ) {
+				/**
+				 * Reset the in-memory site lock for the currently selected site
+				 */
+				this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
+
+				/**
+				 * Reset the migration on the backend
+				 */
+				requestHttpData(
+					'site-migration',
+					http( {
+						apiNamespace: 'wpcom/v2',
+						method: 'POST',
+						path: `/sites/${ currentSelectedSiteId }/reset-migration`,
+						body: {},
+					} ),
+					{
+						freshness: 0,
+					}
+				);
+			}
+		}
 	};
 
 	clickReader = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
-		this.props.setNextLayoutFocus( 'content' );
+		this.handleLayoutFocus( 'reader' );
 	};
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
+		this.handleLayoutFocus( 'me' );
 	};
 
 	preloadMySites = () => {
@@ -70,7 +137,7 @@ class MasterbarLoggedIn extends React.Component {
 		preload( 'me' );
 	};
 
-	isActive = section => {
+	isActive = ( section ) => {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
 
@@ -85,17 +152,21 @@ class MasterbarLoggedIn extends React.Component {
 
 	renderMySites() {
 		const {
-				domainOnlySite,
-				hasMoreThanOneSite,
-				siteSlug,
-				translate,
-				isCustomerHomeEnabled,
-			} = this.props,
-			homeUrl = isCustomerHomeEnabled
-				? `/home/${ siteSlug }`
-				: getStatsPathForTab( 'day', siteSlug ),
-			mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
+			domainOnlySite,
+			hasMoreThanOneSite,
+			siteSlug,
+			translate,
+			isCustomerHomeEnabled,
+			section,
+		} = this.props;
+		const homeUrl = isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
 
+		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
+		if ( config.isEnabled( 'nav-unification' ) && 'sites' === section ) {
+			mySitesUrl = '';
+		}
 		return (
 			<Item
 				url={ mySitesUrl }
@@ -114,18 +185,27 @@ class MasterbarLoggedIn extends React.Component {
 	}
 
 	render() {
-		const { domainOnlySite, translate, isCheckout, isMigrationInProgress } = this.props;
+		const {
+			domainOnlySite,
+			translate,
+			isCheckout,
+			isMigrationInProgress,
+			previousPath,
+			siteSlug,
+			isJetpackNotAtomic,
+			title,
+		} = this.props;
 
-		if ( isCheckout === true ) {
+		if ( isCheckout ) {
 			return (
-				<Masterbar>
-					<div className="masterbar__secure-checkout">
-						<WordPressWordmark className="masterbar__wpcom-wordmark" />
-						<span className="masterbar__secure-checkout-text">
-							{ translate( 'Secure checkout' ) }
-						</span>
-					</div>
-				</Masterbar>
+				<AsyncLoad
+					require="calypso/layout/masterbar/checkout"
+					placeholder={ null }
+					title={ title }
+					isJetpackNotAtomic={ isJetpackNotAtomic }
+					previousPath={ previousPath }
+					siteSlug={ siteSlug }
+				/>
 			);
 		}
 
@@ -141,21 +221,24 @@ class MasterbarLoggedIn extends React.Component {
 					isActive={ this.isActive( 'reader' ) }
 					tooltip={ translate( 'Read the blogs and topics you follow' ) }
 					preloadSection={ this.preloadReader }
+					hasUnseen={ this.props.hasUnseen }
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
 				{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
+				<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
 				{ ! domainOnlySite && ! isMigrationInProgress && (
-					<Publish
+					<AsyncLoad
+						require="./publish"
+						placeholder={ null }
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
 						tooltip={ translate( 'Create a New Post' ) }
 					>
 						{ translate( 'Write' ) }
-					</Publish>
+					</AsyncLoad>
 				) }
 				<Item
 					tipTarget="me"
@@ -188,12 +271,18 @@ class MasterbarLoggedIn extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
-		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
+		const currentSelectedSiteId = getSelectedSiteId( state );
+		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
+
+		const isMigrationInProgress =
+			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
+			isSiteMigrationActiveRoute( state );
 
 		return {
+			hasUnseen: hasUnseen( state ),
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			siteSlug: getSiteSlug( state, siteId ),
@@ -201,8 +290,13 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
-			isMigrationInProgress: !! isSiteMigrationInProgress( state, siteId ),
+			isMigrationInProgress,
+			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
+			currentSelectedSiteId,
+			previousPath: getPreviousPath( state ),
+			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
+			currentLayoutFocus: getCurrentLayoutFocus( state ),
 		};
 	},
-	{ setNextLayoutFocus, recordTracksEvent }
+	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }
 )( localize( MasterbarLoggedIn ) );

@@ -13,11 +13,11 @@ import classnames from 'classnames';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import { Card } from '@automattic/components';
-import ErrorPanel from 'my-sites/stats/stats-error';
+import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
-import Pagination from 'components/pagination';
-import { withLocalizedMoment } from 'components/localized-moment';
-import getStoreReferrersByDate from 'state/selectors/get-store-referrers-by-date';
+import Pagination from 'calypso/components/pagination';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import getStoreReferrersByDate from 'calypso/state/selectors/get-store-referrers-by-date';
 
 class StoreStatsReferrerWidgetBase extends Component {
 	static propTypes = {
@@ -73,7 +73,7 @@ class StoreStatsReferrerWidgetBase extends Component {
 			: [ translate( 'No referral activity on this date' ) ];
 	}
 
-	paginate = data => {
+	paginate = ( data ) => {
 		const { paginate, limit } = this.props;
 		if ( ! paginate ) {
 			return data.slice( 0, limit || data.length );
@@ -84,7 +84,7 @@ class StoreStatsReferrerWidgetBase extends Component {
 		return data.slice( start, end );
 	};
 
-	onPageClick = pageNumber => {
+	onPageClick = ( pageNumber ) => {
 		this.setState( {
 			page: pageNumber,
 		} );
@@ -135,7 +135,7 @@ class StoreStatsReferrerWidgetBase extends Component {
 		return (
 			<Card className={ className }>
 				<Table className={ `${ className }__table` } header={ header } compact>
-					{ paginatedData.map( d => {
+					{ paginatedData.map( ( d ) => {
 						const widgetPath = getWidgetPath(
 							unit,
 							slug,

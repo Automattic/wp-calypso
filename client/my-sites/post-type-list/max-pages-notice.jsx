@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -28,7 +28,7 @@ class PostTypeListMaxPagesNotice extends Component {
 		this.props.recordTracksEvent( 'calypso_post_type_list_max_pages_view' );
 	}
 
-	focusSiteSelector = event => {
+	focusSiteSelector = ( event ) => {
 		event.preventDefault();
 
 		this.props.setLayoutFocus( 'sites' );

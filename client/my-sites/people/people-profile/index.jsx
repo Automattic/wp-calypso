@@ -6,17 +6,17 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
-import { recordTrack } from 'reader/stats';
+import { recordTrack } from 'calypso/reader/stats';
 import page from 'page';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import InfoPopover from 'components/info-popover';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { requestExternalContributors } from 'state/data-getters';
+import Gravatar from 'calypso/components/gravatar';
+import InfoPopover from 'calypso/components/info-popover';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { requestExternalContributors } from 'calypso/state/data-getters';
 /**
  * Style dependencies
  */
@@ -41,7 +41,7 @@ class PeopleProfile extends Component {
 		return;
 	};
 
-	getRoleBadgeText = role => {
+	getRoleBadgeText = ( role ) => {
 		let text;
 		role = 'undefined' === typeof role ? this.getRole() : role;
 
@@ -86,12 +86,12 @@ class PeopleProfile extends Component {
 		return text;
 	};
 
-	getRoleBadgeClass = role => {
+	getRoleBadgeClass = ( role ) => {
 		role = 'undefined' === typeof role ? this.getRole() : role;
 		return 'role-' + role;
 	};
 
-	handleLinkToReaderSiteStream = event => {
+	handleLinkToReaderSiteStream = ( event ) => {
 		const modifierPressed =
 			event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 
@@ -181,7 +181,9 @@ class PeopleProfile extends Component {
 	renderRole = () => {
 		const { isExternalContributor, translate, user } = this.props;
 
-		let contractorBadge, superAdminBadge, roleBadge;
+		let contractorBadge;
+		let superAdminBadge;
+		let roleBadge;
 
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (

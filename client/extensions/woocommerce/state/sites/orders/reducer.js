@@ -7,7 +7,7 @@ import { isFinite, keyBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { getSerializedOrdersQuery } from './utils';
 import invoice from './send-invoice/reducer';
 import notes from './notes/reducer';
@@ -148,7 +148,7 @@ export function items( state = {}, action ) {
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-			const idList = action.orders.map( order => order.id );
+			const idList = action.orders.map( ( order ) => order.id );
 			const query = getSerializedOrdersQuery( action.query );
 			return Object.assign( {}, state, { [ query ]: idList } );
 		default:

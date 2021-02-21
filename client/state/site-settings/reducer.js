@@ -6,7 +6,8 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	MEDIA_DELETE,
@@ -18,7 +19,7 @@ import {
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
@@ -28,7 +29,7 @@ import {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_SETTINGS_REQUEST: {
 			const { siteId } = action;
@@ -45,7 +46,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the save Request status after an action has been dispatched. The
@@ -55,7 +56,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const saveRequests = withoutPersistence( ( state = {}, action ) => {
+export const saveRequests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_SETTINGS_SAVE: {
 			const { siteId } = action;
@@ -84,7 +85,7 @@ export const saveRequests = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -135,8 +136,10 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	requesting,
 	saveRequests,
 } );
+
+export default withStorageKey( 'siteSettings', combinedReducer );

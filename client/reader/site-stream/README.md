@@ -2,7 +2,7 @@
 
 A post stream that shows posts from a WordPress.com or Jetpack site.
 
-# Props
+## Props
 
 - `siteId`: number, The site ID to show posts for
 

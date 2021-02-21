@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-
 import { omit, mapValues } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -18,11 +19,41 @@ import {
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'calypso/state/action-types';
+import wp from 'calypso/lib/wp';
+
+import 'calypso/state/jetpack/init';
+
+const noticeSettings = {
+	duration: 10000,
+	id: 'site-settings-save',
+};
+const showNotice = ( type, moduleSlug, silent ) => {
+	return ( dispatch ) => {
+		if ( silent ) {
+			return;
+		}
+
+		switch ( type ) {
+			case JETPACK_MODULE_ACTIVATE_SUCCESS:
+			case JETPACK_MODULE_DEACTIVATE_SUCCESS:
+				return dispatch(
+					successNotice( translate( 'Settings saved successfully!' ), noticeSettings )
+				);
+			case JETPACK_MODULE_ACTIVATE_FAILURE:
+			case JETPACK_MODULE_DEACTIVATE_FAILURE:
+				return dispatch(
+					errorNotice(
+						translate( 'There was a problem saving your changes. Please try again.' ),
+						noticeSettings
+					)
+				);
+		}
+	};
+};
 
 export const activateModule = ( siteId, moduleSlug, silent = false ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_MODULE_ACTIVATE,
 			siteId,
@@ -40,8 +71,9 @@ export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 					moduleSlug,
 					silent,
 				} );
+				dispatch( showNotice( JETPACK_MODULE_ACTIVATE_SUCCESS, moduleSlug, silent ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_FAILURE,
 					siteId,
@@ -49,12 +81,13 @@ export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 					silent,
 					error: error.message,
 				} );
+				dispatch( showNotice( JETPACK_MODULE_ACTIVATE_FAILURE, moduleSlug, silent ) );
 			} );
 	};
 };
 
 export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_MODULE_DEACTIVATE,
 			siteId,
@@ -72,8 +105,9 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 					moduleSlug,
 					silent,
 				} );
+				dispatch( showNotice( JETPACK_MODULE_DEACTIVATE_SUCCESS, moduleSlug, silent ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 					siteId,
@@ -81,6 +115,7 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 					silent,
 					error: error.message,
 				} );
+				dispatch( showNotice( JETPACK_MODULE_DEACTIVATE_FAILURE, moduleSlug, silent ) );
 			} );
 	};
 };
@@ -101,8 +136,8 @@ export function receiveJetpackModules( siteId, modules ) {
 	};
 }
 
-export const fetchModuleList = siteId => {
-	return dispatch => {
+export const fetchModuleList = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: JETPACK_MODULES_REQUEST,
 			siteId,
@@ -112,7 +147,7 @@ export const fetchModuleList = siteId => {
 			.undocumented()
 			.getJetpackModules( siteId )
 			.then( ( { data } ) => {
-				const modules = mapValues( data, module => ( {
+				const modules = mapValues( data, ( module ) => ( {
 					active: module.activated,
 					...omit( module, 'activated' ),
 				} ) );
@@ -123,7 +158,7 @@ export const fetchModuleList = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_FAILURE,
 					siteId,

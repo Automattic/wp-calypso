@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get, filter, find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/site-keyrings/init';
 
 /**
  * Returns true if we are requesting keyrings for the specified site ID, false otherwise.
@@ -71,7 +75,7 @@ export function getSiteKeyringsForService( state, siteId, service ) {
  * @returns {?object}                Site Keyring connection
  */
 export function getSiteKeyringConnection( state, siteId, keyringId, externalUserId = null ) {
-	return find( getSiteKeyrings( state, siteId ), siteKeyring => {
+	return find( getSiteKeyrings( state, siteId ), ( siteKeyring ) => {
 		return externalUserId === null
 			? siteKeyring.keyring_id === keyringId
 			: siteKeyring.keyring_id === keyringId && siteKeyring.external_user_id === externalUserId;

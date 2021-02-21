@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import isPluginActive from 'state/selectors/is-plugin-active';
+import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 
 /**
  * Returns a Boolean indicating if a site has an active plugin present
@@ -13,7 +13,7 @@ import isPluginActive from 'state/selectors/is-plugin-active';
  * @returns {boolean} - truthiness of a site having at least one of the given plugins active
  */
 export default function isAnyPluginActive( state, siteId, pluginSlugs ) {
-	const activePlugins = pluginSlugs.filter( pluginSlug =>
+	const activePlugins = pluginSlugs.filter( ( pluginSlug ) =>
 		isPluginActive( state, siteId, pluginSlug )
 	);
 	return !! activePlugins.length;

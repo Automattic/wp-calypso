@@ -15,21 +15,22 @@ import { some } from 'lodash';
 import DnsAddNew from './dns-add-new';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import { domainManagementEdit, domainManagementNameServers } from 'my-sites/domains/paths';
-import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'lib/domains';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
 import { CompactCard as Card } from '@automattic/components';
 import DnsTemplates from '../name-servers/dns-templates';
-import VerticalNav from 'components/vertical-nav';
+import VerticalNav from 'calypso/components/vertical-nav';
 import DomainConnectRecord from './domain-connect-record';
-import { domainConnect } from 'lib/domains/constants';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getDomainDns } from 'state/domains/dns/selectors';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import QueryDomainDns from 'components/data/query-domain-dns';
+import { domainConnect } from 'calypso/lib/domains/constants';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getDomainDns } from 'calypso/state/domains/dns/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QueryDomainDns from 'calypso/components/data/query-domain-dns';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -113,15 +114,16 @@ class Dns extends React.Component {
 	}
 
 	goBack = () => {
+		const { selectedSite, selectedDomainName, currentRoute } = this.props;
 		let path;
 
 		if ( isRegisteredDomain( getSelectedDomain( this.props ) ) ) {
-			path = domainManagementNameServers;
+			path = domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute );
 		} else {
-			path = domainManagementEdit;
+			path = domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute );
 		}
 
-		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page( path );
 	};
 }
 
@@ -132,5 +134,11 @@ export default connect( ( state, { selectedDomainName } ) => {
 	const dns = getDomainDns( state, selectedDomainName );
 	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
 
-	return { selectedSite, domains, dns, showPlaceholder };
+	return {
+		selectedSite,
+		domains,
+		dns,
+		showPlaceholder,
+		currentRoute: getCurrentRoute( state ),
+	};
 } )( localize( Dns ) );

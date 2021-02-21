@@ -6,6 +6,6 @@ This directory contains the server portion of the implementation, which uses [lu
 
 Endpoints:
 
-* `/devdocs/query?q=term1%20term2` searches and ranks documents according to the query
-* `/devdocs/query?files=client%2FREADME.md,CONTRIBUTING.md` lists documents by name
-* `/devdocs/content?path=client%2FREADME.md` returns the content of the document, rendered as HTML
+- `/devdocs/query?q=term1%20term2` searches and ranks documents according to the query
+- `/devdocs/query?files=client%2FREADME.md,CONTRIBUTING.md` lists documents by name
+- `/devdocs/content?path=client%2FREADME.md` returns the content of the document, rendered as HTML

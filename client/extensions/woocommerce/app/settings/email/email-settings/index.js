@@ -27,7 +27,7 @@ import {
 	isSavingEmailSettings,
 	emailSettingsSubmitSettingsError,
 } from 'woocommerce/state/sites/settings/email/selectors';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import CustomerNotification from './components/customer-notification';
 import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
@@ -110,7 +110,7 @@ const customerNotifications = [
 ];
 
 class Settings extends React.Component {
-	fetchSettings = props => {
+	fetchSettings = ( props ) => {
 		const { siteId, fetchSettings } = props;
 		siteId && fetchSettings( siteId );
 	};
@@ -163,7 +163,7 @@ class Settings extends React.Component {
 		}
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const { onChange, onSettingsChange, siteId } = this.props;
 		onChange( siteId, event );
 		onSettingsChange();

@@ -7,7 +7,7 @@ import { get, isEmpty, isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
@@ -50,6 +50,7 @@ export const areShippingZoneLocationsLoading = (
  * in WP-Admin (which doesn't have as many restrictions), then it could be that he configured the zones in a way
  * that can't be reliably represented in Calypso, and as such the UI must forbid him to add new zones or edit
  * existing zones locations.
+ *
  * @param {object} appState Whole Redux state tree
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @returns {boolean} Whether the shipping zones have valid locations to be edited in Calypso

@@ -20,7 +20,7 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 			await this.driver
 				.findElement( by.css( '#wpwrap' ) )
 				.getAttribute( 'class' )
-				.then( classValue => {
+				.then( ( classValue ) => {
 					if ( classValue !== 'wp-responsive-open' ) {
 						driverHelper.clickWhenClickable( this.driver, by.css( '#wp-admin-bar-menu-toggle' ) );
 					}

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { infoNotice, removeNotice } from 'state/notices/actions';
+import { infoNotice, removeNotice } from 'calypso/state/notices/actions';
 
 export class GlobalNotice extends Component {
 	static propTypes = {

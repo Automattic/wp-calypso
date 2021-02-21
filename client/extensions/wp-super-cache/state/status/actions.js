@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	WP_SUPER_CACHE_RECEIVE_STATUS,
 	WP_SUPER_CACHE_REQUEST_STATUS,
@@ -28,8 +28,8 @@ export const receiveStatus = ( siteId, status ) => ( {
  * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests status for a given site
  */
-export const requestStatus = siteId => {
-	return dispatch => {
+export const requestStatus = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: WP_SUPER_CACHE_REQUEST_STATUS,
 			siteId,

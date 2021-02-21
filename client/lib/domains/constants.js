@@ -25,7 +25,8 @@ export const domainAvailability = {
 	AVAILABLE: 'available',
 	AVAILABLE_PREMIUM: 'available_premium',
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
-	BLACKLISTED: 'blacklisted_domain',
+	CONFLICTING_CNAME_EXISTS: 'conflicting_cname_exists',
+	DISALLOWED: 'blacklisted_domain',
 	DOMAIN_SUGGESTIONS_THROTTLED: 'domain_suggestions_throttled',
 	DOTBLOG_SUBDOMAIN: 'dotblog_subdomain',
 	EMPTY_QUERY: 'empty_query',
@@ -95,4 +96,10 @@ export const gdprConsentStatus = {
 export const domainConnect = {
 	DISCOVERY_TXT_RECORD_NAME: '_domainconnect',
 	API_URL: 'public-api.wordpress.com/rest/v1.3/domain-connect',
+};
+
+export const sslStatuses = {
+	SSL_DISABLED: 'disabled',
+	SSL_PENDING: 'pending',
+	SSL_ACTIVE: 'active',
 };

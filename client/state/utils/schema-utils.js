@@ -3,13 +3,17 @@
  */
 import validator from 'is-my-json-valid';
 import { forEach, get, isEmpty, isEqual } from 'lodash';
+import { getInitialState } from '@automattic/state-utils';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { getInitialState } from './get-initial-state';
-import warn from 'lib/warn';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	const validate = validator( schema, {

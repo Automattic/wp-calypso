@@ -13,8 +13,8 @@ import {
 	POST_TYPES_TAXONOMIES_REQUEST,
 	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
 	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -39,7 +39,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostTypeTaxonomies()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/post-types/post/taxonomies' )

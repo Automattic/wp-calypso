@@ -7,7 +7,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { noop, size } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -19,17 +21,18 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-} from 'lib/plans';
-import { GROUP_JETPACK, GROUP_WPCOM } from 'lib/plans/constants';
-import { addQueryArgs } from 'lib/url';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
+} from 'calypso/lib/plans';
+import { GROUP_JETPACK, GROUP_WPCOM } from 'calypso/lib/plans/constants';
+import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { Button, Card } from '@automattic/components';
-import DismissibleCard from 'blocks/dismissible-card';
-import PlanIcon from 'components/plans/plan-icon';
-import PlanPrice from 'my-sites/plan-price';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import DismissibleCard from 'calypso/blocks/dismissible-card';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -47,14 +50,18 @@ export class Banner extends Component {
 		dismissTemporary: PropTypes.bool,
 		event: PropTypes.string,
 		feature: PropTypes.string,
+		horizontal: PropTypes.bool,
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		iconPath: PropTypes.string,
+		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		primaryButton: PropTypes.bool,
 		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
@@ -66,6 +73,7 @@ export class Banner extends Component {
 		tracksClickProperties: PropTypes.object,
 		tracksDismissProperties: PropTypes.object,
 		customerType: PropTypes.string,
+		isSiteWPForTeams: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -73,12 +81,16 @@ export class Banner extends Component {
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
+		horizontal: false,
+		jetpack: false,
 		onClick: noop,
 		onDismiss: noop,
+		primaryButton: true,
 		showIcon: true,
 		tracksImpressionName: 'calypso_banner_cta_impression',
 		tracksClickName: 'calypso_banner_cta_click',
 		tracksDismissName: 'calypso_banner_dismiss',
+		isSiteWPForTeams: false,
 	};
 
 	getHref() {
@@ -103,7 +115,7 @@ export class Banner extends Component {
 		return href;
 	}
 
-	handleClick = e => {
+	handleClick = ( e ) => {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
 		if ( event && tracksClickName ) {
@@ -118,7 +130,7 @@ export class Banner extends Component {
 		onClick( e );
 	};
 
-	handleDismiss = e => {
+	handleDismiss = ( e ) => {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
 		if ( event && tracksDismissName ) {
@@ -133,28 +145,31 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, showIcon, plan } = this.props;
-
-		if ( plan && ! icon ) {
-			return (
-				<div className="banner__icon-plan">
-					<PlanIcon plan={ plan } />
-				</div>
-			);
-		}
+		const { icon, iconPath, jetpack, showIcon } = this.props;
 
 		if ( ! showIcon ) {
 			return;
 		}
 
+		if ( jetpack ) {
+			return (
+				<div className="banner__icon-plan">
+					<JetpackLogo size={ 32 } />
+				</div>
+			);
+		}
+
+		let iconComponent;
+		if ( iconPath ) {
+			iconComponent = <img src={ iconPath } alt="" />;
+		} else {
+			iconComponent = <Gridicon icon={ icon || 'star' } size={ 18 } />;
+		}
+
 		return (
 			<div className="banner__icons">
-				<div className="banner__icon">
-					<Gridicon icon={ icon || 'info-outline' } size={ 18 } />
-				</div>
-				<div className="banner__icon-circle">
-					<Gridicon icon={ icon || 'info-outline' } size={ 18 } />
-				</div>
+				<div className="banner__icon">{ iconComponent }</div>
+				<div className="banner__icon-circle">{ iconComponent }</div>
 			</div>
 		);
 	}
@@ -169,6 +184,7 @@ export class Banner extends Component {
 			compact,
 			list,
 			price,
+			primaryButton,
 			title,
 			target,
 			tracksImpressionName,
@@ -215,18 +231,18 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact primary target={ target }>
-									{ callToAction }
+								<Button compact primary={ primaryButton } target={ target }>
+									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
 								<Button
 									compact
 									href={ this.getHref() }
 									onClick={ this.handleClick }
-									primary
+									primary={ primaryButton }
 									target={ target }
 								>
-									{ callToAction }
+									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
 					</div>
@@ -244,8 +260,15 @@ export class Banner extends Component {
 			dismissPreferenceName,
 			dismissTemporary,
 			forceHref,
+			horizontal,
+			jetpack,
 			plan,
 		} = this.props;
+
+		// No Banners for WP for Teams sites.
+		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
 
 		const classes = classNames(
 			'banner',
@@ -259,7 +282,9 @@ export class Banner extends Component {
 			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
 			{ 'is-compact': compact },
-			{ 'is-dismissible': dismissPreferenceName }
+			{ 'is-dismissible': dismissPreferenceName },
+			{ 'is-horizontal': horizontal },
+			{ 'is-jetpack': jetpack }
 		);
 
 		if ( dismissPreferenceName ) {
@@ -292,6 +317,7 @@ export class Banner extends Component {
 const mapStateToProps = ( state, ownProps ) => ( {
 	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 	canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+	isSiteWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 } );
 
 export default connect( mapStateToProps, { recordTracksEvent } )( Banner );

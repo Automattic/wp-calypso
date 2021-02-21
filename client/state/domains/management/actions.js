@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
@@ -17,7 +16,9 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/domains/init';
 
 /**
  * Returns an action object to be used in signalling that a cached domains
@@ -36,10 +37,11 @@ export function receiveContactDetailsCache( data ) {
 /**
  * Triggers a network request to query domain contact details
  * cached data (originated from last domain purchase)
+ *
  * @returns {Function}          Action thunk
  */
 export function requestContactDetailsCache() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
@@ -91,7 +93,7 @@ export function receiveWhois( domain, whoisData ) {
  * @returns {Function}          Action thunk
  */
 export function requestWhois( domain ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_REQUEST,
 			domain,
@@ -100,14 +102,14 @@ export function requestWhois( domain ) {
 		return wpcom
 			.undocumented()
 			.fetchWhois( domain )
-			.then( whoisData => {
+			.then( ( whoisData ) => {
 				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
 					domain,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
 					domain,
@@ -123,11 +125,11 @@ export function requestWhois( domain ) {
  *
  * @param   {string}   domain		domain to query
  * @param   {object}   whoisData	whois details object
- * @param	{Bool}     transferLock set 60-day transfer lock after update
+ * @param	  {boolean}  transferLock set 60-day transfer lock after update
  * @returns {Function}				Action thunk
  */
 export function saveWhois( domain, whoisData, transferLock ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
 			domain,
@@ -136,7 +138,7 @@ export function saveWhois( domain, whoisData, transferLock ) {
 		return wpcom
 			.undocumented()
 			.updateWhois( domain, whoisData, transferLock )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
@@ -144,7 +146,7 @@ export function saveWhois( domain, whoisData, transferLock ) {
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 					domain,

@@ -1,5 +1,6 @@
 /**
  * Feed post display types
+ *
  * @type {object} Types of post for display
  */
 export default {

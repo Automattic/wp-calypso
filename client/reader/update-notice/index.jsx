@@ -7,15 +7,15 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { noop, filter, get, flatMap } from 'lodash';
 import classnames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
-import { getCommentById } from 'state/comments/selectors';
-import getStream from 'state/selectors/get-reader-stream';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
+import { getCommentById } from 'calypso/state/comments/selectors';
+import { getStream } from 'calypso/state/reader/streams/selectors';
 
 /**
  * Style dependencies
@@ -52,15 +52,15 @@ class UpdateNotice extends React.PureComponent {
 		);
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 		this.props.onClick();
 	};
 }
 
 const countNewComments = ( state, postKeys ) => {
-	const newComments = flatMap( postKeys, postKey => {
-		return filter( postKey.comments, commentId => {
+	const newComments = flatMap( postKeys, ( postKey ) => {
+		return filter( postKey.comments, ( commentId ) => {
 			return ! getCommentById( {
 				state,
 				siteId: postKey.blogId,

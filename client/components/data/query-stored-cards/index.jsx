@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingStoredCards } from 'state/stored-cards/selectors';
-import { fetchStoredCards } from 'state/stored-cards/actions';
+import { isFetchingStoredCards } from 'calypso/state/stored-cards/selectors';
+import { fetchStoredCards } from 'calypso/state/stored-cards/actions';
 
 class QueryStoredCards extends Component {
 	UNSAFE_componentWillMount() {
@@ -30,7 +30,7 @@ QueryStoredCards.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isRequesting: isFetchingStoredCards( state ),
 		};

@@ -7,9 +7,9 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getSitesItems from 'state/selectors/get-sites-items';
-import isMainSiteOf from 'state/selectors/is-main-site-of';
+import { createSelector } from '@automattic/state-utils';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import isMainSiteOf from 'calypso/state/selectors/is-main-site-of';
 
 /**
  * Returns true if site with id equal to siteId is a connected secondary network site and false otherwise
@@ -22,5 +22,5 @@ import isMainSiteOf from 'state/selectors/is-main-site-of';
  */
 export default createSelector( ( state, siteId ) => {
 	const siteIds = Object.keys( getSitesItems( state ) );
-	return some( siteIds, mainSiteId => isMainSiteOf( state, mainSiteId, siteId ) );
+	return some( siteIds, ( mainSiteId ) => isMainSiteOf( state, mainSiteId, siteId ) );
 }, getSitesItems );

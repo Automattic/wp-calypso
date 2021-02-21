@@ -1,0 +1,41 @@
+// ==========================================================================
+// A map of all of our z-index values.
+//
+// Please add new values relative to their parent stacking context. For
+// example the values of 'root' are elements with a stacking context that have no
+// parents with a stacking context, other than the default html root.
+//
+// A Stacking Context is created when:
+// 1. It's the root element (HTML)
+// 2. Has a position other than static, with a z-index value
+// 3. position:fixed
+// 4. Has one of the following css properties: (transform, opacity<1, mix-blend-mode, filter)
+// 5. isolation:isolate
+// 6: -webkit-overflow-scrolling: touch
+//
+// So before adding a new z-index:
+// 1. You'll want to make sure the element actually creates a stacking context
+// 2. Look up what its parent stacking context is
+// There's a Chrome devtools extension that can help you find both:
+// https://chrome.google.com/webstore/detail/z-context/jigamimbjojkdgnlldajknogfgncplbh
+//
+// For readability please sort values from lowest to highest.
+//
+// Usage:
+// .environment-badge {
+//     z-index: onboarding-z-index( '.environment-badge' );
+// }
+//
+// For a refresher on stacking contexts see:
+// https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context
+// ==========================================================================
+
+$z-layers: (
+	'.onboarding__header': 30,
+	'.onboarding__footer': 30,
+	'.vertical-select__suggestions-wrapper': 2,
+);
+
+@function onboarding-z-index( $keys... ) {
+	@return map-get( $z-layers, $keys... );
+}

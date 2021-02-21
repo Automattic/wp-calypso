@@ -11,7 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ShippingServiceEntry from './entry';
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
 import InfoTooltip from 'woocommerce/woocommerce-services/components/info-tooltip';
 
@@ -26,12 +26,12 @@ const summaryLabel = ( services, numSelected, translate ) => {
 };
 
 const updateAll = ( event, updateValue, services ) => {
-	services.forEach( service => {
+	services.forEach( ( service ) => {
 		updateValue( [ service.id, 'enabled' ], event.target.checked );
 	} );
 };
 
-const ShippingServiceGroup = props => {
+const ShippingServiceGroup = ( props ) => {
 	const { title, deliveryEstimate, services, updateValue, errors, translate } = props;
 
 	const numSelected = services.reduce(
@@ -39,8 +39,8 @@ const ShippingServiceGroup = props => {
 		0
 	);
 
-	const stopPropagation = event => event.stopPropagation();
-	const onChange = event => updateAll( event, updateValue, services );
+	const stopPropagation = ( event ) => event.stopPropagation();
+	const onChange = ( event ) => updateAll( event, updateValue, services );
 
 	const renderHeader = () => {
 		return (

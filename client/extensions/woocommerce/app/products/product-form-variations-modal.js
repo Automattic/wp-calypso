@@ -14,10 +14,10 @@ import { find, debounce } from 'lodash';
 import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormToggle from 'components/forms/form-toggle';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
 
 class ProductFormVariationsModal extends React.Component {
@@ -47,10 +47,10 @@ class ProductFormVariationsModal extends React.Component {
 	 * make sure the correct event handler runs, and that we don't share the
 	 * same TinyMCE instance for different descriptions.
 	 */
-	editorComponent = variationId => {
+	editorComponent = ( variationId ) => {
 		const { siteId, product, variations, editProductVariation } = this.props;
-		const variation = find( variations, v => variationId === v.id );
-		const setDescription = debounce( description => {
+		const variation = find( variations, ( v ) => variationId === v.id );
+		const setDescription = debounce( ( description ) => {
 			editProductVariation( siteId, product, variation, { description } );
 		}, 200 );
 		return (
@@ -64,10 +64,10 @@ class ProductFormVariationsModal extends React.Component {
 	selectedVariation() {
 		const { selectedVariation } = this.state;
 		const { variations } = this.props;
-		return find( variations, v => selectedVariation === v.id );
+		return find( variations, ( v ) => selectedVariation === v.id );
 	}
 
-	setSku = sku => {
+	setSku = ( sku ) => {
 		const { siteId, product, editProductVariation } = this.props;
 		const variation = this.selectedVariation();
 		editProductVariation( siteId, product, variation, { sku } );

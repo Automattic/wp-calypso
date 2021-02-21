@@ -27,16 +27,17 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	const mySitesPath =
 		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
 	} );
@@ -68,7 +69,7 @@ describe( 'actions', () => {
 
 	describe( '#requestSites()', () => {
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.filteringPath( () => mySitesPath )
@@ -107,7 +108,7 @@ describe( 'actions', () => {
 			} );
 		} );
 		describe( 'failure', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.filteringPath( () => mySitesPath )
@@ -132,7 +133,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSite()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.2/sites/2916284' )
@@ -215,7 +216,13 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteSite()', () => {
-		useNock( nock => {
+		const getState = () => ( {
+			sites: {
+				items: {},
+			},
+		} );
+
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/delete' )
@@ -230,7 +237,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch delete action when thunk triggered', () => {
-			deleteSite( 2916284 )( spy );
+			deleteSite( 2916284 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_DELETE,
@@ -239,13 +246,13 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch receive deleted site when request completes', () => {
-			return deleteSite( 2916284 )( spy ).then( () => {
+			return deleteSite( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( receiveDeletedSite( 2916284 ) );
 			} );
 		} );
 
 		test( 'should dispatch delete success action when request completes', () => {
-			return deleteSite( 2916284 )( spy ).then( () => {
+			return deleteSite( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_DELETE_SUCCESS,
 					siteId: 2916284,
@@ -254,7 +261,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request for delete fails', () => {
-			return deleteSite( 77203074 )( spy ).then( () => {
+			return deleteSite( 77203074 )( spy, getState ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_DELETE_FAILURE,
 					siteId: 77203074,

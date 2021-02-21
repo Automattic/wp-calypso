@@ -3,7 +3,7 @@
  */
 import { items } from '../reducer';
 import { receivePostRevisionAuthors } from '../actions';
-import { POST_REVISION_AUTHORS_RECEIVE } from 'state/action-types';
+import { POST_REVISION_AUTHORS_RECEIVE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

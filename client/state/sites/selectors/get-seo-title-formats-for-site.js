@@ -6,7 +6,7 @@ import { flowRight as compose, get, partialRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
+import { fromApi as seoTitleFromApi } from 'calypso/components/seo/meta-title-editor/mappings';
 
 /**
  * Returns object describing custom title format

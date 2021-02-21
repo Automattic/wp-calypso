@@ -3,7 +3,7 @@
  */
 
 import { areTaxSettingsLoaded, areTaxSettingsLoading } from './selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import request from 'woocommerce/state/sites/request';
 import { setError } from '../../status/wc-api/actions';
 import {
@@ -13,7 +13,7 @@ import {
 	WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchTaxSettings = siteId => ( dispatch, getState ) => {
+export const fetchTaxSettings = ( siteId ) => ( dispatch, getState ) => {
 	if ( areTaxSettingsLoaded( getState(), siteId ) || areTaxSettingsLoading( getState(), siteId ) ) {
 		return;
 	}
@@ -27,14 +27,14 @@ export const fetchTaxSettings = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'settings/tax' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };
@@ -77,13 +77,13 @@ export const updateTaxSettings = (
 	];
 	return request( siteId )
 		.post( 'settings/tax/batch', { update } )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( updateTaxSettingsSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, updateAction, err ) );
 			if ( failureAction ) {
 				dispatch( failureAction( err ) );

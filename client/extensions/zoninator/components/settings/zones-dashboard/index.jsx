@@ -12,14 +12,14 @@ import { flowRight, times } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import HeaderCake from 'components/header-cake';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import SectionHeader from 'calypso/components/section-header';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ZoneItem from './zone-item';
 import ZonePlaceholder from './zone-placeholder';
 import { getZones, isRequestingZones } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 const placeholderCount = 5;
 
@@ -36,8 +36,8 @@ const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) => (
 		</SectionHeader>
 		{ isRequesting &&
 			zones.length === 0 &&
-			times( placeholderCount, i => <ZonePlaceholder key={ i } /> ) }
-		{ zones.map( zone => (
+			times( placeholderCount, ( i ) => <ZonePlaceholder key={ i } /> ) }
+		{ zones.map( ( zone ) => (
 			<ZoneItem key={ zone.slug } zone={ zone } />
 		) ) }
 	</div>
@@ -48,7 +48,7 @@ ZonesDashboard.propTypes = {
 	zones: PropTypes.array,
 };
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

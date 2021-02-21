@@ -1,36 +1,50 @@
-.upsell-nudge {
-	&.banner.card {
-		border-left-color: var( --color-accent );
-		background-color: var( --color-neutral-80 );
+.upsell-nudge.banner.card.is-compact {
+	background-color: var( --color-neutral-80 );
+	box-shadow: none;
+	border: 0;
+	border-radius: 2px;
+	color: var( --color-text-inverted );
+	margin: -4px 8px 8px;
+
+	a,
+	button {
+		border: none;
+		box-shadow: none;
 		color: var( --color-text-inverted );
-		display: flex;
-		align-items: center;
-
-		a {
-			border: none;
-			box-shadow: none;
-			color: var( --color-text-inverted );
-		}
-
-		&.is-compact {
-			margin-bottom: 0;
-
-			.banner__icon-circle,
-			.banner__icon {
-				margin-top: -2px;
-				margin-right: 0.25em;
-			}
-			.dismissible-card__close-icon {
-				margin-left: 0.75em;
-			}
-			.banner__content {
-				padding: 0 0 0 8px;
-			}
-		}
 	}
 
-	&.banner.card .banner__icon-circle,
-	&.banner.card .banner__icon {
+	.banner__icon-circle,
+	.banner__icon {
+		margin-top: -2px;
+		margin-right: 0.25em;
+	}
+	.dismissible-card__close-icon {
+		fill: var( --color-text-inverted );
+		margin-right: -6px;
+	}
+	.banner__action {
+		position: relative;
+		top: 1px;
+	}
+	.banner__content {
+		color: var( --color-text-inverted );
+		padding: 0 0 0 8px;
+	}
+	.banner__description {
+		color: var( --color-neutral-5 );
+	}
+	.banner__info {
+		margin-right: 5px;
+	}
+	.banner__info .banner__title {
+		color: var( --color-text-inverted );
+		font-weight: 400;
+	}
+	.card__link-indicator {
+		fill: var( --color-text-inverted );
+	}
+	.banner__icon-circle,
+	.banner__icon {
 		width: auto;
 		height: auto;
 		color: var( --color-text-inverted );
@@ -39,44 +53,24 @@
 		padding: 0;
 	}
 
-	&.banner.card .card__link-indicator {
-		fill: var( --color-text-inverted );
+	&:hover {
+		box-shadow: none;
+	}
+}
+
+.upsell-nudge.is-dismissible.is-compact .banner__action {
+	margin-top: 0;
+	margin-right: 28px;
+	top: 2px;
+}
+.upsell-nudge.banner.card.is-compact.is-card-link {
+	padding-right: 12px;
+
+	.card__link-indicator {
+		display: none;
 	}
 
-	.banner__content {
-		margin-right: auto;
-		color: var( --color-text-inverted );
-	}
-
-	.banner__title {
-		color: var( --color-text-inverted );
-		font-weight: normal;
-	}
-
-	.banner__description {
-		color: var( --color-text-inverted );
-	}
-
-	.banner__action {
-		margin-top: 5px;
-		margin-left: auto;
-	}
-
-	.dismissible-card__close-icon {
-		fill: var( --color-text-inverted );
-		margin-left: 1em;
-		order: 2;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: 0;
-			position: relative;
-			top: auto;
-			right: auto;
-		}
-	}
-
-	&.is-dismissible .banner__action {
-		margin-top: 3px;
-		margin-right: 0;
+	&:hover {
+		box-shadow: none;
 	}
 }

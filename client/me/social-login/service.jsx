@@ -9,7 +9,7 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import SocialLoginActionButton from './action-button';
 
 const SocialLoginService = ( {

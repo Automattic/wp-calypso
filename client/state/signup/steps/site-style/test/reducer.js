@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { SIGNUP_STEPS_SITE_STYLE_SET } from 'state/action-types';
+import { SIGNUP_STEPS_SITE_STYLE_SET } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should update the site style', () => {

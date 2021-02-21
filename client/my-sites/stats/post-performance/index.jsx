@@ -15,15 +15,15 @@ import { Button, Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Emojify from 'components/emojify';
-import SectionHeader from 'components/section-header';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostStats from 'components/data/query-post-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { isRequestingPostsForQuery, getPostsForQuery } from 'state/posts/selectors';
-import { getPostStat } from 'state/stats/posts/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Emojify from 'calypso/components/emojify';
+import SectionHeader from 'calypso/components/section-header';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { isRequestingPostsForQuery, getPostsForQuery } from 'calypso/state/posts/selectors';
+import { getPostStat } from 'calypso/state/stats/posts/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -71,7 +71,7 @@ class StatsPostPerformance extends Component {
 			},
 		];
 
-		return tabs.map( function( tabOptions ) {
+		return tabs.map( function ( tabOptions ) {
 			return <StatsTab { ...tabOptions } key={ tabOptions.gridicon } />;
 		} );
 	}
@@ -105,7 +105,7 @@ class StatsPostPerformance extends Component {
 				{ siteId && post && (
 					<QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } />
 				) }
-				<SectionHeader label={ translate( 'Latest Post Summary' ) } href={ summaryUrl } />
+				<SectionHeader label={ translate( 'Latest post summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<StatsModulePlaceholder isLoading={ loading && ! post } />
 					{ post ? (
@@ -149,7 +149,7 @@ class StatsPostPerformance extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const query = { status: 'publish', number: 1 };
 		const posts = siteId ? getPostsForQuery( state, siteId, query ) : null;

@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
+import FAQ from 'calypso/components/faq';
+import FAQItem from 'calypso/components/faq/faq-item';
 
 export default class extends React.Component {
 	static displayName = 'FAQ';
@@ -23,8 +23,8 @@ export default class extends React.Component {
 				<FAQItem
 					question="Can I cancel my subscription?"
 					answer={ [
-						'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day refund on all of our plans. ',
-						<a href="#" key="manage-purchases">
+						'Yes. We want you to love everything you do at WordPress.com, so we provide a 14-day refund on all of our plans. ',
+						<a href="/devdocs/design/f-a-q" key="manage-purchases">
 							Manage purchases
 						</a>,
 					] }
@@ -48,8 +48,8 @@ export default class extends React.Component {
 				<FAQItem
 					question="Can I cancel my subscription?"
 					answer={ [
-						'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day refund on all of our plans. ',
-						<a href="#" key="manage-purchases-two">
+						'Yes. We want you to love everything you do at WordPress.com, so we provide a 14-day refund on all of our plans. ',
+						<a href="/devdocs/design/f-a-q" key="manage-purchases-two">
 							Manage purchases
 						</a>,
 					] }

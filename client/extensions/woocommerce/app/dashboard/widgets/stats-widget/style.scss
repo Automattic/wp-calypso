@@ -16,7 +16,7 @@
 
 	.dashboard-widget__title, .stats-widget__footer {
 		padding: 16px;
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			padding: 24px;
 		}
 	}
@@ -35,7 +35,7 @@
 		justify-content: space-between;
 		align-items: center;
 
-		@include breakpoint( '<1040px' ) {
+		@include breakpoint-deprecated( '<1040px' ) {
 			flex-direction: column;
 
 			a {
@@ -45,7 +45,7 @@
 
 		span {
 			color: var( --color-text-subtle );
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 	}
 
@@ -56,7 +56,7 @@
 	}
 
 	.stats-widget__box-label, .table-heading .table-item__cell-title, .table.is-compact-table .table-heading {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 600;
 		white-space: nowrap;
 	}
@@ -66,14 +66,14 @@
 	}
 
 	.table.is-compact-table .table-item {
-		font-size: 14px;
+		font-size: $font-body-small;
 		color: var( --color-neutral-50 );
 	}
 
 	.table.is-compact-table .table-heading:nth-child( 3 ), .table.is-compact-table .table-item:nth-child( 3 ) {
 		padding-left: 32px;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			padding-left: 48px;
 		}
 	}
@@ -86,7 +86,7 @@
 		padding: 32px;
 		text-align: left;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			padding: 16px;
 		}
 
@@ -94,7 +94,7 @@
 			display: flex;
 			height: 120px;
 
-			@include breakpoint( '<960px' ) {
+			@include breakpoint-deprecated( '<960px' ) {
 				flex-direction: column;
 				height: 140px;
 			}
@@ -108,11 +108,11 @@
 		&.stats-type-list {
 			height: 200px;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				height: 175px;
 			}
 
-			@include breakpoint( '<960px' ) {
+			@include breakpoint-deprecated( '<960px' ) {
 				max-width: 100%;
 				min-width: 100%;
 
@@ -143,7 +143,7 @@
 		}
 
 		.stats-widget__more {
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				margin-top: -8px;
 			}
 		}
@@ -172,7 +172,7 @@
 	.stats-widget__more {
 		text-align: left;
 		padding: 0 8px 0 16px;
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin-top: -14px;
 	}
 

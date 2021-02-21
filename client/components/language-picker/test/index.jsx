@@ -70,7 +70,7 @@ describe( 'LanguagePicker', () => {
 		const newProps = { ...defaultProps, value: 'es-mx_gringos' };
 		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
 		expect( wrapper.find( '.language-picker__icon-inner' ).html() ).toBe(
-			'<div class="language-picker__icon-inner">es<br/>mx</div>'
+			'<div class="language-picker__icon-inner">es mx</div>'
 		);
 		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe(
 			'Español de México de los Gringos'

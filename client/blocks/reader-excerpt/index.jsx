@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
+import AutoDirection from 'calypso/components/auto-direction';
+import Emojify from 'calypso/components/emojify';
 
 /**
  * Style dependencies

@@ -9,7 +9,7 @@ import { fromPairs, flatMap, identity, isFunction } from 'lodash';
  * Transforms a React `Children` object into an array. The children of a `Step` are
  * a render prop and we need to call the function to get the children array.
  */
-const childrenToArray = children => {
+const childrenToArray = ( children ) => {
 	if ( isFunction( children ) ) {
 		children = children( { translate: identity } );
 	}
@@ -53,7 +53,7 @@ const childrenToArray = children => {
  * chain.
  *
  */
-const branching = element => {
+const branching = ( element ) => {
 	// Skip null elements and text nodes
 	if ( ! element || ! element.props ) {
 		return [];
@@ -78,8 +78,8 @@ const branching = element => {
  * This data is used to skip steps (`Step.skipToNext`) and to figure out if a step is the
  * last one in a tour (`isLastStep` in tour context).
  */
-export const tourBranching = tourTree => {
+export const tourBranching = ( tourTree ) => {
 	const steps = childrenToArray( tourTree.props.children );
 
-	return fromPairs( steps.map( step => [ step.props.name, fromPairs( branching( step ) ) ] ) );
+	return fromPairs( steps.map( ( step ) => [ step.props.name, fromPairs( branching( step ) ) ] ) );
 };

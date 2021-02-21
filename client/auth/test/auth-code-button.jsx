@@ -17,7 +17,7 @@ const savedFetch = fetch;
  * Internal dependencies
  */
 import { AuthCodeButton } from '../auth-code-button';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 describe( 'AuthCodeButton', () => {
 	beforeAll( () => {

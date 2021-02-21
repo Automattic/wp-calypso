@@ -33,6 +33,15 @@ describe( 'memoizeLast', () => {
 		expect( result2 ).toBe( result1 );
 	} );
 
+	test( 'it should call the function again if it was cleared and then called with the same args', () => {
+		const result1 = memoizedFunction( 1, 2, 3 );
+		memoizedFunction.clear();
+		const result2 = memoizedFunction( 1, 2, 3 );
+		expect( mockFunction ).toHaveBeenCalledTimes( 2 );
+		expect( mockFunction ).toHaveBeenCalledWith( 1, 2, 3 );
+		expect( result2 ).not.toBe( result1 );
+	} );
+
 	test( 'it should call the function if it is called with different args', () => {
 		const result1 = memoizedFunction( 1, 2, 3 );
 		const result2 = memoizedFunction( 3, 2, 1 );
@@ -67,11 +76,20 @@ describe( 'once', () => {
 		expect( result ).toEqual( { foo: 'bar' } );
 	} );
 
-	test( 'it should not call the function if it was already called ', () => {
+	test( 'it should not call the function if it was already called', () => {
 		const result1 = memoizedFunction();
 		const result2 = memoizedFunction();
 		expect( mockFunction ).toHaveBeenCalledTimes( 1 );
 		expect( mockFunction ).toHaveBeenCalledWith();
 		expect( result2 ).toBe( result1 );
+	} );
+
+	test( 'it should call the function if it was cleared between calls', () => {
+		const result1 = memoizedFunction();
+		memoizedFunction.clear();
+		const result2 = memoizedFunction();
+		expect( mockFunction ).toHaveBeenCalledTimes( 2 );
+		expect( mockFunction ).toHaveBeenCalledWith();
+		expect( result2 ).not.toBe( result1 );
 	} );
 } );

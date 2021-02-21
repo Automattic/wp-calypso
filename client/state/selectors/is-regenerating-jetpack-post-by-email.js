@@ -6,8 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getRequest from 'state/selectors/get-request';
-import { saveJetpackSettings } from 'state/jetpack/settings/actions';
+import getRequest from 'calypso/state/selectors/get-request';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 
 /**
  * Returns true if we are currently making a request to regenerate the Post By Email address. False otherwise

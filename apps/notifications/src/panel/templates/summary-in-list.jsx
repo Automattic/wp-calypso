@@ -1,21 +1,25 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight as compose } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import Gridicon from './gridicons';
 import noticon2gridicon from '../utils/noticon2gridicon';
-
 import actions from '../state/actions';
-
 import ImagePreloader from './image-loader';
 
 import { html } from '../indices-to-html';
 
-var debug = require( 'debug' )( 'notifications:summary-in-list' );
-var { recordTracksEvent } = require( '../helpers/stats' );
+const debug = require( 'debug' )( 'notifications:summary-in-list' );
+const { recordTracksEvent } = require( '../helpers/stats' );
 
 export class SummaryInList extends React.Component {
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 
@@ -34,10 +38,10 @@ export class SummaryInList extends React.Component {
 	};
 
 	render() {
-		var subject = html( this.props.note.subject[ 0 ], {
+		const subject = html( this.props.note.subject[ 0 ], {
 			links: false,
 		} );
-		var excerpt = null;
+		let excerpt = null;
 
 		if ( 1 < this.props.note.subject.length ) {
 			excerpt = <div className="wpnc__excerpt">{ this.props.note.subject[ 1 ].text }</div>;
@@ -53,7 +57,7 @@ export class SummaryInList extends React.Component {
 						}
 					/>
 					<span className="wpnc__gridicon">
-						<Gridicon icon={ noticon2gridicon( this.props.note.noticon ) } size={ 16 } />
+						<Gridicon icon={ noticon2gridicon( this.props.note.noticon ) } size={ 12 } />
 					</span>
 				</div>
 				<div className="wpnc__text-summary">
@@ -65,7 +69,7 @@ export class SummaryInList extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectNote: compose( dispatch, actions.ui.selectNote ),
 	unselectNote: compose( dispatch, actions.ui.unselectNote ),
 } );

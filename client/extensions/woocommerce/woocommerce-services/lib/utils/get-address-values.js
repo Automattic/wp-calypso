@@ -11,7 +11,7 @@ import { isPlainObject } from 'lodash';
  * - {boolean} addressData.selectNormalized True if the user has chosen to accept the normalized address, false otherwise.
  * @returns {object} Object with the selected address values (postcode, country, state, etc), or an empty object on error.
  */
-export default addressData => {
+export default ( addressData ) => {
 	if ( ! isPlainObject( addressData ) ) {
 		return {};
 	}

@@ -11,29 +11,22 @@ export default { title: 'Button' };
 const helloWorld = `Hello World!`;
 const handleClick = action( 'click' );
 
-export const Default = () => <Button onClick={ handleClick }>{ helloWorld }</Button>;
-export const IsPrimary = () => (
-	<Button primary onClick={ handleClick }>
-		{ helloWorld }
-	</Button>
+const ButtonVariations = ( props ) => (
+	<>
+		<Button onClick={ handleClick } { ...props }>
+			{ helloWorld }
+		</Button>{ ' ' }
+		<Button primary onClick={ handleClick } { ...props }>
+			{ helloWorld }
+		</Button>
+	</>
 );
-export const IsScary = () => (
-	<Button scary onClick={ handleClick }>
-		{ helloWorld }
-	</Button>
-);
-export const IsBusy = () => (
-	<Button busy onClick={ handleClick }>
-		{ helloWorld }
-	</Button>
-);
-export const IsBorderless = () => (
-	<Button borderless onClick={ handleClick }>
-		{ helloWorld }
-	</Button>
-);
-export const AsLink = () => (
-	<Button href="https://www.google.com/" target="_blank">
-		{ helloWorld }
-	</Button>
-);
+
+export const Normal = () => <ButtonVariations />;
+export const Compact = () => <ButtonVariations compact />;
+export const Busy = () => <ButtonVariations busy />;
+export const Scary = () => <ButtonVariations scary />;
+export const Borderless = () => <ButtonVariations borderless />;
+export const Disabled = () => <ButtonVariations disabled />;
+export const Link = () => <ButtonVariations href="https://www.google.com/" target="_blank" />;
+export const Plain = () => <ButtonVariations plain />;

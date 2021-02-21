@@ -10,8 +10,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
-import { requestThumbnail } from 'state/reader/thumbnails/actions';
+import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
+import { requestThumbnail } from 'calypso/state/reader/thumbnails/actions';
 
 class QueryReaderThumbnails extends Component {
 	UNSAFE_componentWillMount() {
@@ -45,6 +45,6 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	shouldRequestThumbnail: ! getThumbnailForIframe( state, ownProps.embedUrl ),
 } );
 
-const mapDispatchToProps = dispatch => bindActionCreators( { requestThumbnail }, dispatch );
+const mapDispatchToProps = ( dispatch ) => bindActionCreators( { requestThumbnail }, dispatch );
 
 export default connect( mapStateToProps, mapDispatchToProps )( QueryReaderThumbnails );

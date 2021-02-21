@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'calypso/components/popover';
 
-const isInvalidTarget = target => {
+const isInvalidTarget = ( target ) => {
 	return target.tagName === 'HR';
 };
 
@@ -46,6 +46,7 @@ class PopoverMenu extends Component {
 			context,
 			customPosition,
 			isVisible,
+			isFocusEnabled,
 			popoverTitle,
 			position,
 		} = this.props;
@@ -59,6 +60,7 @@ class PopoverMenu extends Component {
 				context={ context }
 				customPosition={ customPosition }
 				isVisible={ isVisible }
+				isFocusEnabled={ isFocusEnabled }
 				popoverTitle={ popoverTitle }
 				position={ position }
 			>
@@ -75,7 +77,7 @@ class PopoverMenu extends Component {
 		);
 	}
 
-	_setPropsOnChild = child => {
+	_setPropsOnChild = ( child ) => {
 		if ( child == null ) {
 			return child;
 		}
@@ -84,8 +86,8 @@ class PopoverMenu extends Component {
 
 		return React.cloneElement( child, {
 			action: null,
-			onClick: () => {
-				onClick && onClick();
+			onClick: ( event ) => {
+				onClick && onClick( event );
 				this._onClose( action );
 			},
 		} );
@@ -110,8 +112,8 @@ class PopoverMenu extends Component {
 	_getClosestSibling = ( target, isDownwardMotion = true ) => {
 		const menu = this.menu.current;
 
-		let first = menu.firstChild,
-			last = menu.lastChild;
+		let first = menu.firstChild;
+		let last = menu.lastChild;
 
 		if ( ! isDownwardMotion ) {
 			first = menu.lastChild;
@@ -131,7 +133,7 @@ class PopoverMenu extends Component {
 			: sibling;
 	};
 
-	_onKeyDown = event => {
+	_onKeyDown = ( event ) => {
 		const target = event.target;
 		let handled = false;
 		let elementToFocus;
@@ -162,7 +164,7 @@ class PopoverMenu extends Component {
 		}
 	};
 
-	_onClose = action => {
+	_onClose = ( action ) => {
 		if ( this._previouslyFocusedElement ) {
 			this._previouslyFocusedElement.focus();
 			this._previouslyFocusedElement = null;

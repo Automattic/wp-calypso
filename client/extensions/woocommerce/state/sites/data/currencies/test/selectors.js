@@ -46,7 +46,9 @@ const loadingState = {
 
 const emptyState = {
 	extensions: {
-		woocommerce: {},
+		woocommerce: {
+			sites: {},
+		},
 	},
 	ui: {
 		selectedSiteId: 123,

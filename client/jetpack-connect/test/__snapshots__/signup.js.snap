@@ -36,7 +36,7 @@ exports[`JetpackSignup should render 1`] = `
       footerLink={
         <LoggedOutFormLinks>
           <LoggedOutFormLinkItem
-            href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
+            href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site&from=banner-44-slide-1-dashboard"
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>
@@ -95,7 +95,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
       footerLink={
         <LoggedOutFormLinks>
           <LoggedOutFormLinkItem
-            href="/log-in/jetpack/es?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
+            href="/log-in/jetpack/es?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site&from=banner-44-slide-1-dashboard"
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>

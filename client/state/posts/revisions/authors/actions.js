@@ -2,12 +2,18 @@
  * Internal dependencies
  */
 
-import { POST_REVISION_AUTHORS_RECEIVE, POST_REVISIONS_AUTHORS_REQUEST } from 'state/action-types';
+import {
+	POST_REVISION_AUTHORS_RECEIVE,
+	POST_REVISIONS_AUTHORS_REQUEST,
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/users';
+import 'calypso/state/data-layer/wpcom/sites/users';
+
+import 'calypso/state/posts/init';
 
 /**
  * Action creator for receiving an array of users from REST response
+ *
  * @param {Array} users Users received
  * @returns {object} Action object
  */

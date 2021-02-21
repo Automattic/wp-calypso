@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import hasUserAskedADirectlyQuestion from 'state/selectors/has-user-asked-a-directly-question';
+import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
 
 describe( 'hasUserAskedADirectlyQuestion()', () => {
 	const questionData = deepFreeze( {

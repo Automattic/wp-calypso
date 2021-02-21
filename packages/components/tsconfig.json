@@ -6,8 +6,8 @@
 		"checkJs": false,
 		"jsx": "react",
 		"declaration": true,
-		"declarationDir": "./types",
-		"emitDeclarationOnly": true,
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
 		"isolatedModules": true,
 
 		"strict": true,
@@ -22,8 +22,11 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"typeRoots": [ "../../node_modules/@types" ],
-		"types": []
+		"types": [],
+		"rootDir": "src",
+
+		"composite": true
 	},
-	"files": [ "src/index" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

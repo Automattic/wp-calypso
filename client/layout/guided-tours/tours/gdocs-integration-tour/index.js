@@ -15,11 +15,11 @@ import {
 	ButtonRow,
 	LinkQuit,
 	Quit,
-} from 'layout/guided-tours/config-elements';
-import analytics from 'lib/analytics';
+} from 'calypso/layout/guided-tours/config-elements';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const trackUserInterest = () => {
-	analytics.tracks.recordEvent( 'calypso_editor_gdocs_tour_success' );
+	recordTracksEvent( 'calypso_editor_gdocs_tour_success' );
 };
 
 export const GDocsIntegrationTour = makeTour(

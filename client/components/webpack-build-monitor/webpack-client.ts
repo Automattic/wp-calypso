@@ -80,14 +80,14 @@ function processUpdate( message: UpdateMessage, setBuildState: BuildStateSetter 
 
 	module.hot
 		.check( true )
-		.then( updatedModules => {
+		.then( ( updatedModules ) => {
 			setBuildState( BuildState.IDLE );
 			console.log( `[webpack] hot updated ${ updatedModules.length } modules:` );
 			for ( const updatedModuleId of updatedModules ) {
 				console.log( updatedModuleId );
 			}
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			setBuildState( BuildState.NEEDS_RELOAD );
 			console.error( '[webpack] hot update failed:', error );
 		} );
@@ -108,12 +108,12 @@ export default function connectToWebpackServer( setBuildState: BuildStateSetter 
 		setBuildState( BuildState.IDLE );
 	};
 
-	source.onerror = error => {
+	source.onerror = ( error ) => {
 		console.log( '[webpack] build monitor disconnected from server:', error );
 		setBuildState( BuildState.DISCONNECTED );
 	};
 
-	source.onmessage = m => {
+	source.onmessage = ( m ) => {
 		if ( m.data === '💓' ) {
 			return;
 		}

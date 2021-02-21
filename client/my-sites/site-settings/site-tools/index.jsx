@@ -7,29 +7,32 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
-import config from 'config';
-import { tracks } from 'lib/analytics';
+import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
+import config from '@automattic/calypso-config';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localize } from 'i18n-calypso';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SiteToolsLink from './link';
-import QueryRewindState from 'components/data/query-rewind-state';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isVipSite from 'state/selectors/is-vip-site';
-import getRewindState from 'state/selectors/get-rewind-state';
-import { hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
-import notices from 'notices';
-import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purchases';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import {
+	hasLoadedSitePurchasesFromServer,
+	getPurchasesError,
+} from 'calypso/state/purchases/selectors';
+import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const trackDeleteSiteOption = option => {
-	tracks.recordEvent( 'calypso_settings_delete_site_options', {
+const trackDeleteSiteOption = ( option ) => {
+	recordTracksEvent( 'calypso_settings_delete_site_options', {
 		option: option,
 	} );
 };
@@ -42,7 +45,7 @@ class SiteTools extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
-			notices.error( this.props.purchasesError );
+			this.props.errorNotice( this.props.purchasesError );
 		}
 	}
 
@@ -94,7 +97,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
-				<SettingsSectionHeader title={ translate( 'Site Tools' ) } />
+				<SettingsSectionHeader id="site-tools__header" title={ translate( 'Site tools' ) } />
 				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }
@@ -103,7 +106,7 @@ class SiteTools extends Component {
 						description={ changeAddressText }
 					/>
 				) }
-				{ showClone && config.isEnabled( 'rewind/clone-site' ) && (
+				{ showClone && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
 				) }
 				{ showThemeSetup && (
@@ -155,7 +158,7 @@ class SiteTools extends Component {
 		trackDeleteSiteOption( 'start-over' );
 	}
 
-	checkForSubscriptions = event => {
+	checkForSubscriptions = ( event ) => {
 		trackDeleteSiteOption( 'delete-site' );
 
 		if ( this.props.isAtomic || ! this.props.hasCancelablePurchases ) {
@@ -172,29 +175,34 @@ class SiteTools extends Component {
 	};
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-	const isAtomic = isSiteAutomatedTransfer( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isVip = isVipSite( state, siteId );
-	const rewindState = getRewindState( state, siteId );
-	const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isVip = isVipSite( state, siteId );
+		const rewindState = getRewindState( state, siteId );
+		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
-	const cloneUrl = `/start/clone-site/${ siteSlug }`;
+		const cloneUrl = `/start/clone-site/${ siteSlug }`;
 
-	return {
-		isAtomic,
-		siteSlug,
-		purchasesError: getPurchasesError( state ),
-		cloneUrl,
-		showChangeAddress: ! isJetpack && ! isVip,
-		showClone: 'active' === rewindState.state && ! isAtomic,
-		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
-		showDeleteContent: ! isJetpack && ! isVip,
-		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
-		showManageConnection: isJetpack && ! isAtomic,
-		siteId,
-		hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
-	};
-} )( localize( SiteTools ) );
+		return {
+			isAtomic,
+			siteSlug,
+			purchasesError: getPurchasesError( state ),
+			cloneUrl,
+			showChangeAddress: ! isJetpack && ! isVip,
+			showClone: 'active' === rewindState.state && ! isAtomic,
+			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
+			showDeleteContent: ! isJetpack && ! isVip,
+			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
+			showManageConnection: isJetpack && ! isAtomic,
+			siteId,
+			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
+		};
+	},
+	{
+		errorNotice,
+	}
+)( localize( SiteTools ) );

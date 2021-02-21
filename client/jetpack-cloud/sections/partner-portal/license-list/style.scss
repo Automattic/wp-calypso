@@ -1,0 +1,56 @@
+.license-list {
+	&__header {
+		&.card.is-compact {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+	}
+
+	&__message {
+		p {
+			margin: 0;
+			padding: 0;
+			font-size: 0.875rem;
+			font-style: italic;
+			font-weight: normal;
+			color: var( --color-neutral-light );
+		}
+	}
+
+	&__license-transition {
+		&-enter {
+			display: none;
+
+			&-active {
+				animation: license-list__transition-enter 0.15s linear;
+			}
+		}
+
+		&-exit {
+			opacity: 1;
+
+			&-active {
+				opacity: 0.01;
+				transition: opacity 0.15s linear;
+			}
+		}
+	}
+}
+
+@keyframes license-list__transition-enter {
+	0% {
+		display: none;
+		opacity: 0;
+	}
+	50% {
+		display: none;
+		opacity: 0;
+	}
+	51% {
+		display: block;
+		opacity: 0.01;
+	}
+	100% {
+		opacity: 1;
+	}
+}

@@ -12,11 +12,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import GoogleIcon from 'components/social-icons/google';
-import Popover from 'components/popover';
-import { preventWidows } from 'lib/formatting';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { isFormDisabled } from 'state/login/selectors';
+import GoogleIcon from 'calypso/components/social-icons/google';
+import Popover from 'calypso/components/popover';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isFormDisabled } from 'calypso/state/login/selectors';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 let auth2InitDone = false;
 
@@ -99,8 +100,10 @@ class GoogleLoginButton extends Component {
 		const { translate } = this.props;
 
 		this.initialized = this.loadDependency()
-			.then( gapi => new Promise( resolve => gapi.load( 'auth2', resolve ) ).then( () => gapi ) )
-			.then( gapi =>
+			.then( ( gapi ) =>
+				new Promise( ( resolve ) => gapi.load( 'auth2', resolve ) ).then( () => gapi )
+			)
+			.then( ( gapi ) =>
 				this.initializeAuth2( gapi ).then( () => {
 					this.setState( { isDisabled: false } );
 
@@ -115,14 +118,25 @@ class GoogleLoginButton extends Component {
 					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
 				} )
 			)
-			.catch( error => {
+			.catch( ( error ) => {
 				this.initialized = null;
 
 				if ( 'idpiframe_initialization_failed' === error.error ) {
 					// This error is caused by 3rd party cookies being blocked.
 					this.setState( {
 						error: translate(
-							'Please enable "third-party cookies" to connect your Google account.'
+							'Please enable "third-party cookies" to connect your Google account. To learn how to do this, {{learnMoreLink}}click here{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: (
+										<a
+											target="_blank"
+											rel="noreferrer"
+											href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
+										/>
+									),
+								},
+							}
 						),
 					} );
 				}
@@ -158,7 +172,7 @@ class GoogleLoginButton extends Component {
 		window.gapi.auth2
 			.getAuthInstance()
 			.signIn( { prompt: 'select_account' } )
-			.then( responseHandler, error => {
+			.then( responseHandler, ( error ) => {
 				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
 					social_account_type: 'google',
 					error_code: error.error,
@@ -211,7 +225,6 @@ class GoogleLoginButton extends Component {
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 						onMouseOver={ this.showError }
 						onFocus={ this.showError }
-						onMouseOut={ this.hideError }
 						onBlur={ this.hideError }
 						onClick={ this.handleClick }
 					>
@@ -242,7 +255,7 @@ class GoogleLoginButton extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isFormDisabled: isFormDisabled( state ),
 	} ),
 	{

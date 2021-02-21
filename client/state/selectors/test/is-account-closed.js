@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import isAccountClosed from 'state/selectors/is-account-closed';
+import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 
 describe( 'isAccountClosed()', () => {
 	test( 'should return false if state is empty', () => {

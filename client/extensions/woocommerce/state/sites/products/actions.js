@@ -6,7 +6,7 @@ import { isArray } from 'lodash';
  * Internal dependencies
  */
 import { DEFAULT_QUERY, getNormalizedProductsQuery } from './utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import request from 'woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
 import {
@@ -114,13 +114,13 @@ export const deleteProduct = ( siteId, productId, successAction = null, failureA
 	// In v1, we don't have trash management. Later we can trash instead.
 	return request( siteId )
 		.del( `products/${ productId }?force=true` )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( deleteProductSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, deleteAction, err ) );
 			if ( failureAction ) {
 				dispatch( failureAction( err ) );

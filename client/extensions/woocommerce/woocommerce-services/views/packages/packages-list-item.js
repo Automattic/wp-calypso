@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 
 const PackagesListItem = ( {
@@ -37,13 +37,13 @@ const PackagesListItem = ( {
 		);
 	}
 
-	const renderIcon = isLetter => {
+	const renderIcon = ( isLetter ) => {
 		const icon = isLetter ? 'mail' : 'product';
 
 		return <Gridicon icon={ icon } size={ 18 } />;
 	};
 
-	const renderName = name => {
+	const renderName = ( name ) => {
 		return name && '' !== trim( name ) ? name : translate( 'Untitled' );
 	};
 

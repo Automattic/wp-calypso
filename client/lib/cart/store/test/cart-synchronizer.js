@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
+import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -10,19 +10,20 @@ import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const TEST_CART_KEY = 91234567890;
 
 const poller = {
-	add: function() {},
+	add: function () {},
 };
 
 describe( 'cart-synchronizer', () => {
-	let applyCoupon, emptyCart;
+	let applyCoupon;
+	let emptyCart;
 
 	beforeAll( () => {
-		const cartValues = require( 'lib/cart-values' );
+		const cartValues = require( 'calypso/lib/cart-values' );
 
 		applyCoupon = cartValues.applyCoupon;
 		emptyCart = cartValues.emptyCart;
@@ -32,8 +33,8 @@ describe( 'cart-synchronizer', () => {
 
 	describe( '*before* the first fetch from the server', () => {
 		test( 'should *not* allow the value to be read', () => {
-			const wpcom = FakeWPCOM(),
-				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller );
+			const wpcom = FakeWPCOM();
+			const synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller );
 
 			assert.throws( () => {
 				synchronizer.getLatestValue();
@@ -41,9 +42,9 @@ describe( 'cart-synchronizer', () => {
 		} );
 
 		test( 'should enqueue local changes and POST them after fetching', () => {
-			const wpcom = FakeWPCOM(),
-				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
-				serverCart = emptyCart( TEST_CART_KEY );
+			const wpcom = FakeWPCOM();
+			const synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller );
+			const serverCart = emptyCart( TEST_CART_KEY );
 
 			synchronizer.fetch();
 			synchronizer.update( applyCoupon( 'foo' ) );
@@ -64,9 +65,9 @@ describe( 'cart-synchronizer', () => {
 
 	describe( '*after* the first fetch from the server', () => {
 		test( 'should allow the value to be read', () => {
-			const wpcom = FakeWPCOM(),
-				synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
-				serverCart = emptyCart( TEST_CART_KEY );
+			const wpcom = FakeWPCOM();
+			const synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller );
+			const serverCart = emptyCart( TEST_CART_KEY );
 
 			synchronizer.fetch();
 			wpcom.resolveRequest( 0, serverCart );
@@ -76,9 +77,9 @@ describe( 'cart-synchronizer', () => {
 	} );
 
 	test( 'should make local changes visible immediately', () => {
-		const wpcom = FakeWPCOM(),
-			synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller ),
-			serverCart = emptyCart( TEST_CART_KEY );
+		const wpcom = FakeWPCOM();
+		const synchronizer = CartSynchronizer( TEST_CART_KEY, wpcom, poller );
+		const serverCart = emptyCart( TEST_CART_KEY );
 
 		synchronizer.fetch();
 		wpcom.resolveRequest( 0, serverCart );

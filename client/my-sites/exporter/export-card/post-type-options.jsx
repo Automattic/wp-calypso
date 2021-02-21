@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -10,18 +9,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import Label from 'components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import Label from 'calypso/components/forms/form-label';
 import Select from './select';
-import Tooltip from 'components/tooltip';
-import { setPostType } from 'state/exporter/actions';
+import Tooltip from 'calypso/components/tooltip';
+import { setPostType } from 'calypso/state/exporter/actions';
 import {
 	getSelectedPostType,
 	isDateRangeValid as isExportDateRangeValid,
-} from 'state/exporter/selectors';
+} from 'calypso/state/exporter/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const mapStateToProps = ( state, ownProps ) => {
-	const siteId = state.ui.selectedSiteId;
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		siteId,
@@ -57,7 +57,7 @@ class PostTypeOptions extends React.PureComponent {
 
 		const fields = [ 'author', 'status', 'start_date', 'end_date', 'category' ];
 
-		const setRef = fieldName => c => {
+		const setRef = ( fieldName ) => ( c ) => {
 			if ( fieldName === 'start_date' ) {
 				this._startDate = c;
 			}
@@ -66,8 +66,7 @@ class PostTypeOptions extends React.PureComponent {
 		return (
 			<div className="export-card__option-fieldset">
 				<Label>
-					<FormRadio checked={ isEnabled } onChange={ onSelect } />
-					<span>{ legend }</span>
+					<FormRadio checked={ isEnabled } onChange={ onSelect } label={ legend } />
 				</Label>
 
 				{ description && (
@@ -75,7 +74,7 @@ class PostTypeOptions extends React.PureComponent {
 				) }
 
 				<div className="export-card__option-fieldset-fields">
-					{ fields.map( fieldName => (
+					{ fields.map( ( fieldName ) => (
 						<Select
 							key={ fieldName }
 							ref={ setRef( fieldName ) }

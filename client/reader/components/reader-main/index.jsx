@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SyncReaderFollows from 'components/data/sync-reader-follows';
+import Main from 'calypso/components/main';
+import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 
 /**
  * Style dependencies
@@ -27,7 +27,7 @@ import './style.scss';
  * 3. dismount old ReaderMain from the first step (dismount, 1 ref)
  */
 let activeReaderMainRefCount = 0;
-const setIsReaderPage = add => {
+const setIsReaderPage = ( add ) => {
 	if ( add ) {
 		document.querySelector( 'body' ).classList.add( 'is-reader-page' );
 	} else if ( activeReaderMainRefCount === 0 ) {

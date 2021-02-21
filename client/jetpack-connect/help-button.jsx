@@ -3,17 +3,17 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import { recordTracksEvent } from 'state/analytics/actions';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-export default function JetpackConnectHelpButton( { label } ) {
+export default function JetpackConnectHelpButton( { label, url } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -24,7 +24,7 @@ export default function JetpackConnectHelpButton( { label } ) {
 	return (
 		<LoggedOutFormLinkItem
 			className="jetpack-connect__help-button"
-			href="https://jetpack.com/contact-support"
+			href={ url || 'https://jetpack.com/contact-support?hpi=1' }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ recordClick }
@@ -37,4 +37,5 @@ export default function JetpackConnectHelpButton( { label } ) {
 
 JetpackConnectHelpButton.propTypes = {
 	label: PropTypes.string,
+	url: PropTypes.string,
 };

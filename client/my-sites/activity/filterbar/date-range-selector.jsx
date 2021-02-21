@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { isEmpty, flowRight as compose } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 
@@ -13,10 +13,10 @@ import { DateUtils } from 'react-day-picker';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { updateFilter } from 'state/activity-log/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import DateRangePicker from 'components/date-range';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { updateFilter } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import DateRangePicker from 'calypso/components/date-range';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
@@ -43,12 +43,9 @@ export class DateRangeSelector extends Component {
 			enteredToDate: null,
 		} );
 
-		const formattedFromDate = fromDate && moment( fromDate ).format( DATE_FORMAT );
-		const formattedToDate =
-			toDate &&
-			moment( toDate )
-				.endOf( 'day' )
-				.format( DATE_FORMAT );
+		const formattedFromDate =
+			fromDate && moment( fromDate ).startOf( 'day' ).utc().format( DATE_FORMAT );
+		const formattedToDate = toDate && moment( toDate ).endOf( 'day' ).utc().format( DATE_FORMAT );
 		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
 			selectDateRange( siteId, formattedFromDate, formattedToDate );
 			onClose();
@@ -64,11 +61,11 @@ export class DateRangeSelector extends Component {
 
 	handleDateRangeCommit = ( startDate, endDate ) => {
 		const { moment, selectDateRange } = this.props;
-		const formattedStartDate = startDate ? moment( startDate ).format( DATE_FORMAT ) : null;
+		const formattedStartDate = startDate
+			? moment( startDate ).startOf( 'day' ).utc().format( DATE_FORMAT )
+			: null;
 		const formattedEndDate = endDate
-			? moment( endDate )
-					.endOf( 'day' )
-					.format( DATE_FORMAT )
+			? moment( endDate ).endOf( 'day' ).utc().format( DATE_FORMAT )
 			: null;
 
 		selectDateRange( this.props.siteId, formattedStartDate, formattedEndDate ); // enough?
@@ -80,12 +77,12 @@ export class DateRangeSelector extends Component {
 		return ! from || isBeforeFirstDay || isRangeSelected;
 	};
 
-	isSelectingDayInPast = day => {
+	isSelectingDayInPast = ( day ) => {
 		const today = new Date();
 		return day.getTime() <= today.getTime();
 	};
 
-	handleDayClick = date => {
+	handleDayClick = ( date ) => {
 		const { filter } = this.props;
 		const day = date.toDate();
 
@@ -112,7 +109,7 @@ export class DateRangeSelector extends Component {
 		} );
 	};
 
-	handleDayMouseEnter = day => {
+	handleDayMouseEnter = ( day ) => {
 		const { filter } = this.props;
 		const fromDate = this.getFromDate( filter );
 		const toDate = this.getToDate( filter );
@@ -238,7 +235,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	render() {
-		const { isVisible } = this.props;
+		const { customLabel, isVisible } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
 		const now = new Date();
@@ -254,7 +251,7 @@ export class DateRangeSelector extends Component {
 				selectedEndDate={ to }
 				lastSelectableDate={ now }
 				onDateCommit={ this.handleDateRangeCommit }
-				renderTrigger={ props => (
+				renderTrigger={ ( props ) => (
 					<Fragment>
 						<Button
 							className={ buttonClass }
@@ -263,7 +260,7 @@ export class DateRangeSelector extends Component {
 							onClick={ props.onTriggerClick }
 							ref={ props.buttonRef }
 						>
-							{ this.getFormattedDate( from, to ) }
+							{ customLabel ? customLabel : this.getFormattedDate( from, to ) }
 						</Button>
 						{ ( from || to ) && (
 							<Button
@@ -282,7 +279,7 @@ export class DateRangeSelector extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectDateRange: ( siteId, from, to ) => {
 		if ( ! from && ! to ) {
 			return dispatch(

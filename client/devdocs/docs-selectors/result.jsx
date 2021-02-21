@@ -33,7 +33,7 @@ export default function DocsSelectorsResult( { url, name, description, tags, exp
 				{ paramTags.length > 0 && (
 					<div className="docs-selectors__result-arguments">
 						<span className="docs-selectors__result-label">Arguments</span>
-						{ paramTags.map( tag => (
+						{ paramTags.map( ( tag ) => (
 							<div className="docs-selectors__result-arguments-content" key={ tag.name }>
 								<div className="docs-selectors__result-arguments-name">
 									<strong>{ tag.name }</strong>

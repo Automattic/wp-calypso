@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { getSerializedQuery, normalizeFollower } from '../utils';
@@ -16,7 +11,7 @@ describe( 'utils', () => {
 				max: 20,
 				siteId: 0,
 			} );
-			expect( query ).to.eql( getSerializedQuery( { siteId: 0 } ) );
+			expect( query ).toEqual( getSerializedQuery( { siteId: 0 } ) );
 		} );
 	} );
 	describe( '#normalizeFollower()', () => {
@@ -25,7 +20,7 @@ describe( 'utils', () => {
 				ID: 0,
 				avatar: 'http://some-avatar-url/',
 			} );
-			expect( normalized.avatar_URL ).to.eql( 'http://some-avatar-url/' );
+			expect( normalized.avatar_URL ).toEqual( 'http://some-avatar-url/' );
 		} );
 	} );
 } );

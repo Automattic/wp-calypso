@@ -9,9 +9,9 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import connectSite from 'lib/reader-connect-site';
+import connectSite from 'calypso/lib/reader-connect-site';
 import SubscriptionListItem from '.';
-import isFollowingSelector from 'state/selectors/is-following';
+import { isFollowing as isFollowingSelector } from 'calypso/state/reader/follows/selectors';
 
 class ConnectedSubscriptionListItem extends React.Component {
 	static propTypes = {

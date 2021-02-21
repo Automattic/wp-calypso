@@ -1,0 +1,27 @@
+{
+	"extends": "@automattic/calypso-build/tsconfig",
+	"compilerOptions": {
+		// Disallow features that require cross-file information for emit.
+		// Must be used with babel typescript
+		"isolatedModules": true,
+		"resolveJsonModule": true,
+
+		"baseUrl": ".",
+		"rootDir": ".",
+		"noEmit": false,
+		"emitDeclarationOnly": true,
+		"composite": true,
+		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ],
+		"paths": {
+			"calypso/*": [ "./*" ]
+		}
+	},
+	"references": [ { "path": "../packages" } ],
+	"include": [ "**/*", "../build-tools/**" ],
+	"exclude": [
+		"../**/node_modules/**/*",
+		"**/test/**/*",
+		"server/bundler/assets*.json",
+		"server/devdocs/search-index.js"
+	]
+}

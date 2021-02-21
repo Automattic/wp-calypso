@@ -10,9 +10,12 @@ import {
 	receivePostEmailUnsubscription,
 	receivePostEmailUnsubscriptionError,
 } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { subscribeToNewPostEmail, unsubscribeToNewPostEmail } from 'state/reader/follows/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	subscribeToNewPostEmail,
+	unsubscribeToNewPostEmail,
+} from 'calypso/state/reader/follows/actions';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestPostEmailUnsubscription', () => {

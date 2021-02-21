@@ -9,13 +9,12 @@ const debug = debugFactory( 'calypso:my-sites:people:log-store' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 
-let _errors = [],
-	_inProgress = [],
-	_completed = [],
-	PeopleLogStore;
+let _errors = [];
+let _inProgress = [];
+let _completed = [];
 
 function removeLog( log ) {
 	debug( 'removing log:', log );
@@ -69,9 +68,11 @@ function filterList( listName, filterBy ) {
 	return clone( list );
 }
 
-PeopleLogStore = {
-	hasUnauthorizedError: function( siteId ) {
-		return Boolean( find( _errors, log => log.siteId === siteId && log.error === 'unauthorized' ) );
+const PeopleLogStore = {
+	hasUnauthorizedError: function ( siteId ) {
+		return Boolean(
+			find( _errors, ( log ) => log.siteId === siteId && log.error === 'unauthorized' )
+		);
 	},
 
 	getErrors: filterList.bind( this, 'error' ),
@@ -80,18 +81,18 @@ PeopleLogStore = {
 
 	getCompleted: filterList.bind( this, 'completed' ),
 
-	clear: function() {
+	clear: function () {
 		_errors = [];
 		_inProgress = [];
 		_completed = [];
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
 
-PeopleLogStore.dispatchToken = Dispatcher.register( function( payload ) {
+PeopleLogStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	switch ( action.type ) {

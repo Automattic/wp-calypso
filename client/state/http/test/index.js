@@ -11,8 +11,8 @@ const fetch = require( 'jest-fetch-mock' );
  * Internal dependencies
  */
 import { httpHandler } from '../';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
-import { extendAction } from 'state/utils';
+import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
+import { extendAction } from 'calypso/state/utils';
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };
@@ -36,7 +36,7 @@ describe( '#httpHandler', () => {
 
 	beforeEach( () => {
 		fetch.resetMocks();
-		completed = new Promise( resolve => {
+		completed = new Promise( ( resolve ) => {
 			dispatch = jest.fn( () => resolve( true ) );
 		} );
 	} );

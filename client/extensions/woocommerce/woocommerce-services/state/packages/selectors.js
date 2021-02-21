@@ -6,8 +6,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ACCEPTED_USPS_ORIGIN_COUNTRIES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 import { getForm } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
@@ -20,7 +20,7 @@ export const getPackagesForm = ( state, siteId = getSelectedSiteId( state ) ) =>
 	);
 };
 
-const getPredefinedPackageServices = form => {
+const getPredefinedPackageServices = ( form ) => {
 	if ( ! form || ! form.predefinedSchema ) {
 		return [];
 	}
@@ -30,6 +30,7 @@ const getPredefinedPackageServices = form => {
 
 /**
  * Returns a list of all selected packages, custom and predefined
+ *
  * @param {object} state - state tree
  * @param {number} siteId - current site id
  * @returns {Array} selected packages
@@ -45,10 +46,10 @@ export const getAllSelectedPackages = createSelector(
 		forEach( form.predefinedSchema, ( serviceGroups, serviceId ) => {
 			const serviceSelectedIds = ( form.packages.predefined || {} )[ serviceId ] || [];
 
-			forEach( serviceGroups, group => {
+			forEach( serviceGroups, ( group ) => {
 				const definitions = group.definitions;
 
-				forEach( definitions, pckg => {
+				forEach( definitions, ( pckg ) => {
 					if ( ! includes( serviceSelectedIds, pckg.id ) ) {
 						return;
 					}
@@ -77,7 +78,7 @@ export const getAllSelectedPackages = createSelector(
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
 			...( form.packages.custom || [] ),
-			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+			...serviceIds.map( ( serviceId ) => ( form.packages.predefined || {} )[ serviceId ] ),
 		];
 	}
 );
@@ -85,6 +86,7 @@ export const getAllSelectedPackages = createSelector(
 /**
  * Returns definitions of packages that can be used during the label purchase,
  * including all flat rate boxes. Results are grouped
+ *
  * @param {object} state - state tree
  * @param {number} siteId - current site id
  * @returns {object} packages grouped by services
@@ -114,7 +116,7 @@ export const getPackageGroupsForLabelPurchase = createSelector(
 				const definitions = group.definitions;
 				const resultGroup = { title: group.title, definitions: [] };
 
-				forEach( definitions, pckg => {
+				forEach( definitions, ( pckg ) => {
 					if ( isInternationalOrder && false === pckg.can_ship_international ) {
 						return;
 					}
@@ -147,7 +149,7 @@ export const getPackageGroupsForLabelPurchase = createSelector(
 		const destinationCountryCode = getAddressValues( shippingLabelForm.destination ).country;
 		return [
 			...( form.packages.custom || [] ),
-			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+			...serviceIds.map( ( serviceId ) => ( form.packages.predefined || {} )[ serviceId ] ),
 			originCountryCode,
 			destinationCountryCode,
 		];
@@ -156,6 +158,7 @@ export const getPackageGroupsForLabelPurchase = createSelector(
 
 /**
  * Returns all available package definitions, keyed by their ID
+ *
  * @param {object} state - state tree
  * @param {number} siteId - current site id
  * @returns {object} packages keyed by id
@@ -168,14 +171,14 @@ export const getAllPackageDefinitions = createSelector(
 		}
 
 		const result = {};
-		forEach( form.packages.custom, pckg => {
+		forEach( form.packages.custom, ( pckg ) => {
 			result[ pckg.name ] = pckg;
 		} );
 
-		forEach( form.predefinedSchema, serviceGroups => {
-			forEach( serviceGroups, group => {
+		forEach( form.predefinedSchema, ( serviceGroups ) => {
+			forEach( serviceGroups, ( group ) => {
 				const definitions = group.definitions;
-				forEach( definitions, pckg => {
+				forEach( definitions, ( pckg ) => {
 					result[ pckg.id ] = pckg;
 				} );
 			} );
@@ -192,7 +195,7 @@ export const getAllPackageDefinitions = createSelector(
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
 			...( form.packages.custom || [] ),
-			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+			...serviceIds.map( ( serviceId ) => ( form.packages.predefined || {} )[ serviceId ] ),
 		];
 	}
 );
@@ -200,6 +203,7 @@ export const getAllPackageDefinitions = createSelector(
 /**
  * Returns currently edited predefined non-flat-rate packages, including their definitions,
  * decorated with selected state and service information
+ *
  * @param {object} state - state tree
  * @param {number} siteId - site ID
  * @returns {object} an object containing package groups and their definitions
@@ -232,7 +236,7 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
 					selected: 0,
 				};
 
-				forEach( definitions, pckg => {
+				forEach( definitions, ( pckg ) => {
 					const selected = includes( serviceSelectedIds, pckg.id );
 					if ( selected ) {
 						groupResult.selected++;
@@ -259,13 +263,14 @@ export const getCurrentlyEditingPredefinedPackages = createSelector(
 
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
-			...serviceIds.map( serviceId => form.currentlyEditingPredefinedPackages[ serviceId ] ),
+			...serviceIds.map( ( serviceId ) => form.currentlyEditingPredefinedPackages[ serviceId ] ),
 		];
 	}
 );
 
 /**
  * Returns a summary of edits made to the predefined packages (added packages count, removed packages count)
+ *
  * @param {object} state - state tree
  * @param {number} siteId - site ID
  * @returns {object} an object containing the changes summary
@@ -283,7 +288,7 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 		const existingPackages =
 			form.packages && form.packages.predefined ? form.packages.predefined : {};
 		const editedPackages = form.currentlyEditingPredefinedPackages;
-		Object.keys( editedPackages ).forEach( key => {
+		Object.keys( editedPackages ).forEach( ( key ) => {
 			const existing = existingPackages[ key ];
 			const edited = editedPackages[ key ];
 
@@ -292,14 +297,14 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 				return;
 			}
 
-			edited.forEach( packageId => {
+			edited.forEach( ( packageId ) => {
 				if ( ! includes( existing, packageId ) ) {
 					added++;
 				}
 			} );
 		} );
 
-		Object.keys( existingPackages ).forEach( key => {
+		Object.keys( existingPackages ).forEach( ( key ) => {
 			const existing = existingPackages[ key ];
 			const edited = editedPackages[ key ];
 
@@ -308,7 +313,7 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 				return;
 			}
 
-			existing.forEach( packageId => {
+			existing.forEach( ( packageId ) => {
 				if ( ! includes( edited, packageId ) ) {
 					removed++;
 				}
@@ -326,10 +331,10 @@ export const getPredefinedPackagesChangesSummary = createSelector(
 		const serviceIds = getPredefinedPackageServices( form );
 		return [
 			...serviceIds.map(
-				serviceId =>
+				( serviceId ) =>
 					form.packages && form.packages.predefined && form.packages.predefined[ serviceId ]
 			),
-			...serviceIds.map( serviceId => form.currentlyEditingPredefinedPackages[ serviceId ] ),
+			...serviceIds.map( ( serviceId ) => form.currentlyEditingPredefinedPackages[ serviceId ] ),
 		];
 	}
 );

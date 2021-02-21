@@ -10,17 +10,17 @@ import { find, identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SignupThemesList from './signup-themes-list';
-import StepWrapper from 'signup/step-wrapper';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { Button } from '@automattic/components';
-import { themes } from 'lib/signup/themes-data';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { isEnabled } from 'config';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { themes } from 'calypso/lib/signup/themes-data';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { isEnabled } from '@automattic/calypso-config';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -43,12 +43,12 @@ class ThemeSelectionStep extends Component {
 		translate: identity,
 	};
 
-	pickTheme = themeId => {
+	pickTheme = ( themeId ) => {
 		const { useHeadstart } = this.props;
 		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
-		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
+		recordTracksEvent( 'calypso_signup_theme_select', {
 			theme: repoSlug,
 			headstart: useHeadstart,
 		} );

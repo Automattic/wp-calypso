@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
+import { find, isString, map, pickBy, includes } from 'lodash';
 import i18n, { getLocaleSlug } from 'i18n-calypso';
+import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { languages } from 'languages';
-import { getUrlParts, getUrlFromParts } from 'lib/url/url-parts';
+import config from '@automattic/calypso-config';
+import languages from '@automattic/languages';
+import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 /**
  * a locale can consist of three component
@@ -98,6 +99,17 @@ export function getLanguageSlugs() {
 }
 
 /**
+ * Return a specifier for page.js/Express route param that enumerates all supported languages.
+ *
+ * @param {string} name of the parameter. By default it's `lang`, some routes use `locale`.
+ * @param {boolean} optional whether to put the `?` character at the end, making the param optional
+ * @returns {string} Router param specifier that looks like `:lang(cs|de|fr|pl)`
+ */
+export function getLanguageRouteParam( name = 'lang', optional = true ) {
+	return `:${ name }(${ getLanguageSlugs().join( '|' ) })${ optional ? '?' : '' }`;
+}
+
+/**
  * Matches and returns language from config.languages based on the given localeSlug
  *
  * @param   {string} langSlug locale slug of the language to match
@@ -145,93 +157,9 @@ export function addLocaleToPath( path, locale ) {
 	return removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
 }
 
-const localesWithBlog = [ 'en', 'ja', 'es', 'pt', 'fr', 'pt-br' ];
-const localesWithPrivacyPolicy = [ 'en', 'fr', 'de' ];
-const localesWithCookiePolicy = [ 'en', 'fr', 'de' ];
-
-const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, localeSlug ) => {
-	const localesToSubdomains = {
-		'pt-br': 'br',
-		br: 'bre',
-		zh: 'zh-cn',
-		'zh-hk': 'zh-tw',
-		'zh-sg': 'zh-cn',
-		kr: 'ko',
-	};
-
-	if ( typeof validLocales === 'string' ) {
-		validLocales = config( validLocales );
-	}
-
-	if ( validLocales.includes( localeSlug ) ) {
-		urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
-	}
-	return urlParts;
-};
-
-const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug ) => {
-	if ( typeof validLocales === 'string' ) {
-		validLocales = config( validLocales );
-	}
-	if ( validLocales.includes( localeSlug ) ) {
-		urlParts.pathname = localeSlug + urlParts.pathname;
-	}
-	return urlParts;
-};
-
-const urlLocalizationMapping = {
-	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
-	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
-	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', 'jetpack_com_locales' ),
-	'en.support.wordpress.com': setLocalizedUrlHost(
-		'support.wordpress.com',
-		'support_site_locales'
-	),
-	'en.blog.wordpress.com': setLocalizedUrlHost( 'blog.wordpress.com', localesWithBlog ),
-	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', 'forum_locales' ),
-	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
-	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
-};
-
 export function localizeUrl( fullUrl, locale ) {
 	const localeSlug = locale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en' );
-	const urlParts = getUrlParts( String( fullUrl ) );
-
-	if ( ! urlParts.host ) {
-		return fullUrl;
-	}
-
-	// Let's unify the URL.
-	urlParts.protocol = 'https:';
-	// Let's use `host` for everything.
-	delete urlParts.hostname;
-
-	if ( ! endsWith( urlParts.pathname, '.php' ) ) {
-		urlParts.pathname = ( urlParts.pathname + '/' ).replace( /\/+$/, '/' );
-	}
-
-	if ( ! localeSlug || 'en' === localeSlug ) {
-		if ( 'en.wordpress.com' === urlParts.host ) {
-			urlParts.host = 'wordpress.com';
-			return getUrlFromParts( urlParts ).href;
-		}
-		return fullUrl;
-	}
-
-	if ( 'en.wordpress.com' === urlParts.host ) {
-		urlParts.host = 'wordpress.com';
-	}
-
-	const lookup = [ urlParts.host, urlParts.host + urlParts.pathname ];
-
-	for ( let i = lookup.length - 1; i >= 0; i-- ) {
-		if ( lookup[ i ] in urlLocalizationMapping ) {
-			return getUrlFromParts( urlLocalizationMapping[ lookup[ i ] ]( urlParts, localeSlug ) ).href;
-		}
-	}
-
-	// Nothing needed to be changed, just return it unmodified.
-	return fullUrl;
+	return _localizeUrl( fullUrl, localeSlug );
 }
 
 /**
@@ -277,4 +205,24 @@ export function filterLanguageRevisions( languageRevisions ) {
 
 		return true;
 	} );
+}
+
+/**
+ * Checks if provided locale is one of the magnificenet non-english locales.
+ *
+ * @param   {string}  locale Locale slug
+ * @returns {boolean} true when provided magnificent non-english locale.
+ */
+export function isMagnificentLocale( locale ) {
+	return config( 'magnificent_non_en_locales' ).includes( locale );
+}
+
+/**
+ * Checks if provided locale is translated incompletely (is missing essential translations).
+ *
+ * @param   {string}  locale Locale slug
+ * @returns {boolean} Whether provided locale is flagged as translated incompletely.
+ */
+export function isTranslatedIncompletely( locale ) {
+	return getLanguage( locale )?.isTranslatedIncompletely === true;
 }

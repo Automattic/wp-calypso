@@ -9,7 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { CompactCard as Card } from '@automattic/components';
-import { emailManagement } from 'my-sites/email/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 
 const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate } ) => {
 	return (

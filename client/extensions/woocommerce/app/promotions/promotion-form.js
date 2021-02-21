@@ -5,7 +5,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { uniqueId, get, find } from 'lodash';
-import warn from 'lib/warn';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
@@ -38,7 +42,7 @@ export default class PromotionForm extends React.PureComponent {
 		showEmptyValidationErrors: PropTypes.bool,
 	};
 
-	calculatePromotionName = promotion => {
+	calculatePromotionName = ( promotion ) => {
 		const { products } = this.props;
 
 		switch ( promotion.type ) {
@@ -46,11 +50,12 @@ export default class PromotionForm extends React.PureComponent {
 			case 'fixed_cart':
 			case 'percent':
 				return promotion.couponCode;
-			case 'product_sale':
+			case 'product_sale': {
 				const productIds = get( promotion, [ 'appliesTo', 'productIds' ], [] );
 				const productId = productIds.length > 0 ? productIds[ 0 ] : null;
 				const product = productId && find( products, { id: productId } );
 				return product ? product.name : '';
+			}
 		}
 	};
 
@@ -71,7 +76,7 @@ export default class PromotionForm extends React.PureComponent {
 			return null;
 		}
 
-		return Object.keys( model ).map( key => {
+		return Object.keys( model ).map( ( key ) => {
 			const cardModel = model[ key ];
 			return (
 				<PromotionFormCard

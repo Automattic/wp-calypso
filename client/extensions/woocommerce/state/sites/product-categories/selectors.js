@@ -6,7 +6,7 @@ import { get, isArray, omit, some, range, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSerializedProductCategoriesQuery } from './utils';
 
 /**
@@ -101,7 +101,7 @@ export function getProductCategories( state, query = {}, siteId = getSelectedSit
 	const idsForQuery = categoryState.queries && categoryState.queries[ serializedQuery ];
 
 	if ( idsForQuery.length ) {
-		return idsForQuery.map( id => getProductCategory( state, id, siteId ) );
+		return idsForQuery.map( ( id ) => getProductCategory( state, id, siteId ) );
 	}
 
 	return [];
@@ -118,7 +118,7 @@ export function getProductCategories( state, query = {}, siteId = getSelectedSit
 export function getAllProductCategories( state, siteId = getSelectedSiteId( state ) ) {
 	const categoryState = getRawCategoryState( state, siteId );
 	const items = values( categoryState.items ) || [];
-	return items.map( cat => getProductCategory( state, cat.id, siteId ) );
+	return items.map( ( cat ) => getProductCategory( state, cat.id, siteId ) );
 }
 
 /**
@@ -141,7 +141,7 @@ export function getAllProductCategoriesBySearch(
 	}
 
 	const result = [];
-	range( 1, lastPage + 1 ).some( page => {
+	range( 1, lastPage + 1 ).some( ( page ) => {
 		const query = {
 			search,
 			page,

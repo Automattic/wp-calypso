@@ -8,19 +8,17 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import { useLocalizedMoment } from 'components/localized-moment';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'lib/url/support';
-import { getSelectedDomain } from 'lib/domains';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
+import { getSelectedDomain } from 'calypso/lib/domains';
 
-const TransferLock = props => {
+const TransferLock = ( props ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const { transferAwayEligibleAt } = getSelectedDomain( props );
 
 	return (
 		<div>
-			<SectionHeader label={ translate( 'Transfer Domain' ) } />
 			<Card className="transfer-out__card">
 				{ translate(
 					'Due to recent contact information updates, ' +

@@ -3,11 +3,11 @@
 	align-items: center;
 	justify-content: center;
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin-bottom: 8px;
 	text-align: center;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding-top: 8px;
 	}
 }

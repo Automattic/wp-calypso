@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { filter, find, get, noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -13,8 +13,8 @@ import Gridicon from 'components/gridicon';
 import DropdownItem from './item';
 import DropdownSeparator from './separator';
 import DropdownLabel from './label';
-import Count from 'components/count';
-import TranslatableString from 'components/translatable/proptype';
+import Count from 'calypso/components/count';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies
@@ -41,7 +41,7 @@ class SelectDropdown extends Component {
 		options: PropTypes.arrayOf(
 			PropTypes.shape( {
 				value: PropTypes.string.isRequired,
-				label: TranslatableString.isRequired,
+				label: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 				path: PropTypes.string,
 				icon: PropTypes.element,
 			} )
@@ -68,7 +68,7 @@ class SelectDropdown extends Component {
 
 	itemRefs = [];
 
-	setItemRef = index => itemEl => {
+	setItemRef = ( index ) => ( itemEl ) => {
 		this.itemRefs[ index ] = itemEl;
 	};
 
@@ -107,7 +107,7 @@ class SelectDropdown extends Component {
 
 		// Otherwise find the first option that is an item, i.e., not label or separator
 		return get(
-			find( this.props.options, item => item && ! item.isLabel ),
+			find( this.props.options, ( item ) => item && ! item.isLabel ),
 			'value'
 		);
 	}
@@ -141,14 +141,14 @@ class SelectDropdown extends Component {
 
 		if ( this.props.children ) {
 			// add refs and focus-on-click handlers to children
-			return React.Children.map( this.props.children, child => {
+			return React.Children.map( this.props.children, ( child ) => {
 				if ( ! child || child.type !== DropdownItem ) {
 					return null;
 				}
 
 				return React.cloneElement( child, {
 					ref: this.setItemRef( refIndex++ ),
-					onClick: event => {
+					onClick: ( event ) => {
 						this.dropdownContainerRef.current.focus();
 						if ( typeof child.props.onClick === 'function' ) {
 							child.props.onClick( event );
@@ -223,7 +223,7 @@ class SelectDropdown extends Component {
 					<ul
 						id={ 'select-submenu-' + this.instanceId }
 						className="select-dropdown__options"
-						role="menu"
+						role="listbox"
 						aria-labelledby={ 'select-dropdown-' + this.instanceId }
 						aria-expanded={ this.state.isOpen }
 					>
@@ -282,7 +282,7 @@ class SelectDropdown extends Component {
 		this.dropdownContainerRef.current.focus();
 	}
 
-	navigateItem = event => {
+	navigateItem = ( event ) => {
 		switch ( event.keyCode ) {
 			case 9: //tab
 				this.navigateItemByTabKey( event );
@@ -334,22 +334,23 @@ class SelectDropdown extends Component {
 			return;
 		}
 
-		let items, focusedIndex;
+		let items;
+		let focusedIndex;
 
 		if ( this.props.options.length ) {
-			items = filter( this.props.options, item => item && ! item.isLabel );
+			items = filter( this.props.options, ( item ) => item && ! item.isLabel );
 
 			focusedIndex =
 				typeof this.focused === 'number'
 					? this.focused
-					: items.findIndex( item => item.value === this.state.selected );
+					: items.findIndex( ( item ) => item.value === this.state.selected );
 		} else {
-			items = filter( this.props.children, item => item.type === DropdownItem );
+			items = filter( this.props.children, ( item ) => item.type === DropdownItem );
 
 			focusedIndex =
 				typeof this.focused === 'number'
 					? this.focused
-					: items.findIndex( item => item.props.selected );
+					: items.findIndex( ( item ) => item.props.selected );
 		}
 
 		const increment = direction === 'previous' ? -1 : 1;
@@ -363,7 +364,7 @@ class SelectDropdown extends Component {
 		this.focused = newIndex;
 	}
 
-	handleOutsideClick = event => {
+	handleOutsideClick = ( event ) => {
 		if ( ! this.dropdownContainerRef.current.contains( event.target ) ) {
 			this.closeDropdown();
 		}

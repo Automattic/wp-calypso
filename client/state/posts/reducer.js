@@ -19,10 +19,9 @@ import {
 /**
  * Internal dependencies
  */
-import PostQueryManager from 'lib/query-manager/post';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import PostQueryManager from 'calypso/lib/query-manager/post';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
-	EDITOR_SAVE,
 	EDITOR_START,
 	EDITOR_STOP,
 	POST_DELETE,
@@ -42,7 +41,7 @@ import {
 	POSTS_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
 import revisions from './revisions/reducer';
@@ -59,7 +58,7 @@ import {
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
-import { getFeaturedImageId } from 'state/posts/utils';
+import { getFeaturedImageId } from 'calypso/state/posts/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -324,7 +323,7 @@ export const queries = ( () => {
 export const allSitesQueries = ( () => {
 	function findItemKey( state, siteId, postId ) {
 		return (
-			findKey( state.data.items, post => {
+			findKey( state.data.items, ( post ) => {
 				return post.site_ID === siteId && post.ID === postId;
 			} ) || null
 		);
@@ -539,30 +538,6 @@ export function edits( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: omit( state[ action.siteId ], action.postId || '' ),
 			} );
-
-		case EDITOR_SAVE: {
-			if ( ! action.saveMarker ) {
-				break;
-			}
-
-			const siteId = action.siteId;
-			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
-
-			if ( isEmpty( postEditsLog ) ) {
-				break;
-			}
-
-			const newEditsLog = [ ...postEditsLog, action.saveMarker ];
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: newEditsLog,
-				},
-			};
-		}
 
 		case POST_SAVE_SUCCESS: {
 			const siteId = action.siteId;

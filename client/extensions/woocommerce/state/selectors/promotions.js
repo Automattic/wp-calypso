@@ -24,7 +24,7 @@ export function getPromotion(
 	siteId = getSelectedSiteWithFallback( rootState )
 ) {
 	const promotions = getPromotions( rootState, siteId );
-	return find( promotions, p => promotionId === p.id ) || null;
+	return find( promotions, ( p ) => promotionId === p.id ) || null;
 }
 
 export function getPromotionsPage( promotions, page, perPage ) {
@@ -71,9 +71,9 @@ export function getPromotionEdits(
 	);
 
 	if ( isObject( promotionId ) ) {
-		return find( edits.creates, p => promotionId === p.id ) || null;
+		return find( edits.creates, ( p ) => promotionId === p.id ) || null;
 	}
-	return find( edits.updates, p => promotionId === p.id ) || null;
+	return find( edits.updates, ( p ) => promotionId === p.id ) || null;
 }
 
 export function getPromotionWithLocalEdits(

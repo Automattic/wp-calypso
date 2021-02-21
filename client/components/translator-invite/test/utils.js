@@ -7,42 +7,40 @@
  */
 import { isDefaultLocale, getCurrentNonDefaultLocale } from '../utils';
 
-jest.mock( 'config', () => key => {
+jest.mock( '@automattic/calypso-config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
 		return 'it';
 	}
 } );
 
-jest.mock( 'languages', () => ( {
-	languages: [
-		{
-			value: 1,
-			langSlug: 'it',
-			name: 'Italian English',
-			wpLocale: 'it_US',
-			popular: 1,
-			territories: [ '019' ],
-		},
-		{
-			value: 465,
-			langSlug: 'mt',
-			name: 'Malti',
-			territories: [ '039' ],
-		},
-		{
-			value: 455,
-			langSlug: 'tl',
-			name: 'Tagalog',
-			territories: [ '035' ],
-		},
-		{
-			value: 73,
-			langSlug: 'uk',
-			name: 'Українська',
-			territories: [ '151' ],
-		},
-	],
-} ) );
+jest.mock( '@automattic/languages', () => [
+	{
+		value: 1,
+		langSlug: 'it',
+		name: 'Italian English',
+		wpLocale: 'it_US',
+		popular: 1,
+		territories: [ '019' ],
+	},
+	{
+		value: 465,
+		langSlug: 'mt',
+		name: 'Malti',
+		territories: [ '039' ],
+	},
+	{
+		value: 455,
+		langSlug: 'tl',
+		name: 'Tagalog',
+		territories: [ '035' ],
+	},
+	{
+		value: 73,
+		langSlug: 'uk',
+		name: 'Українська',
+		territories: [ '151' ],
+	},
+] );
 
 describe( 'TranslatorInvite utils', () => {
 	describe( 'getCurrentNonDefaultLocale()', () => {

@@ -10,8 +10,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { generateGalleryShortcode } from 'lib/media/utils';
-import GalleryShortcode from 'components/gallery-shortcode';
+import { generateGalleryShortcode } from 'calypso/lib/media/utils';
+import GalleryShortcode from 'calypso/components/gallery-shortcode';
 
 export default class EditorMediaModalGalleryPreviewShortcode extends React.Component {
 	static propTypes = {

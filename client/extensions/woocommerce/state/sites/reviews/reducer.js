@@ -7,7 +7,7 @@ import { keyBy, omit, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { getSerializedReviewsQuery } from './utils';
 import {
 	WOOCOMMERCE_REVIEWS_RECEIVE,
@@ -90,7 +90,7 @@ export function isQueryError( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	if ( WOOCOMMERCE_REVIEWS_RECEIVE === action.type && action.reviews ) {
-		const idList = action.reviews.map( review => review.id );
+		const idList = action.reviews.map( ( review ) => review.id );
 		const query = getSerializedReviewsQuery( action.query );
 		return Object.assign( {}, state, { [ query ]: idList } );
 	}

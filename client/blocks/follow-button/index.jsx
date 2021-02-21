@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import FollowButton from './button';
-import isFollowing from 'state/selectors/is-following';
-import { follow, unfollow } from 'state/reader/follows/actions';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
+import { follow, unfollow } from 'calypso/state/reader/follows/actions';
 
 class FollowButtonContainer extends Component {
 	static propTypes = {
@@ -28,7 +28,7 @@ class FollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = following => {
+	handleFollowToggle = ( following ) => {
 		if ( following ) {
 			const followData = omitBy(
 				{

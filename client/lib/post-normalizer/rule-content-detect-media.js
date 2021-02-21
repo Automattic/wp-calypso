@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/no-undefined-types */
+
 /**
  * External dependencies
  */
@@ -8,10 +10,11 @@ import getEmbedMetadata from 'get-video-id';
 /**
  * Internal Dependencies
  */
-import { iframeIsWhitelisted, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
-import { READER_CONTENT_WIDTH } from 'state/reader/posts/sizes';
+import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
+import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
 /** Checks whether or not an image is a tracking pixel
+ *
  * @param {Node} image - DOM node for an img
  * @returns {boolean} isTrackingPixel - returns true if image is probably a tracking pixel
  */
@@ -25,6 +28,7 @@ function isTrackingPixel( image ) {
 }
 
 /** Returns true if image should be considered
+ *
  * @param {Node} image - DOM node for an image
  * @returns {boolean} true/false depending on if it should be included as a potential featured image
  */
@@ -37,7 +41,7 @@ function isCandidateForContentImage( image ) {
 
 	const imageUrl = image.getAttribute( 'src' );
 
-	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts, urlPart =>
+	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts, ( urlPart ) =>
 		includes( imageUrl.toLowerCase(), urlPart )
 	);
 
@@ -45,10 +49,11 @@ function isCandidateForContentImage( image ) {
 }
 
 /** Detects and returns metadata if it should be considered as a content image
+ *
  * @param {image} image - the image
  * @returns {object} metadata - regarding the image or null
  */
-const detectImage = image => {
+const detectImage = ( image ) => {
 	if ( isCandidateForContentImage( image ) ) {
 		const { width, height } = deduceImageWidthAndHeight( image ) || { width: 0, height: 0 };
 		return {
@@ -62,10 +67,11 @@ const detectImage = image => {
 };
 
 /**  For an iframe we know how to process, return a string for an autoplaying iframe
+ *
  * @param {Node} iframe - DOM node for an iframe
  * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
  */
-const getAutoplayIframe = iframe => {
+const getAutoplayIframe = ( iframe ) => {
 	const KNOWN_SERVICES = [ 'youtube', 'vimeo', 'videopress' ];
 	const metadata = getEmbedMetadata( iframe.src );
 	if ( metadata && includes( KNOWN_SERVICES, metadata.service ) ) {
@@ -80,7 +86,7 @@ const getAutoplayIframe = iframe => {
 	return null;
 };
 
-const getEmbedType = iframe => {
+const getEmbedType = ( iframe ) => {
 	let node = iframe;
 	let matches;
 
@@ -98,11 +104,12 @@ const getEmbedType = iframe => {
 };
 
 /** Detects and returns metadata if it should be considered as a content iframe
+ *
  * @param {Node} iframe - a DOM node for an iframe
  * @returns {metadata} metadata - metadata for an embed
  */
-const detectEmbed = iframe => {
-	if ( ! iframeIsWhitelisted( iframe ) ) {
+const detectEmbed = ( iframe ) => {
+	if ( ! iframeIsAllowed( iframe ) ) {
 		return false;
 	}
 
@@ -123,6 +130,7 @@ const detectEmbed = iframe => {
 };
 
 /** Adds an ordered list of all of the content_media to the post
+ *
  * @param {post} post - the post object to add content_media to
  * @param {dom} dom - the dom of the post to scan for media
  * @returns {PostMetadata} post - the post object mutated to also have content_media
@@ -132,7 +140,7 @@ export default function detectMedia( post, dom ) {
 	const embedSelector = 'iframe';
 	const media = dom.querySelectorAll( `${ imageSelector }, ${ embedSelector }` );
 
-	const contentMedia = map( media, element => {
+	const contentMedia = map( media, ( element ) => {
 		const nodeName = element.nodeName.toLowerCase();
 
 		if ( nodeName === 'iframe' ) {
@@ -144,8 +152,8 @@ export default function detectMedia( post, dom ) {
 	} );
 
 	post.content_media = compact( contentMedia );
-	post.content_embeds = filter( post.content_media, m => m.mediaType === 'video' );
-	post.content_images = filter( post.content_media, m => m.mediaType === 'image' );
+	post.content_embeds = filter( post.content_media, ( m ) => m.mediaType === 'video' );
+	post.content_images = filter( post.content_media, ( m ) => m.mediaType === 'image' );
 
 	// TODO: figure out a more sane way of combining featured_image + content media
 	// so that changes to logic don't need to exist in multiple places

@@ -11,26 +11,26 @@ import i18n, { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AppsBadge from './apps-badge';
-import ReauthRequired from 'me/reauth-required';
+import ReauthRequired from 'calypso/me/reauth-required';
 import { Card, Button } from '@automattic/components';
-import QuerySmsCountries from 'components/data/query-countries/sms';
-import FormPhoneInput from 'components/forms/form-phone-input';
-import getCountries from 'state/selectors/get-countries';
-import { infoNotice, successNotice, errorNotice } from 'state/notices/actions';
-import { fetchUserSettings } from 'state/user-settings/actions';
-import { accountRecoverySettingsFetch } from 'state/account-recovery/settings/actions';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
+import FormPhoneInput from 'calypso/components/forms/form-phone-input';
+import getCountries from 'calypso/state/selectors/get-countries';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
 import {
 	getAccountRecoveryPhone,
 	isAccountRecoverySettingsReady,
-} from 'state/account-recovery/settings/selectors';
-import getUserSettings from 'state/selectors/get-user-settings';
-import hasUserSettings from 'state/selectors/has-user-settings';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import wpcom from 'lib/wp';
-import phoneValidation from 'lib/phone-validation';
-import userAgent from 'lib/user-agent';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/state/account-recovery/settings/selectors';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import hasUserSettings from 'calypso/state/selectors/has-user-settings';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import phoneValidation from 'calypso/lib/phone-validation';
+import userAgent from 'calypso/lib/user-agent';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -51,30 +51,6 @@ function sendSMS( phone ) {
 		onSuccess,
 		onFailure,
 	} );
-}
-
-function sendMagicLink( email ) {
-	//Actions must be plain objects. Use custom middleware for async actions.
-	// https://stackoverflow.com/questions/46765896/react-redux-actions-must-be-plain-objects-use-custom-middleware-for-async-acti
-	return function( dispatch ) {
-		const duration = { duration: 4000 };
-		dispatch( infoNotice( i18n.translate( 'Sending email' ), duration ) );
-
-		return wpcom
-			.undocumented()
-			.requestMagicLoginEmail( {
-				email,
-				infer: true,
-				scheme: 'wordpress',
-			} )
-			.then( () => {
-				dispatch( successNotice( i18n.translate( 'Email Sent. Check your mail app!' ), duration ) );
-			} )
-			.catch( error => {
-				dispatch( errorNotice( i18n.translate( 'Sorry, we couldn’t send the email.' ), duration ) );
-				return Promise.reject( error );
-			} );
-	};
 }
 
 class MobileDownloadCard extends React.Component {
@@ -179,7 +155,7 @@ class MobileDownloadCard extends React.Component {
 	}
 
 	numericCountryCodeForCountryCode( code ) {
-		const element = this.props.countriesList.find( item => {
+		const element = this.props.countriesList.find( ( item ) => {
 			return item.code === code;
 		} );
 
@@ -214,18 +190,8 @@ class MobileDownloadCard extends React.Component {
 						</p>
 					</div>
 					<div className="get-apps__badges">
-						<AppsBadge
-							storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-get-apps%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-							storeName={ 'android' }
-							titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-							altText={ translate( 'Google Play Store download badge' ) }
-						/>
-						<AppsBadge
-							storeLink="https://itunes.apple.com/app/apple-store/id335703880?pt=299112&ct=calpyso-get-apps-button&mt=8"
-							storeName={ 'ios' }
-							titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-							altText={ translate( 'Apple App Store download badge' ) }
-						/>
+						<AppsBadge storeName={ 'android' } utm_source={ 'calypso-get-apps' } />
+						<AppsBadge storeName={ 'ios' } utm_source={ 'calypso-get-apps-button' } />
 					</div>
 				</div>
 
@@ -259,8 +225,6 @@ class MobileDownloadCard extends React.Component {
 							) }
 						</div>
 						<div className="get-apps__sms-button-wrapper">
-							<p>{ translate( 'Standard SMS rates may apply' ) }</p>
-
 							<Button
 								className="get-apps__sms-button"
 								onClick={ this.onSubmit }
@@ -268,6 +232,8 @@ class MobileDownloadCard extends React.Component {
 							>
 								{ translate( 'Text me a link' ) }
 							</Button>
+
+							<p>{ translate( 'Standard SMS rates may apply' ) }</p>
 						</div>
 					</div>
 				) }
@@ -282,7 +248,7 @@ class MobileDownloadCard extends React.Component {
 							) }
 						</p>
 					</div>
-					<div className="get-apps__link-button-wrapper">
+					<div>
 						<Button className="get-apps__magic-link-button" onClick={ this.onSubmitLink }>
 							{ translate( 'Email me a log in link' ) }
 						</Button>
@@ -292,7 +258,7 @@ class MobileDownloadCard extends React.Component {
 		);
 	}
 
-	onChange = phoneNumber => {
+	onChange = ( phoneNumber ) => {
 		this.setState( {
 			phoneNumber: {
 				countryCode: phoneNumber.countryData.code,
@@ -304,7 +270,7 @@ class MobileDownloadCard extends React.Component {
 		} );
 	};
 
-	onKeyUp = event => {
+	onKeyUp = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			this.onSubmit( event );
 		}
@@ -316,14 +282,19 @@ class MobileDownloadCard extends React.Component {
 	};
 
 	onSubmitLink = () => {
-		this.props.recordTracksEvent( 'calypso_get_apps_magic_link_button_click' );
 		const email = this.props.userSettings.user_email;
 		this.props.sendMagicLink( email );
 	};
 }
 
+const sendMagicLink = ( email ) =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
+		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
+	);
+
 export default connect(
-	state => ( {
+	( state ) => ( {
 		countriesList: getCountries( state, 'sms' ),
 		accountRecoveryPhone: getAccountRecoveryPhone( state ),
 		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),

@@ -6,14 +6,14 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import schema from './schema.json';
-import { clearJITM, insertJITM } from 'state/jitm/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { JITM_DISMISS, JITM_FETCH } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
@@ -21,7 +21,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {string} str The string to decode
  * @returns {string} The decoded string
  */
-const unescapeDecimalEntities = str =>
+const unescapeDecimalEntities = ( str ) =>
 	str.replace( /&#(\d+);/g, ( _, entity ) => String.fromCharCode( entity ) );
 
 /**
@@ -31,7 +31,7 @@ const unescapeDecimalEntities = str =>
  * @returns {object} The transformed data to display
  */
 const transformApiRequest = ( { data: jitms } ) =>
-	jitms.map( jitm => ( {
+	jitms.map( ( jitm ) => ( {
 		message: unescapeDecimalEntities( jitm.content.message || '' ),
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
 		classes: unescapeDecimalEntities( jitm.content.classes || '' ),
@@ -45,6 +45,7 @@ const transformApiRequest = ( { data: jitms } ) =>
 		action: jitm.action,
 		template: jitm.template,
 		id: jitm.id,
+		isDismissible: jitm.is_dismissible,
 	} ) );
 
 /**
@@ -53,7 +54,7 @@ const transformApiRequest = ( { data: jitms } ) =>
  * @param {object} action The fetch action
  * @returns {object} The HTTP fetch action
  */
-export const doFetchJITM = action => {
+export const doFetchJITM = ( action ) => {
 	return http(
 		{
 			apiNamespace: 'rest',
@@ -79,7 +80,7 @@ export const doFetchJITM = action => {
  * @param {object} action The dismissal action
  * @returns {object} The HTTP fetch action
  */
-export const doDismissJITM = action =>
+export const doDismissJITM = ( action ) =>
 	http(
 		{
 			apiNamespace: 'rest',
@@ -120,7 +121,7 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
  * @param {string} action.messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @returns {Function} a handler for the failed request
  */
-export const failedJITM = action => ( dispatch, getState ) => {
+export const failedJITM = ( action ) => ( dispatch, getState ) => {
 	const siteId = action.siteId || action.site_id || getSelectedSiteId( getState() );
 	dispatch( clearJITM( siteId, action.messagePath ) );
 };

@@ -10,8 +10,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingList } from 'state/reader/lists/selectors';
-import { requestList } from 'state/reader/lists/actions';
+import { isRequestingList } from 'calypso/state/reader/lists/selectors';
+import { requestList } from 'calypso/state/reader/lists/actions';
 
 class QueryReaderList extends Component {
 	UNSAFE_componentWillMount() {
@@ -54,7 +54,7 @@ export default connect(
 			isRequestingList: isRequestingList( state, owner, slug ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestList,

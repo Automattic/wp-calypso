@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'components/data/document-head', () => 'DocumentHead' );
+jest.mock( 'calypso/components/data/document-head', () => 'DocumentHead' );
 
 /**
  * External dependencies
@@ -15,7 +15,7 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import { JetpackConnectMainWrapper } from '../main-wrapper';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 
 describe( 'JetpackConnectMainWrapper', () => {
 	test( 'should render a <Main> instance', () => {

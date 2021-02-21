@@ -9,11 +9,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 import ProductVariationTypesForm from './product-variation-types-form';
 import ProductFormVariationsTable from './product-form-variations-table';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormToggle from 'components/forms/form-toggle';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
 
 class ProductFormVariationsCard extends Component {
 	state = {
@@ -71,13 +71,13 @@ class ProductFormVariationsCard extends Component {
 		const productData = { ...product };
 		const simpleProduct = [ ...this.state.simpleProduct ];
 
-		this.simpleFields.forEach( function( field ) {
+		this.simpleFields.forEach( function ( field ) {
 			if ( product[ field ] ) {
 				simpleProduct[ field ] = product[ field ];
 				productData[ field ] = null;
 			}
 		} );
-		this.state.variationAttributes.forEach( function( attribute ) {
+		this.state.variationAttributes.forEach( function ( attribute ) {
 			attributes.push( attribute );
 		} );
 
@@ -94,15 +94,17 @@ class ProductFormVariationsCard extends Component {
 		const productData = { ...product };
 		const simpleProduct = this.state.simpleProduct;
 
-		this.simpleFields.forEach( function( field ) {
+		this.simpleFields.forEach( function ( field ) {
 			if ( simpleProduct[ field ] ) {
 				productData[ field ] = simpleProduct[ field ];
 			}
 		} );
 		const variationAttributes =
-			( product.attributes && product.attributes.filter( attribute => attribute.variation ) ) || [];
+			( product.attributes && product.attributes.filter( ( attribute ) => attribute.variation ) ) ||
+			[];
 		const attributes =
-			( product.attributes && product.attributes.filter( attribute => ! attribute.variation ) ) ||
+			( product.attributes &&
+				product.attributes.filter( ( attribute ) => ! attribute.variation ) ) ||
 			null;
 
 		this.setState( { variationAttributes, simpleProduct: [] } );

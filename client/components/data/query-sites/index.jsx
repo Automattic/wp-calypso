@@ -8,12 +8,16 @@ import { useSelector, useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSites, isRequestingSite, hasAllSitesList } from 'state/sites/selectors';
-import { requestSites, requestSite } from 'state/sites/actions';
-import { getPreference } from 'state/preferences/selectors';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import {
+	isRequestingSites,
+	isRequestingSite,
+	hasAllSitesList,
+} from 'calypso/state/sites/selectors';
+import { requestSites, requestSite } from 'calypso/state/sites/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
-const getRecentSites = state => getPreference( state, 'recentSites' );
+const getRecentSites = ( state ) => getPreference( state, 'recentSites' );
 
 const requestAll = () => ( dispatch, getState ) => {
 	if ( ! isRequestingSites( getState() ) ) {
@@ -31,7 +35,7 @@ function QueryAll() {
 	return null;
 }
 
-const requestSingle = siteId => ( dispatch, getState ) => {
+const requestSingle = ( siteId ) => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSite( getState(), siteId ) ) {
 		dispatch( requestSite( siteId ) );
 	}
@@ -49,13 +53,13 @@ function QuerySingle( { siteId } ) {
 	return null;
 }
 
-const requestPrimaryAndRecent = siteIds => ( dispatch, getState ) => {
+const requestPrimaryAndRecent = ( siteIds ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( hasAllSitesList( state ) ) {
 		return;
 	}
 
-	siteIds.forEach( siteId => dispatch( requestSingle( siteId ) ) );
+	siteIds.forEach( ( siteId ) => dispatch( requestSingle( siteId ) ) );
 };
 
 function QueryPrimaryAndRecent() {

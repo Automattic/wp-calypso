@@ -138,7 +138,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		this.props.onStop();
 	};
 
-	onTouchStartHandler: React.TouchEventHandler< HTMLDivElement > = event => {
+	onTouchStartHandler: React.TouchEventHandler< HTMLDivElement > = ( event ) => {
 		event.preventDefault();
 
 		// Call draggingStartedHandler first
@@ -147,7 +147,7 @@ export default class Draggable extends Component< Props & DivProps, State > {
 		document.addEventListener( 'touchend', this.draggingEndedHandler );
 	};
 
-	onMouseDownHandler: React.MouseEventHandler< HTMLDivElement > = event => {
+	onMouseDownHandler: React.MouseEventHandler< HTMLDivElement > = ( event ) => {
 		event.preventDefault();
 
 		// Call draggingStartedHandler first

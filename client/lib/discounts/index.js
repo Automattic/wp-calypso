@@ -4,7 +4,7 @@
 import activeDiscounts from './active-discounts';
 
 function getDiscountByName( discountName, endsAt = null ) {
-	const activeDiscount = activeDiscounts.find( function( discount ) {
+	const activeDiscount = activeDiscounts.find( function ( discount ) {
 		if ( discountName !== discount.name ) {
 			return false;
 		}

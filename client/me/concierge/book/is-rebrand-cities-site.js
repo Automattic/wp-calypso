@@ -23,7 +23,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import SiteUsersFetcher from 'components/site-users-fetcher';
+import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
 
 const REBRAND_CITIES_ACCOUNT_USERNAME = 'rebrandcities';
 

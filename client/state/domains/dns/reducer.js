@@ -29,7 +29,7 @@ import {
 	DOMAINS_DNS_FETCH,
 	DOMAINS_DNS_FETCH_COMPLETED,
 	DOMAINS_DNS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 function isWpcomRecord( record ) {
 	return startsWith( record.id, 'wpcom:' );
@@ -111,7 +111,7 @@ function addDns( state, domainName, record ) {
 		[ domainName ]: {
 			isSubmittingForm: { $set: true },
 			records: {
-				$apply: records => {
+				$apply: ( records ) => {
 					const added = records.concat( [ newRecord ] );
 					return removeDuplicateWpcomRecords( domainName, added );
 				},
@@ -130,7 +130,7 @@ function deleteDns( state, domainName, record ) {
 	const command = {
 		[ domainName ]: {
 			records: {
-				$apply: records => {
+				$apply: ( records ) => {
 					const deleted = reject( records, ( _, current ) => {
 						return index === current;
 					} );

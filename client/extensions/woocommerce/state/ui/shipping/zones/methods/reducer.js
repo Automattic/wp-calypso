@@ -6,7 +6,7 @@ import { find, findIndex, isEmpty, isEqual, isNil, omit, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
@@ -46,10 +46,11 @@ export const initialState = {
 
 /**
  * Gets the temporal ID object that the next created method should have.
+ *
  * @param {object} state Current edit state
  * @returns {object} Object with an "index" property, guaranteed to be unique
  */
-const nextCreateId = state => {
+const nextCreateId = ( state ) => {
 	return {
 		index: isEmpty( state.creates ) ? 0 : state.creates[ state.creates.length - 1 ].id.index + 1,
 	};
@@ -158,7 +159,7 @@ function handleZoneMethodClose( state ) {
 	}
 
 	let found = false;
-	const newBucket = state[ bucket ].map( method => {
+	const newBucket = state[ bucket ].map( ( method ) => {
 		if ( isEqual( currentlyEditingId, method.id ) ) {
 			found = true;
 			// If edits for the method were already in the expected bucket, just update them

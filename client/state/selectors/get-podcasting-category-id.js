@@ -2,7 +2,9 @@
  * Internal dependencies
  */
 import { get } from 'lodash';
-import isPrivateSite from 'state/selectors/is-private-site';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+
+import 'calypso/state/site-settings/init';
 
 /**
  * Returns the Podcasting category ID for a given site ID.

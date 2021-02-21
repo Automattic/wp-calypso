@@ -22,7 +22,7 @@ import {
 import { getPackagesForm } from 'woocommerce/woocommerce-services/state/packages/selectors';
 import { submit as submitLabels } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { submit as submitPackages } from 'woocommerce/woocommerce-services/state/packages/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE } from 'woocommerce/woocommerce-services/state/action-types';
 import { shippingZoneMethodUpdated } from 'woocommerce/state/sites/shipping-zone-methods/actions';
 import * as api from 'woocommerce/woocommerce-services/api';
@@ -78,7 +78,7 @@ const getSavePackagesActionListSteps = ( state, siteId ) => {
 	];
 };
 
-const getSaveSettingsActionListSteps = state => {
+const getSaveSettingsActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return [
@@ -91,6 +91,7 @@ export default {
 	[ WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE ]: [
 		/**
 		 * Creates and executes a WCS shipping settings action list
+		 *
 		 * @param {object} store -
 		 * @param {object} action - an action containing successAction and failureAction
 		 */
@@ -105,17 +106,19 @@ export default {
 
 			/**
 			 * A callback issued after a successful request
+			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onSuccess = dispatch => {
+			const onSuccess = ( dispatch ) => {
 				dispatch( successAction );
 				dispatch( actionListClear() );
 			};
 			/**
 			 * A callback issued after a failed request
+			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onFailure = dispatch => {
+			const onFailure = ( dispatch ) => {
 				dispatch( failureAction );
 				dispatch( actionListClear() );
 			};
@@ -133,7 +136,7 @@ export default {
 			const methodSchema = getShippingMethodSchema( getState(), methodType, siteId ).formSchema;
 			const methodValues = coerceFormValues( methodSchema, method );
 
-			const updatedAction = data => {
+			const updatedAction = ( data ) => {
 				dispatch( shippingZoneMethodUpdated( siteId, data, action ) );
 
 				const props = {
@@ -146,7 +149,7 @@ export default {
 			api
 				.post( siteId, api.url.serviceSettings( methodType, methodId ), methodValues )
 				.then( updatedAction )
-				.catch( error => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
+				.catch( ( error ) => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
 		},
 	],
 };

@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import classnames from 'classnames';
+// eslint-disable-next-line import/no-extraneous-dependencies, no-restricted-imports
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -86,7 +88,7 @@ class Dialog extends Component {
 		this.close( button.action );
 	}
 
-	close = action => {
+	close = ( action ) => {
 		if ( this.props.onClose ) {
 			this.props.onClose( action );
 		}
@@ -108,6 +110,7 @@ class Dialog extends Component {
 		const backdropClassName = classnames( baseClassName + '__backdrop', {
 			'is-full-screen': isFullScreen,
 			'is-hidden': ! isBackdropVisible,
+			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const contentClassName = classnames( baseClassName + '__content', className );

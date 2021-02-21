@@ -34,7 +34,7 @@ class SetupTasksView extends Component {
 		} ),
 	};
 
-	onFinished = event => {
+	onFinished = ( event ) => {
 		event.preventDefault();
 		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'finished',

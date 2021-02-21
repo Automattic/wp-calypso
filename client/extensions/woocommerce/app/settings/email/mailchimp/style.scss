@@ -4,13 +4,13 @@
 	}
 
 	.mailchimp__getting-started-content {
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			padding-top: 48px;
 			padding-bottom: 48px;
 		}
 
 		img {
-			@include breakpoint( '>960px' ) {
+			@include breakpoint-deprecated( '>960px' ) {
 				width: 390px;
 			}
 		}
@@ -18,7 +18,7 @@
 
 	.mailchimp__getting-started-list-header {
 		font-weight: 400;
-		font-size: 24px;
+		font-size: $font-title-medium;
 		line-height: 1.2em;
 		margin-bottom: 16px;
 	}
@@ -29,14 +29,14 @@
 }
 
 .mailchimp__getting-started-title-text {
-	font-size: 18px;
-	font-weight: 500;
+	font-size: $font-title-small;
+	font-weight: 600;
 	padding-bottom: 4px;
 }
 
 .mailchimp__getting-started-subtitle-text {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 	padding-bottom: 4px;
 }
@@ -47,7 +47,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 	}
 
@@ -55,7 +55,7 @@
 		width: 200px;
 		margin-bottom: 16px;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			margin-bottom: 0;
 			width: 230px;
 		}
@@ -63,14 +63,14 @@
 }
 
 .mailchimp__getting-started-list-header {
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .mailchimp__getting-started-list {
 	color: var( --color-text-subtle );
 	list-style: none;
 	margin: 0 0 16px;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	li {
 		margin: 6px 0;
@@ -112,7 +112,7 @@
 			border-radius: 0;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			margin: 0 -24px 16px;
 			padding: 16px 24px;
 		}
@@ -120,12 +120,12 @@
 }
 
 .mailchimp__setup-dialog-title {
-	font-size: 24px;
+	font-size: $font-title-medium;
 }
 
 .setup-steps__login-title {
-	font-size: 18px;
-	font-weight: 500;
+	font-size: $font-title-small;
+	font-weight: 600;
 	margin-bottom: 8px;
 }
 
@@ -146,14 +146,14 @@
 }
 
 .setup-steps__campaign-defaults-title {
-	font-size: 16px;
-	font-weight: 500;
+	font-size: $font-body;
+	font-weight: 600;
 	margin-bottom: 8px;
 }
 
 .setup-steps__mailchimp-api-intro-notice {
-	font-size: 16px;
-	font-weight: 500;
+	font-size: $font-body;
+	font-weight: 600;
 	margin-bottom: 16px;
 }
 
@@ -184,7 +184,7 @@
 .mailchimp__getting-started-list-header,
 .mailchimp__getting-started-list,
 .mailchimp__getting-started-button {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-left: 24px;
 	}
 }
@@ -204,7 +204,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 		align-items: stretch;
 	}
@@ -212,7 +212,7 @@
 
 .mailchimp__dashboard-title {
 	flex-grow: 1;
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 400;
 }
 
@@ -224,7 +224,7 @@
 	display: flex;
 	align-items: center;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding-left: 24px;
 		padding-right: 24px;
 	}
@@ -235,21 +235,21 @@
 		0 1px 2px var( --color-neutral-0 );
 	flex-grow: 0;
 	width: 255px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	background: var( --color-surface );
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		width: auto;
 	}
 
 	.notice {
 		margin: 2px 8px 4px 16px;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			margin-left: 24px;
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			margin-left: 12px;
 		}
 	}
@@ -259,7 +259,7 @@
 	display: flex;
 	max-width: 140px;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		width: auto;
 	}
 }
@@ -288,7 +288,7 @@
 
 .mailchimp__header-description {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 }
 
@@ -298,12 +298,12 @@
 	background: var( --color-neutral-0 );
 	border-top: 1px solid var( --color-neutral-0 );
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding-left: 24px;
 		padding-right: 24px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		padding-left: 12px;
 		padding-right: 12px;
 	}
@@ -324,12 +324,12 @@
 	margin: 8px 16px 0;
 	font-weight: 600;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-left: 24px;
 		margin-right: 24px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-left: 12px;
 		margin-right: 12px;
 	}
@@ -350,11 +350,11 @@
 	padding: 16px;
 	flex-direction: column;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 24px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -366,7 +366,7 @@
 		margin-bottom: 0;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		padding-right: 24px;
 	}
 }
@@ -376,7 +376,7 @@
 	width: 250px;
 	flex-grow: 0;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		width: 100%;
 	}
 }
@@ -385,7 +385,7 @@
 	border: 1px solid var( --color-neutral-10 );
 	padding: 12px;
 	margin-top: 4px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --color-neutral-40 );
 
 	.form-label {
@@ -402,7 +402,7 @@
 
 .mailchimp__dashboard-settings-preview-heading {
 	text-transform: uppercase;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 }
 

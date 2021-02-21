@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
@@ -16,7 +16,8 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Receives the status of a guided transfer for a particular site
@@ -37,13 +38,13 @@ export function receiveGuidedTransferStatus( siteId, guidedTransferStatus ) {
  * Requests the status of guided transfer for a particular site
  *
  * @param {number} siteId The site ID to which the status belongs
- * @returns {Thunk} Action thunk
+ * @returns {Function} Action thunk
  */
 export function requestGuidedTransferStatus( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: GUIDED_TRANSFER_STATUS_REQUEST, siteId } );
 
-		const success = response => {
+		const success = ( response ) => {
 			const guidedTransferStatus = omit( response, '_headers' );
 
 			dispatch( {
@@ -54,7 +55,7 @@ export function requestGuidedTransferStatus( siteId ) {
 			dispatch( receiveGuidedTransferStatus( siteId, guidedTransferStatus ) );
 		};
 
-		const failure = error =>
+		const failure = ( error ) =>
 			dispatch( {
 				type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 				siteId,
@@ -84,20 +85,20 @@ export function saveHostDetailsFailure( siteId, error = {} ) {
  *
  * @param {number} siteId The id of the source site to transfer
  * @param {object} data The form data containing the target host details
- * @returns {Thunk} Action thunk
+ * @returns {Function} Action thunk
  */
 export function saveHostDetails( siteId, data ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 			siteId,
 		} );
 
-		const failure = error => {
+		const failure = ( error ) => {
 			dispatch( saveHostDetailsFailure( siteId, error ) );
 		};
 
-		const success = response => {
+		const success = ( response ) => {
 			// The success response is the updated status of the guided transfer
 			dispatch( receiveGuidedTransferStatus( siteId, omit( response, '_headers' ) ) );
 
@@ -109,6 +110,8 @@ export function saveHostDetails( siteId, data ) {
 				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 				siteId,
 			} );
+
+			dispatch( successNotice( translate( 'Thanks for confirming those details!' ) ) );
 		};
 
 		return wpcom

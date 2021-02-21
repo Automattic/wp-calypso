@@ -16,13 +16,13 @@ import {
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
-} from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#requestBillingTransactions()', () => {
 		describe( 'success', () => {
@@ -47,10 +47,10 @@ describe( 'actions', () => {
 				],
 			};
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/billing-history' )
+					.get( '/rest/v1.3/me/billing-history' )
 					.reply( 200, successResponse );
 			} );
 
@@ -85,10 +85,10 @@ describe( 'actions', () => {
 			const message =
 				'An active access token must be used to query information about the current user.';
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/billing-history' )
+					.get( '/rest/v1.3/me/billing-history' )
 					.reply( 403, {
 						error: 'authorization_required',
 						message,
@@ -112,7 +112,7 @@ describe( 'actions', () => {
 		const receiptId = 12345678;
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
@@ -142,7 +142,7 @@ describe( 'actions', () => {
 			const message =
 				'An active access token must be used to query information about the current user.';
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )

@@ -1,0 +1,40 @@
+{
+	"name": "@automattic/request-external-access",
+	"version": "1.0.0",
+	"description": "Utility for requesting authorization of sharing services.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
+	"sideEffects": false,
+	"keywords": [
+		"wordpress",
+		"access",
+		"popup"
+	],
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/request-external-access",
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/request-external-access"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"dependencies": {
+		"@automattic/popup-monitor": "^1.0.0"
+	}
+}

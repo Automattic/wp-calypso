@@ -1,28 +1,20 @@
 /**
  * External dependencies
  */
-import { parse } from 'url';
+import { parse } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
 import {
-	hasRenewalItem,
-	getRenewalItems,
-	hasDomainRegistration,
-	hasDomainMapping,
-	hasProduct,
-} from 'lib/cart-values/cart-items';
-import { managePurchase } from 'me/purchases/paths';
-import {
 	UPGRADE_INTENT_PLUGINS,
 	UPGRADE_INTENT_INSTALL_PLUGIN,
 	UPGRADE_INTENT_THEMES,
 	UPGRADE_INTENT_INSTALL_THEME,
-} from 'lib/checkout/constants';
-import { decodeURIComponentIfValid, isExternal } from 'lib/url';
+} from 'calypso/lib/checkout/constants';
+import { decodeURIComponentIfValid, isExternal } from 'calypso/lib/url';
 
-const isValidValue = url => typeof url === 'string' && url;
+const isValidValue = ( url ) => typeof url === 'string' && url;
 
 export function isValidUpgradeIntent( upgradeIntent ) {
 	switch ( upgradeIntent ) {
@@ -43,7 +35,7 @@ export function parseRedirectToChain( rawUrl, includeOriginalUrl = true ) {
 		redirectChain.push( url );
 	}
 
-	const parseUrlAndPushToChain = currentUrl => {
+	const parseUrlAndPushToChain = ( currentUrl ) => {
 		const {
 			query: { redirect_to },
 		} = parse( currentUrl, true );
@@ -66,36 +58,6 @@ export function getValidDeepRedirectTo( redirectTo ) {
 	) {
 		return redirectChain[ redirectChain.length - 1 ];
 	}
-}
-
-export function getExitCheckoutUrl( cart, siteSlug, upgradeIntent, redirectTo ) {
-	let url = '/plans/';
-
-	if ( hasRenewalItem( cart ) ) {
-		const { purchaseId, purchaseDomain } = getRenewalItems( cart )[ 0 ].extra,
-			siteName = siteSlug || purchaseDomain;
-
-		return managePurchase( siteName, purchaseId );
-	}
-
-	if ( isValidUpgradeIntent( upgradeIntent ) ) {
-		const finalRedirectTo = getValidDeepRedirectTo( redirectTo );
-		if ( finalRedirectTo ) {
-			return finalRedirectTo;
-		}
-	}
-
-	if ( hasDomainRegistration( cart ) ) {
-		url = '/domains/add/';
-	} else if ( hasDomainMapping( cart ) ) {
-		url = '/domains/add/mapping/';
-	} else if ( hasProduct( cart, 'offsite_redirect' ) ) {
-		url = '/domains/add/site-redirect/';
-	} else if ( hasProduct( cart, 'premium_theme' ) ) {
-		url = '/themes/';
-	}
-
-	return siteSlug ? url + siteSlug : url;
 }
 
 export { getCreditCardType, validatePaymentDetails } from './validation';

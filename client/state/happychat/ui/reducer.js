@@ -9,8 +9,8 @@ import {
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 
 /**
  * Tracks the current message the user has typed into the happychat client
@@ -35,6 +35,7 @@ const lostFocusAtSchema = { type: 'number' };
  * Tracks the last time Happychat had focus. This lets us determine things like
  * whether the user has unread messages. A numerical value is the timestamp where focus
  * was lost, and `null` means HC currently has focus.
+ *
  * @param {object} state Current state
  * @param {object} action Action payload
  * @returns {object}        Updated state

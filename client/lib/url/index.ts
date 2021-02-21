@@ -1,7 +1,7 @@
 /**
  * Re-exports
  */
-export { addQueryArgs } from 'lib/route';
+export { default as addQueryArgs } from './add-query-args';
 export { withoutHttp, urlToSlug, urlToDomainAndPath } from './http-utils';
 export { default as omitUrlParams } from './omit-url-params';
 export { default as isExternal } from './is-external';
@@ -13,3 +13,4 @@ export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
 export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
 export { default as format } from './format';
 export { getUrlParts, getUrlFromParts } from './url-parts';
+export { default as resolveRelativePath } from './resolve-relative-path';

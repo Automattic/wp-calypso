@@ -6,7 +6,7 @@ import { last } from 'lodash';
 /**
  * Internal dependencies
  */
-import { sameXPost } from 'reader/stream/utils';
+import { sameXPost } from 'calypso/reader/stream/utils';
 
 /**
  * Add the post URL from a duplicate x-post to an existing post key
@@ -31,7 +31,7 @@ export const addDuplicateXPostToPostKey = ( postKey1, postKey2 ) => {
  * @param {Array} postKeys Array of post key objects
  * @returns {Array} Array of post key objects
  */
-export const combineXPosts = postKeys =>
+export const combineXPosts = ( postKeys ) =>
 	postKeys.reduce( ( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
 		if ( sameXPost( lastPostKey, postKey ) ) {

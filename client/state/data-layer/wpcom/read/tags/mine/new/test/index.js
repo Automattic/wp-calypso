@@ -8,15 +8,15 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import { requestFollowTag, receiveFollowTag, receiveError } from '../';
-import { NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { NOTICE_CREATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
 import {
 	requestFollowTag as requestFollowAction,
 	receiveTags as receiveTagsAction,
-} from 'state/reader/tags/items/actions';
+} from 'calypso/state/reader/tags/items/actions';
 
-export const successfulFollowResponse = freeze( {
+const successfulFollowResponse = freeze( {
 	subscribed: true,
 	added_tag: '422',
 	tags: [

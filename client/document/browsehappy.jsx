@@ -1,33 +1,20 @@
 /**
  * External dependencies
- *
  */
-
 import React from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Head from '../components/head';
-import EmptyContent from 'components/empty-content';
+import Head from 'calypso/components/head';
+import EmptyContent from 'calypso/components/empty-content';
 import { chunkCssLinks } from './utils';
 
-function Browsehappy( { faviconURL, entrypoint, isRTL, lang, isFluidWidth, dashboardUrl } ) {
+function Browsehappy( { entrypoint, dashboardUrl } ) {
 	return (
-		<html
-			lang={ lang }
-			dir={ isRTL ? 'rtl' : 'ltr' }
-			className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
-		>
-			<Head
-				title="Unsupported Browser — WordPress.com"
-				faviconURL={ faviconURL }
-				cdn={ '//s1.wp.com' }
-			>
-				{ chunkCssLinks( entrypoint, isRTL ) }
-			</Head>
-			<body className={ classNames( { rtl: isRTL } ) }>
+		<html lang="en">
+			<Head title="Unsupported Browser — WordPress.com">{ chunkCssLinks( entrypoint ) }</Head>
+			<body>
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace*/ }
 				<div id="wpcom" className="wpcom-site">
 					<div className="layout has-no-sidebar">

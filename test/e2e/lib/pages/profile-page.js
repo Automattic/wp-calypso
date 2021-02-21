@@ -15,7 +15,7 @@ const by = webdriver.By;
 
 export default class ProfilePage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.me-profile-settings' ) );
+		super( driver, by.css( '.profile__settings' ) );
 	}
 
 	async clickSignOut() {

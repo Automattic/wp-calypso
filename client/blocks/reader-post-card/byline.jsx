@@ -4,25 +4,25 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { get, map, take, values } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
-import TimeSince from 'components/time-since';
-import { getSiteName } from 'reader/get-helpers';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import TimeSince from 'calypso/components/time-since';
+import { getSiteName } from 'calypso/reader/get-helpers';
 import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick,
-} from 'reader/stats';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
-import { getStreamUrl } from 'reader/route';
-import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
-import ReaderAuthorLink from 'blocks/reader-author-link';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+} from 'calypso/reader/stats';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
+import { getStreamUrl } from 'calypso/reader/route';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 
 const TAGS_TO_SHOW = 3;
 
@@ -90,7 +90,7 @@ class PostByline extends React.Component {
 		let tagsInOccurrenceOrder = values( post.tags );
 		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
 		tagsInOccurrenceOrder = take( tagsInOccurrenceOrder, TAGS_TO_SHOW );
-		const tags = map( tagsInOccurrenceOrder, tag => <TagLink tag={ tag } key={ tag.slug } /> );
+		const tags = map( tagsInOccurrenceOrder, ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (

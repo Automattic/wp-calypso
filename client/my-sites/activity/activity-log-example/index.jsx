@@ -9,10 +9,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityLogItem from '../activity-log-item';
-import FeatureExample from 'components/feature-example';
-import FormattedHeader from 'components/formatted-header';
+import FeatureExample from 'calypso/components/feature-example';
+import FormattedHeader from 'calypso/components/formatted-header';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
-import { getPreference } from 'state/preferences/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
 /**
  * Style dependencies
@@ -51,7 +51,7 @@ class ActivityLogExample extends Component {
 			},
 		];
 
-		const exampleItems = exampleContents.map( example => {
+		const exampleItems = exampleContents.map( ( example ) => {
 			return Object.assign(
 				{
 					activityMeta: {},
@@ -72,7 +72,7 @@ class ActivityLogExample extends Component {
 					/>
 				) }
 				<FeatureExample role="presentation">
-					{ exampleItems.map( log => (
+					{ exampleItems.map( ( log ) => (
 						<ActivityLogItem
 							key={ log.activityTs }
 							activity={ log }

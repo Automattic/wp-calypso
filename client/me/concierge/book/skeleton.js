@@ -8,7 +8,7 @@ import React, { Component } from 'react';
  */
 import { CompactCard } from '@automattic/components';
 import PrimaryHeader from '../shared/primary-header';
-import SitePlaceholder from 'blocks/site/placeholder';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
 
 class Skeleton extends Component {
 	render() {

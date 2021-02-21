@@ -9,16 +9,16 @@ import { localize, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PopoverMenuItemClipboard from 'components/popover/menu-item-clipboard';
-import { getPost } from 'state/posts/selectors';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
+import { getPost } from 'calypso/state/posts/selectors';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { infoNotice } from 'state/notices/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 
 function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink } ) {
 	return (
 		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopyLinkClick } icon={ 'link' }>
-			{ translate( 'Copy Link' ) }
+			{ translate( 'Copy link' ) }
 		</PopoverMenuItemClipboard>
 	);
 }

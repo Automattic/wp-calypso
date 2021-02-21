@@ -8,17 +8,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StoreStatsChart from 'woocommerce/app/store-stats/store-stats-chart';
 import Delta from 'woocommerce/components/delta';
-import { getPeriodFormat } from 'state/stats/lists/utils';
+import { getPeriodFormat } from 'calypso/state/stats/lists/utils';
 import { getDelta } from '../utils';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import Tabs from 'my-sites/stats/stats-tabs';
-import Tab from 'my-sites/stats/stats-tabs/tab';
+} from 'calypso/state/stats/lists/selectors';
+import Tabs from 'calypso/my-sites/stats/stats-tabs';
+import Tab from 'calypso/my-sites/stats/stats-tabs/tab';
 import { UNITS, chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
 

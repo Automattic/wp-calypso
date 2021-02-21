@@ -11,15 +11,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled as isConfigEnabled } from 'config';
-import { appStates } from 'state/imports/constants';
+import { isEnabled as isConfigEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
-import { startImport } from 'lib/importer/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { appStates } from 'calypso/state/imports/constants';
+import { startImport } from 'calypso/state/imports/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -29,20 +29,20 @@ import './file-importer.scss';
 /**
  * Module variables
  */
-const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
-	importingStates = [
-		appStates.IMPORT_FAILURE,
-		appStates.IMPORT_SUCCESS,
-		appStates.IMPORTING,
-		appStates.MAP_AUTHORS,
-	],
-	uploadingStates = [
-		appStates.UPLOAD_PROCESSING,
-		appStates.READY_FOR_UPLOAD,
-		appStates.UPLOAD_FAILURE,
-		appStates.UPLOAD_SUCCESS,
-		appStates.UPLOADING,
-	];
+const compactStates = [ appStates.DISABLED, appStates.INACTIVE ];
+const importingStates = [
+	appStates.IMPORT_FAILURE,
+	appStates.IMPORT_SUCCESS,
+	appStates.IMPORTING,
+	appStates.MAP_AUTHORS,
+];
+const uploadingStates = [
+	appStates.UPLOAD_PROCESSING,
+	appStates.READY_FOR_UPLOAD,
+	appStates.UPLOAD_FAILURE,
+	appStates.UPLOAD_SUCCESS,
+	appStates.UPLOADING,
+];
 
 class FileImporter extends React.PureComponent {
 	static propTypes = {
@@ -58,7 +58,6 @@ class FileImporter extends React.PureComponent {
 				description: PropTypes.string.isRequired,
 			} ),
 			importerState: PropTypes.string.isRequired,
-			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 			type: PropTypes.string.isRequired,
 		} ),
@@ -67,13 +66,15 @@ class FileImporter extends React.PureComponent {
 		} ),
 	};
 
-	handleClick = () => {
+	handleClick = ( shouldStartImport ) => {
 		const {
 			importerStatus: { type },
 			site: { ID: siteId },
 		} = this.props;
 
-		startImport( siteId, type );
+		if ( shouldStartImport ) {
+			this.props.startImport( siteId, type );
+		}
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
@@ -99,7 +100,7 @@ class FileImporter extends React.PureComponent {
 		} );
 		const cardProps = {
 			displayAsLink: true,
-			onClick: this.handleClick,
+			onClick: this.handleClick.bind( this, true ),
 			tagName: 'button',
 		};
 
@@ -110,14 +111,16 @@ class FileImporter extends React.PureComponent {
 			 * This is used for the new Migration logic for the moment.
 			 */
 			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
-			cardProps.onClick = null;
+			cardProps.onClick = this.handleClick.bind( this, false );
 		}
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
 				<ImporterHeader
 					importerStatus={ importerStatus }
-					{ ...{ icon, title, description, isEnabled, site } }
+					icon={ icon }
+					title={ title }
+					description={ description }
 				/>
 				{ errorData && <ErrorPane type={ errorData.type } description={ errorData.description } /> }
 				{ includes( importingStates, importerState ) && (
@@ -136,4 +139,4 @@ class FileImporter extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( FileImporter );
+export default connect( null, { recordTracksEvent, startImport } )( FileImporter );

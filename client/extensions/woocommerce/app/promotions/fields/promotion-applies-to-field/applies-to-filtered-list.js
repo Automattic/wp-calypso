@@ -6,19 +6,23 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { sortBy } from 'lodash';
-import warn from 'lib/warn';
 import formatCurrency from '@automattic/format-currency';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
 import { getAllProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Search from 'components/search';
+import Search from 'calypso/components/search';
 
 function categoryContainsString( category, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();
@@ -62,7 +66,7 @@ function addCategoryId( appliesTo, categoryId ) {
 
 function removeCategoryId( appliesTo, categoryId ) {
 	const categoryIds = appliesTo ? appliesTo.productCategoryIds : [];
-	const newCategoryIds = categoryIds.filter( id => id !== categoryId );
+	const newCategoryIds = categoryIds.filter( ( id ) => id !== categoryId );
 	return { ...appliesTo, productCategoryIds: newCategoryIds };
 }
 
@@ -74,7 +78,7 @@ function addProductId( appliesTo, productId ) {
 
 function removeProductId( appliesTo, productId ) {
 	const productIds = appliesTo ? appliesTo.productIds : [];
-	const newProductIds = productIds.filter( id => id !== productId );
+	const newProductIds = productIds.filter( ( id ) => id !== productId );
 	return { ...appliesTo, productIds: newProductIds };
 }
 
@@ -137,7 +141,7 @@ class AppliesToFilteredList extends React.Component {
 		const filteredCategories =
 			productCategories &&
 			productCategories.filter(
-				category =>
+				( category ) =>
 					categoryContainsString( category, searchFilter ) ||
 					isCategorySelected( value, category.id )
 			);
@@ -155,7 +159,7 @@ class AppliesToFilteredList extends React.Component {
 
 		return (
 			products &&
-			products.filter( product => {
+			products.filter( ( product ) => {
 				return (
 					productContainsString( product, searchFilter ) || isProductSelected( value, product.id )
 				);
@@ -209,7 +213,7 @@ class AppliesToFilteredList extends React.Component {
 		);
 	}
 
-	renderCategoryCheckbox = category => {
+	renderCategoryCheckbox = ( category ) => {
 		const { value } = this.props;
 		const { label, id, image } = category;
 		const selected = isCategorySelected( value, id );
@@ -218,7 +222,7 @@ class AppliesToFilteredList extends React.Component {
 		return renderRow( FormCheckbox, label, id, imageSrc, selected, this.onCategoryCheckbox );
 	};
 
-	renderProductCheckbox = currency => product => {
+	renderProductCheckbox = ( currency ) => ( product ) => {
 		const { value } = this.props;
 		const { name, regular_price, id, images } = product;
 		const nameWithPrice = name + ' - ' + formatCurrency( regular_price, currency );
@@ -229,7 +233,7 @@ class AppliesToFilteredList extends React.Component {
 		return renderRow( FormCheckbox, nameWithPrice, id, imageSrc, selected, this.onProductCheckbox );
 	};
 
-	renderProductRadio = currency => product => {
+	renderProductRadio = ( currency ) => ( product ) => {
 		const { value } = this.props;
 		const { name, regular_price, id, images } = product;
 		const nameWithPrice = name + ' - ' + formatCurrency( regular_price, currency );
@@ -240,11 +244,11 @@ class AppliesToFilteredList extends React.Component {
 		return renderRow( FormRadio, nameWithPrice, id, imageSrc, selected, this.onProductRadio );
 	};
 
-	onSearch = searchFilter => {
+	onSearch = ( searchFilter ) => {
 		this.setState( () => ( { searchFilter } ) );
 	};
 
-	onCategoryCheckbox = e => {
+	onCategoryCheckbox = ( e ) => {
 		const { value, edit } = this.props;
 		const categoryId = Number( e.target.value );
 		const selected = isCategorySelected( value, categoryId );
@@ -254,7 +258,7 @@ class AppliesToFilteredList extends React.Component {
 		edit( 'appliesTo', newValue );
 	};
 
-	onProductCheckbox = e => {
+	onProductCheckbox = ( e ) => {
 		const { value, edit } = this.props;
 		const productId = Number( e.target.value );
 		const selected = isProductSelected( value, productId );
@@ -264,7 +268,7 @@ class AppliesToFilteredList extends React.Component {
 		edit( 'appliesTo', newValue );
 	};
 
-	onProductRadio = e => {
+	onProductRadio = ( e ) => {
 		const { edit } = this.props;
 		const productId = Number( e.target.value );
 		edit( 'appliesTo', { productIds: [ productId ] } );
@@ -292,7 +296,7 @@ function mapStateToProps( state ) {
 
 	// TODO: This is temporary, as it's not used anymore.
 	const nonVariableProducts =
-		! productsLoading && products.filter( product => 'variable' !== product.type );
+		! productsLoading && products.filter( ( product ) => 'variable' !== product.type );
 
 	return {
 		products: nonVariableProducts,

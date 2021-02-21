@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	WP_SUPER_CACHE_DELETE_FILE,
 	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
@@ -16,8 +16,8 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../action-types';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteTitle } from 'state/sites/selectors';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 
 /*
  * Retrieves stats for a site.
@@ -25,7 +25,7 @@ import { getSiteTitle } from 'state/sites/selectors';
  * @param  {number} siteId Site ID
  * @returns {Function} Action thunk that requests stats for a given site
  */
-export const generateStats = siteId => {
+export const generateStats = ( siteId ) => {
 	return ( dispatch, getState ) => {
 		dispatch( { type: WP_SUPER_CACHE_GENERATE_STATS, siteId } );
 		dispatch( removeNotice( 'wpsc-cache-stats' ) );
@@ -65,7 +65,7 @@ export const generateStats = siteId => {
  * @returns {Function} Action thunk that deletes the cached file for a given site
  */
 export const deleteFile = ( siteId, url, isSupercache, isCached ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( removeNotice( 'wpsc-delete-cached-file' ) );
 		dispatch( { type: WP_SUPER_CACHE_DELETE_FILE, siteId } );
 

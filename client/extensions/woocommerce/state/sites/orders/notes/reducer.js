@@ -7,7 +7,7 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_ORDER_NOTE_CREATE,
 	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,
@@ -92,7 +92,7 @@ export function items( state = {}, action ) {
 export function orders( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS: {
-			const idList = action.notes.map( note => note.id );
+			const idList = action.notes.map( ( note ) => note.id );
 			return Object.assign( {}, state, { [ action.orderId ]: idList } );
 		}
 		case WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS: {

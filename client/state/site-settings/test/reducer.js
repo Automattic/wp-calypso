@@ -18,13 +18,12 @@ import {
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -88,28 +87,6 @@ describe( 'reducer', () => {
 				2916284: false,
 			} );
 		} );
-
-		test( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requesting( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requesting( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
 	} );
 
 	describe( 'saveRequests()', () => {
@@ -172,28 +149,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				2916284: { saving: false, status: 'error', error: 'my error' },
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending', error: false },
-			} );
-			const state = saveRequests( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const previousState = deepFreeze( {
-				2916284: { saving: true, status: 'pending', error: false },
-			} );
-			const state = saveRequests( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -318,7 +273,7 @@ describe( 'reducer', () => {
 			const previousState = deepFreeze( {
 				2916284: { default_category: 'cat' },
 			} );
-			const state = items( previousState, { type: SERIALIZE } );
+			const state = serialize( items, previousState );
 
 			expect( state ).to.eql( {
 				2916284: { default_category: 'cat' },
@@ -329,7 +284,7 @@ describe( 'reducer', () => {
 			const previousState = deepFreeze( {
 				2916284: { default_category: 'cat' },
 			} );
-			const state = items( previousState, { type: DESERIALIZE } );
+			const state = deserialize( items, previousState );
 
 			expect( state ).to.eql( {
 				2916284: { default_category: 'cat' },
@@ -340,7 +295,7 @@ describe( 'reducer', () => {
 			const previousInvalidState = deepFreeze( {
 				2454: 2,
 			} );
-			const state = items( previousInvalidState, { type: DESERIALIZE } );
+			const state = deserialize( items, previousInvalidState );
 
 			expect( state ).to.eql( {} );
 		} );

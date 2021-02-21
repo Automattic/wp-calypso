@@ -42,7 +42,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	display: flex;
 	flex-direction: column-reverse;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -65,7 +65,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	}
 
 	padding: 16px;
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 16px;
 	}
 }
@@ -78,7 +78,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 .post-share__form {
 	flex: 3 0 0;
 	margin: 0 16px 16px;
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin: 0 16px 16px;
 	}
 
@@ -91,7 +91,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 		padding-left: 8px;
 	}
 
-	.editor-sharing__publicize-message {
+	.publicize-message {
 		margin-top: 0;
 
 		.editor-sharing__message-heading {
@@ -100,7 +100,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 			padding: 11.5px 0;
 		}
 
-		.editor-sharing__message-input {
+		.publicize-message__input {
 			margin: 0;
 
 			&.form-textarea {
@@ -147,9 +147,13 @@ $section-border: solid 1px var( --color-neutral-5 );
 	}
 }
 
-.post-share__service .form-toggle__wrapper {
+.post-share__service .components-toggle-control {
 	flex: 0 0 24px;
 	margin-left: auto;
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
 }
 
 .post-share__service-account-social-logo {
@@ -163,7 +167,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 
 	&::before {
 		background-color: var( --color-surface );
-		border-radius: 3px;
+		border-radius: 2px;
 		content: '';
 		display: block;
 		height: 22px;
@@ -288,7 +292,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 
 	border-top: $section-border;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-bottom: 1px;
 		padding: 16px;
 	}
@@ -319,7 +323,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	overflow: hidden;
 	position: relative;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		align-items: center;
 		flex-direction: row;
 
@@ -328,12 +332,12 @@ $section-border: solid 1px var( --color-neutral-5 );
 		}
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		align-items: flex-start;
 		flex-direction: column;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		align-items: center;
 		flex-direction: row;
 	}
@@ -342,7 +346,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 .post-share__footer-item .social-logo {
 	flex: 0 0 24px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		position: relative;
 		top: 1px;
 	}
@@ -355,7 +359,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 	top: -1px;
 	left: -1px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		top: 0;
 	}
 }
@@ -374,29 +378,29 @@ $section-border: solid 1px var( --color-neutral-5 );
 }
 
 .post-share__handle {
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-right: 7px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-right: 12px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-right: 7px;
 	}
 }
 
 .post-share__timestamp-value {
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding-left: 0;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-left: 4px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		padding-left: 0;
 	}
 }
@@ -408,15 +412,15 @@ $section-border: solid 1px var( --color-neutral-5 );
 	font-style: italic;
 	white-space: nowrap;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: block;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: none;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		display: block;
 	}
 }

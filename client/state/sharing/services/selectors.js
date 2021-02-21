@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-
 import { filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
-import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
+import config from '@automattic/calypso-config';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { isJetpackSite, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';
+
+import 'calypso/state/sharing/init';
 
 /**
  * Returns an object of service objects.
@@ -52,8 +53,7 @@ export function getKeyringServiceByName( state, name ) {
  * A service is eligible for a given site if
  *  1. it's a Jetpack site and the service supports Jetpack,
  *  2. the service requires an active Jetpack module and that module is active on that site,
- *  3. the current user can manage options in case of the eventbrite service,
- *  4. the current user can publish posts in case of all publicize services.
+ *  3. the current user can publish posts in case of all publicize services.
  *
  * @param  {object} state  Global state tree
  * @param  {number} siteId Site ID.
@@ -67,7 +67,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		return services;
 	}
 
-	return services.filter( service => {
+	return services.filter( ( service ) => {
 		// Omit if the site is Jetpack and service doesn't support Jetpack
 		if ( isJetpackSite( state, siteId ) && ! service.jetpack_support ) {
 			return false;
@@ -79,11 +79,6 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			service.jetpack_module_required &&
 			! isJetpackModuleActive( state, siteId, service.jetpack_module_required )
 		) {
-			return false;
-		}
-
-		// Omit if service is settings-oriented and user cannot manage
-		if ( 'eventbrite' === service.ID && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 			return false;
 		}
 
@@ -118,10 +113,15 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		}
 
 		if (
-			'google_drive' === service.ID &&
+			'google-drive' === service.ID &&
 			( ! config.isEnabled( 'google-drive' ) ||
 				! canCurrentUser( state, siteId, 'manage_options' ) )
 		) {
+			return false;
+		}
+
+		// Omit Eventbrite as the API that is used by Eventbrite plugin was disabled 20/02/2020
+		if ( service.ID === 'eventbrite' ) {
 			return false;
 		}
 

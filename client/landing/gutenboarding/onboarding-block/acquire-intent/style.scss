@@ -1,0 +1,117 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '../../mixins';
+@import '../../variables.scss';
+
+.acquire-intent {
+	@include onboarding-heading-text-mobile;
+	background-color: var( --contrastColor );
+	color: var( --mainColor );
+	tab-size: 4;
+	min-height: calc( 100vh - 2 * #{$onboarding-header-height} );
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	margin: 0 -20px;
+	padding: 24px;
+
+	@include break-small {
+		@include onboarding-heading-text;
+		margin: 0 -44px; // override block margins
+		padding: 48px;
+		justify-content: center;
+	}
+
+	@include break-medium {
+		margin: 0 -88px; // override block margins
+		padding: 64px;
+		font-size: 64px;
+	}
+}
+
+.site-title {
+	@include break-small {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+	}
+
+	.vertical-select + & {
+		@include break-medium {
+			margin-top: 20px;
+		}
+	}
+}
+
+.site-title__input-label {
+	line-height: 1.4em;
+
+	@include break-small {
+		// stylelint-disable-next-line unit-allowed-list
+		margin-right: 0.4ch;
+	}
+}
+
+.site-title__input-wrapper {
+	position: relative;
+	flex: 1;
+
+	@include break-small {
+		min-width: 300px;
+		max-width: 400px;
+	}
+
+	@include break-medium {
+		max-width: 750px;
+	}
+}
+
+.site-title__input-hint {
+	display: flex;
+	color: var( --studio-gray-50 );
+	font-family: $default-font;
+	font-size: 14px;
+	line-height: 14px;
+	opacity: 0;
+	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	margin-top: 10px;
+
+	@include break-medium {
+		margin-top: 15px;
+	}
+
+	.site-title.is-touched & {
+		opacity: 1;
+		transition-delay: 3s;
+	}
+
+	svg {
+		fill: var( --studio-yellow-30 );
+		margin-right: $grid-unit-10;
+		margin-top: -2px;
+	}
+}
+
+.acquire-intent__footer {
+	margin-top: 20px;
+	display: flex;
+	justify-content: flex-end;
+
+	@include break-small {
+		margin-top: 40px;
+		justify-content: flex-start;
+	}
+}
+
+.acquire-intent__mobile-vertical-input {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.acquire-intent__mobile-next-arrow,
+.acquire-intent__mobile-back-arrow {
+	cursor: pointer;
+}
+
+.acquire-intent__mobile-back-arrow {
+	margin-bottom: 20px;
+}

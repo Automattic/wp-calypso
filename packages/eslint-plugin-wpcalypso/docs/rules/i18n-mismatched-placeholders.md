@@ -7,19 +7,19 @@ When using placeholders in strings, there cannot be a mismatch between the numbe
 The following patterns are considered warnings:
 
 ```js
-var count = 21;
+const count = 21;
 translate( 'One thing', '%d things', {
 	count: count,
-	args: [ count ]
+	args: [ count ],
 } );
 ```
 
 The following patterns are not warnings:
 
 ```js
-var count = 21;
+const count = 21;
 translate( '%d thing', '%d things', {
 	count: count,
-	args: [ count ]
+	args: [ count ],
 } );
 ```

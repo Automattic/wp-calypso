@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_COST,
@@ -12,7 +12,7 @@ const initialState = {
 	cost: 5,
 };
 
-export default withoutPersistence( function( state = initialState, action ) {
+export default withoutPersistence( function ( state = initialState, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_SHIPPING_ZONE_METHOD_SET_TAXABLE:
 			return {

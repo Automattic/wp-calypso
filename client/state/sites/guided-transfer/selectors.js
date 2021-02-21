@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import { find, matches, some } from 'lodash';
 
 export function getGuidedTransferError( state, siteId ) {
@@ -58,7 +61,7 @@ export function isEligibleForGuidedTransfer( state, siteId ) {
 		return false;
 	}
 
-	return ! some( issues, issue => issue.prevents_transfer );
+	return ! some( issues, ( issue ) => issue.prevents_transfer );
 }
 
 export function getGuidedTransferIssue( state, siteId, options = {} ) {
@@ -88,7 +91,7 @@ export function isGuidedTransferAvailableForAllSites( state, siteId ) {
 		return false;
 	}
 
-	return ! some( issues, issue => {
+	return ! some( issues, ( issue ) => {
 		return issue.reason === 'unavailable' || issue.reason === 'vacation';
 	} );
 }

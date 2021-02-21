@@ -14,10 +14,10 @@ import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingSupportLink from './support-link';
 import PodcastingPublishNotice from './publish-notice';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isPrivateSite from 'state/selectors/is-private-site';
-import { getTerm } from 'state/terms/selectors';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { getTerm } from 'calypso/state/terms/selectors';
 
 class PodcastingLink extends Component {
 	render() {
@@ -29,7 +29,10 @@ class PodcastingLink extends Component {
 
 		return (
 			<div className={ classes }>
-				<SettingsSectionHeader title={ translate( 'Podcasting' ) } />
+				<SettingsSectionHeader
+					id="podcasting-details__link-header"
+					title={ translate( 'Podcasting' ) }
+				/>
 				<Card className="podcasting-details__link-card">{ this.renderCardBody() }</Card>
 			</div>
 		);
@@ -59,7 +62,7 @@ class PodcastingLink extends Component {
 						<PodcastingSupportLink />
 					</div>
 					<Button className="podcasting-details__link-button" href={ detailsLink }>
-						{ translate( 'Set Up' ) }
+						{ translate( 'Set up' ) }
 					</Button>
 				</div>
 			);

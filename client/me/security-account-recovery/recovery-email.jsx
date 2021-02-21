@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import ManageContact from './manage-contact';
 import EditEmail from './edit-email';
-import accept from 'lib/accept';
+import accept from 'calypso/lib/accept';
 
 class RecoveryEmail extends Component {
 	render() {
@@ -20,7 +20,7 @@ class RecoveryEmail extends Component {
 			<ManageContact
 				type="email"
 				isLoading={ isLoading }
-				title={ translate( 'Recovery Email Address' ) }
+				title={ translate( 'Recovery email address' ) }
 				subtitle={ email ? email : translate( 'Not set' ) }
 				hasValue={ !! email }
 				onSave={ this.onSave }
@@ -31,14 +31,14 @@ class RecoveryEmail extends Component {
 		);
 	}
 
-	onSave = newEmail => {
+	onSave = ( newEmail ) => {
 		this.props.updateEmail( newEmail );
 	};
 
 	onDelete = () => {
 		const { translate, deleteEmail } = this.props;
 
-		accept( translate( 'Are you sure you want to remove the email address?' ), accepted => {
+		accept( translate( 'Are you sure you want to remove the email address?' ), ( accepted ) => {
 			if ( accepted ) {
 				deleteEmail();
 			}

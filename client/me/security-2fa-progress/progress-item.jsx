@@ -1,38 +1,25 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
 
-export default class extends React.Component {
-	static displayName = 'Security2faProgressItem';
+/**
+ * Internal dependencies
+ */
+import FormLabel from 'calypso/components/forms/form-label';
+import Gridicon from 'calypso/components/gridicon';
 
-	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	}
+const Security2faProgressItem = ( { icon, label, step } ) => (
+	<div
+		className={ classNames( 'security-2fa-progress__item', {
+			'is-highlighted': step?.isHighlighted,
+			'is-completed': step?.isCompleted,
+		} ) }
+	>
+		<Gridicon icon={ icon } />
+		<FormLabel>{ label } </FormLabel>
+	</div>
+);
 
-	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	}
-
-	highlight = () => {
-		return classNames( {
-			'security-2fa-progress__item': true,
-			'is-highlighted': this.props.step.isHighlighted,
-			'is-completed': this.props.step.isCompleted,
-		} );
-	};
-
-	render() {
-		return (
-			<div className={ this.highlight() }>
-				<Gridicon icon={ this.props.icon } />
-				<label>{ this.props.label } </label>
-			</div>
-		);
-	}
-}
+export default Security2faProgressItem;

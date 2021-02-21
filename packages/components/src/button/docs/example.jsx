@@ -2,19 +2,17 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import Button from '..';
 import Card from '../../card';
-import DocsExample from 'devdocs/docs-example';
+import DocsExample from 'calypso/devdocs/docs-example';
 
-Button.displayName = 'Button';
-
-class Buttons extends React.PureComponent {
-	static displayName = 'Button';
+export default class ButtonExample extends React.PureComponent {
+	static displayName = 'ButtonExample';
 
 	static defaultProps = {
 		exampleCode: (
@@ -168,6 +166,10 @@ class Buttons extends React.PureComponent {
 						<span>Primary scary busy button</span>
 					</Button>
 				</div>
+
+				<div className="docs__design-button-row">
+					<Button plain>Plain button</Button>
+				</div>
 			</Card>
 		),
 	};
@@ -176,5 +178,3 @@ class Buttons extends React.PureComponent {
 		return <DocsExample>{ this.props.exampleCode }</DocsExample>;
 	}
 }
-
-export default Buttons;

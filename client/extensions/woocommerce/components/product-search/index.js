@@ -14,8 +14,9 @@ import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/prod
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import NoResults from 'my-sites/no-results';
-import Search from 'components/search';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import NoResults from 'calypso/my-sites/no-results';
+import Search from 'calypso/components/search';
 import ProductSearchRow from './row';
 import {
 	addProductId,
@@ -68,7 +69,7 @@ class ProductSearch extends Component {
 
 		return (
 			products &&
-			products.filter( product => {
+			products.filter( ( product ) => {
 				return (
 					productContainsString( product, searchFilter ) ||
 					isProductSelected( value, product.id ) ||
@@ -78,11 +79,11 @@ class ProductSearch extends Component {
 		);
 	}
 
-	onSearch = searchFilter => {
+	onSearch = ( searchFilter ) => {
 		this.setState( { searchFilter } );
 	};
 
-	onProductCheckbox = productId => {
+	onProductCheckbox = ( productId ) => {
 		const { value } = this.props;
 		const selected = isProductSelected( value, productId );
 		const newValue = selected
@@ -122,7 +123,7 @@ class ProductSearch extends Component {
 			<div className="product-search__list">
 				<div className="product-search__row is-placeholder">
 					<div className="product-search__row-item">
-						<input type="checkbox" disabled />
+						<FormInputCheckbox disabled />
 						<span className="product-search__list-image is-thumb-placeholder" />
 						<span className="product-search__row-title" />
 					</div>
@@ -141,7 +142,7 @@ class ProductSearch extends Component {
 		}
 
 		const filteredProducts = this.getFilteredProducts() || [];
-		const renderFunc = product => {
+		const renderFunc = ( product ) => {
 			const onChange = singular ? this.onProductRadio : this.onProductCheckbox;
 			return (
 				<ProductSearchRow
@@ -169,7 +170,7 @@ class ProductSearch extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : null;
 		const query = { per_page: 50, offset: 0 };
@@ -184,5 +185,5 @@ export default connect(
 			products,
 		};
 	},
-	dispatch => bindActionCreators( { fetchProducts }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchProducts }, dispatch )
 )( localize( ProductSearch ) );

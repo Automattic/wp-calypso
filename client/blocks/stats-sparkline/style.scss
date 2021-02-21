@@ -1,0 +1,17 @@
+.stats-sparkline {
+	--color-stats-sparkline: var( --color-sidebar-gridicon-fill );
+	padding: 5px 0 2px;
+}
+
+.stats-sparkline__bar {
+	display: inline-block;
+	background-color: var( --color-stats-sparkline );
+	width: 1px;
+	height: 100%;
+	transform-origin: 0% 100%;
+	margin-left: 1px;
+
+	&:first-child {
+		margin-left: 0;
+	}
+}

@@ -9,7 +9,7 @@ import { get, includes, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { navigate } from 'state/ui/actions';
+import { navigate } from 'calypso/state/ui/actions';
 
 export class CommentLink extends PureComponent {
 	static propTypes = {
@@ -19,7 +19,7 @@ export class CommentLink extends PureComponent {
 		navigate: PropTypes.func,
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		if ( ! window ) {
 			return;
 		}

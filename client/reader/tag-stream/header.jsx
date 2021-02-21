@@ -7,17 +7,17 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { sample } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import FollowButton from 'blocks/follow-button/button';
-import QueryReaderTagImages from 'components/data/query-reader-tag-images';
-import { getTagImages } from 'state/reader/tags/images/selectors';
-import resizeImageUrl from 'lib/resize-image-url';
-import cssSafeUrl from 'lib/css-safe-url';
-import { decodeEntities } from 'lib/formatting';
+import FollowButton from 'calypso/blocks/follow-button/button';
+import QueryReaderTagImages from 'calypso/components/data/query-reader-tag-images';
+import { getTagImages } from 'calypso/state/reader/tags/images/selectors';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 const TAG_HEADER_WIDTH = 800;
 const TAG_HEADER_HEIGHT = 140;
@@ -95,18 +95,17 @@ class TagStreamHeader extends React.Component {
 		return (
 			<div className={ classes }>
 				<QueryReaderTagImages tag={ imageSearchString } />
-				{ showFollow && (
-					<div className="tag-stream__header-follow">
+				<div className="tag-stream__header-follow">
+					{ showFollow && (
 						<FollowButton
 							followLabel={ translate( 'Follow Tag' ) }
-							followingLabel={ translate( 'Following Tag' ) }
+							followingLabel={ translate( 'Following tag' ) }
 							iconSize={ 24 }
 							following={ following }
 							onFollowToggle={ onFollowToggle }
 						/>
-					</div>
-				) }
-
+					) }
+				</div>
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
 						<Gridicon icon="tag" size={ 24 } />

@@ -1,37 +1,41 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { trim, initial, flatMap } from 'lodash';
+import { trim, flatMap } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import BlankSuggestions from 'reader/components/reader-blank-suggestions';
-import SegmentedControl from 'components/segmented-control';
+import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
+import SegmentedControl from 'calypso/components/segmented-control';
 import { CompactCard } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import SearchInput from 'components/search';
-import { recordAction, recordTrack } from 'reader/stats';
+import DocumentHead from 'calypso/components/data/document-head';
+import SearchInput from 'calypso/components/search';
+import { recordAction } from 'calypso/reader/stats';
 import SiteResults from './site-results';
 import PostResults from './post-results';
-import ReaderMain from 'reader/components/reader-main';
-import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
-import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
-import withDimensions from 'lib/with-dimensions';
+import {
+	SORT_BY_RELEVANCE,
+	SORT_BY_LAST_UPDATED,
+} from 'calypso/state/reader/feed-searches/actions';
+import withDimensions from 'calypso/lib/with-dimensions';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
-import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
-import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
-import FollowButton from 'reader/follow-button';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import { getSearchPlaceholderText } from 'reader/search/utils';
+import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
+import { SEARCH_RESULTS_URL_INPUT } from 'calypso/reader/follow-sources';
+import FollowButton from 'calypso/reader/follow-button';
+import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
+import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -40,10 +44,10 @@ import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
-const updateQueryArg = params =>
+const updateQueryArg = ( params ) =>
 	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
-const pickSort = sort => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
+const pickSort = ( sort ) => ( sort === 'date' ? SORT_BY_LAST_UPDATED : SORT_BY_RELEVANCE );
 
 const SpacerDiv = withDimensions( ( { width, height } ) => (
 	<div
@@ -66,7 +70,7 @@ class SearchStream extends React.Component {
 		selected: SEARCH_TYPES.POSTS,
 	};
 
-	updateQuery = newValue => {
+	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if (
@@ -84,7 +88,7 @@ class SearchStream extends React.Component {
 	useRelevanceSort = () => {
 		const sort = 'relevance';
 		recordAction( 'search_page_clicked_relevance_sort' );
-		recordTrack( 'calypso_reader_clicked_search_sort', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_clicked_search_sort', {
 			query: this.props.query,
 			sort,
 		} );
@@ -94,16 +98,16 @@ class SearchStream extends React.Component {
 	useDateSort = () => {
 		const sort = 'date';
 		recordAction( 'search_page_clicked_date_sort' );
-		recordTrack( 'calypso_reader_clicked_search_sort', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_clicked_search_sort', {
 			query: this.props.query,
 			sort,
 		} );
 		updateQueryArg( { sort } );
 	};
 
-	handleFixedAreaMounted = ref => ( this.fixedAreaRef = ref );
+	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
 
-	handleSearchTypeSelection = searchType => updateQueryArg( { show: searchType } );
+	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
 		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
@@ -137,17 +141,15 @@ class SearchStream extends React.Component {
 		const singleColumnResultsClasses = classnames( 'search-stream__single-column-results', {
 			'is-post-results': searchType === SEARCH_TYPES.POSTS && query,
 		} );
-		const suggestionList = initial(
-			flatMap( suggestions, suggestion => [
-				<Suggestion
-					suggestion={ suggestion.text }
-					source="search"
-					sort={ sortOrder === 'date' ? sortOrder : undefined }
-					railcar={ suggestion.railcar }
-				/>,
-				', ',
-			] )
-		);
+		const suggestionList = flatMap( suggestions, ( suggestion ) => [
+			<Suggestion
+				suggestion={ suggestion.text }
+				source="search"
+				sort={ sortOrder === 'date' ? sortOrder : undefined }
+				railcar={ suggestion.railcar }
+			/>,
+			', ',
+		] ).slice( 0, -1 );
 
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
@@ -252,14 +254,19 @@ class SearchStream extends React.Component {
 
 /* eslint-disable */
 // wrapping with Main so that we can use withWidth helper to pass down whole width of Main
-const wrapWithMain = Component => props => (
+const wrapWithMain = ( Component ) => ( props ) => (
 	<ReaderMain className="search-stream search-stream__with-sites" wideLayout>
 		<Component { ...props } />
 	</ReaderMain>
 );
 /* eslint-enable */
 
-export default connect( ( state, ownProps ) => ( {
-	readerAliasedFollowFeedUrl:
-		ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
-} ) )( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );
+export default connect(
+	( state, ownProps ) => ( {
+		readerAliasedFollowFeedUrl:
+			ownProps.query && getReaderAliasedFollowFeedUrl( state, ownProps.query ),
+	} ),
+	{
+		recordReaderTracksEvent,
+	}
+)( localize( SuggestionProvider( wrapWithMain( withDimensions( SearchStream ) ) ) ) );

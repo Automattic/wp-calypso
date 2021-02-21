@@ -11,17 +11,26 @@ import cookie from 'cookie';
 /**
  * Internal dependencies
  */
-import analytics from '../';
-import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
+import { recordTracksEvent, tracksEvents } from 'calypso/lib/analytics/tracks';
+import { identifyUser } from 'calypso/lib/analytics/identify-user';
+import { initializeAnalytics } from 'calypso/lib/analytics/init';
+import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
+import { recordAliasInFloodlight } from 'calypso/lib/analytics/ad-tracking';
 
-jest.mock( 'config', () => require( './mocks/config' ) );
-jest.mock( 'lib/analytics/ad-tracking', () => ( {
+jest.mock( '@automattic/calypso-config', () => require( './mocks/config' ) );
+jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
 	recordAliasInFloodlight: jest.fn(),
 } ) );
-jest.mock( '@automattic/load-script', () => require( './mocks/lib/load-script' ) );
+import { loadScript } from '@automattic/load-script';
+
+jest.mock( '@automattic/load-script', () => ( {
+	loadScript: jest.fn( () => Promise.reject() ),
+} ) );
+
 jest.mock( 'cookie', () => ( {
 	parse: jest.fn(),
+	serialize: jest.fn(),
 } ) );
 
 function logImageLoads() {
@@ -32,15 +41,15 @@ function logImageLoads() {
 		imagesLoaded.length = 0;
 		originalImage = global.Image;
 
-		global.Image = function() {
+		global.Image = function () {
 			this._src = '';
 		};
 
 		Object.defineProperty( global.Image.prototype, 'src', {
-			get: function() {
+			get: function () {
 				return this._src;
 			},
-			set: function( value ) {
+			set: function ( value ) {
 				this._src = value;
 				imagesLoaded.push( url.parse( value, true, true ) );
 			},
@@ -64,14 +73,14 @@ describe( 'Analytics', () => {
 
 	describe( 'mc', () => {
 		test( 'bumpStat with group and stat', () => {
-			analytics.mc.bumpStat( 'go', 'time' );
+			bumpStat( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom-no-pv' );
 			expect( imagesLoaded[ 0 ].query.x_go ).toEqual( 'time' );
 			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 
 		test( 'bumpStat with value object', () => {
-			analytics.mc.bumpStat( {
+			bumpStat( {
 				go: 'time',
 				another: 'one',
 			} );
@@ -82,14 +91,14 @@ describe( 'Analytics', () => {
 		} );
 
 		test( 'bumpStatWithPageView with group and stat', () => {
-			analytics.mc.bumpStatWithPageView( 'go', 'time' );
+			bumpStatWithPageView( 'go', 'time' );
 			expect( imagesLoaded[ 0 ].query.v ).toEqual( 'wpcom' );
 			expect( imagesLoaded[ 0 ].query.go ).toEqual( 'time' );
 			expect( imagesLoaded[ 0 ].query.t ).toBeTruthy();
 		} );
 
 		test( 'bumpStatWithPageView with value object', () => {
-			analytics.mc.bumpStatWithPageView( {
+			bumpStatWithPageView( {
 				go: 'time',
 				another: 'one',
 			} );
@@ -102,7 +111,9 @@ describe( 'Analytics', () => {
 
 	describe( 'identifyUser', () => {
 		beforeEach( () => {
-			window._tkq.push = jest.fn();
+			window._tkq = {
+				push: jest.fn(),
+			};
 			cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
 		} );
 
@@ -111,40 +122,124 @@ describe( 'Analytics', () => {
 		} );
 
 		test( 'should not call window._tkq.push or recordAliasInFloodlight when there is no user data', () => {
-			analytics.identifyUser( {} );
+			identifyUser( {} );
 			expect( window._tkq.push ).not.toHaveBeenCalled();
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not call window._tkq.push and recordAliasInFloodlight when user ID is missing', () => {
-			analytics.identifyUser( { ID: undefined, username: 'eight', email: 'eight@example.com' } );
+			identifyUser( { ID: undefined, username: 'eight', email: 'eight@example.com' } );
 			expect( window._tkq.push ).not.toHaveBeenCalled();
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not call window._tkq.push and recordAliasInFloodlight when username is missing', () => {
-			analytics.identifyUser( { ID: 8, username: undefined, email: 'eight@example.com' } );
+			identifyUser( { ID: 8, username: undefined, email: 'eight@example.com' } );
 			expect( window._tkq.push ).not.toHaveBeenCalled();
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not call window._tkq.push and recordAliasInFloodlight when email is missing', () => {
-			analytics.identifyUser( { ID: 8, username: 'eight', email: undefined } );
+			identifyUser( { ID: 8, username: 'eight', email: undefined } );
 			expect( window._tkq.push ).not.toHaveBeenCalled();
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should call window._tkq.push and recordAliasInFloodlight when user ID, username, and email are given', () => {
-			analytics.identifyUser( { ID: '8', username: 'eight', email: 'eight@example.com' } );
+			identifyUser( { ID: '8', username: 'eight', email: 'eight@example.com' } );
 			expect( recordAliasInFloodlight ).toHaveBeenCalled();
 			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', 8, 'eight' ] );
 		} );
 
 		test( 'should not call recordAliasInFloodlight when anonymousUserId does not exist', () => {
 			cookie.parse.mockImplementationOnce( () => ( {} ) );
-			analytics.identifyUser( { ID: 8, username: 'eight', email: 'eight@example.com' } );
+			identifyUser( { ID: 8, username: 'eight', email: 'eight@example.com' } );
 			expect( recordAliasInFloodlight ).not.toHaveBeenCalled();
 			expect( window._tkq.push ).toHaveBeenCalledWith( [ 'identifyUser', 8, 'eight' ] );
+		} );
+	} );
+	describe( 'initialize', () => {
+		beforeEach( () => {
+			loadScript.mockReset();
+
+			cookie.parse.mockImplementation( () => ( {} ) );
+			cookie.serialize.mockImplementation( () => {} );
+		} );
+		test( 'if stat.js load fails, should load nostat.js', () => {
+			return initializeAnalytics().then( () => {
+				expect( loadScript ).toHaveBeenCalledWith( expect.stringMatching( /\/nostats.js/ ) );
+			} );
+		} );
+	} );
+	describe( 'tracks', () => {
+		describe( 'recordEvent', () => {
+			beforeEach( () => {
+				window._tkq = {
+					push: jest.fn(),
+				};
+				cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
+				global.console.error = jest.fn();
+			} );
+
+			test( 'should log error if event name does not match regex', () => {
+				recordTracksEvent( 'calypso_!!!' );
+				expect( global.console.error ).toHaveBeenCalledWith( expect.any( String ), 'calypso_!!!' );
+			} );
+
+			test( 'should log error if nested property', () => {
+				recordTracksEvent( 'calypso_abc_def', {
+					nested: {},
+				} );
+				expect( global.console.error ).not.toHaveBeenCalledWith(
+					expect.any( String ),
+					'calypso_abc_def'
+				);
+				expect( global.console.error ).toHaveBeenCalledWith( expect.any( String ), { nested: {} } );
+			} );
+
+			test( 'should log error if property names do not match regex', () => {
+				recordTracksEvent( 'calypso_abc_def', {
+					'incorrect!': 'property',
+				} );
+				expect( global.console.error ).toHaveBeenCalledWith(
+					expect.any( String ),
+					expect.any( String ),
+					'incorrect!'
+				);
+			} );
+
+			test( 'should log error if using a special reserved property name', () => {
+				recordTracksEvent( 'calypso_abc_def', {
+					geo: 'property',
+				} );
+				expect( global.console.error ).toHaveBeenCalledWith(
+					expect.any( String ),
+					'geo',
+					expect.any( String )
+				);
+			} );
+
+			test( 'should add _superProps if they are initialized', () => {
+				initializeAnalytics( {}, () => {
+					return { super: 'prop' };
+				} );
+				recordTracksEvent( 'calypso_abc_def' );
+
+				expect( window._tkq.push ).toHaveBeenCalledWith( [
+					'recordEvent',
+					'calypso_abc_def',
+					{ super: 'prop' },
+				] );
+			} );
+
+			test( 'should notify listeners when event is recorded', () => {
+				let numCalled = 0;
+				tracksEvents.addListener( 'record-event', () => {
+					numCalled++;
+				} );
+				recordTracksEvent( 'calypso_abc_def' );
+				expect( numCalled ).toEqual( 1 );
+			} );
 		} );
 	} );
 } );

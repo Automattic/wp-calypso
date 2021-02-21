@@ -5,7 +5,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import moment from 'moment';
 
 declare namespace i18nCalypso {
 	type NormalizedTranslateArgs =
@@ -16,7 +15,7 @@ declare namespace i18nCalypso {
 				count: number;
 		  } );
 
-	export type Substitution = string | number;
+	export type Substitution = string | number | React.ReactFragment;
 
 	export type Substitutions =
 		| Substitution
@@ -81,7 +80,6 @@ declare namespace i18nCalypso {
 		locale: string;
 		translate: typeof translate;
 		numberFormat: typeof numberFormat;
-		moment: typeof moment;
 	}
 
 	// Infers prop type from component C
@@ -106,6 +104,9 @@ declare namespace i18nCalypso {
 	) => TranslateResult;
 
 	export function registerTranslateHook( hook: TranslateHook ): void;
+
+	export function getLocaleSlug(): string | null;
+	export const defaultLocaleSlug: string;
 }
 
 export = i18nCalypso;

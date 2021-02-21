@@ -14,7 +14,7 @@ import { find, isEmpty } from 'lodash';
  */
 import AddressView from 'woocommerce/components/address-view';
 import { Button, Card, Dialog } from '@automattic/components';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import {
 	areLocationsLoaded,
 	getAllCountries,
@@ -26,7 +26,7 @@ import {
 	areSettingsGeneralLoadError,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
-import FormLabel from 'components/forms/form-label';
+import FormLabel from 'calypso/components/forms/form-label';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import QueryLocations from 'woocommerce/components/query-locations';
 
@@ -35,7 +35,7 @@ class StoreAddress extends Component {
 		showLabel: true,
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		this.setState( { address: newProps.address } );
 	};
 
@@ -47,7 +47,7 @@ class StoreAddress extends Component {
 		};
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const addressEdits = { ...this.state.addressEdits };
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
@@ -74,7 +74,7 @@ class StoreAddress extends Component {
 		} );
 	};
 
-	onCloseDialog = action => {
+	onCloseDialog = ( action ) => {
 		const { translate, siteId, onSetAddress } = this.props;
 		if ( 'save' === action ) {
 			const onFailure = () => {

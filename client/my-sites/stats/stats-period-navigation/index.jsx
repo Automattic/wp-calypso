@@ -6,15 +6,15 @@ import PropTypes from 'prop-types';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize, withRtl } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 import qs from 'qs';
 
 /**
  * Internal dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
-import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -49,7 +49,7 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleClickArrow( 'previous' );
 	};
 
-	handleClickArrow = arrow => {
+	handleClickArrow = ( arrow ) => {
 		const { date, onPeriodChange, period, recordGoogleEvent } = this.props;
 		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
 
@@ -76,16 +76,12 @@ class StatsPeriodNavigation extends PureComponent {
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
-		const previousDay = moment( date )
-			.subtract( 1, period )
-			.format( 'YYYY-MM-DD' );
+		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
 		const previousDayQuery = qs.stringify(
 			Object.assign( {}, queryParams, { startDate: previousDay } ),
 			{ addQueryPrefix: true }
 		);
-		const nextDay = moment( date )
-			.add( 1, period )
-			.format( 'YYYY-MM-DD' );
+		const nextDay = moment( date ).add( 1, period ).format( 'YYYY-MM-DD' );
 		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
 			addQueryPrefix: true,
 		} );

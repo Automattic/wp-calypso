@@ -9,7 +9,7 @@ import { pick } from 'lodash';
  */
 import reducer from '../reducer';
 import { DOMAIN_NAME, RECORD_A, RECORD_NS, RECORD_TXT } from './data';
-import { DOMAINS_DNS_DELETE_COMPLETED } from 'state/action-types';
+import { DOMAINS_DNS_DELETE_COMPLETED } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should return the same state when no matching record passed in the delete action', () => {

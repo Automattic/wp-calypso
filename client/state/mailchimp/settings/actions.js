@@ -1,20 +1,20 @@
 /**
  * Internal dependencies
  */
-
 import {
 	MAILCHIMP_SETTINGS_LIST,
 	MAILCHIMP_SETTINGS_RECEIVE,
 	MAILCHIMP_SETTINGS_UPDATE,
 	MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 	MAILCHIMP_SETTINGS_UPDATE_FAILURE,
-	NOTICE_CREATE,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
+} from 'calypso/state/action-types';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-import 'state/data-layer/wpcom/sites/mailchimp';
+import 'calypso/state/data-layer/wpcom/sites/mailchimp';
+import 'calypso/state/mailchimp/init';
 
-export const requestSettings = siteId => ( {
+export const requestSettings = ( siteId ) => ( {
 	siteId,
 	type: MAILCHIMP_SETTINGS_LIST,
 } );
@@ -28,7 +28,7 @@ export function receiveSettings( siteId, lists ) {
 }
 
 export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MAILCHIMP_SETTINGS_UPDATE,
 			siteId,
@@ -37,35 +37,29 @@ export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 
 		return wpcom.req
 			.post( `/sites/${ siteId }/mailchimp/settings`, settings )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 					siteId,
 					settings: data,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					successNotice( noticeText, {
 						duration: 5000,
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+					} )
+				);
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MAILCHIMP_SETTINGS_UPDATE_FAILURE,
 					siteId,
 					error,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					errorNotice( error.message, {
 						duration: 10000,
-						text: error.message,
-						status: 'is-error',
-					},
-				} );
+					} )
+				);
 			} );
 	};
 };

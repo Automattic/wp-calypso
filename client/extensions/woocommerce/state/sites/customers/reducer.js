@@ -7,7 +7,7 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_CUSTOMERS_REQUEST,
 	WOOCOMMERCE_CUSTOMERS_REQUEST_FAILURE,
@@ -64,7 +64,7 @@ export function items( state = {}, action ) {
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_CUSTOMERS_REQUEST_SUCCESS:
-			const idList = action.customers.map( item => item.id );
+			const idList = action.customers.map( ( item ) => item.id );
 			return Object.assign( {}, state, { [ action.searchTerm ]: idList } );
 		default:
 			return state;

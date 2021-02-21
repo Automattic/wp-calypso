@@ -10,10 +10,10 @@ import { localize, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SignupSitePreviewIframe from 'components/signup-site-preview/iframe';
-import SignupSitePreviewScreenshot from 'components/signup-site-preview/screenshot';
-import Spinner from 'components/spinner';
-import { getSiteVerticalPreviewScreenshot } from 'state/signup/steps/site-vertical/selectors';
+import SignupSitePreviewIframe from 'calypso/components/signup-site-preview/iframe';
+import SignupSitePreviewScreenshot from 'calypso/components/signup-site-preview/screenshot';
+import Spinner from 'calypso/components/spinner';
+import { getSiteVerticalPreviewScreenshot } from 'calypso/state/signup/steps/site-vertical/selectors';
 
 /**
  * Style dependencies
@@ -94,8 +94,8 @@ export class SignupSitePreview extends Component {
 		}
 	}
 
-	setIsLoaded = isLoaded => this.setState( { isLoaded } );
-	setWrapperHeight = wrapperHeight => this.setState( { wrapperHeight } );
+	setIsLoaded = ( isLoaded ) => this.setState( { isLoaded } );
+	setWrapperHeight = ( wrapperHeight ) => this.setState( { wrapperHeight } );
 
 	render() {
 		const { isDesktop, isPhone, screenshotUrl } = this.props;

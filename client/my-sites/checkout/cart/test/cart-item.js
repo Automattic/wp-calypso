@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from '@automattic/calypso-config';
 import { CartItem } from '../cart-item';
 import {
 	isPlan,
@@ -21,16 +21,16 @@ import {
 	isBiennially,
 	isBundled,
 	isDomainProduct,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_PERSONAL,
 	PLAN_BLOGGER,
 	PLAN_PREMIUM,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
-const plansModule = require( 'lib/plans' );
+const plansModule = require( 'calypso/lib/plans' );
 const originalPlansModuleFunctions = pick( plansModule, [
 	'calculateMonthlyPriceForPlan',
 	'getBillingMonthsForPlan',
@@ -41,15 +41,15 @@ const mockPlansModule = () => {
 };
 mockPlansModule();
 
-jest.mock( 'config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};
 	fn.isEnabled = jest.fn( () => null );
 	return fn;
 } );
 jest.mock( '@automattic/format-currency', () => ( {
-	getCurrencyObject: price => ( { integer: price } ),
+	getCurrencyObject: ( price ) => ( { integer: price } ),
 } ) );
-jest.mock( 'lib/products-values', () => ( {
+jest.mock( 'calypso/lib/products-values', () => ( {
 	isPlan: jest.fn( () => null ),
 	isTheme: jest.fn( () => null ),
 	isMonthly: jest.fn( () => null ),
@@ -58,7 +58,7 @@ jest.mock( 'lib/products-values', () => ( {
 	isBundled: jest.fn( () => null ),
 	isDomainProduct: jest.fn( () => null ),
 	isCredits: jest.fn( () => null ),
-	isGoogleApps: jest.fn( () => null ),
+	isGSuiteOrExtraLicenseOrGoogleWorkspace: jest.fn( () => null ),
 } ) );
 
 const cartItem = {
@@ -82,7 +82,8 @@ describe( 'cart-item', () => {
 	} );
 
 	describe( 'monthlyPrice', () => {
-		let myTranslate, instance;
+		let myTranslate;
+		let instance;
 		beforeEach( () => {
 			myTranslate = jest.fn( identity );
 			instance = new CartItem( {

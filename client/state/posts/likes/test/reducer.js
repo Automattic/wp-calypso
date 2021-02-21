@@ -7,12 +7,13 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items, itemReducer } from '../reducer';
-import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { POST_LIKES_RECEIVE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { addLiker, removeLiker, like, unlike } from '../actions';
-import { useFakeTimers, useSandbox } from 'test/helpers/use-sinon';
+import { useFakeTimers, useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -220,7 +221,8 @@ describe( 'reducer', () => {
 
 		test( 'should persist state', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
-			const state = items(
+			const state = serialize(
+				items,
 				deepFreeze( {
 					12345678: {
 						50: {
@@ -230,10 +232,7 @@ describe( 'reducer', () => {
 							lastUpdated: 2000,
 						},
 					},
-				} ),
-				{
-					type: SERIALIZE,
-				}
+				} )
 			);
 
 			expect( state.root() ).toEqual( {
@@ -250,7 +249,8 @@ describe( 'reducer', () => {
 
 		test( 'should load valid persisted state', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					12345678: {
 						50: {
@@ -260,10 +260,7 @@ describe( 'reducer', () => {
 							lastUpdated: 4000,
 						},
 					},
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).toEqual( {
@@ -279,13 +276,11 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					status: 'ribs',
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).toEqual( {} );
@@ -426,6 +421,21 @@ describe( 'reducer', () => {
 				} );
 				expect( state.likes ).toBe( initialState.likes );
 			} );
+
+			test( 'should return previous state if liker is already present and like count is the same', () => {
+				const initialState = deepFreeze( {
+					likes: [ { ID: 2 }, liker ],
+					found: 5,
+					iLike: false,
+				} );
+				const state = itemReducer(
+					initialState,
+					// same liker, same count!
+					addLiker( 1, 1, 5, liker )
+				);
+
+				expect( state ).toBe( initialState );
+			} );
 		} );
 
 		describe( 'a POST_LIKES_REMOVE_LIKER action', () => {
@@ -461,14 +471,14 @@ describe( 'reducer', () => {
 				expect(
 					itemReducer(
 						deepFreeze( {
-							likes: [ liker ],
+							likes: [ { ID: 123 }, liker, { ID: 456 } ],
 							found: 5,
 							iLike: false,
 						} ),
 						removeLiker( 1, 1, 5, liker )
 					)
 				).toEqual( {
-					likes: [],
+					likes: [ { ID: 123 }, { ID: 456 } ],
 					found: 5,
 					iLike: false,
 				} );
@@ -493,6 +503,22 @@ describe( 'reducer', () => {
 					iLike: false,
 				} );
 				expect( state.likes ).toBe( initialState.likes );
+			} );
+
+			test( 'should return previous state if liker is not present and like count is the same', () => {
+				const initialState = deepFreeze( {
+					likes: [ { ID: 2 } ],
+					found: 5,
+					iLike: false,
+					lastUpdated: undefined,
+				} );
+				const state = itemReducer(
+					initialState,
+					// same liker, same count!
+					removeLiker( 1, 1, 5, liker )
+				);
+
+				expect( state ).toBe( initialState );
 			} );
 		} );
 	} );

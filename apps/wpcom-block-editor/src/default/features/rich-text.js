@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* global wpcomGutenberg */
 
 /**
@@ -58,7 +57,7 @@ const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttribut
 };
 
 const ConnectedRichTextJustifyButton = compose(
-	withSelect( wpSelect => {
+	withSelect( ( wpSelect ) => {
 		const selectedBlock = wpSelect( 'core/editor' ).getSelectedBlock();
 		if ( ! selectedBlock ) {
 			return {};
@@ -69,10 +68,10 @@ const ConnectedRichTextJustifyButton = compose(
 			isBlockJustified: 'justify' === get( selectedBlock, 'attributes.align' ),
 		};
 	} ),
-	withDispatch( dispatch => ( {
+	withDispatch( ( dispatch ) => ( {
 		updateBlockAttributes: dispatch( 'core/editor' ).updateBlockAttributes,
 	} ) ),
-	ifCondition( props => 'core/paragraph' === props.blockName )
+	ifCondition( ( props ) => 'core/paragraph' === props.blockName )
 )( RichTextJustifyButton );
 
 registerFormatType( 'wpcom/justify', {

@@ -48,7 +48,7 @@ export function editProductAddCategory( siteId, product, categoryId ) {
 }
 
 export function editProductRemoveCategory( siteId, product, categoryId ) {
-	const categories = product.categories.filter( c => categoryId !== c.id );
+	const categories = product.categories.filter( ( c ) => categoryId !== c.id );
 
 	return editProduct( siteId, product, { categories } );
 }
@@ -57,6 +57,7 @@ export function editProductRemoveCategory( siteId, product, categoryId ) {
  * Creates an action list to save product-related edits.
  *
  * Saves products, variations, and product categories.
+ *
  * @param {object} [successAction] Action to be dispatched upon successful completion.
  * @param {object} [failureAction] Action to be dispatched upon failure of execution.
  * @returns {Function} action

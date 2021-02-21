@@ -12,10 +12,10 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
-import { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
-export * from './types';
-export { State };
+export type { Vertical } from './types';
+export type { State };
 
 let isRegistered = false;
 export function register(): typeof STORE_KEY {
@@ -24,7 +24,7 @@ export function register(): typeof STORE_KEY {
 		registerStore< State >( STORE_KEY, {
 			actions,
 			controls,
-			reducer,
+			reducer: reducer as any,
 			resolvers,
 			selectors,
 		} );

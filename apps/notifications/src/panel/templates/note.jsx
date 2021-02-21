@@ -17,7 +17,7 @@ import NoteBody from './body';
 
 import { getActions } from '../helpers/notes';
 
-const hasBadge = body =>
+const hasBadge = ( body ) =>
 	body.some( ( { media } ) => media && media.some( ( { type } ) => 'badge' === type ) );
 
 export const Note = React.forwardRef( ( props, ref ) => {

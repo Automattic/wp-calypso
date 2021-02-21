@@ -1,11 +1,15 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import autosize from 'autosize';
+
+/**
+ * Internal dependencies
+ */
+import FormTextarea from 'calypso/components/forms/form-textarea';
 
 /**
  * Style dependencies
@@ -17,12 +21,14 @@ export default class TextareaAutosize extends Component {
 		className: PropTypes.string,
 	};
 
+	textareaRef = React.createRef();
+
 	componentDidMount() {
-		autosize( this.refs.textarea );
+		autosize( this.textareaRef.current );
 	}
 
 	componentWillUnmount() {
-		autosize.destroy( this.refs.textarea );
+		autosize.destroy( this.textareaRef.current );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -32,12 +38,14 @@ export default class TextareaAutosize extends Component {
 	}
 
 	resize() {
-		autosize.update( this.refs.textarea );
+		autosize.update( this.textareaRef.current );
 	}
 
 	render() {
 		const classes = classnames( 'textarea-autosize', this.props.className );
 
-		return <textarea ref="textarea" { ...this.props } className={ classes } />;
+		return (
+			<FormTextarea { ...this.props } className={ classes } forwardedRef={ this.textareaRef } />
+		);
 	}
 }

@@ -6,7 +6,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import {
 	extendAction,
 	keyedReducer,
@@ -15,11 +16,14 @@ import {
 	isValidStateWithSchema,
 	withoutPersistence,
 	withEnhancers,
-	withStorageKey,
-} from 'state/utils';
-import warn from 'lib/warn';
+} from 'calypso/state/utils';
 
-jest.mock( 'lib/warn', () => jest.fn() );
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+jest.mock( '@wordpress/warning', () => jest.fn() );
 
 describe( 'utils', () => {
 	beforeEach( () => warn.mockReset() );
@@ -52,7 +56,7 @@ describe( 'utils', () => {
 		test( 'should return an updated action thunk, merging data on dispatch', () => {
 			const dispatch = jest.fn();
 			const action = extendAction(
-				thunkDispatch =>
+				( thunkDispatch ) =>
 					thunkDispatch( {
 						type: 'ACTION_TEST',
 						meta: {
@@ -110,8 +114,8 @@ describe( 'utils', () => {
 		test( 'should return an updated nested action thunk, merging data on dispatch', () => {
 			const dispatch = jest.fn();
 			const action = extendAction(
-				thunkDispatch =>
-					thunkDispatch( nestedThunkDispatch =>
+				( thunkDispatch ) =>
+					thunkDispatch( ( nestedThunkDispatch ) =>
 						nestedThunkDispatch( {
 							type: 'ACTION_TEST',
 							meta: {
@@ -139,9 +143,9 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#keyedReducer', () => {
-		const grow = name => ( { type: 'GROW', name } );
-		const reset = name => ( { type: 'RESET', name } );
-		const remove = name => ( { type: 'REMOVE', name } );
+		const grow = ( name ) => ( { type: 'GROW', name } );
+		const reset = ( name ) => ( { type: 'RESET', name } );
+		const remove = ( name ) => ( { type: 'REMOVE', name } );
 
 		const age = ( state = 0, action ) => {
 			if ( 'GROW' === action.type ) {
@@ -296,9 +300,9 @@ describe( 'utils', () => {
 			const keyed = keyedReducer( 'id', age );
 
 			// state with non-initial value
-			const state = { '1': 1 };
+			const state = { 1: 1 };
 			const serialized = keyed( state, { type: 'SERIALIZE' } );
-			expect( serialized.root() ).toEqual( { '1': 1 } );
+			expect( serialized.root() ).toEqual( { 1: 1 } );
 		} );
 
 		test( 'should not serialize nested empty state', () => {
@@ -315,9 +319,9 @@ describe( 'utils', () => {
 			// right thing.
 			// Another reason why empty state might not be persisted is that the tested reducer didn't
 			// opt in into persistence in the first place -- and we DON'T want to test that!
-			const stateWithData = { a: { '1': 1 } };
+			const stateWithData = { a: { 1: 1 } };
 			const serializedWithData = nestedReducer( stateWithData, { type: 'SERIALIZE' } );
-			expect( serializedWithData.root() ).toEqual( { a: { '1': 1 } } );
+			expect( serializedWithData.root() ).toEqual( { a: { 1: 1 } } );
 
 			// initial state should not serialize
 			const state = nestedReducer( undefined, { type: 'INIT' } );
@@ -680,13 +684,13 @@ describe( 'utils', () => {
 	describe( '#withEnhancers', () => {
 		it( 'should enhance action creator', () => {
 			const actionCreator = () => ( { type: 'HELLO' } );
-			const enhancedActionCreator = withEnhancers( actionCreator, action =>
+			const enhancedActionCreator = withEnhancers( actionCreator, ( action ) =>
 				Object.assign( { name: 'test' }, action )
 			);
 			const thunk = enhancedActionCreator();
 			const getState = () => ( {} );
 			let dispatchedAction = null;
-			const dispatch = action => ( dispatchedAction = action );
+			const dispatch = ( action ) => ( dispatchedAction = action );
 			thunk( dispatch, getState );
 
 			expect( dispatchedAction ).toEqual( {
@@ -698,14 +702,14 @@ describe( 'utils', () => {
 		it( 'should enhance with multiple enhancers, from last to first', () => {
 			const actionCreator = () => ( { type: 'HELLO' } );
 			const enhancedActionCreator = withEnhancers( actionCreator, [
-				action => Object.assign( { name: 'test' }, action ),
-				action => Object.assign( { name: 'test!!!' }, action ),
-				action => Object.assign( { meetup: 'akumal' }, action ),
+				( action ) => Object.assign( { name: 'test' }, action ),
+				( action ) => Object.assign( { name: 'test!!!' }, action ),
+				( action ) => Object.assign( { meetup: 'akumal' }, action ),
 			] );
 			const thunk = enhancedActionCreator();
 			const getState = () => ( {} );
 			let dispatchedAction = null;
-			const dispatch = action => ( dispatchedAction = action );
+			const dispatch = ( action ) => ( dispatchedAction = action );
 			thunk( dispatch, getState );
 
 			expect( dispatchedAction ).toEqual( {
@@ -726,7 +730,7 @@ describe( 'utils', () => {
 			] );
 			const thunk = enhancedActionCreator();
 			const getState = () => ( {} );
-			const dispatch = action => action;
+			const dispatch = ( action ) => action;
 			thunk( dispatch, getState );
 
 			expect( providedGetState ).toEqual( getState );
@@ -735,14 +739,14 @@ describe( 'utils', () => {
 		it( 'should accept an action creator as first parameter', () => {
 			const actionCreator = () => ( { type: 'HELLO' } );
 			const enhancedActionCreator = withEnhancers(
-				withEnhancers( actionCreator, action => Object.assign( { name: 'test' }, action ) ),
-				action => Object.assign( { hello: 'world' }, action )
+				withEnhancers( actionCreator, ( action ) => Object.assign( { name: 'test' }, action ) ),
+				( action ) => Object.assign( { hello: 'world' }, action )
 			);
 
 			const thunk = enhancedActionCreator();
 			const getState = () => ( {} );
 			let dispatchedAction = null;
-			const dispatch = action => ( dispatchedAction = action );
+			const dispatch = ( action ) => ( dispatchedAction = action );
 			thunk( dispatch, getState );
 
 			expect( dispatchedAction ).toEqual( {
@@ -756,7 +760,7 @@ describe( 'utils', () => {
 
 describe( 'addReducer', () => {
 	// creator of toy reducers that initialize to `initialValue` and don't react to other actions
-	const toyReducer = initialValue => ( state = initialValue ) => state;
+	const toyReducer = ( initialValue ) => ( state = initialValue ) => state;
 
 	describe( 'basic tests', () => {
 		test( 'can add a new top-level reducer', () => {
@@ -816,7 +820,7 @@ describe( 'addReducer', () => {
 	} );
 
 	describe( 'interaction with persistence', () => {
-		const persistedToyReducer = initialState =>
+		const persistedToyReducer = ( initialState ) =>
 			withSchemaValidation( { type: 'string' }, toyReducer( initialState ) );
 
 		test( 'storageKey survives adding a new reducer', () => {

@@ -13,14 +13,14 @@ import {
 	WP_SUPER_CACHE_REQUEST_STATUS_FAILURE,
 } from '../../action-types';
 import reducer from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
 	const secondarySiteId = 456789;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -80,22 +80,6 @@ describe( 'reducer', () => {
 			expect( state.requesting ).to.eql( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state.requesting ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state.requesting ).to.eql( {} );
 		} );
 	} );
 
@@ -184,9 +168,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = reducer( previousState, {
-				type: SERIALIZE,
-			} );
+			const state = serialize( reducer, previousState );
 
 			expect( state.root().items ).to.eql( {
 				[ primarySiteId ]: primaryNotices,
@@ -194,9 +176,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = reducer( previousState, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( reducer, previousState );
 
 			expect( state.items ).to.eql( {
 				[ primarySiteId ]: primaryNotices,
@@ -209,9 +189,7 @@ describe( 'reducer', () => {
 					[ primarySiteId ]: 2,
 				},
 			} );
-			const state = reducer( previousInvalidState, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( reducer, previousInvalidState );
 
 			expect( state.items ).to.eql( {} );
 		} );

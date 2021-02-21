@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-import { get, mapValues, reduce, reduceRight } from 'lodash';
+import { get, mapValues, pick, reduce } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, SERIALIZE } from 'state/action-types';
-import { SerializationResult } from 'state/serialization-result';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { SerializationResult } from 'calypso/state/serialization-result';
 import { withoutPersistence } from './without-persistence';
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
+ *
  * @param {Function} origReducer Original reducer to copy `storageKey` and other flags from
  * @param {object} reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
@@ -54,8 +55,7 @@ export function addReducer( origReducer, reducers ) {
 			//   })
 			// })
 			// ```
-			newReducer = reduceRight(
-				restKeys,
+			newReducer = restKeys.reduceRight(
 				( subreducer, subkey ) => createCombinedReducer( { [ subkey ]: subreducer } ),
 				setupReducerPersistence( reducer )
 			);
@@ -75,6 +75,7 @@ export function addReducer( origReducer, reducers ) {
  * If you don't need state to be stored, simply use this method instead of
  * combineReducers from redux. This function uses the same interface.
  * *
+ *
  * @example
  * const age = ( state = 0, action ) =>
  *     GROW === action.type
@@ -164,6 +165,9 @@ function createCombinedReducer( reducers ) {
 			case SERIALIZE:
 				return serializeState( reducers, state, action );
 
+			case DESERIALIZE:
+				return combined( pick( state, Object.keys( reducers ) ), action );
+
 			case APPLY_STORED_STATE:
 				return applyStoredState( reducers, state, action );
 
@@ -180,7 +184,7 @@ function createCombinedReducer( reducers ) {
 }
 
 function getStorageKeys( reducers ) {
-	return function*() {
+	return function* () {
 		for ( const reducer of Object.values( reducers ) ) {
 			if ( reducer.storageKey ) {
 				yield { storageKey: reducer.storageKey, reducer };

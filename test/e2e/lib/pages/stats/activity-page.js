@@ -11,7 +11,7 @@ import * as driverHelper from '../../driver-helper';
 
 export default class ActivityPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.activity-log__wrapper' ) );
+		super( driver, By.css( '.is-section-activity' ) );
 	}
 
 	async postTitleDisplayed( postTitle ) {

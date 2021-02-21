@@ -39,7 +39,7 @@ export const clearQueue = () => {
  * @param {object} request the HTTP request action
  * @returns {boolean} whether or not the method is GET
  */
-const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
+const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpperCase();
 
 /**
  * Generate a deterministic key for comparing request descriptions
@@ -47,7 +47,7 @@ const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCa
  * @param {string} path API endpoint path
  * @param {string} apiNamespace used for endpoint versioning
  * @param {string} apiVersion used for endpoint versioning
- * @param {object<String, *>} query GET query string
+ * @param {object<string, *>} query GET query string
  * @returns {string} unique key up to duplicate request descriptions
  */
 export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
@@ -56,9 +56,9 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
 /**
  * Joins a responder action into a unique list of responder actions
  *
- * @param {object<String, Object[]>} list existing responder actions
+ * @param {object<string, object[]>} list existing responder actions
  * @param {object} item new responder action to add
- * @returns {object<String, Object[]>} union of existing list and new item
+ * @returns {object<string, object[]>} union of existing list and new item
  */
 export const addResponder = ( list, item ) => ( {
 	failures: unionWith( list.failures, compact( [ item.onFailure ] ), isEqual ),
@@ -74,7 +74,7 @@ export const addResponder = ( list, item ) => ( {
  * @param {OutboundData} outboundData request info
  * @returns {OutboundData} filtered request info
  */
-export const removeDuplicateGets = outboundData => {
+export const removeDuplicateGets = ( outboundData ) => {
 	const { nextRequest } = outboundData;
 
 	if ( ! isGetRequest( nextRequest ) ) {
@@ -105,7 +105,7 @@ export const removeDuplicateGets = outboundData => {
  * @param {InboundData} inboundData request info
  * @returns {InboundData} processed request info
  */
-export const applyDuplicatesHandlers = inboundData => {
+export const applyDuplicatesHandlers = ( inboundData ) => {
 	const { originalRequest } = inboundData;
 
 	if ( ! isGetRequest( originalRequest ) ) {

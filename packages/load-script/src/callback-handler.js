@@ -64,7 +64,7 @@ export function executeCallbacks( url, error = null ) {
 			( error === null ? ' with success' : ` with error "${ error }"` );
 		debug( debugMessage );
 
-		callbacksForUrl.forEach( cb => {
+		callbacksForUrl.forEach( ( cb ) => {
 			if ( typeof cb === 'function' ) {
 				cb( error );
 			}

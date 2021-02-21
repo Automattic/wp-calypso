@@ -25,8 +25,8 @@ import {
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
-	SERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+import { serialize } from 'calypso/state/utils';
 
 describe( 'premium reducer', () => {
 	describe( 'isRequesting', () => {
@@ -204,7 +204,7 @@ describe( 'premium reducer', () => {
 				],
 			} );
 
-			const nextState = plugins( originalState, { type: SERIALIZE } );
+			const nextState = serialize( plugins, originalState );
 			expect( nextState ).to.deep.eql( {
 				'one.site': [
 					{
@@ -230,7 +230,7 @@ describe( 'premium reducer', () => {
 					},
 				],
 			} );
-			const nextState = plugins( originalState, { type: SERIALIZE } );
+			const nextState = serialize( plugins, originalState );
 			expect( nextState ).eql( {
 				'error-site': [
 					{

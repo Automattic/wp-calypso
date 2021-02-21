@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ElementChart from 'components/chart';
+import ElementChart from 'calypso/components/chart';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import { Card } from '@automattic/components';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class StatsSummaryChart extends Component {
 	static propTypes = {
@@ -35,15 +35,15 @@ class StatsSummaryChart extends Component {
 		onClick: () => {},
 	};
 
-	barClick = bar => {
-		const selectedBar = find( this.props.data, data => isEqual( data, bar.data ) );
+	barClick = ( bar ) => {
+		const selectedBar = find( this.props.data, ( data ) => isEqual( data, bar.data ) );
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Summary Chart Bar' );
 		this.props.onClick( selectedBar );
 	};
 
 	buildChartData() {
 		const { data, labelClass, numberFormat, sectionClass, selected, tabLabel } = this.props;
-		return data.map( record => {
+		return data.map( ( record ) => {
 			const className = classNames( {
 				'is-selected': isEqual( selected, record ),
 			} );

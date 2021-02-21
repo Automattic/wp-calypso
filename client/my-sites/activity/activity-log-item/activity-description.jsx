@@ -7,8 +7,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import FormattedBlock from 'components/notes-formatted-block';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import FormattedBlock from 'calypso/components/notes-formatted-block';
 
 class ActivityDescription extends Component {
 	trackContentLinkClick = ( {
@@ -17,7 +17,7 @@ class ActivityDescription extends Component {
 		},
 	} ) => {
 		const params = { activity, section, intent };
-		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', params );
+		recordTracksEvent( 'calypso_activitylog_item_click', params );
 	};
 
 	render() {

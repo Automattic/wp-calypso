@@ -2,7 +2,7 @@
 	background: var( --color-masterbar-item-active-background );
 	color: var( --color-masterbar-text );
 	border-radius: 24px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	height: auto;
 	padding: 6px 16px;
 	position: fixed;

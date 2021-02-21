@@ -59,7 +59,7 @@ class ScrollHelper {
 	}
 
 	storeRowItemHeights( fromDirection, index ) {
-		this.forEachInRow( index, item => {
+		this.forEachInRow( index, ( item ) => {
 			const itemKey = this.props.getItemRef( item );
 			const itemBounds = this.boundsForRef( itemKey );
 			let height;
@@ -79,7 +79,7 @@ class ScrollHelper {
 	}
 
 	deleteRowItemHeights( index ) {
-		this.forEachInRow( index, item => {
+		this.forEachInRow( index, ( item ) => {
 			const itemKey = this.props.getItemRef( item );
 			delete this.itemHeights[ itemKey ];
 		} );
@@ -88,7 +88,7 @@ class ScrollHelper {
 	getRowHeight( index ) {
 		let maxHeight = 0;
 
-		this.forEachInRow( index, item => {
+		this.forEachInRow( index, ( item ) => {
 			const itemKey = this.props.getItemRef( item );
 			const height = this.storedItemHeight( itemKey );
 
@@ -130,6 +130,10 @@ class ScrollHelper {
 		const topPlaceholderRect = this.getTopPlaceholderBounds();
 		const bottomPlaceholderRect = this.getBottomPlaceholderBounds();
 
+		if ( ! topPlaceholderRect || ! bottomPlaceholderRect ) {
+			return;
+		}
+
 		this.topPlaceholderHeight = topPlaceholderRect.height;
 		this.containerTop = topPlaceholderRect.top;
 
@@ -170,10 +174,10 @@ class ScrollHelper {
 	adjustLastRenderedIndex() {
 		// last index -1 means everything is rendered - it can happen when
 		// item count is not known when component is mounted
-		const offset = this.initialLastRenderedIndex(),
-			lastIndex = this.lastRenderedIndex || 0, // fixes NaN
-			firstIndex = this.firstRenderedIndex || 0, // fixes NaN
-			itemCount = this.props.items.length;
+		const offset = this.initialLastRenderedIndex();
+		const lastIndex = this.lastRenderedIndex || 0; // fixes NaN
+		const firstIndex = this.firstRenderedIndex || 0; // fixes NaN
+		const itemCount = this.props.items.length;
 		let newIndex = lastIndex;
 
 		if ( itemCount === 0 ) {
@@ -234,7 +238,8 @@ class ScrollHelper {
 	}
 
 	hideItemsAbove() {
-		let rowHeight, rowBottom;
+		let rowHeight;
+		let rowBottom;
 
 		while ( this.firstRenderedIndex < this.props.items.length ) {
 			this.storeRowItemHeights( 'top', this.firstRenderedIndex );
@@ -285,7 +290,8 @@ class ScrollHelper {
 	}
 
 	showItemsAbove() {
-		let rowHeight, newPlaceholderBottom;
+		let rowHeight;
+		let newPlaceholderBottom;
 
 		while ( this.firstRenderedIndex > 0 ) {
 			rowHeight = this.getRowHeight( this.firstRenderedIndex - this.props.itemsPerRow );
@@ -355,7 +361,8 @@ class ScrollHelper {
 	}
 
 	hideItemsBelow() {
-		let rowTop, rowHeight;
+		let rowTop;
+		let rowHeight;
 
 		while ( this.lastRenderedIndex >= 0 ) {
 			this.storeRowItemHeights( 'bottom', this.lastRenderedIndex );
@@ -380,7 +387,9 @@ class ScrollHelper {
 	}
 
 	showItemsBelow() {
-		let rowHeight, itemTop, placeholderTop;
+		let rowHeight;
+		let itemTop;
+		let placeholderTop;
 
 		while ( this.lastRenderedIndex < this.props.items.length - 1 ) {
 			rowHeight = this.getRowHeight( this.lastRenderedIndex + this.props.itemsPerRow );

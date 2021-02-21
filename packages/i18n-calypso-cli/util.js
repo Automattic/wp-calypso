@@ -10,7 +10,7 @@ const fs = require( 'fs' );
  * @returns {string}                   Concatenated file contents
  */
 function concatAllFiles( inputFiles ) {
-	return inputFiles.map( inputFile => fs.readFileSync( inputFile, 'utf8' ) ).join( '\n' );
+	return inputFiles.map( ( inputFile ) => fs.readFileSync( inputFile, 'utf8' ) ).join( '\n' );
 }
 
 module.exports = {

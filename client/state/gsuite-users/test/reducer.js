@@ -8,19 +8,20 @@ import { expect } from 'chai';
  */
 import { usersReducer } from '../reducer';
 
-import { GSUITE_USERS_REQUEST_SUCCESS } from 'state/action-types';
+import { GSUITE_USERS_REQUEST_SUCCESS } from 'calypso/state/action-types';
 
 describe( "gsuiteUsersReducer's", () => {
 	const account = {
-		mailbox: 'a',
+		agreed_to_terms: false,
 		domain: 'test.blog',
 		email: 'a@test.blog',
 		firstname: 'User',
-		lastname: 'One',
 		fullname: 'User One',
+		is_admin: true,
+		lastname: 'One',
+		mailbox: 'a',
 		site_id: 1,
 		suspended: false,
-		agreed_to_terms: false,
 	};
 
 	describe( 'users sub-reducer', () => {

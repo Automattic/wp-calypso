@@ -1,14 +1,21 @@
 /**
  * External dependencies
  */
-import { format as urlFormat, parse as urlParse } from 'url';
-import { difference, get, includes, pick, values } from 'lodash';
+import { difference, get, has, includes, pick, values, isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
+import { isEnabled } from '@automattic/calypso-config';
+import { isFreeJetpackPlan } from 'calypso/lib/products-values/is-free-jetpack-plan';
+import { isJetpackPlan } from 'calypso/lib/products-values/is-jetpack-plan';
+import { isMonthly } from 'calypso/lib/products-values/is-monthly';
+import {
+	format as formatUrl,
+	getUrlParts,
+	getUrlFromParts,
+	determineUrlType,
+} from 'calypso/lib/url';
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
@@ -21,10 +28,21 @@ import {
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_SECURITY_DAILY,
+	TYPE_SECURITY_REALTIME,
+	TYPE_ALL,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	JETPACK_RESET_PLANS,
+	FEATURE_JETPACK_SEARCH,
+	FEATURE_JETPACK_SEARCH_MONTHLY,
+	TYPE_P2_PLUS,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
+
+/**
+ * @typedef { import('./types').Plan } Plan
+ */
 
 export function getPlans() {
 	return PLANS_LIST;
@@ -41,6 +59,20 @@ export function getPlan( planKey ) {
 		}
 	}
 	return PLANS_LIST[ planKey ];
+}
+
+/**
+ * Find a plan by its path slug
+ *
+ * @param {string} pathSlug Path slug
+ * @param {string} [group] Group to search in
+ * @returns {Plan|undefined} The plan
+ */
+export function getPlanByPathSlug( pathSlug, group ) {
+	/** @type {Plan[]} */
+	let plans = Object.values( PLANS_LIST );
+	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
+	return plans.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {
@@ -72,6 +104,18 @@ export function getPlanClass( planKey ) {
 
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isSecurityDailyPlan( planKey ) ) {
+		return 'is-daily-security-plan';
+	}
+
+	if ( isSecurityRealTimePlan( planKey ) ) {
+		return 'is-realtime-security-plan';
+	}
+
+	if ( isCompletePlan( planKey ) ) {
+		return 'is-complete-plan';
 	}
 
 	return '';
@@ -135,7 +179,7 @@ export function filterPlansBySiteAndProps(
 	const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 	const hasPersonalPlan = site && site.plan.product_slug === PLAN_PERSONAL;
 
-	return plans.filter( function( plan ) {
+	return plans.filter( function ( plan ) {
 		if ( site && site.jetpack ) {
 			if ( 'monthly' === intervalType ) {
 				if ( showJetpackFreePlan ) {
@@ -171,6 +215,10 @@ export function filterPlansBySiteAndProps(
  * @returns {string}          Monthly version slug or "" if the slug could not be converted.
  */
 export function getMonthlyPlanByYearly( planSlug ) {
+	const plan = getPlan( planSlug );
+	if ( has( plan, 'getMonthlySlug' ) ) {
+		return plan.getMonthlySlug();
+	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
 }
 
@@ -182,6 +230,10 @@ export function getMonthlyPlanByYearly( planSlug ) {
  * @returns {string}          Yearly version slug or "" if the slug could not be converted.
  */
 export function getYearlyPlanByMonthly( planSlug ) {
+	const plan = getPlan( planSlug );
+	if ( has( plan, 'getAnnualSlug' ) ) {
+		return plan.getAnnualSlug();
+	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
 }
 
@@ -238,6 +290,22 @@ export function isFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE } );
 }
 
+export function isSecurityDailyPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_SECURITY_DAILY } );
+}
+
+export function isSecurityRealTimePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
+}
+
+export function isCompletePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_ALL } );
+}
+
+export function isWpComPlan( planSlug ) {
+	return planMatches( planSlug, { group: GROUP_WPCOM } );
+}
+
 export function isWpComBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
 }
@@ -276,6 +344,14 @@ export function isJetpackPersonalPlan( planSlug ) {
 
 export function isJetpackFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
+}
+
+export function isJetpackOfferResetPlan( planSlug ) {
+	return JETPACK_RESET_PLANS.includes( planSlug );
+}
+
+export function isP2PlusPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_P2_PLUS } );
 }
 
 /**
@@ -329,7 +405,7 @@ export function findSimilarPlansKeys( planKey, diff = {} ) {
  */
 export function findPlansKeys( query = {} ) {
 	const plans = getPlans();
-	return Object.keys( plans ).filter( k => planMatches( plans[ k ], query ) );
+	return Object.keys( plans ).filter( ( k ) => planMatches( plans[ k ], query ) );
 }
 
 /**
@@ -360,7 +436,7 @@ export function planMatches( planKey, query = {} ) {
 
 	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
 	const plan = getPlan( planKey ) || {};
-	const match = key => ! ( key in query ) || plan[ key ] === query[ key ];
+	const match = ( key ) => ! ( key in query ) || plan[ key ] === query[ key ];
 	return match( 'type' ) && match( 'group' ) && match( 'term' );
 }
 
@@ -390,16 +466,22 @@ export function getBillingMonthsForTerm( term ) {
 }
 
 export function plansLink( url, siteSlug, intervalType, forceIntervalType = false ) {
-	const parsedUrl = urlParse( url );
+	const originalUrlType = determineUrlType( url );
+	const resultUrl = getUrlParts( url );
+
 	if ( 'monthly' === intervalType || forceIntervalType ) {
-		parsedUrl.pathname += '/' + intervalType;
+		resultUrl.pathname += '/' + intervalType;
 	}
 
 	if ( siteSlug ) {
-		parsedUrl.pathname += '/' + siteSlug;
+		resultUrl.pathname += '/' + siteSlug;
 	}
 
-	return urlFormat( parsedUrl );
+	// getUrlFromParts only works with absolute URLs, so add some dummy data if
+	// needed, and format down to the type of the original url.
+	resultUrl.protocol = resultUrl.protocol || 'https:';
+	resultUrl.hostname = resultUrl.hostname || '__hostname__.invalid';
+	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
 }
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
@@ -439,40 +521,44 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
-export const getPopularPlanSpec = ( {
-	customerType,
-	isJetpack,
-	abtest,
-	isInSignup,
-	isLaunchPage,
-	countryCode,
-} ) => {
+export const getPopularPlanSpec = ( { customerType, isJetpack, availablePlans } ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {
 		return false;
 	}
 
-	const spec = {
-		type: TYPE_BUSINESS,
-		group: GROUP_WPCOM,
-	};
-
-	if ( customerType === 'personal' ) {
-		const isUserOutsideUS = countryCode && 'US' !== countryCode;
-
-		if (
-			isInSignup &&
-			! isLaunchPage &&
-			isUserOutsideUS &&
-			'variantShowBizPopular' === abtest( 'showBusinessPlanPopular' )
-		) {
-			return spec;
-		}
-
-		spec.type = TYPE_PREMIUM;
+	if ( availablePlans.length === 0 ) {
+		return false;
 	}
 
-	return spec;
+	const defaultPlan = getPlan( availablePlans[ 0 ] );
+
+	if ( ! defaultPlan ) {
+		return false;
+	}
+
+	const group = GROUP_WPCOM;
+
+	if ( customerType === 'personal' ) {
+		if ( availablePlans.findIndex( isPremiumPlan ) !== -1 ) {
+			return {
+				type: TYPE_PREMIUM,
+				group,
+			};
+		}
+		// when customerType is not personal, default to business
+	} else if ( availablePlans.findIndex( isBusinessPlan ) !== -1 ) {
+		return {
+			type: TYPE_BUSINESS,
+			group,
+		};
+	}
+
+	// finally, just return the default one.
+	return {
+		type: defaultPlan.type,
+		group,
+	};
 };
 
 export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, currentPlan } ) => {
@@ -489,8 +575,8 @@ export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, 
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 	]
-		.map( planKey => getPlan( planKey ) )
-		.map( plan => plan.getStoreSlug() );
+		.map( ( planKey ) => getPlan( planKey ) )
+		.map( ( plan ) => plan.getStoreSlug() );
 
 	if ( selectedPlan ) {
 		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';
@@ -501,3 +587,13 @@ export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, 
 
 	return 'personal';
 };
+
+/**
+ * Determines if a plan includes Jetpack Search by looking at the plan's features.
+ *
+ * @param   {string}  planSlug  Slug of the plan.
+ * @returns {boolean}           Whether the specified plan includes Jetpack Search.
+ */
+export const planHasJetpackSearch = ( planSlug ) =>
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH ) ||
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH_MONTHLY );

@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 class StripeConnectPrompt extends Component {
 	static propTypes = {
@@ -37,8 +37,8 @@ class StripeConnectPrompt extends Component {
 							value={ isCreateSelected }
 							checked={ isCreateSelected }
 							onChange={ onSelectCreate }
+							label={ translate( 'Create a new Stripe account' ) }
 						/>
-						<span>{ translate( 'Create a new Stripe account' ) }</span>
 					</FormLabel>
 
 					<FormLabel>
@@ -46,8 +46,8 @@ class StripeConnectPrompt extends Component {
 							value={ ! isCreateSelected }
 							checked={ ! isCreateSelected }
 							onChange={ onSelectConnect }
+							label={ translate( 'I already have a Stripe account' ) }
 						/>
-						<span>{ translate( 'I already have a Stripe account' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>

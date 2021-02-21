@@ -1,0 +1,38 @@
+.email-provider-details__feature {
+	margin: 8px 0;
+	display: block;
+
+	.gridicon {
+		position: absolute;
+		margin: 1px 0 0 -28px;
+		fill: var( --studio-green-40 );
+	}
+
+	&::before {
+		content: '';
+		display: block;
+		height: 1px;
+		border-bottom: 1px solid var( --color-neutral-5 );
+		margin-bottom: 8px;
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-left: 28px;
+	}
+}
+
+.promo-card .action-panel__body p.email-provider-details__description {
+	flex-grow: 0;
+}
+
+.promo-card div.promo-card__title-badge {
+	background-color: var( --studio-gray-80 );
+}
+
+.promo-card h2.action-panel__title {
+	flex-wrap: wrap;
+}
+
+.email-provider-details__cta {
+	margin: 16px auto 16px 0;
+}

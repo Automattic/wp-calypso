@@ -8,11 +8,11 @@ import superagent from 'superagent';
 /**
  * Internal dependencies
  */
-import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd';
+import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 import analytics from '../index';
-import config from 'config';
-jest.mock( 'config', () => require( 'sinon' ).stub() );
-jest.mock( 'lib/analytics/statsd', () => ( {
+import config from '@automattic/calypso-config';
+jest.mock( '@automattic/calypso-config', () => require( 'sinon' ).stub() );
+jest.mock( 'calypso/lib/analytics/statsd-utils', () => ( {
 	statsdTimingUrl: require( 'sinon' ).stub(),
 	statsdCountingUrl: require( 'sinon' ).stub(),
 } ) );
@@ -21,7 +21,7 @@ describe( 'Server-Side Analytics', () => {
 	describe( 'tracks.recordEvent', () => {} );
 
 	describe( 'statsd.recordTiming', () => {
-		beforeAll( function() {
+		beforeAll( function () {
 			sinon.stub( superagent, 'get' ).returns( { end: () => {} } );
 		} );
 
@@ -56,7 +56,7 @@ describe( 'Server-Side Analytics', () => {
 	} );
 
 	describe( 'statsd.recordCounting', () => {
-		beforeAll( function() {
+		beforeAll( function () {
 			sinon.stub( superagent, 'get' ).returns( { end: () => {} } );
 		} );
 

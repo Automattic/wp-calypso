@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { bumpStat } from 'state/analytics/actions';
+import { bumpStat } from 'calypso/state/analytics/actions';
 import { WOOCOMMERCE_STAT_DISCARDED } from 'woocommerce/state/action-types';
 
 /**
@@ -22,7 +22,7 @@ export const recordTrack = ( tracks, debug, tracksStore ) => ( eventName, eventP
 		return;
 	}
 
-	tracks.recordEvent( eventName, eventProperties );
+	tracks.recordTracksEvent( eventName, eventProperties );
 };
 
 export const bumpMCStat = ( debug, tracksStore ) => ( group, name ) => {

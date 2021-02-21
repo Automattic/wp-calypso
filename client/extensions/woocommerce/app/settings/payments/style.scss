@@ -1,6 +1,6 @@
 &.payments__dialog {
 	min-width: 90%;
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		min-width: 360px;
 		max-width: 540px;
 	}
@@ -45,7 +45,7 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		flex-direction: column;
 	}
 
@@ -63,7 +63,7 @@
 	max-width: 255px;
 	padding-top: 24px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		padding-top: 0;
 	}
 }
@@ -78,7 +78,7 @@
 	justify-content: flex-start;
 	background: var( --color-neutral-0 );
 	font-weight: 600;
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	.list-item-field {
 		padding-top: 12px;
@@ -89,7 +89,7 @@
 // PAYMENT-METHOD-ROW
 .payments__type-container {
 	p.payments__method-suggested {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		text-transform: uppercase;
 		color: var( --color-text-subtle );
 		display: none;
@@ -103,7 +103,7 @@
 	}
 
 	p.payments__method-information p.payments__method-name {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.payments__method-name-paypal,
@@ -131,7 +131,7 @@
 	}
 
 	.payments__method-information {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.payments__method-method-suggested-container,
@@ -140,7 +140,7 @@
 	}
 
 	.payments__method-method-suggested-container {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			width: 50%;
 		}
 	}
@@ -151,13 +151,13 @@
 	}
 
 	.list-item-field.payments__methods-column-fees {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 	}
 
 	.payments__method-method-information-container {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			width: 60%;
 			order: 4;
 			padding-top: 0;
@@ -167,7 +167,7 @@
 	.payments__method-enable-container {
 		width: 20%;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			width: 30%;
 			padding-left: 0;
 			padding-right: 0;
@@ -180,7 +180,7 @@
 		.payments__method-enable .form-label {
 			display: inline-block;
 			color: var( --color-neutral-light );
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 			font-weight: 400;
 			line-height: 16px;
 			margin-top: 6px;
@@ -194,7 +194,7 @@
 	.payments__method-action-container {
 		width: 15%;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			width: 20%;
 			padding-left: 0;
 		}
@@ -207,7 +207,7 @@
 }
 
 .payments__method-edit-header {
-	font-size: 18px;
+	font-size: $font-title-small;
 	justify-content: space-between;
 	padding: 0 0 16px;
 }
@@ -217,7 +217,7 @@
 	border-top: 1px solid var( --color-border-subtle );
 	width: 100%;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 24px;
 	}
 
@@ -241,7 +241,7 @@
 	margin-bottom: 5px;
 	width: 100%;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 60%;
 	}
 }
@@ -250,7 +250,7 @@
 	height: 12px;
 	width: 90%;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 50%;
 	}
 }
@@ -260,7 +260,7 @@
 	margin-bottom: 5px;
 	width: 100%;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 60%;
 	}
 }
@@ -269,7 +269,7 @@
 	height: 12px;
 	width: 90%;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 50%;
 	}
 }

@@ -11,7 +11,7 @@ import {
 	ATOMIC_TRANSFER_REQUEST as TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_REQUEST_FAILURE as TRANSFER_REQUEST_FAILURE,
 	ATOMIC_TRANSFER_SET as SET_TRANSFER,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'action', () => {
 	describe( 'fetchAtomicTransfer', () => {
@@ -39,7 +39,7 @@ describe( 'action', () => {
 	} );
 
 	describe( 'atomicTransferFetchingFailure', () => {
-		describe( 'should return a failed transfer request action object', () => {
+		test( 'should return a failed transfer request action object', () => {
 			const failedRequestAction = atomicTransferFetchingFailure( 1 );
 
 			expect( failedRequestAction ).to.eql( {

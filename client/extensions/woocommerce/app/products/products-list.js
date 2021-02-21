@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {

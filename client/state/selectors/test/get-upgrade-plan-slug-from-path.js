@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from 'lib/plans/constants';
+import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from 'calypso/lib/plans/constants';
 
 describe( 'getUpgradePlanSlugFromPath', () => {
 	const siteId = 1234567;

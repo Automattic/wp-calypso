@@ -10,12 +10,12 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 import IssuesNotices from './issues-notices';
-import Main from 'components/main';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
+import Main from 'calypso/components/main';
+import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
 import TransferUnavailableCard from './transfer-unavailable-card';
 
 /**
@@ -58,7 +58,7 @@ class GuidedTransfer extends React.Component {
 		page( `/export/guided/${ this.props.siteSlug }` );
 	};
 
-	showHost = hostSlug => {
+	showHost = ( hostSlug ) => {
 		page( `/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
 	};
 
@@ -73,7 +73,7 @@ class GuidedTransfer extends React.Component {
 	render() {
 		const { siteId, siteSlug } = this.props;
 		const hostInfo = get( guidedTransferHosts, this.props.hostSlug );
-		const hosts = Object.keys( guidedTransferHosts ).map( hostSlug => {
+		const hosts = Object.keys( guidedTransferHosts ).map( ( hostSlug ) => {
 			return {
 				...guidedTransferHosts[ hostSlug ],
 				showHost: () => this.showHost( hostSlug ),

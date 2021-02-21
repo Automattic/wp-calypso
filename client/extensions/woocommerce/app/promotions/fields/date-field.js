@@ -8,15 +8,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DatePicker from 'components/date-picker';
-import { withLocalizedMoment } from 'components/localized-moment';
+import DatePicker from 'calypso/components/date-picker';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import FormField from './form-field';
 
-const DateField = props => {
+const DateField = ( props ) => {
 	const { fieldName, explanationText, disabledDays, value, edit, moment } = props;
 	const selectedDay = value ? new Date( value ) : new Date();
 
-	const onSelectDay = day => {
+	const onSelectDay = ( day ) => {
 		edit( fieldName, moment( day ).format( 'YYYY-MM-DDTHH:mm:ss' ) );
 	};
 

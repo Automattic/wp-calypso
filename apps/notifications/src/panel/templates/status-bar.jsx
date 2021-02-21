@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import Gridicon from './gridicons';
 
 export class StatusBar extends React.Component {
@@ -32,11 +38,11 @@ export class StatusBar extends React.Component {
 
 		if ( nextProps.statusMessage == this.props.statusMessage ) return;
 
-		var component = this;
+		const component = this;
 
 		/* We only want this to appear for a bit, then disappear */
-		var timeout = window.setTimeout(
-			function() {
+		const timeout = window.setTimeout(
+			function () {
 				component.disappear();
 			},
 			nextProps.statusTimeout ? nextProps.statusTimeout : this.props.statusTimeout
@@ -49,9 +55,9 @@ export class StatusBar extends React.Component {
 	}
 
 	render() {
-		var visibility = this.state.isVisible ? { display: 'flex' } : { display: 'none' };
+		const visibility = this.state.isVisible ? { display: 'flex' } : { display: 'none' };
 
-		var classes = [ 'wpnc__status-bar' ];
+		const classes = [ 'wpnc__status-bar' ];
 		if ( 'undefined' != typeof this.props.statusClasses && this.props.statusClasses.length > 0 ) {
 			classes.push.apply( classes, this.props.statusClasses );
 		}

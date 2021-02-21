@@ -15,8 +15,8 @@ import {
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
 	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { pluginInstructionSchema } from './schema';
 
 /*
@@ -68,8 +68,8 @@ export const plugins = withSchemaValidation( pluginInstructionSchema, ( state = 
 			return state;
 		case SERIALIZE:
 			// Save the error state as a string message.
-			return mapValues( state, pluginList =>
-				pluginList.map( item => {
+			return mapValues( state, ( pluginList ) =>
+				pluginList.map( ( item ) => {
 					if ( item.error !== null ) {
 						return Object.assign( {}, item, { error: item.error.toString() } );
 					}
@@ -93,7 +93,7 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_SETUP_CONFIGURE:
 		case PLUGIN_SETUP_FINISH:
 		case PLUGIN_SETUP_ERROR:
-			return state.map( p => plugin( p, action ) );
+			return state.map( ( p ) => plugin( p, action ) );
 		default:
 			return state;
 	}

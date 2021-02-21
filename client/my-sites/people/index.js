@@ -6,11 +6,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import peopleController from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
-export default function() {
+export default function () {
 	page(
 		'/people/:filter(team|followers|email-followers|viewers)',
 		siteSelection,

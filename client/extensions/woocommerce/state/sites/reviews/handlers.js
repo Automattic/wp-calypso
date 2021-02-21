@@ -9,10 +9,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { DEFAULT_QUERY } from './utils';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import {
@@ -30,7 +30,7 @@ import {
 export function handleReviewsRequest( action ) {
 	const { siteId, query } = action;
 	const requestQuery = { ...DEFAULT_QUERY, ...query };
-	const queryString = stringify( omitBy( requestQuery, val => '' === val ) );
+	const queryString = stringify( omitBy( requestQuery, ( val ) => '' === val ) );
 
 	return request( siteId, action ).get( `products/calypso-reviews?${ queryString }&_envelope` );
 }

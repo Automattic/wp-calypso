@@ -4,13 +4,13 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import { GUIDED_TRANSFER } from 'lib/url/support';
+import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
 
 const GuidedTransferInProgress = ( { translate } ) => (
 	<Card className="guided-transfer-card__in-progress">

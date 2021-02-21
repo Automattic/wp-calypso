@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-
-import switchLocale from 'lib/i18n-utils/switch-locale';
+import switchLocale from 'calypso/lib/i18n-utils/switch-locale';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { LOCALE_SET } from 'state/action-types';
+import { LOCALE_SET } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 /**
  * Set the ui locale
@@ -32,7 +33,7 @@ export const setLocale = ( localeSlug, localeVariant = null ) => {
  * @param   {object} localeData the locale data to be set
  * @returns {object} Action
  */
-export const setLocaleRawData = localeData => {
+export const setLocaleRawData = ( localeData ) => {
 	i18n.setLocale( localeData );
 
 	const { localeSlug, localeVariant = null } = localeData[ '' ];

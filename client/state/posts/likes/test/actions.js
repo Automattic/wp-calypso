@@ -6,7 +6,7 @@
  * Internal dependencies
  */
 import { requestPostLikes } from '../actions';
-import { POST_LIKES_REQUEST } from 'state/action-types';
+import { POST_LIKES_REQUEST } from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'requestPostLikes()', () => {

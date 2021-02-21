@@ -18,7 +18,7 @@ export function extendAction( action, data ) {
 	}
 
 	return ( dispatch, getState ) => {
-		const newDispatch = a => dispatch( extendAction( a, data ) );
+		const newDispatch = ( a ) => dispatch( extendAction( a, data ) );
 		return action( newDispatch, getState );
 	};
 }

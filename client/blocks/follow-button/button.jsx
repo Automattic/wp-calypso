@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -39,7 +39,7 @@ class FollowButton extends React.Component {
 		};
 	}
 
-	toggleFollow = event => {
+	toggleFollow = ( event ) => {
 		if ( event ) {
 			event.preventDefault();
 		}

@@ -1,18 +1,17 @@
 /**
- */
-
-/**
  * Internal dependencies
  */
 import {
 	READER_SITE_BLOCK,
 	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_UNBLOCK,
-} from 'state/action-types';
+} from 'calypso/state/reader/action-types';
 
-import 'state/data-layer/wpcom/me/block/sites/delete';
-import 'state/data-layer/wpcom/me/block/sites/new';
-import 'state/data-layer/wpcom/me/blocks/sites';
+import 'calypso/state/data-layer/wpcom/me/block/sites/delete';
+import 'calypso/state/data-layer/wpcom/me/block/sites/new';
+import 'calypso/state/data-layer/wpcom/me/blocks/sites';
+
+import 'calypso/state/reader/init';
 
 export function blockSite( siteId ) {
 	return {

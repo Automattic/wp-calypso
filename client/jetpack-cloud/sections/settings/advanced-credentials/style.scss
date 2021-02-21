@@ -1,0 +1,102 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.advanced-credentials.main {
+	.step-progress {
+		margin-top: 16px;
+		margin-bottom: 16px;
+
+		font-style: bold;
+
+		.step-progress__element-number-complete {
+			background-color: var( --color-primary-50 );
+			color: var( --studio-white );
+		}
+		.step-progress__element-number-current {
+			background-color: var( --studio-white );
+			border: 3px solid var( --color-neutral-70 );
+			color: var( --color-neutral-7 );
+		}
+		.step-progress__element-number {
+			background-color: var( --color-neutral-10 );
+		}
+	}
+
+	// remove the margin for everything but the top section header at smaller widths
+	> :not( :first-child ) {
+		margin-left: -16px;
+		margin-right: -16px;
+
+		@include break-medium {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+}
+
+.advanced-credentials__server-connection-status {
+	margin-bottom: 0;
+}
+
+.advanced-credentials__server-connection-status-content {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.advanced-credentials__server-connection-status-content h3 {
+	font-size: $font-body;
+}
+
+.advanced-credentials__connected {
+	display: flex;
+	align-items: center;
+	text-align: left;
+	font-weight: normal;
+
+	.gridicon {
+		flex-shrink: 0;
+	}
+}
+
+.connection-status__failed,
+.connection-status__connected,
+.connection-status__connecting,
+.connection-status__disconnected,
+.connection-status__loading {
+	display: flex;
+	*:not( first-child ) {
+		margin-left: 8px;
+	}
+	svg {
+		height: 16px;
+		width: 16px;
+	}
+	align-items: center;
+}
+
+.connection-status__failed,
+.connection-status__disconnected {
+	color: var( --color-error );
+	fill: var( --color-error );
+}
+
+.connection-status__connecting {
+	color: var( --color-warning );
+	fill: var( --color-warning );
+}
+
+.connection-status__connected {
+	color: var( --color-primary-50 );
+	fill: var( --color-primary-50 );
+}
+
+.connection-status__loading {
+	circle {
+		@include placeholder();
+		fill: var( --color-neutral-5 );
+	}
+	span {
+		color: var( --color-neutral-5 );
+	}
+}

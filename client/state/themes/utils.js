@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { every, get, includes, map, mapKeys, omit, omitBy, some, split, startsWith } from 'lodash';
+import { every, get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,7 +50,7 @@ export function normalizeJetpackTheme( theme = {} ) {
 		...omit( theme, 'tags' ),
 		taxonomies: {
 			// Map slugs only since JP sites give us no names
-			theme_feature: map( theme.tags, slug => ( { slug } ) ),
+			theme_feature: map( theme.tags, ( slug ) => ( { slug } ) ),
 		},
 	};
 }
@@ -118,7 +118,7 @@ export function normalizeWporgTheme( theme ) {
  * @returns {?string}            Theme ID
  */
 export function getThemeIdFromStylesheet( stylesheet ) {
-	const [ , slug ] = split( stylesheet, '/', 2 );
+	const [ , slug ] = stylesheet?.split( '/', 2 ) ?? [];
 	if ( ! slug ) {
 		return stylesheet;
 	}
@@ -162,7 +162,8 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
  * @returns {object}                 Deserialized themes query details
  */
 export function getDeserializedThemesQueryDetails( serializedQuery ) {
-	let siteId, query;
+	let siteId;
+	let query;
 
 	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
 	if ( matches ) {
@@ -223,7 +224,7 @@ export function isThemeMatchingQuery( query, theme ) {
 
 				const foundInTaxonomies = some(
 					SEARCH_TAXONOMIES,
-					taxonomy =>
+					( taxonomy ) =>
 						theme.taxonomies &&
 						some(
 							theme.taxonomies[ 'theme_' + taxonomy ],
@@ -247,7 +248,9 @@ export function isThemeMatchingQuery( query, theme ) {
 				// TODO: Change filters object shape to be more like post's terms, i.e.
 				// { color: 'blue,red', feature: 'post-slider' }
 				const filters = value.split( ',' );
-				return every( filters, f => some( theme.taxonomies, terms => some( terms, { slug: f } ) ) );
+				return every( filters, ( f ) =>
+					some( theme.taxonomies, ( terms ) => some( terms, { slug: f } ) )
+				);
 			}
 		}
 

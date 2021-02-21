@@ -4,13 +4,13 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getEditURL } from 'state/posts/utils';
+import { getEditURL } from 'calypso/state/posts/utils';
 
 /**
  * Style dependencies

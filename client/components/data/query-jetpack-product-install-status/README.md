@@ -1,5 +1,4 @@
-Query Jetpack Product Install Status
-================
+# Query Jetpack Product Install Status
 
 `<QueryJetpackProductInstallStatus />` is a React component used in managing network requests for fetching the current Jetpack product installation status.
 

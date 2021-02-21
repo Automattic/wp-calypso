@@ -10,13 +10,14 @@ import photon from 'photon';
  * Internal dependencies
  */
 import ListItemFileDetails from './list-item-file-details';
-import Gridicon from 'components/gridicon';
-import { MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
+import Gridicon from 'calypso/components/gridicon';
+import { MEDIA_IMAGE_THUMBNAIL } from 'calypso/lib/media/constants';
 
 /**
  * Style dependencies
  */
 import './list-item-video.scss';
+import MediaFile from './media-file';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItemVideo';
@@ -51,17 +52,22 @@ export default class extends React.Component {
 					? thumbnail
 					: photon( thumbnail, { width: this.props.maxImageWidth } );
 
-			return (
-				<div
-					className="media-library__list-item-video"
-					style={ { backgroundImage: 'url(' + url + ')' } }
-				>
-					<span className="media-library__list-item-icon media-library__list-item-centered">
-						<Gridicon icon="video-camera" />
-					</span>
-				</div>
-			);
+			return <MediaFile src={ url } component={ ListItemVideo } placeholder={ ListItemVideo } />;
 		}
 		return <ListItemFileDetails { ...this.props } icon="video-camera" />;
 	}
+}
+
+function ListItemVideo( { src } ) {
+	const style = {};
+	if ( src ) {
+		style.backgroundImage = 'url(' + src + ')';
+	}
+	return (
+		<div className="media-library__list-item-video" style={ style }>
+			<span className="media-library__list-item-icon media-library__list-item-centered">
+				<Gridicon icon="video-camera" />
+			</span>
+		</div>
+	);
 }

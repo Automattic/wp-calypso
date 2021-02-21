@@ -13,7 +13,11 @@
 	display: block;
 	margin-top: 5px;
 	margin-bottom: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 	color: var( --color-text-subtle );
+
+	a {
+		white-space: nowrap;
+	}
 }

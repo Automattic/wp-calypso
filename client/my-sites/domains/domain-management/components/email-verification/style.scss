@@ -9,7 +9,7 @@
 }
 
 .email-verification__status {
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 600;
 	line-height: 21px;
 	padding-left: 50px;
@@ -28,12 +28,12 @@
 
 .email-verification__sent-to {
 	color: var( --color-neutral-50 );
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .email-verification__heading {
-	font-size: 21px;
-	font-weight: bold;
+	font-size: $font-title-small;
+	font-weight: 600;
 	line-height: 26px;
 	margin: 0 0 10px;
 }
@@ -63,6 +63,15 @@
 
 	&.sent .gridicon {
 		color: var( --color-success );
+	}
+}
+
+.email-verification__actions {
+	display: flex;
+	align-items: center;
+
+	a {
+		margin-left: 16px;
 	}
 }
 

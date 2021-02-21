@@ -15,7 +15,7 @@ export default function detectSurveys( post, dom ) {
 		return post;
 	}
 
-	forEach( surveys, survey => {
+	forEach( surveys, ( survey ) => {
 		// Get survey details
 		let surveyDetails = null;
 

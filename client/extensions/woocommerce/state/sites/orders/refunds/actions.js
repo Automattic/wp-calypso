@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { translate } from 'i18n-calypso';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,

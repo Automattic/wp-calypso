@@ -1,1 +1,4 @@
-module.exports = { preset: '@automattic/calypso-build', rootDir: __dirname };
+module.exports = {
+	preset: '../../test/packages/jest-preset.js',
+	setupFiles: [ 'regenerator-runtime/runtime' ],
+};

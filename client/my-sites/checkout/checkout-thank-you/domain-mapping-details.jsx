@@ -9,11 +9,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { isSubdomain } from 'lib/domains';
-import { isBusiness } from 'lib/products-values';
-import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
-import { getSelectedSite } from 'state/ui/selectors';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { isSubdomain } from 'calypso/lib/domains';
+import { isBusiness } from 'calypso/lib/products-values';
+import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const DomainMappingDetails = ( {
 	domain,

@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import { getInitialState } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { getInitialState } from './get-initial-state';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 
 /**
  * Wraps a reducer such that it won't persist any state to the browser's local storage
@@ -23,7 +27,7 @@ import { getInitialState } from './get-initial-state';
  * @param {Function} reducer original reducer
  * @returns {Function} wrapped reducer
  */
-export const withoutPersistence = reducer => {
+export const withoutPersistence = ( reducer ) => {
 	const wrappedReducer = ( state, action ) => {
 		switch ( action.type ) {
 			case SERIALIZE:

@@ -9,10 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
 import { Card } from '@automattic/components';
-import { getAllSiteTypes } from 'lib/signup/site-type';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getAllSiteTypes } from 'calypso/lib/signup/site-type';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -35,7 +35,7 @@ class SiteTypeForm extends Component {
 		showPurchaseRequired: true,
 	};
 
-	handleSubmit = type => {
+	handleSubmit = ( type ) => {
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
 			value: type,
 		} );
@@ -48,7 +48,7 @@ class SiteTypeForm extends Component {
 		return (
 			<>
 				<Card className="site-type__wrapper">
-					{ getAllSiteTypes().map( siteTypeProperties => (
+					{ getAllSiteTypes().map( ( siteTypeProperties ) => (
 						<Card
 							className="site-type__option"
 							key={ siteTypeProperties.id }

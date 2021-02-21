@@ -1,24 +1,25 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import ButtonGroup from 'components/button-group';
+import getSites from 'calypso/state/selectors/get-sites';
+import SectionHeader from 'calypso/components/section-header';
+import ButtonGroup from 'calypso/components/button-group';
 import { Button } from '@automattic/components';
-import SelectDropdown from 'components/select-dropdown';
-import BulkSelect from 'components/bulk-select';
-import analytics from 'lib/analytics';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import BulkSelect from 'calypso/components/bulk-select';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -98,18 +99,23 @@ export class PluginsListHeader extends PureComponent {
 		const { plugins, selected } = this.props;
 		const someSelected = selected.length > 0;
 		this.props.setSelectionState( plugins, ! someSelected );
-		analytics.ga.recordEvent(
+		gaRecordEvent(
 			'Plugins',
 			someSelected ? 'Clicked to Uncheck All Plugins' : 'Clicked to Check All Plugins'
 		);
 	};
 
 	isJetpackSelected() {
-		return this.props.selected.some( plugin => 'jetpack' === plugin.slug );
+		return this.props.selected.some( ( plugin ) => 'jetpack' === plugin.slug );
 	}
 
 	canUpdatePlugins() {
-		return this.props.selected.some( plugin => plugin.sites.some( site => site.canUpdateFiles ) );
+		const { selected, allSites } = this.props;
+		return selected.some( ( plugin ) =>
+			Object.values( allSites )
+				.filter( ( { ID } ) => plugin.sites.hasOwnProperty( ID ) )
+				.some( ( site ) => site.canUpdateFiles )
+		);
 	}
 
 	needsRemoveButton() {
@@ -374,4 +380,6 @@ export class PluginsListHeader extends PureComponent {
 	}
 }
 
-export default localize( PluginsListHeader );
+export default connect( ( state ) => ( {
+	allSites: getSites( state ),
+} ) )( localize( PluginsListHeader ) );

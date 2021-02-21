@@ -11,7 +11,7 @@ import React from 'react';
 import Sparkline from '../index';
 
 describe( 'Sparkline', () => {
-	const shallowWithoutLifecycle = arg => shallow( arg, { disableLifecycleMethods: true } );
+	const shallowWithoutLifecycle = ( arg ) => shallow( arg, { disableLifecycleMethods: true } );
 
 	test( 'should allow data to be set.', () => {
 		const sparkline = <Sparkline data={ [ 1, 2, 3, 4, 5 ] } />;

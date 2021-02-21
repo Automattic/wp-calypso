@@ -17,7 +17,9 @@ const SEPARATORS = [ ' ', '/', ',', ';' ];
 module.exports = function multiline( literal, startAt ) {
 	const maxPosition = MAX_COLUMNS - 1; // MAX_COLUMNS minus the last character needed for closing string (a ");
 
-	let nextSpaceIndex, i, char;
+	let nextSpaceIndex;
+	let i;
+	let char;
 
 	if ( typeof startAt === 'string' ) {
 		startAt = -startAt.length;

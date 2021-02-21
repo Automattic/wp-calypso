@@ -2,12 +2,12 @@
 /**
  * External dependencies
  */
-import { omit, findIndex } from 'lodash';
+import { findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
 import status from './status/reducer';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -20,7 +20,7 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { pluginsSchema } from './schema';
 
 /*
@@ -42,7 +42,7 @@ export function isRequesting( state = {}, action ) {
  * Helper function to update a plugin's state after a successful plugin action
  * (multiple action-types are possible)
  */
-const updatePlugin = function( state, action ) {
+const updatePlugin = function ( state, action ) {
 	if ( typeof state[ action.siteId ] !== 'undefined' ) {
 		return Object.assign( {}, state, {
 			[ action.siteId ]: pluginsForSite( state[ action.siteId ], action ),
@@ -88,7 +88,7 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
-			return state.map( p => plugin( p, action ) );
+			return state.map( ( p ) => plugin( p, action ) );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
 			return [ ...state, action.data ];
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:
@@ -116,7 +116,7 @@ function plugin( state, action ) {
 			if ( state.id !== action.data.id ) {
 				return state;
 			}
-			return Object.assign( {}, omit( state, 'update' ), action.data );
+			return Object.assign( {}, state, { update: { recentlyUpdated: true } }, action.data );
 		default:
 			return state;
 	}

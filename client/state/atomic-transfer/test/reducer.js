@@ -10,7 +10,7 @@ import { fetchingTransfer } from '../reducer';
 import {
 	ATOMIC_TRANSFER_REQUEST as TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_REQUEST_FAILURE as TRANSFER_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'state', () => {
 	describe( 'atomic-transfer', () => {

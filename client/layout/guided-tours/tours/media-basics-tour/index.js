@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 
 /**
@@ -16,14 +15,14 @@ import {
 	Next,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
-import { doesSelectedSiteHaveMediaFiles } from 'state/ui/guided-tours/contexts';
+} from 'calypso/layout/guided-tours/config-elements';
+import { doesSelectedSiteHaveMediaFiles } from 'calypso/state/guided-tours/contexts';
 import {
 	AddNewButton,
 	EditButton,
 	EditImageButton,
 	DoneButton,
-} from 'layout/guided-tours/button-labels';
+} from 'calypso/layout/guided-tours/button-labels';
 
 export const MediaBasicsTour = makeTour(
 	<Tour { ...meta }>
@@ -36,7 +35,7 @@ export const MediaBasicsTour = makeTour(
 		>
 			{ ( { translate } ) => (
 				<Fragment>
-					<p>{ translate( 'Welcome to your media libary!' ) }</p>
+					<p>{ translate( 'Welcome to your Media Library!' ) }</p>
 					<p>
 						{ translate(
 							'Upload media — photos, documents, audio files, and more — ' +
@@ -61,7 +60,7 @@ export const MediaBasicsTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'You can also drag-and-drop image and video files from your computer into your media library.'
+							'You can also drag-and-drop image and video files from your computer into your Media Library.'
 						) }
 					</p>
 					<img

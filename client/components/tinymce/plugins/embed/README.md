@@ -1,23 +1,22 @@
-EmbedDialog (JSX)
-==========
+# EmbedDialog (JSX)
 
 Component used to show an embedded URL in a dialog
 
-#### Props
+## Props
 
-* `embedUrl`: The URL of the content to show
-* `isVisible`: Whether or not the dialog is visible
-* `onCancel`: (required) Function to handle the close event
-* `onUpdate`: (required) Function to handle the update event
+- `embedUrl`: The URL of the content to show
+- `isVisible`: Whether or not the dialog is visible
+- `onCancel`: (required) Function to handle the close event
+- `onUpdate`: (required) Function to handle the update event
 
-----------
+---
 
-#### How to use:
+## How to use
 
 ```js
-import EmbedDialog from 'components/tinymce/plugins/embed';
+import EmbedDialog from 'calypso/components/tinymce/plugins/embed/dialog';
 
-render() {
+function render() {
 	return (
 		<EmbedDialog
 			embedUrl={ this.props.embedUrl }

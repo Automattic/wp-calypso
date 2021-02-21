@@ -8,14 +8,14 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import { Formats, MediaTypes } from './constants';
-import { getMimePrefix } from 'lib/media/utils';
+import { getMimePrefix } from 'calypso/lib/media/utils';
 
 /**
  * Module variables
  */
 const VALID_SHORTCODE_TYPES = [ 'closed', 'self-closing', 'single' ];
 
-export default function( node ) {
+export default function ( node ) {
 	if ( 'string' === typeof node ) {
 		return Formats.STRING;
 	}

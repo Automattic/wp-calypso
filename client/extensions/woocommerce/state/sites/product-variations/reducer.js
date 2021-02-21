@@ -7,7 +7,7 @@ import { compact, isEqual, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import { WOOCOMMERCE_PRODUCT_VARIATION_UPDATED } from 'woocommerce/state/action-types';
 
 export default withoutPersistence( ( state = {}, action ) => {
@@ -38,7 +38,7 @@ function updateCachedVariation( variations, variation ) {
 
 	let found = false;
 	const newVariations = compact(
-		variations.map( v => {
+		variations.map( ( v ) => {
 			if ( isEqual( v.id, variationId ) ) {
 				found = true;
 				return newVariation;

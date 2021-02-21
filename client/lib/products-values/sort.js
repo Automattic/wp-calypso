@@ -7,8 +7,13 @@ import { difference, flatten, groupBy, sortBy, toPairs } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isIncludedWithPlan } from 'lib/purchases';
-import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from 'lib/products-values';
+import { isIncludedWithPlan } from 'calypso/lib/purchases';
+import {
+	getDomainProductRanking,
+	isCredits,
+	isDomainProduct,
+	isPlan,
+} from 'calypso/lib/products-values';
 
 /**
  * Sorts all products in the following order:
@@ -27,29 +32,29 @@ import { getDomainProductRanking, isCredits, isDomainProduct, isPlan } from 'lib
  */
 
 function sortProducts( products ) {
-	let planItems, includedItems, domainItems, creditItems, otherItems;
+	let domainItems;
 
-	planItems = products.filter( isPlan );
+	const planItems = products.filter( isPlan );
 
-	includedItems = products.filter( isIncludedWithPlan );
+	const includedItems = products.filter( isIncludedWithPlan );
 
 	domainItems = difference( products, includedItems );
 	domainItems = domainItems.filter( isDomainProduct );
 	domainItems = toPairs( groupBy( domainItems, 'meta' ) );
-	domainItems = sortBy( domainItems, function( pair ) {
+	domainItems = sortBy( domainItems, function ( pair ) {
 		if ( pair[ 1 ][ 0 ] && pair[ 1 ][ 0 ].cost === 0 ) {
 			return -1;
 		}
 		return pair[ 0 ];
 	} );
-	domainItems = domainItems.map( function( pair ) {
+	domainItems = domainItems.map( function ( pair ) {
 		return sortBy( pair[ 1 ], getDomainProductRanking );
 	} );
 	domainItems = flatten( domainItems );
 
-	creditItems = products.filter( isCredits );
+	const creditItems = products.filter( isCredits );
 
-	otherItems = difference( products, planItems, domainItems, includedItems, creditItems );
+	const otherItems = difference( products, planItems, domainItems, includedItems, creditItems );
 
 	return planItems
 		.concat( includedItems )

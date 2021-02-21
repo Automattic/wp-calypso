@@ -1,14 +1,13 @@
-Network connection
-=======
+# Network connection
 
 `Network connection` provides simple UI for the cases when the user lost connection to the internet or to our servers.
 
-## How to use:
+## How to use
 
 Public API can be used through main file:
 
 ```js
-import NetworkConnectionApp from 'lib/network-connection';
+import NetworkConnectionApp from 'calypso/lib/network-connection';
 ```
 
 To init default handler which shows/hides error notice when connection lost/restored simply call:
@@ -23,8 +22,7 @@ Network connection keeps current network connection status. To check it use:
 NetworkConnectionApp.isConnected();
 ```
 
-
-#### Sending events
+## Sending events
 
 There are to methods that can be used to emit connection status change.
 
@@ -40,14 +38,14 @@ When you want to notify that network connection has been lost use:
 NetworkConnectionApp.emitDisconnected();
 ```
 
-#### Responding to events
+## Responding to events
 
 It is possible to listen for network connection status change. Events will be fired only when connection changes status from connected to disconnected or other way around.
 
 This will handle the case when user gets reconnected:
 
 ```js
-NetworkConnectionApp.on( 'connected' function() {
+NetworkConnectionApp.on( 'connected', function () {
 	console.log( 'Connection restored!' );
 } );
 ```
@@ -55,7 +53,7 @@ NetworkConnectionApp.on( 'connected' function() {
 This will handle the case when user gets disconnected:
 
 ```js
-NetworkConnectionApp.on( 'disconnected' function() {
+NetworkConnectionApp.on( 'disconnected', function () {
 	console.log( 'Connection lost!' );
 } );
 ```

@@ -12,9 +12,9 @@ import { connect } from 'react-redux';
  */
 import Delta from 'woocommerce/components/delta';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { isRequestingSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
 import Sparkline from 'woocommerce/components/d3/sparkline';
-import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 
 class StatsWidgetStat extends Component {
 	static propTypes = {
@@ -70,7 +70,7 @@ class StatsWidgetStat extends Component {
 			);
 		}
 
-		const index = findIndex( data, d => d.period === date );
+		const index = findIndex( data, ( d ) => d.period === date );
 		if ( ! data[ index ] ) {
 			return <div className="stats-widget__box-contents stats-type-stat" />;
 		}
@@ -79,7 +79,7 @@ class StatsWidgetStat extends Component {
 
 		// Our store stats REST API endpoints return zero filled data. The visitors endpoint and conversion data
 		// have not been zero filled. This catches any missing data points and fills them in so sparklines look consistent.
-		const timeSeries = data.map( row => +row[ attribute ] );
+		const timeSeries = data.map( ( row ) => +row[ attribute ] );
 		const expectedDataPoints = 'month' === unit ? 12 : 30;
 		const missingDataPoints = expectedDataPoints - timeSeries.length;
 		for ( let i = missingDataPoints; i > 0; i-- ) {

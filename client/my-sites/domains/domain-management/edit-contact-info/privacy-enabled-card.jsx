@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
+import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
 import PropTypes from 'prop-types';
 
 /**

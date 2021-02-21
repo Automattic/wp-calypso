@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -10,18 +9,21 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import ThemeSheetComponent from '../main';
-import { createReduxStore } from 'state';
-import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
+import { createReduxStore } from 'calypso/state';
+import { setStore } from 'calypso/state/redux-store';
+import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
-jest.mock( 'lib/wp', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},
 	} ),
 } ) );
-jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/themes/themes-site-selector-modal', () =>
-	require( 'components/empty-component' )
+jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/my-sites/themes/themes-site-selector-modal', () =>
+	require( 'calypso/components/empty-component' )
 );
 
 describe( 'main', () => {
@@ -39,22 +41,35 @@ describe( 'main', () => {
 			demo_uri: 'https://twentysixteendemo.wordpress.com/',
 		};
 
+		let store;
+		let initialState;
+
+		beforeAll( () => {
+			store = createReduxStore();
+			setStore( store );
+			// Preserve initial theme state by deep cloning it.
+			initialState = JSON.parse( JSON.stringify( store.getState().themes ) );
+		} );
+
+		beforeEach( () => {
+			// Ensure initial theme state at the beginning of every test.
+			store.getState().themes = initialState;
+		} );
+
 		test( "doesn't throw an exception without theme data", () => {
-			const store = createReduxStore();
 			const layout = (
 				<ReduxProvider store={ store }>
 					<ThemeSheetComponent id={ 'twentysixteen' } />
 				</ReduxProvider>
 			);
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
-			assert.isTrue( markup.includes( 'theme__sheet' ) );
+			} ).not.toThrow();
+			expect( markup.includes( 'theme__sheet' ) ).toBeTruthy();
 		} );
 
 		test( "doesn't throw an exception with theme data", () => {
-			const store = createReduxStore();
 			store.dispatch( receiveTheme( themeData ) );
 			const layout = (
 				<ReduxProvider store={ store }>
@@ -62,14 +77,13 @@ describe( 'main', () => {
 				</ReduxProvider>
 			);
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
-			assert.isTrue( markup.includes( 'theme__sheet' ) );
+			} ).not.toThrow();
+			expect( markup.includes( 'theme__sheet' ) ).toBeTruthy();
 		} );
 
 		test( "doesn't throw an exception with invalid theme data", () => {
-			const store = createReduxStore();
 			store.dispatch( themeRequestFailure( 'wpcom', 'invalidthemeid', 'not found' ) );
 			const layout = (
 				<ReduxProvider store={ store }>
@@ -77,10 +91,10 @@ describe( 'main', () => {
 				</ReduxProvider>
 			);
 			let markup;
-			assert.doesNotThrow( () => {
+			expect( () => {
 				markup = renderToString( layout );
-			} );
-			assert.isTrue( markup.includes( 'empty-content' ) );
+			} ).not.toThrow();
+			expect( markup.includes( 'empty-content' ) ).toBeTruthy();
 		} );
 	} );
 } );

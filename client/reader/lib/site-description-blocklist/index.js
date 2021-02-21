@@ -13,6 +13,6 @@ const siteDescriptionBlocklist = new Set( [
  * @param {string} siteDescription Site description
  * @returns {boolean} True if blocked
  */
-export const isSiteDescriptionBlocked = siteDescription => {
+export const isSiteDescriptionBlocked = ( siteDescription ) => {
 	return siteDescriptionBlocklist.has( siteDescription );
 };

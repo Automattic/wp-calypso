@@ -13,9 +13,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
+import accept from 'calypso/lib/accept';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
 import QueryShippingZones, {
 	areShippingZonesFullyLoaded,
 } from 'woocommerce/components/query-shipping-zones';
@@ -32,10 +32,10 @@ import {
 	createShippingZoneDeleteActionList,
 } from 'woocommerce/state/ui/shipping/zones/actions';
 import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { getSaveZoneActionListSteps } from 'woocommerce/state/data-layer/ui/shipping-zones';
 
 class Shipping extends Component {
@@ -121,7 +121,7 @@ class Shipping extends Component {
 			'Are you sure you want to permanently delete this shipping zone?'
 		);
 
-		accept( areYouSure, function( accepted ) {
+		accept( areYouSure, function ( accepted ) {
 			if ( ! accepted ) {
 				return;
 			}
@@ -177,7 +177,7 @@ export default connect(
 			hasEdits: Boolean( zone && 0 !== getSaveZoneActionListSteps( state ).length ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				addNewShippingZone,

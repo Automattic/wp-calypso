@@ -1,27 +1,30 @@
-Preferences
-========
+# Preferences
 
 This store holds preferences specific to Calypso.
 They are persisted in `calypso_preferences` key of `/me/settings`.
 
-# Usage
+## Usage
 
 1. Render `QueryPreferences` from `components/data/query-preferences`
 2. Connect your component specifying proper option keys:
-```es6
-export default connect(
-	( state ) => {
-		return {
-			editorModePreference: getPreference( state, 'editor-mode' ),
-		};
-	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			saveEditorModePreference: savePreference.bind( null, 'editor-mode' ),
-		}, dispatch );
-	},
-)( PostEditor );
-```
+
+   ```js
+   export default connect(
+   	( state ) => {
+   		return {
+   			editorModePreference: getPreference( state, 'editor-mode' ),
+   		};
+   	},
+   	( dispatch ) => {
+   		return bindActionCreators(
+   			{
+   				saveEditorModePreference: savePreference.bind( null, 'editor-mode' ),
+   			},
+   			dispatch
+   		);
+   	}
+   )( PostEditor );
+   ```
 
 ## Adding new preference key
 

@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DayItem from './day';
 import DatePickerNavBar from './nav-bar';
 
@@ -93,7 +93,8 @@ class DatePicker extends PureComponent {
 			return [];
 		}
 
-		let i, event;
+		let i;
+		let event;
 		const eventsInDay = [];
 
 		for ( i = 0; i < this.props.events.length; i++ ) {
@@ -118,27 +119,27 @@ class DatePicker extends PureComponent {
 		const weekdaysMin = moment.weekdaysMin();
 		const weekdays = moment.weekdays();
 		const utils = {
-			formatDay: function( date ) {
+			formatDay: function ( date ) {
 				return moment( date ).format( 'llll' );
 			},
 
-			formatMonthTitle: function( date ) {
+			formatMonthTitle: function ( date ) {
 				return moment( date ).format( 'MMMM YYYY' );
 			},
 
-			formatWeekdayShort: function( day ) {
+			formatWeekdayShort: function ( day ) {
 				return get( weekdaysMin, day, ' ' )[ 0 ];
 			},
 
-			formatWeekdayLong: function( day ) {
+			formatWeekdayLong: function ( day ) {
 				return weekdays[ day ];
 			},
 
-			getFirstDayOfWeek: function() {
+			getFirstDayOfWeek: function () {
 				return firstDayOfWeek;
 			},
 
-			formatMonthShort: function( month ) {
+			formatMonthShort: function ( month ) {
 				return moment( month.toISOString() ).format( 'MMM' );
 			},
 		};
@@ -220,8 +221,8 @@ class DatePicker extends PureComponent {
 
 		if ( this.props.events && this.props.events.length ) {
 			modifiers.events = map(
-				filter( this.props.events, event => event.date ),
-				event => this.getDateInstance( event.date )
+				filter( this.props.events, ( event ) => event.date ),
+				( event ) => this.getDateInstance( event.date )
 			);
 		}
 

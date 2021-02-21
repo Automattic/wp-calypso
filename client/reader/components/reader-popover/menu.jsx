@@ -7,10 +7,10 @@ import { omit } from 'lodash';
 /**
  * Internal Dependencies
  */
-import ReaderPopover from 'reader/components/reader-popover';
-import PopoverMenu from 'components/popover/menu';
+import ReaderPopover from 'calypso/reader/components/reader-popover';
+import PopoverMenu from 'calypso/components/popover/menu';
 
-const ReaderPopoverMenu = props => {
+const ReaderPopoverMenu = ( props ) => {
 	const popoverProps = omit( props, 'popoverComponent' );
 	return (
 		<PopoverMenu

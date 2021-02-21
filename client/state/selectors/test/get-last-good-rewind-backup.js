@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getLastGoodRewindBackup from 'state/selectors/get-last-good-rewind-backup';
+import getLastGoodRewindBackup from 'calypso/state/selectors/get-last-good-rewind-backup';
 
 describe( 'getLastGoodRewindBackup()', () => {
 	test( 'should return null if there is no rewind data', () => {

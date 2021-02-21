@@ -12,9 +12,8 @@ import {
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 	READER_POSTS_RECEIVE,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/reader/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -107,17 +106,17 @@ describe( 'reducer', () => {
 
 		test( 'will deserialize valid state', () => {
 			const validState = { '123-456': 'M' };
-			expect( items( validState, { type: DESERIALIZE } ) ).toEqual( validState );
+			expect( deserialize( items, validState ) ).toEqual( validState );
 		} );
 
 		test( 'will not deserialize invalid state', () => {
 			const invalidState = { '123-456': 'X' };
-			expect( items( invalidState, { type: DESERIALIZE } ) ).toEqual( {} );
+			expect( deserialize( items, invalidState ) ).toEqual( {} );
 		} );
 
 		test( 'will serialize', () => {
 			const validState = { '123-456': 'M' };
-			expect( items( validState, { type: SERIALIZE } ) ).toEqual( validState );
+			expect( serialize( items, validState ) ).toEqual( validState );
 		} );
 	} );
 } );

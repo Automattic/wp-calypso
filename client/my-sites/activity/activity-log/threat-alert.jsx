@@ -4,8 +4,8 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Spinner from 'components/spinner';
-import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
+import Spinner from 'calypso/components/spinner';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 import classNames from 'classnames';
 
 /**
@@ -13,18 +13,18 @@ import classNames from 'classnames';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import { Button, Card } from '@automattic/components';
-import DiffViewer from 'components/diff-viewer';
-import FoldableCard from 'components/foldable-card';
-import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
-import InfoPopover from 'components/info-popover';
-import MarkedLines from 'components/marked-lines';
-import TimeSince from 'components/time-since';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
-import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import DiffViewer from 'calypso/components/diff-viewer';
+import FoldableCard from 'calypso/components/foldable-card';
+import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import InfoPopover from 'calypso/components/info-popover';
+import MarkedLines from 'calypso/components/marked-lines';
+import TimeSince from 'calypso/components/time-since';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
+import { fixThreatAlert, ignoreThreatAlert } from 'calypso/state/jetpack/site-alerts/actions';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -42,6 +42,11 @@ export class ThreatAlert extends Component {
 	handleIgnore = () => {
 		this.setState( { requesting: true } );
 		this.props.ignoreThreat( this.props.siteId, this.props.threat.id );
+	};
+
+	handleGetHelp = () => {
+		this.props.trackGetHelp( this.props.threat.id );
+		window.open( JETPACK_CONTACT_SUPPORT, '_blank' );
 	};
 
 	refreshRewindState = () => this.props.requestRewindState( this.props.siteId );
@@ -76,7 +81,7 @@ export class ThreatAlert extends Component {
 			translate,
 		} = this.props;
 
-		const basename = s => s.replace( /.*\//, '' );
+		const basename = ( s ) => s.replace( /.*\//, '' );
 
 		switch ( this.getDetailType( threat ) ) {
 			case 'core':
@@ -196,7 +201,7 @@ export class ThreatAlert extends Component {
 			return -1;
 		}
 
-		Object.keys( rows ).map( idx => {
+		Object.keys( rows ).map( ( idx ) => {
 			const row = rows[ idx ];
 			const postIndex = findObjectIndexInArray( infectedPosts, 'postTitle', row.description );
 
@@ -327,7 +332,6 @@ export class ThreatAlert extends Component {
 			<Fragment>
 				<FoldableCard
 					className={ className }
-					highlight="error"
 					compact
 					clickableHeader={ true }
 					actionButton={ <span /> }
@@ -351,29 +355,26 @@ export class ThreatAlert extends Component {
 									<SplitButton
 										compact
 										primary
-										label={
-											threat.fixable ? translate( 'Fix threat' ) : translate( 'Ignore threat' )
-										}
-										onClick={ threat.fixable ? this.handleFix : this.handleIgnore }
+										label={ threat.fixable ? translate( 'Fix threat' ) : translate( 'Get help' ) }
+										onClick={ threat.fixable ? this.handleFix : this.handleGetHelp }
 										disabled={ inProgress }
 									>
-										<PopoverMenuItem
-											href={ JETPACK_CONTACT_SUPPORT }
-											className="activity-log__threat-menu-item"
-											icon="chat"
-											target="_blank"
-										>
-											<span>{ translate( 'Get help' ) }</span>
-										</PopoverMenuItem>
 										{ threat.fixable && (
 											<PopoverMenuItem
-												onClick={ this.handleIgnore }
+												onClick={ this.handleGetHelp }
 												className="activity-log__threat-menu-item"
-												icon="trash"
+												icon="chat"
 											>
-												<span>{ translate( 'Ignore threat' ) }</span>
+												<span>{ translate( 'Get help' ) }</span>
 											</PopoverMenuItem>
 										) }
+										<PopoverMenuItem
+											onClick={ this.handleIgnore }
+											className="activity-log__threat-menu-item"
+											icon="trash"
+										>
+											<span>{ translate( 'Ignore threat' ) }</span>
+										</PopoverMenuItem>
 									</SplitButton>
 								</div>
 								<span className="activity-log__threat-alert-type">{ this.renderSubtitle() }</span>
@@ -388,7 +389,7 @@ export class ThreatAlert extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	siteSlug: getSelectedSiteSlug( state ),
 } );
 
@@ -403,5 +404,7 @@ export default connect( mapStateToProps, {
 			recordTracksEvent( 'calypso_activitylog_threat_ignore', { threat_id: threatId } ),
 			ignoreThreatAlert( siteId, threatId )
 		),
+	trackGetHelp: ( threatId ) =>
+		recordTracksEvent( 'calypso_activitylog_threat_gethelp', { threat_id: threatId } ),
 	requestRewindState,
 } )( localize( ThreatAlert ) );

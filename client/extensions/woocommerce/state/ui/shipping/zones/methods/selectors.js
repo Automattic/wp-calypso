@@ -19,8 +19,8 @@ import {
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getAPIShippingZones,
 	areShippingZonesLoaded,
@@ -110,8 +110,8 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 
 	// Overlay the current edits on top of (a copy of) the wc-api zone methods
 	pullAll( methodIds, map( deletes, 'id' ) );
-	const methods = methodIds.map( methodId => getShippingZoneMethod( state, methodId, siteId ) );
-	updates.forEach( update => {
+	const methods = methodIds.map( ( methodId ) => getShippingZoneMethod( state, methodId, siteId ) );
+	updates.forEach( ( update ) => {
 		const index = methodIds.indexOf( update.id );
 		if ( -1 === index ) {
 			return;
@@ -120,7 +120,7 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 	} );
 
 	// Compute the "enabled" prop for all the methods. If a method hasn't been explicitly disabled (enabled===false), then it's enabled
-	const allMethods = [ ...methods, ...creates ].map( method => {
+	const allMethods = [ ...methods, ...creates ].map( ( method ) => {
 		let enabled = method.enabled;
 		if ( isNil( enabled ) && 'number' === typeof method._originalId ) {
 			// If the "enabled" prop hasn't been modified, use the value from the original method
@@ -249,18 +249,16 @@ export const getCurrentlyOpenShippingZoneMethod = (
 	 * in standard mode `merge` does not always allow the elements of
 	 * standard arrays to be removed.
 	 *
-	 * Example:
-
-	const openMethod              = { shipping_classes: [ 19 ] };
-	const currentlyEditingChanges = { shipping_classes: [] };
-
-	_.merge( {}, openMethod, currentlyEditingChanges );
-	// { shipping_classes: [ 19 ] }
-
-	_.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
-	// { shipping_classes: [] }
-	*/
-
+	 * @example
+	 * const openMethod = { shipping_classes: [ 19 ] };
+	 * const currentlyEditingChanges = { shipping_classes: [] };
+	 *
+	 * _.merge( {}, openMethod, currentlyEditingChanges );
+	 * // { shipping_classes: [ 19 ] }
+	 *
+	 * _.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
+	 * // { shipping_classes: [] }
+	 */
 	return mergeWith(
 		{},
 		defaultValues,
@@ -314,7 +312,7 @@ export const getNewMethodTypeOptions = (
 		Object.keys( builtInShippingMethods ),
 		map( getShippingMethods( state, siteId ), 'id' )
 	);
-	allMethods.forEach( methodType => {
+	allMethods.forEach( ( methodType ) => {
 		// A user can add as many "Local Pickup" and Live Rates methods as he wants for a given zone
 		if (
 			'local_pickup' === methodType ||

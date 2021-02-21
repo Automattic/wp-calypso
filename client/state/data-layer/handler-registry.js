@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 
 /** Stores lists of handlers by action type */
 let registeredHandlers = {};
@@ -30,7 +30,7 @@ export const registerHandlers = ( id, handlers ) => {
  * @param {string} actionType requested action type
  * @returns {?Array<Function>} list of handlers for type
  */
-export const getHandlers = actionType => registeredHandlers[ actionType ];
+export const getHandlers = ( actionType ) => registeredHandlers[ actionType ];
 
 /**
  * For testing only: reset handlers

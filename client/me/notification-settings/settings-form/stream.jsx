@@ -37,7 +37,7 @@ class NotificationSettingsFormStream extends PureComponent {
 		return { stream, settings };
 	};
 
-	onChangeDevices = event =>
+	onChangeDevices = ( event ) =>
 		this.setState( { selectedDeviceId: parseInt( event.target.value, 10 ) } );
 
 	render() {
