@@ -123,6 +123,7 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	children: PropTypes.array.isRequired,
 	link: PropTypes.string,
 	sidebarCollapsed: PropTypes.bool,
+	continueInCalypso: PropTypes.func,
 	/*
 	Example of children shape:
 	[
