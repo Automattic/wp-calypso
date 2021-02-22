@@ -261,7 +261,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR ]: {
 		getSlug: () => constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		getTitle: () => i18n.translate( 'Advanced SEO (Search Engine Optimization) tools' ),
+		getTitle: () => i18n.translate( 'Advanced SEO (Search Engine Optimisation) tools' ),
 		getDescription: () => {},
 	},
 
