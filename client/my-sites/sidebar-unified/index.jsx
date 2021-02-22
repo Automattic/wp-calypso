@@ -109,7 +109,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					<CurrentSite forceAllSitesView={ isAllDomainsView } />
 				</SidebarRegion>
 				{ menuItems.map( ( item, i ) => {
-					const isSelected = item?.url && itemLinkMatches( item.url, path );
+					const isSelected = item?.url && itemLinkMatches( item.url, path, true );
 
 					if ( 'separator' === item?.type ) {
 						return <SidebarSeparator key={ i } />;

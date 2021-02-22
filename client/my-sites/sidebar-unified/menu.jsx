@@ -51,7 +51,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 
 	const selectedMenuItem =
 		Array.isArray( children ) &&
-		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
+		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path, true ) );
 	const childIsSelected = !! selectedMenuItem;
 
 	/**
