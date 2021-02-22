@@ -3,7 +3,7 @@
  */
 import { useSelect } from '@wordpress/data';
 import { useDispatch } from '@wordpress/data';
-import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
+import { isGoodDefaultDomainQuery, DOMAIN_QUERY_MINIMUM_LENGTH } from '@automattic/domain-picker';
 
 /**
  * Internal dependencies
@@ -27,7 +27,10 @@ export function useDomainSearch(): {
 
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 
-	const nonDefaultTitle = ( title && title.length > 1 && ! isDefaultTitle && title ) || '';
+	const searchQueryFromTitle =
+		typeof title !== 'undefined' && title.length >= DOMAIN_QUERY_MINIMUM_LENGTH && ! isDefaultTitle
+			? title
+			: '';
 
 	// Domain search query is determined by evaluating the following, in order:
 	// 1. existing domain search string saved in Launch store
@@ -35,7 +38,7 @@ export function useDomainSearch(): {
 	// 3. site subdomain name
 	const domainSearch =
 		( existingDomainSearch.trim() ||
-			filterUnsuitableTitles( nonDefaultTitle ) ||
+			filterUnsuitableTitles( searchQueryFromTitle ) ||
 			siteSubdomain?.domain?.split( '.' )[ 0 ] ) ??
 		'';
 
