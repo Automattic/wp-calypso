@@ -292,7 +292,8 @@ export const EXTERNAL_PRODUCT_CRM_FREE: ( variation: Iterations ) => SelectorPro
 		),
 	},
 	hidePrice: true,
-	externalUrl: 'https://jetpackcrm.com/pricing/',
+	externalUrl:
+		'https://jetpackcrm.com/pricing?utm_source=jetpack&utm_medium=web&utm_campaign=pricing_i4&utm_content=pricing',
 } );
 
 export const EXTERNAL_PRODUCT_CRM_FREE_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
