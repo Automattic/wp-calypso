@@ -1250,7 +1250,6 @@ object WPComPlugins_EditorToolKit : BuildType({
 			buildRule = tag("etk-release-build", "+:trunk")
 			artifactRules = """
 				+:editing-toolkit.zip!** => etk-release-build
-				-:editing-toolkit.zip!build_meta.txt
 			""".trimIndent()
 		}
 	}
@@ -1366,8 +1365,9 @@ object WPComPlugins_EditorToolKit : BuildType({
 				yarn build
 
 				echo
-				prev_release_build_num=${'$'}(grep "build_number" "../../etk-release-build/readme.txt" | sed -e "s/build_number=//")
+				prev_release_build_num=${'$'}(grep build_number ../../etk-release-build/readme.txt | sed -e "s/build_number=//")
 				echo "Previous tagged trunk build: ${'$'}prev_release_build_num"
+				rm ../../etk-release-build/readme.txt
 
 				# Update plugin version in the plugin file and readme.txt.
 				# Note: we also update the previous release build to the same version to restore idempotence
