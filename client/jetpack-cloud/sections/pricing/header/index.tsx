@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 /**
  * Internal dependencies

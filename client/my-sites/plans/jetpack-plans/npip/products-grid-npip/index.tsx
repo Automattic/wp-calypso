@@ -11,8 +11,8 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { SWITCH_PLAN_SIDES_EXPERIMENT, SWITCH_PLAN_SIDES_TREATMENT } from '../../experiments';
-import PlansFilterBarI5 from 'calypso/my-sites/plans/jetpack-plans/i5/plans-filter-bar-i5';
-import ProductCardI5 from 'calypso/my-sites/plans/jetpack-plans/i5/product-card-i5';
+import PlansFilterBar from '../../plans-filter-bar';
+import ProductCard from '../../product-card';
 import { getProductPosition } from '../../product-grid/products-order';
 import {
 	getPlansToDisplay,
@@ -46,7 +46,7 @@ import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
  */
 import './style.scss';
 
-const ProductsGridI5: React.FC< ProductsGridProps > = ( {
+const ProductsGridNPP: React.FC< ProductsGridProps > = ( {
 	duration,
 	onSelectProduct,
 	urlQueryArgs,
@@ -140,7 +140,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 			<section className="products-grid-npip__section">
 				<h2 className="products-grid-npip__section-title">{ translate( 'Most Popular' ) }</h2>
 				<div className="products-grid-npip__filter-bar">
-					<PlansFilterBarI5
+					<PlansFilterBar
 						showDiscountMessage
 						onDurationChange={ onDurationChange }
 						duration={ duration }
@@ -155,7 +155,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 				>
 					{ popularProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
-							<ProductCardI5
+							<ProductCard
 								item={ product }
 								onClick={ onSelectProduct }
 								siteId={ siteId }
@@ -200,7 +200,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 				<ul className="products-grid-npip__product-grid">
 					{ otherProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
-							<ProductCardI5
+							<ProductCard
 								item={ product }
 								onClick={ onSelectProduct }
 								siteId={ siteId }
@@ -221,4 +221,4 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	);
 };
 
-export default ProductsGridI5;
+export default ProductsGridNPP;

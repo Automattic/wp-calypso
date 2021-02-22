@@ -8,15 +8,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PlanRenewalMessage from '../../plan-renewal-message';
-import useItemPrice from '../../use-item-price';
-import { productAboveButtonText, productButtonLabel, productTooltip } from '../../utils';
 import {
 	getForCurrentCROIteration,
 	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import JetpackProductCardNPIP from 'calypso/components/jetpack/card/npip/jetpack-product-card-npip';
-import JetpackProductCardI5 from 'calypso/components/jetpack/card/i5/jetpack-product-card-i5';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
@@ -65,10 +61,10 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const JetpackProductCard = useMemo(
+	const Card = useMemo(
 		() =>
 			getForCurrentCROIteration( { [ Iterations.NPIP ]: JetpackProductCardNPIP } ) ||
-			JetpackProductCardI5,
+			JetpackProductCard,
 		[]
 	);
 
@@ -143,7 +139,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	}
 
 	return (
-		<JetpackProductCard
+		<Card
 			productSlug={ item.productSlug }
 			productName={ item.displayName }
 			headingLevel={ 3 }

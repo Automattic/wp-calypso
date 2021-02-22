@@ -46,7 +46,7 @@ const getCurrentCROIterationName = (): Iterations | null => {
 	return newPurchaseIntroPricing ? Iterations.NPIP : null;
 };
 
-type IterationValueFunction< T > = ( key: Iterations ) => T | undefined;
+type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;
 type IterationValueMap< T > = Partial< { [ key in Iterations ]: T } >;
 
 /**
@@ -71,7 +71,7 @@ export const getForCurrentCROIteration = < T >(
 		return valueGetter( iteration );
 	}
 
-	if ( typeof valueGetter === 'object' ) {
+	if ( iteration && typeof valueGetter === 'object' ) {
 		return valueGetter[ iteration ];
 	}
 
@@ -84,5 +84,5 @@ export const getForCurrentCROIteration = < T >(
  *
  * @param fn The function to execute.
  */
-export const doForCurrentCROIteration = ( fn: ( key: Iterations ) => void ): void =>
+export const doForCurrentCROIteration = ( fn: ( key: Iterations | null ) => void ): void =>
 	fn( getCurrentCROIterationName() );

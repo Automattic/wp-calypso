@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import JetpackFreeCardButton from 'calypso/components/jetpack/card/jetpack-free-card-button';
+import JetpackFreeCardButton from 'calypso/components/jetpack/card/jetpack-free-card/button';
 
 /**
  * Type dependencies

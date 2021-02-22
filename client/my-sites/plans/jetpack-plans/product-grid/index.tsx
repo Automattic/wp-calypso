@@ -178,13 +178,11 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</section>
-
 			<section className="product-grid__section product-grid__asterisk-items">
 				<h2 className="product-grid__asterisk-item">
 					{ translate( 'All plans include priority support' ) }
 				</h2>
 			</section>
-
 			<section className="product-grid__section">
 				<h2 className="product-grid__section-title">{ translate( 'More Products' ) }</h2>
 				<ul className="product-grid__product-grid">
