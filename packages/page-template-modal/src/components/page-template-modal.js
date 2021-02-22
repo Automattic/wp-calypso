@@ -3,7 +3,7 @@
  */
 import { find, reduce, get, memoize } from 'lodash';
 import { __ } from '@wordpress/i18n';
-import { Button, Modal } from '@wordpress/components';
+import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { parse as parseBlocks } from '@wordpress/blocks';
 import { withInstanceId } from '@wordpress/compose';
@@ -319,19 +319,29 @@ class PageTemplateModal extends Component {
 								) ) }
 							</select>
 						</div>
-						<ul className="page-template-modal__category-list">
+						<VisuallyHidden as="h2" id={ `page-template-modal__list-heading-${ instanceId }` }>
+							{ __( 'Page categories', __i18n_text_domain__ ) }
+						</VisuallyHidden>
+						<NavigableMenu
+							className="page-template-modal__category-list"
+							orientation="vertical"
+							aria-labelledby={ `page-template-modal__list-heading-${ instanceId }` }
+							onNavigate={ ( index, child ) => this.handleCategorySelection( child.dataset.slug ) }
+						>
 							{ this.getTemplateCategories().map( ( { slug, name } ) => (
-								<li key={ slug }>
-									<Button
-										isTertiary
-										isPressed={ slug === selectedCategory }
-										onClick={ () => this.handleCategorySelection( slug ) }
-									>
-										{ name }
-									</Button>
-								</li>
+								<MenuItem
+									key={ slug }
+									isTertiary
+									aria-selected={ slug === selectedCategory }
+									data-slug={ slug }
+									onClick={ () => this.handleCategorySelection( slug ) }
+									className="page-template-modal__category-button"
+									tabIndex={ slug === selectedCategory ? null : -1 }
+								>
+									{ name }
+								</MenuItem>
 							) ) }
-						</ul>
+						</NavigableMenu>
 					</div>
 					<div className="page-template-modal__template-list-container">
 						{ this.renderTemplateGroup(
