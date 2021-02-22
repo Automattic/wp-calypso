@@ -440,9 +440,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											badgeText={ plan.isPopular ? popularLabel : '' }
 										/>
 										{ plan.isFree ? (
-											<TrailingContentSide
-												nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
-											>
+											<TrailingContentSide nodeType={ 'NOT_A_VALID_TYPE' }>
 												{ hasPaidDomain || selectedPaidDomain
 													? freePlanLabelNotAvailable
 													: freePlanLabel }
