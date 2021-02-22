@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { requestDomainTransferCode } from 'calypso/state/domains/transfer/actions';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import TransferOutWarning from './warning.jsx';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
@@ -60,9 +59,6 @@ class Locked extends React.Component {
 							: translate(
 									'To transfer your domain, we must unlock it. It will remain unlocked until the transfer is canceled or completed.'
 							  ) }{ ' ' }
-						<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
-							{ translate( 'Learn More.' ) }
-						</a>
 					</p>
 					<TransferOutWarning domainName={ domainName } selectedSiteSlug={ selectedSite.slug } />
 					{ this.isManualTransferRequired() && this.renderManualTransferInfo() }

@@ -14,7 +14,6 @@ import {
 	cancelDomainTransferRequest,
 	requestDomainTransferCode,
 } from 'calypso/state/domains/transfer/actions';
-import { TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR } from 'calypso/lib/url/support';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import TransferOutWarning from './warning.jsx';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
@@ -177,7 +176,7 @@ class Unlocked extends React.Component {
 		if ( domainLockingAvailable && privacyDisabled && registrar === registrarNames.WWD ) {
 			domainStateMessage = translate(
 				'Your domain is unlocked and ' +
-					'Privacy Protection has been disabled to prepare for transfer. It will remain in this state until the transfer is canceled or completed.'
+					'Privacy Protection has been disabled to prepare for transfer. Your contact information will be publicly available during the transfer period. The domain will remain unlocked and your contact information will be publicly available until the transfer is canceled or completed.'
 			);
 		} else if ( domainLockingAvailable ) {
 			domainStateMessage = translate(
@@ -212,13 +211,6 @@ class Unlocked extends React.Component {
 						{ isSubmitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ this.renderDomainStateMessage( domain ) }
 						{ this.renderBody( domain ) }
-						<a
-							href={ TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{ translate( 'Learn More.' ) }
-						</a>
 					</div>
 					{ this.renderSendButton( domain ) }
 					{ this.renderCancelButton( domain ) }
