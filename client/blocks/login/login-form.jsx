@@ -52,7 +52,6 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
-import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -79,7 +78,6 @@ export class LoginForm extends Component {
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
 		isGutenboarding: PropTypes.bool,
-		isAnchorFmSignup: PropTypes.bool,
 		locale: PropTypes.string,
 	};
 
@@ -415,7 +413,6 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			isGutenboarding,
-			isAnchorFmSignup,
 			isJetpackWooDnaFlow,
 			wccomFrom,
 			currentRoute,
@@ -432,8 +429,7 @@ export class LoginForm extends Component {
 			oauth2Client,
 			locale,
 			pathname,
-			isGutenboarding,
-			isAnchorFmSignup
+			isGutenboarding
 		);
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
@@ -643,9 +639,6 @@ export default connect(
 				getCurrentQueryArguments( state ).email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 			currentQuery: getCurrentQueryArguments( state ),
-			isAnchorFmSignup: getIsAnchorFmSignup(
-				get( getCurrentQueryArguments( state ), 'redirect_to' )
-			),
 		};
 	},
 	{

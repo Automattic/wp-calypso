@@ -30,8 +30,6 @@ import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
-
 export class LoginLinks extends React.Component {
 	static propTypes = {
 		isLoggedIn: PropTypes.bool.isRequired,
@@ -44,7 +42,6 @@ export class LoginLinks extends React.Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		isGutenboarding: PropTypes.bool.isRequired,
-		isAnchorFmSignup: PropTypes.bool,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -281,7 +278,6 @@ export class LoginLinks extends React.Component {
 		const {
 			currentRoute,
 			isGutenboarding,
-			isAnchorFmSignup,
 			locale,
 			oauth2Client,
 			pathname,
@@ -295,8 +291,7 @@ export class LoginLinks extends React.Component {
 			oauth2Client,
 			locale,
 			pathname,
-			isGutenboarding,
-			isAnchorFmSignup
+			isGutenboarding
 		);
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
@@ -338,9 +333,6 @@ export default connect(
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		isAnchorFmSignup: getIsAnchorFmSignup(
-			get( getCurrentQueryArguments( state ), 'redirect_to' )
-		),
 	} ),
 	{
 		recordTracksEvent,

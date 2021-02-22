@@ -39,8 +39,7 @@ export function getSignupUrl(
 	oauth2Client,
 	locale,
 	pathname,
-	isGutenboarding,
-	isAnchorFmSignup
+	isGutenboarding
 ) {
 	let signupUrl = config( 'signup_url' );
 
@@ -97,13 +96,15 @@ export function getSignupUrl(
 	}
 
 	if ( isGutenboarding ) {
-		if ( isAnchorFmSignup ) {
-			// Maybe passing the signup_url query could work in other flows as well,
-			// to reduce the number of checks needed in this function?
-			signupUrl = get( currentQuery, 'signup_url', '/new?signup' );
-		} else {
-			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-			signupUrl = '/new/plans?signup' + langFragment;
+		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
+		const defaultSignupUrl = '/new/plans?signup' + langFragment;
+		// Maybe passing the signup_url query could work in other flows as well,
+		// to reduce the number of checks needed in this function?
+		signupUrl = get( currentQuery, 'signup_url', defaultSignupUrl );
+
+		// Sanitize the url if it doesn't start with /new
+		if ( ! startsWith( signupUrl, '/new' ) ) {
+			signupUrl = defaultSignupUrl;
 		}
 	}
 
