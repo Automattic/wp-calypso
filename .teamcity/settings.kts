@@ -326,6 +326,39 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
+			name = "Prevent duplicated packages"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Duplicated packages
+				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
+				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
+					echo "Repository contains duplicated packages: "
+					echo ""
+					echo "${'$'}DUPLICATED_PACKAGES"
+					echo ""
+					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
+					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
+					exit 1
+				else
+					echo "No duplicated packages found."
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
