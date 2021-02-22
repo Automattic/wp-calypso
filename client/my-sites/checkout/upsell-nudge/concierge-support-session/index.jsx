@@ -196,7 +196,7 @@ export class ConciergeSupportSession extends PureComponent {
 					<div className="concierge-support-session__column-doodle">
 						<img
 							className="concierge-support-session__doodle"
-							alt="Website expert offering a support session"
+							alt={ translate( 'Website expert offering a support session' ) }
 							src={ supportIllustration }
 						/>
 					</div>
