@@ -27,7 +27,7 @@ export function useDomainSearch(): {
 
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 
-	const nonDefaultTitle = ( ! isDefaultTitle && title ) || '';
+	const nonDefaultTitle = ( title && title.length > 1 && ! isDefaultTitle && title ) || '';
 
 	// Domain search query is determined by evaluating the following, in order:
 	// 1. existing domain search string saved in Launch store
