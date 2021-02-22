@@ -203,20 +203,27 @@ $sidebar-width: 324px;
 		font-size: 0.875rem;
 		line-height: 1.9;
 
-		&:hover {
-			box-shadow: none !important;
-			color: var( --color-text );
+		&.is-tertiary:not( :disabled ):hover {
+			box-shadow: none;
 		}
 
-		&:active {
-			background: transparent !important;
-			color: var( --color-text );
+		&.is-tertiary:not( :disabled ):active {
+			background: transparent;
 		}
 
-		&[aria-pressed='true'] {
+		&.is-tertiary:not( :disabled ):hover:focus {
+			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
+			outline: 3px solid transparent;
+		}
+
+		&.is-tertiary:not( :disabled )[aria-pressed='true'] {
 			font-weight: 700;
-			color: var( --color-text ) !important;
-			background: transparent !important;
+			background: transparent;
+			color: var( --color-text );
+
+			&:hover {
+				color: var( --wp-admin-theme-color-darker-10 );
+			}
 		}
 	}
 }
@@ -232,8 +239,23 @@ $sidebar-width: 324px;
 	}
 }
 
-.page-template-modal__blank-button {
+.components-button.page-template-modal__blank-button {
 	min-height: 40px;
+	box-shadow: inset 0 0 0 1px #ddd;
+	color: var( --color-text );
+
+	&:active {
+		color: var( --color-text );
+	}
+
+	&.is-secondary:hover:not( :disabled ) {
+		box-shadow: inset 0 0 0 1px #ddd;
+	}
+
+	&.is-secondary:hover:focus:not( :disabled ) {
+		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
+		outline: 3px solid transparent;
+	}
 }
 
 .page-template-modal__mobile-category-dropdown {

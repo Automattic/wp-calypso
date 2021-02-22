@@ -277,7 +277,7 @@ class PageTemplateModal extends Component {
 				className="page-template-modal"
 				onRequestClose={ this.closeModal }
 				aria={ {
-					// TODO: `labelledby` option isn't working because of a <Modal> bug in Gutenberg
+					// TODO: `labelledby` option isn't working because of a <Modal> bug in Gutenberg: WordPress/gutenboarding#29020
 					labelledby: `page-template-modal__heading-${ instanceId }`,
 					describedby: `page-template-modal__description-${ instanceId }`,
 				} }
