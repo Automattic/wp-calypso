@@ -117,6 +117,12 @@ export default class PageTemplateModal extends Component {
 		return null;
 	}
 
+	componentDidMount() {
+		if ( this.props.isOpen ) {
+			this.trackCurrentView();
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		// Only track when the modal is first displayed
 		// and if it didn't already happen during componentDidMount.
