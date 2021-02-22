@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import MockDate from 'mockdate';
-
-/**
  * Internal dependencies
  */
 import ExPlatClient from '../index';
@@ -16,21 +11,20 @@ jest.mock( '../internals/log-error', () => ( {
 } ) );
 
 beforeEach( () => {
-	MockDate.set( 0 );
+	jest.resetAllMocks();
 } );
 
 describe( 'ExPlatClient', () => {
-	test( 'should run without crashing in SSR', async () => {
-		mockLogError.mockReset();
-		expect( await ExPlatClient.loadExperimentAssignment( 'experiment_a' ) ).toMatchInlineSnapshot( `
-		Object {
-		  "experimentName": "experiment_a",
-		  "isFallbackExperimentAssignment": true,
-		  "retrievedTimestamp": 1,
-		  "ttl": 60,
-		  "variationName": null,
-		}
-	` );
+	test( 'should loadExperimentAssignment without crashing in SSR', async () => {
+		const startNow = Date.now();
+		const experimentAssignment = await ExPlatClient.loadExperimentAssignment( 'experiment_a' );
+		expect( experimentAssignment ).toMatchObject( {
+			experimentName: 'experiment_a',
+			isFallbackExperimentAssignment: true,
+			ttl: 60,
+			variationName: null,
+		} );
+		expect( experimentAssignment.retrievedTimestamp ).toBeGreaterThanOrEqual( startNow );
 		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
@@ -41,63 +35,23 @@ describe( 'ExPlatClient', () => {
 		  ],
 		]
 	` );
-		mockLogError.mockReset();
-		expect( await ExPlatClient.loadExperimentAssignment( 'experiment_b' ) ).toMatchInlineSnapshot( `
-		Object {
-		  "experimentName": "experiment_b",
-		  "isFallbackExperimentAssignment": true,
-		  "retrievedTimestamp": 2,
-		  "ttl": 60,
-		  "variationName": null,
-		}
-	` );
+	} );
+
+	test( 'should dangerouslyGetExperimentAssignment without crashing in SSR', async () => {
+		const startNow = Date.now();
+		const experimentAssignment = ExPlatClient.dangerouslyGetExperimentAssignment( 'experiment_b' );
+		expect( experimentAssignment ).toMatchObject( {
+			experimentName: 'experiment_b',
+			isFallbackExperimentAssignment: true,
+			ttl: 60,
+			variationName: null,
+		} );
+		expect( experimentAssignment.retrievedTimestamp ).toBeGreaterThanOrEqual( startNow );
 		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
 		      "experimentName": "experiment_b",
-		      "message": "Attempting to load ExperimentAssignment in SSR context",
-		    },
-		  ],
-		]
-	` );
-		mockLogError.mockReset();
-		expect( ExPlatClient.dangerouslyGetExperimentAssignment( 'experiment_b' ) )
-			.toMatchInlineSnapshot( `
-		Object {
-		  "experimentName": "experiment_b",
-		  "isFallbackExperimentAssignment": true,
-		  "retrievedTimestamp": 3,
-		  "ttl": 60,
-		  "variationName": null,
-		}
-	` );
-		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_b",
-		      "message": "Attempting to dangerously get ExperimentAssignment in SSR context",
-		    },
-		  ],
-		]
-	` );
-		mockLogError.mockReset();
-		expect( ExPlatClient.dangerouslyGetExperimentAssignment( 'experiment_c' ) )
-			.toMatchInlineSnapshot( `
-		Object {
-		  "experimentName": "experiment_c",
-		  "isFallbackExperimentAssignment": true,
-		  "retrievedTimestamp": 4,
-		  "ttl": 60,
-		  "variationName": null,
-		}
-	` );
-		expect( mockLogError.mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_c",
 		      "message": "Attempting to dangerously get ExperimentAssignment in SSR context",
 		    },
 		  ],
