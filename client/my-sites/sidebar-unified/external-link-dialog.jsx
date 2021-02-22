@@ -22,7 +22,7 @@ export const ExternalLinkDialog = ( { isVisible, closeModalHandler } ) => {
 				},
 				{
 					action: 'ok',
-					label: translate( 'OK' ),
+					label: translate( 'Continue' ),
 					isPrimary: true,
 					onClick: () => closeModalHandler( true ),
 				},
@@ -31,10 +31,9 @@ export const ExternalLinkDialog = ( { isVisible, closeModalHandler } ) => {
 		>
 			<p>
 				{ translate(
-					'There is a Support Chat session in progress. Clicking OK will open this link in a new tab.'
+					'A support chat session is currently in progress. Click continue to open this link in a new tab.'
 				) }
 			</p>
-			<p>{ translate( 'Please come back to this tab to continue chatting.' ) }</p>
 		</Dialog>
 	);
 };
