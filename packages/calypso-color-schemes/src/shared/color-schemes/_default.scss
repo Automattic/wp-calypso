@@ -1,4 +1,4 @@
-:root {
+.classic-bright-colors {
 	/* Theme Properties */
 	--color-primary: var( --studio-blue-50 );
 	--color-primary-rgb: var( --studio-blue-50-rgb );
@@ -342,4 +342,16 @@
 	--color-sidebar-submenu-text: var( --studio-blue-70 );
 	--color-sidebar-submenu-hover-text: var( --color-accent );
 	--color-sidebar-submenu-selected-text: var( --color-accent );
+}
+
+// We need :root to be a standalone selector for postcss-custom-properties to be able to
+// generate the IE11 fallback colors (see Calypso issue 50231 for details).
+:root {
+	@extend .classic-bright-colors;
+}
+
+// We need this selector too in order to overwrite the dark default styles in Nav Unification.
+// TODO: reduce this and the above to one selector once Nav Unification has been rolled out.
+.color-scheme.is-classic-bright .is-nav-unification {
+	@extend .classic-bright-colors;
 }
