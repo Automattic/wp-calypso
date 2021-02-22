@@ -20,7 +20,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import supportIllustration from 'assets/images/illustrations/happiness-support.svg';
+import supportIllustration from 'calypso/assets/images/illustrations/happiness-support.svg';
 
 export class ConciergeSupportSession extends PureComponent {
 	render() {
