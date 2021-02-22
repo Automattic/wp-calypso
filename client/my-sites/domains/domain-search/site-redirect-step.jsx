@@ -79,6 +79,7 @@ class SiteRedirectStep extends React.Component {
 							type="submit"
 							onClick={ this.recordGoButtonClick }
 							busy={ this.state.isSubmitting }
+							disabled={ this.state.isSubmitting }
 						>
 							{ translate( 'Go', {
 								context: 'Upgrades: Label for adding Site Redirect',
