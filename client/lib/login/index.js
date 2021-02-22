@@ -98,8 +98,8 @@ export function getSignupUrl(
 
 	if ( isGutenboarding ) {
 		if ( isAnchorFmSignup ) {
-			// Maybe passing the signup_url query could work in other flows, as well,
-			// to reduce the logic in this function?
+			// Maybe passing the signup_url query could work in other flows as well,
+			// to reduce the number of checks needed in this function?
 			signupUrl = get( currentQuery, 'signup_url', '/new?signup' );
 		} else {
 			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
