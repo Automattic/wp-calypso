@@ -1,5 +1,5 @@
 {
-	"name": "@automattic/explat-client-react",
+	"name": "@automattic/explat-react-client",
 	"version": "0.0.1",
 	"description": "Standalone ExPlat Client: React Interface",
 	"author": "Automattic Inc.",
@@ -13,7 +13,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/explat-client-react"
+		"directory": "packages/explat-react-client"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
