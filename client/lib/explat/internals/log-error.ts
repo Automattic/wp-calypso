@@ -16,10 +16,15 @@ export const isDevelopmentMode = process.env.NODE_ENV === 'development';
  *
  * @param error Error to save
  */
-export const logError = ( error: Record< string, string > & { message: string } ): void => {
+export const logError = (
+	error: Record< string, string > & { message: string; properties?: Record< string, unknown > }
+): void => {
 	try {
-		error[ 'context' ] = 'explat';
-		error[ 'explat_client' ] = 'calypso';
+		error[ 'properties' ] = {
+			...( error?.[ 'properties' ] || {} ),
+			context: 'explat',
+			explat_client: 'calypso',
+		};
 
 		if ( typeof window === 'undefined' ) {
 			// Bunyan logger will log to the console in development mode.
