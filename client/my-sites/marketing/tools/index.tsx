@@ -6,6 +6,7 @@ import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
+import { WhatsNewGuide } from '@automattic/whats-new';
 
 /**
  * Internal dependencies
@@ -25,7 +26,6 @@ import {
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { WhatsNewGuide } from '@automattic/components';
 
 /**
  * Images
