@@ -3,9 +3,8 @@
  */
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
-import { SELECTOR_PLANS_I5, SELECTOR_PLANS_SPP } from '../constants';
+import { SELECTOR_PLANS_I5 } from '../constants';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
-import { getForCurrentCROIteration, Iterations } from '../iterations';
 
 /**
  * Type dependencies
@@ -20,16 +19,11 @@ export const getPlansToDisplay = ( {
 	duration: Duration;
 	currentPlanSlug: string | null;
 } ): SelectorProduct[] => {
-	const plans =
-		getForCurrentCROIteration( {
-			[ Iterations.SPP ]: SELECTOR_PLANS_SPP,
-		} ) || SELECTOR_PLANS_I5;
 	const currentPlanTerms = currentPlanSlug
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];
 
-	const plansToDisplay = plans
-		.map( slugToSelectorProduct )
+	const plansToDisplay = SELECTOR_PLANS_I5.map( slugToSelectorProduct )
 		// Remove plans that don't fit the filters or have invalid data.
 		.filter(
 			( product: SelectorProduct | null ): product is SelectorProduct =>

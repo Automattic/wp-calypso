@@ -10,7 +10,6 @@ import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 export enum Iterations {
 	I5 = 'i5',
-	SPP = 'spp', // Simplify pricing page
 	NPIP = 'npip', // New purchase intro pricing
 }
 const iterationNames: string[] = Object.values( Iterations );
