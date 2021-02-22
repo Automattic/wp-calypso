@@ -142,7 +142,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				} );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
-				options.addArguments( '--disable-dev-shm-usage' );
 				options.addArguments( '--no-sandbox' );
 
 				if ( useCustomUA ) {

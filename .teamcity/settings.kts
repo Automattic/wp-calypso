@@ -885,6 +885,7 @@ object RunCanaryE2eTests : BuildType({
 				set -o errexit
 				set -o nounset
 				set -o pipefail
+				shopt -s globstar
 				set -x
 
 				cd test/e2e
@@ -892,8 +893,14 @@ object RunCanaryE2eTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
-				export MAGELLANDEBUG=true
+				#export MAGELLANDEBUG=true
 				export TEST_VIDEO=true
+
+				function join() {
+					local IFS=${'$'}1
+					shift
+					echo "${'$'}*"
+				}
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -924,11 +931,16 @@ object RunCanaryE2eTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
+				export BROWSERSIZE="desktop"
+				export BROWSERLOCALE="en"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
+
+			yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 		}
 		script {
 			name = "Collect results"
@@ -961,7 +973,7 @@ object RunCanaryE2eTests : BuildType({
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "reports/*.xml")
+			param("xmlReportParsing.reportDirs", "test/e2e/temp/**/reports/*.xml")
 		}
 		perfmon {
 		}
@@ -997,6 +1009,9 @@ object RunCanaryE2eTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		// This will mute tests that failed but eventually passed. Muted tests
+		// will be run in future builds, but they won't be reported as "failing"
+		supportTestRetry = true
 	}
 
 	dependencies {
