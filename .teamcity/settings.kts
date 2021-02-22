@@ -1366,8 +1366,8 @@ object WPComPlugins_EditorToolKit : BuildType({
 				yarn build
 
 				echo
-				echo
-				echo "Previous Tagged Build: ${'$'}( grep build_number ../../etk-release-build/readme.txt | sed -e "s/build_number=//" )" 
+				prev_release_build_num=${'$'}(grep "build_number" "../../etk-release-build/readme.txt" | sed -e "s/build_number=//")
+				echo "Previous tagged trunk build: ${'$'}prev_release_build_num
 
 				# Update plugin version in the plugin file and readme.txt.
 				# Note: we also update the previous release build to the same version to restore idempotence
@@ -1377,11 +1377,11 @@ object WPComPlugins_EditorToolKit : BuildType({
 				if ! diff -rq ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
 					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
 					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
+				else
+					echo "The build is not different from the last release build. Therefore, this build has no effect."
 				fi
 
-				echo "The build is different from trunk; creating artifact."
 				cd editing-toolkit-plugin/
-
 				# Metadata file with info for the download script.
 				tee build_meta.txt <<-EOM
 					commit_hash=%build.vcs.number%
@@ -1389,6 +1389,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 					build_number=%build.number%
 					EOM
 
+				echo
 				zip -r ../../../editing-toolkit.zip .
 
 			""".trimIndent()
