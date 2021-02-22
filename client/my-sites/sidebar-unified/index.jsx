@@ -20,7 +20,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import CurrentSite from 'calypso/my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
-import ExternalLinkDialog from './external-link-dialog';
 import CollapseSidebar from './collapse-sidebar';
 import useSiteMenuItems from './use-site-menu-items';
 import useDomainsViewStatus from './use-domains-view-status';
@@ -113,11 +112,12 @@ export const MySitesSidebarUnified = ( { path } ) => {
 				} ) }
 				<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
 			</Sidebar>
-			<ExternalLinkDialog
+			<AsyncLoad require="calypso/blocks/nav-unification-modal" placeholder={ null } />
+			<AsyncLoad
+				require="calypso/my-sites/sidebar-unified/external-link-dialog"
 				isVisible={ showDialog }
 				closeModalHandler={ ( openUrl ) => closeModalHandler( openUrl ) }
 			/>
-			<AsyncLoad require="calypso/blocks/nav-unification-modal" placeholder={ null } />
 		</Fragment>
 	);
 };
