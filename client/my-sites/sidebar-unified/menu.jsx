@@ -66,6 +66,10 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const onClick = () => {
 		if ( isWithinBreakpoint( '>782px' ) ) {
 			if ( link ) {
+				if ( ! continueInCalypso( link ) ) {
+					return;
+				}
+
 				if ( isExternal( link ) ) {
 					// If the URL is external, page() will fail to replace state between different domains.
 					externalRedirect( link );
@@ -88,7 +92,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	return (
 		<li>
 			<ExpandableSidebarMenu
-				onClick={ () => continueInCalypso( link ) && onClick() }
+				onClick={ () => onClick() }
 				expanded={ ! sidebarCollapsed && isExpanded }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
