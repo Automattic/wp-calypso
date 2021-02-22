@@ -30,6 +30,7 @@ import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
+
 export class LoginLinks extends React.Component {
 	static propTypes = {
 		isLoggedIn: PropTypes.bool.isRequired,
