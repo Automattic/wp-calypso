@@ -97,7 +97,13 @@ export function getSignupUrl(
 
 	if ( isGutenboarding ) {
 		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-		signupUrl = '/new/plans?signup' + langFragment;
+		const defaultSignupUrl = `/new/plans${ langFragment }?signup`;
+		signupUrl = get( currentQuery, 'signup_url', defaultSignupUrl );
+
+		// Sanitize the url if it doesn't start with /new
+		if ( ! startsWith( signupUrl, '/new' ) ) {
+			signupUrl = defaultSignupUrl;
+		}
 	}
 
 	if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
