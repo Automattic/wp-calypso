@@ -78,6 +78,9 @@ export class CommentsManagement extends Component {
 						brandFont
 						className="comments__page-heading"
 						headerText={ translate( 'Comments' ) }
+						subHeaderText={ translate(
+							'View, reply to, and manage all the comments across your site.'
+						) }
 						align="left"
 					/>
 				) }

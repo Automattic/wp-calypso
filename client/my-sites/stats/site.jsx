@@ -167,6 +167,9 @@ class StatsSite extends Component {
 					className="stats__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
 					align="left"
+					subHeaderText={ translate(
+						"Learn more about the activity and behavior of your site's visitors."
+					) }
 				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }

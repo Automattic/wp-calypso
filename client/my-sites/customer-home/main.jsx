@@ -79,7 +79,7 @@ const Home = ( {
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'My Home' ) }
-				subHeaderText={ translate( 'Your home base for posting, editing, and growing your site.' ) }
+				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
 			/>
 			<div className="customer-home__view-site-button">
