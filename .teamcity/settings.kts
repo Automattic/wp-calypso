@@ -1367,7 +1367,7 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 				echo
 				prev_release_build_num=${'$'}(grep "build_number" "../../etk-release-build/readme.txt" | sed -e "s/build_number=//")
-				echo "Previous tagged trunk build: ${'$'}prev_release_build_num
+				echo "Previous tagged trunk build: ${'$'}prev_release_build_num"
 
 				# Update plugin version in the plugin file and readme.txt.
 				# Note: we also update the previous release build to the same version to restore idempotence
