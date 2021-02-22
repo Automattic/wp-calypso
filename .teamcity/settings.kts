@@ -378,6 +378,7 @@ object RunAllUnitTests : BuildType({
 
 				# Run type checks
 				yarn tsc --build packages/tsconfig.json
+				yarn tsc --build apps/editing-toolkit/tsconfig.json
 				yarn tsc --project client/landing/gutenboarding
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
