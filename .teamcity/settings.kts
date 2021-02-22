@@ -835,7 +835,7 @@ object CheckCodeStyleBranch : BuildType({
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
-	id(RunCanaryE2eTests)
+	id("calypso_RunCanaryE2eTests")
 	name = "Run Calypso e2e tests (desktop)"
 	description = "Run Calypso e2e tests"
 
