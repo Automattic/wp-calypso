@@ -211,7 +211,7 @@ export class PlansStep extends Component {
 
 		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
 		if ( shouldShowPlansRedesign ) {
-			return 'Choose a plan';
+			return translate( 'Choose a plan' );
 		}
 
 		return headerText || translate( "Pick a plan that's right for you." );
@@ -251,7 +251,7 @@ export class PlansStep extends Component {
 		}
 
 		if ( shouldShowPlansRedesign ) {
-			return "Pick one that's right for you and unlock features that help you grow.";
+			return translate( "Pick one that's right for you and unlock features that help you grow." );
 		}
 
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
