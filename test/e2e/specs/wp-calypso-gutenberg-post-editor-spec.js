@@ -1213,7 +1213,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Insert embeds: @parallel', function () {
+	// Skip reason: https://github.com/Automattic/wp-calypso/issues/50336
+	describe.skip( 'Insert embeds: @parallel', function () {
 		step( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
