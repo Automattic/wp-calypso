@@ -34,7 +34,7 @@ class SiteRedirectStep extends React.Component {
 		selectedSite: PropTypes.object.isRequired,
 	};
 
-	state = { searchQuery: '' };
+	state = { searchQuery: '', isSubmitting: false };
 
 	isMounted = false;
 
@@ -78,6 +78,7 @@ class SiteRedirectStep extends React.Component {
 							className="site-redirect-step__go"
 							type="submit"
 							onClick={ this.recordGoButtonClick }
+							busy={ this.state.isSubmitting }
 						>
 							{ translate( 'Go', {
 								context: 'Upgrades: Label for adding Site Redirect',
@@ -105,6 +106,8 @@ class SiteRedirectStep extends React.Component {
 	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
+		this.setState( { isSubmitting: true } );
+
 		const domain = this.state.searchQuery;
 
 		this.props.recordFormSubmit( domain );
@@ -113,6 +116,7 @@ class SiteRedirectStep extends React.Component {
 			this.props.errorNotice(
 				this.getValidationErrorMessage( domain, { code: 'already_in_cart' } )
 			);
+			this.setState( { isSubmitting: false } );
 			return;
 		}
 
@@ -122,6 +126,7 @@ class SiteRedirectStep extends React.Component {
 			function ( error ) {
 				if ( error ) {
 					this.props.errorNotice( this.getValidationErrorMessage( domain, error ) );
+					this.setState( { isSubmitting: false } );
 					return;
 				}
 
