@@ -547,7 +547,7 @@ const Summary: React.FunctionComponent = () => {
 		showSiteTitleStep,
 	} = useDispatch( LAUNCH_STORE );
 
-	const { title, isValidTitle, updateTitle } = useTitle();
+	const { title, isValidTitle, isDefaultTitle, updateTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
@@ -574,10 +574,10 @@ const Summary: React.FunctionComponent = () => {
 	// step to the user when in this launch flow.
 	// Allow changing site title when it's the default value or when it's an empty string.
 	React.useEffect( () => {
-		if ( ! isSiteTitleStepVisible && ! isValidTitle ) {
+		if ( title !== undefined && ! isSiteTitleStepVisible && isDefaultTitle ) {
 			showSiteTitleStep();
 		}
-	}, [ isValidTitle, showSiteTitleStep, isSiteTitleStepVisible ] );
+	}, [ isDefaultTitle, showSiteTitleStep, isSiteTitleStepVisible, title ] );
 
 	// Launch the site directly if Free plan and subdomain are selected.
 	// Otherwise, show checkout as the next step.
