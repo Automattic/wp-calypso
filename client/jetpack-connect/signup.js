@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import { flowRight, get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { Button, Card } from '@wordpress/components';
+import { getQueryArg } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -142,7 +143,7 @@ export class JetpackSignup extends Component {
 	}
 
 	getLoginRoute() {
-		const emailAddress = this.props.authQuery.userEmail;
+		const emailAddress = getQueryArg( this.props.path, 'email' ) || this.props.authQuery.userEmail;
 		return login( {
 			emailAddress,
 			from: this.props.authQuery.from,
@@ -453,7 +454,7 @@ export class JetpackSignup extends Component {
 					<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
 					<SignupForm
 						disabled={ isCreatingAccount }
-						email={ this.props.authQuery.userEmail }
+						email={ getQueryArg( this.props.path, 'email' ) || this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
 						isSocialSignupEnabled={ isEnabled( 'signup/social' ) }
