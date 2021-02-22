@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
 import FormattedDate from 'calypso/components/formatted-date';
@@ -95,9 +95,6 @@ export default function LicenseDetails( {
 					{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }
 				</li>
 			</ul>
-			<div className="license-details__actions">
-				<Button scary>{ translate( 'Revoke License' ) }</Button>
-			</div>
 		</Card>
 	);
 }
