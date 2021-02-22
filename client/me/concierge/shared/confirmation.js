@@ -13,7 +13,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 /**
  * Image dependencies
  */
-import supportIllustration from 'assets/images/illustrations/happiness-support.svg';
+import supportIllustration from 'calypso/assets/images/illustrations/happiness-support.svg';
 
 class Confirmation extends Component {
 	static propTypes = {
