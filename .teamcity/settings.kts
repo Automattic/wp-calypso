@@ -1365,6 +1365,10 @@ object WPComPlugins_EditorToolKit : BuildType({
 				cd apps/editing-toolkit
 				yarn build
 
+				echo
+				echo
+				echo "Previous Tagged Build: ${'$'}( grep build_number ../../etk-release-build/readme.txt | sed -e "s/build_number=//" )" 
+
 				# Update plugin version in the plugin file and readme.txt.
 				# Note: we also update the previous release build to the same version to restore idempotence
 				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
