@@ -192,7 +192,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	}
 	loginRedirectUrl = encodeURIComponent( loginRedirectUrl );
 
-	let signupUrl = `/new${ makePath( Step[ currentStep ] ) }?signup${ langFragment }`;
+	let signupUrl = `/new${ makePath( Step[ currentStep ] ) }?signup`;
 	if ( isAnchorFmSignup ) {
 		signupUrl = addAnchorQueryParts( signupUrl );
 	}

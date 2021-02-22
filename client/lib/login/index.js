@@ -97,9 +97,7 @@ export function getSignupUrl(
 
 	if ( isGutenboarding ) {
 		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-		const defaultSignupUrl = '/new/plans?signup' + langFragment;
-		// Maybe passing the signup_url query could work in other flows as well,
-		// to reduce the number of checks needed in this function?
+		const defaultSignupUrl = `/new/plans${ langFragment }?signup`;
 		signupUrl = get( currentQuery, 'signup_url', defaultSignupUrl );
 
 		// Sanitize the url if it doesn't start with /new
