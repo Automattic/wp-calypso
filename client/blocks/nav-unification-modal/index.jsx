@@ -96,7 +96,7 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--no-margin nav-unification-modal__picture--top-right">
+								<picture className="nav-unification-modal__picture nav-unification-modal__picture--center">
 									<source srcSet={ desktopTwoImg } media="(min-width: 600px)" />
 									<img alt={ translate( 'Scrolling complete navigation' ) } src={ mobileTwoImg } />
 								</picture>
@@ -112,7 +112,7 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--center">
+								<picture className="nav-unification-modal__picture nav-unification-modal__picture--bottom-center">
 									<source srcSet={ desktopThreeImg } media="(min-width: 600px)" />
 									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileThreeImg } />
 								</picture>

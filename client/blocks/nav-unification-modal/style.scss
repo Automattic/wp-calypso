@@ -187,17 +187,11 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		}
 	}
 
-	&--top-right {
-		align-self: flex-start;
-
+	&--bottom-center {
 		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
-			top: 0;
+			bottom: 0;
 		}
-	}
-
-	&--no-margin {
-		margin-top: 0;
 	}
 }
 
