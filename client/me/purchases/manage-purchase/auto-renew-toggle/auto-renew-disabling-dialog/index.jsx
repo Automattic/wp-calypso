@@ -141,9 +141,9 @@ class AutoRenewDisablingDialog extends Component {
 				);
 			default:
 				return translate(
-					'By canceling auto-renewal, your %(productName)s plan for %(siteDomain)s will expire on %(expiryDate)s. ' +
+					'By canceling auto-renewal, your %(productName)s subscription for %(siteDomain)s will expire on %(expiryDate)s. ' +
 						"When it does, you'll lose access to key features you may be using on your site. " +
-						'To avoid that, turn auto-renewal back on or manually renew your plan before the expiration date.',
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
 					{
 						args: {
 							productName: purchase.productName,
