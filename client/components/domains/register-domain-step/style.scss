@@ -23,11 +23,6 @@
 			animation: shake 0.5s both;
 			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
 		}
-
-		// Add some padding to account for the filter button.
-		body.is-section-signup & {
-			padding-right: 72px;
-		}
 	}
 
 	&.disabled {
