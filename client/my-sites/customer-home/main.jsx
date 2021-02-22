@@ -59,15 +59,12 @@ const Home = ( {
 
 			const successMessage = translate( 'Your application has been sent!' );
 			reduxDispatch( successNotice( successMessage ) );
+			return;
 		}
 
 		if ( noticeType === 'purchase-success' ) {
 			const successMessage = translate( 'Your purchase has been completed!' );
-			reduxDispatch(
-				successNotice( successMessage, {
-					isPersistent: true,
-				} )
-			);
+			reduxDispatch( successNotice( successMessage ) );
 			return;
 		}
 
@@ -177,4 +174,3 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
 export default flowRight( connectHome, withTrackingTool( 'HotJar' ) )( Home );
-
