@@ -197,7 +197,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		signupUrl = addAnchorQueryParts( signupUrl );
 	}
 	signupUrl = encodeURIComponent( signupUrl );
-	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_flow=${ signupUrl }`;
+	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
 	const displayProps = {
 		closeModal,
