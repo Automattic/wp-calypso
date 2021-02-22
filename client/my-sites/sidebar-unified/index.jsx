@@ -116,7 +116,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 			<AsyncLoad
 				require="calypso/my-sites/sidebar-unified/external-link-dialog"
 				isVisible={ showDialog }
-				closeModalHandler={ ( openUrl ) => closeModalHandler( openUrl ) }
+				closeModalHandler={ closeModalHandler }
 			/>
 		</Fragment>
 	);
