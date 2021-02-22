@@ -5,6 +5,7 @@
 import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import classnames from 'classnames';
 
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -17,6 +18,10 @@ import formatCurrency from '@automattic/format-currency';
 import QuerySecureYourBrand from 'calypso/components/data/query-secure-your-brand';
 import Badge from 'calypso/components/badge';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import {
+	getVariationForUser,
+	isLoading as isExperimentLoadingSelector,
+} from 'calypso/state/experiments/selectors';
 
 /**
  * Style dependencies
@@ -45,8 +50,16 @@ export default function DomainUpsellStep( props ) {
 		}
 	);
 
+	const isInDomainUpsellEmphasizeFreeTest =
+		'treatment' ===
+		useSelector( ( state ) => getVariationForUser( state, 'domain_upsell_emphasize_free' ) );
+
 	return (
-		<div className="domain-upsell__step-secton-wrapper">
+		<div
+			className={ classnames( 'domain-upsell__step-secton-wrapper', {
+				is_in_domain_upsell_emphasize_free_test: isInDomainUpsellEmphasizeFreeTest,
+			} ) }
+		>
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
@@ -56,7 +69,7 @@ export default function DomainUpsellStep( props ) {
 				subHeaderText={ subHeaderText }
 				fallbackSubHeaderText={ subHeaderText }
 				isWideLayout={ false }
-				stepContent={ RecommendedDomains( props ) }
+				stepContent={ RecommendedDomains( { ...props, isInDomainUpsellEmphasizeFreeTest } ) }
 			/>
 		</div>
 	);
@@ -97,17 +110,32 @@ function RecommendedDomains( props ) {
 		stepName,
 		submitSignupStep,
 		goToNextStep,
+		isInDomainUpsellEmphasizeFreeTest,
 	} = props;
 	const translate = useTranslate();
 	const [ selectedDomain, setSelectedDomain ] = useState( null );
 	const selectDomain = ( event ) => setSelectedDomain( event.target.value );
 	const secureYourBrand = useSelector( ( state ) => getSecureYourBrand( state ) );
-	const isLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
+	const isSecureYourBrandLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
+	const isExperimentLoading = useSelector( ( state ) => isExperimentLoadingSelector( state ) );
 	const hasError = useSelector( ( state ) => hasSecureYourBrandError( state ) );
 	const productData = secureYourBrand.product_data;
 	const selectedProduct = productData?.filter(
 		( product ) => product.domain === selectedDomain
 	)[ 0 ];
+
+	const isLoading = isSecureYourBrandLoading || isExperimentLoading;
+
+	const upgradeCtaText = isInDomainUpsellEmphasizeFreeTest
+		? translate( 'Use %(selectedDomain)s (%(originalCost)s)', {
+				args: {
+					selectedDomain,
+					originalCost: formatCurrency( selectedProduct?.cost, selectedProduct?.currency, {
+						stripZeros: true,
+					} ),
+				},
+		  } )
+		: translate( 'Use %s', { args: [ selectedDomain ] } );
 
 	useEffect( () => {
 		if ( productData && ! selectedDomain ) {
@@ -177,19 +205,24 @@ function RecommendedDomains( props ) {
 				) }
 				<div className="domain-upsell__buttons">
 					<Button busy={ isLoading } primary onClick={ handleUpgradeButtonClick }>
-						{ isLoading
-							? translate( 'Loading' )
-							: translate( 'Use %s', { args: [ selectedDomain ] } ) }
+						{ isLoading ? translate( 'Loading' ) : upgradeCtaText }
 					</Button>
+					{ isInDomainUpsellEmphasizeFreeTest && ! isLoading && (
+						<Button onClick={ handleSkipButtonClick }>
+							{ translate( 'Use %s (free)', { args: [ siteSlug ] } ) }
+						</Button>
+					) }
 				</div>
 			</Card>
-			<div className="domain-upsell__continue-link">
-				<Button compact borderless plain onClick={ handleSkipButtonClick }>
-					{ translate( `No thanks, I'll stick with %s`, {
-						args: [ siteSlug ],
-					} ) }
-				</Button>
-			</div>
+			{ ! isInDomainUpsellEmphasizeFreeTest && (
+				<div className="domain-upsell__continue-link">
+					<Button compact borderless plain onClick={ handleSkipButtonClick }>
+						{ translate( `No thanks, I'll stick with %s`, {
+							args: [ siteSlug ],
+						} ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 }
