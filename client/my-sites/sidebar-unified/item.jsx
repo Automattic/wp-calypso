@@ -9,13 +9,12 @@
  * External dependencies
  */
 import React, { memo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
@@ -23,6 +22,7 @@ import {
 	collapseAllMySitesSidebarSections,
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
@@ -33,21 +33,25 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	continueInCalypso,
 } ) => {
 	const reduxDispatch = useDispatch();
+	const isHappychatSessionActive = useSelector( ( state ) => hasActiveHappychatSession( state ) );
+
+	const onNavigate = () => {
+		reduxDispatch( collapseAllMySitesSidebarSections() );
+		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
+	};
 
 	return (
 		<SidebarItem
 			count={ count }
 			label={ title }
 			link={ url }
-			onNavigate={ () => {
-				reduxDispatch( collapseAllMySitesSidebarSections() );
-				reduxDispatch( expandMySitesSidebarSection( sectionId ) );
-			} }
+			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink
+			forceInternalLink={ ! isHappychatSessionActive }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
@@ -62,6 +66,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	slug: PropTypes.string,
 	title: PropTypes.string,
 	url: PropTypes.string,
+	continueInCalypso: PropTypes.func.isRequired,
 };
 
 export default memo( MySitesSidebarUnifiedItem );
