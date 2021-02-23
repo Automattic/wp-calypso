@@ -3,7 +3,12 @@
  */
 import { withStorageKey } from '@automattic/state-utils';
 import eligibility from './eligibility/reducer';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withPersistence,
+} from 'calypso/state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
@@ -18,7 +23,7 @@ import {
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
 } from 'calypso/state/themes/action-types';
 
-export const status = ( state = null, action ) => {
+export const status = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case ELIGIBILITY_UPDATE:
 			return state || transferStates.INQUIRING;
@@ -33,8 +38,7 @@ export const status = ( state = null, action ) => {
 	}
 
 	return state;
-};
-status.hasCustomPersistence = true;
+} );
 
 export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {
