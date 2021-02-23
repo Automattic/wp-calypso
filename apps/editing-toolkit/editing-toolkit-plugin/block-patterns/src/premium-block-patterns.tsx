@@ -27,7 +27,7 @@ interface ExperimentalBlockPattern {
 	description: string;
 	isPremium: boolean;
 	name: string;
-	title: string | JSX.Element;
+	title: React.ReactNode;
 	viewportWidth: number;
 }
 
