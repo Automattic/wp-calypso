@@ -165,7 +165,10 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
+			isTreatmentPlansRedesign,
 		} = this.props;
+
+		const shouldShowPlansRedesign = isTreatmentPlansRedesign && this.state.plansWithScroll;
 
 		return (
 			<div>
@@ -196,6 +199,7 @@ export class PlansStep extends Component {
 						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 						isAllPaidPlansShown={ true }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+						shouldShowPlansRedesign={ shouldShowPlansRedesign }
 					/>
 				) }
 			</div>
