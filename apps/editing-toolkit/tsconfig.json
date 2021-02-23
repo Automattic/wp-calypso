@@ -29,7 +29,8 @@
 		"esModuleInterop": false,
 
 		// Some type helpers from our webpack/
-		"typeRoots": [ "./typings", "./node_modules/@types", "../../node_modules/@types" ]
+		"typeRoots": [ "./typings", "./node_modules/@types", "../../node_modules/@types" ],
+		"types": [ "jest", "@emotion/core" ]
 	},
 	"exclude": [ "node_modules" ],
 	"references": [
