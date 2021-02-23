@@ -20,8 +20,8 @@ jobs:
           # Disable auto-close of both issues and PRs.
           days-before-close: -1
           # Get issues in ascending (oldest first) order.
-          ascending: false
+          ascending: true
           # Label to apply when issue is marked stale.
           stale-issue-label: '[Status] Stale'
           # Increase number of operations executed per run.
-          operations-per-run: 180
+          operations-per-run: 2000
