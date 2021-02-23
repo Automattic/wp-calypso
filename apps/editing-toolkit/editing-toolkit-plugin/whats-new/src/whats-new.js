@@ -18,7 +18,7 @@ import './style.scss';
 const blockPatternsImage = 'https://s0.wp.com/i/whats-new/block-patterns.png';
 const dragDropImage = 'https://s0.wp.com/i/whats-new/drag-drop.png';
 const singlePageSiteImage = 'https://s0.wp.com/i/whats-new/single-page-website.png';
-const anchorFmImage = 'https://s0.wp.com/i/whats-new/single-page-website.png';
+const anchorFmImage = 'https://s0.wp.com/i/whats-new/convert-to-audio.jpg';
 
 function WhatsNewMenuItem() {
 	const { toggleWhatsNew } = useDispatch( 'automattic/whats-new' );
@@ -135,7 +135,7 @@ function getWhatsNewPages() {
 				{
 					Link: (
 						<a
-							href="https://wordpress.com/blog/2021/01/25/building-single-page-websites-on-wordpress-com/"
+							href="https://wordpress.com/support/create-anchor-podcast/"
 							target="_blank"
 							rel="noreferrer"
 						/>
