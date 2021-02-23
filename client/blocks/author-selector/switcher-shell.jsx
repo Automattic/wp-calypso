@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
+import deterministicStringify from 'fast-json-stable-stringify';
 
 /**
  * Internal dependencies
@@ -16,14 +17,12 @@ import Popover from 'calypso/components/popover';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import UserItem from 'calypso/components/user';
 import InfiniteList from 'calypso/components/infinite-list';
-import { fetchUsers } from 'calypso/lib/users/actions';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:author-selector' );
-let instance = 0;
 
 class AuthorSwitcherShell extends React.Component {
 	static propTypes = {
@@ -46,11 +45,6 @@ class AuthorSwitcherShell extends React.Component {
 	authorSelectorToggleRef = createRef();
 	authorSelectorChevronRef = createRef();
 
-	UNSAFE_componentWillMount() {
-		this.instance = instance;
-		instance++;
-	}
-
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! nextProps.fetchOptions.siteId ||
@@ -66,20 +60,21 @@ class AuthorSwitcherShell extends React.Component {
 		}
 
 		if ( ! prevState.showAuthorMenu && this.props.users.length > 10 && ! hasTouch() ) {
-			setTimeout( () => this.authorSelectorSearchRef.current?.focus(), 0 );
+			setTimeout( () => this.authorSelectorSearchRef.current?.focus?.(), 0 );
 		}
 	}
 
 	render() {
-		const { users, fetchNameSpace } = this.props;
-		const infiniteListKey = fetchNameSpace + this.instance;
+		const { users, fetchOptions, fetchingUsers } = this.props;
+		const { number, offset, ...otherFetchOptions } = fetchOptions;
+		const infiniteListKey = deterministicStringify( otherFetchOptions );
 
 		if ( ! this.userCanSelectAuthor() ) {
 			return <span>{ this.props.children }</span>;
 		}
 
 		return (
-			<span>
+			<>
 				<span
 					className="author-selector__author-toggle"
 					onClick={ this.toggleShowAuthor }
@@ -100,7 +95,7 @@ class AuthorSwitcherShell extends React.Component {
 					className="author-selector__popover popover"
 					ignoreContext={ this.props.ignoreContext }
 				>
-					{ ( this.props.fetchOptions.search || users.length > 10 ) && (
+					{ ( fetchOptions.search || users.length > 10 ) && (
 						<AsyncLoad
 							require="@automattic/search"
 							compact
@@ -110,39 +105,27 @@ class AuthorSwitcherShell extends React.Component {
 							ref={ this.authorSelectorSearchRef }
 						/>
 					) }
-					{ this.props.fetchInitialized &&
-					! users.length &&
-					this.props.fetchOptions.search &&
-					! this.props.fetchingUsers ? (
+					{ ! users.length && fetchOptions.search && ! fetchingUsers ? (
 						this.noUsersFound()
 					) : (
 						<InfiniteList
-							items={ users }
 							key={ infiniteListKey }
+							items={ users }
 							className="author-selector__infinite-list"
 							ref={ this.setListContext }
 							context={ this.state.listContext }
-							fetchingNextPage={ this.props.fetchingUsers }
+							fetchingNextPage={ this.props.fetchingNextPage }
 							guessedItemHeight={ 42 }
-							lastPage={ this.isLastPage() }
-							fetchNextPage={ this.fetchNextPage }
+							lastPage={ ! this.props.hasNextPage }
+							fetchNextPage={ this.props.fetchNextPage }
 							getItemRef={ this.getAuthorItemGUID }
 							renderLoadingPlaceholders={ this.renderLoadingAuthors }
 							renderItem={ this.renderAuthor }
 						/>
 					) }
 				</Popover>
-			</span>
+			</>
 		);
-	}
-
-	isLastPage() {
-		let usersLength = this.props.users.length;
-		if ( this.props.exclude ) {
-			usersLength += this.props.excludedUsers.length;
-		}
-
-		return this.props.totalUsers <= usersLength;
 	}
 
 	setListContext = ( infiniteListInstance ) => {
@@ -152,14 +135,14 @@ class AuthorSwitcherShell extends React.Component {
 	};
 
 	userCanSelectAuthor() {
-		const { users } = this.props;
+		const { users, fetchOptions, allowSingleUser } = this.props;
 
-		if ( this.props.fetchOptions.search ) {
+		if ( fetchOptions.search ) {
 			return true;
 		}
 
 		// no user choice
-		if ( ! users || ! users.length || ( ! this.props.allowSingleUser && users.length === 1 ) ) {
+		if ( ! users || ! users.length || ( ! allowSingleUser && users.length === 1 ) ) {
 			return false;
 		}
 
@@ -220,14 +203,6 @@ class AuthorSwitcherShell extends React.Component {
 			showAuthorMenu: false,
 		} );
 		this.props.updateSearch( false );
-	};
-
-	fetchNextPage = () => {
-		const fetchOptions = Object.assign( {}, this.props.fetchOptions, {
-			offset: this.props.users.length,
-		} );
-		debug( 'fetching next batch of authors' );
-		fetchUsers( fetchOptions );
 	};
 
 	getAuthorItemGUID = ( author ) => {
