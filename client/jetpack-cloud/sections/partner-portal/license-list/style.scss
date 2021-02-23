@@ -1,8 +1,16 @@
+@import '~@wordpress/base-styles/_breakpoints.scss';
+@import '~@wordpress/base-styles/_mixins.scss';
+
 .license-list {
 	&__header {
 		&.card.is-compact {
-			padding-top: 0;
-			padding-bottom: 0;
+			display: none;
+
+			@include break-xlarge() {
+				display: block;
+				padding-top: 0;
+				padding-bottom: 0;
+			}
 		}
 	}
 
