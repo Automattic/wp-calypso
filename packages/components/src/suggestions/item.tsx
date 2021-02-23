@@ -57,10 +57,6 @@ const Item: ForwardRefRenderFunction< HTMLButtonElement, Props > = (
 		onMouseDown();
 	};
 
-	const handleMouseOver = () => {
-		onMouseOver();
-	};
-
 	const className = classNames( 'suggestions__item', { 'has-highlight': hasHighlight } );
 
 	return (
@@ -68,7 +64,7 @@ const Item: ForwardRefRenderFunction< HTMLButtonElement, Props > = (
 			className={ className }
 			onMouseDown={ handleMouseDown }
 			onFocus={ handleMouseDown }
-			onMouseOver={ handleMouseOver }
+			onMouseOver={ onMouseOver }
 			ref={ forwardedRef }
 		>
 			{ createTextWithHighlight( label, query ) }
