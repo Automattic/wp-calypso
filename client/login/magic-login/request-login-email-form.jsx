@@ -87,6 +87,7 @@ class RequestLoginEmailForm extends React.Component {
 		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
+			flow: 'jetpack',
 		} );
 	};
 
