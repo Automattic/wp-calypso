@@ -163,8 +163,10 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				options.addArguments( '--app=https://www.wordpress.com' );
 
+				console.log( 'CHROMERIVER PATH', chromedriver.path );
+
 				// eslint-disable-next-line no-case-declarations
-				const service = new chrome.ServiceBuilder( chromedriver.path )
+				const service = new chrome.ServiceBuilder()
 					.loggingTo( './chromedriver.' + process.pid + '.log' )
 					.enableVerboseLogging()
 					.build();
