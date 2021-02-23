@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState, useCallback, ReactElement } from 'react';
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { getUrlParts } from 'calypso/lib/url';
 import classnames from 'classnames';
@@ -10,6 +11,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 
+import { infoNotice } from 'calypso/state/notices/actions';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { Button } from '@automattic/components';
@@ -48,6 +50,7 @@ export default function LicensePreview( {
 	filter,
 }: Props ): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ isOpen, setOpen ] = useState( false );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname : '';
@@ -57,6 +60,10 @@ export default function LicensePreview( {
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
 	}, [ isOpen ] );
+
+	const onCopyLicense = () => {
+		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
+	};
 
 	return (
 		<div
@@ -135,6 +142,7 @@ export default function LicensePreview( {
 							text={ licenseKey }
 							className="license-preview__copy-license-key"
 							compact
+							onCopy={ onCopyLicense }
 						>
 							{ translate( 'Copy License' ) }
 						</ClipboardButton>
@@ -156,6 +164,7 @@ export default function LicensePreview( {
 					issuedAt={ issuedAt }
 					attachedAt={ attachedAt }
 					revokedAt={ revokedAt }
+					onCopyLicense={ onCopyLicense }
 				/>
 			) }
 		</div>

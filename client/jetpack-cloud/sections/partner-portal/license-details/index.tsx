@@ -3,6 +3,7 @@
  */
 import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ interface Props {
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
+	onCopyLicense?: () => void;
 }
 
 export default function LicenseDetails( {
@@ -35,6 +37,7 @@ export default function LicenseDetails( {
 	issuedAt,
 	attachedAt,
 	revokedAt,
+	onCopyLicense = noop,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
@@ -53,6 +56,7 @@ export default function LicenseDetails( {
 							className="license-details__clipboard-button"
 							borderless
 							compact
+							onCopy={ onCopyLicense }
 						>
 							<Gridicon icon="clipboard" />
 						</ClipboardButton>
