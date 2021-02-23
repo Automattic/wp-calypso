@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
-		"lib": [ "DOM", "ESNext" ],
+		"lib": [ "ESNext" ],
 		"baseUrl": ".",
 		"module": "esnext",
 		"allowJs": true,
