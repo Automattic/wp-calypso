@@ -344,7 +344,7 @@ class Help extends React.PureComponent {
 								</Button>
 							</div>
 						</Variation>
-						<DefaultVariation name="default" />
+						<DefaultVariation name="control" />
 					</Experiment>
 				</div>
 				<HelpSearch onSearch={ this.setIsSearching } />
