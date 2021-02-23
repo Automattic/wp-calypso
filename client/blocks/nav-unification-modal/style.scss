@@ -203,7 +203,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	/* Gray / Gray 90 */
 	color: #1d2327;
 	font-size: 24px;
-	margin-bottom: 16px;
 	
 	h2 {
 		line-height: 1.19;
@@ -211,6 +210,10 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 	@media ( min-width: $modal-breakpoint ) {
 		font-size: 24px;
+
+		h2 {
+			margin: 26px 0;
+		}
 	}
 }
 
