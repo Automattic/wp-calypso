@@ -2,10 +2,11 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, map, noop } from 'lodash';
+import { compact, get, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -13,7 +14,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Notice from 'calypso/components/notice';
+import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
+import { PlanFeaturesAvailableItem } from './item';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { abtest } from 'calypso/lib/abtest';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -42,6 +45,8 @@ import {
 	isWpComBusinessPlan,
 	findPlansKeys,
 	getPlan as getPlanFromKey,
+	getPlanClass,
+	isFreePlan,
 } from 'calypso/lib/plans';
 import {
 	getPlanDiscountedRawPrice,
@@ -74,6 +79,7 @@ import {
 	TYPE_FREE,
 } from 'calypso/lib/plans/constants';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 
 /**
  * Style dependencies
@@ -107,6 +113,8 @@ export class PlanFeaturesComparison extends Component {
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
+									<tr>{ this.renderTopButtons() }</tr>
+									{ this.renderPlanFeatureRows() }
 								</tbody>
 							</table>
 						</div>
@@ -251,6 +259,207 @@ export class PlanFeaturesComparison extends Component {
 						isMonthlyPlan={ isMonthlyPlan }
 					/>
 				</th>
+			);
+		} );
+	}
+
+	handleUpgradeClick( singlePlanProperties ) {
+		const { isInSignup, onUpgradeClick: ownPropsOnUpgradeClick, redirectTo } = this.props;
+
+		const {
+			availableForPurchase,
+			cartItemForPlan,
+			checkoutUrl,
+			siteIsPrivateAndGoingAtomic,
+		} = singlePlanProperties;
+
+		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
+			ownPropsOnUpgradeClick( cartItemForPlan );
+			return;
+		}
+
+		if ( ! availableForPurchase ) {
+			return;
+		}
+
+		const checkoutUrlWithArgs = addQueryArgs( { redirect_to: redirectTo }, checkoutUrl );
+
+		if ( siteIsPrivateAndGoingAtomic ) {
+			if ( isInSignup ) {
+				// Let signup do its thing
+				return;
+			}
+			page( checkoutUrlWithArgs );
+			return;
+		}
+
+		page( checkoutUrlWithArgs );
+	}
+
+	renderTopButtons() {
+		const {
+			canPurchase,
+			disableBloggerPlanWithNonBlogDomain,
+			isInSignup,
+			isLandingPage,
+			isLaunchPage,
+			planProperties,
+			selectedPlan,
+			selectedSiteSlug,
+			purchaseId,
+			translate,
+		} = this.props;
+
+		return map( planProperties, ( properties ) => {
+			let { availableForPurchase } = properties;
+			const {
+				current,
+				planName,
+				primaryUpgrade,
+				isPlaceholder,
+				planConstantObj,
+				popular,
+			} = properties;
+
+			const classes = classNames(
+				'plan-features-comparison__table-item',
+				'has-border-bottom',
+				'is-top-buttons'
+			);
+
+			let forceDisplayButton = false;
+			let buttonText = null;
+
+			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
+				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
+					availableForPurchase = false;
+					forceDisplayButton = true;
+					buttonText = translate( 'Only with .blog domains' );
+				}
+			}
+
+			return (
+				<td key={ planName } className={ classes }>
+					<PlanFeaturesComparisonActions
+						availableForPurchase={ availableForPurchase }
+						buttonText={ buttonText }
+						canPurchase={ canPurchase }
+						className={ getPlanClass( planName ) }
+						current={ current }
+						freePlan={ isFreePlan( planName ) }
+						forceDisplayButton={ forceDisplayButton }
+						isPlaceholder={ isPlaceholder }
+						isPopular={ popular }
+						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
+						isLaunchPage={ isLaunchPage }
+						manageHref={
+							purchaseId
+								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+								: `/plans/my-plan/${ selectedSiteSlug }`
+						}
+						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
+						planName={ planConstantObj.getTitle() }
+						planType={ planName }
+						primaryUpgrade={ primaryUpgrade }
+						selectedPlan={ selectedPlan }
+					/>
+				</td>
+			);
+		} );
+	}
+
+	getLongestFeaturesList() {
+		const { planProperties } = this.props;
+
+		return reduce(
+			planProperties,
+			( longest, properties ) => {
+				const currentFeatures = Object.keys( properties.features );
+				return currentFeatures.length > longest.length ? currentFeatures : longest;
+			},
+			[]
+		);
+	}
+
+	renderPlanFeatureRows() {
+		const longestFeatures = this.getLongestFeaturesList();
+		return map( longestFeatures, ( featureKey, rowIndex ) => {
+			return (
+				<tr key={ rowIndex } className="plan-features-comparison__row">
+					{ this.renderPlanFeatureColumns( rowIndex ) }
+				</tr>
+			);
+		} );
+	}
+
+	renderAnnualPlansFeatureNotice( feature ) {
+		const { translate, isInSignup } = this.props;
+
+		if (
+			! isInSignup ||
+			! feature.availableOnlyForAnnualPlans ||
+			feature.availableForCurrentPlan
+		) {
+			return '';
+		}
+
+		return (
+			<span className="plan-features-comparison__item-annual-plan">
+				{ translate( 'Included with annual plans' ) }
+			</span>
+		);
+	}
+
+	renderFeatureItem( feature, index ) {
+		const classes = classNames( 'plan-features-comparison__item-info', {
+			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
+			'is-available': feature.availableForCurrentPlan,
+		} );
+
+		return (
+			<>
+				<PlanFeaturesAvailableItem
+					key={ index }
+					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
+				>
+					<span className={ classes }>
+						<span className="plan-features-comparison__item-title">
+							{ feature.getTitle( this.props.domainName ) }
+						</span>
+					</span>
+				</PlanFeaturesAvailableItem>
+			</>
+		);
+	}
+
+	renderPlanFeatureColumns( rowIndex ) {
+		const { planProperties, selectedFeature, withScroll } = this.props;
+
+		return map( planProperties, ( properties, mapIndex ) => {
+			const { features, planName } = properties;
+			const featureKeys = Object.keys( features );
+			const key = featureKeys[ rowIndex ];
+			const currentFeature = features[ key ];
+
+			const classes = classNames(
+				'plan-features-comparison__table-item',
+				getPlanClass( planName ),
+				{
+					'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
+					'is-last-feature': rowIndex + 1 === featureKeys.length,
+					'is-highlighted':
+						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+					'is-bold': rowIndex === 0,
+				}
+			);
+
+			return currentFeature ? (
+				<td key={ `${ planName }-${ key }` } className={ classes }>
+					{ this.renderFeatureItem( currentFeature, mapIndex ) }
+				</td>
+			) : (
+				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
 			);
 		} );
 	}
@@ -411,9 +620,9 @@ export default connect(
 
 							break;
 						default:
-							if ( planConstantObj.getSignupFeatures ) {
+							if ( planConstantObj.getSignupCompareAvailableFeatures ) {
 								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupFeatures( currentPlan )
+									planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
 								);
 							}
 					}
