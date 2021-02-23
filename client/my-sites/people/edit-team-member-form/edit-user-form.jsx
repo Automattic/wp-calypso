@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { updateUser } from 'calypso/lib/users/actions';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -26,6 +25,8 @@ import {
 	requestExternalContributorsRemoval,
 } from 'calypso/state/data-getters';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import useUpdateUserMutation from 'calypso/data/users/use-update-user-mutation';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -37,7 +38,7 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:my-sites:people:edit-team-member-form' );
 
-class EditUserForm extends Component {
+class EditUserForm extends React.Component {
 	state = this.getStateObject( this.props );
 
 	componentDidUpdate() {
@@ -114,13 +115,11 @@ class EditUserForm extends Component {
 		// Since we store 'roles' in state as a string, but user objects expect
 		// roles to be an array, if we've updated the user's role, we need to
 		// place the role in an array before updating the user.
-		updateUser(
-			siteId,
-			user.ID,
-			changedSettings.roles
-				? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
-				: changedSettings
-		);
+		const changedAttributes = changedSettings.roles
+			? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
+			: changedSettings;
+
+		this.props.updateUser( this.state.ID, changedAttributes );
 
 		if ( true === changedSettings.isExternalContributor ) {
 			requestExternalContributorsAddition(
@@ -266,6 +265,43 @@ class EditUserForm extends Component {
 	}
 }
 
+const withUpdateUser = ( Component ) => {
+	return ( props ) => {
+		const { siteId, user, translate } = props;
+		const dispatch = useDispatch();
+		const { updateUser, isSuccess, isError, error } = useUpdateUserMutation( siteId, user?.login );
+
+		React.useEffect( () => {
+			isSuccess &&
+				dispatch(
+					successNotice(
+						translate( 'Successfully updated @%(user)s', {
+							args: { user: user?.login },
+							context: 'Success message after a user has been modified.',
+						} ),
+						{ id: 'update-user-notice' }
+					)
+				);
+		}, [ isSuccess, translate, dispatch, user ] );
+
+		React.useEffect( () => {
+			isError &&
+				error &&
+				dispatch(
+					errorNotice(
+						translate( 'There was an error updating @%(user)s', {
+							args: { user: user?.login },
+							context: 'Error message after A site has failed to perform actions on a user.',
+						} ),
+						{ id: 'update-user-notice' }
+					)
+				);
+		}, [ isError, error, translate, dispatch, user ] );
+
+		return <Component { ...props } updateUser={ updateUser } />;
+	};
+};
+
 export default localize(
 	connect(
 		( state, { siteId, user } ) => {
@@ -280,5 +316,5 @@ export default localize(
 		{
 			recordGoogleEvent,
 		}
-	)( EditUserForm )
+	)( withUpdateUser( EditUserForm ) )
 );
