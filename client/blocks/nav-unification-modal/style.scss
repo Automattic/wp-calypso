@@ -163,34 +163,36 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 }
 
 .nav-unification-modal__picture {
-	display: flex;
-	margin-top: 20px;
-	// Preserve image aspect ratio on Safari (default for align-items is stretch)
-	align-items: flex-end;
+	max-height: 100%;
 
 	@media ( min-width: $modal-breakpoint ) {
 		margin-top: 0;
 	}
 
 	&--center {
+		display: flex;
+		align-items: center;
+
 		@media ( min-width: $modal-breakpoint ) {
-			position: absolute;
-			transform: translateY( -50% );
-			top: 50%;
+			align-self: center;
 		}
 	}
 
 	&--bottom-right {
+		align-self: flex-end;
+		margin-bottom: -10px;
+
 		@media ( min-width: $modal-breakpoint ) {
 			position: absolute;
 			bottom: 0;
+			align-self: auto;
 		}
 	}
 
 	&--bottom-center-small {
 		@media ( max-width: $modal-breakpoint ) {
-			position: absolute;
-			bottom: 0;
+			align-self: flex-end;
+			margin-bottom: -10px;
 		}
 	}
 }
