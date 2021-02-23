@@ -9,9 +9,9 @@ import { getUrlParts } from 'calypso/lib/url/url-parts';
  */
 
 export enum Iterations {
-	I5 = 'i5',
 	NPIP = 'npip', // New purchase intro pricing
 }
+
 const iterationNames: string[] = Object.values( Iterations );
 
 /**
@@ -28,7 +28,7 @@ const iterationNames: string[] = Object.values( Iterations );
  * @see getForCurrentCROIteration
  * @see doForCurrentCROIteration
  */
-const getCurrentCROIterationName = (): Iterations => {
+const getCurrentCROIterationName = (): Iterations | null => {
 	// If we see a query parameter, obey that,
 	// regardless of any active A/B test value
 	if ( typeof window !== 'undefined' ) {
@@ -43,10 +43,10 @@ const getCurrentCROIterationName = (): Iterations => {
 
 	const newPurchaseIntroPricing = abtest( 'jetpackNewPurchaseIntroPricing' ) === 'withIntroPricing';
 
-	return newPurchaseIntroPricing ? Iterations.NPIP : Iterations.I5;
+	return newPurchaseIntroPricing ? Iterations.NPIP : null;
 };
 
-type IterationValueFunction< T > = ( key: Iterations ) => T | undefined;
+type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;
 type IterationValueMap< T > = Partial< { [ key in Iterations ]: T } >;
 
 /**
@@ -71,7 +71,7 @@ export const getForCurrentCROIteration = < T >(
 		return valueGetter( iteration );
 	}
 
-	if ( typeof valueGetter === 'object' ) {
+	if ( iteration && typeof valueGetter === 'object' ) {
 		return valueGetter[ iteration ];
 	}
 
@@ -84,5 +84,5 @@ export const getForCurrentCROIteration = < T >(
  *
  * @param fn The function to execute.
  */
-export const doForCurrentCROIteration = ( fn: ( key: Iterations ) => void ): void =>
+export const doForCurrentCROIteration = ( fn: ( key: Iterations | null ) => void ): void =>
 	fn( getCurrentCROIterationName() );

@@ -1,7 +1,7 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-.plans-filter-bar-i5 {
+.plans-filter-bar {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -16,22 +16,22 @@
 		flex-direction: row;
 	}
 
-	.plans-filter-bar-i5__duration-toggle {
+	.plans-filter-bar__duration-toggle {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		font-weight: 700;
 		padding-bottom: 10px;
 
-		.plans-filter-bar-i5__toggle-off-label {
+		.plans-filter-bar__toggle-off-label {
 			color: var( --color-primary );
 		}
 
 		&.checked {
-			.plans-filter-bar-i5__toggle-on-label {
+			.plans-filter-bar__toggle-on-label {
 				color: var( --color-primary );
 			}
-			.plans-filter-bar-i5__toggle-off-label {
+			.plans-filter-bar__toggle-off-label {
 				color: var( --studio-gray-50 );
 			}
 		}
@@ -41,7 +41,7 @@
 			margin-right: 20px;
 		}
 	}
-	.plans-filter-bar-i5__toggle-control {
+	.plans-filter-bar__toggle-control {
 		> .components-base-control__field {
 			margin-bottom: 0;
 
@@ -79,7 +79,7 @@
 	}
 }
 
-.plans-filter-bar-i5__discount-message {
+.plans-filter-bar__discount-message {
 	font-size: 0.8125rem;
 	font-weight: 600;
 	padding-top: 2px;
@@ -88,16 +88,16 @@
 		color: var( --color-primary );
 	}
 
-	.plans-filter-bar-i5__discount-message-text {
+	.plans-filter-bar__discount-message-text {
 		padding-right: 6px;
 	}
 }
 
-.plans-filter-bar-i5__discount-message.treatment .plans-filter-bar-i5__discount-message-text {
+.plans-filter-bar__discount-message.treatment .plans-filter-bar__discount-message-text {
 	text-decoration: underline;
 }
 
-.plans-filter-bar-i5.sticky {
+.plans-filter-bar.sticky {
 	position: fixed;
 	width: 100%;
 	left: 0;
@@ -110,13 +110,13 @@
 }
 .is-section-jetpack-connect,
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
-	.plans-filter-bar-i5.sticky {
+	.plans-filter-bar.sticky {
 		top: 0;
 	}
 }
 
 // target Calypso pricing filter bar, not jetpack cloud
-.is-group-sites.is-section-plans .plans-filter-bar-i5.sticky {
+.is-group-sites.is-section-plans .plans-filter-bar.sticky {
 	// At this screen size, the left sidebar is 228px;
 	@include breakpoint-deprecated( '>660px' ) {
 		width: calc( 100% - 228px );

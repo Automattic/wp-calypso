@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 
@@ -30,10 +29,6 @@ import './style.scss';
 
 const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 	const translate = useTranslate();
-	const iterationClassName = useMemo(
-		() => getForCurrentCROIteration( ( variation: Iterations ) => `iteration-${ variation }` ),
-		[]
-	) as Iterations;
 
 	// Don't show for the NPIP variant
 	const showFreshStartBanner = useMemo(
@@ -53,7 +48,7 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 
 			{ showFreshStartBanner && <FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } /> }
 
-			<div className={ classNames( 'header', iterationClassName ) }>
+			<div className="header">
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows(

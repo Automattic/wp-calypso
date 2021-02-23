@@ -72,15 +72,13 @@ const DisplayPrice = ( {
 
 	if ( isOwned ) {
 		return (
-			<p className="jetpack-product-card-i5__you-own-this">
-				{ translate( 'You own this product' ) }
-			</p>
+			<p className="jetpack-product-card__you-own-this">{ translate( 'You own this product' ) }</p>
 		);
 	}
 
 	if ( isIncludedInPlan ) {
 		return (
-			<p className="jetpack-product-card-i5__you-own-this">
+			<p className="jetpack-product-card__you-own-this">
 				{ translate( 'Part of your current plan' ) }
 			</p>
 		);
@@ -88,8 +86,8 @@ const DisplayPrice = ( {
 
 	if ( isFree ) {
 		return (
-			<div className="jetpack-product-card-i5__price">
-				<span className="jetpack-product-card-i5__price-free">{ translate( 'Free' ) }</span>
+			<div className="jetpack-product-card__price">
+				<span className="jetpack-product-card__price-free">{ translate( 'Free' ) }</span>
 			</div>
 		);
 	}
@@ -97,11 +95,11 @@ const DisplayPrice = ( {
 	const isDiscounted = isFinite( discountedPrice );
 
 	return (
-		<div className="jetpack-product-card-i5__price">
+		<div className="jetpack-product-card__price">
 			{ currencyCode && originalPrice ? (
 				<>
-					{ displayFrom && <span className="jetpack-product-card-i5__price-from">from</span> }
-					<span className="jetpack-product-card-i5__raw-price">
+					{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
+					<span className="jetpack-product-card__raw-price">
 						<PlanPrice
 							rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
 							currencyCode={ currencyCode }
@@ -109,22 +107,22 @@ const DisplayPrice = ( {
 					</span>
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 					{ tooltipText && (
-						<InfoPopover position="top" className="jetpack-product-card-i5__price-tooltip">
+						<InfoPopover position="top" className="jetpack-product-card__price-tooltip">
 							{ tooltipText }
 						</InfoPopover>
 					) }
 				</>
 			) : (
 				<>
-					<div className="jetpack-product-card-i5__price-placeholder" />
-					<div className="jetpack-product-card-i5__time-frame-placeholder" />
+					<div className="jetpack-product-card__price-placeholder" />
+					<div className="jetpack-product-card__time-frame-placeholder" />
 				</>
 			) }
 		</div>
 	);
 };
 
-const JetpackProductCardAlt2: React.FC< Props > = ( {
+const JetpackProductCard: React.FC< Props > = ( {
 	iconSlug,
 	productSlug,
 	productName,
@@ -158,7 +156,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 
 	return (
 		<div
-			className={ classNames( 'jetpack-product-card-i5', {
+			className={ classNames( 'jetpack-product-card', {
 				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
@@ -169,19 +167,19 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 			data-e2e-product-slug={ productSlug }
 		>
 			{ isFeatured && (
-				<div className="jetpack-product-card-i5__header">
-					<img className="jetpack-product-card-i5__header-icon" src={ starIcon } alt="" />
+				<div className="jetpack-product-card__header">
+					<img className="jetpack-product-card__header-icon" src={ starIcon } alt="" />
 					<span>{ translate( 'Recommended' ) }</span>
 				</div>
 			) }
-			<div className="jetpack-product-card-i5__body">
-				{ iconSlug && <ProductIcon className="jetpack-product-card-i5__icon" slug={ iconSlug } /> }
+			<div className="jetpack-product-card__body">
+				{ iconSlug && <ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } /> }
 				{ createElement(
 					`h${ parsedHeadingLevel }`,
-					{ className: 'jetpack-product-card-i5__product-name' },
+					{ className: 'jetpack-product-card__product-name' },
 					<>{ productName }</>
 				) }
-				<p className="jetpack-product-card-i5__description">{ description }</p>
+				<p className="jetpack-product-card__description">{ description }</p>
 				<DisplayPrice
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
@@ -195,17 +193,17 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 					tooltipText={ tooltipText }
 				/>
 				{ aboveButtonText && (
-					<p className="jetpack-product-card-i5__above-button">{ aboveButtonText }</p>
+					<p className="jetpack-product-card__above-button">{ aboveButtonText }</p>
 				) }
 				{ isDisabled && disabledMessage && (
-					<p className="jetpack-product-card-i5__disabled-message">
+					<p className="jetpack-product-card__disabled-message">
 						{ preventWidows( disabledMessage ) }
 					</p>
 				) }
 				{ ! isDisabled && (
 					<Button
 						primary={ buttonPrimary }
-						className="jetpack-product-card-i5__button"
+						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
 						disabled={ isDisabled }
 					>
@@ -220,4 +218,4 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	);
 };
 
-export default JetpackProductCardAlt2;
+export default JetpackProductCard;

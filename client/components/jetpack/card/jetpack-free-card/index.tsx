@@ -7,8 +7,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import JetpackFreeCardButton from './button';
 import Gridicon from 'calypso/components/gridicon';
-import JetpackFreeCardButton from 'calypso/components/jetpack/card/jetpack-free-card-button';
 
 /**
  * Type dependencies
@@ -20,23 +20,23 @@ import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/type
  */
 import './style.scss';
 
-const JetpackFreeCardAlt: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => {
+const JetpackFreeCard: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className="jetpack-free-card-i5 jetpack-product-card-i5" data-e2e-product-slug="free">
-			<header className="jetpack-free-card-i5__header">
-				<h3 className="jetpack-free-card-i5__title">{ translate( 'Jetpack Free' ) }</h3>
-				<p className="jetpack-free-card-i5__subheadline">
+		<div className="jetpack-free-card jetpack-product-card" data-e2e-product-slug="free">
+			<header className="jetpack-free-card__header">
+				<h3 className="jetpack-free-card__title">{ translate( 'Jetpack Free' ) }</h3>
+				<p className="jetpack-free-card__subheadline">
 					{ translate( 'Included for free with all products' ) }
 				</p>
 				<JetpackFreeCardButton
-					className="jetpack-free-card-i5__button"
+					className="jetpack-free-card__button"
 					siteId={ siteId }
 					urlQueryArgs={ urlQueryArgs }
 				/>
 			</header>
-			<ul className="jetpack-free-card-i5__features-list">
+			<ul className="jetpack-free-card__features-list">
 				{ [
 					{
 						text: translate( 'Site stats' ),
@@ -59,7 +59,7 @@ const JetpackFreeCardAlt: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) 
 				].map( ( feature, index ) => (
 					<li key={ index }>
 						<Gridicon icon="checkmark" />
-						<span className="jetpack-free-card-i5__features-text">{ feature.text }</span>
+						<span className="jetpack-free-card__features-text">{ feature.text }</span>
 					</li>
 				) ) }
 			</ul>
@@ -67,4 +67,4 @@ const JetpackFreeCardAlt: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) 
 	);
 };
 
-export default JetpackFreeCardAlt;
+export default JetpackFreeCard;

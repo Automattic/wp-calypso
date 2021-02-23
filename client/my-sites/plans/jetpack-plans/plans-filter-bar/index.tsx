@@ -16,13 +16,13 @@ import { JETPACK_RESET_PLANS_BY_TERM } from 'calypso/lib/plans/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-import useDetectWindowBoundary from '../../use-detect-window-boundary';
-import { getHighestAnnualDiscount } from '../../utils';
+import useDetectWindowBoundary from '../use-detect-window-boundary';
+import { getHighestAnnualDiscount } from '../utils';
 
 /**
  * Type dependencies
  */
-import type { Duration, DurationChangeCallback, ProductType } from '../../types';
+import type { Duration, DurationChangeCallback, ProductType } from '../types';
 
 /**
  * Style dependencies
@@ -66,13 +66,13 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary, withTreat
 
 	return (
 		<div
-			className={ classNames( 'plans-filter-bar-i5__discount-message', {
+			className={ classNames( 'plans-filter-bar__discount-message', {
 				primary,
 				treatment: withTreatmentVariant,
 			} ) }
 		>
 			<div>
-				<span className="plans-filter-bar-i5__discount-message-text">
+				<span className="plans-filter-bar__discount-message-text">
 					{ isMobile
 						? translate( 'Save %(discount)s by paying yearly', {
 								args: { discount: highestAnnualDiscount },
@@ -89,7 +89,7 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary, withTreat
 	);
 };
 
-const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
+const PlansFilterBar: React.FC< FilterBarProps > = ( {
 	showDiscountMessage,
 	duration,
 	onDurationChange,
@@ -112,21 +112,19 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 	}, [ onDurationChange, durationChecked ] );
 
 	return (
-		<div ref={ barRef } className={ classNames( 'plans-filter-bar-i5', { sticky: hasCrossed } ) }>
+		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
 			<div
-				className={ classNames( 'plans-filter-bar-i5__duration-toggle', {
+				className={ classNames( 'plans-filter-bar__duration-toggle', {
 					checked: durationChecked,
 				} ) }
 			>
-				<span className="plans-filter-bar-i5__toggle-off-label">
-					{ translate( 'Bill monthly' ) }
-				</span>
+				<span className="plans-filter-bar__toggle-off-label">{ translate( 'Bill monthly' ) }</span>
 				<ToggleControl
-					className="plans-filter-bar-i5__toggle-control"
+					className="plans-filter-bar__toggle-control"
 					checked={ durationChecked }
 					onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
 				/>
-				<span className="plans-filter-bar-i5__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
+				<span className="plans-filter-bar__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
 			</div>
 			{ showDiscountMessage && (
 				<DiscountMessage
@@ -138,4 +136,4 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 	);
 };
 
-export default PlansFilterBarI5;
+export default PlansFilterBar;

@@ -1,7 +1,7 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-.jetpack-free-card-i5 {
+.jetpack-free-card {
 	padding: 24px 32px;
 
 	@include break-small {
@@ -9,13 +9,13 @@
 	}
 }
 
-.jetpack-free-card-i5__header {
+.jetpack-free-card__header {
 	@include break-small {
 		flex: 1;
 	}
 }
 
-.jetpack-free-card-i5__title {
+.jetpack-free-card__title {
 	color: var( --studio-gray-100 );
 
 	font-family: 'Noto Sans SemiCondensed Bold', 'Noto Sans', $sans;
@@ -23,11 +23,11 @@
 	font-weight: 700;
 }
 
-.jetpack-free-card-i5__subheadline {
+.jetpack-free-card__subheadline {
 	color: var( --studio-gray-60 );
 }
 
-.jetpack-free-card-i5__button.button {
+.jetpack-free-card__button.button {
 	display: block;
 
 	width: 100%;
@@ -46,7 +46,7 @@
 	}
 }
 
-.jetpack-free-card-i5__features-list {
+.jetpack-free-card__features-list {
 	margin: 28px 0 0;
 
 	color: var( --studio-gray-100 );
@@ -83,12 +83,12 @@
 	}
 }
 
-.jetpack-free-card-i5__features-list .gridicon {
+.jetpack-free-card__features-list .gridicon {
 	margin-right: 12px;
 
 	color: var( --studio-jetpack-green-40 );
 }
 
-.jetpack-free-card-i5__features-text {
+.jetpack-free-card__features-text {
 	flex: 1;
 }

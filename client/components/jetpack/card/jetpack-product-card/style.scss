@@ -1,4 +1,4 @@
-.jetpack-product-card-i5 {
+.jetpack-product-card {
 	position: relative;
 
 	box-sizing: border-box;
@@ -18,7 +18,7 @@
 	}
 }
 
-.jetpack-product-card-i5__header {
+.jetpack-product-card__header {
 	display: flex;
 
 	box-sizing: border-box;
@@ -40,11 +40,11 @@
 	}
 }
 
-.jetpack-product-card-i5__header-icon {
+.jetpack-product-card__header-icon {
 	margin-right: 8px;
 }
 
-.jetpack-product-card-i5__body {
+.jetpack-product-card__body {
 	padding: 24px 32px;
 
 	.is-featured & {
@@ -62,11 +62,11 @@
 	}
 }
 
-.jetpack-product-card-i5__icon {
+.jetpack-product-card__icon {
 	width: 56px;
 }
 
-.jetpack-product-card-i5__product-name {
+.jetpack-product-card__product-name {
 	margin: 6px 0 12px;
 
 	color: var( --studio-gray-100 );
@@ -89,7 +89,7 @@
 	}
 }
 
-.jetpack-product-card-i5__description {
+.jetpack-product-card__description {
 	color: var( --studio-gray-60 );
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -101,7 +101,7 @@
 	}
 }
 
-.jetpack-product-card-i5__you-own-this {
+.jetpack-product-card__you-own-this {
 	margin-top: -18px;
 	margin-bottom: 31px;
 
@@ -114,7 +114,7 @@
 	background-color: rgba( var( --color-success-10-rgb ), 0.1 );
 }
 
-.jetpack-product-card-i5__price {
+.jetpack-product-card__price {
 	display: flex;
 	align-items: center;
 
@@ -129,20 +129,20 @@
 	}
 }
 
-.jetpack-product-card-i5__price-from {
+.jetpack-product-card__price-from {
 	margin-right: 12px;
 	color: var( --studio-gray-40 );
 	font-size: 0.875rem;
 	line-height: 1.2;
 }
 
-.jetpack-product-card-i5 .plan-price {
+.jetpack-product-card .plan-price {
 	display: flex;
 
 	color: var( --studio-gray-100 );
 }
 
-.jetpack-product-card-i5 .plan-price__currency-symbol {
+.jetpack-product-card .plan-price__currency-symbol {
 	margin-top: 0.875rem;
 
 	color: inherit;
@@ -150,18 +150,18 @@
 	font-size: 1.5rem;
 }
 
-.jetpack-product-card-i5__price-free,
-.jetpack-product-card-i5 .plan-price__integer {
+.jetpack-product-card__price-free,
+.jetpack-product-card .plan-price__integer {
 	font-size: 3.375rem;
 	font-weight: 700;
 }
 
-.jetpack-product-card-i5 .plan-price__fraction {
+.jetpack-product-card .plan-price__fraction {
 	margin-top: 1rem;
 }
 
-.jetpack-product-card-i5__billing-time-frame,
-.jetpack-product-card-i5__expiration-date {
+.jetpack-product-card__billing-time-frame,
+.jetpack-product-card__expiration-date {
 	margin: 0 12px;
 
 	color: var( --studio-gray-40 );
@@ -170,34 +170,34 @@
 	line-height: 1.2;
 }
 
-.jetpack-product-card-i5__price-tooltip {
+.jetpack-product-card__price-tooltip {
 	color: var( --studio-gray-40 );
 	margin-bottom: 0.875rem;
 }
 
-.jetpack-product-card-i5__price-tooltip.popover .popover__inner {
+.jetpack-product-card__price-tooltip.popover .popover__inner {
 	text-align: center;
 }
-.jetpack-product-card-i5__price-tooltip p {
+.jetpack-product-card__price-tooltip p {
 	margin-bottom: 1rem;
 }
 
-.jetpack-product-card-i5__expiration-date {
+.jetpack-product-card__expiration-date {
 	color: var( --studio-pink-50 );
 }
 
-.jetpack-product-card-i5__above-button {
+.jetpack-product-card__above-button {
 	color: var( --studio-gray-40 );
 	font-size: 0.875rem;
 	line-height: 1.2;
 }
 
-.jetpack-product-card-i5__disabled-message {
+.jetpack-product-card__disabled-message {
 	color: var( --color-accent );
 	font-weight: 600;
 }
 
-.jetpack-product-card-i5__button {
+.jetpack-product-card__button {
 	width: 100%;
 	height: 45px;
 
@@ -211,7 +211,7 @@
 	}
 }
 
-.jetpack-product-card-i5__features {
+.jetpack-product-card__features {
 	margin-bottom: 10px;
 
 	.is-disabled & {
@@ -219,7 +219,7 @@
 	}
 }
 
-.jetpack-product-card-i5__features-list {
+.jetpack-product-card__features-list {
 	margin: 32px 0;
 
 	list-style-type: none;
@@ -229,25 +229,25 @@
 	}
 }
 
-.jetpack-product-card-i5__features-item {
+.jetpack-product-card__features-item {
 	display: flex;
 	align-items: flex-start;
 
 	margin: 14px 0;
 }
 
-.jetpack-product-card-i5__features-icon {
+.jetpack-product-card__features-icon {
 	margin-right: 12px;
 }
 
-.jetpack-product-card-i5__features-text {
+.jetpack-product-card__features-text {
 	margin: 0;
 
 	color: var( --studio-gray-100 );
 }
 
 /* Prices Loading state */
-.jetpack-product-card-i5__price-placeholder {
+.jetpack-product-card__price-placeholder {
 	@include placeholder( --color-neutral-10 );
 
 	width: 80px;
@@ -256,7 +256,7 @@
 	margin-top: 24px;
 }
 
-.jetpack-product-card-i5__time-frame-placeholder {
+.jetpack-product-card__time-frame-placeholder {
 	@include placeholder( --color-neutral-10 );
 
 	width: 80px;
