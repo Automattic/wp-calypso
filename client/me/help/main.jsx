@@ -336,7 +336,7 @@ class Help extends React.PureComponent {
 						subHeaderText={ translate( 'Get help with your WordPress.com site' ) }
 						align="left"
 					/>
-					<Experiment name="calypso-help-contact-button">
+					<Experiment name="calypso_help_contact_button">
 						<Variation name="show-header-button">
 							<div className="help__contact-us-header-button">
 								<Button onClick={ this.trackContactUsClick }>
