@@ -80,9 +80,12 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--bottom-right">
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--bottom-right"
+									key={ desktopOneImg }
+								>
 									<source srcSet={ desktopOneImg } media="(min-width: 600px)" />
-									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileOneImg } />
+									<img alt="" src={ mobileOneImg } />
 								</picture>
 							}
 							heading={ translate( 'Navigate easier than ever' ) }
@@ -96,9 +99,12 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--center">
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--center"
+									key={ desktopTwoImg }
+								>
 									<source srcSet={ desktopTwoImg } media="(min-width: 600px)" />
-									<img alt={ translate( 'Scrolling complete navigation' ) } src={ mobileTwoImg } />
+									<img alt="" src={ mobileTwoImg } />
 								</picture>
 							}
 							heading={ translate( 'Do even more' ) }
@@ -112,9 +118,12 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--bottom-center">
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--bottom-center-small nav-unification-modal__picture--center"
+									key={ desktopThreeImg }
+								>
 									<source srcSet={ desktopThreeImg } media="(min-width: 600px)" />
-									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileThreeImg } />
+									<img alt="" src={ mobileThreeImg } />
 								</picture>
 							}
 							heading={ translate( 'Create in color' ) }

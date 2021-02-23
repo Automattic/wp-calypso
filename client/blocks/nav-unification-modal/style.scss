@@ -190,8 +190,8 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		}
 	}
 
-	&--bottom-center {
-		@media ( min-width: $modal-breakpoint ) {
+	&--bottom-center-small {
+		@media ( max-width: $modal-breakpoint ) {
 			position: absolute;
 			bottom: 0;
 		}
