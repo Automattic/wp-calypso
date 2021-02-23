@@ -66,7 +66,7 @@ MySitesSidebarUnifiedItem.propTypes = {
 	slug: PropTypes.string,
 	title: PropTypes.string,
 	url: PropTypes.string,
-	continueInCalypso: PropTypes.func,
+	continueInCalypso: PropTypes.func.isRequired,
 };
 
 export default memo( MySitesSidebarUnifiedItem );
