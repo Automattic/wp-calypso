@@ -39,12 +39,7 @@ export interface ExPlatClient {
 	/**
 	 * INTERNAL USE ONLY
 	 */
-	internalUseOnlyLogError: (error: Record< string, string > & { message: string; properties?: Record< string, unknown > }) => void;
-
-	/**
-	 * INTERNAL USE ONLY
-	 */
-	internalUseOnlyIsDevelopmentMode: boolean;
+	config: Config;
 }
 
 export class MissingExperimentAssignmentError extends Error {
@@ -196,8 +191,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 			return storedExperimentAssignment;
 		},
-		internalUseOnlyLogError: config.logError,
-		internalUseOnlyIsDevelopmentMode: config.isDevelopmentMode,
+		config,
 	};
 }
 
@@ -222,7 +216,6 @@ export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
 			} );
 			return createFallbackExperimentAssignment( experimentName );
 		},
-		internalUseOnlyLogError: config.logError,
-		internalUseOnlyIsDevelopmentMode: config.isDevelopmentMode,
+		config,
 	};
 }

@@ -13,7 +13,7 @@ interface ExPlatReactClient {
     useExperiment: (experimentName: string) => [boolean, ExperimentAssignment | null]
 }
 
-export default function createExPlatReactClient(ExPlatClient: ExPlatClient): ExPlatReactClient {
+export default function createExPlatReactClient(exPlatClient: ExPlatClient): ExPlatReactClient {
     return {
         useExperiment: (experimentName: string) => {
             const [previousExperimentName] = useState(experimentName)
@@ -25,7 +25,7 @@ export default function createExPlatReactClient(ExPlatClient: ExPlatClient): ExP
 
             useEffect(() => {
                 let isSubscribed = true;
-                ExPlatClient.loadExperimentAssignment(experimentName).then((experimentAssignment) => {
+                exPlatClient.loadExperimentAssignment(experimentName).then((experimentAssignment) => {
                     if (isSubscribed) {
                         setExperimentAssignment(experimentAssignment);
                         setIsLoading(false);
@@ -38,10 +38,10 @@ export default function createExPlatReactClient(ExPlatClient: ExPlatClient): ExP
 
             if (experimentName !== previousExperimentName) {
                 const message = '[ExPlat] useExperiment: experimentName should never change between renders!'
-                if ( ExPlatClient.internalUseOnlyIsDevelopmentMode ) {
+                if ( exPlatClient.config.isDevelopmentMode ) {
                     throw new Error(message)
                 } 
-                ExPlatClient.internalUseOnlyLogError({ message })
+                exPlatClient.config.logError({ message })
             }
 
             return [isLoading, experimentAssignment];

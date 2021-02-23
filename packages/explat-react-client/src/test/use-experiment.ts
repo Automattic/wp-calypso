@@ -8,8 +8,12 @@ import createExPlatReactClient from '../index'
 const createMockExPlatClient = (isDevelopmentMode: boolean = false): ExPlatClient => ({
     loadExperimentAssignment: jest.fn(),
     dangerouslyGetExperimentAssignment: jest.fn(),
-    internalUseOnlyIsDevelopmentMode: isDevelopmentMode,
-    internalUseOnlyLogError: jest.fn(),
+    config: {
+        isDevelopmentMode,
+        logError: jest.fn(),
+        fetchExperimentAssignment: jest.fn(),
+        getAnonId: jest.fn(),
+    }
 })
 
 const createControllablePromise = <T>() => {
