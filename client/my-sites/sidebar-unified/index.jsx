@@ -11,7 +11,7 @@
  * External dependencies
  */
 import React, { Fragment, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -33,10 +33,12 @@ import { itemLinkMatches } from '../sidebar/utils';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isExternal } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
 export const MySitesSidebarUnified = ( { path } ) => {
+	const dispatch = useDispatch();
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
@@ -64,6 +66,11 @@ export const MySitesSidebarUnified = ( { path } ) => {
 			event && event.preventDefault();
 			setExternalUrl( url );
 			setShowDialog( true );
+			dispatch(
+				recordTracksEvent( 'calypso_nav_unification_external_link_dialog_show', {
+					link: url,
+				} )
+			);
 			return false;
 		}
 		return true;
@@ -71,7 +78,14 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 	const closeModalHandler = ( openUrl ) => {
 		setShowDialog( false );
-		openUrl && window.open( externalUrl );
+		if ( openUrl ) {
+			openUrl && window.open( externalUrl );
+			dispatch(
+				recordTracksEvent( 'calypso_nav_unification_external_link_dialog_continue', {
+					link: externalUrl,
+				} )
+			);
+		}
 	};
 
 	return (
