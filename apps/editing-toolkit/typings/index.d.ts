@@ -21,4 +21,3 @@ interface Window {
 		manageReusableBlocksUrl?: string;
 	};
 }
-

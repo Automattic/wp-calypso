@@ -14,7 +14,7 @@ import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
-	originalRegisterPlugin( name, settings as any );
+	originalRegisterPlugin( name, settings as PluginSettings );
 
 if ( typeof MainDashboardButton !== 'undefined' ) {
 	registerPlugin( 'a8c-full-site-editing-nav-sidebar', {

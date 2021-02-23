@@ -34,10 +34,13 @@ const Button = forwardRef(
 		{
 			children,
 			...rest
-		}: OriginalButton.Props & { icon?: any; iconSize?: number; showTooltip?: boolean },
+		}: OriginalButton.Props & { icon?: unknown; iconSize?: number; showTooltip?: boolean },
 		ref
 	) => (
-		<OriginalButton ref={ ref as any } { ...rest }>
+		<OriginalButton
+			ref={ ref as string | ( ( instance: HTMLElement | null ) => void ) }
+			{ ...rest }
+		>
 			{ children }
 		</OriginalButton>
 	)
@@ -46,7 +49,10 @@ const Button = forwardRef(
 function WpcomBlockEditorNavSidebar() {
 	const { toggleSidebar, setSidebarClosing } = useDispatch( STORE_KEY );
 	const [ isOpen, isClosing, postType, selectedItemId, siteTitle ] = useSelect( ( select ) => {
-		const { getPostType, getSite } = select( 'core' ) as any;
+		const { getPostType, getSite } = ( select( 'core' ) as unknown ) as {
+			getPostType: ( postType: string ) => null | { slug: string };
+			getSite: () => null | { title: string };
+		};
 
 		return [
 			select( STORE_KEY ).isSidebarOpened(),
@@ -73,10 +79,10 @@ function WpcomBlockEditorNavSidebar() {
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
 	// When the sidebar closes the previously focused element should be re-focused
-	const activeElementOnMount = useRef< HTMLElement | null >( null );
-	const dismissButtonMount = ( el: HTMLDivElement | null ) => {
+	const activeElementOnMount = useRef< HTMLButtonElement | null >( null );
+	const dismissButtonMount = ( el: HTMLButtonElement | null ) => {
 		if ( el ) {
-			activeElementOnMount.current = document.activeElement as HTMLElement;
+			activeElementOnMount.current = document.activeElement as HTMLButtonElement;
 			el.focus();
 		}
 	};
@@ -205,7 +211,7 @@ function WpcomBlockEditorNavSidebar() {
 						onClick={ dismissSidebar }
 					/>
 					<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
-						<h2>{ decodeEntities( siteTitle ) }</h2>
+						<h2>{ siteTitle ? decodeEntities( siteTitle ) : '' }</h2>
 					</div>
 				</div>
 				<Button
@@ -283,7 +289,12 @@ function WpcomBlockEditorNavSidebar() {
 
 export default compose( [ withConstrainedTabbing ] )( WpcomBlockEditorNavSidebar );
 
-function useNavItems(): Record< string, Post[] > {
+type NavItemRecord = {
+	current: Post[];
+	drafts: Post[];
+	recent: Post[];
+};
+function useNavItems(): NavItemRecord {
 	return useSelect( ( select ) => {
 		const {
 			isEditedPostNew,
@@ -294,7 +305,7 @@ function useNavItems(): Record< string, Post[] > {
 		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
 
 		if ( ! statuses ) {
-			return [];
+			return { current: [], drafts: [], recent: [] };
 		}
 
 		const statusFilter = statuses
@@ -303,22 +314,21 @@ function useNavItems(): Record< string, Post[] > {
 			.join( ',' );
 		const currentPostId = getCurrentPostId();
 		const currentPostType = getCurrentPostType();
-		const items =
-			select( 'core' ).getEntityRecords( 'postType', currentPostType, {
-				_fields: 'id,status,title',
-				exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],
-				orderby: 'modified',
-				per_page: 10,
-				status: statusFilter,
-			} ) || [];
+		const items = ( select( 'core' ).getEntityRecords( 'postType', currentPostType, {
+			_fields: 'id,status,title',
+			exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],
+			orderby: 'modified',
+			per_page: 10,
+			status: statusFilter,
+		} ) || [] ) as Post[];
 		const current = {
 			id: currentPostId,
 			status: isEditedPostNew() ? 'draft' : getEditedPostAttribute( 'status' ),
 			title: { raw: getEditedPostAttribute( 'title' ), rendered: '' },
-		};
+		} as Post;
 		const [ drafts, recent ] = partition( items, { status: 'draft' } );
 
-		return { current: [ current ], drafts, recent } as any;
+		return { current: [ current ], drafts, recent } as NavItemRecord;
 	} );
 }
 

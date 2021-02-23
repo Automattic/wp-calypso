@@ -18,7 +18,7 @@ import './style.scss';
 const Button = ( {
 	children,
 	...rest
-}: OriginalButton.Props & { icon?: any; iconSize?: number } ) => (
+}: OriginalButton.Props & { icon?: unknown; iconSize?: number } ) => (
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
@@ -26,7 +26,7 @@ interface Props {
 	postType: { slug: string };
 }
 
-export default function CreatePage( { postType }: Props ) {
+export default function CreatePage( { postType }: Props ): JSX.Element {
 	const defaultLabel = get(
 		postType,
 		[ 'labels', 'add_new_item' ],
