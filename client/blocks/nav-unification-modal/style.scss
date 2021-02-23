@@ -27,7 +27,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		}
 
 		@media ( min-width: $modal-breakpoint ) {
-			width: 720px;
+			width: 740px;
 			height: $modal-content-min-height;
 			top: calc( 50% - #{$modal-footer-height / 2} );
 		}
@@ -141,6 +141,9 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	@media ( min-width: $modal-breakpoint ) {
 		height: auto;
 		padding: $modal-padding-v $modal-padding-h;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 }
 .nav-unification-modal__visual {
@@ -199,9 +202,12 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	@include onboarding-font-recoleta;
 	/* Gray / Gray 90 */
 	color: #1d2327;
-
 	font-size: 24px;
-	line-height: 1.19;
+	margin-bottom: 16px;
+	
+	h2 {
+		line-height: 1.19;
+	}
 
 	@media ( min-width: $modal-breakpoint ) {
 		font-size: 24px;
