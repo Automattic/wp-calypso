@@ -50,3 +50,11 @@ export const logError = (
 		}
 	}
 };
+
+export const logErrorOrThrowInDevelopmentMode = ( message: string ) => {
+	if ( isDevelopmentMode ) {
+		throw new Error( message );
+	} else {
+		logError( { message } );
+	}
+};

@@ -4,18 +4,10 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
 import userUtils from 'calypso/lib/user/utils';
-import { logError, isDevelopmentMode } from './log-error';
+import { logErrorOrThrowInDevelopmentMode } from './log-error';
 
 // Using typescript to ensure we are being safe in SSR
 declare const window: undefined | ( Window & typeof globalThis );
-
-const logErrorOrThrowInDevelopmentMode = ( message: string ) => {
-	if ( isDevelopmentMode ) {
-		throw new Error( message );
-	} else {
-		logError( { message } );
-	}
-};
 
 /**
  * setInterval, but it runs first callback immediately instead of after interval.
