@@ -35,6 +35,8 @@ const getDotcomPlanDetails = () => ( {
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		] ),
 } );
 
@@ -145,6 +147,13 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 	getInferiorHiddenFeatures: () => [],
@@ -228,6 +237,24 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_SHIPPING_CARRIERS,
 		constants.FEATURE_ALL_BUSINESS_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_INSTALL_PLUGINS,
+		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
+		constants.FEATURE_SFTP_DATABASE,
+		constants.FEATURE_ACCEPT_PAYMENTS,
+		constants.FEATURE_SHIPPING_CARRIERS,
+		constants.PREMIUM_DESIGN_FOR_STORES,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [
 		constants.FEATURE_AUDIO_UPLOADS,
@@ -300,6 +327,17 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_ADVANCED_CUSTOMIZATION,
 		constants.FEATURE_PREMIUM_THEMES,
 		constants.FEATURE_ALL_PERSONAL_FEATURES,
+	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
@@ -377,6 +415,21 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
 		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_ALL_PREMIUM_FEATURES,
+	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_INSTALL_PLUGINS,
+		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
+		constants.FEATURE_SFTP_DATABASE,
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [
