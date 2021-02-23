@@ -22,14 +22,15 @@ import {
 	getVariationForUser,
 	isLoading as isExperimentLoadingSelector,
 } from 'calypso/state/experiments/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+import Experiment from 'calypso/components/experiment';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormRadio from 'calypso/components/forms/form-radio';
-import FormLabel from 'calypso/components/forms/form-label';
 
 export default function DomainUpsellStep( props ) {
 	const translate = useTranslate();
@@ -60,6 +61,7 @@ export default function DomainUpsellStep( props ) {
 				is_in_domain_upsell_emphasize_free_test: isInDomainUpsellEmphasizeFreeTest,
 			} ) }
 		>
+			<Experiment name="domain_upsell_emphasize_free" />
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
