@@ -21,6 +21,7 @@ import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/li
 interface Props {
 	filter: LicenseFilter;
 	search: string;
+	currentPage: number;
 	sortField: LicenseSortField;
 	sortDirection: LicenseSortDirection;
 }
@@ -28,6 +29,7 @@ interface Props {
 export default function Licenses( {
 	filter,
 	search,
+	currentPage,
 	sortDirection,
 	sortField,
 }: Props ): ReactElement {
@@ -44,6 +46,7 @@ export default function Licenses( {
 			<LicenseList
 				filter={ filter }
 				search={ search }
+				currentPage={ currentPage }
 				sortDirection={ sortDirection }
 				sortField={ sortField }
 			/>

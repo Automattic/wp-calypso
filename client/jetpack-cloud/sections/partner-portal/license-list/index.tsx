@@ -30,6 +30,7 @@ import LicensePreview, {
 	LicensePreviewPlaceholder,
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
 import Gridicon from 'calypso/components/gridicon';
+import Pagination from 'calypso/components/pagination';
 import { addQueryArgs } from 'calypso/lib/route';
 
 /**
@@ -48,6 +49,7 @@ const LicenseTransition = ( props: React.PropsWithChildren< LicenseTransitionPro
 interface Props {
 	filter: LicenseFilter;
 	search: string;
+	currentPage: number;
 	sortField: LicenseSortField;
 	sortDirection: LicenseSortDirection;
 }
@@ -55,6 +57,7 @@ interface Props {
 export default function LicenseList( {
 	filter,
 	search,
+	currentPage,
 	sortField,
 	sortDirection,
 }: Props ): ReactElement {
@@ -73,6 +76,13 @@ export default function LicenseList( {
 		}
 
 		const queryParams = { sort_field: field, sort_direction: direction };
+		const currentPath = window.location.pathname + window.location.search;
+
+		page( addQueryArgs( queryParams, currentPath ) );
+	};
+
+	const setPage = ( pageNumber: number ): void => {
+		const queryParams = { page: pageNumber };
 		const currentPath = window.location.pathname + window.location.search;
 
 		page( addQueryArgs( queryParams, currentPath ) );
@@ -150,6 +160,18 @@ export default function LicenseList( {
 							/>
 						</LicenseTransition>
 					) ) }
+
+				{ showLicenses && (
+					<LicenseTransition>
+						<Pagination
+							className="license-list__pagination"
+							page={ currentPage }
+							perPage={ 10 }
+							total={ 50 }
+							pageClick={ setPage }
+						/>
+					</LicenseTransition>
+				) }
 
 				{ isFetching && (
 					<LicenseTransition>

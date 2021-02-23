@@ -31,12 +31,13 @@ export function partnerKeyContext( context: PageJS.Context, next: () => void ): 
 }
 
 export function partnerPortalContext( context: PageJS.Context, next: () => void ): void {
-	const { s: search, sort_field, sort_direction } = context.query;
+	const { s: search, sort_field, sort_direction, page } = context.query;
 	const filter = valueToEnum< LicenseFilter >(
 		LicenseFilter,
 		context.params.state,
 		LicenseFilter.NotRevoked
 	);
+	const currentPage = parseInt( page ) || 1;
 	const sortField = valueToEnum< LicenseSortField >(
 		LicenseSortField,
 		sort_field,
@@ -54,6 +55,7 @@ export function partnerPortalContext( context: PageJS.Context, next: () => void 
 		<Licenses
 			filter={ filter }
 			search={ search || '' }
+			currentPage={ currentPage }
 			sortDirection={ sortDirection }
 			sortField={ sortField }
 		/>
