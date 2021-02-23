@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { get } from 'lodash';
 import { Button as OriginalButton } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
@@ -35,14 +36,14 @@ export default function CreatePage( { postType }: Props ) {
 		'a8c.WpcomBlockEditorNavSidebar.createPostLabel',
 		defaultLabel,
 		postType.slug
-	);
+	) as string;
 
 	const defaultUrl = addQueryArgs( 'post-new.php', { post_type: postType.slug } );
 	const url = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.createPostUrl',
 		defaultUrl,
 		postType.slug
-	);
+	) as string;
 
 	const trackEvent = () => {
 		recordTracksEvent( `calypso_editor_sidebar_item_add`, { post_type: postType.slug } );
@@ -50,7 +51,9 @@ export default function CreatePage( { postType }: Props ) {
 
 	return (
 		<Button
-			target={ applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) }
+			target={
+				applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) as string | undefined
+			}
 			isPrimary
 			className="wpcom-block-editor-nav-sidebar-create-page"
 			href={ url }

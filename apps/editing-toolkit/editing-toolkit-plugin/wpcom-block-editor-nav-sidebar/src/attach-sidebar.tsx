@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, createPortal, useState } from '@wordpress/element';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';

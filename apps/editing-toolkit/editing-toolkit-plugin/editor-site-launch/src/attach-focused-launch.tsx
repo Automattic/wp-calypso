@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { hasQueryArg } from '@wordpress/url';

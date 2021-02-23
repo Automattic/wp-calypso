@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { forwardRef, useLayoutEffect, useRef, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -102,14 +103,20 @@ function WpcomBlockEditorNavSidebar() {
 	// `closeLabel` can be overridden in the same way to correctly label where the user will
 	// be taken to after closing the editor.
 	const defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
-	const closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', defaultCloseUrl );
+	const closeUrl = applyFilters(
+		'a8c.WpcomBlockEditorNavSidebar.closeUrl',
+		defaultCloseUrl
+	) as string;
 
 	const defaultCloseLabel = get(
 		postType,
 		[ 'labels', 'all_items' ],
 		__( 'Back', 'full-site-editing' )
 	);
-	const closeLabel = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeLabel', defaultCloseLabel );
+	const closeLabel = applyFilters(
+		'a8c.WpcomBlockEditorNavSidebar.closeLabel',
+		defaultCloseLabel
+	) as string;
 
 	const handleClose = ( e: React.MouseEvent ) => {
 		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
@@ -124,7 +131,7 @@ function WpcomBlockEditorNavSidebar() {
 		'a8c.WpcomBlockEditorNavSidebar.listHeading',
 		defaultListHeading,
 		postType.slug
-	);
+	) as string;
 
 	const dialogDescription =
 		postType.slug === 'page'
@@ -296,7 +303,7 @@ function useNavItems(): Record< string, Post[] > {
 			.join( ',' );
 		const currentPostId = getCurrentPostId();
 		const currentPostType = getCurrentPostType();
-		const items: Post[] =
+		const items =
 			select( 'core' ).getEntityRecords( 'postType', currentPostType, {
 				_fields: 'id,status,title',
 				exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],

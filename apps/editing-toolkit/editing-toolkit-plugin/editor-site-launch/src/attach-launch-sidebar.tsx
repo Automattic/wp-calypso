@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { doAction, hasAction } from '@wordpress/hooks';
 import { LaunchContext } from '@automattic/launch';
-import { LocaleProvider } from '@automattic/i18n-utils';
+import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -47,7 +47,7 @@ registerPlugin( 'a8c-editor-site-launch', {
 		}
 
 		return (
-			<LocaleProvider localeSlug={ window.wpcomEditorSiteLaunch?.locale }>
+			<LocaleProvider localeSlug={ window.wpcomEditorSiteLaunch?.locale ?? i18nDefaultLocaleSlug }>
 				<LaunchContext.Provider
 					value={ {
 						siteId: window._currentSiteId,

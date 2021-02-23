@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { Button as OriginalButton } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
