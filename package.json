@@ -244,6 +244,7 @@
 		"eslint-plugin-prettier": "^3.1.4",
 		"eslint-plugin-react": "^7.21.5",
 		"eslint-plugin-react-hooks": "^4.0.5",
+		"eslint-plugin-you-dont-need-lodash-underscore": "^6.11.0",
 		"eslint-plugin-wpcalypso": "^5.1.0",
 		"exports-loader": "^0.7.0",
 		"fake-indexeddb": "^3.1.0",

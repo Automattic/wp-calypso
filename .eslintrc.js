@@ -10,6 +10,7 @@ module.exports = {
 		'plugin:prettier/recommended',
 		'prettier/react',
 		'plugin:md/prettier',
+		'plugin:you-dont-need-lodash-underscore/compatible',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
 	overrides: [
