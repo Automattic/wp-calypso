@@ -1,1 +1,1 @@
-export const LICENSES_PER_PAGE = 1;
+export const LICENSES_PER_PAGE = 50;
