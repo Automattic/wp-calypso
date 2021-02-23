@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, map, noop } from 'lodash';
+import { compact, get, map, noop, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
+import { PlanFeaturesAvailableItem } from './item';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { abtest } from 'calypso/lib/abtest';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -113,6 +114,7 @@ export class PlanFeaturesComparison extends Component {
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
+									{ this.renderPlanFeatureRows() }
 								</tbody>
 							</table>
 						</div>
@@ -367,6 +369,101 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 
+	getLongestFeaturesList() {
+		const { planProperties } = this.props;
+
+		return reduce(
+			planProperties,
+			( longest, properties ) => {
+				const currentFeatures = Object.keys( properties.features );
+				return currentFeatures.length > longest.length ? currentFeatures : longest;
+			},
+			[]
+		);
+	}
+
+	renderPlanFeatureRows() {
+		const longestFeatures = this.getLongestFeaturesList();
+		return map( longestFeatures, ( featureKey, rowIndex ) => {
+			return (
+				<tr key={ rowIndex } className="plan-features-comparison__row">
+					{ this.renderPlanFeatureColumns( rowIndex ) }
+				</tr>
+			);
+		} );
+	}
+
+	renderAnnualPlansFeatureNotice( feature ) {
+		const { translate, isInSignup } = this.props;
+
+		if (
+			! isInSignup ||
+			! feature.availableOnlyForAnnualPlans ||
+			feature.availableForCurrentPlan
+		) {
+			return '';
+		}
+
+		return (
+			<span className="plan-features-comparison__item-annual-plan">
+				{ translate( 'Included with annual plans' ) }
+			</span>
+		);
+	}
+
+	renderFeatureItem( feature, index ) {
+		const classes = classNames( 'plan-features-comparison__item-info', {
+			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
+			'is-available': feature.availableForCurrentPlan,
+		} );
+
+		return (
+			<>
+				<PlanFeaturesAvailableItem
+					key={ index }
+					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
+				>
+					<span className={ classes }>
+						<span className="plan-features-comparison__item-title">
+							{ feature.getTitle( this.props.domainName ) }
+						</span>
+					</span>
+				</PlanFeaturesAvailableItem>
+			</>
+		);
+	}
+
+	renderPlanFeatureColumns( rowIndex ) {
+		const { planProperties, selectedFeature, withScroll } = this.props;
+
+		return map( planProperties, ( properties, mapIndex ) => {
+			const { features, planName } = properties;
+			const featureKeys = Object.keys( features );
+			const key = featureKeys[ rowIndex ];
+			const currentFeature = features[ key ];
+
+			const classes = classNames(
+				'plan-features-comparison__table-item',
+				getPlanClass( planName ),
+				{
+					'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
+					'is-last-feature': rowIndex + 1 === featureKeys.length,
+					'is-highlighted':
+						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+					'is-bold': rowIndex === 0,
+				}
+			);
+
+			return currentFeature ? (
+				<td key={ `${ planName }-${ key }` } className={ classes }>
+					{ this.renderFeatureItem( currentFeature, mapIndex ) }
+				</td>
+			) : (
+				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
+			);
+		} );
+	}
+
 	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -523,9 +620,9 @@ export default connect(
 
 							break;
 						default:
-							if ( planConstantObj.getSignupFeatures ) {
+							if ( planConstantObj.getSignupCompareAvailableFeatures ) {
 								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupFeatures( currentPlan )
+									planConstantObj.getSignupCompareAvailableFeatures( currentPlan )
 								);
 							}
 					}
