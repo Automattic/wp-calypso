@@ -141,9 +141,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	@media ( min-width: $modal-breakpoint ) {
 		height: auto;
 		padding: $modal-padding-v $modal-padding-h;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
 	}
 }
 .nav-unification-modal__visual {
