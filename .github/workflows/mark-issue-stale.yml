@@ -25,3 +25,4 @@ jobs:
           stale-issue-label: '[Status] Stale'
           # Increase number of operations executed per run.
           operations-per-run: 2000
+          debug-only: true
