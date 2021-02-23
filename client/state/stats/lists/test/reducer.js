@@ -180,10 +180,36 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( original );
 		} );
 
-		test( 'should not load invalid persisted state', () => {
+		test( 'should not load persisted state with invalid statType', () => {
 			const original = deepFreeze( {
 				2916284: {
 					'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse,
+				},
+			} );
+			const state = deserialize( items, original );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should not load persisted state with invalid query', () => {
+			const original = deepFreeze( {
+				2916284: {
+					statsStreak: {
+						'query-withou-square-brackets': streakResponse,
+					},
+				},
+			} );
+			const state = deserialize( items, original );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should not load persisted state with non-object data', () => {
+			const original = deepFreeze( {
+				2916284: {
+					statsStreak: {
+						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': '',
+					},
 				},
 			} );
 			const state = deserialize( items, original );
@@ -210,6 +236,24 @@ describe( 'reducer', () => {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': streakResponse,
+					},
+				},
+			} );
+		} );
+
+		test( 'should receive invalid stats as null', () => {
+			const state = items( undefined, {
+				type: SITE_STATS_RECEIVE,
+				siteId: 2916284,
+				statType: 'statsStreak',
+				query: streakQuery,
+				data: '',
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					statsStreak: {
+						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': null,
 					},
 				},
 			} );
@@ -291,7 +335,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should should not change another statTypes property', () => {
+		test( 'should not change another statTypes property', () => {
 			const original = deepFreeze( {
 				2916284: {
 					statsStreak: {
