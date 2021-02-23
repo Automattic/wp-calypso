@@ -7,29 +7,32 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import classnames from 'classnames';
 import page from 'page';
+import { PanelBody } from '@wordpress/components';
+import { Dialog, Button, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
-import Card from 'components/card';
-import Dialog from 'components/dialog';
-import Button from 'components/button';
-import Gridicon from 'components/gridicon';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import SiteSelector from 'components/site-selector';
-import DocumentHead from 'components/data/document-head';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import hasJetpackSites from 'state/selectors/has-jetpack-sites';
-import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
-import { getCurrentUserSiteCount } from 'state/current-user/selectors';
-import getJetpackSites from 'state/selectors/get-jetpack-sites';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import SiteSelector from 'calypso/components/site-selector';
+import DocumentHead from 'calypso/components/data/document-head';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import getJetpackSites from 'calypso/state/selectors/get-jetpack-sites';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import mainImage from 'calypso/assets/images/illustrations/check-email.svg';
 
 class HelpFlow extends Component {
 	state = {
@@ -52,7 +55,7 @@ class HelpFlow extends Component {
 		this.setState( { displayDialog: true, otherDialog: true } );
 	};
 
-	siteFilter = site => {
+	siteFilter = ( site ) => {
 		const isAtomic = get( site, 'options.is_automated_transfer', false );
 
 		return site.jetpack && ! isAtomic;
@@ -63,18 +66,24 @@ class HelpFlow extends Component {
 	};
 
 	render() {
-		const { siteCount, jetpackSiteCount, hasAtomicSites, translate } = this.props;
+		const {
+			siteCount,
+			jetpackSiteCount,
+			hasAnyJetpackSites,
+			hasAtomicSites,
+			translate,
+		} = this.props;
 
 		const { displayDialog, jetpackDialog, otherDialog } = this.state;
 
 		const hasWpComSites = siteCount - jetpackSiteCount > 0;
 
-		if ( ! hasJetpackSites && ! hasAtomicSites ) {
+		if ( ! hasAnyJetpackSites && ! hasAtomicSites ) {
 			page( `/help/contact/form` );
 		}
 
 		const helpFlowClassNames = classnames( 'help-flow', {
-			'has-site-selector': hasJetpackSites && hasWpComSites,
+			'has-site-selector': hasAnyJetpackSites && hasWpComSites,
 			'has-no-site-selector': ! hasWpComSites,
 		} );
 
@@ -101,7 +110,10 @@ class HelpFlow extends Component {
 		} else if ( otherDialog ) {
 			dialogContent = (
 				<Fragment>
-					<Accordion title={ translate( 'I have an issue with WooCommerce' ) }>
+					<PanelBody
+						initialOpen={ false }
+						title={ translate( 'I have an issue with WooCommerce' ) }
+					>
 						{ translate(
 							'For Store or WooCommerce questions, {{a}}contact the Woo support team directly{{/a}}.',
 							{
@@ -110,29 +122,35 @@ class HelpFlow extends Component {
 								},
 							}
 						) }
-					</Accordion>
+					</PanelBody>
 
-					<Accordion title={ translate( 'I have an issue with a custom theme/plugin' ) }>
+					<PanelBody
+						initialOpen={ false }
+						title={ translate( 'I have an issue with a custom theme/plugin' ) }
+					>
 						{ translate(
 							'For issues with a custom theme or a custom plugin, contact that developer directly.'
 						) }
-					</Accordion>
+					</PanelBody>
 
-					<Accordion title={ translate( 'I have an issue with the WordPress app' ) }>
+					<PanelBody
+						initialOpen={ false }
+						title={ translate( 'I have an issue with the WordPress app' ) }
+					>
 						{ translate(
 							'For issues with the WordPress apps, use the in-help support located under "Help & Support" to provide additional information necessary for debugging the issue.'
 						) }
-					</Accordion>
+					</PanelBody>
 
-					<Accordion title={ translate( 'I have an issue WordAds' ) }>
+					<PanelBody initialOpen={ false } title={ translate( 'I have an issue WordAds' ) }>
 						{ translate( 'For issues with WordAds, contact us {{a}}here{{/a}}.', {
 							components: {
 								a: <a href="/help/contact/form" />,
 							},
 						} ) }
-					</Accordion>
+					</PanelBody>
 
-					<Accordion title={ translate( 'I have a billing issue' ) }>
+					<PanelBody initialOpen={ false } title={ translate( 'I have a billing issue' ) }>
 						{ translate(
 							'For billing issues, including investigating an unknown charge, visit our {{a}}billing site{{/a}}.',
 							{
@@ -141,9 +159,12 @@ class HelpFlow extends Component {
 								},
 							}
 						) }
-					</Accordion>
+					</PanelBody>
 
-					<Accordion title={ translate( 'I have an issue with my dashboard on WordPress.com' ) }>
+					<PanelBody
+						initialOpen={ false }
+						title={ translate( 'I have an issue with my dashboard on WordPress.com' ) }
+					>
 						{ translate(
 							'For issues with your WordPress.com dashboard, contact us {{a}}here{{/a}}.',
 							{
@@ -152,9 +173,10 @@ class HelpFlow extends Component {
 								},
 							}
 						) }
-					</Accordion>
+					</PanelBody>
 
-					<Accordion
+					<PanelBody
+						initialOpen={ false }
 						title={ translate( 'I have an issue with a WordPress site hosted somewhere else' ) }
 					>
 						{ translate(
@@ -165,7 +187,7 @@ class HelpFlow extends Component {
 								},
 							}
 						) }
-					</Accordion>
+					</PanelBody>
 				</Fragment>
 			);
 		}
@@ -179,11 +201,7 @@ class HelpFlow extends Component {
 				</HeaderCake>
 				<Card className={ helpFlowClassNames }>
 					<div className="help-flow__wrapper">
-						<img
-							className="help-flow__illustration"
-							alt=""
-							src="/calypso/images/illustrations/contact-us.svg"
-						/>
+						<img className="help-flow__illustration" alt="" src={ mainImage } />
 						<div className="help-flow__description">
 							<h2 className="help-flow__heading">{ translate( 'Hi there! How can we help?' ) }</h2>
 							<p>
@@ -209,7 +227,7 @@ class HelpFlow extends Component {
 								{ translate( 'My WordPress.com site' ) }
 							</Button>
 						) }
-						{ hasJetpackSites && (
+						{ hasAnyJetpackSites && (
 							<Button
 								className="help-flow__button is-jetpack"
 								primary
@@ -222,7 +240,7 @@ class HelpFlow extends Component {
 							{ translate( 'Other' ) }
 						</Button>
 					</div>
-					{ hasJetpackSites && hasWpComSites && (
+					{ hasAnyJetpackSites && hasWpComSites && (
 						<div className="help-flow__site-selector">
 							<p className="help-flow__site-selector-subtitle">
 								{ translate( 'Your Jetpack-connected sites:' ) }
@@ -271,8 +289,8 @@ class HelpFlow extends Component {
 	}
 }
 
-export default connect( state => ( {
-	hasJetpackSites: hasJetpackSites( state ),
+export default connect( ( state ) => ( {
+	hasAnyJetpackSites: hasJetpackSites( state ),
 	hasAtomicSites: userHasAnyAtomicSites( state ),
 	siteCount: getCurrentUserSiteCount( state ),
 	jetpackSiteCount: getJetpackSites( state ).length,
