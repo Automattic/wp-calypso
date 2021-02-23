@@ -32,16 +32,16 @@ export const logError = (
 		} else {
 			if ( isDevelopmentMode ) {
 				// eslint-disable-next-line no-console
-				console.error( '[ExPlat]', error.message, error );
+				console.error( '[ExPlat] ', error.message, error );
+			} else {
+				const body = new window.FormData();
+				body.append( 'error', JSON.stringify( error ) );
+
+				window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
+					method: 'POST',
+					body,
+				} );
 			}
-
-			const body = new window.FormData();
-			body.append( 'error', JSON.stringify( error ) );
-
-			window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
-				method: 'POST',
-				body,
-			} );
 		}
 	} catch ( e ) {
 		if ( isDevelopmentMode ) {
