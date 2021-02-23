@@ -97,8 +97,11 @@ The way we use Git with Calypso is described in the [Git Workflow document](../g
 
 - [page.js](http://visionmedia.github.io/page.js/) – router
 - [express.js](http://expressjs.com) – light server-side framework we use to serve the initial page
-- [lodash](https://lodash.com) – general purpose utility library; includes a ton of useful functions for dealing with arrays, objects, and collections
 - [webpack](http://webpack.github.io) – building a JavaScript bundle of all of our modules and making sure loading them works just fine
 - [Babel](https://babeljs.io) – for transpiling ES2015+ and JSX
+
+## Other technologies used in Calypso that are now deprecated
+
+- [lodash](https://lodash.com) – general purpose utility library; includes a ton of useful functions for dealing with arrays, objects, and collections; deprecated because of its lack of modularity and tendency to introduce code smells by implicitly converting different value types and handling nil (`null` or `undefined`) values.
 
 Previous: [Hello, World!](hello-world.md) Next: [Information Architecture](information-architecture.md)
