@@ -1010,6 +1010,9 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		// This will mute tests that failed but eventually passed. Muted tests
+		// will be run in future builds, but they won't be reported as "failing"
+		supportTestRetry = true
 	}
 
 	dependencies {
