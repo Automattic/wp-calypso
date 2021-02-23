@@ -102,6 +102,6 @@ The way we use Git with Calypso is described in the [Git Workflow document](../g
 
 ## Other technologies used in Calypso that are now deprecated
 
-- [lodash](https://lodash.com) – general purpose utility library; includes a ton of useful functions for dealing with arrays, objects, and collections; deprecated because of its lack of modularity and tendency to introduce code smells by implicitly converting different value types and handling nil (`null` or `undefined`) values.
+- [lodash](https://lodash.com) – general purpose utility library; includes a ton of useful functions for dealing with arrays, objects, and collections; deprecated because of its lack of modularity and tendency to introduce code smells by implicitly converting different value types and handling nullish (`null` or `undefined`) values.
 
 Previous: [Hello, World!](hello-world.md) Next: [Information Architecture](information-architecture.md)
