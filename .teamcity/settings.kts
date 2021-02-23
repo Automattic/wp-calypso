@@ -975,7 +975,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
 			param("xmlReportParsing.reportDirs", "test/e2e/temp/**/reports/*.xml")
-			param("xmlReportParsing.logInternalSystemError", "true");
 		}
 		perfmon {
 		}
@@ -1011,6 +1010,8 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		// With testFailure=true, TeamCity detects test that fail but succeed after a retry as build failures
+		testFailure = false
 	}
 
 	dependencies {
