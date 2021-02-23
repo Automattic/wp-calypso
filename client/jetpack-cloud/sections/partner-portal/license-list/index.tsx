@@ -29,6 +29,7 @@ import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/licen
 import LicensePreview, {
 	LicensePreviewPlaceholder,
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
+import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 import Gridicon from 'calypso/components/gridicon';
 import Pagination from 'calypso/components/pagination';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -121,6 +122,7 @@ export default function LicenseList( {
 	const isFetching = useSelector( isFetchingLicenses );
 	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;
 	const showLicenses = hasFetched && ! isFetching && !! licenses;
+	const showPagination = showLicenses && licenses.totalPages > 1;
 	const showNoResults = hasFetched && ! isFetching && licenses && licenses.items.length === 0;
 
 	return (
@@ -130,6 +132,7 @@ export default function LicenseList( {
 				search={ search }
 				sortField={ sortField }
 				sortDirection={ sortDirection }
+				page={ currentPage }
 			/>
 
 			<LicenseListItem header className="license-list__header">
@@ -186,18 +189,6 @@ export default function LicenseList( {
 						</LicenseTransition>
 					) ) }
 
-				{ showLicenses && (
-					<LicenseTransition>
-						<Pagination
-							className="license-list__pagination"
-							page={ currentPage }
-							perPage={ 10 }
-							total={ 50 }
-							pageClick={ setPage }
-						/>
-					</LicenseTransition>
-				) }
-
 				{ isFetching && (
 					<LicenseTransition>
 						<LicensePreviewPlaceholder />
@@ -209,6 +200,17 @@ export default function LicenseList( {
 						<Card className="license-list__message" compact>
 							<p>{ translate( 'No licenses found.' ) }</p>
 						</Card>
+					</LicenseTransition>
+				) }
+				{ showPagination && (
+					<LicenseTransition>
+						<Pagination
+							className="license-list__pagination"
+							page={ currentPage }
+							perPage={ LICENSES_PER_PAGE }
+							total={ licenses.totalItems }
+							pageClick={ setPage }
+						/>
 					</LicenseTransition>
 				) }
 			</TransitionGroup>

@@ -18,6 +18,7 @@ import {
 	LicenseCounts,
 	PaginatedItems,
 } from 'calypso/state/partner-portal/types';
+import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -38,7 +39,8 @@ export function fetchLicenses(
 	filter: LicenseFilter,
 	search: string,
 	sortField: LicenseSortField,
-	sortDirection: LicenseSortDirection
+	sortDirection: LicenseSortDirection,
+	page: number
 ): HttpAction {
 	return createHttpAction( {
 		type: JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
@@ -46,6 +48,8 @@ export function fetchLicenses(
 		search,
 		sortField,
 		sortDirection,
+		page: page,
+		perPage: LICENSES_PER_PAGE,
 	} );
 }
 

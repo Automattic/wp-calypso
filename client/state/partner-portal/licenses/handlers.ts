@@ -83,6 +83,8 @@ export function fetchLicensesHandler( action: HttpAction ): AnyAction {
 				...( action.search ? { search: action.search } : { filter: action.filter } ),
 				sort_field: action.sortField,
 				sort_direction: action.sortDirection,
+				page: action.page,
+				per_page: action.perPage,
 			},
 		},
 		action
