@@ -85,9 +85,9 @@ const Modal = () => {
 									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileOneImg } />
 								</picture>
 							}
-							heading={ translate( 'A new way to navigate' ) }
+							heading={ translate( 'Navigate easier than ever' ) }
 							content={ translate(
-								'Introducing a single site management experience for WordPress.com.'
+								'Managing your entire site is simpler than ever. Do it all right from the sidebar without leaving your dashboard.'
 							) }
 						/>
 					),
@@ -101,9 +101,9 @@ const Modal = () => {
 									<img alt={ translate( 'Scrolling complete navigation' ) } src={ mobileTwoImg } />
 								</picture>
 							}
-							heading={ translate( 'Everything in one place' ) }
+							heading={ translate( 'Do even more' ) }
 							content={ translate(
-								'Manage your entire site from the sidebar, all without ever leaving your dashboard.'
+								'Advanced admin features have a new home! You can find it in your account settings'
 							) }
 						/>
 					),
@@ -117,9 +117,9 @@ const Modal = () => {
 									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileThreeImg } />
 								</picture>
 							}
-							heading={ translate( 'Make it your own' ) }
+							heading={ translate( 'Create in color' ) }
 							content={ translate(
-								'Customize the appearance of your navigation from your {{a}}account settings{{/a}}.',
+								'Now you can choose a new color for your dashboard in {{a}}account settings{{/a}}.',
 								{
 									components: {
 										a: <a href="/me/account" />,
