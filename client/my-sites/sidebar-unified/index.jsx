@@ -79,7 +79,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	const closeModalHandler = ( openUrl ) => {
 		setShowDialog( false );
 		if ( openUrl ) {
-			openUrl && window.open( externalUrl );
+			window.open( externalUrl );
 			dispatch(
 				recordTracksEvent( 'calypso_nav_unification_external_link_dialog_continue', {
 					link: externalUrl,
