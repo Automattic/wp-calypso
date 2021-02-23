@@ -328,7 +328,7 @@ function useNavItems(): NavItemRecord {
 		} as Post;
 		const [ drafts, recent ] = partition( items, { status: 'draft' } );
 
-		return { current: [ current ], drafts, recent } as NavItemRecord;
+		return { current: [ current ], drafts, recent };
 	} );
 }
 
