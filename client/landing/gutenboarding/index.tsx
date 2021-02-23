@@ -122,14 +122,10 @@ function waitForSelectedSite(): Promise< Site | undefined > {
 			return resolve( undefined );
 		}
 		unsubscribe = subscribe( () => {
-			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
-			if ( resolvedSelectedSite ) {
-				return resolve( resolvedSelectedSite );
-			}
-
-			// For some reason, this still holds the value true after the request is resolved.
-			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
-				resolve( undefined );
+			if (
+				select( 'core/data' ).hasFinishedResolution( SITE_STORE, 'getSite', [ selectedSite ] )
+			) {
+				resolve( select( SITE_STORE ).getSite( selectedSite ) );
 			}
 		} );
 		select( SITE_STORE ).getSite( selectedSite );
