@@ -5,9 +5,7 @@
  */
 import deterministicStringify from 'fast-json-stable-stringify';
 import { localize } from 'i18n-calypso';
-import { omit } from 'lodash';
 import React from 'react';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
 
 /**
@@ -15,66 +13,79 @@ import { connect } from 'react-redux';
  */
 import { Card } from '@automattic/components';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
-import { fetchUsers } from 'calypso/lib/users/actions';
 import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import ListEnd from 'calypso/components/list-end';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-const debug = debugFactory( 'calypso:my-sites:people:team-list' );
-
 class Team extends React.Component {
 	infiniteList = React.createRef();
 
-	isLastPage = () =>
-		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
+	renderPerson = ( user ) => (
+		<PeopleListItem key={ user.ID } user={ user } type="user" site={ this.props.site } />
+	);
+
+	getPersonRef = ( user ) => 'user-' + user.ID;
+
+	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 
 	render() {
-		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
+		const {
+			site,
+			users,
+			fetchOptions,
+			search,
+			fetchingUsers,
+			fetchingNextPage,
+			totalUsers,
+			hasNextPage,
+			fetchNextPage,
+			translate,
+		} = this.props;
+
+		const { number, offset, ...keyProps } = fetchOptions;
+		const key = deterministicStringify( keyProps );
+
 		let people;
 		let headerText;
-		if ( this.props.totalUsers ) {
-			headerText = this.props.translate(
+
+		if ( totalUsers ) {
+			headerText = translate(
 				'There is %(numberPeople)d person in your team',
 				'There are %(numberPeople)d people in your team',
 				{
 					args: {
-						numberPeople: this.props.totalUsers,
+						numberPeople: totalUsers,
 					},
-					count: this.props.totalUsers,
+					count: totalUsers,
 					context: 'A navigation label.',
 				}
 			);
 		}
 
-		if (
-			this.props.fetchInitialized &&
-			! this.props.users.length &&
-			this.props.fetchOptions.search &&
-			! this.props.fetchingUsers
-		) {
+		if ( ! users.length && fetchOptions.search && ! fetchingUsers ) {
 			return (
 				<NoResults
 					image="/calypso/images/people/mystery-person.svg"
-					text={ this.props.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
-						args: { searchTerm: this.props.search },
+					text={ translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
+						args: { searchTerm: search },
 						components: { em: <em /> },
 					} ) }
 				/>
 			);
 		}
 
-		if ( this.props.site && this.props.users.length ) {
-			if ( this.props.search && this.props.totalUsers ) {
-				headerText = this.props.translate(
+		if ( site && users.length ) {
+			if ( search && totalUsers ) {
+				headerText = translate(
 					'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
 					'%(numberPeople)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
 					{
-						count: this.props.users.length,
+						count: users.length,
 						args: {
-							numberPeople: this.props.totalUsers,
-							searchTerm: this.props.search,
+							numberPeople: totalUsers,
+							searchTerm: search,
 						},
 						components: {
 							em: <em />,
@@ -86,12 +97,12 @@ class Team extends React.Component {
 			people = (
 				<InfiniteList
 					key={ key }
-					items={ this.props.users }
+					items={ users }
 					className="team-list__infinite is-people"
 					ref={ this.infiniteList }
-					fetchingNextPage={ this.props.fetchingUsers }
-					lastPage={ this.isLastPage() }
-					fetchNextPage={ this.fetchNextPage }
+					fetchingNextPage={ fetchingNextPage }
+					lastPage={ ! hasNextPage }
+					fetchNextPage={ fetchNextPage }
 					getItemRef={ this.getPersonRef }
 					renderLoadingPlaceholders={ this.renderLoadingPeople }
 					renderItem={ this.renderPerson }
@@ -103,38 +114,17 @@ class Team extends React.Component {
 		}
 
 		return (
-			<div>
+			<>
 				<PeopleListSectionHeader
 					label={ headerText }
-					site={ this.props.site }
-					isPlaceholder={ this.props.fetchingUsers || this.props.fetchOptions.search }
+					site={ site }
+					isPlaceholder={ fetchingUsers }
 				/>
 				<Card className="people-invites__invites-list">{ people }</Card>
-				{ this.isLastPage() && <ListEnd /> }
-			</div>
+				{ ! hasNextPage && <ListEnd /> }
+			</>
 		);
 	}
-
-	renderPerson = ( user ) => (
-		<PeopleListItem key={ user.ID } user={ user } type="user" site={ this.props.site } />
-	);
-
-	fetchNextPage = () => {
-		const offset = this.props.users.length;
-		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
-		this.props.recordGoogleEvent(
-			'People',
-			'Fetched more users with infinite list',
-			'offset',
-			offset
-		);
-		debug( 'fetching next batch of users' );
-		fetchUsers( fetchOptions );
-	};
-
-	getPersonRef = ( user ) => 'user-' + user.ID;
-
-	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
 }
 
 export default connect( null, { recordGoogleEvent } )( localize( Team ) );
