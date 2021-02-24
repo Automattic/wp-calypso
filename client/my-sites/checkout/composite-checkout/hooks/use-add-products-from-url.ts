@@ -62,6 +62,22 @@ export default function useAddProductsFromUrl( {
 		couponCodeFromUrl,
 	] );
 
+	// If we have made requests to update the cart, and the cart has finished
+	// updating, mark this hook complete.
+	useEffect( () => {
+		if ( ! isLoading ) {
+			return;
+		}
+		if ( ! hasRequestedInitialProducts.current ) {
+			return;
+		}
+		if ( ! isCartPendingUpdate && ! isLoadingCart ) {
+			debug( 'initial cart requests have been completed' );
+			setIsLoading( false );
+			return;
+		}
+	}, [ isLoading, isCartPendingUpdate, isLoadingCart ] );
+
 	// If we have products or a coupon to add, and we have not requested they be
 	// added, and nothing is loading, request that the shopping cart add those
 	// products.
@@ -73,18 +89,13 @@ export default function useAddProductsFromUrl( {
 			return;
 		}
 		debug( 'adding initial products to cart', productsForCart );
-		const cartPromises = [];
 		if ( productsForCart.length > 0 ) {
-			cartPromises.push( addProductsToCart( productsForCart ) );
+			addProductsToCart( productsForCart );
 		}
 		debug( 'adding initial coupon to cart', couponCodeFromUrl );
 		if ( couponCodeFromUrl ) {
-			cartPromises.push( applyCoupon( couponCodeFromUrl ) );
+			applyCoupon( couponCodeFromUrl );
 		}
-		Promise.all( cartPromises ).then( () => {
-			debug( 'initial cart requests have completed' );
-			setIsLoading( false );
-		} );
 		hasRequestedInitialProducts.current = true;
 	}, [
 		isLoading,
