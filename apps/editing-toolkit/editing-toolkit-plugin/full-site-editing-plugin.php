@@ -282,7 +282,7 @@ function load_block_inserter_modifications() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
 
 /**
- * Load Mailerlite module
+ * Load Mailerlite module.
  */
 function load_mailerlite() {
 	require_once __DIR__ . '/mailerlite/subscriber-popup.php';
