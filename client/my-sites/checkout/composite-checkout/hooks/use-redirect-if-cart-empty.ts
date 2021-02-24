@@ -25,8 +25,10 @@ export default function useRedirectIfCartEmpty< T >(
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const displayRedirectNotice = useCallback( () => {
-		reduxDispatch( infoNotice( translate( 'You have no items in your cart' ) ) );
-	}, [] );
+		reduxDispatch(
+			infoNotice( translate( 'You have no items in your cart' ), { displayOnNextPage: true } )
+		);
+	}, [ reduxDispatch, translate ] );
 	useEffect( () => {
 		if ( didRedirect.current || doNotRedirect ) {
 			return;
