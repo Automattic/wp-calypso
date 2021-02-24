@@ -168,7 +168,7 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
-		"woocommerce/store-removed": false,
+		"woocommerce/store-removed": true,
 		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,
