@@ -51,7 +51,7 @@ class SiteOrDomain extends Component {
 				label: translate( 'New site' ),
 				image: <NewSiteImage />,
 				description: translate(
-					'Choose a theme, customize, and launch your site. A free domain for one year is included with all plans.'
+					'Choose a theme, customize, and launch your site. A free domain for one year is included with all annual plans.'
 				),
 			},
 		];
