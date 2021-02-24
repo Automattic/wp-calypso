@@ -13,7 +13,7 @@ import { parse as parseBlocks } from '@wordpress/blocks';
  */
 import TemplateSelectorControl from './template-selector-control';
 import TemplateSelectorPreview from './template-selector-preview';
-import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
+import { trackDismiss, trackSelection } from '../utils/tracking';
 import replacePlaceholders from '../utils/replace-placeholders';
 import ensureAssets from '../utils/ensure-assets';
 import mapBlocksRecursively from '../utils/map-blocks-recursively';
@@ -134,10 +134,6 @@ export default class PageTemplateModal extends Component {
 		if ( this.props.isWelcomeGuideActive || this.props.areTipsEnabled ) {
 			this.props.hideWelcomeGuide();
 		}
-	}
-
-	trackCurrentView() {
-		trackView( 'add-page' );
 	}
 
 	static getDefaultSelectedTemplate = ( props ) => {
