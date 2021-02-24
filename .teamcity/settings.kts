@@ -13,6 +13,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnec
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -701,6 +702,15 @@ object CheckCodeStyle : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		nonZeroExitCode = false
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
+			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
+			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 
 	features {
