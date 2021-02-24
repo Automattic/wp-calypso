@@ -33,9 +33,16 @@ namespace A8C\FSE;
  *
  * Can be used in cache keys to invalidate caches on plugin update.
  *
+ * Note: this constant is updated via TeamCity continuous integration. That
+ * change is not copied back to VCS, so we use "dev" here to indicate that the
+ * version in wp-calypso is for development.
+ *
+ * On WordPress.com, the version here should show up in the "info" section of
+ * the "more options" menu in Gutenberg.
+ *
  * @var string
  */
-define( 'A8C_ETK_PLUGIN_VERSION', '2.21' );
+define( 'A8C_ETK_PLUGIN_VERSION', 'dev' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
