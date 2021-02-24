@@ -86,6 +86,8 @@ $font-size: rem( 14px );
 			&:focus {
 				background-color: var( --color-sidebar-menu-hover-background );
 				color: var( --color-sidebar-menu-hover-text );
+				box-shadow: inset 4px 0 0 0 currentColor;
+ 				transition: box-shadow .1s linear;
 			}
 
 			&::after {
@@ -545,6 +547,10 @@ $font-size: rem( 14px );
 				left: var( --sidebar-width-max );
 				width: 160px;
 				box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
+
+				> ul {
+					border-left: 5px solid transparent;
+				}
 
 				.sidebar__menu-link:hover {
 					font-weight: normal;
