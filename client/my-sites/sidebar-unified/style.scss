@@ -82,14 +82,6 @@ $font-size: rem( 14px );
 			color: var( --color-sidebar-text );
 			align-items: center;
 
-			&:hover,
-			&:focus {
-				background-color: var( --color-sidebar-menu-hover-background );
-				color: var( --color-sidebar-menu-hover-text );
-				box-shadow: inset 4px 0 0 0 currentColor;
- 				transition: box-shadow .1s linear;
-			}
-
 			&::after {
 				content: ' ';
 				display: none;
@@ -106,7 +98,24 @@ $font-size: rem( 14px );
 			}
 		}
 
+		// Apply hover and focus effects only to tabbable items assuming they are links.
+		.sidebar__heading:not([tabindex="-1"]),
+		.sidebar__menu-link {
+			&:hover,
+			&:focus {
+				background-color: var( --color-sidebar-menu-hover-background );
+				color: var( --color-sidebar-menu-hover-text );
+				box-shadow: inset 4px 0 0 0 currentColor;
+ 				transition: box-shadow .1s linear;
+			}
+		}
+
+		.sidebar__informative-title {
+			display: block;
+		}
+
 		.sidebar__expandable-title,
+		.sidebar__informative-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
 			max-height: 34px;
