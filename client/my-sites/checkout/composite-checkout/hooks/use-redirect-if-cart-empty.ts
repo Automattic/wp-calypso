@@ -1,14 +1,17 @@
 /**
  * External dependencies
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import page from 'page';
 import debugFactory from 'debug';
+import { useDispatch } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { infoNotice } from 'calypso/state/notices/actions';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-empty' );
 
@@ -19,6 +22,11 @@ export default function useRedirectIfCartEmpty< T >(
 	createUserAndSiteBeforeTransaction: boolean
 ): boolean {
 	const didRedirect = useRef< boolean >( false );
+	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
+	const displayRedirectNotice = useCallback( () => {
+		reduxDispatch( infoNotice( translate( 'You have no items in your cart' ) ) );
+	}, [] );
 	useEffect( () => {
 		if ( didRedirect.current || doNotRedirect ) {
 			return;
@@ -26,6 +34,11 @@ export default function useRedirectIfCartEmpty< T >(
 		if ( items.length === 0 ) {
 			didRedirect.current = true;
 			debug( 'cart is empty and not still loading; redirecting...' );
+
+			// Note that this will only be displayed if `page` is used. If there's an
+			// actual redirect (using `window.location`), the notice will not show
+			// up, but it's better than nothing.
+			displayRedirectNotice();
 
 			debug( 'Before redirect, first clear redirect url cookie' );
 			clearSignupDestinationCookie();
