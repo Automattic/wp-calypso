@@ -122,7 +122,7 @@ interface Props {
 	locale: string | undefined;
 	checkoutOnSuccessCallback?: () => void;
 	isFocusedLaunch?: boolean;
-	cartData: RequestCart;
+	cartData?: RequestCart;
 	redirectTo?: string;
 }
 
