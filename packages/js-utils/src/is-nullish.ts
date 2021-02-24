@@ -1,4 +1,4 @@
-function isNullish( value: any ): boolean {
+function isNullish( value: any ): value is null | undefined {
 	if ( typeof value === 'undefined' ) {
 		return true;
 	}
