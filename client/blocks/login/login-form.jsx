@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
 import Divider from './divider';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -515,7 +516,13 @@ export class LoginForm extends Component {
 										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
 										{
 											components: {
-												newAccountLink: <a href={ signupUrl } />,
+												newAccountLink: (
+													<a
+														href={ addQueryArgs( signupUrl, {
+															user_email: this.state.usernameOrEmail,
+														} ) }
+													/>
+												),
 											},
 										}
 									) }
