@@ -10,7 +10,6 @@ import {
 	includes,
 	isEmpty,
 	isEqual,
-	isNil,
 	map,
 	mapValues,
 	omit,
@@ -20,6 +19,7 @@ import {
 	uniq,
 	zipObject,
 } from 'lodash';
+import { isNullish } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -373,14 +373,14 @@ export const getCustomsErrors = (
 				itemErrors.description = translate( 'This field is required' );
 			}
 			if ( ! customs.ignoreWeightValidation[ productId ] ) {
-				if ( isNil( itemData.weight ) || '' === itemData.weight ) {
+				if ( isNullish( itemData.weight ) || '' === itemData.weight ) {
 					itemErrors.weight = translate( 'This field is required' );
 				} else if ( ! ( parseFloat( itemData.weight ) > 0 ) ) {
 					itemErrors.weight = translate( 'Weight must be greater than zero' );
 				}
 			}
 			if ( ! customs.ignoreValueValidation[ productId ] ) {
-				if ( isNil( itemData.value ) || '' === itemData.value ) {
+				if ( isNullish( itemData.value ) || '' === itemData.value ) {
 					itemErrors.value = translate( 'This field is required' );
 				} else if ( ! ( parseFloat( itemData.value ) > 0 ) ) {
 					itemErrors.value = translate( 'Declared value must be greater than zero' );
@@ -497,7 +497,7 @@ export const isCustomsFormStepSubmitted = (
 	return ! some(
 		usedProductIds.map(
 			( productId ) =>
-				isNil( form.customs.items[ productId ].tariffNumber ) ||
+				isNullish( form.customs.items[ productId ].tariffNumber ) ||
 				form.customs.ignoreWeightValidation[ productId ] ||
 				form.customs.ignoreValueValidation[ productId ]
 		)
