@@ -41,6 +41,7 @@ class RequestLoginEmailForm extends React.Component {
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
 		userEmail: PropTypes.string,
+		flow: PropTypes.string,
 
 		// mapped to dispatch
 		sendEmailLogin: PropTypes.func.isRequired,
@@ -87,7 +88,7 @@ class RequestLoginEmailForm extends React.Component {
 		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
-			flow: 'jetpack',
+			...( this.props.flow ? { flow: this.props.flow } : {} ),
 		} );
 	};
 
