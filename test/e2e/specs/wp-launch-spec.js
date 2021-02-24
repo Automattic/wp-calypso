@@ -9,33 +9,20 @@ import config from 'config';
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
 
-import SignUpFlow from '../lib/flows/sign-up-flow.js';
 import CreateSiteFlow from '../lib/flows/create-site-flow.js';
 import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
-import DeleteAccountFlow from '../lib/flows/delete-account-flow.js';
-import SidebarComponent from '../lib/components/sidebar-component';
+import LoginFlow from '../lib/flows/login-flow.js';
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
+import SidebarComponent from '../lib/components/sidebar-component';
 import MyHomePage from '../lib/pages/my-home-page.js';
+import SettingsPage from '../lib/pages/settings-page';
 
 const host = dataHelper.getJetpackHost();
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
-const signupInboxId = config.get( 'signupInboxId' );
 
 let driver;
-const createAndActivateAccount = async function ( accountName ) {
-	const emailAddress = dataHelper.getEmailAddress( accountName, signupInboxId );
-	const password = config.get( 'passwordForNewTestSignUps' );
-
-	const signupFlow = new SignUpFlow( driver, {
-		accountName,
-		emailAddress: emailAddress,
-		password: password,
-	} );
-	await signupFlow.signupFreeAccount();
-	await signupFlow.activateAccount();
-};
 
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
@@ -45,12 +32,16 @@ before( async function () {
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Launch a free site', function () {
-		const accountName = dataHelper.getNewBlogName();
+	describe( 'Create and launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
+		const siteURL = siteName + '.wordpress.com';
 
-		before( 'Create a site as a new user', async function () {
-			await createAndActivateAccount( accountName );
+		step( 'Can log in', async function () {
+			const loginFlow = new LoginFlow( driver );
+			await loginFlow.login();
+		} );
+
+		step( 'Can create one free site as existing user', async function () {
 			await new CreateSiteFlow( driver, siteName ).createFreeSite();
 		} );
 
@@ -58,19 +49,29 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
-		after( 'Delete the newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( accountName );
+		step( 'Can delete site', async function () {
+			const sidebarComponent = await SidebarComponent.Expect( driver );
+			await sidebarComponent.ensureSidebarMenuVisible();
+			await sidebarComponent.selectSettings();
+			const settingsPage = await SettingsPage.Expect( driver );
+			return await settingsPage.deleteSite( siteURL );
 		} );
 	} );
 
-	describe( 'Launch when having multiple sites', function () {
-		const accountName = dataHelper.getNewBlogName();
+	describe( 'Create and launch multiple sites', function () {
 		const firstSiteName = dataHelper.getNewBlogName();
 		const secondSiteName = dataHelper.getNewBlogName();
 
-		before( 'Create 2 free sites as a new user', async function () {
-			await createAndActivateAccount( accountName );
+		step( 'Can log in', async function () {
+			const loginFlow = new LoginFlow( driver );
+			await loginFlow.login();
+		} );
+
+		step( 'Can create first free site as existing user', async function () {
 			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
+		} );
+
+		step( 'Can create second free site as existing user', async function () {
 			await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
 		} );
 
@@ -92,11 +93,21 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 				await sideBarComponent.ensureSidebarMenuVisible();
 				await sideBarComponent.selectMyHome();
 			}
+		} );
+
+		step( 'Can launch first site', async function () {
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
-		after( 'Delete the newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( accountName );
+		step( 'Can delete sites', async function () {
+			const siteURLs = [ firstSiteName + '.wordpress.com', secondSiteName + 'wordpress.com' ];
+			for ( const siteURL of siteURLs ) {
+				const sidebarComponent = await SidebarComponent.Expect( driver );
+				await sidebarComponent.ensureSidebarMenuVisible();
+				await sidebarComponent.selectSettings();
+				const settingsPage = await SettingsPage.Expect( driver );
+				return await settingsPage.deleteSite( siteURL );
+			}
 		} );
 	} );
 } );
