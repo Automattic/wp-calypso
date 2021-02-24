@@ -10,7 +10,6 @@ module.exports = {
 		'plugin:prettier/recommended',
 		'prettier/react',
 		'plugin:md/prettier',
-		'plugin:you-dont-need-lodash-underscore/compatible',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
 	overrides: [
@@ -213,7 +212,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'import' ],
+	plugins: [ 'import', 'you-dont-need-lodash-underscore' ],
 	settings: {
 		react: {
 			version: reactVersion,
@@ -390,5 +389,17 @@ module.exports = {
 
 		// Disabled, because in packages we are using globally defined `__i18n_text_domain__` constant at compile time
 		'@wordpress/i18n-text-domain': 'off',
+
+		// Disable Lodash methods that we've already migrated away from, see p4TIVU-9Bf-p2 for more details.
+		'you-dont-need-lodash-underscore/bind': 'error',
+		'you-dont-need-lodash-underscore/drop': 'error',
+		'you-dont-need-lodash-underscore/ends-with': 'error',
+		'you-dont-need-lodash-underscore/entries': 'error',
+		'you-dont-need-lodash-underscore/is-null': 'error',
+		'you-dont-need-lodash-underscore/reduce-right': 'error',
+		'you-dont-need-lodash-underscore/reverse': 'error',
+		'you-dont-need-lodash-underscore/split': 'error',
+		'you-dont-need-lodash-underscore/to-lower': 'error',
+		'you-dont-need-lodash-underscore/to-upper': 'error',
 	},
 };
