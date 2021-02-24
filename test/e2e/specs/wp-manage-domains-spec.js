@@ -108,7 +108,6 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 		} );
 
 		step( 'Empty the cart', async function () {
-			await driver.sleep( 1000 );
 			await ReaderPage.Visit( driver );
 			const navBarComponent = await NavBarComponent.Expect( driver );
 			await navBarComponent.clickMySites();
