@@ -34,6 +34,9 @@ import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isExternal } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -43,7 +46,11 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const isHappychatSessionActive = useSelector( ( state ) => hasActiveHappychatSession( state ) );
+	const isHappychatSessionActive = useSelector( hasActiveHappychatSession );
+	const siteId = useSelector( getSelectedSiteId );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const isJetpackNonAtomicSite = isJetpack && ! isSiteAtomic;
 	const [ showDialog, setShowDialog ] = useState( false );
 	const [ externalUrl, setExternalUrl ] = useState();
 
@@ -62,6 +69,10 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	// link on new tab in order to avoid Happy Chat session disconnection.
 	// We return a bool that shows if the logic should terminate here.
 	const continueInCalypso = ( url, event ) => {
+		if ( isJetpackNonAtomicSite ) {
+			return true;
+		}
+
 		if ( isHappychatSessionActive && isExternal( url ) ) {
 			event && event.preventDefault();
 			setExternalUrl( url );

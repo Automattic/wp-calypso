@@ -23,6 +23,9 @@ import {
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
@@ -36,12 +39,23 @@ export const MySitesSidebarUnifiedItem = ( {
 	continueInCalypso,
 } ) => {
 	const reduxDispatch = useDispatch();
-	const isHappychatSessionActive = useSelector( ( state ) => hasActiveHappychatSession( state ) );
+	const isHappychatSessionActive = useSelector( hasActiveHappychatSession );
+	const siteId = useSelector( getSelectedSiteId );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const isJetpackNonAtomicSite = isJetpack && ! isSiteAtomic;
 
 	const onNavigate = () => {
 		reduxDispatch( collapseAllMySitesSidebarSections() );
 		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
 	};
+
+	let forceInternalLink = true;
+	if ( isHappychatSessionActive && ! isJetpackNonAtomicSite ) {
+		forceInternalLink = false;
+	} else if ( isJetpackNonAtomicSite ) {
+		forceInternalLink = false;
+	}
 
 	return (
 		<SidebarItem
@@ -51,7 +65,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink={ ! isHappychatSessionActive }
+			forceInternalLink={ forceInternalLink }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
