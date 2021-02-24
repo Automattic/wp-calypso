@@ -15,12 +15,13 @@ function isThunk( action: Action | AnyThunkAction ): action is AnyThunkAction {
  * Given an action object or thunk, returns an updated object or thunk which
  * will include additional data in the action (as provided) when dispatched.
  *
- * @param  {(Function|object)} action Action object or thunk
- * @param  {object}            data   Additional data to include in action
- * @returns {(Function|object)}        Augmented action object or thunk
- * @see client/state/utils/withEnhancers for a more advanced alternative
+ * @see 'client/state/utils/with-enhancers' for a more advanced alternative
+ *
+ * @param action Action object or thunk
+ * @param data   Additional data to include in action
+ * @returns Augmented action object or thunk
  */
-export default function extendAction< TAction extends Action | AnyThunkAction >(
+export function extendAction< TAction extends Action | AnyThunkAction >(
 	action: TAction,
 	data: Record< string, unknown > = {}
 ): TAction {
