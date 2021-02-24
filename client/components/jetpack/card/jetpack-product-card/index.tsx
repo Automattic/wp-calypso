@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { isFinite, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
 import React, { createElement, ReactNode } from 'react';
 import { Button, ProductIcon } from '@automattic/components';
 
@@ -92,7 +92,7 @@ const DisplayPrice = ( {
 		);
 	}
 
-	const isDiscounted = isFinite( discountedPrice );
+	const isDiscounted = Number.isFinite( discountedPrice );
 
 	return (
 		<div className="jetpack-product-card__price">
