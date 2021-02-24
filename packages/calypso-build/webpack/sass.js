@@ -16,18 +16,11 @@ const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
  * @param  {object}    _.postCssOptions               PostCSS options
- * @param  {object}    _.postCssConfig                PostCSS config (deprecated)
  * @param  {object}    _.cacheDirectory               Directory used to store the cache
  *
  * @returns {object}                                  webpack loader object
  */
-module.exports.loader = ( {
-	includePaths,
-	prelude,
-	postCssOptions,
-	postCssConfig = {},
-	cacheDirectory,
-} ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssOptions, cacheDirectory } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPlugin.loader,
@@ -49,7 +42,9 @@ module.exports.loader = ( {
 		},
 		{
 			loader: require.resolve( 'postcss-loader' ),
-			options: postCssOptions || { config: postCssConfig },
+			options: {
+				postcssOptions: postCssOptions || {},
+			},
 		},
 		{
 			loader: require.resolve( 'sass-loader' ),

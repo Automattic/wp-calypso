@@ -75,11 +75,9 @@ function getWebpackConfig(
 		babelConfig = undefined;
 	}
 
-	let postCssConfigPath = process.cwd();
-	if ( ! fs.existsSync( path.join( postCssConfigPath, 'postcss.config.js' ) ) ) {
-		// Default to this package's PostCSS config
-		postCssConfigPath = __dirname;
-	}
+	// Use this package's PostCSS config. If it doesn't exist postcss will look
+	// for the config file starting in the current directory (https://github.com/webpack-contrib/postcss-loader#config-cascade)
+	const postCssConfigPath = path.join( process.cwd(), 'postcss.config.js' );
 
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -122,7 +120,9 @@ function getWebpackConfig(
 					workerCount,
 				} ),
 				SassConfig.loader( {
-					postCssConfig: { path: postCssConfigPath },
+					postCssOptions: {
+						...( fs.existsSync( postCssConfigPath ) ? { config: postCssConfigPath } : {} ),
+					},
 					cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 				} ),
 				FileConfig.loader(),
