@@ -322,7 +322,7 @@ export default {
 			dispatch( requestSite( siteSlug ) ).then( () => {
 				let freshSiteId = getSiteId( getState(), siteSlug );
 
-				if ( ! freshSiteId ) {
+				if ( ! freshSiteId && siteSlug ) {
 					const wpcomStagingFragment = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
