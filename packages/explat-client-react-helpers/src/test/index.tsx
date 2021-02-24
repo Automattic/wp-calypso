@@ -1,7 +1,13 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
-import { renderHook, act } from '@testing-library/react-hooks';
+import React from 'react';
+import { renderHook, act as actReactHooks } from '@testing-library/react-hooks';
+import { render, act as actReact, waitFor } from '@testing-library/react';
 
 /**
  * WordPress dependencies
@@ -25,7 +31,7 @@ const createMockExPlatClient = ( isDevelopmentMode = false ): ExPlatClient => ( 
 	},
 } );
 
-const createControllablePromise = < T >() => {
+const createControllablePromise = function < T >() {
 	let resOuter;
 	let rejOuter;
 
@@ -56,11 +62,91 @@ describe( 'useExperiment', () => {
 		);
 
 		expect( result.current ).toEqual( [ true, null ] );
-		act( () => controllablePromise1.resolve( validExperimentAssignment ) );
+		actReactHooks( () => controllablePromise1.resolve( validExperimentAssignment ) );
 		expect( result.current ).toEqual( [ true, null ] );
 		await waitForNextUpdate();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
 		rerender();
 		expect( result.current ).toEqual( [ false, validExperimentAssignment ] );
+	} );
+} );
+
+describe( 'Experiment', () => {
+	it( 'should correctly show treatment after loading', async () => {
+		const exPlatClient = createMockExPlatClient();
+		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
+
+		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
+		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+			typeof exPlatClient.loadExperimentAssignment
+		> ).mockImplementationOnce( () => controllablePromise1.promise );
+
+		const { container, rerender } = render(
+			<Experiment name="experiment_a">
+				{ {
+					treatment: 'treatment-1',
+					control: 'control',
+					loading: 'loading-1',
+				} }
+			</Experiment>
+		);
+		expect( container.textContent ).toBe( 'loading-1' );
+		rerender(
+			<Experiment name="experiment_a">
+				{ {
+					treatment: 'treatment-1',
+					control: 'control',
+					loading: 'loading-2',
+				} }
+			</Experiment>
+		);
+		expect( container.textContent ).toBe( 'loading-2' );
+		await actReact( async () => controllablePromise1.resolve( validExperimentAssignment ) );
+		await waitFor( () => expect( container.textContent ).toBe( 'treatment-1' ) );
+		rerender(
+			<Experiment name="experiment_a">
+				{ {
+					treatment: 'treatment-2',
+					control: 'control',
+					loading: 'loading-2',
+				} }
+			</Experiment>
+		);
+		expect( container.textContent ).toBe( 'treatment-2' );
+	} );
+
+	it( 'should correctly show control after loading ', async () => {
+		const exPlatClient = createMockExPlatClient();
+		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
+
+		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
+		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
+			typeof exPlatClient.loadExperimentAssignment
+		> ).mockImplementationOnce( () => controllablePromise1.promise );
+
+		const { container, rerender } = render(
+			<Experiment name="experiment_a">
+				{ {
+					treatment: 'treatment',
+					control: 'control-1',
+					loading: 'loading',
+				} }
+			</Experiment>
+		);
+		expect( container.textContent ).toBe( 'loading' );
+		await actReact( async () =>
+			controllablePromise1.resolve( { ...validExperimentAssignment, variationName: 'control' } )
+		);
+		await waitFor( () => expect( container.textContent ).toBe( 'control-1' ) );
+		rerender(
+			<Experiment name="experiment_a">
+				{ {
+					treatment: 'treatment-2',
+					control: 'control-2',
+					loading: 'loading-2',
+				} }
+			</Experiment>
+		);
+		expect( container.textContent ).toBe( 'control-2' );
 	} );
 } );

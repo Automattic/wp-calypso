@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * WordPress dependencies
@@ -17,13 +17,17 @@ interface ExPlatClientReactHelpers {
 	 * @returns [isExperimentAssignmentLoading, ExperimentAssignment | null]
 	 */
 	useExperiment: ( experimentName: string ) => [ boolean, ExperimentAssignment | null ];
+
+	/**
+	 * Experiment component, safest and simplest, should be first choice if usable.
+	 */
+	Experiment: (props: {name: string, children: { control: React.ReactNode, treatment: React.ReactNode, loading: React.ReactNode }}) => JSX.Element,
 }
 
 export default function createExPlatClientReactHelpers(
 	exPlatClient: ExPlatClient
 ): ExPlatClientReactHelpers {
-	return {
-		useExperiment: ( experimentName: string ) => {
+	const useExperiment = ( experimentName: string ): [boolean, ExperimentAssignment | null] => {
 			const [ previousExperimentName ] = useState( experimentName );
 			const [ isLoading, setIsLoading ] = useState< boolean >( true );
 			const [
@@ -56,6 +60,22 @@ export default function createExPlatClientReactHelpers(
 			}
 
 			return [ isLoading, experimentAssignment ];
-		},
+		};
+
+	const Experiment = ( { children, name: experimentName }: { children: { control: React.ReactNode, treatment: React.ReactNode, loading: React.ReactNode }, name: string } ): JSX.Element => {
+		const [isLoading, experimentAssignment] = useExperiment(experimentName)
+		if (isLoading) {
+			return <>{children.loading}</>
+		} else if (experimentAssignment?.variationName === 'treatment') {
+			return <>{children.treatment}</>
+		} else {
+			return <>{children.control}</>
+		}
+	}
+
+	return {
+		useExperiment,
+		Experiment,
 	};
 }
+
