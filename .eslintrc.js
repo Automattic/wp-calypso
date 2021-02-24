@@ -395,6 +395,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/drop': 'error',
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
+		'you-dont-need-lodash-underscore/is-finite': 'error',
 		'you-dont-need-lodash-underscore/is-null': 'error',
 		'you-dont-need-lodash-underscore/reduce-right': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
