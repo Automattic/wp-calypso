@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/explat-react-client",
+	"name": "@automattic/explat-client-react-helpers",
 	"version": "0.0.1",
-	"description": "Standalone ExPlat Client: React Interface",
+	"description": "Standalone ExPlat Client: React Helpers",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",
@@ -13,7 +13,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/explat-react-client"
+		"directory": "packages/explat-client-react-helpers"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",

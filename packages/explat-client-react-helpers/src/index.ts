@@ -13,7 +13,7 @@ interface ExPlatReactClient {
     useExperiment: (experimentName: string) => [boolean, ExperimentAssignment | null]
 }
 
-export default function createExPlatReactClient(exPlatClient: ExPlatClient): ExPlatReactClient {
+export default function createExPlatClientReactHelpers(exPlatClient: ExPlatClient): ExPlatReactClient {
     return {
         useExperiment: (experimentName: string) => {
             const [previousExperimentName] = useState(experimentName)
