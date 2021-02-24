@@ -10,7 +10,6 @@ import {
 	includes,
 	isEmpty,
 	isEqual,
-	isFinite,
 	isNil,
 	map,
 	mapValues,
@@ -270,7 +269,7 @@ const getPackagesErrors = ( values ) =>
 			errors.box_id = translate( 'Please select a package' );
 		}
 
-		const isInvalidDimension = ( dimension ) => ! isFinite( dimension ) || 0 >= dimension;
+		const isInvalidDimension = ( dimension ) => ! Number.isFinite( dimension ) || 0 >= dimension;
 
 		if ( isInvalidDimension( pckg.weight ) ) {
 			errors.weight = translate( 'Invalid weight' );
