@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
  */
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
-interface ExPlatReactClient {
+interface ExPlatClientReactHelpers {
 	/**
 	 * An ExPlat useExperiment hook.
 	 *
@@ -21,7 +21,7 @@ interface ExPlatReactClient {
 
 export default function createExPlatClientReactHelpers(
 	exPlatClient: ExPlatClient
-): ExPlatReactClient {
+): ExPlatClientReactHelpers {
 	return {
 		useExperiment: ( experimentName: string ) => {
 			const [ previousExperimentName ] = useState( experimentName );

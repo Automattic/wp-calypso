@@ -12,7 +12,7 @@ import { validExperimentAssignment } from '@automattic/explat-client/src/interna
 /**
  * Internal dependencies
  */
-import createExPlatReactClient from '../index';
+import createExPlatClientReactHelpers from '../index';
 
 const createMockExPlatClient = ( isDevelopmentMode = false ): ExPlatClient => ( {
 	loadExperimentAssignment: jest.fn(),
@@ -44,7 +44,7 @@ const createControllablePromise = < T >() => {
 describe( 'useExperiment', () => {
 	it( 'should correctly load an experiment assignment', async () => {
 		const exPlatClient = createMockExPlatClient();
-		const { useExperiment } = createExPlatReactClient( exPlatClient );
+		const { useExperiment } = createExPlatClientReactHelpers( exPlatClient );
 
 		const controllablePromise1 = createControllablePromise< ExperimentAssignment >();
 		( exPlatClient.loadExperimentAssignment as jest.MockedFunction<
