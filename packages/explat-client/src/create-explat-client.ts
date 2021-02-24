@@ -35,6 +35,11 @@ export interface ExPlatClient {
 	 *
 	 */
 	dangerouslyGetExperimentAssignment: ( experimentName: string ) => ExperimentAssignment;
+
+	/**
+	 * INTERNAL USE ONLY
+	 */
+	config: Config;
 }
 
 export class MissingExperimentAssignmentError extends Error {
@@ -186,6 +191,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 			return storedExperimentAssignment;
 		},
+		config,
 	};
 }
 
@@ -210,5 +216,6 @@ export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
 			} );
 			return createFallbackExperimentAssignment( experimentName );
 		},
+		config,
 	};
 }
