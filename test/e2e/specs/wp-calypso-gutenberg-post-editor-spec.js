@@ -1213,7 +1213,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe.only( 'Insert embeds: @parallel', function () {
+	describe( 'Insert embeds: @parallel', function () {
 		step( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
