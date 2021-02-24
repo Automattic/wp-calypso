@@ -570,13 +570,14 @@ function LineItemSublabelAndPrice( {
 	if ( type === 'plan' && product.months_per_bill_period && product.months_per_bill_period > 1 ) {
 		return (
 			<>
-				{ translate( '%(sublabel)s: %(monthlyPrice)s /month × %(monthsPerBillPeriod)s', {
+				{ translate( '%(sublabel)s: %(monthlyPrice)s/month × %(monthsPerBillPeriod)s', {
 					args: {
 						sublabel: sublabel,
 						monthlyPrice: product.item_subtotal_monthly_cost_display,
 						monthsPerBillPeriod: product.months_per_bill_period,
 					},
-					comment: 'product type and monthly breakdown of total cost, separated by a colon',
+					comment:
+						'product type and monthly breakdown of total cost, separated by a colon. For "/month", there is no space before and after the "/" but please add a space if it makes sense in other languages.',
 				} ) }
 			</>
 		);

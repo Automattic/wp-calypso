@@ -59,6 +59,13 @@ const Home = ( {
 
 			const successMessage = translate( 'Your application has been sent!' );
 			reduxDispatch( successNotice( successMessage ) );
+			return;
+		}
+
+		if ( noticeType === 'purchase-success' ) {
+			const successMessage = translate( 'Your purchase has been completed!' );
+			reduxDispatch( successNotice( successMessage ) );
+			return;
 		}
 
 		return;
