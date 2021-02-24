@@ -231,7 +231,6 @@ export default function CompositeCheckout( {
 	} );
 
 	const {
-		removeProductFromCart,
 		couponStatus,
 		applyCoupon,
 		removeCoupon,
@@ -343,23 +342,15 @@ export default function CompositeCheckout( {
 	).filter( doesValueExist );
 	debug( 'items for checkout', itemsForCheckout );
 
-	let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
-
-	if ( createUserAndSiteBeforeTransaction ) {
-		const siteSlugLoggedOutCart = select( 'wpcom' )?.getSiteSlug();
-		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
-	}
-
 	const errors = responseCart.messages?.errors ?? [];
 	const areThereErrors =
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( doesValueExist ).length > 0;
-	const doNotRedirect = isInitialCartLoading || isCartPendingUpdate || areThereErrors;
-	const areWeRedirecting = useRedirectIfCartEmpty(
-		doNotRedirect,
-		responseCart.products,
-		cartEmptyRedirectUrl,
-		createUserAndSiteBeforeTransaction
-	);
+
+	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
+	const {
+		isRemovingProductFromCart,
+		removeProductFromCartAndMaybeRedirect,
+	} = useRedirectIfCartEmpty( siteSlug, siteSlugLoggedOutCart, createUserAndSiteBeforeTransaction );
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
@@ -620,7 +611,7 @@ export default function CompositeCheckout( {
 	if (
 		shouldShowEmptyCartPage( {
 			responseCart,
-			areWeRedirecting,
+			areWeRedirecting: isRemovingProductFromCart,
 			areThereErrors,
 			isCartPendingUpdate,
 			isInitialCartLoading,
@@ -681,7 +672,7 @@ export default function CompositeCheckout( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
-					removeProductFromCart={ removeProductFromCart }
+					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					updateLocation={ updateLocation }
 					applyCoupon={ applyCoupon }
 					removeCoupon={ removeCoupon }
