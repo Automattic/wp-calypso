@@ -117,7 +117,7 @@ function load_global_styles() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
 /**
- * Load Event Countdown Block
+ * Load Event Countdown Block.
  */
 function load_countdown_block() {
 	require_once __DIR__ . '/event-countdown-block/index.php';
@@ -125,7 +125,7 @@ function load_countdown_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
 
 /**
- * Load Timeline Block
+ * Load Timeline Block.
  */
 function load_timeline_block() {
 	require_once __DIR__ . '/jetpack-timeline/index.php';
