@@ -65,6 +65,7 @@ export class LoginForm extends Component {
 		isFormDisabled: PropTypes.bool,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
+		handleUsernameChange: PropTypes.func,
 		oauth2Client: PropTypes.object,
 		onSuccess: PropTypes.func.isRequired,
 		privateSite: PropTypes.bool,
@@ -96,8 +97,12 @@ export class LoginForm extends Component {
 		} );
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { disableAutoFocus, requestError } = this.props;
+	componentDidUpdate( prevProps, prevState ) {
+		const { disableAutoFocus, requestError, handleUsernameChange } = this.props;
+
+		if ( handleUsernameChange && prevState.usernameOrEmail !== this.state.usernameOrEmail ) {
+			handleUsernameChange( this.state.usernameOrEmail );
+		}
 
 		if ( prevProps.requestError || ! requestError ) {
 			return;

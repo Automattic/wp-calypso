@@ -183,8 +183,8 @@ const mapState = ( state ) => {
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
 		userEmail:
-			getInitialQueryArguments( state ).email_address ||
-			getCurrentQueryArguments( state ).email_address,
+			getCurrentQueryArguments( state ).email_address ||
+			getInitialQueryArguments( state ).email_address,
 	};
 };
 
