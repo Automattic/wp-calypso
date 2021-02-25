@@ -56,10 +56,10 @@ export default function useRedirectIfCartEmpty(
 			return removeProductFromCart( uuid ).then( ( cart: ResponseCart ) => {
 				if ( cart.products.length === 0 ) {
 					redirectDueToEmptyCart();
+					// Don't turn off isRemovingProductFromCart if we are redirecting so that the loading page remains active.
 					return cart;
 				}
-				// Don't change this if we are redirecting so that the loading page remains active
-				setIsRemovingFromCart( true );
+				setIsRemovingFromCart( false );
 				return cart;
 			} );
 		},
