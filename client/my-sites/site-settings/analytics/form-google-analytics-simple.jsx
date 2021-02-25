@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { CompactCard } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
@@ -22,81 +22,47 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
  */
 import './style.scss';
 
-const validateGoogleAnalyticsCode = ( code ) =>
-	! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i );
 const GoogleAnalyticsSimpleForm = ( {
+	displayForm,
+	enableForm,
 	fields,
-	updateFields,
+	handleCodeChange,
+	handleFieldChange,
+	handleFieldFocus,
+	handleFieldKeypress,
+	handleSubmitForm,
+	isCodeValid,
 	isRequestingSettings,
 	isSavingSettings,
-	enableForm,
-	eventTracker,
-	handleSubmitForm,
-	path,
-	translate,
-	trackTracksEvent,
-	uniqueEventTracker,
+	isSubmitButtonDisabled,
+	placeholderText,
+	recordSupportLinkClick,
+	setDisplayForm,
 	showUpgradeNudge,
 	site,
+	translate,
 } ) => {
-	const [ isCodeValid, setIsCodeValid ] = useState( true );
-	const [ isGoogleEnabled, setIsGoogleEnabled ] = useState( false );
-	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
-
-	const isSubmitButtonDisabled =
-		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
 	const analyticsSupportUrl = 'https://wordpress.com/support/google-analytics/';
-	const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 	const nudgeTitle = translate(
 		'Connect your site to Google Analytics in seconds with the Premium plan'
 	);
 
 	useEffect( () => {
 		if ( fields?.wga?.code ) {
-			setIsGoogleEnabled( true );
+			setDisplayForm( true );
 		} else {
-			setIsGoogleEnabled( false );
+			setDisplayForm( false );
 		}
-	}, [ fields ] );
-
-	const handleFieldChange = ( value, callback = () => {} ) => {
-		const updatedFields = Object.assign( {}, fields.wga || {}, {
-			code: value,
-		} );
-		updateFields( { wga: updatedFields }, callback );
-	};
-
-	const recordSupportLinkClick = () => {
-		trackTracksEvent( 'calypso_traffic_settings_google_support_click' );
-	};
-
-	const handleCodeChange = ( event ) => {
-		const code = event.target.value.trim();
-		setIsCodeValid( validateGoogleAnalyticsCode( code ) );
-		handleFieldChange( code );
-	};
-
-	const handleFieldFocus = () => {
-		trackTracksEvent( 'calypso_google_analytics_key_field_focused', { path } );
-		eventTracker( 'Focused Analytics Key Field' )();
-	};
-
-	const handleFieldKeypress = () => {
-		if ( ! loggedGoogleAnalyticsModified ) {
-			trackTracksEvent( 'calypso_google_analytics_key_field_modified', { path } );
-			setLoggedGoogleAnalyticsModified( true );
-		}
-		uniqueEventTracker( 'Typed In Analytics Key Field' )();
-	};
+	}, [ fields, setDisplayForm ] );
 
 	const handleFormToggle = () => {
-		if ( isGoogleEnabled ) {
-			setIsGoogleEnabled( false );
-			handleFieldChange( '', () => {
+		if ( displayForm ) {
+			setDisplayForm( false );
+			handleFieldChange( 'code', '', () => {
 				handleSubmitForm();
 			} );
 		} else {
-			setIsGoogleEnabled( true );
+			setDisplayForm( true );
 		}
 	};
 
@@ -153,7 +119,7 @@ const GoogleAnalyticsSimpleForm = ( {
 							</p>
 						</div>
 					</div>
-					{ isGoogleEnabled && (
+					{ displayForm && (
 						<div>
 							<FormFieldset>
 								<FormLabel htmlFor="wgaCode">
@@ -223,9 +189,9 @@ const GoogleAnalyticsSimpleForm = ( {
 					<CompactCard>
 						<div className="analytics site-settings__analytics">
 							<FormToggle
-								checked={ isGoogleEnabled }
+								checked={ displayForm }
 								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ () => handleFormToggle( ! isGoogleEnabled ) }
+								onChange={ () => handleFormToggle( ! displayForm ) }
 							>
 								{ translate( 'Add Google' ) }
 							</FormToggle>

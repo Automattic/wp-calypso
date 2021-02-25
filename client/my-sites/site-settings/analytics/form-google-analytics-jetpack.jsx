@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { find } from 'lodash';
 
 import { CompactCard } from '@automattic/components';
@@ -32,35 +32,32 @@ import {
  */
 import './style.scss';
 
-const validateGoogleAnalyticsCode = ( code ) =>
-	! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i );
 const GoogleAnalyticsJetpackForm = ( {
+	displayForm,
+	enableForm,
 	fields,
-	updateFields,
+	handleCodeChange,
+	handleFieldChange,
+	handleFieldFocus,
+	handleFieldKeypress,
+	handleSubmitForm,
+	isCodeValid,
 	isRequestingSettings,
 	isSavingSettings,
-	enableForm,
-	eventTracker,
-	handleSubmitForm,
+	isSubmitButtonDisabled,
+	jetpackModuleActive,
 	path,
-	translate,
-	trackTracksEvent,
-	uniqueEventTracker,
+	placeholderText,
+	recordSupportLinkClick,
+	setDisplayForm,
 	showUpgradeNudge,
 	site,
 	siteId,
 	sitePlugins,
-	jetpackModuleActive,
+	translate,
 } ) => {
-	const [ isCodeValid, setIsCodeValid ] = useState( true );
-	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
-	const [ displayForm, setDisplayForm ] = useState( false );
-
-	const isSubmitButtonDisabled =
-		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
 	const upsellHref = `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`;
 	const analyticsSupportUrl = 'https://jetpack.com/support/google-analytics/';
-	const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 	const nudgeTitle = translate( 'Connect your site to Google Analytics' );
 	const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
 	const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
@@ -71,47 +68,16 @@ const GoogleAnalyticsJetpackForm = ( {
 		} else {
 			setDisplayForm( false );
 		}
-	}, [ jetpackModuleActive ] );
+	}, [ jetpackModuleActive, setDisplayForm ] );
 
-	const handleFieldChange = ( key, value, callback = () => {} ) => {
-		const updatedFields = Object.assign( {}, fields.wga || {}, {
-			[ key ]: value,
-		} );
-		updateFields( { wga: updatedFields }, callback );
-	};
-
-	const recordSupportLinkClick = () => {
-		trackTracksEvent( 'calypso_traffic_settings_google_support_click' );
-	};
-
-	const handleCodeChange = ( event ) => {
-		const code = event.target.value.trim();
-		setIsCodeValid( validateGoogleAnalyticsCode( code ) );
-		handleFieldChange( 'code', code );
-	};
 	const handleToggleChange = ( key ) => {
 		const value = fields.wga ? ! fields.wga[ key ] : false;
-
 		recordTracksEvent( 'calypso_google_analytics_setting_changed', { key, path } );
-
 		handleFieldChange( key, value );
 	};
 
 	const handleAnonymizeChange = () => {
 		handleToggleChange( 'anonymize_ip' );
-	};
-
-	const handleFieldFocus = () => {
-		trackTracksEvent( 'calypso_google_analytics_key_field_focused', { path } );
-		eventTracker( 'Focused Analytics Key Field' )();
-	};
-
-	const handleFieldKeypress = () => {
-		if ( ! loggedGoogleAnalyticsModified ) {
-			trackTracksEvent( 'calypso_google_analytics_key_field_modified', { path } );
-			setLoggedGoogleAnalyticsModified( true );
-		}
-		uniqueEventTracker( 'Typed In Analytics Key Field' )();
 	};
 
 	const renderForm = () => {
