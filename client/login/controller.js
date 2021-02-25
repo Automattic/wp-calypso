@@ -97,15 +97,10 @@ export function magicLogin( context, next ) {
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
-	let component;
-	switch ( flow ) {
-		case 'jetpack-connect':
-			component = HandleEmailedLinkFormJetpackConnect;
-			break;
-		default:
-			component = HandleEmailedLinkForm;
+	if ( flow === 'jetpack-connect' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
+		return HandleEmailedLinkFormJetpackConnect;
 	}
-	return component;
+	return HandleEmailedLinkForm;
 }
 
 export function magicLoginUse( context, next ) {

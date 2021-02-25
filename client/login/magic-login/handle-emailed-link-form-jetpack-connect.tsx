@@ -113,11 +113,14 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 			} ) }
 			illustration={ illustration }
 			illustrationWidth={ 500 }
-			title={ translate( 'Logging in as %(emailAddress)s …', {
-				args: {
-					emailAddress,
-				},
-			} ) }
+			title={ [
+				translate( 'Logging in as %(emailAddress)s', {
+					args: {
+						emailAddress,
+					},
+				} ),
+				'...',
+			] }
 		/>
 	);
 };
