@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, reduce, get, memoize } from 'lodash';
+import { memoize } from 'lodash';
 import { __ } from '@wordpress/i18n';
 import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
 import { Component } from '@wordpress/element';
@@ -28,39 +28,31 @@ class PageTemplateModal extends Component {
 
 	// Parse templates blocks and memoize them.
 	getBlocksByTemplateSlugs = memoize( ( templates ) => {
-		const blocksByTemplateSlugs = reduce(
-			templates,
-			( prev, { name, html } ) => {
-				prev[ name ] = html
-					? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
-					: [];
-				return prev;
-			},
-			{}
-		);
+		const blocksByTemplateSlugs = templates.reduce( ( prev, { name, html } ) => {
+			prev[ name ] = html
+				? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
+				: [];
+			return prev;
+		}, {} );
 
 		// Remove templates that include a missing block
 		return this.filterTemplatesWithMissingBlocks( blocksByTemplateSlugs );
 	} );
 
 	filterTemplatesWithMissingBlocks( templates ) {
-		return reduce(
-			templates,
-			( acc, templateBlocks, name ) => {
-				// Does the template contain any missing blocks?
-				const templateHasMissingBlocks = containsMissingBlock( templateBlocks );
+		return Object.entries( templates ).reduce( ( acc, [ name, templateBlocks ] ) => {
+			// Does the template contain any missing blocks?
+			const templateHasMissingBlocks = containsMissingBlock( templateBlocks );
 
-				// Only retain the template in the collection if:
-				// 1. It does not contain any missing blocks
-				// 2. There are no blocks at all (likely the "blank" template placeholder)
-				if ( ! templateHasMissingBlocks || ! templateBlocks.length ) {
-					acc[ name ] = templateBlocks;
-				}
+			// Only retain the template in the collection if:
+			// 1. It does not contain any missing blocks
+			// 2. There are no blocks at all (likely the "blank" template placeholder)
+			if ( ! templateHasMissingBlocks || ! templateBlocks.length ) {
+				acc[ name ] = templateBlocks;
+			}
 
-				return acc;
-			},
-			{}
-		);
+			return acc;
+		}, {} );
 	}
 
 	getBlocksForSelection = ( selectedTemplate ) => {
@@ -121,7 +113,7 @@ class PageTemplateModal extends Component {
 			return;
 		}
 
-		const template = find( this.props.templates, { name } );
+		const template = this.props.templates.find( ( t ) => t.name === name );
 
 		// Load content.
 		const blocks = this.getBlocksForSelection( name );
@@ -148,12 +140,12 @@ class PageTemplateModal extends Component {
 		trackDismiss();
 
 		// Try if we have specific URL to go back to, otherwise go to the page list.
-		const calypsoifyCloseUrl = get( window, [ 'calypsoifyGutenberg', 'closeUrl' ] );
+		const calypsoifyCloseUrl = window?.calypsoifyGutenberg?.closeUrl;
 		window.top.location = calypsoifyCloseUrl || 'edit.php?post_type=page';
 	};
 
 	getBlocksByTemplateSlug( name ) {
-		return get( this.getBlocksByTemplateSlugs( this.props.templates ), [ name ], [] );
+		return this.getBlocksByTemplateSlugs( this.props.templates )?.[ name ] ?? [];
 	}
 
 	getTemplateGroups = () => {
