@@ -837,7 +837,7 @@ object CheckCodeStyleBranch : BuildType({
 object RunCalypsoE2eDesktopTests : BuildType({
 	uuid = "52f38738-92b2-43cb-b7fb-19fce03cb67c"
 	name = "Run Calypso e2e tests (desktop)"
-	description = "Run Calypso e2e tests"
+	description = "Run Calypso e2e tests (desktop)"
 
 	artifactRules = """
 		reports => reports
@@ -1011,6 +1011,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 	failureConditions {
 		executionTimeoutMin = 20
 		// With testFailure=true, TeamCity detects test that fail but succeed after a retry as build failures
+		// With this option disabled, TeamCity fails the build if `yarn magellan` returns an exit code other than 0.
 		testFailure = false
 	}
 
