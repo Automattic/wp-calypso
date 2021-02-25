@@ -85,7 +85,7 @@ describe( 'Experiment', () => {
 			<Experiment name="experiment_a">
 				{ {
 					treatment: 'treatment-1',
-					control: 'control',
+					default: 'default',
 					loading: 'loading-1',
 				} }
 			</Experiment>
@@ -95,7 +95,7 @@ describe( 'Experiment', () => {
 			<Experiment name="experiment_a">
 				{ {
 					treatment: 'treatment-1',
-					control: 'control',
+					default: 'default',
 					loading: 'loading-2',
 				} }
 			</Experiment>
@@ -107,7 +107,7 @@ describe( 'Experiment', () => {
 			<Experiment name="experiment_a">
 				{ {
 					treatment: 'treatment-2',
-					control: 'control',
+					default: 'default',
 					loading: 'loading-2',
 				} }
 			</Experiment>
@@ -115,7 +115,7 @@ describe( 'Experiment', () => {
 		expect( container.textContent ).toBe( 'treatment-2' );
 	} );
 
-	it( 'should correctly show control after loading ', async () => {
+	it( 'should correctly show default after loading ', async () => {
 		const exPlatClient = createMockExPlatClient();
 		const { Experiment } = createExPlatClientReactHelpers( exPlatClient );
 
@@ -128,25 +128,25 @@ describe( 'Experiment', () => {
 			<Experiment name="experiment_a">
 				{ {
 					treatment: 'treatment',
-					control: 'control-1',
+					default: 'default-1',
 					loading: 'loading',
 				} }
 			</Experiment>
 		);
 		expect( container.textContent ).toBe( 'loading' );
 		await actReact( async () =>
-			controllablePromise1.resolve( { ...validExperimentAssignment, variationName: 'control' } )
+			controllablePromise1.resolve( { ...validExperimentAssignment, variationName: 'default' } )
 		);
-		await waitFor( () => expect( container.textContent ).toBe( 'control-1' ) );
+		await waitFor( () => expect( container.textContent ).toBe( 'default-1' ) );
 		rerender(
 			<Experiment name="experiment_a">
 				{ {
 					treatment: 'treatment-2',
-					control: 'control-2',
+					default: 'default-2',
 					loading: 'loading-2',
 				} }
 			</Experiment>
 		);
-		expect( container.textContent ).toBe( 'control-2' );
+		expect( container.textContent ).toBe( 'default-2' );
 	} );
 } );
