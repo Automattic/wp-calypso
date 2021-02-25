@@ -66,10 +66,10 @@ export default function createExPlatClientReactHelpers(
 		const [isLoading, experimentAssignment] = useExperiment(experimentName)
 		if (isLoading) {
 			return <>{children.loading}</>
-		} else if (experimentAssignment?.variationName === 'treatment') {
-			return <>{children.treatment}</>
-		} else {
+		} else if (!experimentAssignment?.variationName) {
 			return <>{children.control}</>
+		} else {
+			return <>{children.treatment}</>
 		}
 	}
 
@@ -78,4 +78,3 @@ export default function createExPlatClientReactHelpers(
 		Experiment,
 	};
 }
-
