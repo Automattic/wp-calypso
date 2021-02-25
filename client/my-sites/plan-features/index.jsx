@@ -42,7 +42,6 @@ import {
 	planMatches,
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
-	getYearlyPlanByMonthly,
 	getPlanPath,
 	isFreePlan,
 	isWpComEcommercePlan,
@@ -343,7 +342,7 @@ export class PlanFeatures extends Component {
 						isPlaceholder={ isPlaceholder }
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
-						isInSignup={ isInSignup }
+						displayPerMonthNotation={ isInSignup }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						isMonthlyPlan={ isMonthlyPlan }
