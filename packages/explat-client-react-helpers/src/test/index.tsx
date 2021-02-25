@@ -135,7 +135,7 @@ describe( 'Experiment', () => {
 		);
 		expect( container.textContent ).toBe( 'loading' );
 		await actReact( async () =>
-			controllablePromise1.resolve( { ...validExperimentAssignment, variationName: 'default' } )
+			controllablePromise1.resolve( { ...validExperimentAssignment, variationName: null } )
 		);
 		await waitFor( () => expect( container.textContent ).toBe( 'default-1' ) );
 		rerender(
