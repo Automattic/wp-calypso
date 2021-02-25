@@ -54,7 +54,7 @@ export const logError = (
 	}
 };
 
-export const logErrorOrThrowInDevelopmentMode = ( message: string ) => {
+export const logErrorOrThrowInDevelopmentMode = ( message: string ): void => {
 	if ( isDevelopmentMode ) {
 		throw new Error( message );
 	} else {
