@@ -15,7 +15,6 @@ import LoginFlow from '../lib/flows/login-flow.js';
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SidebarComponent from '../lib/components/sidebar-component';
 import MyHomePage from '../lib/pages/my-home-page.js';
-import SettingsPage from '../lib/pages/settings-page';
 
 const host = dataHelper.getJetpackHost();
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
@@ -34,9 +33,8 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 
 	describe( 'Create and launch a free site as existing user', function () {
 		const siteName = dataHelper.getNewBlogName();
-		const siteURL = siteName + '.wordpress.com';
 
-		step( 'Can log in', async function () {
+		before( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.login();
 		} );
@@ -48,30 +46,19 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		step( 'Can launch a site', async function () {
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
-
-		step( 'Can delete site', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.ensureSidebarMenuVisible();
-			await sidebarComponent.selectSettings();
-			const settingsPage = await SettingsPage.Expect( driver );
-			return await settingsPage.deleteSite( siteURL );
-		} );
 	} );
 
 	describe( 'Create and launch multiple sites as existing user', function () {
 		const firstSiteName = dataHelper.getNewBlogName();
 		const secondSiteName = dataHelper.getNewBlogName();
 
-		step( 'Can log in', async function () {
+		before( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver );
 			return await loginFlow.login();
 		} );
 
-		step( 'Can create first free site', async function () {
-			return await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
-		} );
-
-		step( 'Can create second free site', async function () {
+		step( 'Can create free sites', async function () {
+			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
 			return await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
 		} );
 
@@ -85,29 +72,19 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			return await driver.navigate().back();
 		} );
 
-		step( 'Can switch sites', async function () {
+		step( 'Can switch to first site', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( firstSiteName );
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
 				await sideBarComponent.ensureSidebarMenuVisible();
-				await sideBarComponent.selectMyHome();
+				return await sideBarComponent.selectMyHome();
 			}
+			return await MyHomePage.Expect( driver );
 		} );
 
 		step( 'Can launch first site', async function () {
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
-		} );
-
-		step( 'Can delete sites', async function () {
-			const siteURLs = [ firstSiteName + '.wordpress.com', secondSiteName + 'wordpress.com' ];
-			for await ( const siteURL of siteURLs ) {
-				const sidebarComponent = await SidebarComponent.Expect( driver );
-				await sidebarComponent.ensureSidebarMenuVisible();
-				await sidebarComponent.selectSettings();
-				const settingsPage = await SettingsPage.Expect( driver );
-				return await settingsPage.deleteSite( siteURL );
-			}
 		} );
 	} );
 } );
