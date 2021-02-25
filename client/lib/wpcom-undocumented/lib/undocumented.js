@@ -808,14 +808,16 @@ Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( emailAccoun
  * Retrieves the URL to embed Titan's control panel in an iframe.
  *
  * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId, fn ) {
+Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId, context, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-iframe-url`,
 			apiNamespace: 'wpcom/v2',
 		},
+		{ context },
 		fn
 	);
 };
