@@ -12,7 +12,7 @@ import {
 	Button,
 } from '@automattic/composite-checkout';
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type {
@@ -638,6 +638,115 @@ function FirstTermDiscountCallout( {
 	return null;
 }
 
+function IntroductoryOfferCallout( {
+	product,
+}: {
+	product: ResponseCartProduct;
+} ): JSX.Element | null {
+	const translate = useTranslate();
+	let text: TranslateResult = translate( 'Discount for first period' );
+	if ( ! product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+
+	const intervalUnit = product.introductory_offer_terms.interval_unit;
+	const intervalCount = product.introductory_offer_terms.interval_count;
+
+	if ( product.cost === 0 ) {
+		if ( intervalUnit === 'day' ) {
+			if ( intervalCount === 1 ) {
+				text = translate( 'Free for first day' );
+			} else {
+				text = translate( 'Free for first %(numberOfDays)d days', {
+					args: {
+						numberOfDays: intervalCount,
+					},
+				} );
+			}
+		}
+		if ( intervalUnit === 'week' ) {
+			if ( intervalCount === 1 ) {
+				text = translate( 'Free for first week' );
+			} else {
+				text = translate( 'Free for first %(numberOfWeeks)d weeks', {
+					args: {
+						numberOfWeeks: intervalCount,
+					},
+				} );
+			}
+		}
+		if ( intervalUnit === 'month' ) {
+			if ( intervalCount === 1 ) {
+				text = translate( 'Free for first month' );
+			} else {
+				text = translate( 'Free for first %(numberOfMonths)d months', {
+					args: {
+						numberOfMonths: intervalCount,
+					},
+				} );
+			}
+		}
+		if ( intervalUnit === 'year' ) {
+			if ( intervalCount === 1 ) {
+				text = translate( 'Free for first year' );
+			} else {
+				text = translate( 'Free for first %(numberOfYears)d years', {
+					args: {
+						numberOfYears: intervalCount,
+					},
+				} );
+			}
+		}
+	} else {
+		if ( intervalUnit === 'day' ) {
+			if ( intervalCount === 1 ) {
+				text = translate( 'Discount for first day' );
+			} else {
+				text = translate( 'Discount for first %(numberOfDays)d days', {
+					args: {
+						numberOfDays: intervalCount,
+					},
+				} );
+			}
+		}
+		if ( intervalUnit === 'week' ) {
+			if ( intervalCount === 1 ) {
+				text = translate( 'Discount for first week' );
+			} else {
+				text = translate( 'Discount for first %(numberOfWeeks)d weeks', {
+					args: {
+						numberOfWeeks: intervalCount,
+					},
+				} );
+			}
+		}
+		if ( intervalUnit === 'month' ) {
+			if ( intervalCount === 1 ) {
+				text = translate( 'Discount for first month' );
+			} else {
+				text = translate( 'Discount for first %(numberOfMonths)d months', {
+					args: {
+						numberOfMonths: intervalCount,
+					},
+				} );
+			}
+		}
+		if ( intervalUnit === 'year' ) {
+			if ( intervalCount === 1 ) {
+				text = translate( 'Discount for first year' );
+			} else {
+				text = translate( 'Discount for first %(numberOfYears)d years', {
+					args: {
+						numberOfYears: intervalCount,
+					},
+				} );
+			}
+		}
+	}
+
+	return <DiscountCallout>{ text }</DiscountCallout>;
+}
+
 function DomainDiscountCallout( {
 	product,
 }: {
@@ -781,6 +890,7 @@ function WPLineItem( {
 					<DomainDiscountCallout product={ product } />
 					<FirstTermDiscountCallout product={ product } />
 					<CouponDiscountCallout product={ product } />
+					<IntroductoryOfferCallout product={ product } />
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList product={ product } /> }

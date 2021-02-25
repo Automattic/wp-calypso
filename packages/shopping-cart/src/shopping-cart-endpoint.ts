@@ -154,10 +154,18 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
 	subscription_id?: string;
+	introductory_offer_terms?: IntroductoryOfferTerms;
 
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
 	related_monthly_plan_cost_integer?: number;
+}
+
+export interface IntroductoryOfferTerms {
+	enabled: boolean;
+	interval_unit: string;
+	interval_count: number;
+	reason?: string;
 }
 
 export interface CartLocation {
