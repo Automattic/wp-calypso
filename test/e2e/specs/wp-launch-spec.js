@@ -11,6 +11,7 @@ import * as dataHelper from '../lib/data-helper.js';
 
 import CreateSiteFlow from '../lib/flows/create-site-flow.js';
 import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
+import DeleteSiteFlow from '../lib/flows/delete-site-flow.js';
 import LoginFlow from '../lib/flows/login-flow.js';
 import FindADomainComponent from '../lib/components/find-a-domain-component.js';
 import SidebarComponent from '../lib/components/sidebar-component';
@@ -38,10 +39,10 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
+describe.only( `[${ host }] Launch (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Create and launch a free site as existing user', function () {
+	describe( 'Create and launch a free site as existing user  @parallel', function () {
 		const siteName = dataHelper.getNewBlogName();
 
 		before( 'Can log in', async function () {
@@ -54,11 +55,17 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		} );
 
 		step( 'Can launch a site', async function () {
-			return await new LaunchSiteFlow( driver ).launchFreeSite();
+			await new LaunchSiteFlow( driver ).launchFreeSite();
+			return await MyHomePage.Expect( driver );
+		} );
+
+		after( async function () {
+			const deleteSite = new DeleteSiteFlow( driver );
+			await deleteSite.deleteSite( siteName + '.wordpress.com' );
 		} );
 	} );
 
-	describe( 'Create and launch multiple sites as existing user', function () {
+	describe( 'Create and launch multiple sites as existing user @parallel', function () {
 		const firstSiteName = dataHelper.getNewBlogName();
 		const secondSiteName = dataHelper.getNewBlogName();
 
@@ -68,6 +75,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		} );
 
 		step( 'Can create free sites', async function () {
+			console.log( firstSiteName, secondSiteName );
 			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
 			return await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
 		} );
@@ -87,7 +95,8 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		} );
 
 		step( 'Can launch first site', async function () {
-			return await new LaunchSiteFlow( driver ).launchFreeSite();
+			await new LaunchSiteFlow( driver ).launchFreeSite();
+			return await MyHomePage.Expect( driver );
 		} );
 
 		step( 'Can switch to second site', async function () {
@@ -95,7 +104,16 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		} );
 
 		step( 'Can launch second site', async function () {
-			return await new LaunchSiteFlow( driver ).launchFreeSite();
+			await new LaunchSiteFlow( driver ).launchFreeSite();
+			return await MyHomePage.Expect( driver );
+		} );
+
+		after( async function () {
+			const deleteSite = new DeleteSiteFlow( driver );
+			await deleteSite.deleteSite( firstSiteName + '.wordpress.com' );
+			console.log( 'deleted ' + firstSiteName );
+			await deleteSite.deleteSite( secondSiteName + '.wordpress.com' );
+			console.log( 'deleted ' + secondSiteName );
 		} );
 	} );
 } );
