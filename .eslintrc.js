@@ -73,9 +73,13 @@ module.exports = {
 			},
 		},
 		{
+			plugins: [ 'mocha' ],
 			files: [ 'test/e2e/**/*' ],
 			rules: {
 				'import/no-nodejs-modules': 'off',
+				'mocha/no-exclusive-tests': 'error',
+				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
+				'mocha/no-global-tests': 'error',
 				'no-console': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
