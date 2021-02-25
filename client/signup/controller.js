@@ -311,13 +311,13 @@ export default {
 	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
 		const { getState, dispatch } = signupStore;
 		const signupDependencies = getSignupDependencyStore( getState() );
-
 		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
 		const siteId = getSiteId( getState(), siteSlug );
+
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
 			next();
-		} else {
+		} else if ( siteSlug ) {
 			// Fetch the site by siteSlug and then try to select again
 			dispatch( requestSite( siteSlug ) ).then( () => {
 				let freshSiteId = getSiteId( getState(), siteSlug );
@@ -332,6 +332,7 @@ export default {
 					next();
 				}
 			} );
+		} else {
 			next();
 		}
 	},
