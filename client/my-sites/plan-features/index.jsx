@@ -320,8 +320,7 @@ export class PlanFeatures extends Component {
 				isPlaceholder,
 				hideMonthly,
 			} = properties;
-			const { rawPrice, discountPrice } = properties;
-			const { annualPricePerMonth, isMonthlyPlan } = properties;
+			const { rawPrice, discountPrice, isMonthlyPlan } = properties;
 			const planDescription = isInVerticalScrollingPlansExperiment
 				? planConstantObj.getShortDescription( abtest )
 				: planConstantObj.getDescription( abtest );
@@ -347,7 +346,6 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
-						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						audience={ planConstantObj.getAudience() }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
@@ -414,6 +412,7 @@ export class PlanFeatures extends Component {
 				isPlaceholder,
 				hideMonthly,
 				rawPrice,
+				isMonthlyPlan,
 			} = properties;
 			let { discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
@@ -446,8 +445,6 @@ export class PlanFeatures extends Component {
 				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
-			const { annualPricePerMonth, isMonthlyPlan } = properties;
-
 			return (
 				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeaturesHeader
@@ -472,7 +469,6 @@ export class PlanFeatures extends Component {
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
 						plansWithScroll={ withScroll }
-						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={
@@ -891,6 +887,7 @@ export default connect(
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const planPath = getPlanPath( plan ) || '';
+				const isMonthlyPlan = isMonthly( plan );
 
 				const checkoutUrlArgs = {};
 				// Auto-apply the coupon code to the cart for WPCOM sites
@@ -955,18 +952,6 @@ export default connect(
 					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
-				let annualPricePerMonth = rawPrice;
-				const isMonthlyPlan = isMonthly( plan );
-				if ( isMonthlyPlan ) {
-					// Get annual price per month for comparison
-					const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
-					if ( yearlyPlan ) {
-						annualPricePerMonth = siteId
-							? getSitePlanRawPrice( state, selectedSiteId, plan, { isMonthly: true } )
-							: getPlanRawPrice( state, yearlyPlan.product_id, true );
-					}
-				}
-
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 				if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
@@ -1016,7 +1001,6 @@ export default connect(
 					rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
-					annualPricePerMonth,
 					isMonthlyPlan,
 				};
 			} )

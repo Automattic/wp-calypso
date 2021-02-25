@@ -458,18 +458,9 @@ $plan-features-sidebar-width: 272px;
 			margin-bottom: 9px;
 		}
 	}
-}
 
-.plan-features__header-interval-discount {
-	margin-top: -1em;
-	margin-bottom: 1.4em;
-	font-size: $font-body-extra-small;
-	font-weight: 400;
-	color: var( --color-success );
-	line-height: normal;
-
-	&.is-crossed-out {
-		text-decoration: line-through;
+	&.is-logged-in-monthly-pricing {
+		font-style: normal;
 	}
 }
 
