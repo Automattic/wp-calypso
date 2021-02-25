@@ -97,6 +97,9 @@ export const JETPACK_ANTI_SPAM_PRODUCTS = [
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 ];
 
+// Marketplace products
+export const PRODUCT_MARKETPLACE_YOAST_PREMIUM = 'yoast_premium';
+
 export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_BACKUP_PRODUCTS,
 	...( isEnabled( 'jetpack/scan-product' ) ? JETPACK_SCAN_PRODUCTS : [] ),

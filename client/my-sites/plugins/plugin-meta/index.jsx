@@ -34,7 +34,7 @@ import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-t
 import { getExtensionSettingsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
+import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS, TYPE_MARKETPLACE, FEATURE_MARKETPLACE_YOAST_PREMIUM } from 'calypso/lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import { isBusiness, isEcommerce, isEnterprise } from 'calypso/lib/products-values';
 import { addSiteFragment } from 'calypso/lib/route';
@@ -502,6 +502,38 @@ export class PluginMeta extends Component {
 		);
 	};
 
+	renderYoastUpsell() {
+		const { translate, slug } = this.props;
+
+		if ( this.props.isVipSite ) {
+			return null;
+		}
+		const bannerURL = `/checkout/${ slug }/yoast_premium`;
+		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
+			type: TYPE_MARKETPLACE,
+		} );
+
+		// eslint-disable-next-line
+		console.log( plan );
+
+		const title = translate( 'Buy Yoast Premium!' );
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		return (
+			<div className="plugin-meta__upgrade_nudge">
+				<UpsellNudge
+					event="calypso_plugin_detail_page_upgrade_nudge"
+					href={ bannerURL }
+					feature={ FEATURE_MARKETPLACE_YOAST_PREMIUM }
+					plan={ plan }
+					title={ title }
+					showIcon={ true }
+				/>
+			</div>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
 	renderUpsell() {
 		const { translate, slug } = this.props;
 
@@ -606,6 +638,10 @@ export class PluginMeta extends Component {
 					! this.hasBusinessPlan() &&
 					! this.isWpcomPreinstalled() &&
 					( this.maybeDisplayUnsupportedNotice() || this.renderUpsell() ) }
+
+				{ 'wordpress-seo' === this.props.plugin.slug &&
+					this.renderYoastUpsell()
+				}
 
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }
