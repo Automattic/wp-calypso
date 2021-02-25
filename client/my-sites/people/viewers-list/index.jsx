@@ -27,7 +27,7 @@ const ViewersList = ( { site, label } ) => {
 	} = useViewers( {
 		siteId: site.ID,
 	} );
-	const { removeViewer } = useRemoveViewer( site.ID );
+	const { removeViewer } = useRemoveViewer();
 
 	useEffect( () => {
 		if ( error ) {

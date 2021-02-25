@@ -8,14 +8,15 @@ import { useMutation, useQueryClient } from 'react-query';
  */
 import wp from 'calypso/lib/wp';
 
-function useRemoveViewer( siteId ) {
+function useRemoveViewer() {
 	const queryClient = useQueryClient();
 	const { mutate: removeViewer, ...rest } = useMutation(
-		( viewerId ) => {
+		( { siteId, viewerId } ) => {
 			return wp.undocumented().site( siteId ).removeViewer( viewerId );
 		},
 		{
-			onSuccess() {
+			onSuccess( data, variables ) {
+				const { siteId } = variables;
 				queryClient.invalidateQueries( [ 'viewers', siteId ] );
 			},
 		}

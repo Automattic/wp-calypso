@@ -51,7 +51,7 @@ class Viewers extends React.Component {
 						'People',
 						'Clicked Remove Button In Remove Viewer Confirmation'
 					);
-					this.props.removeViewer( viewer.ID );
+					this.props.removeViewer( { siteId: this.props.site.ID, viewerId: viewer.ID } );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
