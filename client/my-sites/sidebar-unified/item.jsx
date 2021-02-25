@@ -9,7 +9,7 @@
  * External dependencies
  */
 import React, { memo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 /**
@@ -22,10 +22,6 @@ import {
 	collapseAllMySitesSidebarSections,
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
@@ -36,26 +32,16 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	isHappychatSessionActive,
+	isJetpackNonAtomicSite,
 	continueInCalypso,
 } ) => {
 	const reduxDispatch = useDispatch();
-	const isHappychatSessionActive = useSelector( hasActiveHappychatSession );
-	const siteId = useSelector( getSelectedSiteId );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
-	const isJetpackNonAtomicSite = isJetpack && ! isSiteAtomic;
 
 	const onNavigate = () => {
 		reduxDispatch( collapseAllMySitesSidebarSections() );
 		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
 	};
-
-	let forceInternalLink = true;
-	if ( isHappychatSessionActive && ! isJetpackNonAtomicSite ) {
-		forceInternalLink = false;
-	} else if ( isJetpackNonAtomicSite ) {
-		forceInternalLink = false;
-	}
 
 	return (
 		<SidebarItem
@@ -65,7 +51,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink={ forceInternalLink }
+			forceInternalLink={ ! isHappychatSessionActive && ! isJetpackNonAtomicSite }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
@@ -80,6 +66,8 @@ MySitesSidebarUnifiedItem.propTypes = {
 	slug: PropTypes.string,
 	title: PropTypes.string,
 	url: PropTypes.string,
+	isHappychatSessionActive: PropTypes.bool.isRequired,
+	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
 	continueInCalypso: PropTypes.func.isRequired,
 };
 

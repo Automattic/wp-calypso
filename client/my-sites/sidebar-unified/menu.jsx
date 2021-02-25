@@ -40,6 +40,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 	link,
 	selected,
 	sidebarCollapsed,
+	isHappychatSessionActive,
+	isJetpackNonAtomicSite,
 	continueInCalypso,
 } ) => {
 	const hasAutoExpanded = useRef( false );
@@ -109,6 +111,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 							selected={ isSelected }
 							sectionId={ sectionId }
 							isSubItem={ true }
+							isHappychatSessionActive={ isHappychatSessionActive }
+							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
 							continueInCalypso={ continueInCalypso }
 						/>
 					);
@@ -127,6 +131,8 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	children: PropTypes.array.isRequired,
 	link: PropTypes.string,
 	sidebarCollapsed: PropTypes.bool,
+	isHappychatSessionActive: PropTypes.bool.isRequired,
+	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
 	continueInCalypso: PropTypes.func.isRequired,
 	/*
 	Example of children shape:

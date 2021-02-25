@@ -30,13 +30,12 @@ import SidebarRegion from 'calypso/layout/sidebar/region';
 import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
-import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
+import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isExternal } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -69,11 +68,13 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	// link on new tab in order to avoid Happy Chat session disconnection.
 	// We return a bool that shows if the logic should terminate here.
 	const continueInCalypso = ( url, event ) => {
-		if ( isJetpackNonAtomicSite ) {
-			return true;
-		}
-
 		if ( isHappychatSessionActive && isExternal( url ) ) {
+			// Do not show warning modal on Jetpack sites, since all external links are
+			// always opened on new tabs for these sites.
+			if ( isJetpackNonAtomicSite ) {
+				return false;
+			}
+
 			event && event.preventDefault();
 			setExternalUrl( url );
 			setShowDialog( true );
@@ -120,6 +121,8 @@ export const MySitesSidebarUnified = ( { path } ) => {
 								link={ item.url }
 								selected={ isSelected }
 								sidebarCollapsed={ sidebarIsCollapsed }
+								isHappychatSessionActive={ isHappychatSessionActive }
+								isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
 								continueInCalypso={ continueInCalypso }
 								{ ...item }
 							/>
@@ -130,6 +133,8 @@ export const MySitesSidebarUnified = ( { path } ) => {
 						<MySitesSidebarUnifiedItem
 							key={ item.slug }
 							selected={ isSelected }
+							isHappychatSessionActive={ isHappychatSessionActive }
+							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
 							continueInCalypso={ continueInCalypso }
 							{ ...item }
 						/>
