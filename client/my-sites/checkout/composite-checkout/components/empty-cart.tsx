@@ -12,6 +12,7 @@ export default function EmptyCart(): JSX.Element {
 			isStepActive={ false }
 			isStepComplete={ true }
 			titleContent={ <EmptyCartTitle /> }
+			completeStepContent={ <EmptyCartExplanation /> }
 		/>
 	);
 }
@@ -19,4 +20,15 @@ export default function EmptyCart(): JSX.Element {
 function EmptyCartTitle(): JSX.Element {
 	const translate = useTranslate();
 	return <>{ String( translate( 'You have no items in your cart' ) ) }</>;
+}
+
+function EmptyCartExplanation(): JSX.Element {
+	const translate = useTranslate();
+	return (
+		<>
+			{ translate(
+				'If you were trying to add something to your cart, there may have been a problem. Try adding it again.'
+			) }
+		</>
+	);
 }
