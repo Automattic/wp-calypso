@@ -233,7 +233,7 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 				<Button
 					data-e2e-button="decline"
 					className="premium-plan-upgrade-upsell__decline-offer-button"
-					onClick={ handleClickDecline }
+					onClick={ () => handleClickDecline() }
 				>
 					{ translate( 'No thanks' ) }
 				</Button>

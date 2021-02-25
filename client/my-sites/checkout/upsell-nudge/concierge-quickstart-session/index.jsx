@@ -259,7 +259,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 						<Button
 							data-e2e-button="decline"
 							className="concierge-quickstart-session__decline-offer-button"
-							onClick={ handleClickDecline }
+							onClick={ () => handleClickDecline() }
 						>
 							{ translate( "No thanks, I'll do it on my own" ) }
 						</Button>

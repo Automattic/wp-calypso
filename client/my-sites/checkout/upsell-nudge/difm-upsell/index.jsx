@@ -176,7 +176,7 @@ export class DifmUpsell extends PureComponent {
 				<Button
 					data-e2e-button="decline"
 					className="difm-upsell__decline-offer-button"
-					onClick={ handleClickDecline }
+					onClick={ () => handleClickDecline() }
 				>
 					{ translate( 'No thanks' ) }
 				</Button>

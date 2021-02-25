@@ -8,6 +8,7 @@ import page from 'page';
 import { pick } from 'lodash';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -70,6 +71,8 @@ export const PREMIUM_PLAN_UPGRADE_UPSELL = 'premium-plan-upgrade-upsell';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export const DIFM_UPSELL = 'difm-upsell';
 
+const debug = debugFactory( 'calypso:composite-checkout:upsell-nudge' );
+
 export class UpsellNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
@@ -85,8 +88,8 @@ export class UpsellNudge extends React.Component {
 		product: PropTypes.object,
 		productCost: PropTypes.number,
 		productDisplayCost: PropTypes.string,
-		planRawPrice: PropTypes.string,
-		planDiscountedRawPrice: PropTypes.string,
+		planRawPrice: PropTypes.number,
+		planDiscountedRawPrice: PropTypes.number,
 		isLoggedIn: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		selectedSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
@@ -265,15 +268,21 @@ export class UpsellNudge extends React.Component {
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
-
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
 		const destinationFromCookie = retrieveSignupDestination();
+
 		if ( url.includes( destinationFromCookie ) ) {
 			clearSignupDestinationCookie();
 		}
 
-		page.redirect( url );
+		try {
+			page.redirect( url );
+		} catch ( e ) {
+			debug( 'handleClickDecline() page.redirect error', e );
+		} finally {
+			window.location.replace( url );
+		}
 	};
 
 	handleClickAccept = ( buttonAction ) => {

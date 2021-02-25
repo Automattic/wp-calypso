@@ -270,7 +270,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 				<Button
 					data-e2e-button="decline"
 					className="business-plan-upgrade-upsell__decline-offer-button"
-					onClick={ handleClickDecline }
+					onClick={ () => handleClickDecline() }
 				>
 					{ translate( "No thanks, I don't need plugins" ) }
 				</Button>
