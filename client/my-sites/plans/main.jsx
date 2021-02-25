@@ -136,9 +136,9 @@ class Plans extends React.Component {
 							<FormattedHeader
 								brandFont
 								headerText={ translate( 'Plans' ) }
-								subHeaderText={
+								subHeaderText={ translate(
 									'See and compare the features available on each WordPress.com plan.'
-								}
+								) }
 								align="left"
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
