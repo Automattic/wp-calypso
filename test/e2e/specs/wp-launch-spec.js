@@ -22,6 +22,16 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 
 let driver;
+const switchSite = async function ( siteName ) {
+	const sideBarComponent = await SidebarComponent.Expect( driver );
+	await sideBarComponent.selectSiteSwitcher();
+	await sideBarComponent.searchForSite( siteName );
+	if ( driverManager.currentScreenSize() === 'mobile' ) {
+		await sideBarComponent.ensureSidebarMenuVisible();
+		await sideBarComponent.selectMyHome();
+	}
+	await MyHomePage.Expect( driver );
+};
 
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
@@ -73,17 +83,18 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		} );
 
 		step( 'Can switch to first site', async function () {
-			const sideBarComponent = await SidebarComponent.Expect( driver );
-			await sideBarComponent.selectSiteSwitcher();
-			await sideBarComponent.searchForSite( firstSiteName );
-			if ( driverManager.currentScreenSize() === 'mobile' ) {
-				await sideBarComponent.ensureSidebarMenuVisible();
-				return await sideBarComponent.selectMyHome();
-			}
-			return await MyHomePage.Expect( driver );
+			await switchSite( firstSiteName );
 		} );
 
 		step( 'Can launch first site', async function () {
+			return await new LaunchSiteFlow( driver ).launchFreeSite();
+		} );
+
+		step( 'Can switch to second site', async function () {
+			await switchSite( secondSiteName );
+		} );
+
+		step( 'Can launch second site', async function () {
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 	} );
