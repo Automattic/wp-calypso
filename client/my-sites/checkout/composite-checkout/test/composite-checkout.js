@@ -497,12 +497,12 @@ describe( 'CompositeCheckout', () => {
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'redirects to the plans page if the cart is empty when it loads', async () => {
+	it( 'does not redirect to the plans page if the cart is empty when it loads', async () => {
 		const cartChanges = { products: [] };
 		await act( async () => {
 			render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
-		expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
+		expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {
