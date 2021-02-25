@@ -7,7 +7,6 @@ import '@automattic/calypso-polyfills';
 /**
  * Internal dependencies
  */
-import * as AdTracking from 'calypso/lib/analytics/ad-tracking';
 import userUtils from 'calypso/lib/user/utils';
 
 import * as AnonId from '../anon-id';
@@ -18,11 +17,13 @@ jest.mock( '../log-error', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/wp' );
-const mockedRecordTracksEvent = jest.fn()
-const mockedGetTracksAnonymousUserId = jest.fn()
+const mockedRecordTracksEvent = jest.fn();
+const mockedGetTracksAnonymousUserId = jest.fn();
+const mockedGetTracksLoadPromise = jest.fn();
 jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: (...args) => mockedRecordTracksEvent(...args),
-	getTracksAnonymousUserId: (...args) => mockedGetTracksAnonymousUserId(...args),
+	recordTracksEvent: ( ...args ) => mockedRecordTracksEvent( ...args ),
+	getTracksAnonymousUserId: ( ...args ) => mockedGetTracksAnonymousUserId( ...args ),
+	getTracksLoadPromise: ( ...args ) => mockedGetTracksLoadPromise( ...args ),
 } ) );
 jest.mock( 'calypso/lib/user/utils' );
 const mockedIsLoggedIn = jest.spyOn( userUtils, 'isLoggedIn' );
@@ -58,6 +59,7 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should work as expected when the anonId is immediately available', async () => {
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => 'anon-id-123' );
+		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		expect( await AnonId.initializeAnonId() ).toBe( 'anon-id-123' );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
@@ -65,6 +67,7 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should work as expected when the anonId is available after a few tries', async () => {
 		jest.useFakeTimers();
+		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => undefined );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => '' );
@@ -78,6 +81,7 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should poll at intervals', async () => {
 		jest.useFakeTimers();
+		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		AnonId.initializeAnonId();
 		const intervalMs = 50;
 		jest.advanceTimersByTime( 0 );
@@ -97,6 +101,7 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should give up after many polling attempts and return null', async () => {
 		jest.useFakeTimers();
+		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementation( () => null );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
 		jest.runAllTimers();
@@ -106,6 +111,7 @@ describe( 'initializeAnonId', () => {
 	} );
 
 	it( 'should give up immediately and return null if immediately logged in', async () => {
+		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementation( () => `anon-id-shouldn't-appear` );
 		mockedIsLoggedIn.mockImplementationOnce( () => true );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
@@ -116,6 +122,7 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should give up and return null if logged in', async () => {
 		jest.useFakeTimers();
+		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => `anon-id-should't-appear` );
@@ -127,6 +134,18 @@ describe( 'initializeAnonId', () => {
 		expect( await initializeAnonIdPromise ).toBe( null );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 2 );
+	} );
+
+	it( `should give up and return null if tracks doesn't load`, async () => {
+		jest.useFakeTimers();
+		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.reject() );
+		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
+		mockedIsLoggedIn.mockImplementationOnce( () => false );
+		const initializeAnonIdPromise = AnonId.initializeAnonId();
+		expect( await initializeAnonIdPromise ).toBe( null );
+		jest.runAllTimers();
+		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
+		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
 	} );
 } );
 

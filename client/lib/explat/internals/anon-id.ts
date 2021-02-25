@@ -1,7 +1,11 @@
 /**
  * WordPress dependencies
  */
-import { recordTracksEvent, getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+import {
+	recordTracksEvent,
+	getTracksAnonymousUserId,
+	getTracksLoadPromise,
+} from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -65,6 +69,12 @@ export const initializeAnonId = async (): Promise< string | null > => {
 				res( anonId );
 			}
 		}, anonIdPollingIntervalMilliseconds );
+
+		// Tracks can fail to load, e.g. because of an ad-blocker
+		getTracksLoadPromise().catch( () => {
+			clearInterval( anonIdPollingInterval );
+			res( null );
+		} );
 	} );
 
 	return initializeAnonIdPromise;
