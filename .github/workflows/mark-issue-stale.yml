@@ -24,5 +24,4 @@ jobs:
           # Label to apply when issue is marked stale.
           stale-issue-label: '[Status] Stale'
           # Increase number of operations executed per run.
-          operations-per-run: 750
-          debug-only: true
+          operations-per-run: 650
