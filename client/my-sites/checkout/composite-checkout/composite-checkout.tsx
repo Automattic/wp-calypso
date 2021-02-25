@@ -68,7 +68,7 @@ import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useCountryList from './hooks/use-country-list';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
-import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
+import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
@@ -350,7 +350,11 @@ export default function CompositeCheckout( {
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
-	} = useRedirectIfCartEmpty( siteSlug, siteSlugLoggedOutCart, createUserAndSiteBeforeTransaction );
+	} = useRemoveFromCartAndRedirect(
+		siteSlug,
+		siteSlugLoggedOutCart,
+		createUserAndSiteBeforeTransaction
+	);
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,

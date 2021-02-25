@@ -14,7 +14,7 @@ import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-empty' );
 
-export default function useRedirectIfCartEmpty(
+export default function useRemoveFromCartAndRedirect(
 	siteSlug: string | undefined,
 	siteSlugLoggedOutCart: string | undefined,
 	createUserAndSiteBeforeTransaction: boolean
