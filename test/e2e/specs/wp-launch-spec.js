@@ -46,7 +46,8 @@ describe.only( `[${ host }] Launch (${ screenSize })`, function () {
 		const siteName = dataHelper.getNewBlogName();
 
 		before( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver );
+			await driverManager.ensureNotLoggedIn( driver );
+			const loginFlow = new LoginFlow( driver, 'launchUser' );
 			return await loginFlow.login();
 		} );
 
@@ -61,7 +62,7 @@ describe.only( `[${ host }] Launch (${ screenSize })`, function () {
 
 		after( async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
-			await deleteSite.deleteSite( siteName + '.wordpress.com' );
+			return await deleteSite.deleteSite( siteName + '.wordpress.com' );
 		} );
 	} );
 
@@ -70,13 +71,15 @@ describe.only( `[${ host }] Launch (${ screenSize })`, function () {
 		const secondSiteName = dataHelper.getNewBlogName();
 
 		before( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver );
+			await driverManager.ensureNotLoggedIn( driver );
+			const loginFlow = new LoginFlow( driver, 'launchUser' );
 			return await loginFlow.login();
 		} );
 
 		step( 'Can create free sites', async function () {
 			console.log( firstSiteName, secondSiteName );
 			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
+			console.log( 'finished first site' );
 			return await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
 		} );
 
