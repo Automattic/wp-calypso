@@ -101,7 +101,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 
 		step( 'Can delete sites', async function () {
 			const siteURLs = [ firstSiteName + '.wordpress.com', secondSiteName + 'wordpress.com' ];
-			for ( const siteURL of siteURLs ) {
+			for await ( const siteURL of siteURLs ) {
 				const sidebarComponent = await SidebarComponent.Expect( driver );
 				await sidebarComponent.ensureSidebarMenuVisible();
 				await sidebarComponent.selectSettings();
