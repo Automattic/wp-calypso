@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
@@ -27,7 +27,7 @@ interface ExperimentalBlockPattern {
 	description: string;
 	isPremium: boolean;
 	name: string;
-	title: React.ReactNode;
+	title: ReactNode;
 	viewportWidth: number;
 }
 
