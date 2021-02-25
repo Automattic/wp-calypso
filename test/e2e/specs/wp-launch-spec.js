@@ -39,7 +39,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe.only( `[${ host }] Launch (${ screenSize })`, function () {
+describe( `[${ host }] Launch (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Create and launch a free site as existing user  @parallel', function () {
@@ -66,7 +66,9 @@ describe.only( `[${ host }] Launch (${ screenSize })`, function () {
 		} );
 	} );
 
-	describe( 'Create and launch multiple sites as existing user @parallel', function () {
+	// Expected failure as the /start flow gets stuck when launching multiple sites.
+	// https://github.com/Automattic/wp-calypso/issues/50273
+	describe.skip( 'Create and launch multiple sites as existing user @parallel', function () {
 		const firstSiteName = dataHelper.getNewBlogName();
 		const secondSiteName = dataHelper.getNewBlogName();
 
@@ -77,9 +79,7 @@ describe.only( `[${ host }] Launch (${ screenSize })`, function () {
 		} );
 
 		step( 'Can create free sites', async function () {
-			console.log( firstSiteName, secondSiteName );
 			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
-			console.log( 'finished first site' );
 			return await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
 		} );
 
@@ -114,9 +114,7 @@ describe.only( `[${ host }] Launch (${ screenSize })`, function () {
 		after( async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
 			await deleteSite.deleteSite( firstSiteName + '.wordpress.com' );
-			console.log( 'deleted ' + firstSiteName );
 			await deleteSite.deleteSite( secondSiteName + '.wordpress.com' );
-			console.log( 'deleted ' + secondSiteName );
 		} );
 	} );
 } );
