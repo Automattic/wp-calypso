@@ -1,12 +1,11 @@
 /**
- * WordPress dependencies
+ * Internal dependencies
  */
 import { getLogger } from 'calypso/server/lib/logger';
+import { isDevelopmentMode } from './misc'
 
 // Using typescript to ensure we are being safe in SSR
 declare const window: undefined | ( Window & typeof globalThis );
-
-export const isDevelopmentMode = process.env.NODE_ENV === 'development';
 
 /**
  * Log an error to the server.

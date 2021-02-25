@@ -8,7 +8,8 @@ import { createExPlatClient } from '@automattic/explat-client';
  */
 import { getAnonId, initializeAnonId } from './internals/anon-id';
 import fetchExperimentAssignment from './internals/fetch-experiment-assignment';
-import { logError, isDevelopmentMode } from './internals/log-error';
+import { logError } from './internals/log-error';
+import { isDevelopmentMode } from './internals/misc';
 
 initializeAnonId().catch( ( e ) => logError( { message: e.message } ) );
 
