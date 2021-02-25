@@ -32,17 +32,17 @@ before( async function () {
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Create and launch a free site', function () {
+	describe( 'Create and launch a free site as existing user', function () {
 		const siteName = dataHelper.getNewBlogName();
 		const siteURL = siteName + '.wordpress.com';
 
 		step( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver );
-			await loginFlow.login();
+			return await loginFlow.login();
 		} );
 
-		step( 'Can create one free site as existing user', async function () {
-			await new CreateSiteFlow( driver, siteName ).createFreeSite();
+		step( 'Can create a free site', async function () {
+			return await new CreateSiteFlow( driver, siteName ).createFreeSite();
 		} );
 
 		step( 'Can launch a site', async function () {
@@ -58,21 +58,21 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		} );
 	} );
 
-	describe( 'Create and launch multiple sites', function () {
+	describe( 'Create and launch multiple sites as existing user', function () {
 		const firstSiteName = dataHelper.getNewBlogName();
 		const secondSiteName = dataHelper.getNewBlogName();
 
 		step( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver );
-			await loginFlow.login();
+			return await loginFlow.login();
 		} );
 
-		step( 'Can create first free site as existing user', async function () {
-			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
+		step( 'Can create first free site', async function () {
+			return await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
 		} );
 
-		step( 'Can create second free site as existing user', async function () {
-			await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
+		step( 'Can create second free site', async function () {
+			return await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
 		} );
 
 		step( 'Can start launch flow and abandon', async function () {
@@ -85,7 +85,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			return await driver.navigate().back();
 		} );
 
-		step( 'Can switch sites and launch the first site', async function () {
+		step( 'Can switch sites', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
 			await sideBarComponent.selectSiteSwitcher();
 			await sideBarComponent.searchForSite( firstSiteName );
