@@ -242,7 +242,7 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		if ( ( isInSignup || isLoggedInMonthlyPricing ) && ! isMonthlyPlan ) {
-			return translate( 'Billed annually' );
+			return translate( 'billed annually' );
 		}
 
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
