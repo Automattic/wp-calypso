@@ -6,7 +6,7 @@ import ExPlatClient from '../index';
 const mockLogError = jest.fn();
 jest.mock( '../internals/log-error', () => ( {
 	...jest.requireActual( '../internals/log-error' ),
-	// We get a runtype type error if we don't do this:
+	// We get a runtime type error if we don't do this:
 	logError: ( ...args ) => mockLogError( ...args ),
 } ) );
 
