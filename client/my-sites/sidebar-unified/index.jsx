@@ -12,6 +12,7 @@
  */
 import React, { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -124,7 +125,11 @@ export const MySitesSidebarUnified = ( { path } ) => {
 						/>
 					);
 				} ) }
-				<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
+				<CollapseSidebar
+					key="collapse"
+					title={ translate( 'Collapse menu' ) }
+					icon="dashicons-admin-collapse"
+				/>
 			</Sidebar>
 			<AsyncLoad require="calypso/blocks/nav-unification-modal" placeholder={ null } />
 			<AsyncLoad
