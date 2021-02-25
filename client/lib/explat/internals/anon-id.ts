@@ -1,8 +1,11 @@
 /**
+ * WordPress dependencies
+ */
+import { recordTracksEvent, getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+
+/**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
 import userUtils from 'calypso/lib/user/utils';
 import { logErrorOrThrowInDevelopmentMode } from './log-error';
 
@@ -56,7 +59,7 @@ export const initializeAnonId = async (): Promise< string | null > => {
 			}
 			attempt = attempt + 1;
 
-			const anonId = tracksAnonymousUserId();
+			const anonId = getTracksAnonymousUserId();
 			if ( typeof anonId === 'string' && anonId !== '' ) {
 				clearInterval( anonIdPollingInterval );
 				res( anonId );
