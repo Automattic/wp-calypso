@@ -1,20 +1,48 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
+
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import Viewers from './viewers';
 import useViewers from 'calypso/data/viewers/use-viewers';
 import useRemoveViewer from 'calypso/data/viewers/remove-viewer';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
 const ViewersList = ( { site, label } ) => {
-	const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage } = useViewers( {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const {
+		data,
+		isLoading,
+		fetchNextPage,
+		isFetchingNextPage,
+		hasNextPage,
+		error,
+		refetch,
+	} = useViewers( {
 		siteId: site.ID,
 	} );
 	const { removeViewer } = useRemoveViewer( site.ID );
+
+	useEffect( () => {
+		if ( error ) {
+			dispatch(
+				errorNotice( 'There was an error retrieving viewer', {
+					id: 'site-viewers-notice',
+					button: 'Try again',
+					onClick: () => {
+						removeNotice( 'site-viewers-notice' );
+						refetch();
+					},
+				} )
+			);
+		}
+	}, [ dispatch, error, refetch, translate ] );
 
 	return (
 		<Viewers
@@ -31,4 +59,4 @@ const ViewersList = ( { site, label } ) => {
 	);
 };
 
-export default localize( ViewersList );
+export default ViewersList;
