@@ -565,7 +565,7 @@ function LineItemSublabelAndPrice( {
 		const options = {
 			args: {
 				sublabel,
-				price: product.item_subtotal_display,
+				price: product.item_original_subtotal_display,
 			},
 		};
 
