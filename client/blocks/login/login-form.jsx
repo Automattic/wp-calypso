@@ -518,9 +518,12 @@ export class LoginForm extends Component {
 											components: {
 												newAccountLink: (
 													<a
-														href={ addQueryArgs( signupUrl, {
-															user_email: this.state.usernameOrEmail,
-														} ) }
+														href={ addQueryArgs(
+															{
+																user_email: this.state.usernameOrEmail,
+															},
+															signupUrl
+														) }
 													/>
 												),
 											},
