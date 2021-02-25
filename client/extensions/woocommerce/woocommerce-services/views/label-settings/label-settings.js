@@ -42,7 +42,6 @@ import {
 	userCanManagePayments,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
-import AddCardDialog from 'woocommerce/woocommerce-services/views/label-settings/add-credit-card-modal';
 
 class ShippingLabels extends Component {
 	UNSAFE_componentWillMount() {
@@ -286,8 +285,6 @@ class ShippingLabels extends Component {
 				) : (
 					paymentMethods.map( renderPaymentMethod )
 				) }
-
-				<AddCardDialog siteId={ siteId } />
 
 				{ /* Render two buttons with internal/external classNames to conditionally show them in Calypso or wp-admin using CSS */ }
 				<Button className="label-settings__internal" onClick={ openDialog } compact>
