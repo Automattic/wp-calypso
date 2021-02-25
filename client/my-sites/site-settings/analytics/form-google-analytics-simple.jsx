@@ -120,7 +120,7 @@ const GoogleAnalyticsSimpleForm = ( {
 						</div>
 					</div>
 					{ displayForm && (
-						<div>
+						<div className="analytics site-settings__analytics-form-content">
 							<FormFieldset>
 								<FormLabel htmlFor="wgaCode">
 									{ translate( 'Google Analytics Measurement ID', { context: 'site setting' } ) }
