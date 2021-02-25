@@ -2,7 +2,6 @@
  * External dependencies
  */
 import webdriver from 'selenium-webdriver';
-import chromedriver from 'chromedriver'; // eslint-disable-line no-unused-vars
 import firefox from 'selenium-webdriver/firefox';
 import chrome from 'selenium-webdriver/chrome';
 import config from 'config';
@@ -162,8 +161,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				}
 
 				options.addArguments( '--app=https://www.wordpress.com' );
-
-				console.log( 'CHROMERIVER PATH', chromedriver.path );
 
 				// eslint-disable-next-line no-case-declarations
 				const service = new chrome.ServiceBuilder()
