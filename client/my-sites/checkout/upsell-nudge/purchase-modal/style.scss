@@ -119,9 +119,9 @@ $left-margin: 36px;
 /**
  * Checkout Terms
  */
-.checkout__terms,
-.checkout__concierge-refund-policy,
-.checkout__bundled-domain-notice {
+.purchase-modal .checkout__terms,
+.purchase-modal .checkout__concierge-refund-policy,
+.purchase-modal .checkout__bundled-domain-notice {
 	margin: 4px 0;
 	padding-left: $left-margin;
 	position: relative;
