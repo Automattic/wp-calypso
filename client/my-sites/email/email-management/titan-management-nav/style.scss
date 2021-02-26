@@ -7,6 +7,24 @@
 	}
 }
 
+.titan-management-nav__mailbox-setup-prompt {
+	display: flex;
+
+	span {
+		flex-grow: 1;
+
+		.gridicon {
+			margin-right: 0.25em;
+			vertical-align: text-bottom;
+		}
+	}
+
+	.button .gridicon {
+		margin-left: 0.25em;
+		vertical-align: top;
+	}
+}
+
 .titan-management-nav__foldable-card {
 	margin-bottom: 0;
 
@@ -47,7 +65,7 @@
 
 			&:hover {
 				background-color: #eee;
-				border-radius: 5px;
+				border-radius: 5px; /* stylelint-disable-line scales/radii */
 			}
 
 			img {
