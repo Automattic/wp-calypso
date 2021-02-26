@@ -3,7 +3,8 @@
  */
 import * as React from 'react';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
@@ -18,6 +19,10 @@ import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic
 import { FLOW_ID } from '../../constants';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
+	console.log( locale, document.documentElement.lang );
+
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { siteSubdomain } = useSiteDomains();
 	const { domainSearch, setDomainSearch } = useDomainSearch();
@@ -41,14 +46,26 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 		} );
 	};
 
+	const fallbackSubtitleText = __(
+		'Free for the first year with any paid plan.',
+		'full-site-editing'
+	);
+	const newSubtitleText = __(
+		'Free for the first year with any annual plan.',
+		'full-site-editing'
+	);
+	const subtitleText =
+		locale === 'en' ||
+		hasTranslation?.( 'Free for the first year with any annual plan.', 'full-site-editing' )
+			? newSubtitleText
+			: fallbackSubtitleText;
+
 	return (
 		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
 				<div>
 					<Title>{ __( 'Choose a domain', 'full-site-editing' ) }</Title>
-					<SubTitle>
-						{ __( 'Free for the first year with any paid plan.', 'full-site-editing' ) }
-					</SubTitle>
+					<SubTitle>{ subtitleText }</SubTitle>
 				</div>
 				<ActionButtons sticky={ false }>
 					<NextButton onClick={ handleNext } disabled={ ! domainSearch } />
