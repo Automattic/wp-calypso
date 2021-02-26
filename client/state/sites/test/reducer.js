@@ -27,9 +27,8 @@ import {
 	SITE_SETTINGS_UPDATE,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
@@ -546,7 +545,7 @@ describe( 'reducer', () => {
 					name: 'WordPress.com Example Blog',
 				},
 			} );
-			const state = items( original, { type: SERIALIZE } );
+			const state = serialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -558,7 +557,7 @@ describe( 'reducer', () => {
 					name: 'WordPress.com Example Blog',
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -567,7 +566,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				2916284: { bad: true },
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.be.null;
 		} );
@@ -784,7 +783,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 			expect( state ).to.eql( original );
 		} );
 
@@ -797,7 +796,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 			expect( state ).to.be.null;
 		} );
 	} );

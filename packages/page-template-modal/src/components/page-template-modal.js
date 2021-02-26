@@ -18,6 +18,7 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import ensureAssets from '../utils/ensure-assets';
 import mapBlocksRecursively from '../utils/map-blocks-recursively';
 import containsMissingBlock from '../utils/contains-missing-block';
+import { sortGroupNames } from '../utils/group-utils';
 
 export default class PageTemplateModal extends Component {
 	state = {
@@ -280,16 +281,8 @@ export default class PageTemplateModal extends Component {
 			}
 		}
 
-		return this.sortGroupsNames( templateGroups );
-	};
-
-	sortGroupsNames = ( groups ) => {
-		return Object.keys( groups )
-			.sort()
-			.reduce( ( result, key ) => {
-				result[ key ] = groups[ key ];
-				return result;
-			}, {} );
+		const preferredGroupOrder = [ 'about', 'blog', 'home-page', 'gallery', 'services', 'contact' ];
+		return sortGroupNames( preferredGroupOrder, templateGroups );
 	};
 
 	getTemplatesForGroup = ( groupName ) => {
@@ -339,7 +332,7 @@ export default class PageTemplateModal extends Component {
 		const blankGroup = this.renderTemplateGroup( 'blank', __( 'Blank', __i18n_text_domain__ ) );
 
 		const homePageGroup = this.props.isFrontPage
-			? this.renderTemplateGroup( 'home-page', __( 'Home Page', __i18n_text_domain__ ) )
+			? this.renderTemplateGroup( 'home-page', __( 'Home', __i18n_text_domain__ ) )
 			: null;
 
 		const renderedGroups = [];
@@ -364,10 +357,10 @@ export default class PageTemplateModal extends Component {
 			return null;
 		}
 
-		return this.renderTemplatesList( templates, groupName, groupTitle );
+		return this.renderTemplatesList( templates, groupTitle );
 	};
 
-	renderTemplatesList = ( templatesList, groupName, groupTitle ) => {
+	renderTemplatesList = ( templatesList, groupTitle ) => {
 		if ( ! templatesList.length ) {
 			return null;
 		}

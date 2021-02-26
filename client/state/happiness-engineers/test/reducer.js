@@ -13,9 +13,8 @@ import {
 	HAPPINESS_ENGINEERS_RECEIVE,
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
 	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -89,14 +88,14 @@ describe( 'reducer', () => {
 
 		test( 'should persist state', () => {
 			const original = deepFreeze( [ 'test 3' ] );
-			const state = items( original, { type: SERIALIZE } );
+			const state = serialize( items, original );
 
 			expect( state ).to.eql( [ 'test 3' ] );
 		} );
 
 		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( [ 'test 3' ] );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( [ 'test 3' ] );
 		} );
@@ -105,7 +104,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				'test 3': { URL: 'test 3' },
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( null );
 		} );

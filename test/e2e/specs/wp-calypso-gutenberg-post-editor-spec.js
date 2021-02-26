@@ -1219,38 +1219,38 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert Embeds block', async function () {
-			const blogPostTitle = dataHelper.randomPhrase();
+		step( 'Can start post', async function () {
+			const blogPostTitle = 'Embeds: ' + dataHelper.randomPhrase();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.enterTitle( 'Embeds: ' + blogPostTitle );
+			await gEditorComponent.enterTitle( blogPostTitle );
+			const title = await gEditorComponent.titleShown();
+			assert.strictEqual( title, blogPostTitle );
+		} );
 
-			this.instagramEditorSelector =
-				'.wp-block-embed iframe[title="Embedded content from instagram.com"]';
-			const blockIdInstagram = await gEditorComponent.addBlock( 'Instagram' );
-			const gEmbedsComponentInstagram = await EmbedsBlockComponent.Expect(
-				driver,
-				blockIdInstagram
-			);
-			await gEmbedsComponentInstagram.embedUrl( 'https://www.instagram.com/p/BlDOZMil933/' );
-			await gEmbedsComponentInstagram.isEmbeddedInEditor( this.instagramEditorSelector );
-
-			this.twitterEditorSelector = '.wp-block-embed iframe[title="Embedded content from twitter"]';
-			const blockIdTwitter = await gEditorComponent.addBlock( 'Twitter' );
-			const gEmbedsComponentTwitter = await EmbedsBlockComponent.Expect( driver, blockIdTwitter );
-			await gEmbedsComponentTwitter.embedUrl(
-				'https://twitter.com/automattic/status/1067120832676327424'
-			);
-			await gEmbedsComponentTwitter.isEmbeddedInEditor( this.twitterEditorSelector );
-
-			this.youtubeEditorSelector =
-				'.wp-block-embed iframe[title="Embedded content from youtube.com"]';
-			const blockIdYouTube = await gEditorComponent.addBlock( 'YouTube' );
-			const gEmbedsComponentYouTube = await EmbedsBlockComponent.Expect( driver, blockIdYouTube );
-			await gEmbedsComponentYouTube.embedUrl( 'https://www.youtube.com/watch?v=xifhQyopjZM' );
-			await gEmbedsComponentYouTube.isEmbeddedInEditor( this.youtubeEditorSelector );
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+		[
+			{
+				name: 'Instagram',
+				url: 'https://www.instagram.com/p/BlDOZMil933/',
+				selector: '.wp-block-embed iframe[title="Embedded content from instagram.com"]',
+			},
+			{
+				name: 'Twitter',
+				url: 'https://twitter.com/automattic/status/1067120832676327424',
+				selector: '.wp-block-embed iframe[title="Embedded content from twitter"]',
+			},
+			{
+				name: 'YouTube',
+				url: 'https://www.youtube.com/watch?v=xifhQyopjZM',
+				selector: '.wp-block-embed iframe[title="Embedded content from youtube.com"]',
+			},
+		].forEach( ( Block ) => {
+			step( `Can insert ${ Block.name } block`, async function () {
+				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+				const embedBlock = await gEditorComponent.addBlock( Block.name );
+				const gEmbedsComponent = await EmbedsBlockComponent.Expect( driver, embedBlock );
+				await gEmbedsComponent.embedUrl( Block.url );
+				await gEmbedsComponent.isEmbeddedInEditor( Block.selector );
+			} );
 		} );
 
 		step( 'Can publish and view content', async function () {

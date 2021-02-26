@@ -19,7 +19,6 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import CartData from 'calypso/components/data/cart';
 import DomainSearch from './domain-search';
 import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'calypso/my-sites/domains/map-domain';
@@ -39,9 +38,6 @@ import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
-import { addItem } from 'calypso/lib/cart/actions';
-import { planItem } from 'calypso/lib/cart-values/cart-items';
-import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 const domainsAddHeader = ( context, next ) => {
@@ -72,11 +68,6 @@ const domainSearch = ( context, next ) => {
 		window.scrollTo( 0, 0 );
 	}
 
-	if ( 'upgrade' === context.query.ref ) {
-		addItem( planItem( PLAN_PERSONAL, {} ) );
-		return page.replace( context.pathname );
-	}
-
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
@@ -97,9 +88,9 @@ const siteRedirect = ( context, next ) => {
 				title="Domain Search > Site Redirect"
 			/>
 			<DocumentHead title={ translate( 'Redirect a Site' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<SiteRedirect />
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();

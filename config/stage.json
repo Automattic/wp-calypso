@@ -17,7 +17,6 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
-		"anchor-fm-dev": false,
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": false,
@@ -46,7 +45,6 @@
 		"google-my-business": true,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
-		"gutenboarding/language-picker": false,
 		"happychat": true,
 		"help": true,
 		"inline-help": true,

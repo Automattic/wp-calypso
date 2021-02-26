@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import webdriver, { By, Key, until } from 'selenium-webdriver';
+import webdriver, { By, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -15,6 +15,7 @@ import { ContactFormBlockComponent } from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 import { FileBlockComponent } from './blocks/file-block-component';
+import GuideComponent from '../components/guide-component.js';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
@@ -60,7 +61,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( dismissPageTemplateSelector ) {
 			await this.dismissPageTemplateSelector();
 		}
-		await this.dismissEditorWelcomeModal();
+		const editorWelcomeModal = new GuideComponent( this.driver );
+		await editorWelcomeModal.dismiss( 4000 );
 		return await this.closeSidebar();
 	}
 
@@ -329,7 +331,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
-				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed-' };
+				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed\\/' };
 				break;
 			case 'Form':
 				blockSettings = { prefix: 'jetpack-', blockClass: 'contact-form' };
@@ -388,8 +390,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			title
 		);
 
-		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.1 on production.
-		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
+		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 10.x on production.
+		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix.replace(
+			'\\/',
+			'-'
+		) }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
 		);
@@ -665,33 +670,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( '.page-template-modal__buttons .components-button.is-primary' )
 				);
 				await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
-			}
-		}
-	}
-
-	async dismissEditorWelcomeModal() {
-		const welcomeModal = By.css( '.components-guide__container' );
-		if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
-				this.driver,
-				welcomeModal,
-				this.explicitWaitMS / 5
-			)
-		) {
-			try {
-				// Easiest way to dismiss it, but it might not work in IE.
-				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
-			} catch {
-				// Click to the last page of the welcome guide.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( 'ul.components-guide__page-control li:last-child button' )
-				);
-				// Click the finish button.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( '.components-guide__finish-button' )
-				);
 			}
 		}
 	}

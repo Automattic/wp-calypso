@@ -47,8 +47,12 @@ export const openCheckout = (
 	const isFocusedLaunchFlow = window?.wpcomEditorSiteLaunch?.launchFlow === FOCUSED_LAUNCH_FLOW;
 	const urlWithoutArgs = getCurrentLaunchFlowUrl().split( '?' )[ 0 ];
 
-	// only in focused launch, open checkout modal assuming the cart is already updated
-	if ( hasAction( HOOK_OPEN_CHECKOUT_MODAL ) && isFocusedLaunchFlow ) {
+	// Use Checkout Modal as a progressive enhancement if:
+	// - we are in Calypso, within the iframed editor where HOOK_OPEN_CHECKOUT_MODAL exists
+	// - we are in Focused Launch flow
+	// - selected plan is not eCommerce
+	if ( hasAction( HOOK_OPEN_CHECKOUT_MODAL ) && isFocusedLaunchFlow && ! isEcommerce ) {
+		// open Checkout Modal without passing cartData, assuming the cart is already updated
 		doAction( HOOK_OPEN_CHECKOUT_MODAL, {
 			checkoutOnSuccessCallback: onSuccessCallback,
 			isFocusedLaunch: true,

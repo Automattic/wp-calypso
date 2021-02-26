@@ -105,6 +105,9 @@ export const Sharing = ( {
 				brandFont
 				className="marketing__page-heading"
 				headerText={ translate( 'Marketing and Integrations' ) }
+				subHeaderText={ translate(
+					'Explore tools to build your audience, market your site, and engage your visitors.'
+				) }
 				align="left"
 			/>
 			{ filters.length > 0 && (

@@ -8,6 +8,7 @@ import * as reducers from 'calypso/state/partner-portal/licenses/reducer';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
@@ -49,6 +50,20 @@ describe( 'reducer', () => {
 				paginatedLicenses: [ 'foo' ],
 			};
 			expect( paginated( state, action ) ).toEqual( action.paginatedLicenses );
+		} );
+	} );
+
+	describe( '#counts', () => {
+		test( 'should return the value of counts on request success', () => {
+			const { counts } = reducers;
+
+			const state = undefined;
+			const expected = [ 'foo' ];
+			const action = {
+				type: JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
+				counts: expected,
+			};
+			expect( counts( state, action ) ).toEqual( expected );
 		} );
 	} );
 } );

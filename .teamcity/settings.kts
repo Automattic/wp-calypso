@@ -326,6 +326,39 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
+			name = "Prevent duplicated packages"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Duplicated packages
+				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
+				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
+					echo "Repository contains duplicated packages: "
+					echo ""
+					echo "${'$'}DUPLICATED_PACKAGES"
+					echo ""
+					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
+					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
+					exit 1
+				else
+					echo "No duplicated packages found."
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
@@ -1212,6 +1245,15 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 	artifactRules = "editing-toolkit.zip"
 
+	dependencies {
+		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
+			buildRule = tag("etk-release-build", "+:trunk")
+			artifactRules = """
+				+:editing-toolkit.zip!** => etk-release-build
+			""".trimIndent()
+		}
+	}
+
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 	params {
 		param("build.prefix", "3")
@@ -1224,12 +1266,10 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 	triggers {
 		vcs {
-			triggerRules = "+:apps/editing-toolkit/**"
 			branchFilter = """
 				+:*
 				-:pull*
 			""".trimIndent()
-
 		}
 	}
 
@@ -1322,16 +1362,26 @@ object WPComPlugins_EditorToolKit : BuildType({
 				export NODE_ENV="production"
 
 				cd apps/editing-toolkit
-
-				# Update plugin version in the plugin file.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
-
-				# Update plugin stable tag in readme.txt.
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
-
 				yarn build
-				cd editing-toolkit-plugin/
 
+				echo
+				prev_release_build_num=${'$'}(grep build_number ../../etk-release-build/build_meta.txt | sed -e "s/build_number=//")
+				rm ../../etk-release-build/build_meta.txt # Adds a source of randomness which we don't want for comparison.
+				echo "Previous tagged trunk build: ${'$'}prev_release_build_num"
+
+				# Update plugin version in the plugin file and readme.txt.
+				# Note: we also update the previous release build to the same version to restore idempotence
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
+
+				if ! diff -rq ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
+					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
+					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
+				else
+					echo "The build is not different from the last release build. Therefore, this build has no effect."
+				fi
+
+				cd editing-toolkit-plugin/
 				# Metadata file with info for the download script.
 				tee build_meta.txt <<-EOM
 					commit_hash=%build.vcs.number%
@@ -1339,7 +1389,9 @@ object WPComPlugins_EditorToolKit : BuildType({
 					build_number=%build.number%
 					EOM
 
+				echo
 				zip -r ../../../editing-toolkit.zip .
+
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true

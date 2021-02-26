@@ -1,22 +1,10 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import { Plans as PlansStore } from '@automattic/data-stores';
 import type { Plans } from '@automattic/data-stores';
-
-const DEFAULT_SITE_NAME = __( 'Site Title', __i18n_text_domain__ );
-
-export const isDefaultSiteTitle = ( {
-	currentSiteTitle = '',
-}: {
-	currentSiteTitle: string | undefined;
-} ): boolean => currentSiteTitle === DEFAULT_SITE_NAME;
-
-export const isValidSiteTitle = ( title?: string ): boolean =>
-	title !== '' && ! isDefaultSiteTitle( { currentSiteTitle: title } );
 
 export type PlanProductForFlow = {
 	product_id: number;
