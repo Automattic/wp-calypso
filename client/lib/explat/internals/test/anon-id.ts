@@ -110,30 +110,30 @@ describe( 'initializeAnonId', () => {
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 100 );
 	} );
 
-	it( 'should give up immediately and return null if immediately logged in', async () => {
+	it( 'should attempt once and return the anonId if immediately logged in', async () => {
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
-		mockedGetTracksAnonymousUserId.mockImplementation( () => `anon-id-shouldn't-appear` );
+		mockedGetTracksAnonymousUserId.mockImplementation( () => `the-anon-id` );
 		mockedIsLoggedIn.mockImplementationOnce( () => true );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
-		expect( await initializeAnonIdPromise ).toBe( null );
+		expect( await initializeAnonIdPromise ).toBe( `the-anon-id` );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
-		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 0 );
+		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
 	} );
 
-	it( 'should give up and return null if logged in', async () => {
+	it( 'should attempt before checking for being logged in', async () => {
 		jest.useFakeTimers();
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
-		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => `anon-id-should't-appear` );
+		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => `the-anon-id` );
 		mockedIsLoggedIn.mockImplementationOnce( () => false );
 		mockedIsLoggedIn.mockImplementationOnce( () => false );
 		mockedIsLoggedIn.mockImplementationOnce( () => true );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
 		jest.runAllTimers();
-		expect( await initializeAnonIdPromise ).toBe( null );
+		expect( await initializeAnonIdPromise ).toBe( `the-anon-id` );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
-		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 2 );
+		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 3 );
 	} );
 
 	it( `should give up and return null if tracks doesn't load`, async () => {

@@ -40,10 +40,6 @@ const anonIdPollingIntervalMaxAttempts = 100; // 50 * 100 = 5000 = 5 seconds
  * The return is avaliable to make this easier to test.
  *
  * Throws on error.
- *
- * TODO: More error checking?
- * TODO: Better timing?
- * TODO: Maybe look further into the tracks event system to see if there is an alternative method for this.
  */
 export const initializeAnonId = async (): Promise< string | null > => {
 	if ( typeof window === 'undefined' ) {
@@ -56,18 +52,19 @@ export const initializeAnonId = async (): Promise< string | null > => {
 	let attempt = 0;
 	initializeAnonIdPromise = new Promise( ( res ) => {
 		const anonIdPollingInterval = immediateStartSetInterval( () => {
-			if ( attempt > anonIdPollingIntervalMaxAttempts - 1 || userUtils.isLoggedIn() ) {
+			const anonId = getTracksAnonymousUserId();
+			if ( typeof anonId === 'string' && anonId !== '' ) {
+				clearInterval( anonIdPollingInterval );
+				res( anonId );
+				return
+			}
+
+			if ( anonIdPollingIntervalMaxAttempts - 1 <= attempt || userUtils.isLoggedIn() ) {
 				clearInterval( anonIdPollingInterval );
 				res( null );
 				return;
 			}
 			attempt = attempt + 1;
-
-			const anonId = getTracksAnonymousUserId();
-			if ( typeof anonId === 'string' && anonId !== '' ) {
-				clearInterval( anonIdPollingInterval );
-				res( anonId );
-			}
 		}, anonIdPollingIntervalMilliseconds );
 
 		// Tracks can fail to load, e.g. because of an ad-blocker
