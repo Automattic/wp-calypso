@@ -12,11 +12,6 @@ import { buildPlanFeaturesDict } from '../test-utils';
 import { TIMELESS_PLAN_ECOMMERCE, TIMELESS_PLAN_FREE, FREE_PLAN_PRODUCT_ID } from '../constants';
 import type { State } from '../reducer';
 
-// Mocks
-jest.mock( '@wordpress/deprecated', () => {
-	return jest.fn();
-} );
-
 // Test data
 const TEST_LOCALE_1 = 'test-locale-1';
 const TEST_LOCALE_2 = 'test-locale-2';
@@ -54,6 +49,10 @@ const mockState: State = {
 	planProducts: testPlanProducts,
 };
 
+// Mocks
+jest.mock( '@wordpress/deprecated', () => {
+	return jest.fn();
+} );
 // Tests
 describe( 'Plans selectors', () => {
 	it( 'getFeatures', () => {
