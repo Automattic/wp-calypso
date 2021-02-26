@@ -127,7 +127,7 @@ cp -R $CODE/amp $TARGET/
 
 echo "Fixing the text domains…"
 echo -n "eslint --fix: "
-npx eslint . --fix > /dev/null 2>&1
+npx eslint "$TARGET" --fix > /dev/null 2>&1
 echo "done"
 echo -n "phpcbf: "
 ../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
