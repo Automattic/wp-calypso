@@ -280,6 +280,7 @@ export class PlanFeaturesHeader extends Component {
 			isInSignup,
 			plansWithScroll,
 			isLoggedInMonthlyPricing,
+			isMonthlyPlan,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -306,7 +307,7 @@ export class PlanFeaturesHeader extends Component {
 			return (
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? perMonthDescription : '' }
-					{ isDiscounted && ! isPlaceholder && (
+					{ isDiscounted && ! isPlaceholder && ! isMonthlyPlan && (
 						<InfoPopover
 							className="plan-features__header-tip-info"
 							position={ isMobile() ? 'top' : 'bottom left' }
@@ -322,9 +323,9 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	isPlanCurrent() {
-		const { planType, current, currentSitePlan } = this.props;
+		const { planType, current, currentSitePlan, isLoggedInMonthlyPricing, isJetpack } = this.props;
 
-		if ( ! currentSitePlan ) {
+		if ( ! currentSitePlan || ( isLoggedInMonthlyPricing && ! isJetpack ) ) {
 			return current;
 		}
 
