@@ -7,15 +7,11 @@
 
 const runAll = require( 'npm-run-all' );
 
-const args = process.argv.slice( 2 );
+const commands = [ 'calypso-build' ];
 
-const argsToCommands = {
-	'--build': 'build:*',
-	'--dev': 'dev:*',
-	'--sync': 'wpcom-sync',
-};
-
-const commands = args.map( ( arg ) => argsToCommands[ arg ] ).filter( ( val ) => !! val );
+if ( process.argv.includes( '--sync' ) ) {
+	commands.push( 'wpcom-sync' );
+}
 
 console.log( `Running the following commands: ${ commands.toString() }` );
 
