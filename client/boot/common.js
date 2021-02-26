@@ -272,6 +272,16 @@ function setupErrorLogger( reduxStore ) {
 	} );
 }
 
+const maybeInitFullStory = ( currentUser ) => {
+	if (
+		undefined !== currentUser &&
+		currentUser.user_ip_country_code &&
+		'US' === currentUser.user_ip_country_code
+	) {
+		fullStoryInit( { orgId: '1149DX' } );
+	}
+};
+
 const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
@@ -282,12 +292,10 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	setRouteMiddleware();
 	unsavedFormsMiddleware();
 
+	const fetchedCurrentUser = currentUser ? currentUser.get() : undefined;
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
-	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
-
-	// TEMP: FullStory Test
-	console.log( `----FullStory Init----` );
-	fullStoryInit( { orgId: '1149DX' } );
+	initializeAnalytics( fetchedCurrentUser, getSuperProps( reduxStore ) );
+	maybeInitFullStory( fetchedCurrentUser );
 
 	setupErrorLogger( reduxStore );
 
