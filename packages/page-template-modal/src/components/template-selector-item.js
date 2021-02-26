@@ -16,7 +16,7 @@ const TemplateSelectorItem = ( props ) => {
 	) }`;
 
 	const staticPreviewImg =
-		mshotsUrl + encodeURIComponent( previewUrl ) + '?vpw=1024&vph=1024&w=500&h=500';
+		mshotsUrl + encodeURIComponent( previewUrl ) + '?vpw=1024&vph=1024&w=660&h=430';
 
 	const refreshSourceImg = ( e ) => {
 		const img = e.target;

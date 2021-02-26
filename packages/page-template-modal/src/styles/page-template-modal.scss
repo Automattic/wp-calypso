@@ -17,7 +17,7 @@
 $template-selector-border-color: #e2e4e7;
 $template-selector-border-color-selected: #555d66;
 $template-selector-border-color-active: #00a0d2;
-$template-selector-border-color-hover: #c9c9ca;
+$template-selector-border-color-hover: var( --wp-admin-theme-color-darker-10 );
 $template-selector-empty-background: #fff;
 
 // Breakpoints
@@ -142,16 +142,13 @@ $sidebar-width: 324px;
 	border-radius: 0;
 	overflow: hidden;
 	height: 0;
-	padding-top: 120%;
+	// Aspect ratio of boxes. Height will be 65% of width.
+	padding-top: 65%;
 	box-sizing: content-box;
 	position: relative;
 	pointer-events: none;
 	opacity: 1;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
-
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		padding-top: 100%; // Aspect radio boxes. It will take the 100% of width.
-	}
 
 	&.is-rendering {
 		opacity: 0.5;
