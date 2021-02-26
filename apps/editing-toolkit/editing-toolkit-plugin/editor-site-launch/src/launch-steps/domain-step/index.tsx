@@ -21,7 +21,6 @@ import { FLOW_ID } from '../../constants';
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
-	console.log( locale, document.documentElement.lang );
 
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { siteSubdomain } = useSiteDomains();
@@ -83,7 +82,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsUiAlgo="editor_domain_modal"
 					segregateFreeAndPaid
-					locale={ document.documentElement.lang }
+					locale={ locale }
 				/>
 			</div>
 			<div className="nux-launch-step__footer">
