@@ -18,12 +18,12 @@ declare const window: undefined | ( Window & typeof globalThis );
 export const logError = (
 	error: Record< string, string > & { message: string; properties?: Record< string, unknown > }
 ): void => {
-	const onError = (e: unknown) => {
+	const onError = ( e: unknown ) => {
 		if ( isDevelopmentMode ) {
 			// eslint-disable-next-line no-console
 			console.error( '[ExPlat] Unable to send error to server:', e );
 		}
-	}
+	};
 
 	try {
 		error[ 'properties' ] = {
@@ -37,21 +37,23 @@ export const logError = (
 			getLogger().error( error );
 		} else if ( isDevelopmentMode ) {
 			// eslint-disable-next-line no-console
-			console.error('[ExPlat] ', error.message, error);
+			console.error( '[ExPlat] ', error.message, error );
 		} else {
 			const body = new window.FormData();
-			body.append('error', JSON.stringify(error));
-			window.fetch('https://public-api.wordpress.com/rest/v1.1/js-error', {
-				method: 'POST',
-				body,
-			}).catch(onError);
+			body.append( 'error', JSON.stringify( error ) );
+			window
+				.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
+					method: 'POST',
+					body,
+				} )
+				.catch( onError );
 		}
 	} catch ( e ) {
-		onError(e)
+		onError( e );
 	}
 };
 
-export const logErrorOrThrowInDevelopmentMode = ( message: string ) => {
+export const logErrorOrThrowInDevelopmentMode = ( message: string ): void => {
 	if ( isDevelopmentMode ) {
 		throw new Error( message );
 	} else {

@@ -27,12 +27,6 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
  */
 import './style.scss';
 
-export interface CheckoutModalOptions {
-	cartData?: RequestCart;
-	redirectTo?: string;
-	isFocusedLaunch?: boolean;
-}
-
 const wpcom = wp.undocumented();
 
 function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
@@ -121,13 +115,15 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 	) : null;
 };
 
-interface Props extends CheckoutModalOptions {
+interface Props {
 	site: SiteData | null;
 	onClose: () => void;
 	isOpen: boolean;
 	locale: string | undefined;
 	checkoutOnSuccessCallback?: () => void;
 	isFocusedLaunch?: boolean;
+	cartData?: RequestCart;
+	redirectTo?: string;
 }
 
 EditorCheckoutModal.defaultProps = {

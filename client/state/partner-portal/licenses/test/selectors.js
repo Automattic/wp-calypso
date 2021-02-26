@@ -61,4 +61,20 @@ describe( 'selectors', () => {
 			expect( getPaginatedLicenses( state ) ).toEqual( value );
 		} );
 	} );
+
+	describe( '#getLicenseCounts()', () => {
+		test( 'should return the value of counts', () => {
+			const { getLicenseCounts } = selectors;
+			const expected = { attached: 0 };
+			const state = {
+				partnerPortal: {
+					licenses: {
+						counts: expected,
+					},
+				},
+			};
+
+			expect( getLicenseCounts( state ) ).toEqual( expected );
+		} );
+	} );
 } );

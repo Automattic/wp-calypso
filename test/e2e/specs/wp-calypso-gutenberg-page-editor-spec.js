@@ -555,7 +555,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.publish( { visit: true } );
+			// closePanel is set to false because the panel is forcibly dismissed after publishing.
+			// See https://github.com/Automattic/wp-calypso/issues/50302.
+			return await gEditorComponent.publish( { closePanel: false, visit: true } );
 		} );
 
 		step( 'Can see the payment button in our published page', async function () {

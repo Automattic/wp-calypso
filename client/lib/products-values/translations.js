@@ -8,10 +8,6 @@ import { numberFormat, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
@@ -62,18 +58,11 @@ export const getJetpackProductsShortNames = () => {
 };
 
 export const getJetpackProductsDisplayNames = () => {
-	const backupDaily = getForCurrentCROIteration( {
-		[ Iterations.SPP ]: <>{ translate( 'Jetpack Backup' ) }</>,
-	} ) || (
-		<>
-			{ translate( 'Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
-		</>
-	);
-
+	const backupDaily = translate( 'Backup {{em}}Daily{{/em}}', {
+		components: {
+			em: <em />,
+		},
+	} );
 	const backupRealtime = (
 		<>
 			{ translate( 'Backup {{em}}Real-time{{/em}}', {
@@ -85,7 +74,6 @@ export const getJetpackProductsDisplayNames = () => {
 	);
 	const search = translate( 'Site Search' );
 	const scan = translate( 'Scan' );
-
 	const scanRealtime = (
 		<>
 			{ translate( 'Scan {{em}}Real-time{{/em}}', {
@@ -95,10 +83,7 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }
 		</>
 	);
-
-	const antiSpam = getForCurrentCROIteration( {
-		[ Iterations.SPP ]: translate( 'Anti-Spam' ),
-	} ) || <>{ translate( 'Anti-spam' ) }</>;
+	const antiSpam = translate( 'Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -119,18 +104,11 @@ export const getJetpackProductsDisplayNames = () => {
 };
 
 export const getJetpackProductsCallToAction = () => {
-	const backupDaily = getForCurrentCROIteration( {
-		[ Iterations.SPP ]: <>{ translate( 'Get Jetpack Backup' ) }</>,
-	} ) || (
-		<>
-			{ translate( 'Get Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
-		</>
-	);
-
+	const backupDaily = translate( 'Get Backup {{em}}Daily{{/em}}', {
+		components: {
+			em: <em />,
+		},
+	} );
 	const backupRealtime = (
 		<>
 			{ translate( 'Get Backup {{em}}Real-time{{/em}}', {
@@ -140,14 +118,9 @@ export const getJetpackProductsCallToAction = () => {
 			} ) }
 		</>
 	);
-
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
-
-	const antiSpam =
-		getForCurrentCROIteration( {
-			[ Iterations.SPP ]: translate( 'Get Anti-Spam' ),
-		} ) || translate( 'Get Anti-spam' );
+	const antiSpam = translate( 'Get Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,

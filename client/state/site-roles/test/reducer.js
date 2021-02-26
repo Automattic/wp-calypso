@@ -13,9 +13,8 @@ import {
 	SITE_ROLES_REQUEST,
 	SITE_ROLES_REQUEST_FAILURE,
 	SITE_ROLES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -148,14 +147,12 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = items(
+			const state = serialize(
+				items,
 				deepFreeze( {
 					12345678: roles,
 					87654321: altRoles,
-				} ),
-				{
-					type: SERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {
@@ -165,14 +162,12 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					12345678: roles,
 					87654321: altRoles,
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {
@@ -182,7 +177,8 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = items(
+			const state = deserialize(
+				items,
 				deepFreeze( {
 					1234567: [
 						{
@@ -192,10 +188,7 @@ describe( 'reducer', () => {
 							},
 						},
 					],
-				} ),
-				{
-					type: DESERIALIZE,
-				}
+				} )
 			);
 
 			expect( state ).to.eql( {} );

@@ -353,9 +353,6 @@ class PurchaseItem extends Component {
 			isJetpack,
 		} = this.props;
 
-		let onClick;
-		let href;
-
 		const classes = classNames( 'purchase-item', {
 			'purchase-item--disconnected': isDisconnectedSite,
 		} );
@@ -370,6 +367,9 @@ class PurchaseItem extends Component {
 				</>
 			);
 		}
+
+		let onClick;
+		let href;
 
 		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.

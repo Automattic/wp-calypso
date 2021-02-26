@@ -63,7 +63,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			// We need to save the post to get a stable post slug for the block's `url` attribute.
 			// See https://github.com/godaddy-wordpress/coblocks/issues/1663.
 			await gEditorComponent.ensureSaved();
-			return await gEditorComponent.publish( { visit: true, closePanel: false } );
+			return await gEditorComponent.publish( { visit: true } );
 		} );
 
 		step( 'Can see the Click to Tweet block in our published post', async function () {

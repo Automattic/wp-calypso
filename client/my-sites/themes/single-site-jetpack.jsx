@@ -93,6 +93,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				brandFont
 				className="themes__page-heading"
 				headerText={ translate( 'Themes' ) }
+				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
 				align="left"
 			/>
 			<CurrentTheme siteId={ siteId } />

@@ -64,10 +64,18 @@ export interface License {
 	revokedAt: string | null;
 }
 
+export interface LicenseCounts {
+	attached: number;
+	detached: number;
+	revoked: number;
+	not_revoked: number;
+}
+
 export interface LicensesStore {
 	hasFetched: boolean;
 	isFetching: boolean;
 	paginated: PaginatedItems< License > | null;
+	counts: LicenseCounts;
 }
 
 interface CombinedStore {

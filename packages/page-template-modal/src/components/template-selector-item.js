@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { isNil } from 'lodash';
 import classnames from 'classnames';
+import { isNullish } from '@automattic/js-utils';
 
 const TemplateSelectorItem = ( props ) => {
 	const {
@@ -17,7 +17,7 @@ const TemplateSelectorItem = ( props ) => {
 		isSelected,
 	} = props;
 
-	if ( isNil( id ) || isNil( title ) || isNil( value ) ) {
+	if ( isNullish( id ) || isNullish( title ) || isNullish( value ) ) {
 		return null;
 	}
 

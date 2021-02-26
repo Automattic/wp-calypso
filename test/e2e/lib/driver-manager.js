@@ -2,7 +2,6 @@
  * External dependencies
  */
 import webdriver from 'selenium-webdriver';
-import chromedriver from 'chromedriver'; // eslint-disable-line no-unused-vars
 import firefox from 'selenium-webdriver/firefox';
 import chrome from 'selenium-webdriver/chrome';
 import config from 'config';
@@ -142,7 +141,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				} );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
-				options.addArguments( '--disable-dev-shm-usage' );
 				options.addArguments( '--no-sandbox' );
 
 				if ( useCustomUA ) {
@@ -165,7 +163,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				options.addArguments( '--app=https://www.wordpress.com' );
 
 				// eslint-disable-next-line no-case-declarations
-				const service = new chrome.ServiceBuilder( chromedriver.path )
+				const service = new chrome.ServiceBuilder()
 					.loggingTo( './chromedriver.' + process.pid + '.log' )
 					.enableVerboseLogging()
 					.build();

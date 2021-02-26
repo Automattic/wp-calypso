@@ -15,7 +15,6 @@
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
-		"anchor-fm-dev": true,
 		"automated-transfer": true,
 		"async-payments": false,
 		"ad-tracking": false,
@@ -43,7 +42,6 @@
 		"gdpr-banner": true,
 		"google-my-business": false,
 		"gutenboarding/alpha-templates": true,
-		"gutenboarding/language-picker": true,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
 		"happychat": false,

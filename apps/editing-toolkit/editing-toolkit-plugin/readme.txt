@@ -3,7 +3,7 @@ Contributors: automattic
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.5
 Tested up to: 5.6
-Stable tag: 2.20
+Stable tag: 2.21
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -40,6 +40,12 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 View the commit history here: https://github.com/Automattic/wp-calypso/commits/trunk/apps/editing-toolkit
+
+= 2.21 =
+* Focused Launch: redirect to checkout after launch for eCommerce plan in Calypso (https://github.com/Automattic/wp-calypso/pull/50267)
+* Focused Launch: Once there is a plan selected, do not use plan from cart anymore. (https://github.com/Automattic/wp-calypso/pull/50276)
+* Set an order for page layout categories (https://github.com/Automattic/wp-calypso/pull/50110)
+* Focused Launch: show Name your site step for non-EN sites (https://github.com/Automattic/wp-calypso/pull/50311)
 
 = 2.20 =
 * Page layout picker: Fix broken web fonts in page layout picker large preview (https://github.com/Automattic/wp-calypso/pull/50253)

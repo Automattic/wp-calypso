@@ -10,17 +10,17 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 
 .license-list-item {
 	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
-	grid-column-gap: 14px;
-	grid-row-gap: 14px;
+	grid-template-columns: 1fr 36px;
 
 	> * {
+		display: none;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
 	> *:nth-child(#{$column-domain}) {
-		grid-column-end: span 3;
+		grid-column-end: auto;
+		display: block;
 	}
 
 	> *:nth-child(#{$column-actions}) {
@@ -28,7 +28,8 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 	}
 
 	> *:nth-child(#{$column-toggle}) {
-		grid-column-end: span 3;
+		grid-column-end: -1;
+		display: inherit;
 		text-align: center;
 	}
 
@@ -37,6 +38,10 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 		grid-column-gap: 0;
 		grid-row-gap: 0;
 		align-items: center;
+
+		> * {
+			display: block;
+		}
 
 		> * + * {
 			margin-left: 14px;
@@ -49,10 +54,6 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 
 		> *:nth-child(#{$column-domain}) {
 			grid-column-end: auto;
-		}
-
-		> *:nth-child(#{$column-actions}) {
-			display: block;
 		}
 
 		> *:nth-child(#{$column-toggle}) {

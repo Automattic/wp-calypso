@@ -167,6 +167,9 @@ class StatsSite extends Component {
 					className="stats__section-header"
 					headerText={ translate( 'Stats and Insights' ) }
 					align="left"
+					subHeaderText={ translate(
+						"Learn more about the activity and behavior of your site's visitors."
+					) }
 				/>
 				<StatsNavigation
 					selectedItem={ 'traffic' }
@@ -174,6 +177,8 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+				{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
+
 				<div id="my-stats-content">
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
@@ -187,8 +192,6 @@ class StatsSite extends Component {
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
 					/>
-
-					{ ! isVip && isAdmin && ! hasWordAds && <Cloudflare /> }
 
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation
