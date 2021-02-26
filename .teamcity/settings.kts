@@ -50,7 +50,7 @@ project {
 	buildType(CheckCodeStyle)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(RunCanaryE2eTests)
+	buildType(RunCalypsoE2eDesktopTests)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
@@ -845,9 +845,10 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-object RunCanaryE2eTests : BuildType({
-	name = "Canary e2e tests"
-	description = "Run canary e2e tests"
+object RunCalypsoE2eDesktopTests : BuildType({
+	uuid = "52f38738-92b2-43cb-b7fb-19fce03cb67c"
+	name = "Run browser e2e tests (desktop)"
+	description = "Run browser e2e tests (desktop)"
 
 	artifactRules = """
 		reports => reports
@@ -885,7 +886,7 @@ object RunCanaryE2eTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Run e2e tests: Canary (mobile, desktop)"
+			name = "Run e2e tests (desktop)"
 			scriptContent = """
 				#!/bin/bash
 
@@ -896,6 +897,7 @@ object RunCanaryE2eTests : BuildType({
 				set -o errexit
 				set -o nounset
 				set -o pipefail
+				shopt -s globstar
 				set -x
 
 				cd test/e2e
@@ -903,8 +905,14 @@ object RunCanaryE2eTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
-				export MAGELLANDEBUG=true
+				#export MAGELLANDEBUG=true
 				export TEST_VIDEO=true
+
+				function join() {
+					local IFS=${'$'}1
+					shift
+					echo "${'$'}*"
+				}
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -935,11 +943,16 @@ object RunCanaryE2eTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
+				export BROWSERSIZE="desktop"
+				export BROWSERLOCALE="en"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
+
+			yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 		}
 		script {
 			name = "Collect results"
@@ -972,7 +985,7 @@ object RunCanaryE2eTests : BuildType({
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "reports/*.xml")
+			param("xmlReportParsing.reportDirs", "test/e2e/temp/**/reports/*.xml")
 		}
 		perfmon {
 		}
@@ -1008,6 +1021,9 @@ object RunCanaryE2eTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		// With testFailure=true, TeamCity detects test that fail but succeed after a retry as build failures
+		// With this option disabled, TeamCity fails the build if `yarn magellan` returns an exit code other than 0.
+		testFailure = false
 	}
 
 	dependencies {
@@ -1030,7 +1046,7 @@ object WpCalypso : GitVcsRoot({
 })
 
 object WpDesktop : Project({
-	name = "Desktop"
+	name = "Desktop app"
 	buildType(WpDesktop_DesktopE2ETests)
 
 	params {
@@ -1042,7 +1058,7 @@ object WpDesktop : Project({
 })
 
 object WpDesktop_DesktopE2ETests : BuildType({
-	name = "Desktop e2e tests"
+	name = "Run e2e tests"
 	description = "Run wp-desktop e2e tests in Linux"
 
 	artifactRules = """
