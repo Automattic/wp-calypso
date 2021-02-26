@@ -22,14 +22,13 @@ function WhatsNewPage( {
 			slide_number: pageNumber,
 			is_last_slide: isLastPage,
 		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ isLastPage, pageNumber ] );
 
 	return (
-		<GuidePage className="whats-new__page">
-			<div className="whats-new__text">
-				<h1 className="whats-new__heading">{ heading }</h1>
-				<div className="whats-new__description">
+		<GuidePage className="whats-new-page__container">
+			<div className="whats-new-page__text">
+				<h1 className="whats-new-page__heading">{ heading }</h1>
+				<div className="whats-new-page__description">
 					<p>{ description }</p>
 					{ link && (
 						<p>
@@ -40,14 +39,13 @@ function WhatsNewPage( {
 					) }
 				</div>
 			</div>
-			<div className="whats-new__visual">
+			<div className="whats-new-page__visual">
 				<img
-					// Force remount so the stale image doesn't remain while new image is fetched
 					key={ imageSrc }
 					src={ imageSrc }
 					alt={ description }
 					aria-hidden="true"
-					className={ 'whats-new__image' + ( alignBottom ? ' align-bottom' : '' ) }
+					className={ 'whats-new-page__image' + ( alignBottom ? ' align-bottom' : '' ) }
 				/>
 			</div>
 		</GuidePage>

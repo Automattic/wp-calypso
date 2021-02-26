@@ -94,7 +94,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 }
 
-.whats-new__page {
+.whats-new-page__container {
 	display: flex;
 	flex-direction: column-reverse;
 	justify-content: flex-end;
@@ -111,15 +111,15 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 }
 
-.whats-new__text,
-.whats-new__visual {
+.whats-new-page__text,
+.whats-new-page__visual {
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		flex: 1 auto;
 		min-width: 290px;
 	}
 }
 
-.whats-new__text {
+.whats-new-page__text {
 	padding: 0 25px 25px;
 	height: 60%;
 
@@ -128,9 +128,9 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		padding: $wpcom-modal-padding-v $wpcom-modal-padding-h;
 	}
 }
-.whats-new__visual {
+.whats-new-page__visual {
 	height: 40%;
-	padding: 25px 25px 0 25px;
+	padding: 25px 25px 0;
 	background: #1581d8;
 	text-align: center;
 	display: flex;
@@ -142,7 +142,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 }
 
-.whats-new__heading {
+.whats-new-page__heading {
 	@include onboarding-font-recoleta;
 	/* Gray / Gray 90 */
 	color: #1d2327;
@@ -165,7 +165,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 }
 
-.whats-new__description p {
+.whats-new-page__description p {
 	font-size: 15px;
 	line-height: 22px;
 	margin-top: 10px;
@@ -179,7 +179,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 }
 
-.whats-new__image {
+.whats-new-page__image {
 	max-width: 100%;
 	height: auto;
 	margin-top: auto;
