@@ -6,7 +6,7 @@ import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
-import { WhatsNewGuide } from '@automattic/whats-new';
+import WhatsNewGuide from '@automattic/whats-new';
 
 /**
  * Internal dependencies

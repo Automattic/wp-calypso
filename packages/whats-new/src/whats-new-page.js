@@ -6,18 +6,13 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { GuidePage } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
-/**
- * Internal dependencies
- */
-import './style.scss';
-
 function WhatsNewPage( {
 	pageNumber,
 	isLastPage,
 	alignBottom = false,
 	heading,
 	description,
-	imgSrc,
+	imageSrc,
 	link,
 } ) {
 	const __ = useI18n().__;
@@ -48,8 +43,8 @@ function WhatsNewPage( {
 			<div className="whats-new__visual">
 				<img
 					// Force remount so the stale image doesn't remain while new image is fetched
-					key={ imgSrc }
-					src={ imgSrc }
+					key={ imageSrc }
+					src={ imageSrc }
 					alt={ description }
 					aria-hidden="true"
 					className={ 'whats-new__image' + ( alignBottom ? ' align-bottom' : '' ) }

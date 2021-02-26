@@ -130,9 +130,12 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 }
 .whats-new__visual {
 	height: 40%;
-	padding: 25px;
+	padding: 25px 25px 0 25px;
 	background: #1581d8;
 	text-align: center;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		height: auto;
@@ -145,16 +148,16 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	color: #1d2327;
 
 	font-size: 24px;
-	line-height: 1.19;
+	line-height: 1;
+	margin: 0;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
-		font-size: 24px;
+		font-size: 40px;
 	}
 
-	// TODO: remove this hack once the welcome editor deals better with
 	// overflowing text
 	body.locale-de & {
-		font-size: 24px;
+		font-size: 40px;
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			font-size: 28px;
@@ -165,6 +168,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .whats-new__description p {
 	font-size: 15px;
 	line-height: 22px;
+	margin-top: 10px;
 
 	/* Gray / Gray 60 */
 	color: #50575e;
@@ -178,7 +182,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .whats-new__image {
 	max-width: 100%;
 	height: auto;
-	flex: 1;
+	margin-top: auto;
 	align-self: center;
 
 	&.align-bottom {

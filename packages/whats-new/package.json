@@ -4,7 +4,11 @@
 	"description": "A WordPress Guide component that highlights recently-added WordPress.com features.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"sideEffects": false,
+	"calypso:src": "src/index.js",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
 	"keywords": [
 		"wordpress"
 	],
@@ -29,8 +33,8 @@
 	],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"build": "transpile && copy-assets",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
@@ -45,6 +49,7 @@
 	},
 	"devDependencies": {
 		"wpcom-proxy-request": "^6.0.0",
+		"@automattic/calypso-build": "^7.0.0",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"
 	}
