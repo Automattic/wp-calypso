@@ -2,6 +2,11 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
+import { stringify } from 'qs';
+
+/**
+ * Internal dependencies
+ */
 import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 export const emailManagementPrefix = '/email';
@@ -50,8 +55,13 @@ export function emailManagementNewGSuiteAccount(
 	return emailManagementEdit( siteName, domainName, 'gsuite/new/' + planType, relativeTo );
 }
 
-export function emailManagementManageTitanAccount( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/manage', relativeTo );
+export function emailManagementManageTitanAccount(
+	siteName,
+	domainName,
+	relativeTo = null,
+	urlParameters = {}
+) {
+	return emailManagementEdit( siteName, domainName, 'titan/manage', relativeTo, urlParameters );
 }
 
 export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
@@ -61,9 +71,16 @@ export function emailManagementNewTitanAccount( siteName, domainName, relativeTo
 export function emailManagementTitanControlPanelRedirect(
 	siteName,
 	domainName,
-	relativeTo = null
+	relativeTo = null,
+	urlParameters = {}
 ) {
-	return emailManagementEdit( siteName, domainName, 'titan/control-panel', relativeTo );
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/control-panel',
+		relativeTo,
+		urlParameters
+	);
 }
 
 export function emailManagement( siteName, domainName, relativeTo = null ) {
@@ -84,7 +101,13 @@ export function emailManagementForwarding( siteName, domainName, relativeTo = nu
 	return emailManagementEdit( siteName, domainName, 'forwarding', relativeTo );
 }
 
-export function emailManagementEdit( siteName, domainName, slug, relativeTo = null ) {
+export function emailManagementEdit(
+	siteName,
+	domainName,
+	slug,
+	relativeTo = null,
+	urlParameters = {}
+) {
 	slug = slug || 'manage';
 
 	// Encodes only real domain names and not parameter placeholders
@@ -94,7 +117,20 @@ export function emailManagementEdit( siteName, domainName, slug, relativeTo = nu
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return resolveRootPath( relativeTo ) + '/' + domainName + '/' + slug + '/' + siteName;
+	const urlParameterString = urlParameters
+		? stringify( urlParameters, { addQueryPrefix: true } )
+		: '';
+
+	return (
+		resolveRootPath( relativeTo ) +
+		'/' +
+		domainName +
+		'/' +
+		slug +
+		'/' +
+		siteName +
+		urlParameterString
+	);
 }
 
 export function isUnderEmailManagementAll( path ) {
