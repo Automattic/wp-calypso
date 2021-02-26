@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { startsWith } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -111,7 +110,7 @@ export function emailManagementEdit(
 	slug = slug || 'manage';
 
 	// Encodes only real domain names and not parameter placeholders
-	if ( ! startsWith( domainName, ':' ) ) {
+	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
 		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
 		// Note they are encoded twice since page.js decodes the path by default.
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
