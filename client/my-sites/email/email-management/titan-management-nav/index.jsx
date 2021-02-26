@@ -27,8 +27,11 @@ import titanContactsIcon from 'calypso/assets/images/email-providers/titan/servi
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
-import { getConfiguredTitanMailboxCount, getMaxTitanMailboxCount } from 'calypso/lib/titan';
+import {
+	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
+	getTitanProductName,
+} from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 
 /**
