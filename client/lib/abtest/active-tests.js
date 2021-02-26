@@ -10,15 +10,6 @@
 /**************************************************************************************************/
 
 export default {
-	pageBuilderMVP: {
-		datestamp: '20190419',
-		variations: {
-			control: 100,
-			test: 0,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
 		datestamp: '20200910',
