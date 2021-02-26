@@ -263,7 +263,9 @@ class TitanMailQuantitySelection extends React.Component {
 					) }
 					<Button onClick={ this.handleCreateMailbox } compact>
 						{ translate( 'Finish Setup' ) }
-						{ showExternalFinishSetupLink && <Gridicon icon="external" /> }
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						{ showExternalFinishSetupLink && <Gridicon icon="external" size={ 16 } /> }
+						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</Button>
 				</span>
 			</CompactCard>
