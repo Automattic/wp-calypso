@@ -130,8 +130,7 @@
 	}
 }
 
-.jetpack-product-card-npip__price
-.jetpack-product-card-npip__original-price {
+.jetpack-product-card-npip__price .plan-price.jetpack-product-card-npip__original-price {
 	margin-inline-end: 16px;
 }
 
@@ -178,8 +177,7 @@
 	color: var( --studio-gray-100 );
 }
 
-.jetpack-product-card-npip__price
-.plan-price.is-original {
+.jetpack-product-card-npip__price .plan-price.is-original {
 	color: var( --studio-gray-20 );
 
 	&::before {
@@ -194,8 +192,7 @@
 	color: inherit;
 }
 
-.jetpack-product-card-npip__price
-.plan-price__currency-symbol {
+.jetpack-product-card-npip__price .plan-price__currency-symbol {
 	margin-top: 0.25rem;
 	line-height: 3.375rem;
 

@@ -364,6 +364,9 @@ class Media extends Component {
 					brandFont
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
+					subHeaderText={ translate(
+						'Manage all the media on your site, including images, video, and more.'
+					) }
 					align="left"
 				/>
 				{ this.showDialog() && (

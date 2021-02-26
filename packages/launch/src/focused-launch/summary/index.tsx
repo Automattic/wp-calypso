@@ -34,7 +34,6 @@ import FocusedLaunchSummaryItem, {
 } from './focused-launch-summary-item';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../../stores';
 import LaunchContext from '../../context';
-import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 import type { Plan, PlanProduct } from '../../stores';
 
@@ -548,7 +547,7 @@ const Summary: React.FunctionComponent = () => {
 		showSiteTitleStep,
 	} = useDispatch( LAUNCH_STORE );
 
-	const { title, updateTitle } = useTitle();
+	const { title, isValidTitle, isDefaultTitle, updateTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
@@ -575,10 +574,10 @@ const Summary: React.FunctionComponent = () => {
 	// step to the user when in this launch flow.
 	// Allow changing site title when it's the default value or when it's an empty string.
 	React.useEffect( () => {
-		if ( ! isSiteTitleStepVisible && ! isValidSiteTitle( title ) ) {
+		if ( ! isSiteTitleStepVisible && isDefaultTitle ) {
 			showSiteTitleStep();
 		}
-	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
+	}, [ isDefaultTitle, showSiteTitleStep, isSiteTitleStepVisible, title ] );
 
 	// Launch the site directly if Free plan and subdomain are selected.
 	// Otherwise, show checkout as the next step.
@@ -602,8 +601,7 @@ const Summary: React.FunctionComponent = () => {
 		/>
 	);
 
-	const isDomainStepHighlighted =
-		!! selectedPlanProductId || !! hasSelectedDomain || isValidSiteTitle( title );
+	const isDomainStepHighlighted = !! selectedPlanProductId || !! hasSelectedDomain || isValidTitle;
 
 	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep

@@ -20,7 +20,6 @@ import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_CRM_FREE_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
-import { doForCurrentCROIteration, Iterations } from './iterations';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';
@@ -56,43 +55,33 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	// Include Jetpack CRM
-	doForCurrentCROIteration( ( variation: Iterations ) => {
-		if (
-			variation !== Iterations.SPP &&
-			! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
-		) {
-			availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
-		}
-	} );
+	if (
+		! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
+	}
 
 	const backupProductsToShow: string[] = [];
-	doForCurrentCROIteration( ( variation: Iterations ) => {
-		const ownsDaily =
-			ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY ) ||
-			ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
-		const ownsRealtime =
-			ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME ) ||
-			ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY );
 
-		// Show the Backup product the site owns, and the one it doesn't own.
-		// In other words, always show both Backup Daily and Backup Real-time.
-		if ( ! ownsDaily ) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_DAILY,
-				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
-			);
-		}
+	const ownsDaily =
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
+	const ownsRealtime =
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY );
 
-		// ... except in the SPP iteration, which only shows
-		// Backup Real-time if the site owns it.
+	// Show the Backup product the site owns, and the one it doesn't own.
+	// In other words, always show both Backup Daily and Backup Real-time.
+	if ( ! ownsDaily ) {
+		backupProductsToShow.push( PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
+	}
 
-		if ( variation !== Iterations.SPP && ! ownsRealtime ) {
-			backupProductsToShow.push(
-				PRODUCT_JETPACK_BACKUP_REALTIME,
-				PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
-			);
-		}
-	} );
+	if ( ! ownsRealtime ) {
+		backupProductsToShow.push(
+			PRODUCT_JETPACK_BACKUP_REALTIME,
+			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
+		);
+	}
 
 	availableProducts = [ ...availableProducts, ...backupProductsToShow ];
 

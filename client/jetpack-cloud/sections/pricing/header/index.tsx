@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 
@@ -31,18 +30,6 @@ import './style.scss';
 const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 	const translate = useTranslate();
 
-	const iterationClassName = useMemo(
-		() => getForCurrentCROIteration( ( variation: Iterations ) => `iteration-${ variation }` ),
-		[]
-	) as Iterations;
-	const title = useMemo(
-		() =>
-			getForCurrentCROIteration( {
-				[ Iterations.SPP ]: translate( 'Security, performance, and marketing tools for WordPress' ),
-			} ) || translate( 'Security, performance, and marketing tools made for WordPress' ),
-		[ translate ]
-	);
-
 	// Don't show for the NPIP variant
 	const showFreshStartBanner = useMemo(
 		() => getForCurrentCROIteration( ( variation: Iterations ) => variation !== Iterations.NPIP ),
@@ -61,10 +48,12 @@ const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
 
 			{ showFreshStartBanner && <FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } /> }
 
-			<div className={ classNames( 'header', iterationClassName ) }>
+			<div className="header">
 				<FormattedHeader
 					className="header__main-title"
-					headerText={ preventWidows( title ) }
+					headerText={ preventWidows(
+						translate( 'Security, performance, and marketing tools made for WordPress' )
+					) }
 					align="center"
 				/>
 			</div>

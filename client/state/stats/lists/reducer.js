@@ -86,7 +86,7 @@ export const items = withSchemaValidation( itemSchema, ( state = {}, action ) =>
 					...state[ siteId ],
 					[ statType ]: {
 						...get( state, [ siteId, statType ] ),
-						[ queryKey ]: data,
+						[ queryKey ]: data || null,
 					},
 				},
 			};

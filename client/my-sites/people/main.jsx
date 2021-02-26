@@ -100,6 +100,9 @@ class People extends React.Component {
 					brandFont
 					className="people__page-heading"
 					headerText={ translate( 'People' ) }
+					subHeaderText={ translate(
+						'Invite contributors to your site and manage their access settings.'
+					) }
 					align="left"
 				/>
 				<div>

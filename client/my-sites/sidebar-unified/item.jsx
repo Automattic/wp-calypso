@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
@@ -33,21 +32,26 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	isHappychatSessionActive,
+	isJetpackNonAtomicSite,
+	continueInCalypso,
 } ) => {
 	const reduxDispatch = useDispatch();
+
+	const onNavigate = () => {
+		reduxDispatch( collapseAllMySitesSidebarSections() );
+		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
+	};
 
 	return (
 		<SidebarItem
 			count={ count }
 			label={ title }
 			link={ url }
-			onNavigate={ () => {
-				reduxDispatch( collapseAllMySitesSidebarSections() );
-				reduxDispatch( expandMySitesSidebarSection( sectionId ) );
-			} }
+			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink
+			forceInternalLink={ ! isHappychatSessionActive && ! isJetpackNonAtomicSite }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
@@ -62,6 +66,9 @@ MySitesSidebarUnifiedItem.propTypes = {
 	slug: PropTypes.string,
 	title: PropTypes.string,
 	url: PropTypes.string,
+	isHappychatSessionActive: PropTypes.bool.isRequired,
+	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
+	continueInCalypso: PropTypes.func.isRequired,
 };
 
 export default memo( MySitesSidebarUnifiedItem );

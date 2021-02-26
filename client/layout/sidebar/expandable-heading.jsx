@@ -24,6 +24,7 @@ const ExpandableSidebarHeading = ( {
 	materialIconStyle,
 	expanded,
 	menuId,
+	hideExpandableIcon,
 	...props
 } ) => {
 	return (
@@ -46,7 +47,9 @@ const ExpandableSidebarHeading = ( {
 				{ title }
 				{ undefined !== count && <Count count={ count } /> }
 			</span>
-			<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
+			{ ! hideExpandableIcon && (
+				<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
+			) }
 		</SidebarHeading>
 	);
 };
@@ -59,6 +62,7 @@ ExpandableSidebarHeading.propTypes = {
 	icon: PropTypes.string,
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
+	hideExpandableIcon: PropTypes.bool,
 };
 
 ExpandableSidebarHeading.defaultProps = {

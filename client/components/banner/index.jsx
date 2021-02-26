@@ -45,6 +45,7 @@ export class Banner extends Component {
 		className: PropTypes.string,
 		description: PropTypes.node,
 		forceHref: PropTypes.bool,
+		disableCircle: PropTypes.bool,
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
@@ -78,6 +79,7 @@ export class Banner extends Component {
 
 	static defaultProps = {
 		forceHref: false,
+		disableCircle: false,
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
@@ -145,7 +147,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, iconPath, jetpack, showIcon } = this.props;
+		const { disableCircle, icon, iconPath, jetpack, showIcon } = this.props;
 
 		if ( ! showIcon ) {
 			return;
@@ -169,7 +171,10 @@ export class Banner extends Component {
 		return (
 			<div className="banner__icons">
 				<div className="banner__icon">{ iconComponent }</div>
-				<div className="banner__icon-circle">{ iconComponent }</div>
+				{ ! disableCircle && <div className="banner__icon-circle">{ iconComponent }</div> }
+				{ disableCircle && iconPath && (
+					<div className="banner__icon-no-circle">{ iconComponent }</div>
+				) }
 			</div>
 		);
 	}

@@ -13,6 +13,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnec
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -48,7 +50,7 @@ project {
 	buildType(CheckCodeStyle)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(RunCanaryE2eTests)
+	buildType(RunCalypsoE2eDesktopTests)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
@@ -318,6 +320,39 @@ object RunAllUnitTests : BuildType({
 					echo "${'$'}DIRTY_FILES"
 					echo "You need to checkout the branch, run 'yarn' and commit those files."
 					exit 1
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Prevent duplicated packages"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Duplicated packages
+				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
+				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
+					echo "Repository contains duplicated packages: "
+					echo ""
+					echo "${'$'}DUPLICATED_PACKAGES"
+					echo ""
+					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
+					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
+					exit 1
+				else
+					echo "No duplicated packages found."
 				fi
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
@@ -668,6 +703,15 @@ object CheckCodeStyle : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		nonZeroExitCode = false
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
+			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
+			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
 	}
 
 	features {
@@ -801,9 +845,10 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-object RunCanaryE2eTests : BuildType({
-	name = "Canary e2e tests"
-	description = "Run canary e2e tests"
+object RunCalypsoE2eDesktopTests : BuildType({
+	uuid = "52f38738-92b2-43cb-b7fb-19fce03cb67c"
+	name = "Run browser e2e tests (desktop)"
+	description = "Run browser e2e tests (desktop)"
 
 	artifactRules = """
 		reports => reports
@@ -841,7 +886,7 @@ object RunCanaryE2eTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Run e2e tests: Canary (mobile, desktop)"
+			name = "Run e2e tests (desktop)"
 			scriptContent = """
 				#!/bin/bash
 
@@ -852,6 +897,7 @@ object RunCanaryE2eTests : BuildType({
 				set -o errexit
 				set -o nounset
 				set -o pipefail
+				shopt -s globstar
 				set -x
 
 				cd test/e2e
@@ -859,8 +905,14 @@ object RunCanaryE2eTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
-				export MAGELLANDEBUG=true
+				#export MAGELLANDEBUG=true
 				export TEST_VIDEO=true
+
+				function join() {
+					local IFS=${'$'}1
+					shift
+					echo "${'$'}*"
+				}
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -891,11 +943,16 @@ object RunCanaryE2eTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				./run.sh -R -a %E2E_WORKERS% -C -s "mobile,desktop" -u "${'$'}{URL%/}"
+				export BROWSERSIZE="desktop"
+				export BROWSERLOCALE="en"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
+
+			yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
-			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 		}
 		script {
 			name = "Collect results"
@@ -928,7 +985,7 @@ object RunCanaryE2eTests : BuildType({
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "reports/*.xml")
+			param("xmlReportParsing.reportDirs", "test/e2e/temp/**/reports/*.xml")
 		}
 		perfmon {
 		}
@@ -964,6 +1021,9 @@ object RunCanaryE2eTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
+		// With testFailure=true, TeamCity detects test that fail but succeed after a retry as build failures
+		// With this option disabled, TeamCity fails the build if `yarn magellan` returns an exit code other than 0.
+		testFailure = false
 	}
 
 	dependencies {
@@ -986,7 +1046,7 @@ object WpCalypso : GitVcsRoot({
 })
 
 object WpDesktop : Project({
-	name = "Desktop"
+	name = "Desktop app"
 	buildType(WpDesktop_DesktopE2ETests)
 
 	params {
@@ -998,7 +1058,7 @@ object WpDesktop : Project({
 })
 
 object WpDesktop_DesktopE2ETests : BuildType({
-	name = "Desktop e2e tests"
+	name = "Run e2e tests"
 	description = "Run wp-desktop e2e tests in Linux"
 
 	artifactRules = """
@@ -1212,6 +1272,15 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 	artifactRules = "editing-toolkit.zip"
 
+	dependencies {
+		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
+			buildRule = tag("etk-release-build", "+:trunk")
+			artifactRules = """
+				+:editing-toolkit.zip!** => etk-release-build
+			""".trimIndent()
+		}
+	}
+
 	buildNumberPattern = "%build.prefix%.%build.counter%"
 	params {
 		param("build.prefix", "3")
@@ -1224,12 +1293,10 @@ object WPComPlugins_EditorToolKit : BuildType({
 
 	triggers {
 		vcs {
-			triggerRules = "+:apps/editing-toolkit/**"
 			branchFilter = """
 				+:*
 				-:pull*
 			""".trimIndent()
-
 		}
 	}
 
@@ -1322,16 +1389,26 @@ object WPComPlugins_EditorToolKit : BuildType({
 				export NODE_ENV="production"
 
 				cd apps/editing-toolkit
-
-				# Update plugin version in the plugin file.
-				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php
-
-				# Update plugin stable tag in readme.txt.
-				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt
-
 				yarn build
-				cd editing-toolkit-plugin/
 
+				echo
+				prev_release_build_num=${'$'}(grep build_number ../../etk-release-build/build_meta.txt | sed -e "s/build_number=//")
+				rm ../../etk-release-build/build_meta.txt # Adds a source of randomness which we don't want for comparison.
+				echo "Previous tagged trunk build: ${'$'}prev_release_build_num"
+
+				# Update plugin version in the plugin file and readme.txt.
+				# Note: we also update the previous release build to the same version to restore idempotence
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
+
+				if ! diff -rq ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
+					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
+					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
+				else
+					echo "The build is not different from the last release build. Therefore, this build has no effect."
+				fi
+
+				cd editing-toolkit-plugin/
 				# Metadata file with info for the download script.
 				tee build_meta.txt <<-EOM
 					commit_hash=%build.vcs.number%
@@ -1339,7 +1416,9 @@ object WPComPlugins_EditorToolKit : BuildType({
 					build_number=%build.number%
 					EOM
 
+				echo
 				zip -r ../../../editing-toolkit.zip .
+
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true

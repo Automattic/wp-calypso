@@ -279,7 +279,7 @@ class UseYourDomainStep extends React.Component {
 			);
 		} else if ( domainsWithPlansOnly || primaryWithPlansOnly ) {
 			mappingProductPrice = translate(
-				'Included in paid plans, but registration costs at your current provider still apply'
+				'Included in annual paid plans, but registration costs at your current provider still apply'
 			);
 		}
 

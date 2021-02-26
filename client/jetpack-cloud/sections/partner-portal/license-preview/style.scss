@@ -53,8 +53,7 @@
 		line-height: 1.75rem;
 		color: var( --studio-gray-100 );
 		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		word-break: break-all;
 
 		span + span {
 			margin-left: 12px;
@@ -124,7 +123,8 @@
 
 	&--placeholder &__domain,
 	&--placeholder &__product,
-	&--placeholder &__label + div {
+	&--placeholder &__label + div,
+	&--placeholder &__copy-license-key {
 		@include placeholder( --color-neutral-10 );
 	}
 }

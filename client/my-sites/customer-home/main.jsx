@@ -59,6 +59,13 @@ const Home = ( {
 
 			const successMessage = translate( 'Your application has been sent!' );
 			reduxDispatch( successNotice( successMessage ) );
+			return;
+		}
+
+		if ( noticeType === 'purchase-success' ) {
+			const successMessage = translate( 'Your purchase has been completed!' );
+			reduxDispatch( successNotice( successMessage ) );
+			return;
 		}
 
 		return;
@@ -79,7 +86,7 @@ const Home = ( {
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'My Home' ) }
-				subHeaderText={ translate( 'Your home base for posting, editing, and growing your site.' ) }
+				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
 			/>
 			<div className="customer-home__view-site-button">

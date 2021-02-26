@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop, isNil, has } from 'lodash';
+import { noop, has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -10,6 +10,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import moment from 'moment';
+import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -81,14 +82,14 @@ export class DateRange extends Component {
 			has( this.props, 'lastSelectableDate' ) && this.props.moment( this.props.lastSelectableDate );
 
 		// Clamp start/end dates to ranges (if specified)
-		let startDate = isNil( this.props.selectedStartDate )
+		let startDate = isNullish( this.props.selectedStartDate )
 			? NO_DATE_SELECTED_VALUE
 			: this.clampDateToRange( this.props.moment( this.props.selectedStartDate ), {
 					dateFrom: firstSelectableDate,
 					dateTo: lastSelectableDate,
 			  } );
 
-		let endDate = isNil( this.props.selectedEndDate )
+		let endDate = isNullish( this.props.selectedEndDate )
 			? NO_DATE_SELECTED_VALUE
 			: this.clampDateToRange( this.props.moment( this.props.selectedEndDate ), {
 					dateFrom: firstSelectableDate,
