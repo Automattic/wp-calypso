@@ -836,8 +836,8 @@ object CheckCodeStyleBranch : BuildType({
 
 object RunCalypsoE2eDesktopTests : BuildType({
 	uuid = "52f38738-92b2-43cb-b7fb-19fce03cb67c"
-	name = "Run Calypso e2e tests (desktop)"
-	description = "Run Calypso e2e tests (desktop)"
+	name = "Run browser e2e tests (desktop)"
+	description = "Run browser e2e tests (desktop)"
 
 	artifactRules = """
 		reports => reports
@@ -1035,7 +1035,7 @@ object WpCalypso : GitVcsRoot({
 })
 
 object WpDesktop : Project({
-	name = "Desktop"
+	name = "Desktop app"
 	buildType(WpDesktop_DesktopE2ETests)
 
 	params {
@@ -1047,7 +1047,7 @@ object WpDesktop : Project({
 })
 
 object WpDesktop_DesktopE2ETests : BuildType({
-	name = "Desktop e2e tests"
+	name = "Run e2e tests"
 	description = "Run wp-desktop e2e tests in Linux"
 
 	artifactRules = """
