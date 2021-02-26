@@ -16,7 +16,7 @@ import type { State } from '../reducer';
 const TEST_LOCALE_1 = 'test-locale-1';
 const TEST_LOCALE_2 = 'test-locale-2';
 
-const testFeatures = {
+const mockFeatures = {
 	[ TEST_LOCALE_1 ]: buildPlanFeaturesDict( [
 		MockData.STORE_PLAN_FEATURE_CUSTOM_DOMAIN,
 		MockData.STORE_PLAN_FEATURE_LIVE_SUPPORT,
@@ -26,7 +26,7 @@ const testFeatures = {
 		MockData.STORE_PLAN_FEATURE_RECURRING_PAYMENTS,
 	] ),
 };
-const testFeaturesByType = {
+const mockFeaturesByType = {
 	[ TEST_LOCALE_1 ]: [
 		MockData.API_FEATURES_BY_TYPE_GENERAL,
 		MockData.API_FEATURES_BY_TYPE_COMMERCE,
@@ -36,17 +36,17 @@ const testFeaturesByType = {
 		MockData.API_FEATURES_BY_TYPE_MARKETING,
 	],
 };
-const testPlans = {
+const mockPlans = {
 	[ TEST_LOCALE_1 ]: [ MockData.STORE_PLAN_FREE, MockData.STORE_PLAN_PREMIUM ],
 	[ TEST_LOCALE_2 ]: [ MockData.STORE_PLAN_FREE ],
 };
-const testPlanProducts = [ MockData.STORE_PRODUCT_FREE, MockData.STORE_PRODUCT_PREMIUM_ANNUALLY ];
+const mockPlanProducts = [ MockData.STORE_PRODUCT_FREE, MockData.STORE_PRODUCT_PREMIUM_ANNUALLY ];
 
 const mockState: State = {
-	features: testFeatures,
-	featuresByType: testFeaturesByType,
-	plans: testPlans,
-	planProducts: testPlanProducts,
+	features: mockFeatures,
+	featuresByType: mockFeaturesByType,
+	plans: mockPlans,
+	planProducts: mockPlanProducts,
 };
 
 // Mocks
@@ -57,20 +57,20 @@ jest.mock( '@wordpress/deprecated', () => {
 describe( 'Plans selectors', () => {
 	it( 'getFeatures', () => {
 		expect( Selectors.getFeatures( mockState, TEST_LOCALE_1 ) ).toEqual(
-			testFeatures[ TEST_LOCALE_1 ]
+			mockFeatures[ TEST_LOCALE_1 ]
 		);
 		expect( Selectors.getFeatures( mockState, TEST_LOCALE_2 ) ).toEqual(
-			testFeatures[ TEST_LOCALE_2 ]
+			mockFeatures[ TEST_LOCALE_2 ]
 		);
 		expect( Selectors.getFeatures( mockState, 'non-existing' ) ).toEqual( {} );
 	} );
 
 	it( 'getFeaturesByType', () => {
 		expect( Selectors.getFeaturesByType( mockState, TEST_LOCALE_1 ) ).toEqual(
-			testFeaturesByType[ TEST_LOCALE_1 ]
+			mockFeaturesByType[ TEST_LOCALE_1 ]
 		);
 		expect( Selectors.getFeaturesByType( mockState, TEST_LOCALE_2 ) ).toEqual(
-			testFeaturesByType[ TEST_LOCALE_2 ]
+			mockFeaturesByType[ TEST_LOCALE_2 ]
 		);
 		expect( Selectors.getFeaturesByType( mockState, 'non-existing' ) ).toEqual( [] );
 	} );
@@ -97,16 +97,16 @@ describe( 'Plans selectors', () => {
 
 	it( 'getSupportedPlans', () => {
 		expect( Selectors.getSupportedPlans( mockState, TEST_LOCALE_1 ) ).toEqual(
-			testPlans[ TEST_LOCALE_1 ]
+			mockPlans[ TEST_LOCALE_1 ]
 		);
 		expect( Selectors.getSupportedPlans( mockState, TEST_LOCALE_2 ) ).toEqual(
-			testPlans[ TEST_LOCALE_2 ]
+			mockPlans[ TEST_LOCALE_2 ]
 		);
 		expect( Selectors.getSupportedPlans( mockState, 'non-existing' ) ).toEqual( [] );
 	} );
 
 	it( 'getPlansProducts', () => {
-		expect( Selectors.getPlansProducts( mockState ) ).toEqual( testPlanProducts );
+		expect( Selectors.getPlansProducts( mockState ) ).toEqual( mockPlanProducts );
 	} );
 
 	it( 'getPrices', () => {
