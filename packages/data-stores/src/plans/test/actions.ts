@@ -1,81 +1,63 @@
 /**
  * Internal dependencies
  */
-import { setFeatures, setFeaturesByType, setPlans, setPlanProducts, resetPlan } from '../actions';
-import {
-	MOCK_FEATURES_BY_TYPE_GENERAL,
-	MOCK_FEATURES_BY_TYPE_COMMERCE,
-	MOCK_FEATURES_BY_TYPE_MARKETING,
-	MOCK_PLAN_FREE,
-	MOCK_PLAN_PREMIUM,
-	MOCK_PLAN_PRODUCT_FREE,
-	MOCK_PLAN_PRODUCT_PREMIUM_ANNUALLY,
-	MOCK_PLAN_PRODUCT_PREMIUM_MONTHLY,
-} from '../mock/mock-constants';
+import * as Actions from '../actions';
+import * as MockData from '../mock';
+import { buildPlanFeaturesDict } from '../test-utils';
 
-// TODO: consider splitting files in mock/ folder
-// and exporting everything through index file
-
-// TODO: consider extracting to mock/
 const TEST_LOCALE = 'test-locale';
-const TEST_FEATURE = {
-	id: 'test-id',
-	description: 'test-description',
-	name: 'test-name',
-	requiresAnnuallyBilledPlan: true,
-	type: 'test-type',
-	data: [ false, 'test' ],
-};
 
 describe( 'Plans action creators', () => {
-	test( 'SET_FEATURES', () => {
-		const mockFeatures = {
-			test: TEST_FEATURE,
-		};
+	test( 'setFeatures', () => {
+		const mockFeatures = buildPlanFeaturesDict( [
+			MockData.STORE_PLAN_FEATURE_CUSTOM_DOMAIN,
+			MockData.STORE_PLAN_FEATURE_LIVE_SUPPORT,
+			MockData.STORE_PLAN_FEATURE_WORDADS,
+		] );
 
-		expect( setFeatures( mockFeatures, TEST_LOCALE ) ).toEqual( {
+		expect( Actions.setFeatures( mockFeatures, TEST_LOCALE ) ).toEqual( {
 			type: 'SET_FEATURES',
 			features: mockFeatures,
 			locale: TEST_LOCALE,
 		} );
 	} );
 
-	test( 'SET_FEATURES_BY_TYPE', () => {
+	test( 'setFeaturesByType', () => {
 		const features = [
-			MOCK_FEATURES_BY_TYPE_GENERAL,
-			MOCK_FEATURES_BY_TYPE_COMMERCE,
-			MOCK_FEATURES_BY_TYPE_MARKETING,
+			MockData.API_FEATURES_BY_TYPE_GENERAL,
+			MockData.API_FEATURES_BY_TYPE_COMMERCE,
+			MockData.API_FEATURES_BY_TYPE_MARKETING,
 		];
-		expect( setFeaturesByType( features, TEST_LOCALE ) ).toEqual( {
+		expect( Actions.setFeaturesByType( features, TEST_LOCALE ) ).toEqual( {
 			type: 'SET_FEATURES_BY_TYPE',
 			featuresByType: features,
 			locale: TEST_LOCALE,
 		} );
 	} );
 
-	test( 'SET_PLANS', () => {
-		const plans = [ MOCK_PLAN_FREE, MOCK_PLAN_PREMIUM ];
-		expect( setPlans( plans, TEST_LOCALE ) ).toEqual( {
+	test( 'setPlans', () => {
+		const plans = [ MockData.STORE_PLAN_FREE, MockData.STORE_PLAN_PREMIUM ];
+		expect( Actions.setPlans( plans, TEST_LOCALE ) ).toEqual( {
 			type: 'SET_PLANS',
 			plans,
 			locale: TEST_LOCALE,
 		} );
 	} );
 
-	test( 'SET_PLAN_PRODUCTS', () => {
+	test( 'setPlanProducts', () => {
 		const planProducts = [
-			MOCK_PLAN_PRODUCT_FREE,
-			MOCK_PLAN_PRODUCT_PREMIUM_ANNUALLY,
-			MOCK_PLAN_PRODUCT_PREMIUM_MONTHLY,
+			MockData.STORE_PRODUCT_FREE,
+			MockData.STORE_PRODUCT_PREMIUM_ANNUALLY,
+			MockData.STORE_PRODUCT_PREMIUM_MONTHLY,
 		];
-		expect( setPlanProducts( planProducts ) ).toEqual( {
+		expect( Actions.setPlanProducts( planProducts ) ).toEqual( {
 			type: 'SET_PLAN_PRODUCTS',
 			products: planProducts,
 		} );
 	} );
 
-	test( 'RESET_PLAN', () => {
-		expect( resetPlan() ).toEqual( {
+	test( 'resetPlan', () => {
+		expect( Actions.resetPlan() ).toEqual( {
 			type: 'RESET_PLAN',
 		} );
 	} );
