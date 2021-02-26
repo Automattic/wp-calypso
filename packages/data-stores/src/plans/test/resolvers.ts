@@ -7,13 +7,17 @@ import { buildPlanFeaturesDict } from '../test-utils';
 
 import type { PricedAPIPlan } from '../types';
 
-// Don't need to mock specific functions for any tests, but mocking
-// module because it accesses the `document` global.
-jest.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
+jest.mock( '../../wpcom-request-controls', () => ( {
+	wpcomRequest: ( request ) => ( {
+		type: 'WPCOM_REQUEST',
+		request,
+	} ),
+	fetchAndParse: ( resource, options ) => ( {
+		type: 'FETCH_AND_PARSE',
+		resource,
+		options,
+	} ),
 } ) );
-
-// const TEST_LOCALE = 'test-locale';
 
 describe( 'getSupportedPlans', () => {
 	it( 'calls setFeatures, setFeaturesByType, and setPlans after fetching plans', () => {
