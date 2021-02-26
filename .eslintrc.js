@@ -398,6 +398,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/is-finite': 'error',
 		'you-dont-need-lodash-underscore/is-null': 'error',
 		'you-dont-need-lodash-underscore/reduce-right': 'error',
+		'you-dont-need-lodash-underscore/repeat': 'error',
 		'you-dont-need-lodash-underscore/reverse': 'error',
 		'you-dont-need-lodash-underscore/split': 'error',
 		'you-dont-need-lodash-underscore/to-lower': 'error',
