@@ -194,7 +194,7 @@ class TitanManagementNav extends React.Component {
 								<img src={ titanMailIcon } alt={ translate( 'Titan Mail icon' ) } />
 								<strong>
 									{ translate( 'Mail', {
-										comments: 'This refers to the Email application (i.e. the webmail) of Titan',
+										comment: 'This refers to the Email application (i.e. the webmail) of Titan',
 									} ) }
 								</strong>
 							</a>
@@ -204,7 +204,7 @@ class TitanManagementNav extends React.Component {
 								<img src={ titanCalendarIcon } alt={ translate( 'Titan Calendar icon' ) } />
 								<strong>
 									{ translate( 'Calendar', {
-										comments: 'This refers to the Calendar application of Titan',
+										comment: 'This refers to the Calendar application of Titan',
 									} ) }
 								</strong>
 							</a>
@@ -214,7 +214,7 @@ class TitanManagementNav extends React.Component {
 								<img src={ titanContactsIcon } alt={ translate( 'Titan Contacts icon' ) } />
 								<strong>
 									{ translate( 'Contacts', {
-										comments: 'This refers to the Contacts application of Titan',
+										comment: 'This refers to the Contacts application of Titan',
 									} ) }
 								</strong>
 							</a>
