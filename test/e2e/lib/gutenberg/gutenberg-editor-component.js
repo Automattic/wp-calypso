@@ -69,10 +69,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async publish( { visit = false, closePanel = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
 		await this.driver.sleep( 1000 );
-		const button = await this.driver.findElement( this.publishSelector );
-		await this.driver.executeScript( 'arguments[0].click();', button );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 
 		if ( closePanel ) {
