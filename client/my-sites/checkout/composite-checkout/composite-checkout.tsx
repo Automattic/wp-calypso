@@ -225,6 +225,7 @@ export default function CompositeCheckout( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
+		isInEditor,
 		isJetpackNotAtomic,
 		isPrivate,
 		siteSlug,
