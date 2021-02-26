@@ -4,7 +4,7 @@
 import { getLogger } from 'calypso/server/lib/logger';
 import { isDevelopmentMode } from './misc'
 
-// Using typescript to ensure we are being safe in SSR
+// SSR safety: Fail TypeScript compilation if `window` is used without an explicit undefined check
 declare const window: undefined | ( Window & typeof globalThis );
 
 /**
