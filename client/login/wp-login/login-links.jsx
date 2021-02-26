@@ -217,31 +217,17 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		// The email address from the URL (if present) is added to the login
-		// parameters in this.handleMagicLoginLinkClick(). But it's left out
-		// here deliberately, to ensure that if someone copies this link to
-		// paste somewhere else, their email address isn't included in it.
-		const loginParameters = {
-			isNative: true,
-			locale: this.props.locale,
-			twoFactorAuthType: 'link',
-		};
-
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
-			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = 'new/link';
-		}
-
+		// Using a `button` here because page.js seems to add an onClick handler
+		// to `a` tags with internal links, which prevents the onClick handler
+		// below from being called.
 		return (
-			<a
-				href={ login( loginParameters ) }
+			<button
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 				onClick={ this.handleMagicLoginLinkClick }
 			>
 				{ this.props.translate( 'Email me a login link' ) }
-			</a>
+			</button>
 		);
 	}
 
