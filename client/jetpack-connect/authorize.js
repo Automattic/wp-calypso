@@ -798,6 +798,9 @@ export class JetpackAuthorize extends Component {
 	render() {
 		const { translate } = this.props;
 		const wooDna = this.getWooDnaConfig();
+
+		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
+
 		return (
 			<MainWrapper
 				isWoo={ this.isWooOnboarding() }
@@ -823,7 +826,7 @@ export class JetpackAuthorize extends Component {
 							{ this.renderNotices() }
 							{ this.renderStateAction() }
 						</Card>
-						{ this.renderFooterLinks() }
+						{ ! isJetpackMagicLinkSignUpFlow && this.renderFooterLinks() }
 					</div>
 				</div>
 			</MainWrapper>
