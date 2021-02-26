@@ -49,8 +49,9 @@ const Home = ( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
+	const shouldShowNotice = canUserUseCustomerHome && layout && noticeType;
 	useEffect( () => {
-		if ( ! canUserUseCustomerHome || ! layout || ! noticeType ) {
+		if ( ! shouldShowNotice ) {
 			return;
 		}
 
@@ -69,7 +70,7 @@ const Home = ( {
 		}
 
 		return;
-	}, [ noticeType, layout, canUserUseCustomerHome, reduxDispatch, translate ] );
+	}, [ shouldShowNotice, translate, reduxDispatch, noticeType ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
