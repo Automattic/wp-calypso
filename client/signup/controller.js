@@ -106,13 +106,15 @@ export default {
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.pathname.indexOf( 'launch-only' ) >= 0 ||
-			context.params.flowName === 'user' ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||
 			context.params.flowName === 'pressable-nux' ||
 			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
+			next();
+		} else if ( context.params.flowName === 'user' ) {
+			document.body.classList.add( 'is-white-signup' );
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
 			// We still want to keep the original styling for the new user creation step
@@ -159,7 +161,6 @@ export default {
 						);
 						window.location = urlWithLocale;
 					} else {
-						removeWhiteBackground();
 						next();
 					}
 				} )
