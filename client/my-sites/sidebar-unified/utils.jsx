@@ -20,7 +20,11 @@ export const isNewNavUnificationUser = ( state ) => {
 export const isNavUnificationEnabledForUser = ( state ) => {
 	const userId = getCurrentUserId( state );
 
-	if ( userId && userId % 100 < CURRENT_ROLLOUT_SEGMENT_PERCENTAGE ) {
+	if (
+		userId &&
+		( new Date() - LAUNCH_DATE ) / HOURS_IN_MS > 24 &&
+		userId % 100 < CURRENT_ROLLOUT_SEGMENT_PERCENTAGE
+	) {
 		return true;
 	}
 
