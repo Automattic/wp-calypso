@@ -2,43 +2,36 @@
 
 This plugin includes many sub-features which add blocks and new functionality to the Gutenberg editor. The plugin provides a single codebase which can be installed on any platform which requires these features, such as the WordPress.com multisite or other standalone WordPress instances.
 
-## Rename Info
-
-This plugin has been renamed from Full Site Editing Plugin to WordPress.com Editing Toolkit Plugin.
-The following changed to use "editing-toolkit" in place of "full-site-editing".
-
-- Directories and filenames referencing "full site editing"
-- Code referencing those filenames
-- Documentation
-- CI job names
-
-The following items did not change:
-
-- The plugin slug, which will remain `full-site-editing` due to rename limitations in WordPress.
-- The root full-site-editing-plugin.php file (to preserve the plugin slug).
-- The `full-site-editing` textdomain, also to reference the slug.
-- The \A8C\FSE php namespace may not ever be fully converted, since it is referenced in many places outside of the plugin.
-
 ## File Architecture
 
 - `package.json`: The package file for the editing toolkit monorepo app.
 - `.wp-env.json`: Local environment configuration for the editing toolkit plugin.
-- `bin/`: Scripts to assis with your local developmenet environment and testing.
+- `bin/`: Scripts to assis with development and testing.
 - `editing-toolkit-plugin/`: The root of the editing toolkit plugin.
   - `full-site-editing-plugin.php`: All initialization code should go here.
-  - `block-patterns/`: Additional block patterns for Gutenberg.
-  - `coming-soon/`: Coming Soon page and associated functionality.
-  - `common/`: General functionality which doesn't fit a specific feature and is always executed.
-  - `dotcom-fse/`: (_deprecated_) An early experiment for a consistent site editing experience in Gutenberg. (Superceeded by the site-editor work in Gutenberg.)
-  - `e2e-test-helpers/`: Functions to assist with e2e tests in Puppeteer.
-  - `event-countdown-block/`: A block which counts down to a specified date.
-  - `global-styles/`: (_deprecated_) A plugin which adds a global font picker to the editor. (Superceeded by global style work in Gutenberg.)
-  - `jetpack-timeline/`: A block which lets you create a timeline of events.
-  - `newspack-blocks/`: Container for newspack blocks such as the carousel block and the blog post block.
-  - `posts-list-block/`: (_deprecated_) A simple block to show a list of posts on a page. (Superceeded by the blog-posts-block.)
-  - `site-editor/`: Gutenberg site-editor integration code for WordPress.com.
-  - `starter-page-templates/`: Allows you to select different page layouts made of blocks.
-  - `wpcom-block-editor-nux/`: WordPress.com-specific NUX dialogue.
+  - `$feature_slug`: Each separate feature should go in its own top-level directory.
+
+## Features Available
+
+| Feature                   | How to access                                                                                                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Contextual Tips           |                                                                                                                                                                            |
+| Block Patterns            | Open the block inserter sidebar and go to the "patterns" tab. You should see many A8C-custom patterns, such as the ones in the "subscribe" category.                       |
+| Coming Soon               |                                                                                                                                                                            |
+| Data Store                |                                                                                                                                                                            |
+| Dotcom FSE                |                                                                                                                                                                            |
+| Editor Site Launch        | In a new, unlaunched site, a "Launch" button will appear in the top-right. This will open new screens to launch your site.                                                 |
+| Mailerlite                |                                                                                                                                                                            |
+| Global Styles             | In the options menu dropdown (3 dots at top-right), open plugins > global styles. A sidebar will open from which you can change the font.                                  |
+| Starter Page Templates    | Using a supported theme, create a new page. A modal will cover the screen asking which layout you'd like to use for the page.                                              |
+| What's New                | In the options menu dropdown (3 dots at top-right), open tools > what's new. A modal will appear with info about new features.                                             |
+| Nav Sidebar               | On WordPress.com, click the "W" back icon at top-left. A sidebar will appear showing recent posts you can open.                                                            |
+| Block Editor NUX          |                                                                                                                                                                            |
+| Jetpack Timeline Block    | Insert the "Timeline" block.                                                                                                                                               |
+| Event Countdown Block     | Insert the "Event countdown" block.                                                                                                                                        |
+| Newspack Carousel Block   | Insert the "Post Carousel" block.                                                                                                                                          |
+| Newspack Blog Posts Block | Insert the "Latest Posts" block.                                                                                                                                           |
+| Posts List Block          | Insert the "Blog Posts Listing" block. (Note: this has been deprecated in favor of the "Latest Posts" block, so it won't show up unless it was inserted on an older site.) |
 
 ## Shared WordPress scripts
 
@@ -46,13 +39,13 @@ WordPress has a mechanism to share scripts. We already depend on many core provi
 
 The following scripts are made available by the plugin:
 
-- `a8c-etk-common-data-stores`: Import this script to register data stores.
+- `a8c-fse-common-data-stores`: Import this script to register data stores.
 
 At the moment, scripts are only enqueued for their side effects, i.e. you cannot import anything from them. The imports serve to ensure the script
 is enqueued by WordPress as a script dependency. To depend on a script, add an import:
 
 ```js
-import 'a8c-etk-common-data-stores';
+import 'a8c-fse-common-data-stores';
 ```
 
 ## Build System
@@ -74,15 +67,6 @@ The entry point is:
 The output is:
 
 - **Plugin**: `/editing-toolkit-plugin/{{plugin-directory}}/dist`
-
-### Building Individual _Plugins_
-
-You can also build one of the plugins separately by appending the plugin slug onto the `build` portion of the command. eg:
-
-```sh
-# Builds the `posts-list-block` Plugin only
-yarn build:posts-list-block`
-```
 
 ## Local Development
 
@@ -169,3 +153,20 @@ The tests make use of the 3rd party [React Testing Library](https://testing-libr
 When writing tests try to approach them **from the perspective of how a user would interact with your component**. Approaching tests in this fashion provides greater confidence that tests will capture true component behaviors and avoids the need for costly refactoring should the component's implementation need to change.
 
 For more on this approach please see the [excellent introduction in the React Testing Library docs](https://testing-library.com/docs/react-testing-library/intro).
+
+## Rename Info
+
+This plugin was renamed from Full Site Editing Plugin to WordPress.com Editing Toolkit Pluginin 2020.
+The following changed to use "editing-toolkit" in place of "full-site-editing".
+
+- Directories and filenames referencing "full site editing"
+- Code referencing those filenames
+- Documentation
+- CI job names
+
+The following items did not change:
+
+- The plugin slug, which will remain `full-site-editing` due to rename limitations in WordPress.
+- The root full-site-editing-plugin.php file (to preserve the plugin slug).
+- The `full-site-editing` textdomain, also to reference the slug.
+- The \A8C\FSE php namespace may not ever be fully converted, since it is referenced in many places outside of the plugin.
