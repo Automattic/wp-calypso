@@ -61,9 +61,9 @@ export default function LicensePreview( {
 		setOpen( ! isOpen );
 	}, [ isOpen ] );
 
-	const onCopyLicense = () => {
+	const onCopyLicense = useCallback( () => {
 		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
-	};
+	}, [ dispatch, translate ] );
 
 	return (
 		<div
