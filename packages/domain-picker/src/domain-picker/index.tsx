@@ -236,6 +236,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		onSetDomainSearch( searchQuery );
 	};
 
+	// Force blur to close keyboard when submitting the form using Search button on mobile
+	const inputRef = React.useRef< HTMLInputElement | null >();
+	const handleSubmit = ( event: React.FormEvent ) => {
+		event.preventDefault();
+		inputRef?.current?.blur();
+	};
+
 	const showErrorMessage = domainSuggestionState === DataStatus.Failure;
 	const isDomainSearchEmpty = domainSearch.trim?.().length <= 1;
 	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
@@ -267,18 +274,25 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			{ header && header }
 			{ showSearchField && (
 				<div className="domain-picker__search">
-					<div className="domain-picker__search-icon">
-						<Icon icon={ search } />
-					</div>
-					<TextControl
-						hideLabelFromVision
-						label={ label }
-						placeholder={ label }
-						onChange={ handleInputChange }
-						onBlur={ onDomainSearchBlurValue }
-						value={ domainSearch }
-						dir="ltr"
-					/>
+					{ /* Form is to allow hiding keyboard on "submit" */ }
+					<form action="" onSubmit={ handleSubmit }>
+						<div className="domain-picker__search-icon">
+							<Icon icon={ search } />
+						</div>
+						<TextControl
+							ref={ ( ref ) => {
+								inputRef.current = ref;
+							} }
+							hideLabelFromVision
+							name="search"
+							label={ label }
+							placeholder={ label }
+							onChange={ handleInputChange }
+							onBlur={ onDomainSearchBlurValue }
+							value={ domainSearch }
+							dir="ltr"
+						/>
+					</form>
 				</div>
 			) }
 			{ showErrorMessage && (
