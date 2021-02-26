@@ -92,7 +92,8 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import user from 'calypso/lib/user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { abtest } from 'calypso/lib/abtest';
+import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
+import { Experiment } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
@@ -207,14 +208,10 @@ class Signup extends React.Component {
 			this.setState( { resumingStep: destinationStep } );
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
 		}
-
-		if ( this.props.isReskinned ) {
-			this.addCssClassToBodyForReskinnedFlow();
-		}
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { stepName, flowName, progress, isReskinned } = nextProps;
+		const { stepName, flowName, progress } = nextProps;
 
 		if ( this.props.stepName !== stepName ) {
 			this.removeFulfilledSteps( nextProps );
@@ -230,9 +227,6 @@ class Signup extends React.Component {
 
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
-		}
-		if ( isReskinned ) {
-			this.addCssClassToBodyForReskinnedFlow();
 		}
 	}
 
@@ -267,6 +261,10 @@ class Signup extends React.Component {
 		if ( this.props.stepName !== prevProps.stepName ) {
 			this.maybeShowSitePreview();
 			this.preloadNextStep();
+		}
+
+		if ( ! this.props.isLoadingExperiment ) {
+			! this.props.isReskinned && document.body.classList.remove( 'is-white-signup' );
 		}
 	}
 
@@ -668,6 +666,7 @@ class Signup extends React.Component {
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
+							isReskinned={ this.props.isReskinned }
 							{ ...propsForCurrentStep }
 						/>
 					) }
@@ -723,30 +722,33 @@ class Signup extends React.Component {
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
-			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-				<DocumentHead title={ this.props.pageTitle } />
-				{ ! isWPForTeamsFlow( this.props.flowName ) && (
-					<SignupHeader
-						positionInFlow={ this.getPositionInFlow() }
-						flowLength={ this.getFlowLength() }
-						flowName={ this.props.flowName }
-						showProgressIndicator={ showProgressIndicator }
-						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-						isReskinned={ this.props.isReskinned }
-					/>
-				) }
-				<div className="signup__steps">{ this.renderCurrentStep() }</div>
-				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
-					<SiteMockups stepName={ this.props.stepName } />
-				) }
-				{ this.state.bearerToken && (
-					<WpcomLoginForm
-						authorization={ 'Bearer ' + this.state.bearerToken }
-						log={ this.state.username }
-						redirectTo={ this.state.redirectTo }
-					/>
-				) }
-			</div>
+			<>
+				<Experiment name="refined_reskin_v1" />
+				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+					<DocumentHead title={ this.props.pageTitle } />
+					{ ! isWPForTeamsFlow( this.props.flowName ) && (
+						<SignupHeader
+							positionInFlow={ this.getPositionInFlow() }
+							flowLength={ this.getFlowLength() }
+							flowName={ this.props.flowName }
+							showProgressIndicator={ showProgressIndicator }
+							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+							isReskinned={ this.props.isReskinned }
+						/>
+					) }
+					<div className="signup__steps">{ this.renderCurrentStep() }</div>
+					{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
+						<SiteMockups stepName={ this.props.stepName } />
+					) }
+					{ this.state.bearerToken && (
+						<WpcomLoginForm
+							authorization={ 'Bearer ' + this.state.bearerToken }
+							log={ this.state.username }
+							redirectTo={ this.state.redirectTo }
+						/>
+					) }
+				</div>
+			</>
 		);
 	}
 }
@@ -761,8 +763,10 @@ export default connect(
 			'props.showSiteMockups',
 			false
 		);
+
 		const isReskinned =
-			'onboarding' === ownProps.flowName && 'reskinned' === abtest( 'reskinSignupFlow' );
+			'onboarding' === ownProps.flowName &&
+			'treatment' === getVariationForUser( state, 'refined_reskin_v1' );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -783,6 +787,7 @@ export default connect(
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
 			isReskinned,
+			isLoadingExperiment: isLoading( state ),
 		};
 	},
 	{
