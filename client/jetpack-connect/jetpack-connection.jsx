@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import { JETPACK_ADMIN_PATH } from 'calypso/jetpack-connect/constants';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import versionCompare from 'calypso/lib/version-compare';
 import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
@@ -89,7 +90,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 				if ( currentPlan ) {
 					if ( currentPlan === PLAN_JETPACK_FREE ) {
 						debug( `Redirecting to wpadmin` );
-						externalRedirect( `${ this.props.siteHomeUrl }/wp-admin/` );
+						externalRedirect( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );
 					} else {
 						debug( `Redirecting to checkout with ${ currentPlan } plan retrieved from cookies` );
 						this.redirect( 'checkout', url, currentPlan, queryArgs );
