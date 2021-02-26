@@ -4,13 +4,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { find, noop } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import ChartLegendItem from './legend-item';
 
-export default class ChartLegend extends React.Component {
+class ChartLegend extends React.Component {
 	static propTypes = {
 		activeCharts: PropTypes.array,
 		activeTab: PropTypes.object.isRequired,
@@ -38,6 +39,7 @@ export default class ChartLegend extends React.Component {
 			const colorClass = legendColors[ index ];
 			const checked = -1 !== this.props.activeCharts.indexOf( legendItem );
 			const tab = find( this.props.tabs, { attr: legendItem } );
+
 			return (
 				<ChartLegendItem
 					key={ index }
@@ -65,3 +67,5 @@ export default class ChartLegend extends React.Component {
 		);
 	}
 }
+
+export default localize( ChartLegend );
