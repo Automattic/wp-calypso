@@ -99,6 +99,8 @@ describe( 'handlers', () => {
 				search: 'foo',
 				sortField: LicenseSortField.IssuedAt,
 				sortDirection: LicenseSortDirection.Descending,
+				page: 2,
+				perPage: 3,
 				fetcher: 'wpcomJetpackLicensing',
 			};
 			const expected = {
@@ -112,6 +114,7 @@ describe( 'handlers', () => {
 					search: action.search,
 					sort_field: 'issued_at',
 					sort_direction: 'desc',
+					per_page: 3,
 				},
 				formData: undefined,
 				onSuccess: action,

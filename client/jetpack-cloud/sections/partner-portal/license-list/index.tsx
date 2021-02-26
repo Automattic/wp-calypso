@@ -57,7 +57,7 @@ function setSortingConfig(
 		direction = LicenseSortDirection.Ascending;
 	}
 
-	const queryParams = { sort_field: newSortField, sort_direction: direction };
+	const queryParams = { sort_field: newSortField, sort_direction: direction, page: 1 };
 	const currentPath = window.location.pathname + window.location.search;
 
 	page( addQueryArgs( queryParams, currentPath ) );

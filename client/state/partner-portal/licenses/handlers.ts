@@ -80,10 +80,11 @@ export function fetchLicensesHandler( action: HttpAction ): AnyAction {
 			path: '/jetpack-licensing/licenses',
 			query: {
 				// Do not apply filters during search as search takes over (matches Calypso Blue Post search behavior).
-				...( action.search ? { search: action.search } : { filter: action.filter } ),
+				...( action.search
+					? { search: action.search }
+					: { filter: action.filter, page: action.page } ),
 				sort_field: action.sortField,
 				sort_direction: action.sortDirection,
-				page: action.page,
 				per_page: action.perPage,
 			},
 		},
