@@ -113,7 +113,7 @@ $sidebar-width: 324px;
 	display: block;
 	width: 100%;
 	text-align: center;
-	border: solid 2px $template-selector-border-color;
+	border: none;
 	cursor: pointer;
 	appearance: none;
 	padding: 0;
@@ -130,7 +130,11 @@ $sidebar-width: 324px;
 	}
 
 	&:hover {
-		border: solid 2px $template-selector-border-color-hover;
+		color: $template-selector-border-color-hover;
+
+		.template-selector-item__preview-wrap {
+			border: solid 2px $template-selector-border-color-hover;
+		}
 	}
 }
 
@@ -144,11 +148,12 @@ $sidebar-width: 324px;
 	height: 0;
 	// Aspect ratio of boxes. Height will be 65% of width.
 	padding-top: 65%;
-	box-sizing: content-box;
 	position: relative;
 	pointer-events: none;
 	opacity: 1;
 	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
+	border: solid 2px $template-selector-border-color;
+	margin-bottom: 1em;
 
 	&.is-rendering {
 		opacity: 0.5;
@@ -157,10 +162,12 @@ $sidebar-width: 324px;
 
 .template-selector-item__media {
 	width: 100%;
+	height: 100%;
 	display: block;
 	position: absolute;
 	top: 0;
 	left: 0;
+	object-fit: cover;
 }
 
 .page-template-modal__sidebar {

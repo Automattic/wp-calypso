@@ -45,9 +45,9 @@ const TemplateSelectorItem = ( props ) => {
 			className="template-selector-item__label"
 			value={ value }
 			onClick={ () => onSelect( value ) }
-			aria-label={ description }
 		>
 			<span className="template-selector-item__preview-wrap">{ innerPreview }</span>
+			{ description }
 		</button>
 	);
 };
