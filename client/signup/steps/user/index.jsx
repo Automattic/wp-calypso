@@ -38,7 +38,7 @@ import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
-import { getABTestVariation } from 'calypso/lib/abtest';
+import { isLoading } from 'calypso/state/experiments/selectors';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 /**
@@ -419,7 +419,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, wccomFrom, flowName } = this.props;
+		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -440,9 +440,6 @@ export class UserStep extends Component {
 		) {
 			isSocialSignupEnabled = true;
 		}
-
-		const isReskinned =
-			'onboarding' === flowName && 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return (
 			<>
@@ -469,6 +466,10 @@ export class UserStep extends Component {
 	}
 
 	render() {
+		if ( this.props.isLoadingExperiment ) {
+			return null;
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -488,6 +489,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isLoadingExperiment: isLoading( state ),
 	} ),
 	{
 		errorNotice,
