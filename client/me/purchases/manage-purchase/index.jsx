@@ -103,7 +103,6 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
-import CartStore from 'calypso/lib/cart/store';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -160,22 +159,10 @@ class ManagePurchase extends Component {
 		}
 	}
 
-	componentDidMount() {
-		if ( this.props.siteId ) {
-			CartStore.setSelectedSiteId( this.props.siteId );
-		}
-	}
-
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			page.redirect( this.props.purchaseListUrl );
 			return;
-		}
-	}
-
-	componentDidUpdate( { siteId } ) {
-		if ( this.props.siteId && siteId !== this.props.siteId ) {
-			CartStore.setSelectedSiteId( this.props.siteId );
 		}
 	}
 

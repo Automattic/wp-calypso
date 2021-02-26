@@ -157,8 +157,7 @@
 			},
 			"categories": [ "featured", "charity", "non-profit" ],
 			"is_premium": false,
-			"features": [],
-			"hide": true
+			"features": []
 		},
 		{
 			"title": "Barnsbury",

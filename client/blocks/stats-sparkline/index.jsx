@@ -35,23 +35,33 @@ const StatsSparklineChart = ( { className, hourlyViews, height = DEFAULT_HEIGHT 
 			title={ title }
 			style={ { height: chartHeight + 'px', width: chartWidth + 'px' } }
 		>
-			{ hourlyViews.map( ( value, i ) => {
-				// for zero value, we show a baseline bar with 1px height
-				let scale = 1 / chartHeight;
-				// if the chart is all zeros, show just the flat baseline
-				if ( highestViews > 0 ) {
-					// fill the remaining height with the bar scaled according to the value
-					scale += ( value / highestViews ) * ( 1 - 1 / chartHeight );
-				}
+			<svg
+				width={ chartWidth }
+				height={ chartHeight }
+				viewBox={ `0 0 ${ chartWidth } ${ chartHeight }` }
+			>
+				{ hourlyViews.map( ( value, i ) => {
+					// for zero value, we show a baseline bar with 1px height
+					let lineHeight = 1;
 
-				return (
-					<div
-						key={ i }
-						className="stats-sparkline__bar"
-						style={ { transform: `scaleY(${ scale })` } }
-					/>
-				);
-			} ) }
+					// if the chart is all zeros, show just the flat baseline
+					if ( highestViews > 0 ) {
+						// fill the remaining height with the bar scaled according to the value
+						lineHeight += ( value / highestViews ) * ( chartHeight - 1 );
+					}
+
+					return (
+						<rect
+							x={ i * 2 }
+							y={ chartHeight - lineHeight }
+							height={ lineHeight }
+							width={ 1 }
+							key={ i }
+							className="stats-sparkline__bar"
+						/>
+					);
+				} ) }
+			</svg>
 		</div>
 	);
 };

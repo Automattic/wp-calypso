@@ -4,6 +4,7 @@
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 /**
  * Internal Dependencies
@@ -32,6 +33,8 @@ import { hydrate } from './web-util.js';
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 export { render, hydrate } from './web-util.js';
 
+const queryClient = new QueryClient();
+
 export const ProviderWrappedLayout = ( {
 	store,
 	currentSection,
@@ -57,9 +60,11 @@ export const ProviderWrappedLayout = ( {
 				currentRoute={ currentRoute }
 				currentQuery={ currentQuery }
 			>
-				<ReduxProvider store={ store }>
-					<MomentProvider>{ layout }</MomentProvider>
-				</ReduxProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<MomentProvider>{ layout }</MomentProvider>
+					</ReduxProvider>
+				</QueryClientProvider>
 			</RouteProvider>
 		</CalypsoI18nProvider>
 	);

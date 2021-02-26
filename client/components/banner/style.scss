@@ -90,6 +90,14 @@
 		padding: 3px 4px 4px 3px;
 	}
 
+	.banner__icon-no-circle {
+		display: flex;
+		padding: 3px 4px 4px 3px;
+		margin-right: 16px;
+		align-items: center;
+		justify-content: center;
+	}
+
 	@include breakpoint-deprecated( '>480px' ) {
 		align-items: center;
 

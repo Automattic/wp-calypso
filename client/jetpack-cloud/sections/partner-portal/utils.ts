@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { LicenseFilter, LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 /**
  * Get the state of a license based on its properties.
@@ -26,15 +26,23 @@ export function getLicenseState(
 
 	return LicenseState.Detached;
 }
+
 /**
- * Get the state of a license based on a string.
- * If the given string is not a valid LicenseState, it returns `LicenseFilter.All`
+ * Convert a value to a the enum member with that value or a fallback.
+ * This is a hack around TypeScript's poor support of enums as types.
  *
- * @param {string?} value The filter string matching the `state` param in the URL
- * @returns {LicenseFilter} State matching one of LicenseFilter values.
+ * @example const enumMember = valueToEnum< SomeEnumType >( SomeEnumType, 'foo', SomeEnumType.SomeMember );
+ *
+ * @template T
+ * @param {Record< string, * >} enumType Enum type to search in.
+ * @param {*} value The enum value we are looking to get the member for.
+ * @param {*} fallback The fallback value in case value is not a member of enumType.
+ * @returns {T} T for value or fallback
  */
-export function stringToLicenseFilter( value?: string ): LicenseFilter {
-	return Object.values( LicenseFilter ).includes( value as LicenseFilter )
-		? ( value as LicenseFilter )
-		: LicenseFilter.All;
+export function valueToEnum< T >(
+	enumType: Record< string, unknown >,
+	value: unknown,
+	fallback: unknown
+): T {
+	return Object.values( enumType ).includes( value ) ? ( value as T ) : ( fallback as T );
 }

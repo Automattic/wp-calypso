@@ -6,7 +6,9 @@
 
 - Breaking: drop support for wepback 4
 - Breaking: renamed option `output-jsonp-function` to `output-chunk-loading-global`
+- Changed: Use `contenthash` hash strategy instead of `chunkhash`
 - Added: support for webpack 5
+- Added: plugin to transform i18n imports to local variables
 - Updated dependencies
   - @wordpress/dependency-extraction-webpack-plugin to ^2.9.0
 

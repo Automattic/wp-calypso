@@ -128,7 +128,9 @@ class MeSidebar extends React.Component {
 					</div>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
+						<SidebarHeading>
+							<span className="sidebar__informative-title">{ translate( 'Profile' ) }</span>
+						</SidebarHeading>
 
 						<SidebarItem
 							selected={ selected === 'profile' }
@@ -202,7 +204,9 @@ class MeSidebar extends React.Component {
 					</SidebarMenu>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
+						<SidebarHeading>
+							<span className="sidebar__informative-title">{ translate( 'Special' ) }</span>
+						</SidebarHeading>
 
 						<SidebarItem
 							selected={ selected === 'get-apps' }

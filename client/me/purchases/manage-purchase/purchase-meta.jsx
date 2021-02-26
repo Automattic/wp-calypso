@@ -27,12 +27,9 @@ import {
 import {
 	isDomainRegistration,
 	isDomainTransfer,
-	isGSuiteOrGoogleWorkspace,
 	isConciergeSession,
 	isJetpackPlan,
 	isJetpackProduct,
-	isPlan,
-	isTitanMail,
 	getProductFromSlug,
 } from 'calypso/lib/products-values';
 import { getPlan } from 'calypso/lib/plans';
@@ -365,13 +362,7 @@ function PurchaseMetaExpiration( {
 		return null;
 	}
 
-	if (
-		( isDomainRegistration( purchase ) ||
-			isPlan( purchase ) ||
-			isGSuiteOrGoogleWorkspace( purchase ) ||
-			isTitanMail( purchase ) ) &&
-		! isExpired( purchase )
-	) {
+	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
 		const subsRenewText = isAutorenewalEnabled
 			? translate( 'Auto-renew is ON' )

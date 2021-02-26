@@ -13,6 +13,7 @@ import { STORE_KEY } from '../../stores/onboard';
 import type { Viewport } from './types';
 import { useFontPairings } from '../../fonts';
 import type { FontPair } from '../../constants';
+import { useAnchorFmParams } from '../../../gutenboarding/path';
 
 function getFontsLoadingHTML( effectiveFontPairings: readonly FontPair[] ) {
 	const baseURL = 'https://fonts.googleapis.com/css2';
@@ -61,6 +62,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
+	const { anchorFmPodcastId } = useAnchorFmParams();
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
 	const effectiveFontPairings = useFontPairings();
@@ -80,6 +82,9 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 					...( selectedFonts && {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
+					} ),
+					...( anchorFmPodcastId && {
+						anchor_podcast: anchorFmPodcastId,
 					} ),
 				} );
 

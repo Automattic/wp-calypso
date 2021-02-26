@@ -20,9 +20,10 @@ export default class UpsellPage extends AsyncBaseContainer {
 	}
 
 	async declineOffer() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( 'button[data-e2e-button="decline"]' )
-		);
+		const selector = By.css( 'button[data-e2e-button="decline"]' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
+		// Sometimes the button is outside of the viewport which may be the reason behind intermittent failures.
+		await driverHelper.scrollIntoView( this.driver, selector, 'center' );
+		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 }

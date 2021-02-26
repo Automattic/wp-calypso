@@ -496,7 +496,7 @@ export class PluginsBrowser extends Component {
 							headerText={ this.props.translate( 'Plugins' ) }
 							align="left"
 							subHeaderText={ this.props.translate(
-								'Plugins are extensions that add useful features to your site.'
+								'Add new functionality and integrations to your site with plugins.'
 							) }
 						/>
 						<div className="plugins-browser__main-buttons">

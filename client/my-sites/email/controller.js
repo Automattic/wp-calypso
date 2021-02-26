@@ -67,6 +67,7 @@ export default {
 			<TitanControlPanelRedirect
 				domainName={ pageContext.params.domain }
 				siteSlug={ pageContext.params.site }
+				context={ pageContext.query.context }
 			/>
 		);
 

@@ -9,3 +9,4 @@ export type { SUGGESTION_ITEM_TYPE } from './domain-picker/suggestion-item';
 
 export { mockDomainSuggestion, isGoodDefaultDomainQuery } from './utils';
 export { useDomainSuggestions } from './hooks';
+export { DOMAIN_QUERY_MINIMUM_LENGTH } from './constants';
