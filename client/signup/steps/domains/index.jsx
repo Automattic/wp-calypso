@@ -51,7 +51,6 @@ import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { getABTestVariation } from 'calypso/lib/abtest';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
@@ -786,12 +785,9 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	( state, ownProps ) => {
+	( state ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
-		const isReskinned =
-			'onboarding' === ownProps.flowName &&
-			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			designType: getDesignType( state ),
@@ -803,7 +799,6 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
-			isReskinned,
 			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
 		};
 	},
