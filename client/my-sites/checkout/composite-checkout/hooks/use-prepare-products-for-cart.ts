@@ -42,12 +42,14 @@ const initialPreparedProductsState = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
+	isInEditor,
 	isJetpackNotAtomic,
 	isPrivate,
 	siteSlug,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
+	isInEditor?: boolean;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
@@ -95,7 +97,7 @@ export default function usePrepareProductsForCart( {
 	} );
 
 	// Do not strip products from url until the URL has been parsed
-	const areProductsRetrievedFromUrl = ! state.isLoading;
+	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
 	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl );
 
 	return state;
