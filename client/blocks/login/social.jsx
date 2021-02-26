@@ -168,6 +168,58 @@ class SocialLoginForm extends Component {
 		return `https://${ host + login( { isNative: true, socialService: service } ) }`;
 	};
 
+	renderSocialTos = () => {
+		const { redirectTo = '', translate } = this.props;
+
+		const isJetpackMagicLinkSignUpFlow =
+			redirectTo.includes( 'jetpack/connect' ) && config.isEnabled( 'jetpack/magic-link-signup' );
+		if ( isJetpackMagicLinkSignUpFlow ) {
+			return (
+				<>
+					<p className="login__social-tos">
+						{ translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
+							components: {
+								a: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						} ) }
+					</p>
+					<p className="login__social-tos">
+						{ translate(
+							'If you continue with Google, Apple, or an email that isn’t registered yet,' +
+								' you are creating a new WordPress.com account.'
+						) }
+					</p>
+				</>
+			);
+		}
+		return (
+			<p className="login__social-tos">
+				{ translate(
+					"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
+						' are creating an account and you agree to our' +
+						' {{a}}Terms of Service{{/a}}.',
+					{
+						components: {
+							a: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</p>
+		);
+	};
+
 	render() {
 		const { redirectTo, uxMode } = this.props;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
@@ -197,24 +249,7 @@ class SocialLoginForm extends Component {
 						}
 					/>
 
-					<p className="login__social-tos">
-						{ this.props.translate(
-							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-								' are creating an account and you agree to our' +
-								' {{a}}Terms of Service{{/a}}.',
-							{
-								components: {
-									a: (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</p>
+					{ this.renderSocialTos() }
 				</div>
 
 				{ this.props.isSocialAccountCreating && (
