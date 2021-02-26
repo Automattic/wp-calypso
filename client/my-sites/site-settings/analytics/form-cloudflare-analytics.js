@@ -209,7 +209,7 @@ export function CloudflareAnalyticsSettings( {
 						<div className="analytics site-settings__analytics">
 							<FormToggle
 								checked={ isCloudflareEnabled }
-								disabled={ isRequestingSettings || isSavingSettings }
+								disabled={ isRequestingSettings || isSavingSettings || ! enableForm }
 								onChange={ () => handleFormToggle( ! isCloudflareEnabled ) }
 							>
 								{ translate( 'Add Cloudflare' ) }
