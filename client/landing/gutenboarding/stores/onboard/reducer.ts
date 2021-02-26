@@ -75,16 +75,6 @@ const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, act
 	return state;
 };
 
-const isExperimental: Reducer< boolean, OnboardAction > = (
-	state = hasExperimentalQueryParam(),
-	action
-) => {
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_IS_REDIRECTING' ) {
 		return action.isRedirecting;
@@ -261,7 +251,6 @@ const reducer = combineReducers( {
 	showSignupDialog,
 	planProductId,
 	wasVerticalSkipped,
-	isExperimental,
 	randomizedDesigns,
 	hasOnboardingStarted,
 } );
