@@ -22,6 +22,18 @@
 	span {
 		display: block;
 		font-size: $font-body-small;
+		line-height: 28px;
+
+		.button {
+			margin-left: 0.5em;
+
+			.gridicon {
+				height: 16px;
+				margin-left: 0.25em;
+				vertical-align: top;
+				width: 16px;
+			}
+		}
 	}
 }
 .titan-mail-quantity-selection__pricing-info {

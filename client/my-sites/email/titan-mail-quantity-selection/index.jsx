@@ -5,6 +5,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
 import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
@@ -16,7 +17,11 @@ import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import {
+	emailManagement,
+	emailManagementManageTitanAccount,
+	emailManagementTitanControlPanelRedirect,
+} from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import Gridicon from 'calypso/components/gridicon';
@@ -44,7 +49,10 @@ import {
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import {
+	TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+	TITAN_MAIL_MONTHLY_SLUG,
+} from 'calypso/lib/titan/constants';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
@@ -125,6 +133,35 @@ class TitanMailQuantitySelection extends React.Component {
 			} );
 	};
 
+	handleCreateMailbox = () => {
+		const {
+			currentRoute,
+			isSelectedDomainNameValid,
+			selectedDomainName,
+			selectedSite,
+		} = this.props;
+
+		this.recordClickEvent(
+			'calypso_email_management_titan_quantity_selection_create_mailbox_click'
+		);
+
+		const domainName = isSelectedDomainNameValid ? selectedDomainName : null;
+		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
+			page(
+				emailManagementManageTitanAccount( selectedSite.slug, domainName, currentRoute, {
+					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+				} )
+			);
+			return;
+		}
+
+		window.open(
+			emailManagementTitanControlPanelRedirect( selectedSite.slug, domainName, currentRoute, {
+				context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+			} )
+		);
+	};
+
 	onQuantityChange = ( e ) => {
 		const parsedQuantity = parseInt( e.target.value, 10 );
 		const quantity = isNaN( parsedQuantity ) ? 1 : Math.max( 1, parsedQuantity );
@@ -194,6 +231,7 @@ class TitanMailQuantitySelection extends React.Component {
 		}
 
 		const unusedMailboxCount = purchasedMailboxCount - configuredMailboxCount;
+		const showExternalFinishSetupLink = ! isEnabled( 'titan/iframe-control-panel' );
 		return (
 			<CompactCard>
 				<span>
@@ -223,6 +261,10 @@ class TitanMailQuantitySelection extends React.Component {
 								'%(unusedMailboxCount)d is the number of unused mailboxes that the user has paid for but is not using',
 						}
 					) }
+					<Button onClick={ this.handleCreateMailbox } compact>
+						{ translate( 'Finish Setup' ) }
+						{ showExternalFinishSetupLink && <Gridicon icon="external" /> }
+					</Button>
 				</span>
 			</CompactCard>
 		);
