@@ -53,6 +53,15 @@ const mockState: State = {
 jest.mock( '@wordpress/deprecated', () => {
 	return jest.fn();
 } );
+jest.mock( '@wordpress/data', () => ( {
+	// Mocking `select` allows unit tests to run in isolation for selectors,
+	// without the corresponding resolvers being called
+	select: () => ( {
+		getPlansProducts: () => mockPlanProducts,
+		getSupportedPlans: ( locale ) => mockPlans[ locale ] ?? [],
+	} ),
+} ) );
+
 // Tests
 describe( 'Plans selectors', () => {
 	it( 'getFeatures', () => {
