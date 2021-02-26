@@ -14,14 +14,6 @@ import type { FontPair } from '../../constants';
 
 type FeatureId = WPCOMFeatures.FeatureId;
 
-// Returns true if the url has a `?latest`, which is used to enable experimental features
-export function hasExperimentalQueryParam() {
-	if ( typeof window !== 'undefined' ) {
-		return new URLSearchParams( window.location.search ).has( 'latest' );
-	}
-	return false;
-}
-
 const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
 	state,
 	action
