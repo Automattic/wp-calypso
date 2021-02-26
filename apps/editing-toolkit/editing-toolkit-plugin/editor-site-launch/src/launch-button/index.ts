@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
 import { dispatch } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import 'a8c-fse-common-data-stores';
+import 'a8c-etk-common-data-stores';
 import '@wordpress/editor';
 
 /**

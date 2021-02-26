@@ -13,7 +13,7 @@ const webpack = require( 'webpack' );
 const { readdirSync } = require( 'fs' );
 const packageFile = require( './package.json' );
 
-const FSE_MODULE_PREFIX = 'a8c-fse';
+const FSE_MODULE_PREFIX = 'a8c-etk';
 
 /**
  * Internal variables
@@ -93,7 +93,7 @@ function getWebpackConfig( env = {}, argv = {} ) {
 							// This is not a real module, it is a placeholder that corresponds to a WordPress script handle registered with the same name.
 							// This allows us to import the module, declaring the dependency via JavaScript.
 							// A TypeScript type helps ensure it's used properly. See `./typings/fse`
-							case 'a8c-fse-common-data-stores':
+							case 'a8c-etk-common-data-stores':
 								return request;
 
 							default:
