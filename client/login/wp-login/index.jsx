@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -222,9 +223,14 @@ export class Login extends React.Component {
 			return <PrivateSite />;
 		}
 
+		const isJetpackMagicLinkSignUpFlow =
+			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
+
+		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow;
+
 		const footer = (
 			<>
-				{ ! socialConnect && (
+				{ shouldRenderFooter && (
 					<LoginLinks
 						locale={ locale }
 						privateSite={ privateSite }
