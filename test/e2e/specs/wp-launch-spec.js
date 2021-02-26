@@ -42,7 +42,11 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
+// Tracking issue:
+// https://github.com/Automattic/wp-calypso/issues/50547
+// Potential issue that trigger this failure:
+// https://github.com/Automattic/wp-calypso/issues/50273
+describe.skip( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Launch a free site', function () {
