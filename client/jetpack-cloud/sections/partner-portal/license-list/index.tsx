@@ -4,111 +4,136 @@
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { pick } from 'lodash';
-import url from 'url'; // eslint-disable-line no-restricted-imports
 import page from 'page';
 import classnames from 'classnames';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import {
+	getPaginatedLicenses,
 	hasFetchedLicenses,
 	isFetchingLicenses,
-	getPaginatedLicenses,
 } from 'calypso/state/partner-portal/licenses/selectors';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import LicensePreview, {
 	LicensePreviewPlaceholder,
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
 import Gridicon from 'calypso/components/gridicon';
-import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import Pagination from 'calypso/components/pagination';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-/**
- * Style dependencies
- */
-import './style.scss';
+interface LicenseTransitionProps {
+	key?: string;
+}
+
+const LicenseTransition = ( props: React.PropsWithChildren< LicenseTransitionProps > ) => (
+	<CSSTransition { ...props } classNames="license-list__license-transition" timeout={ 150 } />
+);
 
 interface Props {
-	licenseFilter: LicenseFilter;
-	sortDirection: string;
-	sortField: string;
+	filter: LicenseFilter;
+	search: string;
+	currentPage: number;
+	sortField: LicenseSortField;
+	sortDirection: LicenseSortDirection;
 }
 
 export default function LicenseList( {
-	licenseFilter,
-	sortDirection,
+	filter,
+	search,
+	currentPage,
 	sortField,
+	sortDirection,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const hasFetched = useSelector( hasFetchedLicenses );
 	const isFetching = useSelector( isFetchingLicenses );
 	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;
+	const showLicenses = hasFetched && ! isFetching && !! licenses;
+	const showNoResults = hasFetched && ! isFetching && licenses && licenses.items.length === 0;
 
-	const buildSortingUrl = ( field: string, direction: string ): string => {
-		const parsedUrl = pick( url.parse( window.location.href, true ), 'pathname', 'query' );
+	const setSortingConfig = ( field: LicenseSortField ): void => {
+		let direction = LicenseSortDirection.Descending;
 
-		return url.format( {
-			...parsedUrl,
-			query: { ...parsedUrl.query, sort_field: field, sort_direction: direction },
-		} );
-	};
-
-	const setSortingConfig = ( newSortField: string ): void => {
-		let newSortDirection = 'asc';
-
-		if ( sortField === newSortField ) {
-			newSortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+		if ( field === sortField && sortDirection === direction ) {
+			direction = LicenseSortDirection.Ascending;
 		}
 
-		page( buildSortingUrl( newSortField, newSortDirection ) );
+		const queryParams = { sort_field: field, sort_direction: direction };
+		const currentPath = window.location.pathname + window.location.search;
+
+		page( addQueryArgs( queryParams, currentPath ) );
+	};
+
+	const setPage = ( pageNumber: number ): void => {
+		const queryParams = { page: pageNumber };
+		const currentPath = window.location.pathname + window.location.search;
+
+		page( addQueryArgs( queryParams, currentPath ) );
 	};
 
 	return (
 		<div className="license-list">
-			<QueryJetpackPartnerPortalLicenses />
+			<QueryJetpackPartnerPortalLicenses
+				filter={ filter }
+				search={ search }
+				sortField={ sortField }
+				sortDirection={ sortDirection }
+			/>
 
 			<LicenseListItem header className="license-list__header">
 				<h2>{ translate( 'License state' ) }</h2>
-				<h2 className={ classnames( { 'is-selected': 'issued_at' === sortField } ) }>
-					<button onClick={ () => setSortingConfig( 'issued_at' ) }>
+				<h2 className={ classnames( { 'is-selected': LicenseSortField.IssuedAt === sortField } ) }>
+					<button onClick={ () => setSortingConfig( LicenseSortField.IssuedAt ) }>
 						{ translate( 'Issued on' ) }
 						<Gridicon
 							icon="dropdown"
 							className={ classnames( 'license-list-item__sort-indicator', {
-								[ `is-sort-${ sortDirection }` ]: sortDirection,
+								[ `is-sort-${ sortDirection }` ]: true,
 							} ) }
 						/>
 					</button>
 				</h2>
-				{ licenseFilter !== LicenseFilter.Revoked ? (
-					<h2 className={ classnames( { 'is-selected': 'attached_at' === sortField } ) }>
-						<button onClick={ () => setSortingConfig( 'attached_at' ) }>
+				{ filter !== LicenseFilter.Revoked ? (
+					<h2
+						className={ classnames( { 'is-selected': LicenseSortField.AttachedAt === sortField } ) }
+					>
+						<button onClick={ () => setSortingConfig( LicenseSortField.AttachedAt ) }>
 							{ translate( 'Attached on' ) }
 							<Gridicon
 								icon="dropdown"
 								className={ classnames( 'license-list-item__sort-indicator', {
-									[ `is-sort-${ sortDirection }` ]: sortDirection,
+									[ `is-sort-${ sortDirection }` ]: true,
 								} ) }
 							/>
 						</button>
 					</h2>
 				) : (
-					<h2 className={ classnames( { 'is-selected': 'revoked_at' === sortField } ) }>
-						<button onClick={ () => setSortingConfig( 'revoked_at' ) }>
+					<h2
+						className={ classnames( { 'is-selected': LicenseSortField.RevokedAt === sortField } ) }
+					>
+						<button onClick={ () => setSortingConfig( LicenseSortField.RevokedAt ) }>
 							{ translate( 'Revoked on' ) }
 							<Gridicon
 								icon="dropdown"
 								className={ classnames( 'license-list-item__sort-indicator', {
-									[ `is-sort-${ sortDirection }` ]: sortDirection,
+									[ `is-sort-${ sortDirection }` ]: true,
 								} ) }
 							/>
 						</button>
@@ -118,36 +143,50 @@ export default function LicenseList( {
 				<div>{ /* Intentionally empty header. */ }</div>
 			</LicenseListItem>
 
-			{ ! hasFetched && isFetching && (
-				<>
-					<LicensePreviewPlaceholder />
-					<LicensePreviewPlaceholder />
-					<LicensePreviewPlaceholder />
-				</>
-			) }
+			<TransitionGroup className="license-list__transition-group">
+				{ showLicenses &&
+					licenses.items.map( ( license ) => (
+						<LicenseTransition key={ license.licenseKey }>
+							<LicensePreview
+								licenseKey={ license.licenseKey }
+								product={ license.product }
+								username={ license.username }
+								blogId={ license.blogId }
+								siteUrl={ license.siteUrl }
+								issuedAt={ license.issuedAt }
+								attachedAt={ license.attachedAt }
+								revokedAt={ license.revokedAt }
+								filter={ filter }
+							/>
+						</LicenseTransition>
+					) ) }
 
-			{ hasFetched &&
-				licenses &&
-				licenses.items.map( ( license ) => (
-					<LicensePreview
-						key={ license.licenseKey }
-						licenseKey={ license.licenseKey }
-						product={ license.product }
-						username={ license.username }
-						blogId={ license.blogId }
-						siteUrl={ license.siteUrl }
-						issuedAt={ license.issuedAt }
-						attachedAt={ license.attachedAt }
-						revokedAt={ license.revokedAt }
-						licenseFilter={ licenseFilter }
-					/>
-				) ) }
+				{ showLicenses && (
+					<LicenseTransition>
+						<Pagination
+							className="license-list__pagination"
+							page={ currentPage }
+							perPage={ 10 }
+							total={ 50 }
+							pageClick={ setPage }
+						/>
+					</LicenseTransition>
+				) }
 
-			{ hasFetched && licenses && licenses.items.length === 0 && (
-				<Card className="license-list__message" compact>
-					{ translate( 'No licenses found.' ) }
-				</Card>
-			) }
+				{ isFetching && (
+					<LicenseTransition>
+						<LicensePreviewPlaceholder />
+					</LicenseTransition>
+				) }
+
+				{ showNoResults && (
+					<LicenseTransition>
+						<Card className="license-list__message" compact>
+							<p>{ translate( 'No licenses found.' ) }</p>
+						</Card>
+					</LicenseTransition>
+				) }
+			</TransitionGroup>
 		</div>
 	);
 }

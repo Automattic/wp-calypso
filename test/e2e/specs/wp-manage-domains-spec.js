@@ -87,7 +87,8 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 
 		step( 'Can search for a blog name', async function () {
 			const findADomainComponent = await FindADomainComponent.Expect( driver );
-			return await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
+			// Search for the full blog name including the .com, as the default TLD suggestion is not always .com.
+			return await findADomainComponent.searchForBlogNameAndWaitForResults( expectedDomainName );
 		} );
 
 		step( 'Can select the .com search result and decline Google Apps for email', async function () {

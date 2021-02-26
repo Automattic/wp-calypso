@@ -80,14 +80,17 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--bottom-right">
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--bottom-right"
+									key={ desktopOneImg }
+								>
 									<source srcSet={ desktopOneImg } media="(min-width: 600px)" />
-									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileOneImg } />
+									<img alt="" src={ mobileOneImg } />
 								</picture>
 							}
-							heading={ translate( 'A new way to navigate' ) }
+							heading={ translate( 'Navigate easier than ever' ) }
 							content={ translate(
-								'Introducing a single site management experience for WordPress.com.'
+								'Managing your entire site is simpler than ever. Do it all right from the sidebar without leaving your dashboard.'
 							) }
 						/>
 					),
@@ -96,14 +99,17 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--no-margin nav-unification-modal__picture--top-right">
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--center"
+									key={ desktopTwoImg }
+								>
 									<source srcSet={ desktopTwoImg } media="(min-width: 600px)" />
-									<img alt={ translate( 'Scrolling complete navigation' ) } src={ mobileTwoImg } />
+									<img alt="" src={ mobileTwoImg } />
 								</picture>
 							}
-							heading={ translate( 'Everything in one place' ) }
+							heading={ translate( 'Do even more' ) }
 							content={ translate(
-								'Manage your entire site from the sidebar, all without ever leaving your dashboard.'
+								'Advanced admin features have a new home! You can find it in your account settings'
 							) }
 						/>
 					),
@@ -112,14 +118,17 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--center">
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--bottom-center-small nav-unification-modal__picture--center"
+									key={ desktopThreeImg }
+								>
 									<source srcSet={ desktopThreeImg } media="(min-width: 600px)" />
-									<img alt={ translate( 'Scrolling sub navigation' ) } src={ mobileThreeImg } />
+									<img alt="" src={ mobileThreeImg } />
 								</picture>
 							}
-							heading={ translate( 'Make it your own' ) }
+							heading={ translate( 'Create in color' ) }
 							content={ translate(
-								'Customize the appearance of your navigation from your {{a}}account settings{{/a}}.',
+								'Now you can choose a new color for your dashboard in {{a}}account settings{{/a}}.',
 								{
 									components: {
 										a: <a href="/me/account" />,

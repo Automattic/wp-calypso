@@ -9,13 +9,21 @@ import { AnyAction } from 'redux';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
+	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 
 export const initialState = {
 	hasFetched: false,
 	isFetching: false,
 	paginated: null,
+	counts: {
+		[ LicenseFilter.Attached ]: 0,
+		[ LicenseFilter.Detached ]: 0,
+		[ LicenseFilter.Revoked ]: 0,
+		[ LicenseFilter.NotRevoked ]: 0,
+	},
 };
 
 export const hasFetched = withoutPersistence(
@@ -54,8 +62,18 @@ export const paginated = withoutPersistence(
 	}
 );
 
+export const counts = withoutPersistence( ( state = initialState.counts, action: AnyAction ) => {
+	switch ( action.type ) {
+		case JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE:
+			return action.counts;
+	}
+
+	return state;
+} );
+
 export default combineReducers( {
 	hasFetched,
 	isFetching,
 	paginated,
+	counts,
 } );

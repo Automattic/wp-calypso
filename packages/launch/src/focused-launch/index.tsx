@@ -46,11 +46,30 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	const planProductIdFromCart = usePlanProductIdFromCart();
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
+	// Once there is a selected plan, do not retrieve plan from from cart anymore.
+	const canUsePlanProductIdFromCart = React.useRef( true );
 	React.useEffect( () => {
-		if ( ! selectedPlanProductId && planProductIdFromCart && ! hasPaidPlan ) {
+		if ( selectedPlanProductId ) {
+			canUsePlanProductIdFromCart.current = false;
+		}
+	}, [ selectedPlanProductId ] );
+
+	React.useEffect( () => {
+		if (
+			! selectedPlanProductId &&
+			planProductIdFromCart &&
+			! hasPaidPlan &&
+			canUsePlanProductIdFromCart.current
+		) {
 			setPlanProductId( planProductIdFromCart );
 		}
-	}, [ selectedPlanProductId, planProductIdFromCart, setPlanProductId, hasPaidPlan ] );
+	}, [
+		selectedPlanProductId,
+		planProductIdFromCart,
+		setPlanProductId,
+		hasPaidPlan,
+		canUsePlanProductIdFromCart,
+	] );
 
 	// The user may have previously used the launch flow to pick a paid plan,
 	// but they may have then purchased that paid plan or other plan before deciding to continue Launch flow.

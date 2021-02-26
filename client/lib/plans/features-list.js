@@ -192,6 +192,12 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ constants.FEATURE_EARN_AD ]: {
+		getSlug: () => constants.FEATURE_EARN_AD,
+		getTitle: () => i18n.translate( 'Earn ad revenue' ),
+		getDescription: () => {},
+	},
+
 	[ constants.FEATURE_UPLOAD_THEMES_PLUGINS ]: {
 		getSlug: () => constants.FEATURE_UPLOAD_THEMES_PLUGINS,
 		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
@@ -251,6 +257,12 @@ export const FEATURES_LIST = {
 			i18n.translate(
 				'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
 			),
+	},
+
+	[ constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR ]: {
+		getSlug: () => constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		getTitle: () => i18n.translate( 'Advanced SEO (Search Engine Optimisation) tools' ),
+		getDescription: () => {},
 	},
 
 	[ constants.FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP ]: {
@@ -340,10 +352,17 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => constants.FEATURE_CUSTOM_DOMAIN,
-		getTitle: () =>
-			i18n.translate( 'Free domain for one year', {
+		getTitle: ( domainName ) => {
+			if ( domainName ) {
+				return i18n.translate( 'The domain %(domainName)s is free for the first year', {
+					args: { domainName },
+				} );
+			}
+
+			return i18n.translate( 'Free domain for one year', {
 				context: 'title',
-			} ),
+			} );
+		},
 		getDescription: ( abtest, domainName ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
@@ -416,6 +435,12 @@ export const FEATURES_LIST = {
 					'using a fast, unbranded, customizable player with rich stats.'
 			),
 		getStoreSlug: () => 'videopress',
+	},
+
+	[ constants.FEATURE_UPLOAD_VIDEO ]: {
+		getSlug: () => constants.FEATURE_UPLOAD_VIDEO,
+		getTitle: () => i18n.translate( 'Upload videos' ),
+		getDescription: () => {},
 	},
 
 	[ constants.FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ]: {
@@ -539,6 +564,14 @@ export const FEATURES_LIST = {
 			i18n.translate(
 				'Plugins extend the functionality of your site and ' +
 					'open up endless possibilities for presenting your content and interacting with visitors.'
+			),
+	},
+
+	[ constants.FEATURE_INSTALL_PLUGINS ]: {
+		getSlug: () => constants.FEATURE_INSTALL_PLUGINS,
+		getTitle: () =>
+			i18n.translate(
+				'Access to more than 50,000 WordPress plugins to extend functionality for your site'
 			),
 	},
 
@@ -883,6 +916,12 @@ export const FEATURES_LIST = {
 		hideInfoPopover: true,
 	},
 
+	[ constants.FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
+		getSlug: () => constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
+		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
+		getDescription: () => {},
+	},
+
 	[ constants.FEATURE_SECURITY_SCANNING_JETPACK ]: {
 		getSlug: () => constants.FEATURE_SECURITY_SCANNING_JETPACK,
 		getTitle: () => i18n.translate( 'Advanced security' ),
@@ -1014,10 +1053,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
 		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
 		getIcon: () => 'lock',
-		getTitle: ( variation ) =>
-			( {
-				spp: i18n.translate( 'All Jetpack Security features' ),
-			}[ variation ] || i18n.translate( 'All Security Daily features' ) ),
+		getTitle: () => i18n.translate( 'All Security Daily features' ),
 		isPlan: true,
 	},
 
@@ -1089,10 +1125,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: ( variation ) =>
-			( {
-				spp: i18n.translate( 'All Jetpack Backup features' ),
-			}[ variation ] || i18n.translate( 'All Backup Daily features' ) ),
+		getTitle: () => i18n.translate( 'All Backup Daily features' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1538,6 +1571,36 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_P2_CUSTOM_DOMAIN,
 		getTitle: () => i18n.translate( 'Custom domain' ),
 		getDescription: () => i18n.translate( 'Make your P2 more memorable using your own domain.' ),
+	},
+
+	[ constants.FEATURE_HOSTING ]: {
+		getSlug: () => constants.FEATURE_HOSTING,
+		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
+		getDescription: () => {},
+	},
+
+	[ constants.FEATURE_SFTP_DATABASE ]: {
+		getSlug: () => constants.FEATURE_SFTP_DATABASE,
+		getTitle: () => i18n.translate( 'SFTP (SSH File Transfer Protocol) and Database Access' ),
+		getDescription: () => {},
+	},
+
+	[ constants.PREMIUM_DESIGN_FOR_STORES ]: {
+		getSlug: () => constants.PREMIUM_DESIGN_FOR_STORES,
+		getTitle: () => i18n.translate( 'Premium design options customized for online stores' ),
+		getDescription: () => {},
+	},
+
+	[ constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
+		getSlug: () => constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		getTitle: () => i18n.translate( 'Live chat support 24X5' ),
+		getDescription: () => {},
+	},
+
+	[ constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
+		getSlug: () => constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
+		getDescription: () => {},
 	},
 };
 

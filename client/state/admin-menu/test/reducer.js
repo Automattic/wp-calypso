@@ -7,12 +7,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import menuFixture from './fixture/menu-fixture';
-import {
-	ADMIN_MENU_RECEIVE,
-	ADMIN_MENU_REQUEST,
-	DESERIALIZE,
-	SERIALIZE,
-} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { ADMIN_MENU_RECEIVE, ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { menus as menusReducer, requesting as requestingReducer } from '../reducer';
 
 describe( 'reducer', () => {
@@ -72,9 +68,7 @@ describe( 'reducer', () => {
 					123456: menuFixture,
 				} );
 
-				const action = { type: SERIALIZE };
-
-				const serializationResult = menusReducer( initialState, action ).root();
+				const serializationResult = serialize( menusReducer, initialState ).root();
 
 				expect( serializationResult ).toEqual( {
 					123456: menuFixture,
@@ -86,9 +80,7 @@ describe( 'reducer', () => {
 					123456: menuFixture,
 				} );
 
-				const action = { type: DESERIALIZE };
-
-				expect( menusReducer( stateToDeserialize, action ) ).toEqual( {
+				expect( deserialize( menusReducer, stateToDeserialize ) ).toEqual( {
 					123456: menuFixture,
 				} );
 			} );
@@ -127,14 +119,14 @@ describe( 'reducer', () => {
 					// see: https://github.com/Automattic/wp-calypso/blob/02c3a452881ff89fce240c09d16874c0c4e4d429/client/state/utils/schema-utils.js#L14
 					jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
-					// This is the state that will be returned for the `DESERIALIZE` action
+					// This is the state that will be returned for the `deserialize` call
 					// if the persisted state fails schema validation
 					const defaultReducerState = deepFreeze( {} );
 
 					// This is the state to be validated against the schema.
 					const stateToDeserialize = deepFreeze( persistedState );
 
-					const state = menusReducer( stateToDeserialize, { type: DESERIALIZE } );
+					const state = deserialize( menusReducer, stateToDeserialize );
 					expect( state ).toEqual( defaultReducerState );
 				}
 			);

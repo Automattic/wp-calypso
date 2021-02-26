@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { isFinite, omitBy } from 'lodash';
+import { omitBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { stringify } from 'qs';
 
@@ -91,7 +91,7 @@ export function receivedOrder( action, { data } ) {
 
 export function sendOrder( action ) {
 	const { siteId, orderId, order } = action;
-	if ( isFinite( orderId ) ) {
+	if ( Number.isFinite( orderId ) ) {
 		return request( siteId, action ).post( `orders/${ orderId }`, order );
 	}
 	return request( siteId, action ).post( 'orders', order );

@@ -90,3 +90,5 @@ export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefin
 export const getSiteTitle = ( state: State ): string | undefined => state?.siteTitle;
 
 export const getCurrentStep = ( state: State ): string => state.step;
+
+export const getDomainSearch = ( state: State ): string => state.domainSearch;

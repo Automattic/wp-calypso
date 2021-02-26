@@ -82,6 +82,7 @@ class PostsMain extends React.Component {
 					brandFont
 					className="posts__page-heading"
 					headerText={ translate( 'Posts' ) }
+					subHeaderText={ translate( 'Create, edit, and manage the posts on your site.' ) }
 					align="left"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />

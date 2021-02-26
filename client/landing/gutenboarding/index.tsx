@@ -58,9 +58,11 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	try {
-		checkAndRedirectIfSiteWasCreatedRecently();
-	} catch {}
+	// If site was recently created, redirect to customer site home.
+	const shouldRedirect = await checkAndRedirectIfSiteWasCreatedRecently();
+	if ( shouldRedirect ) {
+		return;
+	}
 
 	// Update list of randomized designs in the gutenboarding session store
 	ensureRandomizedDesignsAreUpToDate();
@@ -105,7 +107,7 @@ async function checkAndRedirectIfSiteWasCreatedRecently() {
 				const diffMinutes = diff / 1000 / 60;
 				if ( diffMinutes < 10 && diffMinutes >= 0 ) {
 					window.location.replace( `/home/${ selectedSiteDetails.ID }` );
-					return;
+					return true;
 				}
 			}
 		}
@@ -122,13 +124,10 @@ function waitForSelectedSite(): Promise< Site | undefined > {
 			return resolve( undefined );
 		}
 		unsubscribe = subscribe( () => {
-			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
-			if ( resolvedSelectedSite ) {
-				resolve( resolvedSelectedSite );
-			}
-
-			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
-				resolve( undefined );
+			if (
+				select( 'core/data' ).hasFinishedResolution( SITE_STORE, 'getSite', [ selectedSite ] )
+			) {
+				resolve( select( SITE_STORE ).getSite( selectedSite ) );
 			}
 		} );
 		select( SITE_STORE ).getSite( selectedSite );

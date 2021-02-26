@@ -14,9 +14,8 @@ import {
 	POST_TYPES_TAXONOMIES_REQUEST,
 	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
 	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -233,7 +232,7 @@ describe( 'reducer', () => {
 					],
 				},
 			} );
-			const state = items( original, { type: SERIALIZE } );
+			const state = serialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -253,7 +252,7 @@ describe( 'reducer', () => {
 					],
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( original );
 		} );
@@ -264,7 +263,7 @@ describe( 'reducer', () => {
 					post: [ true ],
 				},
 			} );
-			const state = items( original, { type: DESERIALIZE } );
+			const state = deserialize( items, original );
 
 			expect( state ).to.eql( {} );
 		} );
