@@ -111,6 +111,11 @@ export function offerResetRedirects( context, next ) {
 		return externalRedirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
 	}
 
+	// If selected site has a Free plan, redirect to URL passed as query param or wpadmin
+	if ( selectedSite.plan.is_free ) {
+		externalRedirect( context.query.redirect || selectedSite.options.admin_url );
+	}
+
 	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
 	// the connection was started within Calypso, otherwise redirect the user to wp-admin
 	const canPurchasePlans = selectedSite
