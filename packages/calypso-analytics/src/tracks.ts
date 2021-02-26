@@ -112,7 +112,7 @@ function checkForBlockedTracks(): Promise< void > {
  * Returns a promise that marks whether and when the external Tracks script loads.
  */
 export function getTracksLoadPromise() {
-	return _loadTracksResult
+	return _loadTracksResult;
 }
 
 export function pushEventToTracksQueue( args: Array< any > ) {
