@@ -104,7 +104,7 @@ $sidebar-width: 324px;
 		margin-top: 0;
 		grid-template-columns: repeat(
 			auto-fill,
-			minmax( 250px, 1fr )
+			minmax( 260px, 1fr )
 		); // allow grid to take over number of cols on large screens
 	}
 }
