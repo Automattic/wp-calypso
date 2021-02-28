@@ -156,14 +156,21 @@ class PageTemplateModal extends Component {
 		const templateGroups = {};
 		for ( const template of this.props.templates ) {
 			for ( const key in template.categories ) {
-				// Temporarily skip the 'featured' category so that we can expose it at another time.
-				if ( key !== 'featured' && ! ( key in templateGroups ) ) {
+				if ( ! ( key in templateGroups ) ) {
 					templateGroups[ key ] = template.categories[ key ];
 				}
 			}
 		}
 
-		const preferredGroupOrder = [ 'about', 'blog', 'home-page', 'gallery', 'services', 'contact' ];
+		const preferredGroupOrder = [
+			'featured',
+			'about',
+			'blog',
+			'home-page',
+			'gallery',
+			'services',
+			'contact',
+		];
 		return sortGroupNames( preferredGroupOrder, templateGroups );
 	};
 
