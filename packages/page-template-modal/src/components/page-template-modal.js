@@ -166,7 +166,7 @@ class PageTemplateModal extends Component {
 			'featured',
 			'about',
 			'blog',
-			'home-page',
+			'home',
 			'gallery',
 			'services',
 			'contact',
