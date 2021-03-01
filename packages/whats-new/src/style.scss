@@ -3,6 +3,7 @@
 
 @import '~@automattic/typography/styles/fonts';
 @import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/calypso-color-schemes';
 
 $wpcom-modal-breakpoint: 660px;
 
@@ -13,7 +14,7 @@ $wpcom-modal-footer-padding-v: 20px;
 $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 // Core modal style overrides
-.whats-new {
+.whats-new__main {
 	&.components-modal__frame {
 		overflow: visible;
 		height: 65vh;
@@ -131,7 +132,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .whats-new-page__visual {
 	height: 40%;
 	padding: 25px 25px 0;
-	background: #1581d8;
+	// background: #1581d8;
+	background: var( --studio-blue );
 	text-align: center;
 	display: flex;
 	flex-direction: column;

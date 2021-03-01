@@ -29,31 +29,31 @@ const WhatsNewGuide = () => {
 			.then( ( returnedList ) => {
 				setWhatsNewData( returnedList );
 			} );
-	}, [] );
+	}, [ locale ] );
 
 	const toggleWhatsNew = () => setShowGuide( false );
 
+	if ( ! ( whatsNewData && showGuide ) ) return null;
+
 	return (
-		<>
-			Locale is: { locale }
-			{ whatsNewData && showGuide && (
-				<Guide
-					className="whats-new"
-					contentLabel={ __( "What's New at WordPress.com" ) }
-					finishButtonText={ __( 'Close' ) }
-					onFinish={ toggleWhatsNew }
-				>
-					{ whatsNewData.map( ( page, index ) => (
-						<WhatsNewPage
-							key={ page.announcementId }
-							pageNumber={ index + 1 }
-							isLastPage={ index === whatsNewData.length - 1 }
-							{ ...page }
-						/>
-					) ) }
-				</Guide>
-			) }
-		</>
+		<Guide
+			className="whats-new__main"
+			contentLabel={ __( "What's New at WordPress.com" ) }
+			finishButtonText={ __( 'Close' ) }
+			onFinish={ toggleWhatsNew }
+		>
+			{ whatsNewData.map( ( page, index ) => (
+				<WhatsNewPage
+					key={ page.announcementId }
+					pageNumber={ index + 1 }
+					isLastPage={ index === whatsNewData.length - 1 }
+					description={ page.description }
+					heading={ page.heading }
+					imageSrc={ page.imageSrc }
+					link={ page.link }
+				/>
+			) ) }
+		</Guide>
 	);
 };
 
