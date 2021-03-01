@@ -49,7 +49,7 @@ const Home = ( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
-	const shouldShowNotice = canUserUseCustomerHome && layout && noticeType;
+	const shouldShowNotice = Boolean( canUserUseCustomerHome && layout && noticeType );
 	const lastShownNotice = useRef( null );
 	useEffect( () => {
 		if ( ! shouldShowNotice || lastShownNotice.current === noticeType ) {
