@@ -13,20 +13,12 @@ import { preventWidows } from 'calypso/lib/formatting';
  */
 import type { ProductCardFeaturesItem } from './types';
 
-/**
- * Styles dependencies
- */
-import checkmarkIcon from './assets/checkmark.svg';
-
 interface Props {
 	item: ProductCardFeaturesItem;
 }
 
 const JetpackProductCardFeaturesItem: React.FC< Props > = ( { item: { text } } ) => (
-	<li className="jetpack-product-card__features-item">
-		<img className="jetpack-product-card__features-icon" src={ checkmarkIcon } alt="" />
-		<p className="jetpack-product-card__features-text">{ preventWidows( text ) }</p>
-	</li>
+	<li className="jetpack-product-card__features-item">{ preventWidows( text ) }</li>
 );
 
 export default JetpackProductCardFeaturesItem;

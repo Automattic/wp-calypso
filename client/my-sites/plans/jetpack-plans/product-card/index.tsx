@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import JetpackProductCardNPIP from 'calypso/components/jetpack/card/npip/jetpack-product-card-npip';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
@@ -127,7 +127,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	}
 
 	return (
-		<JetpackProductCardNPIP
+		<JetpackProductCard
 			productSlug={ item.productSlug }
 			productName={ item.displayName }
 			headingLevel={ 3 }
