@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
+import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -38,6 +39,7 @@ class RequestLoginEmailForm extends React.Component {
 		currentUser: PropTypes.object,
 		emailRequested: PropTypes.bool,
 		isFetching: PropTypes.bool,
+		isJetpackSignUp: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
@@ -103,6 +105,7 @@ class RequestLoginEmailForm extends React.Component {
 			currentUser,
 			requestError,
 			isFetching,
+			isJetpackSignUp,
 			emailRequested,
 			showCheckYourEmail,
 			translate,
@@ -112,7 +115,12 @@ class RequestLoginEmailForm extends React.Component {
 
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
-			return <EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />;
+
+			return isJetpackSignUp ? (
+				<EmailedLoginLinkSuccessfullyJetpackConnect emailAddress={ emailAddress } />
+			) : (
+				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
+			);
 		}
 
 		const submitEnabled =

@@ -145,12 +145,15 @@ class MagicLogin extends React.Component {
 		// If this is part of the Jetpack login flow and the feature flag is enabled,
 		// instruct the magic link API to create a user account when the email address
 		// doesn't have a corresponding WP.com account.
-		const allowUserAccountCreation =
-			this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' );
+		// doesn't have a corresponding a WP.com account.
+		const jetpackMagicLinkSignupFlowProps =
+			this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
+				? { allowUserAccountCreation: true, isJetpackSignUp: true }
+				: {};
 
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
-			allowUserAccountCreation,
+			...jetpackMagicLinkSignupFlowProps,
 		};
 
 		return (

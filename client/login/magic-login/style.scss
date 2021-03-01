@@ -110,6 +110,10 @@
 	margin: 0 auto 1.5em;
 }
 
+.magic-login__check-email-image.jetpack {
+	height: 240px;
+}
+
 .magic-login.is-gutenboarding-login {
 	.magic-login__form-header {
 		@include onboarding-heading-text-mobile;
@@ -144,5 +148,11 @@
 
 	@include break-mobile {
 		padding: 8px 24px;
+	}
+}
+
+.magic-login__successfully-jetpack {
+	p {
+		text-align: center;
 	}
 }
