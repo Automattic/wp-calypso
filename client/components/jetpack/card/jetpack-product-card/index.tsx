@@ -162,7 +162,7 @@ const DisplayPrice = ( {
 	);
 };
 
-const JetpackProductCardAlt2: React.FC< Props > = ( {
+const JetpackProductCard: React.FC< Props > = ( {
 	iconSlug,
 	productSlug,
 	productName,
@@ -263,4 +263,4 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	);
 };
 
-export default JetpackProductCardAlt2;
+export default JetpackProductCard;
