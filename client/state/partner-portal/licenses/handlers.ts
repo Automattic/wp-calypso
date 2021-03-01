@@ -160,7 +160,7 @@ export default {
 			fetch: fetchLicenseCountsHandler,
 			onSuccess: receiveLicenseCountsHandler,
 			onError: () => {
-				// TODO this is a failure or relatively low importance - how do we log these?
+				// Failure of low importance we can ignore.
 			},
 		} ),
 	],
