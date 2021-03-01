@@ -444,6 +444,7 @@ class Login extends Component {
 			disableAutoFocus,
 			locale,
 			userEmail,
+			handleUsernameChange,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -487,6 +488,7 @@ class Login extends Component {
 				isGutenboarding={ isGutenboarding }
 				locale={ locale }
 				userEmail={ userEmail }
+				handleUsernameChange={ handleUsernameChange }
 			/>
 		);
 	}
