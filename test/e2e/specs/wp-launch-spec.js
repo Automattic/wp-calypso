@@ -51,7 +51,7 @@ before( async function () {
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Launch a free site', function () {
+	describe.only( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
 		console.log( siteName );
 
