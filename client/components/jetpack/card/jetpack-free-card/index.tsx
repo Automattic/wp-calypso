@@ -19,7 +19,7 @@ import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/type
  */
 import './style.scss';
 
-const JetpackFreeCardAlt: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => {
+const JetpackFreeCard: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -63,4 +63,4 @@ const JetpackFreeCardAlt: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) 
 	);
 };
 
-export default JetpackFreeCardAlt;
+export default JetpackFreeCard;
