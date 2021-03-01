@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 import { sprintf } from '@wordpress/i18n';
 import { NextButton } from '@automattic/onboarding';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
@@ -62,22 +63,34 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 	onToggle,
 	disabledLabel,
 } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 
 	const planProduct = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
 	);
 
-	// show a nbps in price while loading to prevent a janky UI
+	// show a nbsp in price while loading to prevent a jump in the UI
 	const nbsp = '\u00A0\u00A0';
 
 	const handleToggle = () => {
 		! disabledLabel && onToggle?.( slug, ! isOpen );
 	};
 
+	const fallbackPlanItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
 	// translators: %s is the cost per year (e.g "billed as 96$ annually")
-	const planItemPriceLabelAnnually = __( 'billed as %s annually', __i18n_text_domain__ );
-	const planItemPriceLabelMonthly = __( 'billed monthly', __i18n_text_domain__ );
+	const newPlanItemPriceLabelAnnually = __( 'billed as %s annually', __i18n_text_domain__ );
+	const planItemPriceLabelAnnually =
+		locale === 'en' || hasTranslation?.( 'billed as %s annually', __i18n_text_domain__ )
+			? sprintf( newPlanItemPriceLabelAnnually, planProduct?.annualPrice )
+			: fallbackPlanItemPriceLabelAnnually;
+
+	const fallbackPlanItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
+	const newPlanItemPriceLabelMonthly = __( 'billed monthly', __i18n_text_domain__ );
+	const planItemPriceLabelMonthly =
+		locale === 'en' || hasTranslation?.( 'billed monthly', __i18n_text_domain__ )
+			? newPlanItemPriceLabelMonthly
+			: fallbackPlanItemPriceLabelMonthly;
 
 	return (
 		<div
@@ -127,7 +140,7 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 
 								{ ! isFree &&
 									( billingPeriod === 'ANNUALLY'
-										? sprintf( planItemPriceLabelAnnually, planProduct?.annualPrice )
+										? planItemPriceLabelAnnually
 										: planItemPriceLabelMonthly ) }
 							</div>
 							{ ! isFree && (
