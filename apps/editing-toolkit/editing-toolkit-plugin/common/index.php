@@ -14,22 +14,12 @@ namespace A8C\FSE\Common;
 /**
  * Register data stores that may be useful for a variety of concerns
  */
-function register_data_stores() {
-	$path         = plugin_dir_path( __FILE__ ) . 'dist/data_stores.js';
-	$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/data-stores.asset.php';
-	$asset        = file_exists( $asset_file ) ? require $asset_file : null;
-	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
-	$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( $path );
-
-	wp_register_script(
-		'a8c-fse-common-data-stores',
-		plugins_url( 'dist/data-stores.js', __FILE__ ),
-		$dependencies,
-		$version,
-		true
-	);
-}
-add_action( 'init', __NAMESPACE__ . '\register_data_stores' );
+add_action(
+	'init',
+	function () {
+		\A8C\FSE\use_webpack_assets( 'data-stores', array( 'register_only' => true ) );
+	}
+);
 
 /**
  * Can be used to determine if the current screen is the block editor.
@@ -112,30 +102,20 @@ add_filter( 'admin_body_class', __NAMESPACE__ . '\admin_body_classes' );
  * Enqueue script and style for the common package.
  */
 function enqueue_script_and_style() {
-	// Avoid loading assets if possible.
-	if ( ! should_load_assets() ) {
-		return;
+	/**
+	 * Hides plugin buttons that appear in the header on mobile devices
+	 * (because there's not enough room).
+	 *
+	 * Can be disabled with the `a8c_fse_enqueue_hide_plugin_buttons_mobile_style` filter.
+	 */
+	if ( apply_filters( 'a8c_fse_enqueue_hide_plugin_buttons_mobile_style', true ) ) {
+		\A8C\FSE\use_webpack_assets( 'hide-plugin-buttons-mobile', array( 'exclude_script' => true ) );
 	}
 
-	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/common.asset.php';
-	$script_dependencies = $asset_file['dependencies'];
-	wp_enqueue_script(
-		'a8c-fse-common-script',
-		plugins_url( 'dist/common.js', __FILE__ ),
-		is_array( $script_dependencies ) ? $script_dependencies : array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/common.js' ),
-		true
-	);
-
-	$style_file = is_rtl()
-		? 'common.rtl.css'
-		: 'common.css';
-	wp_enqueue_style(
-		'a8c-fse-common-style',
-		plugins_url( 'dist/' . $style_file, __FILE__ ),
-		'wp-edit-post',
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-	);
+	// Load normal assets.
+	if ( should_load_assets() ) {
+		\A8C\FSE\use_webpack_assets( basename( __DIR__ ) );
+	}
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_style' );
 
@@ -176,24 +156,3 @@ function get_iso_639_locale( $language ) {
 
 	return $language;
 }
-
-/**
- * Hides plugin buttons that appear in the header on mobile devices
- * (because there's not enough room).
- *
- * Can be disabled with the `a8c_fse_enqueue_hide_plugin_buttons_mobile_style` filter.
- */
-function enqueue_hide_plugin_buttons_mobile_style() {
-	if ( apply_filters( 'a8c_fse_enqueue_hide_plugin_buttons_mobile_style', true ) ) {
-		$style_file = is_rtl()
-			? 'hide-plugin-buttons-mobile.rtl.css'
-			: 'hide-plugin-buttons-mobile.css';
-		wp_enqueue_style(
-			'a8c-fse-hide-plugin-buttons-mobile',
-			plugins_url( 'dist/' . $style_file, __FILE__ ),
-			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
-		);
-	}
-}
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_hide_plugin_buttons_mobile_style' );

@@ -44,6 +44,88 @@ namespace A8C\FSE;
  */
 define( 'A8C_ETK_PLUGIN_VERSION', 'dev' );
 
+/**
+ * Use this function to use webpack-generated assets for your module. By default,
+ * this uses "wp_enqueue_script" and "wp_enqueue_style" for any style and scripts
+ * which match the name you give, and which exist in the "/dist" directory.
+ *
+ * The main requirement is that the name you pass to this function must match the
+ * name of an asset in the "dist/" directory, disregarding extensions. By default,
+ * all top-level directories in "editing-toolkit-plugin" with an index.js or index.ts
+ * file are compiled into the "dist/" directory. Therefore, you can simply create
+ * a new directory for your feature with an index.ts file, and then use this.
+ *
+ * For example, say you are developing a feature in "editing-toolkit-plugin/new-feature",
+ * and you have an index.ts file in the top-level directory. You can add your
+ * JS asset simpley by calling "use_webpack_assets( 'new-feature' );". If you also
+ * use .scss files, those will be enqueued as well if they exist. Scripts are also
+ * only enqueued if they exist.
+ *
+ * Note: this function prepends "a8c-etk-" to the handle of the script. So if you
+ * are loading the asset "block-patterns", this will get the handle "a8c-etk-block-patterns".
+ * You can access the generated handle from the return value.
+ *
+ * You can also have this function only register the script by passing "register_only => true"
+ * to the $options parameter. This will use wp_register_x instead of wp_enqueue_x.
+ * Then, you can enqueue the asset later using the handle given in the return value.
+ *
+ * @param {string} $filename The name of the script + style to enqueue, without
+ *                           extensions or paths (E.g. "block-patterns").
+ * @param {array}  $options  Options to configure how assets are loaded.
+ *                           - register_only:  Uses wp_register_ instead of wp_enqueue_.
+ *                                             You must then enqueue at some point if you need to use it.
+ *                                             Defaults to false.
+ *                           - exclude_script: Do not register the script, even if it exists. Defaults to false.
+ *                           - exclude_style:  Do not register the style, even if it exists. Defaults to false.
+ *                           - in_footer:      Whether to enqueue the script before body instead of in head. Defaults to true.
+ * @return {array} Details about the assets.
+ *                 -asset_handle: The name of the asset in the handle, with prefix. Like "a8c-etk-block-patterns".
+ *                 -asset_dir_url: The URL to the directory of the assets (using `plugins_url`).
+ */
+function use_webpack_assets( $filename, $options = array() ) {
+	// Add a prefix to ensure the script is unique.
+	$asset_handle  = "a8c-etk-$filename";
+	$asset_file    = include plugin_dir_path( __FILE__ ) . "dist/$filename.asset.php";
+	$register_only = isset( $options['register_only'] ) && $options['register_only'];
+
+	$script_dependencies = $asset_file['dependencies'] ?? array();
+	$script_path         = "dist/$filename.js";
+
+	$exclude_script = isset( $options['exclude_script'] ) && $options['exclude_script'];
+	if ( ! $exclude_script && file_exists( __DIR__ . '/' . $script_path ) ) {
+		$script_version      = $asset_file['version'] ?? filemtime( plugin_dir_path( __FILE__ ) . $script_path );
+		$enqueue_or_register = $register_only ? 'wp_register_script' : 'wp_enqueue_script';
+		$enqueue_or_register(
+			$asset_handle,
+			plugins_url( $script_path, __FILE__ ),
+			$script_dependencies,
+			$script_version,
+			$options['in_footer'] ?? true
+		);
+		wp_set_script_translations( $asset_handle, 'full-site-editing' );
+	}
+
+	$style_ext  = is_rtl() ? $filename . '.rtl.css' : $filename . '.css';
+	$style_path = "dist/$style_ext";
+
+	$exclude_style = isset( $options['exclude_style'] ) && $options['exclude_style'];
+	if ( ! $exclude_style && file_exists( __DIR__ . '/' . $style_path ) ) {
+		$style_version       = $asset_file['version'] ?? filemtime( plugin_dir_path( __FILE__ ) . $style_path );
+		$enqueue_or_register = $register_only ? 'wp_register_style' : 'wp_enqueue_style';
+		$enqueue_or_register(
+			$asset_handle,
+			plugins_url( $style_path, __FILE__ ),
+			array(),
+			$style_version
+		);
+	}
+
+	return array(
+		'asset_handle'  => $asset_handle,
+		'asset_dir_url' => plugins_url( 'dist/', __FILE__ ),
+	);
+}
+
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
