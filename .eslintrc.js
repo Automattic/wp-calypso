@@ -402,6 +402,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/contains': 'error',
 		'you-dont-need-lodash-underscore/detect': 'error',
 		'you-dont-need-lodash-underscore/drop': 'error',
+		'you-dont-need-lodash-underscore/drop-right': 'error',
 		'you-dont-need-lodash-underscore/ends-with': 'error',
 		'you-dont-need-lodash-underscore/entries': 'error',
 		'you-dont-need-lodash-underscore/extend-own': 'error',
