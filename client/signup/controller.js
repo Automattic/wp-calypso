@@ -97,7 +97,11 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
+		const currentFlowName = getFlowName( context.params );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			next();
+		} else if ( currentFlowName === 'onboarding' ) {
+			document.body.classList.add( 'is-white-signup' );
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
@@ -112,9 +116,6 @@ export default {
 			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
-			next();
-		} else if ( context.params.flowName === 'user' ) {
-			document.body.classList.add( 'is-white-signup' );
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
 			// We still want to keep the original styling for the new user creation step
