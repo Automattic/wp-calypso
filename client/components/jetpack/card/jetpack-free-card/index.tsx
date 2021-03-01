@@ -8,7 +8,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import JetpackFreeCardButton from './button';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Type dependencies
@@ -20,7 +19,7 @@ import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/type
  */
 import './style.scss';
 
-const JetpackFreeCard: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => {
+const JetpackFreeCardAlt: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -57,14 +56,11 @@ const JetpackFreeCard: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => 
 						text: translate( 'Activity Log' ),
 					},
 				].map( ( feature, index ) => (
-					<li key={ index }>
-						<Gridicon icon="checkmark" />
-						<span className="jetpack-free-card__features-text">{ feature.text }</span>
-					</li>
+					<li key={ index }>{ feature.text }</li>
 				) ) }
 			</ul>
 		</div>
 	);
 };
 
-export default JetpackFreeCard;
+export default JetpackFreeCardAlt;
