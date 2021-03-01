@@ -4,6 +4,7 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 
@@ -64,7 +65,8 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	type = ITEM_TYPE_RADIO,
 	buttonRef,
 } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
 
 	const isMobile = ! useViewportMatch( 'small', '>=' );
@@ -82,12 +84,28 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const freeDomainLabel =
 		type === ITEM_TYPE_INDIVIDUAL_ITEM ? freeDomainLabelDefault : freeDomainLabelFree;
 
-	const includedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
+	const fallbackIncludedLabel = __( 'Included with annual plans', __i18n_text_domain__ );
+	const newIncludedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
+	const includedLabel =
+		locale === 'en' || hasTranslation?.( 'Included in annual plans', __i18n_text_domain__ )
+			? newIncludedLabel
+			: fallbackIncludedLabel;
+
 	// translators: text in between the <strong></strong> marks is styled as bold text
-	const includedLabelFormatted = __(
+	const fallbackIncludedLabelFormatted = __(
+		'<strong>First year included</strong> in paid plans',
+		__i18n_text_domain__
+	);
+	// translators: text in between the <strong></strong> marks is styled as bold text
+	const newIncludedLabelFormatted = __(
 		'<strong>First year included</strong> in annual plans',
 		__i18n_text_domain__
 	);
+	const includedLabelFormatted =
+		locale === 'en' ||
+		hasTranslation?.( '<strong>First year included</strong> in annual plans', __i18n_text_domain__ )
+			? newIncludedLabelFormatted
+			: fallbackIncludedLabelFormatted;
 	const paidIncludedDomainLabel = isMobile
 		? includedLabel
 		: createInterpolateElement( includedLabelFormatted, {
