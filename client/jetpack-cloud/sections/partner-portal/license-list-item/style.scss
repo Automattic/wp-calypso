@@ -52,6 +52,10 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 			margin-left: 6px;
 		}
 
+		> *:nth-child(#{$column-actions}) {
+			display: block;
+		}
+
 		> *:nth-child(#{$column-domain}) {
 			grid-column-end: auto;
 		}
