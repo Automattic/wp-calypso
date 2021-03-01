@@ -114,6 +114,7 @@ export function offerResetRedirects( context, next ) {
 	// If selected site has a Free plan, redirect to URL passed as query param or wpadmin
 	if ( selectedSite.plan.is_free ) {
 		externalRedirect( context.query.redirect || selectedSite.options.admin_url );
+		return;
 	}
 
 	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
