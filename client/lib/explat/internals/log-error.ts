@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getLogger } from 'calypso/server/lib/logger';
-import { isDevelopmentMode } from './misc'
+import { isDevelopmentMode } from './misc';
 
 // SSR safety: Fail TypeScript compilation if `window` is used without an explicit undefined check
 declare const window: undefined | ( Window & typeof globalThis );
