@@ -52,8 +52,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		margin: 0;
 		display: flex;
 		justify-content: center;
-		background: white;
-		border-top: 1px solid #dcdcde;
+		background: var( --studio-white );
+		border-top: 1px solid var( --studio-gray-5 );
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			border-top: none;
@@ -99,7 +99,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	display: flex;
 	flex-direction: column-reverse;
 	justify-content: flex-end;
-	background: white;
+	background: var( --studio-white );
 	width: 100%;
 	height: 100%;
 
@@ -132,7 +132,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .whats-new-page__visual {
 	height: 40%;
 	padding: 25px 25px 0;
-	// background: #1581d8;
 	background: var( --studio-blue );
 	text-align: center;
 	display: flex;
@@ -147,36 +146,36 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .whats-new-page__heading {
 	@include onboarding-font-recoleta;
 	/* Gray / Gray 90 */
-	color: #1d2327;
+	color: var( --studio-gray-90 );
 
-	font-size: 24px;
+	font-size: $font-title-medium;
 	line-height: 1;
 	margin: 0;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
-		font-size: 40px;
+		font-size: $font-headline-medium;
 	}
 
 	// overflowing text
 	body.locale-de & {
-		font-size: 40px;
+		font-size: $font-headline-medium;
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
-			font-size: 28px;
+			font-size: $font-title-medium;
 		}
 	}
 }
 
 .whats-new-page__description p {
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 22px;
 	margin-top: 10px;
 
 	/* Gray / Gray 60 */
-	color: #50575e;
+	color: var( --studio-gray-60 );
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
-		font-size: 17px;
+		font-size: $font-body;
 		line-height: 26px;
 	}
 }

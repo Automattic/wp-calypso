@@ -19,7 +19,7 @@ function WhatsNewPage( {
 	const __ = useI18n().__;
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_block_editor_whats_new_slide_view', {
+		recordTracksEvent( 'wpcom_whats_new_slide_view', {
 			slide_number: pageNumber,
 			is_last_slide: isLastPage,
 		} );
@@ -32,7 +32,7 @@ function WhatsNewPage( {
 				<div className="whats-new-page__description">
 					{ description && <p>{ description }</p> }
 					{ link && (
-						<p>
+						<p className="whats-new-page__link">
 							<a href={ link } target="_blank" rel="noreferrer">
 								{ __( 'Learn more' ) }
 							</a>
