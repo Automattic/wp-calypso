@@ -37,7 +37,7 @@ const WhatsNewGuide = () => {
 
 	return (
 		<Guide
-			className="whats-new__main"
+			className="src__main"
 			contentLabel={ __( "What's New at WordPress.com" ) }
 			finishButtonText={ __( 'Close' ) }
 			onFinish={ toggleWhatsNew }

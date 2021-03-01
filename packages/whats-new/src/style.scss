@@ -14,7 +14,7 @@ $wpcom-modal-footer-padding-v: 20px;
 $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 // Core modal style overrides
-.whats-new__main {
+.src__main {
 	&.components-modal__frame {
 		overflow: visible;
 		height: 65vh;
@@ -153,12 +153,12 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	margin: 0;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
-		font-size: $font-headline-medium;
+		font-size: $font-headline-small;
 	}
 
 	// overflowing text
 	body.locale-de & {
-		font-size: $font-headline-medium;
+		font-size: $font-headline-small;
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			font-size: $font-title-medium;
