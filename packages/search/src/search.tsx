@@ -5,7 +5,7 @@
 
 import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
-import React from 'react';
+import React, { Ref } from 'react';
 import type {
 	RefObject,
 	MutableRefObject,
@@ -127,7 +127,7 @@ type ImperativeHandle = {
 	clear: () => void;
 };
 
-const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
+const InnerSearch = (
 	{
 		delaySearch,
 		disabled,
@@ -159,9 +159,9 @@ const InnerSearch: React.ForwardRefRenderFunction< ImperativeHandle, Props > = (
 		minLength,
 		maxLength,
 		hideClose,
-	},
-	forwardedRef
-) => {
+	}: Props,
+	forwardedRef: Ref< ImperativeHandle >
+): JSX.Element => {
 	const { __ } = useI18n();
 	const [ keyword, setKeyword ] = React.useState( defaultValue );
 	const [ isOpen, setIsOpen ] = React.useState( defaultIsOpen );
