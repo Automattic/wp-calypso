@@ -1057,14 +1057,14 @@ class Account extends React.Component {
 						{ config.isEnabled( 'nav-unification' ) && (
 							<FormFieldset className="account__link-destination">
 								<FormLabel id="account__link_destination" htmlFor="link_destination">
-									{ translate( 'Dashboard appearance' ) }
+									{ translate( 'Show advanced dashboard pages' ) }
 								</FormLabel>
 								<FormToggle
 									checked={ !! this.getUserSetting( linkDestinationKey ) }
 									onChange={ this.toggleLinkDestination }
 								>
 									{ translate(
-										'Replace all dashboard pages with WP Admin equivalents when possible.'
+										'Enabling this will replace your dashboard pages with more advanced wp-admin equivalents when possible. Learn more.'
 									) }
 								</FormToggle>
 							</FormFieldset>
