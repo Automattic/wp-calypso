@@ -13,6 +13,7 @@ import * as dataHelper from '../lib/data-helper.js';
 import * as mediaHelper from '../lib/media-helper';
 import * as driverHelper from '../lib/driver-helper';
 import LoginFlow from '../lib/flows/login-flow.js';
+import LoginPage from '../lib/pages/login-page.js';
 import ReaderPage from '../lib/pages/reader-page';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
@@ -197,10 +198,20 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 
 			describe( `Test the block on a non-edge site`, function () {
 				step( `Log in and start a new post`, async function () {
-					const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
+					const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
 
-					await loginFlow.login();
-					editor = await startNewPost( loginFlow );
+					await driver
+						.navigate()
+						.to( `https://${ loginFlow.account.loginURL }/wp-admin/post-new.php` );
+					const currentUrl = await driver.getCurrentUrl();
+
+					if ( currentUrl.startsWith( 'https://wordpress.com/log-in' ) ) {
+						const loginPage = await LoginPage.Expect( driver );
+						await loginPage.login( loginFlow.account.username, loginFlow.account.password );
+					}
+
+					const gutenbergEditorComponent = await GutenbergEditorComponent.Expect( driver );
+					editor = await gutenbergEditorComponent.initEditor();
 				} );
 
 				step( `Insert and configure the block`, async function () {
@@ -218,7 +229,7 @@ describe( `[${ host }, ${ screenSize }] Test Gutenberg upgrade against most popu
 
 			describe( `Test the same block on a corresponding edge site`, function () {
 				step( `Start a new post`, async function () {
-					const loginFlow = new LoginFlow( driver, 'gutenbergUpgradeEdgeUser' );
+					const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteEdgeUser' );
 
 					// No need to log in again as the edge site is owned by the same user.
 					editor = await startNewPost( loginFlow );
