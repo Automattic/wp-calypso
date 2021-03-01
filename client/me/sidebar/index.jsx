@@ -180,13 +180,11 @@ class MeSidebar extends React.Component {
 							preloadSectionName="privacy"
 						/>
 
-						{ config.isEnabled( 'nav-unification' ) && (
-							<SidebarItem
-								link={ 'https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs' }
-								label={ translate( 'Manage Blogs' ) }
-								materialIcon="apps"
-							/>
-						) }
+						<SidebarItem
+							link={ 'https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs' }
+							label={ translate( 'Manage Blogs' ) }
+							materialIcon="apps"
+						/>
 
 						<SidebarItem
 							selected={ selected === 'notifications' }
