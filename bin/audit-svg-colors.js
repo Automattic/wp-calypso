@@ -292,8 +292,8 @@ function printReplacementRules( replacementObjects ) {
 
 function formatReplacementRules( rules ) {
 	return _.sortBy( rules, 'to.name' ).map( ( rule ) => {
-		const valueFrom = _.padEnd( rule.from.value, 7 );
-		const valueTo = _.padEnd( rule.to.value, 7 );
+		const valueFrom = rule.from.value.padEnd( 7 );
+		const valueTo = rule.to.value.padEnd( 7 );
 
 		return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
 	} );
