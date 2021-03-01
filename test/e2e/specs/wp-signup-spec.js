@@ -484,14 +484,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual(
-				errorShown,
-				false,
-				'There is a block editor error when editing the homepage'
-			);
-
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
 			assert.strictEqual(
 				hasInvalidBlocks,
@@ -1113,13 +1105,6 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual(
-				errorShown,
-				false,
-				'There is a block editor error when editing the homepage'
-			);
 
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
 			assert.strictEqual(

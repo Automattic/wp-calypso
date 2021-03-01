@@ -127,11 +127,6 @@ function verifyBlockInEditor( Block ) {
 		assert( blockDisplayed, `The block "${ Block.blockName }" was not found in the editor.` );
 	} );
 
-	step( 'Block does not error in the editor', async function () {
-		const errorDisplayed = await editor.errorDisplayed();
-		assert( ! errorDisplayed, `The block "${ Block.blockName }" errored in the editor.` );
-	} );
-
 	step( 'Block does not invalidate', async function () {
 		const hasInvalidBlocks = await editor.hasInvalidBlocks();
 		assert( ! hasInvalidBlocks, `The block "${ Block.blockName }" is invalid.` );
