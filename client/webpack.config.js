@@ -234,6 +234,10 @@ const webpackConfig = {
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
 				postCssOptions: {
+					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
+					// This is required because Calypso imports `@automattic/notifications` and that package defines its
+					// own `postcss.config.js` that they use for their webpack bundling process.
+					config: false,
 					plugins: [
 						autoprefixerPlugin(),
 						browserslistEnv === 'defaults' &&
