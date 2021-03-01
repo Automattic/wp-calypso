@@ -1064,7 +1064,18 @@ class Account extends React.Component {
 									onChange={ this.toggleLinkDestination }
 								>
 									{ translate(
-										'Enabling this will replace your dashboard pages with more advanced wp-admin equivalents when possible. Learn more.'
+										'Enabling this will replace your dashboard pages with more advanced wp-admin equivalents when possible. {{a}}Learn more{{/a}}.',
+										{
+											components: {
+												a: (
+													<a
+														href="https://support.wordpress.com"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
 									) }
 								</FormToggle>
 							</FormFieldset>
