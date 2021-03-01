@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, isArray, noop, map } from 'lodash';
+import { isEmpty, noop, map } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -31,7 +31,7 @@ export const TemplateSelectorControl = ( {
 	siteInformation = {},
 	selectedTemplate,
 } ) => {
-	if ( isEmpty( templates ) || ! isArray( templates ) ) {
+	if ( isEmpty( templates ) || ! Array.isArray( templates ) ) {
 		return null;
 	}
 

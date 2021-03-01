@@ -3,7 +3,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { flatMap, flatten, isArray, map } from 'lodash';
+import { flatMap, flatten, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +34,9 @@ export const fetchCommentsTreeForSite = ( action ) => {
 
 const mapPosts = ( commentIds, apiPostId ) => {
 	const postId = parseInt( apiPostId, 10 );
-	const [ topLevelIds, replyIds ] = ! isArray( commentIds[ 0 ] ) ? [ commentIds, [] ] : commentIds;
+	const [ topLevelIds, replyIds ] = ! Array.isArray( commentIds[ 0 ] )
+		? [ commentIds, [] ]
+		: commentIds;
 
 	return flatten( [
 		topLevelIds.map( ( commentId ) => [ commentId, postId, 0 ] ),

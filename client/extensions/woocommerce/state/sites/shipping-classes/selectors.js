@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ const getShippingClassesFromState = ( state, siteId = getSelectedSiteId( state )
  * @returns {boolean} Whether the shipping classes have been successfully loaded from the server
  */
 export const areShippingClassesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getShippingClassesFromState( state, siteId ) );
+	return Array.isArray( getShippingClassesFromState( state, siteId ) );
 };
 
 /**
@@ -39,5 +39,5 @@ export const areShippingClassesLoading = ( state, siteId = getSelectedSiteId( st
 export const getShippingClassOptions = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const classes = getShippingClassesFromState( state, siteId );
 
-	return isArray( classes ) ? classes : [];
+	return Array.isArray( classes ) ? classes : [];
 };

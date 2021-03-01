@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { map, compact, concat, isObject, isArray } from 'lodash';
+import { map, compact, concat, isObject } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
@@ -9,8 +9,8 @@ import { decodeEntities } from 'calypso/lib/formatting';
  * we always pass forward a list
  * Also transform the api response to be something more calypso-friendly
  *
- * @param  {Tag|Tags} apiResponse api response from the tags endpoint
- * @returns {Tags} An object containing all of the normalized tags in the format:
+ * @param  {Object} apiResponse api response from the tags endpoint
+ * @returns {Object} An object containing all of the normalized tags in the format:
  *  [
  *    { id, displayName, url, title, slug },
  *    ...
@@ -25,7 +25,7 @@ export function fromApi( apiResponse ) {
 		concat(
 			[],
 			isObject( apiResponse.tag ) && apiResponse.tag,
-			isArray( apiResponse.tags ) && apiResponse.tags
+			Array.isArray( apiResponse.tags ) && apiResponse.tags
 		)
 	);
 

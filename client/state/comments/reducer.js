@@ -13,7 +13,6 @@ import {
 	get,
 	zipObject,
 	includes,
-	isArray,
 	values,
 	omit,
 	startsWith,
@@ -230,7 +229,7 @@ const isValidExpansionsAction = ( action ) => {
 	return (
 		siteId &&
 		postId &&
-		isArray( commentIds ) &&
+		Array.isArray( commentIds ) &&
 		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
 	);
 };
