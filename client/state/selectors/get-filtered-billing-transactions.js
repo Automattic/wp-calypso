@@ -8,10 +8,12 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { createSelector } from '@automattic/state-utils';
+import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+
+import 'calypso/state/billing-transactions/init';
 
 const PAGE_SIZE = 5;
 
@@ -23,9 +25,7 @@ const PAGE_SIZE = 5;
  */
 function formatDate( date ) {
 	const localeSlug = getLocaleSlug();
-	return moment( date )
-		.locale( localeSlug )
-		.format( 'll' );
+	return moment( date ).locale( localeSlug ).format( 'll' );
 }
 
 /**
@@ -52,8 +52,8 @@ function getSearchableStrings( transaction ) {
 function search( transactions, searchQuery ) {
 	const needle = searchQuery.toLowerCase();
 
-	return transactions.filter( transaction =>
-		some( getSearchableStrings( transaction ), val => {
+	return transactions.filter( ( transaction ) =>
+		some( getSearchableStrings( transaction ), ( val ) => {
 			const haystack = val.toString().toLowerCase();
 			return haystack.includes( needle );
 		} )
@@ -65,10 +65,11 @@ function search( transactions, searchQuery ) {
  *
  * @param   {object}  state           Global state tree
  * @param   {string}  transactionType Transaction type
+ * @param   {string}  [siteId]        An optional siteId on which to filter results (in addition to the other filters)
  * @returns {object}                  Filtered results in format {transactions, total, pageSize}
  */
 export default createSelector(
-	( state, transactionType ) => {
+	( state, transactionType, siteId = null ) => {
 		const transactions = getBillingTransactionsByType( state, transactionType );
 		if ( ! transactions ) {
 			return {
@@ -81,7 +82,7 @@ export default createSelector(
 		const { app, date, page, query } = getBillingTransactionFilters( state, transactionType );
 		let results = query ? search( transactions, query ) : transactions;
 		if ( date && date.month && date.operator ) {
-			results = results.filter( transaction => {
+			results = results.filter( ( transaction ) => {
 				const transactionDate = moment( transaction.date );
 
 				if ( 'equal' === date.operator ) {
@@ -93,7 +94,15 @@ export default createSelector(
 		}
 
 		if ( app && app !== 'all' ) {
-			results = results.filter( transaction => transaction.service === app );
+			results = results.filter( ( transaction ) => transaction.service === app );
+		}
+
+		if ( siteId ) {
+			results = results.filter( ( transaction ) => {
+				return transaction.items.some( ( receiptItem ) => {
+					return String( receiptItem.site_id ) === String( siteId );
+				} );
+			} );
 		}
 
 		const total = results.length;

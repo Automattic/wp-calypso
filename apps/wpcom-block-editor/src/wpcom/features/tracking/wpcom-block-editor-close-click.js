@@ -9,7 +9,7 @@ import tracksRecordEvent from './track-record-event';
  * @returns {{handler: Function, selector: string, type: string}} event object definition.
  */
 export default () => ( {
-	selector: '.edit-post-fullscreen-mode-close__toolbar',
+	selector: '.edit-post-header .edit-post-fullscreen-mode-close',
 	type: 'click',
 	handler: () => tracksRecordEvent( 'wpcom_block_editor_close_click' ),
 } );

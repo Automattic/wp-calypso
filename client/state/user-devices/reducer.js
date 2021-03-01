@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
+import { withoutPersistence } from 'calypso/state/utils';
+import { USER_DEVICES_ADD } from 'calypso/state/action-types';
 
-import { withoutPersistence } from 'state/utils';
-import { USER_DEVICES_ADD } from 'state/action-types';
-
-export default withoutPersistence( ( state = {}, action ) => {
+const reducer = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {
 		case USER_DEVICES_ADD: {
 			const { devices } = action;
@@ -15,3 +15,5 @@ export default withoutPersistence( ( state = {}, action ) => {
 
 	return state;
 } );
+
+export default withStorageKey( 'userDevices', reducer );

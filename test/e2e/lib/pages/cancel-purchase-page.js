@@ -13,7 +13,7 @@ const by = webdriver.By;
 
 export default class CancelPurchasePage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.cancel-purchase.main' ) );
+		super( driver, by.css( '.purchases__cancel.main' ) );
 		this.cancelButtonSelector = by.css( 'button.cancel-purchase__button' );
 	}
 

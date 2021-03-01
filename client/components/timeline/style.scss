@@ -99,13 +99,13 @@
 		}
 
 		.timeline-event__title {
-			font-size: 16px;
+			font-size: $font-body;
 			margin-top: 4px;
 		}
 
 		.timeline-event__detail {
 			width: 100%;
-			font-size: 14px;
+			font-size: $font-body-small;
 			color: var( --color-text-subtle );
 		}
 	}

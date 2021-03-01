@@ -1,59 +1,51 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { ActionType, CurrentUser, NewUser, NewUserErrorResponse } from './types';
-import * as Actions from './actions';
+import type { CurrentUser, NewUser, NewUserErrorResponse } from './types';
+import type { Action } from './actions';
 
-const currentUser: Reducer<
-	CurrentUser | null | undefined,
-	| ReturnType< typeof Actions[ 'receiveCurrentUser' ] >
-	| ReturnType< typeof Actions[ 'receiveCurrentUserFailed' ] >
-> = ( state = undefined, action ) => {
+export const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( state, action ) => {
 	switch ( action.type ) {
-		case ActionType.RECEIVE_CURRENT_USER:
+		case 'RECEIVE_CURRENT_USER':
 			return action.currentUser;
-		case ActionType.RECEIVE_CURRENT_USER_FAILED:
+		case 'RECEIVE_CURRENT_USER_FAILED':
 			return null;
 	}
 	return state;
 };
 
-const newUserData: Reducer<
-	NewUser | undefined,
-	| ReturnType< typeof Actions[ 'receiveNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUserFailed' ] >
-> = ( state = undefined, action ) => {
-	if ( action.type === ActionType.RECEIVE_NEW_USER ) {
+export const newUserData: Reducer< NewUser | undefined, Action > = ( state, action ) => {
+	if ( action.type === 'RECEIVE_NEW_USER' ) {
 		const { response } = action;
 		return {
 			username: response.signup_sandbox_username || response.username,
 			userId: response.signup_sandbox_user_id || response.user_id,
 			bearerToken: response.bearer_token,
 		};
-	} else if ( action.type === ActionType.RECEIVE_NEW_USER_FAILED ) {
+	} else if ( action.type === 'RECEIVE_NEW_USER_FAILED' ) {
 		return undefined;
 	}
 	return state;
 };
 
-const newUserError: Reducer<
-	NewUserErrorResponse | undefined,
-	| ReturnType< typeof Actions[ 'fetchNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUserFailed' ] >
-> = ( state = undefined, action ) => {
+export const newUserError: Reducer< NewUserErrorResponse | undefined, Action > = (
+	state,
+	action
+) => {
 	switch ( action.type ) {
-		case ActionType.FETCH_NEW_USER:
+		case 'FETCH_NEW_USER':
 			return undefined;
-		case ActionType.RECEIVE_NEW_USER:
+		case 'RECEIVE_NEW_USER':
 			return undefined;
-		case ActionType.RECEIVE_NEW_USER_FAILED:
+		case 'CLEAR_ERRORS':
+			return undefined;
+		case 'RECEIVE_NEW_USER_FAILED':
 			return {
 				error: action.error.error,
 				status: action.error.status,
@@ -65,18 +57,16 @@ const newUserError: Reducer<
 	return state;
 };
 
-const isFetchingNewUser: Reducer<
-	boolean | undefined,
-	| ReturnType< typeof Actions[ 'fetchNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUser' ] >
-	| ReturnType< typeof Actions[ 'receiveNewUserFailed' ] >
-> = ( state = false, action ) => {
+export const isFetchingNewUser: Reducer< boolean | undefined, Action > = (
+	state = false,
+	action
+) => {
 	switch ( action.type ) {
-		case ActionType.FETCH_NEW_USER:
+		case 'FETCH_NEW_USER':
 			return true;
-		case ActionType.RECEIVE_NEW_USER:
+		case 'RECEIVE_NEW_USER':
 			return false;
-		case ActionType.RECEIVE_NEW_USER_FAILED:
+		case 'RECEIVE_NEW_USER_FAILED':
 			return false;
 	}
 	return state;

@@ -7,10 +7,11 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	collapseSidebar,
+	expandSidebar,
 	navigate,
 	setAllSitesSelected,
 	setPreviewShowing,
-	setRoute,
 	setSection,
 	setSelectedSiteId,
 	toggleNotificationsPanel,
@@ -19,10 +20,10 @@ import {
 	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	PREVIEW_IS_SHOWING,
-	ROUTE_SET,
+	SIDEBAR_TOGGLE_VISIBILITY,
 	SECTION_SET,
 	SELECTED_SITE_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
@@ -56,60 +57,13 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'setRoute()', () => {
-		const route = '/foo';
-
-		test( 'should return an action with an empty query object if no query is supplied', () => {
-			const action = setRoute( route );
-
-			expect( action ).to.eql( {
-				type: ROUTE_SET,
-				path: route,
-				query: {},
-			} );
-		} );
-
-		test( 'should return an action object with path and the specified query arguments', () => {
-			const query = {
-				foo: 'bar',
-				bat: 123,
-			};
-			const action = setRoute( route, query );
-
-			expect( action ).to.eql( {
-				type: ROUTE_SET,
-				path: route,
-				query,
-			} );
-		} );
-	} );
-
 	describe( 'setSection()', () => {
-		test( 'should return an action object where hasSidebar is true by default', () => {
-			expect( setSection() ).to.eql( {
-				type: SECTION_SET,
-				hasSidebar: true,
-			} );
-		} );
-
 		test( 'should return an action object with the section specified', () => {
 			const section = { name: 'me' };
 
 			expect( setSection( section ) ).to.eql( {
 				type: SECTION_SET,
 				section,
-				hasSidebar: true,
-			} );
-		} );
-
-		test( 'should return an action object with the section and hasSidebar specified', () => {
-			const section = { name: 'me' };
-			const options = { hasSidebar: false };
-
-			expect( setSection( section, options ) ).to.eql( {
-				type: SECTION_SET,
-				section,
-				hasSidebar: false,
 			} );
 		} );
 	} );
@@ -142,6 +96,24 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: NAVIGATE,
 				path,
+			} );
+		} );
+	} );
+
+	describe( 'expandSidebar', () => {
+		test( 'should return an action object with the action type and sidebarIsCollapsed= false', () => {
+			expect( expandSidebar() ).to.eql( {
+				type: SIDEBAR_TOGGLE_VISIBILITY,
+				collapsed: false,
+			} );
+		} );
+	} );
+
+	describe( 'collapseSidebar', () => {
+		test( 'should return an action object with the action type and sidebarIsCollapsed= true', () => {
+			expect( collapseSidebar() ).to.eql( {
+				type: SIDEBAR_TOGGLE_VISIBILITY,
+				collapsed: true,
 			} );
 		} );
 	} );

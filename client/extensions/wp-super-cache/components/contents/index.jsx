@@ -13,11 +13,11 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
 import { Button, Card } from '@automattic/components';
 import CacheStats from './cache-stats';
 import QueryStats from '../data/query-stats';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { generateStats } from '../../state/stats/actions';
-import { getSiteTitle, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { getSiteTitle, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { getStats, isGeneratingStats } from '../../state/stats/selectors';
 
 class ContentsTab extends Component {
@@ -222,7 +222,7 @@ class ContentsTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const stats = getStats( state, siteId );
 		const isGenerating = isGeneratingStats( state, siteId );
@@ -239,7 +239,7 @@ const connectComponent = connect(
 	{ generateStats }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_max_time' ] );
 };
 

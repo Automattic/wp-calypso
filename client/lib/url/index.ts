@@ -13,3 +13,4 @@ export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
 export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
 export { default as format } from './format';
 export { getUrlParts, getUrlFromParts } from './url-parts';
+export { default as resolveRelativePath } from './resolve-relative-path';

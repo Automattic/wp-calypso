@@ -30,10 +30,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return the message if metadata contains message', () => {
-			let message = 'Post with Taxonomies',
-				value;
-
-			value = PostMetadata.publicizeMessage( {
+			const message = 'Post with Taxonomies';
+			const value = PostMetadata.publicizeMessage( {
 				metadata: [ { id: '796', key: '_wpas_mess', value: message } ],
 			} );
 
@@ -63,10 +61,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of numeric IDs of done services in the metadata', () => {
-			let ID = 11491646,
-				value;
-
-			value = PostMetadata.publicizeDone( {
+			const ID = 11491646;
+			const value = PostMetadata.publicizeDone( {
 				metadata: [ { id: '797', key: '_wpas_done_' + ID, value: '1' } ],
 			} );
 
@@ -74,10 +70,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should only return IDs of services where metadata value is equal to "1"', () => {
-			let ID = 11491646,
-				value;
-
-			value = PostMetadata.publicizeDone( {
+			const ID = 11491646;
+			const value = PostMetadata.publicizeDone( {
 				metadata: [ { id: '797', key: '_wpas_done_' + ID, value: '0' } ],
 			} );
 
@@ -107,10 +101,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of numeric IDs of skipped services in the metadata', () => {
-			let ID = 11491646,
-				value;
-
-			value = PostMetadata.publicizeSkipped( {
+			const ID = 11491646;
+			const value = PostMetadata.publicizeSkipped( {
 				metadata: [ { id: '797', key: '_wpas_skip_' + ID, value: '1' } ],
 			} );
 
@@ -118,10 +110,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should only return IDs of services where metadata value is equal to "1"', () => {
-			let ID = 11491646,
-				value;
-
-			value = PostMetadata.publicizeSkipped( {
+			const ID = 11491646;
+			const value = PostMetadata.publicizeSkipped( {
 				metadata: [ { id: '797', key: '_wpas_skip_' + ID, value: '0' } ],
 			} );
 
@@ -149,10 +139,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return the address if metadata contains geolocation address', () => {
-			let address = 'New York, NY, USA',
-				value;
-
-			value = PostMetadata.geoLabel( {
+			const address = 'New York, NY, USA';
+			const value = PostMetadata.geoLabel( {
 				metadata: [ { id: '796', key: 'geo_address', value: address } ],
 			} );
 
@@ -188,11 +176,9 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of float values if metadata contains coordinate', () => {
-			let latitude = 40.7127837,
-				longitude = -74.00594130000002,
-				value;
-
-			value = PostMetadata.geoCoordinates( {
+			const latitude = 40.7127837;
+			const longitude = -74.00594130000002;
+			const value = PostMetadata.geoCoordinates( {
 				metadata: [
 					{ id: '796', key: 'geo_latitude', value: latitude.toString() },
 					{ id: '796', key: 'geo_longitude', value: longitude.toString() },

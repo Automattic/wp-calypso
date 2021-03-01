@@ -3,25 +3,26 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Stream from 'reader/stream';
+import config from '@automattic/calypso-config';
+import Stream from 'calypso/reader/stream';
 import EmptyContent from './empty';
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import ListMissing from './missing';
 import ListStreamHeader from './header';
-import { followList, unfollowList } from 'state/reader/lists/actions';
+import { followList, unfollowList } from 'calypso/state/reader/lists/actions';
 import {
 	getListByOwnerAndSlug,
 	isSubscribedByOwnerAndSlug,
 	isMissingByOwnerAndSlug,
-} from 'state/reader/lists/selectors';
-import QueryReaderList from 'components/data/query-reader-list';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+} from 'calypso/state/reader/lists/selectors';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -33,7 +34,8 @@ class ListStream extends React.Component {
 		super( props );
 		this.title = props.translate( 'Loading list' );
 	}
-	toggleFollowing = isFollowRequested => {
+
+	toggleFollowing = ( isFollowRequested ) => {
 		const list = this.props.list;
 
 		if ( isFollowRequested ) {
@@ -47,7 +49,7 @@ class ListStream extends React.Component {
 			isFollowRequested ? 'Clicked Follow List' : 'Clicked Unfollow List',
 			list.owner + ':' + list.slug
 		);
-		recordTrack(
+		this.props.recordReaderTracksEvent(
 			isFollowRequested
 				? 'calypso_reader_reader_list_followed'
 				: 'calypso_reader_reader_list_unfollowed',
@@ -59,18 +61,13 @@ class ListStream extends React.Component {
 	};
 
 	render() {
-		const list = this.props.list,
-			shouldShowFollow = list && ! list.is_owner,
-			shouldShowEdit = ! shouldShowFollow,
-			emptyContent = <EmptyContent />,
-			listStreamIconClasses = 'gridicon gridicon__list';
-
-		let editUrl = null;
+		const list = this.props.list;
+		const shouldShowFollow = list && ! list.is_owner;
+		const emptyContent = <EmptyContent />;
+		const listStreamIconClasses = 'gridicon gridicon__list';
 
 		if ( list ) {
 			this.title = list.title;
-
-			editUrl = `https://wordpress.com/read/list/${ list.owner }/${ list.slug }/edit`;
 		}
 
 		if ( this.props.isMissing ) {
@@ -93,6 +90,7 @@ class ListStream extends React.Component {
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
 					isPlaceholder={ ! list }
+					isPublic={ list?.is_public }
 					icon={
 						<svg
 							className={ listStreamIconClasses }
@@ -113,12 +111,12 @@ class ListStream extends React.Component {
 						</svg>
 					}
 					title={ this.title }
-					description={ list && list.description }
+					description={ list?.description }
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
-					showEdit={ shouldShowEdit }
-					editUrl={ editUrl }
+					showEdit={ config.isEnabled( 'reader/list-management' ) && list && list.is_owner }
+					editUrl={ window.location.href + '/edit' }
 				/>
 			</Stream>
 		);
@@ -133,13 +131,5 @@ export default connect(
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 		};
 	},
-	dispatch => {
-		return bindActionCreators(
-			{
-				followList,
-				unfollowList,
-			},
-			dispatch
-		);
-	}
+	{ followList, recordReaderTracksEvent, unfollowList }
 )( localize( ListStream ) );

@@ -10,12 +10,12 @@ import startsWith from 'lodash/startsWith';
 /**
  * Internal dependencies
  */
-import { addLocaleToPath, getLanguage } from 'lib/i18n-utils';
+import { addLocaleToPath, getLanguage } from 'calypso/lib/i18n-utils';
 import LocaleSuggestionsListItem from './list-item';
-import QueryLocaleSuggestions from 'components/data/query-locale-suggestions';
-import Notice from 'components/notice';
-import getLocaleSuggestions from 'state/selectors/get-locale-suggestions';
-import { setLocale } from 'state/ui/language/actions';
+import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
+import Notice from 'calypso/components/notice';
+import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
+import { setLocale } from 'calypso/state/ui/language/actions';
 
 /**
  * Style dependencies
@@ -62,7 +62,7 @@ export class LocaleSuggestions extends Component {
 
 	dismiss = () => this.setState( { dismissed: true } );
 
-	getPathWithLocale = locale => addLocaleToPath( this.props.path, locale );
+	getPathWithLocale = ( locale ) => addLocaleToPath( this.props.path, locale );
 
 	render() {
 		if ( this.state.dismissed ) {
@@ -75,7 +75,7 @@ export class LocaleSuggestions extends Component {
 			return <QueryLocaleSuggestions />;
 		}
 
-		const usersOtherLocales = localeSuggestions.filter( function( locale ) {
+		const usersOtherLocales = localeSuggestions.filter( function ( locale ) {
 			return ! startsWith( getLocaleSlug(), locale.locale );
 		} );
 
@@ -83,7 +83,7 @@ export class LocaleSuggestions extends Component {
 			return null;
 		}
 
-		const localeMarkup = usersOtherLocales.map( locale => {
+		const localeMarkup = usersOtherLocales.map( ( locale ) => {
 			return (
 				<LocaleSuggestionsListItem
 					key={ 'locale-' + locale.locale }
@@ -105,7 +105,7 @@ export class LocaleSuggestions extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		localeSuggestions: getLocaleSuggestions( state ),
 	} ),
 	{ setLocale }

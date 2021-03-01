@@ -32,7 +32,7 @@ class DomainEmail {
 	 * @returns {Function} request handler
 	 */
 	forward( destination, query, fn ) {
-		let body = { destination: destination };
+		const body = { destination: destination };
 		return this.wpcom.req.post( this._subpath + this._email, query, body, fn );
 	}
 
@@ -51,9 +51,9 @@ class DomainEmail {
 			query = {};
 		}
 
-		let body = {
+		const body = {
 			mailbox: mailbox,
-			destination: destination
+			destination: destination,
 		};
 
 		return this.wpcom.req.post( this._subpath + 'new', query, body, fn );
@@ -69,7 +69,7 @@ class DomainEmail {
 	 */
 	delete( mailbox, query, fn ) {
 		return this.wpcom.req.del( this._subpath + mailbox + '/delete', query, fn );
-	};
+	}
 }
 
 /**

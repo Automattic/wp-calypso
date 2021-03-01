@@ -7,20 +7,20 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import analytics from 'lib/analytics';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import verticals from './verticals';
 import { Button } from '@automattic/components';
-import { getStepUrl } from 'signup/utils';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { setSurvey } from 'state/signup/steps/survey/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
+import { getStepUrl } from 'calypso/signup/utils';
+import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
+import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 
 /**
  * Style dependencies
@@ -53,7 +53,7 @@ class SurveyStep extends React.Component {
 		);
 	}
 
-	renderVertical = vertical => {
+	renderVertical = ( vertical ) => {
 		return (
 			<Button
 				className="survey__vertical"
@@ -136,7 +136,7 @@ class SurveyStep extends React.Component {
 		);
 	}
 
-	handleVerticalButton = e => {
+	handleVerticalButton = ( e ) => {
 		const { value, label } = e.target.dataset;
 		this.submitStep( label, value );
 	};
@@ -145,22 +145,22 @@ class SurveyStep extends React.Component {
 		page( getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
 	};
 
-	handleVerticalOther = otherTextValue => {
+	handleVerticalOther = ( otherTextValue ) => {
 		const otherText = otherTextValue.replace( /^\W+|\W+$/g, '' );
 		const otherWriteIn = otherText.length !== 0 ? otherText : undefined;
 
 		this.submitStep( 'Uncategorized', 'a8c.24', otherWriteIn );
 	};
 
-	handleOtherWriteIn = value => {
+	handleOtherWriteIn = ( value ) => {
 		this.setState( {
 			otherWriteIn: value.replace( /^\W+|\W+$/g, '' ),
 		} );
 	};
 
 	submitStep = ( label, value, otherWriteIn = '' ) => {
-		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
-		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
+		recordTracksEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
+		recordTracksEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
 			category_label: label,
 			category_write_in: otherWriteIn,
@@ -187,7 +187,7 @@ class SurveyStep extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		signupProgress: getSignupProgress( state ),
 	} ),
 	{ setSurvey, submitSignupStep }

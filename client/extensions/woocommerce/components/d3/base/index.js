@@ -52,9 +52,7 @@ export default class D3Base extends Component {
 		const { className } = this.props;
 		const { width, height } = this.state;
 
-		d3Select( this.node )
-			.selectAll( 'svg' )
-			.remove();
+		d3Select( this.node ).selectAll( 'svg' ).remove();
 		const newNode = d3Select( this.node )
 			.append( 'svg' )
 			.attr( 'class', `${ className }__viewbox` )
@@ -64,7 +62,7 @@ export default class D3Base extends Component {
 		return newNode;
 	}
 
-	setNodeRef = node => {
+	setNodeRef = ( node ) => {
 		this.node = node;
 	};
 

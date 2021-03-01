@@ -1,18 +1,17 @@
-enum ActionType {
-	SET_DOMAIN = 'SET_DOMAIN',
-	SET_SELECTED_DESIGN = 'SET_SELECTED_DESIGN',
-	SET_SITE_TITLE = 'SET_SITE_TITLE',
-	SET_SITE_TYPE = 'SET_SITE_TYPE',
-	SET_SITE_VERTICAL = 'SET_SITE_VERTICAL',
-	RESET_SITE_VERTICAL = 'RESET_SITE_VERTICAL',
-	TOGGLE_PAGE_LAYOUT = 'TOGGLE_PAGE_LAYOUT',
-	SET_SHOULD_CREATE = 'SET_SHOULD_CREATE',
-	RESET_ONBOARD_STORE = 'RESET_ONBOARD_STORE',
-	IS_CREATING_SITE = 'IS_CREATING_SITE',
-}
-export { ActionType };
+/**
+ * Internal dependencies
+ */
+import type { FontPair } from '../../constants';
 
 export interface SiteVertical {
+	/**
+	 * Vertical ID. Can be undefined for user-specified verticals that don't exist in WP.com's curated list.
+	 *
+	 * @example
+	 * p2v19
+	 */
+	id?: string;
+
 	/**
 	 * Vertical Label. Either obtained from WP.com, or specified by the user.
 	 *
@@ -22,10 +21,33 @@ export interface SiteVertical {
 	label: string;
 
 	/**
-	 * Vertical ID. Can be undefined for user-specified verticals that don't exist in WP.com's curated list.
+	 * Untranslated Vertical Label. Obtained from WP.com.
 	 *
 	 * @example
-	 * p2v19
+	 * Christmas Tree Farm
 	 */
-	id?: string;
+	slug?: string;
+}
+
+export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
+
+export interface Design {
+	categories: Array< string >;
+	fonts: FontPair;
+	is_alpha?: boolean;
+	is_fse?: boolean;
+	is_premium: boolean;
+	slug: string;
+	src: string;
+	template: string;
+	theme: string;
+	preview?: 'static';
+	title: string;
+	features: Array< DesignFeatures >;
+
+	/**
+	 * Quickly hide a design from the picker without having to remove
+	 * it from the available-designs-config.json file.
+	 */
+	hide?: boolean;
 }

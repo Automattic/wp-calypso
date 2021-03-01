@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ANALYTICS_EVENT_RECORD, ANALYTICS_PAGE_VIEW_RECORD } from 'state/action-types';
+import { ANALYTICS_EVENT_RECORD, ANALYTICS_PAGE_VIEW_RECORD } from 'calypso/state/action-types';
 
 export const recordEvent = ( service, args ) => ( {
 	type: ANALYTICS_EVENT_RECORD,
@@ -24,7 +24,7 @@ export const recordTracksEvent = ( name, properties ) =>
 export const recordCustomFacebookConversionEvent = ( name, properties ) =>
 	recordEvent( 'fb', { name, properties } );
 
-export const recordCustomAdWordsRemarketingEvent = properties =>
+export const recordCustomAdWordsRemarketingEvent = ( properties ) =>
 	recordEvent( 'adwords', { properties } );
 
 export const recordPageView = ( url, title, service, properties = {} ) => ( {

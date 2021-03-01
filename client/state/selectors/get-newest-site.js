@@ -6,9 +6,9 @@ import { sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
-import createSelector from 'lib/create-selector';
-import getSitesItems from 'state/selectors/get-sites-items';
+import { getSite } from 'calypso/state/sites/selectors';
+import { createSelector } from '@automattic/state-utils';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
 /**
  * Get the newest site of the current user
@@ -17,7 +17,7 @@ import getSitesItems from 'state/selectors/get-sites-items';
  * @returns {object}       Site object
  */
 export default createSelector(
-	state => {
+	( state ) => {
 		const newestSite = sortBy( Object.values( getSitesItems( state ) ), 'ID' ).pop();
 
 		if ( ! newestSite ) {
@@ -26,5 +26,5 @@ export default createSelector(
 
 		return getSite( state, newestSite.ID );
 	},
-	state => [ getSitesItems( state ), state.currentUser.capabilities ]
+	( state ) => [ getSitesItems( state ), state.currentUser.capabilities ]
 );

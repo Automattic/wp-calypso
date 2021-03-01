@@ -10,12 +10,12 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { getPost } from 'state/posts/selectors';
-import { savePost } from 'state/posts/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { getPost } from 'calypso/state/posts/selectors';
+import { savePost } from 'calypso/state/posts/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 class PostActionsEllipsisMenuPublish extends Component {
 	static propTypes = {

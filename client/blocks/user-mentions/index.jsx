@@ -18,7 +18,7 @@ import addUserMentions from './add';
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
-const withUserMentions = WrappedComponent => {
+const withUserMentions = ( WrappedComponent ) => {
 	class TextInputWrapper extends React.PureComponent {
 		static propTypes = {
 			siteId: PropTypes.number,

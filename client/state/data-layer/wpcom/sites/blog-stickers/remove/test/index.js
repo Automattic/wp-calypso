@@ -7,9 +7,9 @@ import {
 	receiveBlogStickerRemoveError,
 	fromApi,
 } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { addBlogSticker, removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-remove', () => {
 	describe( 'requestBlogStickerRemove', () => {

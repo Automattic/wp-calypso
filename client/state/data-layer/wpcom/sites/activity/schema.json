@@ -23,7 +23,7 @@
 				"prev": { "type": "string" },
 				"orderedItems": {
 					"type": "array",
-					"items": { "$ref": "#/definitions/item" }
+					"items": { "$ref": "#/definitions/activity" }
 				},
 				"totalItems": { "type": "integer" },
 				"type": { "type": "string" }
@@ -31,7 +31,7 @@
 		}
 	},
 	"definitions": {
-		"item": {
+		"activity": {
 			"type": "object",
 			"required": [ "activity_id", "is_rewindable", "name", "summary" ],
 			"properties": {
@@ -97,6 +97,9 @@
 				},
 				"type": { "type": "string" }
 			}
+		},
+		"singleActivityRequest": {
+			"$ref": "#/definitions/activity"
 		}
 	}
 }

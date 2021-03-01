@@ -6,18 +6,19 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get, findLast, findIndex } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getStepUrl } from 'signup/utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
+import { getStepUrl } from 'calypso/signup/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
+import { getABTestVariation } from 'calypso/lib/abtest';
 
 /**
  * Style dependencies
@@ -37,6 +38,7 @@ export class NavigationLink extends Component {
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
+		rel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -56,9 +58,9 @@ export class NavigationLink extends Component {
 		let steps = getFilteredSteps( flowName, signupProgress );
 		steps = steps.slice(
 			0,
-			findIndex( steps, step => step.stepName === stepName )
+			findIndex( steps, ( step ) => step.stepName === stepName )
 		);
-		const previousStep = findLast( steps, step => ! step.wasSkipped );
+		const previousStep = findLast( steps, ( step ) => ! step.wasSkipped );
 
 		return previousStep || { stepName: null };
 	}
@@ -128,11 +130,19 @@ export class NavigationLink extends Component {
 			return null;
 		}
 
-		let backGridicon, forwardGridicon, text;
+		let backGridicon;
+		let forwardGridicon;
+		let text;
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
-			text = labelText ? labelText : translate( 'Back' );
+			if ( labelText ) {
+				text = labelText;
+			} else if ( 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) ) {
+				text = translate( 'Go Back' );
+			} else {
+				text = translate( 'Back' );
+			}
 		}
 
 		if ( this.props.direction === 'forward' ) {
@@ -152,6 +162,7 @@ export class NavigationLink extends Component {
 				className={ buttonClasses }
 				href={ this.getBackUrl() }
 				onClick={ this.handleClick }
+				rel={ this.props.rel }
 			>
 				{ backGridicon }
 				{ text }
@@ -162,7 +173,7 @@ export class NavigationLink extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		signupProgress: getSignupProgress( state ),
 	} ),
 	{ recordTracksEvent, submitSignupStep }

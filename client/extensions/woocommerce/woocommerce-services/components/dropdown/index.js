@@ -7,11 +7,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
-import FormLegend from 'components/forms/form-legend';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormLegend from 'calypso/components/forms/form-legend';
 import FieldError from '../field-error';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 const Dropdown = ( {
 	id,
@@ -24,7 +24,7 @@ const Dropdown = ( {
 	disabled,
 	className,
 } ) => {
-	const onChange = event => updateValue( event.target.value );
+	const onChange = ( event ) => updateValue( event.target.value );
 
 	return (
 		<FormFieldset className={ className }>
@@ -37,7 +37,7 @@ const Dropdown = ( {
 				disabled={ Boolean( disabled ) }
 				isError={ Boolean( error ) }
 			>
-				{ Object.keys( valuesMap ).map( key => {
+				{ Object.keys( valuesMap ).map( ( key ) => {
 					return (
 						<option key={ key } value={ key }>
 							{ valuesMap[ key ] }

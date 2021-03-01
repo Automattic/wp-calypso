@@ -1,0 +1,65 @@
+.domain-upsell__step-secton-wrapper {
+    .domain-upsell {
+        @media screen and ( min-width: 660px ) {
+            margin-top: 38px;
+        }
+        .domain-upsell__card {
+            padding: 0;
+            .form-fieldset {
+                margin-bottom: 0;
+            }
+        }
+        .domain-upsell__domain-radio {
+            box-shadow: 0 0 0 1px #dcdcde, 0 2px 2px rgba( 0, 0, 0, 0.14 );
+            cursor: pointer;
+            margin-bottom: 0;
+            padding: 19px 40px 22px 36px;
+            .form-radio {
+                margin: 5px 0;
+            }
+            .domain-upsell__domain-radio-label {
+                justify-content: space-between;
+                font-size: $font-body;
+            }
+            @media screen and ( min-width: 660px ) {
+                .domain-upsell__domain-radio-label {
+                    display: flex;
+                }
+                .domain-upsell__domain-radio-label-domain-wrapper {
+                    margin-left: 30px;
+                }
+            }
+        }
+        .domain-upsell__placeholder {
+            box-shadow: 0 0 0 1px #dcdcde, 0 2px 2px rgba( 0, 0, 0, 0.14 );
+            margin-bottom: 0;
+            padding: 19px 40px 22px 36px;
+            .domain-upsell__placeholder-animation {
+                animation: loading-fade 1.6s ease-in-out infinite;
+                background-color: var( --color-neutral-10 );
+                color: transparent;
+                min-height: 44px;
+            }
+        }
+        .domain-upsell__buttons {
+            padding: 20px;
+            text-align: center;
+            .button {
+                font-size: $font-body;
+                font-weight: bold;
+                min-width: 340px;
+            }
+        }
+        .domain-upsell__continue-link {
+            padding: 20px;
+            text-align: center;
+            .button-plain {
+                color: var( --color-surface );
+                cursor: pointer;
+            }
+        }
+        .domain-upsell__registration-fee {
+            color: var( --color-neutral-60 );
+        }
+    }
+}

@@ -47,16 +47,16 @@ export default class ViewPostPage extends AsyncBaseContainer {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.contact-form' ) );
 	}
 
-	async paymentButtonDisplayed() {
+	async paymentButtonDisplayed( retries = 3 ) {
+		if ( retries <= 0 ) return false;
 		let paymentButtonFrontEndComponent;
 		try {
 			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
+			return await paymentButtonFrontEndComponent.displayed();
 		} catch ( e ) {
-			this.driver.navigate().refresh();
-			paymentButtonFrontEndComponent = await PaymentButtonFrontEndComponent.Expect( this.driver );
+			await this.driver.navigate().refresh();
+			return await this.paymentButtonDisplayed( retries-- );
 		}
-
-		return await paymentButtonFrontEndComponent.displayed();
 	}
 
 	async clickPaymentButton() {
@@ -85,7 +85,7 @@ export default class ViewPostPage extends AsyncBaseContainer {
 	async imageDisplayed( fileDetails ) {
 		return await this.driver
 			.findElement( By.css( `img[alt='${ fileDetails.imageName }']` ) )
-			.then( imageElement => {
+			.then( ( imageElement ) => {
 				return driverHelper.imageVisible( this.driver, imageElement );
 			} );
 	}

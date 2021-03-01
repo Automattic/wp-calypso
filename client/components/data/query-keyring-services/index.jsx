@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isKeyringServicesFetching } from 'state/sharing/services/selectors';
-import { requestKeyringServices } from 'state/sharing/services/actions';
+import { isKeyringServicesFetching } from 'calypso/state/sharing/services/selectors';
+import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 
 class QueryKeyringServices extends Component {
 	UNSAFE_componentWillMount() {
@@ -30,7 +30,7 @@ QueryKeyringServices.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isRequesting: isKeyringServicesFetching( state ),
 	} ),
 	{ requestKeyringServices }

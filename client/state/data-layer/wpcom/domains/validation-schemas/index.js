@@ -6,13 +6,13 @@ import { get, join, flatMap } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'state/action-types';
-import { addValidationSchemas } from 'state/domains/management/validation-schemas/actions';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'calypso/state/action-types';
+import { addValidationSchemas } from 'calypso/state/domains/management/validation-schemas/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Convert an application level request action for domain contact information
@@ -22,7 +22,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param   {Array<string>} action.tlds the tlds to be fetched from the API
  * @returns {object}                    The HTTP action for the data
  */
-export const fetch = action =>
+export const fetch = ( action ) =>
 	http(
 		{
 			apiVersion: '1',
@@ -50,7 +50,7 @@ export const onSuccess = ( action, schemas ) => addValidationSchemas( schemas );
  */
 export const onError = ( { tlds }, error ) =>
 	composeAnalytics(
-		...flatMap( tlds, tld => [
+		...flatMap( tlds, ( tld ) => [
 			bumpStat( 'form_validation_schema_exceptions', `load_${ tld }` ),
 			recordTracksEvent( 'calypso_domain_contact_validation_schema_load_failure', {
 				tld,

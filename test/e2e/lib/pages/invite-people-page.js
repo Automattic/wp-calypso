@@ -32,7 +32,7 @@ export default class InvitePeoplePage extends AsyncBaseContainer {
 		await DriverHelper.setWhenSettable( this.driver, By.css( '#message' ), message );
 		return await DriverHelper.clickWhenClickable(
 			this.driver,
-			By.css( 'button.button.is-primary:not([disabled])' )
+			By.css( '.invite-people button.button.is-primary:not([disabled])' )
 		);
 	}
 

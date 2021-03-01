@@ -4,19 +4,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { isFrontPage, isPostsPage } from 'state/pages/selectors';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import PostMetadata from 'lib/post-metadata';
-import { getTheme } from 'state/themes/selectors';
-import QueryTheme from 'components/data/query-theme';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
+import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import PostMetadata from 'calypso/lib/post-metadata';
+import { getTheme } from 'calypso/state/themes/selectors';
+import QueryTheme from 'calypso/components/data/query-theme';
 
 /**
  * Style dependencies
@@ -42,6 +41,7 @@ const ICON_SIZE = 12;
 function PageCardInfo( {
 	page,
 	showTimestamp,
+	showPublishedStatus,
 	isFront,
 	isPosts,
 	siteUrl,
@@ -50,34 +50,22 @@ function PageCardInfo( {
 	themeId,
 } ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-
-	const renderTimestamp = function() {
-		if ( page.status === 'future' ) {
-			return (
-				<PostRelativeTimeStatus
-					post={ page }
-					link={ contentLink.contentLinkURL }
-					target={ contentLink.contentLinkTarget }
-					gridiconSize={ ICON_SIZE }
-				/>
-			);
-		}
-
-		return (
-			<span className="page-card-info__item">
-				<Gridicon icon="time" size={ ICON_SIZE } className="page-card-info__item-icon" />
-				<span className="page-card-info__item-text">{ moment( page.modified ).fromNow() }</span>
-			</span>
-		);
-	};
 
 	return (
 		<div className="page-card-info">
 			{ themeId && <QueryTheme siteId="wpcom" themeId={ themeId } /> }
 			{ siteUrl && <div className="page-card-info__site-url">{ siteUrl }</div> }
 			<div>
-				{ showTimestamp && renderTimestamp() }
+				{ showTimestamp && (
+					<PostRelativeTimeStatus
+						showPublishedStatus={ showPublishedStatus }
+						post={ page }
+						link={ contentLink.contentLinkURL }
+						target={ contentLink.contentLinkTarget }
+						gridiconSize={ ICON_SIZE }
+						includeBasicStatus={ true }
+					/>
+				) }
 				{ isFront && (
 					<span className="page-card-info__badge">
 						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__badge-icon" />

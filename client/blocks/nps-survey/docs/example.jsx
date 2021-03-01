@@ -10,6 +10,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import { NpsSurvey } from '../';
 import {
 	isNpsSurveySubmitted,
@@ -19,13 +21,13 @@ import {
 	getNpsSurveyName,
 	getNpsSurveyScore,
 	getNpsSurveyFeedback,
-} from 'state/nps-survey/selectors';
+} from 'calypso/state/nps-survey/selectors';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
 	sendNpsSurveyFeedback,
-} from 'state/nps-survey/actions';
-import { successNotice } from 'state/notices/actions';
+} from 'calypso/state/nps-survey/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 
 class NpsSurveyExample extends PureComponent {
 	state = {
@@ -34,32 +36,32 @@ class NpsSurveyExample extends PureComponent {
 		isBusinessUser: false,
 	};
 
-	handleClose = afterClose => {
+	handleClose = ( afterClose ) => {
 		this.setState( {
 			isClosed: true,
 		} );
 		afterClose();
 	};
 
-	toggleBusinessUser = event => {
+	toggleBusinessUser = ( event ) => {
 		this.setState( { isBusinessUser: event.target.checked } );
 	};
 
-	toggleConciergeSessionAvailability = event => {
+	toggleConciergeSessionAvailability = ( event ) => {
 		this.setState( { hasAvailableConciergeSession: event.target.checked } );
 	};
 
 	renderOptions() {
 		return (
 			<div style={ { marginTop: '10px' } }>
-				<label style={ { display: 'block' } }>
-					<input type="checkbox" onClick={ this.toggleBusinessUser } />
-					The user subscribes the Business plan.
-				</label>
-				<label style={ { display: 'block' } }>
-					<input type="checkbox" onClick={ this.toggleConciergeSessionAvailability } />
-					The user is available for concierge sessions.
-				</label>
+				<FormLabel>
+					<FormInputCheckbox onClick={ this.toggleBusinessUser } />
+					<span>The user subscribes the Business plan.</span>
+				</FormLabel>
+				<FormLabel>
+					<FormInputCheckbox onClick={ this.toggleConciergeSessionAvailability } />
+					<span>The user is available for concierge sessions.</span>
+				</FormLabel>
 			</div>
 		);
 	}
@@ -102,7 +104,7 @@ class NpsSurveyExample extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isSubmitted: isNpsSurveySubmitted( state ),
 		isSubmitFailure: isNpsSurveySubmitFailure( state ),

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { URL as URLString, SiteSlug, SiteId } from 'types';
+import { URL as URLString, SiteSlug, SiteId } from 'calypso/types';
 
 /**
  * Internal Dependencies
@@ -58,9 +58,12 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 
 	// Check last and second-to-last piece for numeric site ID
 	for ( let i = 2; i > 0; i-- ) {
-		const piece = parseInt( pieces[ pieces.length - i ], 10 );
-		if ( Number.isSafeInteger( piece ) ) {
-			return piece;
+		const piece = pieces[ pieces.length - i ];
+		// We can't just do parseInt because some strings look like numbers, eg: '404-hello'
+		const isNumber = /^\d+$/.test( piece );
+		const intPiece = parseInt( piece, 10 );
+		if ( isNumber && Number.isSafeInteger( intPiece ) ) {
+			return intPiece;
 		}
 	}
 
@@ -139,9 +142,12 @@ export function getStatsPathForTab(
 }
 
 export function getMessagePathForJITM( path: URLString, siteFragment?: SiteSlug | SiteId ): string {
-	return sectionify( path, siteFragment )
-		.replace( /^\/+/, '' )
-		.replace( /\//g, '-' );
+	let messagePath = sectionify( path, siteFragment ).replace( /^\/+/, '' );
+
+	// simplify stats paths
+	messagePath = messagePath.replace( /^(stats)\/\w+/, '$1' );
+
+	return messagePath.replace( /\//g, '-' );
 }
 
 // TODO: Add status enum (see `client/my-sites/pages/main.jsx`).

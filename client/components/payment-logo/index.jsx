@@ -16,13 +16,13 @@ import './style.scss';
 /**
  * Image assets
  */
-import creditCardAmexImage from 'assets/images/upgrades/cc-amex.svg';
-import creditCardDinersImage from 'assets/images/upgrades/cc-diners.svg';
-import creditCardDiscoverImage from 'assets/images/upgrades/cc-discover.svg';
-import creditCardJCBImage from 'assets/images/upgrades/cc-jcb.svg';
-import creditCardMasterCardImage from 'assets/images/upgrades/cc-mastercard.svg';
-import creditCardUnionPayImage from 'assets/images/upgrades/cc-unionpay.svg';
-import creditCardVisaImage from 'assets/images/upgrades/cc-visa.svg';
+import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
+import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
+import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
+import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
+import creditCardMasterCardImage from 'calypso/assets/images/upgrades/cc-mastercard.svg';
+import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
+import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
 
 const LOGO_PATHS = {
 	amex: creditCardAmexImage,
@@ -44,13 +44,14 @@ const ALT_TEXT = {
 	discover: 'Discover',
 	eps: 'eps',
 	giropay: 'Giropay',
+	id_wallet: 'OVO',
 	ideal: 'iDEAL',
 	jcb: 'JCB',
 	mastercard: 'Mastercard',
 	netbanking: 'Net Banking',
 	p24: 'Przelewy24',
 	paypal: 'PayPal',
-	placeholder: '',
+	placeholder: 'Payment logo',
 	unionpay: 'UnionPay',
 	visa: 'Visa',
 	wechat: i18n.translate( 'WeChat Pay', {
@@ -67,15 +68,17 @@ class PaymentLogo extends React.Component {
 		type: PropTypes.oneOf( POSSIBLE_TYPES ),
 		altText: PropTypes.string,
 		isCompact: PropTypes.bool,
+		disabled: PropTypes.bool,
 	};
 
 	render() {
-		const { altText, className, isCompact, type } = this.props;
+		const { altText, className, isCompact, type, disabled } = this.props;
 
 		const classes = classNames(
 			'payment-logo',
 			`is-${ type }`,
 			{ 'is-compact': isCompact },
+			{ disabled },
 			className
 		);
 

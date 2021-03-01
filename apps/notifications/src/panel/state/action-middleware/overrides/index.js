@@ -1,6 +1,9 @@
 // freeze the local changes to mitigate races with note updates
 // from the server which occurred before the action
 
+/**
+ * Internal dependencies
+ */
 import * as types from '../../action-types';
 import actions from '../../actions';
 

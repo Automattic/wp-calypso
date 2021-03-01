@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPluginUploadProgress from 'state/selectors/get-plugin-upload-progress';
+import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 
 const siteId = 77203074;
 

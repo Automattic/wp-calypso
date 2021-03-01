@@ -1,10 +1,15 @@
 /**
  * Internal dependencies
  */
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import 'calypso/state/domains/init';
 
-export const recordAddDomainButtonClick = ( domainName, section ) =>
+export const recordAddDomainButtonClick = ( domainName, section, isPremium = false ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -15,6 +20,7 @@ export const recordAddDomainButtonClick = ( domainName, section ) =>
 		recordTracksEvent( 'calypso_domain_search_add_button_click', {
 			domain_name: domainName,
 			section,
+			is_premium: isPremium,
 		} )
 	);
 
@@ -60,12 +66,12 @@ export const recordAddDomainButtonClickInUseYourDomain = ( domainName, section )
 		} )
 	);
 
-export const recordStartTransferClickInThankYou = domainName =>
+export const recordStartTransferClickInThankYou = ( domainName ) =>
 	recordTracksEvent( 'calypso_thank_you_start_transfer', {
 		meta: domainName,
 	} );
 
-export const recordRemoveDomainButtonClick = domainName =>
+export const recordRemoveDomainButtonClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -78,7 +84,7 @@ export const recordRemoveDomainButtonClick = domainName =>
 		} )
 	);
 
-export const recordFormSubmitInMapDomain = searchBoxValue =>
+export const recordFormSubmitInMapDomain = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Submitted Form in Map Domain Step',
@@ -86,7 +92,7 @@ export const recordFormSubmitInMapDomain = searchBoxValue =>
 		searchBoxValue
 	);
 
-export const recordInputFocusInMapDomain = searchBoxValue =>
+export const recordInputFocusInMapDomain = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
 		'Focused On Search Box Input in Map Domain Step',

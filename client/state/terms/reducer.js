@@ -7,6 +7,7 @@ import { mapValues, merge } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	DESERIALIZE,
 	TERM_REMOVE,
@@ -15,9 +16,9 @@ import {
 	TERMS_REQUEST_FAILURE,
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
-import TermQueryManager from 'lib/query-manager/term';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import TermQueryManager from 'calypso/lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
 
@@ -93,14 +94,14 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 			};
 		}
 		case SERIALIZE: {
-			return mapValues( state, taxonomies => {
+			return mapValues( state, ( taxonomies ) => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return { data, options };
 				} );
 			} );
 		}
 		case DESERIALIZE: {
-			return mapValues( state, taxonomies => {
+			return mapValues( state, ( taxonomies ) => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return new TermQueryManager( data, options );
 				} );
@@ -111,7 +112,10 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
 } );
+
+const termsReducer = withStorageKey( 'terms', combinedReducer );
+export default termsReducer;

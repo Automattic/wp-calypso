@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import Item from './item';
 
 const SIDE_PADDING = 50;
@@ -81,7 +81,7 @@ export default class Navbar extends Component {
 	};
 
 	toggleList = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			collapsed: ! state.collapsed,
 		} ) );
 	};

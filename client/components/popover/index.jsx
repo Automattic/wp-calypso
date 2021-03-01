@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import debugFactory from 'debug';
 import classNames from 'classnames';
-import { defer, noop } from 'lodash';
+import { defer } from 'lodash';
 import { useRtl } from 'i18n-calypso';
 
 /**
@@ -31,6 +31,8 @@ import './style.scss';
  */
 const debug = debugFactory( 'calypso:popover' );
 
+const noop = () => {};
+
 class PopoverInner extends Component {
 	static defaultProps = {
 		autoPosition: true,
@@ -38,8 +40,11 @@ class PopoverInner extends Component {
 		className: '',
 		closeOnEsc: true,
 		isRtl: false,
+		isFocusEnabled: true,
 		position: 'top',
 		onClose: noop,
+		onMouseEnter: noop,
+		onMouseLeave: noop,
 	};
 
 	/**
@@ -127,7 +132,7 @@ class PopoverInner extends Component {
 		}
 	}
 
-	onKeydown = event => {
+	onKeydown = ( event ) => {
 		if ( event.keyCode === 27 ) {
 			const domContext = ReactDom.findDOMNode( this.props.context );
 			if ( domContext ) {
@@ -153,7 +158,7 @@ class PopoverInner extends Component {
 		document.removeEventListener( 'click', this.onClickout, true );
 	}
 
-	onClickout = event => {
+	onClickout = ( event ) => {
 		const popoverContext = this.popoverInnerNodeRef.current;
 		let shouldClose = popoverContext && ! popoverContext.contains( event.target );
 
@@ -189,7 +194,9 @@ class PopoverInner extends Component {
 
 	setPositionAndFocus() {
 		this.setPosition();
-		this.focusPopover();
+		if ( this.props.isFocusEnabled ) {
+			this.focusPopover();
+		}
 	}
 
 	focusPopover() {
@@ -322,6 +329,18 @@ class PopoverInner extends Component {
 		this.props.onClose( wasCanceled );
 	}
 
+	handleOnMouseEnter = () => {
+		const { onMouseEnter } = this.props;
+
+		onMouseEnter?.();
+	};
+
+	handleOnMouseLeave = () => {
+		const { onMouseLeave } = this.props;
+
+		onMouseLeave?.();
+	};
+
 	render() {
 		if ( ! this.props.context ) {
 			debug( 'No `context` to tie. return no render' );
@@ -339,6 +358,8 @@ class PopoverInner extends Component {
 				tabIndex="-1"
 				style={ this.getStylePosition() }
 				className={ classes }
+				onMouseEnter={ this.handleOnMouseEnter }
+				onMouseLeave={ this.handleOnMouseLeave }
 			>
 				<div className="popover__arrow" />
 				<div ref={ this.popoverInnerNodeRef } className="popover__inner">
@@ -412,6 +433,7 @@ Popover.propTypes = {
 	context: PropTypeElement,
 	ignoreContext: PropTypeElement,
 	isVisible: PropTypes.bool,
+	isFocusEnabled: PropTypes.bool,
 	position: PropTypes.oneOf( [
 		'top',
 		'top right',

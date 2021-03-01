@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import languageNames from './language-names/reducer';
 import localeSuggestions from './locale-suggestions/reducer';
 

@@ -21,7 +21,7 @@ const AddressSummary = ( {
 	}
 	const countryStr = countryNames[ country ] || country;
 
-	const getValue = fieldName => {
+	const getValue = ( fieldName ) => {
 		const rawValue = values[ fieldName ];
 		if ( ! rawValue ) {
 			return '';

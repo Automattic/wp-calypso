@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestMedia, requestMediaItem } from 'state/media/actions';
+import { requestMedia, requestMediaItem } from 'calypso/state/media/actions';
 
 /**
  * Module variables

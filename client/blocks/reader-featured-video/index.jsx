@@ -12,15 +12,15 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import EmbedHelper from 'reader/embed-helper';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
-import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
+import EmbedHelper from 'calypso/reader/embed-helper';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
+import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
 
 /**
  * Image dependencies
  */
-import playIconImage from 'assets/images/reader/play-icon.png';
+import playIconImage from 'calypso/assets/images/reader/play-icon.png';
 
 /**
  * Style dependencies
@@ -47,7 +47,7 @@ class ReaderFeaturedVideo extends React.Component {
 		className: '',
 	};
 
-	setVideoSizingStrategy = videoEmbed => {
+	setVideoSizingStrategy = ( videoEmbed ) => {
 		let sizingFunction = constant( {} );
 		if ( videoEmbed ) {
 			const maxWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
@@ -69,14 +69,14 @@ class ReaderFeaturedVideo extends React.Component {
 
 	throttledUpdateVideoSize = throttle( this.updateVideoSize, 100 );
 
-	handleThumbnailClick = e => {
+	handleThumbnailClick = ( e ) => {
 		if ( this.props.allowPlaying ) {
 			e.preventDefault();
 			this.props.onThumbnailClick();
 		}
 	};
 
-	setVideoEmbedRef = c => {
+	setVideoEmbedRef = ( c ) => {
 		this.videoEmbedRef = c;
 		this.setVideoSizingStrategy( this.props.videoEmbed );
 	};

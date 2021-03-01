@@ -56,7 +56,7 @@ const applyInboundProcessor = ( inboundData, nextProcessor ) =>
 const applyOutboundProcessor = ( outboundData, nextProcessor ) =>
 	outboundData.nextRequest !== null ? nextProcessor( outboundData ) : outboundData;
 
-export const processInboundChain = chain => (
+export const processInboundChain = ( chain ) => (
 	originalRequest,
 	store,
 	originalData,
@@ -79,7 +79,7 @@ export const processInboundChain = chain => (
 		[ 'failures', 'nextData', 'nextError', 'nextHeaders', 'successes', 'shouldAbort' ]
 	);
 
-export const processOutboundChain = chain => ( originalRequest, store ) =>
+export const processOutboundChain = ( chain ) => ( originalRequest, store ) =>
 	chain.reduce( applyOutboundProcessor, { originalRequest, store, nextRequest: originalRequest } )
 		.nextRequest;
 

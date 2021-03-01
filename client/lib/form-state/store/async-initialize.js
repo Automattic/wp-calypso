@@ -9,7 +9,7 @@ const { createInitialFormState, createNullFieldValues, initializeFields } = Form
 function asyncInitialize( { fieldNames, loadFunction } ) {
 	return {
 		initialize() {
-			return dispatch => {
+			return ( dispatch ) => {
 				dispatch( { type: 'INITIALIZE_START' } );
 
 				loadFunction( ( error, fieldValues ) => {

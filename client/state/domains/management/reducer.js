@@ -11,7 +11,7 @@ import {
 	keyedReducer,
 	withSchemaValidation,
 	withoutPersistence,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import { validationSchemas } from './validation-schemas/reducer';
 import { domainWhoisSchema } from './schema';
 import {
@@ -28,7 +28,7 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { whoisType } from '../../../lib/domains/whois/constants';
 
 /**
@@ -109,7 +109,7 @@ export const isSaving = withoutPersistence( ( state = {}, action ) => {
 
 function mergeDomainRegistrantContactDetails( domainState, registrantContactDetails ) {
 	return isArray( domainState )
-		? domainState.map( item => {
+		? domainState.map( ( item ) => {
 				if ( item.type === whoisType.REGISTRANT ) {
 					return {
 						...item,
@@ -158,9 +158,12 @@ export const items = withSchemaValidation( domainWhoisSchema, ( state = {}, acti
 		}
 		case DOMAIN_MANAGEMENT_WHOIS_UPDATE: {
 			const { domain, whoisData } = action;
-			const domainState = get( state, [ `${ domain }` ], {} );
+			const domainState = state[ domain ];
 			return merge( {}, state, {
-				[ domain ]: mergeDomainRegistrantContactDetails( domainState, whoisData ),
+				[ domain ]: mergeDomainRegistrantContactDetails(
+					domainState !== undefined ? domainState : {},
+					whoisData
+				),
 			} );
 		}
 	}

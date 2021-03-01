@@ -1,15 +1,14 @@
 /**
  * External dependencies
  */
-
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import InfoPopover from 'components/info-popover';
-import { useMobileBreakpoint } from 'lib/viewport/react';
+import InfoPopover from 'calypso/components/info-popover';
 
 export default function PlanFeaturesItem( {
 	children,

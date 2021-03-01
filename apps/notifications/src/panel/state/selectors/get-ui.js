@@ -1,3 +1,3 @@
-export const getUI = state => state.ui;
+export const getUI = ( state ) => state.ui;
 
 export default getUI;

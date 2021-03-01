@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { requestNotificationSettings, updateSettings, handleError } from '../';
-import { NOTIFICATION_SETTINGS_UPDATE, NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { NOTIFICATION_SETTINGS_UPDATE, NOTICE_CREATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'requestNotificationSettings()', () => {
 	test( 'should return an HTTP action to fetch the user notification settings', () => {

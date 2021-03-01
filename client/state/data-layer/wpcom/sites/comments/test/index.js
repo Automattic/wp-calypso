@@ -15,17 +15,17 @@ import {
 	receiveCommentError,
 	receiveCommentSuccess,
 } from '../';
-import { COMMENTS_EDIT, NOTICE_REMOVE, COMMENTS_RECEIVE } from 'state/action-types';
+import { COMMENTS_EDIT, NOTICE_REMOVE, COMMENTS_RECEIVE } from 'calypso/state/action-types';
 import {
 	requestComment as requestCommentAction,
 	editComment as editCommentAction,
 	receiveComments as receiveCommentsAction,
 	receiveCommentsError as receiveCommentsErrorAction,
-} from 'state/comments/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice } from 'state/notices/actions';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+} from 'calypso/state/comments/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const query = {
 	siteId: 1337,

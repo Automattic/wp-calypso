@@ -11,21 +11,21 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deserialize } from 'lib/media-serialization';
-import MediaStore from 'lib/media/store';
-import { url as mediaUrl } from 'lib/media/utils';
+import { deserialize } from 'calypso/lib/media-serialization';
+import { url as mediaUrl } from 'calypso/lib/media/utils';
 import { Dialog } from '@automattic/components';
-import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import PostSelector from 'my-sites/post-selector';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSitePosts } from 'state/posts/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
-import Gridicon from 'components/gridicon';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import PostSelector from 'calypso/my-sites/post-selector';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSitePosts } from 'calypso/state/posts/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
+import Gridicon from 'calypso/components/gridicon';
+import { getMediaItem } from 'calypso/state/media/thunks';
 
 /**
  * Module variables
@@ -116,7 +116,7 @@ class LinkDialog extends React.Component {
 		this.closeDialog();
 	};
 
-	hasSelectedText = linkNode => {
+	hasSelectedText = ( linkNode ) => {
 		const { editor } = this.props;
 		const html = editor.selection.getContent();
 		let nodes;
@@ -162,7 +162,7 @@ class LinkDialog extends React.Component {
 			parsedImage = deserialize( selectedNode );
 			if ( this.props.site && parsedImage.media.ID ) {
 				knownImage =
-					MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
+					this.props.getMediaItem( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
 				return mediaUrl( knownImage, {
 					size: 'full',
 				} );
@@ -210,22 +210,22 @@ class LinkDialog extends React.Component {
 		this.props.onClose();
 	};
 
-	setUrl = event => {
+	setUrl = ( event ) => {
 		this.setState( { url: event.target.value } );
 	};
 
-	setLinkText = event => {
+	setLinkText = ( event ) => {
 		this.setState( {
 			linkText: event.target.value,
 			isUserDefinedLinkText: true,
 		} );
 	};
 
-	setNewWindow = event => {
+	setNewWindow = ( event ) => {
 		this.setState( { newWindow: event.target.checked } );
 	};
 
-	onInputKeyDown = event => {
+	onInputKeyDown = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 			this.updateEditor();
@@ -267,7 +267,7 @@ class LinkDialog extends React.Component {
 		return buttons;
 	};
 
-	setExistingContent = post => {
+	setExistingContent = ( post ) => {
 		const state = { url: post.URL };
 		const shouldSetLinkText =
 			! this.state.isUserDefinedLinkText &&
@@ -364,12 +364,12 @@ class LinkDialog extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		return {
 			site: selectedSite,
 			sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null,
 		};
 	},
-	{ recordEditorEvent, recordEditorStat }
+	{ recordEditorEvent, recordEditorStat, getMediaItem }
 )( localize( LinkDialog ) );

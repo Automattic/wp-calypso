@@ -15,21 +15,24 @@ const by = webdriver.By;
 export default class CancelDomainPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, by.css( '.confirm-cancel-domain.main' ) );
-		this.confirmButtonSelector = by.css( 'button[type="submit"]' );
+		this.confirmButtonSelector = by.css( '.confirm-cancel-domain .button.is-primary' );
 	}
 
 	async completeSurveyAndConfirm() {
 		await this.driver.sleep( 2000 ); // since this is in after block, wait before open survey
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.select-dropdown__header' ) );
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.select-dropdown__item' ) );
-		await driverHelper.setCheckbox(
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '.confirm-cancel-domain__reasons-dropdown' )
+		);
+		await driverHelper.clickWhenClickable( this.driver, by.css( 'option[value="other"]' ) );
+		await driverHelper.setWhenSettable(
+			this.driver,
+			by.css( '.confirm-cancel-domain__reason-details' ),
+			'e2e testing'
+		);
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( '.confirm-cancel-domain__confirm-container input[type="checkbox"]' )
-		);
-		await driverHelper.verifyTextPresent(
-			this.driver,
-			this.confirmButtonSelector,
-			'Cancel Anyway'
 		);
 		await driverHelper.clickWhenClickable( this.driver, this.confirmButtonSelector );
 		const noticesComponent = await NoticesComponent.Expect( this.driver );

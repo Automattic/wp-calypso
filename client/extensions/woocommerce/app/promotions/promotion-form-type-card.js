@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import SectionHeader from 'calypso/components/section-header';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 function getExplanation( promotionType, translate ) {
 	switch ( promotionType ) {
@@ -34,7 +34,7 @@ const PromotionFormTypeCard = ( { siteId, promotion, editPromotion, translate } 
 	const productTypesDisabled = Boolean( promotion.couponId );
 	const couponTypesDisabled = Boolean( promotion.productId );
 
-	const onTypeSelect = e => {
+	const onTypeSelect = ( e ) => {
 		const type = e.target.value;
 		editPromotion( siteId, promotion, { type } );
 	};

@@ -4,6 +4,25 @@
 	padding-top: 5px;
 }
 
+.reader-feed-header__seen-button {
+	cursor: pointer;
+	color: var( --color-text-subtle );
+
+	svg {
+		display: inline-block;
+		top: 4px;
+		margin-right: 5px;
+		width: 18px;
+		position: relative;
+		color: var( --color-neutral-20 );
+	}
+
+	&:disabled {
+		cursor: text;
+		opacity: 0.5;
+	}
+}
+
 .reader-feed-header__site-icon {
 	align-self: center;
 	padding-bottom: 20px;
@@ -25,7 +44,7 @@
 .reader-feed-header__site .reader-feed-header__site-title {
 	align-self: stretch;
 	font-family: $serif;
-	font-size: 21px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	max-height: 16px * 4;
 	overflow: hidden;
@@ -44,7 +63,7 @@
 		top: auto;
 	}
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		max-height: 16px * 5.9;
 	}
 }
@@ -55,7 +74,7 @@
 	position: relative;
 	z-index: z-index( 'root', '.reader-feed-header' );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin: 20px 13px;
 	}
 
@@ -65,7 +84,7 @@
 		height: 0;
 		margin-left: auto;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			margin-left: 0;
 		}
 	}
@@ -80,17 +99,17 @@
 			position: relative;
 				top: -4px;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			margin-bottom: 10px;
 		}
 	}
 
 	.reader-feed-header__follow-count {
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin-right: 15px;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			display: none;
 		}
 	}
@@ -105,11 +124,11 @@
 
 		.follow-button__label {
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: inline-block;
 			}
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				display: none;
 			}
 		}
@@ -128,7 +147,7 @@
 
 	.reader-feed-header__details {
 		align-self: stretch;
-		font-size: 14px;
+		font-size: $font-body-small;
 		overflow: hidden;
 		text-align: center;
 		position: relative;
@@ -137,7 +156,7 @@
 			display: block;
 			position: relative;
 
-			@include breakpoint ( '<660px' ) {
+			@include breakpoint-deprecated ( '<660px' ) {
 				max-height: 16px * 4;
 				overflow: hidden;
 
@@ -164,7 +183,7 @@
 	box-shadow: none;
 	padding: 0;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		box-sizing: border-box;
 		padding: 16px;
 	}
@@ -177,18 +196,18 @@
 
 .reader-feed-header__email-settings .reader-site-notification-settings .gridicons-cog {
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		left: -4px;
 	}
 }
 
 .reader-feed-header__email-settings .reader-site-notification-settings__button-label {
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: inline;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }

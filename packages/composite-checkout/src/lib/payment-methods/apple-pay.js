@@ -3,116 +3,35 @@
  */
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import debugFactory from 'debug';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
-import { useLineItems, useDispatch, useMessages, useSelect } from '../../public-api';
-import { useLocalize } from '../../lib/localize';
+import { useLineItems, useEvents } from '../../public-api';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
-import { useFormStatus } from '../form-status';
-import { useStripe, StripeHookProvider } from '../stripe';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
-export function createApplePayMethod( {
-	registerStore,
-	fetchStripeConfiguration,
-	submitTransaction,
-	getCountry,
-	getPostalCode,
-} ) {
-	const actions = {
-		setStripeComplete( payload ) {
-			debug( 'stripe transaction is successful' );
-			return { type: 'STRIPE_TRANSACTION_END', payload };
-		},
-		resetTransaction() {
-			debug( 'resetting transaction' );
-			return { type: 'STRIPE_TRANSACTION_RESET' };
-		},
-		*beginStripeTransaction( payload ) {
-			let stripeResponse;
-			try {
-				stripeResponse = yield {
-					type: 'STRIPE_TRANSACTION_BEGIN',
-					payload: {
-						...payload,
-						country: getCountry(),
-						postalCode: getPostalCode(),
-					},
-				};
-				debug( 'stripe transaction complete', stripeResponse );
-			} catch ( error ) {
-				debug( 'stripe transaction had an error', error );
-				return { type: 'STRIPE_TRANSACTION_ERROR', payload: error };
-			}
-			debug( 'stripe transaction is successful' );
-			return { type: 'STRIPE_TRANSACTION_END', payload: stripeResponse };
-		},
-	};
-
-	const selectors = {
-		getTransactionError( state ) {
-			return state.transactionError;
-		},
-		getTransactionStatus( state ) {
-			return state.transactionStatus;
-		},
-	};
-
-	registerStore( 'apple-pay', {
-		reducer( state = {}, action ) {
-			switch ( action.type ) {
-				case 'STRIPE_TRANSACTION_END':
-					return {
-						...state,
-						transactionStatus: 'complete',
-					};
-				case 'STRIPE_TRANSACTION_ERROR':
-					return {
-						...state,
-						transactionStatus: 'error',
-						transactionError: action.payload,
-					};
-				case 'STRIPE_TRANSACTION_RESET':
-					return {
-						...state,
-						transactionStatus: null,
-					};
-			}
-			return state;
-		},
-		actions,
-		selectors,
-		controls: {
-			STRIPE_TRANSACTION_BEGIN( action ) {
-				return submitTransaction( action.payload );
-			},
-		},
-	} );
-
+export function createApplePayMethod( stripe, stripeConfiguration ) {
 	return {
 		id: 'apple-pay',
 		label: <ApplePayLabel />,
-		submitButton: <ApplePaySubmitButton />,
-		inactiveContent: <ApplePaySummary />,
-		checkoutWrapper: children => (
-			<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-				{ children }
-			</StripeHookProvider>
+		submitButton: (
+			<ApplePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
-		getAriaLabel: localize => localize( 'Apple Pay' ),
+		inactiveContent: <ApplePaySummary />,
+		getAriaLabel: ( __ ) => __( 'Apple Pay' ),
 	};
 }
 
 export function ApplePayLabel() {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 
 	return (
 		<React.Fragment>
-			<span>{ localize( 'Apple Pay' ) }</span>
+			<span>{ __( 'Apple Pay' ) }</span>
 			<PaymentMethodLogos className="apple-pay__logo payment-logos">
 				<ApplePayIcon fill="black" />
 			</PaymentMethodLogos>
@@ -120,77 +39,41 @@ export function ApplePayLabel() {
 	);
 }
 
-export function ApplePaySubmitButton( { disabled } ) {
-	const localize = useLocalize();
-	const paymentRequestOptions = usePaymentRequestOptions();
+export function ApplePaySubmitButton( { disabled, onClick, stripe, stripeConfiguration } ) {
+	const { __ } = useI18n();
+	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
-	const { stripe, stripeConfiguration } = useStripe();
-	const { setFormSubmitting, setFormReady, setFormComplete } = useFormStatus();
-	const { showErrorMessage } = useMessages();
-	const transactionStatus = useSelect( select => select( 'apple-pay' ).getTransactionStatus() );
-	const transactionError = useSelect( select => select( 'apple-pay' ).getTransactionError() );
-	const { beginStripeTransaction, resetTransaction } = useDispatch( 'apple-pay' );
+	const onEvent = useEvents();
 	const onSubmit = useCallback(
-		( { name, paymentMethodToken } ) =>
-			submitStripePayment( {
-				name,
+		( { name, paymentMethodToken } ) => {
+			debug( 'submitting stripe payment with key', paymentMethodToken );
+			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
+			onClick( 'apple-pay', {
+				stripe,
 				paymentMethodToken,
+				name,
 				items,
 				total,
-				stripe,
 				stripeConfiguration,
-				showErrorMessage,
-				beginStripeTransaction,
-				setFormSubmitting,
-				resetTransaction,
-			} ),
-		[
-			beginStripeTransaction,
-			items,
-			total,
-			stripe,
-			stripeConfiguration,
-			showErrorMessage,
-			setFormSubmitting,
-			resetTransaction,
-		]
+			} );
+		},
+		[ onClick, onEvent, items, total, stripe, stripeConfiguration ]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
 		paymentRequestOptions,
 		onSubmit,
+		stripe,
 	} );
 	debug( 'apple-pay button isLoading', isLoading );
 
-	useEffect( () => {
-		if ( transactionStatus === 'error' ) {
-			debug( 'showing error', transactionError );
-			showErrorMessage(
-				transactionError || localize( 'An error occurred during the transaction' )
-			);
-			resetTransaction();
-			setFormReady();
-		}
-		if ( transactionStatus === 'complete' ) {
-			debug( 'marking complete' );
-			setFormComplete();
-		}
-	}, [
-		resetTransaction,
-		setFormReady,
-		setFormComplete,
-		showErrorMessage,
-		transactionStatus,
-		transactionError,
-		localize,
-	] );
-
 	if ( ! isLoading && ! canMakePayment ) {
+		onEvent( { type: 'APPLE_PAY_LOADING_ERROR', payload: 'This payment type is not supported' } );
 		return (
 			<PaymentRequestButton
 				paymentRequest={ paymentRequest }
 				paymentType="apple-pay"
 				disabled
-				disabledReason={ localize( 'This payment type is not supported' ) }
+				disabledReason={ __( 'This payment type is not supported' ) }
 			/>
 		);
 	}
@@ -205,8 +88,8 @@ export function ApplePaySubmitButton( { disabled } ) {
 }
 
 export function ApplePaySummary() {
-	const localize = useLocalize();
-	return <React.Fragment>{ localize( 'Apple Pay' ) }</React.Fragment>;
+	const { __ } = useI18n();
+	return <React.Fragment>{ __( 'Apple Pay' ) }</React.Fragment>;
 }
 
 function ApplePayIcon( { fill, className } ) {
@@ -251,35 +134,35 @@ const PAYMENT_REQUEST_OPTIONS = {
 	requestShipping: false,
 };
 
-function usePaymentRequestOptions() {
-	const { stripeConfiguration } = useStripe();
+function usePaymentRequestOptions( stripeConfiguration ) {
 	const [ items, total ] = useLineItems();
-	const countryCode = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
+	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
 	const currency = items.reduce(
 		( firstCurrency, item ) => firstCurrency || item.amount.currency,
 		null
 	);
-	const paymentRequestOptions = useMemo(
-		() => ( {
-			country: countryCode,
-			currency: currency && currency.toLowerCase(),
-			displayItems: getDisplayItemsForLineItems( items ),
+	const paymentRequestOptions = useMemo( () => {
+		if ( ! currency || ! total.amount.value ) {
+			return null;
+		}
+		return {
+			country,
+			currency: currency?.toLowerCase(),
 			total: getPaymentRequestTotalFromTotal( total ),
+			displayItems: getDisplayItemsForLineItems( items ),
 			...PAYMENT_REQUEST_OPTIONS,
-		} ),
-		[ countryCode, currency, items, total ]
-	);
+		};
+	}, [ country, currency, items, total ] );
 	return paymentRequestOptions;
 }
 
-function useStripePaymentRequest( { paymentRequestOptions, onSubmit } ) {
-	const { stripe } = useStripe();
+function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) {
 	const [ canMakePayment, setCanMakePayment ] = useState( 'loading' );
 	const [ paymentRequest, setPaymentRequest ] = useState();
 
 	// We have to memoize this to prevent re-creating the paymentRequest
 	const callback = useCallback(
-		paymentMethodResponse => {
+		( paymentMethodResponse ) => {
 			completePaymentMethodTransaction( {
 				onSubmit,
 				...paymentMethodResponse,
@@ -290,11 +173,11 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit } ) {
 
 	useEffect( () => {
 		let isSubscribed = true;
-		if ( ! stripe ) {
+		if ( ! stripe || ! paymentRequestOptions ) {
 			return;
 		}
 		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( result => {
+		request.canMakePayment().then( ( result ) => {
 			debug( 'canMakePayment updating to', result );
 			isSubscribed && setCanMakePayment( !! result?.applePay );
 		} );
@@ -330,38 +213,22 @@ function completePaymentMethodTransaction( { onSubmit, complete, paymentMethod, 
 }
 
 function getProcessorCountryFromStripeConfiguration( stripeConfiguration ) {
-	return stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
-}
+	let countryCode = 'US';
 
-async function submitStripePayment( {
-	name,
-	paymentMethodToken,
-	items,
-	total,
-	stripe,
-	stripeConfiguration,
-	showErrorMessage,
-	beginStripeTransaction,
-	setFormSubmitting,
-	setFormReady,
-	resetTransaction,
-} ) {
-	debug( 'submitting stripe payment with key', paymentMethodToken );
-	try {
-		setFormSubmitting();
-		beginStripeTransaction( {
-			stripe,
-			paymentMethodToken,
-			name,
-			items,
-			total,
-			stripeConfiguration,
-		} );
-	} catch ( error ) {
-		resetTransaction();
-		setFormReady();
-		debug( 'showing error for submit', error );
-		showErrorMessage( error );
-		return;
+	if ( stripeConfiguration ) {
+		switch ( stripeConfiguration.processor_id ) {
+			case 'stripe_ie':
+				countryCode = 'IE';
+				break;
+			case 'stripe_au':
+				countryCode = 'AU';
+				break;
+			case 'stripe_ca':
+				countryCode = 'CA';
+				break;
+			default:
+				break;
+		}
 	}
+	return countryCode;
 }

@@ -9,13 +9,13 @@ import { get, unionBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPluginsWithUpdates } from 'state/plugins/installed/selectors';
-import { isJetpackSiteSecondaryNetworkSite } from 'state/sites/selectors';
-import { requestSiteAlerts } from 'state/data-getters';
+import { getPluginsWithUpdates } from 'calypso/state/plugins/installed/selectors';
+import { isJetpackSiteSecondaryNetworkSite } from 'calypso/state/sites/selectors';
+import { requestSiteAlerts } from 'calypso/state/data-getters';
 
 const emptyList = [];
 
-export default WrappedComponent => {
+export default ( WrappedComponent ) => {
 	class ToUpdate extends Component {
 		static propTypes = {
 			siteId: PropTypes.number,

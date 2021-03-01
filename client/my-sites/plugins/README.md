@@ -1,7 +1,6 @@
-Plugins
-=======
+# Plugins
 
-These components handle the `\plugins` section of Calypso.  The plugins section supports a variety of routes:
+These components handle the `\plugins` section of Calypso. The plugins section supports a variety of routes:
 
 ```
 /plugins
@@ -15,7 +14,6 @@ The `Plugins` component renders the list of plugins (all the plugins installed o
 
 The `Plugin` component renders the site description and a list of `PluginSite` components sites, one `PluginSite` per site where the plugin is installed, with actions to update and activate/deactivate the plugin on that particular site.
 
-Plugins Controller
-==================
+## Plugins Controller
 
 Right now, `controller.js` works as the controller for all the plugin-related view. In the future, it would be nice to have it a hub to redirect to single more-specific controllers associated to single views.

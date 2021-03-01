@@ -7,7 +7,7 @@ import { get, find, isEqual, isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getProduct } from 'woocommerce/state/sites/products/selectors';
 
 export function getAllProductEdits( state, siteId ) {
@@ -27,7 +27,7 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
 	const bucket = isObject( productId ) ? 'creates' : 'updates';
 	const array = get( edits, bucket, [] );
 
-	return find( array, p => isEqual( productId, p.id ) );
+	return find( array, ( p ) => isEqual( productId, p.id ) );
 }
 
 /**

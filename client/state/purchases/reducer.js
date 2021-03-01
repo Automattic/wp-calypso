@@ -6,7 +6,8 @@ import { find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -17,7 +18,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Constants
@@ -42,7 +43,7 @@ const initialState = {
 function overwriteExistingPurchases( existingPurchases, newPurchases ) {
 	let purchases = newPurchases;
 
-	existingPurchases.forEach( purchase => {
+	existingPurchases.forEach( ( purchase ) => {
 		if ( ! find( purchases, { ID: purchase.ID } ) ) {
 			purchases = purchases.concat( purchase );
 		}
@@ -61,12 +62,13 @@ function overwriteExistingPurchases( existingPurchases, newPurchases ) {
  */
 function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
 	return existingPurchases.filter(
-		purchase => ! matches( predicate )( purchase ) || find( newPurchases, { ID: purchase.ID } )
+		( purchase ) => ! matches( predicate )( purchase ) || find( newPurchases, { ID: purchase.ID } )
 	);
 }
 
 function updatePurchases( existingPurchases, action ) {
-	let purchases, predicate;
+	let purchases;
+	let predicate;
 
 	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
 		predicate = { blog_id: String( action.siteId ) };
@@ -85,9 +87,7 @@ function updatePurchases( existingPurchases, action ) {
 	return purchases;
 }
 
-const assignError = ( state, action ) => ( { ...state, error: action.error } );
-
-export default withoutPersistence( ( state = initialState, action ) => {
+const reducer = withoutPersistence( ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case PURCHASES_REMOVE:
 			return {
@@ -127,12 +127,30 @@ export default withoutPersistence( ( state = initialState, action ) => {
 				hasLoadedUserPurchasesFromServer: true,
 			};
 		case PURCHASE_REMOVE_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			};
 		case PURCHASES_SITE_FETCH_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedSitePurchasesFromServer: true,
+				isFetchingSitePurchases: false,
+			};
 		case PURCHASES_USER_FETCH_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedUserPurchasesFromServer: true,
+				isFetchingUserPurchases: false,
+			};
 	}
 
 	return state;
 } );
+
+const purchasesReducer = withStorageKey( 'purchases', reducer );
+export default purchasesReducer;

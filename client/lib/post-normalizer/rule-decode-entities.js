@@ -8,13 +8,13 @@ import { forOwn } from 'lodash';
  * Internal Dependencies
  */
 
-import { decodeEntities as decode } from 'lib/formatting';
-import safeImageURL from 'lib/safe-image-url';
+import { decodeEntities as decode } from 'calypso/lib/formatting';
+import safeImageURL from 'calypso/lib/safe-image-url';
 
 const DEFAULT_FIELDS = [ 'excerpt', 'title', 'site_name' ];
 
 export default function decodeEntities( post, fields = DEFAULT_FIELDS ) {
-	fields.forEach( function( prop ) {
+	fields.forEach( function ( prop ) {
 		if ( post[ prop ] ) {
 			post[ prop ] = decode( post[ prop ] );
 		}
@@ -38,7 +38,7 @@ export default function decodeEntities( post, fields = DEFAULT_FIELDS ) {
 
 	if ( post.tags ) {
 		// tags is an object
-		forOwn( post.tags, function( tag ) {
+		forOwn( post.tags, function ( tag ) {
 			tag.name = decode( tag.name );
 		} );
 	}

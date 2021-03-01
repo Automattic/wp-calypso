@@ -4,7 +4,11 @@
 import debugFactory from 'debug';
 import { isUndefined, mapValues, omitBy } from 'lodash';
 import { stringify } from 'qs';
-import warn from 'lib/warn';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
@@ -99,7 +103,7 @@ export function handleProductUpdate( { dispatch }, action ) {
 		return;
 	}
 
-	const data = mapValues( product, value => {
+	const data = mapValues( product, ( value ) => {
 		// JSON doesn't allow undefined,
 		// so change it to empty string for properties to be removed.
 		if ( isUndefined( value ) ) {
@@ -121,7 +125,7 @@ export function handleProductRequest( { dispatch }, action ) {
 
 export function productsRequest( action ) {
 	const { siteId, params } = action;
-	const queryString = stringify( omitBy( params, val => '' === val ) );
+	const queryString = stringify( omitBy( params, ( val ) => '' === val ) );
 
 	return request( siteId, action ).getWithHeaders( `products?${ queryString }` );
 }
@@ -136,8 +140,9 @@ export function receivedProducts( { dispatch }, action, { data } ) {
 
 	if ( undefined !== params.offset ) {
 		debug(
-			`Products ${ params.offset + 1 }-${ params.offset +
-				body.length } out of ${ totalProducts } received.`
+			`Products ${ params.offset + 1 }-${
+				params.offset + body.length
+			} out of ${ totalProducts } received.`
 		);
 
 		const remainder = totalProducts - params.offset - body.length;

@@ -30,26 +30,26 @@ export default class CustomizerPage extends AsyncBaseContainer {
 		await self.driver
 			.wait( until.elementLocated( this.metaiFrameElementSelector ), this.explicitWaitMS * 2 )
 			.then(
-				function() {},
-				async function( error ) {
+				function () {},
+				async function ( error ) {
 					const message = `Found issue on customizer page: '${ error }' - Clicking try again button now.`;
 					slackNotifier.warn( message );
 					await self.driver
-						.wait( async function() {
+						.wait( async function () {
 							return await driverHelper.isElementPresent(
 								self.driver,
 								self.reloadCustomizerSelector
 							);
 						}, self.explicitWaitMS )
 						.then(
-							async function() {
+							async function () {
 								await driverHelper.clickWhenClickable(
 									self.driver,
 									self.reloadCustomizerSelector,
 									self.explicitWaitMS
 								);
 							},
-							function( err ) {
+							function ( err ) {
 								console.log(
 									`Could not locate reload button to click in the customizer: '${ err }'`
 								);

@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import isPluginActive from 'state/selectors/is-plugin-active';
+import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 
 const helloDolly = {
 	id: 'hello-dolly/hello',
@@ -15,7 +15,7 @@ const helloDolly = {
 	active: false,
 };
 
-export const jetpack = {
+const jetpack = {
 	id: 'jetpack/jetpack',
 	slug: 'jetpack',
 	active: true,

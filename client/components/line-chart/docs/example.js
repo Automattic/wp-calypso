@@ -9,7 +9,10 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import LineChart from 'components/line-chart';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import LineChart from 'calypso/components/line-chart';
 
 const NUM_DATA_SERIES = 3;
 
@@ -36,7 +39,7 @@ export default class LineChartExample extends Component {
 	}
 
 	static createLegendInfo() {
-		return range( NUM_DATA_SERIES ).map( index => ( {
+		return range( NUM_DATA_SERIES ).map( ( index ) => ( {
 			name: `Line #${ index + 1 }`,
 		} ) );
 	}
@@ -51,7 +54,7 @@ export default class LineChartExample extends Component {
 		showDataControls: false,
 	};
 
-	changeDataMin = event => {
+	changeDataMin = ( event ) => {
 		const newDataMin = event.target.value;
 
 		this.setState( {
@@ -60,7 +63,7 @@ export default class LineChartExample extends Component {
 		} );
 	};
 
-	changeDataMax = event => {
+	changeDataMax = ( event ) => {
 		const newDataMax = event.target.value;
 
 		this.setState( {
@@ -69,7 +72,7 @@ export default class LineChartExample extends Component {
 		} );
 	};
 
-	changeSeriesLength = event => {
+	changeSeriesLength = ( event ) => {
 		const newSeriesLength = event.target.value;
 
 		this.setState( {
@@ -107,45 +110,44 @@ export default class LineChartExample extends Component {
 
 				{ this.state.showDataControls && (
 					<div>
-						<label>
+						<FormLabel>
 							Data Min
-							<input
+							<FormTextInput
 								type="number"
 								value={ this.state.dataMin }
 								min="0"
 								onChange={ this.changeDataMin }
 							/>
-						</label>
+						</FormLabel>
 
-						<label>
+						<FormLabel>
 							Data Max
-							<input
+							<FormTextInput
 								type="number"
 								value={ this.state.dataMax }
 								min="0"
 								onChange={ this.changeDataMax }
 							/>
-						</label>
+						</FormLabel>
 
-						<label>
+						<FormLabel>
 							Series Length
-							<input
+							<FormTextInput
 								type="number"
 								value={ this.state.seriesLength }
 								min="3"
 								onChange={ this.changeSeriesLength }
 							/>
-						</label>
+						</FormLabel>
 
 						<div>
-							<label>
-								<input
-									type="checkbox"
+							<FormLabel>
+								<FormInputCheckbox
 									checked={ this.state.fillArea }
 									onChange={ this.toggleFillArea }
 								/>
 								Fill Area
-							</label>
+							</FormLabel>
 						</div>
 					</div>
 				) }

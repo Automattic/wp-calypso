@@ -8,8 +8,9 @@ On mount, it consults the global state tree. If a user is detected, it kicks off
 If a user is not detected, it subscribes to the `storage` event and listens for changes to the `wpcom_user_id` key.
 
 ## Usage
+
 ```javascript
-import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
+import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 
 class YourComponent extends React.Component {
 	// ...

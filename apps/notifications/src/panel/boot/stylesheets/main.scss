@@ -47,6 +47,7 @@
 		cursor: pointer;
 		font-size: inherit;
 		outline: none;
+		margin: 0;
 		padding: 0;
 
 		&[disabled] {
@@ -308,7 +309,7 @@
 		transform: translateY( -50% );
 
 		h2 {
-			font: 300 21px/24px $sans;
+			font: 400 21px/24px $sans;
 			margin-bottom: 4px;
 		}
 
@@ -383,7 +384,10 @@
 		}
 
 		.unread {
-			background: rgba( var( --color-primary-rgb ), 0.1 ); // rgba is used to meet AA contrast standard
+			background: rgba(
+				var( --color-primary-rgb ),
+				0.1
+			); // rgba is used to meet AA contrast standard
 		}
 
 		.wpnc__traffic_surge .wpnc__note-icon img {
@@ -511,7 +515,6 @@
 		user-select: none;
 	}
 
-	.wpnc__single-view,
 	.error-view {
 		h1 {
 			text-align: center;

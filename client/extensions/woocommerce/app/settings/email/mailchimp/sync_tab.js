@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Notice from 'components/notice';
-import TooltipComponent from 'components/tooltip';
+import Notice from 'calypso/components/notice';
+import TooltipComponent from 'calypso/components/tooltip';
 
 class Tooltip extends React.Component {
 	constructor( props ) {
@@ -20,7 +20,7 @@ class Tooltip extends React.Component {
 		this.tooltipRef = React.createRef();
 	}
 
-	open = e => {
+	open = ( e ) => {
 		const isTruncated = e.target.offsetWidth < e.target.scrollWidth;
 		this.setState( { show: isTruncated } );
 	};

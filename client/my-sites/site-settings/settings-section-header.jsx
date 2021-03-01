@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 
 const SettingsSectionHeader = ( {
 	children,
@@ -29,7 +29,7 @@ const SettingsSectionHeader = ( {
 			{ children }
 			{ showButton && (
 				<Button compact primary onClick={ onButtonClick } disabled={ disabled } { ...buttonProps }>
-					{ isSaving ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					{ isSaving ? translate( 'Saving…' ) : translate( 'Save settings' ) }
 				</Button>
 			) }
 		</SectionHeader>

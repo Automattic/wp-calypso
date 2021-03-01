@@ -6,9 +6,12 @@ import { Action, Reducer } from 'redux';
 /**
  * Internal Dependencies
  */
-import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'state/action-types';
-import { ExperimentState, ExperimentAssign } from 'state/experiments/types';
-import { tracksAnonymousUserId } from 'lib/analytics/ad-tracking';
+import { withStorageKey } from '@automattic/state-utils';
+import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
+import { ExperimentState, ExperimentAssign } from 'calypso/state/experiments/types';
+import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
+import { withSchemaValidation } from 'calypso/state/utils';
+import { schema } from 'calypso/state/experiments/schema';
 
 /**
  * Attempt to get the anon id for the user, if set
@@ -27,7 +30,7 @@ type HandledActions = Action< 'EXPERIMENT_FETCH' > | ExperimentAssign;
 
 const appStartedAt = Date.now();
 
-const resetState: ( anonId: string | null ) => ExperimentState = anonId => ( {
+const resetState: ( anonId: string | null ) => ExperimentState = ( anonId ) => ( {
 	anonId,
 	isLoading: true,
 	nextRefresh: appStartedAt,
@@ -56,6 +59,7 @@ const reducer: Reducer< ExperimentState, HandledActions > = (
 		case EXPERIMENT_FETCH:
 			return {
 				...state,
+				anonId: getAnonIdFromCookie(),
 				isLoading: true,
 			};
 		default:
@@ -63,4 +67,6 @@ const reducer: Reducer< ExperimentState, HandledActions > = (
 	}
 };
 
-export default reducer;
+const validatedReducer = withSchemaValidation( schema, reducer );
+
+export default withStorageKey( 'experiments', validatedReducer );

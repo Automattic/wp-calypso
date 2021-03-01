@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,11 +11,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasTouch } from 'lib/touch-detect';
-import { isMobile } from 'lib/viewport';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { localize } from 'i18n-calypso';
 import { RootChild } from '@automattic/components';
-import { setPreviewShowing } from 'state/ui/actions';
+import { setPreviewShowing } from 'calypso/state/ui/actions';
 import WebPreviewContent from './content';
 
 /**
@@ -39,6 +38,8 @@ export class WebPreviewModal extends Component {
 		showDeviceSwitcher: PropTypes.bool,
 		// Show edit button
 		showEdit: PropTypes.bool,
+		// Show edit the header link button
+		showEditHeaderLink: PropTypes.bool,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The URL that should be displayed in the iframe

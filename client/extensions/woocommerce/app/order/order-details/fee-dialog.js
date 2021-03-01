@@ -13,8 +13,8 @@ import { trim, uniqueId } from 'lodash';
  */
 import { Button, Dialog } from '@automattic/components';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -50,7 +50,7 @@ class OrderFeeDialog extends Component {
 		}
 	}
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const value = event.target.value;
 		switch ( event.target.name ) {
 			case 'new_fee_name':
@@ -69,7 +69,7 @@ class OrderFeeDialog extends Component {
 
 	formatCurrencyInput = () => {
 		const { currency } = this.props.order;
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			total: getCurrencyFormatDecimal( prevState.total, currency ),
 		} ) );
 	};
@@ -121,7 +121,6 @@ class OrderFeeDialog extends Component {
 				<FormTextInput
 					id="new_fee_name"
 					name="new_fee_name"
-					type="text"
 					value={ this.state.name }
 					onChange={ this.handleChange }
 				/>
@@ -140,7 +139,7 @@ class OrderFeeDialog extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const order = getOrderWithEdits( state );
@@ -150,5 +149,5 @@ export default connect(
 			order,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder }, dispatch )
+	( dispatch ) => bindActionCreators( { editOrder }, dispatch )
 )( localize( OrderFeeDialog ) );

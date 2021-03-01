@@ -22,8 +22,8 @@ import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import SectionHeader from 'components/section-header';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
 
 class OrderCustomerInfo extends Component {
 	static propTypes = {
@@ -70,7 +70,7 @@ class OrderCustomerInfo extends Component {
 
 	updateAddress = ( type = 'billing' ) => {
 		const { siteId, order } = this.props;
-		return address => {
+		return ( address ) => {
 			const { copyToShipping = false, ...newAddress } = address;
 			if ( siteId ) {
 				this.props.editOrder( siteId, { id: order.id, [ type ]: newAddress } );
@@ -81,7 +81,7 @@ class OrderCustomerInfo extends Component {
 		};
 	};
 
-	toggleDialog = type => {
+	toggleDialog = ( type ) => {
 		return () => {
 			this.setState( { showDialog: type } );
 		};
@@ -209,7 +209,7 @@ class OrderCustomerInfo extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const order = getOrderWithEdits( state );
 
@@ -223,5 +223,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder, fetchLocations }, dispatch )
+	( dispatch ) => bindActionCreators( { editOrder, fetchLocations }, dispatch )
 )( localize( OrderCustomerInfo ) );

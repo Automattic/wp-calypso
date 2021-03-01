@@ -8,22 +8,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { isEnabled } from 'config';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Image dependencies
  */
-import customizeImage from 'assets/images/illustrations/dashboard.svg';
+import customizeImage from 'calypso/assets/images/illustrations/dashboard.svg';
 
 function isCustomizeEnabled() {
 	return isEnabled( 'manage/customize' );
 }
 
 function getCustomizeLink( selectedSite ) {
-	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizerInAdmin =
-			adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
+	const adminUrl = selectedSite.URL + '/wp-admin/';
+	const customizerInAdmin =
+		adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
 
 	return isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
 }
@@ -36,7 +36,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				title={ translate( 'Advanced customization' ) }
 				description={ translate(
 					"Change your site's appearance in a few clicks, with an expanded " +
-						'selection of fonts and colors, and access to custom CSS.'
+						'selection of fonts and colors.'
 				) }
 				buttonText={ translate( 'Start customizing' ) }
 				href={ getCustomizeLink( selectedSite ) }

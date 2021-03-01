@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Returns register date of the current user

@@ -3,7 +3,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 
-import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 
 /**
  * Return if it's the primary domainfrom state object and

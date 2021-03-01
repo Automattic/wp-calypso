@@ -6,8 +6,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormRadiosBar from 'components/forms/form-radios-bar';
-import { radios, radiosWithThumbnails } from 'components/forms/form-radios-bar/docs/fixtures';
+import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
+import {
+	radios,
+	radiosWithThumbnails,
+} from 'calypso/components/forms/form-radios-bar/docs/fixtures';
 
 const FormRadiosBarExample = ( { isThumbnail, checked, onChange } ) => {
 	return (

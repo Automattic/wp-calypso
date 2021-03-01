@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * @param {object} state Whole Redux state tree
@@ -72,7 +72,7 @@ export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state
 		[ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'orders', orderId ],
 		[]
 	);
-	return notesForOrder.map( id => notes[ id ] );
+	return notesForOrder.map( ( id ) => notes[ id ] );
 };
 
 /**

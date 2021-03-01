@@ -9,10 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { unblockSite } from 'state/reader/site-blocks/actions';
+import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
 import { Card } from '@automattic/components';
-import { recordTrack as recordReaderTrack } from 'reader/stats';
-import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import { recordTrack as recordReaderTrack } from 'calypso/reader/stats';
+import { bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class PostBlocked extends React.Component {
 	static propTypes = {

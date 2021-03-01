@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 
 /**
  * Returns a normalized site ID from any key accepted by `getSite`. Intends to
@@ -16,8 +16,8 @@ import { getSite } from 'state/sites/selectors';
  * const numericID = getSiteId( state, siteIdentifierOfUnknownFormat );
  *
  * @param  {object}  state       Global state tree
- * @param  {number|string|null}  siteIdOrSlug Site ID
- * @returns {?object}             Site object
+ * @param  {number|string|null}  siteIdOrSlug Site ID or slug
+ * @returns {?number}            Site ID
  */
 export default function getSiteId( state, siteIdOrSlug ) {
 	if ( ! siteIdOrSlug ) {

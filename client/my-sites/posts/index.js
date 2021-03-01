@@ -7,12 +7,12 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { navigation, siteSelection } from 'my-sites/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import postsController from './controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { getSiteFragment } from 'lib/route';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { getSiteFragment } from 'calypso/lib/route';
 
-export default function() {
+export default function () {
 	page(
 		'/posts/:author(my)?/:status(published|drafts|scheduled|trashed)?/:domain?',
 		siteSelection,

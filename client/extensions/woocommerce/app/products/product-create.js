@@ -13,10 +13,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import { ProtectFormGuard } from 'lib/protect-form';
+import Main from 'calypso/components/main';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import {
 	clearProductEdits,
 	editProduct,
@@ -44,7 +44,7 @@ import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { withAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSaveErrorMessage } from './save-error-message';
 
 class ProductCreate extends React.Component {
@@ -98,13 +98,13 @@ class ProductCreate extends React.Component {
 	}
 
 	onUploadStart = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			isUploading: [ ...prevState.isUploading, [ true ] ],
 		} ) );
 	};
 
 	onUploadFinish = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			isUploading: prevState.isUploading.slice( 1 ),
 		} ) );
 	};
@@ -112,7 +112,7 @@ class ProductCreate extends React.Component {
 	onSave = () => {
 		const { site, product, finishedInitialSetup, translate } = this.props;
 
-		const getSuccessNotice = newProduct => {
+		const getSuccessNotice = ( newProduct ) => {
 			if ( ! finishedInitialSetup ) {
 				return successNotice(
 					translate( '%(product)s successfully created. {{productLink}}View{{/productLink}}', {
@@ -149,13 +149,13 @@ class ProductCreate extends React.Component {
 			);
 		};
 
-		const successAction = products => {
+		const successAction = ( products ) => {
 			const newProduct = head( products );
 			page.redirect( getLink( '/store/products/:site', site ) );
 			return getSuccessNotice( newProduct );
 		};
 
-		const failureAction = error => {
+		const failureAction = ( error ) => {
 			const errorSlug = ( error && error.error ) || undefined;
 
 			return errorNotice( getSaveErrorMessage( errorSlug, product.name, translate ), {

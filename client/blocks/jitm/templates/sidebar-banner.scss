@@ -1,12 +1,12 @@
 .sidebar-banner {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 
 	.sidebar-banner__link {
 		background-color: var( --color-success );
 		color: var( --color-text-inverted );
 		display: flex;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			padding: 0 19px;
 		}
 

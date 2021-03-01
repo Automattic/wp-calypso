@@ -1,23 +1,23 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { createRef } from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import PopoverMenuItem from 'components/popover/menu-item';
-import UserItem from 'components/user';
-import InfiniteList from 'components/infinite-list';
-import { fetchUsers } from 'lib/users/actions';
-import Search from 'components/search';
-import { hasTouch } from 'lib/touch-detect';
+import AsyncLoad from 'calypso/components/async-load';
+import Gridicon from 'calypso/components/gridicon';
+import Popover from 'calypso/components/popover';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import UserItem from 'calypso/components/user';
+import InfiniteList from 'calypso/components/infinite-list';
+import { fetchUsers } from 'calypso/lib/users/actions';
+import { hasTouch } from 'calypso/lib/touch-detect';
 
 /**
  * Module variables
@@ -42,6 +42,10 @@ class AuthorSwitcherShell extends React.Component {
 		showAuthorMenu: false,
 	};
 
+	authorSelectorSearchRef = createRef();
+	authorSelectorToggleRef = createRef();
+	authorSelectorChevronRef = createRef();
+
 	UNSAFE_componentWillMount() {
 		this.instance = instance;
 		instance++;
@@ -62,7 +66,7 @@ class AuthorSwitcherShell extends React.Component {
 		}
 
 		if ( ! prevState.showAuthorMenu && this.props.users.length > 10 && ! hasTouch() ) {
-			setTimeout( () => this.refs.authorSelectorSearch.focus(), 0 );
+			setTimeout( () => this.authorSelectorSearchRef.current?.focus(), 0 );
 		}
 	}
 
@@ -79,28 +83,31 @@ class AuthorSwitcherShell extends React.Component {
 				<span
 					className="author-selector__author-toggle"
 					onClick={ this.toggleShowAuthor }
+					onKeyDown={ this.toggleShowAuthor }
+					role="button"
 					tabIndex={ -1 }
-					ref="author-selector-toggle"
+					ref={ this.authorSelectorToggleRef }
 				>
 					{ this.props.children }
-					<Gridicon ref="authorSelectorChevron" icon="chevron-down" size={ 16 } />
+					<Gridicon ref={ this.authorSelectorChevronRef } icon="chevron-down" size={ 18 } />
 				</span>
 				<Popover
 					isVisible={ this.state.showAuthorMenu }
 					onClose={ this.onClose }
 					position={ this.props.popoverPosition }
-					context={ this.refs && this.refs.authorSelectorChevron }
+					context={ this.authorSelectorChevronRef.current }
 					onKeyDown={ this.onKeyDown }
 					className="author-selector__popover popover"
 					ignoreContext={ this.props.ignoreContext }
 				>
 					{ ( this.props.fetchOptions.search || users.length > 10 ) && (
-						<Search
+						<AsyncLoad
+							require="@automattic/search"
 							compact
 							onSearch={ this.onSearch }
 							placeholder={ this.props.translate( 'Find Author…', { context: 'search label' } ) }
 							delaySearch={ true }
-							ref="authorSelectorSearch"
+							ref={ this.authorSelectorSearchRef }
 						/>
 					) }
 					{ this.props.fetchInitialized &&
@@ -138,7 +145,7 @@ class AuthorSwitcherShell extends React.Component {
 		return this.props.totalUsers <= usersLength;
 	}
 
-	setListContext = infiniteListInstance => {
+	setListContext = ( infiniteListInstance ) => {
 		this.setState( {
 			listContext: ReactDom.findDOMNode( infiniteListInstance ),
 		} );
@@ -165,8 +172,8 @@ class AuthorSwitcherShell extends React.Component {
 		} );
 	};
 
-	onClose = event => {
-		const toggleElement = ReactDom.findDOMNode( this.refs[ 'author-selector-toggle' ] );
+	onClose = ( event ) => {
+		const toggleElement = ReactDom.findDOMNode( this.authorSelectorToggleRef.current );
 
 		if ( event && toggleElement.contains( event.target ) ) {
 			// let toggleShowAuthor() handle this case
@@ -178,7 +185,7 @@ class AuthorSwitcherShell extends React.Component {
 		this.props.updateSearch( false );
 	};
 
-	renderAuthor = rawAuthor => {
+	renderAuthor = ( rawAuthor ) => {
 		const { transformAuthor } = this.props;
 		const author = transformAuthor ? transformAuthor( rawAuthor ) : rawAuthor;
 		const authorGUID = this.getAuthorItemGUID( author );
@@ -204,7 +211,7 @@ class AuthorSwitcherShell extends React.Component {
 		);
 	}
 
-	selectAuthor = author => {
+	selectAuthor = ( author ) => {
 		debug( 'assign author:', author );
 		if ( this.props.onSelect ) {
 			this.props.onSelect( author );
@@ -223,7 +230,7 @@ class AuthorSwitcherShell extends React.Component {
 		fetchUsers( fetchOptions );
 	};
 
-	getAuthorItemGUID = author => {
+	getAuthorItemGUID = ( author ) => {
 		return 'author-item-' + author.ID;
 	};
 
@@ -235,7 +242,7 @@ class AuthorSwitcherShell extends React.Component {
 		);
 	};
 
-	onSearch = searchTerm => {
+	onSearch = ( searchTerm ) => {
 		this.props.updateSearch( searchTerm );
 	};
 }

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
@@ -9,11 +8,13 @@ import {
 	AUTOMATED_TRANSFER_STATUS_REQUEST,
 	AUTOMATED_TRANSFER_STATUS_SET,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
-import 'state/data-layer/wpcom/sites/automated-transfer/initiate';
-import 'state/data-layer/wpcom/sites/automated-transfer/status';
+import 'calypso/state/data-layer/wpcom/sites/automated-transfer/eligibility';
+import 'calypso/state/data-layer/wpcom/sites/automated-transfer/initiate';
+import 'calypso/state/data-layer/wpcom/sites/automated-transfer/status';
+
+import 'calypso/state/automated-transfer/init';
 
 /**
  * Initiate a transfer to an Atomic site.
@@ -22,7 +23,7 @@ import 'state/data-layer/wpcom/sites/automated-transfer/status';
  * plugin ID or theme zip, see state/themes/actions#initiateThemeTransfer
  *
  * @param {number} siteId The id of the site to transfer
- * @param {File} pluginZip The plugin to upload and install on transferred site
+ * @param {window.File} pluginZip The plugin to upload and install on transferred site
  * @returns {object} An action object
  */
 export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => ( {
@@ -37,7 +38,7 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
  * @param {number} siteId The id of the site to query.
  * @returns {object} An action object
  */
-export const fetchAutomatedTransferStatus = siteId => ( {
+export const fetchAutomatedTransferStatus = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
 	siteId,
 } );
@@ -70,7 +71,7 @@ export const setAutomatedTransferStatus = ( siteId, status, uploadedPluginId ) =
  * @param {number} siteId The site id to which the status belongs
  * @returns {object} An action object
  */
-export const automatedTransferStatusFetchingFailure = siteId => ( {
+export const automatedTransferStatusFetchingFailure = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 	siteId,
 } );
@@ -81,7 +82,7 @@ export const automatedTransferStatusFetchingFailure = siteId => ( {
  * @param {number} siteId site for requested information
  * @returns {object} Redux action
  */
-export const requestEligibility = siteId => ( {
+export const requestEligibility = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST,
 	siteId,
 } );

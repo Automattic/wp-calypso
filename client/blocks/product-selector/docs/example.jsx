@@ -6,8 +6,8 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
-import SitesDropdown from 'components/sites-dropdown';
+import SegmentedControl from 'calypso/components/segmented-control';
+import SitesDropdown from 'calypso/components/sites-dropdown';
 import ProductSelector from '../';
 
 const products = [
@@ -23,8 +23,8 @@ const products = [
 		optionShortNames: {
 			jetpack_backup_daily: 'Daily Backups',
 			jetpack_backup_daily_monthly: 'Daily Backups',
-			jetpack_backup_realtime: 'Real-Time Backups',
-			jetpack_backup_realtime_monthly: 'Real-Time Backups',
+			jetpack_backup_realtime: 'Real-time Backups',
+			jetpack_backup_realtime_monthly: 'Real-time Backups',
 		},
 		optionsLabel: 'Backup options',
 	},
@@ -64,7 +64,7 @@ class ProductSelectorExample extends Component {
 
 				<div style={ { maxWidth: 520, margin: '0 auto' } }>
 					<div style={ { maxWidth: 300, margin: '0 auto 10px' } }>
-						<SitesDropdown onSiteSelect={ siteId => this.setState( { siteId } ) } />
+						<SitesDropdown onSiteSelect={ ( siteId ) => this.setState( { siteId } ) } />
 					</div>
 
 					{ this.state.siteId ? (

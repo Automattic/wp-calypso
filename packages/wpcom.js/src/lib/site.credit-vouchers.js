@@ -1,4 +1,3 @@
-
 /**
  * SiteCreditVouchers methods
  *
@@ -18,7 +17,7 @@ class SiteCreditVouchers {
 
 		this.wpcom = wpcom;
 		this._sid = sid;
-		this.path = `/sites/${this._sid}/vouchers`;
+		this.path = `/sites/${ this._sid }/vouchers`;
 	}
 
 	/**
@@ -56,7 +55,7 @@ class SiteCreditVouchers {
 	 */
 	assign( serviceType, query = {}, fn ) {
 		query.apiNamespace = 'wpcom/v2';
-		return this.wpcom.req.post( `${ this.path }/${ serviceType}/assign`, query, {}, fn );
+		return this.wpcom.req.post( `${ this.path }/${ serviceType }/assign`, query, {}, fn );
 	}
 }
 

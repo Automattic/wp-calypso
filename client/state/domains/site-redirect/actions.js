@@ -6,7 +6,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	DOMAINS_SITE_REDIRECT_FETCH,
 	DOMAINS_SITE_REDIRECT_FETCH_COMPLETED,
@@ -15,7 +15,9 @@ import {
 	DOMAINS_SITE_REDIRECT_UPDATE,
 	DOMAINS_SITE_REDIRECT_UPDATE_COMPLETED,
 	DOMAINS_SITE_REDIRECT_UPDATE_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/domains/init';
 
 export function closeSiteRedirectNotice( siteId ) {
 	return {
@@ -24,7 +26,7 @@ export function closeSiteRedirectNotice( siteId ) {
 	};
 }
 
-export const fetchSiteRedirect = siteId => dispatch => {
+export const fetchSiteRedirect = ( siteId ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_SITE_REDIRECT_FETCH, siteId } );
 
 	wpcom
@@ -34,7 +36,7 @@ export const fetchSiteRedirect = siteId => dispatch => {
 			( { location } ) => {
 				dispatch( { type: DOMAINS_SITE_REDIRECT_FETCH_COMPLETED, siteId, location } );
 			},
-			error => {
+			( error ) => {
 				dispatch( {
 					type: DOMAINS_SITE_REDIRECT_FETCH_FAILED,
 					siteId,
@@ -48,14 +50,14 @@ export const fetchSiteRedirect = siteId => dispatch => {
 		);
 };
 
-export const updateSiteRedirect = ( siteId, location ) => dispatch => {
+export const updateSiteRedirect = ( siteId, location ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_SITE_REDIRECT_UPDATE, siteId } );
 
 	return wpcom
 		.undocumented()
 		.setSiteRedirect( siteId, location )
 		.then(
-			data => {
+			( data ) => {
 				if ( data.success ) {
 					dispatch( {
 						type: DOMAINS_SITE_REDIRECT_UPDATE_COMPLETED,
@@ -75,7 +77,7 @@ export const updateSiteRedirect = ( siteId, location ) => dispatch => {
 				} );
 				return false;
 			},
-			error => {
+			( error ) => {
 				dispatch( {
 					type: DOMAINS_SITE_REDIRECT_UPDATE_FAILED,
 					siteId,

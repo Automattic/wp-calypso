@@ -7,8 +7,8 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingPreferences } from 'state/preferences/selectors';
-import { fetchPreferences } from 'state/preferences/actions';
+import { isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
 
 const request = () => ( dispatch, getState ) => {
 	if ( ! isFetchingPreferences( getState() ) ) {

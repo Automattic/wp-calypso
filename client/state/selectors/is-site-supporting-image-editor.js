@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import { isJetpackModuleActive } from 'state/sites/selectors';
-import isPrivateSite from 'state/selectors/is-private-site';
+import { isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 /**
  * Returns false only if the site is known to not support editing images, or

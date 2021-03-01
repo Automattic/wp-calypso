@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 export const isClosed = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -14,4 +15,5 @@ export const isClosed = withoutPersistence( ( state = false, action ) => {
 	return state;
 } );
 
-export default combineReducers( { isClosed } );
+const combinedReducer = combineReducers( { isClosed } );
+export default withStorageKey( 'account', combinedReducer );

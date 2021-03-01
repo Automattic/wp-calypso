@@ -13,7 +13,7 @@ import debug from 'debug';
  */
 const log = debug( 'calypso:docs-example:util' );
 
-const getComponentName = docsExample => {
+const getComponentName = ( docsExample ) => {
 	if ( ! docsExample ) {
 		return '';
 	}
@@ -29,18 +29,18 @@ const getComponentName = docsExample => {
 	return ( docsExample.type.displayName || docsExample.type.name ).replace( /Example$/, '' );
 };
 
-const slugToCamelCase = name => {
+const slugToCamelCase = ( name ) => {
 	if ( ! name ) {
 		log( 'name is not defined' );
 		return console.trace();
 	}
 
 	return name
-		.replace( /-([a-z])/g, s => s[ 1 ].toUpperCase() )
-		.replace( /^\w/, s => s.toUpperCase() );
+		.replace( /-([a-z])/g, ( s ) => s[ 1 ].toUpperCase() )
+		.replace( /^\w/, ( s ) => s.toUpperCase() );
 };
 
-const camelCaseToSlug = name => {
+const camelCaseToSlug = ( name ) => {
 	if ( ! name ) {
 		log( 'name is not defined' );
 		return console.trace();

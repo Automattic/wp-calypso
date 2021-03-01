@@ -1,19 +1,23 @@
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { navigate } from 'state/ui/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { navigate } from 'calypso/state/ui/actions';
 import { resetLock } from '../../locks/actions';
-import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
+import {
+	requestError,
+	requestZones,
+	updateZone,
+	updateZoneError,
+	updateZones,
+} from '../../zones/actions';
 import { zoneFromApi, zonesListFromApi } from './utils';
 import {
 	ZONINATOR_ADD_ZONE,
@@ -27,7 +31,7 @@ const settingsPath = '/extensions/zoninator';
 const saveZoneNotice = 'zoninator-zone-create';
 const deleteZoneNotice = 'zoninator-zone-delete';
 
-export const requestZonesList = action =>
+export const requestZonesList = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -37,12 +41,11 @@ export const requestZonesList = action =>
 		action
 	);
 
-export const requestZonesError = action => requestError( action.siteId );
+export const requestZonesError = ( action ) => requestError( action.siteId );
 
 export const updateZonesList = ( action, zonesList ) => updateZones( action.siteId, zonesList );
 
-export const createZone = action => [
-	startSubmit( action.form ),
+export const createZone = ( action ) => [
 	removeNotice( saveZoneNotice ),
 	http(
 		{
@@ -58,8 +61,7 @@ export const createZone = action => [
 	),
 ];
 
-export const saveZone = action => [
-	startSubmit( action.form ),
+export const saveZone = ( action ) => [
 	removeNotice( saveZoneNotice ),
 	resetLock( action.siteId, action.zoneId ),
 	http(
@@ -77,7 +79,6 @@ export const saveZone = action => [
 ];
 
 const announceZoneSaved = ( action, zone ) => [
-	stopSubmit( action.form ),
 	updateZone( action.siteId, zone.id, zone ),
 	successNotice( translate( 'Zone saved!' ), { id: saveZoneNotice } ),
 ];
@@ -87,19 +88,18 @@ export const handleZoneCreated = ( action, zone ) => [
 	...announceZoneSaved( action, zone ),
 ];
 
-export const handleZoneSaved = action => [
-	initialize( action.form, action.data ),
-	...announceZoneSaved( action, action.data ),
+export const handleZoneSaved = ( action ) => [
+	...announceZoneSaved( action, { id: action.zoneId, ...action.data } ),
 ];
 
-export const announceSaveFailure = action => [
-	stopSubmit( action.form ),
+export const announceSaveFailure = ( action ) => [
+	updateZoneError( action.siteId ),
 	errorNotice( translate( 'There was a problem saving the zone. Please try again.' ), {
 		id: saveZoneNotice,
 	} ),
 ];
 
-export const deleteZone = action => [
+export const deleteZone = ( action ) => [
 	removeNotice( deleteZoneNotice ),
 	http(
 		{
@@ -111,7 +111,7 @@ export const deleteZone = action => [
 	),
 ];
 
-export const announceZoneDeleted = action => [
+export const announceZoneDeleted = ( action ) => [
 	navigate( `${ settingsPath }/${ action.siteSlug }` ),
 	requestZones( action.siteId ),
 	successNotice( translate( 'The zone has been deleted.' ), { id: deleteZoneNotice } ),

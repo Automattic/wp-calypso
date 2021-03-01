@@ -7,11 +7,11 @@
 	&::after {
 		content: '';
 		position: absolute;
-		left: 33px;
+		left: 35px;
 		width: 2px;
 
-		@include breakpoint( '<480px' ) {
-			left: 25px;
+		@include breakpoint-deprecated( '<480px' ) {
+			left: 27px;
 		}
 	}
 
@@ -35,9 +35,9 @@
 	margin: 8px 0;
 	padding: 6px 0 4px;
 	background: var( --color-surface-backdrop );
-	font-weight: 500;
+	font-weight: 600;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-left: 10px;
 	}
 

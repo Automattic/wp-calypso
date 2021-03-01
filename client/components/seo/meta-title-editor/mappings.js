@@ -36,7 +36,6 @@ import {
 	camelCase,
 	flowRight as compose,
 	get,
-	initial,
 	last,
 	map,
 	mapKeys,
@@ -62,7 +61,7 @@ const mergeStringPieces = ( a, b ) => ( {
  * @returns {Array} List of native format pieces
  */
 export const rawToNative = unary(
-	partialRight( map, p =>
+	partialRight( map, ( p ) =>
 		Object.assign(
 			{},
 			{ type: 'string' === p.type ? 'string' : camelCase( p.value ) },
@@ -88,14 +87,14 @@ export const nativeToRaw = unary(
 				const lastPiece = last( format );
 
 				if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
-					return [ ...initial( format ), mergeStringPieces( lastPiece, piece ) ];
+					return [ ...format.slice( 0, -1 ), mergeStringPieces( lastPiece, piece ) ];
 				}
 
 				return [ ...format, piece ];
 			},
 			[]
 		),
-		partialRight( map, p => ( {
+		partialRight( map, ( p ) => ( {
 			type: p.type === 'string' ? 'string' : 'token',
 			value: get( p, 'value', snakeCase( p.type ) ),
 		} ) )

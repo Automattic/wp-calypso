@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getJetpackModulesRequiringConnection from 'state/selectors/get-jetpack-modules-requiring-connection';
+import getJetpackModulesRequiringConnection from 'calypso/state/selectors/get-jetpack-modules-requiring-connection';
 
 describe( 'getJetpackModulesRequiringConnection()', () => {
 	test( 'should return null if the site has never been fetched', () => {

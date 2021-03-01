@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 
 describe( 'getPastBillingTransactions()', () => {
 	test( 'should return the past billing transactions', () => {
@@ -30,7 +30,7 @@ describe( 'getPastBillingTransactions()', () => {
 				},
 			},
 		};
-		const expected = state.billingTransactions.items.past.map( transaction => {
+		const expected = state.billingTransactions.items.past.map( ( transaction ) => {
 			transaction.date = new Date( transaction.date );
 			return transaction;
 		} );

@@ -30,15 +30,15 @@ class SiteTaxonomyTerm {
 		this._siteId = encodeURIComponent( siteId );
 		this._taxonomy = encodeURIComponent( taxonomy );
 		this._term = encodeURIComponent( term );
-		this._taxonomyPath = `/sites/${this._siteId}/taxonomies/${this._taxonomy}/terms`;
+		this._taxonomyPath = `/sites/${ this._siteId }/taxonomies/${ this._taxonomy }/terms`;
 	}
 
 	/**
 	 * Get Term details
 	 *
 	 * @param {object} [query] - query parameters
- 	 * @param {Function} fn - callback function
- 	 * @returns {Promise} Promise
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
 	 */
 	get( query, fn ) {
 		if ( ! this._term ) {
@@ -59,8 +59,8 @@ class SiteTaxonomyTerm {
 	 * Add new Term
 	 *
 	 * @param {object} [params] - term parameters
- 	 * @param {Function} fn - callback function
- 	 * @returns {Promise} Promise
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
 	 */
 	add( params, fn ) {
 		if ( ! params || ! params.name ) {
@@ -75,8 +75,8 @@ class SiteTaxonomyTerm {
 	/**
 	 * Delete Term
 	 *
- 	 * @param {Function} fn - callback function
- 	 * @returns {Promise} Promise
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
 	 */
 	delete( fn ) {
 		if ( ! this._term ) {
@@ -92,8 +92,8 @@ class SiteTaxonomyTerm {
 	 * Update Term
 	 *
 	 * @param {object} [params] - term parameters
- 	 * @param {Function} fn - callback function
- 	 * @returns {Promise} Promise
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
 	 */
 	update( params, fn ) {
 		if ( ! this._term ) {

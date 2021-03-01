@@ -13,7 +13,7 @@ let iframe = null;
  * @param {string} url URL to load
  * @returns {Promise} Promise that resolves when the iframe finished loading, rejects on error
  */
-const loadDocumentInFrame = url => {
+const loadDocumentInFrame = ( url ) => {
 	return new Promise( ( resolve, reject ) => {
 		if ( iframe ) {
 			document.body.removeChild( iframe );
@@ -28,7 +28,7 @@ const loadDocumentInFrame = url => {
 		iframe.onload = () => {
 			resolve();
 		};
-		iframe.onerror = error => {
+		iframe.onerror = ( error ) => {
 			reject( error );
 		};
 

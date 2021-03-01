@@ -62,7 +62,7 @@ function handleZoneClose( state ) {
 
 	const bucket = getBucket( { id: currentlyEditingId } );
 	let found = false;
-	const newBucket = state[ bucket ].map( zone => {
+	const newBucket = state[ bucket ].map( ( zone ) => {
 		if ( isEqual( currentlyEditingId, zone.id ) ) {
 			found = true;
 			// If edits for the zone were already in the expected bucket, just update them

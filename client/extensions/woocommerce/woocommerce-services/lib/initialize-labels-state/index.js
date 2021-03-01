@@ -9,7 +9,7 @@ import { forEach, isEmpty, mapValues } from 'lodash';
  * @param {object} address the address object
  * @returns {boolean} true if all required fields are not empty
  */
-const addressFilled = address =>
+const addressFilled = ( address ) =>
 	Boolean(
 		address &&
 			address.name &&
@@ -25,7 +25,7 @@ const addressFilled = address =>
  * @param {object} data data to initialize the labels state from
  * @returns {object} labels Redux state
  */
-export default data => {
+export default ( data ) => {
 	if ( ! data ) {
 		return {
 			loaded: false,

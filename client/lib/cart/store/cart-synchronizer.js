@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import { assign, flowRight, get } from 'lodash';
-import Dispatcher from 'dispatcher';
-import { TRANSACTION_STEP_SET } from 'lib/transaction/action-types';
+import { assign, flowRight, flow, get } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
-import { preprocessCartForServer } from 'lib/cart-values';
+import Emitter from 'calypso/lib/mixins/emitter';
+import { preprocessCartForServer, fillInAllCartItemAttributes } from 'calypso/lib/cart-values';
+import { addCartItem } from 'calypso/lib/cart-values/cart-items';
+import productsListFactory from 'calypso/lib/products-list';
+const productsList = productsListFactory();
 
 /**
  * Internal dependencies
@@ -37,7 +38,7 @@ function createClientMetadata() {
 // FIXME: Temporary fix to cast string product IDs to numbers. There is a bug
 //   with the API where it sometimes returns product IDs as strings.
 function castProductIDsToNumbers( cartItems ) {
-	return cartItems.map( function( item ) {
+	return cartItems.map( function ( item ) {
 		return assign( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
 	} );
 }
@@ -64,26 +65,11 @@ function CartSynchronizer( cartKey, wpcom ) {
 	this._activeRequest = null;
 	this._queuedChanges = null;
 	this._paused = false;
-
-	this.dispatchToken = Dispatcher.register( this.handleDispatch.bind( this ) );
 }
 
 Emitter( CartSynchronizer.prototype );
 
-CartSynchronizer.prototype.handleDispatch = function( { action } ) {
-	switch ( action.type ) {
-		case TRANSACTION_STEP_SET:
-			if ( action.step.first && ! action.step.last ) {
-				this.pause();
-			}
-
-			if ( action.step.last && ! action.step.first ) {
-				this.resume();
-			}
-	}
-};
-
-CartSynchronizer.prototype.update = function( changeFunction ) {
+CartSynchronizer.prototype.update = function ( changeFunction ) {
 	if ( ! this._hasLoadedFromServer ) {
 		// If we haven't loaded any data from the server yet, it's possible that
 		// the local data could completely overwrite the existing data. This would
@@ -105,18 +91,17 @@ CartSynchronizer.prototype.update = function( changeFunction ) {
 
 	this._latestValue = changeFunction( this._latestValue );
 	this._performRequest( 'update', this._postToServer.bind( this ) );
-	this.emit( 'change' );
 };
 
-CartSynchronizer.prototype.pause = function() {
+CartSynchronizer.prototype.pause = function () {
 	this._paused = true;
 };
 
-CartSynchronizer.prototype.resume = function() {
+CartSynchronizer.prototype.resume = function () {
 	this._paused = false;
 };
 
-CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
+CartSynchronizer.prototype._enqueueChange = function ( changeFunction ) {
 	if ( this._queuedChanges ) {
 		this._queuedChanges = flowRight( changeFunction, this._queuedChanges );
 	} else {
@@ -124,7 +109,7 @@ CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
 	}
 };
 
-CartSynchronizer.prototype._processQueuedChanges = function() {
+CartSynchronizer.prototype._processQueuedChanges = function () {
 	if ( ! this._queuedChanges ) {
 		return;
 	}
@@ -139,30 +124,51 @@ CartSynchronizer.prototype._processQueuedChanges = function() {
 	this._performRequest( 'update', this._postToServer.bind( this ) );
 };
 
-CartSynchronizer.prototype._postToServer = function( callback ) {
-	this._wpcom.setCart( this._cartKey, preprocessCartForServer( this._latestValue ), function(
-		error,
-		newValue
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
+CartSynchronizer.prototype._postToServer = function ( callback ) {
+	this._wpcom.setCart(
+		this._cartKey,
+		preprocessCartForServer( this._latestValue ),
+		function ( error, newValue ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
 
-		callback( null, preprocessCartFromServer( newValue ) );
-	} );
+			callback( null, preprocessCartFromServer( newValue ) );
+		}
+	);
 };
 
-CartSynchronizer.prototype._poll = function() {
+CartSynchronizer.prototype._poll = function () {
 	this._performRequest( 'poll', this._getFromServer.bind( this ) );
 };
 
-CartSynchronizer.prototype.fetch = function() {
+CartSynchronizer.prototype._pollFromLocalStorage = function () {
+	const newCartItemsToAdd = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) || '[]' );
+	const addtoCart = flow( ...newCartItemsToAdd.map( ( cartItem ) => addCartItem( cartItem ) ) );
+
+	const changeFunction = ( cart ) => {
+		return fillInAllCartItemAttributes( addtoCart( cart ), productsList.get() );
+	};
+
+	if ( ! this._latestValue ) {
+		const initialCart = {
+			cart_key: this._cartKey,
+			products: [],
+			temporary: 'no-user' === this._cartKey,
+		};
+		this._latestValue = changeFunction( initialCart );
+	}
+
+	this._performRequest( 'poll', this._postToServer.bind( this ) );
+};
+
+CartSynchronizer.prototype.fetch = function () {
 	this._performRequest( 'fetch', this._getFromServer.bind( this ) );
 };
 
-CartSynchronizer.prototype._getFromServer = function( callback ) {
-	this._wpcom.getCart( this._cartKey, function( error, newValue ) {
+CartSynchronizer.prototype._getFromServer = function ( callback ) {
+	this._wpcom.getCart( this._cartKey, function ( error, newValue ) {
 		if ( error ) {
 			callback( error );
 			return;
@@ -174,7 +180,7 @@ CartSynchronizer.prototype._getFromServer = function( callback ) {
 
 let requestCounter = 0;
 
-CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
+CartSynchronizer.prototype._performRequest = function ( type, requestFunction ) {
 	if ( type === 'poll' && this._paused ) {
 		return;
 	}
@@ -218,7 +224,7 @@ CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
 	);
 };
 
-CartSynchronizer.prototype.getLatestValue = function() {
+CartSynchronizer.prototype.getLatestValue = function () {
 	if ( ! this._hasLoadedFromServer ) {
 		throw new Error( 'Value cannot be read before fetching from the server at least once.' );
 	}
@@ -226,11 +232,11 @@ CartSynchronizer.prototype.getLatestValue = function() {
 	return this._latestValue;
 };
 
-CartSynchronizer.prototype.hasLoadedFromServer = function() {
+CartSynchronizer.prototype.hasLoadedFromServer = function () {
 	return this._hasLoadedFromServer;
 };
 
-CartSynchronizer.prototype.hasPendingServerUpdates = function() {
+CartSynchronizer.prototype.hasPendingServerUpdates = function () {
 	return (
 		this._activeRequest &&
 		this._activeRequest.type === 'update' &&

@@ -7,7 +7,7 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
@@ -34,8 +34,8 @@ function handleActionListAnnotate( actionlist, action ) {
 	const pickNames = [ 'description', 'startTime', 'endTime' ];
 
 	return {
-		prevSteps: ( prevSteps || [] ).map( step => pick( step, pickNames ) ),
+		prevSteps: ( prevSteps || [] ).map( ( step ) => pick( step, pickNames ) ),
 		currentStep: currentStep ? pick( currentStep, pickNames ) : null,
-		nextSteps: nextSteps.map( step => pick( step, pickNames ) ),
+		nextSteps: nextSteps.map( ( step ) => pick( step, pickNames ) ),
 	};
 }

@@ -2,18 +2,23 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
-import { tracks } from 'lib/analytics';
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
-import wp from 'lib/wp';
+import * as tracks from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 
-jest.mock( 'reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
+import wp from 'calypso/lib/wp';
 
-jest.mock( 'lib/analytics', () => ( {
-	tracks: { recordEvent: jest.fn() },
-	mc: { bumpStat: jest.fn() },
+jest.mock( 'calypso/reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock( 'lib/wp', () => {
+jest.mock( 'calypso/lib/analytics/mc', () => ( {
+	bumpStat: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/wp', () => {
 	const readFeedPost = jest.fn();
 	const readSitePost = jest.fn();
 
@@ -26,12 +31,11 @@ jest.mock( 'lib/wp', () => {
 } );
 
 const undocumented = wp.undocumented;
-const { pageViewForPost } = require( 'reader/stats' );
-const { mc } = require( 'lib/analytics' );
+const { pageViewForPost } = require( 'calypso/reader/stats' );
 
 describe( 'actions', () => {
 	const dispatchSpy = jest.fn();
-	const trackingSpy = tracks.recordEvent;
+	const trackingSpy = tracks.recordTracksEvent;
 	const readFeedStub = undocumented().readFeedPost;
 	const readSiteStub = undocumented().readSitePost;
 
@@ -53,21 +57,6 @@ describe( 'actions', () => {
 						posts,
 					} );
 				} );
-		} );
-
-		// TODO: move to analytics middleware so that this doesn't cascade out the need for mocking
-		// eslint-disable-next-line jest/no-disabled-tests
-		test.skip( 'should fire tracks events for posts with railcars', () => {
-			const posts = [
-				{
-					ID: 1,
-					site_ID: 1,
-					global_ID: 1,
-					railcar: 'foo',
-				},
-			];
-			actions.receivePosts( posts )( dispatchSpy );
-			expect( trackingSpy ).toHaveBeenCalledWith( 'calypso_traintracks_render', 'foo' );
 		} );
 
 		test( 'should try to reload posts marked with should_reload', () => {
@@ -178,7 +167,7 @@ describe( 'actions', () => {
 			dispatch.mockReset();
 			getState.mockReset();
 			pageViewForPost.mockReset();
-			mc.bumpStat.mockReset();
+			bumpStat.mockReset();
 		} );
 
 		test( 'should not dispatch if post is falsey', () => {
@@ -208,7 +197,7 @@ describe( 'actions', () => {
 			} );
 
 			// expect( pageViewForPost.mock.calls.length ).toBe( 1 );
-			// expect( mc.bumpStat.mock.calls.length ).toBe( 1 );
+			expect( bumpStat.mock.calls.length ).toBe( 1 );
 		} );
 	} );
 } );

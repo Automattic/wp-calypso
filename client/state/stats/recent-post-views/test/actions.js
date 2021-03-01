@@ -5,7 +5,7 @@ import { requestRecentPostViews, receiveRecentPostViews } from '../actions';
 import {
 	STATS_RECENT_POST_VIEWS_REQUEST,
 	STATS_RECENT_POST_VIEWS_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	const siteId = 37463864;

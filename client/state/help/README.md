@@ -1,10 +1,9 @@
-Help
-====
+# Help
 
 A module for managing help data.
 
 ## Reducers
 
-#### `courses`
+### `courses`
 
 An array of help courses that are available to users.

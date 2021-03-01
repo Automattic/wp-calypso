@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation } from 'state/utils';
-import { TIMEZONES_RECEIVE } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { TIMEZONES_RECEIVE } from 'calypso/state/action-types';
 
 import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';
 
@@ -33,8 +34,10 @@ export const byContinents = withSchemaValidation( continentsSchema, ( state = {}
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	rawOffsets,
 	labels,
 	byContinents,
 } );
+
+export default withStorageKey( 'timezones', combinedReducer );

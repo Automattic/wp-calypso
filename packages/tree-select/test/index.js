@@ -15,9 +15,9 @@ describe( 'index', () => {
 
 		beforeEach( () => {
 			selector = jest.fn( ( [ posts ], siteId ) =>
-				Object.values( posts ).filter( p => p.siteId === siteId )
+				Object.values( posts ).filter( ( p ) => p.siteId === siteId )
 			);
-			getDependents = jest.fn( state => [ state.posts ] );
+			getDependents = jest.fn( ( state ) => [ state.posts ] );
 			getSitePosts = treeSelect( getDependents, selector );
 		} );
 
@@ -67,7 +67,7 @@ describe( 'index', () => {
 				Object.values( posts )[ 0 ],
 				Object.values( sites )[ 0 ],
 			] );
-			const getDeps = jest.fn( state => [ state.posts, state.sites ] );
+			const getDeps = jest.fn( ( state ) => [ state.posts, state.sites ] );
 			const arborealTakeOne = treeSelect( getDeps, takeOne );
 
 			arborealTakeOne( reduxState, 42 );
@@ -232,7 +232,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'throws on a non-nullish primitive value returned by getDependents', () => {
-			[ true, 1, 'a', false, '', 0 ].forEach( primitive => {
+			[ true, 1, 'a', false, '', 0 ].forEach( ( primitive ) => {
 				const memoizedSelector = treeSelect(
 					() => [ primitive ],
 					() => []
@@ -253,9 +253,9 @@ describe( 'index', () => {
 			};
 
 			const memoizedSelector = treeSelect(
-				state => [ state.posts ],
-				( [ posts ], query ) => Object.values( posts ).filter( p => p.siteId === query.siteId ),
-				{ getCacheKey: query => `key:${ query.siteId }` }
+				( state ) => [ state.posts ],
+				( [ posts ], query ) => Object.values( posts ).filter( ( p ) => p.siteId === query.siteId ),
+				{ getCacheKey: ( query ) => `key:${ query.siteId }` }
 			);
 
 			// The arguments are objects, they are not identical, but generated keys are.

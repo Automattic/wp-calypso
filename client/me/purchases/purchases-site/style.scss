@@ -1,50 +1,27 @@
-.purchases-site {
-	margin-bottom: 15px;
-
-	.site-icon {
-		display: inline-block;
-		margin-right: 12px;
-		vertical-align: middle;
-	}
-}
-
-.purchases-site__slug {
-	color: var( --color-neutral );
-	font-size: 12px;
-}
-
-.purchases-site__slug {
-	white-space: nowrap;
-
-	@include breakpoint( '<660px' ) {
-		line-height: 15px;
-	}
-}
-
 .concierge-banner {
 	& .action-card__button-container {
 		text-align: left;
+		margin-bottom: 0;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			text-align: center;
 		}
 	}
 
 	& .action-card__illustration {
-		@include breakpoint( '>960px' ) {
-			margin: -10px -20px 0;
+		@include breakpoint-deprecated( '>960px' ) {
+			margin: 5px -20px 0;
 		}
 	}
 
 	&.purchase-concierge .action-card__illustration {
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			margin-right: 20px;
 		}
 	}
 
 	&.card {
-		@include breakpoint( '>480px' ) {
-			padding: 10px;
+		@include breakpoint-deprecated( '>480px' ) {
 			align-items: flex-start;
 		}
 	}

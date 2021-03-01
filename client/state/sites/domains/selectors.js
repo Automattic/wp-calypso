@@ -17,8 +17,12 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 	return state.sites.domains.items[ siteId ] || EMPTY_SITE_DOMAINS;
 };
 
-export const getAllDomains = state => {
+export const getAllDomains = ( state ) => {
 	return state.sites.domains.items;
+};
+
+export const getFlatDomainsList = ( state ) => {
+	return state.allDomains.domains ?? [];
 };
 
 /**
@@ -58,7 +62,7 @@ export const isRequestingSiteDomains = ( state, siteId ) => {
 	return state.sites.domains.requesting[ siteId ] || false;
 };
 
-export const getAllRequestingSiteDomains = state => {
+export const getAllRequestingSiteDomains = ( state ) => {
 	return state.sites.domains.requesting;
 };
 

@@ -16,7 +16,7 @@ import {
 	areSettingsGeneralLoaded,
 	areSettingsGeneralLoadError,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import { errorNotice, removeNotice } from 'state/notices/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
 class QuerySettingsGeneral extends Component {
 	fetch( siteId ) {
@@ -74,11 +74,11 @@ QuerySettingsGeneral.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		loaded: areSettingsGeneralLoaded( state ),
 		error: areSettingsGeneralLoadError( state ),
 	} ),
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				fetchSettingsGeneral,

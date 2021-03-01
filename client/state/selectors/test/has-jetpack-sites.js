@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import hasJetpackSites from 'state/selectors/has-jetpack-sites';
+import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 
 describe( 'hasJetpackSites()', () => {
 	test( 'it should return false if sites are empty', () => {

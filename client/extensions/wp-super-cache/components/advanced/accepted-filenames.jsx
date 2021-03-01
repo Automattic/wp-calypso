@@ -10,13 +10,13 @@ import { get, pick } from 'lodash';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
-import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 class AcceptedFilenames extends Component {
@@ -56,7 +56,7 @@ class AcceptedFilenames extends Component {
 		);
 	};
 
-	handleToggle = fieldName => {
+	handleToggle = ( fieldName ) => {
 		return () => {
 			const { fields, setFieldValue } = this.props;
 			const groupName = 'pages';
@@ -94,7 +94,7 @@ class AcceptedFilenames extends Component {
 				<Card>
 					<form>
 						<FormLabel>{ translate( 'Do not cache these page types.' ) }</FormLabel>
-
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<FormSettingExplanation className="wp-super-cache__condition-settings-explanation">
 							{ translate(
 								' See the {{a}}Conditional Tags{{/a}} ' +
@@ -117,10 +117,14 @@ class AcceptedFilenames extends Component {
 							{ this.renderToggle( 'single', translate( 'Single Posts (is_single)' ) ) }
 							{ this.renderToggle( 'pages', translate( 'Pages (is_page)' ) ) }
 							{ this.renderToggle( 'frontpage', translate( 'Front Page (is_front_page)' ) ) }
+
+							{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 							<div className="wp-super-cache__nested-page-types">
 								{ this.renderToggle( 'home', translate( 'Home (is_home)' ), 'frontpage' ) }
 							</div>
 							{ this.renderToggle( 'archives', translate( 'Archives (is_archive)' ) ) }
+
+							{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 							<div className="wp-super-cache__nested-page-types">
 								{ this.renderToggle( 'tag', translate( 'Tags (is_tag)' ), 'archives' ) }
 								{ this.renderToggle(
@@ -154,7 +158,7 @@ class AcceptedFilenames extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel>{ translate( 'Whitelisted filenames:' ) }</FormLabel>
+							<FormLabel>{ translate( 'Allowed filenames:' ) }</FormLabel>
 							<FormTextarea
 								disabled={ isDisabled }
 								onChange={ handleChange( 'cache_acceptable_files' ) }
@@ -174,7 +178,7 @@ class AcceptedFilenames extends Component {
 	}
 }
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_acceptable_files', 'cache_rejected_uri', 'pages' ] );
 };
 

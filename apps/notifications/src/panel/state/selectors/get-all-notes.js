@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { sortBy, values } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import getNotes from './get-notes';
 
 let prevAllNotes;
@@ -21,7 +27,7 @@ const parsedTimestamp = ( { timestamp } ) => Date.parse( timestamp );
  * @param {object} notesState
  * @returns {object[]} list of notification objects
  */
-export const getAllNotes = notesState => {
+export const getAllNotes = ( notesState ) => {
 	const nextAllNotes = notesState.allNotes;
 
 	if ( prevAllNotes === nextAllNotes ) {
@@ -33,4 +39,4 @@ export const getAllNotes = notesState => {
 	return sortedNotes;
 };
 
-export default state => getAllNotes( getNotes( state ) );
+export default ( state ) => getAllNotes( getNotes( state ) );

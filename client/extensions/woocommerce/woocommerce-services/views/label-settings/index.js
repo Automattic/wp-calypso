@@ -15,11 +15,11 @@ import { isBoolean } from 'lodash';
  */
 import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormToggle from 'components/forms/form-toggle';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import LabelSettings from './label-settings';
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
 import { setFormDataValue, restorePristineSettings } from '../../state/label-settings/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	areLabelsEnabled,
 	areSettingsErrored,

@@ -44,7 +44,7 @@ export async function loadmShotsPreview( options = {} ) {
 		}
 
 		// Wait and retry.
-		await new Promise( resolve => setTimeout( resolve, retryTimeout ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, retryTimeout ) );
 	}
 }
 

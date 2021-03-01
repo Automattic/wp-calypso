@@ -11,18 +11,18 @@ import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { isErrorNotice } from '../../test-utils';
 
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'email forwarding get forwards request', () => {
-		const domainName = 'example.com',
-			action = {
-				type: EMAIL_FORWARDING_REQUEST,
-				domainName,
-			};
+		const domainName = 'example.com';
+		const action = {
+			type: EMAIL_FORWARDING_REQUEST,
+			domainName,
+		};
 
 		describe( '#getEmailForwards', () => {
 			test( 'should dispatch an HTTP request to the get email forwards endpoint', () => {

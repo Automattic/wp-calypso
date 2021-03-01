@@ -6,6 +6,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { escapeRegExp } from 'lodash';
 
+function escapeRegExpWithSpace( str ) {
+	return escapeRegExp( str ).replace( /\s/g, '\\s' );
+}
+
 class Item extends PureComponent {
 	static propTypes = {
 		label: PropTypes.string.isRequired,
@@ -34,14 +38,17 @@ class Item extends PureComponent {
 	 * @returns {Array< ReactElement< JSX.IntrinsicElements[ 'span' ] > >} An element including the highlighted text.
 	 */
 	createTextWithHighlight( text, query ) {
-		const re = new RegExp( '(' + escapeRegExp( query ) + ')', 'gi' );
+		const re = new RegExp( '(' + escapeRegExpWithSpace( query ) + ')', 'gi' );
 		const parts = text.split( re );
+
+		// Replaces char code 160 (&nbsp;) with 32 (space)
+		const match = query.toLowerCase().replace( /\s/g, ' ' );
 
 		return parts.map( ( part, i ) => {
 			const key = text + i;
 			const lowercasePart = part.toLowerCase();
 			const spanClass = classNames( 'suggestions__label', {
-				'is-emphasized': lowercasePart === query.toLowerCase(),
+				'is-emphasized': lowercasePart === match,
 			} );
 
 			return (
@@ -52,7 +59,7 @@ class Item extends PureComponent {
 		} );
 	}
 
-	handleMouseDown = event => {
+	handleMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		this.props.onMouseDown();

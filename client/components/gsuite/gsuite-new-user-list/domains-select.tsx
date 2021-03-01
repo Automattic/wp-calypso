@@ -6,7 +6,7 @@ import React, { ChangeEvent } from 'react';
 /**
  * Internal dependencies
  */
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'calypso/components/forms/form-select';
 
 interface Props {
 	domains: string[];
@@ -21,7 +21,7 @@ const GSuiteDomainsSelect = ( { domains, onChange, value }: Props ) => {
 			onChange={ onChange }
 			value={ value }
 		>
-			{ domains.map( domain => {
+			{ domains.map( ( domain ) => {
 				return (
 					<option value={ domain } key={ domain }>
 						@{ domain }

@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
+import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 
-import getTimezonesLabels from 'state/selectors/get-timezones-labels';
+import 'calypso/state/timezones/init';
 
 /**
  * Return timezone `label` according to the given timezone key (value)

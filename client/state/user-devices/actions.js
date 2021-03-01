@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
+import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'calypso/state/action-types';
 
-import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'state/action-types';
-
-import 'state/data-layer/wpcom/me/devices';
+import 'calypso/state/data-layer/wpcom/me/devices';
+import 'calypso/state/user-devices/init';
 
 /**
  * Returns an action object to signal the request of the user's devices.
@@ -19,4 +19,4 @@ export const requestUserDevices = () => ( { type: USER_DEVICES_REQUEST } );
  * @param  {object} devices Object containing one or more devices, keyed by id.
  * @returns {object}         Action object
  */
-export const userDevicesAdd = devices => ( { type: USER_DEVICES_ADD, devices } );
+export const userDevicesAdd = ( devices ) => ( { type: USER_DEVICES_ADD, devices } );

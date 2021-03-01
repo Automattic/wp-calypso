@@ -32,11 +32,11 @@ export const initialState = {
 	pristine: true,
 };
 
-const isNullOrEmpty = value => null === value || '' === trim( value );
+const isNullOrEmpty = ( value ) => null === value || '' === trim( value );
 
 const reducers = {};
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE ] = ( state ) => {
 	const selectedPredefinedPackages =
 		state.packages && state.packages.predefined ? state.packages.predefined : {};
 
@@ -64,7 +64,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_EDIT_PACKAGE ] = ( state, action ) => {
 	} );
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ] = ( state ) => {
 	return Object.assign( {}, state, {
 		modalErrors: {},
 		showModal: false,
@@ -123,7 +123,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PACKAGE ] = ( state, action ) => {
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS ] = ( state ) => {
 	return {
 		...state,
 		showOuterDimensions: true,
@@ -149,7 +149,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_ALL_PREDEFINED ] = (
 	{ serviceId, groupId, checked }
 ) => {
 	const groupPackages = state.predefinedSchema[ serviceId ][ groupId ].definitions.map(
-		def => def.id
+		( def ) => def.id
 	);
 	const selected = state.currentlyEditingPredefinedPackages[ serviceId ];
 	const newSelected = checked
@@ -213,7 +213,7 @@ reducers[ WOOCOMMERCE_SERVICES_PACKAGES_REMOVE_PREDEFINED ] = (
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED ] = ( state ) => {
 	const predefined = state.currentlyEditingPredefinedPackages;
 
 	state = reducers[ WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL ]( state );

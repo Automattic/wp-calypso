@@ -2,9 +2,8 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import { ERROR, LOADING } from 'woocommerce/state/constants';
-import { isNull } from 'lodash';
 import { updateSettings } from '../helpers';
 import {
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
@@ -21,7 +20,7 @@ export default withoutPersistence( ( state = null, action ) => {
 		case WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS: {
 			const { data } = action;
 			const settings = state || [];
-			const newSettings = settings.map( setting => {
+			const newSettings = settings.map( ( setting ) => {
 				if ( setting.id === data.id ) {
 					return data;
 				}
@@ -32,7 +31,7 @@ export default withoutPersistence( ( state = null, action ) => {
 		case WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS: {
 			const { data } = action;
 			const settings = state || [];
-			const newSettings = settings.map( setting => {
+			const newSettings = settings.map( ( setting ) => {
 				if ( setting.id === data.id ) {
 					return data;
 				}
@@ -49,7 +48,7 @@ export default withoutPersistence( ( state = null, action ) => {
 
 			// Don't set the loading indicator if data has previously been loaded,
 			// or if the data layer is dispatching with meta attached.
-			if ( ! data && ! error && ( isNull( state ) || ERROR === state ) ) {
+			if ( ! data && ! error && ( state === null || ERROR === state ) ) {
 				return LOADING;
 			}
 			return state;

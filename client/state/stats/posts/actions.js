@@ -1,14 +1,15 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
 	POST_STATS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/stats/init';
 
 /**
  * Returns an action object to be used in signalling that post stat for a site,
@@ -38,7 +39,7 @@ export function receivePostStats( siteId, postId, stats ) {
  * @returns {Function}      Action thunk
  */
 export function requestPostStats( siteId, postId, fields = [] ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_STATS_REQUEST,
 			postId,
@@ -49,7 +50,7 @@ export function requestPostStats( siteId, postId, fields = [] ) {
 		return wpcom
 			.site( siteId )
 			.statsPostViews( postId, { fields: fields.join() } )
-			.then( stats => {
+			.then( ( stats ) => {
 				dispatch( receivePostStats( siteId, postId, stats ) );
 				dispatch( {
 					type: POST_STATS_REQUEST_SUCCESS,
@@ -58,7 +59,7 @@ export function requestPostStats( siteId, postId, fields = [] ) {
 					fields,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_STATS_REQUEST_FAILURE,
 					siteId,

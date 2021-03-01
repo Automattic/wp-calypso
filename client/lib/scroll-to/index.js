@@ -8,8 +8,8 @@ function getCurrentScroll( container ) {
 		};
 	}
 
-	const x = window.pageXOffset || document.documentElement.scrollLeft,
-		y = window.pageYOffset || document.documentElement.scrollTop;
+	const x = window.pageXOffset || document.documentElement.scrollLeft;
+	const y = window.pageYOffset || document.documentElement.scrollTop;
 	return { x, y };
 }
 
@@ -88,7 +88,7 @@ class Stepper {
 	 *
 	 * @param {number} ts - timestamp
 	 */
-	step = ts => {
+	step = ( ts ) => {
 		// reset the nextFrame raf handle so we can schedule another step
 		this.nextFrame = null;
 

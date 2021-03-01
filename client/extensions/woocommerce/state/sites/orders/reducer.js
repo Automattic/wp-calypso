@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-
-import { isFinite, keyBy, omit } from 'lodash';
+import { keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { getSerializedOrdersQuery } from './utils';
 import invoice from './send-invoice/reducer';
 import notes from './notes/reducer';
@@ -84,9 +83,10 @@ export function isQueryLoading( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDERS_REQUEST:
 		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-		case WOOCOMMERCE_ORDERS_REQUEST_FAILURE:
+		case WOOCOMMERCE_ORDERS_REQUEST_FAILURE: {
 			const query = getSerializedOrdersQuery( action.query );
 			return Object.assign( {}, state, { [ query ]: WOOCOMMERCE_ORDERS_REQUEST === action.type } );
+		}
 		default:
 			return state;
 	}
@@ -102,7 +102,9 @@ export function isQueryLoading( state = {}, action ) {
  * @returns {object}        Updated state
  */
 export function isUpdating( state = {}, action ) {
-	const orderId = isFinite( action.orderId ) ? action.orderId : JSON.stringify( action.orderId );
+	const orderId = Number.isFinite( action.orderId )
+		? action.orderId
+		: JSON.stringify( action.orderId );
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDER_UPDATE:
 		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
@@ -147,10 +149,11 @@ export function items( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
-		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
-			const idList = action.orders.map( order => order.id );
+		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS: {
+			const idList = action.orders.map( ( order ) => order.id );
 			const query = getSerializedOrdersQuery( action.query );
 			return Object.assign( {}, state, { [ query ]: idList } );
+		}
 		default:
 			return state;
 	}
@@ -165,9 +168,10 @@ export function queries( state = {}, action ) {
  */
 export function total( state = 1, action ) {
 	switch ( action.type ) {
-		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS:
+		case WOOCOMMERCE_ORDERS_REQUEST_SUCCESS: {
 			const query = getSerializedOrdersQuery( omit( action.query, 'page' ) );
 			return Object.assign( {}, state, { [ query ]: action.total } );
+		}
 		default:
 			return state;
 	}

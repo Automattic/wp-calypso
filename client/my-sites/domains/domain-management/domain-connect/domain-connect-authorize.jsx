@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Main from 'components/main';
-import Notice from 'components/notice';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
 import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
 import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
 import { actionType, noticeType } from './constants';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -39,20 +39,20 @@ class DomainConnectAuthorize extends Component {
 	};
 
 	componentDidMount() {
-		const { providerId, serviceId, params, translate } = this.props,
-			{ domain } = params;
+		const { providerId, serviceId, params, translate } = this.props;
+		const { domain } = params;
 
 		wpcom
 			.getDnsTemplateRecords( domain, providerId, serviceId, params )
 			.then(
-				data => {
+				( data ) => {
 					this.setState( {
 						action: actionType.READY_TO_SUBMIT,
 						dnsTemplateConflicts: data && data.conflicting_records,
 						dnsTemplateRecords: data && data.new_records,
 					} );
 				},
-				error => {
+				( error ) => {
 					const errorMessage =
 						error.message ||
 						translate(
@@ -76,8 +76,8 @@ class DomainConnectAuthorize extends Component {
 	}
 
 	handleClickConfirm = () => {
-		const { providerId, serviceId, params, translate } = this.props,
-			{ domain } = params;
+		const { providerId, serviceId, params, translate } = this.props;
+		const { domain } = params;
 
 		this.setState( {
 			action: actionType.SUBMITTING,
@@ -85,7 +85,7 @@ class DomainConnectAuthorize extends Component {
 		} );
 
 		wpcom.applyDnsTemplateSyncFlow( domain, providerId, serviceId, params ).then(
-			result => {
+			( result ) => {
 				let action = actionType.CLOSE;
 				let noticeMessage = translate( 'Hurray! Your new service is now all set up.' );
 				if ( result.redirect_uri ) {
@@ -101,7 +101,7 @@ class DomainConnectAuthorize extends Component {
 					noticeType: noticeType.SUCCESS,
 				} );
 			},
-			error => {
+			( error ) => {
 				const errorMessage =
 					error.message ||
 					translate(
@@ -136,8 +136,8 @@ class DomainConnectAuthorize extends Component {
 	};
 
 	render() {
-		const { params, translate } = this.props,
-			{ domain } = params;
+		const { params, translate } = this.props;
+		const { domain } = params;
 
 		return (
 			<Main className="domain-connect__main">

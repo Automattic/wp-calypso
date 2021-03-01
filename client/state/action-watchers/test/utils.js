@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import { mergeHandlers } from '../utils';
 
 describe( '#mergeHandlers', () => {
-	const inc = a => a + 1;
-	const triple = a => a * 3;
+	const inc = ( a ) => a + 1;
+	const triple = ( a ) => a * 3;
 	const action = 'DO_MATH';
 	const first = { [ action ]: [ inc ] };
 	const second = { [ action ]: [ triple ] };

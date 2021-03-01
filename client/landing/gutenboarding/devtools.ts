@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 interface MagicWindow extends Window {
 	wp: undefined | Record< string, any >;
 }
@@ -13,6 +15,15 @@ export const setupWpDataDebug = () => {
 			}
 			if ( ! window.wp.data ) {
 				window.wp.data = require( '@wordpress/data' );
+
+				const config = require( '@automattic/calypso-config' ).default;
+				const clientCreds = {
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+				};
+
+				const { Site } = require( '@automattic/data-stores' );
+				Site.register( clientCreds );
 			}
 		}
 	}

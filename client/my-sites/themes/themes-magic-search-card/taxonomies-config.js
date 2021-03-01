@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Taxonomies allowed in the search welcome suggestion card.
  */
-export const taxonomiesWelcomeWhitelist = [ 'column', 'feature', 'layout', 'subject', 'style' ];
+export const allowedSearchWelcomeTaxonomies = [ 'column', 'feature', 'layout', 'subject', 'style' ];
 
 /**
  * Associates an icon to each taxonomy.

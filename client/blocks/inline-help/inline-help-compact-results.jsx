@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import InlineHelpCompactResult from 'blocks/inline-help/inline-help-compact-result';
+import InlineHelpCompactResult from 'calypso/blocks/inline-help/inline-help-compact-result';
 
 class InlineHelpCompactResults extends Component {
 	static propTypes = {
@@ -22,7 +22,7 @@ class InlineHelpCompactResults extends Component {
 	render() {
 		return (
 			<ul className="inline-help__results-list">
-				{ this.props.helpLinks.map( link => (
+				{ this.props.helpLinks.map( ( link ) => (
 					<InlineHelpCompactResult
 						key={ link.link + '#' + link.id }
 						helpLink={ link }

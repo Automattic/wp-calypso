@@ -10,7 +10,7 @@ import { assign, filter, forEach, forOwn, noop } from 'lodash';
  * Internal Dependencies
  */
 import { loadScript } from '@automattic/load-script';
-import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
+import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -21,6 +21,7 @@ const embedsToLookFor = {
 	'fb\\:post, [class^=fb-]': embedFacebook,
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
+	'.wp-block-jetpack-story': embedStory,
 	'.embed-reddit': embedReddit,
 };
 
@@ -63,8 +64,8 @@ const loaders = {};
 function loadAndRun( scriptUrl, callback ) {
 	let loader = loaders[ scriptUrl ];
 	if ( ! loader ) {
-		loader = new Promise( function( resolve, reject ) {
-			loadScript( scriptUrl, function( err ) {
+		loader = new Promise( function ( resolve, reject ) {
+			loadScript( scriptUrl, function ( err ) {
 				if ( err ) {
 					reject( err );
 				} else {
@@ -74,7 +75,7 @@ function loadAndRun( scriptUrl, callback ) {
 		} );
 		loaders[ scriptUrl ] = loader;
 	}
-	loader.then( callback, function( err ) {
+	loader.then( callback, function ( err ) {
 		debug( 'error loading ' + scriptUrl, err );
 		loaders[ scriptUrl ] = null;
 	} );
@@ -135,14 +136,14 @@ function embedTumblr( domNode ) {
 	function removeScript() {
 		forEach(
 			document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' ),
-			function( el ) {
+			function ( el ) {
 				el.parentNode.removeChild( el );
 			}
 		);
 		tumblrLoader = false;
 	}
 
-	setTimeout( function() {
+	setTimeout( function () {
 		loadScript( 'https://secure.assets.tumblr.com/post.js', removeScript );
 	}, 30 );
 }
@@ -179,7 +180,7 @@ function embedSlideshow( domNode ) {
 
 	// Remove no JS warning so user doesn't have to look at it while several scripts load
 	const warningElements = domNode.parentNode.getElementsByClassName( 'jetpack-slideshow-noscript' );
-	forEach( warningElements, el => {
+	forEach( warningElements, ( el ) => {
 		el.classList.add( 'hidden' );
 	} );
 
@@ -196,6 +197,17 @@ function embedSlideshow( domNode ) {
 		loadjQueryDependentScriptDesktopWrapper( SLIDESHOW_URLS.CYCLE_JS, () => {
 			createSlideshow();
 		} );
+	}
+}
+
+function embedStory( domNode ) {
+	debug( 'processing story for ', domNode );
+
+	const storyLink = domNode.querySelector( 'a.wp-story-overlay' );
+
+	// Open story in a new tab
+	if ( storyLink ) {
+		storyLink.setAttribute( 'target', '_blank' );
 	}
 }
 

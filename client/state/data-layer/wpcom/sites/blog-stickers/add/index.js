@@ -8,16 +8,16 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { SITES_BLOG_STICKER_ADD } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { SITES_BLOG_STICKER_ADD } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-export const requestBlogStickerAdd = action =>
+export const requestBlogStickerAdd = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -28,12 +28,12 @@ export const requestBlogStickerAdd = action =>
 		action
 	);
 
-export const receiveBlogStickerAddError = action => [
+export const receiveBlogStickerAddError = ( action ) => [
 	errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
 	bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ),
 ];
 
-export const receiveBlogStickerAdd = action => {
+export const receiveBlogStickerAdd = ( action ) => {
 	return successNotice(
 		translate( 'The sticker {{i}}%s{{/i}} has been successfully added.', {
 			args: action.payload.stickerName,

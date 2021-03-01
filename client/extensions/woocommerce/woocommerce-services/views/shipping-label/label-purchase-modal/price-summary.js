@@ -6,14 +6,14 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import Tooltip from 'components/tooltip';
+import Tooltip from 'calypso/components/tooltip';
 import { getTotalPriceBreakdown } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class PriceSummary extends Component {

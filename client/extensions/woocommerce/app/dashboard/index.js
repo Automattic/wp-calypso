@@ -9,6 +9,11 @@ import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
@@ -32,7 +37,7 @@ import {
 import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import ManageExternalView from './manage-external-view';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
@@ -42,7 +47,10 @@ import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup';
 import StoreLocationSetupView from './setup/store-location';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import warn from 'lib/warn';
+import StoreMoveNoticeView from './store-move-notice-view';
+import config from '@automattic/calypso-config';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 
 class Dashboard extends Component {
 	static propTypes = {
@@ -152,7 +160,7 @@ class Dashboard extends Component {
 		return translate( 'Dashboard' );
 	};
 
-	onRequestRedirect = redirectURL => {
+	onRequestRedirect = ( redirectURL ) => {
 		this.setState( { redirectURL } );
 	};
 
@@ -166,6 +174,8 @@ class Dashboard extends Component {
 			settingsGeneralLoading,
 			setupChoicesLoading,
 			storeLocation,
+			shouldRedirectAfterInstall,
+			isSiteWpcomStore,
 		} = this.props;
 
 		const adminURL = get( selectedSite, 'options.admin_url', '' );
@@ -180,6 +190,18 @@ class Dashboard extends Component {
 		}
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
+			return <RequiredPluginsInstallView site={ selectedSite } />;
+		}
+
+		if ( finishedInstallOfRequiredPlugins && shouldRedirectAfterInstall ) {
+			// Redirect to Core UI setup after finish installation if store is
+			// installed on this site. This check is needed because of an edge
+			// case where, if WooCommerce was installed then removed, then
+			// shouldRedirectAfterInstall is always true
+			if ( isSiteWpcomStore ) {
+				this.redirectToWoocommerceSetup( selectedSite );
+			}
+
 			return <RequiredPluginsInstallView site={ selectedSite } />;
 		}
 
@@ -239,15 +261,35 @@ class Dashboard extends Component {
 		return <div>{ manageView }</div>;
 	};
 
+	redirectToWoocommerceSetup = ( site ) => {
+		window.location = site.options.admin_url + 'admin.php?page=wc-admin&path=%2Fsetup-wizard';
+	};
+
 	render() {
-		const { className, finishedInstallOfRequiredPlugins, isSetupComplete, siteId } = this.props;
+		const {
+			className,
+			isSetupComplete,
+			siteId,
+			finishedInstallOfRequiredPlugins,
+			shouldRedirectAfterInstall,
+		} = this.props;
 		const useWideLayout = isSetupComplete ? true : false;
+		const shouldShowStoreNotice = ! shouldRedirectAfterInstall;
+		const shouldRenderDashboardContents =
+			! config.isEnabled( 'woocommerce/store-removed' ) ||
+			! finishedInstallOfRequiredPlugins ||
+			shouldRedirectAfterInstall;
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) } wideLayout={ useWideLayout }>
 				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
-				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
-				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
+				{ shouldShowStoreNotice && <StoreMoveNoticeView /> }
+				{ shouldRenderDashboardContents && (
+					<>
+						{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
+						{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
+					</>
+				) }
 			</Main>
 		);
 	}
@@ -275,6 +317,10 @@ function mapStateToProps( state ) {
 	const hasProducts = getCountProducts( state ) > 0;
 
 	const loading = setupChoicesLoading || ! hasCounts || settingsGeneralLoading;
+	const shouldRedirectAfterInstall =
+		'' === get( getCurrentQueryArguments( state ), 'redirect_after_install' );
+
+	const isSiteWpcomStore = getSiteOption( state, siteId, 'is_wpcom_store' );
 
 	return {
 		finishedInitialSetup,
@@ -291,6 +337,8 @@ function mapStateToProps( state ) {
 		setupChoicesLoading,
 		siteId,
 		storeLocation,
+		shouldRedirectAfterInstall,
+		isSiteWpcomStore,
 	};
 }
 

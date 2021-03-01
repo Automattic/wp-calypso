@@ -21,10 +21,10 @@ import {
 	areSettingsGeneralLoaded,
 	areSettingsGeneralLoadError,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { areShippingZonesLocationsValid } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { createAddDefultShippingZoneActionList } from 'woocommerce/state/ui/shipping/zones/actions';
@@ -83,7 +83,7 @@ class ShippingZoneList extends Component {
 		);
 	};
 
-	onAddNewClick = event => {
+	onAddNewClick = ( event ) => {
 		if ( ! this.props.loaded ) {
 			event.preventDefault();
 		}
@@ -120,7 +120,7 @@ class ShippingZoneList extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const savingZones = Boolean( getActionList( state ) );
 		const loaded =
 			areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state ) && ! savingZones;
@@ -135,7 +135,7 @@ export default connect(
 			isValid: ! loaded || areShippingZonesLocationsValid( state ),
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				createAddDefultShippingZoneActionList,

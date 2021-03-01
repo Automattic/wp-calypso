@@ -3,8 +3,6 @@
  */
 import enrichedSurveyData from '../enriched-survey-data';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
-
 describe( 'enrichedSurveyData', () => {
 	test( 'should duplicate survey data if no site or purchase are provided', () => {
 		expect( enrichedSurveyData( { key: 'value' } ) ).toEqual( {

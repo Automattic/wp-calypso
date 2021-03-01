@@ -11,7 +11,7 @@
  * @param  {object} node CallExpression node
  * @returns {object}      First non-sequence callee
  */
-const getCallee = ( module.exports = function( node ) {
+const getCallee = ( module.exports = function ( node ) {
 	const callee = node.callee;
 	if ( ! callee ) {
 		return node;

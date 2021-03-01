@@ -1,21 +1,25 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import {
 	HOSTING_PHP_VERSION_REQUEST,
 	HOSTING_PHP_VERSION_SET_REQUEST,
 	HOSTING_PHP_VERSION_SET,
-} from 'state/action-types';
-import { errorNotice, successNotice } from 'state/notices/actions';
+} from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { translate } from 'i18n-calypso';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 const updateNoticeId = 'hosting-php-version';
 
-const getPhpVersion = action =>
+const getPhpVersion = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -34,7 +38,7 @@ const getPhpVersionSuccess = ( action, version ) => {
 	};
 };
 
-const updatePhpVersion = action =>
+const updatePhpVersion = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -61,7 +65,7 @@ export const hostingPhpVersionUpdateTracking = ( version, result ) =>
 		} )
 	);
 
-const updatePhpVersionSuccess = action => {
+const updatePhpVersionSuccess = ( action ) => {
 	return [
 		hostingPhpVersionUpdateTracking( action.version, true ),
 		{
@@ -84,7 +88,7 @@ const updatePhpVersionSuccess = action => {
 	];
 };
 
-const updatePhpVersionError = action => {
+const updatePhpVersionError = ( action ) => {
 	return [
 		hostingPhpVersionUpdateTracking( action.version, false ),
 		errorNotice( translate( 'Failed to set PHP version.' ), {

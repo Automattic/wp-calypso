@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { ActionType, Template } from './types';
-import * as Actions from './actions';
+import type { Template } from './types';
+import type { Action } from './actions';
 
-const templates: Reducer<
-	Record< string, Template[] | undefined >,
-	ReturnType< typeof Actions[ 'receiveTemplates' ] >
-> = ( state = {}, action ) => {
-	if ( action.type === ActionType.RECEIVE_TEMPLATES ) {
+const templates: Reducer< Record< string, Template[] | undefined >, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_TEMPLATES' ) {
 		return {
 			...state,
 			[ action.verticalId ]: action.templates,

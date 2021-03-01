@@ -46,11 +46,8 @@ describe( 'ValidationFieldset', () => {
 		);
 
 		expect( wrapper.find( 'FormFieldset > p' ) ).to.have.length( 2 );
-		expect(
-			wrapper
-				.find( 'FormFieldset > p' )
-				.first()
-				.text()
-		).to.equal( 'Lorem ipsum dolor sit amet' );
+		expect( wrapper.find( 'FormFieldset > p' ).first().text() ).to.equal(
+			'Lorem ipsum dolor sit amet'
+		);
 	} );
 } );

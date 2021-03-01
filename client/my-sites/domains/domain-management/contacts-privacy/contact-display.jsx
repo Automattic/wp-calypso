@@ -1,15 +1,17 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { getWhoisData } from 'state/domains/management/selectors';
-import { requestWhois } from 'state/domains/management/actions';
 import { isEmpty } from 'lodash';
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
+
+/**
+ * Internal dependencies
+ */
+import { getWhoisData } from 'calypso/state/domains/management/selectors';
+import { requestWhois } from 'calypso/state/domains/management/actions';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 
 class ContactDisplay extends React.PureComponent {
 	static propTypes = {
@@ -23,7 +25,7 @@ class ContactDisplay extends React.PureComponent {
 	};
 
 	render() {
-		const { translate, whoisData } = this.props;
+		const { whoisData } = this.props;
 
 		const contactInformation = findRegistrantWhois( whoisData );
 
@@ -34,8 +36,6 @@ class ContactDisplay extends React.PureComponent {
 
 		return (
 			<div className="contact-display">
-				<h2>{ translate( 'Contact Information' ) }</h2>
-
 				<div className="contact-display__content">
 					<p>
 						{ contactInformation.fname } { contactInformation.lname }
@@ -67,4 +67,4 @@ export default connect(
 	{
 		requestWhois,
 	}
-)( localize( ContactDisplay ) );
+)( ContactDisplay );

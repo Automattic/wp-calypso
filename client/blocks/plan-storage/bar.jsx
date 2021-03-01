@@ -11,8 +11,8 @@ import filesize from 'filesize';
  * Internal dependencies
  */
 import { ProgressBar } from '@automattic/components';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
+import { planHasFeature } from 'calypso/lib/plans';
+import { FEATURE_UNLIMITED_STORAGE } from 'calypso/lib/plans/constants';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
@@ -22,23 +22,11 @@ export class PlanStorageBar extends Component {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
 		displayUpgradeLink: PropTypes.bool,
-		siteSlug: PropTypes.string.isRequired,
 		sitePlanSlug: PropTypes.string.isRequired,
 	};
 
-	static defaultProps = {
-		siteSlug: '',
-	};
-
 	render() {
-		const {
-			className,
-			displayUpgradeLink,
-			mediaStorage,
-			sitePlanSlug,
-			siteSlug,
-			translate,
-		} = this.props;
+		const { className, displayUpgradeLink, mediaStorage, sitePlanSlug, translate } = this.props;
 
 		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
 			return null;
@@ -75,9 +63,7 @@ export class PlanStorageBar extends Component {
 				</span>
 
 				{ displayUpgradeLink && (
-					<a className="plan-storage__storage-link" href={ `/plans/${ siteSlug }` }>
-						{ translate( 'Upgrade' ) }
-					</a>
+					<span className="plan-storage__storage-link">{ translate( 'Upgrade' ) }</span>
 				) }
 
 				{ this.props.children }

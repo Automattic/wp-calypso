@@ -2,10 +2,10 @@
  * Internal dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 const PeopleActions = {
-	removePeopleNotices: logs => {
+	removePeopleNotices: ( logs ) => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PEOPLE_NOTICES',
 			logs: logs,

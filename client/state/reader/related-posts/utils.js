@@ -1,11 +1,3 @@
-/**
- * External Dependencies
- */
-
-/**
- * Internal Dependencies
- */
-
 export const SCOPE_ALL = 'all';
 export const SCOPE_SAME = 'same';
 export const SCOPE_OTHER = 'other';

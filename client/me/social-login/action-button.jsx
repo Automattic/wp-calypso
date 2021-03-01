@@ -9,15 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isRequesting } from 'state/login/selectors';
-import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
-import FormButton from 'components/forms/form-button';
-import GoogleLoginButton from 'components/social-buttons/google';
-import AppleLoginButton from 'components/social-buttons/apple';
-import userFactory from 'lib/user';
-
-const user = userFactory();
+import config from '@automattic/calypso-config';
+import { isRequesting } from 'calypso/state/login/selectors';
+import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
+import FormButton from 'calypso/components/forms/form-button';
+import GoogleLoginButton from 'calypso/components/social-buttons/google';
+import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import user from 'calypso/lib/user';
 
 class SocialLoginActionButton extends Component {
 	static propTypes = {
@@ -36,14 +34,14 @@ class SocialLoginActionButton extends Component {
 	};
 
 	refreshUser = () => {
-		user.fetch();
+		user().fetch();
 
 		this.setState( { fetchingUser: true } );
 
-		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
+		user().once( 'change', () => this.setState( { fetchingUser: false } ) );
 	};
 
-	handleSocialServiceResponse = response => {
+	handleSocialServiceResponse = ( response ) => {
 		const { service } = this.props;
 
 		let socialInfo = {
@@ -51,14 +49,20 @@ class SocialLoginActionButton extends Component {
 		};
 
 		if ( service === 'google' ) {
-			if ( ! response.Zi || ! response.Zi.access_token || ! response.Zi.id_token ) {
+			if ( ! response.getAuthResponse ) {
+				return;
+			}
+
+			const tokens = response.getAuthResponse();
+
+			if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
 				return;
 			}
 
 			socialInfo = {
 				...socialInfo,
-				access_token: response.Zi.access_token,
-				id_token: response.Zi.id_token,
+				access_token: tokens.access_token,
+				id_token: tokens.id_token,
 			};
 		}
 
@@ -140,7 +144,7 @@ class SocialLoginActionButton extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isUpdatingSocialConnection: isRequesting( state ),
 	} ),
 	{

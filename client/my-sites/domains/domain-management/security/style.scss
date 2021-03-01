@@ -1,0 +1,33 @@
+.security {
+	.security__header {
+		display: flex;
+		align-items: center;
+
+		span:first-child {
+			margin-right: auto;
+		}
+		.security__status {
+			display: flex;
+			align-items: center;
+			border-bottom: 0;
+			padding-bottom: 0;
+			font-weight: 600;
+			svg {
+				margin-right: 5px;
+			}
+
+			&.disabled svg {
+				fill: var( --color-error );
+			}
+			&.active svg {
+				fill: var( --color-success );
+			}
+		}
+	}
+	.security__content ul {
+		margin-left: 1.5em;
+		& > li {
+			line-height: 2em;
+		}
+	}
+}

@@ -20,7 +20,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
 } from 'woocommerce/state/action-types';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
 import { updateField } from 'woocommerce/woocommerce-services/state/service-settings/actions';
 
@@ -53,7 +53,7 @@ export const openShippingZoneMethod = ( siteId, methodId ) => {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const cancelShippingZoneMethod = siteId => {
+export const cancelShippingZoneMethod = ( siteId ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL, siteId };
 };
 
@@ -63,7 +63,7 @@ export const cancelShippingZoneMethod = siteId => {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
+export const closeShippingZoneMethod = ( siteId ) => ( dispatch, getState ) => {
 	const method = getCurrentlyOpenShippingZoneMethod( getState(), siteId );
 	// Perform validation if the method is from WooCommerce Services
 	if ( startsWith( method.methodType, 'wc_services' ) ) {

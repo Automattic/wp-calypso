@@ -11,7 +11,7 @@ import AsyncBaseContainer from '../../async-base-container';
 
 export default class JetpackConnectPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
-		super( driver, By.css( '.jetpack-connect__main' ), url );
+		super( driver, By.css( '.is-section-jetpack-connect' ), url );
 	}
 
 	async addSiteUrl( url ) {
@@ -21,7 +21,8 @@ export default class JetpackConnectPage extends AsyncBaseContainer {
 		);
 
 		await driverHelper.setWhenSettable( this.driver, urlInputSelector, url );
-		return await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
+		return await this.waitToDisappear();
 	}
 
 	async waitToDisappear() {

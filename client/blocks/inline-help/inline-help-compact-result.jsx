@@ -8,7 +8,7 @@ import { invoke } from 'lodash';
 /**
  * Internal dependencies
  */
-import { decodeEntities, preventWidows } from 'lib/formatting';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 
 class InlineHelpCompactResult extends Component {
 	static propTypes = {
@@ -20,7 +20,7 @@ class InlineHelpCompactResult extends Component {
 		helpLink: {},
 	};
 
-	onClick = event => {
+	onClick = ( event ) => {
 		invoke( this.props, 'onClick', event, this.props.helpLink );
 	};
 
@@ -32,6 +32,7 @@ class InlineHelpCompactResult extends Component {
 					href={ helpLink.link }
 					title={ decodeEntities( helpLink.description ) }
 					onClick={ this.onClick }
+					tabIndex={ -1 }
 				>
 					{ preventWidows( decodeEntities( helpLink.title ) ) }
 				</a>

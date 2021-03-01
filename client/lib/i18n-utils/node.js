@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 // we cannot use the following export
 // until we have stopped compiling into
@@ -12,6 +12,7 @@ import config from 'config';
 export {
 	addLocaleToPath,
 	getLanguage,
+	getLanguageRouteParam,
 	getLanguageSlugs,
 	getLocaleFromPath,
 	isDefaultLocale,
@@ -23,6 +24,8 @@ export {
 	getPathParts,
 	filterLanguageRevisions,
 	translationExists,
+	isMagnificentLocale,
+	isTranslatedIncompletely,
 } from './utils';
 
 export const getLocaleSlug = () => config( 'i18n_default_locale_slug' );

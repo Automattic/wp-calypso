@@ -23,8 +23,8 @@ import {
 	PUBLICIZE_SHARE_ACTION_SCHEDULE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { publicizeActionsSchema } from './schema';
 
 /**
@@ -76,7 +76,7 @@ export const scheduled = withSchemaValidation( publicizeActionsSchema, ( state =
 		case PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS: {
 			const { siteId, postId, items } = action;
 			items.forEach(
-				item => ( state = updateDataForPost( item, state, siteId, postId, item.ID ) )
+				( item ) => ( state = updateDataForPost( item, state, siteId, postId, item.ID ) )
 			);
 			return state;
 		}

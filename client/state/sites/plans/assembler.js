@@ -1,4 +1,4 @@
-export const createSitePlanObject = plan => {
+export const createSitePlanObject = ( plan ) => {
 	if ( ! plan ) {
 		return {};
 	}

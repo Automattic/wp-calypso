@@ -15,7 +15,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	order: 3;
 	margin: 40px 0 8px 16px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-left: 0;
 	}
 }
@@ -60,7 +60,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		background: var( --color-surface );
 		z-index: z-index( '.checklist__task', '.checklist__task-icon' );
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			left: 24px;
 		}
 
@@ -113,7 +113,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		text-align: left;
 		color: var( --color-neutral-dark );
 		font-weight: 600;
-		font-size: 16px;
+		font-size: $font-body;
 		border-radius: 0;
 		z-index: 0;
 
@@ -141,7 +141,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 	.checklist__task-description {
 		word-break: break-word;
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin-bottom: 16px;
 	}
 
@@ -151,7 +151,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	.checklist__task-duration {
-		font-size: 14px;
+		font-size: $font-body-small;
 		color: var( --color-neutral-dark );
 	}
 
@@ -166,6 +166,15 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	.checklist__task-action {
 		white-space: nowrap;
 		margin-right: 8px;
+	}
+
+	.checklist__task-skip {
+		margin-left: 16px;
+		color: var( --color-link );
+
+		&:hover {
+			color: var( --color-link-dark );
+		}
 	}
 
 	&.warning {
@@ -193,7 +202,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		.checklist__task-title-button.button {
 			font-weight: 600;
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-top: 8px;
 
 			.checklist__toggle-icon {
@@ -213,7 +222,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		&.is-completed .checklist__task-title {
 			padding: 8px $task-right-padding 8px $task-left-padding;
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 	}
 
@@ -223,7 +232,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		.checklist__task-title,
 		.checklist__task-title-button {
 			color: var( --color-text-subtle );
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 
 		.spinner {

@@ -1,5 +1,5 @@
 .share-widget__container {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-top: 48px;
 	}
 

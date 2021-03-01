@@ -3,7 +3,7 @@
  */
 
 import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { put } from 'woocommerce/state/data-layer/request/actions';
 import request from 'woocommerce/state/sites/http-request';
 import { saveCurrencySuccess } from 'woocommerce/state/sites/settings/general/actions';
@@ -31,7 +31,7 @@ export const handleSettingsGeneralError = ( action, error ) => {
 	};
 };
 
-export const handleSettingsGeneral = action => ( dispatch, getState ) => {
+export const handleSettingsGeneral = ( action ) => ( dispatch, getState ) => {
 	const { siteId } = action;
 
 	if ( areSettingsGeneralLoaded( getState(), siteId ) ) {

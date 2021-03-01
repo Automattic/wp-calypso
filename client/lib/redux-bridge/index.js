@@ -1,12 +1,12 @@
 /**
  * Internal Dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 let reduxStore = null;
 
 let resolveReduxStorePromise;
-const reduxStorePromise = new Promise( resolve => {
+const reduxStorePromise = new Promise( ( resolve ) => {
 	resolveReduxStorePromise = resolve;
 } );
 

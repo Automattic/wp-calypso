@@ -2,14 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import Button from '..';
 import Card from '../../card';
-import DocsExample from 'devdocs/docs-example';
+import DocsExample from 'calypso/devdocs/docs-example';
 
 export default class ButtonExample extends React.PureComponent {
 	static displayName = 'ButtonExample';
@@ -165,6 +165,10 @@ export default class ButtonExample extends React.PureComponent {
 						<Gridicon icon="trash" />
 						<span>Primary scary busy button</span>
 					</Button>
+				</div>
+
+				<div className="docs__design-button-row">
+					<Button plain>Plain button</Button>
 				</div>
 			</Card>
 		),

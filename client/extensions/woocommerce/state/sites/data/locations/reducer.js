@@ -2,14 +2,14 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_LOCATIONS_REQUEST,
 	WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
 	WOOCOMMERCE_ERROR_SET,
 } from 'woocommerce/state/action-types';
 import { LOADING, ERROR } from 'woocommerce/state/constants';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 export default withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
@@ -18,13 +18,13 @@ export default withoutPersistence( ( state = null, action ) => {
 		}
 		case WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS: {
 			const { data } = action;
-			return data.map( continent => ( {
+			return data.map( ( continent ) => ( {
 				code: continent.code,
 				name: decodeEntities( continent.name ),
-				countries: continent.countries.map( country => ( {
+				countries: continent.countries.map( ( country ) => ( {
 					code: country.code,
 					name: decodeEntities( country.name ),
-					states: country.states.map( countryState => ( {
+					states: country.states.map( ( countryState ) => ( {
 						code: countryState.code,
 						name: decodeEntities( countryState.name ),
 					} ) ),

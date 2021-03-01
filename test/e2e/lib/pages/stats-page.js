@@ -10,10 +10,11 @@ import AsyncBaseContainer from '../async-base-container';
 
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
+import * as dataHelper from '../data-helper';
 
 export default class StatsPage extends AsyncBaseContainer {
-	constructor( driver ) {
-		super( driver, By.css( '.stats-module' ) );
+	constructor( driver, url = dataHelper.getCalypsoURL( 'stats/day' ) ) {
+		super( driver, By.css( '.stats-module' ), url );
 	}
 
 	async openInsights() {

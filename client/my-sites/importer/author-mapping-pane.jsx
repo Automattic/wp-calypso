@@ -10,12 +10,12 @@ import React from 'react';
  * Internal dependencies
  */
 import AuthorMapping from './author-mapping-item';
-import SiteUsersFetcher from 'components/site-users-fetcher';
-import UsersStore from 'lib/users/store';
+import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
+import UsersStore from 'calypso/lib/users/store';
 
-import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
-import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
-import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 
 /**
  * Style dependencies
@@ -142,7 +142,7 @@ class AuthorMappingPane extends React.PureComponent {
 			importerStatus,
 			site,
 		} = this.props;
-		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
+		const canStartImport = hasSingleAuthor || sourceAuthors.some( ( author ) => author.mappedTo );
 		const targetUserCount = this.getUserCount();
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
@@ -159,22 +159,22 @@ class AuthorMappingPane extends React.PureComponent {
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
 					<span className="importer__mapping-target-title">{ targetTitle }</span>
 				</div>
-				{ sourceAuthors.map( author => {
+				{ sourceAuthors.map( ( author ) => {
 					return (
 						<AuthorMapping
 							hasSingleAuthor={ hasSingleAuthor }
 							key={ 'author-mapping-' + author.id }
-							onSelect={ e => onMap( author, e ) }
+							onSelect={ ( e ) => onMap( author, e ) }
 							siteId={ siteId }
 							sourceAuthor={ author }
 						/>
 					);
 				} ) }
 				<ImporterActionButtonContainer>
-					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
 						{ this.props.translate( 'Start import' ) }
 					</ImporterActionButton>
+					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				</ImporterActionButtonContainer>
 			</div>
 		);

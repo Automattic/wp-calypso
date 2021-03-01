@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 
 describe( '#isDomainOnlySite()', () => {
 	const siteId = 77203074;

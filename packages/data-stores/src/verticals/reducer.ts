@@ -1,20 +1,17 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { ActionType, Vertical } from './types';
-import * as Actions from './actions';
+import type { Vertical } from './types';
+import type { Action } from './actions';
 
-const verticals: Reducer< Vertical[], ReturnType< typeof Actions[ 'receiveVerticals' ] > > = (
-	state = [],
-	action
-) => {
-	if ( action.type === ActionType.RECEIVE_VERTICALS ) {
+const verticals: Reducer< Vertical[], Action > = ( state = [], action ) => {
+	if ( action.type === 'RECEIVE_VERTICALS' ) {
 		return action.verticals;
 	}
 	return state;

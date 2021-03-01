@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormRadio from 'components/forms/form-radio';
-import FormLabel from 'components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
 import getPackageDescriptions from './get-package-descriptions';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import getProductLink from 'woocommerce/woocommerce-services/lib/utils/get-product-link';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import {
 	closeItemMove,
 	setTargetPackage,
@@ -25,7 +25,7 @@ import {
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const MoveItemDialog = props => {
+const MoveItemDialog = ( props ) => {
 	const {
 		site,
 		siteId,
@@ -68,7 +68,7 @@ const MoveItemDialog = props => {
 
 	const renderPackedOptions = () => {
 		const elements = [];
-		Object.keys( selected ).forEach( pckgId => {
+		Object.keys( selected ).forEach( ( pckgId ) => {
 			const pckg = selected[ pckgId ];
 			if ( pckgId === openedPackageId || 'individual' === pckg.box_id ) {
 				return;
@@ -174,7 +174,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeItemMove, setTargetPackage, moveItem }, dispatch );
 };
 

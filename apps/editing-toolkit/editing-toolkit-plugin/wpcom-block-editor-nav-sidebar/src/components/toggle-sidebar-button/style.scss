@@ -1,0 +1,9 @@
+@import '~@wordpress/base-styles/variables';
+
+.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button {
+	height: $header-height !important;
+
+	&.is-hidden {
+		visibility: hidden;
+	}
+}

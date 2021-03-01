@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,20 +12,21 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import scrollTo from 'lib/scroll-to';
-import { applySiteOffset } from 'lib/site/timezone';
+import scrollTo from 'calypso/lib/scroll-to';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import ActivityActor from './activity-actor';
 import ActivityDescription from './activity-description';
 import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
-import EllipsisMenu from 'components/ellipsis-menu';
-import Gridicon from 'components/gridicon';
-import HappychatButton from 'components/happychat/button';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import Gridicon from 'calypso/components/gridicon';
+import HappychatButton from 'calypso/components/happychat/button';
 import { Button } from '@automattic/components';
-import FoldableCard from 'components/foldable-card';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import FoldableCard from 'calypso/components/foldable-card';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 import {
 	rewindBackup,
 	rewindBackupDismiss,
@@ -32,16 +34,15 @@ import {
 	rewindRequestDismiss,
 	rewindRequestRestore,
 	rewindRestore,
-} from 'state/activity-log/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import getRequestedBackup from 'state/selectors/get-requested-backup';
-import getRequestedRewind from 'state/selectors/get-requested-rewind';
-import getRewindState from 'state/selectors/get-rewind-state';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { getSite } from 'state/sites/selectors';
-import { withDesktopBreakpoint } from 'lib/viewport/react';
-import { withLocalizedMoment } from 'components/localized-moment';
+} from 'calypso/state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
+import getRequestedRewind from 'calypso/state/selectors/get-requested-rewind';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSite } from 'calypso/state/sites/selectors';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies
@@ -94,7 +95,7 @@ class ActivityLogItem extends Component {
 		this.setState( {
 			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
 			disableRestoreButton: Object.keys( this.state.restoreArgs ).every(
-				k => ! this.state.restoreArgs[ k ]
+				( k ) => ! this.state.restoreArgs[ k ]
 			),
 		} );
 	};
@@ -103,7 +104,7 @@ class ActivityLogItem extends Component {
 		this.setState( {
 			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
 			disableDownloadButton: Object.keys( this.state.downloadArgs ).every(
-				k => ! this.state.downloadArgs[ k ]
+				( k ) => ! this.state.downloadArgs[ k ]
 			),
 		} );
 	};
@@ -236,11 +237,16 @@ class ActivityLogItem extends Component {
 
 	renderRewindAction() {
 		const {
+			activity,
+			canAutoconfigure,
 			createBackup,
 			createRewind,
 			disableRestore,
 			disableBackup,
-			activity,
+			missingRewindCredentials,
+			siteId,
+			siteSlug,
+			trackAddCreds,
 			translate,
 		} = this.props;
 
@@ -254,6 +260,20 @@ class ActivityLogItem extends Component {
 					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
 						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
+
+					{ disableRestore && missingRewindCredentials && (
+						<PopoverMenuItem
+							icon="plus"
+							href={
+								canAutoconfigure
+									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+									: `${ settingsPath( siteSlug ) }#credentials`
+							}
+							onClick={ trackAddCreds }
+						>
+							{ translate( 'Add server credentials to enable restoring' ) }
+						</PopoverMenuItem>
+					) }
 
 					<PopoverMenuSeparator />
 
@@ -360,7 +380,7 @@ class ActivityLogItem extends Component {
 					<ActivityLogConfirmDialog
 						key="activity-backup-dialog"
 						confirmTitle={ translate( 'Create download' ) }
-						onClose={ this.cancelBackupIntent }
+						onClose={ this.cancelDownloadIntent }
 						onConfirm={ this.confirmBackup }
 						onSettingsChange={ this.downloadSettingsChange }
 						supportLink="https://jetpack.com/support/backup"
@@ -370,7 +390,7 @@ class ActivityLogItem extends Component {
 						disableButton={ this.state.disableDownloadButton }
 					>
 						{ translate(
-							'{{time/}} is the selected point to create a download backup of. You will get a notification when the backup is ready to download.',
+							'{{time/}} is the selected point to create a download backup. You will get a notification when the backup is ready to download.',
 							{
 								components: {
 									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
@@ -411,6 +431,7 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 		timezone: getSiteTimezoneValue( state, siteId ),
 		siteSlug: site.slug,
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
+		missingRewindCredentials: rewindState.state === 'awaitingCredentials',
 		canAutoconfigure: rewindState.canAutoconfigure,
 		site,
 	};
@@ -467,10 +488,11 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 			)
 		)
 	),
-	trackHelp: activityName =>
+	trackHelp: ( activityName ) =>
 		dispatch(
 			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
 		),
+	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );
 

@@ -1,14 +1,14 @@
 // dialog
 .dialog.card.privacy-policy-banner__dialog {
 	max-width: 700px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	overflow: hidden;
 
 	ol {
 		list-style-position: inside;
 		margin: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			list-style-position: outside;
 			margin: 0 3em 1.5em;
 		}
@@ -47,6 +47,6 @@
 
 .privacy-policy-banner__dialog-body h3,
 .privacy-policy-banner__dialog-body h4 {
-	font-weight: bold;
+	font-weight: 600;
 	margin: 1.5em 0;
 }

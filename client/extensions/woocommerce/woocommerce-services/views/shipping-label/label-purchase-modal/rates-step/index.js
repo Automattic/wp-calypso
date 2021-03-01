@@ -29,14 +29,14 @@ import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state
 import { getOrderShippingTotal } from 'woocommerce/lib/order-values/totals';
 import { getOrderShippingMethod } from 'woocommerce/lib/order-values';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 const ratesSummary = ( selectedRates, availableRates, total, packagesSaved, translate ) => {
 	if ( ! packagesSaved ) {
 		return translate( 'Unsaved changes made to packages' );
 	}
 
-	if ( some( mapValues( availableRates, rateObject => isEmpty( rateObject.rates ) ) ) ) {
+	if ( some( mapValues( availableRates, ( rateObject ) => isEmpty( rateObject.rates ) ) ) ) {
 		return translate( 'No rates found' );
 	}
 
@@ -93,7 +93,7 @@ const getRatesStatus = ( { retrievalInProgress, errors, available, form } ) => {
 	return { isSuccess: true };
 };
 
-const showCheckoutShippingInfo = props => {
+const showCheckoutShippingInfo = ( props ) => {
 	const { shippingMethod, shippingCost, translate } = props;
 
 	// Use a temporary HTML element in order to let the DOM API convert HTML entities into text
@@ -138,7 +138,7 @@ const showCheckoutShippingInfo = props => {
 	}
 };
 
-const RatesStep = props => {
+const RatesStep = ( props ) => {
 	const {
 		siteId,
 		orderId,
@@ -207,7 +207,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { toggleStep, updateRate }, dispatch );
 };
 

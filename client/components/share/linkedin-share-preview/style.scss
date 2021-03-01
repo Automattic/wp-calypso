@@ -27,7 +27,7 @@
 }
 
 .linkedin-share-preview__profile-line {
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 20px;
 }
 
@@ -38,7 +38,7 @@
 
 .linkedin-share-preview__meta-line {
 	color: rgba( 0, 0, 0, 0.55 );
-    font-size: 13px;
+    font-size: $font-body-small;
     line-height: 16px;
 }
 
@@ -72,7 +72,7 @@
 .linkedin-share-preview__message {
 	color: rgba( 0, 0, 0, 0.85 );
 	display: -webkit-box;
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	line-height: 16px;
 	max-height: 40px;
@@ -84,7 +84,7 @@
 
 .linkedin-share-preview__site-url {
 	color: rgba( 0, 0, 0, 0.55 );
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 16px;
 	overflow: hidden;

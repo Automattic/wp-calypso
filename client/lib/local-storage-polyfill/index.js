@@ -16,7 +16,7 @@ const debug = debugFactory( 'calypso:local-storage' );
  *
  * @param  {object} root Object to instantiate `windows` object to test in node.js
  */
-export default function( root ) {
+export default function ( root ) {
 	root = root || window;
 
 	if ( ! root.localStorage ) {

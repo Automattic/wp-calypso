@@ -3,8 +3,15 @@
  *
  * @module boot/messaging
  */
+
+/**
+ * External dependencies
+ */
 import debugFactory from 'debug';
 
+/**
+ * Internal dependencies
+ */
 import { parseJson } from '../panel/utils/parse-json';
 
 const debug = debugFactory( 'notifications:messaging' );
@@ -29,7 +36,7 @@ const debug = debugFactory( 'notifications:messaging' );
  * @param {Function} receiver called with valid incoming messages
  * @returns {MessageEventReceiver}
  */
-export const receiveMessage = receiver => event => {
+export const receiveMessage = ( receiver ) => ( event ) => {
 	if ( ! window || ! event || event.source !== window.parent ) {
 		return debug(
 			'Unexpected or empty message received\n' + 'Messages must come from parent window.'
@@ -72,7 +79,7 @@ export const receiveMessage = receiver => event => {
  * @param {object} message data to send
  * @returns {undefined}
  */
-export const sendMessage = message => {
+export const sendMessage = ( message ) => {
 	if ( ! window || ! window.parent ) {
 		return;
 	}

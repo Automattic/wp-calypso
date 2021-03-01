@@ -23,7 +23,7 @@ class OrderAddItems extends Component {
 		showDialog: false,
 	};
 
-	toggleDialog = type => () => {
+	toggleDialog = ( type ) => () => {
 		this.setState( { showDialog: type } );
 	};
 

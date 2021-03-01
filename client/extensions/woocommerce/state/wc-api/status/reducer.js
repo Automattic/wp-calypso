@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_WC_API_SUCCESS,
 	WOOCOMMERCE_WC_API_UNAVAILABLE,

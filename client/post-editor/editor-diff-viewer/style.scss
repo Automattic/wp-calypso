@@ -16,7 +16,7 @@
 
 	.editor-diff-viewer__title {
 		font-family: $serif;
-		font-size: 32px;
+		font-size: $font-title-large;
 		color: var( --color-neutral-70 );
 		font-weight: 600;
 		margin: 0 0 24px;
@@ -24,7 +24,7 @@
 		line-height: 1.425;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		&.is-split {
 			.editor-diff-viewer__scrollable {
 				display: flex;
@@ -56,16 +56,16 @@
 .editor-diff-viewer__hint-below {
 	position: absolute;
 	right: 24px;
-	border-radius: 4px;
+	border-radius: 2px;
 	height: 28px;
 	line-height: 27px;
 	background-color: var( --color-text-subtle );
 	cursor: pointer;
 	padding: 0 16px 0 8px;
 	color: #fff;
-	font-size: 13px;
+	font-size: $font-body-small;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -77,7 +77,7 @@
 
 .editor-diff-viewer__hint-below {
 	bottom: 0;
-	border-radius: 4px 4px 0 0;
+	border-radius: 2px 2px 0 0;
 }
 
 .editor-diff-viewer__hint-icon {
@@ -95,7 +95,7 @@
 
 .editor-diff-viewer__content {
 	font-family: $serif;
-	font-size: 15px;
+	font-size: $font-body;
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	padding: 0;

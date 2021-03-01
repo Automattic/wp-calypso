@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { find, findIndex, isEmpty, isEqual, isNil, omit, reject } from 'lodash';
+import { find, findIndex, isEmpty, isEqual, omit, reject } from 'lodash';
+import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
@@ -50,7 +51,7 @@ export const initialState = {
  * @param {object} state Current edit state
  * @returns {object} Object with an "index" property, guaranteed to be unique
  */
-const nextCreateId = state => {
+const nextCreateId = ( state ) => {
 	return {
 		index: isEmpty( state.creates ) ? 0 : state.creates[ state.creates.length - 1 ].id.index + 1,
 	};
@@ -133,7 +134,7 @@ function handleZoneMethodClose( state ) {
 	if ( currentlyEditingChangedType ) {
 		const method = find( state[ bucket ], { id: currentlyEditingId } );
 		let originalId = currentlyEditingId;
-		if ( method && ! isNil( method._originalId ) ) {
+		if ( method && ! isNullish( method._originalId ) ) {
 			originalId = method._originalId;
 		}
 
@@ -148,7 +149,7 @@ function handleZoneMethodClose( state ) {
 				{
 					...currentlyEditingChanges,
 					// If the "Enabled" toggle hasn't been modified in the current changes, use the value from the old method
-					enabled: isNil( currentlyEditingChanges.enabled )
+					enabled: isNullish( currentlyEditingChanges.enabled )
 						? method && method.enabled
 						: currentlyEditingChanges.enabled,
 					id: nextCreateId( state ),
@@ -159,7 +160,7 @@ function handleZoneMethodClose( state ) {
 	}
 
 	let found = false;
-	const newBucket = state[ bucket ].map( method => {
+	const newBucket = state[ bucket ].map( ( method ) => {
 		if ( isEqual( currentlyEditingId, method.id ) ) {
 			found = true;
 			// If edits for the method were already in the expected bucket, just update them

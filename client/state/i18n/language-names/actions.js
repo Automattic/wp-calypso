@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { I18N_LANGUAGE_NAMES_REQUEST, I18N_LANGUAGE_NAMES_ADD } from 'state/action-types';
+import { I18N_LANGUAGE_NAMES_REQUEST, I18N_LANGUAGE_NAMES_ADD } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/i18n/language-names';
+import 'calypso/state/data-layer/wpcom/i18n/language-names';
 
 /**
  * Action creator function: I18N_LANGUAGE_NAMES_ADD
@@ -11,7 +11,7 @@ import 'state/data-layer/wpcom/i18n/language-names';
  * @param {object} items - list of localized language names
  * @returns {object} action object
  */
-export const receiveLanguageNames = items => ( {
+export const receiveLanguageNames = ( items ) => ( {
 	type: I18N_LANGUAGE_NAMES_ADD,
 	items,
 } );

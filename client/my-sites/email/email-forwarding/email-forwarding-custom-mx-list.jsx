@@ -10,8 +10,8 @@ import React from 'react';
  * Internal dependencies
  */
 import { CompactCard as Card } from '@automattic/components';
-import { domainManagementDns } from 'my-sites/domains/paths';
-import getEmailForwardingMXServers from 'state/selectors/get-email-forwarding-mx-servers';
+import { domainManagementDns } from 'calypso/my-sites/domains/paths';
+import getEmailForwardingMXServers from 'calypso/state/selectors/get-email-forwarding-mx-servers';
 
 class EmailForwardingCustomMxList extends React.Component {
 	static propTypes = {

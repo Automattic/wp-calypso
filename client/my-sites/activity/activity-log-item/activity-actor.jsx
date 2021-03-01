@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import JetpackLogo from 'components/jetpack-logo';
-import SocialLogo from 'components/social-logo';
+import Gravatar from 'calypso/components/gravatar';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import SocialLogo from 'calypso/components/social-logo';
 import { translate } from 'i18n-calypso';
 import ActivityActorIcon from './activity-actor-icon';
 

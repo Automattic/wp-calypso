@@ -4,14 +4,15 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button, Card, CompactCard } from '@automattic/components';
-import { cancelPurchase } from 'me/purchases/paths';
-import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
-import titles from 'me/purchases/titles';
+import { cancelPurchase } from 'calypso/me/purchases/paths';
+import LoadingPlaceholder from 'calypso/me/purchases/components/loading-placeholder';
+import titles from 'calypso/me/purchases/titles';
 
 const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
 	let path;
@@ -21,9 +22,9 @@ const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) =
 	}
 
 	return (
-		<LoadingPlaceholder title={ titles.confirmCancelDomain } path={ path }>
+		<LoadingPlaceholder title={ titles.confirmCancelDomain } path={ path } isFullWidth={ true }>
 			<Card className="confirm-cancel-domain__loading-placeholder-card">
-				<h2 className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-header" />
+				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-header" />
 				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-subheader" />
 				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-reason" />
 				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-reason" />
@@ -40,4 +41,4 @@ ConfirmCancelDomainLoadingPlaceholder.propTypes = {
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
-export default ConfirmCancelDomainLoadingPlaceholder;
+export default localize( ConfirmCancelDomainLoadingPlaceholder );

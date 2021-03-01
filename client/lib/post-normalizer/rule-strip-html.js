@@ -6,10 +6,10 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import { stripHTML } from 'lib/formatting';
+import { stripHTML } from 'calypso/lib/formatting';
 
 export default function stripHtml( post ) {
-	forEach( [ 'excerpt', 'title', 'site_name' ], function( prop ) {
+	forEach( [ 'excerpt', 'title', 'site_name' ], function ( prop ) {
 		if ( post[ prop ] ) {
 			post[ prop ] = stripHTML( post[ prop ] );
 		}

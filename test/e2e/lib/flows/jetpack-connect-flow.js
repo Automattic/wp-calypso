@@ -8,22 +8,18 @@ import config from 'config';
  */
 import LoginFlow from './login-flow';
 import SidebarComponent from '../components/sidebar-component';
-import AddNewSitePage from '../pages/add-new-site-page';
 import PickAPlanPage from '../pages/signup/pick-a-plan-page';
 import WporgCreatorPage from '../pages/wporg-creator-page';
 import JetpackAuthorizePage from '../pages/jetpack-authorize-page';
 import WPAdminJetpackPage from '../pages/wp-admin/wp-admin-jetpack-page.js';
 import WPAdminSidebar from '../pages/wp-admin/wp-admin-sidebar.js';
 import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page';
+import WPAdminInPlaceApprovePage from '../pages/wp-admin/wp-admin-in-place-approve-page';
+import WPAdminInPlacePlansPage from '../pages/wp-admin/wp-admin-in-place-plans-page';
 import * as driverManager from '../driver-manager';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
-import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
-// These flows are disabled via `jetpack/connect/site-questions` feature flag in Calypso:
-// import JetpackConnectSiteTypePage from '../pages/jetpack/jetpack-connect-site-type-page';
-// import JetpackConnectSiteTopicPage from '../pages/jetpack/jetpack-connect-site-topic-page';
-// import JetpackConnectUserTypePage from '../pages/jetpack/jetpack-connect-user-type-page';
-import NoticesComponent from '../components/notices-component';
+// import NoticesComponent from '../components/notices-component';
 
 export default class JetpackConnectFlow {
 	constructor( driver, account, template ) {
@@ -39,42 +35,11 @@ export default class JetpackConnectFlow {
 			this.driver,
 			WporgCreatorPage._getCreatorURL( this.template )
 		);
-		await wporgCreator.waitForWpadmin();
+
+		await wporgCreator.waitForWpadmin( this.template );
 		this.url = await wporgCreator.getUrl();
 		this.password = await wporgCreator.getPassword();
 		this.username = await wporgCreator.getUsername();
-	}
-
-	async connectFromCalypso() {
-		await driverManager.ensureNotLoggedIn( this.driver );
-		await this.createJNSite();
-		const loginFlow = new LoginFlow( this.driver, this.account );
-		await loginFlow.loginAndSelectMySite();
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
-		await sidebarComponent.addNewSite( this.driver );
-		const addNewSitePage = await AddNewSitePage.Expect( this.driver );
-		await addNewSitePage.addSiteUrl( this.url );
-
-		const connectPage = await JetpackConnectPage.Expect( this.driver );
-		await connectPage.waitToDisappear();
-
-		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
-		await jetpackAuthorizePage.waitToDisappear();
-
-		/* These flows are disabled via `jetpack/connect/site-questions` feature flag in Calypso */
-		/*
-		const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
-		await siteTypePage.selectSiteType( 'blog' );
-
-		const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
-		await siteTopicPage.selectSiteTopic( 'test site' );
-
-		const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
-		await userTypePage.selectUserType( 'creator' );
-		*/
-
-		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
-		return await pickAPlanPage.selectFreePlanJetpack();
 	}
 
 	async connectFromWPAdmin() {
@@ -91,21 +56,22 @@ export default class JetpackConnectFlow {
 		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
 		await jetpackAuthorizePage.approveConnection();
 		await jetpackAuthorizePage.waitToDisappear();
-
-		/* These flows are disabled via `jetpack/connect/site-questions` feature flag in Calypso */
-		/*
-		const siteTypePage = await JetpackConnectSiteTypePage.Expect( this.driver );
-		await siteTypePage.selectSiteType( 'blog' );
-
-		const siteTopicPage = await JetpackConnectSiteTopicPage.Expect( this.driver );
-		await siteTopicPage.selectSiteTopic( 'test site' );
-
-		const userTypePage = await JetpackConnectUserTypePage.Expect( this.driver );
-		await userTypePage.selectUserType( 'creator' );
-		*/
-
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 		return await pickAPlanPage.selectFreePlanJetpack();
+	}
+
+	async inPlaceConnectFromWPAdmin() {
+		await driverManager.ensureNotLoggedIn( this.driver );
+		const loginFlow = new LoginFlow( this.driver, 'jetpackConnectUser' );
+		await loginFlow.login();
+		await this.createJNSite();
+		await WPAdminSidebar.refreshIfJNError( this.driver );
+		await ( await WPAdminSidebar.Expect( this.driver ) ).selectJetpack();
+		await driverHelper.refreshIfJNError( this.driver );
+		await ( await WPAdminJetpackPage.Expect( this.driver ) ).inPlaceConnect();
+		await ( await WPAdminInPlaceApprovePage.Expect( this.driver ) ).approve();
+		await ( await WPAdminInPlacePlansPage.Expect( this.driver ) ).selectFreePlan();
+		return await WPAdminJetpackPage.Expect( this.driver );
 	}
 
 	async removeSites( timeout = config.get( 'mochaTimeoutMS' ) ) {
@@ -121,8 +87,8 @@ export default class JetpackConnectFlow {
 				return;
 			}
 			// seems like it is not waiting for this
-			const noticesComponent = await NoticesComponent.Expect( this.driver );
-			await noticesComponent.dismissNotice();
+			// const noticesComponent = await NoticesComponent.Expect( this.driver );
+			// await noticesComponent.dismissNotice();
 			return await removeSites();
 		};
 

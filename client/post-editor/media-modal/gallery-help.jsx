@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-
+import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
-import Popover from 'components/popover';
-import FormCheckbox from 'components/forms/form-checkbox';
+import Popover from 'calypso/components/popover';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { Button } from '@automattic/components';
-import { setPreference, savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { getSectionName } from 'state/ui/selectors';
-import QueryPreferences from 'components/data/query-preferences';
+import { setPreference, savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
 
 class EditorMediaModalGalleryHelp extends React.PureComponent {
 	static displayName = 'EditorMediaModalGalleryHelp';
@@ -38,7 +38,7 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 		rememberDismiss: true,
 	};
 
-	setRenderContext = renderContext => {
+	setRenderContext = ( renderContext ) => {
 		if ( ! renderContext ) {
 			return;
 		}
@@ -89,13 +89,13 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 						</span>
 					</div>
 					<div className="editor-media-modal__gallery-help-actions">
-						<label className="editor-media-modal__gallery-help-remember-dismiss">
+						<FormLabel className="editor-media-modal__gallery-help-remember-dismiss">
 							<FormCheckbox
 								checked={ this.state.rememberDismiss }
 								onChange={ this.toggleRememberDismiss }
 							/>
 							<span>{ this.props.translate( "Don't show again" ) }</span>
-						</label>
+						</FormLabel>
 						<Button
 							onClick={ () => this.dismiss( { remember: this.state.rememberDismiss } ) }
 							compact
@@ -130,16 +130,16 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		sectionName: getSectionName( state ),
 		isMediaModalGalleryInstructionsDismissed:
 			getPreference( state, 'mediaModalGalleryInstructionsDismissed' ) ||
 			getPreference( state, 'mediaModalGalleryInstructionsDismissedForSession' ),
 	} ),
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
-				onDismiss: options => {
+				onDismiss: ( options ) => {
 					if ( options.remember ) {
 						return savePreference( 'mediaModalGalleryInstructionsDismissed', true );
 					}

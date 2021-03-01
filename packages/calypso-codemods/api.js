@@ -20,15 +20,15 @@ const jscodeshiftBin = require( 'module' )
 function getLocalCodemodFileNames() {
 	const jsFiles = fs
 		.readdirSync( transformsDir )
-		.filter( filename => filename.endsWith( '.js' ) )
-		.map( name => path.basename( name, '.js' ) ); // strip path and extension from filename
+		.filter( ( filename ) => filename.endsWith( '.js' ) )
+		.map( ( name ) => path.basename( name, '.js' ) ); // strip path and extension from filename
 
 	return jsFiles;
 }
 
 function getValidCodemodNames() {
 	return [ ...getLocalCodemodFileNames(), ...Object.getOwnPropertyNames( config.codemodArgs ) ]
-		.map( name => '- ' + name )
+		.map( ( name ) => '- ' + name )
 		.sort();
 }
 

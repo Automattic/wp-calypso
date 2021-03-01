@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -18,26 +17,24 @@ import {
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { bumpStat } from 'woocommerce/lib/analytics';
-import { errorNotice } from 'state/notices/actions';
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import {
 	areLocationsLoaded,
 	getAllCountries,
 	getCountriesWithStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './footer';
 import SetupHeader from './header';
 import SetupNotices from './notices';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryLocations from 'woocommerce/components/query-locations';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import userFactory from 'lib/user';
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-
-const user = userFactory();
+import user from 'calypso/lib/user';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 
 class StoreLocationSetupView extends Component {
 	constructor( props ) {
@@ -87,7 +84,7 @@ class StoreLocationSetupView extends Component {
 		} ),
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const { contactDetails, storeLocation } = newProps;
 
 		if ( ! this.state.userBeganEditing ) {
@@ -115,7 +112,7 @@ class StoreLocationSetupView extends Component {
 		}
 	};
 
-	getAddressFromContactDetails = contactDetails => {
+	getAddressFromContactDetails = ( contactDetails ) => {
 		const { address1, address2, city, state, postalCode, countryCode } = contactDetails;
 		return {
 			street: address1 || '',
@@ -127,7 +124,7 @@ class StoreLocationSetupView extends Component {
 		};
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
 
@@ -148,7 +145,7 @@ class StoreLocationSetupView extends Component {
 		this.setState( { address, userBeganEditing: true } );
 	};
 
-	onNext = event => {
+	onNext = ( event ) => {
 		const {
 			countries,
 			currentUserEmailVerified,
@@ -238,7 +235,7 @@ class StoreLocationSetupView extends Component {
 		}
 
 		const requiredAddressFields = pick( this.state.address, requiredKeys );
-		const everyRequiredFieldHasAValue = every( requiredAddressFields, field => {
+		const everyRequiredFieldHasAValue = every( requiredAddressFields, ( field ) => {
 			return ! isEmpty( trim( field ) );
 		} );
 		const submitDisabled = this.state.isSaving || ! everyRequiredFieldHasAValue;
@@ -275,9 +272,9 @@ class StoreLocationSetupView extends Component {
 	closeVerifyEmailDialog = () => {
 		this.setState( { showEmailVerificationDialog: false } );
 		// Re-fetch the user to see if they actually took care of things
-		user.fetch();
+		user().fetch();
 		this.setState( { isFetchingUser: true } );
-		user.once( 'change', () => this.setState( { isFetchingUser: false } ) );
+		user().once( 'change', () => this.setState( { isFetchingUser: false } ) );
 	};
 
 	render = () => {

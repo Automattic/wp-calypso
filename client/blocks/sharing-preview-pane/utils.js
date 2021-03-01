@@ -8,13 +8,13 @@ import striptags from 'striptags';
 /**
  * Internal dependencies
  */
-import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import PostMetadata from 'lib/post-metadata';
-import { parseHtml } from 'lib/formatting';
+import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
+import PostMetadata from 'calypso/lib/post-metadata';
+import { parseHtml } from 'calypso/lib/formatting';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 
-export const getPostImage = post => {
+export const getPostImage = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
@@ -41,7 +41,7 @@ export const getPostImage = post => {
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
-export const getExcerptForPost = post => {
+export const getExcerptForPost = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}

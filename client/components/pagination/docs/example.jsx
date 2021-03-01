@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 
 class PaginationExample extends Component {
 	state = {
@@ -15,7 +15,7 @@ class PaginationExample extends Component {
 		compact: false,
 	};
 
-	updatePage = page => {
+	updatePage = ( page ) => {
 		this.setState( { page } );
 	};
 

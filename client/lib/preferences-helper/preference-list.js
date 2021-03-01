@@ -10,8 +10,8 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { getAllRemotePreferences } from 'state/preferences/selectors';
-import QueryPreferences from 'components/data/query-preferences';
+import { getAllRemotePreferences } from 'calypso/state/preferences/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
 import Preference from './preference';
 
 class PreferenceList extends Component {
@@ -28,7 +28,7 @@ class PreferenceList extends Component {
 				</a>
 				<Card className="preferences-helper__current-preferences">
 					{ ! isEmpty( preferences ) ? (
-						Object.keys( preferences ).map( preferenceName => (
+						Object.keys( preferences ).map( ( preferenceName ) => (
 							<Preference
 								key={ preferenceName }
 								name={ preferenceName }
@@ -47,7 +47,7 @@ class PreferenceList extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		preferences: getAllRemotePreferences( state ),
 	} ),
 	null

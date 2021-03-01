@@ -2,18 +2,21 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import { isEqual } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import ActivityLog from 'my-sites/activity/activity-log';
-import { setFilter } from 'state/activity-log/actions';
-import { queryToFilterState } from 'state/activity-log/utils';
-import { recordTrack } from 'reader/stats';
+import config from '@automattic/calypso-config';
+import { recordTrack } from 'calypso/reader/stats';
+import { queryToFilterState } from 'calypso/state/activity-log/utils';
+import { setFilter } from 'calypso/state/activity-log/actions';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
+import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import ActivityLog from 'calypso/my-sites/activity/activity-log';
+import ActivityLogV2 from 'calypso/my-sites/activity/activity-log-v2';
 
 function queryFilterToStats( filter ) {
 	// These values are hardcoded so that the attributes that we collect via stats are not unbound
@@ -39,7 +42,7 @@ function queryFilterToStats( filter ) {
 	];
 
 	const groupStats = {};
-	possibleGroups.forEach( groupSlug => {
+	possibleGroups.forEach( ( groupSlug ) => {
 		groupStats[ 'filter_group_' + groupSlug ] = !! (
 			filter.group && filter.group.indexOf( groupSlug ) >= 0
 		);
@@ -67,18 +70,22 @@ export function activity( context, next ) {
 	}
 
 	recordTrack( 'calypso_activitylog_view', queryFilterToStats( queryFilter ) );
-	context.primary = <ActivityLog siteId={ siteId } context={ context } />;
+	context.primary = config.isEnabled( 'activity-log/v2' ) ? (
+		<ActivityLogV2 />
+	) : (
+		<ActivityLog siteId={ siteId } context={ context } />
+	);
 
 	next();
 }
 
-// Add redirect
-export function redirect( context ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	if ( siteId ) {
-		page.redirect( '/activity-log/' + siteId );
-		return;
-	}
-	page.redirect( '/activity-log/' );
+export function showNotAuthorizedForNonAdmins( context, next ) {
+	context.primary = (
+		<IsCurrentUserAdminSwitch
+			trueComponent={ context.primary }
+			falseComponent={ <NotAuthorizedPage /> }
+		/>
+	);
+
+	next();
 }

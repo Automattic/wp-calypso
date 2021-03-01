@@ -1,9 +1,12 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 
-var getRegExpFor = function( type, textToHighlight ) {
-	var expressions = {};
-	expressions[ 'username' ] = '(^' + textToHighlight + ')(\\w*)\\s*';
-	expressions[ 'fullname' ] = '(^.*?)(\\b' + textToHighlight + ')(.*)';
+const getRegExpFor = function ( type, textToHighlight ) {
+	const expressions = {};
+	expressions.username = '(^' + textToHighlight + ')(\\w*)\\s*';
+	expressions.fullname = '(^.*?)(\\b' + textToHighlight + ')(.*)';
 
 	return new RegExp( expressions[ type ], 'ig' );
 };
@@ -31,10 +34,10 @@ const highlight = ( content, textToHighlight, type ) => {
 
 export class Suggestion extends React.Component {
 	render() {
-		var username = highlight( this.props.username, this.props.suggestionsQuery, 'username' );
+		const username = highlight( this.props.username, this.props.suggestionsQuery, 'username' );
 		username.unshift( { type: 'text', text: '@' } );
 
-		var fullName = highlight( this.props.fullName, this.props.suggestionsQuery, 'fullname' );
+		const fullName = highlight( this.props.fullName, this.props.suggestionsQuery, 'fullname' );
 
 		return (
 			<li

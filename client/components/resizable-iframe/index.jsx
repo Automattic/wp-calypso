@@ -11,8 +11,8 @@ import { omit } from 'lodash';
 /**
  * Globals
  */
-const debug = debugFactory( 'calypso:resizable-iframe' ),
-	noop = () => {};
+const debug = debugFactory( 'calypso:resizable-iframe' );
+const noop = () => {};
 
 export default class extends React.Component {
 	static displayName = 'ResizableIframe';
@@ -125,7 +125,7 @@ export default class extends React.Component {
 		}
 	};
 
-	checkMessageForResize = event => {
+	checkMessageForResize = ( event ) => {
 		const iframe = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Attempt to parse the message data as JSON if passed as string
@@ -154,7 +154,7 @@ export default class extends React.Component {
 		}
 	};
 
-	onLoad = event => {
+	onLoad = ( event ) => {
 		this.maybeConnect();
 		this.props.onLoad( event );
 	};

@@ -15,9 +15,8 @@ class PostSelectorNoResults extends React.Component {
 
 	render() {
 		let createMessage;
-		let noResultsMessage;
 
-		noResultsMessage = this.props.translate( 'No results. Please try a different search.' );
+		const noResultsMessage = this.props.translate( 'No results. Please try a different search.' );
 
 		if ( this.props.createLink ) {
 			createMessage = this.props.translate( 'You may want to {{a}}create a new page{{/a}}.', {

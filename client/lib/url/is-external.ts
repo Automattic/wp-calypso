@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import config from 'config';
-import { URL as URLString } from 'types';
+import config from '@automattic/calypso-config';
+import { URL as URLString } from 'calypso/types';
 
 /**
  * Internal dependencies
  */
-import { isLegacyRoute } from 'lib/route/legacy-routes';
+import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 
 // Base URL used for URL parsing. The WHATWG URL API doesn't support relative
 // URLs, so we always need to provide a base of some sort.
@@ -21,7 +21,7 @@ export default function isExternal( url: URLString ): boolean {
 		return true;
 	}
 
-	// The url passed in might be of form `en.support.wordpress.com`,
+	// The url passed in might be of form `wordpress.com/support`,
 	// so for this function we'll append double-slashes to fake it.
 	// If it is a relative URL the hostname will be the base hostname.
 	if (

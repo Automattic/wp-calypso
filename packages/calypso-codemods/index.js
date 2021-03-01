@@ -25,7 +25,7 @@ function main() {
 	}
 
 	const [ names, ...targets ] = args;
-	names.split( ',' ).forEach( codemodName => api.runCodemod( codemodName, targets ) );
+	names.split( ',' ).forEach( ( codemodName ) => api.runCodemod( codemodName, targets ) );
 }
 
 main();

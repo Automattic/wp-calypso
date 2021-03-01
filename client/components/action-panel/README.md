@@ -1,20 +1,19 @@
-Action Panel
-============
+# Action Panel
 
 This is a larger [`Card` component](../../components/card) that has a title, description, right-aligned figure and call-to-action button.
 
 ## Usage
 
-```es6
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelFigure from 'components/action-panel/figure';
-import ActionPanelCta from 'components/action-panel/cta';
-import ActionPanelFooter from 'components/action-panel/footer';
+```jsx
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelCta from 'calypso/components/action-panel/cta';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { Button } from '@automattic/components';
 
-const ActionPanelExample = ( { translate }) => {
+const ActionPanelExample = ( { translate } ) => {
 	return (
 		<div>
 			<ActionPanel>
@@ -63,5 +62,5 @@ const ActionPanelExample = ( { translate }) => {
 			</ActionPanel>
 		</div>
 	);
-}
+};
 ```

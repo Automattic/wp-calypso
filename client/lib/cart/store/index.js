@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, flow, get, has } from 'lodash';
+import { assign, flow } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,7 +10,6 @@ import {
 	CART_COUPON_APPLY,
 	CART_COUPON_REMOVE,
 	CART_DISABLE,
-	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
 	CART_ITEMS_ADD,
@@ -19,47 +18,42 @@ import {
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
-} from 'lib/cart/action-types';
-import {
-	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
-	TRANSACTION_PAYMENT_SET,
-} from 'lib/transaction/action-types';
-import emitter from 'lib/mixins/emitter';
+	CART_RELOAD,
+} from 'calypso/lib/cart/action-types';
+import emitter from 'calypso/lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
-import PollerPool from 'lib/data-poller';
-import { recordEvents, recordUnrecognizedPaymentMethod } from 'lib/analytics/cart';
-import productsListFactory from 'lib/products-list';
+import PollerPool from 'calypso/lib/data-poller';
+import { recordEvents } from 'calypso/lib/analytics/cart';
+import productsListFactory from 'calypso/lib/products-list';
 const productsList = productsListFactory();
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 import {
 	applyCoupon,
 	removeCoupon,
 	fillInAllCartItemAttributes,
 	setTaxCountryCode,
 	setTaxPostalCode,
-	setTaxLocation,
-} from 'lib/cart-values';
+} from 'calypso/lib/cart-values';
 import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
-	fillGoogleAppsRegistrationData,
 	addCartItem,
 	addCartItemWithoutReplace,
 	removeItemAndDependencies,
 	clearCart,
 	replaceItem as replaceCartItem,
-} from 'lib/cart-values/cart-items';
-import wp from 'lib/wp';
-import { getReduxStore } from 'lib/redux-bridge';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
+} from 'calypso/lib/cart-values/cart-items';
+import wp from 'calypso/lib/wp';
+import { getReduxStore } from 'calypso/lib/redux-bridge';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const wpcom = wp.undocumented();
 
 let _cartKey = null;
 let _synchronizer = null;
 let _poller = null;
+let _userLoggedIn = true;
 
 const CartStore = {
 	get() {
@@ -71,11 +65,17 @@ const CartStore = {
 		} );
 	},
 	setSelectedSiteId( selectedSiteId, userLoggedIn = true ) {
-		if ( ! userLoggedIn ) {
-			return;
-		}
+		let newCartKey = selectedSiteId;
+		_userLoggedIn = userLoggedIn;
+		const urlParams = new URLSearchParams( window.location.search );
 
-		const newCartKey = selectedSiteId || 'no-site';
+		if ( ! newCartKey && window.location.pathname.includes( '/checkout/no-site' ) ) {
+			newCartKey = 'no-user';
+
+			if ( _userLoggedIn ) {
+				newCartKey = 'no-user' === urlParams.get( 'cart' ) ? 'no-user' : 'no-site';
+			}
+		}
 
 		if ( _cartKey === newCartKey ) {
 			return;
@@ -91,7 +91,12 @@ const CartStore = {
 		_synchronizer = cartSynchronizer( _cartKey, wpcom );
 		_synchronizer.on( 'change', emitChange );
 
-		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
+		const shouldPollFromLocalStorage =
+			'no-user' === newCartKey || 'no-user' === urlParams.get( 'cart' );
+
+		_poller = shouldPollFromLocalStorage
+			? PollerPool.add( CartStore, _synchronizer._pollFromLocalStorage.bind( _synchronizer ) )
+			: PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 	},
 };
 
@@ -110,7 +115,7 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	const wrappedFunction = cart =>
+	const wrappedFunction = ( cart ) =>
 		fillInAllCartItemAttributes( changeFunction( cart ), productsList.get() );
 
 	const previousCart = CartStore.get();
@@ -131,7 +136,13 @@ function disable() {
 	_cartKey = null;
 }
 
-CartStore.dispatchToken = Dispatcher.register( payload => {
+function fetch() {
+	if ( _synchronizer ) {
+		_synchronizer.fetch();
+	}
+}
+
+CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 	const { action } = payload;
 
 	switch ( action.type ) {
@@ -147,19 +158,15 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			update( removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case CART_GOOGLE_APPS_REGISTRATION_DATA_ADD:
-			update( fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData ) );
-			break;
-
 		case CART_ITEMS_ADD:
-			update( flow( ...action.cartItems.map( cartItem => addCartItem( cartItem ) ) ) );
+			update( flow( ...action.cartItems.map( ( cartItem ) => addCartItem( cartItem ) ) ) );
 			break;
 
 		case CART_ITEMS_REPLACE_ALL:
 			update(
 				flow(
 					clearCart(),
-					...action.cartItems.map( cartItem => addCartItemWithoutReplace( cartItem ) )
+					...action.cartItems.map( ( cartItem ) => addCartItemWithoutReplace( cartItem ) )
 				)
 			);
 			break;
@@ -182,53 +189,16 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			update( replaceCartItem( action.oldItem, action.newItem ) );
 			break;
 
-		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
-			{
-				// typically set one or the other (or neither)
-				const { rawDetails } = action;
-				has( rawDetails, 'country' ) && update( setTaxCountryCode( get( rawDetails, 'country' ) ) );
-				has( rawDetails, 'postal-code' ) &&
-					update( setTaxPostalCode( get( rawDetails, 'postal-code' ) ) );
-			}
-			break;
-
-		case TRANSACTION_PAYMENT_SET:
-			{
-				let postalCode, countryCode;
-
-				const paymentMethod = get( action, [ 'payment', 'paymentMethod' ] );
-				switch ( paymentMethod ) {
-					case 'WPCOM_Billing_MoneyPress_Stored':
-						postalCode = extractStoredCardMetaValue( action, 'card_zip' );
-						countryCode = extractStoredCardMetaValue( action, 'country_code' );
-						break;
-					case 'WPCOM_Billing_WPCOM':
-						postalCode = null;
-						countryCode = null;
-						break;
-					case 'WPCOM_Billing_Ebanx':
-					case 'WPCOM_Billing_Web_Payment':
-					case 'WPCOM_Billing_Stripe_Payment_Method': {
-						const paymentDetails = get( action, 'payment.newCardDetails', {} );
-						postalCode = paymentDetails[ 'postal-code' ];
-						countryCode = paymentDetails.country;
-						break;
-					}
-					default:
-						recordUnrecognizedPaymentMethod( action );
-						postalCode = null;
-						countryCode = null;
-				}
-				update( setTaxLocation( { postalCode, countryCode } ) );
-			}
-			break;
-
 		case CART_TAX_COUNTRY_CODE_SET:
 			update( setTaxCountryCode( action.countryCode ) );
 			break;
 
 		case CART_TAX_POSTAL_CODE_SET:
 			update( setTaxPostalCode( action.postalCode ) );
+			break;
+
+		case CART_RELOAD:
+			fetch();
 			break;
 	}
 } );
@@ -248,7 +218,7 @@ function createListener( store, selector, callback ) {
 }
 
 // Subscribe to the Redux store to get updates about the selected site
-getReduxStore().then( store => {
+getReduxStore().then( ( store ) => {
 	const userLoggedIn = isUserLoggedIn( store.getState() );
 	const selectedSiteId = getSelectedSiteId( store.getState() );
 	CartStore.setSelectedSiteId( selectedSiteId, userLoggedIn );

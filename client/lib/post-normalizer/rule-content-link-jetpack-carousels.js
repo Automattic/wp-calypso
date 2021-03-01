@@ -19,7 +19,7 @@ import { forEach, get } from 'lodash';
 export default function linkJetpackCarousels( post, dom ) {
 	const galleries = dom.querySelectorAll( '.tiled-gallery' );
 
-	forEach( galleries, gallery => {
+	forEach( galleries, ( gallery ) => {
 		let extra = get( gallery, [ 'dataset', 'carouselExtra' ], false );
 		if ( ! extra ) {
 			// this only really exists for jsdom. See https://github.com/tmpvar/jsdom/issues/961
@@ -39,7 +39,7 @@ export default function linkJetpackCarousels( post, dom ) {
 		}
 		// find all the links and rewrite them to point to the carousel instead of the permalink
 		const links = gallery.querySelectorAll( '.tiled-gallery-item > a' );
-		forEach( links, link => {
+		forEach( links, ( link ) => {
 			const img = link.querySelector( 'img' );
 			const attachmentId = img && img.getAttribute( 'data-attachment-id' );
 			if ( attachmentId ) {

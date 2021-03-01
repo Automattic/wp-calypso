@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,18 +11,18 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ImageEditorCrop from './image-editor-crop';
-import { canvasToBlob } from 'lib/media/utils';
+import { canvasToBlob } from 'calypso/lib/media/utils';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
 	getImageEditorCrop,
 	isImageEditorImageLoaded,
-} from 'state/ui/editor/image-editor/selectors';
+} from 'calypso/state/editor/image-editor/selectors';
 import {
 	setImageEditorCropBounds,
 	setImageEditorImageHasLoaded,
-} from 'state/ui/editor/image-editor/actions';
-import getImageEditorIsGreaterThanMinimumDimensions from 'state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
+} from 'calypso/state/editor/image-editor/actions';
+import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 
 export class ImageEditorCanvas extends Component {
 	static propTypes = {
@@ -114,7 +113,7 @@ export class ImageEditorCanvas extends Component {
 			this.initImage( objectURL );
 		};
 
-		req.onerror = error => onLoadError( error );
+		req.onerror = ( error ) => onLoadError( error );
 		req.send();
 	}
 
@@ -125,7 +124,7 @@ export class ImageEditorCanvas extends Component {
 		this.image.onerror = this.onLoadComplete;
 	}
 
-	onLoadComplete = event => {
+	onLoadComplete = ( event ) => {
 		if ( event.type !== 'load' || ! this.isMounted ) {
 			return;
 		}
@@ -219,7 +218,7 @@ export class ImageEditorCanvas extends Component {
 		context.restore();
 	}
 
-	updateCanvasPosition = timestamp => {
+	updateCanvasPosition = ( timestamp ) => {
 		const now = timestamp;
 		const elapsedTime = now - this.lastTimestamp;
 
@@ -286,7 +285,7 @@ export class ImageEditorCanvas extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );

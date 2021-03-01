@@ -1,3 +1,5 @@
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
+
 /**
  * External dependencies
  */
@@ -7,14 +9,14 @@ import { forEach, repeat } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as DISPLAY_TYPES from '../display-types';
+import DISPLAY_TYPES from '../display-types';
 import { classifyPost } from '../normalization-rules';
-import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
-import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
+import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
+import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 
 function verifyClassification( post, displayTypes ) {
 	classifyPost( post );
-	forEach( displayTypes, displayType => {
+	forEach( displayTypes, ( displayType ) => {
 		expect( post.display_type & displayType ).to.equal( displayType );
 	} );
 }

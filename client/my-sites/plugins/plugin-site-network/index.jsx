@@ -1,25 +1,30 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 import { CompactCard } from '@automattic/components';
-import AllSites from 'blocks/all-sites';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
-import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
-import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
-import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
-import Site from 'blocks/site';
+import AllSites from 'calypso/blocks/all-sites';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
+import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
+import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
+import Site from 'calypso/blocks/site';
+import {
+	getPluginOnSite,
+	getPluginOnSites,
+	isPluginActionInProgress,
+} from 'calypso/state/plugins/installed/selectors';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 /**
  * Style dependencies
@@ -32,26 +37,16 @@ class PluginSiteNetwork extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		plugin: PropTypes.object,
-		notices: PropTypes.object,
 		secondarySites: PropTypes.array,
 	};
 
 	renderInstallButton = () => {
-		if ( ! this.props.site.canManage ) {
-			return this.renderManageWarning();
-		}
-		const installInProgress = PluginsLog.isInProgressAction(
-			this.props.site.ID,
-			this.props.plugin.slug,
-			'INSTALL_PLUGIN'
-		);
-
 		return (
 			<PluginInstallButton
 				isEmbed={ true }
 				selectedSite={ this.props.site }
 				plugin={ this.props.plugin }
-				isInstalling={ installInProgress }
+				isInstalling={ this.props.installInProgress }
 			/>
 		);
 	};
@@ -85,23 +80,20 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderPluginActions = () => {
-		if ( ! this.props.site.canManage ) {
-			return this.renderManageWarning();
-		}
-
 		return (
 			<div className="plugin-site-network__actions">
 				<PluginAutoupdateToggle
 					site={ this.props.site }
-					plugin={ this.props.site.plugin }
+					plugin={ this.props.pluginOnSite }
 					wporg={ true }
 				/>
-				<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
+				<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
 			</div>
 		);
 	};
 
 	renderPluginSite = () => {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FoldableCard
 				compact
@@ -112,7 +104,6 @@ class PluginSiteNetwork extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ false }
 					/>
 				}
@@ -120,7 +111,6 @@ class PluginSiteNetwork extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ true }
 					/>
 				}
@@ -133,9 +123,10 @@ class PluginSiteNetwork extends React.Component {
 				</div>
 			</FoldableCard>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	};
 
-	renderSecondarySite = site => {
+	renderSecondarySite = ( site ) => {
 		return (
 			<CompactCard
 				className="plugin-site-network__secondary-site"
@@ -147,29 +138,15 @@ class PluginSiteNetwork extends React.Component {
 		);
 	};
 
-	renderSecondarySiteActions = site => {
-		if ( ! site.canManage ) {
-			return (
-				<div className="plugin-site-network__secondary-site-actions">
-					<PluginSiteDisabledManage site={ site } plugin={ site.plugin } />
-				</div>
-			);
-		}
+	renderSecondarySiteActions = ( site ) => {
+		const sitePlugin = {
+			...this.props.plugin,
+			...this.props.pluginsOnSecondarySites?.sites[ site.ID ],
+		};
+
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
-				<PluginActivateToggle site={ site } plugin={ site.plugin } />
-			</div>
-		);
-	};
-
-	renderManageWarning = () => {
-		return (
-			<div className="plugin-site-network__network_disabled">
-				<PluginSiteDisabledManage
-					site={ this.props.site }
-					plugin={ this.props.plugin }
-					isNetwork={ true }
-				/>
+				<PluginActivateToggle site={ site } plugin={ sitePlugin } />
 			</div>
 		);
 	};
@@ -179,7 +156,7 @@ class PluginSiteNetwork extends React.Component {
 			return null;
 		}
 
-		if ( ! this.props.site.plugin ) {
+		if ( ! this.props.pluginOnSite ) {
 			return this.renderInstallPlugin();
 		}
 
@@ -187,4 +164,12 @@ class PluginSiteNetwork extends React.Component {
 	}
 }
 
-export default localize( PluginSiteNetwork );
+export default connect( ( state, { plugin, secondarySites, site } ) => {
+	const secondarySiteIds = siteObjectsToSiteIds( secondarySites );
+
+	return {
+		pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
+		pluginsOnSecondarySites: getPluginOnSites( state, secondarySiteIds, plugin.slug ),
+		installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, INSTALL_PLUGIN ),
+	};
+} )( localize( PluginSiteNetwork ) );

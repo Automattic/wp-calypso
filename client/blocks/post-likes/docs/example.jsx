@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import PostLikes from '../';
 import PostLikesPopover from '../popover';
 import { Button } from '@automattic/components';

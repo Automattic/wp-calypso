@@ -1,13 +1,19 @@
+/**
+ * External dependencies
+ */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import Filters from './filters';
 import getFilterName from '../state/selectors/get-filter-name';
 
 export class FilterBar extends Component {
-	selectFilter = event => {
+	selectFilter = ( event ) => {
 		if ( event ) {
 			event.stopPropagation();
 			event.preventDefault();
@@ -21,7 +27,7 @@ export class FilterBar extends Component {
 		const { filterName } = this.props;
 
 		const filterItems = Object.keys( Filters )
-			.map( name => Filters[ name ]() )
+			.map( ( name ) => Filters[ name ]() )
 			.sort( ( a, b ) => a.index - b.index );
 
 		return (
@@ -45,7 +51,7 @@ export class FilterBar extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	filterName: getFilterName( state ),
 } );
 

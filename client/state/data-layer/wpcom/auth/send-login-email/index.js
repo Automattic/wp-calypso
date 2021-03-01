@@ -6,21 +6,26 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	LOGIN_EMAIL_SEND,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
-} from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/notices/actions';
-import { recordTracksEventWithClientId } from 'state/analytics/actions';
-import config from 'config';
+} from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import {
+	infoNotice,
+	errorNotice,
+	successNotice,
+	removeNotice,
+} from 'calypso/state/notices/actions';
+import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
+import config from '@automattic/calypso-config';
 
-export const sendLoginEmail = action => {
+export const sendLoginEmail = ( action ) => {
 	const {
 		email,
 		lang_id,

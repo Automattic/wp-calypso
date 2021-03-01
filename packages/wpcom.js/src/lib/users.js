@@ -19,6 +19,6 @@ export default function Users( wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Users.prototype.suggest = function( query, fn ) {
+Users.prototype.suggest = function ( query, fn ) {
 	return this.wpcom.req.get( '/users/suggest', query, fn );
 };

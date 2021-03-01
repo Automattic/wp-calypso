@@ -1,0 +1,23 @@
+.layout-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.layout__column {
+	flex-basis: 100%;
+}
+
+@include breakpoint-deprecated( '>1280px' ) {
+	.layout__column--main {
+		box-sizing: border-box;
+		flex-basis: 70%;
+		padding-right: 8px;
+	}
+
+	.layout__column--sidebar {
+		box-sizing: border-box;
+		flex-basis: 30%;
+		padding-left: 8px;
+	}
+
+}

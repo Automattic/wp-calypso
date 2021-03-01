@@ -7,12 +7,12 @@ import assert from 'assert';
  * Internal dependencies
  */
 import UpsellPage from '../pages/signup/upsell-page';
-import ChecklistPage from '../pages/checklist-page';
+import MyHomePage from '../pages/my-home-page';
 import InlineHelpChecklistComponent from '../components/inline-help-checklist-component.js';
 import SitePreviewComponent from '../components/site-preview-component.js';
 
 export const canSeeTheSitePreview = () => {
-	step( 'Can then see the site preview', async function() {
+	step( 'Can then see the site preview', async function () {
 		const sitePreviewComponent = await SitePreviewComponent.Expect( this.driver );
 
 		const toolbar = await sitePreviewComponent.sitePreviewToolbar();
@@ -31,7 +31,7 @@ export const canSeeTheSitePreview = () => {
 };
 
 export const canSeeTheInlineHelpCongratulations = () => {
-	step( 'Can then see the inlineHelp congratulations', async function() {
+	step( 'Can then see the inlineHelp congratulations', async function () {
 		const inlineHelpChecklistComponent = await InlineHelpChecklistComponent.Expect( this.driver );
 
 		const congratulations = await inlineHelpChecklistComponent.congratulationsExists();
@@ -43,16 +43,14 @@ export const canSeeTheInlineHelpCongratulations = () => {
 };
 
 export const canSeeTheOnboardingChecklist = () => {
-	step( 'Can then see the onboarding checklist', async function() {
+	step( 'Can then see the site setup list', async function () {
 		// dismiss upsell page if displayed
 		try {
 			const upsellPage = await UpsellPage.Expect( this.driver );
 			await upsellPage.declineOffer();
 		} catch ( e ) {}
 
-		const checklistPage = await ChecklistPage.Expect( this.driver );
-		const header = await checklistPage.headerExists();
-
-		return assert( header, 'The checklist header does not exist.' );
+		const myHomePage = await MyHomePage.Expect( this.driver );
+		return assert( await myHomePage.siteSetupListExists(), 'The site setup list does not exist.' );
 	} );
 };

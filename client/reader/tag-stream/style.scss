@@ -16,14 +16,14 @@
 .tag-stream__header .follow-button {
 	z-index: z-index( '.tag-stream__header-follow', '.follow-button' );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin: 12px 20px 0 15px;
 	}
 }
 
 .tag-stream__header .follow-button__label {
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: inline;
 	}
 }
@@ -64,7 +64,7 @@
 
 .tag-stream__header-image-title {
 	color: var( --color-text-inverted );
-	font-size: 28px;
+	font-size: $font-title-large;
 	line-height: 1.3;
 	margin-top: 42px;
 	text-align: center;
@@ -74,8 +74,8 @@
 
 .tag-stream__header-image-byline {
 	color: var( --color-text-inverted );
-	font-size: 12px;
-	font-weight: 500;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
 	padding-top: 24px;
 	text-align: right;
 	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
@@ -106,12 +106,12 @@
 		left: -3px;
 		top: 8px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		left: 13px;
 		top: 20px;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		top: 14px;
 	}
 
@@ -122,4 +122,9 @@
 
 .is-reader-page .main .tag-stream__empty-content {
 	margin-top: 15px;
+}
+
+// Overrides default 720px width
+.is-reader-page .tag-stream__main.main {
+	max-width: 800px;
 }

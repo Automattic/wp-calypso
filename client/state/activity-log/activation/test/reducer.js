@@ -12,7 +12,7 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Constants
@@ -47,7 +47,7 @@ describe( '#activationRequesting()', () => {
 			REWIND_ACTIVATE_FAILURE,
 			REWIND_ACTIVATE_REQUEST,
 			REWIND_ACTIVATE_SUCCESS,
-		].forEach( type => {
+		].forEach( ( type ) => {
 			state = activationRequesting( state, createSiteAction( type ) );
 			expect( state[ OTHER_SITE_ID ] ).to.be.false;
 		} );

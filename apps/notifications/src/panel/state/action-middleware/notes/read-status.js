@@ -1,12 +1,13 @@
+/**
+ * Internal dependencies
+ */
 import * as types from '../../action-types';
-
 import getIsNoteRead from '../../selectors/get-is-note-read';
 import getNote from '../../selectors/get-note';
-
 import { markReadStatus } from '../../../rest-client/wpcom';
 import { bumpStat } from '../../../rest-client/bump-stat';
 
-const clearLocalReadCache = noteId => {
+const clearLocalReadCache = ( noteId ) => {
 	try {
 		localStorage.removeItem( `note_read_status_${ noteId }` );
 	} catch ( e ) {}

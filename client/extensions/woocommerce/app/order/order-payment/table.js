@@ -10,7 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import {
 	getOrderDiscountTax,
@@ -51,14 +52,14 @@ class OrderRefundTable extends Component {
 		}
 	}
 
-	initializeState = props => {
+	initializeState = ( props ) => {
 		const { order } = props;
 		const shippingTax = getOrderShippingTax( order );
 		const shippingTotal = parseFloat( shippingTax ) + parseFloat( order.shipping_total );
 
 		this.state = {
 			quantities: {},
-			fees: props.order.fee_lines.map( item => {
+			fees: props.order.fee_lines.map( ( item ) => {
 				const value =
 					parseFloat( item.total ) + parseFloat( getOrderFeeTax( props.order, item.id ) );
 				return getCurrencyFormatDecimal( value, order.currency );
@@ -80,10 +81,10 @@ class OrderRefundTable extends Component {
 		this.props.onChange( this.state );
 	};
 
-	formatInput = name => {
+	formatInput = ( name ) => {
 		const { order } = this.props;
 		return () => {
-			this.setState( prevState => {
+			this.setState( ( prevState ) => {
 				const newValue = getCurrencyFormatDecimal( get( prevState, name ), order.currency );
 				// Update the new value in state without mutations https://github.com/lodash/lodash/issues/1696#issuecomment-328335502
 				const newState = setWith( clone( prevState ), name, newValue, clone );
@@ -92,7 +93,7 @@ class OrderRefundTable extends Component {
 		};
 	};
 
-	validateValue = value => {
+	validateValue = ( value ) => {
 		if ( '' === value ) {
 			return value;
 		}
@@ -103,21 +104,21 @@ class OrderRefundTable extends Component {
 		return 0;
 	};
 
-	onChange = ( type, i = false ) => event => {
+	onChange = ( type, i = false ) => ( event ) => {
 		const value = this.validateValue( event.target.value );
 		switch ( type ) {
 			case 'shipping_total':
 				this.setState( { shippingTotal: value }, this.triggerRecalculate );
 				break;
 			case 'quantity':
-				this.setState( prevState => {
+				this.setState( ( prevState ) => {
 					const newQuants = prevState.quantities;
 					newQuants[ i ] = value;
 					return { quantities: newQuants };
 				}, this.triggerRecalculate );
 				break;
 			case 'fee':
-				this.setState( prevState => {
+				this.setState( ( prevState ) => {
 					const newFees = prevState.fees;
 					newFees[ i ] = value;
 					return { fees: newFees };
@@ -149,16 +150,16 @@ class OrderRefundTable extends Component {
 		);
 	};
 
-	renderOrderItem = item => {
+	renderOrderItem = ( item ) => {
 		const { order, site, translate } = this.props;
 		const inputId = `quantity-${ item.id }`;
 		return (
 			<OrderLineItem key={ item.id } isEditing item={ item } order={ order } site={ site }>
-				<label htmlFor={ inputId }>
+				<FormLabel htmlFor={ inputId }>
 					<ScreenReaderText>
 						{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
 					</ScreenReaderText>
-				</label>
+				</FormLabel>
 
 				<FormTextInput
 					type="number"
@@ -190,11 +191,11 @@ class OrderRefundTable extends Component {
 					</span>
 				</TableItem>
 				<TableItem colSpan="2" className="order-payment__item-total order-details__item-total">
-					<label htmlFor={ inputId }>
+					<FormLabel htmlFor={ inputId }>
 						<ScreenReaderText>
 							{ translate( 'Value of fee %(item)s', { args: { item: item.name } } ) }
 						</ScreenReaderText>
-					</label>
+					</FormLabel>
 					<PriceInput
 						id={ inputId }
 						currency={ order.currency }

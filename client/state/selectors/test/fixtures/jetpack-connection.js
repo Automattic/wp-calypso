@@ -38,29 +38,35 @@ export const requests = {
 
 export const dataItems = {
 	12345678: {
-		gravatar: '<img />',
-		isConnected: true,
-		isMaster: true,
-		permissions: {
-			edit_posts: true,
+		currentUser: {
+			gravatar: '<img />',
+			isConnected: true,
+			isMaster: true,
+			permissions: {
+				edit_posts: true,
+			},
+			username: 'automattic',
+			wpcomUser: {
+				ID: 12345678,
+				login: 'automattic',
+			},
 		},
-		username: 'automattic',
-		wpcomUser: {
-			ID: 12345678,
-			login: 'automattic',
-		},
+		connectionOwner: 'exampleuser',
 	},
 	87654321: {
-		gravatar: '<img />',
-		isConnected: true,
-		isMaster: false,
-		permissions: {
-			edit_posts: true,
+		currentUser: {
+			gravatar: '<img />',
+			isConnected: true,
+			isMaster: false,
+			permissions: {
+				edit_posts: true,
+			},
+			username: 'automattic',
+			wpcomUser: {
+				ID: 12345678,
+				login: 'automattic',
+			},
 		},
-		username: 'automattic',
-		wpcomUser: {
-			ID: 12345678,
-			login: 'automattic',
-		},
+		connectionOwner: 'exampleuser',
 	},
 };

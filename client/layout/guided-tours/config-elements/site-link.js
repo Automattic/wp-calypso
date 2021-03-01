@@ -10,8 +10,8 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { contextTypes } from '../context-types';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { Button } from '@automattic/components';
 
 class SiteLink extends Component {
@@ -30,7 +30,7 @@ class SiteLink extends Component {
 
 	static contextTypes = contextTypes;
 
-	onClick = event => {
+	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );
 		const { quit, tour, tourVersion, step, isLastStep } = this.context;
 		quit( { tour, tourVersion, step, isLastStep } );
@@ -62,7 +62,7 @@ class SiteLink extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	return { siteId, siteSlug };

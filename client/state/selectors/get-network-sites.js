@@ -7,10 +7,10 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getSitesItems from 'state/selectors/get-sites-items';
-import isMainSiteOf from 'state/selectors/is-main-site-of';
-import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
+import { createSelector } from '@automattic/state-utils';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import isMainSiteOf from 'calypso/state/selectors/is-main-site-of';
+import { getSite, isJetpackSiteMainNetworkSite } from 'calypso/state/sites/selectors';
 
 /**
  * Returns the member sites (main or secondary) of given network site
@@ -28,8 +28,8 @@ export default createSelector(
 
 		return filter(
 			getSitesItems( state ),
-			site => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID )
-		).map( site => getSite( state, site.ID ) );
+			( site ) => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID )
+		).map( ( site ) => getSite( state, site.ID ) );
 	},
-	state => [ getSitesItems( state ), state.currentUser.capabilities ]
+	( state ) => [ getSitesItems( state ), state.currentUser.capabilities ]
 );

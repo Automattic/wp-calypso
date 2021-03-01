@@ -1,5 +1,5 @@
 /**
- * Module dependencies.
+ * Internal dependencies
  */
 import SiteTaxonomyTerm from './site.taxonomy.term';
 
@@ -39,9 +39,9 @@ class SiteTaxonomy {
 	 * Get a list of Terms for the Taxonomy
 	 *
 	 * @param {object} [query] - query object
- 	 * @param {Function} fn - callback function
- 	 * @returns {Promise} Promise
- 	 */
+	 * @param {Function} fn - callback function
+	 * @returns {Promise} Promise
+	 */
 	termsList( query, fn ) {
 		const termsPath = `${ this._rootPath }/terms`;
 		return this.wpcom.req.get( termsPath, query, fn );

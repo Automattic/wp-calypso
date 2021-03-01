@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class FilteredList extends Component {
 	constructor( props ) {
@@ -23,8 +23,8 @@ class FilteredList extends Component {
 	render() {
 		const { items, placeholder, customFilter, filterBy, renderItem, className } = this.props;
 
-		const onFilterChange = event => this.setState( { filter: event.target.value } );
-		const filterFunc = item => {
+		const onFilterChange = ( event ) => this.setState( { filter: event.target.value } );
+		const filterFunc = ( item ) => {
 			if ( customFilter ) {
 				return customFilter( item, this.state.filter );
 			}

@@ -15,7 +15,7 @@ import ItemRowHeader from './item-row-header';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
-import FormLabel from 'components/forms/form-label';
+import FormLabel from 'calypso/components/forms/form-label';
 import {
 	setContentsType,
 	setContentsExplanation,
@@ -29,9 +29,9 @@ import {
 	isLoaded,
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
 
-const PackageRow = props => {
+const PackageRow = ( props ) => {
 	const {
 		siteId,
 		orderId,
@@ -131,7 +131,7 @@ const PackageRow = props => {
 
 			<div className="customs-step__item-rows">
 				<ItemRowHeader siteId={ siteId } orderId={ orderId } />
-				{ uniq( map( items, 'product_id' ) ).map( productId => (
+				{ uniq( map( items, 'product_id' ) ).map( ( productId ) => (
 					<ItemRow
 						key={ productId }
 						productId={ productId }
@@ -200,15 +200,16 @@ const mapStateToProps = ( state, { orderId, siteId, packageId } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { orderId, siteId, packageId } ) => ( {
-	setContentsType: value => dispatch( setContentsType( orderId, siteId, packageId, value ) ),
-	setContentsExplanation: value =>
+	setContentsType: ( value ) => dispatch( setContentsType( orderId, siteId, packageId, value ) ),
+	setContentsExplanation: ( value ) =>
 		dispatch( setContentsExplanation( orderId, siteId, packageId, value ) ),
-	setRestrictionType: value => dispatch( setRestrictionType( orderId, siteId, packageId, value ) ),
-	setRestrictionExplanation: value =>
+	setRestrictionType: ( value ) =>
+		dispatch( setRestrictionType( orderId, siteId, packageId, value ) ),
+	setRestrictionExplanation: ( value ) =>
 		dispatch( setRestrictionExplanation( orderId, siteId, packageId, value ) ),
-	setAbandonOnNonDelivery: value =>
+	setAbandonOnNonDelivery: ( value ) =>
 		dispatch( setAbandonOnNonDelivery( orderId, siteId, packageId, value ) ),
-	setITN: value => dispatch( setITN( orderId, siteId, packageId, value ) ),
+	setITN: ( value ) => dispatch( setITN( orderId, siteId, packageId, value ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( PackageRow ) );

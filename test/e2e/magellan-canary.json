@@ -1,7 +1,6 @@
 {
 	"mocha_tests": [ "specs" ],
-	"mocha_opts": "test/mocha.opts",
-	"mocha_args": "-R spec-xunit-reporter",
+	"mocha_args": "-R spec-junit-reporter",
 	"max_test_attempts": 3,
 	"max_workers": 3,
 	"suiteTag": "canary",
@@ -9,5 +8,5 @@
 	"framework": "testarmada-magellan-mocha-plugin",
 	"reporters": [ "./lib/reporter/magellan-reporter.js" ],
 	"executors": [ "testarmada-magellan-local-executor" ],
-	"bail_time": 300000
+	"bail_time": 450000
 }

@@ -20,4 +20,11 @@ export default class DomainDetailsPage extends AsyncBaseContainer {
 			By.css( 'a.subscription-settings' )
 		);
 	}
+
+	async cancelDomain() {
+		return await DriverHelper.clickWhenClickable(
+			this.driver,
+			By.css( 'a svg.material-icon-delete' )
+		);
+	}
 }

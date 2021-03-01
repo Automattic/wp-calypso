@@ -10,19 +10,19 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { getTld } from 'lib/domains';
+import { getTld } from 'calypso/lib/domains';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	MAP_EXISTING_DOMAIN,
-} from 'lib/url/support';
-import { domainAvailability } from 'lib/domains/constants';
+} from 'calypso/lib/url/support';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
 	domainMapping,
 	domainTransferIn,
-} from 'my-sites/domains/paths';
+} from 'calypso/my-sites/domains/paths';
 
 function getAvailabilityNotice( domain, error, errorData ) {
 	const tld = domain ? getTld( domain ) : null;
@@ -33,8 +33,8 @@ function getAvailabilityNotice( domain, error, errorData ) {
 	// Consumers should check for the message prop in order
 	// to determine whether to display the notice
 	// See for e.g., client/components/domains/register-domain-step/index.jsx
-	let message,
-		severity = 'error';
+	let message;
+	let severity = 'error';
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
@@ -93,6 +93,17 @@ function getAvailabilityNotice( domain, error, errorData ) {
 								href="https://www.icann.org/news/blog/do-you-have-a-domain-name-here-s-what-you-need-to-know-part-5"
 							/>
 						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.CONFLICTING_CNAME_EXISTS:
+			message = translate(
+				'There is an existing CNAME for {{strong}}%(domain)s{{/strong}}. If you want to map this subdomain, you should remove the conflicting CNAME DNS record first.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
 					},
 				}
 			);
@@ -233,7 +244,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
-		case domainAvailability.BLACKLISTED:
+		case domainAvailability.DISALLOWED:
 			if ( domain && domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
@@ -254,7 +265,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				);
 			} else {
 				message = translate(
-					'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.'
+					'Domain cannot be mapped to a WordPress.com blog because of disallowed term.'
 				);
 			}
 			break;
@@ -348,7 +359,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 
 		case domainAvailability.AVAILABLE_PREMIUM:
 			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchases of premium domains on WordPress.com, but if you purchase this domain elsewhere, you can {{a}}map it to your site{{/a}}.",
+				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{a}}map it to your site{{/a}}.",
 				{
 					args: { domain },
 					components: {

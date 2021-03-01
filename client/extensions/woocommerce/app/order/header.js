@@ -3,7 +3,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,12 +12,12 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
+import accept from 'calypso/lib/accept';
 import ActionHeader from 'woocommerce/components/action-header';
 import { Button } from '@automattic/components';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { deleteOrder, saveOrder } from 'woocommerce/state/sites/orders/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
@@ -73,7 +73,7 @@ class OrderActionHeader extends Component {
 		const areYouSure = translate( 'Are you sure you want to delete this order?' );
 		accept(
 			areYouSure,
-			accepted => {
+			( accepted ) => {
 				if ( ! accepted ) {
 					return;
 				}
@@ -93,7 +93,7 @@ class OrderActionHeader extends Component {
 			successOpts.button = translate( 'Send new invoice to customer' );
 			successOpts.onClick = this.triggerInvoice;
 		}
-		const onSuccess = dispatch => {
+		const onSuccess = ( dispatch ) => {
 			dispatch(
 				successNotice(
 					translate( 'Order successfully updated. {{ordersLink}}View all orders{{/ordersLink}}.', {
@@ -105,7 +105,7 @@ class OrderActionHeader extends Component {
 				)
 			);
 		};
-		const onFailure = dispatch => {
+		const onFailure = ( dispatch ) => {
 			dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 8000 } ) );
 		};
 
@@ -218,7 +218,7 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{ clearOrderEdits, deleteOrder, editOrder, saveOrder, sendOrderInvoice },
 			dispatch

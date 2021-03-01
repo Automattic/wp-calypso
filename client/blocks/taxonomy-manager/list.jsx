@@ -13,17 +13,17 @@ import { WindowScroller } from '@automattic/react-virtualized';
 /**
  * Internal dependencies
  */
-import VirtualList from 'components/virtual-list';
+import VirtualList from 'calypso/components/virtual-list';
 import ListItem from './list-item';
 import { CompactCard } from '@automattic/components';
-import QueryTerms from 'components/data/query-terms';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Constants
@@ -115,7 +115,7 @@ export class TaxonomyManagerList extends Component {
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="taxonomy-manager__nested-list">
-						{ children.map( child => this.renderItem( child, true ) ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
@@ -135,7 +135,7 @@ export class TaxonomyManagerList extends Component {
 		);
 	};
 
-	requestPages = pages => {
+	requestPages = ( pages ) => {
 		this.setState( {
 			requestedPages: union( this.state.requestedPages, pages ),
 		} );
@@ -150,7 +150,7 @@ export class TaxonomyManagerList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ this.state.requestedPages.map( page => (
+				{ this.state.requestedPages.map( ( page ) => (
 					<QueryTerms
 						key={ `query-${ page }` }
 						siteId={ siteId }

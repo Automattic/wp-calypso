@@ -16,13 +16,11 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 
@@ -90,24 +88,6 @@ describe( 'reducer', () => {
 				2916284: otherSettings,
 				77203074: settings,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = items( original, { type: SERIALIZE } );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const original = deepFreeze( {
-				2916284: true,
-			} );
-			const state = items( original, { type: DESERIALIZE } );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 

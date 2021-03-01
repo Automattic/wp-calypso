@@ -19,7 +19,7 @@ export function productContainsString( product, textString ) {
 	}
 
 	const attributes = filter( product.attributes, { variation: true } );
-	const attrString = attributes.map( attr => attr.options.join( ' ' ) ).join( ' ' );
+	const attrString = attributes.map( ( attr ) => attr.options.join( ' ' ) ).join( ' ' );
 	if ( -1 < attrString.toLocaleLowerCase().indexOf( matchString ) ) {
 		// found in attributes
 		return true;
@@ -94,5 +94,5 @@ export function removeProductId( value = [], productId ) {
 	if ( isArray( productId ) ) {
 		return difference( value, productId );
 	}
-	return value.filter( id => id !== productId );
+	return value.filter( ( id ) => id !== productId );
 }

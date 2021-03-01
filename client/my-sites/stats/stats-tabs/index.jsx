@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { find } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import StatTab from './tab';
  */
 import './style.scss';
 
-export default class extends React.Component {
+class StatsTabs extends React.Component {
 	static displayName = 'StatsTabs';
 
 	static propTypes = {
@@ -46,7 +47,7 @@ export default class extends React.Component {
 		if ( data && ! children ) {
 			const activeData = find( data, { [ activeKey ]: activeIndex } );
 
-			statsTabs = tabs.map( tab => {
+			statsTabs = tabs.map( ( tab ) => {
 				const hasData =
 					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 
@@ -79,3 +80,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default localize( StatsTabs );

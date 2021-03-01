@@ -4,28 +4,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { recordTrack } from 'reader/stats';
+import Gridicon from 'calypso/components/gridicon';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
- * Image dependencies
+ * Asset dependencies
  */
-import charactersImage from 'assets/images/reader/reader-conversations-characters.svg';
+import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 
 /**
  * Style dependencies
  */
 import './intro.scss';
 
-const getPreferenceName = isInternal =>
+const getPreferenceName = ( isInternal ) =>
 	isInternal ? 'has_used_reader_conversations_a8c' : 'has_used_reader_conversations';
 
 class ConversationsIntro extends React.Component {
@@ -52,11 +52,12 @@ class ConversationsIntro extends React.Component {
 
 	maybeRecordRenderTrack = ( props = this.props ) => {
 		if ( props.hasUsedConversations !== true ) {
-			recordTrack( 'calypso_reader_conversations_intro_render' );
+			this.props.recordReaderTracksEvent( 'calypso_reader_conversations_intro_render' );
 		}
 	};
 
 	dismiss = () => {
+		this.props.recordReaderTracksEvent( 'calypso_reader_conversations_intro_dismiss' );
 		this.props.dismiss( this.props.isInternal );
 	};
 
@@ -128,10 +129,10 @@ export default connect(
 		};
 	},
 	{
-		dismiss: isInternal => {
-			recordTrack( 'calypso_reader_conversations_intro_dismiss' );
+		dismiss: ( isInternal ) => {
 			const preferenceName = getPreferenceName( isInternal );
 			return savePreference( preferenceName, true );
 		},
+		recordReaderTracksEvent,
 	}
 )( localize( ConversationsIntro ) );

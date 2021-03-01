@@ -6,7 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	SITE_ADDRESS_AVAILABILITY_REQUEST,
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
@@ -15,7 +16,7 @@ import {
 	SITE_ADDRESS_CHANGE_REQUEST,
 	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated request state after an action has been dispatched. The
@@ -162,8 +163,10 @@ export const validation = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	validation,
 	status,
 	requesting,
 } );
+
+export default withStorageKey( 'siteAddressChange', combinedReducer );

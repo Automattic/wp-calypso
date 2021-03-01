@@ -23,20 +23,12 @@
 	&.is-large .site-selector__sites {
 		border-top: 1px solid var( --color-neutral-10 );
 	}
-
-	.site.is-loading {
-		.site-icon,
-		.site__title,
-		.site__domain {
-			background-color: var( --color-neutral-0 );
-		}
-	}
 }
 
 // Styles for Site elements within the Selector
 .site-selector .site,
 .site-selector .all-sites {
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	// Highlight selected site
 	&.is-selected {
@@ -46,9 +38,7 @@
 		.site__domain {
 			color: var( --color-sidebar-menu-selected-text );
 			&::after {
-				@include long-content-fade(
-					$color: var( --color-sidebar-menu-selected-background-rgb )
-				);
+				@include long-content-fade( $color: var( --color-sidebar-menu-selected-background-rgb ) );
 			}
 		}
 
@@ -102,7 +92,8 @@
 	position: absolute;
 
 	// ensure sufficient selector specificity for .search.is-open, too
-	&, &.is-open {
+	&,
+	&.is-open {
 		width: auto;
 	}
 
@@ -115,7 +106,7 @@
 	}
 
 	.search__input[type='search'] {
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 
 	.search__open-icon,
@@ -132,7 +123,7 @@
 	overflow-y: auto;
 	background: var( --color-surface );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		max-height: calc( 100% - 109px );
 	}
 }
@@ -156,7 +147,7 @@
 	box-sizing: border-box;
 	display: inline-block;
 	text-transform: uppercase;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	padding: 8px;
 	color: var( --color-neutral-40 );
@@ -166,7 +157,7 @@
 		color: var( --color-neutral-70 );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 16px;
 	}
 
@@ -199,7 +190,7 @@
 .site-selector__hidden-sites-message {
 	color: var( --color-text-subtle );
 	display: block;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding: 16px 16px 24px;
 
 	.site-selector__manage-hidden-sites {

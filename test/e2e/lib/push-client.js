@@ -45,7 +45,7 @@ function filterPushDataKey( filter, addPersistentId, callback ) {
 	return function pushDataFilter( notification ) {
 		addPersistentId( notification.persistentId );
 
-		const appData = notification.appData.find( data => data.key === filter );
+		const appData = notification.appData.find( ( data ) => data.key === filter );
 
 		if ( appData ) {
 			callback( appData.value );
@@ -66,8 +66,8 @@ export const subscribeToPush = ( pushConfig, callback ) => {
 		pushConfig,
 		filterPushDataKey(
 			'push_auth_token',
-			id => persistentIds.push( id ),
-			pushToken => {
+			( id ) => persistentIds.push( id ),
+			( pushToken ) => {
 				connection.close();
 				// we're connecting again to complete a login and mark that way that we saw those notifications persistentIds
 				let markPersistentConnection;
@@ -78,10 +78,10 @@ export const subscribeToPush = ( pushConfig, callback ) => {
 					},
 					() => {},
 					() => markPersistentConnection.close()
-				).then( conn => ( markPersistentConnection = conn ) );
+				).then( ( conn ) => ( markPersistentConnection = conn ) );
 
 				callback( pushToken );
 			}
 		)
-	).then( conn => ( connection = conn ) );
+	).then( ( conn ) => ( connection = conn ) );
 };

@@ -11,14 +11,13 @@ import {
 	READER_FOLLOW,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
-} from 'state/action-types';
-import { receiveFollows, syncComplete } from 'state/reader/follows/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+} from 'calypso/state/reader/action-types';
+import { receiveFollows, syncComplete } from 'calypso/state/reader/follows/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { isValidApiResponse, subscriptionsFromApi } from './utils';
-
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
@@ -61,7 +60,7 @@ export function requestPage( action ) {
 
 const MAX_PAGES_TO_FETCH = MAX_ITEMS / ITEMS_PER_PAGE;
 
-export const receivePage = ( action, apiResponse ) => dispatch => {
+export const receivePage = ( action, apiResponse ) => ( dispatch ) => {
 	if ( ! isValidApiResponse( apiResponse ) ) {
 		dispatch( receiveError() );
 		return;
@@ -79,7 +78,7 @@ export const receivePage = ( action, apiResponse ) => dispatch => {
 
 	dispatch( receiveFollows( { follows, totalCount } ) );
 
-	forEach( follows, follow => seenSubscriptions.add( follow.feed_URL ) );
+	forEach( follows, ( follow ) => seenSubscriptions.add( follow.feed_URL ) );
 
 	// Fetch the next page of subscriptions where applicable
 	if ( number > 0 && page <= MAX_PAGES_TO_FETCH && isSyncingFollows() ) {
@@ -96,7 +95,9 @@ export const receivePage = ( action, apiResponse ) => dispatch => {
 
 export function receiveError() {
 	syncingFollows = false;
-	return errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) );
+	return errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ), {
+		duration: 5000,
+	} );
 }
 
 const syncPage = dispatchRequest( {

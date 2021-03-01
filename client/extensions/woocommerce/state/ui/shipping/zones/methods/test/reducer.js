@@ -190,7 +190,7 @@ describe( 'reducer', () => {
 
 	describe( 'closeShippingZoneMethod', () => {
 		// The real closeShippingZoneMethod is a thunk now, but this test is only concerned with the reducer
-		const closeShippingZoneMethod = _siteId => ( {
+		const closeShippingZoneMethod = ( _siteId ) => ( {
 			type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE,
 			siteId: _siteId,
 		} );

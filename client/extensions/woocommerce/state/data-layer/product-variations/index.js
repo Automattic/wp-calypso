@@ -28,7 +28,7 @@ export function handleProductVariationsRequest( store, action ) {
 	const { siteId, productId, successAction, failureAction } = action;
 
 	const updatedAction = ( dispatch, getState, { data } ) => {
-		data.map( variation => {
+		data.map( ( variation ) => {
 			return dispatch( productVariationUpdated( siteId, productId, variation, action ) );
 		} );
 
@@ -88,7 +88,7 @@ export function handleProductVariationUpdate( store, action ) {
 		dispatchWithProps( dispatch, getState, successAction, props );
 	};
 
-	const data = mapValues( variation, value => {
+	const data = mapValues( variation, ( value ) => {
 		// JSON doesn't allow undefined,
 		// so change it to empty string for properties to be removed.
 		if ( isUndefined( value ) ) {

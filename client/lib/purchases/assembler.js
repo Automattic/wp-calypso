@@ -6,7 +6,7 @@ import { camelCase } from 'lodash';
 /**
  * Internal dependencies
  */
-import sortProducts from 'lib/products-values/sort';
+import sortProducts from 'calypso/lib/products-values/sort';
 
 function createPurchaseObject( purchase ) {
 	const object = {
@@ -50,11 +50,14 @@ function createPurchaseObject( purchase ) {
 			type: purchase.payment_type,
 			countryCode: purchase.payment_country_code,
 			countryName: purchase.payment_country_name,
+			storedDetailsId: purchase.stored_details_id,
 		},
 		pendingTransfer: Boolean( purchase.pending_transfer ),
 		productId: Number( purchase.product_id ),
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
+		totalRefundAmount: Number( purchase.total_refund_amount ),
+		totalRefundText: purchase.total_refund_text,
 		refundAmount: Number( purchase.refund_amount ),
 		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
@@ -68,6 +71,7 @@ function createPurchaseObject( purchase ) {
 		tagLine: purchase.tag_line,
 		taxAmount: purchase.tax_amount,
 		taxText: purchase.tax_text,
+		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
 	};
 

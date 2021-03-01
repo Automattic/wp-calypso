@@ -8,11 +8,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import { toggleWPcomEmailSetting } from 'state/notification-settings/actions';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormLabel from 'calypso/components/forms/form-label';
+import { toggleWPcomEmailSetting } from 'calypso/state/notification-settings/actions';
 
 class EmailCategory extends React.Component {
 	static propTypes = {

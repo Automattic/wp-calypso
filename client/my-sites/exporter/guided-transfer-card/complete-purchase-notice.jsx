@@ -3,22 +3,19 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { guidedTransferItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import page from 'page';
 
-const redirectToCart = siteSlug => () => {
-	addItem( guidedTransferItem() );
-	page( `/checkout/${ siteSlug }` );
+const redirectToCart = ( siteSlug ) => () => {
+	page( `/checkout/${ siteSlug }/guided_transfer` );
 };
 
 const CompletePurchaseNotice = ( { translate, siteSlug } ) => (
@@ -35,7 +32,7 @@ const CompletePurchaseNotice = ( { translate, siteSlug } ) => (
 	</Notice>
 );
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 } );
 

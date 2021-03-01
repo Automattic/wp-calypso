@@ -7,7 +7,7 @@ import { get, omit, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSerializedReviewsQuery } from './utils';
 
 /**
@@ -69,7 +69,7 @@ export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state
 		[]
 	);
 	if ( reviewIdsOnPage.length ) {
-		return reviewIdsOnPage.map( id => reviews[ id ] );
+		return reviewIdsOnPage.map( ( id ) => reviews[ id ] );
 	}
 	return false;
 };

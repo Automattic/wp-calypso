@@ -12,9 +12,9 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 import { restoreSettings } from '../../state/settings/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRestoringSettings } from '../../state/settings/selectors';
 
 class FixConfig extends Component {
@@ -50,7 +50,7 @@ class FixConfig extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isRestoring = isRestoringSettings( state, siteId );
 

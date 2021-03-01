@@ -5,14 +5,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import url from 'url';
-import { invokeMap } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import FormButton from 'components/forms/form-button';
-import Notice from 'components/notice';
+import ExternalLink from 'calypso/components/external-link';
+import FormButton from 'calypso/components/forms/form-button';
+import Notice from 'calypso/components/notice';
 import AddressSummary from './summary';
 import { ACCEPTED_USPS_ORIGIN_COUNTRIES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
 
@@ -79,10 +78,13 @@ const UnverifiedAddress = ( {
 		  } )
 		: null;
 
-	const googleMapsAddressString = invokeMap(
-		[ values.address + ' ' + values.address_2, values.city, values.state + ' ' + values.postcode ],
-		'trim'
-	).join( ', ' );
+	const googleMapsAddressString = [
+		values.address + ' ' + values.address_2,
+		values.city,
+		values.state + ' ' + values.postcode,
+	]
+		.map( ( addressLine ) => addressLine.trim() )
+		.join( ', ' );
 
 	const googleMapsUrlProperties = {
 		scheme: 'https',

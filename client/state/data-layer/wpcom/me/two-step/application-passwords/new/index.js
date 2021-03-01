@@ -6,20 +6,20 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import schema from './schema';
-import { APPLICATION_PASSWORD_CREATE } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { APPLICATION_PASSWORD_CREATE } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	createApplicationPasswordSuccess,
 	requestApplicationPasswords,
-} from 'state/application-passwords/actions';
+} from 'calypso/state/application-passwords/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-export const apiTransformer = data => data.application_password;
+export const apiTransformer = ( data ) => data.application_password;
 
 /**
  * Dispatches a request to add an application password for the current user
@@ -27,7 +27,7 @@ export const apiTransformer = data => data.application_password;
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const addApplicationPassword = action =>
+export const addApplicationPassword = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

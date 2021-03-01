@@ -12,10 +12,10 @@ import PropTypes from 'prop-types';
  */
 import { Button, ScreenReaderText } from '@automattic/components';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormSelect from 'components/forms/form-select';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormSelect from 'calypso/components/forms/form-select';
 import { isOrderNoteSaving } from 'woocommerce/state/sites/orders/notes/selectors';
 
 class CreateOrderNote extends Component {
@@ -29,13 +29,13 @@ class CreateOrderNote extends Component {
 		type: 'internal',
 	};
 
-	setNote = event => {
+	setNote = ( event ) => {
 		this.setState( {
 			note: event.target.value,
 		} );
 	};
 
-	setType = event => {
+	setType = ( event ) => {
 		this.setState( {
 			type: event.target.value,
 		} );
@@ -88,5 +88,5 @@ export default connect(
 	( state, props ) => ( {
 		isNoteSaving: isOrderNoteSaving( state, props.orderId ),
 	} ),
-	dispatch => bindActionCreators( { createNote }, dispatch )
+	( dispatch ) => bindActionCreators( { createNote }, dispatch )
 )( localize( CreateOrderNote ) );

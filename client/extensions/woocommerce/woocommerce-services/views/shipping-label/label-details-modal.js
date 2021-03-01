@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import { userCanManagePayments } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import { closeDetailsDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
@@ -20,7 +20,7 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const DetailsDialog = props => {
+const DetailsDialog = ( props ) => {
 	const {
 		orderId,
 		siteId,
@@ -106,7 +106,7 @@ const mapStateToProps = ( state, { orderId, siteId, labelId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeDetailsDialog }, dispatch );
 };
 

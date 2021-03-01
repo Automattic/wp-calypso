@@ -10,7 +10,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 const closeKeyCodes = [
 	13, // Return
@@ -31,12 +32,12 @@ class SharingButtonsLabelEditor extends React.Component {
 	static defaultProps = {
 		active: false,
 		value: '',
-		onChange: function() {},
-		onClose: function() {},
+		onChange: function () {},
+		onClose: function () {},
 		hasEnabledButtons: true,
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( -1 !== closeKeyCodes.indexOf( event.keyCode ) ) {
 			event.target.blur();
 			event.preventDefault();
@@ -44,7 +45,7 @@ class SharingButtonsLabelEditor extends React.Component {
 		}
 	};
 
-	onInputChange = event => {
+	onInputChange = ( event ) => {
 		this.props.onChange( event.target.value );
 	};
 
@@ -82,8 +83,7 @@ class SharingButtonsLabelEditor extends React.Component {
 					<p className="sharing-buttons-preview__panel-instructions">
 						{ this.props.translate( 'Change the text of the sharing buttons label' ) }
 					</p>
-					<input
-						type="text"
+					<FormTextInput
 						value={ decodeEntities( this.props.value ) }
 						onKeyDown={ this.onKeyDown }
 						onChange={ this.onInputChange }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forEach, isEmpty, isFinite, omit, omitBy } from 'lodash';
+import { forEach, isEmpty, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,8 +55,8 @@ export function removeTemporaryIds( order ) {
 	const newOrder = { ...order };
 	for ( const type of [ 'line_items', 'fee_lines', 'coupon_lines', 'shipping_lines' ] ) {
 		if ( order[ type ] ) {
-			newOrder[ type ] = order[ type ].map( item => {
-				if ( ! isFinite( item.id ) ) {
+			newOrder[ type ] = order[ type ].map( ( item ) => {
+				if ( ! Number.isFinite( item.id ) ) {
 					return omit( item, 'id' );
 				}
 				return item;
@@ -83,31 +83,31 @@ export function transformOrderForApi( order ) {
 		'total',
 		'total_tax',
 	];
-	forEach( totalsAndTaxes, key => {
-		if ( isFinite( order[ key ] ) || order[ key ] ) {
+	forEach( totalsAndTaxes, ( key ) => {
+		if ( Number.isFinite( order[ key ] ) || order[ key ] ) {
 			order[ key ] = getCurrencyFormatString( order[ key ], order.currency );
 		}
 	} );
 
 	const transformOrderData = ( data, strings = [], prices = [], integers = [], floats = [] ) => {
-		return data.map( line => {
-			forEach( strings, key => {
-				if ( isFinite( line[ key ] ) || line[ key ] ) {
+		return data.map( ( line ) => {
+			forEach( strings, ( key ) => {
+				if ( Number.isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = line[ key ].toString();
 				}
 			} );
-			forEach( prices, key => {
-				if ( isFinite( line[ key ] ) || line[ key ] ) {
+			forEach( prices, ( key ) => {
+				if ( Number.isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = getCurrencyFormatString( line[ key ], order.currency );
 				}
 			} );
-			forEach( integers, key => {
-				if ( isFinite( line[ key ] ) || line[ key ] ) {
+			forEach( integers, ( key ) => {
+				if ( Number.isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = parseInt( line[ key ] );
 				}
 			} );
-			forEach( floats, key => {
-				if ( isFinite( line[ key ] ) || line[ key ] ) {
+			forEach( floats, ( key ) => {
+				if ( Number.isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = getCurrencyFormatDecimal( line[ key ], order.currency );
 				}
 			} );

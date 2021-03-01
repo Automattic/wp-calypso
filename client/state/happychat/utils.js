@@ -1,38 +1,18 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import config from 'config';
-import getGroups from 'state/happychat/selectors/get-groups';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import { getHelpSelectedSite } from 'state/help/selectors';
-import getSkills from 'state/happychat/selectors/get-skills';
+import wpcom from 'calypso/lib/wp';
+import config from '@automattic/calypso-config';
+import getGroups from 'calypso/state/happychat/selectors/get-groups';
+import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getHelpSelectedSite } from 'calypso/state/help/selectors';
+import getSkills from 'calypso/state/happychat/selectors/get-skills';
 
-// Promise based interface for wpcom.request
-const request = ( ...args ) =>
-	new Promise( ( resolve, reject ) => {
-		wpcom.request( ...args, ( error, response ) => {
-			if ( error ) {
-				return reject( error );
-			}
-			resolve( response );
-		} );
-	} );
+const sign = ( payload ) => wpcom.req.post( '/jwt/sign', { payload: JSON.stringify( payload ) } );
 
-const sign = payload =>
-	request( {
-		method: 'POST',
-		path: '/jwt/sign',
-		body: { payload: JSON.stringify( payload ) },
-	} );
+const startSession = () => wpcom.req.post( '/happychat/session' );
 
-const startSession = () =>
-	request( {
-		method: 'POST',
-		path: '/happychat/session',
-	} );
-
-export const getHappychatAuth = state => () => {
+export const getHappychatAuth = ( state ) => () => {
 	const url = config( 'happychat_url' );
 
 	const locale = getCurrentUserLocale( state );
@@ -67,5 +47,5 @@ export const getHappychatAuth = state => () => {
 			return sign( { user, session_id } );
 		} )
 		.then( ( { jwt } ) => ( { url, user: { jwt, ...happychatUser } } ) )
-		.catch( e => Promise.reject( 'Failed to start an authenticated Happychat session: ' + e ) );
+		.catch( ( e ) => Promise.reject( 'Failed to start an authenticated Happychat session: ' + e ) );
 };

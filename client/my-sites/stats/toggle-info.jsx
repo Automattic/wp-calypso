@@ -4,13 +4,13 @@
 
 import React, { Component } from 'react';
 
-const toggleInfo = WrappedComponent =>
+const toggleInfo = ( WrappedComponent ) =>
 	class ToggleComponent extends Component {
 		state = {
 			open: false,
 		};
 
-		toggle = event => {
+		toggle = ( event ) => {
 			event.preventDefault();
 			this.setState( {
 				open: ! this.state.open,

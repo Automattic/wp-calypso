@@ -1,5 +1,4 @@
-Query Post Formats
-================
+# Query Post Formats
 
 `<QueryPostFormats />` is a React component used in managing network requests for post formats.
 
@@ -9,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryPostFormats from 'components/data/query-post-formats';
+import QueryPostFormats from 'calypso/components/data/query-post-formats';
 import MyPostFormatsListItem from './list-item';
 
 export default function MyPostFormatsList( { postFormats } ) {
@@ -17,10 +16,8 @@ export default function MyPostFormatsList( { postFormats } ) {
 		<div>
 			<QueryPostFormats siteId={ 12345678 } />
 			{ postFormats.map( ( label, id ) => {
-				return (
-					<MyPostFormatsListItem postFormatId={ id } />
-				);
-			} }
+				return <MyPostFormatsListItem postFormatId={ id } />;
+			} ) }
 		</div>
 	);
 }

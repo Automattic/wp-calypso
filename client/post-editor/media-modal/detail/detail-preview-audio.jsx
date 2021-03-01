@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { url } from 'lib/media/utils';
+import EditorMediaModalDetailPreviewMediaFile from './detail-preview-media-file';
 
 export default class extends React.Component {
 	static displayName = 'EditorMediaModalDetailPreviewAudio';
@@ -17,11 +17,17 @@ export default class extends React.Component {
 	static propTypes = {
 		className: PropTypes.string,
 		item: PropTypes.object.isRequired,
+		site: PropTypes.object.isRequired,
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'is-audio' );
-
-		return <audio src={ url( this.props.item ) } controls className={ classes } />;
+		const { className, ...props } = this.props;
+		return (
+			<EditorMediaModalDetailPreviewMediaFile
+				component="audio"
+				className={ classNames( className, 'is-audio' ) }
+				{ ...props }
+			/>
+		);
 	}
 }
