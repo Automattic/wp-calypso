@@ -3,7 +3,7 @@
  * External dependencies
  */
 
-import { useI18n, I18nReact } from '@automattic/react-i18n';
+import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
 import React from 'react';
 import type {
@@ -57,7 +57,6 @@ const keyListener = (
 };
 
 type Props = {
-	__: I18nReact[ '__' ];
 	autoFocus?: boolean;
 	className?: string;
 	compact?: boolean;
