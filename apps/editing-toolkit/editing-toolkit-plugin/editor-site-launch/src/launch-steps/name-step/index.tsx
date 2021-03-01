@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { TextControl, Tip } from '@wordpress/components';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
