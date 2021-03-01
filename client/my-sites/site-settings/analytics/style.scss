@@ -2,6 +2,10 @@
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
+	.support-info {
+		position: absolute;
+		right: 24px;
+	}
 }
 
 .site-settings__analytics-text {
@@ -18,7 +22,7 @@
 }
 
 .site-settings__analytics-illustration {
-	width: 10%;
+	width: 50px;
 	img {
 		width: 100%;
 	}
@@ -26,4 +30,7 @@
 
 .site-settings__analytics-spacer {
 	margin-bottom: 16px;
+}
+.site-settings__analytics-form-content {
+	margin-top: 24px;
 }

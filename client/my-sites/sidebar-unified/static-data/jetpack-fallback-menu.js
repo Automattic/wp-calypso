@@ -51,22 +51,6 @@ export default function jetpackMenu( { siteDomain } ) {
 			title: translate( 'Posts' ),
 			type: 'menu-item',
 			url: `/posts/${ siteDomain }`,
-			children: [
-				{
-					parent: 'edit.php',
-					slug: 'edit-php',
-					title: translate( 'All Posts' ),
-					type: 'submenu-item',
-					url: `/posts/${ siteDomain }`,
-				},
-				{
-					parent: 'edit.php',
-					slug: 'post-new-php',
-					title: translate( 'Add New' ),
-					type: 'submenu-item',
-					url: `/post/${ siteDomain }`,
-				},
-			],
 		},
 		{
 			icon: 'dashicons-admin-media',
@@ -81,22 +65,6 @@ export default function jetpackMenu( { siteDomain } ) {
 			title: translate( 'Pages' ),
 			type: 'menu-item',
 			url: `/pages/${ siteDomain }`,
-			children: [
-				{
-					parent: 'edit.php?post_type=page',
-					slug: 'edit-phppost_typepage',
-					title: translate( 'All Pages' ),
-					type: 'submenu-item',
-					url: `/pages/${ siteDomain }`,
-				},
-				{
-					parent: 'edit.php?post_type=page',
-					slug: 'post-new-phppost_typepage',
-					title: translate( 'Add New' ),
-					type: 'submenu-item',
-					url: `/page/${ siteDomain }`,
-				},
-			],
 		},
 		{
 			icon: 'dashicons-admin-comments',
