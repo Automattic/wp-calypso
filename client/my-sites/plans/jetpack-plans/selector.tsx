@@ -20,7 +20,7 @@ import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import ProductsGridNpip from './npip/products-grid-npip';
+import ProductGrid from './product-grid';
 
 /**
  * Type dependencies
@@ -137,7 +137,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			{ header }
 
-			<ProductsGridNpip
+			<ProductGrid
 				duration={ currentDuration }
 				onSelectProduct={ selectProduct }
 				urlQueryArgs={ urlQueryArgs }
