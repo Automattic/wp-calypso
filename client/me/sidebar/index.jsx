@@ -181,6 +181,12 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
+							link={ 'https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs' }
+							label={ translate( 'Manage Blogs' ) }
+							materialIcon="apps"
+						/>
+
+						<SidebarItem
 							selected={ selected === 'notifications' }
 							link={
 								config.isEnabled( 'me/notifications' )

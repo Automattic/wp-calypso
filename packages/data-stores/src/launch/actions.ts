@@ -115,11 +115,6 @@ export const closeFocusedLaunch = () =>
 		type: 'CLOSE_FOCUSED_LAUNCH',
 	} as const );
 
-export const enableExperimental = () =>
-	( {
-		type: 'ENABLE_EXPERIMENTAL',
-	} as const );
-
 export const enableAnchorFm = () =>
 	( {
 		type: 'ENABLE_ANCHOR_FM',
@@ -186,7 +181,6 @@ export type LaunchAction = ReturnOrGeneratorYieldUnion<
 	| typeof unsetPlanProductId
 	| typeof openSidebar
 	| typeof closeSidebar
-	| typeof enableExperimental
 	| typeof enableAnchorFm
 	| typeof setSidebarFullscreen
 	| typeof unsetSidebarFullscreen
