@@ -208,7 +208,7 @@
 		"superagent": "^3.8.3",
 		"supertest": "^4.0.2",
 		"textarea-caret": "^3.1.0",
-		"tinymce": "^4.9.6",
+		"tinymce": "^5.0.0",
 		"to-title-case": "^1.0.0",
 		"tracekit": "^0.4.5",
 		"twemoji": "^12.1.4",
