@@ -4,6 +4,7 @@
 import webdriver from 'selenium-webdriver';
 import firefox from 'selenium-webdriver/firefox';
 import chrome from 'selenium-webdriver/chrome';
+import chromedriver from 'chromedriver';
 import config from 'config';
 import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
@@ -163,7 +164,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				options.addArguments( '--app=https://www.wordpress.com' );
 
 				// eslint-disable-next-line no-case-declarations
-				const service = new chrome.ServiceBuilder()
+				const service = new chrome.ServiceBuilder( chromedriver.path )
 					.loggingTo( './chromedriver.' + process.pid + '.log' )
 					.enableVerboseLogging()
 					.build();
