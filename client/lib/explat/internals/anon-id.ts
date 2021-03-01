@@ -13,7 +13,7 @@ import {
 import userUtils from 'calypso/lib/user/utils';
 import { logErrorOrThrowInDevelopmentMode } from './log-error';
 
-// Using typescript to ensure we are being safe in SSR
+// SSR safety: Fail TypeScript compilation if `window` is used without an explicit undefined check
 declare const window: undefined | ( Window & typeof globalThis );
 
 /**
