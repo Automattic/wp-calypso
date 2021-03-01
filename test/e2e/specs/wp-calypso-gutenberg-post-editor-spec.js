@@ -245,7 +245,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe.only( 'Basic Public Post @canary @parallel', function () {
+	describe( 'Basic Public Post @canary @parallel', function () {
 		describe( 'Publish a New Post', function () {
 			const blogPostTitle = dataHelper.randomPhrase();
 			const blogPostQuote =
