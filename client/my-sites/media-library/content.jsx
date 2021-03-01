@@ -38,6 +38,7 @@ import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/ac
 import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -134,7 +135,10 @@ export class MediaLibraryContent extends React.Component {
 			let status = 'is-error';
 			let upgradeNudgeName = undefined;
 			let upgradeNudgeFeature = undefined;
+			let actionText = undefined;
+			let actionLink = undefined;
 			let tryAgain = false;
+			let externalAction = false;
 
 			switch ( errorType ) {
 				case MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN:
@@ -153,6 +157,9 @@ export class MediaLibraryContent extends React.Component {
 						'%d files could not be uploaded because their file types are unsupported.',
 						i18nOptions
 					);
+					actionText = translate( 'See supported file types' );
+					actionLink = localizeUrl( 'https://support.wordpress.com/accepted-filetypes' );
+					externalAction = true;
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:
 					message = translate(
@@ -214,6 +221,11 @@ export class MediaLibraryContent extends React.Component {
 			return (
 				<Notice key={ errorType } status={ status } text={ message } onDismissClick={ onDismiss }>
 					{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
+					{ actionText && (
+						<NoticeAction href={ actionLink } external={ externalAction }>
+							{ actionText }
+						</NoticeAction>
+					) }
 					{ tryAgain && this.renderTryAgain() }
 				</Notice>
 			);
