@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { find } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import StatTab from './tab';
  */
 import './style.scss';
 
-export default class extends React.Component {
+class StatsTabs extends React.Component {
 	static displayName = 'StatsTabs';
 
 	static propTypes = {
@@ -79,3 +80,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default localize( StatsTabs );
