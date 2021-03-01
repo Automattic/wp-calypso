@@ -24,6 +24,7 @@ import type {
 } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
+import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -103,8 +104,8 @@ const wpcom = wp.undocumented();
 // otherwise we get `this is not defined` errors.
 const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
 
-// Can be safely removed after 2021-02-14 when the FRESHPACK coupon expires
-import { abtest } from 'calypso/lib/abtest';
+// Can be safely removed after 2021-03-03 when the FRESHPACK coupon expires
+import moment from 'moment';
 import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
 const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[] ) =>
 	useMemo( () => {
@@ -118,8 +119,9 @@ const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[] ) =>
 			return undefined;
 		}
 
-		const shouldPrefillCode = abtest( 'prefillFRESHPACKCouponCode' ) === 'test';
-		return shouldPrefillCode ? 'FRESHPACK' : undefined;
+		const endDate = moment.utc( '2021-03-04' );
+
+		return moment().isBefore( endDate ) ? 'FRESHPACK' : undefined;
 	}, [ products ] );
 
 export default function CompositeCheckout( {
@@ -138,6 +140,8 @@ export default function CompositeCheckout( {
 	isNoSiteCart,
 	infoMessage,
 	isInEditor,
+	onAfterPaymentComplete,
+	isFocusedLaunch,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -154,6 +158,8 @@ export default function CompositeCheckout( {
 	isNoSiteCart?: boolean;
 	isInEditor?: boolean;
 	infoMessage?: JSX.Element;
+	onAfterPaymentComplete?: () => void;
+	isFocusedLaunch?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -219,8 +225,10 @@ export default function CompositeCheckout( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
+		isInEditor,
 		isJetpackNotAtomic,
 		isPrivate,
+		siteSlug,
 	} );
 
 	const {
@@ -415,13 +423,14 @@ export default function CompositeCheckout( {
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
+	const planSlugs = getPlanProductSlugs( responseCart.products );
 	const getItemVariants = useProductVariants( {
 		siteId,
-		productSlug: getPlanProductSlugs( responseCart.products )[ 0 ],
+		productSlug: planSlugs.length > 0 ? planSlugs[ 0 ] : undefined,
 	} );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
-		String( purchaseId ),
+		purchaseId,
 		productAliasFromUrl,
 		siteSlug,
 		feature,
@@ -598,7 +607,16 @@ export default function CompositeCheckout( {
 		feature,
 		isInEditor,
 		isComingFromUpsell,
+		isFocusedLaunch,
 	} );
+
+	const handlePaymentComplete = useCallback(
+		( args: PaymentCompleteCallbackArguments ) => {
+			onPaymentComplete?.( args );
+			onAfterPaymentComplete?.();
+		},
+		[ onPaymentComplete, onAfterPaymentComplete ]
+	);
 
 	if (
 		shouldShowEmptyCartPage( {
@@ -650,7 +668,7 @@ export default function CompositeCheckout( {
 			<CheckoutProvider
 				items={ itemsForCheckout }
 				total={ total }
-				onPaymentComplete={ onPaymentComplete }
+				onPaymentComplete={ handlePaymentComplete }
 				showErrorMessage={ showErrorMessage }
 				showInfoMessage={ showInfoMessage }
 				showSuccessMessage={ showSuccessMessage }
@@ -677,8 +695,6 @@ export default function CompositeCheckout( {
 					getItemVariants={ getItemVariants }
 					responseCart={ responseCart }
 					addItemToCart={ addItemWithEssentialProperties }
-					subtotal={ subtotal }
-					credits={ credits }
 					isCartPendingUpdate={ isCartPendingUpdate }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					isLoggedOutCart={ isLoggedOutCart }
@@ -699,7 +715,7 @@ function getPlanProductSlugs( items: ResponseCartProduct[] ): string[] {
 }
 
 function getAnalyticsPath(
-	purchaseId: string | undefined,
+	purchaseId: number | undefined,
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,

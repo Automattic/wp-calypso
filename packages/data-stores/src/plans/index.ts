@@ -38,6 +38,7 @@ export {
 	TIMELESS_PLAN_PREMIUM,
 	TIMELESS_PLAN_BUSINESS,
 	TIMELESS_PLAN_ECOMMERCE,
+	FREE_PLAN_PRODUCT_ID,
 } from './constants';
 
 let isRegistered = false;

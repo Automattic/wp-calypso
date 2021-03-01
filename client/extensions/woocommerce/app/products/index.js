@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -128,7 +127,7 @@ class Products extends Component {
 						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
-				{ config.isEnabled( 'woocommerce/store-deprecated' ) && <StoreDeprecatedNotice /> }
+				{ <StoreDeprecatedNotice /> }
 				{ this.renderSectionNav() }
 				{ productsDisplay }
 			</Main>

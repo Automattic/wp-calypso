@@ -13,12 +13,25 @@ import 'calypso/state/stored-cards/init';
 /**
  * Return user's stored cards from state object
  *
+ * @param {object} state - current state object
+ * @returns {Array} Stored Cards
+ */
+export const getStoredCards = ( state ) =>
+	( state.storedCards?.items ?? [] )
+		.filter( ( method ) => isCreditCard( method ) )
+		.filter( ( method ) => ! method.is_expired )
+		.map( ( card ) => ( {
+			...card,
+			allStoredDetailsIds: [ card.stored_details_id ],
+		} ) );
+
+/**
+ * Return user's stored cards including expired cards
  *
  * @param {object} state - current state object
  * @returns {Array} Stored Cards
  */
-
-export const getStoredCards = ( state ) =>
+export const getAllStoredCards = ( state ) =>
 	( state.storedCards?.items ?? [] )
 		.filter( ( method ) => isCreditCard( method ) )
 		.map( ( card ) => ( {

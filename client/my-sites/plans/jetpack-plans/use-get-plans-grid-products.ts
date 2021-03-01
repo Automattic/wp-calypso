@@ -18,10 +18,8 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
+	JETPACK_CRM_FREE_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';
@@ -49,8 +47,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// Directly and indirectly owned products
 	const ownedProducts = [ ...purchasedProducts, ...includedInPlanProducts ];
 
-	const currentCROvariant = getJetpackCROActiveVersion();
-
 	// If Jetpack Search is directly or indirectly owned, continue, otherwise make it available.
 	if (
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
@@ -60,34 +56,27 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	// Include Jetpack CRM
 	if (
-		currentCROvariant !== 'spp' &&
-		! ownedProducts.some( ( ownedProduct ) =>
-			[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
-		)
+		! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
 	) {
-		availableProducts = [ ...availableProducts, PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
+		availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
 	}
 
-	const backupProductsToShow = [];
+	const backupProductsToShow: string[] = [];
 
-	if (
-		! ownedProducts.some( ( ownedProduct ) =>
-			[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes(
-				ownedProduct
-			)
-		)
-	) {
+	const ownsDaily =
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
+	const ownsRealtime =
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY );
+
+	// Show the Backup product the site owns, and the one it doesn't own.
+	// In other words, always show both Backup Daily and Backup Real-time.
+	if ( ! ownsDaily ) {
 		backupProductsToShow.push( PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
 	}
 
-	if (
-		currentCROvariant !== 'spp' &&
-		! ownedProducts.some( ( ownedProduct ) =>
-			[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
-				ownedProduct
-			)
-		)
-	) {
+	if ( ! ownsRealtime ) {
 		backupProductsToShow.push(
 			PRODUCT_JETPACK_BACKUP_REALTIME,
 			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY

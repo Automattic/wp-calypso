@@ -68,6 +68,19 @@
 			"features": []
 		},
 		{
+			"title": "Doyle",
+			"slug": "doyle",
+			"template": "doyle",
+			"theme": "alves",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "business" ],
+			"is_premium": false,
+			"features": []
+		},
+		{
 			"title": "Bowen",
 			"slug": "bowen",
 			"template": "bowen",
@@ -144,8 +157,7 @@
 			},
 			"categories": [ "featured", "charity", "non-profit" ],
 			"is_premium": false,
-			"features": [],
-			"hide": true
+			"features": []
 		},
 		{
 			"title": "Barnsbury",

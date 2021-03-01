@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
  */
 import './style.scss';
 
-export default function PaymentMethods(): JSX.Element {
+function PaymentMethods(): JSX.Element {
 	return (
 		<Main className="payment-methods__main is-wide-layout">
 			<DocumentHead title={ titles.paymentMethods } />
@@ -33,3 +34,5 @@ export default function PaymentMethods(): JSX.Element {
 		</Main>
 	);
 }
+
+export default localize( PaymentMethods );

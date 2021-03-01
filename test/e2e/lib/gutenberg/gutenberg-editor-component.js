@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import webdriver, { By, Key, until } from 'selenium-webdriver';
+import webdriver, { By, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -15,6 +15,7 @@ import { ContactFormBlockComponent } from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 import { FileBlockComponent } from './blocks/file-block-component';
+import GuideComponent from '../components/guide-component.js';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
@@ -60,12 +61,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( dismissPageTemplateSelector ) {
 			await this.dismissPageTemplateSelector();
 		}
-		await this.dismissEditorWelcomeModal();
+		const editorWelcomeModal = new GuideComponent( this.driver );
+		await editorWelcomeModal.dismiss( 4000 );
 		return await this.closeSidebar();
 	}
 
 	async publish( { visit = false, closePanel = true } = {} ) {
-		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
@@ -73,6 +74,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const button = await this.driver.findElement( this.publishSelector );
 		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
+
 		if ( closePanel ) {
 			try {
 				await this.closePublishedPanel();
@@ -80,13 +82,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				console.log( 'Publish panel already closed' );
 			}
 		}
+
 		await this.waitForSuccessViewPostNotice();
+
+		const snackBarNoticeLinkSelector = By.css( '.components-snackbar__content a' );
 		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
 
 		if ( visit ) {
-			const snackbar = await this.driver.findElement( snackBarNoticeLinkSelector );
-			await this.driver.executeScript( 'arguments[0].click();', snackbar );
+			await driverHelper.clickWhenClickable( this.driver, snackBarNoticeLinkSelector );
 		}
+
 		await this.driver.sleep( 1000 );
 		await driverHelper.acceptAlertIfPresent( this.driver );
 		return url;
@@ -158,7 +163,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async toggleOptionsMenu() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='Options']" )
+			By.css( ".edit-post-more-menu button[aria-label='Options']" )
 		);
 
 		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
@@ -329,7 +334,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
-				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed-' };
+				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed\\/' };
 				break;
 			case 'Form':
 				blockSettings = { prefix: 'jetpack-', blockClass: 'contact-form' };
@@ -388,8 +393,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			title
 		);
 
-		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.1 on production.
-		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
+		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 10.x on production.
+		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix.replace(
+			'\\/',
+			'-'
+		) }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
 		);
@@ -523,10 +531,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closePublishedPanel() {
-		const closeButton = await this.driver.findElement(
+		return await driverHelper.clickWhenClickable(
+			this.driver,
 			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
 		);
-		return await this.driver.executeScript( 'arguments[0].click();', closeButton );
 	}
 
 	async ensureSaved() {
@@ -644,6 +652,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
 			if ( driverManager.currentScreenSize() === 'mobile' ) {
+				// For some reason, when the screensize is set to mobile,
+				// the welcome guide modal is not closed when the template button
+				// is clicked, causing the test to fail with a timeout.
+				//
+				// The same doesn't seem to happen if I run the test
+				// in the Desktop screen size, but resize to a mobileish size.
+				// For this reason, when in the mobile screen size, we force-close
+				// the welcome modal before trying to click the template selector.
+				await driverHelper.clickIfPresent(
+					this.driver,
+					By.css( '.edit-post-welcome-guide button[aria-label="Close dialog"]' )
+				);
 				await driverHelper.clickWhenClickable(
 					this.driver,
 					By.css( 'button.template-selector-item__label[value="blank"]' )
@@ -653,33 +673,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					By.css( '.page-template-modal__buttons .components-button.is-primary' )
 				);
 				await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
-			}
-		}
-	}
-
-	async dismissEditorWelcomeModal() {
-		const welcomeModal = By.css( '.components-guide__container' );
-		if (
-			await driverHelper.isEventuallyPresentAndDisplayed(
-				this.driver,
-				welcomeModal,
-				this.explicitWaitMS / 5
-			)
-		) {
-			try {
-				// Easiest way to dismiss it, but it might not work in IE.
-				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
-			} catch {
-				// Click to the last page of the welcome guide.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( 'ul.components-guide__page-control li:last-child button' )
-				);
-				// Click the finish button.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( '.components-guide__finish-button' )
-				);
 			}
 		}
 	}

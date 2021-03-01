@@ -165,9 +165,11 @@
 		margin: 17px;
 	}
 
-	p {
-		max-width: 50%;
-		margin: auto;
+	@media screen and ( min-width: 720px ) {
+		p {
+			max-width: 50%;
+			margin: auto;
+		}
 	}
 
 	&.store-removed {

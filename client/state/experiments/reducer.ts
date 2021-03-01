@@ -6,10 +6,11 @@ import { Action, Reducer } from 'redux';
 /**
  * Internal Dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
 import { ExperimentState, ExperimentAssign } from 'calypso/state/experiments/types';
 import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
-import { withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { withSchemaValidation } from 'calypso/state/utils';
 import { schema } from 'calypso/state/experiments/schema';
 
 /**

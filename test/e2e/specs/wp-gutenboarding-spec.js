@@ -36,7 +36,7 @@ before( async function () {
 
 describe( 'Gutenboarding: (' + screenSize + ')', function () {
 	this.timeout( mochaTimeOut );
-	describe( 'Create new site as existing user @parallel @canary', function () {
+	describe.skip( 'Create new site as existing user @parallel @canary', function () {
 		const siteTitle = dataHelper.randomPhrase();
 		const domainQuery = dataHelper.randomPhrase();
 		let newSiteDomain = '';
@@ -46,12 +46,7 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 
 		step( 'Can visit Gutenboarding page and see Onboarding block', async function () {
-			const page = await NewPage.Visit(
-				driver,
-				NewPage.getGutenboardingURL( {
-					query: 'flags=gutenboarding/language-picker',
-				} )
-			);
+			const page = await NewPage.Visit( driver, NewPage.getGutenboardingURL() );
 			const blockExists = await page.waitForBlock();
 			assert( blockExists, 'Onboarding block is not rendered' );
 		} );

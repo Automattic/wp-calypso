@@ -176,28 +176,6 @@ describe( 'MySitesSidebar', () => {
 			config.isEnabled.mockImplementation( () => true );
 		} );
 
-		test( 'Should return null item if woocommerce/store-deprecated and woocommerce/store-removed is disabled', () => {
-			// Enable all features except for store deprecation and removal
-			config.isEnabled.mockImplementation( ( feature ) => {
-				return (
-					feature !== 'woocommerce/store-deprecated' && feature !== 'woocommerce/store-removed'
-				);
-			} );
-			const Sidebar = new MySitesSidebar( {
-				canUserUseWooCommerceCoreStore: true,
-				...defaultProps,
-				site: {
-					plan: {
-						product_slug: 'business-bundle',
-					},
-				},
-			} );
-			const WooCommerce = () => Sidebar.woocommerce();
-
-			const wrapper = shallow( <WooCommerce /> );
-			expect( wrapper.html() ).toEqual( null );
-		} );
-
 		test( 'Should return null item if site has Personal plan', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseWooCommerceCoreStore: false,
@@ -259,6 +237,7 @@ describe( 'MySitesSidebar', () => {
 					},
 				},
 				isSiteWpcomStore: true,
+				woocommerceUrl: 'http://test.com/wp-admin/admin.php?page=wc-admin&from-calypso',
 			} );
 			const WooCommerce = () => Sidebar.woocommerce();
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { ThemeProvider } from 'emotion-theming';
 import { createInterpolateElement } from '@wordpress/element';
@@ -211,6 +211,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 											isLink
 											href={ localizeUrl( 'https://wordpress.com/help/contact', locale ) }
 											target="_blank"
+											rel="noopener noreferrer"
 										>
 											{ __( 'Ask a Happiness Engineer', 'full-site-editing' ) }
 										</Button>

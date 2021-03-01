@@ -154,7 +154,7 @@ function RecommendedDomains( props ) {
 	return (
 		<div className="domain-upsell">
 			{ ! productData && ! isLoading && ! hasError && <QuerySecureYourBrand domain={ siteSlug } /> }
-			<Card style={ { maxWidth: '615px' } } className="domain-upsell__card">
+			<Card className="domain-upsell__card">
 				{ isLoading ? (
 					[ ...Array( 3 ) ].map( ( e, i ) => (
 						<div key={ `${ i }` } className="domain-upsell__placeholder">

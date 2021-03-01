@@ -14,7 +14,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import config from '@automattic/calypso-config';
 import emitter from 'calypso/lib/mixins/emitter';
-import userSettings from 'calypso/lib/user-settings';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { requestConnectedApplications } from 'calypso/state/connected-applications/actions';
 import { requestUserProfileLinks } from 'calypso/state/profile-links/actions';
@@ -100,7 +100,7 @@ TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function () {
 	// If the validation was successful AND re-auth was required, fetch
 	// data from the following modules.
 	if ( this.isReauthRequired() ) {
-		userSettings.fetchSettings();
+		reduxDispatch( fetchUserSettings() );
 		reduxDispatch( requestConnectedApplications() );
 		reduxDispatch( requestUserProfileLinks() );
 	}

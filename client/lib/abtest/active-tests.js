@@ -10,15 +10,6 @@
 /**************************************************************************************************/
 
 export default {
-	cartNudgeUpdateToPremium: {
-		datestamp: '20180917',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	pageBuilderMVP: {
 		datestamp: '20190419',
 		variations: {
@@ -68,14 +59,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	prefillFRESHPACKCouponCode: {
-		datestamp: '20210203',
+	jetpackNewPurchaseIntroPricing: {
+		datestamp: '20210217',
 		variations: {
-			test: 50,
-			control: 50,
+			withIntroPricing: 50,
+			withoutIntroPricing: 50,
 		},
-		localeTargets: 'any',
-		defaultVariation: 'control',
+		defaultVariation: 'withoutIntroPricing',
 		allowExistingUsers: true,
 	},
 };

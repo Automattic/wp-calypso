@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React, { ReactNode } from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import type { EditorSettings } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -16,13 +17,17 @@ interface PatternTitleProps {
 	description?: string;
 }
 
+interface ExperimentalEditorSettings extends EditorSettings {
+	__experimentalBlockPatterns: ExperimentalBlockPattern[];
+}
+
 interface ExperimentalBlockPattern {
 	categories: string[];
 	content: string;
 	description: string;
 	isPremium: boolean;
 	name: string;
-	title: string;
+	title: ReactNode;
 	viewportWidth: number;
 }
 
@@ -40,12 +45,16 @@ export const PatternTitleContainer: React.FunctionComponent< PatternTitleProps >
 export const PremiumBlockPatterns: React.FunctionComponent = () => {
 	const { __experimentalBlockPatterns } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
+	) as ExperimentalEditorSettings;
+	const {
+		updateSettings,
+	}: { updateSettings: ( settings: Partial< ExperimentalEditorSettings > ) => void } = useDispatch(
+		'core/block-editor'
 	);
-	const { updateSettings } = useDispatch( 'core/block-editor' );
 
 	if ( __experimentalBlockPatterns ) {
 		let shouldUpdateBlockPatterns = false;
-		const updatedPatterns: Array = [];
+		const updatedPatterns: ExperimentalBlockPattern[] = [];
 
 		__experimentalBlockPatterns.forEach( ( originalPattern: ExperimentalBlockPattern ) => {
 			const pattern = { ...originalPattern };

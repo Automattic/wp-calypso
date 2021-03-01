@@ -156,19 +156,22 @@ $commentary-column-gap-wide: 100px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: 20px;
+		flex-wrap: wrap-reverse;
 	}
 
 	@include break-medium {
 		flex-direction: column-reverse;
 		align-items: flex-start;
-		gap: 20px;
 		width: calc( 100% - #{$commentary-column-width-medium + $commentary-column-gap-small} );
+		flex-wrap: nowrap;
 	}
 
 	@include break-large {
 		flex-direction: row;
 		align-items: center;
 		width: calc( 100% - #{$commentary-column-width-large + $commentary-column-gap-large} );
+		flex-wrap: wrap-reverse;
 	}
 
 	@include break-wide {
@@ -182,6 +185,7 @@ $commentary-column-gap-wide: 100px;
 
 	@include break-small {
 		margin-bottom: 0;
+		flex-shrink: 0;
 	}
 
 	> * {
@@ -196,10 +200,22 @@ $commentary-column-gap-wide: 100px;
 	}
 
 	.focused-launch-summary__launch-button {
-		flex: 1;
+		flex-grow: 1;
+		background-color: $onboarding-accent-blue;
 
-		@include break-small {
-			flex: 0;
+		&:disabled,
+		&:hover:not( :disabled ),
+		&:active:not( :disabled ),
+		&:focus:not( :disabled ) {
+			background: $onboarding-accent-blue;
+		}
+
+		&:focus:not( :disabled ) {
+			box-shadow: inset 0 0 0 1px #fff, 0 0 0 var( --wp-admin-border-width-focus ) $onboarding-accent-blue;
+		}
+
+		&--is-loading {
+			@include onboarding-loading( $onboarding-accent-blue );
 		}
 	}
 

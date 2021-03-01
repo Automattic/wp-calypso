@@ -166,6 +166,8 @@ export interface CartLocation {
 export type ResponseCartProductExtra = {
 	context?: string;
 	source?: string;
+	premium?: boolean;
+	new_quantity?: number;
 	domain_to_bundle?: string;
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;

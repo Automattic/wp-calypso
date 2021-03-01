@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import userSettings from 'calypso/lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import AccountComponent, { noticeId as meSettingsNoticeId } from 'calypso/me/account/main';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -30,7 +29,6 @@ export function account( context, next ) {
 	}
 
 	context.primary = React.createElement( AccountComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();

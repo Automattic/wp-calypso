@@ -2,11 +2,14 @@
  * External dependencies
  */
 import type * as DomainSuggestions from '../domain-suggestions';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import type { LaunchStepType } from './types';
+import { PLANS_STORE } from './constants';
+import type { Plans } from '..';
 
 export const setSidebarFullscreen = () =>
 	( {
@@ -52,11 +55,34 @@ export const setDomainSearch = ( domainSearch: string ) =>
 		domainSearch,
 	} as const );
 
-export const setPlanProductId = ( planProductId: number | undefined ) =>
+/**
+ * It's not recommended to export this function. We need the billing period
+ * to be a side-effect of the plan. Please don't export this action creator as you might
+ * create a discrepancy between the selected plan and the selected billing period
+ *
+ * @param billingPeriod the period
+ */
+const __internalSetBillingPeriod = ( billingPeriod: Plans.PlanBillingPeriod ) =>
 	( {
+		type: 'SET_PLAN_BILLING_PERIOD',
+		billingPeriod,
+	} as const );
+
+export const setPlanProductId = function* ( planProductId: number | undefined ) {
+	const isFree = select( PLANS_STORE ).isPlanProductFree( planProductId );
+
+	if ( ! isFree ) {
+		const planProduct = select( PLANS_STORE ).getPlanProductById( planProductId );
+		const billingPeriod = planProduct?.billingPeriod ?? 'ANNUALLY';
+
+		yield __internalSetBillingPeriod( billingPeriod );
+	}
+
+	return {
 		type: 'SET_PLAN_PRODUCT_ID',
 		planProductId,
-	} as const );
+	} as const;
+};
 
 export const unsetPlanProductId = () =>
 	( {
@@ -87,11 +113,6 @@ export const openFocusedLaunch = () =>
 export const closeFocusedLaunch = () =>
 	( {
 		type: 'CLOSE_FOCUSED_LAUNCH',
-	} as const );
-
-export const enableExperimental = () =>
-	( {
-		type: 'ENABLE_EXPERIMENTAL',
 	} as const );
 
 export const enableAnchorFm = () =>
@@ -134,7 +155,20 @@ export const disablePersistentSuccessView = () =>
 		type: 'DISABLE_SUCCESS_VIEW',
 	} as const );
 
-export type LaunchAction = ReturnType<
+/**
+ * Usually we use ReturnType of all the action creators to deduce all the actions.
+ * This works until one of the action creators is a generator and doesn't actually "Return" an action.
+ * This type helper allows for actions to be both functions and generators
+ */
+type ReturnOrGeneratorYieldUnion< T extends ( ...args: any ) => any > = T extends (
+	...args: any
+) => infer Return
+	? Return extends Generator< infer T, infer U, any >
+		? T | U
+		: Return
+	: never;
+
+export type LaunchAction = ReturnOrGeneratorYieldUnion<
 	| typeof setSiteTitle
 	| typeof unsetDomain
 	| typeof setStep
@@ -147,7 +181,6 @@ export type LaunchAction = ReturnType<
 	| typeof unsetPlanProductId
 	| typeof openSidebar
 	| typeof closeSidebar
-	| typeof enableExperimental
 	| typeof enableAnchorFm
 	| typeof setSidebarFullscreen
 	| typeof unsetSidebarFullscreen
@@ -156,6 +189,4 @@ export type LaunchAction = ReturnType<
 	| typeof unsetModalDismissible
 	| typeof showModalTitle
 	| typeof hideModalTitle
-	| typeof enablePersistentSuccessView
-	| typeof disablePersistentSuccessView
 >;

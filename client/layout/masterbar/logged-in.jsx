@@ -13,7 +13,6 @@ import React from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Masterbar from './masterbar';
 import Item from './item';
-import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'calypso/components/gravatar';
 import config from '@automattic/calypso-config';
@@ -231,13 +230,15 @@ class MasterbarLoggedIn extends React.Component {
 				) }
 				<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
 				{ ! domainOnlySite && ! isMigrationInProgress && (
-					<Publish
+					<AsyncLoad
+						require="./publish"
+						placeholder={ null }
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
 						tooltip={ translate( 'Create a New Post' ) }
 					>
 						{ translate( 'Write' ) }
-					</Publish>
+					</AsyncLoad>
 				) }
 				<Item
 					tipTarget="me"

@@ -19,12 +19,14 @@ import {
 	useCurrentStep,
 	usePath,
 	useNewQueryParam,
+	useAnchorFmParams,
 } from '../path';
 import { usePrevious } from '../hooks/use-previous';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
 import AcquireIntent from './acquire-intent';
+import AnchorError from './anchor-error';
 import StylePreview from './style-preview';
 import Features from './features';
 import Plans from './plans';
@@ -43,6 +45,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
 	const shouldTriggerCreate = useNewQueryParam();
 	const isAnchorFmSignup = useIsAnchorFm();
+	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
 
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
@@ -123,7 +126,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
-					<AcquireIntent />
+					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>

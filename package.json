@@ -49,7 +49,7 @@
 		]
 	},
 	"engines": {
-		"node": "^v12.20.1",
+		"node": "^v12.21.0",
 		"yarn": "^1.22.10"
 	},
 	"scripts": {
@@ -90,7 +90,7 @@
 		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || yarn run build-client-both && yarn run build-languages-if-enabled",
 		"build-client-if-desktop": "node -e \"(process.env.CALYPSO_ENV === 'desktop' || process.env.CALYPSO_ENV === 'desktop-development') && process.exit(1)\" || yarn run build-client-fallback",
 		"build-client-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true PROGRESS=true yarn run build-client-evergreen",
-		"build-packages": "tsc --build packages/tsconfig.json && lerna run prepare --stream",
+		"build-packages": "{ [[ \"$SKIP_TSC\" == \"true\" ]] || tsc --build packages/tsconfig.json; } && lerna run prepare --stream",
 		"build-languages": "yarn run translate && node bin/build-languages.js",
 		"build-languages-if-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run build-languages",
 		"calypso-doctor": "./node_modules/.bin/calypso-doctor",
@@ -150,7 +150,7 @@
 		"whybundled": "whybundled client/stats.json",
 		"prewhybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run -s build-server",
 		"whybundled:server": "whybundled client/stats-server.json",
-		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js --mode development",
+		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js",
 		"components:storybook:start": "start-storybook -c packages/components/.storybook",
 		"search:storybook:start": "start-storybook -c packages/search/.storybook"
 	},
@@ -172,7 +172,7 @@
 		"@babel/core": "^7.12.3",
 		"@babel/register": "^7.12.1",
 		"@babel/runtime": "^7.12.5",
-		"@signal-noise/stylelint-scales": "^1.4.0",
+		"@signal-noise/stylelint-scales": "^2.0.0",
 		"@storybook/addon-actions": "^6.1.10",
 		"@storybook/preset-scss": "^1.0.3",
 		"@storybook/react": "^6.1.10",
@@ -204,6 +204,7 @@
 		"@wordpress/base-styles": "^3.3.0",
 		"@wordpress/components": "^12.0.1",
 		"@wordpress/element": "^2.19.0",
+		"@wordpress/eslint-plugin": "^7.3.0",
 		"@wordpress/i18n": "^3.17.0",
 		"@wordpress/icons": "^2.9.0",
 		"@wordpress/jest-preset-default": "^6.5.0",
@@ -240,10 +241,12 @@
 		"eslint-plugin-jsdoc": "^30.7.3",
 		"eslint-plugin-jsx-a11y": "^6.3.1",
 		"eslint-plugin-md": "^1.0.19",
+		"eslint-plugin-mocha": "^8.0.0",
 		"eslint-plugin-prettier": "^3.1.4",
 		"eslint-plugin-react": "^7.21.5",
 		"eslint-plugin-react-hooks": "^4.0.5",
 		"eslint-plugin-wpcalypso": "^5.1.0",
+		"eslint-plugin-you-dont-need-lodash-underscore": "^6.11.0",
 		"exports-loader": "^0.7.0",
 		"fake-indexeddb": "^3.1.0",
 		"fork-ts-checker-webpack-plugin": "^3.1.1",
@@ -297,7 +300,7 @@
 		"webpack-bundle-analyzer": "^4.3.0",
 		"webpack-cli": "^4.3.1",
 		"webpack-dev-middleware": "^4.0.2",
-		"webpack-dev-server": "^3.11.0",
+		"webpack-dev-server": "^4.0.0-beta.0",
 		"whybundled": "^1.4.2",
 		"wpcom": "^6.0.0",
 		"yargs": "^15.3.1"

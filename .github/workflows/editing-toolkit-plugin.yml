@@ -14,7 +14,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '^12.20.1'
+          node-version: '^12.21.0'
       - name: Checkout code
         uses: actions/checkout@HEAD
 
@@ -84,27 +84,6 @@ jobs:
         run: yarn run test:js
         working-directory: apps/editing-toolkit
 
-  mc_upload:
-    name: Create wpcom sync diff
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      CALYPSO_APP: editing_toolkit_plugin
-      TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@HEAD
-
-      # It saves a bit of time to download the artifact rather than doing a build.
-      - name: Get build
-        uses: actions/download-artifact@HEAD
-        with:
-          name: editing-toolkit-build-archive
-          path: apps/editing-toolkit/editing-toolkit-plugin
-
-      - name: Send hook to Mission Control
-        run: .github/workflows/send-calypso-app-build-trigger.sh
-
   phpunit:
     name: Run phpunit tests
     needs: build
@@ -116,7 +95,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '12.20.1'
+          node-version: '12.21.0'
 
       - name: Checkout code
         uses: actions/checkout@HEAD
@@ -149,7 +128,7 @@ jobs:
 
       - name: Setup wp-env dependencies
         run: |
-          echo '{ "plugins": [ "./dev-plugin", "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
+          echo '{ "plugins": [ "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
         working-directory: apps/editing-toolkit
 
       - name: Start wp-env

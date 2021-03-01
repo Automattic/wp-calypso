@@ -5,6 +5,7 @@ import React from 'react';
 import { Guide } from '@wordpress/components';
 import { Title } from '@automattic/onboarding';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,8 +13,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { useTranslate } from 'i18n-calypso';
 
+/**
+ * Image dependencies
+ */
+import desktopOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-1.png';
+import desktopTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-2.png';
+import desktopThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-desktop-3.png';
+import mobileOneImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-1.png';
+import mobileTwoImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-2.png';
+import mobileThreeImg from 'calypso/assets/images/nav-unification-announcement/unify-nav-mobile-3.png';
+
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 const Page = ( { heading, content, image } ) => {
@@ -40,6 +53,16 @@ const Modal = () => {
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const translate = useTranslate();
 
+	/**
+	 * Since we don't extract strings from external packages in node_modules,
+	 * translatable strings from the Guide component are not being extracted.
+	 * In order to get these strings extracted and their translations loaded,
+	 * we need to have the following translate calls included in this component.
+	 */
+	translate( 'Previous' );
+	translate( 'Next' );
+	translate( 'Finish' );
+
 	if ( ! hasPreferences || isDismissed ) {
 		return null;
 	}
@@ -57,20 +80,17 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--bottom-right">
-									<source
-										srcSet="/calypso/images/nav-unification-announcement/unify-nav-desktop-1.jpg"
-										media="(min-width: 600px)"
-									/>
-									<img
-										alt="Scrolling sub navigation"
-										src="/calypso/images/nav-unification-announcement/unify-nav-mobile-1.jpg"
-									/>
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--bottom-right"
+									key={ desktopOneImg }
+								>
+									<source srcSet={ desktopOneImg } media="(min-width: 600px)" />
+									<img alt="" src={ mobileOneImg } />
 								</picture>
 							}
-							heading={ translate( 'A new way to navigate' ) }
+							heading={ translate( 'Navigate easier than ever' ) }
 							content={ translate(
-								'Introducing a single site management experience for WordPress.com.'
+								'Managing your entire site is simpler than ever. Do it all right from the sidebar without leaving your dashboard.'
 							) }
 						/>
 					),
@@ -79,20 +99,17 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--no-margin nav-unification-modal__picture--top-right">
-									<source
-										srcSet="/calypso/images/nav-unification-announcement/unify-nav-desktop-2.jpg"
-										media="(min-width: 600px)"
-									/>
-									<img
-										alt="Scrolling complete navigation"
-										src="/calypso/images/nav-unification-announcement/unify-nav-mobile-2.jpg"
-									/>
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--center"
+									key={ desktopTwoImg }
+								>
+									<source srcSet={ desktopTwoImg } media="(min-width: 600px)" />
+									<img alt="" src={ mobileTwoImg } />
 								</picture>
 							}
-							heading={ translate( 'Everything in one place' ) }
+							heading={ translate( 'Do even more' ) }
 							content={ translate(
-								'Manage your entire site from the sidebar, all without ever leaving your dashboard.'
+								'Advanced admin features have a new home! You can find it in your account settings'
 							) }
 						/>
 					),
@@ -101,20 +118,22 @@ const Modal = () => {
 					content: (
 						<Page
 							image={
-								<picture className="nav-unification-modal__picture nav-unification-modal__picture--center">
-									<source
-										srcSet="/calypso/images/nav-unification-announcement/unify-nav-desktop-3.jpg"
-										media="(min-width: 600px)"
-									/>
-									<img
-										alt="Scrolling sub navigation"
-										src="/calypso/images/nav-unification-announcement/unify-nav-mobile-3.jpg"
-									/>
+								<picture
+									className="nav-unification-modal__picture nav-unification-modal__picture--bottom-center-small nav-unification-modal__picture--center"
+									key={ desktopThreeImg }
+								>
+									<source srcSet={ desktopThreeImg } media="(min-width: 600px)" />
+									<img alt="" src={ mobileThreeImg } />
 								</picture>
 							}
-							heading={ translate( 'Make it your own' ) }
+							heading={ translate( 'Create in color' ) }
 							content={ translate(
-								'Customize the appearance of your navigation from your account settings.'
+								'Now you can choose a new color for your dashboard in {{a}}account settings{{/a}}.',
+								{
+									components: {
+										a: <a href="/me/account" />,
+									},
+								}
 							) }
 						/>
 					),

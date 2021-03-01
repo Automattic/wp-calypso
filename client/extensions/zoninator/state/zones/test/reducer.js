@@ -17,7 +17,7 @@ import {
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
 import reducer, { requesting, items, saving } from '../reducer';
-import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;
@@ -81,22 +81,6 @@ describe( 'reducer', () => {
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: false,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.deep.equal( {} );
 		} );
 	} );
 
@@ -230,9 +214,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = items( previousState, {
-				type: SERIALIZE,
-			} );
+			const state = serialize( items, previousState );
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
@@ -242,9 +224,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = items( previousState, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( items, previousState );
 
 			expect( state ).to.deep.equal( {
 				[ primarySiteId ]: {
@@ -258,9 +238,7 @@ describe( 'reducer', () => {
 				[ primarySiteId ]: 2,
 			} );
 
-			const state = items( previousInvalidState, {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( items, previousInvalidState );
 
 			expect( state ).to.deep.equal( {} );
 		} );

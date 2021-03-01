@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';

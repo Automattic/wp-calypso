@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/state-utils",
-	"version": "1.0.0-alpha.0",
+	"version": "1.0.0-alpha.1",
 	"description": "A collection of Redux state utilities.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -35,6 +35,7 @@
 		"@wordpress/is-shallow-equal": "^3.0.0",
 		"@wordpress/warning": "^1.3.0",
 		"lodash": "^4.17.20",
+		"redux": "^4.0.5",
 		"tslib": "^2.1.0"
 	}
 }

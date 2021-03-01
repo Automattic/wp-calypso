@@ -85,12 +85,18 @@ export class DifmUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'Whether you’re launching a store, a business, or even online courses, we’ll help you stand out online with a beautiful, functional, secure website that’s built just for you.'
+								'Whether you’re launching a store, a business, or even online courses, we’ll help you stand out online with a beautiful, functional, secure website that’s built {{em}}just for you{{/em}}.',
+								{
+									components: { em: <em /> },
+								}
 							) }
 						</p>
 						<p>
 							{ translate(
-								'You’ll work with a dedicated engagement manager throughout the entire project, ensuring that your vision is carried through from start to finish. All for a one-time fee.'
+								'You’ll work with a dedicated engagement manager throughout the entire project, ensuring that your vision is carried through from start to finish. {{b}}All for a one-time fee.{{/b}}',
+								{
+									components: { b: <b /> },
+								}
 							) }
 						</p>
 						<p>{ translate( 'Our premium website building service is perfect for:' ) }</p>
@@ -140,8 +146,8 @@ export class DifmUpsell extends PureComponent {
 						</p>
 
 						<p>
-							{ translate( '{{b}}Custom websites starting at $4,900{{/b}}', {
-								components: { b: <b /> },
+							{ translate( '{{em}}Custom websites starting at $4,900.{{/em}}', {
+								components: { em: <em /> },
 							} ) }
 						</p>
 					</div>

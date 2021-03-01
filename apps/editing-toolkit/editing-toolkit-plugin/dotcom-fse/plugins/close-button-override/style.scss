@@ -15,7 +15,6 @@
 	display: flex;
 	align-items: center;
 	margin-right: 10px;
-	margin-left: -24px;
 	border: none;
 	border-right: 1px solid #e2e4e7;
 
@@ -76,7 +75,6 @@
 	// provided by .edit-post-header__toolbar from WP. So here we
 	// offset the -24px padding and then restore the 24px padding
 	// for other toolbar buttons that comes after this button.
-	margin-left: -24px;
 	margin-right: 24px;
 
 	// Back button is not displayed in mobile & tablet view.
@@ -89,10 +87,5 @@
 		.close-button-override__label {
 			display: none;
 		}
-	}
-
-	// Overrides < v7.7.
-	@media ( max-width: 599px ) {
-		margin-left: -24px;
 	}
 }

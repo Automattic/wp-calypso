@@ -70,6 +70,10 @@
 	button {
 		width: 100%;
 	}
+
+	.form-button:last-child {
+		margin-right: 0;
+	}
 }
 
 .magic-login__footer {

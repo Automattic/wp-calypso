@@ -175,7 +175,6 @@ class Dashboard extends Component {
 			setupChoicesLoading,
 			storeLocation,
 			shouldRedirectAfterInstall,
-			isCalypsoStoreDeprecatedOrRemoved,
 			isSiteWpcomStore,
 		} = this.props;
 
@@ -194,11 +193,7 @@ class Dashboard extends Component {
 			return <RequiredPluginsInstallView site={ selectedSite } />;
 		}
 
-		if (
-			finishedInstallOfRequiredPlugins &&
-			isCalypsoStoreDeprecatedOrRemoved &&
-			shouldRedirectAfterInstall
-		) {
+		if ( finishedInstallOfRequiredPlugins && shouldRedirectAfterInstall ) {
 			// Redirect to Core UI setup after finish installation if store is
 			// installed on this site. This check is needed because of an edge
 			// case where, if WooCommerce was installed then removed, then
@@ -277,10 +272,9 @@ class Dashboard extends Component {
 			siteId,
 			finishedInstallOfRequiredPlugins,
 			shouldRedirectAfterInstall,
-			isCalypsoStoreDeprecatedOrRemoved,
 		} = this.props;
 		const useWideLayout = isSetupComplete ? true : false;
-		const shouldShowStoreNotice = isCalypsoStoreDeprecatedOrRemoved && ! shouldRedirectAfterInstall;
+		const shouldShowStoreNotice = ! shouldRedirectAfterInstall;
 		const shouldRenderDashboardContents =
 			! config.isEnabled( 'woocommerce/store-removed' ) ||
 			! finishedInstallOfRequiredPlugins ||
@@ -325,9 +319,6 @@ function mapStateToProps( state ) {
 	const loading = setupChoicesLoading || ! hasCounts || settingsGeneralLoading;
 	const shouldRedirectAfterInstall =
 		'' === get( getCurrentQueryArguments( state ), 'redirect_after_install' );
-	const isCalypsoStoreDeprecatedOrRemoved =
-		config.isEnabled( 'woocommerce/store-deprecated' ) ||
-		config.isEnabled( 'woocommerce/store-removed' );
 
 	const isSiteWpcomStore = getSiteOption( state, siteId, 'is_wpcom_store' );
 
@@ -347,7 +338,6 @@ function mapStateToProps( state ) {
 		siteId,
 		storeLocation,
 		shouldRedirectAfterInstall,
-		isCalypsoStoreDeprecatedOrRemoved,
 		isSiteWpcomStore,
 	};
 }

@@ -6,6 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import {
 	extendAction,
@@ -15,7 +16,6 @@ import {
 	isValidStateWithSchema,
 	withoutPersistence,
 	withEnhancers,
-	withStorageKey,
 } from 'calypso/state/utils';
 
 /**

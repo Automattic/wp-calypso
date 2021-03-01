@@ -35,6 +35,8 @@ const getDotcomPlanDetails = () => ( {
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		] ),
 } );
 
@@ -145,6 +147,13 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 	getInferiorHiddenFeatures: () => [],
@@ -228,6 +237,24 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_SHIPPING_CARRIERS,
 		constants.FEATURE_ALL_BUSINESS_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_INSTALL_PLUGINS,
+		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
+		constants.FEATURE_SFTP_DATABASE,
+		constants.FEATURE_ACCEPT_PAYMENTS,
+		constants.FEATURE_SHIPPING_CARRIERS,
+		constants.PREMIUM_DESIGN_FOR_STORES,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [
 		constants.FEATURE_AUDIO_UPLOADS,
@@ -300,6 +327,17 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_ADVANCED_CUSTOMIZATION,
 		constants.FEATURE_PREMIUM_THEMES,
 		constants.FEATURE_ALL_PERSONAL_FEATURES,
+	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
 	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
@@ -378,6 +416,21 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_ALL_PREMIUM_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_INSTALL_PLUGINS,
+		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
+		constants.FEATURE_SFTP_DATABASE,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [
 		constants.FEATURE_AUDIO_UPLOADS,
@@ -391,14 +444,7 @@ const getPlanBusinessDetails = () => ( {
 const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_DAILY,
-	getTitle: ( variation ) =>
-		( {
-			spp: translate( 'Jetpack Security' ),
-		}[ variation ] || translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ) ),
-	getButtonLabel: ( variation ) =>
-		( {
-			spp: translate( 'Get Jetpack Security' ),
-		}[ variation ] || undefined ),
+	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),
@@ -426,6 +472,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -437,7 +484,10 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_REALTIME,
-	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	getTitle: () =>
+		translate( 'Security {{em}}Real-time{{/em}}', {
+			components: { em: <em style={ { whiteSpace: 'nowrap' } } /> },
+		} ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -470,6 +520,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -486,8 +537,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 const getPlanJetpackCompleteDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_ALL,
-	getTitle: ( variation ) =>
-		( { i5: translate( 'Complete' ) }[ variation ] || translate( 'Jetpack Complete' ) ),
+	getTitle: () => translate( 'Complete' ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -524,6 +574,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -941,7 +992,10 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getHiddenFeatures: () => [],
+		getHiddenFeatures: () => [
+			constants.FEATURE_ADVANCED_SEO,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
+		],
 		getInferiorHiddenFeatures: () => [],
 	},
 
@@ -1146,6 +1200,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
+			constants.FEATURE_ADVANCED_SEO,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -1194,6 +1250,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_ADVANCED_SEO,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},

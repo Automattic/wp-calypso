@@ -12,13 +12,13 @@ import get from 'lodash/get';
 /**
  * Internal dependencies
  */
-import { PartnerKey } from 'calypso/state/partner-portal';
-import { setActivePartnerKey } from 'calypso/state/partner-portal/actions';
+import { PartnerKey } from 'calypso/state/partner-portal/types';
+import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
 import {
 	isFetchingPartner,
 	getCurrentPartner,
 	hasActivePartnerKey,
-} from 'calypso/state/partner-portal/selectors';
+} from 'calypso/state/partner-portal/partner/selectors';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
 import Spinner from 'calypso/components/spinner';
@@ -57,14 +57,15 @@ export default function SelectPartnerKey(): ReactElement | null {
 					<Card>{ translate( 'You are not registered as a partner.' ) }</Card>
 				) }
 
-				{ ! isFetching && keys.map( ( key ) => (
-					<Card key={ key.id } className="select-partner-key__card">
-						<div className="select-partner-key__key-name">{ key.name }</div>
-						<Button primary onClick={ () => dispatch( setActivePartnerKey( key.id ) ) }>
-							{ translate( 'Use' ) }
-						</Button>
-					</Card>
-				) ) }
+				{ ! isFetching &&
+					keys.map( ( key ) => (
+						<Card key={ key.id } className="select-partner-key__card">
+							<div className="select-partner-key__key-name">{ key.name }</div>
+							<Button primary onClick={ () => dispatch( setActivePartnerKey( key.id ) ) }>
+								{ translate( 'Use' ) }
+							</Button>
+						</Card>
+					) ) }
 			</Main>
 		</>
 	);

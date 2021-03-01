@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 2.18
+ * Version: 2.21
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -33,9 +33,16 @@ namespace A8C\FSE;
  *
  * Can be used in cache keys to invalidate caches on plugin update.
  *
+ * Note: this constant is updated via TeamCity continuous integration. That
+ * change is not copied back to VCS, so we use "dev" here to indicate that the
+ * version in wp-calypso is for development.
+ *
+ * On WordPress.com, the version here should show up in the "info" section of
+ * the "more options" menu in Gutenberg.
+ *
  * @var string
  */
-define( 'A8C_ETK_PLUGIN_VERSION', '2.18' );
+define( 'A8C_ETK_PLUGIN_VERSION', 'dev' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -117,7 +124,7 @@ function load_global_styles() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_styles' );
 
 /**
- * Load Event Countdown Block
+ * Load Event Countdown Block.
  */
 function load_countdown_block() {
 	require_once __DIR__ . '/event-countdown-block/index.php';
@@ -125,7 +132,7 @@ function load_countdown_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_countdown_block' );
 
 /**
- * Load Timeline Block
+ * Load Timeline Block.
  */
 function load_timeline_block() {
 	require_once __DIR__ . '/jetpack-timeline/index.php';
@@ -141,7 +148,7 @@ function load_common_module() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_common_module' );
 
 /**
- * Load Editor Site Launch
+ * Load Editor Site Launch.
  */
 function load_editor_site_launch() {
 	require_once __DIR__ . '/editor-site-launch/index.php';
@@ -264,9 +271,12 @@ add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
  * are loaded via load_block_patterns_from_api.
  */
 function load_wpcom_block_patterns_modifications() {
-	if ( apply_filters( 'a8c_enable_block_patterns_modifications', true ) ) {
-		require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
-	}
+	// Disable the premium patterns feature temporarily due to performance issues (#50069).
+	// phpcs:disable
+	// if ( apply_filters( 'a8c_enable_block_patterns_modifications', false ) ) {
+	// 	require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
+	// }
+	// phpcs:enable
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 
@@ -279,7 +289,7 @@ function load_block_inserter_modifications() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inserter_modifications' );
 
 /**
- * Load Mailerlite module
+ * Load Mailerlite module.
  */
 function load_mailerlite() {
 	require_once __DIR__ . '/mailerlite/subscriber-popup.php';

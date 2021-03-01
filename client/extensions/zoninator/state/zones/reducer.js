@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	ZONINATOR_ADD_ZONE,
@@ -13,7 +13,7 @@ import {
 	ZONINATOR_UPDATE_ZONES,
 } from '../action-types';
 
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case ZONINATOR_REQUEST_ZONES: {
 			const { siteId } = action;
@@ -30,9 +30,9 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const saving = withoutPersistence( ( state = {}, action ) => {
+export const saving = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case ZONINATOR_ADD_ZONE:
 		case ZONINATOR_SAVE_ZONE: {
@@ -47,7 +47,7 @@ export const saving = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

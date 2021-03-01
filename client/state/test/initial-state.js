@@ -11,6 +11,7 @@ import { useFakeTimers } from 'sinon';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import * as browserStorage from 'calypso/lib/browser-storage';
 import userFactory from 'calypso/lib/user';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
@@ -25,7 +26,7 @@ import {
 	MAX_AGE,
 	SERIALIZE_THROTTLE,
 } from 'calypso/state/initial-state';
-import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { addReducerToStore } from 'calypso/state/add-reducer';
 
 import currentUser from 'calypso/state/current-user/reducer';

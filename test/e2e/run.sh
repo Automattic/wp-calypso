@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+
 MAGELLAN=./node_modules/.bin/magellan
 MOCHA_ARGS=""
 WORKERS=6
@@ -44,7 +46,6 @@ usage () {
 -s		  - Screensizes in a comma-separated list (defaults to mobile,desktop)
 -g		  - Execute general tests in the specs/ directory
 -j 		  - Execute Jetpack tests in the specs-jetpack-calypso/ directory (desktop and mobile)
--W		  - Execute WooCommerce tests in the specs-woocommerce/ directory (desktop and mobile)
 -F		  - Execute tests tagged with @secure-auth
 -C		  - Execute tests tagged with @canary
 -J		  - Execute Jetpack connect tests tagged with @canary
@@ -69,7 +70,7 @@ if [ $# -eq 0 ]; then
   usage
 fi
 
-while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
+while getopts ":a:RpS:B:s:gjCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
   case $opt in
     a)
       WORKERS=$OPTARG
@@ -155,10 +156,6 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
     J)
       SCREENSIZES="desktop"
       MAGELLAN_CONFIG="magellan-jetpack-canary.json"
-      ;;
-    W)
-      SCREENSIZES="desktop,mobile"
-      MAGELLAN_CONFIG="magellan-woocommerce.json"
       ;;
     C)
       SCREENSIZES="mobile"
@@ -263,10 +260,10 @@ else # Not using multiple CircleCI containers, just queue up the tests in sequen
       for locale in ${LOCALE_ARRAY[@]}; do
         for config in "${MAGELLAN_CONFIGS[@]}"; do
           if [ "$config" != "" ]; then
-            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale NODE_CONFIG='{$NODE_CONFIG_ARG}' $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --debug"
-
-            eval $CMD
+		  	echo "Starting"
+			BROWSERSIZE="${size}" BROWSERLOCALE="${locale}" NODE_CONFIG="{${NODE_CONFIG_ARG}}" yarn magellan --mocha_args="${MOCHA_ARGS}" --config="${config}" --max_workers="${WORKERS}" --local_browser="${LOCAL_BROWSER}" --debug
             RETURN+=$?
+			echo "Done"
           fi
         done
       done

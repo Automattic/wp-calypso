@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import MySitesSidebarUnifiedStatsSparkline from './sparkline';
@@ -23,6 +22,7 @@ import {
 	collapseAllMySitesSidebarSections,
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
+import { isExternal, addQueryArgs } from 'calypso/lib/url';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
@@ -33,21 +33,35 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	isHappychatSessionActive,
+	isJetpackNonAtomicSite,
+	continueInCalypso,
 } ) => {
 	const reduxDispatch = useDispatch();
+
+	const onNavigate = () => {
+		reduxDispatch( collapseAllMySitesSidebarSections() );
+		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
+	};
+
+	const getLink = () => {
+		if ( ! isExternal( url ) ) {
+			return url;
+		}
+		// In case of external links, let's add a `return` query arg so that we give
+		// other interfaces ( eg WP Admin ) a chance to return us where we started from.
+		return addQueryArgs( { return: document.location.href }, url );
+	};
 
 	return (
 		<SidebarItem
 			count={ count }
 			label={ title }
-			link={ url }
-			onNavigate={ () => {
-				reduxDispatch( collapseAllMySitesSidebarSections() );
-				reduxDispatch( expandMySitesSidebarSection( sectionId ) );
-			} }
+			link={ getLink() }
+			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink
+			forceInternalLink={ ! isHappychatSessionActive && ! isJetpackNonAtomicSite }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
@@ -62,6 +76,9 @@ MySitesSidebarUnifiedItem.propTypes = {
 	slug: PropTypes.string,
 	title: PropTypes.string,
 	url: PropTypes.string,
+	isHappychatSessionActive: PropTypes.bool.isRequired,
+	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
+	continueInCalypso: PropTypes.func.isRequired,
 };
 
 export default memo( MySitesSidebarUnifiedItem );

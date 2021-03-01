@@ -48,12 +48,12 @@ exports[`<SiteStyleStep /> should render 1`] = `
           <div
             className="site-style__submit-wrapper"
           >
-            <Button
+            <ForwardRef(Button)
               primary={true}
               type="submit"
             >
               Continue
-            </Button>
+            </ForwardRef(Button)>
           </div>
         </form>
       </div>

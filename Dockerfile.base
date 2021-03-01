@@ -1,7 +1,7 @@
 #### cache image
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
-FROM node:12.20.1 as cache
+FROM node:12.21.0 as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -10,9 +10,9 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_ENV=production
 ENV CALYPSO_ENV=production
+ENV BUILD_TRANSLATION_CHUNKS=true
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
-ENV PERSISTENT_CACHE=true
 
 RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
 	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"
@@ -34,7 +34,7 @@ ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to uni test and build calypso.
-FROM node:12.20.1 as base
+FROM node:12.21.0 as base
 
 ARG node_memory=8192
 ARG UID=1003

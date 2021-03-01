@@ -60,7 +60,6 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
-const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -209,9 +208,7 @@ const webpackConfig = {
 							safari10: false,
 					  }
 					: {
-							compress: {
-								passes: 2,
-							},
+							compress: true,
 							mangle: true,
 					  } ),
 			},
@@ -286,6 +283,7 @@ const webpackConfig = {
 
 				// Node polyfills
 				process: 'process/browser',
+				util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -296,12 +294,16 @@ const webpackConfig = {
 	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
+		} ),
+		new webpack.ProvidePlugin( {
+			process: 'process/browser',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
@@ -350,7 +352,6 @@ const webpackConfig = {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
 		new RequireChunkCallbackPlugin(),
-		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 		...( ! config.isEnabled( 'desktop' )
 			? [
 					new webpack.NormalModuleReplacementPlugin(
@@ -359,6 +360,13 @@ const webpackConfig = {
 					),
 			  ]
 			: [] ),
+		/*
+		 * ExPlat: Don't import the server logger when we are in the browser
+		 */
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/server\/lib\/logger$/,
+			'calypso/lib/explat/internals/logger-browser-replacement'
+		),
 		/*
 		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
 		 */
@@ -393,36 +401,6 @@ const webpackConfig = {
 		new ExtensiveLodashReplacementPlugin(),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
-	...( shouldUsePersistentCache
-		? {
-				cache: {
-					// More info in https://github.com/webpack/changelog-v5/blob/f518964326583c74e9b78296faebdb9c32b01ea8/guides/persistent-caching.md
-					type: 'filesystem',
-					version: [
-						shouldBuildChunksMap,
-						shouldMinify,
-						process.env.ENTRY_LIMIT,
-						process.env.SECTION_LIMIT,
-						process.env.SOURCEMAP,
-						process.env.NODE_ENV,
-						process.env.CALYPSO_ENV,
-					].join( '-' ),
-					cacheDirectory: path.resolve( cachePath, 'webpack' ),
-					buildDependencies: {
-						config: [ __filename ],
-					},
-				},
-				snapshot: {
-					managedPaths: [
-						path.resolve( __dirname, '../node_modules' ),
-						path.resolve( __dirname, 'node_modules' ),
-					],
-				},
-				infrastructureLogging: {
-					debug: /webpack\.cache/,
-				},
-		  }
-		: {} ),
 };
 
 module.exports = webpackConfig;

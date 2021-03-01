@@ -2,11 +2,12 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
+import { isEnabled } from '@automattic/calypso-config';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from '@automattic/calypso-config';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import {
 	isWpComBusinessPlan,
@@ -14,18 +15,17 @@ import {
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
 } from 'calypso/lib/plans';
-import type { WPCOMCartItem } from '../types/checkout-cart';
 import doesValueExist from './does-value-exist';
 
 export default function getPlanFeatures(
-	plan: WPCOMCartItem | undefined,
+	plan: ResponseCartProduct | undefined,
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
 	hasRenewalInCart: boolean,
 	planHasDomainCredit: boolean
 ): string[] {
 	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && planHasDomainCredit;
-	const productSlug = plan?.wpcom_meta?.product_slug;
+	const productSlug = plan?.product_slug;
 
 	if ( ! productSlug ) {
 		return [];

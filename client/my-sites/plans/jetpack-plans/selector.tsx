@@ -20,7 +20,9 @@ import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getGridComponent } from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import ProductsGridNpip from './npip/products-grid-npip';
+import ProductsGrid from './product-grid';
+import { Iterations, getForCurrentCROIteration } from './iterations';
 
 /**
  * Type dependencies
@@ -50,7 +52,13 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
-	const Grid = useMemo( () => getGridComponent(), [] );
+	const Grid = useMemo(
+		() =>
+			getForCurrentCROIteration( {
+				[ Iterations.NPIP ]: ProductsGridNpip,
+			} ) || ProductsGrid,
+		[]
+	);
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -139,14 +147,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			{ header }
 
-			{ Grid && (
-				<Grid
-					duration={ currentDuration }
-					onSelectProduct={ selectProduct }
-					urlQueryArgs={ urlQueryArgs }
-					onDurationChange={ trackDurationChange }
-				/>
-			) }
+			<Grid
+				duration={ currentDuration }
+				onSelectProduct={ selectProduct }
+				urlQueryArgs={ urlQueryArgs }
+				onDurationChange={ trackDurationChange }
+			/>
 
 			<QueryProductsList />
 			<QueryProducts />
