@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { select } from '@wordpress/data';
+import deprecate from '@wordpress/deprecated';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import {
 	STORE_KEY,
 	FREE_PLAN_PRODUCT_ID,
 } from './constants';
-import deprecate from '@wordpress/deprecated';
 import type {
 	Plan,
 	PlanFeature,
