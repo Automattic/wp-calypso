@@ -63,7 +63,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
-		after( 'Delete the newly created account', async function () {
+		after( 'Delete the newly created site', async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
 			return await deleteSite.deleteSite( siteName + '.wordpress.com' );
 		} );
