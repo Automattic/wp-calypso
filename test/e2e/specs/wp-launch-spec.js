@@ -49,7 +49,6 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
-		console.log( siteName );
 
 		before( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver );
