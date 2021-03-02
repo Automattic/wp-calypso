@@ -10,7 +10,6 @@ import { isValidPostalCode } from 'calypso/lib/postal-code';
  * Internal dependencies
  */
 import {
-	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,
 	isValidCNPJ,
 	countrySpecificFieldRules,
@@ -142,16 +141,21 @@ export function tokenFieldRules() {
  * Returns a validation ruleset to use for the given payment type
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe
+ * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
 	switch ( paymentType ) {
-		case 'credit-card':
+		case 'ebanx':
 			return mergeValidationRules(
 				getCreditCardFieldRules(),
 				getConditionalCreditCardRules( paymentDetails ),
 				getEbanxCreditCardRules( paymentDetails )
+			);
+		case 'credit-card':
+			return mergeValidationRules(
+				getCreditCardFieldRules(),
+				getConditionalCreditCardRules( paymentDetails )
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
@@ -344,10 +348,10 @@ validators.validStreetNumber = {
  * property of that object is an array of error strings.
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card(default)|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe
+ * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object} validation errors, if any
  */
-export function validatePaymentDetails( paymentDetails, paymentType = 'credit-card' ) {
+export function validatePaymentDetails( paymentDetails, paymentType ) {
 	const rules = paymentFieldRules( paymentDetails, paymentType ) || {};
 	const errors = Object.keys( rules ).reduce( function ( allErrors, fieldName ) {
 		const field = rules[ fieldName ];
@@ -415,11 +419,7 @@ function getErrors( field, value, paymentDetails ) {
 }
 
 function getEbanxCreditCardRules( { country } ) {
-	return (
-		country &&
-		isEbanxCreditCardProcessingEnabledForCountry( country ) &&
-		countrySpecificFieldRules( country )
-	);
+	return country && countrySpecificFieldRules( country );
 }
 
 /**
