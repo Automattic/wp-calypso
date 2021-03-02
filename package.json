@@ -286,6 +286,7 @@
 		"recursive-copy": "^2.0.10",
 		"replace": "^1.1.5",
 		"request": "^2.88.2",
+		"rrweb": "^0.9.14",
 		"sharp": "^0.25.3",
 		"sinon": "^9.0.2",
 		"sinon-chai": "^3.5.0",
