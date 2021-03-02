@@ -81,6 +81,7 @@ module.exports = {
 				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
 				'mocha/no-global-tests': 'error',
 				'mocha/no-async-describe': 'error',
+				'mocha/no-top-level-hooks': 'error',
 				'no-console': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(

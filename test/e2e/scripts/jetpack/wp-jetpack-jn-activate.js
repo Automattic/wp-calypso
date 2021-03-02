@@ -18,8 +18,6 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
 // Write url and site credentials into file for further use
 function writeJNCredentials( url, username, password ) {
 	const fileContents = `${ url } ${ username } ${ password }`;
@@ -37,14 +35,15 @@ function writeJNCredentials( url, username, password ) {
 	} );
 }
 
-before( function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = driverManager.startBrowser();
-	return driverManager.clearCookiesAndDeleteLocalStorage( driver );
-} );
-
 describe( `[${ host }] Jurassic Ninja Connection: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		return driverManager.clearCookiesAndDeleteLocalStorage( driver );
+	} );
 
 	step( 'Can connect from WP Admin', async function () {
 		this.jnFlow = new JetpackConnectFlow( driver, 'jetpackUserJN' );
