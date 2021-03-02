@@ -1,8 +1,14 @@
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
+const path = require( 'path' );
 
 module.exports = {
 	root: true,
+	parserOptions: {
+		babelOptions: {
+			configFile: path.join( __dirname, './babel.config.js' ),
+		},
+	},
 	extends: [
 		'plugin:wpcalypso/react',
 		'plugin:jsx-a11y/recommended',
