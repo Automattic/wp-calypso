@@ -141,6 +141,10 @@ class MagicLogin extends React.Component {
 	}
 
 	render() {
+		const formProps = {
+			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
+		};
+
 		return (
 			<Main
 				className={ classNames( 'magic-login', 'magic-login__request-link', {
@@ -154,7 +158,7 @@ class MagicLogin extends React.Component {
 
 				<GlobalNotices id="notices" />
 
-				<RequestLoginEmailForm />
+				<RequestLoginEmailForm { ...formProps } />
 
 				{ this.renderLinks() }
 			</Main>
