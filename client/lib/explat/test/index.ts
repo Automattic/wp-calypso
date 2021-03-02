@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import ExPlatClient from '../index';
+import * as ExPlatClient from '../index';
 
 const mockLogError = jest.fn();
 jest.mock( '../internals/log-error', () => ( {

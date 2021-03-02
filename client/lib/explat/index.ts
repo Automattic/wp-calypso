@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { createExPlatClient } from '@automattic/explat-client';
+import createExPlatClientReactHelpers from '@automattic/explat-client-react-helpers';
 
 /**
  * Internal dependencies
@@ -13,11 +14,13 @@ import { isDevelopmentMode } from './internals/misc';
 
 initializeAnonId().catch( ( e ) => logError( { message: e.message } ) );
 
-const ExPlatClient = createExPlatClient( {
+const exPlatClient = createExPlatClient( {
 	fetchExperimentAssignment,
 	getAnonId,
 	logError,
 	isDevelopmentMode,
 } );
 
-export default ExPlatClient;
+export const { loadExperimentAssignment, dangerouslyGetExperimentAssignment } = exPlatClient;
+const exPlatClientReactHelpers = createExPlatClientReactHelpers( exPlatClient );
+export const { useExperiment, Experiment } = exPlatClientReactHelpers;
