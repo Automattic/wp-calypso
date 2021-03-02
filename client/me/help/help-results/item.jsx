@@ -60,7 +60,7 @@ export default class extends React.PureComponent {
 	};
 
 	render() {
-		const { isSibyl, helpLink } = this.props;
+		const { compact, helpLink } = this.props;
 		return (
 			<a
 				className="help-result"
@@ -69,12 +69,12 @@ export default class extends React.PureComponent {
 				onClick={ this.onClick }
 			>
 				<CompactCard className="help-result__wrapper">
-					{ isSibyl && this.getResultIcon() }
+					{ compact && this.getResultIcon() }
 					<div className="help-result__content-wrapper">
 						<h2 className="help-result__title">{ decodeEntities( helpLink.title ) }</h2>
 						<p className="help-result__description">{ decodeEntities( helpLink.description ) }</p>
 					</div>
-					{ ! isSibyl && (
+					{ ! compact && (
 						<div className="help-result__icon-wrapper">
 							{ this.getResultImage() }
 							{ this.getResultIcon() }
