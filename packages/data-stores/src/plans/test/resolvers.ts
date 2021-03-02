@@ -13,11 +13,11 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 } ) );
 
-// const TEST_LOCALE = 'test-locale';
+const MOCK_LOCALE = 'test-locale';
 
 describe( 'getSupportedPlans', () => {
 	it( 'calls setFeatures, setFeaturesByType, and setPlans after fetching plans', () => {
-		const iter = getSupportedPlans();
+		const iter = getSupportedPlans( MOCK_LOCALE );
 
 		// Prepare stricter iterator types
 		type IteratorReturnType = ReturnType< typeof iter.next >;
@@ -29,7 +29,7 @@ describe( 'getSupportedPlans', () => {
 			request: {
 				apiVersion: '1.5',
 				path: '/plans',
-				query: 'locale=en',
+				query: `locale=${ MOCK_LOCALE }`,
 			},
 			type: 'WPCOM_REQUEST',
 		} );
@@ -42,7 +42,7 @@ describe( 'getSupportedPlans', () => {
 		];
 		expect( ( iter.next as PlanPriceApiDataIterator )( planPriceApiData ).value ).toEqual( {
 			type: 'FETCH_AND_PARSE',
-			resource: 'https://public-api.wordpress.com/wpcom/v2/plans/details?locale=en',
+			resource: `https://public-api.wordpress.com/wpcom/v2/plans/details?locale=${ MOCK_LOCALE }`,
 			options: {
 				credentials: 'omit',
 				mode: 'cors',
@@ -54,7 +54,7 @@ describe( 'getSupportedPlans', () => {
 			body: MockData.API_PLAN_DETAILS,
 		};
 		expect( ( iter.next as PlanDetailsApiDataIterator )( planDetailsApiData ).value ).toEqual( {
-			locale: 'en',
+			locale: MOCK_LOCALE,
 			type: 'SET_PLANS',
 			plans: [ MockData.STORE_PLAN_FREE, MockData.STORE_PLAN_PREMIUM ],
 		} );
@@ -70,7 +70,7 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		expect( iter.next().value ).toEqual( {
-			locale: 'en',
+			locale: MOCK_LOCALE,
 			type: 'SET_FEATURES',
 			features: buildPlanFeaturesDict( [
 				MockData.STORE_PLAN_FEATURE_CUSTOM_DOMAIN,
@@ -82,7 +82,7 @@ describe( 'getSupportedPlans', () => {
 		} );
 
 		expect( iter.next().value ).toEqual( {
-			locale: 'en',
+			locale: MOCK_LOCALE,
 			type: 'SET_FEATURES_BY_TYPE',
 			featuresByType: [
 				MockData.API_FEATURES_BY_TYPE_GENERAL,
