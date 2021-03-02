@@ -785,8 +785,8 @@ export class MySitesSidebar extends Component {
 
 		let storeLink = woocommerceUrl;
 		if ( ! isSiteWpcomStore ) {
-			// Navigate to Store UI for installation.
-			storeLink = '/store' + siteSuffix + '?redirect_after_install';
+			// Navigate to installation.
+			storeLink = '/woocommerce-installation' + siteSuffix;
 		}
 
 		return (
