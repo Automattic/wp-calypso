@@ -5,7 +5,7 @@ import * as Actions from '../actions';
 import * as MockData from '../mock';
 import { buildPlanFeaturesDict } from '../test-utils';
 
-const TEST_LOCALE = 'test-locale';
+const MOCK_LOCALE = 'test-locale';
 
 describe( 'Plans action creators', () => {
 	test( 'setFeatures', () => {
@@ -15,10 +15,10 @@ describe( 'Plans action creators', () => {
 			MockData.STORE_PLAN_FEATURE_WORDADS,
 		] );
 
-		expect( Actions.setFeatures( mockFeatures, TEST_LOCALE ) ).toEqual( {
+		expect( Actions.setFeatures( mockFeatures, MOCK_LOCALE ) ).toEqual( {
 			type: 'SET_FEATURES',
 			features: mockFeatures,
-			locale: TEST_LOCALE,
+			locale: MOCK_LOCALE,
 		} );
 	} );
 
@@ -28,19 +28,19 @@ describe( 'Plans action creators', () => {
 			MockData.API_FEATURES_BY_TYPE_COMMERCE,
 			MockData.API_FEATURES_BY_TYPE_MARKETING,
 		];
-		expect( Actions.setFeaturesByType( features, TEST_LOCALE ) ).toEqual( {
+		expect( Actions.setFeaturesByType( features, MOCK_LOCALE ) ).toEqual( {
 			type: 'SET_FEATURES_BY_TYPE',
 			featuresByType: features,
-			locale: TEST_LOCALE,
+			locale: MOCK_LOCALE,
 		} );
 	} );
 
 	test( 'setPlans', () => {
 		const plans = [ MockData.STORE_PLAN_FREE, MockData.STORE_PLAN_PREMIUM ];
-		expect( Actions.setPlans( plans, TEST_LOCALE ) ).toEqual( {
+		expect( Actions.setPlans( plans, MOCK_LOCALE ) ).toEqual( {
 			type: 'SET_PLANS',
 			plans,
-			locale: TEST_LOCALE,
+			locale: MOCK_LOCALE,
 		} );
 	} );
 

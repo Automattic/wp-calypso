@@ -6,7 +6,7 @@ import { setPlans, setFeaturesByType, setFeatures, setPlanProducts } from '../ac
 import * as MockData from '../mock';
 import { buildPlanFeaturesDict } from '../test-utils';
 
-const TEST_LOCALE = 'test-locale';
+const MOCK_LOCALE = 'test-locale';
 
 describe( 'Plans reducer', () => {
 	describe( 'Plans', () => {
@@ -16,7 +16,7 @@ describe( 'Plans reducer', () => {
 		} );
 
 		it( 'replaces old plans with new plans', () => {
-			let state = reducer( undefined, setPlans( [ MockData.STORE_PLAN_FREE ], TEST_LOCALE ) );
+			let state = reducer( undefined, setPlans( [ MockData.STORE_PLAN_FREE ], MOCK_LOCALE ) );
 
 			state = reducer(
 				state,
@@ -29,10 +29,10 @@ describe( 'Plans reducer', () => {
 
 			const newFreePlan = { ...MockData.STORE_PLAN_FREE, title: 'new free' };
 
-			const { plans } = reducer( state, setPlans( [ newFreePlan ], TEST_LOCALE ) );
+			const { plans } = reducer( state, setPlans( [ newFreePlan ], MOCK_LOCALE ) );
 
-			expect( plans[ TEST_LOCALE ][ 0 ].title ).toBe( newFreePlan.title );
-			expect( plans[ TEST_LOCALE ][ 1 ] ).toBeUndefined();
+			expect( plans[ MOCK_LOCALE ][ 0 ].title ).toBe( newFreePlan.title );
+			expect( plans[ MOCK_LOCALE ][ 1 ] ).toBeUndefined();
 		} );
 	} );
 
@@ -47,16 +47,16 @@ describe( 'Plans reducer', () => {
 				undefined,
 				setFeaturesByType(
 					[ MockData.API_FEATURES_BY_TYPE_GENERAL, MockData.API_FEATURES_BY_TYPE_COMMERCE ],
-					TEST_LOCALE
+					MOCK_LOCALE
 				)
 			);
 
 			const { featuresByType } = reducer(
 				state,
-				setFeaturesByType( [ MockData.API_FEATURES_BY_TYPE_MARKETING ], TEST_LOCALE )
+				setFeaturesByType( [ MockData.API_FEATURES_BY_TYPE_MARKETING ], MOCK_LOCALE )
 			);
 
-			expect( featuresByType[ TEST_LOCALE ] ).toEqual( [
+			expect( featuresByType[ MOCK_LOCALE ] ).toEqual( [
 				MockData.API_FEATURES_BY_TYPE_MARKETING,
 			] );
 		} );
@@ -76,7 +76,7 @@ describe( 'Plans reducer', () => {
 						MockData.STORE_PLAN_FEATURE_CUSTOM_DOMAIN,
 						MockData.STORE_PLAN_FEATURE_LIVE_SUPPORT,
 					] ),
-					TEST_LOCALE
+					MOCK_LOCALE
 				)
 			);
 
@@ -84,15 +84,15 @@ describe( 'Plans reducer', () => {
 				state,
 				setFeatures(
 					buildPlanFeaturesDict( [ MockData.STORE_PLAN_FEATURE_PRIORITY_SUPPORT ] ),
-					TEST_LOCALE
+					MOCK_LOCALE
 				)
 			);
 
 			expect(
-				features[ TEST_LOCALE ][ MockData.STORE_PLAN_FEATURE_PRIORITY_SUPPORT.id ].name
+				features[ MOCK_LOCALE ][ MockData.STORE_PLAN_FEATURE_PRIORITY_SUPPORT.id ].name
 			).toBe( MockData.STORE_SIMPLIFIED_FEATURE_PRIORITY_SUPPORT.name );
 			expect(
-				features[ TEST_LOCALE ][ MockData.STORE_PLAN_FEATURE_CUSTOM_DOMAIN.id ]
+				features[ MOCK_LOCALE ][ MockData.STORE_PLAN_FEATURE_CUSTOM_DOMAIN.id ]
 			).toBeUndefined();
 		} );
 	} );
