@@ -21,7 +21,6 @@ import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import { getRememberedCoupon } from 'calypso/lib/cart/actions';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
-import CartData from 'calypso/components/data/cart';
 import userFactory from 'calypso/lib/user';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -93,20 +92,18 @@ export function checkout( context, next ) {
 	}
 
 	context.primary = (
-		<CartData>
-			<CheckoutSystemDecider
-				productAliasFromUrl={ product }
-				purchaseId={ purchaseId }
-				selectedFeature={ feature }
-				couponCode={ couponCode }
-				isComingFromUpsell={ !! context.query.upgrade }
-				plan={ plan }
-				selectedSite={ selectedSite }
-				redirectTo={ context.query.redirect_to }
-				isLoggedOutCart={ isLoggedOutCart }
-				isNoSiteCart={ isNoSiteCart }
-			/>
-		</CartData>
+		<CheckoutSystemDecider
+			productAliasFromUrl={ product }
+			purchaseId={ purchaseId }
+			selectedFeature={ feature }
+			couponCode={ couponCode }
+			isComingFromUpsell={ !! context.query.upgrade }
+			plan={ plan }
+			selectedSite={ selectedSite }
+			redirectTo={ context.query.redirect_to }
+			isLoggedOutCart={ isLoggedOutCart }
+			isNoSiteCart={ isNoSiteCart }
+		/>
 	);
 
 	next();
