@@ -16,6 +16,7 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 
 jest.mock( 'calypso/state/partner-portal/partner/selectors', () => ( {
 	getActivePartnerKey: () => ( { oauth2_token: 'fake_oauth2_token' } ),
@@ -31,7 +32,8 @@ describe( 'actions', () => {
 					LicenseState.Detached,
 					'bar',
 					LicenseSortField.IssuedAt,
-					LicenseSortDirection.Descending
+					LicenseSortDirection.Descending,
+					2
 				)
 			).toEqual( {
 				type: JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
@@ -40,6 +42,8 @@ describe( 'actions', () => {
 				fetcher: 'wpcomJetpackLicensing',
 				sortField: LicenseSortField.IssuedAt,
 				sortDirection: LicenseSortDirection.Descending,
+				page: 2,
+				perPage: LICENSES_PER_PAGE,
 			} );
 		} );
 	} );

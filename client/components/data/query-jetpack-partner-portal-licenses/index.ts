@@ -19,6 +19,7 @@ interface Props {
 	search: string;
 	sortField: LicenseSortField;
 	sortDirection: LicenseSortDirection;
+	page: number;
 }
 
 export default function QueryJetpackPartnerPortalLicenses( {
@@ -26,12 +27,13 @@ export default function QueryJetpackPartnerPortalLicenses( {
 	search,
 	sortField,
 	sortDirection,
+	page,
 }: Props ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( fetchLicenses( filter, search, sortField, sortDirection ) );
-	}, [ dispatch, filter, search, sortField, sortDirection ] );
+		dispatch( fetchLicenses( filter, search, sortField, sortDirection, page ) );
+	}, [ dispatch, filter, search, sortField, sortDirection, page ] );
 
 	return null;
 }
