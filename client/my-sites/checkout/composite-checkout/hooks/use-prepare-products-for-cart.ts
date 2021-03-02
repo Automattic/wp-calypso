@@ -24,6 +24,7 @@ import { getProductsList, isProductsListFetching } from 'calypso/state/products-
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import doesValueExist from '../lib/does-value-exist';
 import useStripProductsFromUrl from './use-strip-products-from-url';
+import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -46,6 +47,8 @@ export default function usePrepareProductsForCart( {
 	isJetpackNotAtomic,
 	isPrivate,
 	siteSlug,
+	isLoggedOutCart,
+	isNoSiteCart,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -53,6 +56,8 @@ export default function usePrepareProductsForCart( {
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
+	isLoggedOutCart?: boolean;
+	isNoSiteCart?: boolean;
 } ): PreparedProductsForCart {
 	const initializePreparedProductsState = (
 		initialState: PreparedProductsForCart
@@ -65,11 +70,14 @@ export default function usePrepareProductsForCart( {
 		initialPreparedProductsState,
 		initializePreparedProductsState
 	);
+
 	debug(
 		'preparing products for cart from url string',
 		productAliasFromUrl,
 		'and purchase id',
-		originalPurchaseId
+		originalPurchaseId,
+		'and signup variables',
+		{ isLoggedOutCart, isNoSiteCart }
 	);
 
 	useFetchProductsIfNotLoaded();
@@ -78,10 +86,16 @@ export default function usePrepareProductsForCart( {
 		isLoading: state.isLoading,
 		originalPurchaseId,
 		productAliasFromUrl,
+		isLoggedOutCart,
+		isNoSiteCart,
 	} );
 
 	// Only one of these should ever operate. The others should bail if they
 	// think another hook will handle the data.
+	useAddProductsFromLocalStorage( {
+		dispatch,
+		addHandler,
+	} );
 	useAddProductFromSlug( {
 		productAliasFromUrl,
 		dispatch,
@@ -130,30 +144,68 @@ function preparedProductsReducer(
 	}
 }
 
-type AddHandler = 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
+type AddHandler = 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd' | 'addFromLocalStorage';
 
 function chooseAddHandler( {
 	isLoading,
 	originalPurchaseId,
 	productAliasFromUrl,
+	isLoggedOutCart,
+	isNoSiteCart,
 }: {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAliasFromUrl: string | null | undefined;
+	isLoggedOutCart?: boolean;
+	isNoSiteCart?: boolean;
 } ): AddHandler {
 	if ( ! isLoading ) {
 		return 'doNotAdd';
 	}
 
-	if ( isLoading && originalPurchaseId ) {
+	if ( isLoggedOutCart || isNoSiteCart ) {
+		return 'addFromLocalStorage';
+	}
+
+	if ( originalPurchaseId ) {
 		return 'addRenewalItems';
 	}
 
-	if ( isLoading && ! originalPurchaseId && productAliasFromUrl ) {
+	if ( ! originalPurchaseId && productAliasFromUrl ) {
 		return 'addProductFromSlug';
 	}
 
 	return 'doNotAdd';
+}
+
+function useAddProductsFromLocalStorage( {
+	dispatch,
+	addHandler,
+}: {
+	dispatch: ( action: PreparedProductsAction ) => void;
+	addHandler: AddHandler;
+} ) {
+	const translate = useTranslate();
+
+	useEffect( () => {
+		if ( addHandler !== 'addFromLocalStorage' ) {
+			return;
+		}
+
+		const productsForCart = getCartFromLocalStorage();
+
+		if ( productsForCart.length < 1 ) {
+			debug( 'creating products from localStorage failed' );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: String( translate( 'I tried and failed to create products from signup' ) ),
+			} );
+			return;
+		}
+
+		debug( 'preparing products requested in localStorage', productsForCart );
+		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
+	}, [ addHandler, dispatch, translate ] );
 }
 
 function useAddRenewalItems( {
