@@ -39,6 +39,7 @@ export { isFreePlan } from './is-free-plan';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
 export {
 	isGoogleWorkspace,
+	isGoogleWorkspaceExtraLicence,
 	isGSuite,
 	isGSuiteOrExtraLicense,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,

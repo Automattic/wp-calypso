@@ -769,3 +769,5 @@ export {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 	shouldRenderExpiringCreditCard,
 };
+
+export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';
