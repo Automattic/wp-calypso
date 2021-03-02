@@ -305,6 +305,41 @@ export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => 
 	return state;
 } );
 
+function applyToManager( state, siteId, method, createDefault, ...args ) {
+	if ( ! state[ siteId ] ) {
+		if ( ! createDefault ) {
+			return state;
+		}
+
+		return {
+			...state,
+			[ siteId ]: new ThemeQueryManager( null, { itemKey: 'id' } )[ method ]( ...args ),
+		};
+	}
+
+	const nextManager = state[ siteId ][ method ]( ...args );
+	if ( nextManager === state[ siteId ] ) {
+		return state;
+	}
+
+	return {
+		...state,
+		[ siteId ]: nextManager,
+	};
+}
+
+function fromApi( theme ) {
+	if ( ! theme || ! theme.description ) {
+		return theme;
+	}
+
+	return { ...theme, description: decodeEntities( theme.description ) };
+}
+
+// Time after which queries stored in IndexedDb will be invalidated.
+// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
+const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
+
 /**
  * Returns the updated theme query state after an action has been dispatched.
  * The state reflects a mapping of serialized query key to an array of theme IDs
@@ -314,80 +349,43 @@ export const queryRequestErrors = withoutPersistence( ( state = {}, action ) => 
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const queries = ( () => {
-	function applyToManager( state, siteId, method, createDefault, ...args ) {
-		if ( ! state[ siteId ] ) {
-			if ( ! createDefault ) {
-				return state;
+export const queries = withSchemaValidation( queriesSchema, ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEMES_REQUEST_SUCCESS: {
+			const { siteId, query, themes, found } = action;
+			return applyToManager(
+				// Always 'patch' to avoid overwriting existing fields when receiving
+				// from a less rich endpoint such as /mine
+				state,
+				siteId,
+				'receive',
+				true,
+				map( themes, fromApi ),
+				{ query, found, patch: true }
+			);
+		}
+		case THEME_DELETE_SUCCESS: {
+			const { siteId, themeId } = action;
+			return applyToManager( state, siteId, 'removeItem', false, themeId );
+		}
+		case SERIALIZE: {
+			const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
+			serializedState._timestamp = Date.now();
+			return serializedState;
+		}
+		case DESERIALIZE: {
+			if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
+				return {};
 			}
-
-			return {
-				...state,
-				[ siteId ]: new ThemeQueryManager( null, { itemKey: 'id' } )[ method ]( ...args ),
-			};
+			const noTimestampState = omit( state, '_timestamp' );
+			return mapValues( noTimestampState, ( { data, options } ) => {
+				return new ThemeQueryManager( data, options );
+			} );
 		}
-
-		const nextManager = state[ siteId ][ method ]( ...args );
-		if ( nextManager === state[ siteId ] ) {
-			return state;
-		}
-
-		return {
-			...state,
-			[ siteId ]: nextManager,
-		};
 	}
 
-	function fromApi( theme ) {
-		if ( ! theme || ! theme.description ) {
-			return theme;
-		}
-
-		return { ...theme, description: decodeEntities( theme.description ) };
-	}
-
-	// Time after which queries stored in IndexedDb will be invalidated.
-	// days * hours_in_day * minutes_in_hour * seconds_in_minute * miliseconds_in_second
-	const MAX_THEMES_AGE = 1 * 24 * 60 * 60 * 1000;
-
-	return withSchemaValidation( queriesSchema, ( state = {}, action ) => {
-		switch ( action.type ) {
-			case THEMES_REQUEST_SUCCESS: {
-				const { siteId, query, themes, found } = action;
-				return applyToManager(
-					// Always 'patch' to avoid overwriting existing fields when receiving
-					// from a less rich endpoint such as /mine
-					state,
-					siteId,
-					'receive',
-					true,
-					map( themes, fromApi ),
-					{ query, found, patch: true }
-				);
-			}
-			case THEME_DELETE_SUCCESS: {
-				const { siteId, themeId } = action;
-				return applyToManager( state, siteId, 'removeItem', false, themeId );
-			}
-			case SERIALIZE: {
-				const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
-				serializedState._timestamp = Date.now();
-				return serializedState;
-			}
-			case DESERIALIZE: {
-				if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
-					return {};
-				}
-				const noTimestampState = omit( state, '_timestamp' );
-				return mapValues( noTimestampState, ( { data, options } ) => {
-					return new ThemeQueryManager( data, options );
-				} );
-			}
-		}
-
-		return state;
-	} );
-} )();
+	return state;
+} );
 
 /**
  * Returns the updated themes last query state.
