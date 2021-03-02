@@ -24,12 +24,13 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { mapPostStatus } from 'calypso/lib/route';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
-import { Experiment } from 'calypso/components/experiment';
+import { Experiment as ExperimentPreviousClient } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { Experiment } from 'calypso/lib/explat';
 
 class PagesMain extends React.Component {
 	static displayName = 'Pages';
@@ -115,11 +116,22 @@ class PagesMain extends React.Component {
 				 * We use iso-week and iso-week-year in order to consistently change the experiment name every week.
 				 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
 				 */ }
-				<Experiment
+				<ExperimentPreviousClient
 					name={ `explat_test_aa_weekly_calypso_${ moment
 						.utc()
 						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
 				/>
+				<Experiment 
+					name={ `explat_test_aa_weekly_calypso_next_client_${ moment
+						.utc()
+						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+						>
+					{{
+						treatment: null,
+						default: null,
+						loading: null,
+					}}
+				</Experiment>
 			</Main>
 		);
 	}
