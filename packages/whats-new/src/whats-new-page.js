@@ -3,7 +3,8 @@
  */
 import React, { useEffect } from 'react';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { GuidePage } from '@wordpress/components';
+// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+import { Button, GuidePage, __experimentalText as Text } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
 function WhatsNewPage( {
@@ -28,15 +29,19 @@ function WhatsNewPage( {
 	return (
 		<GuidePage className="whats-new-page__container">
 			<div className="whats-new-page__text">
-				{ heading && <h1 className="whats-new-page__heading">{ heading }</h1> }
+				{ heading && <Text variant="title.large">{ heading }</Text> }
 				<div className="whats-new-page__description">
-					{ description && <p>{ description }</p> }
+					{ description && <Text variant="body">{ description }</Text> }
 					{ link && (
-						<p className="whats-new-page__link">
-							<a href={ link } target="_blank" rel="noreferrer">
-								{ __( 'Learn more' ) }
-							</a>
-						</p>
+						<Button
+							className="whats-new-page__link"
+							href={ link }
+							isTertiary
+							isLink
+							target="_blank"
+						>
+							{ __( 'Learn more' ) }
+						</Button>
 					) }
 				</div>
 			</div>

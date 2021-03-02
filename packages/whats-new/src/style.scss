@@ -132,7 +132,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .whats-new-page__visual {
 	height: 40%;
 	padding: 25px 25px 0;
-	background: var( --studio-blue );
+	background: var( --color-primary );
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -169,7 +169,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .whats-new-page__description p {
 	font-size: $font-body;
 	line-height: 22px;
-	margin-top: 10px;
+	margin: 10px 0;
 
 	/* Gray / Gray 60 */
 	color: var( --studio-gray-60 );
@@ -178,6 +178,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		font-size: $font-body;
 		line-height: 26px;
 	}
+}
+
+.whats-new-page__link {
+	font-size: $font-body;
 }
 
 .whats-new-page__image {
