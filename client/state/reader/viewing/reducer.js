@@ -5,7 +5,6 @@ import {
 	READER_VIEWING_FULL_POST_SET,
 	READER_VIEWING_FULL_POST_UNSET,
 } from 'calypso/state/reader/action-types';
-import { SERIALIZE } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
 /**
@@ -23,9 +22,6 @@ export function fullPost( state = null, action ) {
 		case READER_VIEWING_FULL_POST_UNSET: {
 			return null;
 		}
-
-		case SERIALIZE:
-			return null;
 	}
 	return state;
 }

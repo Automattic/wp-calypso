@@ -27,8 +27,7 @@ import {
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
-import { SERIALIZE } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
 
@@ -109,7 +108,7 @@ function updateNotificationSubscription( state, { payload, type } ) {
 	};
 }
 
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_RECORD_FOLLOW: {
 			const urlKey = prepareComparableUrl( action.payload.url );
@@ -295,15 +294,19 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			} );
 			return { ...state };
 		}
-
-		case SERIALIZE:
-			return pickBy( state, ( item ) => item.ID && item.is_following );
 	}
 
 	return state;
-} );
+};
 
-export const itemsCount = withoutPersistence( ( state = 0, action ) => {
+export const items = withSchemaValidation(
+	itemsSchema,
+	withPersistence( itemsReducer, {
+		serialize: ( state ) => pickBy( state, ( item ) => item.ID && item.is_following ),
+	} )
+);
+
+export const itemsCount = ( state = 0, action ) => {
 	switch ( action.type ) {
 		case READER_FOLLOWS_RECEIVE: {
 			return action.payload.totalCount ? action.payload.totalCount : state;
@@ -311,9 +314,9 @@ export const itemsCount = withoutPersistence( ( state = 0, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const lastSyncTime = withoutPersistence( ( state = null, action ) => {
+export const lastSyncTime = ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_FOLLOWS_SYNC_START: {
 			return Date.now();
@@ -321,7 +324,7 @@ export const lastSyncTime = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,
