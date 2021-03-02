@@ -4,7 +4,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -19,7 +18,6 @@ import {
 } from 'calypso/lib/domains';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import MaterialIcon from 'calypso/components/material-icon';
 import {
 	domainAddNew,
 	domainManagementNameServers,
@@ -48,42 +46,10 @@ import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import DomainManagementNavigationItemContents from 'calypso/my-sites/domains/domain-management/edit/navigation/domain-management-navigation-item-contents';
+import DomainManagementNavigationItem from 'calypso/my-sites/domains/domain-management/edit/navigation/domain-management-navigation-item';
 
 import './style.scss';
-
-const DomainManagementNavigationItemContents = function ( props ) {
-	const { gridicon, materialIcon, text, description } = props;
-	return (
-		<React.Fragment>
-			{ gridicon && <Gridicon className="navigation__icon" icon={ gridicon } /> }
-			{ ! gridicon && <MaterialIcon icon={ materialIcon } className="navigation__icon" /> }
-			<div>
-				<div>{ text }</div>
-				<small>{ description }</small>
-			</div>
-		</React.Fragment>
-	);
-};
-
-const DomainManagementNavigationItem = function ( props ) {
-	const { path, onClick, external, gridicon, materialIcon, text, description } = props;
-
-	return (
-		<VerticalNavItem
-			path={ path }
-			onClick={ onClick }
-			external={ external }
-			className="navigation__nav-item"
-		>
-			<DomainManagementNavigationItemContents
-				materialIcon={ materialIcon }
-				gridicon={ gridicon }
-				text={ text }
-				description={ description }
-			/>
-		</VerticalNavItem>
-	);
-};
 
 class DomainManagementNavigationEnhanced extends React.Component {
 	getEmail() {

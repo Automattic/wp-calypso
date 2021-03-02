@@ -305,6 +305,18 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+
+		page(
+			paths.domainAddUsingFlow( ':site' ),
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.redirectToUseYourDomainIfVipSite(),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.domainsAddUsingFlow,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	page(

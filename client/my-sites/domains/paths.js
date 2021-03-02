@@ -60,6 +60,10 @@ export function domainAddNew( siteName, searchTerm ) {
 	return path;
 }
 
+export function domainAddUsingFlow( siteName ) {
+	return `/domains/add-using-flow/${ siteName }`;
+}
+
 export function domainManagementAllRoot() {
 	return '/domains/manage/all';
 }

@@ -18,7 +18,11 @@ import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings'
 import DomainOnly from './domain-only';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'calypso/components/main';
-import { domainManagementRoot, domainManagementList } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementRoot,
+	domainManagementList,
+	domainAddUsingFlow,
+} from 'calypso/my-sites/domains/paths';
 import { Button, Card, CompactCard } from '@automattic/components';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
@@ -243,7 +247,7 @@ export class List extends React.Component {
 
 	clickAddDomain = () => {
 		this.props.addDomainClick();
-		page( `/domains/add/${ this.props.selectedSite.slug }` );
+		page( domainAddUsingFlow( this.props.selectedSite.slug ) );
 	};
 
 	enableChangePrimaryDomainMode = () => {
@@ -275,7 +279,7 @@ export class List extends React.Component {
 				className="domain-management-list__add-a-domain"
 				onClick={ this.clickAddDomain }
 			>
-				{ this.props.translate( 'Add a domain to this site' ) }
+				{ this.props.translate( 'Add domain' ) }
 			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -39,6 +39,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import AddUsingFlow from 'calypso/my-sites/domains/add-using-flow';
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -74,6 +75,19 @@ const domainSearch = ( context, next ) => {
 			<DocumentHead title={ translate( 'Domain Search' ) } />
 			<CalypsoShoppingCartProvider>
 				<DomainSearch basePath={ sectionify( context.path ) } context={ context } />
+			</CalypsoShoppingCartProvider>
+		</Main>
+	);
+	next();
+};
+
+const domainsAddUsingFlow = ( context, next ) => {
+	context.primary = (
+		<Main>
+			<PageViewTracker path="/domains/add-using-flow/:site" title="Domain > Add Using Flow" />
+			<DocumentHead title={ translate( 'Add a domain' ) } />
+			<CalypsoShoppingCartProvider>
+				<AddUsingFlow />
 			</CalypsoShoppingCartProvider>
 		</Main>
 	);
@@ -267,6 +281,7 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 };
 
 export default {
+	domainsAddUsingFlow,
 	domainsAddHeader,
 	domainsAddRedirectHeader,
 	domainSearch,
