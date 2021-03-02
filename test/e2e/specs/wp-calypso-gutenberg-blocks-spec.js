@@ -31,7 +31,7 @@ before( async function () {
 describe( `[${ host }] Calypso Gutenberg Editor: Blocks (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Can see monetization blocks @canary @parallel', function () {
+	describe( 'Can see monetization blocks in block inserter @canary @parallel', function () {
 		step( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( driver, gutenbergUser );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
