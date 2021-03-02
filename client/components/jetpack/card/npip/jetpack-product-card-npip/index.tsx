@@ -38,6 +38,7 @@ type OwnProps = {
 	currencyCode?: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
+	displaySaving?: TranslateResult;
 	billingTerm: Duration;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
@@ -64,6 +65,7 @@ const DisplayPrice = ( {
 	isIncludedInPlan,
 	isFree,
 	discountedPrice,
+	displaySaving,
 	currencyCode,
 	originalPrice,
 	belowPriceText,
@@ -127,15 +129,17 @@ const DisplayPrice = ( {
 
 	return (
 		<div className="jetpack-product-card-npip__price">
-			{ currencyCode && originalPrice ? (
+			{ currencyCode && typeof originalPrice === 'number' ? (
 				<>
 					{ displayFrom && <span className="jetpack-product-card-npip__price-from">from</span> }
-					<PlanPrice
-						original
-						className="jetpack-product-card-npip__original-price"
-						rawPrice={ couponOriginalPrice as number }
-						currencyCode={ currencyCode }
-					/>
+					{ couponOriginalPrice !== couponDiscountedPrice && (
+						<PlanPrice
+							original
+							className="jetpack-product-card-npip__original-price"
+							rawPrice={ couponOriginalPrice as number }
+							currencyCode={ currencyCode }
+						/>
+					) }
 					<PlanPrice
 						discounted
 						rawPrice={ couponDiscountedPrice as number }
@@ -147,11 +151,16 @@ const DisplayPrice = ( {
 						</InfoPopover>
 					) }
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-					<span className="jetpack-product-card-npip__you-save">
-						{ translate( '* You Save %(percent)d%%', {
-							args: { percent: 40 },
-							comment: 'Asterisk clause describing the displayed price adjustment',
+					<span
+						className={ classNames( 'jetpack-product-card-npip__you-save', {
+							'is-highlighted': !! displaySaving,
 						} ) }
+					>
+						{ displaySaving ||
+							translate( '* You Save %(percent)d%%', {
+								args: { percent: 40 },
+								comment: 'Asterisk clause describing the displayed price adjustment',
+							} ) }
 					</span>
 				</>
 			) : (
@@ -173,6 +182,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	currencyCode,
 	originalPrice,
 	discountedPrice,
+	displaySaving,
 	billingTerm,
 	buttonLabel,
 	buttonPrimary,
@@ -230,6 +240,7 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 					isIncludedInPlan={ isIncludedInPlan }
 					isFree={ isFree }
 					discountedPrice={ discountedPrice }
+					displaySaving={ displaySaving }
 					currencyCode={ currencyCode }
 					originalPrice={ originalPrice }
 					displayFrom={ displayFrom }

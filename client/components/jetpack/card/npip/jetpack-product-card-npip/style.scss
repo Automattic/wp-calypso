@@ -157,6 +157,10 @@
 
 .jetpack-product-card-npip__you-save {
 	background-color: var( --studio-yellow-10 );
+
+	&.is-highlighted {
+		background-color: var( --studio-green-0 );
+	}
 }
 
 .jetpack-product-card-npip__get-started {

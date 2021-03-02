@@ -31,7 +31,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 	TERM_BIENNIALLY,
-	JETPACK_LEGACY_PLANS,
+	JETPACK_PLANS,
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_PLANS_BY_TERM,
@@ -125,14 +125,18 @@ export function durationToText( duration: Duration ): TranslateResult {
 		);
 	}
 
-	return (
-		getForCurrentCROIteration( {
-			[ Iterations.NPIP ]: translate( '/month, paid yearly' ),
-		} ) ||
-		translate( 'per month{{br/}}billed yearly', {
-			components: { br: createElement( 'br' ) },
-		} )
-	);
+	if ( duration === TERM_ANNUALLY ) {
+		return (
+			getForCurrentCROIteration( {
+				[ Iterations.NPIP ]: translate( '/month, paid yearly' ),
+			} ) ||
+			translate( 'per month{{br/}}billed yearly', {
+				components: { br: createElement( 'br' ) },
+			} )
+		);
+	}
+
+	return duration;
 }
 
 // In the case of products that have options (daily and real-time), we want to display
@@ -357,7 +361,7 @@ function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
 	return slug in JETPACK_PRODUCTS_LIST;
 }
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
-	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
+	return JETPACK_PLANS.includes( slug );
 }
 
 /**
@@ -399,7 +403,6 @@ function objectIsPlan( item: Record< string, unknown > | Plan ): item is Plan {
 	const requiredKeys = [
 		'group',
 		'type',
-		'term',
 		'getBillingTimeFrame',
 		'getTitle',
 		'getDescription',
@@ -492,6 +495,9 @@ export function itemToSelectorProduct(
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
 			monthlyProductSlug,
+			displayPrice: item.getDisplayPrice?.(),
+			displayTerm: item.getDisplayTerm?.(),
+			displaySaving: item.getDisplaySaving?.(),
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
 				items:

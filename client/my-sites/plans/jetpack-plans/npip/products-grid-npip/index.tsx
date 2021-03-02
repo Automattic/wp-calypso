@@ -24,9 +24,9 @@ import Experiment from 'calypso/components/experiment';
 import JetpackFreeCard from 'calypso/components/jetpack/card/npip/jetpack-free-card-npip';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-} from 'calypso/lib/plans/constants';
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+} from 'calypso/lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -45,6 +45,8 @@ import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
  * Style dependencies
  */
 import './style.scss';
+
+const MAX_CARDS_PER_ROW = 3;
 
 const ProductsGridNPP: React.FC< ProductsGridProps > = ( {
 	duration,
@@ -122,7 +124,7 @@ const ProductsGridNPP: React.FC< ProductsGridProps > = ( {
 				if ( firstChild instanceof HTMLElement ) {
 					const itemCount = Math.round( grid.offsetWidth / firstChild.offsetWidth );
 
-					setPlanRowWrapping( itemCount < sortedPlans.length );
+					setPlanRowWrapping( itemCount < MAX_CARDS_PER_ROW );
 				}
 			}
 		}
@@ -163,8 +165,8 @@ const ProductsGridNPP: React.FC< ProductsGridProps > = ( {
 								selectedTerm={ duration }
 								isAligned={ ! isPlanRowWrapping }
 								featuredPlans={ [
-									PLAN_JETPACK_SECURITY_DAILY,
-									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+									PRODUCT_JETPACK_BACKUP_DAILY,
+									PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 								] }
 							/>
 						</li>

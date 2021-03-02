@@ -147,6 +147,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			currencyCode={ item.displayCurrency }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
+			displaySaving={ item.displaySaving }
 			billingTerm={ item.displayTerm || item.term }
 			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }

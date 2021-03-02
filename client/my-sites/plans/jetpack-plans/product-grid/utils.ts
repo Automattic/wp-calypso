@@ -28,7 +28,7 @@ export const getPlansToDisplay = ( {
 		.filter(
 			( product: SelectorProduct | null ): product is SelectorProduct =>
 				!! product &&
-				product.term === duration &&
+				( ! product.term || product.term === duration ) &&
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug )
 		)
