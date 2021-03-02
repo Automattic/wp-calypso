@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop, flow } from 'lodash';
+import { flow } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -36,7 +36,7 @@ class DismissibleCard extends Component {
 	};
 
 	static defaultProps = {
-		onClick: noop,
+		onClick: () => {},
 	};
 
 	render() {

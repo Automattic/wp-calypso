@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -32,8 +31,8 @@ class EllipsisMenu extends Component {
 	};
 
 	static defaultProps = {
-		onClick: noop,
-		onToggle: noop,
+		onClick: () => {},
+		onToggle: () => {},
 	};
 
 	state = {

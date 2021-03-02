@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop, isEqual, partial } from 'lodash';
+import { isEqual, partial } from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -63,13 +63,13 @@ class ImageEditor extends React.Component {
 
 	static defaultProps = {
 		media: null,
-		onDone: noop,
+		onDone: () => {},
 		onCancel: null,
-		onReset: noop,
+		onReset: () => {},
 		isImageLoaded: false,
 		defaultAspectRatio: AspectRatios.FREE,
 		allowedAspectRatios: AspectRatiosValues,
-		setImageEditorDefaultAspectRatio: noop,
+		setImageEditorDefaultAspectRatio: () => {},
 	};
 
 	state = {

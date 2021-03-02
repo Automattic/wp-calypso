@@ -4,7 +4,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -17,7 +16,7 @@ function PopoverMenuItemClipboard( {
 	children,
 	className,
 	text,
-	onCopy = noop,
+	onCopy = () => {},
 	icon = 'clipboard',
 	...rest
 } ) {

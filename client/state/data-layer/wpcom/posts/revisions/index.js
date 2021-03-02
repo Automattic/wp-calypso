@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { POST_REVISIONS_REQUEST } from 'calypso/state/action-types';
@@ -48,7 +43,7 @@ export const fetchPostRevisionsDiffs = ( action ) => {
 const dispatchPostRevisionsDiffsRequest = dispatchRequest( {
 	fetch: fetchPostRevisionsDiffs,
 	onSuccess: receiveSuccess,
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/posts/revisions/index.js', {

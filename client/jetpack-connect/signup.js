@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, noop } from 'lodash';
+import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { Button, Card } from '@wordpress/components';
 
@@ -153,7 +153,7 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
-	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
+	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = () => {} ) => {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props

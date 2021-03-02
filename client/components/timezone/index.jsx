@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, noop } from 'lodash';
+import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -75,7 +75,7 @@ class Timezone extends Component {
 }
 
 Timezone.defaultProps = {
-	onSelect: noop,
+	onSelect: () => {},
 	includeManualOffsets: true,
 };
 

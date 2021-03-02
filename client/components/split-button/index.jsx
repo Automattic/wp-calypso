@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -38,8 +37,8 @@ class SplitButton extends PureComponent {
 	};
 
 	static defaultProps = {
-		onClick: noop,
-		onToggle: noop,
+		onClick: () => {},
+		onToggle: () => {},
 		label: '',
 		icon: '',
 		position: 'bottom left',

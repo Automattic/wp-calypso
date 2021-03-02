@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { flow, get, includes, noop, partial } from 'lodash';
+import { flow, get, includes, partial } from 'lodash';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
 
@@ -88,7 +88,7 @@ class Page extends Component {
 	};
 
 	static defaultProps = {
-		onShadowStatusChange: noop,
+		onShadowStatusChange: () => {},
 		showPublishedStatus: false,
 	};
 

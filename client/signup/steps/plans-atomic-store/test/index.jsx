@@ -11,7 +11,7 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,9 +43,9 @@ const props = {
 	stepName: 'Step name',
 	stepSectionName: 'Step section name',
 	signupDependencies: { domainItem: null },
-	submitSignupStep: noop,
-	goToNextStep: noop,
-	recordTracksEvent: noop,
+	submitSignupStep: () => {},
+	goToNextStep: () => {},
+	recordTracksEvent: () => {},
 };
 
 describe( 'PlansAtomicStoreStep basic tests', () => {

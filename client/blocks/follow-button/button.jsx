@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -26,7 +25,7 @@ class FollowButton extends React.Component {
 
 	static defaultProps = {
 		following: false,
-		onFollowToggle: noop,
+		onFollowToggle: () => {},
 		iconSize: 20,
 		tagName: 'button',
 		disabled: false,

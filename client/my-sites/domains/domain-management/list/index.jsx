@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
+import { find, findIndex, get, identity, times, isEmpty } from 'lodash';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -71,9 +71,9 @@ export class List extends React.Component {
 
 	static defaultProps = {
 		translate: identity,
-		enablePrimaryDomainMode: noop,
-		disablePrimaryDomainMode: noop,
-		changePrimary: noop,
+		enablePrimaryDomainMode: () => {},
+		disablePrimaryDomainMode: () => {},
+		changePrimary: () => {},
 	};
 
 	state = {
@@ -447,7 +447,7 @@ export class List extends React.Component {
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
-				onClick={ settingPrimaryDomain ? noop : this.goToEditDomainRoot }
+				onClick={ settingPrimaryDomain ? () => {} : this.goToEditDomainRoot }
 				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
 				isChecked={ changePrimaryDomainModeEnabled && index === primaryDomainIndex }
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {

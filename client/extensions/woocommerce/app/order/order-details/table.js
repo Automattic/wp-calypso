@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { every, find, findIndex, get, isNaN, noop } from 'lodash';
+import { every, find, findIndex, get, isNaN } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -58,7 +58,7 @@ class OrderDetailsTable extends Component {
 
 	static defaultProps = {
 		isEditing: false,
-		onChange: noop,
+		onChange: () => {},
 	};
 
 	shouldShowTax = () => {

@@ -6,7 +6,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -14,7 +13,7 @@ import classNames from 'classnames';
  */
 import { Button } from '@automattic/components';
 
-function ClipboardButton( { className, text, onCopy = noop, ...rest } ) {
+function ClipboardButton( { className, text, onCopy = () => {}, ...rest } ) {
 	const buttonRef = React.useRef();
 
 	const textCallback = React.useRef();

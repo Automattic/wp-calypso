@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
+import { groupBy, head, isEmpty, map, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
@@ -65,7 +65,7 @@ export class MediaLibraryContent extends React.Component {
 
 	static defaultProps = {
 		mediaValidationErrors: Object.freeze( {} ),
-		onAddMedia: noop,
+		onAddMedia: () => {},
 		source: '',
 	};
 

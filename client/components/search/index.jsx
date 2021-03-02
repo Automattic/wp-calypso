@@ -5,7 +5,7 @@ import { isMobile } from '@automattic/viewport';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { debounce, noop, uniqueId } from 'lodash';
+import { debounce, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -77,11 +77,11 @@ class Search extends Component {
 		autoFocus: false,
 		disabled: false,
 		describedBy: null,
-		onSearchChange: noop,
-		onSearchOpen: noop,
-		onSearchClose: noop,
-		onKeyDown: noop,
-		onClick: noop,
+		onSearchChange: () => {},
+		onSearchOpen: () => {},
+		onSearchClose: () => {},
+		onKeyDown: () => {},
+		onClick: () => {},
 		//undefined value for overlayStyling is an optimization that will
 		//disable overlay scrolling calculation when no overlay is provided.
 		overlayStyling: undefined,

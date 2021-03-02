@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { get, isUndefined, map, noop, omit, omitBy } from 'lodash';
+import { get, isUndefined, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -84,7 +84,7 @@ export const receivePostRevisionAuthorsSuccess = ( action, users ) => ( dispatch
 const dispatchPostRevisionAuthorsRequest = dispatchRequest( {
 	fetch: fetchPostRevisionAuthors,
 	onSuccess: receivePostRevisionAuthorsSuccess,
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/users/index.js', {

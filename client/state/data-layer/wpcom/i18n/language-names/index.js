@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -44,7 +39,7 @@ export const addLanguageNames = ( action, data ) => [ receiveLanguageNames( data
 export const dispatchPlansRequest = dispatchRequest( {
 	fetch: fetchLanguageNames,
 	onSuccess: addLanguageNames,
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/i18n/language-names/index.js', {

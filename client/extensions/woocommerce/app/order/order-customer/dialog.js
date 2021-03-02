@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
-import { find, get, isEmpty, noop } from 'lodash';
+import { find, get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -83,10 +83,10 @@ class CustomerAddressDialog extends Component {
 
 	static defaultProps = {
 		address: defaultAddress,
-		closeDialog: noop,
+		closeDialog: () => {},
 		isBilling: false,
 		isVisible: false,
-		updateAddress: noop,
+		updateAddress: () => {},
 	};
 
 	state = {};

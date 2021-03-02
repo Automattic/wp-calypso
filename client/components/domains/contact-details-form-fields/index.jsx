@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
 import {
-	noop,
 	get,
 	deburr,
 	kebabCase,
@@ -91,8 +90,8 @@ export class ContactDetailsFormFields extends Component {
 			...CONTACT_DETAILS_FORM_FIELDS.map( ( field ) => ( { [ field ]: '' } ) )
 		),
 		needsFax: false,
-		getIsFieldDisabled: noop,
-		onContactDetailsChange: noop,
+		getIsFieldDisabled: () => {},
+		onContactDetailsChange: () => {},
 		onValidate: null,
 		onSanitize: null,
 		labelTexts: {},

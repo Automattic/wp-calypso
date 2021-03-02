@@ -2,7 +2,7 @@
  * External dependencies
  */
 import sinon from 'sinon';
-import { isFunction, noop } from 'lodash';
+import { isFunction } from 'lodash';
 
 /**
  * Use sinon's fake time controls
@@ -18,6 +18,9 @@ import { isFunction, noop } from 'lodash';
  * @param  {Function} clockCallback  A function invoked with the clock created by sinon
  * @deprecated Use Jest's timer mocks instead (https://facebook.github.io/jest/docs/timer-mocks.html)
  */
+
+const noop = () => {};
+
 export function useFakeTimers( now = 0, clockCallback = noop ) {
 	let clock;
 

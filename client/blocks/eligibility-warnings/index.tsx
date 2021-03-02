@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { union, includes, noop } from 'lodash';
+import { union, includes } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
@@ -202,7 +202,8 @@ function siteRequiresGoingPublic( holds: string[] ) {
 }
 
 EligibilityWarnings.defaultProps = {
-	onProceed: noop,
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	onProceed: () => {},
 };
 
 const mapStateToProps = ( state: object, ownProps: ExternalProps ) => {

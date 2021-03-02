@@ -5,7 +5,7 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, isNumber, noop } from 'lodash';
+import { get, isNumber } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -65,7 +65,7 @@ export class PageViewTracker extends React.Component {
 		const {
 			delay = 0,
 			path,
-			recorder = noop,
+			recorder = () => {},
 			hasSelectedSiteLoaded,
 			title,
 			properties,

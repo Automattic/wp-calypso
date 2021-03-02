@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +26,7 @@ VerticalNavExample.defaultProps = {
 			<VerticalNavItem path="https://google.com" external key="1">
 				Google
 			</VerticalNavItem>
-			<VerticalNavItem path="/posts" onClick={ noop } key="2">
+			<VerticalNavItem path="/posts" onClick={ () => {} } key="2">
 				Posts
 			</VerticalNavItem>
 			<VerticalNavItem isPlaceholder key="3" />

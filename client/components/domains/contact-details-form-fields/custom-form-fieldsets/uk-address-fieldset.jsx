@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -36,7 +36,7 @@ UkAddressFieldset.propTypes = {
 };
 
 UkAddressFieldset.defaultProps = {
-	getFieldProps: noop,
+	getFieldProps: () => {},
 	translate: identity,
 };
 export default localize( UkAddressFieldset );

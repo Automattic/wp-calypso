@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { head, noop, trim, uniqueId } from 'lodash';
+import { head, trim, uniqueId } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
@@ -39,11 +39,11 @@ class ProductImageUploader extends Component {
 	static defaultProps = {
 		multiple: true,
 		compact: false,
-		onSelect: noop,
-		onUpload: noop,
-		onError: noop,
-		onFinish: noop,
-		addWoocommerceProductImage: noop,
+		onSelect: () => {},
+		onUpload: () => {},
+		onError: () => {},
+		onFinish: () => {},
+		addWoocommerceProductImage: () => {},
 	};
 
 	UNSAFE_componentWillMount() {

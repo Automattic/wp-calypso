@@ -8,7 +8,7 @@
 import React from 'react';
 import update from 'immutability-helper';
 import { shallow } from 'enzyme';
-import { noop, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,7 +50,7 @@ describe( 'ContactDetailsFormFields', () => {
 				name: 'Brazil',
 			},
 		],
-		onSubmit: noop,
+		onSubmit: () => {},
 	};
 
 	describe( 'default fields', () => {
@@ -173,7 +173,9 @@ describe( 'ContactDetailsFormFields', () => {
 		} );
 
 		test( 'should render cancel button when `onCancel` method prop passed', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } onCancel={ noop } /> );
+			const wrapper = shallow(
+				<ContactDetailsFormFields { ...defaultProps } onCancel={ () => {} } />
+			);
 
 			expect( wrapper.find( '.contact-details-form-fields__cancel-button' ) ).toHaveLength( 1 );
 		} );

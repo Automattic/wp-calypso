@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, size, map } from 'lodash';
+import { size, map } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -64,7 +64,7 @@ class ReaderPostOptionsMenu extends React.Component {
 	};
 
 	static defaultProps = {
-		onBlock: noop,
+		onBlock: () => {},
 		position: 'top left',
 		showFollow: true,
 		showVisitPost: true,

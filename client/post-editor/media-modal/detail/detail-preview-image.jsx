@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -22,7 +21,7 @@ export default class EditorMediaModalDetailPreviewImage extends Component {
 	};
 
 	static defaultProps = {
-		onLoad: noop,
+		onLoad: () => {},
 	};
 
 	constructor( props ) {

@@ -3,7 +3,6 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -87,7 +86,7 @@ function SiteTitleEdit( {
 				identifier="content"
 				onChange={ updateValue }
 				onReplace={ insertDefaultBlock }
-				onSplit={ noop }
+				onSplit={ () => {} }
 				placeholder={ __( 'Add a Site Title', 'full-site-editing' ) }
 				style={ {
 					color: textColor.color,

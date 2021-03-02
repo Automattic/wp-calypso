@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop, map, size, takeRight, filter, uniqBy } from 'lodash';
+import { map, size, takeRight, filter, uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -59,7 +59,7 @@ class GravatarCaterpillar extends React.Component {
 }
 
 GravatarCaterpillar.defaultProps = {
-	onClick: noop,
+	onClick: () => {},
 	maxGravatarsToDisplay: 10,
 };
 

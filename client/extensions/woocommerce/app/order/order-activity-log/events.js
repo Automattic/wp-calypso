@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { keys, last, noop, sortBy } from 'lodash';
+import { keys, last, sortBy } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -94,7 +94,7 @@ class OrderEvents extends Component {
 		const placeholderClassName = 'is-placeholder';
 		return (
 			<div className={ placeholderClassName }>
-				<OrderEventsByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
+				<OrderEventsByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ () => {} }>
 					<OrderEvent />
 				</OrderEventsByDay>
 			</div>

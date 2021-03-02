@@ -1,12 +1,9 @@
 /**
- */
-
-/**
  * External dependencies
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop, some } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +18,7 @@ const PostCommentFormRoot = ( {
 	commentText,
 	activeReplyCommentId,
 	commentsTree,
-	onUpdateCommentText = noop,
+	onUpdateCommentText = () => {},
 } ) => {
 	// Are we displaying the comment form elsewhere? If so, don't render the root form.
 	if (

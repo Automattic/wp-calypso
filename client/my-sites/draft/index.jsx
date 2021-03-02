@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import url from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,7 +39,7 @@ class Draft extends Component {
 	};
 
 	static defaultProps = {
-		onTitleClick: noop,
+		onTitleClick: () => {},
 		selected: false,
 		showAuthor: false,
 	};

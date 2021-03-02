@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -87,7 +87,7 @@ export const receiveChecklistSuccess = ( action, receivedChecklist ) => {
 const dispatchChecklistRequest = dispatchRequest( {
 	fetch: fetchChecklist,
 	onSuccess: receiveChecklistSuccess,
-	onError: noop,
+	onError: () => {},
 	fromApi,
 } );
 
@@ -108,7 +108,7 @@ export const updateChecklistTask = ( action ) =>
 const dispatchChecklistTaskUpdate = dispatchRequest( {
 	fetch: updateChecklistTask,
 	onSuccess: receiveChecklistSuccess,
-	onError: noop,
+	onError: () => {},
 	fromApi,
 } );
 

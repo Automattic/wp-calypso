@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +32,7 @@ export class NavButton extends Component {
 			<button
 				className={ classNames( className, { disabled: ! isEnabled } ) }
 				disabled={ ! isEnabled }
-				onClick={ isEnabled ? this.navigate : noop }
+				onClick={ isEnabled ? this.navigate : () => {} }
 			>
 				<Gridicon icon={ iconName } size={ 18 } />
 			</button>

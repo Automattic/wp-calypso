@@ -4,7 +4,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,8 +20,8 @@ class VideoEditorUploadButton extends Component {
 
 	static defaultProps = {
 		isPosterUpdating: false,
-		onClick: noop,
-		onUploadImage: noop,
+		onClick: () => {},
+		onUploadImage: () => {},
 	};
 
 	uploadImage = ( files ) => {

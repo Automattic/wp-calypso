@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, invoke, noop } from 'lodash';
+import { get, invoke } from 'lodash';
 import classNames from 'classnames';
 import debug from 'debug';
 import wpcomProxyRequest from 'wpcom-proxy-request';
@@ -32,9 +32,9 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 	static defaultProps = {
 		isPlaying: false,
-		onPause: noop,
-		onScriptLoadError: noop,
-		onVideoLoaded: noop,
+		onPause: () => {},
+		onScriptLoadError: () => {},
+		onVideoLoaded: () => {},
 	};
 
 	componentDidMount() {

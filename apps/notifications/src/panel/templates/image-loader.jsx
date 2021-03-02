@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Module variables
@@ -60,8 +59,8 @@ export class ImageLoader extends Component {
 			return;
 		}
 
-		this.image.onload = noop;
-		this.image.onerror = noop;
+		this.image.onload = () => {};
+		this.image.onerror = () => {};
 		delete this.image;
 	};
 

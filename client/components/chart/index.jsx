@@ -4,7 +4,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { localize, withRtl } from 'i18n-calypso';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -215,7 +214,7 @@ Chart.propTypes = {
 };
 
 Chart.defaultProps = {
-	barClick: noop,
+	barClick: () => {},
 	isPlaceholder: false,
 	minBarWidth: 15,
 	minTouchBarWidth: 42,

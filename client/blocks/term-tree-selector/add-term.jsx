@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -34,7 +34,7 @@ class TermSelectorAddTerm extends Component {
 	};
 
 	static defaultProps = {
-		onSuccess: noop,
+		onSuccess: () => {},
 	};
 
 	state = {

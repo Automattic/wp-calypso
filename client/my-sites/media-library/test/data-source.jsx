@@ -7,7 +7,6 @@
  */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -40,7 +39,7 @@ describe( 'MediaLibraryDataSource', () => {
 				<ReduxProvider store={ store }>
 					<MediaLibraryDataSource
 						source={ '' }
-						onSourceChange={ noop }
+						onSourceChange={ () => {} }
 						ignorePermissions={ true }
 					/>
 				</ReduxProvider>
@@ -56,7 +55,7 @@ describe( 'MediaLibraryDataSource', () => {
 				<ReduxProvider store={ store }>
 					<MediaLibraryDataSource
 						source={ '' }
-						onSourceChange={ noop }
+						onSourceChange={ () => {} }
 						disabledSources={ [ 'pexels' ] }
 						ignorePermissions={ true }
 					/>

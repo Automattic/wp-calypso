@@ -4,7 +4,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { noop } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -43,7 +42,7 @@ export default class InfiniteList extends React.Component {
 
 	static defaultProps = {
 		itemsPerRow: 1,
-		renderTrailingItems: noop,
+		renderTrailingItems: () => {},
 	};
 
 	lastScrollTop = -1;

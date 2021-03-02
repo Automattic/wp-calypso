@@ -7,7 +7,7 @@
  */
 import { assert } from 'chai';
 import { mount, shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import React from 'react';
 
 /**
@@ -22,7 +22,7 @@ describe( 'index', () => {
 				translate={ identity }
 				selectedElements={ 0 }
 				totalElements={ 3 }
-				onToggle={ noop }
+				onToggle={ () => {} }
 			/>
 		);
 		assert.equal( 1, bulkSelect.find( '.bulk-select' ).length );
@@ -34,7 +34,7 @@ describe( 'index', () => {
 				translate={ identity }
 				selectedElements={ 0 }
 				totalElements={ 3 }
-				onToggle={ noop }
+				onToggle={ () => {} }
 			/>
 		);
 		assert.equal( 0, bulkSelect.find( '.is-checked' ).length );
@@ -46,7 +46,7 @@ describe( 'index', () => {
 				translate={ identity }
 				selectedElements={ 3 }
 				totalElements={ 3 }
-				onToggle={ noop }
+				onToggle={ () => {} }
 			/>
 		);
 		assert.equal( 1, bulkSelect.find( '.is-checked' ).length );
@@ -58,7 +58,7 @@ describe( 'index', () => {
 				translate={ identity }
 				selectedElements={ 2 }
 				totalElements={ 3 }
-				onToggle={ noop }
+				onToggle={ () => {} }
 			/>
 		);
 		assert.equal( 0, bulkSelect.find( '.is-checked' ).length );
@@ -70,7 +70,7 @@ describe( 'index', () => {
 				translate={ identity }
 				selectedElements={ 2 }
 				totalElements={ 3 }
-				onToggle={ noop }
+				onToggle={ () => {} }
 			/>
 		);
 		assert.equal( 1, bulkSelect.find( '.bulk-select__some-checked-icon' ).length );
@@ -82,7 +82,7 @@ describe( 'index', () => {
 				translate={ identity }
 				selectedElements={ 2 }
 				totalElements={ 3 }
-				onToggle={ noop }
+				onToggle={ () => {} }
 				ariaLabel="Select All"
 			/>
 		);
@@ -95,7 +95,7 @@ describe( 'index', () => {
 				translate={ identity }
 				selectedElements={ 2 }
 				totalElements={ 3 }
-				onToggle={ noop }
+				onToggle={ () => {} }
 			/>
 		);
 		// There is no prop readOnly, so this is undefined

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, noop } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
 import classnames from 'classnames';
@@ -81,7 +81,7 @@ class TransferDomainStep extends React.Component {
 
 	static defaultProps = {
 		analyticsSection: 'domains',
-		onSave: noop,
+		onSave: () => {},
 	};
 
 	state = this.getDefaultState();

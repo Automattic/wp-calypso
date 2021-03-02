@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -28,7 +28,7 @@ class LikeButtonContainer extends Component {
 	};
 
 	static defaultProps = {
-		onLikeToggle: noop,
+		onLikeToggle: () => {},
 	};
 
 	handleLikeToggle = ( liked ) => {

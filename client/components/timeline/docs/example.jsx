@@ -3,7 +3,6 @@
  */
 
 import React, { PureComponent } from 'react';
-import { noop } from 'lodash-es';
 
 /**
  * Internal dependencies
@@ -23,14 +22,14 @@ class TimelineExample extends PureComponent {
 					icon="checkmark"
 					iconBackground="success"
 					actionLabel="Delete domain"
-					onActionClick={ noop }
+					onActionClick={ () => {} }
 				/>
 				<TimelineEvent
 					date={ new Date( '11 February 2021' ) }
 					detail="You have Auto-renew enabled which means your domain will automatically be renewed for you every year."
 					icon="sync"
 					actionLabel="Disable Auto-renew"
-					onActionClick={ noop }
+					onActionClick={ () => {} }
 				/>
 				<TimelineEvent
 					date={ new Date( '14 March 2021' ) }
@@ -39,7 +38,7 @@ class TimelineExample extends PureComponent {
 					iconBackground="warning"
 					actionLabel="Enable Auto-renew"
 					actionIsPrimary
-					onActionClick={ noop }
+					onActionClick={ () => {} }
 				/>
 				<TimelineEvent
 					date={ new Date( '28 April 2021' ) }
@@ -67,7 +66,7 @@ class TimelineExample extends PureComponent {
 					actionLabel="Watch out!"
 					actionIsScary
 					actionIsPrimary
-					onActionClick={ noop }
+					onActionClick={ () => {} }
 				/>
 			</Timeline>
 		);

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -21,5 +16,7 @@ const logToLogstash = ( action ) =>
 	} );
 
 registerHandlers( 'state/data-layer/wpcom/logstash/index.js', {
-	[ LOGSTASH ]: [ dispatchRequest( { fetch: logToLogstash, onSuccess: noop, onError: noop } ) ],
+	[ LOGSTASH ]: [
+		dispatchRequest( { fetch: logToLogstash, onSuccess: () => {}, onError: () => {} } ),
+	],
 } );

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -248,7 +247,7 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 		dispatchRequest( {
 			fetch: declineDomainTransfer,
 			onSuccess: declineDomainTransferSuccess,
-			onError: noop,
+			onError: () => {},
 		} ),
 	],
 } );

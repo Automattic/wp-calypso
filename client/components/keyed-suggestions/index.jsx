@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	has,
-	noop,
 	pick,
 	pickBy,
 	without,
@@ -46,7 +45,7 @@ class KeyedSuggestions extends React.Component {
 	};
 
 	static defaultProps = {
-		suggest: noop,
+		suggest: () => {},
 		terms: {},
 		input: '',
 	};

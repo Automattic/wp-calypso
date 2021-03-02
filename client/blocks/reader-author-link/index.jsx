@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -64,7 +64,7 @@ ReaderAuthorLink.propTypes = {
 };
 
 ReaderAuthorLink.defaultProps = {
-	onClick: noop,
+	onClick: () => {},
 };
 
 export default ReaderAuthorLink;

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, partial } from 'lodash';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +35,7 @@ class EditorMediaModalDetailBase extends React.Component {
 
 	static defaultProps = {
 		selectedIndex: 0,
-		onSelectedIndexChange: noop,
+		onSelectedIndexChange: () => {},
 	};
 
 	componentDidMount() {

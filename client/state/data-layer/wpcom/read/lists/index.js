@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -154,7 +153,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) => receiveLists( apiResponse?.lists ),
-			onError: () => noop,
+			onError: () => () => {},
 		} ),
 	],
 } );

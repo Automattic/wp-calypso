@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, identity, noop } from 'lodash';
+import { get, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,7 +61,7 @@ export class MetaTitleEditor extends Component {
 
 	static defaultProps = {
 		disabled: false,
-		onChange: noop,
+		onChange: () => {},
 		translate: identity,
 	};
 

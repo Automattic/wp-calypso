@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { spy, match } from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -314,7 +313,12 @@ describe( 'handlers', () => {
 			};
 
 			const category = { id: 2, name: 'Category 1', slug: 'category-1' };
-			const action = deleteProductCategory( 123, category, noop, noop );
+			const action = deleteProductCategory(
+				123,
+				category,
+				() => {},
+				() => {}
+			);
 
 			handleProductCategoryDelete( store, action );
 

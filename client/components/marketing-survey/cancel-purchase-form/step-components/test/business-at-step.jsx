@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { stub } from 'sinon';
 
@@ -18,7 +17,9 @@ describe( 'BusinessATStep', () => {
 		const translate = ( content ) => `Translated: ${ content }`;
 
 		beforeEach( () => {
-			wrapper = shallow( <BusinessATStep recordTracksEvent={ noop } translate={ translate } /> );
+			wrapper = shallow(
+				<BusinessATStep recordTracksEvent={ () => {} } translate={ translate } />
+			);
 		} );
 
 		test( 'should render translated heading content', () => {

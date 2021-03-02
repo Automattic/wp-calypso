@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
-import { get, includes, isEqual, isUndefined, noop } from 'lodash';
+import { get, includes, isEqual, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -52,7 +52,7 @@ export class CommentActions extends Component {
 	};
 
 	static defaultProps = {
-		updateLastUndo: noop,
+		updateLastUndo: () => {},
 	};
 
 	shouldComponentUpdate = ( nextProps ) => ! isEqual( this.props, nextProps );

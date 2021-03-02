@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, truncate, get } from 'lodash';
+import { truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -62,8 +62,8 @@ class ReaderPostCard extends React.Component {
 	};
 
 	static defaultProps = {
-		onClick: noop,
-		onCommentClick: noop,
+		onClick: () => {},
+		onCommentClick: () => {},
 		isSelected: false,
 		showSiteName: true,
 	};
@@ -269,7 +269,7 @@ class ReaderPostCard extends React.Component {
 		}
 
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
-		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
+		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : () => {};
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }

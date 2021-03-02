@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-/**
  * Internal dependencies
  */
 import {
@@ -120,8 +116,8 @@ export const updateOrder = ( siteId, orderId, order ) => {
 export const saveOrder = (
 	siteId,
 	{ id: orderId, ...order },
-	onSuccess = noop,
-	onFailure = noop
+	onSuccess = () => {},
+	onFailure = () => {}
 ) => {
 	order = transformOrderForApi( removeTemporaryIds( order ) );
 	return {

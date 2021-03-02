@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +35,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 }
 
 export function setSectionMiddleware( section ) {
-	return ( context, next = noop ) => {
+	return ( context, next = () => {} ) => {
 		// save the section in context
 		context.section = section;
 

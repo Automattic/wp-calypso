@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -27,7 +22,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/items/index.js', {
 				),
 			onSuccess: ( action, apiResponse ) =>
 				receiveReaderListItems( apiResponse.list_ID, apiResponse.items ),
-			onError: () => noop,
+			onError: () => () => {},
 		} ),
 	],
 } );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,7 +58,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/homepage/index.js', {
 		dispatchRequest( {
 			fetch: updateSiteFrontPageRequest,
 			onSuccess: setSiteFrontPage,
-			onError: noop,
+			onError: () => {},
 		} ),
 	],
 } );

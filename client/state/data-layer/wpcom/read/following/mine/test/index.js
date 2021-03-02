@@ -2,7 +2,6 @@
  * External dependencies
  */
 import freeze from 'deep-freeze';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -101,7 +100,7 @@ describe( 'get follow subscriptions', () => {
 		test( 'should stop the sync process if it hits an empty page', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = syncReaderFollowsPage(); // no feeds
-			const ignoredDispatch = noop;
+			const ignoredDispatch = () => {};
 			const dispatch = jest.fn();
 
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );
@@ -128,7 +127,7 @@ describe( 'get follow subscriptions', () => {
 		test( 'should catch a feed followed during the sync', () => {
 			const startSyncAction = { type: READER_FOLLOWS_SYNC_START };
 			const action = syncReaderFollowsPage(); // no feeds
-			const ignoredDispatch = noop;
+			const ignoredDispatch = () => {};
 			const dispatch = jest.fn();
 
 			syncReaderFollows( { dispatch: ignoredDispatch }, startSyncAction );

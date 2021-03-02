@@ -4,7 +4,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -27,8 +26,8 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 	};
 
 	static defaultProps = {
-		onClose: noop,
-		onConfirm: noop,
+		onClose: () => {},
+		onConfirm: () => {},
 		currentDomainSuffix: '.wordpress.com',
 		newDomainSuffix: '.wordpress.com',
 	};

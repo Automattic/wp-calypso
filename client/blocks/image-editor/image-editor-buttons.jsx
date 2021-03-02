@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -30,10 +29,10 @@ class ImageEditorButtons extends Component {
 	static defaultProps = {
 		src: '',
 		hasChanges: false,
-		resetImageEditorState: noop,
-		onDone: noop,
-		onCancel: noop,
-		onReset: noop,
+		resetImageEditorState: () => {},
+		onDone: () => {},
+		onCancel: () => {},
+		onReset: () => {},
 		doneButtonText: '',
 	};
 

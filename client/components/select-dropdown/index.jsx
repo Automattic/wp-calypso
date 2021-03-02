@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { filter, find, get, noop } from 'lodash';
+import { filter, find, get } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -50,8 +50,8 @@ class SelectDropdown extends Component {
 
 	static defaultProps = {
 		options: [],
-		onSelect: noop,
-		onToggle: noop,
+		onSelect: () => {},
+		onToggle: () => {},
 		style: {},
 	};
 

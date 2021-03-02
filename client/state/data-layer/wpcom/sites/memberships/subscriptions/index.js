@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -31,7 +25,7 @@ export const handleSubscribedMembershipsList = dispatchRequest( {
 		subscriptions,
 		total,
 	} ),
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/memberships/subscriptions/index.js', {

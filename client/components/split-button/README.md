@@ -26,7 +26,7 @@ export default function MyComponent( { onMenuItemClick } ) {
 <table>
 	<tr><td>Type</td><td><code>PropTypes.node</code></td></tr>
     <tr><td>Required</td><td>Yes</td></tr>
-	<tr><td>Default</td><td><code>noop</code></td></tr>
+	<tr><td>Default</td><td><code>() => {}</code></td></tr>
 </table>
 
 Text or icon for the main button.
@@ -66,7 +66,7 @@ Whether the button has modified styling to warn users (delete, remove, etc).es
 <table>
 	<tr><td>Type</td><td>Function</td></tr>
 	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>noop</code></td></tr>
+	<tr><td>Default</td><td><code>() => {}</code></td></tr>
 </table>
 
 Callback that will be invoked when menu button is clicked.
@@ -77,7 +77,7 @@ Will be passed the click event.
 <table>
 	<tr><td>Type</td><td>Function</td></tr>
 	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>noop</code></td></tr>
+	<tr><td>Default</td><td><code>() => {}</code></td></tr>
 </table>
 
 Callback that will be invoked when menu is toggled.

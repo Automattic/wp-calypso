@@ -11,7 +11,6 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { noop } from 'lodash';
 
 jest.mock( 'i18n-calypso', () => ( {
 	translate: ( str ) => str,
@@ -45,7 +44,7 @@ import {
 
 const props = {
 	goToStep: jest.fn(),
-	submitSignupStep: noop,
+	submitSignupStep: () => {},
 	selectedSite: {
 		ID: 1,
 	},

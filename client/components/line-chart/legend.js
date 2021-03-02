@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +19,7 @@ class LineChartLegend extends Component {
 
 	static defaultProps = {
 		fillArea: false,
-		onDataSeriesSelected: noop,
+		onDataSeriesSelected: () => {},
 	};
 
 	handleMouseOver = ( dataSeriesIndex ) => {

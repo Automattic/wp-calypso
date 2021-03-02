@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -28,7 +27,7 @@ class JetpackInstallStep extends Component {
 
 	static defaultProps = {
 		currentUrl: '',
-		onClick: noop,
+		onClick: () => {},
 	};
 
 	confirmJetpackInstalled = ( event ) => {

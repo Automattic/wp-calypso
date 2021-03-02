@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { identity, includes, noop, without } from 'lodash';
+import { identity, includes, without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,9 +39,9 @@ export class DropZone extends React.Component {
 
 	static defaultProps = {
 		className: null,
-		onDrop: noop,
+		onDrop: () => {},
 		onVerifyValidTransfer: () => true,
-		onFilesDrop: noop,
+		onFilesDrop: () => {},
 		fullScreen: false,
 		icon: <Gridicon icon="cloud-upload" size={ 48 } />,
 		translate: identity,

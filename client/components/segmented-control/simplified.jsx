@@ -3,7 +3,6 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +12,7 @@ import SegmentedControl from '.';
 function SimplifiedSegmentedControl( {
 	options,
 	initialSelected = options[ 0 ].value,
-	onSelect = noop,
+	onSelect = () => {},
 	...props
 } ) {
 	const [ selected, setSelected ] = useState( initialSelected );

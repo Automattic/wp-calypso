@@ -5,7 +5,6 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,11 +21,11 @@ function FormTextInputWithAction( {
 	className,
 	action,
 	inputRef,
-	onFocus = noop,
-	onBlur = noop,
-	onKeyDown = noop,
-	onChange = noop,
-	onAction = noop,
+	onFocus = () => {},
+	onBlur = () => {},
+	onKeyDown = () => {},
+	onChange = () => {},
+	onAction = () => {},
 	defaultValue = '',
 	disabled,
 	isError,

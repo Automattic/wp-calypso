@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { spy } from 'sinon';
 
@@ -25,7 +24,9 @@ describe( 'HappinessSupport', () => {
 	const translate = ( content ) => `Translated: ${ content }`;
 
 	beforeEach( () => {
-		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
+		wrapper = shallow(
+			<HappinessSupport translate={ translate } recordTracksEvent={ () => {} } />
+		);
 	} );
 
 	test( 'should render translated heading content', () => {
@@ -50,7 +51,11 @@ describe( 'HappinessSupport', () => {
 
 	test( 'should render a support button with link to SUPPORT_ROOT if it is not for JetPack', () => {
 		wrapper = shallow(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ false } />
+			<HappinessSupport
+				translate={ translate }
+				recordTracksEvent={ () => {} }
+				isJetpack={ false }
+			/>
 		);
 		expect(
 			wrapper.find( 'ForwardRef(Button).happiness-support__support-button' ).props().href
@@ -59,7 +64,7 @@ describe( 'HappinessSupport', () => {
 
 	test( 'should render a support button with link to JETPACK_SUPPORT if it is for JetPack', () => {
 		wrapper = shallow(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
+			<HappinessSupport translate={ translate } recordTracksEvent={ () => {} } isJetpack={ true } />
 		);
 		expect( wrapper.find( 'ForwardRef(Button)' ).last().prop( 'href' ) ).to.equal(
 			JETPACK_SUPPORT
@@ -70,7 +75,11 @@ describe( 'HappinessSupport', () => {
 		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.false;
 
 		wrapper = shallow(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isPlaceholder={ true } />
+			<HappinessSupport
+				translate={ translate }
+				recordTracksEvent={ () => {} }
+				isPlaceholder={ true }
+			/>
 		);
 		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.true;
 	} );
@@ -79,7 +88,7 @@ describe( 'HappinessSupport', () => {
 		wrapper = shallow(
 			<HappinessSupport
 				translate={ translate }
-				recordTracksEvent={ noop }
+				recordTracksEvent={ () => {} }
 				showLiveChatButton={ true }
 			/>
 		);
@@ -89,7 +98,7 @@ describe( 'HappinessSupport', () => {
 	describe( 'LiveChat button', () => {
 		const props = {
 			translate,
-			recordTracksEvent: noop,
+			recordTracksEvent: () => {},
 		};
 
 		beforeEach( () => {
@@ -174,7 +183,7 @@ describe( 'HappinessSupport', () => {
 		const selector = 'ForwardRef(Button).happiness-support__contact-button';
 		const props = {
 			translate,
-			recordTracksEvent: noop,
+			recordTracksEvent: () => {},
 		};
 
 		test( 'should be rendered unless LiveChat button shows up', () => {

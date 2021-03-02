@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +29,7 @@ class ActivityLogBanner extends Component {
 
 	static defaultProps = {
 		isDismissable: false,
-		onDismissClick: noop,
+		onDismissClick: () => {},
 		status: null,
 		title: '',
 	};

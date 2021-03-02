@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { assign, noop, uniqueId, forEach } from 'lodash';
+import { assign, uniqueId, forEach } from 'lodash';
 import classNames from 'classnames';
 import { ReactReduxContext } from 'react-redux';
 
@@ -35,7 +35,7 @@ class CompactTinyMCE extends Component {
 		height: 250,
 		className: '',
 		initialValue: '',
-		onContentsChange: noop,
+		onContentsChange: () => {},
 	};
 
 	reduxStore = null;

@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { spy } from 'sinon';
 
@@ -17,7 +16,7 @@ describe( 'QueryAutomatedTransferEligibility', () => {
 	const siteId = 1337;
 
 	test( 'should mount as null', () => {
-		const wrapped = shallow( <QueryEligibility { ...{ requestEligibility: noop, siteId } } /> );
+		const wrapped = shallow( <QueryEligibility { ...{ requestEligibility: () => {}, siteId } } /> );
 
 		expect( wrapped.equals( null ) ).to.be.true;
 	} );

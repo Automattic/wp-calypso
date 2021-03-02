@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -29,7 +28,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 	};
 
 	static defaultProps = {
-		onSelected: noop,
+		onSelected: () => {},
 	};
 
 	connectLocation = () => {

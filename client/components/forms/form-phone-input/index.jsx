@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { identity, noop, find } from 'lodash';
+import { identity, find } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -35,7 +35,7 @@ export class FormPhoneInput extends React.Component {
 		isDisabled: false,
 		countrySelectProps: {},
 		phoneInputProps: {},
-		onChange: noop,
+		onChange: () => {},
 		translate: identity,
 	};
 

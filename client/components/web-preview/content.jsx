@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { noop, isFunction } from 'lodash';
+import { isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -415,11 +415,11 @@ WebPreviewContent.defaultProps = {
 	editUrl: null,
 	previewUrl: null,
 	previewMarkup: null,
-	onLoad: noop,
-	onLocationUpdate: noop,
-	onClose: noop,
-	onEdit: noop,
-	onDeviceUpdate: noop,
+	onLoad: () => {},
+	onLocationUpdate: () => {},
+	onClose: () => {},
+	onEdit: () => {},
+	onDeviceUpdate: () => {},
 	hasSidebar: false,
 	isModalWindow: false,
 	overridePost: null,

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useState, useEffect, useRef } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Constants
@@ -55,8 +54,8 @@ export default function ImagePreloader( props: Props & ImgProps ) {
 				return;
 			}
 
-			image.current.onload = noop;
-			image.current.onerror = noop;
+			image.current.onload = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+			image.current.onerror = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 			image.current = null;
 		}
 

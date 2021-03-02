@@ -4,7 +4,7 @@
 import page from 'page';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import { get, includes, map, noop } from 'lodash';
+import { get, includes, map } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -259,7 +259,7 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 			</Main>
 		);
 
-		makeLayout( context, noop );
+		makeLayout( context, () => {} );
 		clientRender( context );
 	} else {
 		next();

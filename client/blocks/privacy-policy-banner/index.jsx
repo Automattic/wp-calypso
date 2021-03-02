@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose, get, identity, noop } from 'lodash';
+import { flowRight as compose, get, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ const privacyPolicyQuery = {
 				method: 'GET',
 				path: '/privacy-policy',
 				apiNamespace: 'wpcom/v2',
-				onSuccess: noop,
+				onSuccess: () => {},
 			} ),
 			{
 				fromApi: () => ( data ) => [

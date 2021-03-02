@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -28,10 +27,10 @@ import './style.scss';
 class Site extends React.Component {
 	static defaultProps = {
 		// onSelect callback
-		onSelect: noop,
+		onSelect: () => {},
 		// mouse event callbacks
-		onMouseEnter: noop,
-		onMouseLeave: noop,
+		onMouseEnter: () => {},
+		onMouseLeave: () => {},
 
 		// Set a href attribute to the anchor
 		href: null,

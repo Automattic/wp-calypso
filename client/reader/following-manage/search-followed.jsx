@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,7 +17,7 @@ class FollowingManageSearchFollowed extends Component {
 	};
 
 	static defaultProps = {
-		onSearch: noop,
+		onSearch: () => {},
 	};
 
 	render() {

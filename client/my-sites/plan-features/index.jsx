@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, findIndex, last, map, noop, reduce } from 'lodash';
+import { compact, get, findIndex, last, map, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
@@ -518,7 +518,7 @@ export class PlanFeatures extends Component {
 			siteIsPrivateAndGoingAtomic,
 		} = singlePlanProperties;
 
-		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
+		if ( ownPropsOnUpgradeClick && cartItemForPlan ) {
 			ownPropsOnUpgradeClick( cartItemForPlan );
 			return;
 		}
@@ -801,7 +801,7 @@ PlanFeatures.defaultProps = {
 	isJetpack: false,
 	selectedSiteSlug: '',
 	siteId: null,
-	onUpgradeClick: noop,
+	onUpgradeClick: () => {},
 };
 
 export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>

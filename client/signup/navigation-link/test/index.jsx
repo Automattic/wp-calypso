@@ -3,7 +3,6 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,8 +29,8 @@ describe( 'NavigationLink', () => {
 			'test:step2': { stepName: 'test:step2', stepSectionName: 'test:section2', wasSkipped: false },
 			'test:step3': { stepName: 'test:step3', stepSectionName: 'test:section3', wasSkipped: false },
 		},
-		recordTracksEvent: noop,
-		submitSignupStep: noop,
+		recordTracksEvent: () => {},
+		submitSignupStep: () => {},
 		goToNextStep: jest.fn(),
 		translate: ( str ) => `translated:${ str }`,
 	};

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -35,8 +30,8 @@ registerHandlers( 'state/data-layer/wpcom/jetpack-blogs/product-install', {
 	[ JETPACK_PRODUCT_INSTALL_REQUEST ]: [
 		dispatchRequest( {
 			fetch: startJetpackProductInstall,
-			onSuccess: noop,
-			onError: noop,
+			onSuccess: () => {},
+			onError: () => {},
 		} ),
 	],
 } );

@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, noop } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -74,7 +74,7 @@ class BlogsSettings extends Component {
 			<InfiniteList
 				items={ sites }
 				lastPage={ true }
-				fetchNextPage={ noop }
+				fetchNextPage={ () => {} }
 				fetchingNextPage={ false }
 				guessedItemHeight={ 69 }
 				getItemRef={ getItemRef }

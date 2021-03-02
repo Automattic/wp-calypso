@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { flowRight as compose, noop } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -34,7 +34,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	static defaultProps = {
-		onClose: noop,
+		onClose: () => {},
 	};
 
 	state = {

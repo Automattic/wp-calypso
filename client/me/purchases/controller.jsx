@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -50,7 +49,7 @@ function noSites( context, analyticsPath ) {
 	} );
 
 	context.primary = <NoSitesWrapper />;
-	makeLayout( context, noop );
+	makeLayout( context, () => {} );
 	clientRender( context );
 }
 

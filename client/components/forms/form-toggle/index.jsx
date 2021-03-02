@@ -3,7 +3,6 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -27,7 +26,7 @@ export default class FormToggle extends PureComponent {
 	static defaultProps = {
 		checked: false,
 		disabled: false,
-		onChange: noop,
+		onChange: () => {},
 	};
 
 	render() {

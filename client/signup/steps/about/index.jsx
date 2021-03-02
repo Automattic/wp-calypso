@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -73,7 +73,7 @@ class AboutStep extends Component {
 		this._isMounted = true;
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle', 'siteGoals', 'siteTopic' ],
-			validatorFunction: noop,
+			validatorFunction: () => {},
 			onNewState: this.setFormState,
 			hideFieldErrorsOnChange: true,
 			initialState: {

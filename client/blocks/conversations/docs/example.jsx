@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { noop, map, compact } from 'lodash';
+import { map, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ const ConversationCommentListExample = () => {
 				post={ post }
 				enableCaterpillar={ false }
 				shouldRequestComments={ false }
-				setActiveReply={ noop }
+				setActiveReply={ () => {} }
 			/>
 		</div>
 	);

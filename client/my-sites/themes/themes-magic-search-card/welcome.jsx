@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -150,7 +150,7 @@ MagicSearchWelcome.propTypes = {
 MagicSearchWelcome.defaultProps = {
 	taxonomies: [],
 	topSearches: [],
-	suggestionsCallback: noop,
+	suggestionsCallback: () => {},
 };
 
 export default MagicSearchWelcome;

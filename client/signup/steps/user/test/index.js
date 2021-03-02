@@ -10,7 +10,6 @@ import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -48,7 +47,7 @@ describe( '#signupStep User', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'first subheader message',
 			flowName: 'userAsFirstStepInFlow',
-			saveSignupStep: noop,
+			saveSignupStep: () => {},
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -59,7 +58,7 @@ describe( '#signupStep User', () => {
 		testElement = React.createElement( User, {
 			subHeaderText: 'test subheader message',
 			flowName: 'someOtherFlow',
-			saveSignupStep: noop,
+			saveSignupStep: () => {},
 		} );
 		rendered = TestUtils.renderIntoDocument( testElement );
 
@@ -79,7 +78,7 @@ describe( '#signupStep User', () => {
 			const element = React.createElement( User, {
 				subHeaderText: 'test subheader message',
 				flowName: 'someOtherFlow',
-				saveSignupStep: noop,
+				saveSignupStep: () => {},
 			} );
 			component = ReactDOM.render( element, node );
 		} );
@@ -92,7 +91,7 @@ describe( '#signupStep User', () => {
 			const testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'userAsFirstStepInFlow',
-				saveSignupStep: noop,
+				saveSignupStep: () => {},
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );
@@ -107,7 +106,7 @@ describe( '#signupStep User', () => {
 			const testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'another test message test',
-				saveSignupStep: noop,
+				saveSignupStep: () => {},
 			};
 
 			expect( spyComponentProps.calledOnce ).to.equal( false );

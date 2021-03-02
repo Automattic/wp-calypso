@@ -6,7 +6,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import React from 'react';
@@ -38,11 +37,11 @@ jest.mock( 'calypso/state/selectors/get-current-locale-slug', () => () => 'en' )
 
 describe( 'ImageSelector', () => {
 	const testProps = {
-		onImageChange: noop,
-		onImageSelected: noop,
-		onRemoveImage: noop,
+		onImageChange: () => {},
+		onImageSelected: () => {},
+		onRemoveImage: () => {},
 		imageIds: [],
-		setMediaLibrarySelectedItems: noop,
+		setMediaLibrarySelectedItems: () => {},
 	};
 	const store = {
 		getState: () => ( {

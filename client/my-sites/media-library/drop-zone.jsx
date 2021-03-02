@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
@@ -30,7 +29,7 @@ class MediaLibraryDropZone extends React.Component {
 
 	static defaultProps = {
 		fullScreen: true,
-		onAddMedia: noop,
+		onAddMedia: () => {},
 		trackStats: true,
 	};
 

@@ -7,7 +7,7 @@
  */
 import deepFreeze from 'deep-freeze';
 import React from 'react';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -28,7 +28,7 @@ const DEFAULT_PROPS = deepFreeze( {
 		timestamp: 1509368045859,
 		userAlreadyConnected: false,
 	},
-	authorize: noop,
+	authorize: () => {},
 	authQuery: {
 		authApproved: false,
 		blogname: 'Example Blog',
@@ -54,8 +54,8 @@ const DEFAULT_PROPS = deepFreeze( {
 	isAlreadyOnSitesList: false,
 	isFetchingAuthorizationSite: false,
 	isFetchingSites: false,
-	recordTracksEvent: noop,
-	retryAuth: noop,
+	recordTracksEvent: () => {},
+	retryAuth: () => {},
 	siteSlug: SITE_SLUG,
 	translate: identity,
 	user: {

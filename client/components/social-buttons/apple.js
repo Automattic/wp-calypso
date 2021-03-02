@@ -7,7 +7,6 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import { loadScript } from '@automattic/load-script';
 
 /**
@@ -39,7 +38,7 @@ class AppleLoginButton extends Component {
 	};
 
 	static defaultProps = {
-		onClick: noop,
+		onClick: () => {},
 		scope: 'name email',
 		uxMode: 'popup',
 	};

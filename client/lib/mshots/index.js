@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import { noop } from 'lodash';
-
 export async function loadmShotsPreview( options = {} ) {
 	const { maxRetries = 1, retryTimeout = 1000 } = options;
 	const url = options.url || '';
@@ -49,5 +44,5 @@ export async function loadmShotsPreview( options = {} ) {
 }
 
 export function prefetchmShotsPreview( url ) {
-	loadmShotsPreview( { url, maxRetries: 0 } ).catch( noop );
+	loadmShotsPreview( { url, maxRetries: 0 } ).catch( () => {} );
 }

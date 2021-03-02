@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { identity, includes, noop } from 'lodash';
+import { identity, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -37,7 +37,7 @@ export class RegionAddressFieldsets extends Component {
 	};
 
 	static defaultProps = {
-		getFieldProps: noop,
+		getFieldProps: () => {},
 		translate: identity,
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
@@ -71,7 +71,7 @@ export class RegionAddressFieldsets extends Component {
 			<div>
 				<div>
 					<Input
-						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
+						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : () => {} }
 						label={ translate( 'Address' ) }
 						maxLength={ 40 }
 						{ ...getFieldProps( 'address-1', {

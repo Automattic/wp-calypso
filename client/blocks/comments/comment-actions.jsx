@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -135,7 +134,7 @@ const CommentActions = ( {
 };
 
 CommentActions.defaultProps = {
-	onReadMore: noop,
+	onReadMore: () => {},
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {

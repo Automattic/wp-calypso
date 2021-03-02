@@ -9,7 +9,6 @@ import deepFreeze from 'deep-freeze';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { shallow, mount } from 'enzyme';
-import { noop } from 'lodash';
 import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
@@ -71,8 +70,8 @@ describe( 'index', () => {
 		},
 		sitePlans: {},
 		userCanManageOptions: true,
-		successNotice: noop,
-		errorNotice: noop,
+		successNotice: () => {},
+		errorNotice: () => {},
 	} );
 
 	function renderWithProps( props = defaultProps ) {

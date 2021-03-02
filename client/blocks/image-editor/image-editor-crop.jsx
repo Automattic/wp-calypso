@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, noop } from 'lodash';
+import { isEqual } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -59,8 +59,8 @@ class ImageEditorCrop extends Component {
 			bottomBound: 100,
 			rightBound: 100,
 		},
-		imageEditorCrop: noop,
-		imageEditorComputedCrop: noop,
+		imageEditorCrop: () => {},
+		imageEditorComputedCrop: () => {},
 		minCropSize: {
 			width: 50,
 			height: 50,

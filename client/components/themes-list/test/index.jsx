@@ -7,7 +7,7 @@
  */
 import React from 'react';
 import deepFreeze from 'deep-freeze';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -32,9 +32,9 @@ const defaultProps = deepFreeze( {
 	],
 	lastPage: true,
 	loading: false,
-	fetchNextPage: noop,
-	getButtonOptions: noop,
-	onScreenshotClick: noop,
+	fetchNextPage: () => {},
+	getButtonOptions: () => {},
+	onScreenshotClick: () => {},
 	translate: identity,
 } );
 

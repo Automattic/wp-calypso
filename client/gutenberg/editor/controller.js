@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { get, has, isInteger, noop } from 'lodash';
+import { get, has, isInteger } from 'lodash';
 
 /**
  * Internal dependencies
@@ -133,7 +133,7 @@ export const authenticate = ( context, next ) => {
 
 	// Shows the editor placeholder while doing the redirection.
 	context.primary = <Placeholder />;
-	makeLayout( context, noop );
+	makeLayout( context, () => {} );
 	render( context );
 
 	// We could use `window.location.href` to generate the return URL but there are some potential race conditions that

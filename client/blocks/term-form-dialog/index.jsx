@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find, noop, assign } from 'lodash';
+import { get, find, assign } from 'lodash';
 
 /**
  * Internal dependencies
@@ -60,8 +60,8 @@ class TermFormDialog extends Component {
 	};
 
 	static defaultProps = {
-		onClose: noop,
-		onSuccess: noop,
+		onClose: () => {},
+		onSuccess: () => {},
 		showDescriptionInput: false,
 		showDialog: false,
 	};
@@ -89,7 +89,7 @@ class TermFormDialog extends Component {
 
 	onTopLevelChange = () => {
 		// Only validate the form when **enabling** the top level toggle.
-		const performValidation = ! this.state.isTopLevel ? this.isValid : noop;
+		const performValidation = ! this.state.isTopLevel ? this.isValid : () => {};
 		this.setState(
 			( { isTopLevel } ) => ( {
 				isTopLevel: ! isTopLevel,

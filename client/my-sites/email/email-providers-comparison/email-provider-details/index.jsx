@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +34,7 @@ class EmailProviderDetails extends React.Component {
 	};
 
 	static defaultProps = {
-		onButtonClick: noop,
+		onButtonClick: () => {},
 	};
 
 	renderFeatures() {

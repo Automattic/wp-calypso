@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -32,7 +31,7 @@ class PlanCompareCard extends React.Component {
 	};
 
 	static defaultProps = {
-		onClick: noop,
+		onClick: () => {},
 		currentPlan: true,
 		popularRibbon: false,
 	};

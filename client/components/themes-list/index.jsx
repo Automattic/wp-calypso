@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEqual, isEmpty, noop, times } from 'lodash';
+import { isEqual, isEmpty, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -47,7 +47,7 @@ export class ThemesList extends React.Component {
 	static defaultProps = {
 		loading: false,
 		themes: [],
-		fetchNextPage: noop,
+		fetchNextPage: () => {},
 		placeholderCount: DEFAULT_THEME_QUERY.number,
 		optionsGenerator: () => [],
 		getActionLabel: () => '',

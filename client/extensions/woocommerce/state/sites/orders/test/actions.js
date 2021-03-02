@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,6 +32,8 @@ import {
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
+	const noop = () => {};
+
 	describe( '#fetchOrders()', () => {
 		const siteId = '123';
 

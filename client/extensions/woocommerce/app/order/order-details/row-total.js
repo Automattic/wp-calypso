@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { noop, snakeCase } from 'lodash';
+import { snakeCase } from 'lodash';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
@@ -32,8 +32,8 @@ class OrderTotalRow extends Component {
 	static defaultProps = {
 		currency: 'USD',
 		isEditable: false,
-		onBlur: noop,
-		onChange: noop,
+		onBlur: () => {},
+		onChange: () => {},
 	};
 
 	renderEditable = () => {

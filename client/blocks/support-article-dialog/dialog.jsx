@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { memoize, noop } from 'lodash';
+import { memoize } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -83,7 +83,7 @@ export const SupportArticleDialog = ( {
 						href={ actionUrl }
 						target={ actionIsExternal ? '_blank' : undefined }
 						primary
-						onClick={ () => ( actionIsExternal ? noop() : closeSupportArticleDialog() ) }
+						onClick={ () => ( actionIsExternal ? ( () => {} )() : closeSupportArticleDialog() ) }
 					>
 						{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
 					</Button>

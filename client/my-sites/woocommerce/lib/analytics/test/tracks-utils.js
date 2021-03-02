@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +19,7 @@ describe( 'recordTrack', () => {
 			recordTracksEvent: spy(),
 		};
 
-		expect( recordTrack( tracksSpy, noop ) ).to.be.a( 'function' );
+		expect( recordTrack( tracksSpy, () => {} ) ).to.be.a( 'function' );
 	} );
 
 	it( 'should call tracks to record an event with properties', () => {
@@ -34,7 +33,7 @@ describe( 'recordTrack', () => {
 			c: '3',
 		};
 
-		recordTrack( tracksSpy, noop )( 'calypso_woocommerce_tracks_utils_test', eventProps );
+		recordTrack( tracksSpy, () => {} )( 'calypso_woocommerce_tracks_utils_test', eventProps );
 
 		expect( tracksSpy.recordTracksEvent ).to.have.been.calledWith(
 			'calypso_woocommerce_tracks_utils_test',
@@ -47,7 +46,7 @@ describe( 'recordTrack', () => {
 
 		const eventProps = { a: 1 };
 
-		recordTrack( { recordTracksEvent: noop }, debugSpy )(
+		recordTrack( { recordTracksEvent: () => {} }, debugSpy )(
 			'calypso_woocommerce_tracks_utils_test',
 			eventProps
 		);

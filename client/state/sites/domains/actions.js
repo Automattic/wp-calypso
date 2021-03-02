@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { map, noop } from 'lodash';
+import { map } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -155,7 +155,7 @@ export function disableDomainPrivacy( siteId, domain ) {
 	};
 }
 
-export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => ( dispatch ) => {
+export const setPrimaryDomain = ( siteId, domainName, onComplete = () => {} ) => ( dispatch ) => {
 	debug( 'setPrimaryDomain', siteId, domainName );
 	return wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
 		if ( error ) {

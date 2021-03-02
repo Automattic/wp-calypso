@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,8 +27,8 @@ class WizardProgressBar extends Component {
 	};
 
 	static defaultProps = {
-		nextButtonClick: noop,
-		previousButtonClick: noop,
+		nextButtonClick: () => {},
+		previousButtonClick: () => {},
 	};
 
 	renderNextButton() {

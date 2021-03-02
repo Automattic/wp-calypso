@@ -4,7 +4,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -169,7 +169,7 @@ const TemplateEdit = compose(
 									clientId={ templateBlock.clientId }
 									isSelected={ false }
 									name={ templateBlock.name }
-									setAttributes={ noop }
+									setAttributes={ () => {} }
 								/>
 							</div>
 						</Disabled>

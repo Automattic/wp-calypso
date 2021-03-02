@@ -4,7 +4,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -20,7 +20,7 @@ export default class extends React.Component {
 	};
 
 	static defaultProps = {
-		onChange: noop,
+		onChange: () => {},
 	};
 
 	rangeRef = React.createRef();

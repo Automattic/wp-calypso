@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, flowRight as compose } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**
@@ -249,7 +249,7 @@ PostScheduleClock.propTypes = {
 };
 
 PostScheduleClock.defaultProps = {
-	onChange: noop,
+	onChange: () => {},
 };
 
 export default compose(

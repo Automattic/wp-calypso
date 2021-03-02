@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -54,7 +48,7 @@ export const handleMembershipProductsList = dispatchRequest( {
 		siteId,
 		products,
 	} ),
-	onError: noop,
+	onError: () => {},
 } );
 
 export const handleMembershipGetEarnings = dispatchRequest( {
@@ -72,7 +66,7 @@ export const handleMembershipGetEarnings = dispatchRequest( {
 		siteId,
 		earnings,
 	} ),
-	onError: noop,
+	onError: () => {},
 } );
 
 export const handleMembershipGetSubscribers = dispatchRequest( {
@@ -90,7 +84,7 @@ export const handleMembershipGetSubscribers = dispatchRequest( {
 		siteId,
 		subscribers,
 	} ),
-	onError: noop,
+	onError: () => {},
 } );
 
 export const handleMembershipGetSettings = dispatchRequest( {
@@ -108,7 +102,7 @@ export const handleMembershipGetSettings = dispatchRequest( {
 		siteId,
 		data,
 	} ),
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/memberships/index.js', {

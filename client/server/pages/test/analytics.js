@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import events from 'events';
-import { noop } from 'lodash';
 import sinon from 'sinon';
 
 /**
@@ -28,7 +27,7 @@ describe( 'index', () => {
 			request2 = { context: {} };
 			response = new events.EventEmitter();
 			response2 = new events.EventEmitter();
-			next = noop;
+			next = () => {};
 		} );
 
 		describe( 'when rendering a section', () => {

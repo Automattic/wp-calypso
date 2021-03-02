@@ -8,7 +8,6 @@
 import { assert } from 'chai';
 import { shallow, mount } from 'enzyme';
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,12 +18,14 @@ describe( 'D3base', () => {
 	const shallowWithoutLifecycle = ( arg ) => shallow( arg, { disableLifecycleMethods: true } );
 
 	test( 'should have d3Base class', () => {
-		const base = shallowWithoutLifecycle( <D3Base drawChart={ noop } getParams={ noop } /> );
+		const base = shallowWithoutLifecycle(
+			<D3Base drawChart={ () => {} } getParams={ () => {} } />
+		);
 		assert.lengthOf( base.find( '.d3-base' ), 1 );
 	} );
 
 	test( 'should render an svg', () => {
-		const base = mount( <D3Base drawChart={ noop } getParams={ noop } /> );
+		const base = mount( <D3Base drawChart={ () => {} } getParams={ () => {} } /> );
 		assert.lengthOf( base.render().find( 'svg' ), 1 );
 	} );
 
@@ -32,7 +33,7 @@ describe( 'D3base', () => {
 		const drawChart = ( svg ) => {
 			return svg.append( 'circle' );
 		};
-		const base = mount( <D3Base drawChart={ drawChart } getParams={ noop } /> );
+		const base = mount( <D3Base drawChart={ drawChart } getParams={ () => {} } /> );
 		assert.lengthOf( base.render().find( 'circle' ), 1 );
 	} );
 

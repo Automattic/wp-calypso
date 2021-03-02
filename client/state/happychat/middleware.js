@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -75,7 +75,7 @@ export const socketMiddleware = ( connection = null ) => {
 				isHappychatChatAssigned( state ) &&
 				eventMessage[ action.type ]
 					? store.dispatch( sendEvent( eventMessage[ action.type ] ) )
-					: noop;
+					: () => {};
 				break;
 		}
 

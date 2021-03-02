@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -48,9 +48,9 @@ class CalendarPopover extends Component {
 
 	static defaultProps = {
 		timezoneValue: '',
-		onDateChange: noop,
-		onDayMouseEnter: noop,
-		onDayMouseLeave: noop,
+		onDateChange: () => {},
+		onDayMouseEnter: () => {},
+		onDayMouseLeave: () => {},
 	};
 
 	state = {

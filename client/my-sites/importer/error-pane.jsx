@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import Page from 'page';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ import { Button } from '@automattic/components';
 class ImporterError extends React.PureComponent {
 	static displayName = 'ImporterError';
 	static defaultProps = {
-		retryImport: noop,
+		retryImport: () => {},
 	};
 
 	static propTypes = {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
+import { assign, omitBy, some, isEqual, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ class EditorMediaModalGallery extends React.Component {
 	};
 
 	static defaultProps = {
-		onUpdateSettings: noop,
+		onUpdateSettings: () => {},
 	};
 
 	state = {

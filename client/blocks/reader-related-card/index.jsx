@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { get, noop, partial } from 'lodash';
+import { get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -102,8 +102,8 @@ export function RelatedPostCard( {
 	post,
 	site,
 	siteId,
-	onPostClick = noop,
-	onSiteClick = noop,
+	onPostClick = () => {},
+	onSiteClick = () => {},
 	followSource,
 } ) {
 	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {

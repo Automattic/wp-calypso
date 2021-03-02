@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes, filter, map, noop, reduce, union } from 'lodash';
+import { includes, filter, map, reduce, union } from 'lodash';
 import { WindowScroller } from '@automattic/react-virtualized';
 
 /**
@@ -46,8 +46,8 @@ export class TaxonomyManagerList extends Component {
 	static defaultProps = {
 		loading: true,
 		terms: [],
-		onNextPage: noop,
-		onTermClick: noop,
+		onNextPage: () => {},
+		onTermClick: () => {},
 	};
 
 	state = {

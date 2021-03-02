@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { noop } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -18,8 +17,10 @@ interface Props {
 }
 
 const DateRangeHeader: FunctionComponent< Props > = ( {
-	onCancelClick = noop,
-	onApplyClick = noop,
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	onCancelClick = () => {},
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	onApplyClick = () => {},
 	cancelButtonText,
 	applyButtonText,
 } ) => {

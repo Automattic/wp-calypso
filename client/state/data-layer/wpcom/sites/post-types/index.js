@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -23,7 +18,7 @@ const handlePostTypesRequest = dispatchRequest( {
 			action
 		),
 	onSuccess: ( action, data ) => receivePostTypes( action.siteId, data.post_types ),
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/post-types/index.js', {

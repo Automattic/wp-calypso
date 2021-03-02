@@ -6,7 +6,6 @@
  * External dependencies
  */
 import page from 'page';
-import { noop } from 'lodash';
 import React, { ReactChild } from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -67,7 +66,8 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			<EligibilityWarnings backUrl="" onProceed={ () => {} } />,
 			state
 		);
 
@@ -83,7 +83,8 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			<EligibilityWarnings backUrl="" onProceed={ () => {} } />,
 			state
 		);
 
@@ -96,7 +97,8 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { getByTestId, getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			<EligibilityWarnings backUrl="" onProceed={ () => {} } />,
 			state
 		);
 
@@ -118,7 +120,8 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			<EligibilityWarnings backUrl="" onProceed={ () => {} } />,
 			state
 		);
 
@@ -142,7 +145,8 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { container } = renderWithStore(
-			<EligibilityWarnings backUrl="" onProceed={ noop } />,
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			<EligibilityWarnings backUrl="" onProceed={ () => {} } />,
 			state
 		);
 

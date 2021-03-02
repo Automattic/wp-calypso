@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flowRight as compose, noop } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -30,8 +30,8 @@ class ConnectedSubscriptionListItem extends React.Component {
 	};
 
 	static defaultProps = {
-		onShouldMeasure: noop,
-		onComponentMountWithNewRailcar: noop,
+		onShouldMeasure: () => {},
+		onComponentMountWithNewRailcar: () => {},
 		showNotificationSettings: true,
 		showLastUpdatedDate: true,
 	};

@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { assign, noop } from 'lodash';
+import { assign } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -31,7 +31,7 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	static defaultProps = {
-		onFollowToggle: noop,
+		onFollowToggle: () => {},
 	};
 
 	handleFollowToggle = ( isRequestingFollow ) => {

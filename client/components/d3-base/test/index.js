@@ -7,7 +7,6 @@
  */
 import React from 'react';
 import { assert } from 'chai';
-import { noop } from 'lodash';
 import { shallow, mount } from 'enzyme';
 
 /**
@@ -19,7 +18,9 @@ describe( 'D3base', () => {
 	const shallowWithoutLifecycle = ( arg ) => shallow( arg, { disableLifecycleMethods: true } );
 
 	test( 'should have d3-base CSS class', () => {
-		const base = shallowWithoutLifecycle( <D3Base drawChart={ noop } getParams={ noop } /> );
+		const base = shallowWithoutLifecycle(
+			<D3Base drawChart={ () => {} } getParams={ () => {} } />
+		);
 
 		assert.lengthOf( base.find( '.d3-base' ), 1 );
 	} );
@@ -27,7 +28,7 @@ describe( 'D3base', () => {
 	test( 'should render an svg', () => {
 		const getParams = () => ( { width: 100, height: 100 } );
 
-		const base = mount( <D3Base drawChart={ noop } getParams={ getParams } /> );
+		const base = mount( <D3Base drawChart={ () => {} } getParams={ getParams } /> );
 
 		assert.lengthOf( base.render().find( 'svg' ), 1 );
 	} );

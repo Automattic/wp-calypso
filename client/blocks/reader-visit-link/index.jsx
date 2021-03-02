@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +23,7 @@ class ReaderVisitLink extends React.Component {
 
 	static defaultProps = {
 		iconSize: 24,
-		onClick: noop,
+		onClick: () => {},
 	};
 
 	render() {

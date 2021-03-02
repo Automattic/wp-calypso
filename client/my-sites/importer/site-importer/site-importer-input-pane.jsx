@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, noop, flowRight, has, trim, sortBy } from 'lodash';
+import { includes, isEmpty, flowRight, has, trim, sortBy } from 'lodash';
 import url from 'url'; // eslint-disable-line no-restricted-imports
 import moment from 'moment';
 
@@ -62,7 +62,7 @@ class SiteImporterInputPane extends React.Component {
 		fromSite: PropTypes.string,
 	};
 
-	static defaultProps = { description: null, onStartImport: noop };
+	static defaultProps = { description: null, onStartImport: () => {} };
 
 	state = {
 		siteURLInput: this.props.fromSite || '',

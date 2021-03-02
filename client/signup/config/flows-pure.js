@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -11,12 +10,12 @@ import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/route';
 
 export function generateFlows( {
-	getSiteDestination = noop,
-	getRedirectDestination = noop,
-	getSignupDestination = noop,
-	getLaunchDestination = noop,
-	getThankYouNoSiteDestination = noop,
-	getChecklistThemeDestination = noop,
+	getSiteDestination = () => {},
+	getRedirectDestination = () => {},
+	getSignupDestination = () => {},
+	getLaunchDestination = () => {},
+	getThankYouNoSiteDestination = () => {},
+	getChecklistThemeDestination = () => {},
 } = {} ) {
 	const flows = {
 		account: {

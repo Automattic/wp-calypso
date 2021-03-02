@@ -2,7 +2,7 @@
  * External dependencies
  */
 import deterministicStringify from 'fast-json-stable-stringify';
-import { get, identity, merge, noop } from 'lodash';
+import { get, identity, merge } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -211,11 +211,11 @@ export const dispatchRequest = requestDispatcher( trackRequests );
  */
 function createRequestAction( options, action ) {
 	const {
-		fetch = noop,
-		onSuccess = noop,
-		onError = noop,
-		onProgress = noop,
-		onStreamRecord = noop,
+		fetch = () => {},
+		onSuccess = () => {},
+		onError = () => {},
+		onProgress = () => {},
+		onStreamRecord = () => {},
 		fromApi = identity,
 	} = options;
 

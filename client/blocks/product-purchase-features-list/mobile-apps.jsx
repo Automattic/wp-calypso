@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ import { addQueryArgs } from 'calypso/lib/route';
  */
 import appsImage from 'calypso/assets/images/illustrations/apps.svg';
 
-export default localize( ( { translate, onClick = noop } ) => {
+export default localize( ( { translate, onClick = () => {} } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail

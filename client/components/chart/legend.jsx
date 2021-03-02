@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { find, noop } from 'lodash';
+import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -23,7 +23,7 @@ class ChartLegend extends React.Component {
 	static defaultProps = {
 		activeCharts: [],
 		availableCharts: [],
-		clickHandler: noop,
+		clickHandler: () => {},
 		tabs: [],
 	};
 

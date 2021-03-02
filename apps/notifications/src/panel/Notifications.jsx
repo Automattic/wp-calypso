@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { Provider } from 'react-redux';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,7 +55,7 @@ export class Notifications extends PureComponent {
 		isShowing: false,
 		isVisible: false,
 		locale: 'en',
-		receiveMessage: noop,
+		receiveMessage: () => {},
 	};
 
 	UNSAFE_componentWillMount() {

@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
@@ -34,8 +33,8 @@ class MediaLibraryUploadUrl extends Component {
 	};
 
 	static defaultProps = {
-		onAddMedia: noop,
-		onClose: noop,
+		onAddMedia: () => {},
+		onClose: () => {},
 	};
 
 	state = {

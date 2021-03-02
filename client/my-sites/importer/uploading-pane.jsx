@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, noop, truncate } from 'lodash';
+import { includes, truncate } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -161,7 +161,7 @@ class UploadingPane extends React.PureComponent {
 							onChange={ this.initiateFromForm }
 						/>
 					) }
-					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
+					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : () => {} } />
 				</div>
 				<ImporterActionButtonContainer>
 					<ImporterCloseButton

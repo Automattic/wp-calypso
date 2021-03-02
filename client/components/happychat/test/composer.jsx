@@ -7,7 +7,6 @@
  */
 import React from 'react';
 import { mount } from 'enzyme';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +25,7 @@ describe( '<Composer />', () => {
 					onSetCurrentMessage={ onSetCurrentMessage }
 					onSendTyping={ onSendTyping }
 					onSendNotTyping={ onSendNotTyping }
-					translate={ noop }
+					translate={ () => {} }
 				/>
 			);
 			wrapper.find( 'textarea' ).simulate( 'change', { target: { value: 'hey' } } );
@@ -45,7 +44,7 @@ describe( '<Composer />', () => {
 					onSetCurrentMessage={ onSetCurrentMessage }
 					onSendTyping={ onSendTyping }
 					onSendNotTyping={ onSendNotTyping }
-					translate={ noop }
+					translate={ () => {} }
 				/>
 			);
 			wrapper.find( 'textarea' ).simulate( 'change', { target: { value: '' } } );
@@ -64,7 +63,7 @@ describe( '<Composer />', () => {
 					message={ 'hey' }
 					onSendMessage={ onSendMessage }
 					onSendNotTyping={ onSendNotTyping }
-					translate={ noop }
+					translate={ () => {} }
 				/>
 			);
 			wrapper.find( 'textarea' ).simulate( 'keydown', { which: 13, preventDefault: () => {} } );
@@ -80,7 +79,7 @@ describe( '<Composer />', () => {
 					message={ '' }
 					onSendMessage={ onSendMessage }
 					onSendNotTyping={ onSendNotTyping }
-					translate={ noop }
+					translate={ () => {} }
 				/>
 			);
 			wrapper.find( 'textarea' ).simulate( 'keydown', { which: 13, preventDefault: () => {} } );

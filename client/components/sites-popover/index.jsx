@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -32,7 +31,7 @@ class SitesPopover extends React.Component {
 
 	static defaultProps = {
 		visible: false,
-		onClose: noop,
+		onClose: () => {},
 		position: 'bottom left',
 		groups: false,
 		siteQuerystring: false,

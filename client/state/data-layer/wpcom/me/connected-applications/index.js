@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
@@ -47,7 +42,7 @@ registerHandlers( 'state/data-layer/wpcom/me/connected-applications/index.js', {
 		dispatchRequest( {
 			fetch: requestConnectedApplications,
 			onSuccess: handleRequestSuccess,
-			onError: noop,
+			onError: () => {},
 			fromApi: makeJsonSchemaParser( schema, apiTransformer, {} ),
 		} ),
 	],

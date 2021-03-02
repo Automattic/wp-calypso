@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, times } from 'lodash';
+import { times } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -22,8 +22,8 @@ function RelatedPosts( {
 	title,
 	scope,
 	className = '',
-	onPostClick = noop,
-	onSiteClick = noop,
+	onPostClick = () => {},
+	onSiteClick = () => {},
 } ) {
 	let listItems;
 

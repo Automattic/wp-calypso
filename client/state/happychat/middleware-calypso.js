@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, noop } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -191,7 +191,7 @@ export default ( store ) => ( next ) => ( action ) => {
 		case ROUTE_SET:
 			isHappychatClientConnected( state ) && isHappychatChatAssigned( state )
 				? dispatch( sendEvent( getRouteSetMessage( state, action.path ) ) )
-				: noop;
+				: () => {};
 			break;
 	}
 	return next( action );

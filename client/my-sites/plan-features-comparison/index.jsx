@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { compact, get, map, noop, reduce } from 'lodash';
+import { compact, get, map, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -273,7 +273,7 @@ export class PlanFeaturesComparison extends Component {
 			siteIsPrivateAndGoingAtomic,
 		} = singlePlanProperties;
 
-		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
+		if ( ownPropsOnUpgradeClick && cartItemForPlan ) {
 			ownPropsOnUpgradeClick( cartItemForPlan );
 			return;
 		}
@@ -498,7 +498,7 @@ PlanFeaturesComparison.defaultProps = {
 	isJetpack: false,
 	selectedSiteSlug: '',
 	siteId: null,
-	onUpgradeClick: noop,
+	onUpgradeClick: () => {},
 };
 
 export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>

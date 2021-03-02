@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useCallback, useRef } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 		checked,
 		defaultChecked = [] as OptionValue[],
 		disabled = false,
-		onChange = noop,
+		onChange = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 		name = 'multiCheckbox',
 		options,
 		...otherProps

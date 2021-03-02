@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { values, noop, some, every, flow, partial, pick } from 'lodash';
+import { values, some, every, flow, partial, pick } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
@@ -35,7 +35,7 @@ class MediaModalSecondaryActions extends Component {
 
 	static defaultProps = {
 		disabled: false,
-		onDelete: noop,
+		onDelete: () => {},
 	};
 
 	getButtons() {
@@ -76,7 +76,7 @@ class MediaModalSecondaryActions extends Component {
 				icon: 'trash',
 				className: 'editor-media-modal__delete',
 				disabled: isButtonDisabled,
-				onClick: isButtonDisabled ? noop : onDelete,
+				onClick: isButtonDisabled ? () => {} : onDelete,
 			} );
 		}
 

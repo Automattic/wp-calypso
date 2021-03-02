@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { noop, values } from 'lodash';
+import { values } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -23,7 +23,7 @@ class SearchStreamHeader extends Component {
 		onSelection: PropTypes.func,
 	};
 	static defaultProps = {
-		onSelection: noop,
+		onSelection: () => {},
 		selected: SEARCH_TYPES.posts,
 	};
 

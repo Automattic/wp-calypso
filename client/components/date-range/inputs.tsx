@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { FunctionComponent, useRef, useCallback } from 'react';
-import { noop } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslate } from 'i18n-calypso';
 
@@ -25,6 +24,9 @@ interface Props {
 	onInputBlur: ( value: string | null | undefined, startOrEnd: StartOrEnd ) => void;
 	onInputChange: ( value: string | null | undefined, startOrEnd: StartOrEnd ) => void;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 const DateRangeInputs: FunctionComponent< Props > = ( {
 	onInputFocus = noop,

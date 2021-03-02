@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import classNames from 'classnames';
 import page from 'page';
 
@@ -34,7 +34,7 @@ export class MediaLibraryUploadButton extends React.Component {
 	};
 
 	static defaultProps = {
-		onAddMedia: noop,
+		onAddMedia: () => {},
 		type: 'button',
 		href: null,
 	};

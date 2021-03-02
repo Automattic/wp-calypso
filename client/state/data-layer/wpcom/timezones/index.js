@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { fromPairs, map, mapValues, noop } from 'lodash';
+import { fromPairs, map, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,7 +61,7 @@ registerHandlers( 'state/data-layer/wpcom/timezones/index.js', {
 		dispatchRequest( {
 			fetch: fetchTimezones,
 			onSuccess: addTimezones,
-			onError: noop,
+			onError: () => {},
 			fromApi,
 		} ),
 	],

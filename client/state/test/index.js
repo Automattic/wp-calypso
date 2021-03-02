@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { createReduxStore } from '../';
@@ -48,7 +43,7 @@ describe( 'index', () => {
 
 		describe( 'invalid data', () => {
 			test( 'ignores non-existent keys', () => {
-				const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( noop );
+				const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 				expect( consoleErrorSpy ).not.toHaveBeenCalled();
 				const reduxStoreNoArgs = createReduxStore().getState();
 				const reduxStoreBadData = createReduxStore( { some: { bad: { stuff: true } } } ).getState();

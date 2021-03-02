@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,7 +42,7 @@ class GoogleLoginButton extends Component {
 	static defaultProps = {
 		scope: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
-		onClick: noop,
+		onClick: () => {},
 	};
 
 	state = {

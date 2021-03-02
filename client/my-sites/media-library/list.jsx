@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRtl } from 'i18n-calypso';
-import { clone, filter, findIndex, min, noop } from 'lodash';
+import { clone, filter, findIndex, min } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
 
@@ -50,10 +50,10 @@ export class MediaLibraryList extends React.Component {
 		rowPadding: 10,
 		mediaHasNextPage: false,
 		isFetchingNextPage: false,
-		mediaOnFetchNextPage: noop,
+		mediaOnFetchNextPage: () => {},
 		single: false,
 		scrollable: false,
-		onEditItem: noop,
+		onEditItem: () => {},
 	};
 
 	state = {};

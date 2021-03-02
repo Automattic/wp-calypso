@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,8 +39,8 @@ class SuggestionSearch extends Component {
 	static defaultProps = {
 		id: '',
 		placeholder: '',
-		onChange: noop,
-		onSelect: noop,
+		onChange: () => {},
+		onSelect: () => {},
 		suggestions: [],
 		value: '',
 		autoFocus: false,

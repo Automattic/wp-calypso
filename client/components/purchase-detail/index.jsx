@@ -6,7 +6,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +37,7 @@ export default class PurchaseDetail extends PureComponent {
 	};
 
 	static defaultProps = {
-		onClick: noop,
+		onClick: () => {},
 		primaryButton: false,
 	};
 

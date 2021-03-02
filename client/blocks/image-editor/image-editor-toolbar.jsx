@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, values as objectValues } from 'lodash';
+import { values as objectValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
@@ -35,11 +35,11 @@ export class ImageEditorToolbar extends Component {
 	};
 
 	static defaultProps = {
-		imageEditorRotateCounterclockwise: noop,
-		imageEditorFlip: noop,
-		setImageEditorAspectRatio: noop,
+		imageEditorRotateCounterclockwise: () => {},
+		imageEditorFlip: () => {},
+		setImageEditorAspectRatio: () => {},
 		allowedAspectRatios: objectValues( AspectRatios ),
-		onShowNotice: noop,
+		onShowNotice: () => {},
 		isAspectRatioDisabled: false,
 	};
 

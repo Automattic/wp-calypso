@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +37,7 @@ class PublicizeMessage extends Component {
 		message: '',
 		acceptableLength: 280,
 		requireCount: false,
-		onChange: noop,
+		onChange: () => {},
 		preFilledMessage: '',
 	};
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, mapKeys, mapValues, snakeCase, startsWith, noop } from 'lodash';
+import { flow, mapKeys, mapValues, snakeCase, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -161,7 +161,7 @@ let searchQueue = [];
 let searchStackTimer = null;
 let lastSearchTimestamp = null;
 let searchCount = 0;
-let recordSearchFormSubmitWithDispatch = noop;
+let recordSearchFormSubmitWithDispatch = () => {};
 
 export function resetSearchCount() {
 	searchCount = 0;

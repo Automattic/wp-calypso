@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,7 +40,7 @@ Item.propTypes = {
 
 Item.defaultProps = {
 	isSelected: false,
-	onClick: noop,
+	onClick: () => {},
 	icon: 'star',
 };
 

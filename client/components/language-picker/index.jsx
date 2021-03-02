@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, isString, noop } from 'lodash';
+import { find, isString } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,8 +35,8 @@ export class LanguagePicker extends PureComponent {
 	static defaultProps = {
 		languages: [],
 		valueKey: 'value',
-		onChange: noop,
-		onClick: noop,
+		onChange: () => {},
+		onClick: () => {},
 		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
 		empathyMode: false,
 		useFallbackForIncompleteLanguages: false,

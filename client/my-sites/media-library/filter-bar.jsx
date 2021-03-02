@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, includes, noop, union } from 'lodash';
+import { identity, includes, union } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -44,9 +44,9 @@ export class MediaLibraryFilterBar extends Component {
 	static defaultProps = {
 		filter: '',
 		basePath: '/media',
-		onFilterChange: noop,
-		onSourceChange: noop,
-		onSearch: noop,
+		onFilterChange: () => {},
+		onSourceChange: () => {},
+		onSearch: () => {},
 		translate: identity,
 		source: '',
 		post: false,

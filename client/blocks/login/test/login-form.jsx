@@ -7,7 +7,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -27,7 +26,7 @@ describe( 'LoginForm', () => {
 	describe( 'component rendering', () => {
 		test( 'displays a login form', () => {
 			const wrapper = shallow(
-				<LoginForm translate={ noop } socialAccountLink={ { isLinking: false } } />
+				<LoginForm translate={ () => {} } socialAccountLink={ { isLinking: false } } />
 			);
 			expect( wrapper.find( FormTextInput ).length ).to.equal( 1 );
 			expect( wrapper.find( FormPasswordInput ).length ).to.equal( 1 );

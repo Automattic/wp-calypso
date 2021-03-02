@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,7 +44,7 @@ PostTypeListPostThumbnail.propTypes = {
 };
 
 PostTypeListPostThumbnail.defaultProps = {
-	onClick: noop,
+	onClick: () => {},
 };
 
 export default connect( ( state, ownProps ) => {

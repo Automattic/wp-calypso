@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, filter, get, castArray, debounce, noop } from 'lodash';
+import { each, filter, get, castArray, debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -91,7 +91,7 @@ const BlockFramePreview = ( {
 	viewportWidth,
 	blocks,
 	settings,
-	setTimeout = noop,
+	setTimeout = () => {},
 	title,
 } ) => {
 	const frameContainerRef = useRef();

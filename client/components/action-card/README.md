@@ -18,7 +18,7 @@ function render() {
 			buttonPrimary={ true }
 			buttonHref="https://wordpress.com"
 			buttonTarget="_blank"
-			buttonOnClick={ noop }
+			buttonOnClick={ () => {} }
 			buttonDisabled={ false }
 		/>
 	);

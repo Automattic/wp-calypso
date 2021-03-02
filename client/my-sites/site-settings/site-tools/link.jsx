@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,7 +36,7 @@ SiteToolsLink.propTypes = {
 
 SiteToolsLink.defaultProps = {
 	isWarning: false,
-	onClick: noop,
+	onClick: () => {},
 };
 
 export default SiteToolsLink;

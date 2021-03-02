@@ -5,7 +5,7 @@ import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -41,13 +41,13 @@ export class HappychatButton extends Component {
 	static defaultProps = {
 		allowMobileRedirect: false,
 		borderless: true,
-		getAuth: noop,
-		initConnection: noop,
+		getAuth: () => {},
+		initConnection: () => {},
 		isChatActive: false,
 		isChatAvailable: false,
 		isConnectionUninitialized: false,
-		onClick: noop,
-		openChat: noop,
+		onClick: () => {},
+		openChat: () => {},
 		translate: identity,
 	};
 

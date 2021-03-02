@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -81,7 +80,7 @@ jest.mock( 'calypso/lib/analytics/hotjar', () => ( {
 	addHotJarScript: require( 'sinon' ).spy(),
 } ) );
 
-const dispatch = analyticsMiddleware()( noop );
+const dispatch = analyticsMiddleware()( () => {} );
 
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {

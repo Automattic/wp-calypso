@@ -38,7 +38,7 @@ Any addition classes to pass to the card component.
 <table>
 	<tr><td>Type</td><td>Function</td></tr>
 	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>lodash/noop</code></td></tr>
+	<tr><td>Default</td><td><code>() => {}</code></td></tr>
 </table>
 
 This function will fire when a user clicks on the cross icon

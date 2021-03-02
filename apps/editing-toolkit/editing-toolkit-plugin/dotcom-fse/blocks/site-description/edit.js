@@ -3,7 +3,6 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -105,7 +104,7 @@ function SiteDescriptionEdit( {
 				identifier="content"
 				onChange={ updateValue }
 				onReplace={ insertDefaultBlock }
-				onSplit={ noop }
+				onSplit={ () => {} }
 				placeholder={ __( 'Add a Site Description', 'full-site-editing' ) }
 				style={ {
 					backgroundColor: backgroundColor.color,

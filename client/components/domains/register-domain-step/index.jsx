@@ -14,7 +14,6 @@ import {
 	isEmpty,
 	isEqual,
 	mapKeys,
-	noop,
 	pick,
 	pickBy,
 	reject,
@@ -164,13 +163,13 @@ class RegisterDomainStep extends React.Component {
 		includeDotBlogSubdomain: false,
 		includeWordPressDotCom: false,
 		isDomainOnly: false,
-		onAddDomain: noop,
-		onAddMapping: noop,
-		onDomainsAvailabilityChange: noop,
-		onSave: noop,
+		onAddDomain: () => {},
+		onAddMapping: () => {},
+		onDomainsAvailabilityChange: () => {},
+		onSave: () => {},
 		vendor: getSuggestionsVendor(),
 		showExampleSuggestions: false,
-		onSkip: noop,
+		onSkip: () => {},
 		showSkipButton: false,
 	};
 
@@ -733,7 +732,7 @@ class RegisterDomainStep extends React.Component {
 		this.repeatSearch( { pageNumber: 1 } );
 	};
 
-	onSearchChange = ( searchQuery, callback = noop ) => {
+	onSearchChange = ( searchQuery, callback = () => {} ) => {
 		if ( ! this._isMounted ) {
 			return;
 		}
@@ -787,7 +786,7 @@ class RegisterDomainStep extends React.Component {
 					availableTlds: filteredAvailableTlds,
 				} );
 			} )
-			.catch( noop );
+			.catch( () => {} );
 	};
 
 	fetchDomainPricePromise = ( domain ) => {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
-import { noop, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,10 +42,10 @@ class CalendarButton extends Component {
 		icon: 'calendar',
 		type: 'button',
 		popoverPosition: 'bottom',
-		onDateChange: noop,
-		onDayMouseEnter: noop,
-		onDayMouseLeave: noop,
-		onClose: noop,
+		onDateChange: () => {},
+		onDayMouseEnter: () => {},
+		onDayMouseLeave: () => {},
+		onClose: () => {},
 	};
 
 	state = { showPopover: false };

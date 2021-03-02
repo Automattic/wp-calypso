@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
 import { useSelect } from '@wordpress/data';
-import { noop, times } from 'lodash';
+import { times } from 'lodash';
 import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
@@ -123,11 +123,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onExistingSubdomainSelect,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
-	onDomainSearchBlur = noop,
+	onDomainSearchBlur = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	analyticsFlowId,
 	analyticsUiAlgo,
 	initialDomainSearch = '',
-	onSetDomainSearch = noop,
+	onSetDomainSearch = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	currentDomain,
 	isCheckingDomainAvailability,
 	existingSubdomain,

@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -39,8 +39,8 @@ class VideoEditor extends Component {
 	};
 
 	static defaultProps = {
-		onCancel: noop,
-		onUpdatePoster: noop,
+		onCancel: () => {},
+		onUpdatePoster: () => {},
 	};
 
 	state = {

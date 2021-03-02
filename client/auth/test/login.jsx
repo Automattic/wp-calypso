@@ -8,7 +8,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,7 +66,9 @@ describe( 'LoginTest', () => {
 	test( 'submits login form', () => {
 		return new Promise( ( done ) => {
 			page.setState( { login: 'user', password: 'pass', auth_code: 'otp' }, function () {
-				page.find( 'form' ).simulate( 'submit', { preventDefault: noop, stopPropagation: noop } );
+				page
+					.find( 'form' )
+					.simulate( 'submit', { preventDefault: () => {}, stopPropagation: () => {} } );
 
 				expect( makeAuthRequest ).to.have.been.calledOnce;
 				expect( makeAuthRequest.calledWith( 'user', 'pass', 'otp' ) ).to.be.true;

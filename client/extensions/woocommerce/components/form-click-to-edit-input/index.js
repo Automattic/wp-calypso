@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { noop, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ class FormClickToEditInput extends Component {
 	};
 
 	static defaultProps = {
-		onChange: noop,
+		onChange: () => {},
 		placeholder: '',
 		value: '',
 		disabled: false,

@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, includes, noop } from 'lodash';
+import { get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -124,7 +124,7 @@ VerifyEmailDialog.propTypes = {
 };
 
 VerifyEmailDialog.defaultProps = {
-	onClose: noop,
+	onClose: () => {},
 };
 
 export default connect(

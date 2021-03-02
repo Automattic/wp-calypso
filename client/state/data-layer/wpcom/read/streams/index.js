@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { random, map, includes, get, noop } from 'lodash';
+import { random, map, includes, get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -261,7 +261,7 @@ registerHandlers( 'state/data-layer/wpcom/read/streams/index.js', {
 		dispatchRequest( {
 			fetch: requestPage,
 			onSuccess: handlePage,
-			onError: noop,
+			onError: () => {},
 		} ),
 	],
 } );

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -46,7 +41,7 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/index.js', {
 		dispatchRequest( {
 			fetch: requestUserProfileLinks,
 			onSuccess: handleRequestSuccess,
-			onError: noop,
+			onError: () => {},
 		} ),
 	],
 } );

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
@@ -45,7 +40,7 @@ registerHandlers( 'state/data-layer/wpcom/jetpack-blogs/product-install-status',
 		dispatchRequest( {
 			fetch: requestJetpackProductInstallStatus,
 			onSuccess: handleRequestSuccess,
-			onError: noop,
+			onError: () => {},
 			fromApi: makeJsonSchemaParser( schema ),
 		} ),
 	],

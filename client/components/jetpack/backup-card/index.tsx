@@ -2,7 +2,6 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { noop } from 'lodash';
 import React, { useRef, FunctionComponent, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -68,10 +67,12 @@ const BackupCard: FunctionComponent< Props > = ( {
 	const onRestoreButtonLeave = useCallback( () => setTooltipVisibility( false ), [
 		setTooltipVisibility,
 	] );
-	const onDownloadClick = useTrackCallback( noop, 'calypso_jetpack_backup_download', {
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	const onDownloadClick = useTrackCallback( () => {}, 'calypso_jetpack_backup_download', {
 		rewind_id: rewindId,
 	} );
-	const onRestoreClick = useTrackCallback( noop, 'calypso_jetpack_backup_restore', {
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	const onRestoreClick = useTrackCallback( () => {}, 'calypso_jetpack_backup_restore', {
 		rewind_id: rewindId,
 	} );
 

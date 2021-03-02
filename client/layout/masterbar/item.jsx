@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { isFunction, noop } from 'lodash';
+import { isFunction } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
@@ -23,7 +23,7 @@ class MasterbarItem extends Component {
 
 	static defaultProps = {
 		icon: '',
-		onClick: noop,
+		onClick: () => {},
 		hasUnseen: false,
 	};
 

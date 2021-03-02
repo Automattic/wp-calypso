@@ -4,7 +4,7 @@
 
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -43,7 +43,7 @@ const PlanFeaturesActionsButton = ( {
 	isPopular,
 	isInSignup,
 	isLaunchPage,
-	onUpgradeClick = noop,
+	onUpgradeClick = () => {},
 	planName,
 	planType,
 	primaryUpgrade = false,

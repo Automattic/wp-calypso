@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
@@ -35,7 +35,7 @@ class BlogPostsPage extends React.Component {
 
 	static defaultProps = {
 		translate: identity,
-		recordCalloutClick: noop,
+		recordCalloutClick: () => {},
 	};
 
 	getPostsPageLink() {

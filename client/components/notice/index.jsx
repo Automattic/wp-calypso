@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 // @todo: Convert to import from `components/gridicon`
@@ -41,7 +40,7 @@ export class Notice extends Component {
 		icon: null,
 		isCompact: false,
 		isLoading: false,
-		onDismissClick: noop,
+		onDismissClick: () => {},
 		status: null,
 		text: null,
 	};

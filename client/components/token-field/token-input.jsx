@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,8 +23,8 @@ class TokenInput extends React.PureComponent {
 	static defaultProps = {
 		disabled: false,
 		hasFocus: false,
-		onChange: noop,
-		onBlur: noop,
+		onChange: () => {},
+		onBlur: () => {},
 		placeholder: '',
 		value: '',
 	};

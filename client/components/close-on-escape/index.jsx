@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { filter, includes, isEmpty, last, noop } from 'lodash';
+import { filter, includes, isEmpty, last } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -62,7 +62,7 @@ CloseOnEscape.propTypes = {
 };
 
 CloseOnEscape.defaultProps = {
-	onEscape: noop,
+	onEscape: () => {},
 };
 
 export default CloseOnEscape;

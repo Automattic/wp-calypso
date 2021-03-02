@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { isNumber, noop } from 'lodash';
+import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,8 +32,8 @@ class ProductFormImages extends Component {
 	};
 
 	static defaultProps = {
-		onUpload: noop,
-		onRemove: noop,
+		onUpload: () => {},
+		onRemove: () => {},
 	};
 
 	constructor( props ) {

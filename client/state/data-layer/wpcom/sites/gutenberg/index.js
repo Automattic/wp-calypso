@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, noop } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +40,7 @@ const setGutenbergOptInData = (
 const dispatchFetchGutenbergOptInData = dispatchRequest( {
 	fetch: fetchGutenbergOptInData,
 	onSuccess: setGutenbergOptInData,
-	onError: noop,
+	onError: () => {},
 } );
 
 const updateSelectedEditor = ( action ) =>
@@ -76,7 +76,7 @@ const setSelectedEditorAndRedirect = ( { siteId, redirectUrl }, { editor_web: ed
 const dispatchUpdateSelectedEditor = dispatchRequest( {
 	fetch: updateSelectedEditor,
 	onSuccess: setSelectedEditorAndRedirect,
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/sites/gutenberg/index.js', {

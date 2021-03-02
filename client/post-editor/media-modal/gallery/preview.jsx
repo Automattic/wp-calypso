@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,9 +28,9 @@ class EditorMediaModalGalleryPreview extends Component {
 
 	static defaultProps = {
 		settings: Object.freeze( {} ),
-		onUpdateSetting: noop,
+		onUpdateSetting: () => {},
 		invalidItemDropped: false,
-		onDismissInvalidItemDropped: noop,
+		onDismissInvalidItemDropped: () => {},
 	};
 
 	state = {

@@ -4,7 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { castArray, noop, find } from 'lodash';
+import { castArray, find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -86,7 +86,7 @@ const ensureBlockObject = ( block ) => {
  * @param {object}   parentBlock       parent block. optional.
  * @returns {void}
  */
-function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parentBlock ) {
+function trackBlocksHandler( blocks, eventName, propertiesHandler = () => {}, parentBlock ) {
 	const castBlocks = castArray( blocks );
 	if ( ! castBlocks || ! castBlocks.length ) {
 		return;

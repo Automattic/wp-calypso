@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { noop, omitBy } from 'lodash';
+import { omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,7 +61,7 @@ CommentButton.propTypes = {
 CommentButton.defaultProps = {
 	commentCount: 0,
 	href: null,
-	onClick: noop,
+	onClick: () => {},
 	showLabel: true,
 	size: 24,
 	tagName: 'li',

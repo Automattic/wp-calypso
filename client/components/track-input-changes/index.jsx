@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { assign, noop } from 'lodash';
+import { assign } from 'lodash';
 
 export default class TrackInputChanges extends Component {
 	static displayName = 'TrackInputChanges';
@@ -14,7 +14,7 @@ export default class TrackInputChanges extends Component {
 	};
 
 	static defaultProps = {
-		onNewValue: noop,
+		onNewValue: () => {},
 	};
 
 	UNSAFE_componentWillMount() {

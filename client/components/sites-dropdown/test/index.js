@@ -7,7 +7,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import sinon from 'sinon';
 
@@ -85,7 +84,7 @@ describe( 'index', () => {
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
-					onClose: noop,
+					onClose: () => {},
 				},
 			};
 
@@ -98,7 +97,7 @@ describe( 'index', () => {
 		test( 'should run the component `onClose` hook, when it is provided', () => {
 			const onCloseSpy = sinon.spy();
 			const fakeContext = {
-				setState: noop,
+				setState: () => {},
 				props: {
 					onClose: onCloseSpy,
 				},

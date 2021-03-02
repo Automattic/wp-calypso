@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -30,10 +30,10 @@ class DesktopDownloadCard extends Component {
 
 	static defaultProps = {
 		translate: identity,
-		trackWindowsClick: noop,
-		trackMacClick: noop,
-		trackLinuxTarClick: noop,
-		trackLinuxDebClick: noop,
+		trackWindowsClick: () => {},
+		trackMacClick: () => {},
+		trackLinuxTarClick: () => {},
+		trackLinuxDebClick: () => {},
 	};
 
 	getDescription( platform ) {

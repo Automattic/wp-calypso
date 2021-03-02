@@ -7,7 +7,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -23,7 +22,7 @@ describe( 'Domain Suggestion', () => {
 					buttonContent="Click Me"
 					domain="example.com"
 					isAdded={ false }
-					onButtonClick={ noop }
+					onButtonClick={ () => {} }
 					priceRule="PRICE"
 				/>
 			);

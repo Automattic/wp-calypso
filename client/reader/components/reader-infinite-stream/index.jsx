@@ -11,7 +11,7 @@ import {
 	WindowScroller,
 } from '@automattic/react-virtualized';
 
-import { debounce, noop, get, pickBy } from 'lodash';
+import { debounce, get, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ class ReaderInfiniteStream extends Component {
 	};
 
 	static defaultProps = {
-		windowScrollerRef: noop,
+		windowScrollerRef: () => {},
 		minHeight: 70,
 		hasNextPage: () => false,
 	};

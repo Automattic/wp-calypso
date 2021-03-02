@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop, map } from 'lodash';
+import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -59,7 +59,7 @@ class EventsTooltip extends Component {
 				className="date-picker__events-tooltip"
 				context={ this.props.context }
 				isVisible={ show }
-				onClose={ noop }
+				onClose={ () => {} }
 			>
 				<span>{ title }</span>
 				<hr className="date-picker__division" />

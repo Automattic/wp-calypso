@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, get, includes, noop } from 'lodash';
+import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 import Gridicon from 'calypso/components/gridicon';
@@ -46,10 +46,10 @@ export class EditorMediaModalDetailItem extends Component {
 	static defaultProps = {
 		hasPreviousItem: false,
 		hasNextItem: false,
-		onShowPreviousItem: noop,
-		onShowNextItem: noop,
-		onEdit: noop,
-		onRestore: noop,
+		onShowPreviousItem: () => {},
+		onShowNextItem: () => {},
+		onEdit: () => {},
+		onRestore: () => {},
 	};
 
 	/**

@@ -3,7 +3,6 @@
  */
 import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,7 +36,7 @@ export default function LicenseDetails( {
 	issuedAt,
 	attachedAt,
 	revokedAt,
-	onCopyLicense = noop,
+	onCopyLicense = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );

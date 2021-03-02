@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -106,7 +105,11 @@ export const SftpCard = ( {
 			return (
 				<>
 					<div className="sftp-card__copy-field sftp-card__password-field">
-						<FormTextInput className="sftp-card__copy-input" value={ password } onChange={ noop } />
+						<FormTextInput
+							className="sftp-card__copy-input"
+							value={ password }
+							onChange={ () => {} }
+						/>
 						<ClipboardButton className="sftp-card__copy-button" text={ password } compact>
 							{ translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
@@ -208,7 +211,11 @@ export const SftpCard = ( {
 				<FormFieldset className="sftp-card__info-field">
 					<FormLabel>{ translate( 'URL' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
-						<FormTextInput className="sftp-card__copy-input" value={ SFTP_URL } onChange={ noop } />
+						<FormTextInput
+							className="sftp-card__copy-input"
+							value={ SFTP_URL }
+							onChange={ () => {} }
+						/>
 						<ClipboardButton className="sftp-card__copy-button" text={ SFTP_URL } compact>
 							{ translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
@@ -218,7 +225,7 @@ export const SftpCard = ( {
 						<FormTextInput
 							className="sftp-card__copy-input"
 							value={ SFTP_PORT }
-							onChange={ noop }
+							onChange={ () => {} }
 						/>
 						<ClipboardButton
 							className="sftp-card__copy-button"
@@ -230,7 +237,11 @@ export const SftpCard = ( {
 					</div>
 					<FormLabel>{ translate( 'Username' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
-						<FormTextInput className="sftp-card__copy-input" value={ username } onChange={ noop } />
+						<FormTextInput
+							className="sftp-card__copy-input"
+							value={ username }
+							onChange={ () => {} }
+						/>
 						<ClipboardButton className="sftp-card__copy-button" text={ username } compact>
 							{ translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>

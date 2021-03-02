@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
@@ -28,8 +27,8 @@ interface Props {
 }
 
 const DateRangeTrigger: FunctionComponent< Props > = ( {
-	onTriggerClick = noop,
-	onClearClick = noop,
+	onTriggerClick = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+	onClearClick = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	isCompact = false,
 	showClearBtn = true,
 	startDate,

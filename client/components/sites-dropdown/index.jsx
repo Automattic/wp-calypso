@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { noop, get } from 'lodash';
+import { get } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -39,8 +39,8 @@ export class SitesDropdown extends PureComponent {
 
 	static defaultProps = {
 		showAllSites: false,
-		onClose: noop,
-		onSiteSelect: noop,
+		onClose: () => {},
+		onSiteSelect: () => {},
 		isPlaceholder: false,
 		hasMultipleSites: false,
 	};

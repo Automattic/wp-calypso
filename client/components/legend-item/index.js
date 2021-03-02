@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Style dependencies
@@ -27,8 +26,8 @@ class LegendItem extends Component {
 	};
 
 	static defaultProps = {
-		onMouseOver: noop,
-		onMouseOut: noop,
+		onMouseOver: () => {},
+		onMouseOut: () => {},
 	};
 
 	handleMouseOver = () => {

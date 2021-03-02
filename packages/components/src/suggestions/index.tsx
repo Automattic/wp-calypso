@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { find, groupBy, isEqual, partition, property, noop } from 'lodash';
+import { find, groupBy, isEqual, partition, property } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -45,7 +45,7 @@ interface State {
 class Suggestions extends Component< Props, State > {
 	static defaultProps = {
 		query: '',
-		onSuggestionItemMount: noop,
+		onSuggestionItemMount: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	};
 
 	state = {

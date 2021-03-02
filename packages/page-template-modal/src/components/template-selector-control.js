@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEmpty, noop, map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -27,7 +27,7 @@ export const TemplateSelectorControl = ( {
 	blocksByTemplates = {},
 	theme = 'maywood',
 	locale = 'en',
-	onTemplateSelect = noop,
+	onTemplateSelect = () => {},
 	siteInformation = {},
 	selectedTemplate,
 } ) => {

@@ -4,7 +4,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -29,7 +28,7 @@ class VerticalNavItem extends Component {
 	static defaultProps = {
 		external: false,
 		isPlaceholder: false,
-		onClick: noop,
+		onClick: () => {},
 	};
 
 	placeholder = () => {

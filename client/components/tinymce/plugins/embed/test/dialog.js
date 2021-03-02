@@ -4,7 +4,7 @@
 import React from 'react';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { spy } from 'sinon';
 
 /**
@@ -34,8 +34,8 @@ describe( 'EmbedDialog', () => {
 			<EmbedDialog
 				embedUrl={ url }
 				siteId={ testSiteId }
-				onCancel={ noop }
-				onUpdate={ noop }
+				onCancel={ () => {} }
+				onUpdate={ () => {} }
 				translate={ identity }
 			/>
 		);
@@ -53,8 +53,8 @@ describe( 'EmbedDialog', () => {
 			<EmbedDialog
 				embedUrl={ originalUrl }
 				siteId={ testSiteId }
-				onCancel={ noop }
-				onUpdate={ noop }
+				onCancel={ () => {} }
+				onUpdate={ () => {} }
 				translate={ identity }
 			/>
 		);
@@ -84,7 +84,7 @@ describe( 'EmbedDialog', () => {
 			<EmbedDialog
 				embedUrl={ originalUrl }
 				siteId={ testSiteId }
-				onCancel={ noop }
+				onCancel={ () => {} }
 				onUpdate={ onUpdate }
 				translate={ identity }
 			/>
@@ -102,7 +102,7 @@ describe( 'EmbedDialog', () => {
 		const mockChangeEvent = {
 			target: { value: newUrl },
 		};
-		const noopSpy = spy( noop );
+		const noopSpy = spy( () => {} );
 		let currentUrl = originalUrl;
 		const onUpdate = ( url ) => {
 			currentUrl = url;
@@ -135,8 +135,8 @@ describe( 'EmbedDialog', () => {
 				<EmbedDialog
 					embedUrl={ url }
 					siteId={ testSiteId }
-					onCancel={ noop }
-					onUpdate={ noop }
+					onCancel={ () => {} }
+					onUpdate={ () => {} }
 					translate={ identity }
 				/>
 			);

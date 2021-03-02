@@ -3,7 +3,6 @@
  */
 
 import debugModule from 'debug';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +27,7 @@ const STORAGE_KEY = 'boot_support_user';
 
 const isEnabled = () => config.isEnabled( 'support-user' );
 
-let _setReduxStore = noop;
+let _setReduxStore = () => {};
 const reduxStoreReady = new Promise( ( resolve ) => {
 	if ( ! isEnabled() ) {
 		return;

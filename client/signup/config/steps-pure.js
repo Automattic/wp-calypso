@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -25,23 +24,23 @@ import {
 } from 'calypso/lib/plans/constants';
 
 export function generateSteps( {
-	addPlanToCart = noop,
-	addDomainUpsellToCart = noop,
-	createAccount = noop,
-	createSite = noop,
-	createWpForTeamsSite = noop,
-	createSiteOrDomain = noop,
-	createSiteWithCart = noop,
-	currentPage = noop,
-	setThemeOnSite = noop,
-	addDomainToCart = noop,
-	launchSiteApi = noop,
-	isPlanFulfilled = noop,
-	isFreePlansDomainUpsellFulfilled = noop,
-	isDomainFulfilled = noop,
-	isSiteTypeFulfilled = noop,
-	isSiteTopicFulfilled = noop,
-	maybeRemoveStepForUserlessCheckout = noop,
+	addPlanToCart = () => {},
+	addDomainUpsellToCart = () => {},
+	createAccount = () => {},
+	createSite = () => {},
+	createWpForTeamsSite = () => {},
+	createSiteOrDomain = () => {},
+	createSiteWithCart = () => {},
+	currentPage = () => {},
+	setThemeOnSite = () => {},
+	addDomainToCart = () => {},
+	launchSiteApi = () => {},
+	isPlanFulfilled = () => {},
+	isFreePlansDomainUpsellFulfilled = () => {},
+	isDomainFulfilled = () => {},
+	isSiteTypeFulfilled = () => {},
+	isSiteTopicFulfilled = () => {},
+	maybeRemoveStepForUserlessCheckout = () => {},
 } = {} ) {
 	return {
 		survey: {

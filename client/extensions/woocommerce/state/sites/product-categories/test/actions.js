@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +21,8 @@ import {
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
+	const noop = () => {};
+
 	describe( '#fetchProductCategories()', () => {
 		const siteId = '123';
 

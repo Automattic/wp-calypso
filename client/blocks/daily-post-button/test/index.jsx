@@ -7,7 +7,6 @@
  */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import pageSpy from 'page';
 import { parse } from 'qs';
 import React from 'react';
@@ -88,7 +87,7 @@ describe( 'DailyPostButton', () => {
 					markPostSeen={ markPostSeen }
 				/>
 			);
-			dailyPostButton.simulate( 'click', { preventDefault: noop } );
+			dailyPostButton.simulate( 'click', { preventDefault: () => {} } );
 			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
 		} );
 
@@ -107,7 +106,7 @@ describe( 'DailyPostButton', () => {
 			);
 			return new Promise( ( resolve ) => {
 				dailyPostButton.instance().renderSitesPopover = resolve;
-				dailyPostButton.simulate( 'click', { preventDefault: noop } );
+				dailyPostButton.simulate( 'click', { preventDefault: () => {} } );
 			} );
 		} );
 	} );

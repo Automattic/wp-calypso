@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { isUndefined, noop } from 'lodash';
+import { isUndefined } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -135,7 +135,7 @@ DashboardWidget.propTypes = {
 DashboardWidget.defaultProps = {
 	imagePosition: 'top',
 	imageFlush: false,
-	onSettingsClose: noop,
+	onSettingsClose: () => {},
 	width: 'full',
 };
 

@@ -1,10 +1,4 @@
 /**
- * External dependencies
- *
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -60,7 +54,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/rewind/credentials/delete', {
 		dispatchRequest( {
 			fetch: request,
 			onSuccess: success,
-			onError: noop,
+			onError: () => {},
 		} ),
 	],
 } );

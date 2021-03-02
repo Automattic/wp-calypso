@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { fetchSettingsGeneral } from '../actions';
@@ -49,7 +44,7 @@ describe( 'handlers', () => {
 			const dispatch = jest.fn();
 			const action = fetchSettingsGeneral( siteId );
 
-			handleSettingsGeneral( action, noop )( dispatch, getState );
+			handleSettingsGeneral( action, () => {} )( dispatch, getState );
 			expect( dispatch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					type: WPCOM_HTTP_REQUEST,

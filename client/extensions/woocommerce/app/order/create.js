@@ -3,7 +3,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { get, isEmpty, noop, omit } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import page from 'page';
@@ -86,7 +86,7 @@ class Order extends Component {
 			);
 		};
 
-		this.props.sendOrderInvoice( siteId, orderId, onSuccess, noop );
+		this.props.sendOrderInvoice( siteId, orderId, onSuccess, () => {} );
 	};
 
 	// Saves changes to the remote site via API

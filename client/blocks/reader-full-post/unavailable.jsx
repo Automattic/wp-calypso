@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { noop, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,7 +76,7 @@ ReaderFullPostUnavailable.propTypes = {
 };
 
 ReaderFullPostUnavailable.defaultProps = {
-	onBackClick: noop,
+	onBackClick: () => {},
 };
 
 export default localize( ReaderFullPostUnavailable );

@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import cookie from 'cookie';
-import { noop } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -113,8 +112,8 @@ GdprBanner.propTypes = {
 };
 
 GdprBanner.defaultProps = {
-	recordCookieBannerOk: noop,
-	recordCookieBannerView: noop,
+	recordCookieBannerOk: () => {},
+	recordCookieBannerView: () => {},
 };
 
 const mapDispatchToProps = {

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { AutoSizer, List } from '@automattic/react-virtualized';
-import { debounce, noop, range } from 'lodash';
+import { debounce, range } from 'lodash';
 
 export class VirtualList extends Component {
 	static propTypes = {
@@ -29,8 +29,8 @@ export class VirtualList extends Component {
 		items: [],
 		lastPage: 0,
 		loading: false,
-		getRowHeight: noop,
-		renderRow: noop,
+		getRowHeight: () => {},
+		renderRow: () => {},
 		perPage: 100,
 		loadOffset: 10,
 		query: {},

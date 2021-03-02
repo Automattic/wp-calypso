@@ -13,7 +13,6 @@ import {
 	isEmpty,
 	identity,
 	includes,
-	noop,
 	partial,
 	some,
 	values,
@@ -96,12 +95,12 @@ export class EditorMediaModal extends Component {
 
 	static defaultProps = {
 		visible: false,
-		onClose: noop,
+		onClose: () => {},
 		isBackdropVisible: true,
 		isParentReady: () => true,
 		labels: Object.freeze( {} ),
-		setView: noop,
-		resetView: noop,
+		setView: () => {},
+		resetView: () => {},
 		translate: identity,
 		view: ModalViews.LIST,
 		galleryViewEnabled: true,
@@ -109,8 +108,8 @@ export class EditorMediaModal extends Component {
 		deleteMedia: () => {},
 		disableLargeImageSources: false,
 		disabledDataSources: [],
-		onImageEditorDoneHook: noop,
-		onRestoreMediaHook: noop,
+		onImageEditorDoneHook: () => {},
+		onRestoreMediaHook: () => {},
 	};
 
 	constructor( props ) {

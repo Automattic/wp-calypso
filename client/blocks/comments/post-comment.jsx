@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, noop, some, flatMap } from 'lodash';
+import { get, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
@@ -91,12 +91,12 @@ class PostComment extends React.PureComponent {
 	};
 
 	static defaultProps = {
-		onReplyClick: noop,
+		onReplyClick: () => {},
 		errors: [],
 		depth: 1,
 		maxDepth: Infinity,
 		maxChildrenToShow: 5,
-		onCommentSubmit: noop,
+		onCommentSubmit: () => {},
 		showNestingReplyArrow: false,
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,

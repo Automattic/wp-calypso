@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -64,9 +63,9 @@ VideoEditorControls.propTypes = {
 VideoEditorControls.defaultProps = {
 	isPosterUpdating: false,
 	isVideoLoading: true,
-	onSelectFrame: noop,
-	onUploadImage: noop,
-	onUploadImageClick: noop,
+	onSelectFrame: () => {},
+	onUploadImage: () => {},
+	onUploadImageClick: () => {},
 };
 
 export default localize( VideoEditorControls );

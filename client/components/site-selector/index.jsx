@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
+import { filter, find, flow, get, includes, isEmpty } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -72,8 +72,8 @@ class SiteSelector extends Component {
 		indicator: false,
 		hideSelected: false,
 		selected: null,
-		onClose: noop,
-		onSiteSelect: noop,
+		onClose: () => {},
+		onSiteSelect: () => {},
 		groups: false,
 		autoFocus: false,
 	};

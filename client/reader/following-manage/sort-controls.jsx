@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,7 +17,7 @@ class FollowingManageSortControls extends React.Component {
 	};
 
 	static defaultProps = {
-		onSortChange: noop,
+		onSortChange: () => {},
 		sortOrder: 'date-followed',
 	};
 

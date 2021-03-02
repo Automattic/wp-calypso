@@ -1,9 +1,4 @@
 /**
- * External Dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
@@ -139,8 +134,8 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	[ JITM_DISMISS ]: [
 		dispatchRequest( {
 			fetch: doDismissJITM,
-			onSuccess: noop,
-			onError: noop,
+			onSuccess: () => {},
+			onError: () => {},
 		} ),
 	],
 } );

@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, noop, sortBy } from 'lodash';
+import { map, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,7 +24,7 @@ class EditorMediaModalGalleryEdit extends React.Component {
 
 	static defaultProps = {
 		settings: Object.freeze( {} ),
-		onUpdateSetting: noop,
+		onUpdateSetting: () => {},
 	};
 
 	onOrderChanged = ( order ) => {

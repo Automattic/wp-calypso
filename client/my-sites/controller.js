@@ -4,7 +4,7 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { get, noop, some, startsWith, uniq } from 'lodash';
+import { get, some, startsWith, uniq } from 'lodash';
 import { removeQueryArgs } from '@wordpress/url';
 
 /**
@@ -113,7 +113,7 @@ export function renderEmptySites( context ) {
 
 	context.primary = React.createElement( NoSitesMessage );
 
-	makeLayout( context, noop );
+	makeLayout( context, () => {} );
 	clientRender( context );
 }
 
@@ -150,7 +150,7 @@ export function renderNoVisibleSites( context ) {
 		secondaryActionURL: `${ onboardingUrl }?ref=calypso-nosites`,
 	} );
 
-	makeLayout( context, noop );
+	makeLayout( context, () => {} );
 	clientRender( context );
 }
 
@@ -159,7 +159,7 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 
 	reactContext.secondary = createNavigation( reactContext );
 
-	makeLayout( reactContext, noop );
+	makeLayout( reactContext, () => {} );
 	clientRender( reactContext );
 }
 

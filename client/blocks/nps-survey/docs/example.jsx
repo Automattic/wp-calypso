@@ -5,7 +5,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -81,7 +80,7 @@ class NpsSurveyExample extends PureComponent {
 						successNotice={ this.props.successNotice }
 						isBusinessUser={ this.state.isBusinessUser }
 						hasAvailableConciergeSession={ this.state.hasAvailableConciergeSession }
-						recordTracksEvent={ noop }
+						recordTracksEvent={ () => {} }
 					/>
 				) }
 				{ ! this.state.isClosed && this.renderOptions() }

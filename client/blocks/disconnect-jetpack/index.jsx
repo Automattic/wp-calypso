@@ -7,7 +7,6 @@ import React, { PureComponent } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,8 +62,8 @@ class DisconnectJetpack extends PureComponent {
 
 	static defaultProps = {
 		showTitle: true,
-		onDisconnectClick: noop,
-		onStayConnectedClick: noop,
+		onDisconnectClick: () => {},
+		onStayConnectedClick: () => {},
 	};
 
 	trackReadMoreClick = () => {

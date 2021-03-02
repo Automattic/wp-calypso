@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { throttle, constant, noop } from 'lodash';
+import { throttle, constant } from 'lodash';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
@@ -43,7 +43,7 @@ class ReaderFeaturedVideo extends React.Component {
 
 	static defaultProps = {
 		allowPlaying: true,
-		onThumbnailClick: noop,
+		onThumbnailClick: () => {},
 		className: '',
 	};
 

@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import PurchaseDetail from 'calypso/components/purchase-detail';
  */
 import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 
-export default localize( ( { isWpcomPlan, translate, link, onClick = noop } ) => {
+export default localize( ( { isWpcomPlan, translate, link, onClick = () => {} } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail

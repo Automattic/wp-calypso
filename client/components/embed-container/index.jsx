@@ -4,7 +4,7 @@
 
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
-import { assign, filter, forEach, forOwn, noop } from 'lodash';
+import { assign, filter, forEach, forOwn } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -115,12 +115,12 @@ function embedFacebook( domNode ) {
 		return;
 	}
 
-	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', noop );
+	loadAndRun( 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2', () => {} );
 }
 
 function embedReddit( domNode ) {
 	debug( 'processing reddit for ', domNode );
-	loadAndRun( 'https://embed.redditmedia.com/widgets/platform.js', noop );
+	loadAndRun( 'https://embed.redditmedia.com/widgets/platform.js', () => {} );
 }
 
 let tumblrLoader;

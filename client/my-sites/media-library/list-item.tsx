@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEqual, noop } from 'lodash';
+import { isEqual } from 'lodash';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -49,8 +49,8 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 	static defaultProps = {
 		maxImageWidth: 450,
 		selectedIndex: -1,
-		onToggle: noop,
-		onEditItem: noop,
+		onToggle: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+		onEditItem: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	};
 
 	shouldComponentUpdate( nextProps: Props ) {

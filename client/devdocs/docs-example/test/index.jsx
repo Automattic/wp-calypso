@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -27,7 +26,7 @@ describe( 'DocsExample', () => {
 	} );
 
 	test( 'should render the toggle button', () => {
-		const propsWithToggle = { ...props, toggleHandler: noop, toggleText: 'My Test Example' };
+		const propsWithToggle = { ...props, toggleHandler: () => {}, toggleText: 'My Test Example' };
 		const docsExample = shallow(
 			<DocsExample { ...propsWithToggle }>{ childrenFixture }</DocsExample>
 		);
@@ -38,7 +37,7 @@ describe( 'DocsExample', () => {
 
 describe( 'DocsExampleToggle', () => {
 	const props = {
-		onClick: noop,
+		onClick: () => {},
 		text: 'Toggle me baby!',
 	};
 

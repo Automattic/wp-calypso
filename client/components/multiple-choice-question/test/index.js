@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import React from 'react';
 import renderer from 'react-test-renderer';
 
@@ -22,7 +21,7 @@ describe( 'MultipleChoiceQuestion', () => {
 						{ id: 'test-answer-3', answerText: 'Test Answer Three', doNotShuffle: true },
 						{ id: 'test-answer-4', answerText: 'Test Answer Four', doNotShuffle: true },
 					] }
-					onAnswerChange={ noop }
+					onAnswerChange={ () => {} }
 				/>
 			)
 			.toJSON();

@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { assign, findIndex, fromPairs, noop } from 'lodash';
+import { assign, findIndex, fromPairs } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import Gridicon from 'calypso/components/gridicon';
@@ -32,7 +32,7 @@ class SortableList extends React.Component {
 	static defaultProps = {
 		direction: 'horizontal',
 		allowDrag: true,
-		onChange: noop,
+		onChange: () => {},
 	};
 
 	state = {

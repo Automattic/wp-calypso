@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -40,8 +39,8 @@ class FoldableCard extends Component {
 	};
 
 	static defaultProps = {
-		onOpen: noop,
-		onClose: noop,
+		onOpen: () => {},
+		onClose: () => {},
 		cardKey: '',
 		icon: 'chevron-down',
 		expanded: false,

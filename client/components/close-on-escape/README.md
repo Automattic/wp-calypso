@@ -43,7 +43,7 @@ function render() {
 <table>
 	<tr><td>Type</td><td>function</td></tr>
 	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>noop</code></td></tr>
+	<tr><td>Default</td><td><code>() => {}</code></td></tr>
 </table>
 
 The function to be called when <kbd>esc</kbd> is pressed.

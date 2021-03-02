@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -60,6 +59,7 @@ describe( 'PurchaseDetail', () => {
 	} );
 
 	test( 'should render a <PurchaseButton> with given info unless the body text is passed', () => {
+		const noop = () => {};
 		const buttonProps = {
 			isSubmitting: false,
 			href: 'https://wordpress.com/test/url',

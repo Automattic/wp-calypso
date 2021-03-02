@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { identity, noop, sample } from 'lodash';
+import { identity, sample } from 'lodash';
 import store from 'store';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -219,7 +219,7 @@ export class AppPromo extends React.Component {
 
 AppPromo.defaultProps = {
 	translate: identity,
-	recordTracksEvent: noop,
+	recordTracksEvent: () => {},
 	saveDismissal: () => store.set( 'desktop_promo_disabled', true ),
 	getPromoLink,
 };

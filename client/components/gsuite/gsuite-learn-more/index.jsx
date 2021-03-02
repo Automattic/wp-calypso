@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -55,7 +54,7 @@ GSuiteLearnMore.propTypes = {
 };
 
 GSuiteLearnMore.defaultProps = {
-	onLearnMoreClick: noop,
+	onLearnMoreClick: () => {},
 };
 
 export default GSuiteLearnMore;

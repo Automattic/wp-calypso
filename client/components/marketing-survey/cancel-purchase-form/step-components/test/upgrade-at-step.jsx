@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import { stub } from 'sinon';
 
@@ -23,7 +22,7 @@ describe( 'UpgradeATStep', () => {
 		beforeEach( () => {
 			wrapper = shallow(
 				<UpgradeATStep
-					recordTracksEvent={ noop }
+					recordTracksEvent={ () => {} }
 					translate={ translate }
 					selectedSite={ selectedSite }
 				/>
@@ -52,7 +51,11 @@ describe( 'UpgradeATStep', () => {
 
 	test( 'should render button with link to business plan checkout', () => {
 		const wrapper = shallow(
-			<UpgradeATStep recordTracksEvent={ noop } translate={ noop } selectedSite={ selectedSite } />
+			<UpgradeATStep
+				recordTracksEvent={ () => {} }
+				translate={ () => {} }
+				selectedSite={ selectedSite }
+			/>
 		);
 
 		expect( wrapper.find( Button ).props().href ).to.equal(
@@ -65,7 +68,7 @@ describe( 'UpgradeATStep', () => {
 		const wrapper = shallow(
 			<UpgradeATStep
 				recordTracksEvent={ recordTracksEvent }
-				translate={ noop }
+				translate={ () => {} }
 				selectedSite={ selectedSite }
 			/>
 		);

@@ -7,7 +7,6 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +30,7 @@ function getMediaContent( props ) {
 	return shallow(
 		<MediaLibraryContent
 			mediaValidationErrorTypes={ [] }
-			translate={ noop }
+			translate={ () => {} }
 			site={ { ID: 1 } }
 			{ ...props }
 		/>

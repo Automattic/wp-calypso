@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import React, { useEffect, useState } from 'react';
 
 /**
@@ -25,7 +24,7 @@ export default function SignupSitePreviewScreenshot( {
 	setWrapperHeight,
 	scrolling,
 	screenshotUrl,
-	onPreviewClick = noop,
+	onPreviewClick = () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 	translate,
 }: Props ) {
 	const [ isLoading, setIsLoading ] = useState( true );

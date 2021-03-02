@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { startsWith, noop, get } from 'lodash';
+import { startsWith, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
@@ -119,7 +119,7 @@ ReaderAvatar.propTypes = {
 };
 
 ReaderAvatar.defaultProps = {
-	onClick: noop,
+	onClick: () => {},
 };
 
 export default localize( ReaderAvatar );

@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
-import { noop } from 'lodash';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 
 /**
@@ -126,7 +125,8 @@ const ThreatItem: React.FC< Props > = ( {
 			? { section: currentRoute.includes( '/scan/history' ) ? 'History' : 'Scanner' }
 			: {};
 	}, [ currentRoute ] );
-	const onOpenTrackEvent = useTrackCallback( noop, 'calypso_jetpack_scan_threat_itemtoggle', {
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	const onOpenTrackEvent = useTrackCallback( () => {}, 'calypso_jetpack_scan_threat_itemtoggle', {
 		threat_signature: threat.signature,
 		...currentRouteProp,
 	} );
@@ -177,6 +177,7 @@ const ThreatItem: React.FC< Props > = ( {
 						target="_blank"
 						rel="noopener noreferrer"
 						tracksEventName="calypso_jetpack_scan_threat_codeable_estimate"
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
 						onClick={ () => {} }
 					>
 						{ translate( 'Get a free estimate' ) }

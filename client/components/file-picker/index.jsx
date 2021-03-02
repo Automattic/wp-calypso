@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { assign, noop } from 'lodash';
+import { assign } from 'lodash';
 import pick from 'component-file-picker';
 
 export default class FilePicker extends React.Component {
@@ -41,6 +41,6 @@ FilePicker.defaultProps = {
 	multiple: false,
 	directory: false,
 	accept: null,
-	onClick: noop,
-	onPick: noop,
+	onClick: () => {},
+	onPick: () => {},
 };

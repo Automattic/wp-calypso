@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -60,7 +59,7 @@ ReaderFeaturedImage.propTypes = {
 };
 
 ReaderFeaturedImage.defaultProps = {
-	onClick: noop,
+	onClick: () => {},
 	imageWidth: 250,
 };
 

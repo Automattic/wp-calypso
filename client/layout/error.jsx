@@ -3,7 +3,6 @@
  */
 import debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -48,6 +47,6 @@ export function show( context, chunkName ) {
 	bumpStat( 'calypso_chunk_error', chunkName );
 	context.store.dispatch( setSection( false, { section: false } ) );
 	context.primary = <LoadingErrorMessage />;
-	makeLayout( context, noop );
+	makeLayout( context, () => {} );
 	clientRender( context );
 }

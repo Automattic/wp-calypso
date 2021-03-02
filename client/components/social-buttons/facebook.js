@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ class FacebookLoginButton extends Component {
 		status: false,
 		xfbml: true,
 		scope: 'public_profile,email',
-		onClick: noop,
+		onClick: () => {},
 	};
 
 	constructor( props ) {

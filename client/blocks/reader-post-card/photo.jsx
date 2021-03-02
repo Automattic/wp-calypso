@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, debounce } from 'lodash';
+import { debounce } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -150,7 +150,7 @@ PostPhoto.propTypes = {
 };
 
 PostPhoto.defaultProps = {
-	onClick: noop,
+	onClick: () => {},
 };
 
 export default PostPhoto;

@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -194,7 +193,7 @@ PostCommentForm.propTypes = {
 };
 
 PostCommentForm.defaultProps = {
-	onCommentSubmit: noop,
+	onCommentSubmit: () => {},
 };
 
 const mapDispatchToProps = ( dispatch ) => bindActionCreators( { editComment }, dispatch );

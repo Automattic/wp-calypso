@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, map, max, min, noop } from 'lodash';
+import { get, head, map, max, min } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -74,7 +74,7 @@ export class TitleFormatEditor extends Component {
 			new CompositeDecorator( [
 				{
 					strategy: this.renderTokens,
-					component: Chip( disabled ? noop : this.removeToken ),
+					component: Chip( disabled ? () => {} : this.removeToken ),
 				},
 			] )
 		);
@@ -247,7 +247,7 @@ export class TitleFormatEditor extends Component {
 						<span
 							key={ name }
 							className="title-format-editor__button"
-							onClick={ disabled ? noop : this.addToken( title, name ) }
+							onClick={ disabled ? () => {} : this.addToken( title, name ) }
 						>
 							{ title }
 						</span>
@@ -258,7 +258,7 @@ export class TitleFormatEditor extends Component {
 					<Editor
 						readOnly={ disabled }
 						editorState={ editorState }
-						onChange={ disabled ? noop : this.updateEditor }
+						onChange={ disabled ? () => {} : this.updateEditor }
 						placeholder={ placeholder }
 						ref={ this.storeEditorReference }
 					/>

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +22,7 @@ export class BusinessATStep extends Component {
 	};
 
 	static defaultProps = {
-		translate: noop,
+		translate: () => {},
 	};
 
 	onClickPluginSupport = () => {

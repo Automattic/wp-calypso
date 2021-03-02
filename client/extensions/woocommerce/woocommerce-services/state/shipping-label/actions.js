@@ -15,7 +15,6 @@ import {
 	isBoolean,
 	isEqual,
 	map,
-	noop,
 	pick,
 	sumBy,
 	uniqBy,
@@ -727,7 +726,7 @@ const handleLabelPurchaseError = ( orderId, siteId, dispatch, getState, error ) 
 	dispatch( NoticeActions.errorNotice( error.toString() ) );
 	//re-request the rates on failure to avoid attempting repurchase of the same shipment id
 	dispatch( clearAvailableRates( orderId, siteId ) );
-	tryGetLabelRates( orderId, siteId, dispatch, getState, noop );
+	tryGetLabelRates( orderId, siteId, dispatch, getState, () => {} );
 };
 
 const getPDFFileName = ( orderId, isReprint = false ) => {

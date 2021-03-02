@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -114,7 +113,7 @@ registerHandlers( 'state/data-layer/wpcom/wordads/settings/index.js', {
 		dispatchRequest( {
 			fetch: requestWordadsSettings,
 			onSuccess: receiveWordadsSettings,
-			onError: noop,
+			onError: () => {},
 			fromApi,
 		} ),
 	],

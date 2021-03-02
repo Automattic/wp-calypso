@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,12 +32,12 @@ class JetpackConnectSiteUrlInput extends Component {
 
 	static defaultProps = {
 		candidateSites: [],
-		onChange: noop,
+		onChange: () => {},
 		url: '',
 		autoFocus: true,
 	};
 
-	focusInput = noop;
+	focusInput = () => {};
 
 	refInput = ( formInputComponent ) => {
 		this.focusInput = () => formInputComponent.focus();

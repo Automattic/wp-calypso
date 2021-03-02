@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 import { CompactCard } from '@automattic/components';
 
@@ -16,7 +15,7 @@ class AccountSettingsCloseLink extends React.Component {
 	render() {
 		const { translate } = this.props;
 		const href = '/me/account/close';
-		const onClick = noop;
+		const onClick = () => {};
 		return (
 			<CompactCard href={ href } onClick={ onClick } className="account__settings-close">
 				<div>

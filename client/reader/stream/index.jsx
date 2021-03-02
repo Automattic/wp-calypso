@@ -5,7 +5,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { findLast, noop, times } from 'lodash';
+import { findLast, times } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -87,7 +87,7 @@ class ReaderStream extends React.Component {
 		showPostHeader: true,
 		suppressSiteNameLink: false,
 		showFollowInHeader: false,
-		onUpdatesShown: noop,
+		onUpdatesShown: () => {},
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
 		showPrimaryFollowButtonOnCards: true,

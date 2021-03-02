@@ -7,7 +7,7 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,12 +30,12 @@ describe( '<SiteStyleStep />', () => {
 		],
 		siteStyle: 'default',
 		siteType: 'professional',
-		setSiteStyle: noop,
-		submitSiteStyle: noop,
-		submitSignupStep: noop,
-		saveSignupStep: noop,
-		goToNextStep: noop,
-		recordTracksEvent: noop,
+		setSiteStyle: () => {},
+		submitSiteStyle: () => {},
+		submitSignupStep: () => {},
+		saveSignupStep: () => {},
+		goToNextStep: () => {},
+		recordTracksEvent: () => {},
 		translate: identity,
 	};
 
@@ -64,7 +64,7 @@ describe( '<SiteStyleStep />', () => {
 	test( 'should call `submitSiteStyle()` from `handleSubmit()`', () => {
 		const wrapper = shallow( <SiteStyleStep { ...defaultProps } siteStyle="eyesore" /> );
 		const submitSiteStyle = jest.spyOn( wrapper.instance(), 'submitSiteStyle' );
-		wrapper.instance().handleSubmit( { preventDefault: noop } );
+		wrapper.instance().handleSubmit( { preventDefault: () => {} } );
 		expect( submitSiteStyle ).toHaveBeenCalledWith( 'eyesore', 'pub/hipster', 'nicer' );
 	} );
 
@@ -78,7 +78,7 @@ describe( '<SiteStyleStep />', () => {
 		expect( firstInputField.props.checked ).toBe( true );
 
 		const submitSiteStyle = jest.spyOn( wrapper.instance(), 'submitSiteStyle' );
-		wrapper.instance().handleSubmit( { preventDefault: noop } );
+		wrapper.instance().handleSubmit( { preventDefault: () => {} } );
 		// check that we pass the default site option onSubmit
 		expect( submitSiteStyle ).toHaveBeenCalledWith(
 			defaultProps.styleOptions[ 0 ].id,

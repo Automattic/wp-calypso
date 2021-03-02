@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -36,7 +30,7 @@ export const handleMailchimpListsList = dispatchRequest( {
 		siteId,
 		lists,
 	} ),
-	onError: noop,
+	onError: () => {},
 } );
 
 export const handleMailchimpSettingsList = dispatchRequest( {
@@ -56,7 +50,7 @@ export const handleMailchimpSettingsList = dispatchRequest( {
 		siteId,
 		settings,
 	} ),
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers(

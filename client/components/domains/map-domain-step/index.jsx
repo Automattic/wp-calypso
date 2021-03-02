@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes, noop, get } from 'lodash';
+import { includes, get } from 'lodash';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@automattic/components';
 
@@ -52,7 +52,7 @@ class MapDomainStep extends React.Component {
 	};
 
 	static defaultProps = {
-		onSave: noop,
+		onSave: () => {},
 		initialQuery: '',
 	};
 

@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +34,7 @@ class FormDimensionsInput extends Component {
 	static defaultProps = {
 		value: '',
 		className: '',
-		onChange: noop,
+		onChange: () => {},
 		noWrap: false,
 	};
 

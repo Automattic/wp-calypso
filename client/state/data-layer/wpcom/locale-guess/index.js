@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -45,7 +40,7 @@ export const addLocaleSuggestions = ( action, data ) => receiveLocaleSuggestions
 export const dispatchPlansRequest = dispatchRequest( {
 	fetch: fetchLocaleSuggestions,
 	onSuccess: addLocaleSuggestions,
-	onError: noop,
+	onError: () => {},
 } );
 
 registerHandlers( 'state/data-layer/wpcom/locale-guess/index.js', {

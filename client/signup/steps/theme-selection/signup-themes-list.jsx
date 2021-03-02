@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -31,7 +31,7 @@ class SignupThemesList extends Component {
 		surveyQuestion: null,
 		designType: null,
 		quantity: 3,
-		handleScreenshotClick: noop,
+		handleScreenshotClick: () => {},
 		translate: identity,
 	};
 
@@ -65,9 +65,9 @@ class SignupThemesList extends Component {
 		return (
 			<div className="signup-themes-list">
 				<ThemesList
-					getButtonOptions={ noop }
+					getButtonOptions={ () => {} }
 					onScreenshotClick={ this.props.handleScreenshotClick }
-					onMoreButtonClick={ noop }
+					onMoreButtonClick={ () => {} }
 					getActionLabel={ getActionLabel }
 					themes={ themes }
 				/>

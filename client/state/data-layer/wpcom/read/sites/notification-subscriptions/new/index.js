@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'calypso/state/reader/action-types';
@@ -52,7 +47,7 @@ registerHandlers( 'state/data-layer/wpcom/read/sites/notification-subscriptions/
 	[ READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: [
 		dispatchRequest( {
 			fetch: requestNotificationSubscription,
-			onSuccess: noop,
+			onSuccess: () => {},
 			onError: receiveNotificationSubscriptionError,
 			fromApi,
 		} ),

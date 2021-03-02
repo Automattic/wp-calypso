@@ -1,9 +1,4 @@
 /**
- * External Dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal Dependencies
  */
 import { READER_RECOMMENDED_SITES_REQUEST } from 'calypso/state/reader/action-types';
@@ -44,7 +39,7 @@ registerHandlers( 'state/data-layer/wpcom/read/recommendations/sites/index.js', 
 		dispatchRequest( {
 			fetch: requestRecommendedSites,
 			onSuccess: addRecommendedSites,
-			onError: noop,
+			onError: () => {},
 			fromApi,
 		} ),
 	],

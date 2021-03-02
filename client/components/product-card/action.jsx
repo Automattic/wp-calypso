@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +33,7 @@ ProductCardAction.propTypes = {
 
 ProductCardAction.defaultProps = {
 	href: null,
-	onClick: noop,
+	onClick: () => {},
 	primary: true,
 };
 

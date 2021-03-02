@@ -7,7 +7,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { isNumber, noop, trim } from 'lodash';
+import { isNumber, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -82,7 +82,7 @@ export class NpsSurvey extends PureComponent {
 		if ( ! this.props.hasAnswered ) {
 			this.props.submitNpsSurveyWithNoScore( this.props.name );
 		}
-		this.onClose( noop );
+		this.onClose( () => {} );
 	};
 
 	handleTextBoxChange = ( event ) => {
@@ -107,7 +107,7 @@ export class NpsSurvey extends PureComponent {
 	};
 
 	handlePromotionClose = () => {
-		this.onClose( noop );
+		this.onClose( () => {} );
 	};
 
 	handleLinkClick = ( event ) => {
@@ -115,7 +115,7 @@ export class NpsSurvey extends PureComponent {
 			url: event.target.href,
 			type: event.target.dataset.type,
 		} );
-		this.onClose( noop );
+		this.onClose( () => {} );
 	};
 
 	showThanksNotice = () => {

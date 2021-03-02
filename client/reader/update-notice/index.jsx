@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop, filter, get, flatMap } from 'lodash';
+import { filter, get, flatMap } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -29,7 +29,7 @@ class UpdateNotice extends React.PureComponent {
 		cappedUnreadCount: PropTypes.string,
 	};
 
-	static defaultProps = { onClick: noop };
+	static defaultProps = { onClick: () => {} };
 
 	render() {
 		const { count, cappedUnreadCount, translate } = this.props;

@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-import { noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -28,7 +27,7 @@ class SitePicker extends React.Component {
 	};
 
 	static defaultProps = {
-		onClose: noop,
+		onClose: () => {},
 	};
 
 	state = {

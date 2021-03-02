@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
-import { get, noop, pick } from 'lodash';
+import { get, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -75,7 +75,7 @@ export class CommentEdit extends Component {
 
 	setAuthorUrlValue = ( event ) => this.setState( { authorUrl: event.target.value } );
 
-	setCommentContentValue = ( event, callback = noop ) =>
+	setCommentContentValue = ( event, callback = () => {} ) =>
 		this.setState( { commentContent: event.target.value }, callback );
 
 	setCommentDateValue = ( commentDate ) =>

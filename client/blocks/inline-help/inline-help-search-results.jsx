@@ -3,7 +3,7 @@
  */
 import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { debounce, identity, isEmpty, noop } from 'lodash';
+import { debounce, identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -53,7 +53,7 @@ function HelpSearchResults( {
 	hasPurchases,
 	isSearching = false,
 	onSelect,
-	onAdminSectionSelect = noop,
+	onAdminSectionSelect = () => {},
 	searchQuery = '',
 	searchResults = [],
 	sectionName,

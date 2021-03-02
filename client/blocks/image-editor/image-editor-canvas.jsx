@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -58,9 +58,9 @@ export class ImageEditorCanvas extends Component {
 			cropWidthRatio: 1,
 			cropHeightRatio: 1,
 		},
-		setImageEditorCropBounds: noop,
-		setImageEditorImageHasLoaded: noop,
-		onLoadError: noop,
+		setImageEditorCropBounds: () => {},
+		setImageEditorImageHasLoaded: () => {},
+		onLoadError: () => {},
 		isImageLoaded: false,
 		showCrop: true,
 	};

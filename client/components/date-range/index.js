@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop, has } from 'lodash';
+import { has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -61,8 +61,8 @@ export class DateRange extends Component {
 	};
 
 	static defaultProps = {
-		onDateSelect: noop,
-		onDateCommit: noop,
+		onDateSelect: () => {},
+		onDateCommit: () => {},
 		isCompact: false,
 		focusedMonth: null,
 		showTriggerClear: true,

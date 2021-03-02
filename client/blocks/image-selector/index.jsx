@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,7 +46,7 @@ export class ImageSelector extends Component {
 		compact: false,
 		isDropZoneVisible: false,
 		maxWidth: 450,
-		onAddImage: noop,
+		onAddImage: () => {},
 	};
 
 	state = {

@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
+import { map, zipObject, fill, size, filter, get, compact, partition, min } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,7 +68,7 @@ export class ConversationCommentList extends React.Component {
 	static defaultProps = {
 		enableCaterpillar: true,
 		shouldRequestComments: true,
-		setActiveReply: noop,
+		setActiveReply: () => {},
 	};
 
 	state = {

@@ -7,7 +7,6 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
@@ -44,19 +43,19 @@ describe( 'EditGravatar', () => {
 
 	describe( 'component rendering', () => {
 		test( 'displays a Gravatar', () => {
-			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
+			const wrapper = shallow( <EditGravatar translate={ () => {} } user={ user } /> );
 			expect( wrapper.find( Gravatar ).length ).to.equal( 1 );
 		} );
 
 		test( 'contains a file picker that accepts images', () => {
-			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
+			const wrapper = shallow( <EditGravatar translate={ () => {} } user={ user } /> );
 			const filePicker = wrapper.find( FilePicker );
 			expect( filePicker.length ).to.equal( 1 );
 			expect( filePicker.prop( 'accept' ) ).to.equal( 'image/*' );
 		} );
 
 		test( 'does not display the image editor by default', () => {
-			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
+			const wrapper = shallow( <EditGravatar translate={ () => {} } user={ user } /> );
 			expect( wrapper.find( ImageEditor ).length ).to.equal( 0 );
 		} );
 
@@ -64,7 +63,7 @@ describe( 'EditGravatar', () => {
 			test( 'does not contain a drop zone for unverified users', () => {
 				const wrapper = shallow(
 					<EditGravatar
-						translate={ noop }
+						translate={ () => {} }
 						user={ {
 							email_verified: false,
 						} }
@@ -76,7 +75,7 @@ describe( 'EditGravatar', () => {
 			test( 'contains a drop zone for verified users', () => {
 				const wrapper = shallow(
 					<EditGravatar
-						translate={ noop }
+						translate={ () => {} }
 						user={ {
 							email_verified: true,
 						} }
@@ -91,7 +90,7 @@ describe( 'EditGravatar', () => {
 		describe( 'accepted file type', () => {
 			test( 'displays the image editor with square allowed aspect ratio', () => {
 				const wrapper = shallow(
-					<EditGravatar translate={ noop } user={ user } recordReceiveImageEvent={ noop } />
+					<EditGravatar translate={ () => {} } user={ user } recordReceiveImageEvent={ () => {} } />
 				);
 				const files = [
 					{
@@ -115,9 +114,9 @@ describe( 'EditGravatar', () => {
 				const wrapper = shallow(
 					<EditGravatar
 						receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
-						translate={ noop }
+						translate={ () => {} }
 						user={ user }
-						recordReceiveImageEvent={ noop }
+						recordReceiveImageEvent={ () => {} }
 					/>
 				);
 				const files = [
@@ -136,7 +135,7 @@ describe( 'EditGravatar', () => {
 
 	describe( 'after editing image', () => {
 		const imageEditorProps = {
-			resetAllImageEditorState: noop,
+			resetAllImageEditorState: () => {},
 		};
 		const files = [
 			{
@@ -150,11 +149,11 @@ describe( 'EditGravatar', () => {
 			const wrapper = shallow(
 				<EditGravatar
 					receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
-					resetAllImageEditorState={ noop }
-					translate={ noop }
+					resetAllImageEditorState={ () => {} }
+					translate={ () => {} }
 					uploadGravatar={ uploadGravatarSpy }
 					user={ user }
-					recordReceiveImageEvent={ noop }
+					recordReceiveImageEvent={ () => {} }
 				/>
 			);
 
@@ -173,11 +172,11 @@ describe( 'EditGravatar', () => {
 			const wrapper = shallow(
 				<EditGravatar
 					receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
-					resetAllImageEditorState={ noop }
-					translate={ noop }
+					resetAllImageEditorState={ () => {} }
+					translate={ () => {} }
 					uploadGravatar={ uploadGravatarSpy }
 					user={ user }
-					recordReceiveImageEvent={ noop }
+					recordReceiveImageEvent={ () => {} }
 				/>
 			);
 
@@ -193,7 +192,7 @@ describe( 'EditGravatar', () => {
 	describe( 'unverified user', () => {
 		test( 'shows email verification dialog when clicked', () => {
 			const wrapper = shallow(
-				<EditGravatar translate={ noop } user={ user } recordClickButtonEvent={ noop } />
+				<EditGravatar translate={ () => {} } user={ user } recordClickButtonEvent={ () => {} } />
 			);
 			// Enzyme requires simulate() to be called directly on the element with the click handler
 			const clickableWrapper = wrapper.find( '.edit-gravatar > div' ).first();
