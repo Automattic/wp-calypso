@@ -13,6 +13,9 @@ import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 export default function () {
 	const lang = getLanguageRouteParam();
 
+	// Temporary Experiment testing the new ExPlat client
+	loadExperimentAssignment('explat_test_aa_calypso_signup')
+
 	page(
 		[
 			`/start/${ lang }`,

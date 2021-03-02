@@ -36,6 +36,7 @@ import { getTask } from './get-task';
  * Style dependencies
  */
 import './style.scss';
+import { useExperiment } from 'calypso/lib/explat';
 
 const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
 	dispatch(
@@ -113,6 +114,9 @@ const SiteSetupList = ( {
 	taskUrls,
 	userEmail,
 } ) => {
+	// Temporary Experiment testing the new ExPlat client
+	useExperiment('explat_test_aa_calypso_boot')
+
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
 	const [ taskIsManuallySelected, setTaskIsManuallySelected ] = useState( false );
