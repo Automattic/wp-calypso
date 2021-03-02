@@ -33,6 +33,7 @@ import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
+import FoldableFAQ from 'calypso/components/foldable-faq';
 
 class MappedDomainType extends React.Component {
 	renderSettingUpNameservers() {
@@ -50,6 +51,7 @@ class MappedDomainType extends React.Component {
 		);
 		let primaryMessage;
 		let secondaryMessage;
+		let thirdMessage;
 
 		if ( isSubdomain( domain.name ) ) {
 			primaryMessage = translate(
@@ -83,19 +85,36 @@ class MappedDomainType extends React.Component {
 					args: { domainName: domain.name },
 				}
 			);
+
+			if ( domain.aRecordsRequiredForMapping ) {
+				thirdMessage = (
+					<FoldableFAQ id="advanced-mapping-setup" question="Advanced setup using root A records">
+						<p>Use this to set it up:</p>
+						<ul>
+							{ domain.aRecordsRequiredForMapping.map( ( aRecord, index ) => {
+								return <li key={ index }>{ aRecord }</li>;
+							} ) }
+						</ul>
+					</FoldableFAQ>
+				);
+			}
 		}
 
 		return (
 			<React.Fragment>
 				<div>
-					<p>{ primaryMessage }</p>
-					{ ! isSubdomain( domain.name ) && (
-						<ul className="mapped-domain-type__name-server-list">
-							{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
-								return <li key={ nameServer }>{ nameServer }</li>;
-							} ) }
-						</ul>
-					) }
+					<p>Use these instructions to set up your domain mapping.</p>
+					<FoldableFAQ id="recommended-mapping-setup" question="Recommended setup" expanded>
+						<p>{ primaryMessage }</p>
+						{ ! isSubdomain( domain.name ) && (
+							<ul className="mapped-domain-type__name-server-list">
+								{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
+									return <li key={ nameServer }>{ nameServer }</li>;
+								} ) }
+							</ul>
+						) }
+					</FoldableFAQ>
+					{ thirdMessage }
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</React.Fragment>
