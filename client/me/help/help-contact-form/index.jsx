@@ -474,6 +474,7 @@ export class HelpContactForm extends React.PureComponent {
 						helpLinks={ this.state.qanda }
 						iconTypeDescription="book"
 						onClick={ this.trackSibylClick }
+						isSibyl
 					/>
 				) }
 
