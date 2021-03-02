@@ -44,14 +44,10 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-// Tracking issue:
-// https://github.com/Automattic/wp-calypso/issues/50547
-// Potential issue that trigger this failure:
-// https://github.com/Automattic/wp-calypso/issues/50273
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe.only( 'Launch a free site', function () {
+	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
 		console.log( siteName );
 
@@ -71,10 +67,13 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		after( 'Delete the newly created account', async function () {
 			const deleteSite = new DeleteSiteFlow( driver );
 			return await deleteSite.deleteSite( siteName + '.wordpress.com' );
-			// return await new DeleteAccountFlow( driver ).deleteAccount( accountName );
 		} );
 	} );
 
+	// Tracking issue:
+	// https://github.com/Automattic/wp-calypso/issues/50547
+	// Potential issue that trigger this failure:
+	// https://github.com/Automattic/wp-calypso/issues/50273
 	describe.skip( 'Launch when having multiple sites', function () {
 		const accountName = dataHelper.getNewBlogName();
 		const firstSiteName = dataHelper.getNewBlogName();
