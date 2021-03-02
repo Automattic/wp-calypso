@@ -7,7 +7,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { every, includes, isArray, keys, reduce, some } from 'lodash';
+import { every, includes, keys, reduce, some } from 'lodash';
 import store from 'store';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -133,7 +133,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 			// Allow any locales.
 			this.localeTargets = false;
 		} else if (
-			isArray( testConfig.localeTargets ) &&
+			Array.isArray( testConfig.localeTargets ) &&
 			every( testConfig.localeTargets, langSlugIsValid )
 		) {
 			// Allow specific locales.
@@ -148,7 +148,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 	this.localeExceptions = false;
 	if (
 		testConfig.localeExceptions &&
-		isArray( testConfig.localeExceptions ) &&
+		Array.isArray( testConfig.localeExceptions ) &&
 		every( testConfig.localeExceptions, langSlugIsValid )
 	) {
 		this.localeExceptions = testConfig.localeExceptions;

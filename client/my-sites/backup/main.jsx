@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import page from 'page';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -145,7 +144,7 @@ const BackupStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
 
-	if ( ! isArray( rewindCapabilities ) ) {
+	if ( ! Array.isArray( rewindCapabilities ) ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
 	}
 

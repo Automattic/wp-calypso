@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,7 +53,11 @@ class PaymentMethodEdit extends Component {
 
 	renderEditField = ( editField ) => {
 		const { method } = this.props;
-		if ( method.fields && isArray( method.fields ) && method.fields.indexOf( editField ) < 0 ) {
+		if (
+			method.fields &&
+			Array.isArray( method.fields ) &&
+			method.fields.indexOf( editField ) < 0
+		) {
 			return;
 		}
 		const setting = method.settings[ editField ];

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, mergeWith, union, isString } from 'lodash';
+import { capitalize, compact, isEmpty, mergeWith, union, isString } from 'lodash';
 import i18n from 'i18n-calypso';
 import { isValidPostalCode } from 'calypso/lib/postal-code';
 
@@ -177,7 +177,7 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
  */
 export function mergeValidationRules( ...rulesets ) {
 	return mergeWith( {}, ...rulesets, ( objValue, srcValue ) =>
-		isArray( objValue ) && isArray( srcValue ) ? union( objValue, srcValue ) : undefined
+		Array.isArray( objValue ) && Array.isArray( srcValue ) ? union( objValue, srcValue ) : undefined
 	);
 }
 
@@ -446,7 +446,7 @@ function getConditionalCreditCardRules( { country } ) {
 }
 
 function getValidator( rule ) {
-	if ( isArray( rule ) ) {
+	if ( Array.isArray( rule ) ) {
 		return validators[ rule[ 0 ] ].apply( null, rule.slice( 1 ) );
 	}
 

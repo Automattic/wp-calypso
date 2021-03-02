@@ -7,17 +7,9 @@
 	height: 51px; // same as .search
 	z-index: z-index( 'root', '.search' );
 
-	// Move the filter so its "inside" the
-	// search input
-	body.is-section-signup & {
-		position: absolute;
-		top: 0;
-		right: 0;
-	}
-
 	.button {
 		align-items: center;
-		border-radius: 0 3px 3px 0;
+		border-radius: 0 3px 3px 0; /* stylelint-disable-line */
 		display: flex;
 		flex-direction: column;
 		font-weight: normal;

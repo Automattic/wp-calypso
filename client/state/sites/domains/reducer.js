@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find, indexOf } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ import { itemsSchema } from './schema';
  * Returns a copy of the domains state object with some modifications
  *
  * @param {object} state - current state
- * @param {int} siteId - site ID
+ * @param {number} siteId - site ID
  * @param {string} domain - domain name
  * @param {object} modifyDomainProperties - object with modified site domain properties
  * @returns {any} - new copy of the state
@@ -40,7 +40,7 @@ import { itemsSchema } from './schema';
 const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainProperties ) => {
 	// Find the domain we want to update
 	const targetDomain = find( state[ siteId ], { domain: domain } );
-	const domainIndex = indexOf( state[ siteId ], targetDomain );
+	const domainIndex = state[ siteId ].indexOf( targetDomain );
 	// Copy as we shouldn't mutate original state
 	const newDomains = [ ...state[ siteId ] ];
 	// Update privacy

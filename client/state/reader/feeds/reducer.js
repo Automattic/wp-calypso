@@ -15,16 +15,10 @@ import {
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
-import { SERIALIZE } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { itemsSchema } from './schema';
 import { safeLink } from 'calypso/lib/post-normalizer/utils';
-
-function handleSerialize( state ) {
-	// remove errors from the serialized state
-	return omitBy( state, 'is_error' );
-}
 
 function handleRequestFailure( state, action ) {
 	// new object precedes current state to prevent new errors from overwriting existing values
@@ -68,10 +62,8 @@ function handleFeedUpdate( state, action ) {
 	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
 }
 
-export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
+const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-			return handleSerialize( state, action );
 		case READER_FEED_REQUEST_SUCCESS:
 			return handleRequestSuccess( state, action );
 		case READER_FEED_REQUEST_FAILURE:
@@ -116,7 +108,15 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	}
 
 	return state;
-} );
+};
+
+export const items = withSchemaValidation(
+	itemsSchema,
+	withPersistence( itemsReducer, {
+		// remove errors from the serialized state
+		serialize: ( state ) => omitBy( state, 'is_error' ),
+	} )
+);
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -132,7 +132,7 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
-export const lastFetched = withoutPersistence( ( state = {}, action ) => {
+export const lastFetched = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_FEED_REQUEST_SUCCESS:
 			return {
@@ -153,7 +153,7 @@ export const lastFetched = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

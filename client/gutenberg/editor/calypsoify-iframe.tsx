@@ -4,7 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { map, partial, pickBy, isArray, flowRight } from 'lodash';
+import { map, partial, pickBy, flowRight } from 'lodash';
 /* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -432,7 +432,7 @@ class CalypsoifyIframe extends Component<
 		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
 		if ( EditorActions.LogError === action ) {
 			const { error } = payload;
-			if ( isArray( error ) && error.length > 4 && window.onerror ) {
+			if ( Array.isArray( error ) && error.length > 4 && window.onerror ) {
 				const errorObject = error[ 4 ];
 				error[ 4 ] = errorObject && JSON.parse( errorObject );
 				window.onerror( ...error );
