@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isArray, noop } from 'lodash';
+import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -75,7 +75,7 @@ export const failOrders = ( siteId, query = {}, error = false ) => {
 
 export const updateOrders = ( siteId, query = {}, orders = [], total = 0 ) => {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( ! isArray( orders ) ) {
+	if ( ! Array.isArray( orders ) ) {
 		return failOrders( siteId, query, orders );
 	}
 	return {

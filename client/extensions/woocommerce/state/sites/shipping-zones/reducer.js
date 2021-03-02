@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { findIndex, isArray } from 'lodash';
+import { findIndex } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -34,7 +34,7 @@ export default withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST: {
 			const { zoneId } = action;
-			if ( ! isArray( state ) ) {
+			if ( ! Array.isArray( state ) ) {
 				return state;
 			}
 			const zoneIndex = findIndex( state, { id: zoneId } );
@@ -50,7 +50,7 @@ export default withoutPersistence( ( state = null, action ) => {
 		}
 		case WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS: {
 			const { zoneId, data } = action;
-			if ( ! isArray( state ) ) {
+			if ( ! Array.isArray( state ) ) {
 				return state;
 			}
 			const zoneIndex = findIndex( state, { id: zoneId } );
@@ -71,7 +71,7 @@ export default withoutPersistence( ( state = null, action ) => {
 				originatingAction: { zone },
 			} = action;
 			data = processZoneData( data );
-			if ( ! isArray( state ) ) {
+			if ( ! Array.isArray( state ) ) {
 				return state;
 			}
 
@@ -103,7 +103,7 @@ export default withoutPersistence( ( state = null, action ) => {
 			const {
 				originatingAction: { zone },
 			} = action;
-			if ( ! isArray( state ) ) {
+			if ( ! Array.isArray( state ) ) {
 				return state;
 			}
 
@@ -119,7 +119,7 @@ export default withoutPersistence( ( state = null, action ) => {
 				data,
 				originatingAction: { zoneId },
 			} = action;
-			if ( ! isArray( state ) ) {
+			if ( ! Array.isArray( state ) ) {
 				return state;
 			}
 
@@ -145,7 +145,7 @@ export default withoutPersistence( ( state = null, action ) => {
 			const {
 				originatingAction: { zoneId, methodId },
 			} = action;
-			if ( ! isArray( state ) ) {
+			if ( ! Array.isArray( state ) ) {
 				return state;
 			}
 

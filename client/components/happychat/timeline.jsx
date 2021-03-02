@@ -5,7 +5,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { assign, isArray, isEmpty } from 'lodash';
+import { assign, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -164,7 +164,7 @@ const welcomeMessage = ( { currentUserEmail, translate } ) => (
 	</div>
 );
 
-const timelineHasContent = ( { timeline } ) => isArray( timeline ) && ! isEmpty( timeline );
+const timelineHasContent = ( { timeline } ) => Array.isArray( timeline ) && ! isEmpty( timeline );
 
 const renderTimeline = ( {
 	timeline,

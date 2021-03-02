@@ -12,7 +12,6 @@ import {
 	mergeWith,
 	pullAll,
 	startsWith,
-	isArray,
 } from 'lodash';
 import { isNullish } from '@automattic/js-utils';
 
@@ -239,7 +238,7 @@ export const getCurrentlyOpenShippingZoneMethod = (
 
 	// Overwrites the default behavior of `merge` while ignoring arrays and focusing on objects.
 	const customizer = ( objValue, srcValue ) => {
-		if ( isArray( objValue ) ) {
+		if ( Array.isArray( objValue ) ) {
 			return srcValue;
 		}
 	};

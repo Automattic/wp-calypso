@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
+import { get, merge, omit, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -108,7 +108,7 @@ export const isSaving = withoutPersistence( ( state = {}, action ) => {
 } );
 
 function mergeDomainRegistrantContactDetails( domainState, registrantContactDetails ) {
-	return isArray( domainState )
+	return Array.isArray( domainState )
 		? domainState.map( ( item ) => {
 				if ( item.type === whoisType.REGISTRANT ) {
 					return {
@@ -201,5 +201,5 @@ export default combineReducers( {
  */
 function sanitizeExtra( data ) {
 	const path = data._contactDetailsCache ? [ '_contactDetailsCache', 'extra' ] : 'extra';
-	return data && isArray( get( data, path ) ) ? omit( data, path ) : data;
+	return data && Array.isArray( get( data, path ) ) ? omit( data, path ) : data;
 }

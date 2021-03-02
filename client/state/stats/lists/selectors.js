@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, map, flatten, round } from 'lodash';
+import { get, map, flatten, round } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -76,7 +76,7 @@ export const getSiteStatsPostStreakData = treeSelect(
 		const gmtOffset = query.gmtOffset || 0;
 		const response = {};
 		// ensure streakData.data exists and it is not an array
-		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
+		if ( streakData && streakData.data && ! Array.isArray( streakData.data ) ) {
 			Object.keys( streakData.data ).forEach( ( timestamp ) => {
 				const postDay = moment.unix( timestamp );
 				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
@@ -135,7 +135,7 @@ export const getSiteStatsNormalizedData = treeSelect(
  */
 export function getSiteStatsCSVData( state, siteId, statType, query ) {
 	const data = getSiteStatsNormalizedData( state, siteId, statType, query );
-	if ( ! data || ! isArray( data ) ) {
+	if ( ! data || ! Array.isArray( data ) ) {
 		return [];
 	}
 
