@@ -31,6 +31,7 @@ export default function createExPlatClientReactHelpers(
 	exPlatClient: ExPlatClient
 ): ExPlatClientReactHelpers {
 	const useExperiment = ( experimentName: string ): [ boolean, ExperimentAssignment | null ] => {
+		const [ previousExperimentName ] = useState( experimentName );
 		const [ isLoading, setIsLoading ] = useState< boolean >( true );
 		const [
 			experimentAssignment,
@@ -48,10 +49,17 @@ export default function createExPlatClientReactHelpers(
 			return () => {
 				isSubscribed = false;
 			};
-			// experimentName can change for experiments with dates in their name, such as evergreen A/As
-			// but we don't want the assignment to change when it flips over, so we purposely don't include experimentName as a dep here.
+			// We don't expect experimentName to ever change and if it does we want to assignment to stay constant.
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
+
+		if ( experimentName !== previousExperimentName ) {
+			const message = '[ExPlat] useExperiment: experimentName should never change between renders!';
+			if ( exPlatClient.config.isDevelopmentMode ) {
+				throw new Error( message );
+			}
+			exPlatClient.config.logError( { message } );
+		}
 
 		return [ isLoading, experimentAssignment ];
 	};
