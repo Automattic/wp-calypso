@@ -10,7 +10,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
  * Also transform the api response to be something more calypso-friendly
  *
  * @param  {Object} apiResponse api response from the tags endpoint
- * @returns {Object} An object containing all of the normalized tags in the format:
+ * @returns {Array} An array containing all of the normalized tags in the format:
  *  [
  *    { id, displayName, url, title, slug },
  *    ...
