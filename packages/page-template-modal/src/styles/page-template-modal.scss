@@ -226,6 +226,22 @@ $sidebar-width: 324px;
 			font-weight: 700;
 		}
 	}
+
+	.components-menu-item__button:focus:not( :disabled ) {
+		box-shadow: none;
+		outline: none;
+
+		.page-template-modal__category-item-focus-wrapper {
+			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
+			border-radius: 2px;
+			line-height: 1.7;
+			margin-left: -3px;
+			padding-left: 3px;
+			outline: 3px solid transparent;
+			margin-right: -3px;
+			padding-right: 3px;
+		}
+	}
 }
 
 .page-template-modal__button-container {
