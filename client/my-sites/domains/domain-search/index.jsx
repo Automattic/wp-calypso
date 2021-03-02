@@ -207,6 +207,11 @@ class DomainSearch extends Component {
 
 	render() {
 		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains } = this.props;
+
+		if ( ! selectedSite ) {
+			return null;
+		}
+
 		const classes = classnames( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
