@@ -62,265 +62,346 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
+beforeEach( () => {
+	jest.clearAllMocks();
+} );
+
 // Tests
 describe( 'Plans selectors', () => {
-	it( 'getFeatures', () => {
-		expect( Selectors.getFeatures( mockState, MOCK_LOCALE_1 ) ).toEqual(
-			mockFeatures[ MOCK_LOCALE_1 ]
-		);
-		expect( Selectors.getFeatures( mockState, MOCK_LOCALE_2 ) ).toEqual(
-			mockFeatures[ MOCK_LOCALE_2 ]
-		);
-		expect( Selectors.getFeatures( mockState, 'non-existing' ) ).toEqual( {} );
+	describe( 'getFeatures', () => {
+		it( 'should select the right list of features for an given locale', () => {
+			expect( Selectors.getFeatures( mockState, MOCK_LOCALE_1 ) ).toEqual(
+				mockFeatures[ MOCK_LOCALE_1 ]
+			);
+			expect( Selectors.getFeatures( mockState, MOCK_LOCALE_2 ) ).toEqual(
+				mockFeatures[ MOCK_LOCALE_2 ]
+			);
+		} );
+
+		it( 'should return an empty object if the given locale does not exist in the store', () => {
+			expect( Selectors.getFeatures( mockState, 'non-existing' ) ).toEqual( {} );
+		} );
 	} );
 
-	it( 'getFeaturesByType', () => {
-		expect( Selectors.getFeaturesByType( mockState, MOCK_LOCALE_1 ) ).toEqual(
-			mockFeaturesByType[ MOCK_LOCALE_1 ]
-		);
-		expect( Selectors.getFeaturesByType( mockState, MOCK_LOCALE_2 ) ).toEqual(
-			mockFeaturesByType[ MOCK_LOCALE_2 ]
-		);
-		expect( Selectors.getFeaturesByType( mockState, 'non-existing' ) ).toEqual( [] );
+	describe( 'getFeaturesByType', () => {
+		it( 'should select the right list of features by type for an given locale', () => {
+			expect( Selectors.getFeaturesByType( mockState, MOCK_LOCALE_1 ) ).toEqual(
+				mockFeaturesByType[ MOCK_LOCALE_1 ]
+			);
+			expect( Selectors.getFeaturesByType( mockState, MOCK_LOCALE_2 ) ).toEqual(
+				mockFeaturesByType[ MOCK_LOCALE_2 ]
+			);
+		} );
+
+		it( 'should return an empty array if the given locale does not exist in the store', () => {
+			expect( Selectors.getFeaturesByType( mockState, 'non-existing' ) ).toEqual( [] );
+		} );
 	} );
 
-	it( 'getPlanByProductId', () => {
-		// Product Id not defined
-		expect( Selectors.getPlanByProductId( mockState, undefined, MOCK_LOCALE_1 ) ).toBeUndefined();
+	describe( 'getPlanByProductId', () => {
+		it( 'should return undefined if the product ID is undefined', () => {
+			expect( Selectors.getPlanByProductId( mockState, undefined, MOCK_LOCALE_1 ) ).toBeUndefined();
+		} );
 
-		// Non existing product
-		expect( Selectors.getPlanByProductId( mockState, -1, MOCK_LOCALE_1 ) ).toBeUndefined();
+		it( 'should return undefined if the product ID is not associated to any products', () => {
+			expect( Selectors.getPlanByProductId( mockState, -1, MOCK_LOCALE_1 ) ).toBeUndefined();
+		} );
 
-		// Existing Product (free)
-		expect(
-			Selectors.getPlanByProductId(
-				mockState,
-				MockData.STORE_PRODUCT_FREE.productId,
-				MOCK_LOCALE_1
-			)
-		).toEqual( MockData.STORE_PLAN_FREE );
+		it( 'should select the right product for a given correct product ID', () => {
+			// Free
+			expect(
+				Selectors.getPlanByProductId(
+					mockState,
+					MockData.STORE_PRODUCT_FREE.productId,
+					MOCK_LOCALE_1
+				)
+			).toEqual( MockData.STORE_PLAN_FREE );
 
-		// Existing Product (annually billed)
-		expect(
-			Selectors.getPlanByProductId(
-				mockState,
-				MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.productId,
-				MOCK_LOCALE_1
-			)
-		).toEqual( MockData.STORE_PLAN_PREMIUM );
+			// Paid (annually billed)
+			expect(
+				Selectors.getPlanByProductId(
+					mockState,
+					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.productId,
+					MOCK_LOCALE_1
+				)
+			).toEqual( MockData.STORE_PLAN_PREMIUM );
 
-		// Existing Product (monthly billed)
-		expect(
-			Selectors.getPlanByProductId(
-				mockState,
-				MockData.STORE_PRODUCT_PREMIUM_MONTHLY.productId,
-				MOCK_LOCALE_1
-			)
-		).toEqual( MockData.STORE_PLAN_PREMIUM );
+			// Paid (monthly billed)
+			expect(
+				Selectors.getPlanByProductId(
+					mockState,
+					MockData.STORE_PRODUCT_PREMIUM_MONTHLY.productId,
+					MOCK_LOCALE_1
+				)
+			).toEqual( MockData.STORE_PLAN_PREMIUM );
+		} );
 
-		// Existing Product, but not for the locale
-		expect(
-			Selectors.getPlanByProductId(
-				mockState,
-				MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.productId,
-				MOCK_LOCALE_2
-			)
-		).toBeUndefined();
+		it( 'should return undefined if the product ID does not exist for the given locale', () => {
+			expect(
+				Selectors.getPlanByProductId(
+					mockState,
+					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.productId,
+					MOCK_LOCALE_2
+				)
+			).toBeUndefined();
+		} );
 	} );
 
-	it( 'getPlanProductById', () => {
-		// Product Id not defined
-		expect( Selectors.getPlanProductById( mockState, undefined ) ).toBeUndefined();
+	describe( 'getPlanProductById', () => {
+		it( 'should return undefined if the product ID is undefined', () => {
+			expect( Selectors.getPlanProductById( mockState, undefined ) ).toBeUndefined();
+		} );
 
-		// Non existing product
-		expect( Selectors.getPlanProductById( mockState, -1 ) ).toBeUndefined();
+		it( 'should return undefined if the product ID is not associated to any products', () => {
+			// Non existing product
+			expect( Selectors.getPlanProductById( mockState, -1 ) ).toBeUndefined();
+		} );
 
-		// Existing Product (free)
-		expect(
-			Selectors.getPlanProductById( mockState, MockData.STORE_PRODUCT_FREE.productId )
-		).toEqual( MockData.STORE_PRODUCT_FREE );
+		it( 'should select the right product for a given correct product ID', () => {
+			// Free
+			expect(
+				Selectors.getPlanProductById( mockState, MockData.STORE_PRODUCT_FREE.productId )
+			).toEqual( MockData.STORE_PRODUCT_FREE );
 
-		// Existing Product (annually billed)
-		expect(
-			Selectors.getPlanProductById( mockState, MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.productId )
-		).toEqual( MockData.STORE_PRODUCT_PREMIUM_ANNUALLY );
+			// Paid (annually billed)
+			expect(
+				Selectors.getPlanProductById( mockState, MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.productId )
+			).toEqual( MockData.STORE_PRODUCT_PREMIUM_ANNUALLY );
+		} );
 
-		// Existing Product, but not in store (monthly billed)
-		expect(
-			Selectors.getPlanProductById( mockState, MockData.STORE_PRODUCT_PREMIUM_MONTHLY.productId )
-		).toBeUndefined();
+		it( 'should return undefined if the product ID does not match any products in the store', () => {
+			// Existing Product, but not in store (monthly billed)
+			expect(
+				Selectors.getPlanProductById( mockState, MockData.STORE_PRODUCT_PREMIUM_MONTHLY.productId )
+			).toBeUndefined();
+		} );
 	} );
 
-	it( 'getPlanByPeriodAgnosticSlug', () => {
-		// Plan slug is undefined
-		expect(
-			Selectors.getPlanByPeriodAgnosticSlug( mockState, undefined, MOCK_LOCALE_1 )
-		).toBeUndefined();
+	describe( 'getPlanByPeriodAgnosticSlug', () => {
+		it( 'should return undefined if the plan slug is undefined', () => {
+			expect(
+				Selectors.getPlanByPeriodAgnosticSlug( mockState, undefined, MOCK_LOCALE_1 )
+			).toBeUndefined();
+		} );
 
-		// A plan that doesn't exist in the mock APIs
-		expect(
-			Selectors.getPlanByPeriodAgnosticSlug( mockState, 'ecommerce', MOCK_LOCALE_1 )
-		).toBeUndefined();
+		it( 'should return undefined if the plan slug does not match any plans in the store', () => {
+			expect(
+				Selectors.getPlanByPeriodAgnosticSlug( mockState, 'ecommerce', MOCK_LOCALE_1 )
+			).toBeUndefined();
+		} );
 
-		// A plan that exists in the store, for locale 1
-		expect(
-			Selectors.getPlanByPeriodAgnosticSlug(
-				mockState,
-				MockData.STORE_PLAN_PREMIUM.periodAgnosticSlug,
-				MOCK_LOCALE_1
-			)
-		).toEqual( MockData.STORE_PLAN_PREMIUM );
+		it( 'should select the right plan for a given, correct plan slug and locale', () => {
+			// Locale 1
+			expect(
+				Selectors.getPlanByPeriodAgnosticSlug(
+					mockState,
+					MockData.STORE_PLAN_PREMIUM.periodAgnosticSlug,
+					MOCK_LOCALE_1
+				)
+			).toEqual( MockData.STORE_PLAN_PREMIUM );
 
-		// A plan that exists in the store, for locale 2
-		expect(
-			Selectors.getPlanByPeriodAgnosticSlug(
-				mockState,
-				MockData.STORE_PLAN_FREE.periodAgnosticSlug,
-				MOCK_LOCALE_2
-			)
-		).toEqual( MockData.STORE_PLAN_FREE );
+			// Locale 2
+			expect(
+				Selectors.getPlanByPeriodAgnosticSlug(
+					mockState,
+					MockData.STORE_PLAN_FREE.periodAgnosticSlug,
+					MOCK_LOCALE_2
+				)
+			).toEqual( MockData.STORE_PLAN_FREE );
+		} );
 
-		// Plan exists in the store, but not for locale 2
-		expect(
-			Selectors.getPlanByPeriodAgnosticSlug(
-				mockState,
-				MockData.STORE_PLAN_PREMIUM.periodAgnosticSlug,
-				MOCK_LOCALE_2
-			)
-		).toBeUndefined();
+		it( 'should return undefined if the plan slug does not match any plans in the store for the given locale', () => {
+			expect(
+				Selectors.getPlanByPeriodAgnosticSlug(
+					mockState,
+					MockData.STORE_PLAN_PREMIUM.periodAgnosticSlug,
+					MOCK_LOCALE_2
+				)
+			).toBeUndefined();
+		} );
 	} );
 
-	it( 'getDefaultPaidPlan', () => {
-		// The store has the default paid plan for the selected locale
-		expect( Selectors.getDefaultPaidPlan( mockState, MOCK_LOCALE_1 ) ).toEqual(
-			MockData.STORE_PLAN_PREMIUM
-		);
+	describe( 'getDefaultPaidPlan', () => {
+		it( 'should select the correct default paid plan for the given locale', () => {
+			expect( Selectors.getDefaultPaidPlan( mockState, MOCK_LOCALE_1 ) ).toEqual(
+				MockData.STORE_PLAN_PREMIUM
+			);
+		} );
 
-		// The store doesn't have the default paid plan for the selected locale
-		expect( Selectors.getDefaultPaidPlan( mockState, MOCK_LOCALE_2 ) ).toBeUndefined();
+		it( 'should return undefined if the default paid plan is not available in the store for a given locale', () => {
+			expect( Selectors.getDefaultPaidPlan( mockState, MOCK_LOCALE_2 ) ).toBeUndefined();
+		} );
 	} );
 
-	it( 'getDefaultFreePlan', () => {
-		expect( Selectors.getDefaultFreePlan( mockState, MOCK_LOCALE_1 ) ).toEqual(
-			MockData.STORE_PLAN_FREE
-		);
-		expect( Selectors.getDefaultFreePlan( mockState, MOCK_LOCALE_2 ) ).toEqual(
-			MockData.STORE_PLAN_FREE
-		);
+	describe( 'getDefaultFreePlan', () => {
+		it( 'should select the correct default free plan for the given locale', () => {
+			expect( Selectors.getDefaultFreePlan( mockState, MOCK_LOCALE_1 ) ).toEqual(
+				MockData.STORE_PLAN_FREE
+			);
+			expect( Selectors.getDefaultFreePlan( mockState, MOCK_LOCALE_2 ) ).toEqual(
+				MockData.STORE_PLAN_FREE
+			);
+		} );
 	} );
 
-	it( 'getSupportedPlans', () => {
-		expect( Selectors.getSupportedPlans( mockState, MOCK_LOCALE_1 ) ).toEqual(
-			mockPlans[ MOCK_LOCALE_1 ]
-		);
-		expect( Selectors.getSupportedPlans( mockState, MOCK_LOCALE_2 ) ).toEqual(
-			mockPlans[ MOCK_LOCALE_2 ]
-		);
-		expect( Selectors.getSupportedPlans( mockState, 'non-existing' ) ).toEqual( [] );
+	describe( 'getSupportedPlans', () => {
+		it( 'should select the supported plans for a given locale', () => {
+			expect( Selectors.getSupportedPlans( mockState, MOCK_LOCALE_1 ) ).toEqual(
+				mockPlans[ MOCK_LOCALE_1 ]
+			);
+			expect( Selectors.getSupportedPlans( mockState, MOCK_LOCALE_2 ) ).toEqual(
+				mockPlans[ MOCK_LOCALE_2 ]
+			);
+		} );
+
+		it( 'should return an empty list if the given locale does not exist in the store', () => {
+			expect( Selectors.getSupportedPlans( mockState, 'non-existing' ) ).toEqual( [] );
+		} );
 	} );
 
-	it( 'getPlansProducts', () => {
-		expect( Selectors.getPlansProducts( mockState ) ).toEqual( mockPlanProducts );
+	describe( 'getPlansProducts', () => {
+		it( 'should select all of the plans products from the store', () => {
+			expect( Selectors.getPlansProducts( mockState ) ).toEqual( mockPlanProducts );
+		} );
 	} );
 
-	it( 'getPrices', () => {
-		const expectedPrices = {
-			[ MockData.STORE_PRODUCT_FREE.storeSlug ]: MockData.STORE_PRODUCT_FREE.price,
-			[ MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.storeSlug ]:
-				MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.price,
-		};
-		expect( Selectors.getPrices( mockState, MOCK_LOCALE_1 ) ).toEqual( expectedPrices );
-		expect( Selectors.getPrices( mockState, MOCK_LOCALE_2 ) ).toEqual( expectedPrices );
+	describe( 'getPrices', () => {
+		it( 'should select the prices for each plan product for a given locale', () => {
+			const expectedPrices = {
+				[ MockData.STORE_PRODUCT_FREE.storeSlug ]: MockData.STORE_PRODUCT_FREE.price,
+				[ MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.storeSlug ]:
+					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.price,
+			};
+			expect( Selectors.getPrices( mockState, MOCK_LOCALE_1 ) ).toEqual( expectedPrices );
+			expect( Selectors.getPrices( mockState, MOCK_LOCALE_2 ) ).toEqual( expectedPrices );
+		} );
 
-		// Make sure function is correctly flagged as deprecated
-		const expectedCallArguments = [
-			'getPrices',
-			{
+		it( 'should be marked as deprecated', () => {
+			Selectors.getPrices( mockState, MOCK_LOCALE_1 );
+
+			expect( deprecate ).toHaveBeenCalled();
+			expect( deprecate ).toHaveBeenCalledWith( 'getPrices', {
 				alternative: 'getPlanProduct().price',
-			},
-		];
-		expect( deprecate ).toHaveBeenCalledTimes( 2 );
-		expect( deprecate ).toHaveBeenNthCalledWith( 1, ...expectedCallArguments );
-		expect( deprecate ).toHaveBeenNthCalledWith( 2, ...expectedCallArguments );
+			} );
+		} );
 	} );
 
-	it( 'getPlanByPath', () => {
-		// Plan path (product slug) is undefined
-		expect( Selectors.getPlanByPath( mockState, undefined, MOCK_LOCALE_1 ) ).toBeUndefined();
+	describe( 'getPlanByPath', () => {
+		it( 'should return undefined if the plan slug is undefined', () => {
+			expect( Selectors.getPlanByPath( mockState, undefined, MOCK_LOCALE_1 ) ).toBeUndefined();
+		} );
 
-		// Plan path (product slug) exists, but not currently in the store
-		expect( Selectors.getPlanByPath( mockState, 'ecommerce', MOCK_LOCALE_1 ) ).toBeUndefined();
+		it( 'should return undefined if the plan slug does not match any plans in the store', () => {
+			expect( Selectors.getPlanByPath( mockState, 'ecommerce', MOCK_LOCALE_1 ) ).toBeUndefined();
+		} );
 
-		// Plan path (product slug) exists and there's a matching plan for the locale
-		expect(
-			Selectors.getPlanByPath(
-				mockState,
-				MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.pathSlug,
-				MOCK_LOCALE_1
-			)
-		).toEqual( MockData.STORE_PLAN_PREMIUM );
+		it( 'should select the correct plan for the given locale', () => {
+			expect(
+				Selectors.getPlanByPath(
+					mockState,
+					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.pathSlug,
+					MOCK_LOCALE_1
+				)
+			).toEqual( MockData.STORE_PLAN_PREMIUM );
+		} );
 
-		// Plan path (product slug) exists but there isn't a matching plan for the locale
-		expect(
-			Selectors.getPlanByPath(
-				mockState,
-				MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.pathSlug,
-				MOCK_LOCALE_2
-			)
-		).toBeUndefined();
+		it( 'should return undefined if the plan slug does not match any plans in the store for the given locale', () => {
+			expect(
+				Selectors.getPlanByPath(
+					mockState,
+					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.pathSlug,
+					MOCK_LOCALE_2
+				)
+			).toBeUndefined();
+		} );
 	} );
 
-	it( 'getPlanProduct', () => {
-		// undefined plan slug
-		expect( Selectors.getPlanProduct( mockState, undefined, 'ANNUALLY' ) ).toBeUndefined();
+	describe( 'getPlanProduct', () => {
+		it( 'should return undefined if the plan slug is undefined', () => {
+			expect( Selectors.getPlanProduct( mockState, undefined, 'ANNUALLY' ) ).toBeUndefined();
+		} );
 
-		// undefined billing period
-		expect(
-			Selectors.getPlanProduct( mockState, MockData.STORE_PLAN_FREE.periodAgnosticSlug, undefined )
-		).toBeUndefined();
+		it( 'should return undefined if the billing period is undefined', () => {
+			expect(
+				Selectors.getPlanProduct(
+					mockState,
+					MockData.STORE_PLAN_FREE.periodAgnosticSlug,
+					undefined
+				)
+			).toBeUndefined();
+		} );
 
-		// free plan (regardless of the billing period)
-		expect(
-			Selectors.getPlanProduct( mockState, MockData.STORE_PLAN_FREE.periodAgnosticSlug, 'ANNUALLY' )
-		).toEqual( MockData.STORE_PRODUCT_FREE );
-		expect(
-			Selectors.getPlanProduct( mockState, MockData.STORE_PLAN_FREE.periodAgnosticSlug, 'MONTHLY' )
-		).toEqual( MockData.STORE_PRODUCT_FREE );
+		it( 'should select the free plan if the plan slug matches the free plan (regardless of the billing period)', () => {
+			expect(
+				Selectors.getPlanProduct(
+					mockState,
+					MockData.STORE_PLAN_FREE.periodAgnosticSlug,
+					'ANNUALLY'
+				)
+			).toEqual( MockData.STORE_PRODUCT_FREE );
+			expect(
+				Selectors.getPlanProduct(
+					mockState,
+					MockData.STORE_PLAN_FREE.periodAgnosticSlug,
+					'MONTHLY'
+				)
+			).toEqual( MockData.STORE_PRODUCT_FREE );
+		} );
 
-		// paid plan, annually billed is correctly found in the store
-		expect(
-			Selectors.getPlanProduct(
-				mockState,
-				MockData.STORE_PLAN_PREMIUM.periodAgnosticSlug,
-				'ANNUALLY'
-			)
-		).toEqual( MockData.STORE_PRODUCT_PREMIUM_ANNUALLY );
+		it( 'should select the correct paid plan given the billing period', () => {
+			expect(
+				Selectors.getPlanProduct(
+					mockState,
+					MockData.STORE_PLAN_PREMIUM.periodAgnosticSlug,
+					'ANNUALLY'
+				)
+			).toEqual( MockData.STORE_PRODUCT_PREMIUM_ANNUALLY );
+		} );
 
-		// periodAgnosticSlug is not free, monthly doesn't exist in the store
-		expect(
-			Selectors.getPlanProduct(
-				mockState,
-				MockData.STORE_PLAN_PREMIUM.periodAgnosticSlug,
-				'MONTHLY'
-			)
-		).toBeUndefined();
+		it( 'should return undefined if there is not math in the store for the given plan slug and billing period', () => {
+			expect(
+				Selectors.getPlanProduct(
+					mockState,
+					MockData.STORE_PLAN_PREMIUM.periodAgnosticSlug,
+					'MONTHLY'
+				)
+			).toBeUndefined();
+		} );
 	} );
 
-	it( 'isPlanEcommerce', () => {
-		expect( Selectors.isPlanEcommerce( mockState, TIMELESS_PLAN_ECOMMERCE ) ).toBe( true );
-		expect( Selectors.isPlanEcommerce( mockState, TIMELESS_PLAN_FREE ) ).toBe( false );
-		expect( Selectors.isPlanEcommerce( mockState ) ).toBe( false );
+	describe( 'isPlanEcommerce', () => {
+		it( 'should return true if the eCommerce plan slug is passed', () => {
+			expect( Selectors.isPlanEcommerce( mockState, TIMELESS_PLAN_ECOMMERCE ) ).toBe( true );
+		} );
+		it( 'should return false if the free plan slug is passed', () => {
+			expect( Selectors.isPlanEcommerce( mockState, TIMELESS_PLAN_FREE ) ).toBe( false );
+		} );
+		it( 'should return false if the plan slug is undefined', () => {
+			expect( Selectors.isPlanEcommerce( mockState ) ).toBe( false );
+		} );
 	} );
 
-	it( 'isPlanFree', () => {
-		expect( Selectors.isPlanFree( mockState, TIMELESS_PLAN_ECOMMERCE ) ).toBe( false );
-		expect( Selectors.isPlanFree( mockState, TIMELESS_PLAN_FREE ) ).toBe( true );
-		expect( Selectors.isPlanFree( mockState ) ).toBe( false );
+	describe( 'isPlanFree', () => {
+		it( 'should return false if the eCommerce plan slug is passed', () => {
+			expect( Selectors.isPlanFree( mockState, TIMELESS_PLAN_ECOMMERCE ) ).toBe( false );
+		} );
+		it( 'should return true if the free plan slug is passed', () => {
+			expect( Selectors.isPlanFree( mockState, TIMELESS_PLAN_FREE ) ).toBe( true );
+		} );
+		it( 'should return false if the plan slug is undefined', () => {
+			expect( Selectors.isPlanFree( mockState ) ).toBe( false );
+		} );
 	} );
 
-	it( 'isPlanProductFree', () => {
-		expect( Selectors.isPlanProductFree( mockState, FREE_PLAN_PRODUCT_ID ) ).toBe( true );
-		expect( Selectors.isPlanProductFree( mockState, 2 ) ).toBe( false );
-		expect( Selectors.isPlanProductFree( mockState ) ).toBe( false );
+	describe( 'isPlanProductFree', () => {
+		it( 'should return true if the free plan product ID is passed', () => {
+			expect( Selectors.isPlanProductFree( mockState, FREE_PLAN_PRODUCT_ID ) ).toBe( true );
+		} );
+		it( 'should return false if a product ID not associated to the free plan is passed', () => {
+			expect( Selectors.isPlanProductFree( mockState, 2 ) ).toBe( false );
+		} );
+		it( 'should return false if the product ID is undefined', () => {
+			expect( Selectors.isPlanProductFree( mockState ) ).toBe( false );
+		} );
 	} );
 } );
