@@ -121,11 +121,11 @@ class PagesMain extends React.Component {
 						.utc()
 						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
 				/>
-				<Experiment 
+				<Experiment
 					name={ `explat_test_aa_weekly_calypso_next_client_${ moment
 						.utc()
 						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
-						>
+				>
 					{{
 						treatment: null,
 						default: null,

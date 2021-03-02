@@ -358,9 +358,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		} );
 	} else {
 		// Temporary Experiment testing the new ExPlat client
-		loadExperimentAssignment('explat_test_aa_calypso_boot')
+		loadExperimentAssignment( 'explat_test_aa_calypso_boot' );
 		// Duplicated on purpose
-		loadExperimentAssignment('explat_test_aa_calypso_boot')
+		loadExperimentAssignment( 'explat_test_aa_calypso_boot' );
 	}
 
 	const state = reduxStore.getState();

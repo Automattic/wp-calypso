@@ -141,8 +141,8 @@ export default {
 
 					// Temporary Experiment testing the new ExPlat client
 					try {
-						dangerouslyGetExperimentAssignment('explat_test_aa_calypso_signup')
-					} catch (e) {
+						dangerouslyGetExperimentAssignment( 'explat_test_aa_calypso_signup' );
+					} catch ( e ) {
 						// Do nothing
 					}
 

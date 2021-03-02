@@ -115,7 +115,7 @@ const SiteSetupList = ( {
 	userEmail,
 } ) => {
 	// Temporary Experiment testing the new ExPlat client
-	useExperiment('explat_test_aa_calypso_boot')
+	useExperiment( 'explat_test_aa_calypso_boot' );
 
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );

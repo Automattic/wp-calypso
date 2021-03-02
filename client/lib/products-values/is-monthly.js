@@ -12,8 +12,8 @@ export function isMonthly( rawProduct ) {
 
 	// Temporary Experiment testing the new ExPlat client
 	try {
-		dangerouslyGetExperimentAssignment('explat_test_aa_calypso_boot')
-	} catch (e) {
+		dangerouslyGetExperimentAssignment( 'explat_test_aa_calypso_boot' );
+	} catch ( e ) {
 		// Do nothing
 	}
 
