@@ -9,13 +9,13 @@ import { buildPlanFeaturesDict } from '../test-utils';
 const MOCK_LOCALE = 'test-locale';
 
 describe( 'Plans reducer', () => {
-	describe( 'Plans', () => {
-		it( 'defaults to no plans info', () => {
+	describe( 'plans', () => {
+		it( 'should default to no plans info', () => {
 			const { plans } = reducer( undefined, { type: 'NOOP' } );
 			expect( plans ).toEqual( {} );
 		} );
 
-		it( 'replaces old plans with new plans', () => {
+		it( 'should replace old plans with new plans', () => {
 			let state = reducer( undefined, setPlans( [ MockData.STORE_PLAN_FREE ], MOCK_LOCALE ) );
 
 			state = reducer(
@@ -36,13 +36,13 @@ describe( 'Plans reducer', () => {
 		} );
 	} );
 
-	describe( 'Features By Type', () => {
-		it( 'defaults to no featuresByType info', () => {
+	describe( 'featuresByType', () => {
+		it( 'should default to no featuresByType info', () => {
 			const { featuresByType } = reducer( undefined, { type: 'NOOP' } );
 			expect( featuresByType ).toEqual( {} );
 		} );
 
-		it( 'replaces old featuresByType info with new featuresByType info', () => {
+		it( 'should replace old featuresByType info with new featuresByType info', () => {
 			const state = reducer(
 				undefined,
 				setFeaturesByType(
@@ -62,13 +62,13 @@ describe( 'Plans reducer', () => {
 		} );
 	} );
 
-	describe( 'Features', () => {
-		it( 'defaults to no feature info', () => {
+	describe( 'features', () => {
+		it( 'should default to no feature info', () => {
 			const { features } = reducer( undefined, { type: 'NOOP' } );
 			expect( features ).toEqual( {} );
 		} );
 
-		it( 'replaces old features with new features', () => {
+		it( 'should replace old features with new features', () => {
 			const state = reducer(
 				undefined,
 				setFeatures(
