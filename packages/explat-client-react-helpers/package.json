@@ -7,7 +7,7 @@
 	"main": "dist/cjs/index.js",
 	"browser": "dist/esm/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.ts",
+	"calypso:src": "src/index.tsx",
 	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
