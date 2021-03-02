@@ -264,59 +264,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gEditorComponent.enterText( blogPostQuote );
 			} );
 
-			step( 'Can see the Earn blocks', async function () {
-				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
-				const shownItems = await gEditorComponent.getShownBlockInserterItems();
-
-				[
-					'Donations',
-					'OpenTable',
-					'Payments',
-					'Pay with PayPal',
-					'Pricing Table',
-				].forEach( ( block ) =>
-					assert.ok(
-						shownItems.includes( block ),
-						`Block inserter doesn't show the ${ block } block`
-					)
-				);
-
-				await gEditorComponent.closeBlockInserter();
-			} );
-
-			step( 'Can see the Grow blocks', async function () {
-				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
-				const shownItems = await gEditorComponent.getShownBlockInserterItems();
-
-				[
-					'Business Hours',
-					'Calendly',
-					'Form',
-					'Contact Info',
-					'Mailchimp',
-					'Revue',
-					'Subscription Form',
-					'Premium Content',
-					'Click to Tweet',
-					'Logos',
-					'Contact Form',
-					'RSVP Form',
-					'Registration Form',
-					'Appointment Form',
-					'Feedback Form',
-					'WhatsApp Button',
-				].forEach( ( block ) =>
-					assert.ok(
-						shownItems.includes( block ),
-						`Block inserter doesn't show the ${ block } block`
-					)
-				);
-
-				await gEditorComponent.closeBlockInserter();
-			} );
-
 			step( 'Can publish and view content', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.publish( { visit: true } );
