@@ -19,7 +19,7 @@ class AddUsingFlow extends React.Component {
 		const { translate, selectedSite } = this.props;
 		return (
 			<VerticalNav>
-				<HeaderCake>How would you like to use your new domain?</HeaderCake>
+				<HeaderCake>{ translate( 'How would you like to use your new domain?' ) }</HeaderCake>
 				<DomainManagementNavigationItem
 					path={ domainAddNew( 'something.wordpress.com' ) }
 					materialIcon="language"
