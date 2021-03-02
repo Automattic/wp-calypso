@@ -31,8 +31,10 @@ const ButtonBar: FunctionComponent< Props > = ( { buttons, baseClassName, onButt
 	return (
 		<div className={ baseClassName + '__action-buttons' }>
 			{ buttons.map( ( button, index ) => {
+				const key = index;
+
 				if ( isValidElement( button ) ) {
-					return cloneElement( button, { key: 'dialog-button-' + index } );
+					return cloneElement( button, { key } );
 				}
 
 				const classes = classnames( button.className || 'button', button.additionalClassNames, {
@@ -41,7 +43,7 @@ const ButtonBar: FunctionComponent< Props > = ( { buttons, baseClassName, onButt
 
 				return (
 					<button
-						key={ button.action }
+						key={ key }
 						className={ classes }
 						data-e2e-button={ button.action }
 						data-tip-target={ `dialog-base-action-${ button.action }` }
