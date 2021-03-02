@@ -107,8 +107,11 @@ const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
 // Can be safely removed after 2021-03-03 when the FRESHPACK coupon expires
 import moment from 'moment';
 import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
-const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[] ) =>
+const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[], isCouponApplied: boolean ) =>
 	useMemo( () => {
+		if ( isCouponApplied ) {
+			return undefined;
+		}
 		const includesJetpackItems = products
 			.map( ( p ) => p.product_slug )
 			.some( ( slug ) => isJetpackProductSlug( slug ) || isJetpackPlanSlug( slug ) );
@@ -122,7 +125,7 @@ const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[] ) =>
 		const endDate = moment.utc( '2021-03-04' );
 
 		return moment().isBefore( endDate ) ? 'FRESHPACK' : undefined;
-	}, [ products ] );
+	}, [ products, isCouponApplied ] );
 
 export default function CompositeCheckout( {
 	siteSlug,
@@ -245,7 +248,10 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} = useShoppingCart();
 
-	const maybeFRESHPACKCode = useMaybeGetFRESHPACKCode( productsForCart );
+	const maybeFRESHPACKCode = useMaybeGetFRESHPACKCode(
+		productsForCart,
+		couponStatus === 'applied'
+	);
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
