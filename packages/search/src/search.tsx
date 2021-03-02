@@ -5,8 +5,9 @@
 
 import { useI18n } from '@automattic/react-i18n';
 import classNames from 'classnames';
-import React, { Ref } from 'react';
+import React, { useEffect } from 'react';
 import type {
+	Ref,
 	RefObject,
 	MutableRefObject,
 	ChangeEvent,
@@ -197,6 +198,14 @@ const InnerSearch = (
 		[ onSearchProp, delayTimeout, delaySearch ]
 	);
 
+	useEffect( () => {
+		if ( keyword ) {
+			doSearch( keyword );
+		}
+		// Disable reason: This effect covers the case where a keyword was passed in as the default value and we only want to run it on first search; the useUpdateEffect below will handle the rest of the time that keyword updates
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	useUpdateEffect( () => {
 		if ( keyword ) {
 			doSearch( keyword );
@@ -334,7 +343,7 @@ const InnerSearch = (
 	);
 
 	// Puts the cursor at end of the text when starting
-	// with `initialValue` set.
+	// with `defaultValue` set.
 	const onFocus = React.useCallback( (): void => {
 		setHasFocus( true );
 		onSearchOpen?.();
@@ -343,7 +352,7 @@ const InnerSearch = (
 			return;
 		}
 
-		const setValue = searchInput.current.value ?? '';
+		const setValue = searchInput.current.value;
 		if ( setValue ) {
 			// Firefox needs clear or won't move cursor to end
 			searchInput.current.value = '';
