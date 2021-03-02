@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, get, includes, indexOf, reject } from 'lodash';
+import { assign, get, includes, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -183,7 +183,7 @@ const Flows = {
 			return false;
 		}
 		const flowSteps = flow.steps;
-		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextIndex = currentStepIndex + 1;
 		const nextStepName = get( flowSteps, nextIndex );
 

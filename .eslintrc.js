@@ -407,6 +407,7 @@ module.exports = {
 		'you-dont-need-lodash-underscore/extend-own': 'error',
 		'you-dont-need-lodash-underscore/foldl': 'error',
 		'you-dont-need-lodash-underscore/foldr': 'error',
+		'you-dont-need-lodash-underscore/index-of': 'error',
 		'you-dont-need-lodash-underscore/inject': 'error',
 		'you-dont-need-lodash-underscore/is-finite': 'error',
 		'you-dont-need-lodash-underscore/is-nil': 'error',
