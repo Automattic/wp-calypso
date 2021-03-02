@@ -21,6 +21,6 @@ const exPlatClient = createExPlatClient( {
 	isDevelopmentMode,
 } );
 
-export const { loadExperimentAssignment, dangerouslyGetExperimentAssignment } = exPlatClient
-const exPlatClientReactHelpers = createExPlatClientReactHelpers(exPlatClient)
-export const { useExperiment, Experiment } = exPlatClientReactHelpers
+export const { loadExperimentAssignment, dangerouslyGetExperimentAssignment } = exPlatClient;
+const exPlatClientReactHelpers = createExPlatClientReactHelpers( exPlatClient );
+export const { useExperiment, Experiment } = exPlatClientReactHelpers;
