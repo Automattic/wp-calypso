@@ -29,6 +29,7 @@ import {
 	isJetpackProduct,
 	isPlan,
 	isJetpackSearch,
+	isTitanMail,
 } from 'calypso/lib/products-values';
 import { purchasesRoot } from '../paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -342,7 +343,7 @@ class RemovePurchase extends Component {
 			);
 		}
 
-		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
+		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) && ! isTitanMail( purchase ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 
