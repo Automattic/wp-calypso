@@ -104,10 +104,14 @@ const wpcom = wp.undocumented();
 // otherwise we get `this is not defined` errors.
 const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
 
-// Can be safely removed after 2021-03-03 when the FRESHPACK coupon expires
-import moment from 'moment';
+// Can be safely removed when we no longer need to rely on auto-applied coupons
+// for introductory new purchase pricing
 import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
-const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[], isCouponApplied: boolean ) =>
+const JETPACK_INTRO_COUPON_CODE = 'FRESHPACK';
+const useMaybeJetpackIntroCouponCode = (
+	products: RequestCartProduct[],
+	isCouponApplied: boolean
+) =>
 	useMemo( () => {
 		if ( isCouponApplied ) {
 			return undefined;
@@ -122,9 +126,7 @@ const useMaybeGetFRESHPACKCode = ( products: RequestCartProduct[], isCouponAppli
 			return undefined;
 		}
 
-		const endDate = moment.utc( '2021-03-04' );
-
-		return moment().isBefore( endDate ) ? 'FRESHPACK' : undefined;
+		return JETPACK_INTRO_COUPON_CODE;
 	}, [ products, isCouponApplied ] );
 
 export default function CompositeCheckout( {
@@ -248,7 +250,7 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} = useShoppingCart();
 
-	const maybeFRESHPACKCode = useMaybeGetFRESHPACKCode(
+	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
 		couponStatus === 'applied'
 	);
@@ -258,7 +260,7 @@ export default function CompositeCheckout( {
 		isCartPendingUpdate,
 		productsForCart,
 		areCartProductsPreparing,
-		couponCodeFromUrl: couponCodeFromUrl || maybeFRESHPACKCode,
+		couponCodeFromUrl: couponCodeFromUrl || maybeJetpackIntroCouponCode,
 		applyCoupon,
 		addProductsToCart,
 	} );
