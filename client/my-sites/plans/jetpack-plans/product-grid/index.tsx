@@ -11,11 +11,13 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { SWITCH_PLAN_SIDES_EXPERIMENT, SWITCH_PLAN_SIDES_TREATMENT } from '../experiments';
+import { getForCurrentCROIteration, Iterations } from '../iterations';
 import PlansFilterBar from '../plans-filter-bar';
 import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
+import JetpackCrmCard from '../i7/jetpack-crm-card';
 import Experiment from 'calypso/components/experiment';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -41,6 +43,8 @@ import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
  * Style dependencies
  */
 import './style.scss';
+
+const MAX_CARDS_PER_ROW = 3;
 
 const ProductGrid: React.FC< ProductsGridProps > = ( {
 	duration,
@@ -100,6 +104,12 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	popularProducts = allProducts.slice( 0, 3 );
 	otherProducts = allProducts.slice( 3 );
 
+	const bottomCard =
+		getForCurrentCROIteration( { [ Iterations.I7 ]: <JetpackCrmCard /> } ) ||
+		( ( isInConnectFlow || ( isInJetpackCloud && ! isSiteInContext ) ) && (
+			<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+		) );
+
 	const scrollToComparison = () => {
 		if ( bundleComparisonRef.current ) {
 			bundleComparisonRef.current?.scrollIntoView( {
@@ -118,7 +128,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				if ( firstChild instanceof HTMLElement ) {
 					const itemCount = Math.round( grid.offsetWidth / firstChild.offsetWidth );
 
-					setPlanRowWrapping( itemCount < sortedPlans.length );
+					setPlanRowWrapping( itemCount < MAX_CARDS_PER_ROW );
 				}
 			}
 		}
@@ -152,9 +162,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					{ popularProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
 							<ProductCard
+								siteId={ siteId }
+								urlQueryArgs={ urlQueryArgs }
 								item={ product }
 								onClick={ onSelectProduct }
-								siteId={ siteId }
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
 								isAligned={ ! isPlanRowWrapping }
@@ -206,11 +217,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						</li>
 					) ) }
 				</ul>
-				<div className="product-grid__free">
-					{ ( isInConnectFlow || ( isInJetpackCloud && ! isSiteInContext ) ) && (
-						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-					) }
-				</div>
+				<div className="product-grid__free">{ bottomCard }</div>
 			</section>
 			<StoreFooter />
 		</Experiment>
