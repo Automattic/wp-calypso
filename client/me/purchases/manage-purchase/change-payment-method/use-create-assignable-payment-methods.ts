@@ -15,7 +15,7 @@ import {
 	useCreateCreditCard,
 	useCreateExistingCards,
 	useCreatePayPal,
-} from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
 import useFetchAvailablePaymentMethods from './use-fetch-available-payment-methods';
