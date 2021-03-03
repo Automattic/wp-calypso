@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import type { BlockEditProps } from '@wordpress/blocks';
 
 /**
@@ -20,6 +20,7 @@ import {
 	usePath,
 	useNewQueryParam,
 	useAnchorFmParams,
+	useStepRouteParam,
 } from '../path';
 import { usePrevious } from '../hooks/use-previous';
 import DesignSelector from './design-selector';
@@ -115,6 +116,28 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 
 		return redirectToLatestStep;
 	}
+
+	// Remember the last accessed route path
+	const location = useLocation();
+	const step = useStepRouteParam();
+	const { setLastLocation } = useDispatch( STORE_KEY );
+
+	React.useEffect( () => {
+		if (
+			// When location.key is undefined, this means user has just entered gutenboarding from url.
+			location.key !== undefined &&
+			// When step exists, and step is not any from the modals
+			step &&
+			! [
+				Step.DomainsModal as string,
+				Step.PlansModal as string,
+				Step.LanguageModal as string,
+			].includes( step )
+		) {
+			// Remember last location
+			setLastLocation( location.pathname );
+		}
+	}, [ location, step, setLastLocation ] );
 
 	return (
 		<div className="onboarding-block">
