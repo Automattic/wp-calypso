@@ -54,6 +54,7 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 
 const debug = debugFactory( 'calypso' );
 
@@ -355,6 +356,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 			next();
 		} );
+	} else {
+		// Temporary Experiment testing the new ExPlat client
+		loadExperimentAssignment( 'explat_test_aa_calypso_boot' );
+		// Duplicated on purpose
+		loadExperimentAssignment( 'explat_test_aa_calypso_boot' );
 	}
 
 	const state = reduxStore.getState();

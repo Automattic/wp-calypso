@@ -55,7 +55,9 @@ export const initializeAnonId = async (): Promise< string | null > => {
 
 	let attempt = 0;
 	initializeAnonIdPromise = new Promise( ( res ) => {
-		const anonIdPollingInterval = immediateStartSetInterval( () => {
+		let anonIdPollingInterval: NodeJS.Timeout;
+		// eslint-disable-next-line prefer-const
+		anonIdPollingInterval = immediateStartSetInterval( () => {
 			const anonId = getTracksAnonymousUserId();
 			if ( typeof anonId === 'string' && anonId !== '' ) {
 				clearInterval( anonIdPollingInterval );
