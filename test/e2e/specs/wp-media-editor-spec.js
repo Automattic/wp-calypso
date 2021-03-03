@@ -20,14 +20,15 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
+let driver;
+
+before( async function () {
+	this.timeout( startBrowserTimeoutMS );
+	driver = await driverManager.startBrowser();
+} );
+
 describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Edit Existing Media:', function () {
 		before( 'Can login and select my site', async function () {

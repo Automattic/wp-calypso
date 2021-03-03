@@ -34,14 +34,15 @@ const screenSize = driverManager.currentScreenSize();
 const domainsInboxId = config.get( 'domainsInboxId' );
 const host = dataHelper.getJetpackHost();
 
+let driver;
+
+before( async function () {
+	this.timeout( startBrowserTimeoutMS );
+	driver = await driverManager.startBrowser();
+} );
+
 describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Adding a domain to an existing site @parallel', function () {
 		const blogName = dataHelper.getNewBlogName();

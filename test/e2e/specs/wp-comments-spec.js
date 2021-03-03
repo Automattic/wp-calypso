@@ -21,15 +21,16 @@ const blogPostTitle = dataHelper.randomPhrase();
 const blogPostQuote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
+let driver;
+
+before( async function () {
+	this.timeout( startBrowserTimeoutMS );
+	driver = await driverManager.startBrowser();
+} );
+
 describe( `[${ host }] Comments: (${ screenSize })`, function () {
 	let fileDetails;
-	let driver;
 	this.timeout( mochaTimeoutMS );
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	// Create image file for upload
 	before( async function () {

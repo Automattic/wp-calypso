@@ -21,14 +21,15 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
+let driver;
+
+before( async function () {
+	this.timeout( startBrowserTimeoutMS );
+	driver = await driverManager.startBrowser();
+} );
+
 describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Image Upload:', function () {
 		let gutenbergEditor;

@@ -43,14 +43,15 @@ const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 const locale = driverManager.currentLocale();
 const siteName = dataHelper.getJetpackSiteName();
 
+let driver;
+
+before( async function () {
+	this.timeout( startBrowserTimeoutMS );
+	driver = await driverManager.startBrowser();
+} );
+
 describe( `Jetpack Connect: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Connect From wp-admin: @parallel @jetpack @canary', function () {
 		before( async function () {

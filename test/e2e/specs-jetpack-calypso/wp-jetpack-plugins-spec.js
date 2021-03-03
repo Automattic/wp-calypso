@@ -22,14 +22,15 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = getJetpackHost();
 
+let driver;
+
+before( async function () {
+	this.timeout( startBrowserTimeoutMS );
+	driver = await driverManager.startBrowser();
+} );
+
 describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	step( 'Can login and select Manage Plugins', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );
@@ -70,12 +71,6 @@ describe( `[${ host }] Jetpack Plugins - Activating a plugin: (${ screenSize }) 
 
 describe( `[${ host }] Jetpack Plugins - Searching a plugin: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	step( 'Can login and select Plugins', async function () {
 		await driverManager.clearCookiesAndDeleteLocalStorage( driver );

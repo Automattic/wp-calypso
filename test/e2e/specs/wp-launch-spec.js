@@ -25,7 +25,8 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
 
-const createAndActivateAccount = async function ( driver, accountName ) {
+let driver;
+const createAndActivateAccount = async function ( accountName ) {
 	const emailAddress = dataHelper.getEmailAddress( accountName, signupInboxId );
 	const password = config.get( 'passwordForNewTestSignUps' );
 
@@ -38,14 +39,13 @@ const createAndActivateAccount = async function ( driver, accountName ) {
 	await signupFlow.activateAccount();
 };
 
+before( async function () {
+	this.timeout( startBrowserTimeoutMS );
+	driver = await driverManager.startBrowser();
+} );
+
 describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
@@ -79,7 +79,7 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		const secondSiteName = dataHelper.getNewBlogName();
 
 		before( 'Create 2 free sites as a new user', async function () {
-			await createAndActivateAccount( driver, accountName );
+			await createAndActivateAccount( accountName );
 			await new CreateSiteFlow( driver, firstSiteName ).createFreeSite();
 			await new CreateSiteFlow( driver, secondSiteName ).createFreeSite();
 		} );

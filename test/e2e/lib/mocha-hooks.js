@@ -1,5 +1,3 @@
-/* eslint-disable mocha/no-top-level-hooks */
-
 /**
  * External dependencies
  */

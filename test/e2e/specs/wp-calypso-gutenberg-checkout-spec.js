@@ -28,15 +28,16 @@ const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
 const currencyValue = 'USD';
 
+let driver;
+
+before( async function () {
+	this.timeout( startBrowserTimeoutMS );
+	driver = await driverManager.startBrowser();
+} );
+
 describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) is interactive @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let editorUrl;
-	let driver;
-
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
 
 	describe( 'Can trigger the checkout modal via post editor', function () {
 		step( 'Can log in', async function () {
