@@ -274,7 +274,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			{ header && header }
 			{ showSearchField && (
 				<div className="domain-picker__search">
-					{ /* Form is to allow hiding keyboard on "submit" */ }
+					{ /* <form/> is being used here for mobile enhancements.
+					'onSubmit' callback is used to hide on-screen keyboard on mobile.
+					'action' property is needed to show "search" button instead of "return" on iOS keyboard */ }
 					<form action="" onSubmit={ handleSubmit }>
 						<div className="domain-picker__search-icon">
 							<Icon icon={ search } />
