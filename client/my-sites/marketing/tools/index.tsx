@@ -6,7 +6,6 @@ import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
-import WhatsNewGuide from '@automattic/whats-new';
 
 /**
  * Internal dependencies
@@ -115,7 +114,7 @@ export const MarketingTools: FunctionComponent = () => {
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
-			<WhatsNewGuide />
+
 			<div className="tools__feature-list">
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
