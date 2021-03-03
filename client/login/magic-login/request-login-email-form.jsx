@@ -35,11 +35,10 @@ import { sendEmailLogin } from 'calypso/state/auth/actions';
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {
 		// mapped to state
-		allowUserAccountCreation: PropTypes.bool,
 		currentUser: PropTypes.object,
 		emailRequested: PropTypes.bool,
 		isFetching: PropTypes.bool,
-		isJetpackSignUp: PropTypes.bool,
+		isJetpackMagicLinkSignUpEnabled: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
@@ -92,7 +91,6 @@ class RequestLoginEmailForm extends React.Component {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
 			...( this.props.flow ? { flow: this.props.flow } : {} ),
-			createAccount: this.props.allowUserAccountCreation,
 		} );
 	};
 
@@ -105,7 +103,7 @@ class RequestLoginEmailForm extends React.Component {
 			currentUser,
 			requestError,
 			isFetching,
-			isJetpackSignUp,
+			isJetpackMagicLinkSignUpEnabled,
 			emailRequested,
 			showCheckYourEmail,
 			translate,
@@ -116,7 +114,7 @@ class RequestLoginEmailForm extends React.Component {
 		if ( showCheckYourEmail ) {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
-			return isJetpackSignUp ? (
+			return isJetpackMagicLinkSignUpEnabled ? (
 				<EmailedLoginLinkSuccessfullyJetpackConnect emailAddress={ emailAddress } />
 			) : (
 				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />

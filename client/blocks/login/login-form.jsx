@@ -265,6 +265,7 @@ export class LoginForm extends Component {
 				redirectTo: this.props.redirectTo,
 				requestLoginEmailFormFlow: true,
 				createAccount: true,
+				flow: 'jetpack',
 			} );
 		}
 
