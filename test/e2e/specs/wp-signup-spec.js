@@ -73,7 +73,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 	before( 'Start browser', async function () {
 		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
+		this.driver = driver = await driverManager.startBrowser();
 	} );
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
@@ -130,7 +130,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist( driver );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can log out and request a magic link', async function () {
 			if ( process.env.HORIZON_TESTS === 'true' ) {
@@ -237,7 +237,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist( driver );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		after( 'Can delete our newly created account', async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
@@ -476,7 +476,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist( driver );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function () {
 			const myHomePage = await MyHomePage.Expect( driver );
@@ -612,7 +612,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist( driver );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
@@ -722,7 +722,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist( driver );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'personal' );
@@ -1034,7 +1034,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist( driver );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'business', {
@@ -1100,7 +1100,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist( driver );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function () {
 			// Skipping if IE11 due to JS errors caused by missing DOMRect polyfill.
@@ -1215,7 +1215,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist( driver );
+		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can delete site', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );

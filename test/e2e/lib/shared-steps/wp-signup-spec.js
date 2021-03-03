@@ -42,15 +42,15 @@ export const canSeeTheInlineHelpCongratulations = () => {
 	} );
 };
 
-export const canSeeTheOnboardingChecklist = ( driver ) => {
+export const canSeeTheOnboardingChecklist = () => {
 	step( 'Can then see the site setup list', async function () {
 		// dismiss upsell page if displayed
 		try {
-			const upsellPage = await UpsellPage.Expect( driver );
+			const upsellPage = await UpsellPage.Expect( this.driver );
 			await upsellPage.declineOffer();
 		} catch ( e ) {}
 
-		const myHomePage = await MyHomePage.Expect( driver );
+		const myHomePage = await MyHomePage.Expect( this.driver );
 		return assert( await myHomePage.siteSetupListExists(), 'The site setup list does not exist.' );
 	} );
 };
