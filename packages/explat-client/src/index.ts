@@ -13,4 +13,4 @@ const createExPlatClient =
 	typeof window === 'undefined' ? createSsrSafeDummyExPlatClient : createBrowserExPlatClient;
 
 export { createExPlatClient, ExperimentAssignment };
-export { ExPlatClient }
+export type { ExPlatClient }
