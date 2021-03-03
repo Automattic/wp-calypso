@@ -7,6 +7,7 @@ import debugFactory from 'debug';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal Dependencies
@@ -25,6 +26,8 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
 const wpcom = wp.undocumented();
+
+const emptyCart = getEmptyResponseCart();
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 
@@ -100,13 +103,17 @@ export default function CheckoutSystemDecider( {
 		}
 	}
 
+	// If we do not have a site or user, we cannot fetch the initial cart from
+	// the server, so we'll just mock it as an empty cart here.
+	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( emptyCart ) : undefined;
+
 	return (
 		<>
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
-				<CalypsoShoppingCartProvider cartKey={ cartKey }>
+				<CalypsoShoppingCartProvider cartKey={ cartKey } getCart={ getCart }>
 					<StripeHookProvider
 						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
 						locale={ locale }
