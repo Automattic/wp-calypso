@@ -604,6 +604,10 @@ function LineItemSublabelAndPrice( {
 	return <>{ sublabel || null }</>;
 }
 
+function isCouponApplied( { cost, cost_before_coupon = 0 }: ResponseCartProduct ) {
+	return cost < cost_before_coupon;
+}
+
 function FirstTermDiscountCallout( {
 	product,
 }: {
@@ -613,8 +617,9 @@ function FirstTermDiscountCallout( {
 	const planSlug = product.product_slug;
 	const origCost = product.item_original_cost_integer;
 	const cost = product.product_cost_integer;
+	const isRenewal = product.is_renewal;
 
-	if ( ! isWpComPlan( planSlug ) || origCost <= cost ) {
+	if ( ! isWpComPlan( planSlug ) || origCost <= cost || isRenewal || isCouponApplied( product ) ) {
 		return null;
 	}
 
@@ -649,6 +654,20 @@ function DomainDiscountCallout( {
 		product.product_slug === 'domain_map' && product.item_subtotal_integer === 0;
 	if ( isFreeDomainMapping ) {
 		return <DiscountCallout>{ translate( 'Free with your plan' ) }</DiscountCallout>;
+	}
+
+	return null;
+}
+
+function CouponDiscountCallout( {
+	product,
+}: {
+	product: ResponseCartProduct;
+} ): JSX.Element | null {
+	const translate = useTranslate();
+
+	if ( isCouponApplied( product ) ) {
+		return <DiscountCallout>{ translate( 'Discounts applied' ) }</DiscountCallout>;
 	}
 
 	return null;
@@ -761,6 +780,7 @@ function WPLineItem( {
 					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout product={ product } />
 					<FirstTermDiscountCallout product={ product } />
+					<CouponDiscountCallout product={ product } />
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList product={ product } /> }

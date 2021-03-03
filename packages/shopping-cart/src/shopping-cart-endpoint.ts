@@ -145,6 +145,10 @@ export interface ResponseCartProduct {
 	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: number;
+	cost_before_coupon?: number;
+	coupon_savings?: number;
+	coupon_savings_display?: string;
+	coupon_savings_integer?: number;
 	price: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
