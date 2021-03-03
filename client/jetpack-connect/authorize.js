@@ -301,7 +301,9 @@ export class JetpackAuthorize extends Component {
 	 */
 	isJetpackUpgradeFlow( props = this.props ) {
 		const { redirectAfterAuth } = props.authQuery;
-		return redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' );
+		return (
+			redirectAfterAuth && redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' )
+		);
 	}
 
 	isFromJetpackConnectionManager( props = this.props ) {
