@@ -17,11 +17,7 @@ import {
 } from '@automattic/composite-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type {
-	RequestCartProduct,
-	ResponseCart,
-	ResponseCartProduct,
-} from '@automattic/shopping-cart';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
@@ -92,6 +88,7 @@ import getPostalCode from './lib/get-postal-code';
 import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
+import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -103,31 +100,6 @@ const wpcom = wp.undocumented();
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
 const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
-
-// Can be safely removed when we no longer need to rely on auto-applied coupons
-// for introductory new purchase pricing
-import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
-const JETPACK_INTRO_COUPON_CODE = 'FRESHPACK';
-const useMaybeJetpackIntroCouponCode = (
-	products: RequestCartProduct[],
-	isCouponApplied: boolean
-) =>
-	useMemo( () => {
-		if ( isCouponApplied ) {
-			return undefined;
-		}
-		const includesJetpackItems = products
-			.map( ( p ) => p.product_slug )
-			.some( ( slug ) => isJetpackProductSlug( slug ) || isJetpackPlanSlug( slug ) );
-
-		// Only apply FRESHPACK if there's a Jetpack
-		// product or plan present in the cart
-		if ( ! includesJetpackItems ) {
-			return undefined;
-		}
-
-		return JETPACK_INTRO_COUPON_CODE;
-	}, [ products, isCouponApplied ] );
 
 export default function CompositeCheckout( {
 	siteSlug,
