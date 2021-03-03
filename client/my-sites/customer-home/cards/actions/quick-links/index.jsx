@@ -8,7 +8,6 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
 import FoldableCard from 'calypso/components/foldable-card';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
@@ -149,16 +148,14 @@ export const QuickLinks = ( {
 				external
 				iconSrc={ fiverrLogoIcon }
 			/>
-			{ config.isEnabled( 'anchor-fm' ) && (
-				<ActionBox
-					href="https://anchor.fm"
-					onClick={ trackAnchorPodcastAction }
-					target="_blank"
-					label={ translate( 'Create a podcast with Anchor' ) }
-					external
-					iconSrc={ anchorLogoIcon }
-				/>
-			) }
+			<ActionBox
+				href="https://anchor.fm"
+				onClick={ trackAnchorPodcastAction }
+				target="_blank"
+				label={ translate( 'Create a podcast with Anchor' ) }
+				external
+				iconSrc={ anchorLogoIcon }
+			/>
 		</div>
 	);
 
