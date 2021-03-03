@@ -2,22 +2,23 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
+import WooCommerceColophon from './woocommerce-colophon';
 import Main from 'calypso/components/main';
 
-export function Woocommerce() {
+function WooCommerce() {
 	return (
 		<div className="woocommerce">
 			<Main class="main" wideLayout>
-				<RequiredPluginsInstallView></RequiredPluginsInstallView>
+				<RequiredPluginsInstallView />
 			</Main>
+			<WooCommerceColophon />
 		</div>
 	);
 }
 
-export default localize( Woocommerce );
+export default WooCommerce;
