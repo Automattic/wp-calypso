@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import cookie from 'cookie';
+
+/**
  * Internal dependencies
  */
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -25,7 +30,9 @@ export default ( state ) => {
 	}
 
 	// Enable for E2E tests checking Nav Unification.
-	if ( process.env.FLAGS === 'nav-unification' ) {
+	// @see https://github.com/Automattic/wp-calypso/pull/50144.
+	const cookies = cookie.parse( document.cookie );
+	if ( cookies.flags && cookies.flags.includes( 'nav-unification' ) ) {
 		return true;
 	}
 
