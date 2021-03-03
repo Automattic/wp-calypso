@@ -126,11 +126,11 @@ class PagesMain extends React.Component {
 						.utc()
 						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
 				>
-					{{
+					{ {
 						treatment: null,
 						default: null,
 						loading: null,
-					}}
+					} }
 				</Experiment>
 			</Main>
 		);

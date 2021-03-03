@@ -54,8 +54,8 @@ export default function createExPlatClientReactHelpers(
 		}, [] );
 
 		if (
-			experimentName !== previousExperimentName && 
-			! previousExperimentName.startsWith('explat_test')
+			experimentName !== previousExperimentName &&
+			! previousExperimentName.startsWith( 'explat_test' )
 		) {
 			const message = '[ExPlat] useExperiment: experimentName should never change between renders!';
 			if ( exPlatClient.config.isDevelopmentMode ) {
