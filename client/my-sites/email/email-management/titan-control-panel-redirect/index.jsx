@@ -37,6 +37,10 @@ class TitanControlPanelRedirect extends React.Component {
 		// Connected props derived from the props above
 		domain: PropTypes.object,
 		siteId: PropTypes.number,
+
+		// Other props added via connect
+		errorNotice: PropTypes.function,
+		translate: PropTypes.function,
 	};
 
 	componentDidMount() {
