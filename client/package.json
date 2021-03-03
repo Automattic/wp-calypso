@@ -171,7 +171,7 @@
 		"path-browserify": "^1.0.0",
 		"percentage-regex": "^3.0.0",
 		"phone": "^2.4.2",
-		"photon": "^3.0.0",
+		"photon": "^4.0.0",
 		"portscanner": "^2.2.0",
 		"prismjs": "^1.17.1",
 		"prop-types": "^15.7.2",

@@ -1,6 +1,8 @@
 # History
 
-## 3.0.0 / TBD
+## 4.0.0 / TBD
+
+(Note: version 3 was skipped due to an existing deprecation)
 
 - Drop dependency on `url` npm package.
 - Breaking change: support for URL / URLSearchParams APIs is now required.
