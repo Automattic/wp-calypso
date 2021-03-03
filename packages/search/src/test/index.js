@@ -141,7 +141,7 @@ describe( 'search', () => {
 		expect( onSearchClose ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'should call onSearch when a default value is provided but not call onSearchChange', () => {
+	it( 'should call onSearch without debouncing when a default value is provided but not call onSearchChange', () => {
 		const onSearch = jest.fn();
 		const onSearchChange = jest.fn();
 		const defaultValue = 'a default search value';
@@ -150,8 +150,11 @@ describe( 'search', () => {
 				onSearch={ onSearch }
 				onSearchChange={ onSearchChange }
 				defaultValue={ defaultValue }
+				delaySearch
+				delayTimeout={ 1000 }
 			/>
 		);
+		// Just assert that onSearch was called immediately, if it is debounced then this assertion will fail.
 		expect( onSearch ).toHaveBeenCalledWith( defaultValue );
 		expect( onSearchChange ).not.toHaveBeenCalled();
 	} );
