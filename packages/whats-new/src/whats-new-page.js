@@ -3,20 +3,10 @@
  */
 import React, { useEffect } from 'react';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-import { Button, GuidePage, __experimentalText as Text } from '@wordpress/components';
+import { Button, GuidePage } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
 
-function WhatsNewPage( {
-	alignBottom = false,
-	description,
-	heading,
-	imageSrc,
-	isLastPage,
-	key,
-	link,
-	pageNumber,
-} ) {
+function WhatsNewPage( { description, heading, imageSrc, isLastPage, key, link, pageNumber } ) {
 	const __ = useI18n().__;
 
 	useEffect( () => {
@@ -29,9 +19,9 @@ function WhatsNewPage( {
 	return (
 		<GuidePage className="whats-new-page__container">
 			<div className="whats-new-page__text">
-				{ heading && <Text variant="title.large">{ heading }</Text> }
+				{ heading && <h1 className="whats-new-page__heading">{ heading }</h1> }
 				<div className="whats-new-page__description">
-					{ description && <Text variant="body">{ description }</Text> }
+					{ description && <p>{ description }</p> }
 					{ link && (
 						<Button
 							className="whats-new-page__link"
@@ -40,7 +30,7 @@ function WhatsNewPage( {
 							isLink
 							target="_blank"
 						>
-							{ __( 'Learn more' ) }
+							{ __( 'Learn more', 'Whats New Announcements' ) }
 						</Button>
 					) }
 				</div>
@@ -52,7 +42,7 @@ function WhatsNewPage( {
 						src={ imageSrc }
 						alt={ description }
 						aria-hidden="true"
-						className={ 'whats-new-page__image' + ( alignBottom ? ' align-bottom' : '' ) }
+						className={ 'whats-new-page__image' }
 					/>
 				) }
 			</div>
