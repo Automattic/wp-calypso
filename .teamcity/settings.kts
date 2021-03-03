@@ -968,7 +968,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 				# Collect results
 				mkdir -p reports
-				find test/e2e/temp -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
+				find test/e2e/ -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
 
 				mkdir -p screenshots
 				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
@@ -986,7 +986,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "test/e2e/temp/**/reports/*.xml")
+			param("xmlReportParsing.reportDirs", "test/e2e/reports/*.xml")
 		}
 		perfmon {
 		}
