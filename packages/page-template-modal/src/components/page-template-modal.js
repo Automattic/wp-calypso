@@ -138,10 +138,7 @@ class PageTemplateModal extends Component {
 
 	closeModal = () => {
 		trackDismiss();
-
-		// Try if we have specific URL to go back to, otherwise go to the page list.
-		const calypsoifyCloseUrl = window?.calypsoifyGutenberg?.closeUrl;
-		window.top.location = calypsoifyCloseUrl || 'edit.php?post_type=page';
+		this.props.setOpenState( false );
 	};
 
 	getBlocksByTemplateSlug( name ) {
