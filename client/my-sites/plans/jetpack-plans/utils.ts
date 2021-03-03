@@ -35,6 +35,7 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_PLANS_BY_TERM,
+	PLAN_JETPACK_FREE,
 } from 'calypso/lib/plans/constants';
 import {
 	getPlan,
@@ -487,6 +488,7 @@ export function itemToSelectorProduct(
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
+			isFree: productSlug === PLAN_JETPACK_FREE,
 			displayName: getForCurrentCROIteration( item.getTitle ),
 			buttonLabel: getForCurrentCROIteration( item.getButtonLabel ),
 			type,

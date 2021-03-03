@@ -24,7 +24,7 @@ import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 type SiteId = number | null;
 type Props = {
 	href: string;
-	onClick: () => void;
+	onClick: React.MouseEventHandler;
 };
 
 const buildHref = (

@@ -10,6 +10,7 @@ import { Button, ProductIcon } from '@automattic/components';
 /**
  * Internal dependencies
  */
+import useJetpackFreeButtonProps from 'calypso/components/jetpack/card/jetpack-free-card/use-jetpack-free-button-props';
 import Gridicon from 'calypso/components/gridicon';
 import { preventWidows } from 'calypso/lib/formatting';
 import JetpackProductCardTimeFrame from './time-frame';
@@ -21,7 +22,11 @@ import InfoPopover from 'calypso/components/info-popover';
  * Type dependencies
  */
 import type { Moment } from 'moment';
-import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type {
+	Duration,
+	PurchaseCallback,
+	QueryArgs,
+} from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies
@@ -30,6 +35,8 @@ import './style.scss';
 import starIcon from './assets/star.svg';
 
 type OwnProps = {
+	siteId: number | null;
+	urlQueryArgs: QueryArgs;
 	iconSlug?: string;
 	productSlug: string;
 	productName: TranslateResult;
@@ -106,7 +113,7 @@ const DisplayPrice = ( {
 		);
 	}
 
-	if ( isFree ) {
+	if ( isFree && typeof discountedPrice !== 'number' ) {
 		return (
 			<div className="jetpack-product-card-npip__price">
 				<div>
@@ -174,6 +181,8 @@ const DisplayPrice = ( {
 };
 
 const JetpackProductCardAlt2: React.FC< Props > = ( {
+	siteId,
+	urlQueryArgs,
 	iconSlug,
 	productSlug,
 	productName,
@@ -203,6 +212,10 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	aboveButtonText = null,
 }: Props ) => {
 	const translate = useTranslate();
+	const { href: freeHref, onClick: freeOnClick } = useJetpackFreeButtonProps(
+		siteId,
+		urlQueryArgs
+	);
 	const parsedHeadingLevel = isNumber( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel ), 1 ), 6 )
 		: 2;
@@ -262,7 +275,8 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 					<Button
 						primary={ buttonPrimary }
 						className="jetpack-product-card-npip__button"
-						onClick={ onButtonClick }
+						href={ isFree ? freeHref : '' }
+						onClick={ isFree ? freeOnClick : onButtonClick }
 						disabled={ isDisabled }
 					>
 						{ buttonLabel }
