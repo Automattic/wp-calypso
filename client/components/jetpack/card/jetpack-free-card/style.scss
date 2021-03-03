@@ -12,6 +12,7 @@
 .jetpack-free-card__header {
 	@include break-small {
 		flex: 1;
+		margin-inline-end: 32px;
 	}
 }
 
@@ -39,7 +40,6 @@
 	border-radius: 4px;
 
 	font-size: 1rem;
-	font-weight: 700;
 
 	@include break-large {
 		margin-bottom: 0;
@@ -49,23 +49,21 @@
 .jetpack-free-card__features-list {
 	margin: 28px 0 0;
 
-	color: var( --studio-gray-100 );
-	list-style-type: none;
-
-	> li {
-		display: flex;
-		justify-content: flex-start;
-
-		margin: 12px 0;
-
-		fill: var( --studio-jetpack-green-40 );
-	}
+	color: var( --studio-gray-60 );
 
 	@include break-small {
 		flex: 1;
 
-		margin-top: 0;
+		margin: 12px 0;
 		padding-left: 28px;
+
+		> li {
+			margin-bottom: 16px;
+		}
+
+		> li:last-child {
+			margin-bottom: initial;
+		}
 	}
 
 	@include break-large {
@@ -77,18 +75,10 @@
 		padding-left: 0;
 
 		> li {
-			width: 50%;
-			margin: 0;
+			width: calc( 50% - 8px );
+			padding-inline-start: 8px;
+
+			margin-bottom: initial;
 		}
 	}
-}
-
-.jetpack-free-card__features-list .gridicon {
-	margin-right: 12px;
-
-	color: var( --studio-jetpack-green-40 );
-}
-
-.jetpack-free-card__features-text {
-	flex: 1;
 }

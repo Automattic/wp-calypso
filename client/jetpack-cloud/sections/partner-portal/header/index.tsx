@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -13,8 +13,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import OlarkChat from 'calypso/components/olark-chat';
 import config from '@automattic/calypso-config';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getForCurrentCROIteration } from 'calypso/my-sites/plans/jetpack-plans/iterations';
-import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Style dependencies
@@ -24,17 +22,13 @@ import './style.scss';
 export default function Header() {
 	const identity = config( 'olark_chat_identity' );
 	const translate = useTranslate();
-	const iterationClassName = useMemo(
-		() => getForCurrentCROIteration( ( variation: Iterations ) => `iteration-${ variation }` ),
-		[]
-	);
 	const title = translate( 'Security, performance, and growth tools for WordPress' );
 
 	return (
 		<>
 			{ identity && <OlarkChat { ...{ identity } } /> }
 			<JetpackComMasterbar />
-			<div className={ classNames( 'header', iterationClassName ) }>
+			<div className={ classNames( 'header' ) }>
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows( title ) }

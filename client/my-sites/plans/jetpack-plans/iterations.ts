@@ -1,16 +1,13 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 /**
  * Iterations
  */
 
-export enum Iterations {
-	NPIP = 'npip', // New purchase intro pricing
-}
+export enum Iterations {}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -41,9 +38,8 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		}
 	}
 
-	const newPurchaseIntroPricing = abtest( 'jetpackNewPurchaseIntroPricing' ) === 'withIntroPricing';
-
-	return newPurchaseIntroPricing ? Iterations.NPIP : null;
+	// There are no active iterations right now
+	return null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;
