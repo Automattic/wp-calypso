@@ -19,7 +19,7 @@ import {
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 
 jest.mock( 'calypso/state/partner-portal/partner/selectors', () => ( {
-	getActivePartnerKey: () => ( { oauth2_token: 'fake_oauth2_token' } ),
+	getActivePartnerKey: () => ( { oAuth2Token: 'fake_oauth2_token' } ),
 } ) );
 
 describe( 'actions', () => {

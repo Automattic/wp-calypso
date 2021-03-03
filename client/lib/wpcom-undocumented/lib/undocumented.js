@@ -2627,18 +2627,6 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 };
 
 /**
- * Request the Partner Portal partner and it's keys for the current WPCOM user.
- *
- * @returns {Promise} A promise
- */
-Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
-	return this.wpcom.req.get( {
-		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/partner',
-	} );
-};
-
-/**
  * Look for a site belonging to the currently logged in user that matches the
  * anchor parameters specified.
  *

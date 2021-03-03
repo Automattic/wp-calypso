@@ -12,6 +12,7 @@ import {
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 } from 'calypso/state/action-types';
 import {
+	DispatchRequest,
 	HttpAction,
 	License,
 	LicenseCounts,
@@ -55,9 +56,6 @@ interface APIPaginatedItems< T > {
 interface APIItemFormatter< FormattedType, APIType > {
 	( items: APIType[] ): FormattedType[];
 }
-
-// Avoid TypeScript warnings and be explicit about the type of dispatchRequest being mostly unknown.
-const dispatchRequest = vanillaDispatchRequest as ( options: unknown ) => unknown;
 
 function http( options, action: HttpAction ): AnyAction {
 	return coreHttp(
@@ -147,6 +145,9 @@ export function fetchLicenseCountsHandler( action: HttpAction ): AnyAction {
 export function receiveLicenseCountsHandler( action: AnyAction, counts: LicenseCounts ) {
 	return receiveLicenseCounts( counts );
 }
+
+// Avoid TypeScript warnings and be explicit about the type of dispatchRequest being mostly unknown.
+const dispatchRequest = vanillaDispatchRequest as DispatchRequest;
 
 export default {
 	[ JETPACK_PARTNER_PORTAL_LICENSES_REQUEST ]: [
