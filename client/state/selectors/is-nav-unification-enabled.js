@@ -8,8 +8,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 export default ( state ) => {
-	// Having the feature enabled by default in all environments, will let anyone use ?disable-nav-unification to temporary disable it.
-	// We still have the feature disabled in production as safety mechanism for all customers.
+	// Disable if explicitly requested by the `?disable-nav-unification` query param.
 	if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
 		return false;
 	}
