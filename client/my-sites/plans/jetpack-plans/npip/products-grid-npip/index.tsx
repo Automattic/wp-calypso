@@ -24,9 +24,9 @@ import Experiment from 'calypso/components/experiment';
 import JetpackFreeCard from 'calypso/components/jetpack/card/npip/jetpack-free-card-npip';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
-	PRODUCT_JETPACK_BACKUP_DAILY,
-	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-} from 'calypso/lib/products-values/constants';
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+} from 'calypso/lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -158,15 +158,16 @@ const ProductsGridNPP: React.FC< ProductsGridProps > = ( {
 					{ popularProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
 							<ProductCard
+								siteId={ siteId }
+								urlQueryArgs={ urlQueryArgs }
 								item={ product }
 								onClick={ onSelectProduct }
-								siteId={ siteId }
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
 								isAligned={ ! isPlanRowWrapping }
 								featuredPlans={ [
-									PRODUCT_JETPACK_BACKUP_DAILY,
-									PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+									PLAN_JETPACK_SECURITY_DAILY,
+									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 								] }
 							/>
 						</li>
