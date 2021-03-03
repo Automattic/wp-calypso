@@ -64,17 +64,13 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 	// Translators: intended as "pay monthly", as opposed to "pay annually"
 	const newMonthlyLabel = __( 'Monthly', __i18n_text_domain__ );
 	const monthlyLabel =
-		locale === 'en' || hasTranslation?.( 'Monthly', __i18n_text_domain__ )
-			? newMonthlyLabel
-			: fallbackMonthlyLabel;
+		locale === 'en' || hasTranslation?.( 'Monthly' ) ? newMonthlyLabel : fallbackMonthlyLabel;
 
 	const fallbackAnnuallyLabel = __( 'Pay annually', __i18n_text_domain__ );
 	// Translators: intended as "pay annually", as opposed to "pay monthly"
 	const newAnnuallyLabel = __( 'Annually', __i18n_text_domain__ );
 	const annuallyLabel =
-		locale === 'en' || hasTranslation?.( 'Annually', __i18n_text_domain__ )
-			? newAnnuallyLabel
-			: fallbackAnnuallyLabel;
+		locale === 'en' || hasTranslation?.( 'Annually' ) ? newAnnuallyLabel : fallbackAnnuallyLabel;
 
 	return (
 		<div

@@ -81,14 +81,14 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 	// translators: %s is the cost per year (e.g "billed as 96$ annually")
 	const newPlanItemPriceLabelAnnually = __( 'billed as %s annually', __i18n_text_domain__ );
 	const planItemPriceLabelAnnually =
-		locale === 'en' || hasTranslation?.( 'billed as %s annually', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( 'billed as %s annually' )
 			? sprintf( newPlanItemPriceLabelAnnually, planProduct?.annualPrice )
 			: fallbackPlanItemPriceLabelAnnually;
 
 	const fallbackPlanItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
 	const newPlanItemPriceLabelMonthly = __( 'billed monthly', __i18n_text_domain__ );
 	const planItemPriceLabelMonthly =
-		locale === 'en' || hasTranslation?.( 'billed monthly', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( 'billed monthly' )
 			? newPlanItemPriceLabelMonthly
 			: fallbackPlanItemPriceLabelMonthly;
 

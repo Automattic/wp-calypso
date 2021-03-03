@@ -135,7 +135,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		'full-site-editing'
 	);
 	const planSummaryCostLabelAnnually =
-		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually', 'full-site-editing' )
+		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
 			? sprintf( newPlanSummaryCostLabelAnnually, planProduct?.annualPrice )
 			: fallbackPlanSummaryCostLabelAnnually;
 
