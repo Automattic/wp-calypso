@@ -328,7 +328,7 @@ class RemovePurchase extends Component {
 			return this.renderDomainDialog();
 		}
 
-		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) ) {
+		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
 			return this.renderPlanDialog();
 		}
 
@@ -343,7 +343,7 @@ class RemovePurchase extends Component {
 			);
 		}
 
-		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) && ! isTitanMail( purchase ) ) {
+		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 
