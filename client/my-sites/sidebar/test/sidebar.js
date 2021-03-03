@@ -69,7 +69,7 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( 'Should return Calypsoified store menu item if user can use store on this site and the site is an ecommerce plan', () => {
+		test( 'Should return wp-admin menu item if user can use store on this site and the site is an ecommerce plan', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseCalypsoStore: true,
 				canUserUseWooCommerceCoreStore: true,
