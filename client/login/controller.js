@@ -97,7 +97,7 @@ export function magicLogin( context, next ) {
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
-	if ( flow === 'jetpack-connect' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
+	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
 		return HandleEmailedLinkFormJetpackConnect;
 	}
 	return HandleEmailedLinkForm;
@@ -118,7 +118,7 @@ export function magicLoginUse( context, next ) {
 
 	const { client_id, email, redirect_to, token } = previousQuery;
 
-	const flow = includes( redirect_to, 'jetpack/connect' ) ? 'jetpack-connect' : null;
+	const flow = includes( redirect_to, 'jetpack/connect' ) ? 'jetpack' : null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 

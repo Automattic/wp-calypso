@@ -558,6 +558,7 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: true,
+				flow: ownProps.isJetpack ? 'jetpack' : null,
 			} ),
 	} )
 )( localize( Login ) );
