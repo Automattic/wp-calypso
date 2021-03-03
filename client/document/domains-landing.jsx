@@ -9,9 +9,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Head from 'components/head';
+import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';
-import { jsonStringifyForHtml } from 'server/sanitize';
+import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 
 function DomainsLanding( {
 	branchName,
@@ -98,12 +98,7 @@ function DomainsLanding( {
 				 * this lets us have the performance benefit in prod, without breaking HMR in dev
 				 * since the manifest needs to be updated on each save
 				 */ }
-				{ env === 'development' && (
-					<>
-						<script src="/calypso/evergreen/manifest.js" />
-						<script src="/calypso/evergreen/runtime.js" />
-					</>
-				) }
+				{ env === 'development' && <script src="/calypso/evergreen/runtime.js" /> }
 				{ env !== 'development' &&
 					manifests.map( ( manifest ) => (
 						<script

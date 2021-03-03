@@ -15,16 +15,16 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'lib/plans/constants';
-import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
-import { PRODUCT_JETPACK_BACKUP_DAILY } from 'lib/products-values/constants';
+} from 'calypso/lib/plans/constants';
+import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
+import { PRODUCT_JETPACK_BACKUP_DAILY } from 'calypso/lib/products-values/constants';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const cartItems = require( '../cart-items' );
-const { getPlan } = require( 'lib/plans' );
-const { getTermDuration } = require( 'lib/plans/constants' );
+const { getPlan } = require( 'calypso/lib/plans' );
+const { getTermDuration } = require( 'calypso/lib/plans/constants' );
 const {
 	planItem,
 	replaceItem,
@@ -575,6 +575,73 @@ describe( 'getDomainPriceRule()', () => {
 					{ domain_name: 'domain.com', product_slug: 'domain' }
 				)
 			).toBe( 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' );
+		} );
+	} );
+
+	describe( 'plan flows which do not include a free domain', () => {
+		test( 'should return PRICE if flowName is free', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'free'
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if flowName is personal-monthly', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'personal-monthly'
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if flowName is premium-monthly', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'premium-monthly'
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if flowName is business-monthly', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'business-monthly'
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return PRICE if flowName is ecommerce-monthly', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					null,
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' },
+					false,
+					'ecommerce-monthly'
+				)
+			).toBe( 'PRICE' );
 		} );
 	} );
 } );

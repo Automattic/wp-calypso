@@ -317,7 +317,7 @@ export const topHosts: Host[] = [
 		name: 'Dreamhost',
 		supportLink: 'https://www.dreamhost.com/support/',
 		credentialLinks: {
-			ftp: 'https://help.dreamhost.com/hc/en-us/sections/203242517-Connecting-To-Your-Server',
+			ftp: 'https://help.dreamhost.com/hc/en-us/articles/115000675027-FTP-overview-and-credentials',
 			sftp: 'https://help.dreamhost.com/hc/en-us/articles/216385837-Enabling-Shell-access',
 		},
 	},

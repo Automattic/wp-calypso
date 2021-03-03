@@ -29,6 +29,8 @@ export interface SiteVertical {
 	slug?: string;
 }
 
+export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
+
 export interface Design {
 	categories: Array< string >;
 	fonts: FontPair;
@@ -39,5 +41,13 @@ export interface Design {
 	src: string;
 	template: string;
 	theme: string;
+	preview?: 'static';
 	title: string;
+	features: Array< DesignFeatures >;
+
+	/**
+	 * Quickly hide a design from the picker without having to remove
+	 * it from the available-designs-config.json file.
+	 */
+	hide?: boolean;
 }

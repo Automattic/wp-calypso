@@ -95,7 +95,6 @@ class WP_Template_Inserter {
 		$this->fse_template_data_option = $this->theme_slug . '-fse-template-data-v1';
 	}
 
-
 	/**
 	 * Retrieves template parts content.
 	 */
@@ -356,7 +355,7 @@ class WP_Template_Inserter {
 
 		$request_url = add_query_arg(
 			array(
-				'_locale' => $this->get_iso_639_locale(),
+				'_locale' => $this->get_template_locale(),
 			),
 			'https://public-api.wordpress.com/wpcom/v2/verticals/m1/templates'
 		);
@@ -418,20 +417,11 @@ class WP_Template_Inserter {
 	}
 
 	/**
-	 * Returns ISO 639 conforming locale string.
-	 *
-	 * @return string ISO 639 locale string
+	 * Returns the locale to be used for page templates
 	 */
-	public function get_iso_639_locale() {
-		$language = strtolower( get_locale() );
-
-		if ( in_array( $language, array( 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
-			$language = str_replace( '_', '-', $language );
-		} else {
-			$language = preg_replace( '/([-_].*)$/i', '', $language );
-		}
-
-		return $language;
+	private function get_template_locale() {
+		$language = get_locale();
+		return \A8C\FSE\Common\get_iso_639_locale( $language );
 	}
 
 	/**
@@ -439,7 +429,7 @@ class WP_Template_Inserter {
 	 */
 	public function register_template_post_types() {
 		register_post_type(
-			'wp_template_part',
+			'wp_template_part', // phpcs:ignore WordPress.NamingConventions.ValidPostTypeSlug.ReservedPrefix
 			array(
 				'labels'                => array(
 					'name'                     => _x( 'Template Parts', 'post type general name', 'full-site-editing' ),

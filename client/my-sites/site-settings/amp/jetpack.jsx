@@ -30,7 +30,8 @@ const AmpJetpack = ( {
 	siteSlug,
 	translate,
 } ) => {
-	let linkUrl, linkText;
+	let linkUrl;
+	let linkText;
 	if ( ampPluginInstalled && ampPluginInstalled.active ) {
 		linkUrl = customizerAmpPanelUrl;
 		linkText = translate( 'Edit the design of your Accelerated Mobile Pages' );

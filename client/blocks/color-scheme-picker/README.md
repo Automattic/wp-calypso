@@ -23,6 +23,15 @@ function render() {
 
 The following props can be passed to the ColorSchemePicker component:
 
+### `defaultSelection`
+
+<table>
+	<tr><td>Type</td><td>String</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+Provide a default selection for when no color scheme has been selected yet. If no other default is provided, the first item in the color scheme array will be selected.
+
 ### `temporarySelection`
 
 <table>

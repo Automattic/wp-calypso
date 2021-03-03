@@ -1,122 +1,180 @@
-.color-scheme.is-midnight {
-	/* Theme Properties */
-	--color-primary: var( --studio-gray-70 );
-	--color-primary-rgb: var( --studio-gray-70-rgb );
-	--color-primary-dark: var( --studio-gray-80 );
-	--color-primary-dark-rgb: var( --studio-gray-80-rgb );
-	--color-primary-light: var( --studio-gray-50 );
-	--color-primary-light-rgb: var( --studio-gray-50-rgb );
-	--color-primary-0: var( --studio-gray-0 );
-	--color-primary-0-rgb: var( --studio-gray-0-rgb );
-	--color-primary-5: var( --studio-gray-5 );
-	--color-primary-5-rgb: var( --studio-gray-5-rgb );
-	--color-primary-10: var( --studio-gray-10 );
-	--color-primary-10-rgb: var( --studio-gray-10-rgb );
-	--color-primary-20: var( --studio-gray-20 );
-	--color-primary-20-rgb: var( --studio-gray-20-rgb );
-	--color-primary-30: var( --studio-gray-30 );
-	--color-primary-30-rgb: var( --studio-gray-30-rgb );
-	--color-primary-40: var( --studio-gray-40 );
-	--color-primary-40-rgb: var( --studio-gray-40-rgb );
-	--color-primary-50: var( --studio-gray-50 );
-	--color-primary-50-rgb: var( --studio-gray-50-rgb );
-	--color-primary-60: var( --studio-gray-60 );
-	--color-primary-60-rgb: var( --studio-gray-60-rgb );
-	--color-primary-70: var( --studio-gray-70 );
-	--color-primary-70-rgb: var( --studio-gray-70-rgb );
-	--color-primary-80: var( --studio-gray-80 );
-	--color-primary-80-rgb: var( --studio-gray-80-rgb );
-	--color-primary-90: var( --studio-gray-90 );
-	--color-primary-90-rgb: var( --studio-gray-90-rgb );
-	--color-primary-100: var( --studio-gray-100 );
-	--color-primary-100-rgb: var( --studio-gray-100-rgb );
+/*
+WP Admin Unthemed definitions:
 
-	--color-accent: var( --studio-blue-50 );
-	--color-accent-rgb: var( --studio-blue-50-rgb );
-	--color-accent-dark: var( --studio-blue-70 );
-	--color-accent-dark-rgb: var( --studio-blue-70-rgb );
-	--color-accent-light: var( --studio-blue-30 );
-	--color-accent-light-rgb: var( --studio-blue-30-rgb );
-	--color-accent-0: var( --studio-blue-0 );
-	--color-accent-0-rgb: var( --studio-blue-0-rgb );
-	--color-accent-5: var( --studio-blue-5 );
-	--color-accent-5-rgb: var( --studio-blue-5-rgb );
-	--color-accent-10: var( --studio-blue-10 );
-	--color-accent-10-rgb: var( --studio-blue-10-rgb );
-	--color-accent-20: var( --studio-blue-20 );
-	--color-accent-20-rgb: var( --studio-blue-20-rgb );
-	--color-accent-30: var( --studio-blue-30 );
-	--color-accent-30-rgb: var( --studio-blue-30-rgb );
-	--color-accent-40: var( --studio-blue-40 );
-	--color-accent-40-rgb: var( --studio-blue-40-rgb );
-	--color-accent-50: var( --studio-blue-50 );
-	--color-accent-50-rgb: var( --studio-blue-50-rgb );
-	--color-accent-60: var( --studio-blue-60 );
-	--color-accent-60-rgb: var( --studio-blue-60-rgb );
-	--color-accent-70: var( --studio-blue-70 );
-	--color-accent-70-rgb: var( --studio-blue-70-rgb );
-	--color-accent-80: var( --studio-blue-80 );
-	--color-accent-80-rgb: var( --studio-blue-80-rgb );
-	--color-accent-90: var( --studio-blue-90 );
-	--color-accent-90-rgb: var( --studio-blue-90-rgb );
-	--color-accent-100: var( --studio-blue-100 );
-	--color-accent-100-rgb: var( --studio-blue-100-rgb );
+$text-color: #fff !default;
+$base-color: #363b3f !default;
+$highlight-color: #e14d43 !default;
+$notification-color: #69a8bb !default;
 
-	--color-link: var( --studio-red-60 );
-	--color-link-rgb: var( --studio-red-60-rgb );
-	--color-link-dark: var( --studio-red-70 );
-	--color-link-dark-rgb: var( --studio-red-70-rgb );
-	--color-link-light: var( --studio-red-30 );
-	--color-link-light-rgb: var( --studio-red-30-rgb );
-	--color-link-0: var( --studio-red-0 );
-	--color-link-0-rgb: var( --studio-red-0-rgb );
-	--color-link-5: var( --studio-red-5 );
-	--color-link-5-rgb: var( --studio-red-5-rgb );
-	--color-link-10: var( --studio-red-10 );
-	--color-link-10-rgb: var( --studio-red-10-rgb );
-	--color-link-20: var( --studio-red-20 );
-	--color-link-20-rgb: var( --studio-red-20-rgb );
-	--color-link-30: var( --studio-red-30 );
-	--color-link-30-rgb: var( --studio-red-30-rgb );
-	--color-link-40: var( --studio-red-40 );
-	--color-link-40-rgb: var( --studio-red-40-rgb );
-	--color-link-50: var( --studio-red-50 );
-	--color-link-50-rgb: var( --studio-red-50-rgb );
-	--color-link-60: var( --studio-red-60 );
-	--color-link-60-rgb: var( --studio-red-60-rgb );
-	--color-link-70: var( --studio-red-70 );
-	--color-link-70-rgb: var( --studio-red-70-rgb );
-	--color-link-80: var( --studio-red-80 );
-	--color-link-80-rgb: var( --studio-red-80-rgb );
-	--color-link-90: var( --studio-red-90 );
-	--color-link-90-rgb: var( --studio-red-90-rgb );
-	--color-link-100: var( --studio-red-100 );
-	--color-link-100-rgb: var( --studio-red-100-rgb );
+WP Admin Midnight Definition:
 
-	/* Component Properties */
-	--color-masterbar-background: var( --studio-gray-70 );
-	--color-masterbar-border: var( --studio-gray-70 );
+$base-color: #363b3f;
+$highlight-color: #e14d43;
+$notification-color: #69a8bb;
+
+Created this definition in color-studio to generate 0-100 shades:
+    {
+      name: 'Midnight',
+      default: 50,
+      specs: {
+        hue_start: 200,
+        hue_end: 210,
+        hue_curve: 'easeOutSine',
+        sat_steps: [
+          8, 27, 56, 80, 100, 100, 100, 100, 100, 100, 100, 100
+        ],
+        lum_steps: [
+          96, 96, 95, 94, 87, 75.1, 61.6, 49, 40.5, 31, 20, 11
+        ]
+      }
+    }
+*/
+
+.color-scheme.is-midnight,
+.color-scheme.is-midnight .is-nav-unification {
+	/* Variables used in Calypso Midnight */
+	--theme-text-color: #ffffff; /* Direct from wp-admin */
+	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
+	--theme-base-color: #363b3f; /* Direct from wp-admin */
+	--theme-base-color-rgb: 54, 59, 63; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-text-color: #c3c4c5; /* mix( $base-color, $text-color, 30% ) */
+	--theme-submenu-background-color: #26292c; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
+	--theme-highlight-color: #e14d43; /* Direct from wp-admin */
+	--theme-highlight-color-rgb: 225, 77, 67; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-notification-color: #69a8bb; /* Direct from wp-admin */
+
+	--midnight-blue-0: #e1eef5;
+	--midnight-blue-5: #b3ddf5;
+	--midnight-blue-10: #6bbff2;
+	--midnight-blue-20: #30a2f0;
+	--midnight-blue-30: #007fde;
+	--midnight-blue-40: #006ac0;
+	--midnight-blue-50: #00549d;
+	--midnight-blue-60: #00417d;
+	--midnight-blue-70: #003567;
+	--midnight-blue-80: #00284f;
+	--midnight-blue-90: #001a33;
+	--midnight-blue-100: #000e1c;
+	--midnight-blue: #00549d;
+	--midnight-blue-0-rgb: 225, 238, 245;
+	--midnight-blue-5-rgb: 179, 221, 245;
+	--midnight-blue-10-rgb: 107, 191, 242;
+	--midnight-blue-20-rgb: 48, 162, 240;
+	--midnight-blue-30-rgb: 0, 127, 222;
+	--midnight-blue-40-rgb: 0, 106, 192;
+	--midnight-blue-50-rgb: 0, 84, 157;
+	--midnight-blue-60-rgb: 0, 65, 125;
+	--midnight-blue-70-rgb: 0, 53, 103;
+	--midnight-blue-80-rgb: 0, 40, 79;
+	--midnight-blue-90-rgb: 0, 26, 51;
+	--midnight-blue-100-rgb: 0, 14, 28;
+	--midnight-blue-rgb: 0, 84, 157;
+
+	/* Primary */
+	--color-primary: var( --theme-highlight-color );
+	--color-primary-rgb: var( --theme-highlight-color-rgb );
+	--color-primary-dark: var( --midnight-blue-70 );
+	--color-primary-dark-rgb: var( --midnight-blue-70-rgb );
+	--color-primary-light: var( --midnight-blue-30 );
+	--color-primary-light-rgb: var( --midnight-blue-30-rgb );
+	--color-primary-0: var( --midnight-blue-0 );
+	--color-primary-0-rgb: var( --midnight-blue-0-rgb );
+	--color-primary-5: var( --midnight-blue-5 );
+	--color-primary-5-rgb: var( --midnight-blue-5-rgb );
+	--color-primary-10: var( --midnight-blue-10 );
+	--color-primary-10-rgb: var( --midnight-blue-10-rgb );
+	--color-primary-20: var( --midnight-blue-20 );
+	--color-primary-20-rgb: var( --midnight-blue-20-rgb );
+	--color-primary-30: var( --midnight-blue-30 );
+	--color-primary-30-rgb: var( --midnight-blue-30-rgb );
+	--color-primary-40: var( --midnight-blue-40 );
+	--color-primary-40-rgb: var( --midnight-blue-40-rgb );
+	--color-primary-50: var( --midnight-blue-50 );
+	--color-primary-50-rgb: var( --midnight-blue-50-rgb );
+	--color-primary-60: var( --midnight-blue-60 );
+	--color-primary-60-rgb: var( --midnight-blue-60-rgb );
+	--color-primary-70: var( --midnight-blue-70 );
+	--color-primary-70-rgb: var( --midnight-blue-70-rgb );
+	--color-primary-80: var( --midnight-blue-80 );
+	--color-primary-80-rgb: var( --midnight-blue-80-rgb );
+	--color-primary-90: var( --midnight-blue-90 );
+	--color-primary-90-rgb: var( --midnight-blue-90-rgb );
+	--color-primary-100: var( --midnight-blue-100 );
+	--color-primary-100-rgb: var( --midnight-blue-100-rgb );
+
+	/* Accent */
+	--color-accent: var( --theme-highlight-color );
+	--color-accent-rgb: var( --theme-highlight-color-rgb );
+	--color-accent-dark: var( --midnight-blue-70 );
+	--color-accent-dark-rgb: var( --midnight-blue-70-rgb );
+	--color-accent-light: var( --midnight-blue-30 );
+	--color-accent-light-rgb: var( --midnight-blue-30-rgb );
+	--color-accent-0: var( --midnight-blue-0 );
+	--color-accent-0-rgb: var( --midnight-blue-0-rgb );
+	--color-accent-5: var( --midnight-blue-5 );
+	--color-accent-5-rgb: var( --midnight-blue-5-rgb );
+	--color-accent-10: var( --midnight-blue-10 );
+	--color-accent-10-rgb: var( --midnight-blue-10-rgb );
+	--color-accent-20: var( --midnight-blue-20 );
+	--color-accent-20-rgb: var( --midnight-blue-20-rgb );
+	--color-accent-30: var( --midnight-blue-30 );
+	--color-accent-30-rgb: var( --midnight-blue-30-rgb );
+	--color-accent-40: var( --midnight-blue-40 );
+	--color-accent-40-rgb: var( --midnight-blue-40-rgb );
+	--color-accent-50: var( --midnight-blue-50 );
+	--color-accent-50-rgb: var( --midnight-blue-50-rgb );
+	--color-accent-60: var( --midnight-blue-60 );
+	--color-accent-60-rgb: var( --midnight-blue-60-rgb );
+	--color-accent-70: var( --midnight-blue-70 );
+	--color-accent-70-rgb: var( --midnight-blue-70-rgb );
+	--color-accent-80: var( --midnight-blue-80 );
+	--color-accent-80-rgb: var( --midnight-blue-80-rgb );
+	--color-accent-90: var( --midnight-blue-90 );
+	--color-accent-90-rgb: var( --midnight-blue-90-rgb );
+	--color-accent-100: var( --midnight-blue-100 );
+	--color-accent-100-rgb: var( --midnight-blue-100-rgb );
+
+	/* Masterbar */
+	--color-masterbar-background: var( --theme-base-color );
+	--color-masterbar-border: var( --theme-submenu-background-color );
 	--color-masterbar-text: var( --studio-white );
-	--color-masterbar-item-hover-background: var( --studio-gray-80 );
-	--color-masterbar-item-active-background: var( --studio-gray-90 );
+	--color-masterbar-unread-dot-background: var( --theme-notification-color );
+
+	--color-masterbar-item-hover-background: var( --theme-submenu-background-color );
+	--color-masterbar-item-active-background: var( --theme-submenu-background-color );
 	--color-masterbar-item-new-editor-background: var( --studio-gray-50 );
 	--color-masterbar-item-new-editor-hover-background: var( --studio-gray-60 );
+
 	--color-masterbar-toggle-drafts-editor-background: var( --studio-gray-60 );
 	--color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
 	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
 
-	--color-sidebar-background: var( --studio-gray-90 );
-	--color-sidebar-background-rgb: var( --studio-gray-90-rgb );
-	--color-sidebar-border: var( --studio-gray-80 );
-	--color-sidebar-text: var( --studio-white );
-	--color-sidebar-text-rgb: var( --studio-white-rgb );
-	--color-sidebar-text-alternative: var( --studio-gray-20 );
-	--color-sidebar-gridicon-fill: var( --studio-gray-10 );
-	--color-sidebar-menu-selected-background: var( --studio-red-50 );
-	--color-sidebar-menu-selected-background-rgb: var( --studio-red-50-rgb );
-	--color-sidebar-menu-selected-text: var( --studio-white );
-	--color-sidebar-menu-selected-text-rgb: var( --studio-white-rgb );
-	--color-sidebar-menu-hover-background: var( --studio-gray-80 );
-	--color-sidebar-menu-hover-background-rgb: var( --studio-gray-80-rgb );
-	--color-sidebar-menu-hover-text: var( --studio-white );
+	/* Sidebar */
+	--color-sidebar-background: var( --theme-base-color );
+	--color-sidebar-background-rgb: var( --theme-base-color-rgb );
+	--color-sidebar-border: var( --theme-submenu-background-color );
+	--color-sidebar-text: var( --theme-text-color );
+	--color-sidebar-text-rgb: var( --theme-text-color-rgb );
+	--color-sidebar-text-alternative: var( --theme-text-color );
+	--color-sidebar-gridicon-fill: var( --theme-icon-color );
+
+	/* Sidebar Selected */
+	--color-sidebar-menu-selected-background: var( --theme-highlight-color );
+	--color-sidebar-menu-selected-background-rgb: var( --theme-highlight-color-rgb );
+	--color-sidebar-menu-selected-text: var( --theme-text-color );
+	--color-sidebar-menu-selected-text-rgb: var( --theme-text-color-rgb );
+
+	/* Sidebar Hover */
+	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
+	--color-sidebar-menu-hover-background-rgb: var( --theme-highlight-color-rgb );
+	--color-sidebar-menu-hover-text: var( --theme-text-color );
+
+	/* Sidebar Hover - Nav unification */
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --theme-submenu-background-color );
+	--color-sidebar-submenu-text: var( --theme-submenu-text-color );
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: var( --theme-highlight-color );
 }

@@ -7,15 +7,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit, debounce, isNull } from 'lodash';
+import { isEmpty, omit, debounce } from 'lodash';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import Main from 'components/main';
-import { ProtectFormGuard } from 'lib/protect-form';
+import accept from 'calypso/lib/accept';
+import Main from 'calypso/components/main';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import {
 	fetchProductCategories,
 	updateProductCategory,
@@ -34,9 +34,9 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import ProductCategoryForm from './form';
 import ProductCategoryHeader from './header';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSaveErrorMessage } from './utils';
-import { withAnalytics } from 'state/analytics/actions';
+import { withAnalytics } from 'calypso/state/analytics/actions';
 
 class ProductCategoryUpdate extends React.Component {
 	static propTypes = {
@@ -172,7 +172,7 @@ class ProductCategoryUpdate extends React.Component {
 			category &&
 			category.name &&
 			category.name.length &&
-			! isNull( category.parent ) &&
+			category.parent !== null &&
 			! isUploading;
 
 		return (

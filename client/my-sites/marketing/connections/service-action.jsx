@@ -29,8 +29,8 @@ const SharingServiceAction = ( {
 	recordTracksEvent,
 	path,
 } ) => {
-	let warning = false,
-		label;
+	let warning = false;
+	let label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
 	const onClick = ( event ) => {
@@ -64,7 +64,7 @@ const SharingServiceAction = ( {
 		if ( 'must-disconnect' === status ) {
 			warning = true;
 		}
-	} else if ( 'reconnect' === status ) {
+	} else if ( 'reconnect' === status || 'refresh-failed' === status ) {
 		label = translate( 'Reconnect', {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );

@@ -374,6 +374,7 @@
 	.site-icon {
 		width: 32px !important;
 		height: 32px !important;
+		/* stylelint-disable-next-line scales/font-size */
 		font-size: 32px !important;
 		line-height: 32px !important;
 	}
@@ -541,11 +542,11 @@
 	.comment-button__label-status,
 	.like-button__label-status {
 		@include breakpoint-deprecated( '>960px' ) {
-			display: none;
+			@include screen-reader-text();
 		}
 
 		@include breakpoint-deprecated( '<660px' ) {
-			display: none;
+			@include screen-reader-text();
 		}
 	}
 }

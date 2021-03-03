@@ -1,6 +1,116 @@
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
+/******************************************/
+/*       Vertical Scroll Experiment       */
+/*  	       pcbrnV-XN-p2               */
+/******************************************/
+
+.in-vertically-scrolled-plans-experiment {
+	// If experiment succeeds the following styles
+	// need to be moved to the corresponding selectors
+
+	// To be moved to line 651 approximately
+	.plan-features--signup {
+		.plan-features__table {
+			@media ( max-width: 1040px ) {
+				display: none;
+			}
+		}
+
+		//To be moved to line 66 approximately
+		.plan-features__mobile {
+			@media ( min-width: 660px ) and ( max-width: 1040px ) {
+				.plan-features__summary, .plan-features__description {
+					padding: 16px 33px;
+
+				}
+				.plan-features--signup .plan-features__pricing {
+					padding: 0 7px;
+				}
+			}
+
+			@media ( max-width: 1040px ) {
+				display: block;
+			}
+
+			.plan-features__header {
+				display: block;
+				position: relative;
+				text-align: left;
+				box-sizing: border-box;
+				border-top: solid 8px;
+				border-radius: 2px 2px 0 0;
+				padding-bottom: 12px;
+		
+				&.is-blogger-plan {
+					border-color: var( --color-plan-blogger );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+		
+				&.is-personal-plan {
+					border-color: var( --color-plan-personal );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+		
+				&.is-premium-plan {
+					border-color: var( --color-plan-premium );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+		
+				&.is-business-plan {
+					border-color: var( --color-plan-business );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+		
+				&.is-ecommerce-plan {
+					border-color: var( --color-plan-ecommerce );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
+			}
+
+			 .plan-price {
+				font-weight: 600;
+				margin-right: 10px;
+				font-size: $font-headline-large;
+				text-align: center;
+				font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+
+				.plan-price__currency-symbol {
+					vertical-align: super;
+					font-size: $font-title-medium;
+					font-weight: 400;
+				}
+				
+				.plan-price__integer {
+					font-weight: 600;
+				}
+			}
+
+			.plan-features__header-title {
+				font-size: 1.25rem;
+				color: var( --color-primary );
+				line-height: 0.7;
+			}
+
+			.plan-features__header-billing-info {
+				margin-bottom: 1.4em;
+				color: var( --color-text-subtle );
+				line-height: normal;
+				text-align: center;
+			}
+		}
+	}
+}
+
+
+.plan-features--loading-container {
+	margin-top: 300px;
+}
+
+/******************************************/
+
+
 /* Breakpoints 1150px, */
 
 .plan-features__content {
@@ -192,6 +302,18 @@ $plan-features-sidebar-width: 272px;
 		padding: 12px 12px 0;
 	}
 
+	&.is-p2-free,
+	&.is-p2-plus {
+		padding-left: 12px;
+		@include breakpoint-deprecated( '>1040px' ) {
+			padding-left: 24px;
+		}
+	}
+
+	&.is-p2-plus {
+		border-bottom-color: var( --p2-color-link );
+	}
+
 	.plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
 			border-bottom: solid 2px var( --color-plan-blogger );
@@ -302,7 +424,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: $font-body-extra-small;
 	line-height: 20px;
 	height: 20px;
-	border-radius: 10px;
+	border-radius: 10px; /* stylelint-disable-line */
 	color: var( --color-text-inverted );
 	background: var( --color-success );
 	font-weight: 400;
@@ -335,6 +457,21 @@ $plan-features-sidebar-width: 272px;
 		@include breakpoint-deprecated( '<960px' ) {
 			margin-bottom: 9px;
 		}
+	}
+}
+
+.plan-features__header-title-free {
+	font-size: 1.5rem;
+	line-height: 1.5;
+	font-weight: 400;
+	color: var( --color-neutral-70 );
+	padding-bottom: 8px;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: 2rem;
+	}
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
+		padding-bottom: 32px;
 	}
 }
 
@@ -380,18 +517,6 @@ $plan-features-sidebar-width: 272px;
 
 		@include breakpoint-deprecated( '<960px' ) {
 			height: 26px;
-		}
-	}
-}
-
-.plan-features__interval-type {
-	margin-bottom: 1.4em;
-
-	&.is-placeholder {
-		height: 28px;
-
-		@include breakpoint-deprecated( '<660px' ) {
-			height: auto;
 		}
 	}
 }
@@ -498,6 +623,8 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__item-info {
+	display: flex;
+	flex-direction: column;
 	flex: 1 0 0;
 	width: 100%;
 }
@@ -514,17 +641,6 @@ $plan-features-sidebar-width: 272px;
 
 /*= Plans in Signup
 ========================================*/
-
-// This is used for the monthly/yearly billing
-// which is currently us in the Jetpack flow.
-.segmented-control.price-toggle {
-	width: 250px;
-	margin: 0 auto 20px;
-
-	& + .plans-features-main__group {
-		padding-top: 8px;
-	}
-}
 
 .plans-features-main__group.is-wpcom {
 	padding-top: 19px;
@@ -590,14 +706,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 .plan-features--signup {
 	margin: 0 auto;
-
-	.jetpack-connect__plans & {
-		width: auto;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			max-width: 1000px;
-		}
-	}
 
 	.signup__steps & {
 		width: auto;
@@ -720,12 +828,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__row:last-of-type .plan-features__table-item {
 		border-bottom: solid 1px var( --color-neutral-5 );
-	}
-
-	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
-		@include breakpoint-deprecated( '<660px' ) {
-			padding-top: 0;
-		}
 	}
 
 	.plan-features__header-price-group-prices {
@@ -928,7 +1030,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	tr:last-child .plan-features__table-item {
-		border-radius: 0 0 5px 5px;
+		border-radius: 0 0 5px 5px; /* stylelint-disable-line */
 	}
 
 	.plan-features__actions {
@@ -1000,7 +1102,7 @@ button.plan-features__scroll-button {
 	padding: 0;
 	background-color: var( --color-neutral );
 	border: 0;
-	border-radius: 15px;
+	border-radius: 15px; /* stylelint-disable-line */
 	color: var( --color-text-inverted );
 	cursor: pointer;
 
@@ -1085,5 +1187,30 @@ button.plan-features__scroll-button {
 @include breakpoint-deprecated( '<480px' ) {
 	.plan-features__upgrade-launch-dialog .dialog__content p {
 		padding: 0 20px;
+	}
+}
+
+.plans-wrapper {
+	.plan-features__item-annual-plan {
+		font-size: 0.6rem; /* stylelint-disable-line */
+		text-transform: uppercase;
+	}
+
+	.plan-features__item-info.is-annual-plan-feature {
+		&.is-available {
+			.plan-features__item-annual-plan {
+				color: var( --color-success );
+			}
+		}
+
+		&:not( .is-available ) {
+			.plan-features__item-annual-plan {
+				color: var( --color-error );
+			}
+			.plan-features__item-title {
+				text-decoration: line-through;
+				color: var( --color-neutral-30 );
+			}
+		}
 	}
 }

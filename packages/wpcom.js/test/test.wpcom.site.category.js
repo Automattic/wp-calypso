@@ -1,22 +1,22 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 describe( 'wpcom.site.category', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var new_category;
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	let new_category;
 
 	// Create a testing_category before to start tests
-	var testing_category;
+	let testing_category;
 	before( ( done ) => {
 		fixture.category.name += String( ( Math.random() * 1000000 ) | 0 );
 
@@ -60,7 +60,7 @@ describe( 'wpcom.site.category', function () {
 	describe( 'wpcom.site.category.add', function () {
 		it( 'should add a new category', () => {
 			return new Promise( ( done ) => {
-				var category = site.category();
+				const category = site.category();
 
 				fixture.category.name += '-added';
 				category
@@ -83,8 +83,8 @@ describe( 'wpcom.site.category', function () {
 	describe( 'wpcom.site.category.update', function () {
 		it( 'should edit the new added category', () => {
 			return new Promise( ( done ) => {
-				var category = site.category( new_category.slug );
-				var edited_name = fixture.category.name + '-updated';
+				const category = site.category( new_category.slug );
+				const edited_name = fixture.category.name + '-updated';
 
 				category
 					.update( { name: edited_name } )

@@ -30,7 +30,11 @@ import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import DropZone from 'calypso/components/drop-zone';
-import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'calypso/state/analytics/actions';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

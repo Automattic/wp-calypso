@@ -8,7 +8,6 @@ import { By } from 'selenium-webdriver';
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 import * as driverHelper from '../../driver-helper';
-import * as driverManager from '../../driver-manager';
 
 class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Layout Grid';
@@ -47,22 +46,17 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 			throw new Error( 'You need to run setupColumns before inserting an inner block.' );
 		}
 
-		const screenSize = driverManager.currentScreenSize();
 		const addBlockButtonSelector = By.css( `${ this.blockID } button[aria-label="Add block"]` );
+		const addBlockButtons = await this.driver.findElements( addBlockButtonSelector );
+		const firstEmptyColumnIndex = this.columns - addBlockButtons.length + 1;
+		const blockSelector = By.css( this.blockID );
+		const columnSelector = By.css(
+			`${ this.blockID } div[data-type="jetpack/layout-grid-column"]:nth-child(${ firstEmptyColumnIndex })`
+		);
 
-		if ( screenSize === 'mobile' ) {
-			const addBlockButtons = await this.driver.findElements( addBlockButtonSelector );
-			const firstEmptyColumnIndex = this.columns - addBlockButtons.length + 1;
-			const blockSelector = By.css( this.blockID );
-			const columnSelector = By.css(
-				`${ this.blockID } div[data-type="jetpack/layout-grid-column"]:nth-child(${ firstEmptyColumnIndex })`
-			);
-
-			// On mobiles, we need to click through the layers until the appender is clickable:
-			await driverHelper.clickWhenClickable( this.driver, blockSelector );
-			await driverHelper.clickWhenClickable( this.driver, columnSelector );
-		}
-
+		// We need to click through the layers until the appender is clickable:
+		await driverHelper.clickWhenClickable( this.driver, blockSelector );
+		await driverHelper.clickWhenClickable( this.driver, columnSelector );
 		await driverHelper.clickWhenClickable( this.driver, addBlockButtonSelector );
 
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );

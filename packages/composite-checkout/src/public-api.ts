@@ -3,9 +3,11 @@
  */
 import Button from './components/button';
 import CheckoutErrorBoundary from './components/checkout-error-boundary';
+import PaymentLogo from './lib/payment-methods/payment-logo';
 import { CheckoutProvider } from './components/checkout-provider';
 import useMessages from './components/use-messages';
 import useEvents from './components/use-events';
+import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
 	Checkout,
 	CheckoutStep,
@@ -39,8 +41,6 @@ import {
 	useRegistry,
 	useSelect,
 } from './lib/registry';
-import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
-import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
 import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
 import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
@@ -81,8 +81,13 @@ import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 } from './lib/payment-processors';
+import useProcessPayment from './components/use-process-payment';
+import RadioButton from './components/radio-button';
 import checkoutTheme from './lib/theme';
-import { FormStatus, TransactionStatus, PaymentProcessorResponseType } from './types';
+import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
+export * from './types';
+
+export type { Theme } from './lib/theme';
 
 // Re-export the public API
 export {
@@ -101,16 +106,17 @@ export {
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutSteps,
+	CheckoutSubmitButton,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
-	FormStatus,
+	InvalidPaymentProcessorResponseError,
 	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
-	PaymentProcessorResponseType,
+	PaymentLogo,
+	RadioButton,
 	SubmitButtonWrapper,
-	TransactionStatus,
 	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
@@ -120,8 +126,6 @@ export {
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createExistingCardMethod,
-	createFreePaymentMethod,
-	createFullCreditsMethod,
 	createGiropayMethod,
 	createGiropayPaymentMethodStore,
 	createIdealMethod,
@@ -156,6 +160,7 @@ export {
 	usePaymentMethodId,
 	usePaymentProcessor,
 	usePaymentProcessors,
+	useProcessPayment,
 	useRegisterStore,
 	useRegistry,
 	useSelect,

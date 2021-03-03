@@ -7,7 +7,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,

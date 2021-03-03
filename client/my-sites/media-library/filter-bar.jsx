@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { identity, includes, noop, pull, union } from 'lodash';
+import { identity, includes, noop, union } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -119,10 +119,10 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderTabItems() {
-		const tabs = this.getFiltersForSource( this.props.source );
+		let tabs = this.getFiltersForSource( this.props.source );
 
 		if ( ! this.props.post ) {
-			pull( tabs, 'this-post' );
+			tabs = tabs.filter( ( tab ) => tab !== 'this-post' );
 		}
 
 		if ( tabs.length === 0 ) {

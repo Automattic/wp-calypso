@@ -8,6 +8,7 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/me/transactions/order';
+import 'calypso/state/order-transactions/init';
 
 export const fetchOrderTransaction = ( orderId ) => ( {
 	type: ORDER_TRANSACTION_FETCH,

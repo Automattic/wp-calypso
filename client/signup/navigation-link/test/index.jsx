@@ -9,14 +9,14 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { NavigationLink } from '../';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
-jest.mock( 'signup/utils', () => ( {
+jest.mock( 'calypso/signup/utils', () => ( {
 	getStepUrl: jest.fn(),
 	getFilteredSteps: jest.fn(),
 } ) );
 
-const signupUtils = require( 'signup/utils' );
+const signupUtils = require( 'calypso/signup/utils' );
 const { getStepUrl, getFilteredSteps } = signupUtils;
 
 describe( 'NavigationLink', () => {
@@ -48,8 +48,8 @@ describe( 'NavigationLink', () => {
 	test( 'should render Button element', () => {
 		const wrapper = shallow( <NavigationLink { ...props } /> );
 
-		expect( wrapper.find( 'Button' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'Button' ).props().className ).toEqual( 'navigation-link' );
+		expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 1 );
+		expect( wrapper.find( 'ForwardRef(Button)' ).props().className ).toEqual( 'navigation-link' );
 	} );
 
 	test( 'should render no icons when the direction prop is undefined', () => {

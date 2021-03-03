@@ -1,11 +1,12 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	combineReducers,
 	keyedReducer,
-	withSchemaValidation,
 	withoutPersistence,
+	withSchemaValidation,
 } from 'calypso/state/utils';
 import {
 	GSUITE_USERS_REQUEST,
@@ -61,7 +62,7 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	return state;
 } );
 
-export default keyedReducer(
+const combinedReducer = keyedReducer(
 	'siteId',
 	combineReducers( {
 		users: usersReducer,
@@ -69,3 +70,5 @@ export default keyedReducer(
 		requestError: requestErrorReducer,
 	} )
 );
+
+export default withStorageKey( 'gsuiteUsers', combinedReducer );

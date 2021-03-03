@@ -20,8 +20,8 @@ import {
 } from 'woocommerce/state/sites/settings/products/selectors';
 import { changeSettingsProductsSetting } from 'woocommerce/state/sites/settings/products/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 
 const ShippingUnits = ( {
 	siteId,

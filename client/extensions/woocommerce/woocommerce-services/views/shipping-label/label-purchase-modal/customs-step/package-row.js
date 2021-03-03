@@ -15,7 +15,7 @@ import ItemRowHeader from './item-row-header';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
-import FormLabel from 'components/forms/form-label';
+import FormLabel from 'calypso/components/forms/form-label';
 import {
 	setContentsType,
 	setContentsExplanation,
@@ -29,7 +29,7 @@ import {
 	isLoaded,
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
 
 const PackageRow = ( props ) => {
 	const {

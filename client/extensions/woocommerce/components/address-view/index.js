@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { every, find, isEmpty, trim } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,9 +15,9 @@ import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import FormCountrySelectFromApi from 'woocommerce/components/form-location-select/countries';
 import FormStateSelectFromApi from 'woocommerce/components/form-location-select/states';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class AddressView extends Component {
 	static propTypes = {

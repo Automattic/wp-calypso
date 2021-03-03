@@ -11,7 +11,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 
 let directly;
 let loadScript;

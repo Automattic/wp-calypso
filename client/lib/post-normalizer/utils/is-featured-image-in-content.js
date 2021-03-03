@@ -6,9 +6,9 @@ import { findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
-import { thumbIsLikelyImage } from 'lib/post-normalizer/utils/thumb-is-likely-image';
-import { getUrlParts } from 'lib/url';
+import { isPhotonHost } from 'calypso/lib/post-normalizer/utils/is-photon-host';
+import { thumbIsLikelyImage } from 'calypso/lib/post-normalizer/utils/thumb-is-likely-image';
+import { getUrlParts } from 'calypso/lib/url';
 
 function getPathname( uri ) {
 	const { pathname, hostname } = getUrlParts( uri );

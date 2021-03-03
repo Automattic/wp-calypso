@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import SitePicker from 'calypso/my-sites/picker';
 import AsyncLoad from 'calypso/components/async-load';
 

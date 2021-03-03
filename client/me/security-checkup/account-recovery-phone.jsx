@@ -43,7 +43,8 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 			);
 		}
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( ! accountRecoveryPhone ) {
 			icon = getWarningIcon();
@@ -57,7 +58,7 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 						recoveryPhoneNumber: accountRecoveryPhone.numberFull,
 					},
 					components: {
-						strong: <strong />,
+						strong: <strong dir="ltr" />,
 					},
 				}
 			);
@@ -70,7 +71,7 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 						recoveryPhoneNumber: accountRecoveryPhone.numberFull,
 					},
 					components: {
-						strong: <strong />,
+						strong: <strong dir="ltr" />,
 					},
 				}
 			);

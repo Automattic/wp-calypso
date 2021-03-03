@@ -15,7 +15,7 @@ import SubscriptionsContent from './subscriptions-content';
 import AccountLevelPurchaseLinks from './account-level-purchase-links';
 
 export default function Subscriptions() {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	return (
 		<Main className="subscriptions is-wide-layout">

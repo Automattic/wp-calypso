@@ -40,7 +40,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
-import { infoNotice, withoutNotice } from 'calypso/state/notices/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
@@ -48,7 +48,7 @@ import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -614,7 +614,7 @@ class Page extends Component {
 		switch ( status ) {
 			case 'delete':
 				this.performUpdate( {
-					action: () => this.props.deletePost( page.site_ID, page.ID ),
+					action: () => this.props.deletePost( page.site_ID, page.ID, true ),
 					progressNotice: {
 						status: 'is-error',
 						icon: 'trash',
@@ -633,7 +633,7 @@ class Page extends Component {
 
 			case 'trash':
 				this.performUpdate( {
-					action: () => this.props.trashPost( page.site_ID, page.ID, page ),
+					action: () => this.props.trashPost( page.site_ID, page.ID, true ),
 					undo: page.status !== 'trash' ? 'restore' : 'undo',
 					progressNotice: {
 						status: 'is-error',
@@ -653,7 +653,7 @@ class Page extends Component {
 
 			case 'restore':
 				this.performUpdate( {
-					action: () => this.props.restorePost( page.site_ID, page.ID ),
+					action: () => this.props.restorePost( page.site_ID, page.ID, true ),
 					undo: page.status === 'trash' ? 'trash' : 'undo',
 					progressNotice: {
 						status: 'is-warning',
@@ -673,7 +673,7 @@ class Page extends Component {
 
 			case 'publish':
 				this.performUpdate( {
-					action: () => this.props.savePost( page.site_ID, page.ID, { status } ),
+					action: () => this.props.savePost( page.site_ID, page.ID, { status }, true ),
 					progressNotice: {
 						status: 'is-info',
 						icon: 'reader',
@@ -781,10 +781,10 @@ const mapState = ( state, props ) => {
 
 const mapDispatch = {
 	infoNotice,
-	savePost: withoutNotice( savePost ),
-	deletePost: withoutNotice( deletePost ),
-	trashPost: withoutNotice( trashPost ),
-	restorePost: withoutNotice( restorePost ),
+	savePost,
+	deletePost,
+	trashPost,
+	restorePost,
 	setPreviewUrl,
 	setLayoutFocus,
 	recordEvent,

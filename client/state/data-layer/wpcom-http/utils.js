@@ -5,10 +5,14 @@ import deterministicStringify from 'fast-json-stable-stringify';
 import { get, identity, merge, noop } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
+
+/**
  * Internal dependencies
  */
 import { keyedReducer } from 'calypso/state/utils';
-import warn from 'calypso/lib/warn';
 
 /**
  * Returns response data from an HTTP request success action if available
@@ -47,6 +51,15 @@ export const getHeaders = ( action ) => get( action, 'meta.dataLayer.headers', u
  * @returns {ProgressData|undefined} Progress data if available
  */
 export const getProgress = ( action ) => get( action, 'meta.dataLayer.progress', undefined );
+
+/**
+ * Returns stream record from an HTTP request action if available
+ *
+ * @param {object} action may contain stream record
+ * @returns {*|undefined} response data if available
+ */
+export const getStreamRecord = ( action ) =>
+	get( action, 'meta.dataLayer.streamRecord', undefined );
 
 const getRequestStatus = ( action ) => {
 	if ( undefined !== getError( action ) ) {
@@ -202,6 +215,7 @@ function createRequestAction( options, action ) {
 		onSuccess = noop,
 		onError = noop,
 		onProgress = noop,
+		onStreamRecord = noop,
 		fromApi = identity,
 	} = options;
 
@@ -222,6 +236,11 @@ function createRequestAction( options, action ) {
 	const progress = getProgress( action );
 	if ( progress ) {
 		return onProgress( action, progress );
+	}
+
+	const record = getStreamRecord( action );
+	if ( record ) {
+		return onStreamRecord( action, record );
 	}
 
 	return fetch( action );

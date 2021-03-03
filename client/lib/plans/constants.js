@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -17,16 +16,27 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
 
+// If JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN is true, checkout will redirect to the site's wp-admin,
+// otherwise it will redirect to the JETPACK_REDIRECT_URL. Checkout references these constants in:
+// client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts
+export const JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN = true;
+export const JETPACK_REDIRECT_URL =
+	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';
+export const redirectCloudCheckoutToWpAdmin = () => !! JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN;
+
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_BUSINESS_2_YEARS = 'business-bundle-2y';
+export const PLAN_PREMIUM_MONTHLY = 'value_bundle_monthly';
 export const PLAN_PREMIUM = 'value_bundle';
 export const PLAN_PREMIUM_2_YEARS = 'value_bundle-2y';
+export const PLAN_PERSONAL_MONTHLY = 'personal-bundle-monthly';
 export const PLAN_PERSONAL = 'personal-bundle';
 export const PLAN_PERSONAL_2_YEARS = 'personal-bundle-2y';
 export const PLAN_BLOGGER = 'blogger-bundle';
 export const PLAN_BLOGGER_2_YEARS = 'blogger-bundle-2y';
+export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
 export const PLAN_ECOMMERCE = 'ecommerce-bundle';
 export const PLAN_ECOMMERCE_2_YEARS = 'ecommerce-bundle-2y';
 export const PLAN_FREE = 'free_plan';
@@ -48,12 +58,20 @@ export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 export const PLAN_VIP = 'vip';
 export const PLAN_P2_PLUS = 'wp_p2_plus_monthly';
+export const PLAN_P2_FREE = 'p2_free_plan'; // Not a real plan; it's a renamed WP.com Free for the P2 project.
 
 export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
 export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';
 
 export const NEW_PLANS = [];
 export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
+
+export const WPCOM_MONTHLY_PLANS = [
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_PREMIUM_MONTHLY,
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_ECOMMERCE_MONTHLY,
+];
 
 export const JETPACK_MONTHLY_PLANS = [
 	PLAN_JETPACK_PREMIUM_MONTHLY,
@@ -87,7 +105,38 @@ export const JETPACK_PLANS = [
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	...( shouldShowOfferResetFlow() ? JETPACK_RESET_PLANS : [] ),
+	...JETPACK_RESET_PLANS,
+];
+
+export const JETPACK_RESET_PLANS_BY_TERM = [
+	{
+		yearly: PLAN_JETPACK_COMPLETE,
+		monthly: PLAN_JETPACK_COMPLETE_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_SECURITY_DAILY,
+		monthly: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_SECURITY_REALTIME,
+		monthly: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	},
+];
+
+export const JETPACK_PLANS_BY_TERM = [
+	{
+		yearly: PLAN_JETPACK_BUSINESS,
+		monthly: PLAN_JETPACK_BUSINESS_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_PERSONAL,
+		monthly: PLAN_JETPACK_PERSONAL_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_PREMIUM,
+		monthly: PLAN_JETPACK_PREMIUM_MONTHLY,
+	},
+	...JETPACK_RESET_PLANS_BY_TERM,
 ];
 
 export const PLAN_MONTHLY_PERIOD = 31;
@@ -113,15 +162,19 @@ export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS =
 	'email-live-chat-support-business-days';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS = 'email-live-chat-support-all-days';
+export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
+export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS = 'live-chat-support-business-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
 export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
+export const FEATURE_CLOUDFLARE_ANALYTICS = 'cloudflare-analytics';
 export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
 export const FEATURE_SFTP = 'sftp';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
+export const FEATURE_UPLOAD_VIDEO = 'upload-video';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM = 'video-upload-jetpack-premium';
 export const FEATURE_VIDEO_UPLOADS_JETPACK_PRO = 'video-upload-jetpack-pro';
@@ -131,6 +184,7 @@ export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
+export const FEATURE_INSTALL_PLUGINS = 'install-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 export const FEATURE_PERFORMANCE = 'performance';
 export const FEATURE_REPUBLICIZE = 'republicize';
@@ -151,12 +205,18 @@ export const FEATURE_UNLIMITED_STORAGE_SIGNUP = 'unlimited-storage-signup';
 export const FEATURE_EMAIL_SUPPORT_SIGNUP = 'email-support-signup';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP = 'email-live-chat-support-signup';
 export const FEATURE_MONETISE = 'monetise-your-site';
+export const FEATURE_EARN_AD = 'earn-ad-revenue';
 export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
 export const FEATURE_ADVANCED_SEO_TOOLS = 'advanced-seo-tools';
+export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR = 'advanced-seo-expanded-abbreviation';
 export const FEATURE_FREE_THEMES_SIGNUP = 'free-themes-signup';
 export const FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP = 'unlimited-backup';
 export const FEATURE_MEMBERSHIPS = 'memberships';
 export const FEATURE_PREMIUM_CONTENT_BLOCK = 'premium-content-block';
+export const FEATURE_HOSTING = 'hosting';
+export const PREMIUM_DESIGN_FOR_STORES = 'premium-design-for-stores';
+export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
+export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 
 // jetpack features category
 export const FEATURE_CATEGORY_SECURITY = Symbol();
@@ -197,7 +257,6 @@ export const FEATURE_SECURITY_SCANNING_JETPACK = 'security-scanning-jetpack';
 export const FEATURE_REVENUE_GENERATION_JETPACK = 'revenue-generation-jetpack';
 export const FEATURE_VIDEO_HOSTING_JETPACK = 'vidoe-hosting-jetpack';
 export const FEATURE_SECURITY_ESSENTIALS_JETPACK = 'security-essentials-jetpack';
-export const FEATURE_PRIORITY_SUPPORT_JETPACK = 'priority-support-jetpack';
 export const FEATURE_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
 export const FEATURE_ADVANCED_TRAFFIC_TOOLS_JETPACK = 'seo-tools-jetpack';
 export const FEATURE_FREE_WORDPRESS_THEMES = 'free-wordpress-themes';
@@ -227,46 +286,61 @@ export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 
 // jetpack features constants (offer reset)
-export const FEATURE_SECURITY_REALTIME_V2 = Symbol();
-export const FEATURE_BACKUP_V2 = Symbol();
-export const FEATURE_BACKUP_DAILY_V2 = Symbol();
-export const FEATURE_BACKUP_REALTIME_V2 = Symbol();
-export const FEATURE_PRODUCT_BACKUP_V2 = Symbol();
-export const FEATURE_PRODUCT_BACKUP_DAILY_V2 = Symbol();
-export const FEATURE_PRODUCT_BACKUP_REALTIME_V2 = Symbol();
-export const FEATURE_SCAN_V2 = Symbol();
-export const FEATURE_PRODUCT_SCAN_V2 = Symbol();
-export const FEATURE_PRODUCT_SCAN_DAILY_V2 = Symbol();
-export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = Symbol();
-export const FEATURE_ANTISPAM_V2 = Symbol();
-export const FEATURE_PRODUCT_ANTISPAM_V2 = Symbol();
-export const FEATURE_ACTIVITY_LOG_V2 = Symbol();
-export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = Symbol();
-export const FEATURE_ACTIVITY_LOG_30_DAYS_V2 = Symbol();
-export const FEATURE_SEARCH_V2 = Symbol();
-export const FEATURE_PRODUCT_SEARCH_V2 = Symbol();
-export const FEATURE_VIDEO_HOSTING_V2 = Symbol();
-export const FEATURE_CRM_V2 = Symbol();
-export const FEATURE_CRM_LEADS_AND_FUNNEL = Symbol();
-export const FEATURE_CRM_PROPOSALS_AND_INVOICES = Symbol();
-export const FEATURE_CRM_TRACK_TRANSACTIONS = Symbol();
-export const FEATURE_CRM_NO_CONTACT_LIMITS = Symbol();
-export const FEATURE_CRM_PRIORITY_SUPPORT = Symbol();
-export const FEATURE_SOCIAL_MEDIA_POSTING_V2 = Symbol();
-export const FEATURE_COLLECT_PAYMENTS_V2 = Symbol();
-export const FEATURE_SITE_MONETIZATION_V2 = Symbol();
-export const FEATURE_PREMIUM_THEMES_V2 = Symbol();
-export const FEATURE_PRIORITY_SUPPORT_V2 = Symbol();
-export const FEATURE_SECURE_STORAGE_V2 = Symbol();
-export const FEATURE_ONE_CLICK_RESTORE_V2 = Symbol();
-export const FEATURE_ONE_CLICK_FIX_V2 = Symbol();
-export const FEATURE_INSTANT_EMAIL_V2 = Symbol();
-export const FEATURE_AKISMET_V2 = Symbol();
-export const FEATURE_SPAM_BLOCK_V2 = Symbol();
-export const FEATURE_ADVANCED_STATS_V2 = Symbol();
-export const FEATURE_FILTERING_V2 = Symbol();
-export const FEATURE_LANGUAGE_SUPPORT_V2 = Symbol();
-export const FEATURE_SPELLING_CORRECTION_V2 = Symbol();
+export const FEATURE_SECURITY_REALTIME_V2 = 'security-realtime-v2';
+export const FEATURE_BACKUP_V2 = 'backup-v2';
+export const FEATURE_BACKUP_DAILY_V2 = 'backup-daily-v2';
+export const FEATURE_BACKUP_REALTIME_V2 = 'backup-realtime-v2';
+export const FEATURE_PRODUCT_BACKUP_V2 = 'product-backup-v2';
+export const FEATURE_PRODUCT_BACKUP_DAILY_V2 = 'product-backup-daily-v2';
+export const FEATURE_PRODUCT_BACKUP_REALTIME_V2 = 'product-backup-realtime-v2';
+export const FEATURE_SCAN_V2 = 'scan-v2';
+export const FEATURE_PRODUCT_SCAN_V2 = 'product-scan-v2';
+export const FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT = 'product-scan-v2-no-slideout';
+export const FEATURE_PRODUCT_SCAN_DAILY_V2 = 'product-scan-daily-v2';
+export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = 'product-scan-realtime-v2';
+export const FEATURE_ANTISPAM_V2 = 'antispam-v2';
+export const FEATURE_PRODUCT_ANTISPAM_V2 = 'product-antispam-v2';
+export const FEATURE_ACTIVITY_LOG_V2 = 'activity-log-v2';
+export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = 'activity-log-1-year-v2';
+export const FEATURE_ACTIVITY_LOG_30_DAYS_V2 = 'activity-log-30-days-v2';
+export const FEATURE_SEARCH_V2 = 'search-v2';
+export const FEATURE_PRODUCT_SEARCH_V2 = 'product-search-v2';
+export const FEATURE_PLAN_SECURITY_DAILY = 'security-daily';
+export const FEATURE_PLAN_SECURITY_REALTIME = 'security-realtime';
+export const FEATURE_VIDEO_HOSTING_V2 = 'video-hosting-v2';
+export const FEATURE_CRM_V2 = 'crm-v2';
+export const FEATURE_CRM_LEADS_AND_FUNNEL = 'crm-leads-and-funnel';
+export const FEATURE_CRM_PROPOSALS_AND_INVOICES = 'crm-proposals-and-invoices';
+export const FEATURE_CRM_TRACK_TRANSACTIONS = 'crm-track-transactions';
+export const FEATURE_CRM_NO_CONTACT_LIMITS = 'crm-no-contact-limits';
+export const FEATURE_SOCIAL_MEDIA_POSTING_V2 = 'social-media-posting-v2';
+export const FEATURE_COLLECT_PAYMENTS_V2 = 'collect-payments-v2';
+export const FEATURE_SITE_MONETIZATION_V2 = 'site-monetization-v2';
+export const FEATURE_PREMIUM_THEMES_V2 = 'premium-themes-v2';
+export const FEATURE_SECURE_STORAGE_V2 = 'secure-storage-v2';
+export const FEATURE_ONE_CLICK_RESTORE_V2 = 'one-click-restore-v2';
+export const FEATURE_ONE_CLICK_FIX_V2 = 'one-click-fix-v2';
+export const FEATURE_INSTANT_EMAIL_V2 = 'instant-email-v2';
+export const FEATURE_AKISMET_V2 = 'akismet-v2';
+export const FEATURE_SPAM_BLOCK_V2 = 'spam-block-v2';
+export const FEATURE_ADVANCED_STATS_V2 = 'advanced-stats-v2';
+export const FEATURE_FILTERING_V2 = 'filtering-v2';
+export const FEATURE_LANGUAGE_SUPPORT_V2 = 'language-support-v2';
+export const FEATURE_SPELLING_CORRECTION_V2 = 'spelling-correction-v2';
+
+// P2 project features
+export const FEATURE_P2_3GB_STORAGE = 'p2-3gb-storage';
+export const FEATURE_P2_UNLIMITED_USERS = 'p2-unlimited-users';
+export const FEATURE_P2_UNLIMITED_POSTS_PAGES = 'p2-unlimited-posts-pages';
+export const FEATURE_P2_SIMPLE_SEARCH = 'p2-simple-search';
+export const FEATURE_P2_CUSTOMIZATION_OPTIONS = 'p2-customization-options';
+export const FEATURE_P2_13GB_STORAGE = 'p2-13gb-storage';
+export const FEATURE_P2_ADVANCED_SEARCH = 'p2-advanced-search';
+export const FEATURE_P2_VIDEO_SHARING = 'p2-video-sharing';
+export const FEATURE_P2_MORE_FILE_TYPES = 'p2-more-file-types';
+export const FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT = 'p2-priority-chat-email-support';
+export const FEATURE_P2_ACTIVITY_OVERVIEW = 'p2-activity-overview';
+export const FEATURE_P2_CUSTOM_DOMAIN = 'p2-custom-domain';
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';
@@ -288,8 +362,10 @@ export const TYPE_SECURITY_REALTIME = 'TYPE_SECURITY_REALTIME';
 export const TYPE_ALL = 'TYPE_ALL';
 export const TYPE_P2_PLUS = 'TYPE_P2_PLUS';
 
+export const STORE_DEPRECATION_START_DATE = new Date( '2021-01-19T19:30:00+00:00' );
+
 export function isMonthly( plan ) {
-	return plan === PLAN_BUSINESS_MONTHLY || JETPACK_MONTHLY_PLANS.includes( plan );
+	return WPCOM_MONTHLY_PLANS.includes( plan ) || JETPACK_MONTHLY_PLANS.includes( plan );
 }
 
 export function isNew( plan ) {

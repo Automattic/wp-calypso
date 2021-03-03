@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
-import { useSelect, useDispatch } from '@wordpress/data';
+import React from 'react';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import DomainPicker from '@automattic/domain-picker';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
@@ -14,22 +13,16 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { useSite, useDomainSearch } from '../../hooks';
+import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic/launch';
+
 import { FLOW_ID } from '../../constants';
-import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const { currentDomainName } = useSite();
-	const domainSearch = useDomainSearch();
+	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
+	const { siteSubdomain } = useSiteDomains();
+	const { domainSearch, setDomainSearch } = useDomainSearch();
 
-	const {
-		setDomain,
-		unsetDomain,
-		setDomainSearch,
-		unsetPlan,
-		confirmDomainSelection,
-	} = useDispatch( LAUNCH_STORE );
+	const { confirmDomainSelection } = useDispatch( LAUNCH_STORE );
 
 	const handleNext = () => {
 		confirmDomainSelection();
@@ -38,18 +31,6 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 
 	const handlePrev = () => {
 		onPrevStep?.();
-	};
-
-	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
-		confirmDomainSelection();
-		setDomain( suggestion );
-		if ( plan?.isFree ) {
-			unsetPlan();
-		}
-	};
-
-	const handleExistingSubdomainSelect = () => {
-		unsetDomain();
 	};
 
 	const trackDomainSearchInteraction = ( query: string ) => {
@@ -79,12 +60,13 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ domain?.domain_name || currentDomainName }
-					existingSubdomain={ currentDomainName }
-					onDomainSelect={ handleDomainSelect }
-					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
+					currentDomain={ currentDomain || mockDomainSuggestion( siteSubdomain?.domain ) }
+					existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
+					onDomainSelect={ onDomainSelect }
+					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsUiAlgo="editor_domain_modal"
 					segregateFreeAndPaid
+					locale={ document.documentElement.lang }
 				/>
 			</div>
 			<div className="nux-launch-step__footer">

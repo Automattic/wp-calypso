@@ -11,6 +11,8 @@ import {
 	UNDO_ACTION,
 	VIEW_SETTINGS,
 	SET_FILTER,
+	ENABLE_KEYBOARD_SHORTCUTS,
+	DISABLE_KEYBOARD_SHORTCUTS,
 } from '../action-types';
 
 export const closePanel = () => ( {
@@ -59,6 +61,10 @@ export const editComment = ( siteId, postId, commentId, href ) => ( {
 	href,
 } );
 
+export const enableKeyboardShortcuts = () => ( { type: ENABLE_KEYBOARD_SHORTCUTS } );
+
+export const disableKeyboardShortcuts = () => ( { type: DISABLE_KEYBOARD_SHORTCUTS } );
+
 export default {
 	closePanel,
 	loadNotes,
@@ -70,4 +76,6 @@ export default {
 	viewSettings,
 	setFilter,
 	editComment,
+	enableKeyboardShortcuts,
+	disableKeyboardShortcuts,
 };

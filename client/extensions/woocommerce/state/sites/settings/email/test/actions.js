@@ -14,7 +14,7 @@ import {
 	emailSettingsSubmitSettings,
 	emailSettingsInvalidValue,
 } from '../actions';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,

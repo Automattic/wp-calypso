@@ -1,204 +1,77 @@
-.language-picker__modal {
-	&.dialog.card {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		max-width: none;
-		font-size: $font-body-small;
-		display: flex;
-		flex-direction: column;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			top: 5%;
-			bottom: 5%;
-			left: 5%;
-			right: 5%;
-			width: 90%;
-		}
-
-		@include breakpoint-deprecated( '>960px' ) {
-			left: 12.5%;
-			right: 12.5%;
-			width: 75%;
-		}
-	}
-
-	.dialog__content {
-		display: flex;
-		flex-direction: column;
-		flex: auto;
-		min-height: 0; // permits the .language-picker__modal-list to shrink below its min height
-		overflow: inherit;
-		padding: 0;
-	}
-
-	.dialog__action-buttons {
-		flex: none;
-		margin: 0;
-	}
-
-	.section-nav {
-		flex: none;
-		margin-bottom: 0;
-		z-index: 10;
-
-		@include breakpoint-deprecated( '<660px' ) {
-			.search.has-focus {
-				margin: 0 4px;
-				width: calc( 100% - 8px );
-			}
-		}
-	}
+.language-picker__modal-search {
+    position: relative;
+    width: 250px;
 }
 
-.language-picker__modal-item {
-	display: inline-block;
-	white-space: nowrap;
-	overflow: hidden;
-	&:focus {
-		outline: solid var( --color-neutral-light ) 1px;
-	}
-}
+.language-picker__dialog {
+    &.dialog.card {
+        width: 90%;
+        height: 80%;
+        justify-content: space-between;
+    }
 
-.language-picker__modal-item-notice {
-	display: inline-block;
-	vertical-align: middle;
-	margin: -4px 0 -4px 4px;
-	color: var( --color-warning );
-	line-height: 1;
-	visibility: hidden;
+    .dialog__content {
+        flex: 1 1 auto;
+    }
 
-	.language-picker__modal-item:hover &,
-	.language-picker__modal-item:focus &,
-	.is-selected & {
-		color: var( --color-warning-light );
-		visibility: visible;
-	}
-}
+    .dialog__action-buttons {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        // prevent buttons div from covering language options
+        margin-top: 1.5rem;
 
-.language-picker__modal-tooltip {
-	z-index: z-index( 'root', 'popover.is-dialog-visible' );
+        .components-button {
+            margin-left: 1rem;
+        }
+    }
 
-	a {
-		color: var( --color-link-20 );
-	}
-}
-
-.language-picker__modal-list {
-	box-sizing: border-box;
-	width: 100%;
-	overflow-y: auto;
-	padding: 8px 16px;
-	flex: auto;
-
-	.language-picker__modal-item {
-		width: 100%;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			width: 50%;
-		}
-
-		@include breakpoint-deprecated( '>660px' ) {
-			width: 33%;
-		}
-
-		@include breakpoint-deprecated( '>960px' ) {
-			width: 25%;
-		}
-	}
-}
-
-.language-picker__modal-text {
-	display: inline-block;
-	padding: 4px 8px;
-	border-radius: 2px;
-	cursor: pointer;
-
-	&.is-selected {
-		background: var( --color-primary );
-		color: var( --color-text-inverted );
-	}
-}
-
-.language-picker__modal-suggested {
-	flex: none;
-	background: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-0 );
-	padding: 8px 16px;
-	z-index: 1;
-	position: relative;
-
-	&::before {
-		content: '';
-		display: block;
-		position: absolute;
-		bottom: 100%;
-		left: 16px;
-		right: 16px;
-		height: 24px;
-		background: linear-gradient( to bottom, rgba( 255, 255, 255, 0 ) 0%, white 100% );
-		margin-bottom: 1px;
-	}
-
-	.language-picker__modal-suggested-inner {
-		display: flex;
-		overflow: hidden;
-	}
-
-	.language-picker__modal-suggested-label {
-		flex: none;
-		padding: 4px 8px;
-		white-space: nowrap;
-	}
-
-	.language-picker__modal-suggested-list {
-		flex: 1 1 0;
-		height: 0;
-	}
-
-	.language-picker__modal-suggested-list-inner {
-		display: flex;
-		flex-wrap: wrap;
-	}
-
-	.language-picker__modal-item {
-		flex: none;
-		width: auto;
-		margin-left: 16px;
-	}
+    .language-picker-component .language-picker-component__heading {
+        margin: 6px 0 24px;
+    }
 }
 
 .language-picker__modal-empathy-mode {
-	display: flex;
-	padding: 8px 16px;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		justify-content: flex-end;
-	}
-
-	.form-label {
-		position: relative;
-		z-index: 1;
-		margin: 0;
-		padding: 4px 8px;
-	}
+    display: flex;
+    align-items: center;
 }
 
-.language-picker__modal-locale-notice {
-	position: relative;
-	z-index: 1;
-	padding: 8px 16px;
-	text-align: right;
+.language-picker__modal-checkboxes {
+    border-bottom: 1px solid var( --color-neutral-0 );
+    width: 100%;
+    padding: 24px;
+    text-align: left;
+}
 
-	.form-label {
-		display: inline-block;
-		vertical-align: top;
-		margin: 0;
-	}
+.language-picker__modal-buttons {
+    padding: 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
 
-	p {
-		margin: 0;
-	}
+.language-picker__modal-incomplete-locale-notice {
+    color: var( --color-text-subtle );
+    fill: var( --color-text-subtle );
+    display: inline-block;
+
+    &-info {
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+.language-picker__modal-incomplete-locale-text {
+    margin-right: 8px;
+}
+
+.language-picker__modal-incomplete-locale-tooltip-text {
+    display: flex;
+    flex-direction: column;
 }

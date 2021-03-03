@@ -44,12 +44,12 @@ class PostTrends extends React.Component {
 	yearRef = React.createRef();
 
 	componentDidMount() {
-		const node = this.wrapperRef.current,
-			yearNode = this.yearRef.current,
-			computedStyle = window.getComputedStyle( yearNode ),
-			margin =
-				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-				parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
+		const node = this.wrapperRef.current;
+		const yearNode = this.yearRef.current;
+		const computedStyle = window.getComputedStyle( yearNode );
+		const margin =
+			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
+			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
 
 		// Initially scroll all the way to the left
 		yearNode.style.left = 0 - yearNode.scrollWidth + node.clientWidth - margin + 'px';
@@ -66,14 +66,14 @@ class PostTrends extends React.Component {
 	}
 
 	resize = () => {
-		const scrollProps = {},
-			node = this.wrapperRef.current,
-			yearNode = this.yearRef.current,
-			computedStyle = window.getComputedStyle( yearNode ),
-			margin =
-				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-				parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 ),
-			left = parseInt( yearNode.style.left, 10 );
+		const scrollProps = {};
+		const node = this.wrapperRef.current;
+		const yearNode = this.yearRef.current;
+		const computedStyle = window.getComputedStyle( yearNode );
+		const margin =
+			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
+			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
+		const left = parseInt( yearNode.style.left, 10 );
 
 		scrollProps.canScrollLeft = left < 0;
 		scrollProps.canScrollRight = left > 0 - yearNode.scrollWidth + node.clientWidth - margin;
@@ -86,12 +86,12 @@ class PostTrends extends React.Component {
 	};
 
 	scroll = ( direction ) => {
-		const node = this.wrapperRef.current,
-			yearNode = this.yearRef.current,
-			computedStyle = window.getComputedStyle( yearNode ),
-			margin =
-				parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-				parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
+		const node = this.wrapperRef.current;
+		const yearNode = this.yearRef.current;
+		const computedStyle = window.getComputedStyle( yearNode );
+		const margin =
+			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
+			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
 		let left = parseInt( computedStyle.getPropertyValue( 'left' ), 10 );
 
 		if ( 1 !== direction ) {

@@ -1,15 +1,12 @@
 .notification-settings-form-actions {
 	display: block;
-	border-top: solid 1px var( --color-neutral-0 );
 	padding: 15px 0;
-	text-align: right;
 
 	.form-fieldset {
 		margin-bottom: 10px;
 
 		@include breakpoint-deprecated( '>480px' ) {
 			margin: 10px 0 0;
-			float: left;
 		}
 	}
 

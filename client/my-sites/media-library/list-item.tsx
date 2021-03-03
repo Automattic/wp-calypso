@@ -96,7 +96,8 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 	};
 
 	render() {
-		let title, selectedNumber;
+		let title;
+		let selectedNumber;
 
 		const {
 			media,

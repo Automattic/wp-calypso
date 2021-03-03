@@ -22,29 +22,32 @@ import {
 /**
  * Internal dependencies
  */
-import MediaLibrary from 'my-sites/media-library';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat as mcBumpStat } from 'lib/analytics/mc';
-import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
+import MediaLibrary from 'calypso/my-sites/media-library';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
+import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
 import MediaModalGallery from './gallery';
-import MediaActions from 'lib/media/actions';
-import * as MediaUtils from 'lib/media/utils';
-import CloseOnEscape from 'components/close-on-escape';
-import accept from 'lib/accept';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import { getMediaModalView } from 'state/ui/media-modal/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { resetMediaModalView } from 'state/ui/media-modal/actions';
-import { setEditorMediaModalView } from 'state/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { editMedia, deleteMedia, addExternalMedia } from 'state/media/thunks';
-import { setMediaLibrarySelectedItems, changeMediaSource } from 'state/media/actions';
-import ImageEditor from 'blocks/image-editor';
-import VideoEditor from 'blocks/video-editor';
+import * as MediaUtils from 'calypso/lib/media/utils';
+import CloseOnEscape from 'calypso/components/close-on-escape';
+import accept from 'calypso/lib/accept';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { getMediaModalView } from 'calypso/state/ui/media-modal/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { resetMediaModalView } from 'calypso/state/ui/media-modal/actions';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { editMedia, deleteMedia, addExternalMedia } from 'calypso/state/media/thunks';
+import {
+	changeMediaSource,
+	setMediaLibrarySelectedItems,
+	setQuery,
+} from 'calypso/state/media/actions';
+import ImageEditor from 'calypso/blocks/image-editor';
+import VideoEditor from 'calypso/blocks/video-editor';
 import MediaModalDialog from './dialog';
 import MediaModalDetail from './detail';
-import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -176,33 +179,10 @@ export class EditorMediaModal extends Component {
 			() => {
 				// Reset the query so that we're adding the new media items to the correct
 				// list, with no external source.
-				MediaActions.setQuery( site.ID, {} );
+				this.props.setQuery( site.ID, {} );
 				this.props.addExternalMedia( selectedMedia, site, originalSource );
 			}
 		);
-	}
-
-	copyExternal( selectedMedia, originalSource ) {
-		const { site } = this.props;
-		const hasSearch = !! this.state.search;
-		if ( hasSearch ) {
-			// For unsorted external sources based on a search, when inserting a single image, there's a visual glitch
-			// where one of the items in the list cycles through other items. This seems to happen when receiving
-			// the new image, and the media store is updating pointers. We switch back to no source and no search
-			// before we upload the new image so that the glitch is hidden. The glitch is _purely_ visual, and all
-			// images, transient or otherwise are correctly dealt with.
-			this.setState( {
-				search: '',
-			} );
-		}
-		this.props.addExternalMedia( selectedMedia, site, originalSource );
-		if ( hasSearch ) {
-			// make sure that query change gets everywhere so next time the source is loaded,
-			// or the WP media library is opened, the new media is loaded
-			// This has to happen _after_ the external files are added, or else they
-			// don't show up.
-			MediaActions.setQuery( site.ID, {} );
-		}
 	}
 
 	confirmSelection = () => {
@@ -640,6 +620,7 @@ export default connect(
 		recordEditorStat,
 		editMedia,
 		setMediaLibrarySelectedItems,
+		setQuery,
 		addExternalMedia,
 		changeMediaSource,
 	}

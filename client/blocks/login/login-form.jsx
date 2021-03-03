@@ -5,20 +5,21 @@ import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
-import { capitalize, defer, includes, get, startsWith } from 'lodash';
+import { capitalize, defer, includes, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Divider from './divider';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { addQueryArgs } from 'calypso/lib/url';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
@@ -46,6 +47,7 @@ import {
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getSignupUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -63,6 +65,7 @@ export class LoginForm extends Component {
 		isFormDisabled: PropTypes.bool,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
+		handleUsernameChange: PropTypes.func,
 		oauth2Client: PropTypes.object,
 		onSuccess: PropTypes.func.isRequired,
 		privateSite: PropTypes.bool,
@@ -94,8 +97,12 @@ export class LoginForm extends Component {
 		} );
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { disableAutoFocus, requestError } = this.props;
+	componentDidUpdate( prevProps, prevState ) {
+		const { disableAutoFocus, requestError, handleUsernameChange } = this.props;
+
+		if ( handleUsernameChange && prevState.usernameOrEmail !== this.state.usernameOrEmail ) {
+			handleUsernameChange( this.state.usernameOrEmail );
+		}
 
 		if ( prevProps.requestError || ! requestError ) {
 			return;
@@ -408,7 +415,6 @@ export class LoginForm extends Component {
 		const {
 			accountType,
 			oauth2Client,
-			redirectTo,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
@@ -423,49 +429,14 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
-		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-
-		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
-
-		// copied from login-links.jsx
-		if (
-			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
-		) {
-			// Basic validation that we're in a valid Jetpack Authorization flow
-			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
-			) {
-				/**
-				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
-				 * this case, the redirect_to will handle signups as part of the flow. Use the
-				 * `redirect_to` parameter directly for signup.
-				 */
-				signupUrl = currentQuery.redirect_to;
-			} else {
-				signupUrl = '/jetpack/connect';
-			}
-		} else if ( '/jetpack-connect' === pathname ) {
-			signupUrl = '/jetpack/connect';
-		} else if ( signupFlow ) {
-			signupUrl += '/' + signupFlow;
-		}
-
-		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
-			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
-			const oauth2Params = new globalThis.URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo || '',
-			} );
-
-			signupUrl = `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
-		}
-
-		if ( isGutenboarding ) {
-			signupUrl = '/new' + langFragment;
-		}
+		const signupUrl = getSignupUrl(
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
@@ -510,7 +481,6 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
-
 						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<button
@@ -532,6 +502,7 @@ export class LoginForm extends Component {
 							autoCapitalize="off"
 							autoCorrect="off"
 							spellCheck="false"
+							autoComplete="username"
 							className={ classNames( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
@@ -550,7 +521,16 @@ export class LoginForm extends Component {
 										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
 										{
 											components: {
-												newAccountLink: <a href={ signupUrl } />,
+												newAccountLink: (
+													<a
+														href={ addQueryArgs(
+															{
+																user_email: this.state.usernameOrEmail,
+															},
+															signupUrl
+														) }
+													/>
+												),
 											},
 										}
 									) }
@@ -566,7 +546,7 @@ export class LoginForm extends Component {
 
 							<FormPasswordInput
 								autoCapitalize="off"
-								autoComplete="off"
+								autoComplete="current-password"
 								className={ classNames( {
 									'is-error': requestError && requestError.field === 'password',
 								} ) }

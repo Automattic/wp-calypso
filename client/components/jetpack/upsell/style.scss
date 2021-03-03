@@ -17,3 +17,13 @@
 		width: auto;
 	}
 }
+
+.upsell__button:not( .is-primary ) {
+	margin-left: 0;
+
+	border-color: var( --color-neutral-10 );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-left: 16px;
+	}
+}

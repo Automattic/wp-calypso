@@ -12,7 +12,7 @@ import { PendingListItem } from '../pending-list-item';
 import { PLAN_BUSINESS } from 'calypso/lib/plans/constants';
 import * as localizedMoment from 'calypso/components/localized-moment';
 
-jest.mock( 'components/localized-moment' );
+jest.mock( 'calypso/components/localized-moment' );
 localizedMoment.useLocalizedMoment.mockReturnValue( moment );
 
 describe( 'PendingListItem', () => {
@@ -32,7 +32,7 @@ describe( 'PendingListItem', () => {
 		'.pending-payments__list-item-details .pending-payments__list-item-product',
 		'.pending-payments__list-item-details .pending-payments__list-item-payment',
 		'.pending-payments__list-item-details .pending-payments__list-item-actions',
-		'.pending-payments__list-item-actions Button[href="/help/contact"]',
+		'.pending-payments__list-item-actions ForwardRef(Button)[href="/help/contact"]',
 	];
 
 	assertions.forEach( ( rule ) => {

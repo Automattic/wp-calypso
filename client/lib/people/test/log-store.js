@@ -12,14 +12,12 @@ import { assert } from 'chai';
  */
 import actions from './fixtures/actions';
 import site from './fixtures/site';
-import userActions from 'lib/users/test/fixtures/actions';
+import userActions from 'calypso/lib/users/test/fixtures/actions';
+import Dispatcher from 'calypso/dispatcher';
+import PeopleLogStore from '../log-store';
 
 describe( 'Viewers Store', () => {
-	let Dispatcher, PeopleLogStore;
-
 	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
-		PeopleLogStore = require( '../log-store' );
 		PeopleLogStore.clear();
 	} );
 
@@ -60,9 +58,8 @@ describe( 'Viewers Store', () => {
 		} );
 
 		test( 'An error should increase the number of errors in the store', () => {
-			let errors;
 			Dispatcher.handleServerAction( actions.errorWhenFetchingUsers );
-			errors = PeopleLogStore.getErrors();
+			const errors = PeopleLogStore.getErrors();
 			assert.isArray( errors );
 			assert.lengthOf( errors, 1, 'there is one error' );
 		} );
@@ -82,9 +79,8 @@ describe( 'Viewers Store', () => {
 		} );
 
 		test( 'An action should increase the number of inProgress in the store', () => {
-			let inProgress;
 			Dispatcher.handleServerAction( userActions.deleteUser );
-			inProgress = PeopleLogStore.getInProgress();
+			const inProgress = PeopleLogStore.getInProgress();
 			assert.isArray( inProgress );
 			assert.lengthOf( inProgress, 1, 'there is one in progress' );
 		} );

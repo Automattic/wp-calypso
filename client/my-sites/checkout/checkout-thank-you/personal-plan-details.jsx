@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isPersonal, isGoogleApps } from 'calypso/lib/products-values';
+import { isPersonal, isGSuiteOrExtraLicenseOrGoogleWorkspace } from 'calypso/lib/products-values';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import PurchaseDetail from 'calypso/components/purchase-detail';
@@ -23,7 +23,7 @@ import earnImage from 'calypso/assets/images/customer-home/illustration--task-ea
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
 	const plan = find( sitePlans.data, isPersonal );
-	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	return (
 		<div>

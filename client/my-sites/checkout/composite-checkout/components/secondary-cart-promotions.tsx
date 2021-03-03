@@ -9,7 +9,7 @@ import { ResponseCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -30,10 +30,6 @@ type DivProps = {
 const UpsellWrapper = styled.div< DivProps >`
 	background: ${ ( props ) => props.theme.colors.surface };
 
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		margin-top: 24px;
-	}
-
 	.cart__upsell-wrapper {
 		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 			border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -42,6 +38,7 @@ const UpsellWrapper = styled.div< DivProps >`
 
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+			margin-top: 24px;
 		}
 	}
 

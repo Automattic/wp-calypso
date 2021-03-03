@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/media/init';
+
+/**
  * Get the next page handle for the sites current media request
  *
  * @param {object} state The state object

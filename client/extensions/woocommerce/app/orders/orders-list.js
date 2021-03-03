@@ -12,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import {
 	areOrdersLoading,
@@ -28,11 +28,11 @@ import {
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import humanDate from 'lib/human-date';
+import humanDate from 'calypso/lib/human-date';
 import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
 import OrdersFilterNav from './orders-filter-nav';
 import OrderStatus from 'woocommerce/components/order-status';
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';

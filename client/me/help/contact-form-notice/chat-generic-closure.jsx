@@ -22,7 +22,8 @@ const ChatGenericClosureNotice = ( { compact, endsAt, showAt, startsAt } ) => {
 	const startsAtFormatted = moment.tz( startsAt, guessedTimezone ).format( DATE_FORMAT );
 	const endsAtFormatted = moment.tz( endsAt, guessedTimezone ).format( DATE_FORMAT );
 
-	let heading, message;
+	let heading;
+	let message;
 
 	if ( currentDate.isBefore( startsAt ) ) {
 		heading = translate( 'Upcoming live chat closure' );

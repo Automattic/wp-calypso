@@ -3,8 +3,12 @@
  */
 import { get } from 'lodash';
 
-/** Internal dependencies */
+/**
+ * Internal dependencies
+ */
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+import 'calypso/state/jitm/init';
 
 /**
  * Get the list of available jitms for the current site/section

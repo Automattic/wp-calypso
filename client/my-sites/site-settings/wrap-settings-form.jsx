@@ -122,10 +122,9 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		handleSubmitForm = ( event ) => {
 			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
 
-			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
+			if ( event && ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
 			}
-
 			dirtyFields.map( function ( value ) {
 				switch ( value ) {
 					case 'blogdescription':
@@ -143,9 +142,13 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					case 'wga':
 						trackTracksEvent( 'calypso_seo_settings_google_analytics_updated', { path } );
 						break;
+					case 'jetpack_cloudflare_analytics':
+						trackTracksEvent( 'calypso_seo_settings_jetpack_cloudflare_analytics_updated', {
+							path,
+						} );
+						break;
 				}
 			} );
-
 			this.submitForm();
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
@@ -164,8 +167,8 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		};
 
 		handleRadio = ( event ) => {
-			const currentTargetName = event.currentTarget.name,
-				currentTargetValue = event.currentTarget.value;
+			const currentTargetName = event.currentTarget.name;
+			const currentTargetValue = event.currentTarget.value;
 
 			this.props.trackEvent( `Set ${ currentTargetName } to ${ currentTargetValue }` );
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );

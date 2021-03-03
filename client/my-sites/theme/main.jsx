@@ -6,10 +6,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import titlecase from 'to-title-case';
 import Gridicon from 'calypso/components/gridicon';
-import { head, split } from 'lodash';
+import { head } from 'lodash';
 import photon from 'photon';
 import page from 'page';
 
@@ -209,7 +209,7 @@ class ThemeSheet extends React.Component {
 		if ( this.isLoaded() ) {
 			// Results are being returned with photon params like `?w=…`. This makes the photon
 			// module abort and return null. Strip query string.
-			return head( split( head( this.props.screenshots ), '?', 1 ) );
+			return head( head( this.props.screenshots ).split( '?', 1 ) );
 		}
 		return null;
 	}
@@ -345,7 +345,11 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
-					<AsyncLoad require="calypso/blocks/jitm" messagePath={ 'calypso:theme:admin_notices' } />
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						placeholder={ null }
+						messagePath="calypso:theme:admin_notices"
+					/>
 				) }
 				{ this.renderSectionNav( section ) }
 				{ activeSection }
@@ -664,7 +668,8 @@ class ThemeSheet extends React.Component {
 			} );
 		}
 
-		let pageUpsellBanner, previewUpsellBanner;
+		let pageUpsellBanner;
+		let previewUpsellBanner;
 		const hasWpComThemeUpsellBanner =
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		const hasWpOrgThemeUpsellBanner =

@@ -1,34 +1,38 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { Plans } from '@automattic/data-stores';
+import { __, sprintf } from '@wordpress/i18n';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import { useSite } from '@automattic/launch';
 
 /**
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { useSite } from '../../hooks';
 import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const { isExperimental } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { domain, LaunchStep, selectedPlanProductId } = useSelect( ( select ) => {
+		const launchStore = select( LAUNCH_STORE );
+		return {
+			domain: launchStore.getSelectedDomain(),
+			LaunchStep: launchStore.getLaunchStep(),
+			selectedPlanProductId: launchStore.getSelectedPlanProductId(),
+		};
+	} );
 
-	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
+	const { setPlanProductId, setStep } = useDispatch( LAUNCH_STORE );
 
 	const { selectedFeatures } = useSite();
 
 	const hasPaidDomain = domain && ! domain.is_free;
 
-	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
-		updatePlan( planSlug );
+	const handleSelect = ( planProductId: number | undefined ) => {
+		setPlanProductId( planProductId );
 		onNextStep?.();
 	};
 
@@ -46,30 +50,33 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 				<div>
 					<Title>{ __( 'Select a plan', 'full-site-editing' ) }</Title>
 					<SubTitle>
-						{ __(
-							'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.',
-							'full-site-editing'
+						{ sprintf(
+							/* translators: number of days */
+							__(
+								'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within %1$d days.',
+								'full-site-editing'
+							),
+							14
 						) }
 					</SubTitle>
 				</div>
 			</div>
 			<div className="nux-launch-step__body">
 				<PlansGrid
+					currentPlanProductId={ selectedPlanProductId }
 					currentDomain={ domain }
 					onPlanSelect={ handleSelect }
 					onPickDomainClick={ handlePickDomain }
 					disabledPlans={
 						hasPaidDomain
 							? {
-									[ Plans.PLAN_FREE ]: __(
-										'Not available with custom domain',
-										'full-site-editing'
-									),
+									free: __( 'Unavailable with domain', 'full-site-editing' ),
 							  }
 							: undefined
 					}
-					isExperimental={ isExperimental }
+					isAccordion
 					selectedFeatures={ selectedFeatures }
+					locale={ window.wpcomEditorSiteLaunch?.locale || 'en' }
 				/>
 			</div>
 			<div className="nux-launch-step__footer">

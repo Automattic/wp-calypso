@@ -134,7 +134,8 @@ class PostScheduleClock extends Component {
 			return;
 		}
 
-		let diffInMinutes, tzDateOffset;
+		let diffInMinutes;
+		let tzDateOffset;
 
 		if ( timezone ) {
 			const tzDate = date.clone().tz( timezone );

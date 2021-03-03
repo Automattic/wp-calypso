@@ -72,9 +72,8 @@ class JetpackModuleToggle extends Component {
 				<FormToggle
 					id={ `${ this.props.siteId }-${ this.props.moduleSlug }-toggle` }
 					checked={ this.props.checked || false }
-					toggling={ this.props.toggling }
 					onChange={ this.handleChange }
-					disabled={ this.props.disabled || this.props.toggleDisabled }
+					disabled={ this.props.disabled || this.props.toggleDisabled || this.props.toggling }
 				>
 					{ this.props.label }
 				</FormToggle>

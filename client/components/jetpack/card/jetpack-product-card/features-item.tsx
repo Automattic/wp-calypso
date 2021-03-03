@@ -1,14 +1,11 @@
 /**
  * External dependencies
  */
-import { isObject } from 'lodash';
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'calypso/components/gridicon';
-import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
 
 /**
@@ -16,37 +13,20 @@ import { preventWidows } from 'calypso/lib/formatting';
  */
 import type { ProductCardFeaturesItem } from './types';
 
-export type Props = {
+/**
+ * Styles dependencies
+ */
+import checkmarkIcon from './assets/checkmark.svg';
+
+interface Props {
 	item: ProductCardFeaturesItem;
-};
+}
 
-type IconComponent = FunctionComponent< { icon: string; className?: string } >;
-
-const DEFAULT_ICON = 'checkmark';
-
-const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( { item } ) => {
-	const { icon, text, description, subitems } = item;
-	const iconName = ( isObject( icon ) ? icon?.icon : icon ) || DEFAULT_ICON;
-	const Icon = ( ( isObject( icon ) && icon?.component ) || Gridicon ) as IconComponent;
-
-	return (
-		<li className="jetpack-product-card__features-item">
-			<div className="jetpack-product-card__features-main">
-				<div className="jetpack-product-card__features-summary">
-					<Icon className="jetpack-product-card__features-icon" icon={ iconName } />
-					<p className="jetpack-product-card__features-text">{ preventWidows( text ) }</p>
-				</div>
-				{ description && <InfoPopover>{ preventWidows( description ) }</InfoPopover> }
-			</div>
-			{ subitems && subitems?.length > 0 && (
-				<ul className="jetpack-product-card__features-subitems">
-					{ subitems.map( ( subitem, index ) => (
-						<JetpackProductCardFeaturesItem key={ index } item={ subitem } />
-					) ) }
-				</ul>
-			) }
-		</li>
-	);
-};
+const JetpackProductCardFeaturesItem: React.FC< Props > = ( { item: { text } } ) => (
+	<li className="jetpack-product-card__features-item">
+		<img className="jetpack-product-card__features-icon" src={ checkmarkIcon } alt="" />
+		<p className="jetpack-product-card__features-text">{ preventWidows( text ) }</p>
+	</li>
+);
 
 export default JetpackProductCardFeaturesItem;

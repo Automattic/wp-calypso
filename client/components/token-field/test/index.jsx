@@ -20,7 +20,7 @@ import TokenFieldWrapper from './lib/token-field-wrapper';
 /**
  * Module constants
  */
-jest.mock( 'components/tooltip', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/components/tooltip', () => require( 'calypso/components/empty-component' ) );
 
 /**
  * Module variables
@@ -42,7 +42,9 @@ const charCodes = {
 };
 
 describe( 'TokenField', () => {
-	let wrapper, tokenFieldNode, textInputNode;
+	let wrapper;
+	let tokenFieldNode;
+	let textInputNode;
 
 	function setText( text ) {
 		textInputNode.simulate( 'change', { target: { value: text } } );

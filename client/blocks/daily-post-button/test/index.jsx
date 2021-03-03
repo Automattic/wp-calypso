@@ -18,13 +18,13 @@ import React from 'react';
 import { DailyPostButton } from '../index';
 import { sites, dailyPromptPost } from './fixtures';
 
-jest.mock( 'reader/stats', () => ( {
+jest.mock( 'calypso/reader/stats', () => ( {
 	pageViewForPost: () => {},
 	recordAction: () => {},
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
 } ) );
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
 const markPostSeen = jest.fn();
 

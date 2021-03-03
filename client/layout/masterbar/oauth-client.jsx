@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -13,10 +13,10 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
-} from 'lib/oauth2-clients';
-import { localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/lib/oauth2-clients';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import CrowdsignalOauthMasterbar from './crowdsignal';
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 
 /**
  * Style dependencies

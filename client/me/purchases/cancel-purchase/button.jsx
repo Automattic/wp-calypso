@@ -24,10 +24,10 @@ import {
 	isSubscription,
 } from 'calypso/lib/purchases';
 import { isDomainRegistration } from 'calypso/lib/products-values';
-import notices from 'calypso/notices';
 import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 
 class CancelPurchaseButton extends Component {
@@ -82,8 +82,8 @@ class CancelPurchaseButton extends Component {
 	};
 
 	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase,
-			slug = this.props.siteSlug;
+		const { id } = this.props.purchase;
+		const slug = this.props.siteSlug;
 
 		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
 	};
@@ -94,15 +94,15 @@ class CancelPurchaseButton extends Component {
 		this.setDisabled( true );
 
 		cancelPurchase( purchase.id, ( success ) => {
-			const purchaseName = getName( purchase ),
-				subscriptionEndDate = getSubscriptionEndDate( purchase );
+			const purchaseName = getName( purchase );
+			const subscriptionEndDate = getSubscriptionEndDate( purchase );
 
 			this.props.refreshSitePlans( purchase.siteId );
 
 			this.props.clearPurchases();
 
 			if ( success ) {
-				notices.success(
+				this.props.successNotice(
 					translate(
 						'%(purchaseName)s was successfully cancelled. It will be available ' +
 							'for use until it expires on %(subscriptionEndDate)s.',
@@ -113,12 +113,12 @@ class CancelPurchaseButton extends Component {
 							},
 						}
 					),
-					{ persistent: true }
+					{ displayOnNextPage: true }
 				);
 
 				page( this.props.purchaseListUrl );
 			} else {
-				notices.error(
+				this.props.errorNotice(
 					translate(
 						'There was a problem canceling %(purchaseName)s. ' +
 							'Please try again later or contact support.',
@@ -143,14 +143,14 @@ class CancelPurchaseButton extends Component {
 
 	handleSubmit = ( error, response ) => {
 		if ( error ) {
-			notices.error( error.message );
+			this.props.errorNotice( error.message );
 
 			this.cancellationFailed();
 
 			return;
 		}
 
-		notices.success( response.message, { persistent: true } );
+		this.props.successNotice( response.message, { displayOnNextPage: true } );
 
 		this.props.refreshSitePlans( this.props.purchase.siteId );
 
@@ -171,14 +171,14 @@ class CancelPurchaseButton extends Component {
 				this.setDisabled( false );
 
 				if ( error ) {
-					notices.error( error.message );
+					this.props.errorNotice( error.message );
 
 					this.cancellationFailed();
 
 					return;
 				}
 
-				notices.success( response.message, { persistent: true } );
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
 
 				this.props.refreshSitePlans( purchase.siteId );
 
@@ -206,14 +206,14 @@ class CancelPurchaseButton extends Component {
 				this.setDisabled( false );
 
 				if ( error ) {
-					notices.error( error.message );
+					this.props.errorNotice( error.message );
 
 					this.cancellationFailed();
 
 					return;
 				}
 
-				notices.success( response.message, { persistent: true } );
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
 
 				this.props.refreshSitePlans( purchase.siteId );
 
@@ -259,7 +259,8 @@ class CancelPurchaseButton extends Component {
 
 	render() {
 		const { purchase, selectedSite, translate } = this.props;
-		let text, onClick;
+		let text;
+		let onClick;
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			onClick = this.handleCancelPurchaseClick;
@@ -319,5 +320,7 @@ class CancelPurchaseButton extends Component {
 
 export default connect( null, {
 	clearPurchases,
+	errorNotice,
+	successNotice,
 	refreshSitePlans,
 } )( localize( CancelPurchaseButton ) );

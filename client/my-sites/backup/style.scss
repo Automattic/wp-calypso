@@ -46,21 +46,6 @@
 	}
 }
 
-.backup__card-list {
-	margin: 0;
-	padding: 0;
-
-	list-style-type: none;
-
-	> li {
-		margin: 44px 0;
-
-		&:first-child {
-			margin-top: 0;
-		}
-	}
-}
-
 .backup__search {
 	padding: 0 1rem;
 }
@@ -172,9 +157,5 @@
 		&.banner.card {
 			@include banner-color( var( --color-primary-40 ) );
 		}
-	}
-
-	.backup__card-list {
-		margin-top: 32px;
 	}
 }

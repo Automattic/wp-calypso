@@ -84,9 +84,7 @@ export const StatsV2 = ( {
 					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
 				</>
 			) }
-			<h2 className="stats__heading customer-home__section-heading">
-				{ translate( 'Stats at a glance' ) }
-			</h2>
+
 			<Card>
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>

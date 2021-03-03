@@ -1,3 +1,8 @@
+/**
+ * Internal Dependencies
+ */
+import { isEnabled } from '@automattic/calypso-config';
+
 export const getManagePurchaseUrlFor = (
 	targetSiteSlug: string,
 	targetPurchaseId: string | number
@@ -18,21 +23,28 @@ export const getPurchaseListUrlFor = ( targetSiteSlug: string ) =>
 
 export const getAddPaymentMethodUrlFor = (
 	targetSiteSlug: string,
-	targetPurchase: { id: string | number }
-) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/add`;
+	targetPurchaseId: string | number
+) =>
+	isEnabled( 'purchases/new-payment-methods' )
+		? `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/payment-method/add`
+		: `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/payment/add`;
 
-export const getAddNewPaymentMethod = ( targetSiteSlug: string ) =>
-	`/purchases/add-credit-card/${ targetSiteSlug }`;
+export const getAddNewPaymentMethodUrlFor = ( targetSiteSlug: string ) =>
+	isEnabled( 'purchases/new-payment-methods' )
+		? `/purchases/add-payment-method/${ targetSiteSlug }`
+		: `/purchases/add-credit-card/${ targetSiteSlug }`;
 
 export const getPaymentMethodsUrlFor = ( targetSiteSlug: string ) =>
 	`/purchases/payment-methods/${ targetSiteSlug }`;
 
-export const getEditPaymentMethodUrlFor = (
+export const getChangePaymentMethodUrlFor = (
 	targetSiteSlug: string,
-	targetPurchase: { id: string | number },
-	targetCardId: { id: string | number }
+	targetPurchaseId: string | number,
+	targetCardId: string | number
 ) =>
-	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/edit/${ targetCardId }`;
+	isEnabled( 'purchases/new-payment-methods' )
+		? `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/payment-method/change/${ targetCardId }`
+		: `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/payment/edit/${ targetCardId }`;
 
 export const getReceiptUrlFor = ( targetSiteSlug: string, targetReceiptId: string | number ) =>
 	`/purchases/billing-history/${ targetSiteSlug }/${ targetReceiptId }`;

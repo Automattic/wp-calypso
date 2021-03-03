@@ -2,12 +2,12 @@
  * External dependencies
  */
 
-import { every, get, isArray, some } from 'lodash';
+import { every, get, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	areShippingZoneMethodsLoaded,
@@ -36,7 +36,7 @@ export const getAPIShippingZones = ( state, siteId = getSelectedSiteId( state ) 
 export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const zones = getAPIShippingZones( state, siteId );
 	return (
-		isArray( zones ) &&
+		Array.isArray( zones ) &&
 		every( zones, ( zone ) => areShippingZoneMethodsLoaded( state, zone.id, siteId ) ) &&
 		every( zones, ( zone ) => areShippingZoneLocationsLoaded( state, zone.id, siteId ) )
 	);
@@ -52,7 +52,7 @@ export const areShippingZonesLoading = ( state, siteId = getSelectedSiteId( stat
 	if ( LOADING === zones ) {
 		return true;
 	}
-	if ( ! isArray( zones ) ) {
+	if ( ! Array.isArray( zones ) ) {
 		return false;
 	}
 	return (

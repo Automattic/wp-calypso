@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import DomainOnly from './domain-only';
 import ListItemPlaceholder from './item-placeholder';
@@ -64,7 +64,6 @@ export class List extends React.Component {
 		selectedSite: PropTypes.object.isRequired,
 		domains: PropTypes.array.isRequired,
 		isRequestingDomains: PropTypes.bool,
-		cart: PropTypes.object,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
 		hasSingleSite: PropTypes.bool,
@@ -154,7 +153,6 @@ export class List extends React.Component {
 					/>
 					<div className="domains__header-buttons">
 						<HeaderCart
-							cart={ this.props.cart }
 							selectedSite={ this.props.selectedSite }
 							currentRoute={ this.props.currentRoute }
 						/>
@@ -308,8 +306,8 @@ export class List extends React.Component {
 		}
 
 		this.props.changePrimary( domain, mode );
-		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } ),
-			currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
+		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } );
+		const currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
 
 		if ( domain.name === currentPrimaryName ) {
 			// user clicked the current primary domain
@@ -434,6 +432,8 @@ export class List extends React.Component {
 			hasSingleSite,
 		} = this.props;
 
+		const { changePrimaryDomainModeEnabled, primaryDomainIndex, settingPrimaryDomain } = this.state;
+
 		const domains =
 			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
 				? this.filterOutWpcomDomains( this.props.domains )
@@ -447,13 +447,14 @@ export class List extends React.Component {
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
-				onClick={ this.state.settingPrimaryDomain ? noop : this.goToEditDomainRoot }
-				isBusy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
+				onClick={ settingPrimaryDomain ? noop : this.goToEditDomainRoot }
+				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
+				isChecked={ changePrimaryDomainModeEnabled && index === primaryDomainIndex }
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
 				} ) }
-				disabled={ this.state.settingPrimaryDomain || this.state.changePrimaryDomainModeEnabled }
-				enableSelection={ this.state.changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
+				disabled={ settingPrimaryDomain || changePrimaryDomainModeEnabled }
+				enableSelection={ changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
 				selectionIndex={ index }
 				onMakePrimaryClick={ this.handleUpdatePrimaryDomainOptionClick }
 				onSelect={ this.handleUpdatePrimaryDomain }

@@ -11,7 +11,7 @@ import { stringify } from 'qs';
 import Site from './site';
 import Me from './me';
 import MailingList from './mailing-list';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 
@@ -459,8 +459,8 @@ Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
 };
 
 Undocumented.prototype._sendRequest = function ( originalParams, fn ) {
-	const { apiVersion, method } = originalParams,
-		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
+	const { apiVersion, method } = originalParams;
+	const updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
 
 	if ( apiVersion ) {
 		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
@@ -775,18 +775,49 @@ Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
 	);
 };
 
+Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/titan/redirect-info/${ encodeURIComponent( mode ) }`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ jwt },
+		fn
+	);
+};
+
 /**
  * Retrieves the auto login link to Titan's control panel.
  *
- * @param orderId the Titan order ID
+ * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
  * @param fn The callback function
  */
-Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( emailAccountId, context, fn ) {
 	return this.wpcom.req.get(
 		{
-			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
+			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-auto-login-url`,
 			apiNamespace: 'wpcom/v2',
 		},
+		{ context },
+		fn
+	);
+};
+
+/**
+ * Retrieves the URL to embed Titan's control panel in an iframe.
+ *
+ * @param emailAccountId The email account ID
+ * @param context Optional context enum to launch into a specific part of the control panel
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId, context, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-iframe-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ context },
 		fn
 	);
 };
@@ -825,6 +856,22 @@ Undocumented.prototype.getSiteProducts = function ( siteDomain, fn ) {
 		{
 			path: '/sites/' + siteDomain + '/products',
 			method: 'get',
+		},
+		fn
+	);
+};
+
+/**
+ * Get the user's billing history
+ *
+ * @param {Function} fn The callback function
+ */
+Undocumented.prototype.billingHistory = function ( fn ) {
+	return this._sendRequest(
+		{
+			path: '/me/billing-history',
+			method: 'get',
+			apiVersion: '1.3',
 		},
 		fn
 	);
@@ -915,6 +962,58 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
 Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 	debug( '/me/payment-methods query', { query } );
 	return this.wpcom.req.get( '/me/payment-methods', query, fn );
+};
+
+/**
+ * Get a list of the user's allowed payment methods
+ */
+Undocumented.prototype.getAllowedPaymentMethods = function () {
+	debug( '/me/allowed-payment-methods query' );
+	return this.wpcom.req.get( { path: '/me/allowed-payment-methods' } );
+};
+
+/**
+ * Assign a stored payment method to a subscription.
+ *
+ * @param {string} subscriptionId The subscription ID (a.k.a. purchase ID) to be assigned
+ * @param {string} stored_details_id The payment method ID to assign
+ * @param {Function} [fn] The callback function
+ */
+Undocumented.prototype.assignPaymentMethod = function ( subscriptionId, stored_details_id, fn ) {
+	debug( '/upgrades/assign-payment-method query', { subscriptionId, stored_details_id } );
+	return this.wpcom.req.post(
+		{
+			path: '/upgrades/' + subscriptionId + '/assign-payment-method',
+			body: { stored_details_id },
+			apiVersion: '1',
+		},
+		fn
+	);
+};
+
+/**
+ * Returns a PayPal Express URL to redirect to for confirming the creation of a billing agreement.
+ *
+ * @param {string} subscription_id The subscription ID (a.k.a. purchase ID) to assign the billing agreement to after it is created
+ * @param {string} success_url The URL to return the user to for a successful billing agreement creation
+ * @param {string} cancel_url The URL to return the user to if they cancel the billing agreement creation
+ * @param {Function} [fn] The callback function
+ */
+Undocumented.prototype.createPayPalAgreement = function (
+	subscription_id,
+	success_url,
+	cancel_url,
+	fn
+) {
+	debug( '/payment-methods/create-paypal-agreement', { subscription_id, success_url, cancel_url } );
+	return this.wpcom.req.post(
+		{
+			path: '/payment-methods/create-paypal-agreement',
+			body: { subscription_id, success_url, cancel_url },
+			apiVersion: '1',
+		},
+		fn
+	);
 };
 
 /**
@@ -1198,15 +1297,7 @@ Undocumented.prototype.transactions = function ( data, fn ) {
 };
 
 Undocumented.prototype.updateCreditCard = function ( params, fn ) {
-	const data = pick( params, [
-		'country',
-		'zip',
-		'month',
-		'year',
-		'name',
-		'payment_partner',
-		'paygate_token',
-	] );
+	const data = pick( params, [ 'payment_partner', 'paygate_token' ] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
@@ -1314,48 +1405,6 @@ Undocumented.prototype.readTagImages = function ( query, fn ) {
 	params.apiVersion = '1.2';
 	return this.wpcom.req.get(
 		'/read/tags/' + encodeURIComponent( query.tag ) + '/images',
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.readList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/list' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readLists = function ( fn ) {
-	debug( '/read/lists' );
-	return this.wpcom.req.get( '/read/lists', { apiVersion: '1.2' }, fn );
-};
-
-Undocumented.prototype.followList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:slug/follow' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/follow',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.unfollowList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:slug/unfollow' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/unfollow',
-		{ apiVersion: '1.2' },
 		params,
 		fn
 	);
@@ -1684,31 +1733,6 @@ Undocumented.prototype.uploadTheme = function ( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.nameservers = function ( domain, callback ) {
-	return this.wpcom.req.get( '/domains/' + domain + '/nameservers', function ( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
-Undocumented.prototype.updateNameservers = function ( domain, nameservers, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/nameservers/', {}, nameservers, function (
-		error,
-		response
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
 Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
 };
@@ -1767,50 +1791,6 @@ Undocumented.prototype.getDnsTemplateRecords = function (
 		{ variables },
 		callback
 	);
-};
-
-Undocumented.prototype.fetchWapiDomainInfo = function ( domainName, fn ) {
-	return this.wpcom.req.get( '/domains/' + domainName + '/status', fn );
-};
-
-Undocumented.prototype.requestTransferCode = function ( options, fn ) {
-	const { domainName } = options,
-		data = {
-			domainStatus: JSON.stringify( {
-				command: 'send-code',
-			} ),
-		};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.cancelTransferRequest = function ( { domainName, declineTransfer }, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( {
-			command: 'cancel-transfer-request',
-			payload: {
-				decline_transfer: declineTransfer,
-			},
-		} ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.acceptTransfer = function ( domainName, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( { command: 'accept-transfer' } ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.declineTransfer = function ( domainName, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( { command: 'deny-transfer' } ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
 Undocumented.prototype.transferToUser = function ( siteId, domainName, targetUserId, fn ) {
@@ -2521,17 +2501,17 @@ Undocumented.prototype.updateSiteAddress = function (
 };
 
 Undocumented.prototype.requestGdprConsentManagementLink = function ( domain, callback ) {
-	return this.wpcom.req.get( `/domains/${ domain }/request-gdpr-consent-management-link`, function (
-		error,
-		response
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
+	return this.wpcom.req.get(
+		`/domains/${ domain }/request-gdpr-consent-management-link`,
+		function ( error, response ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
 
-		callback( null, response );
-	} );
+			callback( null, response );
+		}
+	);
 };
 
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (
@@ -2644,6 +2624,73 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 		} );
 
 	return request();
+};
+
+/**
+ * Request the Partner Portal partner and it's keys for the current WPCOM user.
+ *
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.getJetpackPartnerPortalPartner = function () {
+	return this.wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: '/jetpack-licensing/partner',
+	} );
+};
+
+/**
+ * Look for a site belonging to the currently logged in user that matches the
+ * anchor parameters specified.
+ *
+ * @param anchorFmPodcastId {string | null}  Example: 22b6608
+ * @param anchorFmEpisodeId {string | null}  Example: e324a06c-3148-43a4-85d8-34c0d8222138
+ * @param anchorFmSpotifyUrl {string | null} Example: https%3A%2F%2Fopen.spotify.com%2Fshow%2F6HTZdaDHjqXKDE4acYffoD%3Fsi%3DEVfDYETjQCu7pasVG5D73Q
+ * @param anchorFmSite {string | null} Example: 181129564
+ * @param anchorFmPost {string | null} Example: 5
+ * @returns {Promise} A promise
+ *    The promise should resolve to a json object containing ".location" key as {string|false} type.
+ *    False - There were no matching sites detected, the user should create a new one.
+ *    String - The URL to redirect the user to, to edit a new or existing post on that site.
+ */
+Undocumented.prototype.getMatchingAnchorSite = function (
+	anchorFmPodcastId,
+	anchorFmEpisodeId,
+	anchorFmSpotifyUrl,
+	anchorFmSite,
+	anchorFmPost
+) {
+	const queryParts = {
+		podcast: anchorFmPodcastId,
+		episode: anchorFmEpisodeId,
+		spotify_url: anchorFmSpotifyUrl,
+		site: anchorFmSite,
+		post: anchorFmPost,
+	};
+	Object.keys( queryParts ).forEach( ( k ) => {
+		if ( queryParts[ k ] === null ) {
+			delete queryParts[ k ];
+		}
+	} );
+	return this.wpcom.req.get(
+		{
+			path: '/anchor',
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+		},
+		queryParts
+	);
+};
+
+/**
+ * Records the interest of the user for the DIFM upsell offer if they click Accept on the offer page. Check pcbrnV-Y3-p2.
+ *
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.saveDifmInterestForUser = function () {
+	return this.wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: '/difm/interested',
+	} );
 };
 
 export default Undocumented;

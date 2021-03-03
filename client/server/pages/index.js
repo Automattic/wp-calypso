@@ -9,7 +9,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, snakeCase, split } from 'lodash';
+import { get, includes, pick, snakeCase } from 'lodash';
 import bodyParser from 'body-parser';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -17,7 +17,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import sanitize from 'calypso/server/sanitize';
 import utils from 'calypso/server/bundler/utils';
 import { pathToRegExp } from 'calypso/utils';
@@ -34,6 +34,7 @@ import {
 } from 'calypso/server/render';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
+import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import { createReduxStore } from 'calypso/state';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 import { setStore } from 'calypso/state/redux-store';
@@ -57,7 +58,7 @@ const debug = debugFactory( 'calypso:pages' );
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
-const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
+const staticFiles = [ { path: 'tinymce/skins/wordpress/wp-content.css' } ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 	if ( ! file.hash ) {
@@ -160,6 +161,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		manifests: request.getAssets().manifests,
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
+		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
@@ -173,6 +175,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
+		isWpMobileApp: isWpMobileApp( request.useragent.source ),
 		isDebug,
 		staticUrls: staticFilesUrls,
 	};
@@ -269,7 +272,8 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	let redirectUrl, start;
+	let redirectUrl;
+	let start;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
@@ -533,7 +537,7 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
  */
 function handleLocaleSubdomains( req, res, next ) {
 	const langSlug = req.hostname?.endsWith( config( 'hostname' ) )
-		? split( req.hostname, '.' )[ 0 ]
+		? req.hostname.split( '.' )[ 0 ]
 		: null;
 
 	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
@@ -629,17 +633,18 @@ export default function pages() {
 
 		app.get( '/plans', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
-				const queryFor = req.query && req.query.for;
+				const queryFor = req.query?.for;
+
 				if ( queryFor && 'jetpack' === queryFor ) {
 					res.redirect(
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 					);
-				} else {
+				} else if ( ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 					res.redirect( 'https://wordpress.com/pricing' );
 				}
-			} else {
-				next();
 			}
+
+			next();
 		} );
 	}
 
@@ -720,7 +725,7 @@ export default function pages() {
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
-				// default export of it. See webpack/bundler/sections-loader.js
+				// default export of it. See build-tools/webpack/sections-loader.js
 				// TODO: section initialization is async function since #28301. At the moment when
 				// some isomorphic section really starts doing something async, we should start
 				// awaiting the result here. Will be solved together with server-side dynamic reducers.

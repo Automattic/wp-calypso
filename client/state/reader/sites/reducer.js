@@ -13,16 +13,10 @@ import {
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
 } from 'calypso/state/reader/action-types';
-import { SERIALIZE } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'calypso/lib/url';
 import { decodeEntities } from 'calypso/lib/formatting';
-
-function handleSerialize( state ) {
-	// remove errors from the serialized state
-	return omitBy( state, 'is_error' );
-}
 
 function handleRequestFailure( state, action ) {
 	// 410 means site moved - site used to be on wpcom but is no longer
@@ -83,10 +77,8 @@ function handleSiteUpdate( state, action ) {
 	return assign( {}, state, keyBy( sites, 'ID' ) );
 }
 
-export const items = withSchemaValidation( readerSitesSchema, ( state = {}, action ) => {
+const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case SERIALIZE:
-			return handleSerialize( state, action );
 		case READER_SITE_BLOCKS_RECEIVE: {
 			if ( ! action.payload || ! action.payload.sites ) {
 				return state;
@@ -109,7 +101,14 @@ export const items = withSchemaValidation( readerSitesSchema, ( state = {}, acti
 	}
 
 	return state;
-} );
+};
+export const items = withSchemaValidation(
+	readerSitesSchema,
+	withPersistence( itemsReducer, {
+		// remove errors from the serialized state
+		serialize: ( state ) => omitBy( state, 'is_error' ),
+	} )
+);
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -125,7 +124,7 @@ export function queuedRequests( state = {}, action ) {
 	return state;
 }
 
-export const lastFetched = withoutPersistence( ( state = {}, action ) => {
+export const lastFetched = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_SITE_REQUEST_SUCCESS:
 			return {
@@ -146,7 +145,7 @@ export const lastFetched = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	items,

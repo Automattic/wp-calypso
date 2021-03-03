@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import debugFactory from 'debug';
 import classNames from 'classnames';
-import { defer, noop } from 'lodash';
+import { defer } from 'lodash';
 import { useRtl } from 'i18n-calypso';
 
 /**
@@ -31,6 +31,8 @@ import './style.scss';
  */
 const debug = debugFactory( 'calypso:popover' );
 
+const noop = () => {};
+
 class PopoverInner extends Component {
 	static defaultProps = {
 		autoPosition: true,
@@ -41,6 +43,8 @@ class PopoverInner extends Component {
 		isFocusEnabled: true,
 		position: 'top',
 		onClose: noop,
+		onMouseEnter: noop,
+		onMouseLeave: noop,
 	};
 
 	/**
@@ -325,6 +329,18 @@ class PopoverInner extends Component {
 		this.props.onClose( wasCanceled );
 	}
 
+	handleOnMouseEnter = () => {
+		const { onMouseEnter } = this.props;
+
+		onMouseEnter?.();
+	};
+
+	handleOnMouseLeave = () => {
+		const { onMouseLeave } = this.props;
+
+		onMouseLeave?.();
+	};
+
 	render() {
 		if ( ! this.props.context ) {
 			debug( 'No `context` to tie. return no render' );
@@ -342,6 +358,8 @@ class PopoverInner extends Component {
 				tabIndex="-1"
 				style={ this.getStylePosition() }
 				className={ classes }
+				onMouseEnter={ this.handleOnMouseEnter }
+				onMouseLeave={ this.handleOnMouseLeave }
 			>
 				<div className="popover__arrow" />
 				<div ref={ this.popoverInnerNodeRef } className="popover__inner">

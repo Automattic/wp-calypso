@@ -1,3 +1,7 @@
+## 5.1.0 (next)
+
+- Add `i18n.getLocaleVariant()` method to get a nonstandard locale variant slug
+
 ## 5.0.0
 
 - Dependencies: Move `react` to `peerDependencies`. `i18n-calypso` no longer depends on `react` directly and consumers should install the dependency.
@@ -5,15 +9,11 @@
 - Update debug to v4
 - Switch from Jed to Tannin, for smaller size as well as runtime speedups
 
-  4.1.0
-
----
+## 4.1.0
 
 - Add `i18n.isRtl()` method to determine current locale's text direction and the `useRtl` and `withRtl` React wrappers
 
-  4.0.0
-
----
+## 4.0.0
 
 - Move i18n-calypso into Calypso repository.
 - Refactor i18n-calypso to Calypso standards.
@@ -23,22 +23,16 @@
 - Update `xgettext-js` to `^3.0.0`
 - Moved the CLI tool to separate package `i18n-calypso-cli`
 
-  3.0.0
-
----
+## 3.0.0
 
 - Update Jed dependency to v1.1.1. This is a breaking change, since as of Jed v1.1, the format of Jed translation files has changed. Refer to <https://github.com/messageformat/Jed/pull/33> for details.
 
-  2.0.2
-
----
+## 2.0.2
 
 - The localize HoC will now pass down the current locale slug as a `locale` prop to the wrapped component [#77](https://github.com/Automattic/i18n-calypso/pull/77).
 - Open up the range on the moment-timezone dependency to allow clients to use any moment-timezone from the 0.5 range. [#78](https://github.com/Automattic/i18n-calypso/pull/78)
 
-  2.0.1
-
----
+## 2.0.1
 
 - Update parseOptions passed to xgettext to include more modern features <https://github.com/Automattic/i18n-calypso/pull/68>
 - Switch to hash.js from sha1 for hashing to cut size <https://github.com/Automattic/i18n-calypso/pull/67>
@@ -56,9 +50,7 @@
 - Fix circular reference when calling JSON.stringify with the Community Translator enabled in Calypso [#54](https://github.com/Automattic/i18n-calypso/pull/54).
 - Update CI image to node:10 and use `npm cit`, see [#63](https://github.com/Automattic/i18n-calypso/pull/63).
 
-  1.9.1
-
----
+## 1.9.1
 
 Fix a reference to an undefined value.
 
@@ -107,9 +99,7 @@ Update `moment-timezone` to version `0.5.11`.
 - Allow exposed composed component, see [#25](https://github.com/Automattic/i18n-calypso/pull/25).
 - Change Localize HOC display name to be consistent with react-redux, see [#29](https://github.com/Automattic/i18n-calypso/pull/29).
 
-  1.7.0
-
----
+## 1.7.0
 
 Replace LRU cache implementation, see [#18](https://github.com/Automattic/i18n-calypso/pull/18).
 
@@ -126,8 +116,6 @@ Fix invalid POT output when strings contained a line break, see [#14](https://gi
 - Add method to add/overwrite translations, see [#10](https://github.com/Automattic/i18n-calypso/pull/10).
 - Add ability to parse Calypso source by switching to xgettext-js 1.0.0 and enabling the necessary plugins, see [#13](https://github.com/Automattic/i18n-calypso/pull/13).
 
-  1.5.0
-
----
+## 1.5.0
 
 - POT: enable output of string locations, see [#12](https://github.com/Automattic/i18n-calypso/pull/12).

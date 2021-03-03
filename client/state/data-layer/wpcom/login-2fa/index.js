@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } from 'calypso/state/action-types';
 import {
 	startPollAppPushAuth,

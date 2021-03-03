@@ -14,7 +14,7 @@ import { map } from 'lodash';
 import * as MediaUtils from '../utils';
 import { ValidationErrors as MediaValidationErrors } from '../constants';
 
-jest.mock( 'lib/impure-lodash', () => ( {
+jest.mock( 'calypso/lib/impure-lodash', () => ( {
 	uniqueId: () => 'media-13',
 } ) );
 

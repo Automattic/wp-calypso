@@ -1,12 +1,8 @@
 /**
- * External dependencies
- */
-import { isArray } from 'lodash';
-/**
  * Internal dependencies
  */
 import { DEFAULT_QUERY, getNormalizedProductsQuery } from './utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import request from 'woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
 import {
@@ -166,7 +162,7 @@ export function fetchProductsFailure( siteId, params ) {
 
 export function productsUpdated( siteId, params, products, totalPages, totalProducts ) {
 	// This passed through the API layer successfully, but failed at the remote site.
-	if ( ! isArray( products ) ) {
+	if ( ! Array.isArray( products ) ) {
 		return {
 			type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 			siteId,

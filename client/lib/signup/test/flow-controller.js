@@ -12,16 +12,18 @@ import thunk from 'redux-thunk';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
-import signupReducer from 'state/signup/reducer';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
+import { combineReducers } from 'calypso/state/utils';
+import signupReducer from 'calypso/state/signup/reducer';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import SignupFlowController from '../flow-controller';
 
-jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'calypso/signup/config/flows-pure', () =>
+	require( './mocks/signup/config/flows-pure' )
+);
+jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
 
 function createSignupStore( initialState ) {
 	return createStore(

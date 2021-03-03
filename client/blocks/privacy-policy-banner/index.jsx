@@ -16,7 +16,7 @@ import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/
 import { savePreference } from 'calypso/state/preferences/actions';
 import getCurrentUserRegisterDate from 'calypso/state/selectors/get-current-user-register-date';
 import Banner from 'calypso/components/banner';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 

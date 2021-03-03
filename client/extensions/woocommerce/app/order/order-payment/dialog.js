@@ -18,8 +18,8 @@ import {
 } from 'woocommerce/state/sites/payment-methods/selectors';
 import { Button, Dialog } from '@automattic/components';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import {
 	getOrderFeeTax,
@@ -28,7 +28,7 @@ import {
 } from 'woocommerce/lib/order-values';
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import OrderRefundTable from './table';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 

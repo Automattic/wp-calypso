@@ -15,7 +15,7 @@ import {
 	submitMailChimpCampaignDefaults,
 	submitMailChimpStoreInfo,
 } from '../actions';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,

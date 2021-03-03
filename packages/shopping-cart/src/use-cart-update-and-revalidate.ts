@@ -11,17 +11,29 @@ import {
 	convertResponseCartToRequestCart,
 	convertRawResponseCartToResponseCart,
 } from './cart-functions';
-import { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
+import type {
+	TempResponseCart,
+	RequestCart,
+	ResponseCart,
+	CacheStatus,
+	ShoppingCartAction,
+} from './types';
 
 const debug = debugFactory( 'shopping-cart:use-cart-update-and-revalidate' );
 
 export default function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
-	responseCart: ResponseCart,
+	responseCart: TempResponseCart,
 	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
-	const pendingResponseCart = useRef< ResponseCart >( responseCart );
+	const pendingResponseCart = useRef< TempResponseCart >( responseCart );
+	const isMounted = useRef< boolean >( true );
+	useEffect( () => {
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
@@ -46,18 +58,20 @@ export default function useCartUpdateAndRevalidate(
 					debug( 'ignoring updated cart because there is a newer request pending' );
 					return;
 				}
-				hookDispatch( {
-					type: 'RECEIVE_UPDATED_RESPONSE_CART',
-					updatedResponseCart: convertRawResponseCartToResponseCart( response ),
-				} );
+				isMounted.current &&
+					hookDispatch( {
+						type: 'RECEIVE_UPDATED_RESPONSE_CART',
+						updatedResponseCart: convertRawResponseCartToResponseCart( response ),
+					} );
 			} )
 			.catch( ( error ) => {
 				debug( 'error while setting cart', error );
-				hookDispatch( {
-					type: 'RAISE_ERROR',
-					error: 'SET_SERVER_CART_ERROR',
-					message: error.message,
-				} );
+				isMounted.current &&
+					hookDispatch( {
+						type: 'RAISE_ERROR',
+						error: 'SET_SERVER_CART_ERROR',
+						message: error.message,
+					} );
 			} );
-	}, [ setServerCart, cacheStatus, responseCart, hookDispatch ] );
+	}, [ isMounted, setServerCart, cacheStatus, responseCart, hookDispatch ] );
 }

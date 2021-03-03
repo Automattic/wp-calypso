@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-
-import { get, omit, isArray } from 'lodash';
+import { get, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSerializedReviewsQuery } from './utils';
 
 /**
@@ -23,7 +22,7 @@ export const areReviewsLoaded = ( state, query, siteId = getSelectedSiteId( stat
 		[ 'extensions', 'woocommerce', 'sites', siteId, 'reviews', 'queries', serializedQuery ],
 		false
 	);
-	return isArray( reviews );
+	return Array.isArray( reviews );
 };
 
 /**
@@ -51,7 +50,7 @@ export const areReviewsLoading = ( state, query = {}, siteId = getSelectedSiteId
  * @param {object} state Whole Redux state tree
  * @param {object} [query] Query used to fetch reviews. Can contain page, status, etc. If not provided, defaults to first page, all reviews.
  * @param {number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @returns {Array|false} Array of reviews, or false if there was an error
+ * @returns {Array|boolean} Array of reviews, or false if there was an error
  */
 export const getReviews = ( state, query = {}, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areReviewsLoaded( state, query, siteId ) ) {

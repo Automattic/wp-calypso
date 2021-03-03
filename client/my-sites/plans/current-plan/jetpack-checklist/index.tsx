@@ -278,7 +278,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						completedButtonText={ translate( 'Change', { context: 'verb' } ) }
 						completedTitle={ translate( 'You turned on Downtime Monitoring.' ) }
 						description={ translate(
-							"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
+							'Jetpack will continuously watch your site, and alert you with instant notifications if downtime is detected.'
 						) }
 						duration={ this.getDuration( 3 ) }
 						href={ `/settings/security/${ siteSlug }` }

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import activeTests from 'lib/abtest/active-tests';
+import activeTests from 'calypso/lib/abtest/active-tests';
 
 export const ABTEST_LOCALSTORAGE_KEY = 'ABTests';
 

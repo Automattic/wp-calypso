@@ -7,6 +7,7 @@ import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
 import { noop } from 'lodash';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 
 /**
  * Internal dependencies
@@ -67,7 +68,7 @@ const ThreatItem: React.FC< Props > = ( {
 			};
 			return (
 				<Button
-					compact
+					primary
 					className={ classnames( 'threat-item__fix-button', className ) }
 					onClick={ onClickHandler }
 					disabled={ isFixing }
@@ -85,17 +86,32 @@ const ThreatItem: React.FC< Props > = ( {
 		}
 
 		if ( ! threat.fixable ) {
-			return translate(
-				'Jetpack Scan cannot automatically fix this threat. You can fix it manually and re-run scan afterwards, or {{link}}contact us{{/link}} for help.',
-				{
-					components: {
-						link: <a href={ contactSupportUrl } rel="noopener noreferrer" target="_blank" />,
-					},
-				}
+			return (
+				<>
+					<p className="threat-description__section-text">
+						{ translate(
+							'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
+								'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
+								'the offending code, theme, or plugin from your site.'
+						) }
+					</p>
+					<p className="threat-description__section-text">
+						{ translate(
+							'If you need more help to resolve this threat, we recommend {{strong}}Codeable{{/strong}}, a trusted freelancer marketplace of highly vetted WordPress experts. ' +
+								'They have identified a select group of security experts to help with these projects. ' +
+								'Pricing ranges from $70-120/hour, and you can get a free estimate with no obligation to hire.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+				</>
 			);
 		}
 
-		return getThreatFix( threat.fixable );
+		return <p className="threat-description__section-text">{ getThreatFix( threat.fixable ) }</p>;
 	}, [ contactSupportUrl, threat ] );
 
 	const isFixable = React.useMemo(
@@ -128,13 +144,7 @@ const ThreatItem: React.FC< Props > = ( {
 				'is-current': threat.status === 'current',
 			} ) }
 			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
-			subheader={ <ThreatItemSubheader threat={ threat } /> }
-			{ ...( isFixable
-				? {
-						summary: renderFixThreatButton( 'is-summary' ),
-						expandedSummary: renderFixThreatButton( 'is-summary' ),
-				  }
-				: {} ) }
+			subheader={ <ThreatItemSubheader threat={ threat } isFixable={ isFixable } /> }
 			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 			clickableHeader={ true }
 			onClick={ onOpenTrackEvent }
@@ -146,14 +156,13 @@ const ThreatItem: React.FC< Props > = ( {
 				context={ threat.context }
 				diff={ threat.diff }
 				filename={ threat.filename }
+				isFixable={ isFixable }
 			/>
 
 			<div className="threat-item__buttons">
-				{ isFixable && renderFixThreatButton( 'is-details' ) }
 				{ threat.status === 'current' && (
 					<Button
 						scary
-						compact
 						className="threat-item__ignore-button"
 						onClick={ onIgnoreThreat }
 						disabled={ isFixing }
@@ -161,6 +170,19 @@ const ThreatItem: React.FC< Props > = ( {
 						{ translate( 'Ignore threat' ) }
 					</Button>
 				) }
+				{ ! isFixable && (
+					<ExternalLinkWithTracking
+						className="button is-primary threat-item__codeable-button"
+						href="https://codeable.io/partners/jetpack-scan/"
+						target="_blank"
+						rel="noopener noreferrer"
+						tracksEventName="calypso_jetpack_scan_threat_codeable_estimate"
+						onClick={ () => {} }
+					>
+						{ translate( 'Get a free estimate' ) }
+					</ExternalLinkWithTracking>
+				) }
+				{ isFixable && renderFixThreatButton( 'is-details' ) }
 			</div>
 		</LogItem>
 	);

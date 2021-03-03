@@ -1,48 +1,70 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import React, { useMemo } from 'react';
 
 /**
  * Internal dependencies
  */
+import JetpackComMasterbar from '../jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import JetpackComMasterbar from '../jpcom-masterbar';
+import {
+	getForCurrentCROIteration,
+	Iterations,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
+
+// Fresh Start 2021 promotion; runs from Feb 16 00:00 to Mar 3 23:59 UTC automatically.
+// Safe to remove on or after Mar 4.
+import FreshStart2021SaleBanner from 'calypso/components/jetpack/fresh-start-2021-sale-banner';
+
+// Part of the NPIP test iteration
+import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const Header = () => {
-	const isAlternateSelector =
-		getJetpackCROActiveVersion() === 'v1' || getJetpackCROActiveVersion() === 'v2';
-	const header = isAlternateSelector
-		? translate( 'Security, performance, and growth tools for WordPress' )
-		: translate( 'Security, performance, and marketing tools for WordPress' );
+const Header: React.FC< Props > = ( { urlQueryArgs } ) => {
+	const translate = useTranslate();
+
+	// Don't show for the NPIP variant
+	const showFreshStartBanner = useMemo(
+		() => getForCurrentCROIteration( ( variation: Iterations ) => variation !== Iterations.NPIP ),
+		[]
+	);
+
+	// *Only* show for the NPIP variant
+	const showIntroPricingBanner = useMemo(
+		() => getForCurrentCROIteration( ( variation: Iterations ) => variation === Iterations.NPIP ),
+		[]
+	);
 
 	return (
 		<>
 			<JetpackComMasterbar />
+
+			{ showFreshStartBanner && <FreshStart2021SaleBanner urlQueryArgs={ urlQueryArgs } /> }
+
 			<div className="header">
 				<FormattedHeader
 					className="header__main-title"
-					headerText={ preventWidows( header ) }
+					headerText={ preventWidows(
+						translate( 'Security, performance, and marketing tools made for WordPress' )
+					) }
 					align="center"
 				/>
-				{ ! isAlternateSelector && (
-					<p>
-						{ translate(
-							'Get everything your site needs, in one package — so you can focus on your business.'
-						) }
-					</p>
-				) }
 			</div>
+
+			{ showIntroPricingBanner && <IntroPricingBanner /> }
 		</>
 	);
+};
+
+type Props = {
+	urlQueryArgs: { [ key: string ]: string };
 };
 
 export default Header;

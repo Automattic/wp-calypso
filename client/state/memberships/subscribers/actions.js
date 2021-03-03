@@ -6,9 +6,9 @@ import {
 	MEMBERSHIPS_SUBSCRIPTION_STOP,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
-	NOTICE_CREATE,
 } from 'calypso/state/action-types';
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/data-layer/wpcom/sites/memberships';
 import 'calypso/state/memberships/init';
@@ -41,14 +41,11 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 						errorMsg,
 					} );
 
-					dispatch( {
-						type: NOTICE_CREATE,
-						notice: {
+					dispatch(
+						errorNotice( errorMsg, {
 							duration: 5000,
-							text: errorMsg,
-							status: 'is-error',
-						},
-					} );
+						} )
+					);
 				}
 
 				dispatch( {
@@ -57,13 +54,7 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 					subscriptionId: subscriber.id,
 				} );
 
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+				dispatch( successNotice( noticeText ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( {

@@ -25,19 +25,30 @@ import {
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 
 function Transfer( props ) {
 	const {
 		isAtomic,
 		isDomainOnly,
+		isMapping,
 		isPrimaryDomain,
 		selectedSite,
 		selectedDomainName,
 		currentRoute,
 		translate,
 	} = props;
-
 	const slug = get( selectedSite, 'slug' );
+
+	if ( props.isRequestingSiteDomains || ! props.hasSiteDomainsLoaded ) {
+		return (
+			<DomainMainPlaceholder
+				backHref={ domainManagementEdit( slug, selectedDomainName, currentRoute ) }
+			/>
+		);
+	}
 
 	return (
 		<Main>
@@ -45,14 +56,16 @@ function Transfer( props ) {
 				selectedDomainName={ selectedDomainName }
 				backHref={ domainManagementEdit( slug, selectedDomainName, currentRoute ) }
 			>
-				{ translate( 'Transfer Domain' ) }
+				{ isMapping ? translate( 'Transfer Mapping' ) : translate( 'Transfer Domain' ) }
 			</Header>
 			<VerticalNav>
-				<VerticalNavItem
-					path={ domainManagementTransferOut( slug, selectedDomainName, currentRoute ) }
-				>
-					{ translate( 'Transfer to another registrar' ) }
-				</VerticalNavItem>
+				{ ! isMapping && (
+					<VerticalNavItem
+						path={ domainManagementTransferOut( slug, selectedDomainName, currentRoute ) }
+					>
+						{ translate( 'Transfer to another registrar' ) }
+					</VerticalNavItem>
+				) }
 				{ ! isDomainOnly && (
 					<VerticalNavItem
 						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName, currentRoute ) }
@@ -74,12 +87,15 @@ function Transfer( props ) {
 }
 
 export default connect( ( state, ownProps ) => {
+	const domain = getSelectedDomain( ownProps );
 	const siteId = getSelectedSiteId( state );
 	return {
+		currentRoute: getCurrentRoute( state ),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, siteId ),
-		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
+		isMapping: Boolean( domain ) && isMappedDomain( domain ),
 		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
-		currentRoute: getCurrentRoute( state ),
+		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 	};
 } )( localize( Transfer ) );

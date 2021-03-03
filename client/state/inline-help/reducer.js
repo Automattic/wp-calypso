@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,

@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import ExternalLink from 'components/external-link';
+import EmptyContent from 'calypso/components/empty-content';
+import ExternalLink from 'calypso/components/external-link';
 import { recordTrack } from 'woocommerce/lib/analytics';
 
 class ManageExternalView extends Component {
@@ -37,16 +37,16 @@ class ManageExternalView extends Component {
 
 		const actionURL = site.URL + '/wp-admin/edit.php?post_type=shop_order';
 		const action = (
-				<ExternalLink
-					icon
-					className="dashboard__empty-action button is-primary"
-					onClick={ this.recordAction }
-					href={ actionURL }
-				>
-					{ translate( 'Manage my Store' ) }
-				</ExternalLink>
-			),
-			secondaryAction = null;
+			<ExternalLink
+				icon
+				className="dashboard__empty-action button is-primary"
+				onClick={ this.recordAction }
+				href={ actionURL }
+			>
+				{ translate( 'Manage my Store' ) }
+			</ExternalLink>
+		);
+		const secondaryAction = null;
 
 		return (
 			<div className="dashboard__manage-externally">

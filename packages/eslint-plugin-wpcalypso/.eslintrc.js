@@ -14,6 +14,8 @@ module.exports = {
 				'wpcalypso/i18n-no-variables': 'off',
 				'wpcalypso/redux-no-bound-selectors': 'off',
 				'wpcalypso/jsx-gridicon-size': 'off',
+				'no-restricted-imports': 'off',
+				'no-restricted-modules': 'off',
 			},
 		},
 	],

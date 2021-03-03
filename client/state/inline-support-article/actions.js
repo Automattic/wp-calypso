@@ -6,12 +6,16 @@ import {
 	SUPPORT_ARTICLE_DIALOG_CLOSE,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/inline-support-article/init';
+
 /**
  * Shows the given support article (by postId) in a dialog.
  *
- * @param {object} options - action options
- * 	{number} postId 	The id of the support article
- *  {string} postUrl	The URL of the support article
+ * @param {object} options             Action options
+ * @param {number} options.postId      The id of the support article
+ * @param {string} options.postUrl     The URL of the support article
+ * @param {string} options.actionLabel Label of the action
+ * @param {string} options.actionUrl   URL of the action
  *
  * @returns {object}		Action
  */

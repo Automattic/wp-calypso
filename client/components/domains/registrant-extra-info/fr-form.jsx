@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { defaults, get, identity, isEmpty, isString, map, noop, set, toUpper, uniq } from 'lodash';
+import { defaults, get, identity, isEmpty, isString, map, noop, set, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +38,7 @@ function onlyNumericCharacters( string ) {
  * letters, plus or star symbols.
  */
 export function sanitizeVat( string ) {
-	return isString( string ) ? toUpper( string ).replace( /[^0-9A-Z+*]/g, '' ) : '';
+	return isString( string ) ? string.toUpperCase().replace( /[^0-9A-Z+*]/g, '' ) : '';
 }
 
 // If we set a field to null, react decides it's uncontrolled and complains

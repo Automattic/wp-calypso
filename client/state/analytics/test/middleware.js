@@ -27,7 +27,7 @@ import { spy as mockPageView } from 'calypso/lib/analytics/page-view';
 import { spy as mockTracks } from 'calypso/lib/analytics/tracks';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 
-jest.mock( 'lib/analytics/page-view', () => {
+jest.mock( 'calypso/lib/analytics/page-view', () => {
 	const pageViewSpy = require( 'sinon' ).spy();
 	const { pageViewMock } = require( './helpers/analytics-mock' );
 
@@ -37,7 +37,7 @@ jest.mock( 'lib/analytics/page-view', () => {
 	return mock;
 } );
 
-jest.mock( 'lib/analytics/tracks', () => {
+jest.mock( 'calypso/lib/analytics/tracks', () => {
 	const tracksSpy = require( 'sinon' ).spy();
 	const { tracksMock } = require( './helpers/analytics-mock' );
 
@@ -47,7 +47,7 @@ jest.mock( 'lib/analytics/tracks', () => {
 	return mock;
 } );
 
-jest.mock( 'lib/analytics/ad-tracking', () => {
+jest.mock( 'calypso/lib/analytics/ad-tracking', () => {
 	const adTrackingSpy = require( 'sinon' ).spy();
 	const { adTrackingMock } = require( './helpers/analytics-mock' );
 
@@ -57,7 +57,7 @@ jest.mock( 'lib/analytics/ad-tracking', () => {
 	return mock;
 } );
 
-jest.mock( 'lib/analytics/mc', () => {
+jest.mock( 'calypso/lib/analytics/mc', () => {
 	const mcSpy = require( 'sinon' ).spy();
 	const { mcMock } = require( './helpers/analytics-mock' );
 
@@ -67,7 +67,7 @@ jest.mock( 'lib/analytics/mc', () => {
 	return mock;
 } );
 
-jest.mock( 'lib/analytics/ga', () => {
+jest.mock( 'calypso/lib/analytics/ga', () => {
 	const gaSpy = require( 'sinon' ).spy();
 	const { gaMock } = require( './helpers/analytics-mock' );
 
@@ -77,7 +77,7 @@ jest.mock( 'lib/analytics/ga', () => {
 	return mock;
 } );
 
-jest.mock( 'lib/analytics/hotjar', () => ( {
+jest.mock( 'calypso/lib/analytics/hotjar', () => ( {
 	addHotJarScript: require( 'sinon' ).spy(),
 } ) );
 

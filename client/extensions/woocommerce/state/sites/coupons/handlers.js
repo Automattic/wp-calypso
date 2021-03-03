@@ -2,13 +2,17 @@
  * External dependencies
  */
 import { trim, isFunction } from 'lodash';
-import warn from 'lib/warn';
 import debugFactory from 'debug';
+
+/**
+ * WordPress dependencies
+ */
+import warn from '@wordpress/warning';
 
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_COUPON_CREATE,

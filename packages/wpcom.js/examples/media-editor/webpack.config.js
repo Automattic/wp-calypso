@@ -1,12 +1,14 @@
+const path = require( 'path' );
+
 module.exports = {
-	entry: __dirname + '/source.js',
+	entry: path.join( __dirname, 'source.js' ),
 
 	node: {
 		fs: 'empty',
 	},
 
 	output: {
-		path: __dirname + '/built',
+		path: path.join( __dirname, 'built' ),
 		filename: 'app.js',
 		libraryTarget: 'var',
 		library: 'WPCOM',

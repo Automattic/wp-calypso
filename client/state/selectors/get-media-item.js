@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import isNil from 'lodash/isNil';
+import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ import getMediaQueryManager from 'calypso/state/selectors/get-media-query-manage
 
 export default function getMediaItem( state, siteId, mediaId ) {
 	const transientMediaItem = getTransientMediaItem( state, siteId, mediaId );
-	if ( ! isNil( transientMediaItem ) ) {
+	if ( ! isNullish( transientMediaItem ) ) {
 		// if a transient media item existed by this ID then that means the item isn't saved yet
 		// so we should continue to use the transient item
 		return transientMediaItem;

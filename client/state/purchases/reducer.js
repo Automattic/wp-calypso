@@ -6,7 +6,8 @@ import { find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { withoutPersistence, withStorageKey } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -66,7 +67,8 @@ function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, pre
 }
 
 function updatePurchases( existingPurchases, action ) {
-	let purchases, predicate;
+	let purchases;
+	let predicate;
 
 	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
 		predicate = { blog_id: String( action.siteId ) };

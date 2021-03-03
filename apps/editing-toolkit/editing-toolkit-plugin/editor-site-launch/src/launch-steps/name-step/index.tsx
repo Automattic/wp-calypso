@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { TextControl, Tip } from '@wordpress/components';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
@@ -10,22 +10,19 @@ import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automat
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import { useTitle } from '../../hooks';
+import { useTitle } from '@automattic/launch';
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { title, updateTitle, saveTitle } = useTitle();
+	const { title, updateTitle } = useTitle();
 
 	const handleNext = () => {
-		saveTitle();
 		onNextStep?.();
 	};
 
 	const handlePrev = () => {
 		onPrevStep?.();
 	};
-
-	const handleBlur = () => saveTitle();
 
 	return (
 		<LaunchStepContainer>
@@ -44,8 +41,7 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 						id="nux-launch-step__input"
 						className="nux-launch-step__input"
 						onChange={ updateTitle }
-						onBlur={ handleBlur }
-						value={ title }
+						value={ title || '' }
 						spellCheck={ false }
 						autoComplete="off"
 						placeholder={ __( 'Enter site name', 'full-site-editing' ) }

@@ -1,8 +1,10 @@
 .taxes__taxes-rates {
-	.form-toggle__label-content {
-		float: left;
-		font-size: $font-body-small;
-		margin-right: 8px;
+	.components-toggle-control {
+		.components-toggle-control__label {
+			float: left;
+			font-size: $font-body-small;
+			margin-right: 8px;
+		}
 	}
 
 	.taxes__taxes-calculate {

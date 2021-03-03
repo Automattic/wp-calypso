@@ -3,6 +3,8 @@
  */
 import { SIDEBAR_TOGGLE_VISIBILITY } from 'calypso/state/action-types';
 
+import 'calypso/state/ui/init';
+
 /**
  * Expand the sidebar.
  *

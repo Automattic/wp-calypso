@@ -1,15 +1,15 @@
-input.form-text-input.profile-links-add-other__value {
-	margin: 0 0 10px;
-}
+.form-fieldset.profile-links-add-other__fieldset {
+	margin-bottom: 0;
 
-input.form-text-input.profile-links-add-other__title {
-	margin: 0 0 10px;
+	.profile-links-add-other__value {
+		margin: 0 0 10px;
+	}
+	
+	.profile-links-add-other__title {
+		margin-bottom: 1.5rem;
+	}
 }
 
 .profile-links-add-other .notice {
 	margin-bottom: 1.5em;
-}
-
-.profile-links-add-other__add {
-	margin-left: 10px;
 }

@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { isNumber, noop } from 'lodash';
 
@@ -12,10 +12,10 @@ import { isNumber, noop } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import MediaImage from 'my-sites/media-library/media-image';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
-import Spinner from 'components/spinner';
+import Spinner from 'calypso/components/spinner';
 
 class ProductFormImages extends Component {
 	static propTypes = {

@@ -23,7 +23,8 @@ import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
 	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;

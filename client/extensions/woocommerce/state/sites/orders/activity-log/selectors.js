@@ -5,7 +5,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { areOrderNotesLoaded, areOrderNotesLoading, getOrderNotes } from '../notes/selectors';
 import { getOrder } from '../selectors';
 import { getOrderRefunds } from '../refunds/selectors';

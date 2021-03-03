@@ -57,13 +57,13 @@ class Security2faKeyAddName extends React.Component {
 						value={ this.state.keyName }
 					/>
 				</FormFieldset>
-				<Button onClick={ this.props.onCancel }>{ this.props.translate( 'Cancel' ) }</Button>
 				<FormButton
 					className="security-2fa-key__register-key"
 					disabled={ 0 === this.state.keyName.length }
 				>
 					{ this.props.translate( 'Register key' ) }
 				</FormButton>
+				<Button onClick={ this.props.onCancel }>{ this.props.translate( 'Cancel' ) }</Button>
 			</form>
 		);
 	}

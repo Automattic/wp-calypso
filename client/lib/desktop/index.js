@@ -6,30 +6,28 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { newPost } from 'lib/paths';
+import { newPost } from 'calypso/lib/paths';
 import store from 'store';
-import user from 'lib/user';
-import { ipcRenderer as ipc } from 'electron';
-import * as oAuthToken from 'lib/oauth-token';
-import userUtilities from 'lib/user/utils';
-import { getStatsPathForTab } from 'lib/route';
-import { getReduxStore } from 'lib/redux-bridge';
-import { isEditorIframeLoaded } from 'state/editor/selectors';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import user from 'calypso/lib/user';
+import userUtilities from 'calypso/lib/user/utils';
+import * as oAuthToken from 'calypso/lib/oauth-token';
+import { getStatsPathForTab } from 'calypso/lib/route';
+import { getReduxStore } from 'calypso/lib/redux-bridge';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { toggleNotificationsPanel, navigate } from 'calypso/state/ui/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import {
 	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
 	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
-	NOTIFY_DESKTOP_NEW_NOTIFICATION,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
-} from 'state/desktop/window-events';
-import { canCurrentUserManageSiteOptions, getSiteTitle } from 'state/sites/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { requestSite } from 'state/sites/actions';
+} from 'calypso/state/desktop/window-events';
+import { canCurrentUserManageSiteOptions } from 'calypso/state/sites/selectors';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 
 /**
  * Module variables
@@ -44,19 +42,27 @@ const Desktop = {
 		debug( 'Registering IPC listeners' );
 
 		// Register IPC listeners
-		ipc.on( 'page-my-sites', this.onShowMySites.bind( this ) );
-		ipc.on( 'page-reader', this.onShowReader.bind( this ) );
-		ipc.on( 'page-profile', this.onShowProfile.bind( this ) );
-		ipc.on( 'new-post', this.onNewPost.bind( this ) );
-		ipc.on( 'signout', this.onSignout.bind( this ) );
-		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
-		ipc.on( 'close-notifications-panel', this.onCloseNotificationsPanel.bind( this ) );
-		ipc.on( 'notification-clicked', this.onNotificationClicked.bind( this ) );
-		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
-		ipc.on( 'navigate', this.onNavigate.bind( this ) );
-		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
-		ipc.on( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
-		ipc.on( 'enable-notification-badge', this.sendNotificationUnseenCount );
+		window.electron.receive( 'page-my-sites', this.onShowMySites.bind( this ) );
+		window.electron.receive( 'page-reader', this.onShowReader.bind( this ) );
+		window.electron.receive( 'page-profile', this.onShowProfile.bind( this ) );
+		window.electron.receive( 'new-post', this.onNewPost.bind( this ) );
+		window.electron.receive( 'signout', this.onSignout.bind( this ) );
+		window.electron.receive( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
+		window.electron.receive(
+			'notifications-panel-show',
+			this.onNotificationsPanelShow.bind( this )
+		);
+		window.electron.receive(
+			'notifications-panel-refresh',
+			this.onNotificationsPanelRefresh.bind( this )
+		);
+		window.electron.receive( 'notification-clicked', this.onNotificationClicked.bind( this ) );
+		window.electron.receive( 'page-help', this.onShowHelp.bind( this ) );
+		window.electron.receive( 'navigate', this.onNavigate.bind( this ) );
+		window.electron.receive( 'request-site', this.onRequestSite.bind( this ) );
+		window.electron.receive( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
+		window.electron.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
+		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
@@ -73,13 +79,9 @@ const Desktop = {
 			this.onUnseenCountUpdated.bind( this )
 		);
 
-		window.addEventListener( NOTIFY_DESKTOP_NEW_NOTIFICATION, this.onNewNotification.bind( this ) );
-
 		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
 		this.store = await getReduxStore();
-
-		this.editorLoadedStatus();
 
 		// Send some events immediately - this sets the app state
 		this.sendNotificationUnseenCount();
@@ -89,7 +91,7 @@ const Desktop = {
 	selectedSite: null,
 
 	navigate: function ( to ) {
-		this.onCloseNotificationsPanel();
+		this.onNotificationsPanelShow( null, false );
 		this.store.dispatch( navigate( to ) );
 	},
 
@@ -111,87 +113,31 @@ const Desktop = {
 		const unseenCount = store.get( 'wpnotes_unseen_count' );
 		if ( unseenCount !== null ) {
 			debug( `Sending unseen count: ${ unseenCount }` );
-			ipc.send( 'unread-notices-count', unseenCount );
+			window.electron.send( 'unread-notices-count', unseenCount );
 		}
 	},
 
+	// window event
 	onUnseenCountUpdated: function ( event ) {
 		const { unseenCount } = event.detail;
 		debug( `Sending unseen count: ${ unseenCount }` );
-		ipc.send( 'unread-notices-count', unseenCount );
+		window.electron.send( 'unread-notices-count', unseenCount );
 	},
 
-	onNewNotification: function ( event ) {
-		const noteWithMeta = event.detail;
-		const { note } = noteWithMeta;
-		debug( `Received notification: ${ note.id }` );
-		const siteTitle = getSiteTitle( this.store.getState(), note.meta.ids.site );
-		ipc.send( `received-notification`, {
-			siteTitle,
-			...noteWithMeta,
-		} );
-	},
+	onNotificationClicked: function ( notification ) {
+		debug( `Notification ${ notification.id } clicked` );
 
-	onNotificationClicked: function ( _, noteWithMeta ) {
-		const { note, isApproved } = noteWithMeta;
-		debug( `Notification ${ note.id } clicked` );
-
-		const noteId = note.id;
-		const linkType = note.type;
-		const siteId = note.meta.ids.site;
-		const postId = note.meta.ids.post;
-		const commentId = note.meta.ids.comment;
-		let fallBackToNotificationsPanel = false;
+		const { id, type } = notification;
 
 		// TODO: Make this a desktop-specific Tracks event.
 		this.store.dispatch( recordTracksEventAction( 'calypso_web_push_notification_clicked' ), {
-			push_notification_note_id: noteId,
-			push_notification_type: linkType,
+			push_notification_note_id: id,
+			push_notification_type: type,
 		} );
+	},
 
-		// Tell the notifications panel to mark this note as read.
-		window.dispatchEvent(
-			new window.CustomEvent( 'desktop-notification-mark-as-read', {
-				detail: {
-					noteId,
-				},
-			} )
-		);
-
-		switch ( linkType ) {
-			case 'post':
-				this.navigate( `/read/blogs/${ siteId }/posts/${ postId }` );
-				break;
-			case 'comment':
-				{
-					// If the note is approved, navigate to the comment URL within Calypso.
-					// Otherwise open and display Calypso's notifications panel.
-					if ( isApproved ) {
-						this.navigate( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
-					} else {
-						fallBackToNotificationsPanel = true;
-					}
-				}
-				break;
-			case 'comment_like':
-				this.navigate( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
-				break;
-			case 'site':
-				this.navigate( `/read/blogs/${ siteId }` );
-				break;
-			default:
-				fallBackToNotificationsPanel = true;
-		}
-
-		// Fall back to notifications panel for unhandled note types.
-		if ( fallBackToNotificationsPanel ) {
-			setTimeout( () => {
-				this.navigate( '/' );
-				if ( ! isNotificationsOpen( this.store.getState() ) ) {
-					this.toggleNotificationsPanel();
-				}
-			}, 1000 );
-		}
+	onNotificationsPanelRefresh: function () {
+		this.store.dispatch( forceNotificationsRefresh( true ) );
 	},
 
 	sendUserLoginStatus: function () {
@@ -203,8 +149,12 @@ const Desktop = {
 
 		debug( 'Sending logged-in = ' + status );
 
-		ipc.send( 'user-login-status', status );
-		ipc.send( 'user-auth', user(), oAuthToken.getToken() );
+		window.electron.send(
+			'user-login-status',
+			status,
+			{ id: user().data.ID },
+			oAuthToken.getToken()
+		);
 	},
 
 	onToggleNotifications: function () {
@@ -213,8 +163,15 @@ const Desktop = {
 		this.toggleNotificationsPanel();
 	},
 
-	onCloseNotificationsPanel: function () {
-		if ( isNotificationsOpen( this.store.getState() ) ) {
+	onNotificationsPanelShow: function ( show ) {
+		const isOpen = isNotificationsOpen( this.store.getState() );
+
+		if ( show ) {
+			if ( isOpen ) {
+				return;
+			}
+			this.toggleNotificationsPanel();
+		} else if ( isOpen ) {
 			this.toggleNotificationsPanel();
 		}
 	},
@@ -257,34 +214,7 @@ const Desktop = {
 		this.navigate( '/help' );
 	},
 
-	editorLoadedStatus: function () {
-		const sendLoadedEvt = () => {
-			debug( 'Editor iframe loaded' );
-
-			const evt = new window.Event( 'editor-iframe-loaded' );
-			window.dispatchEvent( evt );
-		};
-
-		let previousLoaded = isEditorIframeLoaded( this.store.getState() );
-
-		if ( previousLoaded ) {
-			sendLoadedEvt();
-		}
-
-		this.store.subscribe( () => {
-			const state = this.store.getState();
-			const loaded = isEditorIframeLoaded( state );
-
-			if ( loaded !== previousLoaded ) {
-				if ( loaded ) {
-					sendLoadedEvt();
-				}
-
-				previousLoaded = loaded;
-			}
-		} );
-	},
-
+	// window event
 	onCannotOpenEditor: function ( event ) {
 		const { site, reason, editorUrl, wpAdminLoginUrl } = event.detail;
 		debug( 'Received window event: unable to load editor for site: ', site.URL );
@@ -301,17 +231,18 @@ const Desktop = {
 			canUserManageOptions,
 		};
 
-		ipc.send( 'cannot-use-editor', payload );
+		window.electron.send( 'cannot-use-editor', payload );
 	},
 
+	// window event
 	onViewPostClicked: function ( event ) {
 		const { url } = event.detail;
 		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
 
-		ipc.send( 'view-post-clicked', url );
+		window.electron.send( 'view-post-clicked', url );
 	},
 
-	onActivateJetpackSiteModule: function ( event, info ) {
+	onActivateJetpackSiteModule: function ( info ) {
 		const { siteId, option } = info;
 		debug( `User enabling option '${ option }' for siteId ${ siteId }` );
 
@@ -325,7 +256,7 @@ const Desktop = {
 			if ( Number( siteId ) !== Number( responseSiteId ) ) {
 				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
 			}
-			ipc.send( 'enable-site-option-response', { status, siteId, error } );
+			window.electron.send( 'enable-site-option-response', { status, siteId, error } );
 		}
 		window.addEventListener(
 			response,
@@ -335,7 +266,7 @@ const Desktop = {
 		this.store.dispatch( activateModule( siteId, option ) );
 	},
 
-	onRequestSite: function ( event, siteId ) {
+	onRequestSite: function ( siteId ) {
 		debug( 'Refreshing redux state for siteId: ', siteId );
 
 		const response = NOTIFY_DESKTOP_DID_REQUEST_SITE;
@@ -348,14 +279,14 @@ const Desktop = {
 			if ( Number( siteId ) !== Number( responseSiteId ) ) {
 				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
 			}
-			ipc.send( 'request-site-response', { siteId, status, error } );
+			window.electron.send( 'request-site-response', { siteId, status, error } );
 		}
 		window.addEventListener( response, onDidRequestSite.bind( onDidRequestSite ) );
 
 		this.store.dispatch( requestSite( siteId ) );
 	},
 
-	onNavigate: function ( event, url ) {
+	onNavigate: function ( url ) {
 		debug( 'Navigating to URL: ', url );
 
 		if ( url ) {
@@ -363,13 +294,14 @@ const Desktop = {
 		}
 	},
 
+	// window event
 	onSendToPrinter: function ( event ) {
 		const { title, contents } = event.detail;
 		this.print( title, contents );
 	},
 
 	print: function ( title, html ) {
-		ipc.send( 'print', title, html );
+		window.electron.send( 'print', title, html );
 	},
 };
 

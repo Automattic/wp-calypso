@@ -1,18 +1,18 @@
 /**
  * Module dependencies
  */
-var ProfileLinks = require( '../lib/me.settings.profile-links' );
-var util = require( './util' );
-var assert = require( 'assert' );
+const ProfileLinks = require( '../lib/me.settings.profile-links' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * me.settings
  */
 describe( 'wpcom.me.settings', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var me = wpcom.me();
-	var settings = me.settings();
+	const wpcom = util.wpcom();
+	const me = wpcom.me();
+	const settings = me.settings();
 
 	describe( 'wpcom.me.settings.get', function () {
 		it( 'should get settings for current user', function () {
@@ -29,7 +29,7 @@ describe( 'wpcom.me.settings', function () {
 
 	describe( 'wpcom.me.settings.profileLinks', function () {
 		it( 'should create a ProfileLinks instance', function () {
-			var profileLinks = settings.profileLinks();
+			const profileLinks = settings.profileLinks();
 			assert.ok( profileLinks instanceof ProfileLinks );
 		} );
 	} );

@@ -45,13 +45,9 @@ export const responseCartWithRenewal = {
 export const storeData = () => ( {
 	currentUser: {
 		id: 123,
+		user: {},
 		capabilities: {},
 		flags: [ 'calypso_allow_nonprimary_domains_without_plan' ],
-	},
-	users: {
-		items: {
-			'123': {},
-		},
 	},
 	purchases: {
 		hasLoadedUserPurchasesFromServer: true,

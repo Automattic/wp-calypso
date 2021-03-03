@@ -2,56 +2,93 @@
 @import '~@wordpress/base-styles/mixins';
 
 .jetpack-free-card {
-	box-sizing: border-box;
+	padding: 24px 32px;
 
-	background: var( --color-surface );
-
-	border: 1px solid var( --color-border-subtle );
-	@media ( max-width: 660px ) {
-		border-left: none;
-		border-right: none;
+	@include break-small {
+		display: flex;
 	}
-
-	margin-bottom: 24px;
 }
 
 .jetpack-free-card__header {
-	padding: 24px 16px;
-	border-bottom: solid 1px var( --color-border-subtle );
-
-	h3 {
-		font-size: $font-title-medium;
-		font-weight: 600;
-		line-height: rem( 30px ) / $font-title-medium;
+	@include break-small {
+		flex: 1;
 	}
 }
 
-.jetpack-free-card__body {
-	padding: 24px 16px;
+.jetpack-free-card__title {
+	color: var( --studio-gray-100 );
 
-	@include break-medium {
+	font-family: 'Noto Sans SemiCondensed Bold', 'Noto Sans', $sans;
+	font-size: 1.875rem;
+	font-weight: 700;
+}
+
+.jetpack-free-card__subheadline {
+	color: var( --studio-gray-60 );
+}
+
+.jetpack-free-card__button.button {
+	display: block;
+
+	width: 100%;
+	max-width: 210px;
+	margin: 24px 0;
+
+	color: var( --studio-jetpack-green-40 );
+	border: solid 2px currentColor;
+	border-radius: 4px;
+
+	font-size: 1rem;
+	font-weight: 700;
+
+	@include break-large {
+		margin-bottom: 0;
+	}
+}
+
+.jetpack-free-card__features-list {
+	margin: 28px 0 0;
+
+	color: var( --studio-gray-100 );
+	list-style-type: none;
+
+	> li {
 		display: flex;
-		align-items: flex-start;
+		justify-content: flex-start;
+
+		margin: 12px 0;
+
+		fill: var( --studio-jetpack-green-40 );
 	}
 
-	p {
-		margin-bottom: 0;
+	@include break-small {
+		flex: 1;
 
-		@include break-medium {
+		margin-top: 0;
+		padding-left: 28px;
+	}
+
+	@include break-large {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		flex: 2 1;
+
+		padding-left: 0;
+
+		> li {
 			width: 50%;
-			margin-right: 24px;
+			margin: 0;
 		}
 	}
 }
 
-.jetpack-free-card__button {
-	display: block;
+.jetpack-free-card__features-list .gridicon {
+	margin-right: 12px;
 
-	margin-top: 24px;
+	color: var( --studio-jetpack-green-40 );
+}
 
-	@include break-medium {
-		flex: 1;
-
-		margin-top: 0;
-	}
+.jetpack-free-card__features-text {
+	flex: 1;
 }

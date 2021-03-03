@@ -17,6 +17,8 @@ import {
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/jetpack-sync/init';
+
 /**
  *  Local variables;
  */

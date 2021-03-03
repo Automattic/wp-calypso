@@ -243,6 +243,7 @@ class ActivityLogItem extends Component {
 			createRewind,
 			disableRestore,
 			disableBackup,
+			missingRewindCredentials,
 			siteId,
 			siteSlug,
 			trackAddCreds,
@@ -260,7 +261,7 @@ class ActivityLogItem extends Component {
 						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
 
-					{ disableRestore && (
+					{ disableRestore && missingRewindCredentials && (
 						<PopoverMenuItem
 							icon="plus"
 							href={
@@ -379,7 +380,7 @@ class ActivityLogItem extends Component {
 					<ActivityLogConfirmDialog
 						key="activity-backup-dialog"
 						confirmTitle={ translate( 'Create download' ) }
-						onClose={ this.cancelBackupIntent }
+						onClose={ this.cancelDownloadIntent }
 						onConfirm={ this.confirmBackup }
 						onSettingsChange={ this.downloadSettingsChange }
 						supportLink="https://jetpack.com/support/backup"
@@ -430,6 +431,7 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 		timezone: getSiteTimezoneValue( state, siteId ),
 		siteSlug: site.slug,
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
+		missingRewindCredentials: rewindState.state === 'awaitingCredentials',
 		canAutoconfigure: rewindState.canAutoconfigure,
 		site,
 	};

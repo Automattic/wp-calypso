@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Image dependencies
@@ -21,9 +21,9 @@ function isCustomizeEnabled() {
 }
 
 function getCustomizeLink( selectedSite ) {
-	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizerInAdmin =
-			adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
+	const adminUrl = selectedSite.URL + '/wp-admin/';
+	const customizerInAdmin =
+		adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
 
 	return isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
 }

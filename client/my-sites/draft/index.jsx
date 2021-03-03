@@ -47,7 +47,8 @@ class Draft extends Component {
 	render() {
 		const { post } = this.props;
 		let image = null;
-		let imageUrl, editPostURL;
+		let imageUrl;
+		let editPostURL;
 
 		if ( this.props.isPlaceholder ) {
 			return this.postPlaceholder();

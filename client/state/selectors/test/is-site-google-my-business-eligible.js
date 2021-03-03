@@ -18,7 +18,7 @@ import {
 } from 'calypso/lib/plans/constants';
 import selectors from 'calypso/state/sites/selectors';
 
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),
 } ) );
 

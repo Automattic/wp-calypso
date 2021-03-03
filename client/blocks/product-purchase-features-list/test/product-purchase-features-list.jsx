@@ -29,8 +29,10 @@ import {
  */
 import { ProductPurchaseFeaturesList } from '../index';
 
-jest.mock( 'blocks/product-purchase-features-list/google-vouchers', () => 'GoogleVouchers' );
-jest.mock( 'blocks/product-purchase-features-list/video-audio-posts', () => 'VideoAudioPosts' );
+jest.mock(
+	'calypso/blocks/product-purchase-features-list/video-audio-posts',
+	() => 'VideoAudioPosts'
+);
 
 describe( 'ProductPurchaseFeaturesList basic tests', () => {
 	const props = {
@@ -56,7 +58,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		},
 	};
 
-	let spy, spyWrong;
+	let spy;
+	let spyWrong;
 
 	afterEach( () => {
 		if ( spy ) {

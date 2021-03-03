@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import {
 	HAPPYCHAT_ELIGIBILITY_SET,
@@ -9,6 +9,8 @@ import {
 } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { setSupportLevel } from 'calypso/state/help/actions';
+
+import 'calypso/state/happychat/init';
 
 export const setHappyChatEligibility = ( isEligible ) => ( {
 	type: HAPPYCHAT_ELIGIBILITY_SET,

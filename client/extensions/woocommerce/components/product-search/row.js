@@ -13,12 +13,12 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Count from 'components/count';
+import Count from 'calypso/components/count';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';

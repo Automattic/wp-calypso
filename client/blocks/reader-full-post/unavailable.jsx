@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { noop, get } from 'lodash';
 

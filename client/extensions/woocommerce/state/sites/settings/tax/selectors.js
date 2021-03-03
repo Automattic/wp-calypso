@@ -2,12 +2,12 @@
  * External dependencies
  */
 
-import { find, get, isArray } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const getRawTaxSettings = ( state, siteId ) => {
@@ -15,7 +15,7 @@ const getRawTaxSettings = ( state, siteId ) => {
 };
 
 export const areTaxSettingsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getRawTaxSettings( state, siteId ) );
+	return Array.isArray( getRawTaxSettings( state, siteId ) );
 };
 
 export const areTaxSettingsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {

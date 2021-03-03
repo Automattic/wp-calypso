@@ -4,9 +4,8 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { initial, flatMap, trim } from 'lodash';
+import { flatMap, trim } from 'lodash';
 import { connect, useDispatch } from 'react-redux';
-import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -20,13 +19,14 @@ import Suggestion from 'calypso/reader/search-stream/suggestion';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
-import Banner from 'calypso/components/banner';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import SectionHeader from 'calypso/components/section-header';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 /**
  * Style dependencies
@@ -43,45 +43,25 @@ function handleSearch( query ) {
 	}
 }
 
-const hideVoteBannerDate = new Date( '2020-10-17T19:00:00' );
-
 const FollowingStream = ( props ) => {
 	const suggestionList =
 		props.suggestions &&
-		initial(
-			flatMap( props.suggestions, ( query ) => [
-				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
-				', ',
-			] )
-		);
+		flatMap( props.suggestions, ( query ) => [
+			<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
+			', ',
+		] ).slice( 0, -1 );
 	const placeholderText = getSearchPlaceholderText();
-	const now = new Date();
-	const showRegistrationMsg = props.userInNZ && now < hideVoteBannerDate;
-	const { translate } = props;
+	const { translate, teams } = props;
 	const dispatch = useDispatch();
-
 	const markAllAsSeen = ( feedsInfo ) => {
 		const { feedIds, feedUrls } = feedsInfo;
+		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
 		dispatch( requestMarkAllAsSeen( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
 	};
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ ! showRegistrationMsg && <FollowingIntro /> }
-			{ showRegistrationMsg && (
-				<Banner
-					className="following__reader-vote"
-					title="NZ Election Day: Saturday 17 October"
-					callToAction="How to vote"
-					description="You can vote from 3 October to election day, 17 October."
-					event="reader-vote-prompt"
-					href="https://vote.nz/"
-					icon="star"
-					horizontal
-					target="_blank"
-				/>
-			) }
+			<FollowingIntro />
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
@@ -92,7 +72,7 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
-				{ config.isEnabled( 'reader/seen-posts' ) && (
+				{ isEligibleForUnseen( { teams } ) && (
 					<Button
 						compact
 						onClick={ () => markAllAsSeen( props.feedsInfo ) }
@@ -111,6 +91,6 @@ const FollowingStream = ( props ) => {
 };
 
 export default connect( ( state ) => ( {
-	userInNZ: getCurrentUserCountryCode( state ) === 'NZ',
+	teams: getReaderTeams( state ),
 	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );

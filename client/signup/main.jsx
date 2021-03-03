@@ -12,7 +12,6 @@ import {
 	find,
 	get,
 	includes,
-	indexOf,
 	isEmpty,
 	isEqual,
 	kebabCase,
@@ -26,7 +25,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import {
 	isDomainRegistration,
@@ -317,7 +316,12 @@ class Signup extends React.Component {
 		}
 	}
 
-	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
+	handleSignupFlowControllerCompletion = async ( dependencies, destination ) => {
+		// See comment below for `this.bizxSurveyTimerComplete`
+		if ( this.bizxSurveyTimerComplete && window && window.hj ) {
+			await this.bizxSurveyTimerComplete;
+		}
+
 		const filteredDestination = getDestination(
 			destination,
 			dependencies,
@@ -344,9 +348,9 @@ class Signup extends React.Component {
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress ),
-			waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress ),
-			startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
+		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress );
+		const waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress );
+		const startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
 
 		if ( ! this.isEveryStepSubmitted( progress ) ) {
 			this.goToFirstInvalidStep( progress );
@@ -354,6 +358,12 @@ class Signup extends React.Component {
 
 		if ( startLoadingScreen ) {
 			this.setState( { shouldShowLoadingScreen: true } );
+			/* Temporary change to add a 10 second delay to the processing screen.
+			 * This is done to allow the user 10 seconds to answer the bizx survey
+			 */
+			if ( ! this.bizxSurveyTimerComplete ) {
+				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
+			}
 
 			if ( isWPForTeamsFlow( this.props.flowName ) ) {
 				addLoadingScreenClassNamesToBody();
@@ -546,7 +556,7 @@ class Signup extends React.Component {
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
 		const flowSteps = flows.getFlow( nextFlowName ).steps;
-		const currentStepIndex = indexOf( flowSteps, this.props.stepName );
+		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 		const nextProgressItem = get( this.props.progress, nextStepName );
 		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
@@ -583,7 +593,7 @@ class Signup extends React.Component {
 
 	getPositionInFlow() {
 		const { flowName, stepName } = this.props;
-		return indexOf( flows.getFlow( flowName ).steps, stepName );
+		return flows.getFlow( flowName ).steps.indexOf( stepName );
 	}
 
 	getFlowLength() {
@@ -602,7 +612,12 @@ class Signup extends React.Component {
 			return <ReskinnedProcessingScreen hasPaidDomain={ hasPaidDomain } />;
 		}
 
-		return <SignupProcessingScreen />;
+		return (
+			<SignupProcessingScreen
+				flowName={ this.props.flowName }
+				localeSlug={ this.props.localeSlug }
+			/>
+		);
 	}
 
 	renderCurrentStep() {

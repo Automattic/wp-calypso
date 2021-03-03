@@ -93,7 +93,8 @@ class DatePicker extends PureComponent {
 			return [];
 		}
 
-		let i, event;
+		let i;
+		let event;
 		const eventsInDay = [];
 
 		for ( i = 0; i < this.props.events.length; i++ ) {

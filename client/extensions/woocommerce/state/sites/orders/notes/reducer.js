@@ -7,7 +7,7 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_ORDER_NOTE_CREATE,
 	WOOCOMMERCE_ORDER_NOTE_CREATE_FAILURE,

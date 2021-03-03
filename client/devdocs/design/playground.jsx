@@ -10,11 +10,11 @@ import { keys } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as componentExamples from 'devdocs/design/component-examples';
-import * as playgroundScope from 'devdocs/design/playground-scope';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import SelectDropdown from 'components/select-dropdown';
+import * as componentExamples from 'calypso/devdocs/design/component-examples';
+import * as playgroundScope from 'calypso/devdocs/design/playground-scope';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { getExampleCodeFromComponent } from './playground-utils';
 
 /**

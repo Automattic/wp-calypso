@@ -164,14 +164,14 @@ const contentDays = i18n.translate(
 const content1 = i18n.translate( 'My hat has three corners.' );
 
 // sprintf-style string substitution
-const city = getCity(), // returns string
-	zip = getZip(), // returns string
-	content = i18n.translate( 'Your city is %(city)s, your zip is %(zip)s.', {
-		args: {
-			city: city,
-			zip: zip,
-		},
-	} );
+const city = getCity(); // returns string
+const zip = getZip(); // returns string
+const content = i18n.translate( 'Your city is %(city)s, your zip is %(zip)s.', {
+	args: {
+		city: city,
+		zip: zip,
+	},
+} );
 
 // Mixing strings and markup
 // NOTE: This will return a React component, not a string
@@ -317,7 +317,7 @@ Example:
 
 ```jsx
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { useRtl } from 'i18n-calypso';
 
 export default function Header() {
@@ -340,7 +340,7 @@ Example:
 
 ```jsx
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { withRtl } from 'i18n-calypso';
 
 function Header( { isRtl } ) {

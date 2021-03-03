@@ -16,9 +16,8 @@ import {
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -62,22 +61,6 @@ describe( 'reducer', () => {
 		test( 'should set requesting to false if request finishes unsuccessfully', () => {
 			const state = requesting( true, {
 				type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
-			} );
-
-			expect( state ).to.eql( false );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting( true, {
-				type: DESERIALIZE,
 			} );
 
 			expect( state ).to.eql( false );
@@ -143,30 +126,19 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should persist state', () => {
-			const state = items( deepFreeze( billingTransactions ), {
-				type: SERIALIZE,
-			} );
+			const state = serialize( items, deepFreeze( billingTransactions ) );
 
 			expect( state ).to.eql( billingTransactions );
 		} );
 
 		test( 'should load valid persisted state', () => {
-			const state = items( deepFreeze( billingTransactions ), {
-				type: DESERIALIZE,
-			} );
+			const state = deserialize( items, deepFreeze( billingTransactions ) );
 
 			expect( state ).to.eql( billingTransactions );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			const state = items(
-				deepFreeze( {
-					example: 'test',
-				} ),
-				{
-					type: DESERIALIZE,
-				}
-			);
+			const state = deserialize( items, deepFreeze( { example: 'test' } ) );
 
 			expect( state ).to.eql( {} );
 		} );
@@ -217,22 +189,6 @@ describe( 'reducer', () => {
 				12345678: false,
 				...state,
 			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

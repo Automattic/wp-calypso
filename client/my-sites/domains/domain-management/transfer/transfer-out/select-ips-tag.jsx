@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, isEmpty, startsWith, toUpper } from 'lodash';
+import { find, isEmpty, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -75,7 +75,7 @@ class SelectIpsTag extends Component {
 		return this.state.ipsTagList
 			.filter(
 				( hint ) =>
-					this.state.currentQuery && startsWith( hint.tag, toUpper( this.state.currentQuery ) )
+					this.state.currentQuery && startsWith( hint.tag, this.state.currentQuery.toUpperCase() )
 			)
 			.map( ( hint ) => ( { label: hint.tag + '  (' + hint.registrarName + ')' } ) );
 	}
@@ -89,7 +89,7 @@ class SelectIpsTag extends Component {
 		let selectedRegistrar = this.getRegistrarInfo( ipsTagInput, ipsTagList );
 
 		if ( isEmpty( selectedRegistrar ) ) {
-			selectedRegistrar = { tag: toUpper( ipsTagInput ), registrarName: '', registrarUrl: '' };
+			selectedRegistrar = { tag: ipsTagInput.toUpperCase(), registrarName: '', registrarUrl: '' };
 		}
 
 		this.setState( {

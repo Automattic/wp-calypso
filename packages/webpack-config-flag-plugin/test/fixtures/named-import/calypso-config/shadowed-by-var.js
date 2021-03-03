@@ -1,4 +1,4 @@
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 
 function fn() {
 	const isEnabled = () => false;

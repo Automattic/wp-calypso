@@ -59,10 +59,6 @@ const RoleSelect = ( props ) => {
 		siteRoles = siteRoles.concat( wpcomFollowerRole );
 	}
 
-	if ( site && siteRoles && isWPForTeamsSite ) {
-		siteRoles = siteRoles.filter( ( role ) => role.name !== 'contributor' );
-	}
-
 	return (
 		<FormFieldset key={ siteId } disabled={ ! siteRoles } id={ id }>
 			{ siteId && <QuerySites siteId={ siteId } /> }

@@ -7,7 +7,7 @@ import { get, find, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getProductCategory,
 	getAllProductCategories,

@@ -10,7 +10,7 @@ import { has, identity, mapValues, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
@@ -199,8 +199,8 @@ function getAllThemeOptions() {
 }
 export const connectOptions = connect(
 	( state, { siteId, origin = siteId } ) => {
-		let mapGetUrl = identity,
-			mapHideForTheme = identity;
+		let mapGetUrl = identity;
+		let mapHideForTheme = identity;
 
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		if ( siteId ) {

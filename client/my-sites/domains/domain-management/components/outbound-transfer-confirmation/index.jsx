@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import {
-	acceptTransfer,
-	cancelTransferRequest,
-} from 'calypso/lib/domains/wapi-domain-info/actions';
-import notices from 'calypso/notices';
+	acceptDomainTransfer,
+	cancelDomainTransferRequest,
+} from 'calypso/state/domains/transfer/actions';
 import { getMaintenanceMessageFromError } from '../../../../../landing/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 
 /**
  * Style dependencies
@@ -32,74 +32,23 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this._isMounted = false;
-	}
-
-	componentDidMount() {
-		this._isMounted = true;
-	}
-
-	componentWillUnmount() {
-		this._isMounted = false;
-	}
-
-	setStateIfMounted( ...args ) {
-		if ( this._isMounted ) {
-			this.setState( ...args );
-		}
-	}
-
-	state = {
-		isCanceling: false,
-		isAccepting: false,
-	};
-
 	isRequesting = () => {
-		return this.state.isAccepting || this.state.isCanceling;
+		return this.props.isAccepting || this.props.isCanceling;
 	};
 
 	onAcceptTransferClick = () => {
-		const { domain, translate } = this.props;
-		this.setState( { isAccepting: true } );
-		acceptTransfer( domain.name, ( error ) => {
-			this.setStateIfMounted( { isAccepting: false } );
-			if ( error ) {
-				notices.error( this.getErrorMessage( error ) );
-			} else {
-				notices.success(
-					translate(
-						'You have successfully expedited your domain transfer. There is nothing else you need to do.'
-					)
-				);
-			}
-		} );
+		const { domain } = this.props;
+		this.props.acceptDomainTransfer( domain.name );
 		this.props.recordTracksEvent( 'calypso_outbound_transfer_accept_click' );
 	};
 
 	onCancelTransferClick = () => {
-		const { domain, siteId, translate } = this.props;
-		this.setState( { isCanceling: true } );
-		cancelTransferRequest(
-			{
-				domainName: domain.name,
-				siteId: siteId,
-				declineTransfer: true,
-			},
-			( error ) => {
-				this.setStateIfMounted( { isCanceling: false } );
-				if ( error ) {
-					notices.error( this.getErrorMessage( error ) );
-				} else {
-					notices.success(
-						translate(
-							'You have successfully cancelled your domain transfer. There is nothing else you need to do.'
-						)
-					);
-				}
-			}
-		);
+		const { domain, siteId } = this.props;
+		this.props.cancelDomainTransferRequest( {
+			domainName: domain.name,
+			siteId: siteId,
+			declineTransfer: true,
+		} );
 		this.props.recordTracksEvent( 'calypso_outbound_transfer_cancel_click' );
 	};
 
@@ -124,7 +73,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 		return (
 			<Button
 				primary
-				busy={ this.state.isAccepting }
+				busy={ this.props.isAccepting }
 				disabled={ this.isRequesting() }
 				className="outbound-transfer-confirmation__accept-transfer"
 				onClick={ this.onAcceptTransferClick }
@@ -137,7 +86,7 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	renderCancelButton() {
 		return (
 			<Button
-				busy={ this.state.isCanceling }
+				busy={ this.props.isCanceling }
 				disabled={ this.isRequesting() }
 				onClick={ this.onCancelTransferClick }
 			>
@@ -241,4 +190,18 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( OutboundTransferConfirmation ) );
+export default connect(
+	( state, { domain } ) => {
+		const domainInfo = getDomainWapiInfoByDomainName( state, domain );
+
+		return {
+			isAccepting: !! domainInfo.isAcceptingTransfer,
+			isCanceling: !! domainInfo.isCancelingTransfer,
+		};
+	},
+	{
+		acceptDomainTransfer,
+		cancelDomainTransferRequest,
+		recordTracksEvent,
+	}
+)( localize( OutboundTransferConfirmation ) );

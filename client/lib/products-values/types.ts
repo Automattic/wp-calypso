@@ -12,6 +12,8 @@ export type JetpackProductSlug =
 	| typeof constants.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
 	| typeof constants.PRODUCT_JETPACK_SCAN
 	| typeof constants.PRODUCT_JETPACK_SCAN_MONTHLY
+	| typeof constants.PRODUCT_JETPACK_SCAN_REALTIME
+	| typeof constants.PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY
 	| typeof constants.PRODUCT_JETPACK_SEARCH
 	| typeof constants.PRODUCT_JETPACK_SEARCH_MONTHLY
 	| typeof constants.PRODUCT_JETPACK_ANTI_SPAM
@@ -46,7 +48,7 @@ export type ProductTranslations = {
 	optionActionButtonNames?: () => Record< ProductSlug, TranslateResult >;
 	optionDisplayNames: () => Record< ProductSlug, TranslateResult >;
 	optionDescriptions: () => Record< ProductSlug, TranslateResult >;
-	optionShortNamesCallback?: ( arg0: object ) => TranslateResult;
-	optionsLabelCallback?: ( arg0: object ) => TranslateResult;
+	optionShortNamesCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
+	optionsLabelCallback?: ( arg0: Record< string, unknown > ) => TranslateResult;
 	optionsLabel: TranslateResult;
 };

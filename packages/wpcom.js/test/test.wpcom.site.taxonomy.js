@@ -1,17 +1,17 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * site.follow
  */
 describe( 'wpcom.site.taxonomy', () => {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var taxonomy = site.taxonomy( 'category' );
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	const taxonomy = site.taxonomy( 'category' );
 
 	describe( 'wpcom.site.taxonomy.termsList', () => {
 		it( 'should return a list of terms', () => {
@@ -19,7 +19,7 @@ describe( 'wpcom.site.taxonomy', () => {
 				taxonomy
 					.termsList()
 					.then( ( data ) => {
-						let foundTerm = data.terms[ 0 ];
+						const foundTerm = data.terms[ 0 ];
 						assert.ok( data );
 						assert.equal( 'number', typeof data.found );
 						assert.ok( data.terms.length >= 1 );

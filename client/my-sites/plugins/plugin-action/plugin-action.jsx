@@ -74,8 +74,7 @@ class PluginAction extends React.Component {
 			<FormToggle
 				onChange={ this.props.action }
 				checked={ this.props.status }
-				toggling={ this.props.inProgress }
-				disabled={ this.props.disabled || !! this.props.disabledInfo }
+				disabled={ this.props.inProgress || this.props.disabled || !! this.props.disabledInfo }
 				id={ this.props.htmlFor }
 			>
 				{ this.renderLabel() }

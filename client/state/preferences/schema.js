@@ -4,6 +4,9 @@ export const remoteValuesSchema = {
 		'^dismissible-card-.+$': {
 			type: [ 'boolean', 'object' ],
 		},
+		'^time-mismatch-warning-\\d+$': {
+			type: [ 'boolean', 'number' ],
+		},
 	},
 	properties: {
 		'editor-mode': {
@@ -47,14 +50,21 @@ export const remoteValuesSchema = {
 		colorScheme: {
 			type: 'string',
 			enum: [
+				'aquatic',
+				'blue',
 				'classic-blue',
 				'classic-bright',
+				'coffee',
 				'contrast',
+				'ectoplasm',
+				'light',
 				'midnight',
+				'modern',
 				'nightfall',
 				'ocean',
 				'powder-snow',
 				'sakura',
+				'sunrise',
 				'sunset',
 			],
 		},

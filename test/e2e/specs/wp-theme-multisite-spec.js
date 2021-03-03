@@ -26,14 +26,14 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
+
 	describe( 'Preview a theme @parallel', function () {
 		this.timeout( mochaTimeOut );
 
@@ -67,7 +67,7 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 				assert( displayed, 'Popover menu not displayed' );
 			} );
 
-			describe( 'when "Try & Customize" is clicked', function () {
+			describe.skip( 'when "Try & Customize" is clicked', function () {
 				step( 'click try and customize popover', async function () {
 					await this.themesPage.clickPopoverItem( 'Try & Customize' );
 					this.siteSelector = await SiteSelectorComponent.Expect( driver );
@@ -149,7 +149,8 @@ describe( `[${ host }] Themes: All sites (${ screenSize })`, function () {
 					return await this.siteSelector.ok();
 				} );
 
-				describe( 'Successful activation dialog', function () {
+				// Skip reason: https://github.com/Automattic/wp-calypso/issues/50130
+				describe.skip( 'Successful activation dialog', function () {
 					step( 'should show the successful activation dialog', async function () {
 						const themeDialogComponent = await ThemeDialogComponent.Expect( driver );
 						return await themeDialogComponent.goToThemeDetail();

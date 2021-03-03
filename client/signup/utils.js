@@ -1,22 +1,26 @@
 /**
  * External dependencies
  */
-import { filter, find, includes, indexOf, isEmpty, pick, sortBy } from 'lodash';
+import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import steps from 'signup/config/steps-pure';
-import flows from 'signup/config/flows';
-import user from 'lib/user';
+import steps from 'calypso/signup/config/steps-pure';
+import flows from 'calypso/signup/config/flows';
+import user from 'calypso/lib/user';
 
 const { defaultFlowName } = flows;
+
+function getDefaultFlowName() {
+	return defaultFlowName;
+}
 
 export function getFlowName( parameters ) {
 	return parameters.flowName && isFlowName( parameters.flowName )
 		? parameters.flowName
-		: defaultFlowName;
+		: getDefaultFlowName();
 }
 
 function isFlowName( pathFragment ) {
@@ -40,13 +44,13 @@ function isStepSectionName( pathFragment ) {
 }
 
 export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
-	const flow = flowName ? `/${ flowName }` : '',
-		step = stepName ? `/${ stepName }` : '',
-		section = stepSectionName ? `/${ stepSectionName }` : '',
-		// when the user is logged in, the locale slug is meaningless in a
-		// signup URL, as the page will be translated in the language the user
-		// has in their settings.
-		locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
+	const flow = flowName ? `/${ flowName }` : '';
+	const step = stepName ? `/${ stepName }` : '';
+	const section = stepSectionName ? `/${ stepSectionName }` : '';
+	// when the user is logged in, the locale slug is meaningless in a
+	// signup URL, as the page will be translated in the language the user
+	// has in their settings.
+	const locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route
@@ -72,12 +76,12 @@ export function getValidPath( parameters ) {
 
 export function getPreviousStepName( flowName, currentStepName ) {
 	const flow = flows.getFlow( flowName );
-	return flow.steps[ indexOf( flow.steps, currentStepName ) - 1 ];
+	return flow.steps[ flow.steps.indexOf( currentStepName ) - 1 ];
 }
 
 export function getNextStepName( flowName, currentStepName ) {
 	const flow = flows.getFlow( flowName );
-	return flow.steps[ indexOf( flow.steps, currentStepName ) + 1 ];
+	return flow.steps[ flow.steps.indexOf( currentStepName ) + 1 ];
 }
 
 export function getFlowSteps( flowName ) {

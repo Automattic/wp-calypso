@@ -10,19 +10,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import AsyncLoad from 'calypso/components/async-load';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import MasterbarItem from './item';
-import { preloadEditor } from 'sections-preloaders';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
 import MasterbarDrafts from './drafts';
-import TranslatableString from 'components/translatable/proptype';
-import { getEditorUrl } from 'state/selectors/get-editor-url';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import getSectionGroup from 'state/ui/selectors/get-section-group';
-import { reduxGetState } from 'lib/redux-bridge';
-import { navigate } from 'state/ui/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getSectionGroup from 'calypso/state/ui/selectors/get-section-group';
+import { reduxGetState } from 'calypso/lib/redux-bridge';
+import { navigate } from 'calypso/state/ui/actions';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -75,7 +75,7 @@ class MasterbarItemNew extends React.Component {
 
 		return (
 			<AsyncLoad
-				require="components/sites-popover"
+				require="calypso/components/sites-popover"
 				placeholder={ null }
 				id="popover__sites-popover-masterbar"
 				visible

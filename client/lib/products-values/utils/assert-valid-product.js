@@ -6,7 +6,7 @@ import { difference, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import schema from 'lib/products-values/schema.json';
+import schema from 'calypso/lib/products-values/schema.json';
 
 export function assertValidProduct( product ) {
 	const missingAttributes = difference( schema.required, Object.keys( product ) );

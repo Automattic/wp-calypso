@@ -3,22 +3,26 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'calypso/components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 class FollowingManageEmptyContent extends React.Component {
 	componentDidMount() {
-		recordTrack( 'calypso_reader_empty_manage_following_loaded' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_empty_manage_following_loaded' );
 	}
 
 	recordAction = () => {
 		recordAction( 'clicked_discover_on_empty_manage_following' );
 		recordGaEvent( 'Clicked Discover on EmptyContent in Manage Following' );
-		recordTrack( 'calypso_reader_discover_on_empty_manage_following_clicked' );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_discover_on_empty_manage_following_clicked'
+		);
 	};
 
 	render() {
@@ -47,4 +51,6 @@ class FollowingManageEmptyContent extends React.Component {
 	}
 }
 
-export default localize( FollowingManageEmptyContent );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( localize( FollowingManageEmptyContent ) );

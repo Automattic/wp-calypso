@@ -3,100 +3,78 @@
  */
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from '@wordpress/components';
 import { useI18n } from '@automattic/react-i18n';
-import { ActionButtons, BackButton, Title } from '@automattic/onboarding';
+import { ActionButtons, BackButton } from '@automattic/onboarding';
+import languages from '@automattic/languages';
+import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
+
+/**
+ * WordPress dependencies
+ */
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
-import { languages, Language } from '../../../../languages';
-import {
-	LANGUAGE_GROUPS,
-	DEFAULT_LANGUAGE_GROUP,
-} from '../../../../components/language-picker/constants';
+import { I18N_STORE } from '../../stores/i18n';
+import { USER_STORE } from '../../stores/user';
+import { Step, usePath } from '../../path';
+import type { StepNameType } from '../../path';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const LanguageStep: React.FunctionComponent = () => {
+const LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE = 'en';
+
+interface Props {
+	previousStep?: StepNameType;
+}
+
+const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 	const { __ } = useI18n();
-	const [ filter, setFilter ] = React.useState< string >( DEFAULT_LANGUAGE_GROUP );
+
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+
+	const localizedLanguageNames = useSelect( ( select ) =>
+		select( I18N_STORE ).getLocalizedLanguageNames(
+			currentUser?.language ?? LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE
+		)
+	);
+
+	// keep a static reference to the previous step
+	const staticPreviousStep = React.useRef( previousStep );
 
 	const history = useHistory();
+	const makePath = usePath();
 
-	const goBack = () => {
-		history.goBack();
+	const goBack = ( lang = '' ) => {
+		staticPreviousStep.current
+			? history.push( makePath( Step[ staticPreviousStep.current ], lang ) )
+			: history.goBack();
 	};
 
-	const getFilteredLanguages = () => {
-		switch ( filter ) {
-			case 'popular':
-				return languages
-					.filter( ( language: Language ) => language.popular )
-					.sort(
-						( a: Language, b: Language ) => ( a.popular as number ) - ( b.popular as number )
-					);
-			default: {
-				const languageGroup = LANGUAGE_GROUPS.find( ( l ) => l.id === filter );
-				const subTerritories = languageGroup ? languageGroup.subTerritories : null;
-				return languages
-					.filter( ( language: Language ) =>
-						language.territories.some( ( t ) => subTerritories?.includes( t ) )
-					)
-					.sort( ( a: Language, b: Language ) => a.name.localeCompare( b.name ) );
-			}
-		}
-	};
-
-	const renderCategoryButtons = () => {
-		return LANGUAGE_GROUPS.map( ( languageGroup ) => {
-			const isSelected = filter === languageGroup.id;
-
-			const onClick = () => {
-				setFilter( languageGroup.id );
-			};
-			return (
-				<div key={ languageGroup.id }>
-					<Button onClick={ onClick } className={ 'language__language-group' }>
-						<span className={ isSelected ? 'is-selected' : '' }>{ languageGroup.name( __ ) }</span>
-					</Button>
-				</div>
-			);
-		} );
-	};
 	return (
 		<ChangeLocaleContextConsumer>
 			{ ( changeLocale ) => (
 				<div className="gutenboarding-page language">
-					<div className="language__heading">
-						<Title>{ __( 'Select your site language' ) }</Title>
-						<ActionButtons>
-							<BackButton onClick={ goBack } />
-						</ActionButtons>
-					</div>
-					<div className="language__regions-label">{ __( 'regions' ) }</div>
-					<div className="language__page-content">
-						<div className="language__category-filters">{ renderCategoryButtons() }</div>
-						<div className="language__language-buttons">
-							{ getFilteredLanguages().map( ( language: Language ) => (
-								<Button
-									className="language__language-item"
-									key={ language.langSlug }
-									onClick={ () => {
-										changeLocale( language.langSlug );
-										goBack();
-									} }
-									title={ language.name }
-								>
-									<span lang={ language.langSlug }>{ language.name }</span>
-								</Button>
-							) ) }
-						</div>
-					</div>
+					<LanguagePicker
+						headingTitle={ __( 'Select your site language' ) }
+						headingButtons={
+							<ActionButtons>
+								<BackButton onClick={ () => goBack() } />
+							</ActionButtons>
+						}
+						languageGroups={ createLanguageGroups( __ ) }
+						languages={ languages }
+						onSelectLanguage={ ( language ) => {
+							changeLocale( language.langSlug );
+							goBack( language.langSlug );
+						} }
+						localizedLanguageNames={ localizedLanguageNames }
+					/>
 				</div>
 			) }
 		</ChangeLocaleContextConsumer>

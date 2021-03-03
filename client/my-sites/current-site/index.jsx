@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 
 /**
@@ -22,6 +22,7 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { expandSidebar } from 'calypso/state/ui/actions';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 /**
  * Style dependencies
@@ -85,7 +86,12 @@ class CurrentSite extends Component {
 					{ this.props.siteCount > 1 && (
 						<span className="current-site__switch-sites">
 							<Button borderless onClick={ this.switchSites }>
-								<Gridicon icon="chevron-left" />
+								{ isEnabled( 'nav-unification' ) ? (
+									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+									<span className="gridicon dashicons-before dashicons-arrow-left-alt2"></span>
+								) : (
+									<Gridicon icon="chevron-left" />
+								) }
 								<span className="current-site__switch-sites-label">
 									{ translate( 'Switch Site' ) }
 								</span>
@@ -107,10 +113,12 @@ class CurrentSite extends Component {
 						/>
 					) }
 					{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
-						<AsyncLoad
-							require="calypso/my-sites/current-site/stale-cart-items-notice"
-							placeholder={ null }
-						/>
+						<CalypsoShoppingCartProvider>
+							<AsyncLoad
+								require="calypso/my-sites/current-site/stale-cart-items-notice"
+								placeholder={ null }
+							/>
+						</CalypsoShoppingCartProvider>
 					) }
 					{ selectedSite && isEnabled( 'current-site/notice' ) && (
 						<AsyncLoad

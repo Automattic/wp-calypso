@@ -7,6 +7,7 @@ import { useSelect } from '@wordpress/data';
 import { Icon, chevronDown } from '@wordpress/icons';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -22,7 +23,8 @@ import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
 import './style.scss';
 
 const DomainPickerButton: React.FunctionComponent = () => {
-	const { __, i18nLocale } = useI18n();
+	const { __ } = useI18n();
+	const locale = useLocale();
 	const makePath = usePath();
 	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
@@ -43,7 +45,7 @@ const DomainPickerButton: React.FunctionComponent = () => {
 				include_wordpressdotcom: false,
 				include_dotblogsubdomain: false,
 				quantity: 1, // this will give the recommended domain only
-				locale: i18nLocale,
+				locale,
 			} );
 		},
 		[ suggestionQuery ]

@@ -42,6 +42,7 @@
 		text-align: center;
 		text-transform: uppercase;
 		border-radius: var( --jetpack-corners-soft );
+		font-weight: 600;
 		color: #fff;
 
 		&.is-fixed {
@@ -50,6 +51,15 @@
 
 		&.is-ignored {
 			background-color: var( --studio-gray-50 );
+		}
+
+		&.is-auto-fix {
+			margin-top: 0px;
+			margin-left: 4px;
+			color: var( --studio-jetpack-green-40 );
+			background-color: var( --studio-jetpack-green-0 );
+			position: relative;
+			top: -1px;
 		}
 	}
 

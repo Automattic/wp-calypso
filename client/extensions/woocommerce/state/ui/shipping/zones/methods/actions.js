@@ -20,7 +20,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
 } from 'woocommerce/state/action-types';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
 import { updateField } from 'woocommerce/woocommerce-services/state/service-settings/actions';
 

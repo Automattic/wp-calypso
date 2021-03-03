@@ -8,13 +8,12 @@ import {
 	makeManualResponse,
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
+import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
 import {
-	getPostalCode,
-	getDomainDetails,
 	createStripePaymentMethodToken,
 	wpcomTransaction,
 	wpcomPayPalExpress,
@@ -24,19 +23,20 @@ import {
 	submitRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
-	submitExistingCardPayment,
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
+import getPostalCode from './lib/get-postal-code';
+import getDomainDetails from './lib/get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
-import { showStripeModalAuth } from 'calypso/lib/stripe';
 import userAgent from 'calypso/lib/user-agent';
+import { recordTransactionBeginAnalytics } from './lib/analytics';
 
-const { select, dispatch } = defaultRegistry;
+const { select } = defaultRegistry;
 
 export async function genericRedirectProcessor(
 	paymentMethodId,
 	submitData,
-	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
@@ -63,6 +63,12 @@ export async function genericRedirectProcessor(
 		pathname,
 		query: cancelUrlQuery,
 	} );
+
+	recordTransactionBeginAnalytics( {
+		paymentMethodId,
+		reduxDispatch,
+	} );
+
 	return submitRedirectTransaction(
 		paymentMethodId,
 		{
@@ -76,18 +82,20 @@ export async function genericRedirectProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			return makeRedirectResponse( response?.redirect_url );
-		} );
+	).then( ( response ) => {
+		return makeRedirectResponse( response?.redirect_url );
+	} );
 }
 
 export async function weChatProcessor(
 	submitData,
-	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
 	const paymentMethodId = 'wechat';
+	recordTransactionBeginAnalytics( {
+		reduxDispatch,
+		paymentMethodId,
+	} );
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
 		true
@@ -126,16 +134,14 @@ export async function weChatProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			// The WeChat payment type should only redirect when on mobile as redirect urls
-			// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
-			if ( userAgent.isMobile ) {
-				return makeRedirectResponse( response?.redirect_url );
-			}
-			return makeManualResponse( response );
-		} );
+	).then( ( response ) => {
+		// The WeChat payment type should only redirect when on mobile as redirect urls
+		// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
+		if ( userAgent.isMobile ) {
+			return makeRedirectResponse( response?.redirect_url );
+		}
+		return makeManualResponse( response );
+	} );
 }
 
 export async function applePayProcessor(
@@ -153,9 +159,7 @@ export async function applePayProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( makeSuccessResponse );
+	).then( makeSuccessResponse );
 }
 
 export async function stripeCardProcessor(
@@ -181,15 +185,14 @@ export async function stripeCardProcessor(
 		wpcomTransaction,
 		transactionOptions
 	)
-		.then( saveTransactionResponseToWpcomStore )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
 				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return showStripeModalAuth( {
-					stripeConfiguration: submitData.stripeConfiguration,
-					response: stripeResponse,
-				} );
+				return confirmStripePaymentIntent(
+					submitData.stripeConfiguration,
+					stripeResponse?.message?.payment_intent_client_secret
+				);
 			}
 			return stripeResponse;
 		} )
@@ -221,11 +224,7 @@ export async function ebanxCardProcessor(
 			paymentMethodToken,
 		},
 		wpcomTransaction
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			return makeSuccessResponse( response );
-		} );
+	).then( makeSuccessResponse );
 }
 
 export async function multiPartnerCardProcessor(
@@ -251,43 +250,6 @@ export async function multiPartnerCardProcessor(
 	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
 }
 
-export async function existingCardProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, recordEvent },
-	transactionOptions
-) {
-	return submitExistingCardPayment(
-		{
-			...submitData,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: getPostalCode(),
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-		},
-		wpcomTransaction,
-		transactionOptions
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.message?.payment_intent_client_secret ) {
-				// 3DS authentication required
-				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return showStripeModalAuth( {
-					stripeConfiguration: submitData.stripeConfiguration,
-					response: stripeResponse,
-				} );
-			}
-			return stripeResponse;
-		} )
-		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.redirect_url ) {
-				return makeRedirectResponse( stripeResponse.redirect_url );
-			}
-			return makeSuccessResponse( stripeResponse );
-		} );
-}
-
 export async function freePurchaseProcessor(
 	submitData,
 	{ includeDomainDetails, includeGSuiteDetails }
@@ -302,9 +264,7 @@ export async function freePurchaseProcessor(
 			postalCode: null,
 		},
 		wpcomTransaction
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( makeSuccessResponse );
+	).then( makeSuccessResponse );
 }
 
 export async function fullCreditsProcessor(
@@ -317,23 +277,29 @@ export async function fullCreditsProcessor(
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			// this data is intentionally empty so we do not charge taxes
-			country: null,
-			postalCode: null,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: submitData.postalCode || getPostalCode(),
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 		},
 		wpcomTransaction,
 		transactionOptions
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( makeSuccessResponse );
+	).then( makeSuccessResponse );
 }
 
-export async function payPalProcessor(
-	submitData,
-	{ getThankYouUrl, couponItem, includeDomainDetails, includeGSuiteDetails },
-	transactionOptions
-) {
-	const { createUserAndSiteBeforeTransaction } = transactionOptions;
+export async function payPalProcessor( submitData, transactionOptions ) {
+	const {
+		getThankYouUrl,
+		couponItem,
+		includeDomainDetails,
+		includeGSuiteDetails,
+		createUserAndSiteBeforeTransaction,
+		reduxDispatch,
+	} = transactionOptions;
+	recordTransactionBeginAnalytics( {
+		reduxDispatch,
+		paymentMethodId: 'paypal',
+	} );
+
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 
 	const successUrl = resolveUrl( window.location.href, getThankYouUrl() );
@@ -360,13 +326,5 @@ export async function payPalProcessor(
 		},
 		wpcomPayPalExpress,
 		transactionOptions
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( makeRedirectResponse );
-}
-
-async function saveTransactionResponseToWpcomStore( result ) {
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	dispatch( 'wpcom' ).setTransactionResponse( result );
-	return result;
+	).then( makeRedirectResponse );
 }

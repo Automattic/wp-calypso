@@ -25,7 +25,7 @@ const babelConfig = {
 		},
 		test: {
 			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
-			plugins: [ 'add-module-exports', 'babel-plugin-dynamic-import-node' ],
+			plugins: [ 'babel-plugin-dynamic-import-node' ],
 		},
 	},
 };

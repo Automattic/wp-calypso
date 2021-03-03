@@ -26,7 +26,8 @@ class SecurityCheckupAccountEmail extends React.Component {
 	render() {
 		const { primaryEmail, primaryEmailVerified, translate } = this.props;
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( ! primaryEmailVerified ) {
 			icon = getWarningIcon();

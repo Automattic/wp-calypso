@@ -18,11 +18,11 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'g suite users get users request', () => {
-		const siteId = 1,
-			action = {
-				type: GSUITE_USERS_REQUEST,
-				siteId,
-			};
+		const siteId = 1;
+		const action = {
+			type: GSUITE_USERS_REQUEST,
+			siteId,
+		};
 
 		describe( '#getGSuiteUsers', () => {
 			test( 'should dispatch an HTTP request to the get google-apps endpoint', () => {

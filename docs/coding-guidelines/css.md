@@ -1,5 +1,4 @@
-CSS/Sass Coding Guidelines
-==========================
+# CSS/Sass Coding Guidelines
 
 Every stylesheet should be easy to read, scan, add to, and collaborate on. Our current system and nomenclature builds on top of _components_, where CSS files live alongside the component they are styling: `component/style.scss`. These files are all imported into the React components' JavaScript sources and then bundled by webpack to the production CSS files.
 
@@ -9,11 +8,11 @@ This is an example of a declaration:
 
 Two important considerations:
 
-* The `component` fragment matches the folder name of the React component it's providing styles to.
-* The `.is-modifier` class should never be written on its own outside of the component class. This avoids naming collisions and provides a consistent use of modifiers.
-* We don't use `#ids` for style purposes.
+- The `component` fragment matches the folder name of the React component it's providing styles to.
+- The `.is-modifier` class should never be written on its own outside of the component class. This avoids naming collisions and provides a consistent use of modifiers.
+- We don't use `#ids` for style purposes.
 
-#### Example
+## Example
 
 Take a component called `site/index.jsx` that renders a site item on the picker. Imagine we are going to set the color for the site title to #333 and change it to #444 when the site is a Jetpack site. Our Sass file will sit alongside `site/index.jsx` and be called `site/style.scss`. Its content will be written like:
 
@@ -30,6 +29,7 @@ Take a component called `site/index.jsx` that renders a site item on the picker.
 ```
 
 **Bad**
+
 ```scss
 .site {
     .title {
@@ -115,10 +115,9 @@ To avoid code bloat and have a more consistent experience we use the same breakp
 }
 ```
 
- Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. You should avoid the use of max width breakpoints.
+Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. You should avoid the use of max width breakpoints.
 
-  The old `breakpoint-deprecated` mixin should be replaced with Gutenberg's `break-*` mixins.
-
+The old `breakpoint-deprecated` mixin should be replaced with Gutenberg's `break-*` mixins.
 
 ### Adding a new Sass file
 
@@ -126,18 +125,18 @@ If you are adding a new Sass file (global or component-specific), you need to im
 
 ### Imports
 
-* DO declare all of your `@import` dependencies at the top of a file that needs it/them.
-* DON'T `@import` dependencies in a global file and just hope it filters down to your partial.
+- DO declare all of your `@import` dependencies at the top of a file that needs it/them.
+- DON'T `@import` dependencies in a global file and just hope it filters down to your partial.
 
 ### Nesting
 
-* DON'T nest selectors in general. Exceptions are `:hover`/`:focus`/`::before`/`.is-modifier`, and alike.
-* DO attempt to keep nesting to 2 levels deep at most.
-* DO list items inside a selector in the following order (not all will necessarily be present):
-    1. `@extend`(s).
-    2. property list for the element.
-    3. mixin(s).
-    4. nested selectors, with a space above each to keep them visually distinct.
+- DON'T nest selectors in general. Exceptions are `:hover`/`:focus`/`::before`/`.is-modifier`, and alike.
+- DO attempt to keep nesting to 2 levels deep at most.
+- DO list items inside a selector in the following order (not all will necessarily be present):
+  1. `@extend`(s).
+  2. property list for the element.
+  3. mixin(s).
+  4. nested selectors, with a space above each to keep them visually distinct.
 
 Example of the above:
 
@@ -156,14 +155,14 @@ Example of the above:
 
 ### Mixins vs Extends
 
-* DO use `@extend` when in doubt, using the `%placeholder` syntax. This will produce leaner output.
-* DON'T use mixins for anything that doesn't accept an argument. This is `@extend` territory.
-* DO read [this article](http://miguelcamba.com/blog/2013/07/11/sass-placeholders-versus-mixins-and-extends/) if you don't understand `@extend`.
+- DO use `@extend` when in doubt, using the `%placeholder` syntax. This will produce leaner output.
+- DON'T use mixins for anything that doesn't accept an argument. This is `@extend` territory.
+- DO read [this article](http://miguelcamba.com/blog/2013/07/11/sass-placeholders-versus-mixins-and-extends/) if you don't understand `@extend`.
 
 ### Comments
 
-* DO make generous use of comments to explain the whys of what you are doing.
-* DO use `// Comments` rather than `/* comments */`. Multiline comments should be written like this:
+- DO make generous use of comments to explain the whys of what you are doing.
+- DO use `// Comments` rather than `/* comments */`. Multiline comments should be written like this:
 
 ```scss
 // This is a comment
@@ -174,7 +173,7 @@ Add as much comments as needed to your Sass file, especially around clever code.
 
 ### Indents
 
-* DO use tabs for indents.
+- DO use tabs for indents.
 
 ## Right-To-Left (RTL)
 
@@ -196,6 +195,7 @@ input.email {
     direction:ltr
 }
 ```
+
 If you need custom RTL css code, add it to your stylesheet with a .rtl class prefix, and the rtl ignore comment mentioned above. For example:
 
 ```scss
@@ -204,7 +204,9 @@ If you need custom RTL css code, add it to your stylesheet with a .rtl class pre
     font-family:Tahoma;
 }
 ```
+
 Note for either of the above that because of the SCSS build process, if you're nesting things then you might need to place the rtlignore comment inside the value, with Sass interpolation syntax
+
 ```scss
 .rtl {
   .onlyinrtl {
@@ -214,6 +216,7 @@ Note for either of the above that because of the SCSS build process, if you're n
 ```
 
 You can also define specific values for RTL like so:
+
 ```scss
   .class {
     margin-right: 5px #{"/*rtl:2px*/"};;
@@ -221,7 +224,6 @@ You can also define specific values for RTL like so:
 ```
 
 You can find more details in the [RTLCSS documentation](https://github.com/MohammadYounes/rtlcss/blob/HEAD/README.md).
-
 
 ## Positioning
 
@@ -246,6 +248,7 @@ selector {
   transform: translate( -50%, -50% ) scale( 1 );
 }
 ```
+
 - DO [remove trailing whitespace](trailing-whitespace.md)
 
 ## Z-Index
@@ -257,7 +260,7 @@ add another entry to the `$z-layers` variable in
 Because browsers support a hierarchy of stacking contexts rather than a single
 global one, we use a tree with two levels of keys. The first is the name of the
 parent stacking context, and the latter is the selector for the stacking
-context you've just created.  We keep each level of the tree sorted by z-index
+context you've just created. We keep each level of the tree sorted by z-index
 so we can quickly compare z-index values within a given stacking context.
 
 An element creates a new stacking context when any of the following are true:
@@ -294,6 +297,7 @@ As a simple example, imagine that we have a page with the following markup:
 ```
 
 With CSS of:
+
 ```css
 div {
     position: relative;
@@ -360,5 +364,6 @@ completely resolved within `.modal`. Once this is done the entire `.modal` eleme
 passed for stacking in the root element, with it's sibling `.masterbar`.
 
 For further reading on stacking contexts see:
+
 - [https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
 - [Appendix E. Elaborate description of Stacking Contexts](http://www.w3.org/TR/CSS2/zindex.html)

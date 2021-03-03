@@ -6,17 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CartData from 'components/data/cart';
-import PaymentMethods from 'blocks/payment-methods';
-import JetpackFAQ from 'my-sites/plans-features-main/jetpack-faq';
+import JetpackFAQ from 'calypso/my-sites/plans/jetpack-plans/faq';
 
-export default function StoreFooter() {
-	return (
-		<>
-			<CartData>
-				<PaymentMethods />
-			</CartData>
-			<JetpackFAQ />
-		</>
-	);
-}
+// We can use this later if more iterations of the FAQ component show up
+const StoreFooter: React.FC = () => <JetpackFAQ />;
+
+export default StoreFooter;

@@ -39,18 +39,18 @@ describe( 'reducer', () => {
 
 		test( 'should return the original state with an error and requesting disabled when fetching failed', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: null,
-						error: null,
-						hasLoadedFromServer: true,
-						isRequesting: true,
-					},
-				} ),
-				state = items( original, {
-					type: RECEIPT_FETCH_FAILED,
-					receiptId: 11111111,
-					error: 'Unable to fetch the receipt.',
-				} );
+				11111111: {
+					data: null,
+					error: null,
+					hasLoadedFromServer: true,
+					isRequesting: true,
+				},
+			} );
+			const state = items( original, {
+				type: RECEIPT_FETCH_FAILED,
+				receiptId: 11111111,
+				error: 'Unable to fetch the receipt.',
+			} );
 
 			expect( state ).to.eql( {
 				11111111: {
@@ -64,18 +64,18 @@ describe( 'reducer', () => {
 
 		test( 'should return an updated state with new properties when fetching completes', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: { amount: 10 },
-						error: null,
-						hasLoadedFromServer: true,
-						isRequesting: true,
-					},
-				} ),
-				state = items( original, {
-					type: RECEIPT_FETCH_COMPLETED,
-					receiptId: 11111111,
-					receipt: { amount: 20 },
-				} );
+				11111111: {
+					data: { amount: 10 },
+					error: null,
+					hasLoadedFromServer: true,
+					isRequesting: true,
+				},
+			} );
+			const state = items( original, {
+				type: RECEIPT_FETCH_COMPLETED,
+				receiptId: 11111111,
+				receipt: { amount: 20 },
+			} );
 
 			expect( state ).to.eql( {
 				11111111: {

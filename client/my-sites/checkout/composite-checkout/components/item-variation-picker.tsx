@@ -1,27 +1,24 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /**
  * External dependencies
  */
-import React, { Component, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { WPCOMCartItem } from '../types/checkout-cart';
-import RadioButton from './radio-button';
+import { RadioButton } from '@automattic/composite-checkout';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export type WPCOMProductSlug = string;
 
 export type WPCOMProductVariant = {
 	variantLabel: string;
-	variantDetails: Component;
+	variantDetails: React.ReactNode;
 	productSlug: WPCOMProductSlug;
 	productId: number;
 };
 
 export type ItemVariationPickerProps = {
-	selectedItem: WPCOMCartItem;
+	selectedItem: ResponseCartProduct;
 	getItemVariants: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
@@ -39,7 +36,7 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 	onChangeItemVariant,
 	isDisabled,
 } ) => {
-	const variants = getItemVariants( selectedItem.wpcom_meta.product_slug );
+	const variants = getItemVariants( selectedItem.product_slug );
 
 	if ( variants.length < 2 ) {
 		return null;
@@ -67,13 +64,13 @@ function ProductVariant( {
 	isDisabled,
 }: {
 	productVariant: WPCOMProductVariant;
-	selectedItem: WPCOMCartItem;
+	selectedItem: ResponseCartProduct;
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
 } ) {
 	const translate = useTranslate();
 	const { variantLabel, variantDetails, productSlug, productId } = productVariant;
-	const selectedProductSlug = selectedItem.wpcom_meta.product_slug;
+	const selectedProductSlug = selectedItem.product_slug;
 	const isChecked = productSlug === selectedProductSlug;
 
 	return (
@@ -83,10 +80,9 @@ function ProductVariant( {
 				id={ variantLabel }
 				value={ productSlug }
 				checked={ isChecked }
-				isDisabled={ isDisabled }
+				disabled={ isDisabled }
 				onChange={ () => {
-					! isDisabled &&
-						onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
+					! isDisabled && onChangeItemVariant( selectedItem.uuid, productSlug, productId );
 				} }
 				ariaLabel={ translate( 'Select a different term length' ) as string }
 				label={

@@ -8,7 +8,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { assignToExperiments } from 'calypso/state/experiments/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { getAnonIdFromCookie } from 'calypso/state/experiments/reducer';
 
 /**
@@ -31,9 +31,9 @@ const transformApiRequest = ( data ) => ( {
 export const handleFetchExperiments = ( action ) =>
 	http(
 		{
-			apiNamespace: 'wpcom',
+			apiNamespace: 'wpcom/v2',
 			method: 'GET',
-			path: '/v2/experiments/0.1.0/assignments/calypso',
+			path: '/experiments/0.1.0/assignments/calypso',
 			query: {
 				anon_id: action.anonId,
 			},

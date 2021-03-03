@@ -24,7 +24,7 @@ import {
 	setActiveReply,
 } from 'calypso/state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import PostComment from './post-comment';
 import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
@@ -34,6 +34,7 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -264,7 +265,7 @@ class PostCommentList extends React.Component {
 		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: commentId,
 		} );
@@ -274,7 +275,7 @@ class PostCommentList extends React.Component {
 		this.setState( { commentText: null } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
-		recordTrack( 'calypso_reader_comment_reply_cancel_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
 			blog_id: this.props.post.site_ID,
 			comment_id: this.state.activeReplyCommentId,
 		} );
@@ -550,5 +551,5 @@ export default connect(
 			} ),
 		};
 	},
-	{ requestPostComments, requestComment, setActiveReply }
+	{ requestComment, requestPostComments, recordReaderTracksEvent, setActiveReply }
 )( PostCommentList );

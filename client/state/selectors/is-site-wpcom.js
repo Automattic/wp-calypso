@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';

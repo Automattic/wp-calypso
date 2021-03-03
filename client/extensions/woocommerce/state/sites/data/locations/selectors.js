@@ -2,13 +2,13 @@
  * External dependencies
  */
 
-import { find, filter, flatMap, get, isArray, isEmpty, omit, sortBy } from 'lodash';
+import { find, filter, flatMap, get, isEmpty, omit, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING, ERROR } from 'woocommerce/state/constants';
 
 /**
@@ -27,7 +27,7 @@ const getRawLocations = ( state, siteId = getSelectedSiteId( state ) ) => {
  * @returns {boolean} Whether the locations data tree has been successfully loaded from the server
  */
 export const areLocationsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getRawLocations( state, siteId ) );
+	return Array.isArray( getRawLocations( state, siteId ) );
 };
 
 /**

@@ -12,6 +12,7 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
+import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ import { externalRedirect } from 'calypso/lib/route/path';
 import { itemLinkMatches } from '../sidebar/utils';
 
 export const MySitesSidebarUnifiedMenu = ( {
+	count,
 	slug,
 	title,
 	icon,
@@ -38,6 +40,9 @@ export const MySitesSidebarUnifiedMenu = ( {
 	link,
 	selected,
 	sidebarCollapsed,
+	isHappychatSessionActive,
+	isJetpackNonAtomicSite,
+	continueInCalypso,
 } ) => {
 	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
@@ -45,7 +50,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
 
 	const selectedMenuItem =
-		children && children.find( ( menuItem ) => itemLinkMatches( menuItem.url, path ) );
+		Array.isArray( children ) &&
+		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
 
 	/**
@@ -59,43 +65,65 @@ export const MySitesSidebarUnifiedMenu = ( {
 		}
 	}, [ selected, childIsSelected, reduxDispatch, sectionId, sidebarCollapsed ] );
 
+	const onClick = () => {
+		if ( isWithinBreakpoint( '>782px' ) ) {
+			if ( link ) {
+				if ( ! continueInCalypso( link ) ) {
+					return;
+				}
+
+				if ( isExternal( link ) ) {
+					// If the URL is external, page() will fail to replace state between different domains.
+					externalRedirect( link );
+					return;
+				}
+
+				// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
+				page( link );
+			}
+
+			if ( ! sidebarCollapsed ) {
+				// Keep only current submenu open.
+				reduxDispatch( collapseAllMySitesSidebarSections() );
+			}
+		}
+
+		reduxDispatch( toggleSection( sectionId ) );
+	};
+
 	return (
-		<ExpandableSidebarMenu
-			onClick={ () => {
-				if ( link ) {
-					if ( isExternal( link ) ) {
-						// If the URL is external, page() will fail to replace state between different domains
-						externalRedirect( link );
-						return;
-					}
-					page( link );
-				}
-				if ( ! sidebarCollapsed ) {
-					reduxDispatch( collapseAllMySitesSidebarSections() );
-					reduxDispatch( toggleSection( sectionId ) );
-				}
-			} }
-			expanded={ ! sidebarCollapsed && isExpanded }
-			title={ title }
-			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
-		>
-			{ children.map( ( item ) => {
-				const isSelected = selectedMenuItem?.url === item.url;
-				return (
-					<MySitesSidebarUnifiedItem
-						key={ item.slug }
-						{ ...item }
-						selected={ isSelected }
-						isSubItem={ true }
-					/>
-				);
-			} ) }
-		</ExpandableSidebarMenu>
+		<li>
+			<ExpandableSidebarMenu
+				onClick={ () => onClick() }
+				expanded={ ! sidebarCollapsed && isExpanded }
+				title={ title }
+				customIcon={ <SidebarCustomIcon icon={ icon } /> }
+				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
+				count={ count }
+				hideExpandableIcon={ true }
+			>
+				{ children.map( ( item ) => {
+					const isSelected = selectedMenuItem?.url === item.url;
+					return (
+						<MySitesSidebarUnifiedItem
+							key={ item.title }
+							{ ...item }
+							selected={ isSelected }
+							sectionId={ sectionId }
+							isSubItem={ true }
+							isHappychatSessionActive={ isHappychatSessionActive }
+							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
+							continueInCalypso={ continueInCalypso }
+						/>
+					);
+				} ) }
+			</ExpandableSidebarMenu>
+		</li>
 	);
 };
 
 MySitesSidebarUnifiedMenu.propTypes = {
+	count: PropTypes.number,
 	path: PropTypes.string,
 	slug: PropTypes.string,
 	title: PropTypes.string,
@@ -103,6 +131,9 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	children: PropTypes.array.isRequired,
 	link: PropTypes.string,
 	sidebarCollapsed: PropTypes.bool,
+	isHappychatSessionActive: PropTypes.bool.isRequired,
+	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
+	continueInCalypso: PropTypes.func.isRequired,
 	/*
 	Example of children shape:
 	[

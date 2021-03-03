@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { head } from 'lodash';
 
@@ -14,12 +14,12 @@ import { head } from 'lodash';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import { Button } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
-import MediaImage from 'my-sites/media-library/media-image';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
 import PriceInput from 'woocommerce/components/price-input';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
-import Spinner from 'components/spinner';
+import Spinner from 'calypso/components/spinner';
 
 class ProductFormVariationsRow extends Component {
 	static propTypes = {

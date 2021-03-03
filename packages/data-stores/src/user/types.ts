@@ -73,6 +73,7 @@ export interface CreateAccountParams {
 		first_name?: string;
 		last_name?: string;
 		username_hint: string | null | undefined;
+		is_anchor_fm_signup?: boolean | undefined;
 	};
 }
 

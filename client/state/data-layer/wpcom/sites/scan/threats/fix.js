@@ -4,9 +4,11 @@
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { JETPACK_SCAN_THREAT_FIX } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
-import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
-import { updateThreat, updateThreatCompleted } from 'calypso/state/jetpack-scan/threats/actions';
+import {
+	updateThreat,
+	updateThreatCompleted,
+	getFixThreatsStatus,
+} from 'calypso/state/jetpack-scan/threats/actions';
 import * as sitesAlertsFixHandlers from 'calypso/state/data-layer/wpcom/sites/alerts/fix';
 
 export const request = ( action ) => {
@@ -16,13 +18,7 @@ export const request = ( action ) => {
 
 export const success = ( action, rewindState ) => {
 	const defaultActions = sitesAlertsFixHandlers.success( action, rewindState );
-	return [
-		...defaultActions,
-		requestScanStatus( action.siteId, true ),
-		// Since we can fix threats from the History section, we need to update that
-		// information as well.
-		requestJetpackScanHistory( action.siteId ),
-	];
+	return [ ...defaultActions, getFixThreatsStatus( action.siteId, [ action.threatId ] ) ];
 };
 
 export const failure = ( action ) => {

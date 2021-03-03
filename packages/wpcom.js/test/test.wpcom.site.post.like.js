@@ -1,19 +1,19 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 describe( 'wpcom.site.post.like', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var testing_post;
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	let testing_post;
 
 	// Create a testing_post before to start the tests
 	before( ( done ) => {

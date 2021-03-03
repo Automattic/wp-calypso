@@ -1,14 +1,22 @@
 export interface StoredCard {
-	user_id: string;
-	stored_details_id: string;
-	expiry: string;
+	added: string;
 	card: string;
 	card_type: string;
-	mp_ref: string;
-	payment_partner: string;
-	name: string;
 	email: string;
-	remember: string;
-	added: string;
+	expiry: string;
+	last_service: string;
 	last_used: string;
+	mp_ref: string;
+	name: string;
+	payment_partner: string;
+	remember: string;
+	stored_details_id: string;
+	user_id: string;
+	meta: StoredCardMeta[];
+}
+
+export interface StoredCardMeta {
+	meta_key: string;
+	meta_value: string;
+	stored_details_id: string;
 }

@@ -6,28 +6,28 @@ import cookie from 'cookie';
 /**
  * Internal dependencies
  */
-import { JETPACK_CONNECT_TTL_SECONDS } from 'state/jetpack-connect/constants';
-import { urlToSlug } from 'lib/url';
+import { JETPACK_CONNECT_TTL_SECONDS } from 'calypso/state/jetpack-connect/constants';
+import { urlToSlug } from 'calypso/lib/url';
+
+const SESSION_STORAGE_SELECTED_PLAN = 'jetpack_connect_selected_plan';
 
 /**
  * Utilities for storing jetpack connect state that needs to persist across
- * logins and redirects. Cookies work well for this, since redux
+ * logins and redirects. Session Storage work well for this, since redux
  * state is not guaranteed to be persisted in these scenarios.
+ *
+ * @param planSlug A plan/product unique identifier
  */
-
 export const storePlan = ( planSlug ) => {
-	const options = { path: '/' };
-	document.cookie = cookie.serialize( 'jetpack_connect_selected_plan', planSlug, options );
+	window.sessionStorage.setItem( SESSION_STORAGE_SELECTED_PLAN, planSlug );
 };
 
 export const clearPlan = () => {
-	const options = { path: '/' };
-	document.cookie = cookie.serialize( 'jetpack_connect_selected_plan', '', options );
+	window.sessionStorage.removeItem( SESSION_STORAGE_SELECTED_PLAN );
 };
 
 export const retrievePlan = () => {
-	const cookies = cookie.parse( document.cookie );
-	return cookies.jetpack_connect_selected_plan;
+	return window.sessionStorage.getItem( SESSION_STORAGE_SELECTED_PLAN );
 };
 
 export const persistSession = ( url ) => {

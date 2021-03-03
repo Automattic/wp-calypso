@@ -28,7 +28,8 @@ const ChatHolidayClosureNotice = ( { closesAt, compact, displayAt, holidayName, 
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
 
-	let heading, message;
+	let heading;
+	let message;
 
 	if ( currentDate.isBefore( closesAt ) ) {
 		heading = translate( 'Live chat will be closed for %(holidayName)s', {

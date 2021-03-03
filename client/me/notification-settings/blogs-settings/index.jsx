@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { find, noop } from 'lodash';
 
 /**
@@ -12,11 +11,10 @@ import { find, noop } from 'lodash';
  */
 import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import EmptyContentComponent from 'calypso/components/empty-content';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import Blog from './blog';
 import InfiniteList from 'calypso/components/infinite-list';
 import Placeholder from './placeholder';
-import config from 'calypso/config';
 
 /**
  * Style dependencies
@@ -39,22 +37,14 @@ class BlogsSettings extends Component {
 	};
 
 	render() {
-		const { sites, requestingSites, translate } = this.props;
+		const { sites, requestingSites } = this.props;
 
 		if ( ! sites || ! this.props.settings ) {
 			return <Placeholder />;
 		}
 
 		if ( sites.length === 0 && ! requestingSites ) {
-			return (
-				<EmptyContentComponent
-					title={ translate( "You don't have any WordPress sites yet." ) }
-					line={ translate( 'Would you like to start one?' ) }
-					action={ translate( 'Create Site' ) }
-					actionURL={ config( 'signup_url' ) + '?ref=calypso-nosites' }
-					illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
-				/>
-			);
+			return <NoSitesMessage />;
 		}
 
 		const renderBlog = ( site, index, disableToggle = false ) => {
@@ -100,4 +90,4 @@ const mapStateToProps = ( state ) => ( {
 	requestingSites: isRequestingSites( state ),
 } );
 
-export default connect( mapStateToProps )( localize( BlogsSettings ) );
+export default connect( mapStateToProps )( BlogsSettings );

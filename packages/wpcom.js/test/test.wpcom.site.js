@@ -1,21 +1,21 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 describe( 'wpcom.site', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var testing_post;
-	var new_post_ID;
-	var site_ID;
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	let testing_post;
+	let new_post_ID;
+	let site_ID;
 
 	// Create a testing_post before to start tests
 	before( ( done ) => {
@@ -178,7 +178,7 @@ describe( 'wpcom.site', function () {
 
 			it( 'should return 404 by unknown type', function () {
 				return new Promise( ( done ) => {
-					var rnd = String( Math.random() ).substr( 2 );
+					const rnd = String( Math.random() ).substr( 2 );
 					site.postCounts( rnd, function ( err ) {
 						assert.ok( 'Unknown post type requested', err.message );
 						done();
@@ -666,8 +666,8 @@ describe( 'wpcom.site', function () {
 	} );
 
 	describe( 'wpcom.site.statsReferrersSpamNew', function () {
-		var d = new Date();
-		var domain = d.getTime() / 1000 + 'wordpress.com';
+		const d = new Date();
+		const domain = d.getTime() / 1000 + 'wordpress.com';
 		it( 'should mark a domain as spam', () => {
 			return new Promise( ( done ) => {
 				site
@@ -682,8 +682,8 @@ describe( 'wpcom.site', function () {
 	} );
 
 	describe( 'wpcom.site.statsReferrersSpamDelete', function () {
-		var d = new Date();
-		var domain = d.getTime() / 1000 + 'wordpress.com';
+		const d = new Date();
+		const domain = d.getTime() / 1000 + 'wordpress.com';
 		it( 'should remove a domain from spam refferer list', () => {
 			return new Promise( ( done ) => {
 				site

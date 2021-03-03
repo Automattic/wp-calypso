@@ -23,6 +23,7 @@ import './style.scss';
 
 class ColorSchemePicker extends PureComponent {
 	static propTypes = {
+		defaultSelection: PropTypes.string,
 		temporarySelection: PropTypes.bool,
 		onSelection: PropTypes.func,
 		// Connected props
@@ -41,12 +42,13 @@ class ColorSchemePicker extends PureComponent {
 
 	render() {
 		const colorSchemesData = getColorSchemesData( translate );
+		const defaultColorScheme = this.props.defaultSelection || colorSchemesData[ 0 ].value;
 		const checkedColorScheme = find( colorSchemesData, [
 			'value',
 			this.props.colorSchemePreference,
 		] )
 			? this.props.colorSchemePreference
-			: colorSchemesData[ 0 ].value;
+			: defaultColorScheme;
 		return (
 			<div className="color-scheme-picker">
 				<QueryPreferences />

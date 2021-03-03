@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
 import config from 'config';
 import assert from 'assert';
 
@@ -25,15 +24,14 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Plans: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Comparing Plans:  @parallel @jetpack', function () {
 		step( 'Login and Select My Site', async function () {
@@ -77,7 +75,8 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 	} );
 
 	describe( 'Viewing a specific plan with coupon: @parallel @jetpack', function () {
-		let originalCartAmount, loginFlow;
+		let originalCartAmount;
+		let loginFlow;
 
 		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );

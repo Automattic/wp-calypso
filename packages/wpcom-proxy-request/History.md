@@ -2,6 +2,7 @@
 
 ## 6.0.0 / TBD
 
+- Add "support" for streamed responses and `onStreamRecord`. Doesn't implement, just tolerates the callback.
 - Breaking: Return Promise (rather than `XMLHttpRequest` instance) if no callback argument is provided.
   - In practice, most people have probably been using the callback rather than the returned `XMLHttpRequest` instance, so this shouldn't be a breaking change for most.
 - Add `requestAllBlogsAccess()`.

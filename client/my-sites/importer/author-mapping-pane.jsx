@@ -171,10 +171,10 @@ class AuthorMappingPane extends React.PureComponent {
 					);
 				} ) }
 				<ImporterActionButtonContainer>
-					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
 						{ this.props.translate( 'Start import' ) }
 					</ImporterActionButton>
+					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				</ImporterActionButtonContainer>
 			</div>
 		);

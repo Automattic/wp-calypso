@@ -30,15 +30,10 @@ const getChunkById = ( assets, chunkId ) => assets.chunks.find( ( chunk ) => chu
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
 export default () => {
-	const cachedAssets = {};
-
 	return ( req, res, next ) => {
 		req.getAssets = () => {
 			const target = req.getTarget();
-			if ( ! cachedAssets[ target ] ) {
-				cachedAssets[ target ] = JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
-			}
-			return cachedAssets[ target ];
+			return JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
 		};
 
 		req.getFilesForEntrypoint = ( name ) => {

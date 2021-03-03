@@ -223,13 +223,13 @@ class SharingConnection extends Component {
 	}
 
 	render() {
-		const connectionSitewideElement = this.getConnectionSitewideElement(),
-			connectionClasses = classNames( 'sharing-connection', {
-				disabled: this.props.isDisconnecting || this.props.isRefreshing,
-			} ),
-			statusClasses = classNames( 'sharing-connection__account-status', {
-				'is-shareable': undefined !== connectionSitewideElement,
-			} );
+		const connectionSitewideElement = this.getConnectionSitewideElement();
+		const connectionClasses = classNames( 'sharing-connection', {
+			disabled: this.props.isDisconnecting || this.props.isRefreshing,
+		} );
+		const statusClasses = classNames( 'sharing-connection__account-status', {
+			'is-shareable': undefined !== connectionSitewideElement,
+		} );
 
 		return (
 			<li className={ connectionClasses }>

@@ -10,41 +10,41 @@ import { find, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import { languages } from 'languages';
-import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
-import user from 'lib/user';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { canBeTranslated } from 'lib/i18n-utils';
+import languages from '@automattic/languages';
+import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
+import user from 'calypso/lib/user';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { canBeTranslated } from 'calypso/lib/i18n-utils';
 
 const debug = debugModule( 'calypso:community-translator' );
 
-const communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
-	communityTranslatorVersion = '1.160729',
-	// lookup for the translation set slug on GP
-	translateSetSlugs = {
-		de_formal: 'formal',
+const communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/';
+const communityTranslatorVersion = '1.160729';
+// lookup for the translation set slug on GP
+const translateSetSlugs = {
+	de_formal: 'formal',
+};
+const translationDataFromPage = {
+	localeCode: 'en',
+	languageName: 'English',
+	pluralForms: 'nplurals=2; plural=(n != 1)',
+	contentChangedCallback() {},
+	glotPress: {
+		url: 'https://translate.wordpress.com',
+		project: 'wpcom',
+		translation_set_slug: 'default',
 	},
-	translationDataFromPage = {
-		localeCode: 'en',
-		languageName: 'English',
-		pluralForms: 'nplurals=2; plural=(n != 1)',
-		contentChangedCallback() {},
-		glotPress: {
-			url: 'https://translate.wordpress.com',
-			project: 'wpcom',
-			translation_set_slug: 'default',
-		},
-	};
+};
 
 /**
  * Local variables
  */
 
-let injectUrl,
-	initialized,
-	_isTranslatorEnabled,
-	_isUserSettingsReady = false,
-	_shouldWrapTranslations = false;
+let injectUrl;
+let initialized;
+let _isTranslatorEnabled;
+let _isUserSettingsReady = false;
+let _shouldWrapTranslations = false;
 
 /* "Enabled" means that the user has opted in on the settings page
  *     ( but it's false until userSettings has loaded)
@@ -272,10 +272,10 @@ const communityTranslatorJumpstart = {
 
 	// Merge a Community Translator TranslationPair into the i18n locale
 	updateTranslation( newTranslation ) {
-		const locale = i18n.getLocale(),
-			key = newTranslation.key,
-			plural = newTranslation.plural,
-			translations = newTranslation.translations;
+		const locale = i18n.getLocale();
+		const key = newTranslation.key;
+		const plural = newTranslation.plural;
+		const translations = newTranslation.translations;
 		// jed expects:
 		// 'context\004singular': [plural, translatedSingular, translatedPlural...]
 		debug(
@@ -314,11 +314,11 @@ i18n.registerComponentUpdateHook( () => {
 } );
 
 export function trackTranslatorStatus( isTranslatorEnabled ) {
-	const newSetting = isTranslatorEnabled,
-		changed = _isTranslatorEnabled !== newSetting,
-		tracksEvent = newSetting
-			? 'calypso_community_translator_enabled'
-			: 'calypso_community_translator_disabled';
+	const newSetting = isTranslatorEnabled;
+	const changed = _isTranslatorEnabled !== newSetting;
+	const tracksEvent = newSetting
+		? 'calypso_community_translator_enabled'
+		: 'calypso_community_translator_disabled';
 
 	if ( changed && _isTranslatorEnabled !== undefined ) {
 		debug( tracksEvent );

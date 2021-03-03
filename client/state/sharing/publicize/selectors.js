@@ -6,7 +6,7 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

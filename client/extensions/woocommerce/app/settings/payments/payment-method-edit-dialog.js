@@ -5,18 +5,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 
 class PaymentMethodEdit extends Component {
@@ -54,7 +53,11 @@ class PaymentMethodEdit extends Component {
 
 	renderEditField = ( editField ) => {
 		const { method } = this.props;
-		if ( method.fields && isArray( method.fields ) && method.fields.indexOf( editField ) < 0 ) {
+		if (
+			method.fields &&
+			Array.isArray( method.fields ) &&
+			method.fields.indexOf( editField ) < 0
+		) {
 			return;
 		}
 		const setting = method.settings[ editField ];

@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
-export const ADDING_GOOGLE_APPS_TO_YOUR_SITE = `${ root }/adding-g-suite-to-your-site`;
+export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-g-suite-to-your-site/`;
 export const ADDING_USERS = `${ root }/adding-users`;
 export const AUTO_RENEWAL = `${ root }/auto-renewal`;
 export const BANDPAGE_WIDGET = `${ root }/widgets/bandpage-widget`;
@@ -15,7 +15,6 @@ export const CHANGE_NAME_SERVERS = `${ root }/domains/custom-dns/#changing-name-
 export const CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS = `${ root }/domains/change-name-servers/#finding-out-your-new-name-server`;
 export const COMMENTS = `${ root }/category/comments`;
 export const COMMUNITY_TRANSLATOR = `${ root }/community-translator`;
-export const COMPLETING_GOOGLE_APPS_SIGNUP = `${ root }/adding-g-suite-to-your-site/#completing-sign-up`;
 export const CONCIERGE_SUPPORT = `${ root }/concierge-support`;
 export const CONNECT = `${ root }/connect`;
 export const CONTACT = `${ root }/contact`;
@@ -56,7 +55,7 @@ export const FOLLOWERS = `${ root }/followers`;
 export const FORMS = `${ root }/forms`;
 export const GETTING_MORE_VIEWS_AND_TRAFFIC = `${ root }/getting-more-views-and-traffic`;
 export const GOOGLE_ANALYTICS = `${ root }/google-analytics`;
-export const GOOGLE_APPS_LEARNING_CENTER = 'https://gsuite.google.com/learning-center/';
+export const GSUITE_LEARNING_CENTER = 'https://gsuite.google.com/learning-center/';
 export const GOOGLE_PLUS_EMBEDS = `${ root }/google-plus-embeds`;
 export const GRAVATAR_HOVERCARDS = `${ root }/gravatar-hovercards`;
 export const GUIDED_TRANSFER = `${ root }/guided-transfer`;
@@ -97,7 +96,6 @@ export const STATS_TOP_POSTS_PAGES = `${ root }/stats/#top-posts-pages`;
 export const STATS_VIEWS_BY_COUNTRY = `${ root }/stats/#views-by-country`;
 export const SUPPORT_ROOT = `${ root }/`;
 export const TRANSFER_DOMAIN_REGISTRATION = `${ root }/transfer-domain-registration`;
-export const TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR = `${ root }/transfer-domain-registration#starting-the-transfer-with-your-new-registrar`;
 export const TWITTER_TIMELINE_WIDGET = `${ root }/widgets/twitter-timeline-widget`;
 export const UPDATE_CONTACT_INFORMATION = `${ root }/update-contact-information/`;
 export const UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES = `${ root }/update-contact-information/#email-or-name-changes`;

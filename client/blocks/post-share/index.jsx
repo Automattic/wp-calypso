@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import Gridicon from 'calypso/components/gridicon';
 import { current as currentPage } from 'page';
 
@@ -44,7 +44,7 @@ import {
 	sharePostSuccessMessage,
 } from 'calypso/state/sharing/publicize/selectors';
 import PostMetadata from 'calypso/lib/post-metadata';
-import PublicizeMessage from 'calypso/post-editor/editor-sharing/publicize-message';
+import PublicizeMessage from 'calypso/components/publicize-message';
 import Notice from 'calypso/components/notice';
 import {
 	hasFeature,
@@ -228,7 +228,6 @@ class PostShare extends Component {
 				disabled={ this.isDisabled() }
 				message={ this.state.message }
 				requireCount={ requireCount }
-				displayMessageHeading={ false }
 				onChange={ this.setMessage }
 				acceptableLength={ acceptableLength }
 			/>

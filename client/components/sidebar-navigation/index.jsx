@@ -12,7 +12,7 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import TranslatableString from 'calypso/components/translatable/proptype';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -20,7 +20,7 @@ import config from 'calypso/config';
 import './style.scss';
 
 function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
-	if ( config.isEnabled( 'nav-unification' ) ) {
+	if ( config.isEnabled( 'nav-unification' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
 		return null;
 	}
 

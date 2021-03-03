@@ -1,60 +1,61 @@
-Data Persistence
-================
+# Data Persistence
 
 Persisting our Redux state to browser storage (IndexedDB) allows us to avoid completely rebuilding the
 Redux tree from scratch on each page load and to display cached data in the UI (instead of placeholders)
 while fetching the latest updates from the REST API is still in progress.
 
-Note that the entire Redux state is *not* persisted to the browser. In order to persist state in browser storage the reducer must be wrapped with `withSchemaValidation` as instructed below.
+Note that the entire Redux state is _not_ persisted to the browser. In order to persist state in browser storage the reducer must be wrapped with `withSchemaValidation` as instructed below.
 
 This feature was originally implemented in [#2754](https://github.com/Automattic/wp-calypso/pull/2754).
 
 At a high level, implementing this is straightforward. We subscribe to any Redux store changes, and on change we update
 our browser storage with the new state of the Redux tree. On page load, if we detect stored state in browser storage during
 our initial render, we create our Redux store with that persisted initial state. However, significant issues exist that require special solutions:
-* [Subtrees may contain class instances](#problem-subtrees-may-contain-class-instances)
-* [Data shapes change over time ](#problem-data-shapes-change-over-time--3101-)
-* [Some reducers are loaded dynamically](#problem-some-reducers-are-loaded-dynamically)
 
+- [Subtrees may contain class instances](#problem-subtrees-may-contain-class-instances)
+- [Data shapes change over time](#problem-data-shapes-change-over-time--3101-)
+- [Some reducers are loaded dynamically](#problem-some-reducers-are-loaded-dynamically)
 
-The implementation details for theses solutions are discussed in detail below. 
+The implementation details for theses solutions are discussed in detail below.
 
-
-### Opt-in to Persistence
+## Opt-in to Persistence
 
 Note that we opt-in to persistence simply by wrapping the reducer with `withSchemaValidation`.
 `withSchemaValidation` returns a wrapped reducer that validates on `DESERIALIZE` if a schema is present and returns
-initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present.  [Implementaion](#problem-subtrees-may-contain-class-instances) of `SERIALIZE` and `DESERIALIZE` to handle subtrees with class instances is discussed below.
+initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present. [Implementaion](#problem-subtrees-may-contain-class-instances) of `SERIALIZE` and `DESERIALIZE` to handle subtrees with class instances is discussed below.
 
 In Calypso, we combine all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead
 of the default implementation of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`.
 The custom `combineReducers` handles persistence for the reducers it's combining.
 
 To opt-out of persistence we simply combine reducers without any attached schema.
+
 ```javascript
 return combineReducers( {
-    age,
-    height,
+	age,
+	height,
 } );
 ```
 
 To persist, we add the schema by wrapping the reducer with the `withSchemaValidation` util:
+
 ```javascript
 return combineReducers( {
-    age: withSchemaValidation( ageSchema, age ),
-    height,
+	age: withSchemaValidation( ageSchema, age ),
+	height,
 } );
 ```
 
 For a reducer that has custom handlers (needs to perform transforms), we assume the reducer is checking the schema already,
 on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to ensure that we don't return initial state
 incorrectly from the default handling provided by `withSchemaValidation`.
+
 ```javascript
 date.hasCustomPersistence = true;
 return combineReducers( {
-    age,
-    height,
-    date,
+	age,
+	height,
+	date,
 } );
 ```
 
@@ -64,14 +65,13 @@ Some subtrees may choose to never persist data. One such example of this is our 
 values are persisted we will not be able to reliably tell when the application is offline or online. Please remember
 to reason about if items should be persisted.
 
-
 However we quickly run into the following problems:
 
 #### Problem: Subtrees may contain class instances
 
 Subtrees may contain class instances. In some cases this is expected, because certain state subtrees have chosen to use
 Immutable.js. Other subtrees use specialized classes like [QueryManager](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/query-manager)
-whose instances are stored in Redux state. However, IndexedDB storage requires that objects be serialized and thus attempting to store a class instance in IndexedDB will throw an error.  We must create a custom solution to serialize these classes before saving to IndexedDB.
+whose instances are stored in Redux state. However, IndexedDB storage requires that objects be serialized and thus attempting to store a class instance in IndexedDB will throw an error. We must create a custom solution to serialize these classes before saving to IndexedDB.
 
 [#### Solution: SERIALIZE and DESERIALIZE actions](#solution-serialize-deserialize)
 
@@ -80,22 +80,24 @@ but are instead used with the reducer directly to prepare state to be serialized
 deserializing persisted state to an acceptable initialState for the Redux store.
 
 ```javascript
-reducer( reduxStore.getState(), { type: 'SERIALIZE' } )
+reducer( reduxStore.getState(), { type: 'SERIALIZE' } );
 ```
+
 and
 
 ```javascript
-reducer( browserState, { type: 'DESERIALIZE' } )
+reducer( browserState, { type: 'DESERIALIZE' } );
 ```
 
 Because browser storage is only capable of storing simple JavaScript objects, the purpose of the `SERIALIZE` action
 type reducer handler is to return a plain object representation. In a subtree that uses Immutable.js it should be
 similar to:
+
 ```javascript
 export function items( state = defaultState, action ) {
 	switch ( action.type ) {
 		case ACCOUNT_RECOVERY_SETTINGS_UPDATE:
-			return // ...
+			return; // ...
 		case SERIALIZE:
 			return state.toJS();
 		default:
@@ -110,11 +112,12 @@ Be sure to set `hasCustomPersistence` to true, in order to indicate that you hav
 In turn, when the store instance is initialized with the browser storage copy of state, you can convert
 your subtree state back to its expected format from the `DESERIALIZE` handler. In a subtree that uses Immutable.js
 instead of returning a plain object, we create an Immutable.js instance:
+
 ```javascript
 export function items( state = defaultState, action ) {
 	switch ( action.type ) {
 		case THEMES_RECEIVE:
-			return // ...
+			return; // ...
 		case DESERIALIZE:
 			return fromJS( state );
 		default:
@@ -136,8 +139,8 @@ from changing data shapes, as described below.
 As time passes, the shape of our data will change very drastically in our Redux store and in each subtree. If we now
 persist state, we run into the issue of our persisted data shape no longer matching what the Redux store expects.
 
-As a developer, this case is extremely easy to hit. If Redux persistence is enabled and we are running master, first
-allow  state to be persisted to the browser and then switch to another git branch that contains minor refactors for an
+As a developer, this case is extremely easy to hit. If Redux persistence is enabled and we are running trunk, first
+allow state to be persisted to the browser and then switch to another git branch that contains minor refactors for an
 existing sub-tree. What happens when a selector reaches for a data property that doesn't exist or has been renamed?
 Errors!
 
@@ -156,6 +159,7 @@ specifically: what the general shape looks like, which properties must be requir
 properties they might contain. Ideally, we should try to balance readability and strictness.
 
 A simple example schema.js:
+
 ```javascript
 export const itemsSchema = {
 	type: 'object',
@@ -167,9 +171,10 @@ export const itemsSchema = {
 				ID: { type: 'number' },
 				name: { type: 'string' },
 				description: { type: 'string' },
-		}
+			},
+		},
+		additionalProperties: false,
 	},
-	additionalProperties: false
 };
 ```
 
@@ -178,11 +183,12 @@ match our described data shape, we should throw it out and rebuild that section 
 
 You can use `withSchemaValidation` to wrap a plain reducer, passing the schema as the first param, and all
 that will be handled for you.
+
 ```javascript
 export const items = withSchemaValidation( itemsSchema, ( state = defaultState, action ) => {
 	switch ( action.type ) {
 		case THEMES_RECEIVE:
-			return // ...
+			return; // ...
 		default:
 			return state;
 	}
@@ -208,12 +214,15 @@ It's therefore not possible to load such a state subtree during Calypso boot.
 A reducer for a state subtree can have a `storageKey` property that is added using the `withStorageKey` helper:
 
 ```js
-const readerReducer = withStorageKey( 'reader', combineReducers( {
-  feeds,
-	follows,
-	streams,
-	teams,
-} );
+const readerReducer = withStorageKey(
+	'reader',
+	combineReducers( {
+		feeds,
+		follows,
+		streams,
+		teams,
+	} )
+);
 ```
 
 When this `storageKey` property is encountered when dispatching the `SERIALIZE` action, the result of the serialization
@@ -222,4 +231,3 @@ and another one for `reader` key. Both objects will be stored as two distinct ro
 
 When booting Calypso, we initially load only the `root` stored state. The `reader` key is loaded and deserialized only
 when the `reader` reducer is being added dynamically.
-

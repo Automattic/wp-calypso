@@ -10,7 +10,8 @@ const URL_BASE_PATH = '/calypso';
 
 function hashFile( path ) {
 	const md5 = crypto.createHash( 'md5' );
-	let data, hash;
+	let data;
+	let hash;
 
 	try {
 		data = fs.readFileSync( path );

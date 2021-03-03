@@ -9,18 +9,19 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Head from 'components/head';
+import config from '@automattic/calypso-config';
+import Head from 'calypso/components/head';
 import EnvironmentBadge, {
 	TestHelper,
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
-} from 'components/environment-badge';
+	FeaturesHelper,
+} from 'calypso/components/environment-badge';
 import { chunkCssLinks } from './utils';
-import JetpackLogo from 'components/jetpack-logo';
-import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from 'server/sanitize';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 
 class Document extends React.Component {
 	render() {
@@ -59,6 +60,7 @@ class Document extends React.Component {
 			requestFrom,
 			useTranslationChunks,
 			target,
+			featuresHelper,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -120,6 +122,7 @@ class Document extends React.Component {
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
 						'is-white-signup': sectionName === 'signup',
+						'is-mobile-app-view': app?.isWpMobileApp,
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
@@ -143,7 +146,6 @@ class Document extends React.Component {
 									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
-								<div className="masterbar" />
 								<div className="layout__content">
 									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 								</div>
@@ -158,6 +160,7 @@ class Document extends React.Component {
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
 							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
+							{ featuresHelper && <FeaturesHelper /> }
 						</EnvironmentBadge>
 					) }
 
@@ -201,12 +204,7 @@ class Document extends React.Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && (
-						<>
-							<script src={ `/calypso/${ target }/manifest.js` } />
-							<script src={ `/calypso/${ target }/runtime.js` } />
-						</>
-					) }
+					{ env === 'development' && <script src={ `/calypso/${ target }/runtime.js` } /> }
 					{ env !== 'development' &&
 						manifests.map( ( manifest ) => (
 							<script

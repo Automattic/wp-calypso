@@ -11,7 +11,10 @@ import { connect } from 'react-redux';
  */
 
 import EmailUnverifiedNotice from './email-unverified-notice.jsx';
-import { getCurrentUserEmail, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 

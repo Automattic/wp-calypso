@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import { languages } from 'calypso/languages';
+import languages from '@automattic/languages';
 import LanguagePicker from 'calypso/components/language-picker';
 import { Card, Button } from '@automattic/components';
 

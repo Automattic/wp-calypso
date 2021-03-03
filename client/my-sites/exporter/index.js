@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, redirectWithoutSite, siteSelection, sites } from 'calypso/my-sites/controller';
 import { exportSite, guidedTransfer } from 'calypso/my-sites/exporter/controller';

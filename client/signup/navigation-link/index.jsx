@@ -6,19 +6,19 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get, findLast, findIndex } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getStepUrl } from 'signup/utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
+import { getStepUrl } from 'calypso/signup/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
-import { getABTestVariation } from 'lib/abtest';
+import { getABTestVariation } from 'calypso/lib/abtest';
 
 /**
  * Style dependencies
@@ -130,7 +130,9 @@ export class NavigationLink extends Component {
 			return null;
 		}
 
-		let backGridicon, forwardGridicon, text;
+		let backGridicon;
+		let forwardGridicon;
+		let text;
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;

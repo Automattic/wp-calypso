@@ -1,11 +1,12 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	combineReducers,
 	keyedReducer,
-	withSchemaValidation,
 	withoutPersistence,
+	withSchemaValidation,
 } from 'calypso/state/utils';
 import { atomicTransfer as schema } from './schema';
 import {
@@ -45,4 +46,4 @@ export const atomicTransferReducers = combineReducers( {
 } );
 
 //export default atomicTransferReducers;
-export default keyedReducer( 'siteId', atomicTransferReducers );
+export default withStorageKey( 'atomicTransfer', keyedReducer( 'siteId', atomicTransferReducers ) );

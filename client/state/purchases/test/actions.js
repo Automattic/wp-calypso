@@ -23,10 +23,10 @@ import {
 import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
-	const purchases = [ { ID: 1 } ],
-		userId = 1337,
-		siteId = 1234,
-		purchaseId = 31337;
+	const purchases = [ { ID: 1 } ];
+	const userId = 1337;
+	const siteId = 1234;
+	const purchaseId = 31337;
 
 	const spy = sinon.spy();
 

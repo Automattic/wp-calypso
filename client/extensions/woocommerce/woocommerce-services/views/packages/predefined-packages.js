@@ -12,9 +12,9 @@ import { forEach } from 'lodash';
  * Internal dependencies
  */
 import BulkSelect from 'woocommerce/components/bulk-select';
-import FoldableCard from 'components/foldable-card';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import PackagesListItem from './packages-list-item';
 import { getCurrentlyEditingPredefinedPackages } from '../../state/packages/selectors';
 

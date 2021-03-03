@@ -2,14 +2,14 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { isFinite, omitBy } from 'lodash';
+import { omitBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 import { stringify } from 'qs';
 
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	deleteOrderError,
 	deleteOrderSuccess,
@@ -20,9 +20,9 @@ import {
 	updateOrder,
 	updateOrders,
 } from 'woocommerce/state/sites/orders/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
-import { navigate } from 'state/ui/actions';
+import { navigate } from 'calypso/state/ui/actions';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_ORDER_DELETE,
@@ -91,7 +91,7 @@ export function receivedOrder( action, { data } ) {
 
 export function sendOrder( action ) {
 	const { siteId, orderId, order } = action;
-	if ( isFinite( orderId ) ) {
+	if ( Number.isFinite( orderId ) ) {
 		return request( siteId, action ).post( `orders/${ orderId }`, order );
 	}
 	return request( siteId, action ).post( 'orders', order );

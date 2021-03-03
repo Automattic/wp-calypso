@@ -8,7 +8,6 @@ import { noop, truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
-import config from 'calypso/config';
 
 /**
  * Internal Dependencies
@@ -37,6 +36,10 @@ import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expande
  * Style dependencies
  */
 import './style.scss';
+import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 class ReaderPostCard extends React.Component {
 	static propTypes = {
@@ -54,6 +57,8 @@ class ReaderPostCard extends React.Component {
 		isDiscoverStream: PropTypes.bool,
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -70,8 +75,8 @@ class ReaderPostCard extends React.Component {
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = ReactDom.findDOMNode( this ),
-			selection = window.getSelection && window.getSelection();
+		const rootNode = ReactDom.findDOMNode( this );
+		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
@@ -130,9 +135,14 @@ class ReaderPostCard extends React.Component {
 			isExpanded,
 			expandCard,
 			compact,
+			teams,
+			isWPForTeamsItem,
 		} = this.props;
 
-		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
+		let isSeen = true;
+		if ( canBeMarkedAsSeen( { post } ) ) {
+			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && post.is_seen;
+		}
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
@@ -279,6 +289,11 @@ class ReaderPostCard extends React.Component {
 
 export default connect(
 	( state, ownProps ) => ( {
+		isWPForTeamsItem:
+			ownProps.postKey &&
+			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
+				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
+		teams: getReaderTeams( state ),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
 	{ expandCard: expandCardAction }

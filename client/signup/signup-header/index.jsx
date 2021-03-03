@@ -10,8 +10,8 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 
-import WordPressLogo from 'components/wordpress-logo';
-import FlowProgressIndicator from 'signup/flow-progress-indicator';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 
 /**
  * Style dependencies

@@ -6,8 +6,8 @@ const { app, crashReporter } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const Config = require( 'desktop/lib/config' );
-const log = require( 'desktop/lib/logger' )( 'desktop:crash-reporting' );
+const Config = require( 'calypso/desktop/lib/config' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:crash-reporting' );
 
 module.exports = function () {
 	if ( Config.crash_reporter.electron ) {
@@ -15,8 +15,10 @@ module.exports = function () {
 			log.info( 'Crash reporter started' );
 
 			crashReporter.start( {
+				globalExtra: {
+					_companyName: Config.author,
+				},
 				productName: Config.description,
-				companyName: Config.author,
 				submitURL: Config.crash_reporter.url,
 				uploadToServer: true,
 			} );

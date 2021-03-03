@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import { isRequesting } from 'calypso/state/login/selectors';
 import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
 import FormButton from 'calypso/components/forms/form-button';

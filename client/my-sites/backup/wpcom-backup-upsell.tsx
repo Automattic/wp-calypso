@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { ReactElement, FunctionComponent } from 'react';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { addQueryArgs } from '@wordpress/url';
 import { Button } from '@automattic/components';
@@ -10,11 +10,12 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { preventWidows } from 'calypso/lib/formatting';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -31,24 +32,28 @@ import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
 
-const BackupMultisiteBody: FunctionComponent = () => (
-	<PromoCard
-		title={ preventWidows( translate( 'WordPress multi-sites are not supported' ) ) }
-		image={ { path: JetpackBackupErrorSVG } }
-		isPrimary
-	>
-		<p>
-			{ preventWidows(
-				translate(
-					"We're sorry, Jetpack Backup is not compatible with multisite WordPress installations at this time."
-				)
-			) }
-		</p>
-	</PromoCard>
-);
+const BackupMultisiteBody: FunctionComponent = () => {
+	const translate = useTranslate();
+	return (
+		<PromoCard
+			title={ preventWidows( translate( 'WordPress multi-sites are not supported' ) ) }
+			image={ { path: JetpackBackupErrorSVG } }
+			isPrimary
+		>
+			<p>
+				{ preventWidows(
+					translate(
+						"We're sorry, Jetpack Backup is not compatible with multisite WordPress installations at this time."
+					)
+				) }
+			</p>
+		</PromoCard>
+	);
+};
 
 const BackupVPActiveBody: FunctionComponent = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_backup_vaultpress_click' );
+	const translate = useTranslate();
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Your backups are powered by VaultPress' ) ) }
@@ -77,6 +82,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 	const isAdmin = useSelector(
 		( state ) => siteId && canCurrentUser( state, siteId, 'manage_options' )
 	);
+	const translate = useTranslate();
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
@@ -127,6 +133,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 };
 
 export default function WPCOMUpsellPage( { reason }: { reason: string } ): ReactElement {
+	const translate = useTranslate();
 	let body;
 	switch ( reason ) {
 		case 'multisite_not_supported':
@@ -134,6 +141,9 @@ export default function WPCOMUpsellPage( { reason }: { reason: string } ): React
 			break;
 		case 'vp_active_on_site':
 			body = <BackupVPActiveBody />;
+			break;
+		case 'no_connected_jetpack':
+			body = <JetpackDisconnectedWPCOM />;
 			break;
 		default:
 			body = <BackupUpsellBody />;

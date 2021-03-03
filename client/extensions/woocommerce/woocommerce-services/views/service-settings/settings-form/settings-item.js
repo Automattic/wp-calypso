@@ -15,7 +15,7 @@ import RadioButtons from 'woocommerce/woocommerce-services/components/radio-butt
 import ShippingClassesField from 'woocommerce/woocommerce-services/components/shipping-classes-field';
 import getPackagingManagerLink from 'woocommerce/woocommerce-services/lib/utils/get-packaging-manager-link';
 import ShippingServiceGroups from '../shipping-services';
-import FormLegend from 'components/forms/form-legend';
+import FormLegend from 'calypso/components/forms/form-legend';
 
 const SettingsItem = ( {
 	formData,

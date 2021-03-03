@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	SELECTED_SITE_SET,
 	SECTION_LOADING_SET,
@@ -111,4 +112,4 @@ const reducer = combineReducers( {
 	siteSelectionInitialized,
 } );
 
-export default reducer;
+export default withStorageKey( 'ui', reducer );

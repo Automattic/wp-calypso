@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, debounce, isNumber, indexOf, pull } from 'lodash';
+import { find, debounce, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import TokenField from 'components/token-field';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import TokenField from 'calypso/components/token-field';
 
 class ProductVariationTypesForm extends Component {
 	state = {
@@ -61,15 +60,14 @@ class ProductVariationTypesForm extends Component {
 
 	setAttributeNameError = ( id ) => {
 		const attributeNameErrors = this.state.attributeNameErrors;
-		if ( indexOf( attributeNameErrors, id ) === -1 ) {
+		if ( attributeNameErrors.indexOf( id ) === -1 ) {
 			attributeNameErrors.push( id );
 		}
 		this.setState( { attributeNameErrors } );
 	};
 
 	removeAttributeNameError = ( id ) => {
-		const attributeNameErrors = this.state.attributeNameErrors;
-		pull( attributeNameErrors, id );
+		const attributeNameErrors = this.state.attributeNameErrors.filter( ( e ) => e !== id );
 		this.setState( { attributeNameErrors } );
 	};
 
@@ -113,7 +111,7 @@ class ProductVariationTypesForm extends Component {
 		const { attributeNames, attributeNameErrors } = this.state;
 
 		const attributeName = ( attributeNames && attributeNames[ attribute.uid ] ) || attribute.name;
-		const duplicateNameIssue = indexOf( attributeNameErrors, attribute.uid ) !== -1;
+		const duplicateNameIssue = attributeNameErrors.indexOf( attribute.uid ) !== -1;
 		const classes = classNames( 'products__variation-types-form-fieldset', {
 			'is-error': duplicateNameIssue,
 		} );

@@ -13,7 +13,7 @@ const eslintBin = path.join( '.', 'node_modules', '.bin', 'eslint' );
 
 const branchName = child_process.execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().trim();
 const rev = child_process
-	.execSync( 'git merge-base ' + branchName + ' master' )
+	.execSync( 'git merge-base ' + branchName + ' trunk' )
 	.toString()
 	.trim();
 const files = child_process

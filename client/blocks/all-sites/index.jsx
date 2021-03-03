@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import AllSitesIcon from './all-sites-icon';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Count from 'calypso/components/count';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';

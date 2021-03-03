@@ -21,7 +21,7 @@ import { SCHEDULED, PUBLISHED } from './constants';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
-import { isEnabled } from 'calypso/config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Dialog } from '@automattic/components';
 import { deletePostShareAction } from 'calypso/state/sharing/publicize/publicize-actions/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

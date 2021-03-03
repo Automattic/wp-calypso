@@ -25,7 +25,9 @@ export function PostStatus( { translate, post, showAll, showIcon = true } ) {
 	}
 
 	const { sticky, status } = post;
-	let text, classModifier, icon;
+	let text;
+	let classModifier;
+	let icon;
 	if ( sticky ) {
 		text = translate( 'Sticky' );
 		classModifier = 'is-sticky';

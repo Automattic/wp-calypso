@@ -22,7 +22,7 @@ export const createSiteDomainObject = ( domain ) => {
 	if ( domain.transfer_start_date ) {
 		transferEndDate = new Date( domain.transfer_start_date );
 		transferEndDate.setDate( transferEndDate.getDate() + 7 ); // Add 7 days.
-		transferEndDate = transferEndDate.toIsoString();
+		transferEndDate = transferEndDate.toISOString();
 	}
 
 	return {

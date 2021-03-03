@@ -24,6 +24,7 @@ const FINISHED_RESPONSE = deepFreeze( {
 		status: 'finished',
 		rewindId: '',
 		context: 'main',
+		currentEntry: '',
 	},
 } );
 
@@ -38,6 +39,7 @@ describe( 'receiveRestoreProgress', () => {
 			status: 'finished',
 			rewindId: '',
 			context: 'main',
+			currentEntry: '',
 		} );
 		expect( action ).toEqual( expectedAction );
 	} );

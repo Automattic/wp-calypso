@@ -292,8 +292,8 @@ export class NoteList extends React.Component {
 
 		const emptyNoteList = 0 === notes.length;
 
-		var filter = Filters[ this.props.filterName ]();
-		var loadingIndicatorVisibility = { opacity: 0 };
+		const filter = Filters[ this.props.filterName ]();
+		const loadingIndicatorVisibility = { opacity: 0 };
 		if ( this.props.isLoading ) {
 			loadingIndicatorVisibility.opacity = 1;
 			if ( emptyNoteList ) {

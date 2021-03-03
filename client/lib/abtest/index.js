@@ -1,21 +1,26 @@
+/**************************************************************************************************/
+/* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
+/* See /client/components/experiment/readme.md for more info!
+/**************************************************************************************************/
+
 /**
  * External dependencies
  */
 import debugFactory from 'debug';
-import { every, includes, isArray, keys, reduce, some } from 'lodash';
+import { every, includes, keys, reduce, some } from 'lodash';
 import store from 'store';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import activeTests from 'lib/abtest/active-tests';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { bumpStat } from 'lib/analytics/mc';
-import user from 'lib/user';
-import wpcom from 'lib/wp';
-import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
-import { getLanguageSlugs } from 'lib/i18n-utils/utils';
+import activeTests from 'calypso/lib/abtest/active-tests';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import user from 'calypso/lib/user';
+import wpcom from 'calypso/lib/wp';
+import { ABTEST_LOCALSTORAGE_KEY } from 'calypso/lib/abtest/utility';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso:abtests' );
 
@@ -33,6 +38,8 @@ function ABTest( name, geoLocation ) {
  * @param {string} name - The name of the A/B test
  * @param {string} geoLocation - Location of current user
  * @returns {string} - The user's variation
+ *
+ * @deprecated Use ExPlat. See message at top of file.
  */
 export const abtest = ( name, geoLocation = false ) =>
 	new ABTest( name, geoLocation ).getVariationAndSetAsNeeded();
@@ -42,6 +49,8 @@ export const abtest = ( name, geoLocation = false ) =>
  *
  * @param {string} name - The name of the A/B test
  * @returns {string} - The user's variation or null if the user is not a participant
+ *
+ * @deprecated Use ExPlat. See message at top of file.
  */
 export const getABTestVariation = ( name ) => new ABTest( name ).getVariation();
 
@@ -124,7 +133,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 			// Allow any locales.
 			this.localeTargets = false;
 		} else if (
-			isArray( testConfig.localeTargets ) &&
+			Array.isArray( testConfig.localeTargets ) &&
 			every( testConfig.localeTargets, langSlugIsValid )
 		) {
 			// Allow specific locales.
@@ -139,7 +148,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 	this.localeExceptions = false;
 	if (
 		testConfig.localeExceptions &&
-		isArray( testConfig.localeExceptions ) &&
+		Array.isArray( testConfig.localeExceptions ) &&
 		every( testConfig.localeExceptions, langSlugIsValid )
 	) {
 		this.localeExceptions = testConfig.localeExceptions;
@@ -308,7 +317,8 @@ ABTest.prototype.getSavedVariation = function () {
 };
 
 ABTest.prototype.assignVariation = function () {
-	let variationName, randomAllocationAmount;
+	let variationName;
+	let randomAllocationAmount;
 	let sum = 0;
 
 	const userId = user()?.get()?.ID;

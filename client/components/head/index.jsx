@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import Favicons from './favicons';
 
 const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonce } ) => {
@@ -38,7 +38,7 @@ const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonc
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 
-			{ ! branchName || 'master' === branchName ? (
+			{ ! branchName || 'trunk' === branchName ? (
 				<link rel="manifest" href="/calypso/manifest.json" />
 			) : (
 				<link

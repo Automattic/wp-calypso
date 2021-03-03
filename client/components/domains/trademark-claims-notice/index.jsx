@@ -12,7 +12,11 @@ import { defer, get, isEmpty } from 'lodash';
  */
 import { Button, CompactCard } from '@automattic/components';
 import HeaderCake from 'calypso/components/header-cake';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import { checkDomainAvailability } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import TrademarkNotice from './trademark-notice';

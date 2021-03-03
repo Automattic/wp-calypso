@@ -75,6 +75,53 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementManageTitanAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementManageTitanAccount( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementManageTitanAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementNewTitanAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementNewTitanAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementTitanControlPanelRedirect(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanControlPanelRedirect( ':site', ':domain' ),
+		],
+		// Note that we don't have the commonHandlers here, as we want to avoid the nav bar etc
+		handlers: [ controller.emailManagementTitanControlPanelRedirect, makeLayout, clientRender ],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementForwarding( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
 			paths.emailManagementForwarding( ':site', ':domain' ),
 		],

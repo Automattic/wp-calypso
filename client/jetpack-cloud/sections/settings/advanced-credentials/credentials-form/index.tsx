@@ -58,7 +58,21 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	const handleFormChange: FormEventHandler< HTMLInputElement > = ( { currentTarget } ) => {
 		switch ( currentTarget.name ) {
 			case 'protocol':
-				onFormStateChange( { ...formState, protocol: currentTarget.value as 'ftp' | 'ssh' } );
+				onFormStateChange( {
+					...formState,
+					protocol: currentTarget.value as 'ftp' | 'ssh',
+					port: ( () => {
+						let port = parseInt( formState.port );
+
+						if ( formState.port === 22 && currentTarget.value === 'ftp' ) {
+							port = 21;
+						} else if ( formState.port === 21 && currentTarget.value === 'ssh' ) {
+							port = 22;
+						}
+
+						return port;
+					} )(),
+				} );
 				onModeChange( FormMode.Password );
 				break;
 			case 'host':
@@ -319,7 +333,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	return (
 		<div className="credentials-form">
 			<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
-			<p class="credentials-form__intro-text">{ getSubHeaderText() }</p>
+			<p className="credentials-form__intro-text">{ getSubHeaderText() }</p>
 			{ renderCredentialLinks() }
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">
@@ -342,8 +356,8 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					onChange={ handleFormChange }
 					disabled={ disabled }
 				>
-					<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
 					<option value="ftp">{ translate( 'FTP' ) }</option>
+					<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
 				</FormSelect>
 			</FormFieldset>
 
@@ -475,7 +489,9 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 
 			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
 
-			<FormFieldset className="credentials-form__buttons">{ children }</FormFieldset>
+			<FormFieldset className="credentials-form__buttons">
+				<div className="credentials-form__buttons-flex">{ children }</div>
+			</FormFieldset>
 		</div>
 	);
 };

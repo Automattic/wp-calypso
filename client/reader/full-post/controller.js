@@ -21,10 +21,10 @@ const scrollTopIfNoHash = () =>
 	} );
 
 export function blogPost( context, next ) {
-	const blogId = context.params.blog,
-		postId = context.params.post,
-		basePath = '/read/blogs/:blog_id/posts/:post_id',
-		fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
+	const blogId = context.params.blog;
+	const postId = context.params.post;
+	const basePath = '/read/blogs/:blog_id/posts/:post_id';
+	const fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
 	let referral;
 	if ( context.query.ref_blog && context.query.ref_post ) {
@@ -49,10 +49,10 @@ export function blogPost( context, next ) {
 }
 
 export function feedPost( context, next ) {
-	const feedId = context.params.feed,
-		postId = context.params.post,
-		basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
-		fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
+	const feedId = context.params.feed;
+	const postId = context.params.post;
+	const basePath = '/read/feeds/:feed_id/posts/:feed_item_id';
+	const fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 

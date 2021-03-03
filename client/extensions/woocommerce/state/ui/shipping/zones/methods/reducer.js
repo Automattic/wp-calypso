@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { find, findIndex, isEmpty, isEqual, isNil, omit, reject } from 'lodash';
+import { find, findIndex, isEmpty, isEqual, omit, reject } from 'lodash';
+import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
@@ -133,7 +134,7 @@ function handleZoneMethodClose( state ) {
 	if ( currentlyEditingChangedType ) {
 		const method = find( state[ bucket ], { id: currentlyEditingId } );
 		let originalId = currentlyEditingId;
-		if ( method && ! isNil( method._originalId ) ) {
+		if ( method && ! isNullish( method._originalId ) ) {
 			originalId = method._originalId;
 		}
 
@@ -148,7 +149,7 @@ function handleZoneMethodClose( state ) {
 				{
 					...currentlyEditingChanges,
 					// If the "Enabled" toggle hasn't been modified in the current changes, use the value from the old method
-					enabled: isNil( currentlyEditingChanges.enabled )
+					enabled: isNullish( currentlyEditingChanges.enabled )
 						? method && method.enabled
 						: currentlyEditingChanges.enabled,
 					id: nextCreateId( state ),

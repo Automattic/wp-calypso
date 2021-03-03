@@ -1,7 +1,13 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
@@ -152,13 +158,33 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 		wpcom
 			.undocumented()
 			.createConnection( keyringConnectionId, siteId, externalUserId, { shared: false } )
-			.then( ( connection ) =>
+			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_CREATE,
 					connection,
-				} )
-			)
-			.catch( ( error ) => dispatch( failCreateConnection( error ) ) );
+				} );
+				dispatch(
+					successNotice(
+						translate( 'The %(service)s account was successfully connected.', {
+							args: { service: connection.label },
+							context: 'Sharing: Publicize connection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
+			} )
+			.catch( ( error ) => {
+				dispatch( failCreateConnection( error ) );
+				dispatch(
+					errorNotice(
+						error.message ||
+							translate( 'An error occurred while connecting the account.', {
+								context: 'Sharing: Publicize connection confirmation',
+							} ),
+						{ id: 'publicize' }
+					)
+				);
+			} );
 }
 
 /**
@@ -176,18 +202,38 @@ export function updateSiteConnection( connection, attributes ) {
 		wpcom
 			.undocumented()
 			.updateConnection( connection.site_ID, connection.ID, attributes )
-			.then( ( response ) =>
+			.then( ( response ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_UPDATE,
 					connection: response,
-				} )
-			)
-			.catch( ( error ) =>
+				} );
+
+				dispatch(
+					successNotice(
+						translate( 'The %(service)s account was successfully updated.', {
+							args: { service: connection.label },
+							context: 'Sharing: Publicize connection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
+			} )
+			.catch( ( error ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 					error: { ...error, label: connection.label },
-				} )
-			);
+				} );
+
+				dispatch(
+					errorNotice(
+						translate( 'The %(service)s account was unable to be updated.', {
+							args: { service: error.label },
+							context: 'Sharing: Publicize reconnection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
+			} );
 }
 
 /**
@@ -204,18 +250,32 @@ export function deleteSiteConnection( connection ) {
 		wpcom
 			.undocumented()
 			.deleteSiteConnection( connection.site_ID, connection.ID )
-			.then( () => dispatch( deleteConnection( connection ) ) )
+			.then( () => {
+				dispatch( deleteConnection( connection ) );
+				dispatch( deleteConnectionSuccess( connection ) );
+			} )
 			.catch( ( error ) => {
 				if ( error && 404 === error.statusCode ) {
 					// If the connection cannot be found, we infer that it must have been deleted since the original
 					// connections were retrieved, so pass along the cached connection.
 					dispatch( deleteConnection( connection ) );
+					dispatch( deleteConnectionSuccess( connection ) );
 				}
 
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
 					error: { ...error, label: connection.label },
 				} );
+
+				dispatch(
+					errorNotice(
+						translate( 'The %(service)s account was unable to be disconnected.', {
+							args: { service: error.label },
+							context: 'Sharing: Publicize connection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
 			} );
 }
 
@@ -245,6 +305,22 @@ export function deleteConnection( connection ) {
 		type: PUBLICIZE_CONNECTION_DELETE,
 		connection,
 	};
+}
+
+/**
+ * Returns an action object to be used to render a connection deletion success notice.
+ *
+ * @param  {object} connection Connection that was deleted.
+ * @returns {object}            Action object
+ */
+function deleteConnectionSuccess( connection ) {
+	return successNotice(
+		translate( 'The %(service)s account was successfully disconnected.', {
+			args: { service: connection.label },
+			context: 'Sharing: Publicize connection confirmation',
+		} ),
+		{ id: 'publicize' }
+	);
 }
 
 /**

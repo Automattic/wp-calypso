@@ -7,22 +7,8 @@ import {
 	PaymentMethod,
 	PaymentProcessorProp,
 	ReactStandardAction,
-	TransactionStatus,
 	TransactionStatusManager,
 } from '../types';
-
-const defaultTransactionStatusManager: TransactionStatusManager = {
-	transactionStatus: TransactionStatus.NOT_STARTED,
-	previousTransactionStatus: TransactionStatus.NOT_STARTED,
-	transactionError: null,
-	transactionLastResponse: null,
-	transactionRedirectUrl: null,
-	resetTransaction: noop,
-	setTransactionError: noop,
-	setTransactionComplete: noop,
-	setTransactionPending: noop,
-	setTransactionRedirecting: noop,
-};
 
 interface CheckoutContext {
 	allPaymentMethods: PaymentMethod[];
@@ -34,7 +20,7 @@ interface CheckoutContext {
 	onEvent: ( action: ReactStandardAction ) => void;
 	formStatus: FormStatus;
 	setFormStatus: ( newStatus: FormStatus ) => void;
-	transactionStatusManager: TransactionStatusManager;
+	transactionStatusManager: TransactionStatusManager | null;
 	paymentProcessors: PaymentProcessorProp;
 }
 
@@ -48,7 +34,7 @@ const defaultCheckoutContext: CheckoutContext = {
 	onEvent: noop,
 	formStatus: FormStatus.LOADING,
 	setFormStatus: noop,
-	transactionStatusManager: defaultTransactionStatusManager,
+	transactionStatusManager: null,
 	paymentProcessors: {},
 };
 

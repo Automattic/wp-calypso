@@ -7,7 +7,7 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import ServerCredentialsForm from 'components/jetpack/server-credentials-form';
+import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
 
 const Form: FunctionComponent = () => {
 	const translate = useTranslate();

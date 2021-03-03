@@ -6,6 +6,7 @@ import { reject } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	USER_PROFILE_LINKS_ADD_DUPLICATE,
@@ -68,7 +69,10 @@ export const errors = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
-	items,
-	errors,
-} );
+export default withStorageKey(
+	'userProfileLinks',
+	combineReducers( {
+		items,
+		errors,
+	} )
+);

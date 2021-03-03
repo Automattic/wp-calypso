@@ -10,7 +10,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
@@ -19,6 +18,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { closeAccount } from 'calypso/state/account/actions';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 
 /**
  * Style dependencies
@@ -71,14 +71,14 @@ class AccountCloseConfirmDialog extends React.Component {
 	};
 
 	render() {
-		const { isVisible, currentUsername, translate } = this.props;
+		const { currentUsername, isVisible, onboardingUrl, translate } = this.props;
 		const isDeleteButtonDisabled = currentUsername && this.state.inputValue !== currentUsername;
 
 		const alternativeOptions = [
 			{
 				englishText: 'Start a new site',
 				text: translate( 'Start a new site' ),
-				href: config( 'signup_url' ),
+				href: onboardingUrl + '?ref=me-account-close',
 				supportLink:
 					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account',
 				supportPostId: 3991,
@@ -218,6 +218,7 @@ export default connect(
 
 		return {
 			currentUsername: user && user.username,
+			onboardingUrl: getOnboardingUrl( state ),
 		};
 	},
 	{

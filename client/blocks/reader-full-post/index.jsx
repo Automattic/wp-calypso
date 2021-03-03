@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, startsWith, pickBy } from 'lodash';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -36,10 +36,13 @@ import {
 import Comments from 'calypso/blocks/comments';
 import scrollTo from 'calypso/lib/scroll-to';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { getSiteName } from 'calypso/reader/get-helpers';
+import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'calypso/components/related-posts';
+import {
+	RelatedPostsFromSameSite,
+	RelatedPostsFromOtherSites,
+} from 'calypso/components/related-posts';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
@@ -63,7 +66,10 @@ import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
-import { setViewingFullPostKey, unsetViewingFullPostKey } from 'calypso/state/reader/viewing/actions';
+import {
+	setViewingFullPostKey,
+	unsetViewingFullPostKey,
+} from 'calypso/state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
 import {
 	requestMarkAsSeen,
@@ -73,6 +79,10 @@ import {
 } from 'calypso/state/reader/seen-posts/actions';
 import Gridicon from 'calypso/components/gridicon';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 
 /**
  * Style dependencies
@@ -85,6 +95,8 @@ export class FullPostView extends React.Component {
 		onClose: PropTypes.func.isRequired,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -249,7 +261,7 @@ export class FullPostView extends React.Component {
 	};
 
 	attemptToSendPageView = () => {
-		const { post, site } = this.props;
+		const { post, site, teams, isWPForTeamsItem } = this.props;
 
 		if (
 			post &&
@@ -267,7 +279,9 @@ export class FullPostView extends React.Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			config.isEnabled( 'reader/seen-posts' ) && this.markAsSeen();
+			if ( isEligibleForUnseen( { teams, isWPForTeamsItem } ) && canBeMarkedAsSeen( { post } ) ) {
+				this.markAsSeen();
+			}
 
 			recordTrackForPost(
 				'calypso_reader_article_opened',
@@ -356,7 +370,18 @@ export class FullPostView extends React.Component {
 	};
 
 	render() {
-		const { post, site, feed, referralPost, referral, blogId, feedId, postId } = this.props;
+		const {
+			post,
+			site,
+			feed,
+			referralPost,
+			referral,
+			blogId,
+			feedId,
+			postId,
+			teams,
+			isWPForTeamsItem,
+		} = this.props;
 
 		if ( post.is_error ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
@@ -405,6 +430,7 @@ export class FullPostView extends React.Component {
 				) }
 				{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 				{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
+				<QueryReaderTeams />
 				<BackButton onClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
@@ -455,7 +481,9 @@ export class FullPostView extends React.Component {
 								/>
 							) }
 
-							{ config.isEnabled( 'reader/seen-posts' ) && this.renderMarkAsSenButton() }
+							{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
+								canBeMarkedAsSeen( { post } ) &&
+								this.renderMarkAsSenButton() }
 						</div>
 					</div>
 					<Emojify>
@@ -568,6 +596,8 @@ export default connect(
 		const { site_ID: siteId, is_external: isExternal } = post;
 
 		const props = {
+			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+			teams: getReaderTeams( state ),
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,

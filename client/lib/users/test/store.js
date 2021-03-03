@@ -14,13 +14,14 @@ import { findIndex, isUndefined, some } from 'lodash';
 import actions from './fixtures/actions';
 import site from './fixtures/site';
 import usersData from './fixtures/users';
+import Dispatcher from 'calypso/dispatcher';
+import UsersStore from 'calypso/lib/users/store';
 
 describe( 'Users Store', () => {
-	let Dispatcher, UsersStore, siteId, options;
+	let siteId;
+	let options;
 
 	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
-		UsersStore = require( 'lib/users/store' );
 		siteId = site.ID;
 		options = { siteId };
 	} );
@@ -43,9 +44,8 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'Should return a user object when the user exists', () => {
-			let user;
 			Dispatcher.handleServerAction( actions.fetched );
-			user = UsersStore.getUserByLogin( siteId, usersData.users[ 0 ].login );
+			const user = UsersStore.getUserByLogin( siteId, usersData.users[ 0 ].login );
 
 			assert.isObject( user );
 			assert.equal( user.ID, usersData.users[ 0 ].ID );
@@ -74,16 +74,14 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'Re-fetching a list of users when a users was deleted from the site should result in a smaller array', () => {
-			let lessUsers;
 			Dispatcher.handleServerAction( actions.fetchAgainUserDeleted );
-			lessUsers = UsersStore.getUsers( options );
+			const lessUsers = UsersStore.getUsers( options );
 			assert.isBelow( lessUsers.length, users.length );
 		} );
 
 		test( 'Fetching more users should add to the array of objects', () => {
-			let moreUsers;
 			Dispatcher.handleServerAction( actions.fetchMoreUsers );
-			moreUsers = UsersStore.getUsers( options );
+			const moreUsers = UsersStore.getUsers( options );
 			assert.isAbove( moreUsers.length, users.length );
 		} );
 	} );
@@ -153,34 +151,32 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'Should update a specific user with new attributes', () => {
-			const users = UsersStore.getUsers( options ),
-				testUserIndex = findIndex( users, ( user ) => user.name === 'Test One' );
-			let usersAgain;
-
+			const users = UsersStore.getUsers( options );
+			const testUserIndex = findIndex( users, ( user ) => user.name === 'Test One' );
 			Dispatcher.handleServerAction( actions.updateSingleUser );
-			usersAgain = UsersStore.getUsers( options );
+			const usersAgain = UsersStore.getUsers( options );
 			assert.equal( usersAgain[ testUserIndex ].name, 'Test Won' );
 		} );
 
 		test( 'Error should restore the updated user', () => {
-			const userId = usersData.users[ 0 ].ID,
-				user = UsersStore.getUser( siteId, userId );
-			let userAgain, userRestored;
+			const userId = usersData.users[ 0 ].ID;
+			const user = UsersStore.getUser( siteId, userId );
 
 			assert.equal( user.name, 'Test One' );
 
 			Dispatcher.handleServerAction( actions.updateSingleUser );
-			userAgain = UsersStore.getUser( siteId, userId );
+			const userAgain = UsersStore.getUser( siteId, userId );
 			assert.equal( userAgain.name, 'Test Won' );
 
 			Dispatcher.handleServerAction( actions.updateUserError );
-			userRestored = UsersStore.getUser( siteId, userId );
+			const userRestored = UsersStore.getUser( siteId, userId );
 			assert.equal( userRestored.name, 'Test One' );
 		} );
 	} );
 
 	describe( 'Delete a user', () => {
-		let userId, userAgain;
+		let userId;
+		let userAgain;
 
 		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.fetched );
@@ -194,22 +190,19 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'Error should restore the deleted user', () => {
-			let userRestored;
-
 			Dispatcher.handleServerAction( actions.deleteUser );
 			userAgain = UsersStore.getUser( siteId, userId );
 			assert.equal( userAgain, null );
 
 			Dispatcher.handleServerAction( actions.deleteUserError );
-			userRestored = UsersStore.getUser( siteId, userId );
+			const userRestored = UsersStore.getUser( siteId, userId );
 			assert.equal( userRestored.name, 'Test One' );
 		} );
 
 		test( 'There should be no undefined objects in user array after deleting a user', () => {
-			let users, someUndefined;
 			Dispatcher.handleServerAction( actions.deleteUser );
-			users = UsersStore.getUsers( options );
-			someUndefined = some( users, isUndefined );
+			const users = UsersStore.getUsers( options );
+			const someUndefined = some( users, isUndefined );
 			assert.isFalse( someUndefined );
 		} );
 	} );
@@ -220,10 +213,9 @@ describe( 'Users Store', () => {
 		} );
 		test( 'Fetching a single user should add to the store', () => {
 			const users = UsersStore.getUsers( options );
-			let usersAgain;
 			assert.lengthOf( users, 5 );
 			Dispatcher.handleServerAction( actions.receiveSingleUser );
-			usersAgain = UsersStore.getUsers( options );
+			const usersAgain = UsersStore.getUsers( options );
 			assert.lengthOf( usersAgain, 6 );
 		} );
 	} );

@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import StoreAddress from 'woocommerce/components/store-address';
 import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
 import { fetchCurrencies } from 'woocommerce/state/sites/data/currencies/actions';

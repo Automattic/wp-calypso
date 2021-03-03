@@ -1,8 +1,8 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * me
@@ -10,8 +10,8 @@ var assert = require( 'assert' );
 
 describe( 'wpcom.users', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var users = wpcom.users();
+	const wpcom = util.wpcom();
+	const users = wpcom.users();
 
 	describe( 'wpcom.users.suggets', function () {
 		it( 'should get a list of possible users to suggest.', () => {

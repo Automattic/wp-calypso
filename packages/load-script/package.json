@@ -4,6 +4,7 @@
 	"description": "Async Script Loader.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"keywords": [
 		"wordpress"
 	],
@@ -23,12 +24,12 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"debug": "^4.0.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	}
 }

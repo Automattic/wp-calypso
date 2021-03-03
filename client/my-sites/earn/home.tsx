@@ -50,13 +50,6 @@ import {
  * Image dependencies
  */
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
-import adsImage from 'calypso/assets/images/earn/ads.svg';
-import recurringImage from 'calypso/assets/images/earn/recurring.svg';
-import donationsImage from 'calypso/assets/images/earn/donations.svg';
-import referralImage from 'calypso/assets/images/earn/referral.svg';
-import simplePaymentsImage from 'calypso/assets/images/earn/simple-payments.svg';
-import premiumContentImage from 'calypso/assets/images/earn/premium-content.svg';
-import paidNewsletterImage from 'calypso/assets/images/earn/newsletters.svg';
 
 /**
  * Style dependencies
@@ -171,9 +164,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			image: {
-				path: simplePaymentsImage,
-			},
+			icon: 'credit-card',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -228,10 +219,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
-			image: {
-				path: recurringImage,
-			},
+			icon: 'money',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -279,10 +267,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
-			image: {
-				path: donationsImage,
-			},
+			icon: 'heart-outline',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -346,10 +331,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
-			image: {
-				path: premiumContentImage,
-			},
+			icon: 'bookmark-outline',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -398,10 +380,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
-			image: {
-				path: paidNewsletterImage,
-			},
+			icon: 'mail',
 			actions: {
 				cta,
 			},
@@ -450,9 +429,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							},
 						}
 				  ),
-			image: {
-				path: referralImage,
-			},
+			icon: 'user-add',
 			actions: {
 				cta,
 			},
@@ -505,9 +482,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			image: {
-				path: adsImage,
-			},
+			icon: 'speaker',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -522,7 +497,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			align: 'right',
 		},
 		body: translate(
-			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
+			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
+			{
+				components: {
+					a: (
+						<a
+							href="https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
 		),
 	} );
 

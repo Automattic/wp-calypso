@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { userCan } from 'lib/site/utils';
+import { userCan } from 'calypso/lib/site/utils';
 import {
 	isBusiness,
 	isPremium,
@@ -9,9 +9,9 @@ import {
 	isSecurityDaily,
 	isSecurityRealTime,
 	isComplete,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 
-export function hasWordadsPlan( site ) {
+export function hasWordAdsPlan( site ) {
 	return (
 		isPremium( site.plan ) ||
 		isBusiness( site.plan ) ||
@@ -20,6 +20,16 @@ export function hasWordadsPlan( site ) {
 		isSecurityRealTime( site.plan ) ||
 		isComplete( site.plan )
 	);
+}
+
+/**
+ * Returns true if the site is approved for WordAds.
+ *
+ * @param site Site object
+ * @returns {boolean} true if site is approved for WordAds.
+ */
+export function isWordAdsApproved( site ) {
+	return !! site.options.wordads;
 }
 
 /**
@@ -34,7 +44,7 @@ export function canAccessWordads( site ) {
 			return true;
 		}
 
-		const jetpackPremium = site.jetpack && hasWordadsPlan( site );
+		const jetpackPremium = site.jetpack && hasWordAdsPlan( site );
 		return (
 			site.options &&
 			( site.options.wordads || jetpackPremium ) &&
@@ -53,15 +63,15 @@ export function canAccessAds( site ) {
 }
 
 export function isWordadsInstantActivationEligible( site ) {
-	return hasWordadsPlan( site ) && userCan( 'activate_wordads', site );
+	return hasWordAdsPlan( site ) && userCan( 'activate_wordads', site );
 }
 
 export function isWordadsInstantActivationEligibleButNotOwner( site ) {
-	return hasWordadsPlan( site ) && ! userCan( 'activate_wordads', site );
+	return hasWordAdsPlan( site ) && ! userCan( 'activate_wordads', site );
 }
 
 export function canUpgradeToUseWordAds( site ) {
-	if ( site && ! site.options.wordads && ! hasWordadsPlan( site ) ) {
+	if ( site && ! site.options.wordads && ! hasWordAdsPlan( site ) ) {
 		return true;
 	}
 

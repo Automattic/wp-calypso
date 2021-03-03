@@ -11,9 +11,9 @@ import { isString } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import PriceInput from 'woocommerce/components/price-input';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { setShippingCost } from 'woocommerce/state/ui/shipping/zones/methods/flat-rate/actions';

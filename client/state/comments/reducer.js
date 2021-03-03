@@ -13,7 +13,6 @@ import {
 	get,
 	zipObject,
 	includes,
-	isArray,
 	values,
 	omit,
 	startsWith,
@@ -23,6 +22,7 @@ import {
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
@@ -40,12 +40,7 @@ import {
 	COMMENTS_SET_ACTIVE_REPLY,
 } from 'calypso/state/action-types';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
-import {
-	combineReducers,
-	keyedReducer,
-	withoutPersistence,
-	withStorageKey,
-} from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
 import {
 	PLACEHOLDER_STATE,
 	NUMBER_OF_COMMENTS_PER_FETCH,
@@ -234,7 +229,7 @@ const isValidExpansionsAction = ( action ) => {
 	return (
 		siteId &&
 		postId &&
-		isArray( commentIds ) &&
+		Array.isArray( commentIds ) &&
 		includes( values( POST_COMMENT_DISPLAY_TYPES ), displayType )
 	);
 };

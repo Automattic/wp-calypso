@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getMethodSummary } from './shipping-zone/shipping-methods/utils';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 

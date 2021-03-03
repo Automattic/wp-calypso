@@ -176,28 +176,29 @@ class Global_Styles {
 					'type'    => 'literal',
 					'default' => array(
 						array(
-							'label'    => 'Playfair Display & Roboto',
+							'label'    => 'Playfair Display / Fira Sans',
 							'headings' => 'Playfair Display',
-							'base'     => 'Roboto',
-							'preview'  => 'PLAY_ROBOTO', // See font-pairings-panel-previews.js.
+							'base'     => 'Fira Sans',
 						),
 						array(
-							'label'    => 'Rubik & Work Sans',
-							'headings' => 'Rubik',
-							'base'     => 'Work Sans',
-							'preview'  => 'RUBIK_WORK', // See font-pairings-panel-previews.js.
+							'label'    => 'Cabin / Raleway',
+							'headings' => 'Cabin',
+							'base'     => 'Raleway',
 						),
 						array(
-							'label'    => 'System Font & Libre Baskerville',
-							'headings' => self::SYSTEM_FONT,
-							'base'     => 'Libre Baskerville',
-							'preview'  => 'SYSTEM_BASKER', // See font-pairings-panel-previews.js.
+							'label'    => 'Chivo / Open Sans',
+							'headings' => 'Chivo',
+							'base'     => 'Open Sans',
 						),
 						array(
-							'label'    => 'Space Mono & Lora',
+							'label'    => 'Arvo / Montserrat',
+							'headings' => 'Arvo',
+							'base'     => 'Montserrat',
+						),
+						array(
+							'label'    => 'Space Mono / Roboto',
 							'headings' => 'Space Mono',
-							'base'     => 'Lora',
-							'preview'  => 'SPACE_LORA', // See font-pairings-panel-previews.js.
+							'base'     => 'Roboto',
 						),
 					),
 				),

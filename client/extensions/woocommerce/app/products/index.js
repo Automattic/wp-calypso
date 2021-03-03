@@ -23,13 +23,14 @@ import {
 	areProductsLoaded,
 	areProductsLoading,
 } from 'woocommerce/state/sites/products/selectors';
-import Main from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import Main from 'calypso/components/main';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
-import SectionNav from 'components/section-nav';
-import Search from 'components/search';
+import SectionNav from 'calypso/components/section-nav';
+import Search from 'calypso/components/search';
+import StoreDeprecatedNotice from '../../components/store-deprecated-notice';
 
 class Products extends Component {
 	static propTypes = {
@@ -126,6 +127,7 @@ class Products extends Component {
 						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
+				{ <StoreDeprecatedNotice /> }
 				{ this.renderSectionNav() }
 				{ productsDisplay }
 			</Main>

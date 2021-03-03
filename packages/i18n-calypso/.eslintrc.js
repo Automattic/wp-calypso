@@ -5,6 +5,7 @@ module.exports = {
 			rules: {
 				'wpcalypso/i18n-named-placeholders': 'off',
 				'wpcalypso/i18n-no-variables': 'off',
+				'no-restricted-imports': 'off',
 			},
 		},
 	],

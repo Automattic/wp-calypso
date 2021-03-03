@@ -75,7 +75,8 @@ const ReaderAvatar = ( {
 
 	const hasBothIcons = hasSiteIcon && hasAvatar;
 
-	let siteIconSize, gravatarSize;
+	let siteIconSize;
+	let gravatarSize;
 	if ( isCompact ) {
 		siteIconSize = 32;
 		gravatarSize = hasBothIcons ? 24 : 32;

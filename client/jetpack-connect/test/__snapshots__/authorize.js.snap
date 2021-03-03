@@ -77,14 +77,14 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           <Connect(Localized(JetpackConnectDisclaimer))
             siteName="Example Blog"
           />
-          <Button
+          <ForwardRef(Button)
             disabled={false}
             onClick={[Function]}
             primary={true}
             type="button"
           >
             Approve
-          </Button>
+          </ForwardRef(Button)>
         </LoggedOutFormFooter>
       </Card>
       <LoggedOutFormLinks>

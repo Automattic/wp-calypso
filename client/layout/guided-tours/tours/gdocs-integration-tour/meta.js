@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { and } from 'layout/guided-tours/utils';
-import { hasUserPastedFromGoogleDocs } from 'state/guided-tours/contexts';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { and } from 'calypso/layout/guided-tours/utils';
+import { hasUserPastedFromGoogleDocs } from 'calypso/state/guided-tours/contexts';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 export default {
 	name: 'gdocsIntegrationTour',

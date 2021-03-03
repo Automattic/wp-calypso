@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DatePicker from 'components/date-picker';
-import { withLocalizedMoment } from 'components/localized-moment';
+import DatePicker from 'calypso/components/date-picker';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import FormField from './form-field';
 
 const DateField = ( props ) => {

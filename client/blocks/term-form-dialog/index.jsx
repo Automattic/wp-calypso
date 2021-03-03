@@ -269,24 +269,26 @@ class TermFormDialog extends Component {
 
 		return (
 			<FormFieldset>
-				<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange }>
-					<span>
-						{ translate( 'Top level %(term)s', {
-							args: { term: labels.singular_name },
-							context: 'Terms: New term being created is top level',
-							comment:
-								'term is the singular_name label of a hierarchical taxonomy, e.g. "Category"',
-						} ) }
-					</span>
-					{ isTopLevel && (
-						<span className="term-form-dialog__top-level-description">
-							{ translate( 'Disable to select a %(parentTerm)s', {
-								args: { parentTerm: labels.parent_item },
-								comment:
-									'parentTerm is the parent_item label of a hierarchical taxonomy, e.g. "Parent Category"',
-							} ) }
-						</span>
-					) }
+				<FormToggle
+					checked={ isTopLevel }
+					onChange={ this.onTopLevelChange }
+					help={
+						isTopLevel && (
+							<span className="term-form-dialog__top-level-description">
+								{ translate( 'Disable to select a %(parentTerm)s', {
+									args: { parentTerm: labels.parent_item },
+									comment:
+										'parentTerm is the parent_item label of a hierarchical taxonomy, e.g. "Parent Category"',
+								} ) }
+							</span>
+						)
+					}
+				>
+					{ translate( 'Top level %(term)s', {
+						args: { term: labels.singular_name },
+						context: 'Terms: New term being created is top level',
+						comment: 'term is the singular_name label of a hierarchical taxonomy, e.g. "Category"',
+					} ) }
 				</FormToggle>
 				{ ! isTopLevel && (
 					<div className="term-form-dialog__parent-tree-selector">

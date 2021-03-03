@@ -4,7 +4,7 @@
 import React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import { useInterval } from 'lib/interval/use-interval';
+import { useInterval } from 'calypso/lib/interval/use-interval';
 
 /**
  * Style dependencies

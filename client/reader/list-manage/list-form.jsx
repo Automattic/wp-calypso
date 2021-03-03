@@ -28,10 +28,8 @@ const INITIAL_CREATE_FORM_STATE = {
 	slug: '',
 };
 
-export default function ListForm( { isCreateForm, isSubmissionDisabled, list, onSubmit } ) {
+export default function ListForm( { isCreateForm, isSubmissionDisabled, list = {}, onSubmit } ) {
 	const translate = useTranslate();
-	const isNameValid = typeof list.title === 'string' && list.title.length > 0;
-	const isSlugValid = isCreateForm || ( typeof list.slug === 'string' && list.slug.length > 0 );
 	const [ formList, updateFormList ] = React.useState(
 		isCreateForm ? INITIAL_CREATE_FORM_STATE : { ...INITIAL_UPDATE_FORM_STATE, ...list }
 	);
@@ -42,6 +40,10 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list, on
 		}
 		updateFormList( { ...formList, ...update } );
 	};
+
+	const isNameValid = typeof formList.title === 'string' && formList.title.length > 0;
+	const isSlugValid =
+		isCreateForm || ( typeof formList.slug === 'string' && formList.slug.length > 0 );
 
 	return (
 		<Card>
@@ -60,17 +62,17 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list, on
 
 			{ ! isCreateForm && (
 				<FormFieldset>
-					<FormLabel htmlFor="list-slug">{ translate( 'Slug (Required)' ) }</FormLabel>
+					<FormLabel htmlFor="list-slug">{ translate( 'Slug' ) }</FormLabel>
 					<FormTextInput
 						data-key="slug"
+						// NOTE: Slug modification currently doesn't work in the API.
+						disabled
 						id="list-slug"
-						isValid={ isSlugValid }
 						name="list-slug"
-						onChange={ onChange }
 						value={ formList.slug }
 					/>
 					<FormSettingExplanation>
-						{ translate( 'The slug for the list. This is used to build the URL to the list.' ) }
+						{ translate( 'This is used to build the URL to the list.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 			) }

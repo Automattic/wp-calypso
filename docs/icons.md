@@ -6,7 +6,7 @@ This document will cover how to use icons in Calypso, as well as how to create i
 
 ![Gridicons Preview](https://dotcombrand.files.wordpress.com/2018/05/gridicons-preview.png)
 
-[Gridicons](https://github.com/automattic/gridicons) is the icon set designed for Calypso. There's a gallery with all the available icons at https://automattic.github.io/gridicons/.
+[Gridicons](https://github.com/automattic/gridicons) is the icon set designed for Calypso. There's a gallery with all the available icons at <https://automattic.github.io/gridicons/>.
 
 Gridicons are born with a 24px base grid. Strokes are 2px thick and icons are solid. If an icon is hollow, it generally means the "inactive" version of that icon. For example an outline bookmark icon becomes solid once clicked.
 
@@ -35,9 +35,9 @@ render() {
 
 Though Gridicons are vector graphics and theoretically infinitely scalable, in practice we have to work within the limitations of antialiasing so icons stay crisp. Since Gridicons are designed for 24px, they look perfect at that size. That's why by default, this is the size you should be using.
 
-If you need to use icons that are *larger* than 24px, other perfect sizes are 2x duplicates, such as 48px. You can use 36px as well but this will require the use of an additional `offset-adjust` feature we're working on at the moment.
+If you need to use icons that are _larger_ than 24px, other perfect sizes are 2x duplicates, such as 48px. You can use 36px as well but this will require the use of an additional `offset-adjust` feature we're working on at the moment.
 
-Same thing if you need *smaller* than 24px icons. At this size, gridicons will look blurry, so you should **avoid this if at all possible**. 18px icons will not do for main navigation, for example.
+Same thing if you need _smaller_ than 24px icons. At this size, gridicons will look blurry, so you should **avoid this if at all possible**. 18px icons will not do for main navigation, for example.
 
 ### The `offset-adjust` Hack
 
@@ -49,7 +49,7 @@ Some icons at 18 and 36px size needs an extra feature in order to look crisp. Th
 }
 ```
 
-What this basically does is nudge the pixels up and to the left by half a pixel. In the case of 36px icons (1.5 * 24) what it means is that icons can be **perfectly crisp**. In the case of 18px icons, it means icons will be **crisper**, though not perfect. Just trust me on the math.
+What this basically does is nudge the pixels up and to the left by half a pixel. In the case of 36px icons (1.5 \* 24) what it means is that icons can be **perfectly crisp**. In the case of 18px icons, it means icons will be **crisper**, though not perfect. Just trust me on the math.
 
 The tricky part is that not all icons need this `offset-adjust` hack, only some icons do. A list of icons that need adjustment is kept in the `gridicons` package and used by the Gridicon component at run-time, to determine which icons to adjust and when to do so.
 
@@ -86,7 +86,6 @@ render() {
 - `icon`: String - the icon name.
 - `size`: Number - (default: 24) set the size of the icon.
 - `onClick`: Function - (optional) if you need a click callback.
-
 
 ## App icons
 

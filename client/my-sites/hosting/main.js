@@ -14,6 +14,8 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
@@ -159,18 +161,18 @@ class Hosting extends Component {
 
 			return (
 				<WrapperComponent>
-					<div className="hosting__layout">
-						<div className="hosting__layout-col">
+					<Layout className="hosting__layout">
+						<Column type="main" className="hosting__main-layout-col">
 							<SFTPCard disabled={ isDisabled } />
 							<PhpMyAdminCard disabled={ isDisabled } />
 							<PhpVersionCard disabled={ isDisabled } />
 							<MiscellaneousCard disabled={ isDisabled } />
-						</div>
-						<div className="hosting__layout-col">
+						</Column>
+						<Column type="sidebar">
 							<SiteBackupCard disabled={ isDisabled } />
 							<SupportCard />
-						</div>
-					</div>
+						</Column>
+					</Layout>
 				</WrapperComponent>
 			);
 		};

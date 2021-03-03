@@ -34,7 +34,8 @@ export const StatsPostLikes = ( props ) => {
 		'is-loading': isLoading,
 	};
 
-	let likesListLabel, likesTitleLabel;
+	let likesListLabel;
+	let likesTitleLabel;
 
 	if ( postType === 'page' ) {
 		likesTitleLabel = translate( 'Page Likes' );

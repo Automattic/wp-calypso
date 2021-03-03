@@ -296,10 +296,10 @@ export default class QueryManager {
 			this.data.items
 		);
 
-		let isModified = nextItems !== this.data.items,
-			nextQueries = this.data.queries,
-			isNewlyReceivedQueryKey = false,
-			receivedQueryKey;
+		let isModified = nextItems !== this.data.items;
+		let nextQueries = this.data.queries;
+		let isNewlyReceivedQueryKey = false;
+		let receivedQueryKey;
 
 		// Skip if no items have been updated, added, or removed. If query
 		// specified with received items, we may need to update queries

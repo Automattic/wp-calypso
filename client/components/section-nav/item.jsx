@@ -52,7 +52,8 @@ class NavItem extends PureComponent {
 		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
 		const itemClassName = classNames( this.props.className, itemClasses );
 
-		let target, onClick;
+		let target;
+		let onClick;
 
 		if ( this.props.isExternalLink ) {
 			target = '_blank';

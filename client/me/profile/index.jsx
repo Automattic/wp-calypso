@@ -2,10 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
-import formBase from 'calypso/me/form-base';
+import withFormBase from 'calypso/me/form-base/with-form-base';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -21,7 +19,6 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SectionHeader from 'calypso/components/section-header';
@@ -37,33 +34,17 @@ import FormattedHeader from 'calypso/components/formatted-header';
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:me:profile' );
-
-/* eslint-disable react/prefer-es6-class */
-const Profile = createReactClass( {
-	displayName: 'Profile',
-
-	mixins: [ formBase, observe( 'userSettings' ) ],
-
-	componentDidMount() {
-		debug( this.displayName + ' component is mounted.' );
-	},
-
-	componentWillUnmount() {
-		debug( this.displayName + ' component is unmounting.' );
-	},
-
+class Profile extends React.Component {
 	getClickHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	}
 
 	getFocusHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	},
+	}
 
 	render() {
-		const gravatarProfileLink =
-			'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
+		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
 
 		return (
 			<Main className="profile is-wide-layout">
@@ -78,73 +59,7 @@ const Profile = createReactClass( {
 
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
-					<EditGravatar />
-
-					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
-						<FormFieldset>
-							<FormLabel htmlFor="first_name">{ this.props.translate( 'First name' ) }</FormLabel>
-							<FormTextInput
-								disabled={ this.getDisabledState() }
-								id="first_name"
-								name="first_name"
-								onChange={ this.updateSetting }
-								onFocus={ this.getFocusHandler( 'First Name Field' ) }
-								value={ this.getSetting( 'first_name' ) }
-							/>
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last name' ) }</FormLabel>
-							<FormTextInput
-								disabled={ this.getDisabledState() }
-								id="last_name"
-								name="last_name"
-								onChange={ this.updateSetting }
-								onFocus={ this.getFocusHandler( 'Last Name Field' ) }
-								value={ this.getSetting( 'last_name' ) }
-							/>
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLabel htmlFor="display_name">
-								{ this.props.translate( 'Public display name' ) }
-							</FormLabel>
-							<FormTextInput
-								disabled={ this.getDisabledState() }
-								id="display_name"
-								name="display_name"
-								onChange={ this.updateSetting }
-								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
-								value={ this.getSetting( 'display_name' ) }
-							/>
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLabel htmlFor="description">{ this.props.translate( 'About me' ) }</FormLabel>
-							<FormTextarea
-								disabled={ this.getDisabledState() }
-								id="description"
-								name="description"
-								onChange={ this.updateSetting }
-								onFocus={ this.getFocusHandler( 'About Me Field' ) }
-								value={ this.getSetting( 'description' ) }
-							/>
-						</FormFieldset>
-
-						<p>
-							<FormButton
-								disabled={
-									! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState()
-								}
-								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
-							>
-								{ this.state.submittingForm
-									? this.props.translate( 'Saving…' )
-									: this.props.translate( 'Save profile details' ) }
-							</FormButton>
-						</p>
-					</form>
-					<p className="profile__info-text">
+					<p>
 						{ this.props.translate(
 							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
 								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
@@ -170,14 +85,82 @@ const Profile = createReactClass( {
 							}
 						) }
 					</p>
+
+					<EditGravatar />
+
+					<form onSubmit={ this.props.submitForm } onChange={ this.props.markChanged }>
+						<FormFieldset>
+							<FormLabel htmlFor="first_name">{ this.props.translate( 'First name' ) }</FormLabel>
+							<FormTextInput
+								disabled={ this.props.getDisabledState() }
+								id="first_name"
+								name="first_name"
+								onChange={ this.props.updateSetting }
+								onFocus={ this.getFocusHandler( 'First Name Field' ) }
+								value={ this.props.getSetting( 'first_name' ) }
+							/>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="last_name">{ this.props.translate( 'Last name' ) }</FormLabel>
+							<FormTextInput
+								disabled={ this.props.getDisabledState() }
+								id="last_name"
+								name="last_name"
+								onChange={ this.props.updateSetting }
+								onFocus={ this.getFocusHandler( 'Last Name Field' ) }
+								value={ this.props.getSetting( 'last_name' ) }
+							/>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="display_name">
+								{ this.props.translate( 'Public display name' ) }
+							</FormLabel>
+							<FormTextInput
+								disabled={ this.props.getDisabledState() }
+								id="display_name"
+								name="display_name"
+								onChange={ this.props.updateSetting }
+								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
+								value={ this.props.getSetting( 'display_name' ) }
+							/>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="description">{ this.props.translate( 'About me' ) }</FormLabel>
+							<FormTextarea
+								disabled={ this.props.getDisabledState() }
+								id="description"
+								name="description"
+								onChange={ this.props.updateSetting }
+								onFocus={ this.getFocusHandler( 'About Me Field' ) }
+								value={ this.props.getSetting( 'description' ) }
+							/>
+						</FormFieldset>
+
+						<p className="profile__submit-button-wrapper">
+							<FormButton
+								disabled={ ! this.props.hasUnsavedUserSettings || this.props.getDisabledState() }
+								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
+							>
+								{ this.props.getDisabledState()
+									? this.props.translate( 'Saving…' )
+									: this.props.translate( 'Save profile details' ) }
+							</FormButton>
+						</p>
+					</form>
 				</Card>
 
 				<ProfileLinks />
 			</Main>
 		);
-	},
-} );
+	}
+}
 
-const connectComponent = connect( null, { recordGoogleEvent } );
-
-export default flowRight( connectComponent, protectForm, localize )( Profile );
+export default compose(
+	connect( null, { recordGoogleEvent } ),
+	protectForm,
+	localize,
+	withFormBase
+)( Profile );

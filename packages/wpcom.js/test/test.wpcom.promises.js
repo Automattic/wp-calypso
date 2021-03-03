@@ -1,7 +1,7 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
+const util = require( './util' );
 
 function trueAssertion( done ) {
 	return function () {
@@ -16,7 +16,7 @@ function falseAssertion( done ) {
 }
 
 describe( 'wpcom', function () {
-	var wpcom = util.wpcomPublic();
+	const wpcom = util.wpcomPublic();
 
 	describe( 'wpcom.promises', function () {
 		// eslint-disable-next-line jest/expect-expect

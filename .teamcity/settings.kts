@@ -8,10 +8,13 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -35,25 +38,33 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 'Debug' option is available in the context menu for the task.
 */
 
-version = "2020.1"
+version = "2020.2"
 
 project {
 
 	vcsRoot(WpCalypso)
-
+	subProject(WpDesktop)
+	subProject(WPComPlugins)
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
+	buildType(CheckCodeStyleBranch)
+	buildType(BuildDockerImage)
+	buildType(RunCalypsoE2eDesktopTests)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		text("env.E2E_WORKERS", "7", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
+		text("E2E_WORKERS", "16", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
 		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
-		password("env.CONFIG_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", label = "Config key", description = "Key used to decrypt config")
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		param("teamcity.git.fetchAllHeads", "true")
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
-		text("docker_image", "registry.a8c.com/calypso/ci:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+		text("docker_image", "registry.a8c.com/calypso/base:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
+		text("docker_image_e2e", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker e2e image", description = "Docker image used to run e2e tests", allowEmpty = true)
+		text("calypso.run_full_eslint", "false", label = "Run full eslint", description = "True will lint all files, empty/false will lint only changed files", allowEmpty = true)
+		text("env.DOCKER_BUILDKIT", "1", label = "Enable Docker BuildKit", description = "Enables BuildKit (faster image generation). Values 0 or 1", allowEmpty = true)
+		password("CONFIG_E2E_ENCRYPTION_KEY", "credentialsJSON:16d15e36-f0f2-4182-8477-8d8072d0b5ec", display = ParameterDisplay.HIDDEN)
+		text("env.SKIP_TSC", "true", label = "Skip TS type generation", description = "Skips running `tsc` on yarn install", allowEmpty = true)
 	}
 
 	features {
@@ -79,38 +90,85 @@ object BuildBaseImages : BuildType({
 
 	params {
 		param("build.prefix", "1.0")
+		param("image_tag", "latest")
 	}
 
 	vcs {
 		root(WpCalypso)
-
 		cleanCheckout = true
 	}
 
 	steps {
-		script {
-			name = "Build docker images"
-			scriptContent = """
-				VERSION="%build.number%"
-				BUILDER_IMAGE_NAME="registry.a8c.com/calypso/base"
-				CI_IMAGE_NAME="registry.a8c.com/calypso/ci"
-				BUILDER_IMAGE="${'$'}{BUILDER_IMAGE_NAME}:${'$'}{VERSION}"
-				CI_IMAGE="${'$'}{CI_IMAGE_NAME}:${'$'}{VERSION}"
-
-				docker build -f Dockerfile.base --no-cache --target builder -t "${'$'}BUILDER_IMAGE" .
-				docker build -f Dockerfile.base --target ci -t "${'$'}CI_IMAGE" .
-
-				docker tag "${'$'}BUILDER_IMAGE" "${'$'}{BUILDER_IMAGE_NAME}:latest"
-				docker tag "${'$'}CI_IMAGE" "${'$'}{CI_IMAGE_NAME}:latest"
-
-				docker push "${'$'}CI_IMAGE"
-				docker push "${'$'}{CI_IMAGE_NAME}:latest"
-
-				docker push "${'$'}BUILDER_IMAGE"
-				docker push "${'$'}{BUILDER_IMAGE_NAME}:latest"
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerRunParameters = "-u %env.UID%"
+		dockerCommand {
+			name = "Build base image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/base:%image_tag%
+					registry.a8c.com/calypso/base:%build.number%
+				""".trimIndent()
+				commandArgs = "--no-cache --target base"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI Desktop image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-desktop:%image_tag%
+					registry.a8c.com/calypso/ci-desktop:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-desktop"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI e2e image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-e2e:%image_tag%
+					registry.a8c.com/calypso/ci-e2e:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-e2e"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI wpcom image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-wpcom:%image_tag%
+					registry.a8c.com/calypso/ci-wpcom:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-wpcom"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Push images"
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/base:%image_tag%
+					registry.a8c.com/calypso/base:%build.number%
+					registry.a8c.com/calypso/ci-desktop:%image_tag%
+					registry.a8c.com/calypso/ci-desktop:%build.number%
+					registry.a8c.com/calypso/ci-e2e:%image_tag%
+					registry.a8c.com/calypso/ci-e2e:%build.number%
+					registry.a8c.com/calypso/ci-wpcom:%image_tag%
+					registry.a8c.com/calypso/ci-wpcom:%build.number%
+				""".trimIndent()
+			}
 		}
 	}
 
@@ -119,9 +177,66 @@ object BuildBaseImages : BuildType({
 			schedulingPolicy = daily {
 				hour = 0
 			}
-			branchFilter = "+:master"
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 30
+	}
+
+	features {
+		perfmon {
+		}
+		dockerSupport {
+			cleanupPushedImages = true
+		}
+	}
+})
+
+object BuildDockerImage : BuildType({
+	name = "Build docker image"
+	description = "Build docker image for Calypso"
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		dockerCommand {
+			name = "Build docker image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
+				""".trimIndent()
+				commandArgs = """
+					--pull
+					--label com.a8c.image-builder=teamcity
+					--label com.a8c.target=calypso-live
+					--label com.a8c.build-id=%teamcity.build.id%
+					--build-arg workers=16
+					--build-arg node_memory=32768
+					--build-arg use_cache=true
+				""".trimIndent().replace("\n"," ")
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
+				""".trimIndent()
+			}
 		}
 	}
 
@@ -132,8 +247,14 @@ object BuildBaseImages : BuildType({
 	features {
 		perfmon {
 		}
-		dockerSupport {
-			cleanupPushedImages = true
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
 		}
 	}
 })
@@ -156,16 +277,17 @@ object RunAllUnitTests : BuildType({
 		script {
 			name = "Prepare environment"
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
-				export NODE_ENV="test"
-				export CHROMEDRIVER_SKIP_DOWNLOAD=true
-				export PUPPETEER_SKIP_DOWNLOAD=true
-				export npm_config_cache=${'$'}(yarn cache dir)
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
 
 				# Install modules
 				yarn install
@@ -179,14 +301,17 @@ object RunAllUnitTests : BuildType({
 			name = "Prevent uncommited changes"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				set -x
-				export HOME="/calypso"
-				export NODE_ENV="test"
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
 
 				# Prevent uncommited changes
 				DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
@@ -203,19 +328,58 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Run type checks"
+			name = "Prevent duplicated packages"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
-				export NODE_ENV="test"
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Duplicated packages
+				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
+				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
+					echo "Repository contains duplicated packages: "
+					echo ""
+					echo "${'$'}DUPLICATED_PACKAGES"
+					echo ""
+					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
+					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
+					exit 1
+				else
+					echo "No duplicated packages found."
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run type checks"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
+
 				# Run type checks
-				yarn run tsc --project client/landing/gutenboarding
+				yarn tsc --build packages/tsconfig.json
+				yarn tsc --build apps/editing-toolkit/tsconfig.json
+				yarn tsc --project client/landing/gutenboarding
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
@@ -226,16 +390,19 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for client"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
-
-				unset NODE_ENV
-				unset CALYPSO_ENV
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				unset NODE_ENV
+				unset CALYPSO_ENV
 
 				# Run client tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -249,16 +416,19 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for server"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
-
-				unset NODE_ENV
-				unset CALYPSO_ENV
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				unset NODE_ENV
+				unset CALYPSO_ENV
 
 				# Run server tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -272,16 +442,19 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for packages"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
-
-				unset NODE_ENV
-				unset CALYPSO_ENV
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				unset NODE_ENV
+				unset CALYPSO_ENV
 
 				# Run packages tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -292,23 +465,25 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Run unit tests for Editing Toolkit"
+			name = "Run unit tests for build tools"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
-
-				unset NODE_ENV
-				unset CALYPSO_ENV
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
-				# Run Editing Toolkit tests
-				cd apps/editing-toolkit
-				JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit" yarn test:js --reporters=default --reporters=jest-junit  --maxWorkers=${'$'}JEST_MAX_WORKERS
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Run build-tools tests
+				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
@@ -319,22 +494,72 @@ object RunAllUnitTests : BuildType({
 			name = "Build artifacts"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
-				export NODE_ENV="production"
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="production"
+
 				# Build o2-blocks
 				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")
 
 				# Build wpcom-block-editor
-				(cd apps/wpcom-block-editor/ && yarn build --output-path="../../artifacts/wpcom-block-editor")
+				(cd apps/wpcom-block-editor/ &&  NODE_ENV=development yarn build --output-path="../../artifacts/wpcom-block-editor")
 
 				# Build notifications
 				(cd apps/notifications/ && yarn build --output-path="../../artifacts/notifications")
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Build components storybook"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="production"
+
+				yarn components:storybook:start --ci --smoke-test
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Build search storybook"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="production"
+
+				yarn search:storybook:start --ci --smoke-test
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
@@ -390,7 +615,6 @@ object RunAllUnitTests : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
-				+:master
 				+:trunk
 			""".trimIndent()
 			buildFailedToStart = true
@@ -419,16 +643,17 @@ object CheckCodeStyle : BuildType({
 		script {
 			name = "Prepare environment"
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
-				export NODE_ENV="test"
-				export CHROMEDRIVER_SKIP_DOWNLOAD=true
-				export PUPPETEER_SKIP_DOWNLOAD=true
-				export npm_config_cache=${'$'}(yarn cache dir)
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
 
 				# Install modules
 				yarn install
@@ -442,19 +667,124 @@ object CheckCodeStyle : BuildType({
 			name = "Run linters"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
-				export NODE_ENV="test"
+				#!/bin/bash
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
+
+				# Lint files
+				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 5
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+		nonZeroExitCode = false
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
+			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
+			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/**/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
+		}
+		perfmon {
+		}
+	}
+})
+
+object CheckCodeStyleBranch : BuildType({
+	name = "Check code style for branches"
+	description = "Check code style for branches"
+
+	artifactRules = """
+		checkstyle_results => checkstyle_results
+	""".trimIndent()
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
+
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run linters"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
+
 				# Find files to lint
-				if [ "%teamcity.build.branch.is_default%" = "true" ]; then
+				if [ "%calypso.run_full_eslint%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
-					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
+					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
 				fi
 				echo "Files to lint:"
 				echo ${'$'}FILES_TO_LINT
@@ -476,6 +806,7 @@ object CheckCodeStyle : BuildType({
 		vcs {
 			branchFilter = """
 				+:*
+				-:trunk
 				-:pull*
 			""".trimIndent()
 		}
@@ -515,14 +846,589 @@ object CheckCodeStyle : BuildType({
 	}
 })
 
+object RunCalypsoE2eDesktopTests : BuildType({
+	uuid = "52f38738-92b2-43cb-b7fb-19fce03cb67c"
+	name = "Run browser e2e tests (desktop)"
+	description = "Run browser e2e tests (desktop)"
+
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
+
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run e2e tests (desktop)"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export LIVEBRANCHES=true
+				export NODE_CONFIG_ENV=test
+				#export MAGELLANDEBUG=true
+				export TEST_VIDEO=true
+
+				function join() {
+					local IFS=${'$'}1
+					shift
+					echo "${'$'}*"
+				}
+
+				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
+				MAX_LOOP=10
+				COUNTER=0
+
+				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
+				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
+					COUNTER=${'$'}((COUNTER+1))
+					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
+					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
+
+					# 202 means the image is being downloaded, retry in a few seconds
+					if [[ "${'$'}{HTTP_STATUS}" -eq "202" ]]; then
+						sleep 5
+						continue
+					fi
+
+					break
+				done
+
+				if [[ -z "${'$'}URL" ]]; then
+					echo "Can't redirect to ${'$'}{IMAGE_URL}" >&2
+					echo "Curl response: ${'$'}{REDIRECT}" >&2
+					exit 1
+				fi
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				# Run the test
+				export BROWSERSIZE="desktop"
+				export BROWSERLOCALE="en"
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
+
+			yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --test=${'$'}{TEST_FILES}
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+		}
+		script {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+				set -x
+
+				# Collect results
+				mkdir -p reports
+				find test/e2e/temp -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
+
+				mkdir -p screenshots
+				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "junit")
+			param("xmlReportParsing.reportDirs", "test/e2e/temp/**/reports/*.xml")
+		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:trunk
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+		// With testFailure=true, TeamCity detects test that fail but succeed after a retry as build failures
+		// With this option disabled, TeamCity fails the build if `yarn magellan` returns an exit code other than 0.
+		testFailure = false
+
+		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
+		// display a difference between real errors and retries, making it hard to understand what is actually failing.
+		supportTestRetry = true
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+		}
+	}
+})
+
+
 object WpCalypso : GitVcsRoot({
 	name = "wp-calypso"
 	url = "git@github.com:Automattic/wp-calypso.git"
 	pushUrl = "git@github.com:Automattic/wp-calypso.git"
-	branch = "refs/heads/master"
+	branch = "refs/heads/trunk"
 	branchSpec = "+:refs/heads/*"
 	useTagsAsBranches = true
 	authMethod = uploadedKey {
 		uploadedKey = "Sergio TeamCity"
+	}
+})
+
+object WpDesktop : Project({
+	name = "Desktop app"
+	buildType(WpDesktop_DesktopE2ETests)
+
+	params {
+		text("docker_image_dekstop", "registry.a8c.com/calypso/ci-desktop:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+		password("CALYPSO_SECRETS_ENCRYPTION_KEY", "credentialsJSON:ff451a7d-df79-4635-b6e8-cbd6ec18ddd8", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
+		password("E2EGUTENBERGUSER", "credentialsJSON:27ca9d7b-c6b5-4e84-94d5-ea43879d8184", display = ParameterDisplay.HIDDEN)
+		password("E2EPASSWORD", "credentialsJSON:2c4425c4-07d2-414c-9f18-b64da307bdf2", display = ParameterDisplay.HIDDEN)
+	}
+})
+
+object WpDesktop_DesktopE2ETests : BuildType({
+	name = "Run e2e tests"
+	description = "Run wp-desktop e2e tests in Linux"
+
+	artifactRules = """
+		desktop/release => release
+		desktop/e2e/logs => logs
+		desktop/e2e/screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Restore mtime to maximize cache hits
+				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
+
+				# Decript certs
+				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%CALYPSO_SECRETS_ENCRYPTION_KEY%"
+
+				# Install modules
+				yarn install
+				yarn run build-desktop:install-app-deps
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Build Calypso source"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Build desktop
+				yarn run build-desktop:source
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Build app (linux)"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+				export USE_HARD_LINKS=false
+
+				# Build app
+				yarn run build-desktop:app
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Run tests (linux)"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
+				export E2EPASSWORD="%E2EPASSWORD%"
+				export CI=true
+
+				# Start framebuffer
+				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
+
+				# Run tests
+				yarn run test-desktop:e2e
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
+			// TDLR: Chrome needs access to some kernel level operations to create a sandbox, this option unblocks them.
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
+		}
+
+		script {
+			name = "Clean up artifacts"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			scriptContent = """
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Delete artifacts if branch is not trunk
+				if [ "%teamcity.build.branch.is_default%" != "true" ]; then
+					rm -fr desktop/release/*
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID% "
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 15
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "junit")
+			param("xmlReportParsing.reportDirs", "desktop/e2e/result.xml")
+		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#wp-desktop-calypso-e2e"
+				messageFormat = verboseMessageFormat {
+					addBranch = true
+					maximumNumberOfChanges = 10
+				}
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
+	}
+})
+
+object WPComPlugins : Project({
+	name = "WPCom Plugins"
+	buildType(WPComPlugins_EditorToolKit)
+	params {
+		text("docker_image_wpcom", "registry.a8c.com/calypso/ci-wpcom:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+	}
+})
+
+object WPComPlugins_EditorToolKit : BuildType({
+	name = "Editor ToolKit"
+
+	artifactRules = "editing-toolkit.zip"
+
+	dependencies {
+		artifacts(AbsoluteId("calypso_WPComPlugins_EditorToolKit")) {
+			buildRule = tag("etk-release-build", "+:trunk")
+			artifactRules = """
+				+:editing-toolkit.zip!** => etk-release-build
+			""".trimIndent()
+		}
+	}
+
+	buildNumberPattern = "%build.prefix%.%build.counter%"
+	params {
+		param("build.prefix", "3")
+	}
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
+	features {
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				# Update composer
+				composer install
+
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_wpcom%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run tests"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export JEST_JUNIT_OUTPUT_DIR="../../test_results/editing-toolkit"
+
+				cd apps/editing-toolkit
+				yarn test:js --reporters=default --reporters=jest-junit --maxWorkers=${'$'}JEST_MAX_WORKERS
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_wpcom%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Build artifacts"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="production"
+
+				cd apps/editing-toolkit
+				yarn build
+
+				echo
+				prev_release_build_num=${'$'}(grep build_number ../../etk-release-build/build_meta.txt | sed -e "s/build_number=//")
+				rm ../../etk-release-build/build_meta.txt # Adds a source of randomness which we don't want for comparison.
+				echo "Previous tagged trunk build: ${'$'}prev_release_build_num"
+
+				# Update plugin version in the plugin file and readme.txt.
+				# Note: we also update the previous release build to the same version to restore idempotence
+				sed -i -e "/^\s\* Version:/c\ * Version: %build.number%" -e "/^define( 'A8C_ETK_PLUGIN_VERSION'/c\define( 'A8C_ETK_PLUGIN_VERSION', '%build.number%' );" ./editing-toolkit-plugin/full-site-editing-plugin.php ../../etk-release-build/full-site-editing-plugin.php
+				sed -i -e "/^Stable tag:\s/c\Stable tag: %build.number%" ./editing-toolkit-plugin/readme.txt ../../etk-release-build/readme.txt
+
+				if ! diff -rq ./editing-toolkit-plugin/ ../../etk-release-build/ ; then
+					echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
+					curl -X POST -H "Content-Type: text/plain" --data "etk-release-build" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/
+				else
+					echo "The build is not different from the last release build. Therefore, this build has no effect."
+				fi
+
+				cd editing-toolkit-plugin/
+				# Metadata file with info for the download script.
+				tee build_meta.txt <<-EOM
+					commit_hash=%build.vcs.number%
+					commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+					build_number=%build.number%
+					EOM
+
+				echo
+				zip -r ../../../editing-toolkit.zip .
+
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_wpcom%"
+			dockerRunParameters = "-u %env.UID%"
+		}
 	}
 })

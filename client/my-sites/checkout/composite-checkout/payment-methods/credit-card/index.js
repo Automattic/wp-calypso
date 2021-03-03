@@ -4,7 +4,7 @@
 import React from 'react';
 import debugFactory from 'debug';
 import { useI18n } from '@automattic/react-i18n';
-import { registerStore, useSelect } from '@automattic/composite-checkout';
+import { registerStore, useSelect, PaymentLogo } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -19,7 +19,6 @@ import {
 	MastercardLogo,
 	AmexLogo,
 } from 'calypso/my-sites/checkout/composite-checkout/components/payment-logos';
-import PaymentLogo from 'calypso/my-sites/checkout/composite-checkout/components/payment-logo';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import { maskField } from 'calypso/lib/checkout';
@@ -165,18 +164,32 @@ export function createCreditCardPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createCreditCardMethod( { store, stripe, stripeConfiguration } ) {
+export function createCreditCardMethod( {
+	store,
+	stripe,
+	stripeConfiguration,
+	shouldUseEbanx,
+	shouldShowTaxFields = false,
+	activePayButtonText = undefined,
+} ) {
 	return {
 		id: 'card',
 		label: <CreditCardLabel />,
 		activeContent: (
-			<CreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
+			<CreditCardFields
+				stripe={ stripe }
+				stripeConfiguration={ stripeConfiguration }
+				shouldUseEbanx={ shouldUseEbanx }
+				shouldShowTaxFields={ shouldShowTaxFields }
+			/>
 		),
 		submitButton: (
 			<CreditCardPayButton
 				store={ store }
 				stripe={ stripe }
 				stripeConfiguration={ stripeConfiguration }
+				shouldUseEbanx={ shouldUseEbanx }
+				activeButtonText={ activePayButtonText }
 			/>
 		),
 		inactiveContent: <CreditCardSummary />,
@@ -211,7 +224,7 @@ function CreditCardLabel() {
 
 function CreditCardLogos() {
 	return (
-		<PaymentMethodLogos>
+		<PaymentMethodLogos className="credit-card__logo payment-logos">
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />

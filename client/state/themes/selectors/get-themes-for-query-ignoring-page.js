@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { uniq, flatMap } from 'lodash';
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
 /**
  * Internal dependencies

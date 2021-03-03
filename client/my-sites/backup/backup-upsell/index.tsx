@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
  */
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import Upsell from 'calypso/components/jetpack/upsell';
@@ -90,6 +91,9 @@ const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason 
 			break;
 		case 'multisite_not_supported':
 			body = <BackupsMultisiteBody />;
+			break;
+		case 'no_connected_jetpack':
+			body = <JetpackDisconnected />;
 			break;
 		default:
 			body = <BackupsUpsellBody />;

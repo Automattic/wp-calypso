@@ -10,7 +10,7 @@ const webpack = require( 'webpack' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const cacheDirectory = path.resolve( '.cache', 'babel-desktop' );
@@ -30,7 +30,7 @@ module.exports = {
 			{
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+					loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 					options: { useRequire: true, onlyIsomorphic: true },
 				},
 			},
@@ -76,17 +76,18 @@ module.exports = {
 	},
 	externals: [
 		'webpack',
-		'electron',
+		'keytar',
 
 		// These are Calypso server modules we don't need, so let's not bundle them
 		'webpack.config',
 	],
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: {
-			config: 'server/config',
-			'calypso/config': 'server/config',
+			config: 'calypso/server/config',
+			'@automattic/calypso-config': 'calypso/server/config',
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
@@ -97,12 +98,8 @@ module.exports = {
 		// the `require` function. That breaks webpack.
 		new webpack.DefinePlugin( { 'global.GENTLY': false } ),
 		new webpack.NormalModuleReplacementPlugin(
-			/^my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
 			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
-			'components/empty-component'
+			'calypso/components/empty-component'
 		), // Depends on BOM
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
 	],

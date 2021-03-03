@@ -13,7 +13,7 @@ import { getSiteFragment } from 'calypso/lib/route';
 
 export default function () {
 	page(
-		'/pages/:status(published|drafts|scheduled|trashed)/:domain?',
+		'/pages/:author(my)?/:status(published|drafts|scheduled|trashed)?/:domain?',
 		siteSelection,
 		navigation,
 		pages,

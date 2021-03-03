@@ -59,9 +59,9 @@ class Edit extends React.Component {
 
 	getDomainTypeText( domain ) {
 		if ( this.props.hasDomainOnlySite ) {
-			return 'Parked Domain';
+			return this.props.translate( 'Parked Domain' );
 		}
-		return getDomainTypeText( domain );
+		return getDomainTypeText( domain, this.props.translate );
 	}
 
 	getDetailsForType = ( type ) => {

@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
 import { updateFilter } from 'calypso/state/activity-log/actions';
@@ -76,7 +77,14 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( actualPage ) {
-		const { applySiteOffset, logs, pageSize, showDateSeparators, translate } = this.props;
+		const {
+			applySiteOffset,
+			logs,
+			pageSize,
+			showDateSeparators,
+			translate,
+			userLocale,
+		} = this.props;
 
 		const today = applySiteOffset ? applySiteOffset() : null;
 
@@ -90,13 +98,17 @@ class ActivityCardList extends Component {
 				? 'activity-card-list__secondary-card-with-more'
 				: 'activity-card-list__secondary-card';
 
+		const dateFormat = userLocale === 'en' ? 'MMM Do' : 'LL';
+
 		return this.splitLogsByDate( logs.slice( ( actualPage - 1 ) * pageSize ) ).map(
 			( { date, logs: dateLogs, hasMore }, index ) => (
 				<div key={ `activity-card-list__date-group-${ index }` }>
 					{ showDateSeparators && (
 						<div className="activity-card-list__date-group-date">
 							{ date &&
-								( today?.isSame( date, 'day' ) ? translate( 'Today' ) : date.format( 'MMM Do' ) ) }
+								( today?.isSame( date, 'day' )
+									? translate( 'Today' )
+									: date.format( dateFormat ) ) }
 						</div>
 					) }
 					<div className="activity-card-list__date-group-content">
@@ -247,11 +259,13 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const filter = getActivityLogFilter( state, siteId );
+	const userLocale = getCurrentUserLocale( state );
 
 	return {
 		filter,
 		siteId,
 		siteSlug,
+		userLocale,
 	};
 };
 
@@ -259,9 +273,12 @@ const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
 } );
 
-export default connect(
+/** @type {typeof ActivityCardList} */
+const connectedComponent = connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(
 	withMobileBreakpoint( withApplySiteOffset( withLocalizedMoment( localize( ActivityCardList ) ) ) )
 );
+
+export default connectedComponent;

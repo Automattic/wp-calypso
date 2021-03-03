@@ -60,6 +60,8 @@ class WPCOM_Block_Editor_NUX {
 			plugins_url( 'dist/', __FILE__ )
 		);
 
+		wp_set_script_translations( 'wpcom-block-editor-nux-script', 'full-site-editing' );
+
 		$style_path = 'dist/wpcom-block-editor-nux' . ( is_rtl() ? '.rtl' : '' ) . '.css';
 		wp_enqueue_style(
 			'wpcom-block-editor-nux-style',

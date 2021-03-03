@@ -2,16 +2,16 @@
 /**
  * External dependencies
  */
+
+import { withI18n, I18nReact } from '@automattic/react-i18n';
 import classNames from 'classnames';
 import React, { ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
-import { isMobile } from '@automattic/viewport';
-import { debounce, noop, uniqueId } from 'lodash';
+import { debounce } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { Button, Spinner } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { close, search, Icon } from '@wordpress/icons';
 
 /**
@@ -23,6 +23,8 @@ import './style.scss';
  * Internal variables
  */
 const SEARCH_DEBOUNCE_MS = 300;
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = (): void => {};
 
 const keyListener = (
 	methodToCall: (
@@ -40,42 +42,45 @@ const keyListener = (
 };
 
 type Props = {
-	autoFocus: boolean;
+	__: I18nReact[ '__' ];
+	autoFocus?: boolean;
 	className?: string;
-	compact: boolean;
-	defaultIsOpen: boolean;
+	compact?: boolean;
+	defaultIsOpen?: boolean;
 	defaultValue?: string;
-	delaySearch: boolean;
-	delayTimeout: number;
+	delaySearch?: boolean;
+	delayTimeout?: number;
 	describedBy?: string;
 	dir?: 'ltr' | 'rtl';
-	disableAutocorrect: boolean;
-	disabled: boolean;
-	fitsContainer: boolean;
-	hideClose: boolean;
-	hideOpenIcon: boolean;
+	disableAutocorrect?: boolean;
+	disabled?: boolean;
+	fitsContainer?: boolean;
+	hideClose?: boolean;
+	hideOpenIcon?: boolean;
 	inputLabel?: string;
+	openIconSide?: 'left' | 'right';
 	maxLength?: number;
 	minLength?: number;
 	onBlur?: ( event: FocusEvent< HTMLInputElement > ) => void;
 	onClick?: () => void;
 	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
 	onSearch: ( search: string ) => void;
-	onSearchChange: ( search: string ) => void;
-	onSearchOpen: (
+	onSearchChange?: ( search: string ) => void;
+	onSearchOpen?: (
 		event?:
 			| MouseEvent< HTMLButtonElement | HTMLInputElement >
 			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
 	) => void;
-	onSearchClose: (
+	onSearchClose?: (
 		event:
 			| MouseEvent< HTMLButtonElement | HTMLInputElement >
 			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
 	) => void;
 	overlayStyling?: ( search: string ) => React.ReactNode;
 	placeholder?: string;
-	pinned: boolean;
-	searching: boolean;
+	pinned?: boolean;
+	recordEvent?: ( eventName: string ) => void;
+	searching?: boolean;
 	value?: string;
 };
 
@@ -85,13 +90,13 @@ type State = {
 	hasFocus: boolean;
 };
 
-class Search extends React.Component< Props, State > {
+export class Search extends React.Component< Props, State > {
 	static defaultProps = {
 		autoFocus: false,
 		compact: false,
 		delaySearch: false,
 		delayTimeout: SEARCH_DEBOUNCE_MS,
-		describedBy: null,
+		describedBy: undefined,
 		dir: undefined,
 		disableAutocorrect: false,
 		disabled: false,
@@ -104,14 +109,21 @@ class Search extends React.Component< Props, State > {
 		onSearchChange: noop,
 		onSearchOpen: noop,
 		onSearchClose: noop,
+		openIconSide: 'left' as const,
 		//undefined value for overlayStyling is an optimization that will
 		//disable overlay scrolling calculation when no overlay is provided.
 		overlayStyling: undefined,
 		pinned: false,
+		recordEvent: noop,
 		searching: false,
 	};
 
-	instanceId = uniqueId();
+	static currentId = 0;
+	static getUniqueId = (): number => {
+		return Search.currentId++;
+	};
+
+	instanceId = Search.getUniqueId();
 	searchInput = React.createRef< HTMLInputElement >();
 	openIcon = React.createRef< HTMLButtonElement >();
 	overlay = React.createRef< HTMLDivElement >();
@@ -123,30 +135,31 @@ class Search extends React.Component< Props, State > {
 
 	state = {
 		keyword: this.props.defaultValue ?? '',
-		isOpen: this.props.defaultIsOpen,
-		hasFocus: this.props.autoFocus,
+		isOpen: this.props.defaultIsOpen ?? false,
+		hasFocus: this.props.autoFocus ?? false,
 	};
 
 	openSearch = (
 		event:
 			| MouseEvent< HTMLButtonElement | HTMLInputElement >
 			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	) => {
+	): void => {
 		event.preventDefault();
 		this.setState( {
 			keyword: '',
 			isOpen: true,
 		} );
-		this.props.onSearchOpen( event );
+		this.props.onSearchOpen?.( event );
 		// prevent outlines around the open icon after being clicked
 		this.openIcon.current?.blur();
+		this.props.recordEvent?.( 'Clicked Open Search' );
 	};
 
 	closeSearch = (
 		event:
 			| MouseEvent< HTMLButtonElement | HTMLInputElement >
 			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	) => {
+	): void => {
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
@@ -169,13 +182,15 @@ class Search extends React.Component< Props, State > {
 			this.searchInput.current?.focus();
 		}
 
-		this.props.onSearchClose( event );
+		this.props.onSearchClose?.( event );
+
+		this.props.recordEvent?.( 'Clicked Close Search' );
 	};
 
 	closeListener = keyListener( this.closeSearch );
 	openListener = keyListener( this.openSearch );
 
-	componentDidUpdate( _: Props, prevState: State ) {
+	componentDidUpdate( _: Props, prevState: State ): void {
 		this.scrollOverlay();
 		// Focus if the search box was opened
 		if ( this.state.isOpen && ! prevState.isOpen ) {
@@ -199,10 +214,10 @@ class Search extends React.Component< Props, State > {
 			this.props.onSearch( this.state.keyword );
 		}
 
-		this.props.onSearchChange( this.state.keyword );
+		this.props.onSearchChange?.( this.state.keyword );
 	}
 
-	scrollOverlay = () => {
+	scrollOverlay = (): void => {
 		this.overlay &&
 			window.requestAnimationFrame( () => {
 				if ( this.overlay.current && this.searchInput.current ) {
@@ -214,7 +229,9 @@ class Search extends React.Component< Props, State > {
 	//This is fix for IE11. Does not work on Edge.
 	//On IE11 scrollLeft value for input is always 0.
 	//We are calculating it manually using TextRange object.
-	getScrollLeft = ( inputElement: HTMLInputElement & { createTextRange?: any } ) => {
+	getScrollLeft = (
+		inputElement: HTMLInputElement & { createTextRange?: () => Range }
+	): number => {
 		//TextRange is IE11 specific so this checks if we are not on IE11.
 		if ( ! inputElement.createTextRange ) {
 			return inputElement.scrollLeft;
@@ -232,17 +249,17 @@ class Search extends React.Component< Props, State > {
 		return scrollLeft;
 	};
 
-	focus = () => {
+	focus = (): void => {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
 		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
 		setTimeout( () => this.searchInput.current?.focus(), 0 );
 	};
 
-	blur = () => this.searchInput.current?.blur();
+	blur = (): void => this.searchInput.current?.blur();
 
-	clear = () => this.setState( { keyword: '' } );
+	clear = (): void => this.setState( { keyword: '' } );
 
-	onBlur = ( event: FocusEvent< HTMLInputElement > ) => {
+	onBlur = ( event: FocusEvent< HTMLInputElement > ): void => {
 		if ( this.props.onBlur ) {
 			this.props.onBlur( event );
 		}
@@ -250,14 +267,14 @@ class Search extends React.Component< Props, State > {
 		this.setState( { hasFocus: false } );
 	};
 
-	onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+	onChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
 		this.setState( {
 			keyword: event.target?.value ?? this.state.keyword,
 		} );
 	};
 
-	keyUp = ( event: KeyboardEvent< HTMLInputElement > ) => {
-		if ( event.key === 'Enter' && isMobile() ) {
+	keyUp = ( event: KeyboardEvent< HTMLInputElement > ): void => {
+		if ( event.key === 'Enter' && window.innerWidth < 480 ) {
 			//dismiss soft keyboards
 			this.blur();
 		}
@@ -272,7 +289,7 @@ class Search extends React.Component< Props, State > {
 		this.scrollOverlay();
 	};
 
-	keyDown = ( event: KeyboardEvent< HTMLInputElement > ) => {
+	keyDown = ( event: KeyboardEvent< HTMLInputElement > ): void => {
 		this.scrollOverlay();
 
 		if (
@@ -288,9 +305,9 @@ class Search extends React.Component< Props, State > {
 
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
-	onFocus = () => {
+	onFocus = (): void => {
 		this.setState( { hasFocus: true } );
-		this.props.onSearchOpen();
+		this.props.onSearchOpen?.();
 
 		if ( ! this.searchInput.current ) {
 			return;
@@ -304,13 +321,14 @@ class Search extends React.Component< Props, State > {
 		}
 	};
 
-	handleSubmit = ( event: FormEvent ) => {
+	handleSubmit = ( event: FormEvent ): void => {
 		event.preventDefault();
+		event.stopPropagation();
 	};
 
-	render() {
+	render(): JSX.Element {
 		const searchValue = this.state.keyword;
-		const placeholder = this.props.placeholder || __( 'Search…' );
+		const placeholder = this.props.placeholder || this.props.__( 'Search…', __i18n_text_domain__ );
 		const inputLabel = this.props.inputLabel;
 		const isOpenUnpinnedOrQueried = this.state.isOpen || ! this.props.pinned || searchValue;
 
@@ -332,17 +350,19 @@ class Search extends React.Component< Props, State > {
 		const fadeClass = classNames( 'search-component__input-fade', this.props.dir );
 		const inputClass = classNames( 'search-component__input', this.props.dir );
 
+		const shouldRenderRightOpenIcon = this.props.openIconSide === 'right' && ! this.state.keyword;
+
 		return (
 			<div dir={ this.props.dir } className={ searchClass } role="search">
 				<Spinner />
-				{ this.renderOpenIcon() }
+				{ this.props.openIconSide === 'left' && this.renderOpenIcon() }
 				<form className={ fadeClass } action="." onSubmit={ this.handleSubmit }>
 					<input
 						type="search"
 						id={ 'search-component-' + this.instanceId }
 						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						aria-describedby={ this.props.describedBy }
-						aria-label={ inputLabel ? inputLabel : __( 'Search' ) }
+						aria-label={ inputLabel ? inputLabel : this.props.__( 'Search', __i18n_text_domain__ ) }
 						aria-hidden={ ! isOpenUnpinnedOrQueried }
 						className={ inputClass }
 						placeholder={ placeholder }
@@ -364,12 +384,12 @@ class Search extends React.Component< Props, State > {
 					/>
 					{ this.renderStylingDiv() }
 				</form>
-				{ this.closeButton() }
+				{ shouldRenderRightOpenIcon ? this.renderOpenIcon() : this.closeButton() }
 			</div>
 		);
 	}
 
-	renderOpenIcon() {
+	renderOpenIcon(): JSX.Element {
 		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
 
 		return (
@@ -380,9 +400,11 @@ class Search extends React.Component< Props, State > {
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? this.openListener : undefined }
 				aria-controls={ 'search-component-' + this.instanceId }
-				aria-label={ __( 'Open Search' ) }
+				aria-label={ this.props.__( 'Open Search', __i18n_text_domain__ ) }
 			>
 				{ ! this.props.hideOpenIcon && (
+					// `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work)
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					/* @ts-ignore */
 					<Icon icon={ search } className="search-component__open-icon" />
 				) }
@@ -390,7 +412,7 @@ class Search extends React.Component< Props, State > {
 		);
 	}
 
-	renderStylingDiv() {
+	renderStylingDiv(): JSX.Element | null {
 		if ( typeof this.props.overlayStyling === 'function' ) {
 			return (
 				<div className="search-component__text-overlay" ref={ this.overlay }>
@@ -401,7 +423,7 @@ class Search extends React.Component< Props, State > {
 		return null;
 	}
 
-	closeButton() {
+	closeButton(): JSX.Element | null {
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<Button
@@ -410,8 +432,10 @@ class Search extends React.Component< Props, State > {
 					tabIndex={ 0 }
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ __( 'Close Search' ) }
+					aria-label={ this.props.__( 'Close Search', __i18n_text_domain__ ) }
 				>
+					{ /* `className` is accepted for some reason the intrisic attributes for SVG won't allow it (but it does work) */ }
+					{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 					{ /* @ts-ignore */ }
 					<Icon icon={ close } className="search-component__close-icon" />
 				</Button>
@@ -422,4 +446,4 @@ class Search extends React.Component< Props, State > {
 	}
 }
 
-export default Search;
+export default withI18n( Search );

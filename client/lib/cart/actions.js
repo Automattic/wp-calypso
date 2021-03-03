@@ -17,13 +17,13 @@ import {
 	CART_ITEMS_REPLACE_ALL,
 	CART_PRIVACY_PROTECTION_ADD,
 	CART_PRIVACY_PROTECTION_REMOVE,
-	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
 	CART_RELOAD,
 } from './action-types';
-import Dispatcher from 'dispatcher';
-import { MARKETING_COUPONS_KEY } from 'lib/analytics/utils';
+import Dispatcher from 'calypso/dispatcher';
+import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 
 // We need to load the CartStore to make sure the store is registered with the
 // dispatcher even though it's not used directly here
@@ -98,13 +98,6 @@ export function replaceItem( oldItem, newItem ) {
 	} );
 }
 
-export function addGoogleAppsRegistrationData( registrationData ) {
-	Dispatcher.handleViewAction( {
-		type: CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
-		registrationData: registrationData,
-	} );
-}
-
 export function applyCoupon( coupon ) {
 	Dispatcher.handleViewAction( {
 		type: CART_COUPON_APPLY,
@@ -133,6 +126,8 @@ export function getRememberedCoupon() {
 		'ALT',
 		'FBSAVE15',
 		'FIVERR',
+		'FLASHFB20OFF',
+		'FLASHFB50OFF',
 		'GENEA',
 		'KITVISA',
 		'LINKEDIN',
@@ -142,6 +137,7 @@ export function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
+		...TRUENAME_COUPONS,
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

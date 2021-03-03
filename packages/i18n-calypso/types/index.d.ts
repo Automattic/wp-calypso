@@ -104,6 +104,9 @@ declare namespace i18nCalypso {
 	) => TranslateResult;
 
 	export function registerTranslateHook( hook: TranslateHook ): void;
+
+	export function getLocaleSlug(): string | null;
+	export const defaultLocaleSlug: string;
 }
 
 export = i18nCalypso;

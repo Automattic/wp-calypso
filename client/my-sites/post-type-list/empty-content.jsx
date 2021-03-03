@@ -25,7 +25,8 @@ function PostTypeListEmptyContent( {
 	editPath,
 	addNewItemLabel,
 } ) {
-	let title, action;
+	let title;
+	let action;
 
 	if ( 'draft' === status ) {
 		title = translate( "You don't have any drafts." );

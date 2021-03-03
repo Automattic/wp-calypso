@@ -4,6 +4,7 @@
 	"description": "JavaScript library for the WordPress.com Photon image manipulation service",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -31,14 +32,14 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"crc32": "^0.2.2",
 		"debug": "^4.0.0",
 		"seed-random": "^2.2.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	}
 }

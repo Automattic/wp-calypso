@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import backups from './backups/reducer';
 import capabilities from './capabilities/reducer';
@@ -12,4 +13,6 @@ const rewind = combineReducers( {
 	state,
 } );
 
-export default keyedReducer( 'siteId', rewind );
+const reducer = keyedReducer( 'siteId', rewind );
+
+export default withStorageKey( 'rewind', reducer );

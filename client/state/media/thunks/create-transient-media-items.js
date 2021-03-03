@@ -3,7 +3,6 @@
  */
 import { createTransientMedia, validateMediaItem } from 'calypso/lib/media/utils';
 import { getTransientDate, getBaseTime } from 'calypso/state/media/utils/transient-date';
-import { dispatchFluxCreateMediaItem } from 'calypso/state/media/utils/flux-adapter';
 import { createMediaItem, setMediaItemErrors } from 'calypso/state/media/actions';
 
 /**
@@ -34,8 +33,6 @@ export function createTransientMediaItems( files, site ) {
 			}
 
 			const { ID: siteId } = site;
-
-			dispatchFluxCreateMediaItem( transientMedia, site );
 
 			const errors = validateMediaItem( site, transientMedia );
 			if ( errors?.length ) {

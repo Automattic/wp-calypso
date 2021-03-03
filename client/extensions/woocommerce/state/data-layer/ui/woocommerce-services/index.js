@@ -22,7 +22,7 @@ import {
 import { getPackagesForm } from 'woocommerce/woocommerce-services/state/packages/selectors';
 import { submit as submitLabels } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { submit as submitPackages } from 'woocommerce/woocommerce-services/state/packages/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE } from 'woocommerce/woocommerce-services/state/action-types';
 import { shippingZoneMethodUpdated } from 'woocommerce/state/sites/shipping-zone-methods/actions';
 import * as api from 'woocommerce/woocommerce-services/api';

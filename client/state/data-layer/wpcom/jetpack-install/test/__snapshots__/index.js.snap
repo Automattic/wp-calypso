@@ -15,6 +15,11 @@ Object {
     "url": "https://yourgroovydomain.com",
     "user": "blah123",
   },
+  "onStreamRecord": Object {
+    "password": "hGhrskf145kst",
+    "url": "https://yourgroovydomain.com",
+    "user": "blah123",
+  },
   "onSuccess": Object {
     "password": "hGhrskf145kst",
     "url": "https://yourgroovydomain.com",

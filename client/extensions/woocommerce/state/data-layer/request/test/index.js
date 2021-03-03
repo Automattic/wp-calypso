@@ -9,7 +9,7 @@ import { spy, match } from 'sinon';
  */
 import { handleRequest } from '../';
 import { get, post, put, del } from '../actions';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_ERROR_SET,
 	WOOCOMMERCE_API_REQUEST_SUCCESS,

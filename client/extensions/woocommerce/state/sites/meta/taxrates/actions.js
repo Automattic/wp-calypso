@@ -8,7 +8,7 @@ import {
 	WOOCOMMERCE_TAXRATES_REQUEST,
 	WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 export const fetchTaxRates = ( siteId, address, forceReload = false ) => ( dispatch, getState ) => {
 	if ( areTaxRatesLoading( getState(), siteId ) ) {

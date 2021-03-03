@@ -1,14 +1,14 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 describe( 'wpcom', function () {
 	describe( 'wpcom.freshlyPressed', function () {
 		it( 'should require freshly pressed', function () {
 			return new Promise( ( done ) => {
-				var wpcom = util.wpcomPublic();
+				const wpcom = util.wpcomPublic();
 
 				wpcom
 					.freshlyPressed()

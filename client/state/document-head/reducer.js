@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { uniqWith, isEqual, isArray } from 'lodash';
+import { uniqWith, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	DOCUMENT_HEAD_LINK_SET,
@@ -19,7 +20,7 @@ import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema
 /**
  * Constants
  */
-export const DEFAULT_META_STATE = [ { property: 'og:site_name', content: 'WordPress.com' } ];
+export const DEFAULT_META_STATE = config( 'meta' );
 
 export const title = withSchemaValidation( titleSchema, ( state = '', action ) => {
 	switch ( action.type ) {
@@ -60,7 +61,7 @@ export const link = withSchemaValidation( linkSchema, ( state = [], action ) => 
 			// Append action.link to the state array and prevent duplicate objects.
 			// Works with action.link being a single link object or an array of link objects.
 			return uniqWith(
-				[ ...state, ...( isArray( action.link ) ? action.link : [ action.link ] ) ],
+				[ ...state, ...( Array.isArray( action.link ) ? action.link : [ action.link ] ) ],
 				isEqual
 			);
 	}

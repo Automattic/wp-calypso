@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import FormattedHeader from 'components/formatted-header';
-import { addQueryArgs } from 'lib/route';
-import { getConnectingSite } from 'state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,

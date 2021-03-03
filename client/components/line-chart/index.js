@@ -8,7 +8,7 @@ import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } fr
 import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
 import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
 import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
-import { concat, first, last, mean, throttle, uniq } from 'lodash';
+import { concat, first, last, throttle, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,18 +86,17 @@ class LineChart extends Component {
 
 	dateFormatFunction = ( displayMonthTicksOnly ) => ( date, index, tickRefs ) => {
 		const everyOtherTickOnly = ! displayMonthTicksOnly && tickRefs.length > X_AXIS_TICKS_MAX;
+		const matchingTicks = tickRefs
+			.map( ( tickRef, tickRefIndex ) =>
+				tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
+			)
+			.filter( ( e ) => e !== null );
+		const meanTickRefs = matchingTicks.length
+			? matchingTicks.reduce( ( total, current ) => total + current, 0 ) / matchingTicks.length
+			: NaN;
 		// this can only be figured out here, because D3 will decide how many ticks there should be
-		const isFirstMonthTick =
-			index ===
-			Math.round(
-				mean(
-					tickRefs
-						.map( ( tickRef, tickRefIndex ) =>
-							tickRef.__data__.getMonth() === date.getMonth() ? tickRefIndex : null
-						)
-						.filter( ( e ) => e !== null )
-				)
-			);
+		const isFirstMonthTick = index === Math.round( meanTickRefs );
+
 		return ( ! everyOtherTickOnly && ! displayMonthTicksOnly ) ||
 			( everyOtherTickOnly && index % 2 === 0 ) ||
 			( displayMonthTicksOnly && isFirstMonthTick )
@@ -258,9 +257,9 @@ class LineChart extends Component {
 		const { svg, data } = this.state;
 
 		const xDate = xScale.invert( X );
-		let closestDate = 0,
-			prevClosestDate = 0,
-			nextClosestDate = 0;
+		let closestDate = 0;
+		let prevClosestDate = 0;
+		let nextClosestDate = 0;
 
 		const firstDataSerie = data[ 0 ];
 		const drawFullSeries = firstDataSerie.length < POINTS_MAX;

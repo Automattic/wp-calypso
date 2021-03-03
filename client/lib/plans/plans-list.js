@@ -8,8 +8,7 @@ import i18n, { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { isEnabled } from '@automattic/calypso-config';
 import * as constants from './constants';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
@@ -27,6 +26,20 @@ const getMonthlyTimeframe = () => ( {
 	getSignupBillingTimeFrame: () => translate( 'per month' ),
 } );
 
+const getDotcomPlanDetails = () => ( {
+	// Features only available for annual plans
+	getAnnualPlansOnlyFeatures: () =>
+		compact( [
+			constants.FEATURE_FREE_DOMAIN,
+			constants.FEATURE_CUSTOM_DOMAIN,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			constants.FEATURE_LIVE_CHAT_SUPPORT,
+			constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		] ),
+} );
+
 const plansDescriptionHeadingComponent = {
 	components: {
 		strong: <strong className="plans__features plan-features__targeted-description-heading" />,
@@ -34,6 +47,7 @@ const plansDescriptionHeadingComponent = {
 };
 
 const getPlanBloggerDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
@@ -85,6 +99,7 @@ const getPlanBloggerDetails = () => ( {
 } );
 
 const getPlanPersonalDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_PERSONAL,
 	getTitle: () => i18n.translate( 'Personal' ),
@@ -116,11 +131,12 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_MEMBERSHIPS,
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
-	getSignupFeatures: () => [
-		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
-		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_FREE_THEMES,
-	],
+	getSignupFeatures: () =>
+		compact( [
+			constants.FEATURE_FREE_DOMAIN,
+			constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+			constants.FEATURE_FREE_THEMES,
+		] ),
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
 		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -131,12 +147,20 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanEcommerceDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_ECOMMERCE,
 	getTitle: () => i18n.translate( 'eCommerce' ),
@@ -213,6 +237,24 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_SHIPPING_CARRIERS,
 		constants.FEATURE_ALL_BUSINESS_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_INSTALL_PLUGINS,
+		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
+		constants.FEATURE_SFTP_DATABASE,
+		constants.FEATURE_ACCEPT_PAYMENTS,
+		constants.FEATURE_SHIPPING_CARRIERS,
+		constants.PREMIUM_DESIGN_FOR_STORES,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [
 		constants.FEATURE_AUDIO_UPLOADS,
@@ -225,6 +267,7 @@ const getPlanEcommerceDetails = () => ( {
 } );
 
 const getPlanPremiumDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_PREMIUM,
 	getTitle: () => i18n.translate( 'Premium' ),
@@ -271,8 +314,8 @@ const getPlanPremiumDetails = () => ( {
 	],
 	getSignupFeatures: () =>
 		compact( [
+			constants.FEATURE_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_ADVANCED_CUSTOMIZATION,
-			constants.FEATURE_PREMIUM_THEMES,
 			constants.FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 	getBlogSignupFeatures: () => [
@@ -285,12 +328,24 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_PREMIUM_THEMES,
 		constants.FEATURE_ALL_PERSONAL_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanBusinessDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_BUSINESS,
 	getTitle: () => i18n.translate( 'Business' ),
@@ -361,6 +416,21 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_200GB_STORAGE,
 		constants.FEATURE_ALL_PREMIUM_FEATURES,
 	],
+	getSignupCompareAvailableFeatures: () => [
+		constants.FEATURE_CUSTOM_DOMAIN,
+		constants.FEATURE_HOSTING,
+		constants.FEATURE_NO_ADS,
+		constants.FEATURE_COLLECT_PAYMENTS_V2,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		constants.FEATURE_EARN_AD,
+		constants.FEATURE_PREMIUM_THEMES,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_INSTALL_PLUGINS,
+		constants.FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		constants.FEATURE_SITE_BACKUPS_AND_RESTORE,
+		constants.FEATURE_SFTP_DATABASE,
+	],
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [
 		constants.FEATURE_AUDIO_UPLOADS,
@@ -380,29 +450,16 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
-			'Enjoy the peace of mind of complete site protection. ' +
-				'Great for brochure sites, restaurants, blogs, and resume sites.'
+			'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
 		),
-	getTagline: () =>
-		getJetpackCROActiveVersion() === 'v1'
-			? translate( 'Backup, Scan, and Anti-spam in one package' )
-			: translate( 'Best for sites with occasional updates' ),
+	getTagline: () => translate( 'Best for sites with occasional updates' ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () => ( {
-		[ constants.FEATURE_CATEGORY_SECURITY ]: [
-			constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
-			constants.FEATURE_PRODUCT_SCAN_V2,
-			constants.FEATURE_PRODUCT_ANTISPAM_V2,
-			constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
-		],
-		[ constants.FEATURE_CATEGORY_OTHER ]: [
-			constants.FEATURE_VIDEO_HOSTING_V2,
-			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
-			constants.FEATURE_COLLECT_PAYMENTS_V2,
-			constants.FEATURE_SITE_MONETIZATION_V2,
-			constants.FEATURE_PRIORITY_SUPPORT_V2,
-		],
-	} ),
+	getPlanCardFeatures: () => [
+		constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+		constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
+		constants.FEATURE_ANTISPAM_V2,
+		constants.FEATURE_VIDEO_HOSTING_V2,
+	],
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -415,6 +472,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -426,7 +484,10 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_REALTIME,
-	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	getTitle: () =>
+		translate( 'Security {{em}}Real-time{{/em}}', {
+			components: { em: <em style={ { whiteSpace: 'nowrap' } } /> },
+		} ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -437,27 +498,16 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		].includes( plan ),
 	getDescription: () =>
 		translate(
-			'Additional security for sites with 24/7 activity. ' +
-				'Recommended for eCommerce stores, news organizations, and online forums.'
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
 		),
 	getTagline: () => translate( 'Best for sites with frequent updates' ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () => ( {
-		[ constants.FEATURE_CATEGORY_SECURITY ]: [
-			constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-			constants.FEATURE_PRODUCT_SCAN_V2,
-			constants.FEATURE_PRODUCT_ANTISPAM_V2,
-			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-		],
-		[ constants.FEATURE_CATEGORY_OTHER ]: [
-			constants.FEATURE_PREMIUM_THEMES_V2,
-			constants.FEATURE_VIDEO_HOSTING_V2,
-			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
-			constants.FEATURE_COLLECT_PAYMENTS_V2,
-			constants.FEATURE_SITE_MONETIZATION_V2,
-			constants.FEATURE_PRIORITY_SUPPORT_V2,
-		],
-	} ),
+	getPlanCardFeatures: () => [
+		constants.FEATURE_PLAN_SECURITY_DAILY,
+		constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	],
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
@@ -470,6 +520,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -486,7 +537,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 const getPlanJetpackCompleteDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_ALL,
-	getTitle: () => translate( 'Jetpack Complete' ),
+	getTitle: () => translate( 'Complete' ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -500,31 +551,13 @@ const getPlanJetpackCompleteDetails = () => ( {
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () => ( {
-		[ constants.FEATURE_CATEGORY_SECURITY ]: [
-			[
-				constants.FEATURE_SECURITY_REALTIME_V2,
-				[
-					constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-					constants.FEATURE_PRODUCT_SCAN_V2,
-					constants.FEATURE_PRODUCT_ANTISPAM_V2,
-					constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-				],
-			],
-		],
-		[ constants.FEATURE_CATEGORY_PERFORMANCE ]: [
-			constants.FEATURE_PRODUCT_SEARCH_V2,
-			constants.FEATURE_VIDEO_HOSTING_V2,
-		],
-		[ constants.FEATURE_CATEGORY_GROWTH ]: [
-			constants.FEATURE_CRM_V2,
-			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
-			constants.FEATURE_COLLECT_PAYMENTS_V2,
-			constants.FEATURE_SITE_MONETIZATION_V2,
-		],
-		[ constants.FEATURE_CATEGORY_DESIGN ]: [ constants.FEATURE_PREMIUM_THEMES_V2 ],
-		[ constants.FEATURE_CATEGORY_OTHER ]: [ constants.FEATURE_PRIORITY_SUPPORT_V2 ],
-	} ),
+	getPlanCardFeatures: () => [
+		constants.FEATURE_PLAN_SECURITY_DAILY,
+		constants.FEATURE_BACKUP_REALTIME_V2,
+		constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		constants.FEATURE_CRM_V2,
+		constants.FEATURE_PRODUCT_SEARCH_V2,
+	],
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
@@ -541,6 +574,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 		constants.FEATURE_SIMPLE_PAYMENTS,
 		constants.FEATURE_WORDADS_INSTANT,
 		constants.FEATURE_GOOGLE_ANALYTICS,
@@ -622,13 +656,31 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'blogger-2-years',
 	},
 
+	[ constants.PLAN_PERSONAL_MONTHLY ]: {
+		...getPlanPersonalDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) =>
+			includes(
+				[ constants.PLAN_FREE, constants.PLAN_BLOGGER, constants.PLAN_BLOGGER_2_YEARS ],
+				plan
+			),
+		getProductId: () => 1019,
+		getStoreSlug: () => constants.PLAN_PERSONAL_MONTHLY,
+		getPathSlug: () => 'personal-monthly',
+	},
+
 	[ constants.PLAN_PERSONAL ]: {
 		...getPlanPersonalDetails(),
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
 			includes(
-				[ constants.PLAN_FREE, constants.PLAN_BLOGGER, constants.PLAN_BLOGGER_2_YEARS ],
+				[
+					constants.PLAN_FREE,
+					constants.PLAN_BLOGGER,
+					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
+				],
 				plan
 			),
 		getProductId: () => 1009,
@@ -646,6 +698,7 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 				],
 				plan
@@ -653,6 +706,26 @@ export const PLANS_LIST = {
 		getProductId: () => 1029,
 		getStoreSlug: () => constants.PLAN_PERSONAL_2_YEARS,
 		getPathSlug: () => 'personal-2-years',
+	},
+
+	[ constants.PLAN_PREMIUM_MONTHLY ]: {
+		...getPlanPremiumDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) =>
+			includes(
+				[
+					constants.PLAN_FREE,
+					constants.PLAN_BLOGGER,
+					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
+					constants.PLAN_PERSONAL,
+					constants.PLAN_PERSONAL_2_YEARS,
+				],
+				plan
+			),
+		getProductId: () => 1013,
+		getStoreSlug: () => constants.PLAN_PREMIUM_MONTHLY,
+		getPathSlug: () => 'premium-monthly',
 	},
 
 	[ constants.PLAN_PREMIUM ]: {
@@ -665,8 +738,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 				],
 				plan
 			),
@@ -685,8 +760,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 				],
 				plan
@@ -698,8 +775,7 @@ export const PLANS_LIST = {
 
 	[ constants.PLAN_BUSINESS_MONTHLY ]: {
 		...getPlanBusinessDetails(),
-		term: constants.TERM_MONTHLY,
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		...getMonthlyTimeframe(),
 		availableFor: ( plan ) =>
 			isEnabled( 'upgrades/wpcom-monthly-plans' ) &&
 			includes(
@@ -707,8 +783,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
 				],
@@ -729,8 +807,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
 					constants.PLAN_BUSINESS_MONTHLY,
@@ -752,8 +832,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
 					constants.PLAN_BUSINESS,
@@ -766,6 +848,32 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'business-2-years',
 	},
 
+	[ constants.PLAN_ECOMMERCE_MONTHLY ]: {
+		...getPlanEcommerceDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) =>
+			includes(
+				[
+					constants.PLAN_FREE,
+					constants.PLAN_BLOGGER,
+					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
+					constants.PLAN_PERSONAL,
+					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
+					constants.PLAN_PREMIUM,
+					constants.PLAN_PREMIUM_2_YEARS,
+					constants.PLAN_BUSINESS_MONTHLY,
+					constants.PLAN_BUSINESS,
+					constants.PLAN_BUSINESS_2_YEARS,
+				],
+				plan
+			),
+		getProductId: () => 1021,
+		getStoreSlug: () => constants.PLAN_ECOMMERCE_MONTHLY,
+		getPathSlug: () => 'ecommerce-monthly',
+	},
+
 	[ constants.PLAN_ECOMMERCE ]: {
 		...getPlanEcommerceDetails(),
 		term: constants.TERM_ANNUALLY,
@@ -776,13 +884,16 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
+					constants.PLAN_BUSINESS_MONTHLY,
 					constants.PLAN_BUSINESS,
 					constants.PLAN_BUSINESS_2_YEARS,
-					constants.PLAN_BUSINESS_MONTHLY,
+					constants.PLAN_ECOMMERCE_MONTHLY,
 				],
 				plan
 			),
@@ -801,13 +912,16 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
+					constants.PLAN_BUSINESS_MONTHLY,
 					constants.PLAN_BUSINESS,
 					constants.PLAN_BUSINESS_2_YEARS,
-					constants.PLAN_BUSINESS_MONTHLY,
+					constants.PLAN_ECOMMERCE_MONTHLY,
 					constants.PLAN_ECOMMERCE,
 				],
 				plan
@@ -878,7 +992,10 @@ export const PLANS_LIST = {
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getHiddenFeatures: () => [],
+		getHiddenFeatures: () => [
+			constants.FEATURE_ADVANCED_SEO,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
+		],
 		getInferiorHiddenFeatures: () => [],
 	},
 
@@ -1083,6 +1200,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
+			constants.FEATURE_ADVANCED_SEO,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -1131,6 +1250,8 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_ADVANCED_SEO,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -1335,34 +1456,62 @@ export const PLANS_LIST = {
 		group: constants.GROUP_WPCOM,
 		type: constants.TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
-		getDescription: () => i18n.translate( 'Some long description' ),
+		getDescription: () =>
+			i18n.translate(
+				'{{strong}}Best for professionals:{{/strong}} Enhance your P2 with more space for audio and video, advanced search, an activity overview panel, and priority customer support.',
+				plansDescriptionHeadingComponent
+			),
 		getShortDescription: () => i18n.translate( 'Some short description' ),
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
-			constants.FEATURE_EMAIL_SUPPORT,
-			constants.FEATURE_BASIC_DESIGN,
-			constants.FEATURE_13GB_STORAGE,
-			constants.FEATURE_NO_ADS,
+			constants.FEATURE_P2_13GB_STORAGE,
+			constants.FEATURE_P2_ADVANCED_SEARCH,
+			constants.FEATURE_P2_VIDEO_SHARING,
+			constants.FEATURE_P2_MORE_FILE_TYPES,
+			constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
+			constants.FEATURE_P2_ACTIVITY_OVERVIEW,
 		],
+
+		// TODO: update this once we put P2+ in the signup.
 		getSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
-		getBlogSignupFeatures: () => [
-			constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
-			constants.FEATURE_ALL_FREE_FEATURES,
-		],
-		getPortfolioSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
+
+		// TODO: no idea about this, copied from the WP.com Premium plan.
 		// Features not displayed but used for checking plan abilities
-		getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_AUDIO_UPLOADS,
+			constants.FEATURE_JETPACK_SEARCH,
+			constants.FEATURE_JETPACK_SEARCH_MONTHLY,
+		],
 		getInferiorHiddenFeatures: () => [],
-		getAudience: () => i18n.translate( 'Best for P2ers' ),
-		getBlogAudience: () => i18n.translate( 'Best for P2ers' ),
-		getPortfolioAudience: () => i18n.translate( 'Best for P2ers' ),
-		getStoreAudience: () => i18n.translate( 'Best for P2ers' ),
+
+		// TODO: Calypso requires this prop but we probably don't need it. Refactor Calypso?
+		getAudience: () => i18n.translate( 'Best for bloggers' ),
+
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ), //TODO: only for P2 sites.
 		getProductId: () => 1040,
 		getStoreSlug: () => constants.PLAN_P2_PLUS,
 		getPathSlug: () => 'p2-plus',
+		getBillingTimeFrame: () => translate( 'per user per month' ),
 	},
+};
+
+PLANS_LIST[ constants.PLAN_P2_FREE ] = {
+	...PLANS_LIST[ constants.PLAN_FREE ],
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
+			plansDescriptionHeadingComponent
+		),
+	getTitle: () => i18n.translate( 'P2 Free' ),
+	getPlanCompareFeatures: () => [
+		// pay attention to ordering, shared features should align on /plan page
+		constants.FEATURE_P2_3GB_STORAGE,
+		constants.FEATURE_P2_UNLIMITED_USERS,
+		constants.FEATURE_P2_UNLIMITED_POSTS_PAGES,
+		constants.FEATURE_P2_SIMPLE_SEARCH,
+		constants.FEATURE_P2_CUSTOMIZATION_OPTIONS,
+	],
 };
 
 export const PLANS_CONSTANTS_LIST = Object.keys( PLANS_LIST );

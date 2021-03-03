@@ -22,12 +22,12 @@ import {
 } from 'woocommerce/state/ui/orders/selectors';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import OrderActionHeader from './header';
 import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
 import OrderActivityLog from './order-activity-log';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 
 class Order extends Component {
 	componentDidMount() {

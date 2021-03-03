@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 import { withoutHttp, urlToSlug } from 'calypso/lib/url';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import getRawSite from 'calypso/state/selectors/get-raw-site';

@@ -4,13 +4,11 @@
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { CardNumberElement } from 'react-stripe-elements';
-import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, useSelect, PaymentLogo } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import PaymentLogo from 'calypso/my-sites/checkout/composite-checkout/components/payment-logo';
-import { shouldRenderAdditionalCountryFields } from 'calypso/lib/checkout/processor-specific';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 
@@ -18,7 +16,7 @@ export default function CreditCardNumberField( {
 	setIsStripeFullyLoaded,
 	handleStripeFieldChange,
 	stripeElementStyle,
-	countryCode,
+	shouldUseEbanx = false,
 	getErrorMessagesForField,
 	setFieldValue,
 	getFieldValue,
@@ -33,7 +31,7 @@ export default function CreditCardNumberField( {
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
 
-	if ( countryCode && shouldRenderAdditionalCountryFields( countryCode ) ) {
+	if ( shouldUseEbanx ) {
 		return (
 			<CreditCardNumberInput
 				isError={ !! errorMessage }

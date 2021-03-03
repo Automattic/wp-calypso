@@ -29,8 +29,14 @@ export function TestHelper() {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
+export function FeaturesHelper() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return <div className="environment is-features" />;
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
 export function Branch( { branchName, commitChecksum } ) {
-	return branchName === 'master' ? null : (
+	return branchName === 'trunk' ? null : (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
 			{ branchName }

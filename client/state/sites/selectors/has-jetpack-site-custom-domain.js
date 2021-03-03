@@ -20,8 +20,8 @@ export default function hasJetpackSiteCustomDomain( state, siteId ) {
 		return null;
 	}
 
-	const domain = getSiteDomain( state, siteId ),
-		unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+	const domain = getSiteDomain( state, siteId );
+	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
 
 	if ( ! domain || ! unmappedUrl ) {
 		return null;

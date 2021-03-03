@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';

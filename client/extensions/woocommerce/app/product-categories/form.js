@@ -4,24 +4,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { isNumber, head, isNull } from 'lodash';
+import { isNumber, head } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import MediaImage from 'my-sites/media-library/media-image';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
 
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
-import Spinner from 'components/spinner';
-import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
+import Spinner from 'calypso/components/spinner';
+import TermTreeSelectorTerms from 'calypso/blocks/term-tree-selector/terms';
 
 class ProductCategoryForm extends Component {
 	static propTypes = {
@@ -65,7 +65,7 @@ class ProductCategoryForm extends Component {
 		}
 
 		if ( nextProps.category.parent !== this.props.category.parent ) {
-			if ( isNull( nextProps.category.parent ) ) {
+			if ( nextProps.category.parent === null ) {
 				this.setState( {
 					selectedParent: [],
 					isTopLevel: false,
@@ -274,7 +274,7 @@ class ProductCategoryForm extends Component {
 									</span>
 								</FormLabel>
 
-								{ ( ! isTopLevel || isNull( category.parent ) ) && (
+								{ ( ! isTopLevel || category.parent === null ) && (
 									<div>
 										<FormLabel>{ translate( 'Select a parent category' ) }</FormLabel>
 										<TermTreeSelectorTerms

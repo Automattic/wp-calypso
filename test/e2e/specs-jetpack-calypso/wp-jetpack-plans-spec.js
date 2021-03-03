@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
 import config from 'config';
 
 /**
@@ -31,15 +30,14 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Purchase Business Plan:', function () {
 		before( async function () {

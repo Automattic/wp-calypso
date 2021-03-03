@@ -32,7 +32,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 export default class PageList extends Component {
 	static propTypes = {
@@ -318,7 +318,7 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
-				{ this.renderSectionHeader() }
+				{ site && this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
 			</div>
@@ -357,7 +357,7 @@ class Pages extends Component {
 				{ showBlogPostsPage && (
 					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				) }
-				{ this.renderSectionHeader() }
+				{ site && this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ this.renderListEnd() }

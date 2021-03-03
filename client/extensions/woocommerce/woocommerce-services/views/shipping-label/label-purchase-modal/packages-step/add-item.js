@@ -12,10 +12,10 @@ import { includes, size, some } from 'lodash';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import getPackageDescriptions from './get-package-descriptions';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import {
 	closeAddItem,
 	setAddedItem,

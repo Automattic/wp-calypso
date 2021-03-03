@@ -16,6 +16,7 @@ import FollowButton from 'calypso/blocks/follow-button/button';
 
 const ListStreamHeader = ( {
 	isPlaceholder,
+	isPublic,
 	title,
 	description,
 	showEdit,
@@ -38,7 +39,14 @@ const ListStreamHeader = ( {
 			</span>
 
 			<div className="list-stream__header-details">
-				<h1 className="list-stream__header-title">{ title }</h1>
+				<div className="list-stream__header-title">
+					<h1>{ title }</h1>
+					{ ! isPublic && (
+						<div className="list-stream__header-title-privacy">
+							<Gridicon icon="lock" size={ 18 } title={ translate( 'Private list' ) } />
+						</div>
+					) }
+				</div>
 				{ description && <p className="list-stream__header-description">{ description }</p> }
 			</div>
 
@@ -54,7 +62,9 @@ const ListStreamHeader = ( {
 						<span className="list-stream__header-action-icon">
 							<Gridicon icon="cog" size={ 24 } />
 						</span>
-						<span className="list-stream__header-action-label">{ translate( 'Edit' ) }</span>
+						<span className="list-stream__header-action-label screen-reader-text">
+							{ translate( 'Edit' ) }
+						</span>
 					</a>
 				</div>
 			) }
@@ -64,6 +74,7 @@ const ListStreamHeader = ( {
 
 ListStreamHeader.propTypes = {
 	isPlaceholder: PropTypes.bool,
+	isPublic: PropTypes.bool,
 	title: PropTypes.string,
 	description: PropTypes.string,
 	showEdit: PropTypes.bool,

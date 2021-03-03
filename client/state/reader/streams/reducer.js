@@ -25,7 +25,10 @@ import { combineXPosts } from './utils';
  * Contains a list of post-keys representing the items of a stream.
  */
 export const items = ( state = [], action ) => {
-	let streamItems, gap, newState, newXPosts;
+	let streamItems;
+	let gap;
+	let newState;
+	let newXPosts;
 
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
@@ -94,7 +97,11 @@ export const PENDING_ITEMS_DEFAULT = { lastUpdated: null, items: [] };
  * This is the data backing the orange "${number} new posts" pill.
  */
 export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
-	let streamItems, maxDate, minDate, newItems, newXPosts;
+	let streamItems;
+	let maxDate;
+	let minDate;
+	let newItems;
+	let newXPosts;
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
 			streamItems = action.payload.streamItems;

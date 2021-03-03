@@ -6,7 +6,13 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getPlugin, isFetching, isFetched } from '../selectors';
+import {
+	getNextPluginsListPage,
+	getPlugin,
+	isFetched,
+	isFetching,
+	isFetchingPluginsList,
+} from '../selectors';
 
 const items = deepFreeze( {
 	test: { slug: 'test' },
@@ -20,8 +26,27 @@ const fetchingItems = deepFreeze( {
 	fetchedTest: false,
 	fetchedTest2: true,
 } );
+const fetchingLists = deepFreeze( {
+	category: {
+		popular: true,
+		new: false,
+	},
+	search: {
+		security: true,
+		enhancement: false,
+	},
+} );
+const listsPagination = deepFreeze( {
+	category: {
+		popular: {
+			page: 1,
+			pages: 100,
+			results: 2359,
+		},
+	},
+} );
 const state = deepFreeze( {
-	plugins: { wporg: { items, fetchingItems } },
+	plugins: { wporg: { items, fetchingItems, fetchingLists, listsPagination } },
 } );
 
 describe( 'WPorg Selectors', () => {
@@ -50,8 +75,8 @@ describe( 'WPorg Selectors', () => {
 	} );
 
 	describe( 'isFetching', () => {
-		test( 'Should get `true` if the requested plugin is not in the current state', () => {
-			expect( isFetching( state, 'no.test' ) ).toBe( true );
+		test( 'Should get `false` if the requested plugin is not in the current state', () => {
+			expect( isFetching( state, 'no.test' ) ).toBe( false );
 		} );
 
 		test( 'Should get `false` if the requested plugin is not being fetched', () => {
@@ -78,6 +103,51 @@ describe( 'WPorg Selectors', () => {
 
 		test( "Should get `true` if the requested plugin has being fetched even if it's being fetche again", () => {
 			expect( isFetched( state, 'fetchedTest2' ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'isFetchingPluginsList', () => {
+		test( 'Should return false by default', () => {
+			const emptyState = { plugins: { wporg: { fetchingLists: {} } } };
+			expect( isFetchingPluginsList( emptyState, 'popular' ) ).toBe( false );
+		} );
+		test( 'Should return true when category list is being fetched', () => {
+			expect( isFetchingPluginsList( state, 'popular' ) ).toBe( true );
+		} );
+		test( 'Should return false when category list is not being fetched', () => {
+			expect( isFetchingPluginsList( state, 'new' ) ).toBe( false );
+		} );
+		test( 'Should return true when search term list is being fetched', () => {
+			expect( isFetchingPluginsList( state, undefined, 'security' ) ).toBe( true );
+		} );
+		test( 'Should return false when search term list is not being fetched', () => {
+			expect( isFetchingPluginsList( state, 'enahncement' ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getNextPluginsListPage', () => {
+		test( 'Should return null by default', () => {
+			const emptyState = { plugins: { wporg: { listsPagination: {} } } };
+			expect( getNextPluginsListPage( emptyState, 'popular' ) ).toBe( null );
+		} );
+		test( 'Should return null when this is the last page', () => {
+			const currentState = {
+				plugins: {
+					wporg: {
+						listsPagination: {
+							popular: {
+								page: 10,
+								pages: 10,
+								results: 235,
+							},
+						},
+					},
+				},
+			};
+			expect( getNextPluginsListPage( currentState, 'popular' ) ).toBe( null );
+		} );
+		test( 'Should return next page number when there is one', () => {
+			expect( getNextPluginsListPage( state, 'popular' ) ).toBe( 2 );
 		} );
 	} );
 } );

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { get, isArray, omit, some, range, values } from 'lodash';
+import { get, omit, some, range, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSerializedProductCategoriesQuery } from './utils';
 
 /**
@@ -33,7 +33,7 @@ export function areProductCategoriesLoaded(
 	const categoryState = getRawCategoryState( state, siteId );
 	const cats = categoryState.queries && categoryState.queries[ serializedQuery ];
 
-	return isArray( cats );
+	return Array.isArray( cats );
 }
 
 /**

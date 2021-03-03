@@ -6,7 +6,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import safeImageUrl from 'lib/safe-image-url';
+import safeImageUrl from 'calypso/lib/safe-image-url';
 
 function isValidImage( width, height ) {
 	return function ( image ) {

@@ -5,6 +5,7 @@ const electron = require( 'electron' );
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
 const path = require( 'path' );
+const preloadDirectory = path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop' );
 
 // HACK(sendhilp, 9/6/2016): The reason for this strange importing is there seems to be a
 // bug post Electron 1.1.1 in which attempting to access electron.screen
@@ -15,13 +16,17 @@ const path = require( 'path' );
 // electron.
 let screen;
 app.on( 'ready', () => {
+	if ( process.platform === 'win32' ) {
+		// required to display application notification settings in Windows
+		app.setAppUserModelId( 'com.automattic.wordpress' );
+	}
 	screen = electron.screen;
 } );
 
 /**
  * Internal dependencies
  */
-const Config = require( 'desktop/lib/config' );
+const Config = require( 'calypso/desktop/lib/config' );
 
 /**
  * Module variables
@@ -31,22 +36,26 @@ const windows = {
 		file: 'about.html',
 		config: 'aboutWindow',
 		handle: null,
+		preload: path.join( preloadDirectory, 'preload_about.js' ),
 	},
 	preferences: {
 		file: 'preferences.html',
 		config: 'preferencesWindow',
 		handle: null,
+		preload: path.resolve( preloadDirectory, 'preload_preferences.js' ),
 	},
 	secret: {
 		file: 'secret.html',
 		config: 'secretWindow',
 		handle: null,
+		preload: null,
 	},
 	wapuu: {
 		file: 'wapuu.html',
 		config: 'secretWindow',
 		full: true,
 		handle: null,
+		preload: null,
 	},
 };
 
@@ -68,12 +77,11 @@ async function openWindow( windowName ) {
 			let config = Config[ settings.config ];
 			config = setDimensions( config );
 
-			// nodeIntegration is necessary to support usage of `require` in preload and HTML scripts.
-			// FIXME: Refactor preload to use contextBridge instead (contextIsolation: true, nodeIntegration: false).
 			const webPreferences = Object.assign( {}, config.webPreferences, {
-				contextIsolation: false,
-				nodeIntegration: true,
-				preload: path.resolve( __dirname, '..', '..', '..', '..', 'public_desktop', 'preload.js' ),
+				preload: windows[ windowName ].preload,
+				contextIsolation: true,
+				enableRemoteModule: false,
+				nodeIntegration: false,
 			} );
 			config.webPreferences = webPreferences;
 

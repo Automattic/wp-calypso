@@ -8,6 +8,8 @@ import { get } from 'lodash';
  */
 import isClassicEditorForced from 'calypso/state/selectors/is-classic-editor-forced';
 
+import 'calypso/state/selected-editor/init';
+
 /**
  * Returns the editor of the selected site
  *

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';

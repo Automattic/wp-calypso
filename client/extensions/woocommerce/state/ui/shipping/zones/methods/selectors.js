@@ -7,20 +7,19 @@ import {
 	intersection,
 	isEmpty,
 	isNumber,
-	isNil,
 	map,
 	merge,
 	mergeWith,
 	pullAll,
 	startsWith,
-	isArray,
 } from 'lodash';
+import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getAPIShippingZones,
 	areShippingZonesLoaded,
@@ -79,8 +78,8 @@ const getShippingZoneMethodsEdits = ( state, zoneId, siteId ) => {
 
 const sortShippingZoneMethods = ( state, siteId, methods ) => {
 	return methods.sort( ( a, b ) => {
-		const aId = isNil( a._originalId ) ? a.id : a._originalId;
-		const bId = isNil( b._originalId ) ? b.id : b._originalId;
+		const aId = isNullish( a._originalId ) ? a.id : a._originalId;
+		const bId = isNullish( b._originalId ) ? b.id : b._originalId;
 
 		if ( isNumber( aId ) ) {
 			// Both IDs are numbers (come from the server), so compare their "order" property
@@ -122,7 +121,7 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 	// Compute the "enabled" prop for all the methods. If a method hasn't been explicitly disabled (enabled===false), then it's enabled
 	const allMethods = [ ...methods, ...creates ].map( ( method ) => {
 		let enabled = method.enabled;
-		if ( isNil( enabled ) && 'number' === typeof method._originalId ) {
+		if ( isNullish( enabled ) && 'number' === typeof method._originalId ) {
 			// If the "enabled" prop hasn't been modified, use the value from the original method
 			enabled = getShippingZoneMethod( state, method._originalId, siteId ).enabled;
 		}
@@ -233,13 +232,13 @@ export const getCurrentlyOpenShippingZoneMethod = (
 		return null;
 	}
 
-	const enabled = isNil( zone.methods.currentlyEditingChanges.enabled )
+	const enabled = isNullish( zone.methods.currentlyEditingChanges.enabled )
 		? false !== openMethod.enabled
 		: false !== zone.methods.currentlyEditingChanges.enabled;
 
 	// Overwrites the default behavior of `merge` while ignoring arrays and focusing on objects.
 	const customizer = ( objValue, srcValue ) => {
-		if ( isArray( objValue ) ) {
+		if ( Array.isArray( objValue ) ) {
 			return srcValue;
 		}
 	};
@@ -249,18 +248,16 @@ export const getCurrentlyOpenShippingZoneMethod = (
 	 * in standard mode `merge` does not always allow the elements of
 	 * standard arrays to be removed.
 	 *
-	 * Example:
-
-	const openMethod              = { shipping_classes: [ 19 ] };
-	const currentlyEditingChanges = { shipping_classes: [] };
-
-	_.merge( {}, openMethod, currentlyEditingChanges );
-	// { shipping_classes: [ 19 ] }
-
-	_.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
-	// { shipping_classes: [] }
-	*/
-
+	 * @example
+	 * const openMethod = { shipping_classes: [ 19 ] };
+	 * const currentlyEditingChanges = { shipping_classes: [] };
+	 *
+	 * _.merge( {}, openMethod, currentlyEditingChanges );
+	 * // { shipping_classes: [ 19 ] }
+	 *
+	 * _.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
+	 * // { shipping_classes: [] }
+	 */
 	return mergeWith(
 		{},
 		defaultValues,

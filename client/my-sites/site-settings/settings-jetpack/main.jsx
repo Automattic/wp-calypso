@@ -23,6 +23,7 @@ import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
 
 const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, translate } ) => {
 	//todo: this check makes sense in Jetpack section?
@@ -75,6 +76,9 @@ export default connect( ( state ) => {
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),
-		showCredentials: isRewindActive( state, siteId ) || siteHasScanProductPurchase( state, siteId ),
+		showCredentials:
+			isSiteFailedMigrationSource( state, siteId ) ||
+			isRewindActive( state, siteId ) ||
+			siteHasScanProductPurchase( state, siteId ),
 	};
 } )( localize( SiteSettingsJetpack ) );

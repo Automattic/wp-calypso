@@ -642,7 +642,8 @@ export class DomainWarnings extends React.PureComponent {
 
 		if ( domains.length === 1 ) {
 			const domain = domains[ 0 ].name;
-			let fullMessage, compactMessage;
+			let fullMessage;
+			let compactMessage;
 			if ( severity === 'is-error' ) {
 				fullMessage = translate(
 					'Your domain {{strong}}%(domain)s{{/strong}} may be suspended because your email address is not verified.',
@@ -685,7 +686,9 @@ export class DomainWarnings extends React.PureComponent {
 			);
 		}
 
-		let fullContent, compactContent, compactNoticeText;
+		let fullContent;
+		let compactContent;
+		let compactNoticeText;
 
 		const editLink = ( name ) => domainManagementEdit( this.props.selectedSite.slug, name );
 		if ( severity === 'is-error' ) {
@@ -762,20 +765,20 @@ export class DomainWarnings extends React.PureComponent {
 
 		if ( domains.length === 1 ) {
 			const fullMessage = translate(
-					'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner, ' +
-						'{{strong}}%(owner)s{{/strong}}, has not verified their contact information.',
-					{
-						components: { strong: <strong /> },
-						args: {
-							domain: domains[ 0 ].name,
-							owner: domains[ 0 ].owner,
-						},
-					}
-				),
-				compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}', {
+				'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner, ' +
+					'{{strong}}%(owner)s{{/strong}}, has not verified their contact information.',
+				{
 					components: { strong: <strong /> },
-					args: { domain: domains[ 0 ].name },
-				} );
+					args: {
+						domain: domains[ 0 ].name,
+						owner: domains[ 0 ].owner,
+					},
+				}
+			);
+			const compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}', {
+				components: { strong: <strong /> },
+				args: { domain: domains[ 0 ].name },
+			} );
 			return (
 				<Notice
 					isCompact={ this.props.isCompact }
@@ -790,19 +793,19 @@ export class DomainWarnings extends React.PureComponent {
 		}
 
 		const fullContent = (
-				<span>
-					{ translate(
-						'Some domains on this site are about to be suspended because their owner has not ' +
-							'verified their contact information.'
-					) }
-					<ul>
-						{ domains.map( ( domain ) => {
-							return <li key={ domain.name }>{ domain.name }</li>;
-						} ) }
-					</ul>
-				</span>
-			),
-			compactNoticeText = translate( 'Issues with domains on this site' );
+			<span>
+				{ translate(
+					'Some domains on this site are about to be suspended because their owner has not ' +
+						'verified their contact information.'
+				) }
+				<ul>
+					{ domains.map( ( domain ) => {
+						return <li key={ domain.name }>{ domain.name }</li>;
+					} ) }
+				</ul>
+			</span>
+		);
+		const compactNoticeText = translate( 'Issues with domains on this site' );
 
 		return (
 			<Notice
@@ -840,17 +843,17 @@ export class DomainWarnings extends React.PureComponent {
 
 		const { translate } = this.props;
 		const compactNotice = translate( '{{strong}}%(domain)s{{/strong}} is pending transfer.', {
+			components: { strong: <strong /> },
+			args: { domain: domain.name },
+		} );
+		const fullNotice = translate(
+			'{{strong}}%(domain)s{{/strong}} is pending transfer. ' +
+				'You must wait for the transfer to finish, and then update the settings at the new registrar.',
+			{
 				components: { strong: <strong /> },
 				args: { domain: domain.name },
-			} ),
-			fullNotice = translate(
-				'{{strong}}%(domain)s{{/strong}} is pending transfer. ' +
-					'You must wait for the transfer to finish, and then update the settings at the new registrar.',
-				{
-					components: { strong: <strong /> },
-					args: { domain: domain.name },
-				}
-			);
+			}
+		);
 
 		return (
 			<Notice

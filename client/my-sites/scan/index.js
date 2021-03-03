@@ -14,6 +14,8 @@ import wpcomUpsellController from 'calypso/lib/jetpack/wpcom-upsell-controller';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import {
+	showJetpackIsDisconnected,
+	showNotAuthorizedForNonAdmins,
 	showUpsellIfNoScan,
 	showUpsellIfNoScanHistory,
 	showUnavailableForVaultPressSites,
@@ -48,7 +50,9 @@ export default function () {
 		showUpsellIfNoScan,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -63,7 +67,9 @@ export default function () {
 		showUpsellIfNoScanHistory,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -78,7 +84,9 @@ export default function () {
 		showUpsellIfNoScan,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender

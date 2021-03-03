@@ -75,8 +75,8 @@ class MediaLibraryListNoContent extends Component {
 	}
 
 	render() {
-		let line = '',
-			action = '';
+		let line = '';
+		let action = '';
 
 		if ( userCan( 'upload_files', this.props.site ) && ! this.props.source ) {
 			line = this.props.translate( 'Would you like to upload something?' );

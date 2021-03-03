@@ -3,6 +3,11 @@
 	height: 50px;
 }
 
+.post-type-filter .section-nav .gravatar {
+	margin-left: 6px;
+	vertical-align: middle;
+}
+
 @include breakpoint-deprecated( '660px-800px' ) {
 	$width-search: 40px;
 	$space-between-nav-and-search: 5px;

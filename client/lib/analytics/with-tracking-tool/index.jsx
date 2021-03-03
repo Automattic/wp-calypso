@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { loadTrackingTool } from 'state/analytics/actions';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 
 export default ( trackingTool ) => ( EnhancedComponent ) => {
 	class WithTrackingTool extends Component {

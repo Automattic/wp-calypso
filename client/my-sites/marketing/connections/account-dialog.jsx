@@ -203,12 +203,12 @@ class AccountDialog extends Component {
 
 	render() {
 		const classes = classNames( 'account-dialog', {
-				'single-account': 1 === this.props.accounts.length,
-			} ),
-			buttons = [
-				{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
-				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
-			];
+			'single-account': 1 === this.props.accounts.length,
+		} );
+		const buttons = [
+			{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
+			{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
+		];
 
 		return (
 			<Dialog

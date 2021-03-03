@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { assign, get, includes, indexOf, reject } from 'lodash';
+import { assign, get, includes, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import stepConfig from './steps';
 import user from 'calypso/lib/user';
 import { isEcommercePlan } from 'calypso/lib/plans';
@@ -39,7 +39,12 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return (
+		dependencies.cartItem ||
+		dependencies.domainItem ||
+		dependencies.themeItem ||
+		dependencies.selectedDomainUpsellItem
+	);
 }
 
 function getSiteDestination( dependencies ) {
@@ -58,11 +63,15 @@ function getSiteDestination( dependencies ) {
 }
 
 function getRedirectDestination( dependencies ) {
-	if (
-		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
-	) {
-		return dependencies.oauth2_redirect;
+	try {
+		if (
+			dependencies.oauth2_redirect &&
+			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
+		) {
+			return dependencies.oauth2_redirect;
+		}
+	} catch {
+		return '/';
 	}
 
 	return '/';
@@ -174,7 +183,7 @@ const Flows = {
 			return false;
 		}
 		const flowSteps = flow.steps;
-		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextIndex = currentStepIndex + 1;
 		const nextStepName = get( flowSteps, nextIndex );
 

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	ATOMIC_TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_REQUEST_FAILURE,
@@ -10,6 +9,7 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/transfers/latest';
+import 'calypso/state/atomic-transfer/init';
 
 /**
  * Query the atomic transfer for a given site.

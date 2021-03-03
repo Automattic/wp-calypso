@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { every, filter, find, get, isArray, some, startsWith } from 'lodash';
+import { every, filter, find, get, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import { LOADING } from 'woocommerce/state/constants';
 import {
@@ -40,7 +40,7 @@ export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) )
 		siteId,
 		'shippingMethods',
 	] );
-	if ( ! isArray( allMethods ) ) {
+	if ( ! Array.isArray( allMethods ) ) {
 		return allMethods;
 	}
 	const availableMethods = isWcsEnabled( state, siteId )
@@ -58,7 +58,7 @@ export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) )
  * @returns {boolean} Whether the shipping methods list has been successfully loaded from the server
  */
 export const areShippingMethodsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! isArray( getShippingMethods( state, siteId ) ) ) {
+	if ( ! Array.isArray( getShippingMethods( state, siteId ) ) ) {
 		return false;
 	}
 	const wcsMethods = filter( getShippingMethods( state, siteId ), ( { id } ) =>

@@ -4,6 +4,11 @@
 import { translate } from 'i18n-calypso';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/inline-support-article/init';
+
+/**
  * @param {object} state Global app state
  * @returns {object} ...
  */

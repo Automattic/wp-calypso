@@ -130,22 +130,6 @@
 	margin-left: 0;
 }
 
-.editor-media-modal__back-to-library {
-	.is-desktop {
-		display: none;
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
-		.is-desktop {
-			display: inherit;
-		}
-
-		.is-mobile {
-			display: none;
-		}
-	}
-}
-
 .editor-media-modal__plan-storage {
 	display: none;
 

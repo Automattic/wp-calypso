@@ -107,7 +107,7 @@ const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDial
 				<div className="help-search__footer">
 					<a className="help-search__cta" href="/help">
 						<span className="help-search__help-icon">
-							<Gridicon icon="help-outline" size={ 24 } />
+							<Gridicon icon="help" size={ 36 } />
 						</span>
 						{ translate( 'More help' ) }
 						<Gridicon className="help-search__go-icon" icon="chevron-right" size={ 24 } />

@@ -3,12 +3,11 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { ACTIVATE_PLUGIN } from '../constants';
+import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { isRequesting, plugins } from '../reducer';
 import status from '../status/reducer';
 import { akismet, jetpack } from './fixtures/plugins';
@@ -26,6 +25,7 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
+	PLUGIN_NOTICES_REMOVE,
 } from 'calypso/state/action-types';
 
 describe( 'reducer:', () => {
@@ -94,7 +94,7 @@ describe( 'reducer:', () => {
 
 		test( 'should show an updated plugin as up-to-date', () => {
 			const originalState = deepFreeze( { 'one.site': [ jetpack ] } );
-			const updatedPlugin = omit( jetpack, 'update' );
+			const updatedPlugin = { ...jetpack, update: { recentlyUpdated: true } };
 			const state = plugins( originalState, {
 				type: PLUGIN_UPDATE_REQUEST_SUCCESS,
 				siteId: 'one.site',
@@ -218,6 +218,39 @@ describe( 'reducer:', () => {
 						status: 'error',
 						action: ACTIVATE_PLUGIN,
 						error: testError,
+					},
+				},
+			} );
+		} );
+
+		test( 'should delete all statuses of the specified types for all sites and plugins', () => {
+			const originalState = deepFreeze( {
+				'one.site': {
+					[ akismet.id ]: {
+						status: 'inProgress',
+						action: ACTIVATE_PLUGIN,
+					},
+					[ jetpack.id ]: {
+						status: 'error',
+						action: ACTIVATE_PLUGIN,
+					},
+				},
+				'another.site': {
+					[ akismet.id ]: {
+						status: 'completed',
+						action: ACTIVATE_PLUGIN,
+					},
+				},
+			} );
+			const state = status( originalState, {
+				type: PLUGIN_NOTICES_REMOVE,
+				statuses: [ 'completed', 'error' ],
+			} );
+			expect( state ).to.eql( {
+				'one.site': {
+					[ akismet.id ]: {
+						status: 'inProgress',
+						action: ACTIVATE_PLUGIN,
 					},
 				},
 			} );

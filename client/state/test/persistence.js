@@ -11,7 +11,7 @@ import { createReduxStore } from 'calypso/state';
 import reducer from 'calypso/state/reducer';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'persistence', () => {
 	test( 'initial state should serialize and deserialize without errors or warnings', () => {

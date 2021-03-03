@@ -20,7 +20,10 @@ import {
 } from 'calypso/lib/plans/constants';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getEligibility, isEligibleForAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'calypso/state/automated-transfer/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { Button, CompactCard } from '@automattic/components';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';

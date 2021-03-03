@@ -11,7 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'calypso/reader/stats';
+import {
+	recordAction,
+	recordTrackWithRailcar,
+	recordTracksRailcarRender,
+} from 'calypso/reader/stats';
 import { Button } from '@automattic/components';
 import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
 import ConnectedListItem from 'calypso/blocks/reader-list-item/connected';

@@ -7,7 +7,7 @@ import { get, orderBy } from 'lodash';
  * Internal dependencies
  */
 import { enrichPublicizeActionsWithConnections } from 'calypso/state/selectors/utils/';
-import createSelector from 'calypso/lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
 import 'calypso/state/sharing/init';
 

@@ -6,7 +6,7 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCreditCardType } from 'lib/checkout';
+import { getCreditCardType } from 'calypso/lib/checkout';
 
 /**
  * Formats a credit card card number

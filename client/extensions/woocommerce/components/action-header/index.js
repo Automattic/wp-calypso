@@ -4,8 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
-import { isArray } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
@@ -13,8 +12,8 @@ import { isArray } from 'lodash';
 import ActionButtons from './actions';
 import { Button } from '@automattic/components';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import SiteIcon from 'blocks/site-icon';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import SiteIcon from 'calypso/blocks/site-icon';
 
 class ActionHeader extends React.Component {
 	static propTypes = {
@@ -32,7 +31,7 @@ class ActionHeader extends React.Component {
 	renderBreadcrumbs = () => {
 		const { breadcrumbs } = this.props;
 		let breadcrumbsOutput = breadcrumbs;
-		if ( isArray( breadcrumbs ) ) {
+		if ( Array.isArray( breadcrumbs ) ) {
 			breadcrumbsOutput = breadcrumbs.map( ( crumb, i ) => <span key={ i }>{ crumb }</span> );
 		}
 

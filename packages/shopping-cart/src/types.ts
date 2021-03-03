@@ -1,11 +1,13 @@
 /**
  * Internal dependencies
  */
-import {
+import type {
+	TempResponseCart,
 	ResponseCart,
 	RequestCart,
 	RequestCartProduct,
 	CartLocation,
+	MinimalRequestCartProduct,
 } from './shopping-cart-endpoint';
 
 export * from './shopping-cart-endpoint';
@@ -36,33 +38,38 @@ export interface ShoppingCartManager {
 export type ReplaceProductInCart = (
 	uuidToReplace: string,
 	productPropertiesToChange: Partial< RequestCartProduct >
-) => void;
+) => Promise< ResponseCart >;
 
-export type ReloadCartFromServer = () => void;
+export type ReloadCartFromServer = () => Promise< ResponseCart >;
 
-export type ReplaceProductsInCart = ( products: RequestCartProduct[] ) => void;
+export type ReplaceProductsInCart = (
+	products: MinimalRequestCartProduct[]
+) => Promise< ResponseCart >;
 
-export type AddProductsToCart = ( products: RequestCartProduct[] ) => void;
+export type AddProductsToCart = (
+	products: MinimalRequestCartProduct[]
+) => Promise< ResponseCart >;
 
-export type RemoveCouponFromCart = () => void;
+export type RemoveCouponFromCart = () => Promise< ResponseCart >;
 
-export type ApplyCouponToCart = ( couponId: string ) => void;
+export type ApplyCouponToCart = ( couponId: string ) => Promise< ResponseCart >;
 
-export type RemoveProductFromCart = ( uuidToRemove: string ) => void;
+export type RemoveProductFromCart = ( uuidToRemove: string ) => Promise< ResponseCart >;
 
-export type UpdateTaxLocationInCart = ( location: CartLocation ) => void;
+export type UpdateTaxLocationInCart = ( location: CartLocation ) => Promise< ResponseCart >;
 
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
  * cache status.
  *
  *   - 'fresh': Page has loaded and no requests have been sent.
+ *   - 'fresh-pending': Page has loaded and we are waiting for the initial request.
  *   - 'invalid': Local cart data has been edited.
  *   - 'valid': Local cart has been reloaded from the server.
  *   - 'pending': Request has been sent, awaiting response.
  *   - 'error': Something went wrong.
  */
-export type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
+export type CacheStatus = 'fresh' | 'fresh-pending' | 'valid' | 'invalid' | 'pending' | 'error';
 
 /**
  * Possible states re. coupon submission.
@@ -97,23 +104,13 @@ export type ShoppingCartAction =
 
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 
-/**
- *     * responseCart
- *         Stored shopping cart endpoint response. We manipulate this
- *         directly and pass it back to the endpoint on update events.
- *     * couponStatus
- *         Used to determine whether to render coupon input fields and
- *         coupon-related error messages.
- *     * cacheStatus
- *         Used to determine whether we need to re-validate the cart on
- *         the backend. We can't use responseCart directly to decide this
- *         in e.g. useEffect because this causes an infinite loop.
- */
 export type ShoppingCartState = {
-	responseCart: ResponseCart;
+	responseCart: TempResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
 	loadingError?: string;
 	loadingErrorType?: ShoppingCartError;
 	queuedActions: ShoppingCartAction[];
 };
+
+export type CartValidCallback = ( cart: ResponseCart ) => void;

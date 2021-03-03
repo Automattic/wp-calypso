@@ -6,11 +6,16 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	wpForTeamsGeneralNotSupportedRedirect,
+} from 'calypso/my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
 import SiftScience from 'calypso/lib/siftscience';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
@@ -32,7 +37,7 @@ function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
 	warnIfJetpack = true,
 } = {} ) {
-	const handlers = [ siteSelection, navigation, domainsController.wpForTeamsNoDomainsRedirect ];
+	const handlers = [ siteSelection, navigation, wpForTeamsGeneralNotSupportedRedirect ];
 
 	if ( noSitePath ) {
 		handlers.push( domainsController.redirectIfNoSite( noSitePath ) );

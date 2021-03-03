@@ -51,6 +51,9 @@
 .advanced-credentials__connected {
 	display: flex;
 	align-items: center;
+	text-align: left;
+	font-weight: normal;
+
 	.gridicon {
 		flex-shrink: 0;
 	}

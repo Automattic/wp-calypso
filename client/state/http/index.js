@@ -78,7 +78,8 @@ export const httpHandler = async ( { dispatch }, action ) => {
 
 	const queryString = encodeQueryParameters( queryParams );
 
-	let response, json;
+	let response;
+	let json;
 	try {
 		response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
 			method,

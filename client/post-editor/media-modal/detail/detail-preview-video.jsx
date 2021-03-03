@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isVideoPressItem } from 'lib/media/utils';
+import { isVideoPressItem } from 'calypso/lib/media/utils';
 import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 import EditorMediaModalDetailPreviewMediaFile from './detail-preview-media-file';
 

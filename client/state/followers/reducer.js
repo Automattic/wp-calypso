@@ -35,9 +35,10 @@ export function items( state = {}, action ) {
 
 export function queries( state = {}, action ) {
 	switch ( action.type ) {
-		case FOLLOWERS_RECEIVE:
+		case FOLLOWERS_RECEIVE: {
 			const serializedQuery = getSerializedQuery( action.query );
 			const ids = state[ serializedQuery ] ? state[ serializedQuery ].ids : [];
+
 			return Object.assign( {}, state, {
 				[ serializedQuery ]: {
 					ids: union(
@@ -48,6 +49,7 @@ export function queries( state = {}, action ) {
 					lastPage: action.data.pages,
 				},
 			} );
+		}
 		case FOLLOWER_REMOVE_SUCCESS:
 			return Object.assign(
 				{},
@@ -80,9 +82,12 @@ export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case FOLLOWERS_RECEIVE:
 		case FOLLOWERS_REQUEST:
-		case FOLLOWERS_REQUEST_ERROR:
+		case FOLLOWERS_REQUEST_ERROR: {
 			const serializedQuery = getSerializedQuery( action.query );
-			return Object.assign( {}, state, { [ serializedQuery ]: FOLLOWERS_REQUEST === action.type } );
+			return Object.assign( {}, state, {
+				[ serializedQuery ]: FOLLOWERS_REQUEST === action.type && ! action.silentUpdate,
+			} );
+		}
 	}
 	return state;
 }
@@ -91,10 +96,11 @@ export function removeFromSiteRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case FOLLOWER_REMOVE_ERROR:
 		case FOLLOWER_REMOVE_REQUEST:
-		case FOLLOWER_REMOVE_SUCCESS:
+		case FOLLOWER_REMOVE_SUCCESS: {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: FOLLOWER_REMOVE_REQUEST === action.type,
 			} );
+		}
 	}
 	return state;
 }

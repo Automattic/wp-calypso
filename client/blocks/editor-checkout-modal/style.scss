@@ -1,52 +1,41 @@
-
 @import '~@automattic/typography/styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 .editor-checkout-modal {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: -100%;
-	z-index: 9998;
-	height: 100%;
-	overflow: auto;
-	padding: 80px 30px 30px;
-	background: white;
-	transition: all 0.5s ease-in-out;
+	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
 
-	&.is-open {
-		right: 0;
+	.components-modal__frame {
+		top: auto;
+		right: auto;
+		bottom: auto;
+		left: auto;
+		min-width: auto;
+		min-height: auto;
+		max-height: none;
+		max-width: none;
+		transform: none;
+		width: 100%;
+		height: 100%;
 	}
-}
+	.components-modal__header {
+		// hide border on desktop
+		@include break-medium {
+			border: none;
+		}
+	}
 
-.editor-checkout-modal__header {
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: 9998;
-	width: 100%;
-	height: 0;
-	overflow: visible;
-}
-
-.editor-checkout-modal__wp-logo {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 60px;
-	height: 60px;
-}
-
-.editor-checkout-modal__close-button.components-button.is-link {
-	position: absolute;
-	top: 0;
-	right: 0;
-	z-index: 9999;
-	width: 60px;
-	height: 60px;
-	justify-content: center;
-	color: var( --studio-gray-50 );
-
-	&:hover {
-		color: var( --studio-gray-40 );
+	// @TODO: re-use onboarding-screen-reader-text()
+	// See https://github.com/Automattic/wp-calypso/pull/47601#discussion_r530570891
+	.components-modal__header-heading {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect( 0, 0, 0, 0 );
+		white-space: nowrap;
+		border-width: 0;
 	}
 }

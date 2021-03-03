@@ -3,6 +3,8 @@
  */
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 
+import 'calypso/state/media/init';
+
 /**
  * Retrieves the currently selected media library items for a specified site.
  *

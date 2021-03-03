@@ -45,33 +45,16 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 
 	@include break-large {
 		flex-wrap: nowrap;
+
+		max-width: 1040px;
+
+		margin: 0 auto;
+		padding: 0 32px;
 	}
 }
 
 .jpcom-masterbar__logo {
 	padding-top: 0.25em;
-}
-
-.jpcom-masterbar.sticky {
-	// Pin to the top only on screens wider than `break-large`.
-	@include break-large {
-		position: fixed;
-		top: 0;
-		left: 0;
-
-		width: 100%;
-
-		margin-top: 0;
-
-		z-index: 3;
-
-		.jpcom-masterbar__inner {
-			max-width: 1040px;
-
-			margin: 0 auto;
-			padding: 0 32px;
-		}
-	}
 }
 
 .jpcom-masterbar__nav {

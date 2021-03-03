@@ -36,11 +36,9 @@ class RenewButton extends React.Component {
 	};
 
 	handleRenew = () => {
-		handleRenewNowClick(
-			this.props.purchase,
-			this.props.selectedSite.slug,
-			this.props.tracksProps
-		);
+		handleRenewNowClick( this.props.purchase, this.props.selectedSite.slug, {
+			tracksProps: this.props.tracksProps,
+		} );
 	};
 
 	render() {

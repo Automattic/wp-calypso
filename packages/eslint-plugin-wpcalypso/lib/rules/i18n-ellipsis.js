@@ -9,8 +9,8 @@
 // Helper Functions
 //------------------------------------------------------------------------------
 
-const getCallee = require( '../util/get-callee' ),
-	getTextContentFromNode = require( '../util/get-text-content-from-node' );
+const getCallee = require( '../util/get-callee' );
+const getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -90,3 +90,7 @@ const rule = ( module.exports = function ( context ) {
 rule.ERROR_MESSAGE = 'Use ellipsis character (…) in place of three dots';
 
 rule.schema = [];
+
+rule.meta = {
+	fixable: true,
+};

@@ -19,7 +19,7 @@
 	}
 
 	.credentials-form__intro-text {
-		color: var(--color-text-subtle);
+		color: var( --color-text-subtle );
 		font-size: $font-body-small;
 	}
 
@@ -29,7 +29,7 @@
 		}
 	}
 
-	&__buttons {
+	&__buttons .credentials-form__buttons-flex {
 		display: flex;
 		flex-direction: row;
 		align-items: center;

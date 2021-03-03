@@ -8,10 +8,7 @@ const mkdirp = require( 'mkdirp' );
 const readline = require( 'readline' );
 const parse = require( 'gettext-parser' ).po.parse;
 
-const languagesMetaPath = fs.existsSync( '../client/languages/languages-meta.json' )
-	? '../client/languages/languages-meta.json'
-	: '../client/languages/fallback-languages-meta.json';
-const languages = require( languagesMetaPath );
+const languages = require( '@automattic/languages' );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
@@ -19,7 +16,7 @@ const CALYPSO_STRINGS = './calypso-strings.pot';
 const CHUNKS_MAP_PATTERN = './chunks-map.*.json';
 const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 
-const langSlugs = languages.map( ( { langSlug } ) => langSlug );
+const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
 
 const chunksMaps = glob.sync( CHUNKS_MAP_PATTERN );
 const languagesPaths = chunksMaps
@@ -83,9 +80,6 @@ function downloadLanguagesRevions() {
 				if ( response.statusCode !== 200 ) {
 					console.error( 'Failed to download language revisions file.' );
 					process.exit( 1 );
-
-					resolve( false );
-					return;
 				}
 
 				log( 'completed' );
@@ -212,7 +206,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 		const languageRevisionsHashes = {};
 
-		languagesPaths.map( ( { chunksMapPath, publicPath } ) => {
+		languagesPaths.map( ( { chunksMapPath, extraPath, publicPath } ) => {
 			const chunksMap = require( path.join( '..', chunksMapPath ) );
 
 			const chunks = _.mapValues( chunksMap, ( modules ) => {
@@ -234,6 +228,8 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 				return [ ...strings ];
 			} );
+
+			languageRevisionsHashes[ extraPath ] = {};
 
 			successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 				const languageChunks = _.chain( chunks )
@@ -257,7 +253,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 					.digest( 'hex' );
 
 				// Trim hash in language revisions to 5 characters to reduce file size
-				languageRevisionsHashes[ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
+				languageRevisionsHashes[ extraPath ][ langSlug ] = manifestJsonDataRaw.hash.substr( 0, 5 );
 
 				const manifestJsonData = JSON.stringify( manifestJsonDataRaw );
 				const manifestFilepathJson = path.join(
@@ -298,17 +294,15 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 		logUpdate( 'Updating language revisions...\n' );
 
-		const updatedLanguageRevisions = JSON.stringify( {
-			...languageRevisions,
-			hashes: languageRevisionsHashes,
-		} );
-
-		languagesPaths.forEach( ( { publicPath } ) =>
-			fs.writeFileSync(
+		languagesPaths.forEach( ( { extraPath, publicPath } ) => {
+			return fs.writeFileSync(
 				`${ publicPath }/${ LANGUAGES_REVISIONS_FILENAME }`,
-				updatedLanguageRevisions
-			)
-		);
+				JSON.stringify( {
+					...languageRevisions,
+					hashes: languageRevisionsHashes[ extraPath ],
+				} )
+			);
+		} );
 	}
 
 	logUpdate(

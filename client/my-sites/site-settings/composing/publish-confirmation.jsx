@@ -44,7 +44,7 @@ class PublishConfirmation extends Component {
 		return (
 			<FormFieldset>
 				<FormLabel>{ translate( 'Show publish confirmation' ) }</FormLabel>
-				<FormSettingExplanation isIndented>
+				<FormSettingExplanation>
 					{ translate(
 						'The Block Editor handles the Publish confirmation setting. ' +
 							'To enable it, go to Options under the Ellipses menu in the Editor ' +

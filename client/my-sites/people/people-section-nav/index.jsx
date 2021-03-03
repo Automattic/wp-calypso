@@ -104,7 +104,12 @@ class PeopleSectionNav extends Component {
 			return false;
 		}
 
-		if ( 'viewers' === this.props.filter || ( ! this.props.isJetpack && this.props.isPrivate ) ) {
+		const isPrivateOrPublicComingSoon = this.props.isPrivate || this.props.isComingSoon;
+
+		if (
+			'viewers' === this.props.filter ||
+			( ! this.props.isJetpack && isPrivateOrPublicComingSoon )
+		) {
 			return true;
 		}
 		return false;

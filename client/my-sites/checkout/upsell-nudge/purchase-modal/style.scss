@@ -68,7 +68,7 @@ $left-margin: 36px;
 	height: 27px;
 	top: 0;
 	left: -$left-margin;
-	border-radius: 50%;
+	border-radius: 50;
 	background: #008a20;
 	text-align: center;
 
@@ -119,9 +119,9 @@ $left-margin: 36px;
 /**
  * Checkout Terms
  */
-.checkout__terms,
-.checkout__concierge-refund-policy,
-.checkout__bundled-domain-notice {
+.purchase-modal .checkout__terms,
+.purchase-modal .checkout__concierge-refund-policy,
+.purchase-modal .checkout__bundled-domain-notice {
 	margin: 4px 0;
 	padding-left: $left-margin;
 	position: relative;

@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import { localizeUrl } from 'calypso/lib/i18n-utils';

@@ -21,6 +21,7 @@ import './style.scss';
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isCartPendingUpdate: PropTypes.bool,
 		fetchAlgo: PropTypes.string,
 		showStrikedOutPrice: PropTypes.bool,
 		primarySuggestion: PropTypes.object,
@@ -34,6 +35,7 @@ export class FeaturedDomainSuggestions extends Component {
 	getChildProps() {
 		const childKeys = [
 			'cart',
+			'isCartPendingUpdate',
 			'isDomainOnly',
 			'domainsWithPlansOnly',
 			'showStrikedOutPrice',
@@ -116,6 +118,7 @@ export class FeaturedDomainSuggestions extends Component {
 						suggestion={ primarySuggestion }
 						isFeatured
 						railcarId={ this.props.railcarId + '-0' }
+						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
 						premiumDomain={ this.props.premiumDomains[ primarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
@@ -128,6 +131,7 @@ export class FeaturedDomainSuggestions extends Component {
 						suggestion={ secondarySuggestion }
 						isFeatured
 						railcarId={ this.props.railcarId + '-1' }
+						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 1 }
 						premiumDomain={ this.props.premiumDomains[ secondarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }

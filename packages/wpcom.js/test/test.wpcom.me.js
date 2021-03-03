@@ -1,16 +1,16 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * me
  */
 describe( 'wpcom.me', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var me = wpcom.me();
+	const wpcom = util.wpcom();
+	const me = wpcom.me();
 
 	describe( 'wpcom.me.billingHistory', function () {
 		it( 'should require billing history', function () {

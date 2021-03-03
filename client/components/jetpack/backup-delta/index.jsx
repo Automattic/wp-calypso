@@ -1,28 +1,37 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { useMemo, useState } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import ActivityCard from 'calypso/components/activity-card';
+import Pagination from 'calypso/components/pagination';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class BackupDelta extends Component {
-	renderRealtime() {
-		const { realtimeBackups, translate, isToday } = this.props;
+const BACKUPS_PER_PAGE = 10;
 
-		const cards = realtimeBackups.map( ( activity ) => (
-			<ActivityCard activity={ activity } key={ activity.activityId } />
-		) );
+const BackupDelta = ( { realtimeBackups, translate, isToday } ) => {
+	const [ currentPage, setCurrentPage ] = useState( 1 );
 
-		return (
+	const onPageChange = ( pageNumber ) => setCurrentPage( pageNumber );
+
+	const cards = useMemo(
+		() =>
+			realtimeBackups
+				.slice( ( currentPage - 1 ) * BACKUPS_PER_PAGE, currentPage * BACKUPS_PER_PAGE )
+				.map( ( activity ) => <ActivityCard activity={ activity } key={ activity.activityId } /> ),
+		[ currentPage, realtimeBackups ]
+	);
+
+	return (
+		<div className="backup-delta">
 			<div className="backup-delta__realtime">
 				<div className="backup-delta__realtime-header">
 					{ isToday
@@ -34,6 +43,12 @@ class BackupDelta extends Component {
 						'Your site is backed up in real time (as you make changes) as well as in one daily backup.'
 					) }
 				</div>
+				<Pagination
+					page={ currentPage }
+					perPage={ BACKUPS_PER_PAGE }
+					total={ realtimeBackups.length }
+					pageClick={ onPageChange }
+				/>
 				{ cards.length ? (
 					cards
 				) : (
@@ -42,12 +57,8 @@ class BackupDelta extends Component {
 					</div>
 				) }
 			</div>
-		);
-	}
-
-	render() {
-		return <div className="backup-delta">{ this.renderRealtime() }</div>;
-	}
-}
+		</div>
+	);
+};
 
 export default localize( BackupDelta );

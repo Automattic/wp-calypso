@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { EventEmitter } from 'events';
-import { Language } from '../../languages';
+import { Language } from '@automattic/languages';
 import { GravatarOptions } from '../../gravatar/types';
 import { URL, JSONSerializable } from '../../types';
 
@@ -70,9 +70,11 @@ export type OptionalUserData = {
 	primary_blog_is_jetpack: boolean;
 	primary_blog_url: string;
 	site_count: number;
+	jetpack_site_count?: number;
 	social_login_connections: unknown;
 	user_ip_country_code: string;
 	user_URL: string;
 	username: string;
 	visible_site_count: number;
+	jetpack_visible_site_count?: number;
 };

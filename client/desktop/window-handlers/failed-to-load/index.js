@@ -6,9 +6,9 @@ const { app, dialog } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const settings = require( 'desktop/lib/settings' );
-const assets = require( 'desktop/lib/assets' );
-const log = require( 'desktop/lib/logger' )( 'desktop:failed-to-load' );
+const settings = require( 'calypso/desktop/lib/settings' );
+const assets = require( 'calypso/desktop/lib/assets' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:failed-to-load' );
 
 /**
  * Module variables
@@ -71,25 +71,24 @@ function failedToLoadError( mainWindow ) {
 // @adlk: Keep in mind that every request, even the ones we do not control (e.g. atomic- or self hosted sites), might cause the app to "soft-crash" even though the user experience might not be affected directly by some requests that fail.
 module.exports = function ( mainWindow ) {
 	// This attempts to catch some network errors and display an error screen in order to avoid a blank white page
-	mainWindow.webContents.on( 'did-fail-load', async function (
-		event,
-		errorCode,
-		errorDescription
-	) {
-		if ( ERRORS_TO_IGNORE.indexOf( errorCode ) === -1 ) {
-			if ( isErrorPage( event.sender ) ) {
-				failedToLoadError( mainWindow );
-			} else {
-				log.error(
-					'Failed to load from server, showing fallback page: code=' +
-						errorCode +
-						' ' +
-						errorDescription
-				);
+	mainWindow.webContents.on(
+		'did-fail-load',
+		async function ( event, errorCode, errorDescription ) {
+			if ( ERRORS_TO_IGNORE.indexOf( errorCode ) === -1 ) {
+				if ( isErrorPage( event.sender ) ) {
+					failedToLoadError( mainWindow );
+				} else {
+					log.error(
+						'Failed to load from server, showing fallback page: code=' +
+							errorCode +
+							' ' +
+							errorDescription
+					);
 
-				await mainWindow.webContents.session.setProxy( { proxyRules: 'direct://' } );
-				mainWindow.loadURL( FAILED_FILE + '#' + errorCode );
+					await mainWindow.webContents.session.setProxy( { proxyRules: 'direct://' } );
+					mainWindow.loadURL( FAILED_FILE + '#' + errorCode );
+				}
 			}
 		}
-	} );
+	);
 };

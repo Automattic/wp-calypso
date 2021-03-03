@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
+jest.mock( 'calypso/lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
 
 /**
  * External dependencies
@@ -11,7 +11,7 @@ import { flow, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import safeImageUrlFake from 'lib/safe-image-url';
+import safeImageUrlFake from 'calypso/lib/safe-image-url';
 import decodeEntities from '../rule-decode-entities';
 import stripHtml from '../rule-strip-html';
 import preventWidows from '../rule-prevent-widows';

@@ -40,7 +40,9 @@ class DummyInput extends Component {
 }
 
 describe( 'TrackInputChanges#onNewValue', () => {
-	let tree, dummyInput, container;
+	let tree;
+	let dummyInput;
+	let container;
 
 	beforeAll( () => {
 		container = document.createElement( 'div' );

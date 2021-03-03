@@ -15,12 +15,14 @@ import { THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 
-jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () =>
+jest.mock( 'calypso/lib/abtest', () => ( { abtest: () => {} } ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'my-sites/themes/theme-preview', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
+	require( 'calypso/components/empty-component' )
+);
 
 describe( 'logged-out', () => {
 	describe( 'when calling renderToString()', () => {
@@ -80,7 +82,9 @@ describe( 'logged-out', () => {
 					'https://i1.wp.com/theme.wordpress.com/wp-content/themes/pub/karuna/screenshot.png',
 			},
 		];
-		let layout, store, initialState;
+		let layout;
+		let store;
+		let initialState;
 
 		beforeAll( () => {
 			store = createReduxStore();

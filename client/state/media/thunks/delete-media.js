@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { deleteMediaItem } from 'calypso/state/media/actions';
-import { dispatchFluxRemoveMediaItem } from 'calypso/state/media/utils/flux-adapter';
 
 const debug = debugFactory( 'calypso:media' );
 
@@ -28,7 +27,6 @@ export const deleteMedia = ( siteId, item ) => ( dispatch ) => {
 	const items = castArray( item ).filter( ( i ) => typeof i.ID === 'number' );
 
 	items.forEach( ( mediaItem ) => {
-		dispatchFluxRemoveMediaItem( siteId, mediaItem );
 		dispatch( deleteMediaItem( siteId, mediaItem.ID ) );
 	} );
 };

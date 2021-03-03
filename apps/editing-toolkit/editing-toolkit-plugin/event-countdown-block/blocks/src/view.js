@@ -13,10 +13,10 @@ import { __, _x } from '@wordpress/i18n';
 
 const view = ( { attributes, className, isEditView } ) => {
 	// Expected values in save.
-	let days = '&nbsp;',
-		hours = '&nbsp;',
-		mins = '&nbsp;',
-		secs = '&nbsp;';
+	let days = '&nbsp;';
+	let hours = '&nbsp;';
+	let mins = '&nbsp;';
+	let secs = '&nbsp;';
 
 	if ( isEditView ) {
 		// Zero out.

@@ -17,13 +17,13 @@ import { noop } from 'lodash';
  */
 import { UserStep as User } from '../';
 
-jest.mock( 'blocks/signup-form', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/blocks/signup-form', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 	getABTestVariation: () => null,
 } ) );
-jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );
-jest.mock( 'signup/utils', () => ( {
+jest.mock( 'calypso/signup/step-wrapper', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/signup/utils', () => ( {
 	getFlowSteps: ( flow ) => {
 		let flowSteps = null;
 
@@ -41,7 +41,8 @@ jest.mock( 'signup/utils', () => ( {
 } ) );
 
 describe( '#signupStep User', () => {
-	let testElement, rendered;
+	let testElement;
+	let rendered;
 
 	test( 'should show community subheader text if User step is first in the flow', () => {
 		testElement = React.createElement( User, {
@@ -66,7 +67,9 @@ describe( '#signupStep User', () => {
 	} );
 
 	describe( '#updateComponentProps', () => {
-		let node, spyComponentProps, component;
+		let node;
+		let spyComponentProps;
+		let component;
 
 		beforeEach( () => {
 			node = document.createElement( 'div' );

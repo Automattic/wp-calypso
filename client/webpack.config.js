@@ -8,9 +8,7 @@
  * External dependencies
  */
 const path = require( 'path' );
-const fs = require( 'fs' );
 const webpack = require( 'webpack' );
-const AssetsWriter = require( './server/bundler/assets-writer' );
 const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
@@ -30,17 +28,18 @@ const {
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
+const pkgDir = require( 'pkg-dir' );
 
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './webpack-utils/extensions' );
-const RequireChunkCallbackPlugin = require( './webpack-utils/require-chunk-callback-plugin' );
-const GenerateChunksMapPlugin = require( './webpack-utils/generate-chunks-map-plugin' );
-const ExtractManifestPlugin = require( './webpack-utils/extract-manifest-plugin' );
+const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
+const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
+const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 
 /**
  * Internal variables
@@ -66,9 +65,6 @@ const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
-const hasLanguagesMeta = fs.existsSync(
-	path.join( __dirname, 'languages', 'languages-meta.json' )
-);
 
 function filterEntrypoints( entrypoints ) {
 	/* eslint-disable no-console */
@@ -105,12 +101,32 @@ function filterEntrypoints( entrypoints ) {
 	/* eslint-enable no-console */
 }
 
+/**
+ * Given a package name, finds the absolute path for it.
+ *
+ * require.resolve() will resolve to the main file of the package, using Node's resolution algorithm to find
+ * a `package.json` and looking at the field `main`. This function will return the folder that contains `package.json`
+ * instead of trying to resolve the main file.
+ *
+ * Example: `@wordpress/data` may resolve to `/home/myUser/wp-calypso/node_modules/@wordpress/data`.
+ *
+ * Note this is not the same as looking for `__dirname+'/node_modules/'+pkgName`, as the package may be in a parent
+ * `node_modules`
+ *
+ * @param {string} pkgName Name of the package to search for
+ */
+function findPackage( pkgName ) {
+	const fullPath = require.resolve( pkgName );
+	const packagePath = pkgDir.sync( fullPath );
+	return packagePath;
+}
+
 if ( ! process.env.BROWSERSLIST_ENV ) {
 	process.env.BROWSERSLIST_ENV = browserslistEnv;
 }
 
-let outputFilename = '[name].[chunkhash].min.js'; // prefer the chunkhash, which depends on the chunk, not the entire build
-let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
+let outputFilename = '[name].[contenthash].min.js';
+let outputChunkFilename = '[name].[contenthash].min.js';
 
 // we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 // also we don't minify so dont name them .min.js
@@ -153,7 +169,7 @@ const webpackConfig = {
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
-	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
+	devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
 	output: {
 		path: path.join( outputDir, 'public', extraPath ),
 		pathinfo: false,
@@ -169,22 +185,19 @@ const webpackConfig = {
 		removeEmptyChunks: ! isDesktop,
 		splitChunks: {
 			chunks: 'all',
-			name: !! ( isDevelopment || shouldEmitStats ),
+			...( isDevelopment || shouldEmitStats ? {} : { name: false } ),
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
 		runtimeChunk: isDesktop ? false : { name: 'runtime' },
 		moduleIds: 'named',
-		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
+		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
 		minimizer: Minify( {
-			cache: path.resolve( cachePath, 'terser' ),
 			// Desktop: number of workers should *not* exceed # of vCPUs available.
 			// For both medium Machine and Docker images, number of vCPUs == 2.
 			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
 			parallel: isDesktop ? 2 : workerCount,
-			// Desktop: disable sourceMaps for performance
-			sourceMap: isDesktop ? false : Boolean( process.env.SOURCEMAP ),
 			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
 			terserOptions: {
 				...( isDesktop
@@ -195,9 +208,7 @@ const webpackConfig = {
 							safari10: false,
 					  }
 					: {
-							compress: {
-								passes: 2,
-							},
+							compress: true,
 							mangle: true,
 					  } ),
 			},
@@ -223,6 +234,10 @@ const webpackConfig = {
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
 				postCssOptions: {
+					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
+					// This is required because Calypso imports `@automattic/notifications` and that package defines its
+					// own `postcss.config.js` that they use for their webpack bundling process.
+					config: false,
 					plugins: [
 						autoprefixerPlugin(),
 						browserslistEnv === 'defaults' &&
@@ -234,7 +249,7 @@ const webpackConfig = {
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+				loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 				options: {
 					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
 				},
@@ -256,17 +271,23 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
-		modules: [ __dirname, 'node_modules' ],
+		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		alias: Object.assign(
 			{
 				debug: path.resolve( __dirname, '../node_modules/debug' ),
 				store: 'store/dist/store.modern',
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
-				'@wordpress/data': require.resolve( '@wordpress/data' ),
-				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
+				// By using the path of the package we let Webpack parse the package's `package.json`
+				// and use `mainFields` to decide what is the main file.
+				'@wordpress/data': findPackage( '@wordpress/data' ),
+				'@wordpress/i18n': findPackage( '@wordpress/i18n' ),
 				// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 				// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 				calypso: __dirname,
+
+				// Node polyfills
+				process: 'process/browser',
+				util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -277,6 +298,7 @@ const webpackConfig = {
 	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
@@ -284,8 +306,11 @@ const webpackConfig = {
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
 		} ),
+		new webpack.ProvidePlugin( {
+			process: 'process/browser',
+		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,
@@ -331,10 +356,8 @@ const webpackConfig = {
 				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
 			} ),
 		new RequireChunkCallbackPlugin(),
-		isDevelopment && new webpack.HotModuleReplacementPlugin(),
 		...( ! config.isEnabled( 'desktop' )
 			? [
-					new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
 					new webpack.NormalModuleReplacementPlugin(
 						/^calypso[/\\]lib[/\\]desktop$/,
 						'lodash/noop'
@@ -342,11 +365,18 @@ const webpackConfig = {
 			  ]
 			: [] ),
 		/*
+		 * ExPlat: Don't import the server logger when we are in the browser
+		 */
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/server\/lib\/logger$/,
+			'calypso/lib/explat/internals/logger-browser-replacement'
+		),
+		/*
 		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
 		 */
 		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
 			if ( res.context.includes( '@wordpress/components/' ) ) {
-				res.request = 'components/empty-component';
+				res.request = 'calypso/components/empty-component';
 			}
 		} ),
 		/*
@@ -363,10 +393,6 @@ const webpackConfig = {
 		...( browserslistEnv === 'evergreen'
 			? [
 					new webpack.NormalModuleReplacementPlugin(
-						/^lib[/\\]local-storage-polyfill$/,
-						'lodash-es/noop'
-					),
-					new webpack.NormalModuleReplacementPlugin(
 						/^calypso[/\\]lib[/\\]local-storage-polyfill$/,
 						'lodash-es/noop'
 					),
@@ -374,22 +400,11 @@ const webpackConfig = {
 			: [] ),
 
 		/*
-		 * When available, replace fallback-languages-meta.json with languages-meta.json
-		 */
-		hasLanguagesMeta &&
-			new webpack.NormalModuleReplacementPlugin(
-				new RegExp( path.join( __dirname, 'languages/fallback-languages-meta.json' ) ),
-				'./languages-meta.json'
-			),
-
-		/*
 		 * Replace `lodash` with `lodash-es`
 		 */
 		new ExtensiveLodashReplacementPlugin(),
-
-		! isDesktop && new ExtractManifestPlugin(),
 	].filter( Boolean ),
-	externals: [ 'electron' ],
+	externals: [ 'keytar' ],
 };
 
 module.exports = webpackConfig;

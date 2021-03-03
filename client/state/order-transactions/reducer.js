@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
 
 import {
@@ -59,8 +60,10 @@ export const errors = keyedReducer(
 	} )
 );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	isFetching,
 	errors,
 } );
+
+export default withStorageKey( 'orderTransactions', combinedReducer );

@@ -15,7 +15,7 @@
 
 .plans-accordion__toggle-all-button.components-button.is-link {
 	margin: 22px auto;
-	color: $dark-gray-500;
+	color: $gray-700;
 
 	@include break-medium {
 		margin: 32px auto;
@@ -33,5 +33,19 @@
 		margin-right: $grid-unit-10;
 		position: relative;
 		top: 2px;
+	}
+}
+
+.plans-accordion__placeholder {
+	@include onboarding-placeholder();
+	display: inline-block;
+	width: 64px;
+
+	&--narrow {
+		width: 32px;
+	}
+
+	&--wide {
+		width: 96px;
 	}
 }

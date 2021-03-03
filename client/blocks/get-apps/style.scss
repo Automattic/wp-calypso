@@ -68,26 +68,7 @@
 	}
 
 	.get-apps__magic-link-subpanel {
-
 		margin-top: 64px;
-
-		.get-apps__link-button-wrapper {
-
-			@include breakpoint-deprecated('>480px') {
-				display: flex;
-				flex-direction: row;
-				justify-content: flex-end;
-				align-items: center;
-			}
-
-			@include breakpoint-deprecated('<480px') {
-
-				.get-apps__magic-link-button {
-					width: 100%;
-				}
-			}
-		}
-
 	}
 
 	.get-apps__sms-subpanel {
@@ -114,28 +95,13 @@
 		}
 
 		.get-apps__sms-button-wrapper {
-
-			@include breakpoint-deprecated('>480px') {
-				display: flex;
-				flex-direction: row;
-				justify-content: flex-end;
-				align-items: center;
-			}
-
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			
 			p {
 				margin: 0;
-				padding-right: 16px;
-			}
-
-			@include breakpoint-deprecated('<480px') {
-
-				p {
-					margin-bottom: 24px;
-				}
-
-				.get-apps__sms-button {
-					width: 100%;
-				}
+				padding-left: 16px;
 			}
 		}
 	}

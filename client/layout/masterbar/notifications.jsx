@@ -134,7 +134,7 @@ class MasterbarItemNotifications extends Component {
 					/>
 				</MasterbarItem>
 				<AsyncLoad
-					require="@automattic/notifications/index.jsx"
+					require="calypso/notifications"
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }

@@ -10,8 +10,8 @@ import {
 describe( 'actions', () => {
 	describe( '#fetchSitePlansCompleted()', () => {
 		test( 'should return an action object with an array of plans', () => {
-			const siteId = 2916284,
-				action = fetchSitePlansCompleted( siteId, {} );
+			const siteId = 2916284;
+			const action = fetchSitePlansCompleted( siteId, {} );
 
 			expect( action ).toEqual( {
 				type: SITE_PLANS_FETCH_COMPLETED,

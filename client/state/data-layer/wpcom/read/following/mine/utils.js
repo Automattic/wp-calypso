@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { isArray, isUndefined, map, omitBy } from 'lodash';
+import { isUndefined, map, omitBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -10,7 +10,7 @@ import { toValidId } from 'calypso/reader/id-helpers';
 
 export const isValidApiResponse = ( apiResponse ) => {
 	const hasSubscriptions =
-		apiResponse && apiResponse.subscriptions && isArray( apiResponse.subscriptions );
+		apiResponse && apiResponse.subscriptions && Array.isArray( apiResponse.subscriptions );
 	return hasSubscriptions;
 };
 

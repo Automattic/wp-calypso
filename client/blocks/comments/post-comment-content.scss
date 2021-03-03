@@ -34,37 +34,6 @@
 }
 
 .comments__comment-content {
-	@extend %content-font;
-	font-size: $font-body;
+	@extend %rendered-block-content;
 	line-height: 1.56;
-	word-break: break-word;
-
-	p {
-		color: var( --color-text );
-
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
-
-	blockquote {
-		background: var( --color-neutral-0 );
-		border-left: 2px solid var( --color-neutral-0 );
-		border-radius: 0;
-		color: var( --color-text );
-		margin: 8px 0 16px;
-		padding: 8px 16px;
-	}
-
-	pre {
-		white-space: pre-wrap;
-	}
-
-	figure figcaption {
-		padding: 12px;
-		margin: 0;
-		font-size: $font-body-small;
-		text-align: center;
-		color: var( --color-neutral-40 );
-	}
 }

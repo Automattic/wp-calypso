@@ -9,7 +9,7 @@ import { updateConciergeAppointmentDetails } from 'calypso/state/concierge/actio
 import { CONCIERGE_APPOINTMENT_DETAILS_REQUEST } from 'calypso/state/action-types';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'lib/impure-lodash', () => ( {
+jest.mock( 'calypso/lib/impure-lodash', () => ( {
 	uniqueId: () => 'mock-unique-id',
 } ) );
 

@@ -13,7 +13,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DomainStatus from '../card/domain-status';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-import { WPCOM_DEFAULTS } from 'calypso/lib/domains/nameservers';
+import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { isSubdomain, resolveDomainStatus } from 'calypso/lib/domains';
@@ -91,7 +91,7 @@ class MappedDomainType extends React.Component {
 					<p>{ primaryMessage }</p>
 					{ ! isSubdomain( domain.name ) && (
 						<ul className="mapped-domain-type__name-server-list">
-							{ WPCOM_DEFAULTS.map( ( nameServer ) => {
+							{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
 								return <li key={ nameServer }>{ nameServer }</li>;
 							} ) }
 						</ul>

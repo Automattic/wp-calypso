@@ -28,7 +28,6 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 
 class SiteRedirect extends Component {
 	static propTypes = {
-		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 		isSiteAtomic: PropTypes.bool.isRequired,
@@ -59,7 +58,6 @@ class SiteRedirect extends Component {
 
 	render() {
 		const {
-			cart,
 			selectedSite,
 			selectedSiteAdminUrl,
 			isSiteAtomic,
@@ -87,7 +85,7 @@ class SiteRedirect extends Component {
 					{ translate( 'Redirect a Site' ) }
 				</HeaderCake>
 
-				<SiteRedirectStep cart={ cart } products={ productsList } selectedSite={ selectedSite } />
+				<SiteRedirectStep products={ productsList } selectedSite={ selectedSite } />
 			</Main>
 		);
 	}

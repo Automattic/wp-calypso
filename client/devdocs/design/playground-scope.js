@@ -15,7 +15,6 @@ export {
  * Docs examples
  */
 export { default as ActionCard } from 'calypso/components/action-card';
-export { default as Accordion } from 'calypso/components/accordion';
 export { default as Animate } from 'calypso/components/animate';
 export { default as BackButton } from 'calypso/components/back-button';
 export { default as Badge } from 'calypso/components/badge';
@@ -27,9 +26,9 @@ export { Checklist, Task as ChecklistTask } from 'calypso/components/checklist';
 export { default as ClipboardButtonInput } from 'calypso/components/clipboard-button-input';
 export { default as ClipboardButton } from 'calypso/components/forms/clipboard-button';
 export { default as Collection } from 'calypso/devdocs/design/search-collection';
+export { default as Column } from 'calypso/components/layout/column';
 export { default as Count } from 'calypso/components/count';
 export { default as CountedTextarea } from 'calypso/components/forms/counted-textarea';
-export { default as CreditCard } from 'calypso/components/credit-card';
 export { default as DatePicker } from 'calypso/components/date-picker';
 export { default as DateRange } from 'calypso/components/date-range';
 export { default as DiffViewer } from 'calypso/components/diff-viewer';
@@ -82,6 +81,7 @@ export { default as JetpackColophon } from 'calypso/components/jetpack-colophon'
 export { default as JetpackHeader } from 'calypso/components/jetpack-header';
 export { default as JetpackLogo } from 'calypso/components/jetpack-logo';
 export { default as LanguagePicker } from 'calypso/components/language-picker';
+export { default as Layout } from 'calypso/components/layout';
 export { default as ListEnd } from 'calypso/components/list-end';
 export { default as Main } from 'calypso/components/main';
 export { default as MaterialIcon } from 'calypso/components/material-icon';

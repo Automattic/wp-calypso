@@ -2,220 +2,218 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { isFinite, isNumber } from 'lodash';
-import React, { createElement, useRef, FunctionComponent, ReactNode } from 'react';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { isNumber } from 'lodash';
+import React, { createElement, ReactNode } from 'react';
+import { Button, ProductIcon } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { Button, ProductIcon } from '@automattic/components';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { preventWidows } from 'calypso/lib/formatting';
+import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
-import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
+import InfoPopover from 'calypso/components/info-popover';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Type dependencies
  */
 import type { Moment } from 'moment';
+import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import starIcon from './assets/star.svg';
 
 type OwnProps = {
-	className?: string;
-	iconSlug: string;
+	iconSlug?: string;
+	productSlug: string;
 	productName: TranslateResult;
-	productType?: string;
 	headingLevel?: number;
-	subheadline?: TranslateResult;
 	description?: ReactNode;
-	currencyCode: string | null;
+	currencyCode?: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
-	withStartingPrice?: boolean;
-	billingTimeFrame: TranslateResult;
-	badgeLabel?: TranslateResult;
-	discountMessage?: TranslateResult;
+	billingTerm: Duration;
 	buttonLabel: TranslateResult;
-	onButtonClick: () => void;
-	cancelLabel?: TranslateResult;
-	onCancelClick?: () => void;
-	children?: ReactNode;
-	isHighlighted?: boolean;
-	isOwned?: boolean;
-	isDeprecated?: boolean;
+	buttonPrimary: boolean;
+	onButtonClick: PurchaseCallback;
 	expiryDate?: Moment;
-	UpgradeNudge?: ReactNode;
-	hidePrice?: boolean;
+	isFeatured?: boolean;
+	isOwned?: boolean;
+	isIncludedInPlan?: boolean;
+	isDeprecated?: boolean;
+	isAligned?: boolean;
+	isDisabled?: boolean;
+	disabledMessage?: TranslateResult | null;
+	displayFrom?: boolean;
+	tooltipText?: TranslateResult | ReactNode;
+	aboveButtonText?: TranslateResult | ReactNode;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
 
-const JetpackProductCard: FunctionComponent< Props > = ( {
-	className,
+const DisplayPrice = ( {
+	isOwned,
+	isIncludedInPlan,
+	isFree,
+	discountedPrice,
+	currencyCode,
+	originalPrice,
+	displayFrom,
+	expiryDate,
+	billingTerm,
+	tooltipText,
+} ) => {
+	const translate = useTranslate();
+
+	if ( isOwned ) {
+		return (
+			<p className="jetpack-product-card__you-own-this">{ translate( 'You own this product' ) }</p>
+		);
+	}
+
+	if ( isIncludedInPlan ) {
+		return (
+			<p className="jetpack-product-card__you-own-this">
+				{ translate( 'Part of your current plan' ) }
+			</p>
+		);
+	}
+
+	if ( isFree ) {
+		return (
+			<div className="jetpack-product-card__price">
+				<span className="jetpack-product-card__price-free">{ translate( 'Free' ) }</span>
+			</div>
+		);
+	}
+
+	const isDiscounted = Number.isFinite( discountedPrice );
+
+	return (
+		<div className="jetpack-product-card__price">
+			{ currencyCode && originalPrice ? (
+				<>
+					{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
+					<span className="jetpack-product-card__raw-price">
+						<PlanPrice
+							rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
+							currencyCode={ currencyCode }
+						/>
+					</span>
+					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+					{ tooltipText && (
+						<InfoPopover position="top" className="jetpack-product-card__price-tooltip">
+							{ tooltipText }
+						</InfoPopover>
+					) }
+				</>
+			) : (
+				<>
+					<div className="jetpack-product-card__price-placeholder" />
+					<div className="jetpack-product-card__time-frame-placeholder" />
+				</>
+			) }
+		</div>
+	);
+};
+
+const JetpackProductCard: React.FC< Props > = ( {
 	iconSlug,
+	productSlug,
 	productName,
-	productType,
 	headingLevel,
-	subheadline,
 	description,
 	currencyCode,
 	originalPrice,
 	discountedPrice,
-	withStartingPrice,
-	billingTimeFrame,
-	badgeLabel,
-	discountMessage,
+	billingTerm,
 	buttonLabel,
+	buttonPrimary,
 	onButtonClick,
-	cancelLabel,
-	onCancelClick,
-	children,
-	isHighlighted,
-	isOwned,
-	isDeprecated,
 	expiryDate,
+	isFeatured,
+	isOwned,
+	isIncludedInPlan,
+	isFree,
+	isDeprecated,
+	isAligned,
 	features,
-	isExpanded,
-	UpgradeNudge,
-	hidePrice,
-	productSlug,
-} ) => {
+	isDisabled,
+	disabledMessage,
+	displayFrom,
+	tooltipText,
+	aboveButtonText = null,
+}: Props ) => {
 	const translate = useTranslate();
-	const priceEl = useRef( null );
-	const isHeaderWrapped = useFlexboxWrapDetection( priceEl );
-	const moment = useLocalizedMoment();
-
-	const isDiscounted = isFinite( discountedPrice );
 	const parsedHeadingLevel = isNumber( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel ), 1 ), 6 )
 		: 2;
-	const parsedExpiryDate =
-		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
-
-	const renderBillingTimeFrame = (
-		productExpiryDate: Moment | null,
-		billingTerm: TranslateResult
-	) => {
-		return productExpiryDate ? (
-			<time
-				className="jetpack-product-card__expiration-date"
-				dateTime={ productExpiryDate.format( 'YYYY-DD-YY' ) }
-			>
-				{ translate( 'expires %(date)s', {
-					args: {
-						date: productExpiryDate.format( 'L' ),
-					},
-				} ) }
-			</time>
-		) : (
-			<span className="jetpack-product-card__billing-time-frame">{ billingTerm }</span>
-		);
-	};
 
 	return (
 		<div
-			className={ classNames( className, 'jetpack-product-card', {
+			className={ classNames( 'jetpack-product-card', {
+				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
-				'with-nudge': !! UpgradeNudge,
-				'is-featured': isHighlighted,
+				'is-aligned': isAligned,
+				'is-featured': isFeatured,
+				'without-icon': ! iconSlug,
 			} ) }
-			data-icon={ iconSlug }
+			data-e2e-product-slug={ productSlug }
 		>
-			<header className="jetpack-product-card__header">
-				<ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } />
-				<div className="jetpack-product-card__summary">
-					<div className="jetpack-product-card__headings">
-						{ createElement(
-							`h${ parsedHeadingLevel }`,
-							{ className: 'jetpack-product-card__product-name' },
-							<>
-								{ preventWidows( productName ) }
-								{ productType && (
-									<span className="jetpack-product-card__product-type">
-										{ ' ' }
-										{ preventWidows( productType ) }
-									</span>
-								) }
-							</>
-						) }
-						{ subheadline && (
-							<p className="jetpack-product-card__subheadline">{ preventWidows( subheadline ) }</p>
-						) }
-					</div>
-					{ ! hidePrice && (
-						<div
-							className={ classNames( 'jetpack-product-card__price', {
-								'is-left-aligned': hidePrice && isHeaderWrapped,
-							} ) }
-							ref={ priceEl }
-						>
-							{ currencyCode && originalPrice ? (
-								<span className="jetpack-product-card__raw-price">
-									{ withStartingPrice && (
-										<span className="jetpack-product-card__from">{ translate( 'from' ) }</span>
-									) }
-									<PlanPrice
-										rawPrice={ originalPrice }
-										original={ isDiscounted }
-										currencyCode={ currencyCode }
-									/>
-									{ isDiscounted && (
-										<PlanPrice
-											rawPrice={ discountedPrice }
-											discounted
-											currencyCode={ currencyCode }
-										/>
-									) }
-								</span>
-							) : (
-								<div className="jetpack-product-card__price-placeholder" />
-							) }
-							{ currencyCode && originalPrice ? (
-								renderBillingTimeFrame( parsedExpiryDate, billingTimeFrame )
-							) : (
-								<div className="jetpack-product-card__time-frame-placeholder" />
-							) }
-						</div>
-					) }
+			{ isFeatured && (
+				<div className="jetpack-product-card__header">
+					<img className="jetpack-product-card__header-icon" src={ starIcon } alt="" />
+					<span>{ translate( 'Recommended' ) }</span>
 				</div>
-				{ badgeLabel && <div className="jetpack-product-card__badge">{ badgeLabel }</div> }
-			</header>
+			) }
 			<div className="jetpack-product-card__body">
-				{ discountMessage && (
-					<p className="jetpack-product-card__discount-message">
-						{ preventWidows( discountMessage ) }
+				{ iconSlug && <ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } /> }
+				{ createElement(
+					`h${ parsedHeadingLevel }`,
+					{ className: 'jetpack-product-card__product-name' },
+					<>{ productName }</>
+				) }
+				<p className="jetpack-product-card__description">{ description }</p>
+				<DisplayPrice
+					isOwned={ isOwned }
+					isIncludedInPlan={ isIncludedInPlan }
+					isFree={ isFree }
+					discountedPrice={ discountedPrice }
+					currencyCode={ currencyCode }
+					originalPrice={ originalPrice }
+					displayFrom={ displayFrom }
+					expiryDate={ expiryDate }
+					billingTerm={ billingTerm }
+					tooltipText={ tooltipText }
+				/>
+				{ aboveButtonText && (
+					<p className="jetpack-product-card__above-button">{ aboveButtonText }</p>
+				) }
+				{ isDisabled && disabledMessage && (
+					<p className="jetpack-product-card__disabled-message">
+						{ preventWidows( disabledMessage ) }
 					</p>
 				) }
-				<Button
-					className="jetpack-product-card__button"
-					primary={ isHighlighted || !! cancelLabel }
-					onClick={ onButtonClick }
-				>
-					{ buttonLabel }
-				</Button>
-				{ cancelLabel && (
-					<Button className="jetpack-product-card__cancel" onClick={ onCancelClick }>
-						{ cancelLabel }
+				{ ! isDisabled && (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card__button"
+						onClick={ onButtonClick }
+						disabled={ isDisabled }
+					>
+						{ buttonLabel }
 					</Button>
 				) }
-				{ description && <p className="jetpack-product-card__description">{ description }</p> }
-				{ children && <div className="jetpack-product-card__children">{ children }</div> }
+				{ features && features.items.length > 0 && (
+					<JetpackProductCardFeatures features={ features } />
+				) }
 			</div>
-			{ features && features.items.length > 0 && (
-				<JetpackProductCardFeatures
-					features={ features }
-					productSlug={ productSlug }
-					isExpanded={ isExpanded }
-				/>
-			) }
-			{ UpgradeNudge }
 		</div>
 	);
 };

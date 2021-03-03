@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import * as route from '../';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 describe( 'index', () => {
 	describe( 'getStreamUrlFromPost', () => {

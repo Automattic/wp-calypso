@@ -1,14 +1,14 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
 
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 /**
  * site.tag
@@ -16,12 +16,12 @@ var fixture = require( './fixture' );
 
 describe( 'wpcom.site.tag', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var new_tag;
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	let new_tag;
 
 	// Create a testing_tag before to start tests
-	var testing_tag;
+	let testing_tag;
 	before( ( done ) => {
 		fixture.tag.name += ( Math.random() * 1000000 ) | 0;
 		site
@@ -46,7 +46,7 @@ describe( 'wpcom.site.tag', function () {
 	describe( 'wpcom.site.tag.get', function () {
 		it( 'should get added tag', () => {
 			return new Promise( ( done ) => {
-				var cat = site.tag( testing_tag.slug );
+				const cat = site.tag( testing_tag.slug );
 
 				cat
 					.get()
@@ -65,7 +65,7 @@ describe( 'wpcom.site.tag', function () {
 	describe( 'wpcom.site.tag.add', function () {
 		it( 'should add a new tag', () => {
 			return new Promise( ( done ) => {
-				var tag = site.tag();
+				const tag = site.tag();
 				fixture.tag.name += '-added';
 
 				tag
@@ -88,8 +88,8 @@ describe( 'wpcom.site.tag', function () {
 	describe( 'wpcom.site.tag.update', function () {
 		it( 'should edit the new added tag', () => {
 			return new Promise( ( done ) => {
-				var tag = site.tag( new_tag.slug );
-				var edited_name = fixture.tag.name + '-updated';
+				const tag = site.tag( new_tag.slug );
+				const edited_name = fixture.tag.name + '-updated';
 
 				tag
 					.update( { name: edited_name } )
@@ -110,7 +110,7 @@ describe( 'wpcom.site.tag', function () {
 	describe( 'wpcom.site.tag.delete', function () {
 		it( 'should delete the new added tag', () => {
 			return new Promise( ( done ) => {
-				var cat = site.tag( new_tag.slug );
+				const cat = site.tag( new_tag.slug );
 
 				cat
 					.delete()

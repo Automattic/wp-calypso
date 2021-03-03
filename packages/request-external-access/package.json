@@ -4,6 +4,7 @@
 	"description": "Utility for requesting authorization of sharing services.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": false,
 	"keywords": [
 		"wordpress",
@@ -30,8 +31,8 @@
 	],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
 		"@automattic/popup-monitor": "^1.0.0"

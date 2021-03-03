@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
 import config from 'config';
 import { By, promise, until } from 'selenium-webdriver';
 
@@ -175,6 +174,15 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async waitForCreditCardPaymentProcessing() {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+
+		if ( isCompositeCheckout ) {
+			return await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( '.checkout-submit-button .checkout-button.is-busy' ),
+				this.explicitWaitMS * 5
+			);
+		}
 		return await driverHelper.waitTillNotPresent(
 			this.driver,
 			By.css( '.credit-card-payment-box__progress-bar' ),
@@ -301,7 +309,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 		const cartElement = await this.driver.findElement( this.getCartTotalSelector() );
 
-		const cartText = await cartElement.getText();
+		const cartText = await cartElement.getAttribute( 'innerText' );
 
 		// We need to remove the comma separator first, e.g. 1,024 or 2,048, so `match()` can parse out the whole number properly.
 		const amountMatches = cartText.replace( /,/g, '' ).match( /\d+\.?\d*/g );

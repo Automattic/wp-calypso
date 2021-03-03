@@ -5,15 +5,9 @@ import React from 'react';
 import { render, shallow } from 'enzyme';
 
 /**
- * Mock dependencies
- */
-jest.mock( 'components/notes-formatted-block/blocks' );
-import { getBlockByType } from '../blocks';
-
-/**
  * Internal dependencies
  */
-import FormattedBlock from '..';
+import FormattedBlock, { FormattedBlockRenderer } from '..';
 
 describe( 'FormattedBlock', () => {
 	beforeEach( () => jest.resetAllMocks() );
@@ -64,16 +58,17 @@ describe( 'FormattedBlock', () => {
 	} );
 
 	test( 'displays the correct block with correct props if the content type is supported', () => {
-		const myBlock = ( props ) => <div type="myfakeblock" { ...props }></div>;
-		getBlockByType.mockImplementation( () => myBlock );
+		const MockBlockMapping = FormattedBlockRenderer( {
+			myBlock: ( props ) => <div type="myfakeblock" { ...props }></div>,
+		} );
 
 		const onClick = jest.fn();
 		const meta = {};
 		const children = [ {}, {}, {} ];
-		const content = { type: 'doesnotmatter', children };
+		const content = { type: 'myBlock', children };
 
 		const block = shallow(
-			<FormattedBlock content={ content } onClick={ onClick } meta={ meta } />
+			<MockBlockMapping content={ content } onClick={ onClick } meta={ meta } />
 		);
 
 		expect( block.type() ).toEqual( 'div' );

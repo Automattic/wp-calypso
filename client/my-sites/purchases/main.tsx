@@ -22,16 +22,16 @@ import {
 	getCancelPurchaseUrlFor,
 	getConfirmCancelDomainUrlFor,
 	getManagePurchaseUrlFor,
-	getAddPaymentMethodUrlFor,
+	getAddNewPaymentMethodUrlFor,
 } from './paths';
-import { getEditOrAddPaymentMethodUrlFor } from './utils';
-import AddCardDetails from 'calypso/me/purchases/payment/add-card-details';
-import EditCardDetails from 'calypso/me/purchases/payment/edit-card-details';
+import { getChangeOrAddPaymentMethodUrlFor } from './utils';
+import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
+import titles from 'calypso/me/purchases/titles';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from 'calypso/config';
+import config from '@automattic/calypso-config';
 
 function useLogPurchasesError( message: string ) {
 	const reduxDispatch = useDispatch();
@@ -51,11 +51,11 @@ function useLogPurchasesError( message: string ) {
 				} )
 			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, message ]
 	);
 }
 
-export function Purchases() {
+export function Purchases(): JSX.Element {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
@@ -63,14 +63,14 @@ export function Purchases() {
 	return (
 		<Main className="purchases is-wide-layout">
 			<MySitesSidebarNavigation />
-			<DocumentHead title={ translate( 'Billing' ) } />
+			<DocumentHead title={ titles.sectionTitle } />
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
+				headerText={ titles.sectionTitle }
 				align="left"
 			/>
-			<PurchasesNavigation sectionTitle={ 'Purchases' } siteSlug={ siteSlug } />
+			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />
 
 			<SiteLevelPurchasesErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
@@ -94,11 +94,11 @@ export function PurchaseDetails( {
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ translate( 'Billing' ) } />
+			<DocumentHead title={ titles.managePurchase } />
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
+				headerText={ titles.sectionTitle }
 				align="left"
 			/>
 			<PageViewTracker
@@ -111,14 +111,15 @@ export function PurchaseDetails( {
 				onError={ logPurchasesError }
 			>
 				<ManagePurchase
-					cardTitle={ translate( 'Subscription settings' ) }
+					cardTitle={ titles.managePurchase }
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
 					showHeader={ false }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+					redirectTo={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
-					getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-					getEditPaymentMethodUrlFor={ getEditOrAddPaymentMethodUrlFor }
+					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
 			</SiteLevelPurchasesErrorBoundary>
@@ -132,17 +133,17 @@ export function PurchaseCancel( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ translate( 'Cancel purchase' ) } />
+			<DocumentHead title={ titles.cancelPurchase } />
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
+				headerText={ titles.sectionTitle }
 				align="left"
 			/>
 
@@ -162,45 +163,7 @@ export function PurchaseCancel( {
 	);
 }
 
-export function PurchaseAddPaymentMethod( {
-	purchaseId,
-	siteSlug,
-}: {
-	purchaseId: number;
-	siteSlug: string;
-} ) {
-	const translate = useTranslate();
-	const logPurchasesError = useLogPurchasesError(
-		'site level purchase add payment method load error'
-	);
-
-	return (
-		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ translate( 'Billing' ) } />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
-				align="left"
-			/>
-
-			<SiteLevelPurchasesErrorBoundary
-				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-				onError={ logPurchasesError }
-			>
-				<AddCardDetails
-					purchaseId={ purchaseId }
-					siteSlug={ siteSlug }
-					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					isFullWidth={ true }
-				/>
-			</SiteLevelPurchasesErrorBoundary>
-		</Main>
-	);
-}
-
-export function PurchaseEditPaymentMethod( {
+export function PurchaseChangePaymentMethod( {
 	purchaseId,
 	siteSlug,
 	cardId,
@@ -208,7 +171,7 @@ export function PurchaseEditPaymentMethod( {
 	purchaseId: number;
 	siteSlug: string;
 	cardId: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError(
 		'site level purchase edit payment method load error'
@@ -216,11 +179,11 @@ export function PurchaseEditPaymentMethod( {
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ translate( 'Billing' ) } />
+			<DocumentHead title={ titles.editCardDetails } />
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
+				headerText={ titles.sectionTitle }
 				align="left"
 			/>
 
@@ -228,7 +191,7 @@ export function PurchaseEditPaymentMethod( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
-				<EditCardDetails
+				<ChangePaymentMethod
 					cardId={ cardId }
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
@@ -247,17 +210,17 @@ export function PurchaseCancelDomain( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel domain load error' );
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ translate( 'Cancel domain' ) } />
+			<DocumentHead title={ titles.confirmCancelDomain } />
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
-				headerText={ translate( 'Cancel domain' ) }
+				headerText={ titles.sectionTitle }
 				align="left"
 			/>
 

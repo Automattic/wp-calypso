@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Module variables

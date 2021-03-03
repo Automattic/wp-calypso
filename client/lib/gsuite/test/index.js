@@ -11,9 +11,9 @@ import {
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
-} from 'lib/gsuite';
+} from 'calypso/lib/gsuite';
 
-jest.mock( 'lib/user/', () => {
+jest.mock( 'calypso/lib/user/', () => {
 	return () => {
 		return {
 			get: () => {

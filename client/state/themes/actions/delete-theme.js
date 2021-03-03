@@ -1,7 +1,13 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import {
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
@@ -28,13 +34,22 @@ export function deleteTheme( themeId, siteId ) {
 		return wpcom
 			.undocumented()
 			.deleteThemeFromJetpack( siteId, themeId )
-			.then( ( theme ) => {
+			.then( ( { name: themeName } ) => {
 				dispatch( {
 					type: THEME_DELETE_SUCCESS,
 					themeId,
 					siteId,
-					themeName: theme.name,
+					themeName,
 				} );
+				dispatch(
+					successNotice(
+						translate( 'Deleted theme %(themeName)s.', {
+							args: { themeName },
+							context: 'Themes: Theme delete confirmation',
+						} ),
+						{ duration: 5000 }
+					)
+				);
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -43,6 +58,14 @@ export function deleteTheme( themeId, siteId ) {
 					siteId,
 					error,
 				} );
+				dispatch(
+					errorNotice(
+						translate( 'Problem deleting %(themeId)s. Check theme is not active.', {
+							args: { themeId },
+							context: 'Themes: Theme delete failure',
+						} )
+					)
+				);
 			} );
 	};
 }

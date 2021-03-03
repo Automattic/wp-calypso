@@ -32,5 +32,6 @@
 		"tsBuildInfoFile": "../../.tsc-cache/packages__composite-checkout"
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/test/*" ]
+	"exclude": [ "**/docs/*", "**/test/*" ],
+	"references": [ { "path": "../react-i18n" } ]
 }
