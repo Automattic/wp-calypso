@@ -18,15 +18,15 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
-
-before( function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Jetpack Connection Removal: (${ screenSize }) @jetpack`, function () {
 	this.timeout( mochaTimeOut );
+
+	let driver;
+
+	before( function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = driverManager.startBrowser();
+	} );
 
 	describe( 'Deactivate Jetpack Plugin:', function () {
 		before( async function () {

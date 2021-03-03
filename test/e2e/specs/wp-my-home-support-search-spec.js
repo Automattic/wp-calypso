@@ -21,18 +21,18 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let driver;
 let supportSearchComponent;
 
 const helpCardSelector = By.css( '.help-search' );
 
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	step( 'Login and select the My Home page', async function () {
 		const loginFlow = new LoginFlow( driver );

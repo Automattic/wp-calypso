@@ -42,15 +42,14 @@ function camelCaseDash( string ) {
 	return string.replace( /-([a-z])/g, ( _, letter ) => letter.toUpperCase() );
 }
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Experimental features we depend on are available (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	step( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( driver, gutenbergUser );
