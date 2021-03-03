@@ -36,7 +36,7 @@ import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-w
 import FoldableFAQ from 'calypso/components/foldable-faq';
 
 class MappedDomainType extends React.Component {
-	renderSettingUpNameservers() {
+	renderSettingUpNameserversAndARecords() {
 		const { domain, translate } = this.props;
 		if ( this.props.isJetpackSite && ! this.props.isSiteAutomatedTransfer ) {
 			return null;
@@ -245,7 +245,7 @@ class MappedDomainType extends React.Component {
 						purchase={ purchase }
 						domain={ domain }
 					/>
-					{ this.renderSettingUpNameservers() }
+					{ this.renderSettingUpNameserversAndARecords() }
 					{ this.renderPendingGSuiteTosNotice() }
 					<ExpiringSoon
 						selectedSite={ selectedSite }
