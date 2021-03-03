@@ -27,7 +27,6 @@ export interface RequestCart {
 	is_coupon_applied: boolean;
 	temporary: false;
 	extra: string;
-	is_update?: boolean;
 }
 
 export type RequestCartTaxData = null | {
