@@ -20,7 +20,7 @@ import {
  * Internal dependencies
  */
 import PostQueryManager from 'calypso/lib/query-manager/post';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -39,8 +39,6 @@ import {
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'calypso/state/action-types';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
@@ -189,7 +187,7 @@ function applyToManager( state, siteId, method, createDefault, ...args ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const queries = withSchemaValidation( queriesSchema, ( state = {}, action ) => {
+const queriesReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case POSTS_REQUEST_SUCCESS: {
 			const { siteId, query, posts, found } = action;
@@ -294,16 +292,19 @@ export const queries = withSchemaValidation( queriesSchema, ( state = {}, action
 			const { siteId, postId } = action;
 			return applyToManager( state, siteId, 'removeItem', false, postId );
 		}
-		case SERIALIZE: {
-			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
-		}
-		case DESERIALIZE: {
-			return mapValues( state, ( { data, options } ) => new PostQueryManager( data, options ) );
-		}
 	}
 
 	return state;
-} );
+};
+
+export const queries = withSchemaValidation(
+	queriesSchema,
+	withPersistence( queriesReducer, {
+		serialize: ( state ) => mapValues( state, ( { data, options } ) => ( { data, options } ) ),
+		deserialize: ( persisted ) =>
+			mapValues( persisted, ( { data, options } ) => new PostQueryManager( data, options ) ),
+	} )
+);
 
 function findItemKey( state, siteId, postId ) {
 	return (
@@ -323,93 +324,64 @@ function findItemKey( state, siteId, postId ) {
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
+const allSitesQueriesReducer = (
+	state = new PostQueryManager( {}, { itemKey: 'global_ID' } ),
+	action
+) => {
+	switch ( action.type ) {
+		case POSTS_REQUEST_SUCCESS: {
+			const { siteId, query, posts, found } = action;
+			if ( siteId ) {
+				// Handle all-sites queries only.
+				return state;
+			}
+			return state.receive( posts.map( normalizePostForState ), { query, found } );
+		}
+		case POSTS_RECEIVE: {
+			const { posts } = action;
+			return state.receive( posts );
+		}
+		case POST_RESTORE: {
+			const { siteId, postId } = action;
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive( { global_ID: globalId, status: '__RESTORE_PENDING' }, { patch: true } );
+		}
+		case POST_RESTORE_FAILURE: {
+			const { siteId, postId } = action;
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive( { global_ID: globalId, status: 'trash' }, { patch: true } );
+		}
+		case POST_SAVE: {
+			const { siteId, postId, post } = action;
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive( { global_ID: globalId, ...post }, { patch: true } );
+		}
+		case POST_DELETE: {
+			const { siteId, postId } = action;
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive( { global_ID: globalId, status: '__DELETE_PENDING' }, { patch: true } );
+		}
+		case POST_DELETE_FAILURE: {
+			const { siteId, postId } = action;
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive( { global_ID: globalId, status: 'trash' }, { patch: true } );
+		}
+		case POST_DELETE_SUCCESS: {
+			const { siteId, postId } = action;
+			const globalId = findItemKey( state, siteId, postId );
+			return state.removeItem( globalId );
+		}
+	}
+
+	return state;
+};
+
 export const allSitesQueries = withSchemaValidation(
 	allSitesQueriesSchema,
-	( state = new PostQueryManager( {}, { itemKey: 'global_ID' } ), action ) => {
-		switch ( action.type ) {
-			case POSTS_REQUEST_SUCCESS: {
-				const { siteId, query, posts, found } = action;
-				if ( siteId ) {
-					// Handle all-sites queries only.
-					return state;
-				}
-				return state.receive( posts.map( normalizePostForState ), { query, found } );
-			}
-			case POSTS_RECEIVE: {
-				const { posts } = action;
-				return state.receive( posts );
-			}
-			case POST_RESTORE: {
-				const { siteId, postId } = action;
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						status: '__RESTORE_PENDING',
-					},
-					{ patch: true }
-				);
-			}
-			case POST_RESTORE_FAILURE: {
-				const { siteId, postId } = action;
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						status: 'trash',
-					},
-					{ patch: true }
-				);
-			}
-			case POST_SAVE: {
-				const { siteId, postId, post } = action;
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						...post,
-					},
-					{ patch: true }
-				);
-			}
-			case POST_DELETE: {
-				const { siteId, postId } = action;
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						status: '__DELETE_PENDING',
-					},
-					{ patch: true }
-				);
-			}
-			case POST_DELETE_FAILURE: {
-				const { siteId, postId } = action;
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						status: 'trash',
-					},
-					{ patch: true }
-				);
-			}
-			case POST_DELETE_SUCCESS: {
-				const { siteId, postId } = action;
-				const globalId = findItemKey( state, siteId, postId );
-				return state.removeItem( globalId );
-			}
-			case SERIALIZE:
-				return {
-					data: state.data,
-					options: state.options,
-				};
-			case DESERIALIZE:
-				return new PostQueryManager( state.data, state.options );
-		}
-
-		return state;
-	}
+	withPersistence( allSitesQueriesReducer, {
+		serialize: ( { data, options } ) => ( { data, options } ),
+		deserialize: ( { data, options } ) => new PostQueryManager( data, options ),
+	} )
 );
 
 /**
