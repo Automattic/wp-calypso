@@ -216,7 +216,7 @@ function useAddProductsFromLocalStorage( {
 			return;
 		}
 
-		const productsForCart = getCartFromLocalStorage().map( ( product ) =>
+		const productsForCart: RequestCartProduct[] = getCartFromLocalStorage().map( ( product ) =>
 			fillInSingleCartItemAttributes( product, products )
 		);
 
