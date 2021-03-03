@@ -128,7 +128,7 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		// client/layout/style.scss
-		&.layout.focus-content .layout__secondary {
+		.layout.focus-content .layout__secondary {
 			transform: translateX( -100% );
 			padding: 71px 24px 24px;
 		}
