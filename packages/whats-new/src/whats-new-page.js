@@ -19,9 +19,9 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageN
 	return (
 		<GuidePage className="whats-new-page__container">
 			<div className="whats-new-page__text">
-				{ heading && <Text variant="title.large">{ heading }</Text> }
+				{ heading && <h1 className="whats-new-page__heading">{ heading }</h1> }
 				<div className="whats-new-page__description">
-					{ description && <Text variant="body">{ description }</Text> }
+					{ description && <p>{ description }</p> }
 					{ link && (
 						<Button
 							className="whats-new-page__link"
