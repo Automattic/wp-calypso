@@ -42,7 +42,7 @@ interface Props {
 }
 
 const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 	const history = useHistory();
 	const { goBack, goNext } = useStepNavigation();
@@ -113,11 +113,18 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		setDomain( suggestion );
 	};
 
+	const fallbackSubtitleText = __( 'Free for the first year with any paid plan.' );
+	const newSubtitleText = __( 'Free for the first year with any annual plan.' );
+	const subtitleText =
+		locale === 'en' || hasTranslation?.( 'Free for the first year with any annual plan.' )
+			? newSubtitleText
+			: fallbackSubtitleText;
+
 	const header = (
 		<div className="domains__header">
 			<div>
 				<Title>{ __( 'Choose a domain' ) }</Title>
-				<SubTitle>{ __( 'Free for the first year with any paid plan.' ) }</SubTitle>
+				<SubTitle>{ subtitleText }</SubTitle>
 			</div>
 			<ActionButtons>
 				<BackButton onClick={ handleBack } />
