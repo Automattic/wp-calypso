@@ -87,7 +87,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		step( 'Can create a new WordPress site', async function () {
-			await StartPage.Visit( this.driver, StartPage.getStartURL() );
+			await StartPage.Visit( driver, StartPage.getStartURL() );
 		} );
 
 		step( 'Can see the account page and enter account details', async function () {
@@ -130,7 +130,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheOnboardingChecklist( driver );
 
 		step( 'Can log out and request a magic link', async function () {
 			if ( process.env.HORIZON_TESTS === 'true' ) {
@@ -479,7 +479,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function () {
-			const myHomePage = await MyHomePage.Expect( this.driver );
+			const myHomePage = await MyHomePage.Expect( driver );
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
@@ -1108,7 +1108,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			if ( dataHelper.getTargetType() === 'IE11' ) {
 				return this.skip();
 			}
-			const myHomePage = await MyHomePage.Expect( this.driver );
+			const myHomePage = await MyHomePage.Expect( driver );
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
