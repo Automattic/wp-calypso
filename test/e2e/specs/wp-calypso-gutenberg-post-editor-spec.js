@@ -78,13 +78,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const gEditorSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gEditorSidebarComponent.enterImageAltText( fileDetails );
 			await gEditorComponent.closeSidebar();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			return assert.strictEqual(
-				errorShown,
-				false,
-				'There is an error shown on the Gutenberg editor page!'
-			);
 		} );
 
 		step( 'Expand Categories and Tags', async function () {
@@ -269,13 +262,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gEditorComponent.initEditor();
 				await gEditorComponent.enterTitle( blogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
-
-				const errorShown = await gEditorComponent.errorDisplayed();
-				return assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the Gutenberg editor page!'
-				);
 			} );
 
 			step( 'Can publish and view content', async function () {
@@ -309,9 +295,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( blogPostTitle );
 			await gEditorComponent.enterText( blogPostQuote );
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 		} );
 
 		step( 'Can publish and view content', async function () {
@@ -358,13 +341,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.enterTitle( blogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
-
-				const errorShown = await gEditorComponent.errorDisplayed();
-				return assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the editor page!'
-				);
 			} );
 
 			step(
@@ -542,13 +518,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can enter post title and content and set to password protected', async function () {
 				let gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.enterTitle( blogPostTitle );
-
-				const errorShown = await gEditorComponent.errorDisplayed();
-				assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the Gutenberg editor page!'
-				);
 
 				const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 				await gSidebarComponent.chooseDocumentSettings();
@@ -851,12 +820,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.enterTitle( originalBlogPostTitle );
 				await gEditorComponent.enterText( blogPostQuote );
-				const errorShown = await gEditorComponent.errorDisplayed();
-				return assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the editor page!'
-				);
 			} );
 
 			step( 'Can publish the post', async function () {
@@ -931,10 +894,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					'Can set the new title and update it, and link to the updated post',
 					async function () {
 						const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-
 						await gEditorComponent.enterTitle( updatedBlogPostTitle );
-						const errorShown = await gEditorComponent.errorDisplayed();
-						assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+
 						return await gEditorComponent.update( { visit: true } );
 					}
 				);
@@ -978,9 +939,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gEditorComponent.enterTitle( originalBlogPostTitle );
 				await gEditorComponent.insertContactForm( contactEmail, subject );
 				await gEditorComponent.ensureSaved();
-
-				const errorShown = await gEditorComponent.errorDisplayed();
-				assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 
 				const contactFormDisplayedInEditor = await gEditorComponent.contactFormDisplayedInEditor();
 				assert.strictEqual(
@@ -1034,9 +992,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 			const gPaymentComponent = await SimplePaymentsBlockComponent.Expect( driver, blockId );
 			await gPaymentComponent.insertPaymentButtonDetails( paymentButtonDetails );
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 
 			await gEditorComponent.enterTitle( blogPostTitle );
 			await gEditorComponent.ensureSaved();
@@ -1131,13 +1086,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				const gHeaderComponent = await GutenbergEditorComponent.Expect( driver );
 				await gHeaderComponent.enterTitle( originalBlogPostTitle );
 				await gHeaderComponent.enterText( blogPostQuote );
-
-				const errorShown = await gHeaderComponent.errorDisplayed();
-				return assert.strictEqual(
-					errorShown,
-					false,
-					'There is an error shown on the Gutenberg editor page!'
-				);
 			} );
 
 			step( 'Can publish the post', async function () {
