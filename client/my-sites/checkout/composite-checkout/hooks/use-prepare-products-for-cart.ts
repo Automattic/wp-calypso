@@ -25,6 +25,7 @@ import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import doesValueExist from '../lib/does-value-exist';
 import useStripProductsFromUrl from './use-strip-products-from-url';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -198,13 +199,26 @@ function useAddProductsFromLocalStorage( {
 	addHandler: AddHandler;
 } ) {
 	const translate = useTranslate();
+	const products: Record<
+		string,
+		{
+			product_id: number;
+			product_slug: string;
+		}
+	> = useSelector( getProductsList );
 
 	useEffect( () => {
 		if ( addHandler !== 'addFromLocalStorage' ) {
 			return;
 		}
+		if ( Object.keys( products || {} ).length < 1 ) {
+			debug( 'waiting on products fetch' );
+			return;
+		}
 
-		const productsForCart = getCartFromLocalStorage();
+		const productsForCart = getCartFromLocalStorage().map( ( product ) =>
+			fillInSingleCartItemAttributes( product, products )
+		);
 
 		if ( productsForCart.length < 1 ) {
 			debug( 'creating products from localStorage failed' );
@@ -217,7 +231,7 @@ function useAddProductsFromLocalStorage( {
 
 		debug( 'preparing products requested in localStorage', productsForCart );
 		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
-	}, [ addHandler, dispatch, translate ] );
+	}, [ addHandler, dispatch, translate, products ] );
 }
 
 function useAddRenewalItems( {
