@@ -149,7 +149,7 @@ export const QuickLinks = ( {
 				iconSrc={ fiverrLogoIcon }
 			/>
 			<ActionBox
-				href="https://anchor.fm"
+				href="https://anchor.fm/wordpressdotcom"
 				onClick={ trackAnchorPodcastAction }
 				target="_blank"
 				label={ translate( 'Create a podcast with Anchor' ) }
