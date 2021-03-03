@@ -218,7 +218,7 @@ describe( 'premium reducer', () => {
 			} );
 		} );
 
-		test( 'should serialize just the error message for errored plugins', () => {
+		test( 'should serialize selected error fields for errored plugins', () => {
 			const originalState = deepFreeze( {
 				'error-site': [
 					{
@@ -237,7 +237,7 @@ describe( 'premium reducer', () => {
 						slug: 'vaultpress',
 						name: 'VaultPress',
 						status: 'done',
-						error: 'Error: Something went wrong.',
+						error: { name: 'Error', message: 'Something went wrong.' },
 					},
 				],
 			} );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mapValues, omit } from 'lodash';
+import { mapValues, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -73,12 +73,16 @@ const pluginsReducer = ( state = {}, action ) => {
 export const plugins = withSchemaValidation(
 	pluginInstructionSchema,
 	withPersistence( pluginsReducer, {
-		// Save the error state as a string message and omit the `key` field.
+		// - save only selected fields of an error (an `Error` instance is not serializable per se)
+		// - omit the `key` field.
 		serialize: ( state ) =>
 			mapValues( state, ( pluginList ) =>
 				pluginList.map( ( item ) => {
-					if ( item.error != null ) {
-						item = { ...item, error: item.error.toString() };
+					if ( item.error ) {
+						item = {
+							...item,
+							error: pick( item.error, [ 'name', 'code', 'error', 'message' ] ),
+						};
 					}
 					return omit( item, 'key' );
 				} )
