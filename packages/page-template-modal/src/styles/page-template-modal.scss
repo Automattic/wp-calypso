@@ -21,7 +21,7 @@ $template-selector-border-color-hover: var( --wp-admin-theme-color-darker-10 );
 $template-selector-empty-background: #fff;
 
 // Breakpoints
-$breakpoint-mobile: 660px;
+$breakpoint-mobile: 600px;
 $breakpoint-tablet: 783px;
 $breakpoint-desktop: 961px;
 $breakpoint-huge: 1648px;
@@ -34,18 +34,22 @@ $wp-org-admin-bar-mobile: 46px;
 
 $sidebar-width: 324px;
 
+// Overrides of the Gutenberg modal component
 .page-template-modal {
+
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		width: 90%;
 		height: 90vh;
+		// prevents a 1px strip of content being visible after scrolling
+		overflow-y: hidden;
+		padding-bottom: 24px;
 	}
-}
 
-// Overrides of the Gutenberg modal component
-.page-template-modal {
 	.components-modal__content {
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch;
+		// prevents a 1px strip of content being visible after scrolling
+		margin-top: -1px;
 	}
 
 	.components-modal__header {
