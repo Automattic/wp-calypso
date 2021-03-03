@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { mapValues, omit, pick } from 'lodash';
+import { mapValues, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,6 +70,14 @@ const pluginsReducer = ( state = {}, action ) => {
 	}
 };
 
+// pick selected properties from the error object and ignore ones that are `undefined`.
+const serializeError = ( error ) =>
+	Object.fromEntries(
+		[ 'name', 'code', 'error', 'message' ]
+			.map( ( k ) => [ k, error[ k ] ] )
+			.filter( ( [ , v ] ) => v !== undefined )
+	);
+
 export const plugins = withSchemaValidation(
 	pluginInstructionSchema,
 	withPersistence( pluginsReducer, {
@@ -81,7 +89,7 @@ export const plugins = withSchemaValidation(
 					if ( item.error ) {
 						item = {
 							...item,
-							error: pick( item.error, [ 'name', 'code', 'error', 'message' ] ),
+							error: serializeError( item.error ),
 						};
 					}
 					return omit( item, 'key' );
