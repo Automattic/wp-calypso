@@ -31,12 +31,12 @@ import NavItem from './nav-item';
 import CurrentTaskItem from './current-task-item';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
+import { useExperiment } from 'calypso/lib/explat';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { useExperiment } from 'calypso/lib/explat';
 
 const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
 	dispatch(
