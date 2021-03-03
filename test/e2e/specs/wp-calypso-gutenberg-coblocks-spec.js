@@ -213,7 +213,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'WPCOM-specific gutter controls: @parallel', async function () {
+	describe( 'WPCOM-specific gutter controls: @parallel', function () {
 		const gutterControlsLocator = By.css(
 			'div[aria-label="Editor settings"] div[aria-label="Gutter"]'
 		);

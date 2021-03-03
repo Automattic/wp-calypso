@@ -31,7 +31,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, async function () {
+describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	step( 'Login and select the My Home page', async function () {
