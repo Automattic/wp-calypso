@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import {
 	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
@@ -27,7 +27,12 @@ import titanContactsIcon from 'calypso/assets/images/email-providers/titan/servi
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getTitanProductName } from 'calypso/lib/titan/get-titan-product-name';
+import {
+	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
+	getTitanProductName,
+} from 'calypso/lib/titan';
+import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 
 /**
  * Style
@@ -37,6 +42,13 @@ import './style.scss';
 class TitanManagementNav extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
+
+		// Props injected via connect()
+		currentRoute: PropTypes.string.isRequired,
+		selectedSiteSlug: PropTypes.string.isRequired,
+
+		// Props injected via localize()
+		translate: PropTypes.func.isRequired,
 	};
 
 	renderTitanManagementLink = () => {
@@ -87,6 +99,59 @@ class TitanManagementNav extends React.Component {
 		);
 	};
 
+	renderMailboxSetupPrompt = () => {
+		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
+
+		const numberOfUnusedMailboxes =
+			getMaxTitanMailboxCount( domain ) - getConfiguredTitanMailboxCount( domain );
+
+		if ( numberOfUnusedMailboxes <= 0 ) {
+			return;
+		}
+
+		const showExternalControlPanelLink = ! isEnabled( 'titan/iframe-control-panel' );
+		const controlPanelUrl = showExternalControlPanelLink
+			? emailManagementTitanControlPanelRedirect( selectedSiteSlug, domain.name, currentRoute, {
+					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+			  } )
+			: emailManagementManageTitanAccount( selectedSiteSlug, domain.name, currentRoute, {
+					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
+			  } );
+
+		return (
+			<CompactCard className="titan-management-nav__mailbox-setup-prompt" highlight="info">
+				<span>
+					<Gridicon icon="info-outline" size={ 18 } />
+					<em>
+						{ translate(
+							'You have %(numberOfMailboxes)d unused mailbox',
+							'You have %(numberOfMailboxes)d unused mailboxes',
+							{
+								count: numberOfUnusedMailboxes,
+								args: {
+									numberOfMailboxes: numberOfUnusedMailboxes,
+								},
+								comment:
+									'This refers to the number of mailboxes purchased that have not been set up yet',
+							}
+						) }
+					</em>
+				</span>
+
+				{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+				<Button
+					compact
+					href={ controlPanelUrl }
+					target={ showExternalControlPanelLink ? '_blank' : null }
+				>
+					{ translate( 'Finish Setup' ) }
+					{ showExternalControlPanelLink && <Gridicon icon="external" size={ 16 } /> }
+				</Button>
+				{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+			</CompactCard>
+		);
+	};
+
 	render() {
 		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
 
@@ -129,7 +194,7 @@ class TitanManagementNav extends React.Component {
 								<img src={ titanMailIcon } alt={ translate( 'Titan Mail icon' ) } />
 								<strong>
 									{ translate( 'Mail', {
-										comments: 'This refers to the Email application (i.e. the webmail) of Titan',
+										comment: 'This refers to the Email application (i.e. the webmail) of Titan',
 									} ) }
 								</strong>
 							</a>
@@ -139,7 +204,7 @@ class TitanManagementNav extends React.Component {
 								<img src={ titanCalendarIcon } alt={ translate( 'Titan Calendar icon' ) } />
 								<strong>
 									{ translate( 'Calendar', {
-										comments: 'This refers to the Calendar application of Titan',
+										comment: 'This refers to the Calendar application of Titan',
 									} ) }
 								</strong>
 							</a>
@@ -149,7 +214,7 @@ class TitanManagementNav extends React.Component {
 								<img src={ titanContactsIcon } alt={ translate( 'Titan Contacts icon' ) } />
 								<strong>
 									{ translate( 'Contacts', {
-										comments: 'This refers to the Contacts application of Titan',
+										comment: 'This refers to the Contacts application of Titan',
 									} ) }
 								</strong>
 							</a>
@@ -158,6 +223,7 @@ class TitanManagementNav extends React.Component {
 				</FoldableCard>
 
 				<VerticalNav>
+					{ this.renderMailboxSetupPrompt() }
 					{ this.renderTitanManagementLink() }
 					{ this.renderPurchaseManagementLink() }
 				</VerticalNav>
