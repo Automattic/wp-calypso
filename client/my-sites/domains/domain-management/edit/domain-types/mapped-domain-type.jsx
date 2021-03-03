@@ -51,7 +51,6 @@ class MappedDomainType extends React.Component {
 		);
 		let primaryMessage;
 		let secondaryMessage;
-		let thirdMessage;
 
 		if ( isSubdomain( domain.name ) ) {
 			primaryMessage = translate(
@@ -85,36 +84,50 @@ class MappedDomainType extends React.Component {
 					args: { domainName: domain.name },
 				}
 			);
+		}
 
-			if ( domain.aRecordsRequiredForMapping ) {
-				thirdMessage = (
-					<FoldableFAQ id="advanced-mapping-setup" question="Advanced setup using root A records">
-						<p>Use this to set it up:</p>
-						<ul>
-							{ domain.aRecordsRequiredForMapping.map( ( aRecord, index ) => {
-								return <li key={ index }>{ aRecord }</li>;
-							} ) }
-						</ul>
-					</FoldableFAQ>
-				);
-			}
+		const setupInstructionsMessage = translate(
+			'Follow these instructions to set up your domain mapping.'
+		);
+
+		const recommendedSetupTitle = translate( 'Recommended setup' );
+		const recommendedSetupMessage = (
+			<FoldableFAQ id="recommended-mapping-setup" question={ recommendedSetupTitle } expanded>
+				<p>{ primaryMessage }</p>
+				{ ! isSubdomain( domain.name ) && (
+					<ul className="mapped-domain-type__name-server-list">
+						{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
+							return <li key={ nameServer }>{ nameServer }</li>;
+						} ) }
+					</ul>
+				) }
+			</FoldableFAQ>
+		);
+
+		let aRecordsMappingMessage;
+		if ( domain.aRecordsRequiredForMapping ) {
+			const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
+			const aRecordsSetupMessage = translate(
+				"If you have already set up your domain's DNS records in its own provider and just want to point it to WordPress.com, use these IP addresses as your root A records:"
+			);
+			aRecordsMappingMessage = (
+				<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
+					<p>{ aRecordsSetupMessage }</p>
+					<ul className="mapped-domain-type__name-server-list">
+						{ domain.aRecordsRequiredForMapping.map( ( aRecord ) => {
+							return <li key={ aRecord }>{ aRecord }</li>;
+						} ) }
+					</ul>
+				</FoldableFAQ>
+			);
 		}
 
 		return (
 			<React.Fragment>
 				<div>
-					<p>Use these instructions to set up your domain mapping.</p>
-					<FoldableFAQ id="recommended-mapping-setup" question="Recommended setup" expanded>
-						<p>{ primaryMessage }</p>
-						{ ! isSubdomain( domain.name ) && (
-							<ul className="mapped-domain-type__name-server-list">
-								{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
-									return <li key={ nameServer }>{ nameServer }</li>;
-								} ) }
-							</ul>
-						) }
-					</FoldableFAQ>
-					{ thirdMessage }
+					<p>{ setupInstructionsMessage }</p>
+					{ recommendedSetupMessage }
+					{ aRecordsMappingMessage }
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</React.Fragment>
