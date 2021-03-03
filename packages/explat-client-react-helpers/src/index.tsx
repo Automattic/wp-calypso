@@ -53,10 +53,7 @@ export default function createExPlatClientReactHelpers(
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
 
-		if (
-			experimentName !== previousExperimentName &&
-			! previousExperimentName.startsWith( 'explat_test' )
-		) {
+		if ( experimentName !== previousExperimentName ) {
 			const message = '[ExPlat] useExperiment: experimentName should never change between renders!';
 			if ( exPlatClient.config.isDevelopmentMode ) {
 				throw new Error( message );

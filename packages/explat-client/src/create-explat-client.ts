@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import type { ExperimentAssignment, Config } from './types';
+import { ExperimentAssignment, Config } from './types';
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import * as Request from './internal/requests';
 import ExperimentAssignmentStore from './internal/experiment-assignment-store';
@@ -43,8 +43,8 @@ export interface ExPlatClient {
 }
 
 export class MissingExperimentAssignmentError extends Error {
-	constructor( message?: string ) {
-		super( message );
+	constructor( ...params: any[] ) {
+		super( ...params );
 
 		// Maintains proper stack trace for where our error was thrown (only available on V8)
 		if ( Error.captureStackTrace ) {

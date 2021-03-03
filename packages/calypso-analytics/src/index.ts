@@ -11,7 +11,6 @@ export {
 	identifyUser,
 	initializeAnalytics,
 	getTracksAnonymousUserId,
-	getTracksLoadPromise,
 	analyticsEvents,
 	pushEventToTracksQueue,
 } from './tracks';
