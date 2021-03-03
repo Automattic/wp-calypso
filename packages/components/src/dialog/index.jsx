@@ -5,8 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import classnames from 'classnames';
-// eslint-disable-next-line import/no-extraneous-dependencies, no-restricted-imports
-import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -100,6 +98,7 @@ class Dialog extends Component {
 			isBackdropVisible,
 			className,
 			baseClassName,
+			overlayClassName,
 			isFullScreen,
 			shouldCloseOnEsc,
 		} = this.props;
@@ -107,10 +106,9 @@ class Dialog extends Component {
 		// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
 		const dialogClassName = classnames( baseClassName, 'card', additionalClassNames );
 
-		const backdropClassName = classnames( baseClassName + '__backdrop', {
+		const backdropClassName = classnames( baseClassName + '__backdrop', overlayClassName, {
 			'is-full-screen': isFullScreen,
 			'is-hidden': ! isBackdropVisible,
-			'is-nav-unification': config.isEnabled( 'nav-unification' ),
 		} );
 
 		const contentClassName = classnames( baseClassName + '__content', className );
