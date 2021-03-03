@@ -10,10 +10,12 @@ import { Button, ProductIcon } from '@automattic/components';
 /**
  * Internal dependencies
  */
+import useJetpackFreeButtonProps from 'calypso/components/jetpack/card/jetpack-free-card/use-jetpack-free-button-props';
 import Gridicon from 'calypso/components/gridicon';
 import { preventWidows } from 'calypso/lib/formatting';
 import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
 
@@ -21,7 +23,11 @@ import InfoPopover from 'calypso/components/info-popover';
  * Type dependencies
  */
 import type { Moment } from 'moment';
-import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type {
+	Duration,
+	PurchaseCallback,
+	QueryArgs,
+} from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies
@@ -30,6 +36,8 @@ import './style.scss';
 import starIcon from './assets/star.svg';
 
 type OwnProps = {
+	siteId: number | null;
+	urlQueryArgs: QueryArgs;
 	iconSlug?: string;
 	productSlug: string;
 	productName: TranslateResult;
@@ -63,6 +71,7 @@ const DisplayPrice = ( {
 	isOwned,
 	isIncludedInPlan,
 	isFree,
+	isJetpackFree,
 	discountedPrice,
 	currencyCode,
 	originalPrice,
@@ -104,7 +113,7 @@ const DisplayPrice = ( {
 		);
 	}
 
-	if ( isFree ) {
+	if ( isFree && ! isJetpackFree ) {
 		return (
 			<div className="jetpack-product-card__price">
 				<div>
@@ -128,12 +137,14 @@ const DisplayPrice = ( {
 			{ currencyCode && originalPrice ? (
 				<>
 					{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
-					<PlanPrice
-						original
-						className="jetpack-product-card__original-price"
-						rawPrice={ couponOriginalPrice as number }
-						currencyCode={ currencyCode }
-					/>
+					{ ! isJetpackFree && (
+						<PlanPrice
+							original
+							className="jetpack-product-card__original-price"
+							rawPrice={ couponOriginalPrice as number }
+							currencyCode={ currencyCode }
+						/>
+					) }
 					<PlanPrice
 						discounted
 						rawPrice={ couponDiscountedPrice as number }
@@ -145,12 +156,18 @@ const DisplayPrice = ( {
 						</InfoPopover>
 					) }
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-					<span className="jetpack-product-card__you-save">
-						{ translate( '* You Save %(percent)d%%', {
-							args: { percent: 40 },
-							comment: 'Asterisk clause describing the displayed price adjustment',
-						} ) }
-					</span>
+					{ isJetpackFree ? (
+						<span className="jetpack-product-card__get-started">
+							{ translate( 'Get started for free' ) }
+						</span>
+					) : (
+						<span className="jetpack-product-card__you-save">
+							{ translate( '* You Save %(percent)d%%', {
+								args: { percent: 40 },
+								comment: 'Asterisk clause describing the displayed price adjustment',
+							} ) }
+						</span>
+					) }
 				</>
 			) : (
 				<>
@@ -163,6 +180,8 @@ const DisplayPrice = ( {
 };
 
 const JetpackProductCard: React.FC< Props > = ( {
+	siteId,
+	urlQueryArgs,
 	iconSlug,
 	productSlug,
 	productName,
@@ -191,9 +210,14 @@ const JetpackProductCard: React.FC< Props > = ( {
 	aboveButtonText = null,
 }: Props ) => {
 	const translate = useTranslate();
+	const { href: freeHref, onClick: freeOnClick } = useJetpackFreeButtonProps(
+		siteId,
+		urlQueryArgs
+	);
 	const parsedHeadingLevel = isNumber( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel ), 1 ), 6 )
 		: 2;
+	const isJetpackFree = productSlug === PLAN_JETPACK_FREE;
 
 	return (
 		<div
@@ -225,6 +249,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
 					isFree={ isFree }
+					isJetpackFree={ isJetpackFree }
 					discountedPrice={ discountedPrice }
 					currencyCode={ currencyCode }
 					originalPrice={ originalPrice }
@@ -247,7 +272,8 @@ const JetpackProductCard: React.FC< Props > = ( {
 					<Button
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
-						onClick={ onButtonClick }
+						href={ isJetpackFree ? freeHref : '' }
+						onClick={ isJetpackFree ? freeOnClick : onButtonClick }
 						disabled={ isDisabled }
 					>
 						{ buttonLabel }
