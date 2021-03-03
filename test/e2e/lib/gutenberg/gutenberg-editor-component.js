@@ -22,15 +22,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		super( driver, By.css( '.edit-post-header' ), url );
 		this.editorType = editorType;
 
-		this.publishSelector = By.css(
-			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button'
+		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
+		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
+		this.prePublishButtonSelector = By.css(
+			'.editor-post-publish-panel__toggle[aria-disabled="false"]'
+		);
+		this.publishButtonSelector = By.css(
+			'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button[aria-disabled="false"]'
 		);
 		this.publishingSpinnerSelector = By.css(
 			'.editor-post-publish-panel__content .components-spinner'
 		);
-		this.prePublishButtonSelector = By.css( '.editor-post-publish-panel__toggle' );
-		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
-		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
 	}
 
 	static async Expect( driver, editorType ) {
@@ -68,10 +70,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async publish( { visit = false, closePanel = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
-		await this.driver.sleep( 1000 );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishSelector );
-		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 
 		if ( closePanel ) {
@@ -606,7 +605,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.css( '.editor-post-publish-panel__link' ),
 			publishDate
 		);
-		await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
+		await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
@@ -629,7 +628,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async submitForReview() {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonSelector );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.publishHeaderSelector );
-		return await driverHelper.clickWhenClickable( this.driver, this.publishSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.publishButtonSelector );
 	}
 
 	async closeEditor() {
