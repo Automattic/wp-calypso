@@ -11,15 +11,6 @@
 	}
 }
 
-.help-results__header.card.is-compact,
-.help-results__footer.card.is-compact {
-	padding: 16px;
-
-	@include break-medium {
-		padding: 16px 24px;
-	}
-}
-
 .help-result {
 	&:hover {
 		.help-result__wrapper {
@@ -93,4 +84,21 @@
 	font-size: $font-body;
 	line-height: 24px;
 	margin: 0 0 8px;
+}
+
+.help-results__header.card.is-compact,
+.help-results__footer.card.is-compact {
+	padding: 16px;
+
+	@include break-medium {
+		padding: 16px 24px;
+	}
+}
+
+.is-compact .help-result__title {
+	font-weight: 400;
+}
+
+.is-compact .gridicon {
+	margin-right: 16px;
 }
