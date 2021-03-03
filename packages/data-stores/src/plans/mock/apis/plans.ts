@@ -1,25 +1,16 @@
 /**
  * Internal dependencies
  */
+import * as MockData from '../';
 import type {
-	Plan,
-	PlanProduct,
-	FeaturesByType,
-	PlanSimplifiedFeature,
 	PricedAPIPlanFree,
 	PricedAPIPlanPaidAnnually,
 	PricedAPIPlanPaidMonthly,
 	DetailsAPIResponse,
 	APIPlanDetail,
-} from '../types';
+} from '../../types';
 
 /**
- * This file contains mock data for the plans data-store unit tests.
- * There 2 main sections:
- * - APIs: mocks of the data returned by the REST APIs
- * - Data-store objects: mocks of the objects that are created by the
- *   data-store's resolvers when reading/transforming plan APIs data
- *
  * For the sake of testing, only a few plans are mocked:
  * - Free plan
  * - Premium plan (annually and monthly billed)
@@ -30,7 +21,6 @@ import type {
 // (allow us to use real-ish APIs data without TypeScript complaining about
 // extra props that are otherwise ignored in this data-store)
 //==============================================================================
-
 interface MockPricedAPIPlanFree extends PricedAPIPlanFree {
 	[ key: string ]: unknown;
 }
@@ -48,62 +38,8 @@ interface MockPricedAPIPlanPaidMonthly extends PricedAPIPlanPaidMonthly {
 	[ key: string ]: unknown;
 }
 
-//==============================================================================
-// APIs
-//==============================================================================
-
-// Individual Features
-export const MOCK_FEATURE_CUSTOM_DOMAIN = {
-	id: 'custom-domain',
-	name: 'Free domain for One Year',
-	description:
-		'Get a free domain for one year. Premium domains not included. Your domain will renew at its regular price.',
-};
-export const MOCK_FEATURE_LIVE_SUPPORT = {
-	id: 'support-live',
-	name: 'Live chat support',
-	description:
-		'High quality support to help you get your website up and running and working how you want it.',
-};
-export const MOCK_FEATURE_PRIORITY_SUPPORT = {
-	id: 'priority-support',
-	name: '24/7 Priority live chat support',
-	description: 'Receive faster support from our WordPress experts - weekends included.',
-};
-export const MOCK_FEATURE_RECURRING_PAYMENTS = {
-	id: 'recurring-payments',
-	name: 'Sell subscriptions (recurring payments)',
-	description: 'Accept one-time, monthly or annual payments on your website.',
-};
-export const MOCK_FEATURE_WORDADS = {
-	id: 'wordads',
-	name: 'WordAds',
-	description: 'Put your site to work and earn through ad revenue.',
-};
-
-// Feature groups (by type)
-export const MOCK_FEATURES_BY_TYPE_GENERAL: FeaturesByType = {
-	id: 'general',
-	name: null,
-	features: [
-		MOCK_FEATURE_CUSTOM_DOMAIN.id,
-		MOCK_FEATURE_LIVE_SUPPORT.id,
-		MOCK_FEATURE_PRIORITY_SUPPORT.id,
-	],
-};
-export const MOCK_FEATURES_BY_TYPE_COMMERCE: FeaturesByType = {
-	id: 'commerce',
-	name: 'Commerce',
-	features: [ MOCK_FEATURE_RECURRING_PAYMENTS.id ],
-};
-export const MOCK_FEATURES_BY_TYPE_MARKETING: FeaturesByType = {
-	id: 'marketing',
-	name: 'Marketing',
-	features: [ MOCK_FEATURE_WORDADS.id ],
-};
-
 // All plans details (from APIs)
-export const MOCK_PLAN_DETAILS_API: MockDetailsAPIResponse = {
+export const API_PLAN_DETAILS: MockDetailsAPIResponse = {
 	groups: [
 		{
 			slug: 'personal',
@@ -151,8 +87,8 @@ export const MOCK_PLAN_DETAILS_API: MockDetailsAPIResponse = {
 				'Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.',
 			features: [ 'custom-domain', 'support-live', 'recurring-payments', 'wordads' ],
 			highlighted_features: [
-				MOCK_FEATURE_CUSTOM_DOMAIN.name,
-				MOCK_FEATURE_LIVE_SUPPORT.name,
+				MockData.API_FEATURE_CUSTOM_DOMAIN.name,
+				MockData.API_FEATURE_LIVE_SUPPORT.name,
 				'Premium plan highlighted feature',
 			],
 			storage: '13 GB',
@@ -160,22 +96,22 @@ export const MOCK_PLAN_DETAILS_API: MockDetailsAPIResponse = {
 		},
 	],
 	features_by_type: [
-		MOCK_FEATURES_BY_TYPE_GENERAL,
-		MOCK_FEATURES_BY_TYPE_COMMERCE,
-		MOCK_FEATURES_BY_TYPE_MARKETING,
+		MockData.API_FEATURES_BY_TYPE_GENERAL,
+		MockData.API_FEATURES_BY_TYPE_COMMERCE,
+		MockData.API_FEATURES_BY_TYPE_MARKETING,
 	],
 	features: [
-		MOCK_FEATURE_CUSTOM_DOMAIN,
-		MOCK_FEATURE_LIVE_SUPPORT,
-		MOCK_FEATURE_PRIORITY_SUPPORT,
-		MOCK_FEATURE_RECURRING_PAYMENTS,
-		MOCK_FEATURE_WORDADS,
+		MockData.API_FEATURE_CUSTOM_DOMAIN,
+		MockData.API_FEATURE_LIVE_SUPPORT,
+		MockData.API_FEATURE_PRIORITY_SUPPORT,
+		MockData.API_FEATURE_RECURRING_PAYMENTS,
+		MockData.API_FEATURE_WORDADS,
 	],
 };
 
 // Individual plan (from APIs)
 
-export const MOCK_PLAN_PRICE_APIS_FREE: MockPricedAPIPlanFree = {
+export const API_PLAN_PRICE_FREE: MockPricedAPIPlanFree = {
 	product_id: 1,
 	product_name: 'WordPress.com Free',
 	meta: null,
@@ -240,7 +176,7 @@ export const MOCK_PLAN_PRICE_APIS_FREE: MockPricedAPIPlanFree = {
 	],
 };
 
-export const MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnually = {
+export const API_PLAN_PRICE_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnually = {
 	product_id: 1003,
 	product_name: 'WordPress.com Premium',
 	meta: null,
@@ -346,7 +282,7 @@ export const MOCK_PLAN_PRICE_APIS_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnuall
 	],
 };
 
-export const MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY: MockPricedAPIPlanPaidMonthly = {
+export const API_PLAN_PRICE_PREMIUM_MONTHLY: MockPricedAPIPlanPaidMonthly = {
 	product_id: 1013,
 	product_name: 'WordPress.com Premium',
 	meta: null,
@@ -402,104 +338,4 @@ export const MOCK_PLAN_PRICE_APIS_PREMIUM_MONTHLY: MockPricedAPIPlanPaidMonthly 
 	raw_price: 14,
 	tagline: null,
 	currency_code: 'EUR',
-};
-
-//==============================================================================
-// Data-store objects
-//==============================================================================
-
-// Plans
-export const MOCK_PLAN_FREE: Plan = {
-	description: 'Mock free plan',
-	features: [
-		{
-			name: 'Free plan highlighted feature',
-			requiresAnnuallyBilledPlan: false,
-		},
-	],
-	storage: '3 GB',
-	title: 'Free',
-	featuresSlugs: {
-		subdomain: true,
-	},
-	isFree: true,
-	isPopular: false,
-	periodAgnosticSlug: 'free',
-	productIds: [ 1 ],
-};
-export const MOCK_PLAN_PREMIUM: Plan = {
-	description: 'Mock premium plan',
-	features: [
-		{
-			name: MOCK_FEATURE_CUSTOM_DOMAIN.name,
-			requiresAnnuallyBilledPlan: true,
-		},
-		{
-			name: MOCK_FEATURE_LIVE_SUPPORT.name,
-			requiresAnnuallyBilledPlan: true,
-		},
-		{
-			name: 'Premium plan highlighted feature',
-			requiresAnnuallyBilledPlan: false,
-		},
-	],
-	storage: '13 GB',
-	title: 'Premium',
-	featuresSlugs: {
-		'custom-domain': true,
-		'support-live': true,
-		'recurring-payments': true,
-		wordads: true,
-	},
-	isFree: false,
-	isPopular: true,
-	periodAgnosticSlug: 'premium',
-	productIds: [ 1003, 1013 ],
-};
-
-// Plan products
-export const MOCK_PLAN_PRODUCT_FREE: PlanProduct = {
-	productId: 1,
-	billingPeriod: 'ANNUALLY',
-	periodAgnosticSlug: 'free',
-	storeSlug: 'free_plan',
-	rawPrice: 0,
-	pathSlug: 'free',
-	price: '€0',
-	annualPrice: '€0',
-};
-export const MOCK_PLAN_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
-	productId: 1003,
-	billingPeriod: 'ANNUALLY',
-	periodAgnosticSlug: 'premium',
-	storeSlug: 'value_bundle',
-	rawPrice: 96,
-	pathSlug: 'premium',
-	price: '€8',
-	annualPrice: '€96',
-	annualDiscount: 43,
-};
-export const MOCK_PLAN_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
-	productId: 1013,
-	billingPeriod: 'MONTHLY',
-	periodAgnosticSlug: 'premium',
-	storeSlug: 'value_bundle_monthly',
-	rawPrice: 14,
-	price: '€14',
-	annualPrice: '€168',
-	annualDiscount: 43,
-};
-
-// Plan "simplified" features
-export const MOCK_SIMPLIFIED_FEATURE_CUSTOM_DOMAIN: PlanSimplifiedFeature = {
-	name: MOCK_FEATURE_CUSTOM_DOMAIN.name,
-	requiresAnnuallyBilledPlan: true,
-};
-export const MOCK_SIMPLIFIED_FEATURE_LIVE_SUPPORT: PlanSimplifiedFeature = {
-	name: MOCK_FEATURE_LIVE_SUPPORT.name,
-	requiresAnnuallyBilledPlan: true,
-};
-export const MOCK_SIMPLIFIED_FEATURE_PRIORITY_SUPPORT: PlanSimplifiedFeature = {
-	name: MOCK_FEATURE_PRIORITY_SUPPORT.name,
-	requiresAnnuallyBilledPlan: false,
 };
