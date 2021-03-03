@@ -52,7 +52,7 @@ export default function useCreateAssignablePaymentMethods(
 	const storedCards = useSelector( getStoredCards );
 	const existingCardMethods = useCreateExistingCards( {
 		storedCards,
-		activePayButtonText: translate( 'Use this card' ),
+		activePayButtonText: String( translate( 'Use this card' ) ),
 	} );
 
 	const paymentMethods = useMemo(
