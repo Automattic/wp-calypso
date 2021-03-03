@@ -54,7 +54,6 @@ import {
 	isJetpackSite,
 	canCurrentUserUseEarn,
 	getSiteOption,
-	canCurrentUserUseCalypsoStore,
 	canCurrentUserUseWooCommerceCoreStore,
 	getSiteWoocommerceUrl,
 } from 'calypso/state/sites/selectors';
@@ -695,7 +694,6 @@ export class MySitesSidebar extends Component {
 			translate,
 			site,
 			siteSuffix,
-			canUserUseCalypsoStore,
 			canUserUseWooCommerceCoreStore,
 			isSiteWpcomStore,
 		} = this.props;
@@ -713,7 +711,7 @@ export class MySitesSidebar extends Component {
 			// So, we'll just continue to change the link here as we have been doing.
 			experience = 'wpadmin-woocommerce-core';
 			storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
-		} else if ( ! canUserUseCalypsoStore ) {
+		} else {
 			return null;
 		}
 
@@ -1168,7 +1166,6 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManagePlugins: canCurrentUserManagePlugins( state ),
-		canUserUseCalypsoStore: canCurrentUserUseCalypsoStore( state, siteId ),
 		canUserUseWooCommerceCoreStore: canCurrentUserUseWooCommerceCoreStore( state, siteId ),
 		canUserUseEarn: canCurrentUserUseEarn( state, siteId ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),

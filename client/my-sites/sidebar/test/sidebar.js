@@ -69,23 +69,6 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( 'Should return store menu item if user can use store on this site', () => {
-			const Sidebar = new MySitesSidebar( {
-				canUserUseCalypsoStore: true,
-				isSiteWpcomStore: true,
-				...defaultProps,
-				site: {
-					plan: {
-						product_slug: 'business-bundle',
-					},
-				},
-			} );
-			const Store = () => Sidebar.store();
-
-			const wrapper = shallow( <Store /> );
-			expect( wrapper.props().link ).toEqual( '/store/mysite.com' );
-		} );
-
 		test( 'Should return wp-admin menu item if user can use store on this site and the site is an ecommerce plan', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseCalypsoStore: true,
