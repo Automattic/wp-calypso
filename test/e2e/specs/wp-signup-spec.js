@@ -237,7 +237,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheOnboardingChecklist( driver );
 
 		after( 'Can delete our newly created account', async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
@@ -476,7 +476,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheOnboardingChecklist( driver );
 
 		step( 'Can update the homepage', async function () {
 			const myHomePage = await MyHomePage.Expect( driver );
@@ -612,7 +612,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheOnboardingChecklist( driver );
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
@@ -722,7 +722,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheOnboardingChecklist( driver );
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'personal' );
@@ -1034,7 +1034,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheOnboardingChecklist( driver );
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'business', {
@@ -1100,7 +1100,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheOnboardingChecklist( driver );
 
 		step( 'Can update the homepage', async function () {
 			// Skipping if IE11 due to JS errors caused by missing DOMRect polyfill.
@@ -1215,7 +1215,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+		sharedSteps.canSeeTheOnboardingChecklist( driver );
 
 		step( 'Can delete site', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
