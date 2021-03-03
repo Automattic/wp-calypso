@@ -59,25 +59,17 @@ export default function usePrepareProductsForCart( {
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 } ): PreparedProductsForCart {
-	const initializePreparedProductsState = (
-		initialState: PreparedProductsForCart
-	): PreparedProductsForCart => ( {
-		...initialState,
-		isLoading: !! productAliasFromUrl,
-	} );
-	const [ state, dispatch ] = useReducer(
-		preparedProductsReducer,
-		initialPreparedProductsState,
-		initializePreparedProductsState
-	);
+	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
 	debug(
 		'preparing products for cart from url string',
 		productAliasFromUrl,
 		'and purchase id',
 		originalPurchaseId,
-		'and signup variables',
-		{ isLoggedOutCart, isNoSiteCart }
+		'and isLoggedOutCart',
+		isLoggedOutCart,
+		'and isNoSiteCart',
+		isNoSiteCart
 	);
 
 	useFetchProductsIfNotLoaded();
@@ -89,6 +81,8 @@ export default function usePrepareProductsForCart( {
 		isLoggedOutCart,
 		isNoSiteCart,
 	} );
+	debug( 'isLoading', state.isLoading );
+	debug( 'handler is', addHandler );
 
 	// Only one of these should ever operate. The others should bail if they
 	// think another hook will handle the data.
@@ -109,6 +103,7 @@ export default function usePrepareProductsForCart( {
 		dispatch,
 		addHandler,
 	} );
+	useNothingToAdd( { addHandler, dispatch } );
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
@@ -176,6 +171,23 @@ function chooseAddHandler( {
 	}
 
 	return 'doNotAdd';
+}
+
+function useNothingToAdd( {
+	dispatch,
+	addHandler,
+}: {
+	dispatch: ( action: PreparedProductsAction ) => void;
+	addHandler: AddHandler;
+} ) {
+	useEffect( () => {
+		if ( addHandler !== 'doNotAdd' ) {
+			return;
+		}
+
+		debug( 'nothing to add' );
+		dispatch( { type: 'PRODUCTS_ADD', products: [] } );
+	}, [ addHandler, dispatch ] );
 }
 
 function useAddProductsFromLocalStorage( {
