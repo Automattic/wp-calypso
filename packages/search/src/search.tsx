@@ -135,7 +135,9 @@ const InnerSearch = (
 		pinned,
 		onSearchClose,
 		onSearchChange,
-		onSearch: onSearchProp,
+		onSearch: onSearchProp = () => {
+			/* noop default */
+		},
 		onBlur: onBlurProp,
 		onKeyDown: onKeyDownProp,
 		onClick,
@@ -234,7 +236,7 @@ const InnerSearch = (
 			setIsOpen( true );
 
 			focus();
-			onSearchOpen?.( event );
+			// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
 			// prevent outlines around the open icon after being clicked
 			openIcon.current?.blur();
 			recordEvent?.( 'Clicked Open Search' );
