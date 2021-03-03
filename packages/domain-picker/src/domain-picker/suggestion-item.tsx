@@ -87,7 +87,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const fallbackIncludedLabel = __( 'Included with annual plans', __i18n_text_domain__ );
 	const newIncludedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
 	const includedLabel =
-		locale === 'en' || hasTranslation?.( 'Included in annual plans', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( 'Included in annual plans' )
 			? newIncludedLabel
 			: fallbackIncludedLabel;
 
@@ -102,8 +102,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 		__i18n_text_domain__
 	);
 	const includedLabelFormatted =
-		locale === 'en' ||
-		hasTranslation?.( '<strong>First year included</strong> in annual plans', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( '<strong>First year included</strong> in annual plans' )
 			? newIncludedLabelFormatted
 			: fallbackIncludedLabelFormatted;
 	const paidIncludedDomainLabel = isMobile
