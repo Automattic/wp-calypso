@@ -119,7 +119,7 @@ class TitanManagementNav extends React.Component {
 			  } );
 
 		return (
-			<CompactCard className="titan-management-nav__mailbox-setup-prompt">
+			<CompactCard className="titan-management-nav__mailbox-setup-prompt" highlight="info">
 				<span>
 					<Gridicon icon="info-outline" size={ 18 } />
 					<em>
