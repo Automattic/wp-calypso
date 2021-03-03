@@ -1,5 +1,6 @@
 @import '~@automattic/typography/styles/fonts';
 @import '~@automattic/typography/styles/variables';
+@import '~@wordpress/base-styles/variables';
 
 @mixin screen-reader-text() {
 	border: 0;
@@ -270,7 +271,10 @@ $sidebar-width: 324px;
 	}
 }
 
-.page-template-modal__mobile-category-dropdown {
+.wp-core-ui select.page-template-modal__mobile-category-dropdown {
+	font-size: $default-font-size;
+	border-color: #ddd;
+
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		display: none;
 	}
