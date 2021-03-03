@@ -101,6 +101,31 @@ const wpcom = wp.undocumented();
 // otherwise we get `this is not defined` errors.
 const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
 
+// Can be safely removed when we no longer need to rely on auto-applied coupons
+// for introductory new purchase pricing
+import { isJetpackProductSlug, isJetpackPlanSlug } from 'calypso/lib/products-values';
+const JETPACK_INTRO_COUPON_CODE = 'FRESHPACK';
+const useMaybeJetpackIntroCouponCode = (
+	products: RequestCartProduct[],
+	isCouponApplied: boolean
+) =>
+	useMemo( () => {
+		if ( isCouponApplied ) {
+			return undefined;
+		}
+		const includesJetpackItems = products
+			.map( ( p ) => p.product_slug )
+			.some( ( slug ) => isJetpackProductSlug( slug ) || isJetpackPlanSlug( slug ) );
+
+		// Only apply FRESHPACK if there's a Jetpack
+		// product or plan present in the cart
+		if ( ! includesJetpackItems ) {
+			return undefined;
+		}
+
+		return JETPACK_INTRO_COUPON_CODE;
+	}, [ products, isCouponApplied ] );
+
 export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
