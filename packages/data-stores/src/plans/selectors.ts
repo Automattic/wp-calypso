@@ -137,8 +137,8 @@ export const getPlanByPath = (
 
 export const getPlanProduct = (
 	_state: State,
-	periodAgnosticSlug?: string,
-	billingPeriod?: PlanProduct[ 'billingPeriod' ]
+	periodAgnosticSlug: string | undefined,
+	billingPeriod: PlanProduct[ 'billingPeriod' ] | undefined
 ): PlanProduct | undefined => {
 	if ( ! periodAgnosticSlug || ! billingPeriod ) {
 		return undefined;
