@@ -158,7 +158,7 @@ const DisplayPrice = ( {
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 					{ isJetpackFree ? (
 						<span className="jetpack-product-card__get-started">
-							{ translate( 'Get started for free' ) }
+							{ translate( 'Try Jetpack now' ) }
 						</span>
 					) : (
 						<span className="jetpack-product-card__you-save">
