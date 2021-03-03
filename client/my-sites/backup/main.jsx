@@ -38,6 +38,7 @@ import {
 	DailyStatus as DailyStatusSimplifiedI4,
 	RealtimeStatus as RealtimeStatusSimplifiedI4,
 } from './status/simplified-i4';
+import SessionRecorder from 'calypso/components/session-recorder';
 
 /**
  * Style dependencies
@@ -68,6 +69,7 @@ const BackupPage = ( { queryDate } ) => {
 				wordpressdotcom: ! isJetpackCloud(),
 			} ) }
 		>
+			<SessionRecorder />
 			<Main
 				className={ classNames( {
 					is_jetpackcom: isJetpackCloud(),
