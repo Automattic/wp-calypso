@@ -130,7 +130,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 		} );
 	} );
 
-	describe( 'Can add/remove coupons', async function () {
+	describe( 'Can add/remove coupons', function () {
 		step( 'Can Enter Coupon Code', async function () {
 			const enterCouponCodeButton = await driverHelper.isElementPresent(
 				driver,
@@ -239,7 +239,7 @@ describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize
 		} );
 	} );
 
-	describe( 'Can delete the premium plan', async function () {
+	describe( 'Can delete the premium plan', function () {
 		step( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
 			return await loginFlow.login();

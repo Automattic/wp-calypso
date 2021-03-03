@@ -29,7 +29,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function () {
+describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	step( 'Login and select a page that is not the My Home page', async function () {
