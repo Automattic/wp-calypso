@@ -90,8 +90,23 @@ class MappedDomainType extends React.Component {
 			'Follow these instructions to set up your domain mapping.'
 		);
 
+		return (
+			<React.Fragment>
+				<div>
+					<p>{ setupInstructionsMessage }</p>
+					{ this.renderRecommendedSetupMessage( primaryMessage ) }
+					{ this.renderARecordsMappingMessage() }
+				</div>
+				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
+			</React.Fragment>
+		);
+	}
+
+	renderRecommendedSetupMessage( primaryMessage ) {
+		const { domain, translate } = this.props;
+
 		const recommendedSetupTitle = translate( 'Recommended setup' );
-		const recommendedSetupMessage = (
+		return (
 			<FoldableFAQ id="recommended-mapping-setup" question={ recommendedSetupTitle } expanded>
 				<p>{ primaryMessage }</p>
 				{ ! isSubdomain( domain.name ) && (
@@ -103,34 +118,28 @@ class MappedDomainType extends React.Component {
 				) }
 			</FoldableFAQ>
 		);
+	}
 
-		let aRecordsMappingMessage;
-		if ( domain.aRecordsRequiredForMapping ) {
-			const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
-			const aRecordsSetupMessage = translate(
-				"If you have already set up your domain's DNS records in its own provider and just want to point it to WordPress.com, use these IP addresses as your root A records:"
-			);
-			aRecordsMappingMessage = (
-				<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
-					<p>{ aRecordsSetupMessage }</p>
-					<ul className="mapped-domain-type__name-server-list">
-						{ domain.aRecordsRequiredForMapping.map( ( aRecord ) => {
-							return <li key={ aRecord }>{ aRecord }</li>;
-						} ) }
-					</ul>
-				</FoldableFAQ>
-			);
+	renderARecordsMappingMessage() {
+		const { domain, translate } = this.props;
+
+		if ( ! domain.aRecordsRequiredForMapping ) {
+			return null;
 		}
 
+		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
+		const aRecordsSetupMessage = translate(
+			"If you have already set up your domain's DNS records in its own provider and just want to point it to WordPress.com, use these IP addresses as your root A records:"
+		);
 		return (
-			<React.Fragment>
-				<div>
-					<p>{ setupInstructionsMessage }</p>
-					{ recommendedSetupMessage }
-					{ aRecordsMappingMessage }
-				</div>
-				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
-			</React.Fragment>
+			<FoldableFAQ id="advanced-mapping-setup" question={ advancedSetupUsingARecordsTitle }>
+				<p>{ aRecordsSetupMessage }</p>
+				<ul className="mapped-domain-type__name-server-list">
+					{ domain.aRecordsRequiredForMapping.map( ( aRecord ) => {
+						return <li key={ aRecord }>{ aRecord }</li>;
+					} ) }
+				</ul>
+			</FoldableFAQ>
 		);
 	}
 
