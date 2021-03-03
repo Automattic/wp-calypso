@@ -98,7 +98,6 @@ class Dialog extends Component {
 			isBackdropVisible,
 			className,
 			baseClassName,
-			overlayClassName,
 			isFullScreen,
 			shouldCloseOnEsc,
 		} = this.props;
@@ -106,7 +105,7 @@ class Dialog extends Component {
 		// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
 		const dialogClassName = classnames( baseClassName, 'card', additionalClassNames );
 
-		const backdropClassName = classnames( baseClassName + '__backdrop', overlayClassName, {
+		const backdropClassName = classnames( baseClassName + '__backdrop', {
 			'is-full-screen': isFullScreen,
 			'is-hidden': ! isBackdropVisible,
 		} );
