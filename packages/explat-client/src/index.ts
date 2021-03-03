@@ -8,9 +8,8 @@ import {
 } from './create-explat-client';
 import type { ExPlatClient } from './create-explat-client';
 
-
 const createExPlatClient =
 	typeof window === 'undefined' ? createSsrSafeDummyExPlatClient : createBrowserExPlatClient;
 
 export { createExPlatClient, ExperimentAssignment };
-export type { ExPlatClient }
+export type { ExPlatClient };

@@ -56,7 +56,8 @@ export const initializeAnonId = async (): Promise< string | null > => {
 	let attempt = 0;
 	initializeAnonIdPromise = new Promise( ( res ) => {
 		let anonIdPollingInterval: number | undefined;
-		anonIdPollingInterval = immediateStartSetInterval( () => {
+		// eslint-disable-next-line prefer-const
+		anonIdPollingInterval = ( immediateStartSetInterval( () => {
 			const anonId = getTracksAnonymousUserId();
 			if ( typeof anonId === 'string' && anonId !== '' ) {
 				clearInterval( anonIdPollingInterval );
@@ -70,7 +71,7 @@ export const initializeAnonId = async (): Promise< string | null > => {
 				return;
 			}
 			attempt = attempt + 1;
-		}, anonIdPollingIntervalMilliseconds ) as unknown as number;
+		}, anonIdPollingIntervalMilliseconds ) as unknown ) as number;
 
 		// Tracks can fail to load, e.g. because of an ad-blocker
 		getTracksLoadPromise().catch( () => {

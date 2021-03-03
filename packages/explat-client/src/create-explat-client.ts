@@ -43,6 +43,7 @@ export interface ExPlatClient {
 }
 
 export class MissingExperimentAssignmentError extends Error {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	constructor( ...params: any[] ) {
 		super( ...params );
 
