@@ -54,8 +54,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 		'full-site-editing'
 	);
 	const subtitleText =
-		locale === 'en' ||
-		hasTranslation?.( 'Free for the first year with any annual plan.', 'full-site-editing' )
+		locale === 'en' || hasTranslation?.( 'Free for the first year with any annual plan.' )
 			? newSubtitleText
 			: fallbackSubtitleText;
 

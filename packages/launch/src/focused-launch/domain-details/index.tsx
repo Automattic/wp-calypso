@@ -72,8 +72,7 @@ const DomainDetails: React.FunctionComponent = () => {
 		__i18n_text_domain__
 	);
 	const subtitleText =
-		locale === 'en' ||
-		hasTranslation?.( 'Free for the first year with any annual plan.', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( 'Free for the first year with any annual plan.' )
 			? newSubtitleText
 			: fallbackSubtitleText;
 
