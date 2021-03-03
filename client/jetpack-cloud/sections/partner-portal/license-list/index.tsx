@@ -33,6 +33,7 @@ import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constan
 import Gridicon from 'calypso/components/gridicon';
 import Pagination from 'calypso/components/pagination';
 import { addQueryArgs } from 'calypso/lib/route';
+import { internalToPublicLicenseSortField } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 
 /**
  * Style dependencies
@@ -57,7 +58,11 @@ function setSortingConfig(
 		direction = LicenseSortDirection.Ascending;
 	}
 
-	const queryParams = { sort_field: newSortField, sort_direction: direction, page: 1 };
+	const queryParams = {
+		sort_field: internalToPublicLicenseSortField( newSortField ),
+		sort_direction: direction,
+		page: 1,
+	};
 	const currentPath = window.location.pathname + window.location.search;
 
 	page( addQueryArgs( queryParams, currentPath ) );
@@ -152,7 +157,7 @@ export default function LicenseList( {
 						currentSortField={ sortField }
 						currentSortDirection={ sortDirection }
 					>
-						{ translate( 'Attached on' ) }
+						{ translate( 'Assigned on' ) }
 					</SortButton>
 				) }
 

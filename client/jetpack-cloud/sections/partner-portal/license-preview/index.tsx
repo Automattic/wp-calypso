@@ -86,7 +86,7 @@ export default function LicensePreview( {
 						{ licenseState === LicenseState.Detached && (
 							<span className="license-preview__tag license-preview__tag--is-detached">
 								<Gridicon icon="info-outline" size={ 18 } />
-								{ translate( 'Detached' ) }
+								{ translate( 'Unassigned' ) }
 							</span>
 						) }
 
@@ -112,7 +112,7 @@ export default function LicensePreview( {
 
 				{ filter !== LicenseFilter.Revoked ? (
 					<div>
-						<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
+						<div className="license-preview__label">{ translate( 'Assigned on:' ) }</div>
 
 						{ licenseState === LicenseState.Attached && (
 							<FormattedDate date={ attachedAt } format="YYYY-MM-DD" />
@@ -190,7 +190,7 @@ export function LicensePreviewPlaceholder(): ReactElement {
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
+					<div className="license-preview__label">{ translate( 'Assigned on:' ) }</div>
 
 					<div />
 				</div>
