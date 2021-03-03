@@ -15,6 +15,10 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 
 const MOCK_LOCALE = 'test-locale';
 
+beforeEach( () => {
+	jest.clearAllMocks();
+} );
+
 describe( 'Plans resolvers', () => {
 	describe( 'getSupportedPlans', () => {
 		it( 'should fetch APIs data and set features and plans data', () => {
@@ -90,6 +94,21 @@ describe( 'Plans resolvers', () => {
 					MockData.API_FEATURES_BY_TYPE_COMMERCE,
 					MockData.API_FEATURES_BY_TYPE_MARKETING,
 				],
+			} );
+		} );
+
+		it( 'should default to english locale', () => {
+			const englishLocale = 'en';
+			const iter = getSupportedPlans();
+
+			// request to prices endpoint
+			expect( iter.next().value ).toEqual( {
+				request: {
+					apiVersion: '1.5',
+					path: '/plans',
+					query: `locale=${ englishLocale }`,
+				},
+				type: 'WPCOM_REQUEST',
 			} );
 		} );
 	} );
