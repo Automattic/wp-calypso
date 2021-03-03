@@ -118,7 +118,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 		__i18n_text_domain__
 	);
 	const planItemPriceLabelAnnually =
-		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually', __i18n_text_domain__ )
+		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
 			? sprintf( newPlanItemPriceLabelAnnually, planProduct?.annualPrice )
 			: fallbackPlanItemPriceLabelAnnually;
 
