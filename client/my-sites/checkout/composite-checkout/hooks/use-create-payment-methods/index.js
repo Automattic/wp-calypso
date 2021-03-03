@@ -25,25 +25,25 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { createWeChatMethod, createWeChatPaymentMethodStore } from './payment-methods/wechat';
+import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
-} from './payment-methods/credit-card';
+} from '../../payment-methods/credit-card';
 import {
 	createEbanxTefPaymentMethodStore,
 	createEbanxTefMethod,
-} from './payment-methods/ebanx-tef';
+} from '../../payment-methods/ebanx-tef';
 import {
 	createIdWalletPaymentMethodStore,
 	createIdWalletMethod,
-} from './payment-methods/id-wallet';
+} from '../../payment-methods/id-wallet';
 import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
-} from './payment-methods/netbanking';
-import { createFullCreditsMethod } from './payment-methods/full-credits';
-import { createFreePaymentMethod } from './payment-methods/free-purchase';
+} from '../../payment-methods/netbanking';
+import { createFullCreditsMethod } from '../../payment-methods/full-credits';
+import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCreateExistingCards from './use-create-existing-cards';
 
