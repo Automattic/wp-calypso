@@ -4,7 +4,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
 
@@ -31,6 +30,7 @@ import {
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import JetpackConnected from 'calypso/assets/images/jetpack/connected.svg';
 
 interface Props {
 	emailAddress: string;
@@ -58,7 +58,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	);
 
 	useEffect( () => {
-		if ( isEmpty( emailAddress ) || isEmpty( token ) ) {
+		if ( ! emailAddress || ! token ) {
 			dispatch( showMagicLoginLinkExpiredPage() );
 		} else {
 			setHasSubmitted( true );
@@ -102,18 +102,15 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 		return <EmailedLoginLinkExpired />;
 	}
 
-	const illustration = '/calypso/images/illustrations/' + 'illustration-nosites.svg';
-
 	dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
 
 	return (
 		<EmptyContent
-			className={ classNames( 'magic-login__handle-link', {
-				'magic-login__is-fetching-auth': isFetching,
-			} ) }
-			illustration={ illustration }
-			illustrationWidth={ 500 }
-			title={ [
+			className="magic-login__handle-link jetpack"
+			illustration={ JetpackConnected }
+			illustrationWidth={ 150 }
+			title={ translate( 'Welcome back!' ) }
+			line={ [
 				translate( 'Logging in as %(emailAddress)s', {
 					args: {
 						emailAddress,
