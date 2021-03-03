@@ -21,6 +21,14 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import megaphoneImage from 'calypso/assets/images/woocommerce/megaphone.svg';
 
 class StoreMoveNoticeView extends Component {
+	trackTryWooCommerceClick = () => {
+		this.props.recordTracksEvent( 'calypso_store_try_woocommerce_click' );
+	};
+
+	trackLearnMoreAboutWooCommerceClick = () => {
+		this.props.recordTracksEvent( 'calypso_store_learn_more_about_woocommerce_click' );
+	};
+
 	render = () => {
 		const { site } = this.props;
 
@@ -34,7 +42,10 @@ class StoreMoveNoticeView extends Component {
 						{
 							components: {
 								link: (
-									<a href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/" />
+									<a
+										onClick={ this.trackLearnMoreAboutWooCommerceClick }
+										href="https://wordpress.com/support/new-woocommerce-experience-on-wordpress-dot-com/"
+									/>
 								),
 							},
 						}
