@@ -53,7 +53,7 @@ export default function DomainUpsellStep( props ) {
 
 	const isInDomainUpsellEmphasizeFreeTest =
 		'treatment' ===
-		useSelector( ( state ) => getVariationForUser( state, 'domain_upsell_emphasize_free' ) );
+		useSelector( ( state ) => getVariationForUser( state, 'domain_upsell_emphasize_free_v2' ) );
 
 	return (
 		<div
@@ -61,7 +61,7 @@ export default function DomainUpsellStep( props ) {
 				is_in_domain_upsell_emphasize_free_test: isInDomainUpsellEmphasizeFreeTest,
 			} ) }
 		>
-			<Experiment name="domain_upsell_emphasize_free" />
+			<Experiment name="domain_upsell_emphasize_free_v2" />
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
