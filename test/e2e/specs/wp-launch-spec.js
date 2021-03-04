@@ -26,7 +26,7 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = browserManager.targetScreenSize();
 const signupInboxId = config.get( 'signupInboxId' );
 
-describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () {
+describe( `[${ host }] Launch (${ screenSize }) @canary @signup @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let page;
 

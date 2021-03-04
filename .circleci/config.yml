@@ -589,6 +589,9 @@ jobs:
 
   test-e2e-canary:
     <<: *defaults
+    docker:
+      - image: mcr.microsoft.com/playwright:bionic
+      - image: cimg/node:12.21.0
     working_directory: ~/wp-calypso/test/e2e
     parameters:
       test-flags:
