@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -33,7 +32,7 @@ describe( 'reducer', () => {
 	describe( 'items', () => {
 		test( 'state should default to empty object', () => {
 			const state = itemsReducer( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should update connection statuses in the items object', () => {
@@ -45,7 +44,7 @@ describe( 'reducer', () => {
 				status: ITEMS_FIXTURE[ 87654321 ],
 			};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
+			expect( stateOut ).toEqual( {
 				...ITEMS_FIXTURE,
 				[ siteId ]: ITEMS_FIXTURE[ 87654321 ],
 			} );
@@ -60,7 +59,7 @@ describe( 'reducer', () => {
 				status: ITEMS_FIXTURE[ 87654321 ],
 			};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
+			expect( stateOut ).toEqual( {
 				...ITEMS_FIXTURE,
 				[ siteId ]: ITEMS_FIXTURE[ 87654321 ],
 			} );
@@ -68,9 +67,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requests', () => {
+		function isRequestingJetpackConnectionStatus( state, siteId ) {
+			return state[ siteId ] ?? false;
+		}
+
 		test( 'state should default to an empty object', () => {
 			const state = requestsReducer( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should set requesting to true for the specified site when status request starts', () => {
@@ -81,10 +84,7 @@ describe( 'reducer', () => {
 				siteId,
 			};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: true,
-			} );
+			expect( isRequestingJetpackConnectionStatus( stateOut, siteId ) ).toBe( true );
 		} );
 
 		test( 'should set requesting to false for the specified site when status request completes successfully', () => {
@@ -95,10 +95,7 @@ describe( 'reducer', () => {
 				siteId,
 			};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: false,
-			} );
+			expect( isRequestingJetpackConnectionStatus( stateOut, siteId ) ).toBe( false );
 		} );
 
 		test( 'should set requesting to false for the specified site when status request completes unsuccessfully', () => {
@@ -109,17 +106,14 @@ describe( 'reducer', () => {
 				siteId,
 			};
 			const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: false,
-			} );
+			expect( isRequestingJetpackConnectionStatus( stateOut, siteId ) ).toBe( false );
 		} );
 	} );
 
 	describe( 'dataItems', () => {
 		test( 'state should default to empty object', () => {
 			const state = dataItemsReducer( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should update user connection data in the items object', () => {
@@ -131,7 +125,7 @@ describe( 'reducer', () => {
 				data: DATA_ITEMS_FIXTURE[ 87654321 ],
 			};
 			const stateOut = dataItemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
+			expect( stateOut ).toEqual( {
 				...DATA_ITEMS_FIXTURE,
 				[ siteId ]: DATA_ITEMS_FIXTURE[ 87654321 ],
 			} );
@@ -146,7 +140,7 @@ describe( 'reducer', () => {
 				data: DATA_ITEMS_FIXTURE[ 87654321 ],
 			};
 			const stateOut = dataItemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
+			expect( stateOut ).toEqual( {
 				...DATA_ITEMS_FIXTURE,
 				[ siteId ]: DATA_ITEMS_FIXTURE[ 87654321 ],
 			} );
@@ -154,9 +148,13 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'dataRequests', () => {
+		function isRequestingJetpackUserConnection( state, siteId ) {
+			return state[ siteId ] ?? false;
+		}
+
 		test( 'state should default to an empty object', () => {
 			const state = dataRequestsReducer( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should set dataRequests to true for the specified site when data request starts', () => {
@@ -167,10 +165,7 @@ describe( 'reducer', () => {
 				siteId,
 			};
 			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: true,
-			} );
+			expect( isRequestingJetpackUserConnection( stateOut, siteId ) ).toBe( true );
 		} );
 
 		test( 'should set dataRequests to false for the specified site when data request completes successfully', () => {
@@ -181,10 +176,7 @@ describe( 'reducer', () => {
 				siteId,
 			};
 			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: false,
-			} );
+			expect( isRequestingJetpackUserConnection( stateOut, siteId ) ).toBe( false );
 		} );
 
 		test( 'should set dataRequests to false for the specified site when data request completes unsuccessfully', () => {
@@ -195,10 +187,7 @@ describe( 'reducer', () => {
 				siteId,
 			};
 			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: false,
-			} );
+			expect( isRequestingJetpackUserConnection( stateOut, siteId ) ).toBe( false );
 		} );
 	} );
 } );

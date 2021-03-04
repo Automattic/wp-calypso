@@ -33,7 +33,7 @@ export const requesting = keyedReducer( 'siteId', ( state = false, action ) => {
 	return state;
 } );
 
-export const updating = keyedReducer( 'siteId', ( state = {}, action ) => {
+export const updating = keyedReducer( 'siteId', ( state = false, action ) => {
 	switch ( action.type ) {
 		case SITE_MONITOR_SETTINGS_UPDATE:
 			return true;
