@@ -56,7 +56,7 @@ const Success: React.FunctionComponent = () => {
 
 	// if the user has an ecommerce plan or they're using focused launch from wp-admin
 	// they will be automatically redirected to /checkout, in which case the CTAs are not needed
-	const willUserBeRedirectedAutomatically = isEcommercePlan || ! isInIframe;
+	const willUserBeRedirectedAutomatically = ! isInIframe || isEcommercePlan;
 
 	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
@@ -101,7 +101,7 @@ const Success: React.FunctionComponent = () => {
 			<SubTitle tagName="h3">
 				{ isSiteLaunching ? subtitleTextLaunching : subtitleTextLaunched }
 			</SubTitle>
-			{ ! isSiteLaunching && (
+			{ ! willUserBeRedirectedAutomatically && ! isSiteLaunching && (
 				<>
 					<div className="focused-launch-success__url-wrapper">
 						<span className="focused-launch-success__url-field">{ displayedSiteUrl }</span>
@@ -124,22 +124,17 @@ const Success: React.FunctionComponent = () => {
 							{ hasCopied ? copyButtonLabelActivated : copyButtonLabelIdle }
 						</ClipboardButton>
 					</div>
+					{ /* @TODO: at the moment this only works when the modal is in the block editor. */ }
+					<NextButton
+						onClick={ continueEditing }
+						className="focused-launch-success__continue-editing-button"
+					>
+						{ __( 'Continue Editing', __i18n_text_domain__ ) }
+					</NextButton>
 
-					{ ! willUserBeRedirectedAutomatically && (
-						<>
-							{ /* @TODO: at the moment this only works when the modal is in the block editor. */ }
-							<NextButton
-								onClick={ continueEditing }
-								className="focused-launch-success__continue-editing-button"
-							>
-								{ __( 'Continue Editing', __i18n_text_domain__ ) }
-							</NextButton>
-
-							<BackButton onClick={ redirectToHome }>
-								{ __( 'Back home', __i18n_text_domain__ ) }
-							</BackButton>
-						</>
-					) }
+					<BackButton onClick={ redirectToHome }>
+						{ __( 'Back home', __i18n_text_domain__ ) }
+					</BackButton>
 				</>
 			) }
 		</div>
