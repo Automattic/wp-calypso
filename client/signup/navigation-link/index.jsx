@@ -24,6 +24,7 @@ import { getABTestVariation } from 'calypso/lib/abtest';
  * Style dependencies
  */
 import './style.scss';
+import * as previousStepsUptoCurrent from '@wordpress/rich-text';
 
 export class NavigationLink extends Component {
 	static propTypes = {
@@ -53,14 +54,14 @@ export class NavigationLink extends Component {
 	 * @returns {object} The previous step object
 	 */
 	getPreviousStep() {
-		const { flowName, signupProgress, stepName } = this.props;
+		const { flowName, signupProgress, stepName: currentStepName } = this.props;
 
-		let steps = getFilteredSteps( flowName, signupProgress );
-		steps = steps.slice(
-			0,
-			findIndex( steps, ( step ) => step.stepName === stepName )
-		);
-		const previousStep = findLast( steps, ( step ) => ! step.wasSkipped );
+		const stepsThatBelongToTheCurrentFlow = getFilteredSteps( flowName, signupProgress );
+
+		const [ previousStep ] = stepsThatBelongToTheCurrentFlow
+			.filter( ( step ) => step.stepName !== currentStepName )
+			.filter( ( step ) => ! step.wasSkipped )
+			.slice( -1 );
 
 		return previousStep || { stepName: null };
 	}
