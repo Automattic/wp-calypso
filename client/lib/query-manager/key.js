@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { sortBy, toPairs, fromPairs, omitBy } from 'lodash';
+import { sortBy, toPairs, omitBy } from 'lodash';
 
 /**
  * QueryKey manages the serialization and deserialization of a query key for
@@ -77,6 +77,6 @@ export default class QueryKey {
 	 * @returns {object}     Query object
 	 */
 	static parse( key ) {
-		return this.omit( fromPairs( JSON.parse( key ) ) );
+		return this.omit( Object.fromEntries( JSON.parse( key ) ) );
 	}
 }

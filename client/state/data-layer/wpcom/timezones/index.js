@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { fromPairs, map, mapValues } from 'lodash';
+import { map, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ const noop = () => {};
  * @returns {ValueLabelMap} object whose keys are timezone values, values are timezone labels
  */
 const timezonePairsToMap = ( pairs ) =>
-	fromPairs( map( pairs, ( { label, value } ) => [ value, label ] ) );
+	Object.fromEntries( map( pairs, ( { label, value } ) => [ value, label ] ) );
 
 /**
  * Normalize data gotten from the REST API making them more Calypso friendly.

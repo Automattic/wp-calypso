@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { assign, findIndex, fromPairs } from 'lodash';
+import { assign, findIndex } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import Gridicon from 'calypso/components/gridicon';
@@ -287,7 +287,7 @@ class SortableList extends React.Component {
 					'is-draggable': isDraggable,
 				} );
 
-				events = fromPairs(
+				events = Object.fromEntries(
 					events.map( function ( event ) {
 						return [ event, this[ event ].bind( null, index ) ];
 					}, this )

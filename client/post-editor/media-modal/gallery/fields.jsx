@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { assign, fromPairs, includes, times } from 'lodash';
+import { assign, includes, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -85,7 +85,7 @@ export class EditorMediaModalGalleryFields extends React.Component {
 
 	getColumnOptions = () => {
 		const max = Math.min( this.props.numberOfItems, 9 );
-		return fromPairs( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
+		return Object.fromEntries( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
 	};
 
 	updateRandomOrder = ( event ) => {
