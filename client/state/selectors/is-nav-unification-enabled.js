@@ -13,6 +13,8 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 export default ( state ) => {
+	const userDate = getCurrentUserDate( state );
+	const userId = getCurrentUserId( state );
 	// Disable if explicitly requested by the `?disable-nav-unification` query param.
 	if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
 		return false;

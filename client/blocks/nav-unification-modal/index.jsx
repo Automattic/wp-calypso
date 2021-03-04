@@ -13,7 +13,7 @@ import { useTranslate } from 'i18n-calypso';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { isNewNavUnificationUser } from 'calypso/my-sites/sidebar-unified/utils';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Image dependencies
@@ -48,14 +48,14 @@ const Page = ( { heading, content, image } ) => {
 
 const Modal = () => {
 	const dispatch = useDispatch();
-	const newNavUnificationUser = useSelector( isNewNavUnificationUser );
+	const isUnifiedMenuEnabled = useSelector( isNavUnificationEnabled );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const dismissPreference = `nav-unification-modal-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const translate = useTranslate();
 
-	if ( newNavUnificationUser ) {
+	if ( isUnifiedMenuEnabled ) {
 		return null;
 	}
 
