@@ -170,7 +170,7 @@ const ThreatItem: React.FC< Props > = ( {
 						{ translate( 'Ignore threat' ) }
 					</Button>
 				) }
-				{ ! isFixable && (
+				{ false === threat.fixable && 'fixed' !== threat.status && 'ignored' !== threat.status && (
 					<ExternalLinkWithTracking
 						className="button is-primary threat-item__codeable-button"
 						href="https://codeable.io/partners/jetpack-scan/"
