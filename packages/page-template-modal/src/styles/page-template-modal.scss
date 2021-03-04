@@ -25,12 +25,6 @@ $breakpoint-tablet: 783px;
 $breakpoint-desktop: 961px;
 $breakpoint-huge: 1648px;
 
-// WP.org sidebar and admin bar sizes
-$wp-org-sidebar-full: 160px;
-$wp-org-sidebar-collapsed: 36px;
-$wp-org-admin-bar-full: 32px;
-$wp-org-admin-bar-mobile: 46px;
-
 $sidebar-width: 324px;
 
 // Overrides of the Gutenberg modal component
@@ -285,18 +279,5 @@ $sidebar-width: 324px;
 .page-template-modal__template-list-container {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		padding-left: $sidebar-width;
-	}
-}
-
-.page-template-modal__loading {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate( -50%, -50% );
-	display: flex;
-	align-items: flex-end;
-
-	.components-spinner {
-		float: none;
 	}
 }
