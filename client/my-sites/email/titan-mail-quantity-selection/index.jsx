@@ -266,11 +266,27 @@ class TitanMailQuantitySelection extends React.Component {
 			return null;
 		}
 
-		if ( this.doesAdditionalPriceMatchStandardPrice() ) {
-			return;
-		}
-
 		const purchaseCost = getTitanMailboxPurchaseCost( selectedDomain );
+
+		if ( this.doesAdditionalPriceMatchStandardPrice() ) {
+			return (
+				<Notice icon="info-outline" showDismiss={ false } status="is-success">
+					{ translate(
+						'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per month.',
+						{
+							args: {
+								price: purchaseCost.text,
+							},
+							components: {
+								strong: <strong />,
+							},
+							comment:
+								'%(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
+						}
+					) }
+				</Notice>
+			);
+		}
 		const renewalCost = getTitanMailboxRenewalCost( selectedDomain );
 		const expiryDate = getTitanExpiryDate( selectedDomain );
 
