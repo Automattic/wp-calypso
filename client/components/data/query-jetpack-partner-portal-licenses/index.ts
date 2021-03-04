@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import {
 	LicenseSortDirection,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { fetchLicenses } from 'calypso/state/partner-portal/licenses/actions';
+import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 
 interface Props {
 	filter: LicenseFilter;
@@ -30,10 +31,12 @@ export default function QueryJetpackPartnerPortalLicenses( {
 	page,
 }: Props ) {
 	const dispatch = useDispatch();
+	const activeKeyId = useSelector( getActivePartnerKeyId );
 
 	useEffect( () => {
+		// Key switching for requests is already done for us - we use keyId just to re-trigger the request.
 		dispatch( fetchLicenses( filter, search, sortField, sortDirection, page ) );
-	}, [ dispatch, filter, search, sortField, sortDirection, page ] );
+	}, [ dispatch, activeKeyId, filter, search, sortField, sortDirection, page ] );
 
 	return null;
 }
