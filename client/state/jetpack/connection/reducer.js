@@ -6,9 +6,6 @@ import {
 	JETPACK_CONNECTION_STATUS_REQUEST,
 	JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
 	JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
-	JETPACK_DISCONNECT_REQUEST,
-	JETPACK_DISCONNECT_REQUEST_FAILURE,
-	JETPACK_DISCONNECT_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_DATA_RECEIVE,
 	JETPACK_USER_CONNECTION_DATA_REQUEST,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
@@ -90,22 +87,9 @@ export const dataRequests = keyedReducer( 'siteId', ( state = false, action ) =>
 	return state;
 } );
 
-export const disconnectRequests = keyedReducer( 'siteId', ( state = false, action ) => {
-	switch ( action.type ) {
-		case JETPACK_DISCONNECT_REQUEST:
-			return true;
-		case JETPACK_DISCONNECT_REQUEST_FAILURE:
-		case JETPACK_DISCONNECT_REQUEST_SUCCESS:
-			return false;
-	}
-
-	return state;
-} );
-
 export const reducer = combineReducers( {
 	items,
 	requests,
 	dataItems,
 	dataRequests,
-	disconnectRequests,
 } );

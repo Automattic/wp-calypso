@@ -12,7 +12,6 @@ import {
 	requests as requestsReducer,
 	dataItems as dataItemsReducer,
 	dataRequests as dataRequestsReducer,
-	disconnectRequests as disconnectRequestsReducer,
 } from '../reducer';
 import {
 	items as ITEMS_FIXTURE,
@@ -24,9 +23,6 @@ import {
 	JETPACK_CONNECTION_STATUS_REQUEST,
 	JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
 	JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
-	JETPACK_DISCONNECT_REQUEST,
-	JETPACK_DISCONNECT_REQUEST_FAILURE,
-	JETPACK_DISCONNECT_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_DATA_RECEIVE,
 	JETPACK_USER_CONNECTION_DATA_REQUEST,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
@@ -199,56 +195,6 @@ describe( 'reducer', () => {
 				siteId,
 			};
 			const stateOut = dataRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: false,
-			} );
-		} );
-	} );
-
-	describe( 'disconnectRequests', () => {
-		test( 'state should default to an empty object', () => {
-			const state = disconnectRequestsReducer( undefined, {} );
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should set requesting to true for the specified site when disconnect request starts', () => {
-			const stateIn = REQUESTS_FIXTURE;
-			const siteId = 12345678;
-			const action = {
-				type: JETPACK_DISCONNECT_REQUEST,
-				siteId,
-			};
-			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: true,
-			} );
-		} );
-
-		test( 'should set requesting to false for the specified site when disconnect request completes successfully', () => {
-			const stateIn = REQUESTS_FIXTURE;
-			const siteId = 87654321;
-			const action = {
-				type: JETPACK_DISCONNECT_REQUEST_SUCCESS,
-				siteId,
-			};
-			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				...REQUESTS_FIXTURE,
-				[ siteId ]: false,
-			} );
-		} );
-
-		test( 'should set requesting to false for the specified site when disconnect request completes unsuccessfully', () => {
-			const stateIn = REQUESTS_FIXTURE;
-			const siteId = 87654321;
-			const action = {
-				type: JETPACK_DISCONNECT_REQUEST_FAILURE,
-				siteId,
-			};
-			const stateOut = disconnectRequestsReducer( deepFreeze( stateIn ), action );
-
 			expect( stateOut ).to.eql( {
 				...REQUESTS_FIXTURE,
 				[ siteId ]: false,
