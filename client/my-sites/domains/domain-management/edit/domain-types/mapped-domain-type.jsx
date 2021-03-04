@@ -95,7 +95,7 @@ class MappedDomainType extends React.Component {
 				<div>
 					<p>{ setupInstructionsMessage }</p>
 					{ this.renderRecommendedSetupMessage( primaryMessage ) }
-					{ this.renderARecordsMappingMessage() }
+					{ domain.aRecordsRequiredForMapping && this.renderARecordsMappingMessage() }
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</React.Fragment>
@@ -122,10 +122,6 @@ class MappedDomainType extends React.Component {
 
 	renderARecordsMappingMessage() {
 		const { domain, translate } = this.props;
-
-		if ( ! domain.aRecordsRequiredForMapping ) {
-			return null;
-		}
 
 		const advancedSetupUsingARecordsTitle = translate( 'Advanced setup using root A records' );
 		const aRecordsSetupMessage = translate(
