@@ -8,7 +8,7 @@ import {
 	JETPACK_CONNECT_RETRY_AUTH,
 } from 'calypso/state/jetpack-connect/action-types';
 import { jetpackAuthAttemptsSchema } from './schema';
-import { keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { keyedReducer, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 
 export function authAttempts( state = undefined, { type, attemptNumber } ) {
 	switch ( type ) {
@@ -30,9 +30,7 @@ export function authAttempts( state = undefined, { type, attemptNumber } ) {
 	return state;
 }
 
-export const reducer = withSchemaValidation(
+export default withSchemaValidation(
 	jetpackAuthAttemptsSchema,
-	keyedReducer( 'slug', authAttempts )
+	keyedReducer( 'slug', withPersistence( authAttempts ) )
 );
-
-export default reducer;
