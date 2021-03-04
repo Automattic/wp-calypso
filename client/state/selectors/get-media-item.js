@@ -1,14 +1,10 @@
 /**
- * External dependencies
- */
-import { isNullish } from '@automattic/js-utils';
-
-/**
  * Internal dependencies
  */
 import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-item';
 import getMediaItemServerIdFromTransientId from 'calypso/state/selectors/get-media-item-server-id-from-transient-id';
 import getMediaQueryManager from 'calypso/state/selectors/get-media-query-manager';
+import { isNullish } from 'calypso/lib/js-utils';
 
 /**
  * Returns a media object by site ID, media ID, or null if not known.

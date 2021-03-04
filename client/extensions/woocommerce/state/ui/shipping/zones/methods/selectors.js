@@ -13,7 +13,6 @@ import {
 	pullAll,
 	startsWith,
 } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -32,6 +31,7 @@ import { builtInShippingMethods } from 'woocommerce/state/ui/shipping/zones/meth
 import { mergeMethodEdits } from './helpers';
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import getDefaultSettingsValues from 'woocommerce/woocommerce-services/lib/get-default-settings-values';
+import { isNullish } from 'calypso/lib/js-utils';
 
 const getShippingZone = createSelector(
 	( state, zoneId, siteId ) => {

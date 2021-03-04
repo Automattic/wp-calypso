@@ -2,7 +2,11 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { isNullish } from '@automattic/js-utils';
+
+/**
+ * Internal dependencies
+ */
+import { isNullish } from '../utils/is-nullish';
 
 const TemplateSelectorItem = ( props ) => {
 	const {

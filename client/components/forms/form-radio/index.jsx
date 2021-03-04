@@ -4,7 +4,11 @@
 
 import React from 'react';
 import classnames from 'classnames';
-import { isNullish } from '@automattic/js-utils';
+
+/**
+ * Internal dependencies
+ */
+import { isNullish } from 'calypso/lib/js-utils';
 
 import './style.scss';
 

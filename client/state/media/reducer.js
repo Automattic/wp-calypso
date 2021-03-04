@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -31,6 +30,7 @@ import { combineReducers } from 'calypso/state/utils';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
+import { isNullish } from 'calypso/lib/js-utils';
 
 const isExternalMediaError = ( message ) =>
 	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );

@@ -18,8 +18,8 @@ import {
 	uniq,
 	zipObject,
 } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -50,6 +50,7 @@ import {
 	hasStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
 import { isWcsInternationalLabelsEnabled } from 'woocommerce/state/selectors/plugins';
+import { isNullish } from 'calypso/lib/js-utils';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get(

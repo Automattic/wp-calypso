@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { find, findIndex, isEmpty, isEqual, omit, reject } from 'lodash';
-import { isNullish } from '@automattic/js-utils';
 
 /**
  * Internal dependencies
@@ -24,6 +23,7 @@ import {
 import { getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
 import freeShipping from './free-shipping/reducer';
+import { isNullish } from 'calypso/lib/js-utils';
 import localPickup from './local-pickup/reducer';
 import wcsServiceSettings from 'woocommerce/woocommerce-services/state/service-settings/reducer';
 
