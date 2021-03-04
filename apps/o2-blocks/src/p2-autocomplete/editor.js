@@ -22,7 +22,7 @@ const p2s = apiFetch( {
 	path: '/internal/P2s',
 } ).then( ( result ) =>
 	map( result.list, ( p2, subdomain ) => {
-		const keywords = [ subdomain ];
+		const keywords = [ subdomain, p2.title ];
 		const stripped = stripCommonWords( subdomain );
 		if ( subdomain !== stripped ) {
 			keywords.push( stripped );
