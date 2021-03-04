@@ -9,7 +9,7 @@
  * External dependencies
  */
 import React, { memo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 /**
@@ -22,7 +22,7 @@ import {
 	collapseAllMySitesSidebarSections,
 	expandMySitesSidebarSection,
 } from 'calypso/state/my-sites/sidebar/actions';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import { isExternal, addQueryArgs } from 'calypso/lib/url';
 
 export const MySitesSidebarUnifiedItem = ( {
 	count,
@@ -33,25 +33,35 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	isHappychatSessionActive,
+	isJetpackNonAtomicSite,
 	continueInCalypso,
 } ) => {
 	const reduxDispatch = useDispatch();
-	const isHappychatSessionActive = useSelector( ( state ) => hasActiveHappychatSession( state ) );
 
 	const onNavigate = () => {
 		reduxDispatch( collapseAllMySitesSidebarSections() );
 		reduxDispatch( expandMySitesSidebarSection( sectionId ) );
 	};
 
+	const getLink = () => {
+		if ( ! isExternal( url ) ) {
+			return url;
+		}
+		// In case of external links, let's add a `return` query arg so that we give
+		// other interfaces ( eg WP Admin ) a chance to return us where we started from.
+		return addQueryArgs( { return: document.location.href }, url );
+	};
+
 	return (
 		<SidebarItem
 			count={ count }
 			label={ title }
-			link={ url }
+			link={ getLink() }
 			onNavigate={ ( event ) => continueInCalypso( url, event ) && onNavigate() }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			forceInternalLink={ ! isHappychatSessionActive }
+			forceInternalLink={ ! isHappychatSessionActive && ! isJetpackNonAtomicSite }
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
@@ -66,6 +76,8 @@ MySitesSidebarUnifiedItem.propTypes = {
 	slug: PropTypes.string,
 	title: PropTypes.string,
 	url: PropTypes.string,
+	isHappychatSessionActive: PropTypes.bool.isRequired,
+	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
 	continueInCalypso: PropTypes.func.isRequired,
 };
 

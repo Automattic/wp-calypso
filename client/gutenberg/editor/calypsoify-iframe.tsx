@@ -4,10 +4,12 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { map, partial, pickBy, isArray, flowRight } from 'lodash';
+import { map, partial, pickBy, flowRight } from 'lodash';
 /* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import type { RequestCart } from '@automattic/shopping-cart';
+
 /**
  * Internal dependencies
  */
@@ -57,7 +59,6 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
-import type { CheckoutModalOptions } from 'calypso/blocks/editor-checkout-modal';
 
 /**
  * Types
@@ -85,6 +86,11 @@ interface Props {
 	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
 	stripeConnectSuccess: 'gutenberg' | null;
+}
+
+interface CheckoutModalOptions extends RequestCart {
+	redirectTo?: string;
+	isFocusedLaunch?: boolean;
 }
 
 interface State {
@@ -426,7 +432,7 @@ class CalypsoifyIframe extends Component<
 		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
 		if ( EditorActions.LogError === action ) {
 			const { error } = payload;
-			if ( isArray( error ) && error.length > 4 && window.onerror ) {
+			if ( Array.isArray( error ) && error.length > 4 && window.onerror ) {
 				const errorObject = error[ 4 ];
 				error[ 4 ] = errorObject && JSON.parse( errorObject );
 				window.onerror( ...error );
@@ -719,6 +725,7 @@ class CalypsoifyIframe extends Component<
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
+		const { redirectTo, isFocusedLaunch, ...cartData } = checkoutModalOptions || {};
 
 		return (
 			<Fragment>
@@ -763,9 +770,9 @@ class CalypsoifyIframe extends Component<
 						onClose={ this.closeCheckoutModal }
 						placeholder={ null }
 						isOpen={ isCheckoutModalVisible }
-						cartData={ checkoutModalOptions?.cartData }
-						redirectTo={ checkoutModalOptions?.redirectTo }
-						isFocusedLaunch={ checkoutModalOptions?.isFocusedLaunch }
+						cartData={ cartData }
+						redirectTo={ redirectTo }
+						isFocusedLaunch={ isFocusedLaunch }
 					/>
 				) }
 				<AsyncLoad

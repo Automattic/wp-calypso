@@ -12,6 +12,7 @@ import {
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 } from 'calypso/state/action-types';
 import {
+	DispatchRequest,
 	HttpAction,
 	License,
 	LicenseCounts,
@@ -56,9 +57,6 @@ interface APIItemFormatter< FormattedType, APIType > {
 	( items: APIType[] ): FormattedType[];
 }
 
-// Avoid TypeScript warnings and be explicit about the type of dispatchRequest being mostly unknown.
-const dispatchRequest = vanillaDispatchRequest as ( options: unknown ) => unknown;
-
 function http( options, action: HttpAction ): AnyAction {
 	return coreHttp(
 		{
@@ -80,9 +78,12 @@ export function fetchLicensesHandler( action: HttpAction ): AnyAction {
 			path: '/jetpack-licensing/licenses',
 			query: {
 				// Do not apply filters during search as search takes over (matches Calypso Blue Post search behavior).
-				...( action.search ? { search: action.search } : { filter: action.filter } ),
+				...( action.search
+					? { search: action.search }
+					: { filter: action.filter, page: action.page } ),
 				sort_field: action.sortField,
 				sort_direction: action.sortDirection,
+				per_page: action.perPage,
 			},
 		},
 		action
@@ -145,6 +146,9 @@ export function receiveLicenseCountsHandler( action: AnyAction, counts: LicenseC
 	return receiveLicenseCounts( counts );
 }
 
+// Avoid TypeScript warnings and be explicit about the type of dispatchRequest being mostly unknown.
+const dispatchRequest = vanillaDispatchRequest as DispatchRequest;
+
 export default {
 	[ JETPACK_PARTNER_PORTAL_LICENSES_REQUEST ]: [
 		dispatchRequest( {
@@ -160,7 +164,7 @@ export default {
 			fetch: fetchLicenseCountsHandler,
 			onSuccess: receiveLicenseCountsHandler,
 			onError: () => {
-				// TODO this is a failure or relatively low importance - how do we log these?
+				// Failure of low importance we can ignore.
 			},
 		} ),
 	],

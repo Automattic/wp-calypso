@@ -99,7 +99,6 @@
 		"me/notifications": true,
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
-		"nav-unification": false,
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
 		"p2/p2-plus": true,
@@ -168,7 +167,6 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
-		"woocommerce/store-removed": false,
 		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,

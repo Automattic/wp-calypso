@@ -23,6 +23,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { expandSidebar } from 'calypso/state/ui/actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Style dependencies
@@ -39,10 +40,11 @@ class CurrentSite extends Component {
 		forceAllSitesView: PropTypes.bool,
 		sidebarIsCollapsed: PropTypes.bool,
 		expandSidebar: PropTypes.func.isRequired,
+		isNavUnificationEnabled: PropTypes.bool.isRequired,
 	};
 
 	switchSites = ( event ) => {
-		if ( isEnabled( 'nav-unification' ) && this.props.sidebarIsCollapsed ) {
+		if ( this.props.isNavUnificationEnabled && this.props.sidebarIsCollapsed ) {
 			this.props.expandSidebar();
 		}
 		event.preventDefault();
@@ -78,7 +80,7 @@ class CurrentSite extends Component {
 					tabIndex="0"
 					aria-hidden="true"
 					onClick={ () => {
-						return isEnabled( 'nav-unification' ) && this.props.sidebarIsCollapsed
+						return this.props.isNavUnificationEnabled && this.props.sidebarIsCollapsed
 							? this.props.expandSidebar()
 							: null;
 					} }
@@ -86,7 +88,7 @@ class CurrentSite extends Component {
 					{ this.props.siteCount > 1 && (
 						<span className="current-site__switch-sites">
 							<Button borderless onClick={ this.switchSites }>
-								{ isEnabled( 'nav-unification' ) ? (
+								{ this.props.isNavUnificationEnabled ? (
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 									<span className="gridicon dashicons-before dashicons-arrow-left-alt2"></span>
 								) : (
@@ -140,6 +142,7 @@ export default connect(
 		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
 		sidebarIsCollapsed: getSidebarIsCollapsed( state ),
+		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 	} ),
 	{
 		recordGoogleEvent,

@@ -43,6 +43,7 @@ export class LoginLinks extends React.Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		isGutenboarding: PropTypes.bool.isRequired,
+		usernameOrEmail: PropTypes.string,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -73,19 +74,21 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.resetMagicLoginRequestForm();
 
+		const { locale, currentRoute, isGutenboarding, query, usernameOrEmail } = this.props;
 		const loginParameters = {
 			isNative: true,
-			locale: this.props.locale,
+			locale: locale,
 			twoFactorAuthType: 'link',
 		};
-		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
+		const emailAddress = usernameOrEmail || query?.email_address;
+
 		if ( emailAddress ) {
 			loginParameters.emailAddress = emailAddress;
 		}
 
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
+		if ( currentRoute === '/log-in/jetpack' ) {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
+		} else if ( isGutenboarding ) {
 			loginParameters.twoFactorAuthType = 'new/link';
 		}
 
@@ -214,31 +217,17 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
-		// The email address from the URL (if present) is added to the login
-		// parameters in this.handleMagicLoginLinkClick(). But it's left out
-		// here deliberately, to ensure that if someone copies this link to
-		// paste somewhere else, their email address isn't included in it.
-		const loginParameters = {
-			isNative: true,
-			locale: this.props.locale,
-			twoFactorAuthType: 'link',
-		};
-
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
-			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = 'new/link';
-		}
-
+		// Using a `button` here because page.js seems to add an onClick handler
+		// to `a` tags with internal links, which prevents the onClick handler
+		// below from being called.
 		return (
-			<a
-				href={ login( loginParameters ) }
+			<button
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 				onClick={ this.handleMagicLoginLinkClick }
 			>
 				{ this.props.translate( 'Email me a login link' ) }
-			</a>
+			</button>
 		);
 	}
 
@@ -284,6 +273,7 @@ export class LoginLinks extends React.Component {
 			pathname,
 			query,
 			translate,
+			usernameOrEmail,
 		} = this.props;
 
 		const signupUrl = getSignupUrl(
@@ -301,7 +291,12 @@ export class LoginLinks extends React.Component {
 
 		return (
 			<a
-				href={ signupUrl }
+				href={ addQueryArgs(
+					{
+						user_email: usernameOrEmail,
+					},
+					signupUrl
+				) }
 				key="sign-up-link"
 				onClick={ this.recordSignUpLinkClick }
 				rel="external"

@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-import { isArray } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -32,7 +31,7 @@ class ActionHeader extends React.Component {
 	renderBreadcrumbs = () => {
 		const { breadcrumbs } = this.props;
 		let breadcrumbsOutput = breadcrumbs;
-		if ( isArray( breadcrumbs ) ) {
+		if ( Array.isArray( breadcrumbs ) ) {
 			breadcrumbsOutput = breadcrumbs.map( ( crumb, i ) => <span key={ i }>{ crumb }</span> );
 		}
 

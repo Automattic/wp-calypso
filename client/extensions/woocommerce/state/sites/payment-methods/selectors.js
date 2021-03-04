@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { find, get, isArray } from 'lodash';
+import { find, get } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -49,7 +49,7 @@ export const getPaymentMethod = ( state, methodId, siteId = getSelectedSiteId( s
  * @returns {boolean} Whether the payment methods list has been successfully loaded from the server
  */
 export const arePaymentMethodsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getPaymentMethods( state, siteId ) );
+	return Array.isArray( getPaymentMethods( state, siteId ) );
 };
 
 /**

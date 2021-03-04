@@ -39,6 +39,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { hasUnseen } from 'calypso/state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -54,7 +55,7 @@ class MasterbarLoggedIn extends React.Component {
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
-		if ( ! config.isEnabled( 'nav-unification' ) ) {
+		if ( ! this.props.isNavUnificationEnabled ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		} else if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
@@ -164,7 +165,7 @@ class MasterbarLoggedIn extends React.Component {
 			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( config.isEnabled( 'nav-unification' ) && 'sites' === section ) {
+		if ( this.props.isNavUnificationEnabled && 'sites' === section ) {
 			mySitesUrl = '';
 		}
 		return (
@@ -296,6 +297,7 @@ export default connect(
 			previousPath: getPreviousPath( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }

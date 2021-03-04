@@ -2,9 +2,9 @@
  * External dependencies
  */
 import webdriver from 'selenium-webdriver';
-import chromedriver from 'chromedriver'; // eslint-disable-line no-unused-vars
 import firefox from 'selenium-webdriver/firefox';
 import chrome from 'selenium-webdriver/chrome';
+import chromedriver from 'chromedriver';
 import config from 'config';
 import proxy from 'selenium-webdriver/proxy';
 import SauceLabs from 'saucelabs';
@@ -142,7 +142,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				} );
 				options.setProxy( getProxyType() );
 				options.addArguments( '--no-first-run' );
-				options.addArguments( '--disable-dev-shm-usage' );
 				options.addArguments( '--no-sandbox' );
 
 				if ( useCustomUA ) {

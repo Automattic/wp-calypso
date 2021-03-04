@@ -128,7 +128,9 @@ class MeSidebar extends React.Component {
 					</div>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
+						<SidebarHeading>
+							<span className="sidebar__informative-title">{ translate( 'Profile' ) }</span>
+						</SidebarHeading>
 
 						<SidebarItem
 							selected={ selected === 'profile' }
@@ -179,6 +181,12 @@ class MeSidebar extends React.Component {
 						/>
 
 						<SidebarItem
+							link={ 'https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs' }
+							label={ translate( 'Manage Blogs' ) }
+							materialIcon="apps"
+						/>
+
+						<SidebarItem
 							selected={ selected === 'notifications' }
 							link={
 								config.isEnabled( 'me/notifications' )
@@ -202,7 +210,9 @@ class MeSidebar extends React.Component {
 					</SidebarMenu>
 
 					<SidebarMenu>
-						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
+						<SidebarHeading>
+							<span className="sidebar__informative-title">{ translate( 'Special' ) }</span>
+						</SidebarHeading>
 
 						<SidebarItem
 							selected={ selected === 'get-apps' }

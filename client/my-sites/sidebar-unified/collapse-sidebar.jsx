@@ -18,6 +18,7 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import { collapseSidebar, expandSidebar } from 'calypso/state/ui/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 export const CollapseSidebar = ( { title, icon } ) => {
 	const reduxDispatch = useDispatch();
@@ -55,7 +56,7 @@ export const CollapseSidebar = ( { title, icon } ) => {
 };
 
 CollapseSidebar.propTypes = {
-	title: PropTypes.string.isRequired,
+	title: TranslatableString.isRequired,
 	icon: PropTypes.string.isRequired,
 };
 

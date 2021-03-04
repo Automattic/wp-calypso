@@ -33,9 +33,9 @@ export interface OrderSummaryData {
 
 export interface PaymentMethod {
 	id: string;
-	label: React.ReactNode;
-	activeContent: React.ReactNode;
-	inactiveContent: React.ReactNode;
+	label?: React.ReactNode;
+	activeContent?: React.ReactNode;
+	inactiveContent?: React.ReactNode;
 	submitButton: ReactElement;
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
 }

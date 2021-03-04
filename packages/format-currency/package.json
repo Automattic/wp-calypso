@@ -33,5 +33,8 @@
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
+	"peerDependencies": {
+		"react": "^16.8"
+	},
 	"types": "types"
 }

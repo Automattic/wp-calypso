@@ -4,14 +4,14 @@
 
 import React from 'react';
 import classnames from 'classnames';
-import { isNil } from 'lodash';
+import { isNullish } from '@automattic/js-utils';
 
 import './style.scss';
 
 const FormRadio = ( { className, label, ...otherProps } ) => (
 	<>
 		<input { ...otherProps } type="radio" className={ classnames( className, 'form-radio' ) } />
-		{ ! isNil( label ) && <span className="form-radio__label">{ label }</span> }
+		{ ! isNullish( label ) && <span className="form-radio__label">{ label }</span> }
 	</>
 );
 

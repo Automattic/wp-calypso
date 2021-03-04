@@ -11,6 +11,8 @@
 		{ "path": "./components" },
 		{ "path": "./composite-checkout" },
 		{ "path": "./create-calypso-config" },
+		{ "path": "./explat-client" },
+		{ "path": "./explat-client-react-helpers" },
 		{ "path": "./state-utils" },
 		{ "path": "./data-stores" },
 		{ "path": "./domain-picker" },

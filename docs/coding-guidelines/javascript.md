@@ -332,7 +332,7 @@ If you really must check the type of a value, however, do the following:
 - Number: [`Number.isFinite( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite) for finite numbers only, or `[ Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY ].includes( value )` if you'd like to check for infinite numbers. (avoid using Lodash's `isNumber`).
 - Boolean: `value === true || value === false` (don't use Lodash's `isBoolean`, as it's incredibly wasteful).
 - Object: [`isPlainObject( value )`](https://lodash.com/docs#isPlainObject). Try to avoid when possible - we'd like to get rid of Lodash in the long term. In most cases, `typeof value === 'object' && value.constructor === Object` should do the job for plain objects.
-- Array: [`Array.isArray( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray).
+- Array: [`Array.isArray( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray). (avoid using Lodash's `isArray`).
 - null: `value === null`.
 - undefined: `value === undefined`.
 - undefined or null (either): `value == null` or `value === null || value === undefined` (clearer)

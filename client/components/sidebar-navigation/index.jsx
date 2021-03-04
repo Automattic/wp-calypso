@@ -13,14 +13,20 @@ import Gridicon from 'calypso/components/gridicon';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import config from '@automattic/calypso-config';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
-	if ( config.isEnabled( 'nav-unification' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
+function SidebarNavigation( {
+	sectionTitle,
+	children,
+	toggleSidebar,
+	isNavUnificationEnabled: isUnifiedNavEnabled,
+} ) {
+	if ( isUnifiedNavEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
 		return null;
 	}
 
@@ -42,6 +48,11 @@ SidebarNavigation.propTypes = {
 	toggleSidebar: PropTypes.func.isRequired,
 };
 
-export default connect( null, {
-	toggleSidebar: () => setLayoutFocus( 'sidebar' ),
-} )( SidebarNavigation );
+export default connect(
+	( state ) => ( {
+		isNavUnificationEnabled: isNavUnificationEnabled( state ),
+	} ),
+	{
+		toggleSidebar: () => setLayoutFocus( 'sidebar' ),
+	}
+)( SidebarNavigation );

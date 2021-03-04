@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState, useCallback, ReactElement } from 'react';
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { getUrlParts } from 'calypso/lib/url';
 import classnames from 'classnames';
@@ -10,6 +11,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 
+import { infoNotice } from 'calypso/state/notices/actions';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { Button } from '@automattic/components';
@@ -48,6 +50,7 @@ export default function LicensePreview( {
 	filter,
 }: Props ): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ isOpen, setOpen ] = useState( false );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname : '';
@@ -57,6 +60,10 @@ export default function LicensePreview( {
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
 	}, [ isOpen ] );
+
+	const onCopyLicense = useCallback( () => {
+		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
+	}, [ dispatch, translate ] );
 
 	return (
 		<div
@@ -79,7 +86,7 @@ export default function LicensePreview( {
 						{ licenseState === LicenseState.Detached && (
 							<span className="license-preview__tag license-preview__tag--is-detached">
 								<Gridicon icon="info-outline" size={ 18 } />
-								{ translate( 'Detached' ) }
+								{ translate( 'Unassigned' ) }
 							</span>
 						) }
 
@@ -105,7 +112,7 @@ export default function LicensePreview( {
 
 				{ filter !== LicenseFilter.Revoked ? (
 					<div>
-						<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
+						<div className="license-preview__label">{ translate( 'Assigned on:' ) }</div>
 
 						{ licenseState === LicenseState.Attached && (
 							<FormattedDate date={ attachedAt } format="YYYY-MM-DD" />
@@ -135,6 +142,7 @@ export default function LicensePreview( {
 							text={ licenseKey }
 							className="license-preview__copy-license-key"
 							compact
+							onCopy={ onCopyLicense }
 						>
 							{ translate( 'Copy License' ) }
 						</ClipboardButton>
@@ -156,6 +164,7 @@ export default function LicensePreview( {
 					issuedAt={ issuedAt }
 					attachedAt={ attachedAt }
 					revokedAt={ revokedAt }
+					onCopyLicense={ onCopyLicense }
 				/>
 			) }
 		</div>
@@ -181,7 +190,7 @@ export function LicensePreviewPlaceholder(): ReactElement {
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Attached on:' ) }</div>
+					<div className="license-preview__label">{ translate( 'Assigned on:' ) }</div>
 
 					<div />
 				</div>

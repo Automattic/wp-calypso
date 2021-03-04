@@ -461,8 +461,9 @@ class RegisterDomainStep extends React.Component {
 							onSearchChange={ this.onSearchChange }
 							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
-						/>
-						{ this.renderSearchFilters() }
+						>
+							{ this.renderSearchFilters() }
+						</Search>
 					</CompactCard>
 				</StickyPanel>
 				{ availabilityMessage && (

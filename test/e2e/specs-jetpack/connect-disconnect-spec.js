@@ -23,14 +23,15 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const jetpackUser = process.env.JETPACKUSER;
 const user = dataHelper.getAccountConfig( jetpackUser );
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-} );
 
 describe( 'Disconnect wporg site', function () {
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
+
 	this.timeout( mochaTimeOut );
 
 	step( 'Can disconnect wporg site', async function () {
@@ -44,6 +45,12 @@ describe( 'Disconnect wporg site', function () {
 
 describe( `Jetpack Connect and Disconnect: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( async function () {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+	} );
 
 	before( async function () {
 		return await driverManager.ensureNotLoggedIn( driver );

@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { REWIND_BACKUPS_SET, SERIALIZE } from 'calypso/state/action-types';
+import { REWIND_BACKUPS_SET } from 'calypso/state/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -38,12 +38,5 @@ describe( 'reducer', () => {
 		} );
 
 		expect( state ).toEqual( [ 4, 5, 6 ] );
-	} );
-
-	test( 'should persist state', () => {
-		const previousState = deepFreeze( [ 1, 2, 3 ] );
-		const state = reducer( previousState, { type: SERIALIZE } );
-
-		expect( state ).toEqual( [ 1, 2, 3 ] );
 	} );
 } );

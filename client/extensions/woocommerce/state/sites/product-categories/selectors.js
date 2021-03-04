@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isArray, omit, some, range, values } from 'lodash';
+import { get, omit, some, range, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +33,7 @@ export function areProductCategoriesLoaded(
 	const categoryState = getRawCategoryState( state, siteId );
 	const cats = categoryState.queries && categoryState.queries[ serializedQuery ];
 
-	return isArray( cats );
+	return Array.isArray( cats );
 }
 
 /**

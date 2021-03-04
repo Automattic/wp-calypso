@@ -50,7 +50,7 @@ export function register(): typeof STORE_KEY {
 			resolvers,
 			actions,
 			controls: controls as any,
-			reducer: reducer as any,
+			reducer,
 			selectors,
 		} );
 	}

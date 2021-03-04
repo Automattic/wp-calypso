@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { ReactElement, FunctionComponent } from 'react';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { Button } from '@automattic/components';
 
@@ -32,24 +32,28 @@ import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
-const ScanMultisiteBody: FunctionComponent = () => (
-	<PromoCard
-		title={ preventWidows( translate( 'WordPress multi-sites are not supported' ) ) }
-		image={ <SecurityIcon icon="info" /> }
-		isPrimary
-	>
-		<p>
-			{ preventWidows(
-				translate(
-					"We're sorry, Jetpack Scan is not compatible with multisite WordPress installations at this time."
-				)
-			) }
-		</p>
-	</PromoCard>
-);
+const ScanMultisiteBody: FunctionComponent = () => {
+	const translate = useTranslate();
+	return (
+		<PromoCard
+			title={ preventWidows( translate( 'WordPress multi-sites are not supported' ) ) }
+			image={ <SecurityIcon icon="info" /> }
+			isPrimary
+		>
+			<p>
+				{ preventWidows(
+					translate(
+						"We're sorry, Jetpack Scan is not compatible with multisite WordPress installations at this time."
+					)
+				) }
+			</p>
+		</PromoCard>
+	);
+};
 
 const ScanVPActiveBody: FunctionComponent = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_vaultpress_click' );
+	const translate = useTranslate();
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Your site has VaultPress' ) ) }
@@ -85,6 +89,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 	const isAdmin = useSelector(
 		( state ) => siteId && canCurrentUser( state, siteId, 'manage_options' )
 	);
+	const translate = useTranslate();
 
 	return (
 		<PromoCard
@@ -126,6 +131,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 };
 
 export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ): ReactElement {
+	const translate = useTranslate();
 	let body;
 	switch ( reason ) {
 		case 'multisite_not_supported':

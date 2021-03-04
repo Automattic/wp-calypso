@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -49,20 +49,31 @@ const Home = ( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
+	const shouldShowNotice = Boolean( canUserUseCustomerHome && layout && noticeType );
+	const lastShownNotice = useRef( null );
 	useEffect( () => {
-		if ( ! canUserUseCustomerHome || ! layout || ! noticeType ) {
+		if ( ! shouldShowNotice || lastShownNotice.current === noticeType ) {
 			return;
 		}
 
 		if ( noticeType === 'difm-success' ) {
+			lastShownNotice.current = noticeType;
 			reduxDispatch( recordTracksEvent( 'calypso_difm_intake_submitted' ) );
 
 			const successMessage = translate( 'Your application has been sent!' );
 			reduxDispatch( successNotice( successMessage ) );
+			return;
+		}
+
+		if ( noticeType === 'purchase-success' ) {
+			lastShownNotice.current = noticeType;
+			const successMessage = translate( 'Your purchase has been completed!' );
+			reduxDispatch( successNotice( successMessage ) );
+			return;
 		}
 
 		return;
-	}, [ noticeType, layout, canUserUseCustomerHome, reduxDispatch, translate ] );
+	}, [ shouldShowNotice, translate, reduxDispatch, noticeType ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );

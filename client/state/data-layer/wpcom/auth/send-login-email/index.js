@@ -35,6 +35,7 @@ export const sendLoginEmail = ( action ) => {
 		loginFormFlow,
 		requestLoginEmailFormFlow,
 		isMobileAppLogin,
+		flow,
 	} = action;
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
@@ -54,7 +55,7 @@ export const sendLoginEmail = ( action ) => {
 			{
 				path: `/auth/send-login-email`,
 				method: 'POST',
-				apiVersion: '1.2',
+				apiVersion: '1.3',
 				body: {
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
@@ -64,6 +65,7 @@ export const sendLoginEmail = ( action ) => {
 					lang_id: lang_id,
 					email: email,
 					...( redirect_to && { redirect_to } ),
+					...( flow && { flow } ),
 				},
 			},
 			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }

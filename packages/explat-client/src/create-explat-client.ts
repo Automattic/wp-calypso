@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ExperimentAssignment, Config } from './types';
+import type { ExperimentAssignment, Config } from './types';
 import * as ExperimentAssignments from './internal/experiment-assignments';
 import * as Request from './internal/requests';
 import ExperimentAssignmentStore from './internal/experiment-assignment-store';
@@ -35,11 +35,16 @@ export interface ExPlatClient {
 	 *
 	 */
 	dangerouslyGetExperimentAssignment: ( experimentName: string ) => ExperimentAssignment;
+
+	/**
+	 * INTERNAL USE ONLY
+	 */
+	config: Config;
 }
 
 export class MissingExperimentAssignmentError extends Error {
-	constructor( ...params: any[] ) {
-		super( ...params );
+	constructor( message?: string ) {
+		super( message );
 
 		// Maintains proper stack trace for where our error was thrown (only available on V8)
 		if ( Error.captureStackTrace ) {
@@ -186,6 +191,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 			return storedExperimentAssignment;
 		},
+		config,
 	};
 }
 
@@ -210,5 +216,6 @@ export function createSsrSafeDummyExPlatClient( config: Config ): ExPlatClient {
 			} );
 			return createFallbackExperimentAssignment( experimentName );
 		},
+		config,
 	};
 }

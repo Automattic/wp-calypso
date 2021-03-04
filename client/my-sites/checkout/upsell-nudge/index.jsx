@@ -8,6 +8,7 @@ import page from 'page';
 import { pick } from 'lodash';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { isURL } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -273,7 +274,13 @@ export class UpsellNudge extends React.Component {
 			clearSignupDestinationCookie();
 		}
 
-		page.redirect( url );
+		// If url starts with http, use browser redirect.
+		// If url is a route, use page router.
+		if ( isURL( url ) ) {
+			window.location.href = url;
+		} else {
+			page.redirect( url );
+		}
 	};
 
 	handleClickAccept = ( buttonAction ) => {

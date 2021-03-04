@@ -8,7 +8,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import JetpackFreeCardButton from './button';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Type dependencies
@@ -57,10 +56,7 @@ const JetpackFreeCard: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => 
 						text: translate( 'Activity Log' ),
 					},
 				].map( ( feature, index ) => (
-					<li key={ index }>
-						<Gridicon icon="checkmark" />
-						<span className="jetpack-free-card__features-text">{ feature.text }</span>
-					</li>
+					<li key={ index }>{ feature.text }</li>
 				) ) }
 			</ul>
 		</div>

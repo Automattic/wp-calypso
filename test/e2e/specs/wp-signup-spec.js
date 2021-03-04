@@ -67,15 +67,14 @@ const locale = driverManager.currentLocale();
 const passwordForTestAccounts = config.get( 'passwordForNewTestSignUps' );
 const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
-let driver;
-
-before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	this.driver = driver = await driverManager.startBrowser();
-} );
-
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	this.timeout( mochaTimeOut );
+	let driver;
+
+	before( 'Start browser', async function () {
+		this.timeout( startBrowserTimeoutMS );
+		this.driver = driver = await driverManager.startBrowser();
+	} );
 
 	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
@@ -88,7 +87,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 
 		step( 'Can create a new WordPress site', async function () {
-			await StartPage.Visit( this.driver, StartPage.getStartURL() );
+			await StartPage.Visit( driver, StartPage.getStartURL() );
 		} );
 
 		step( 'Can see the account page and enter account details', async function () {
@@ -480,18 +479,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function () {
-			const myHomePage = await MyHomePage.Expect( this.driver );
+			const myHomePage = await MyHomePage.Expect( driver );
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual(
-				errorShown,
-				false,
-				'There is a block editor error when editing the homepage'
-			);
-
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
 			assert.strictEqual(
 				hasInvalidBlocks,
@@ -1109,17 +1100,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			if ( dataHelper.getTargetType() === 'IE11' ) {
 				return this.skip();
 			}
-			const myHomePage = await MyHomePage.Expect( this.driver );
+			const myHomePage = await MyHomePage.Expect( driver );
 			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
-
-			const errorShown = await gEditorComponent.errorDisplayed();
-			assert.strictEqual(
-				errorShown,
-				false,
-				'There is a block editor error when editing the homepage'
-			);
 
 			const hasInvalidBlocks = await gEditorComponent.hasInvalidBlocks();
 			assert.strictEqual(

@@ -27,6 +27,7 @@ import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/
 class TitanManagementIframe extends React.Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
+		context: PropTypes.string,
 		currentRoute: PropTypes.string,
 		domainName: PropTypes.string.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
@@ -35,7 +36,7 @@ class TitanManagementIframe extends React.Component {
 	};
 
 	renderManagementSection() {
-		const { domainName } = this.props;
+		const { context, domainName } = this.props;
 		const selectedDomain = this.props.domains
 			.filter( function ( domain ) {
 				return domain?.name === domainName;
@@ -44,7 +45,7 @@ class TitanManagementIframe extends React.Component {
 		if ( ! selectedDomain ) {
 			return null;
 		}
-		return <TitanControlPanelLoginCard domain={ selectedDomain } />;
+		return <TitanControlPanelLoginCard domain={ selectedDomain } context={ context } />;
 	}
 
 	render() {

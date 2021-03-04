@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { forEach, repeat } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +34,7 @@ describe( 'normalization-rules', () => {
 						mediaType: 'image',
 						width: 1000,
 					},
-					better_excerpt_no_html: repeat( 'no ', 10 ),
+					better_excerpt_no_html: 'no '.repeat( 10 ),
 				},
 				[ DISPLAY_TYPES.PHOTO_ONLY ]
 			);
@@ -47,7 +47,7 @@ describe( 'normalization-rules', () => {
 						mediaType: 'image',
 						width: 1000,
 					},
-					better_excerpt_no_html: repeat( 'no ', 100 ),
+					better_excerpt_no_html: 'no '.repeat( 100 ),
 				},
 				[ DISPLAY_TYPES.UNCLASSIFIED ]
 			);
@@ -74,7 +74,7 @@ describe( 'normalization-rules', () => {
 							width: 50,
 						},
 					],
-					better_excerpt_no_html: repeat( 'no ', 5 ),
+					better_excerpt_no_html: 'no '.repeat( 5 ),
 				},
 				[ DISPLAY_TYPES.PHOTO_ONLY ]
 			);

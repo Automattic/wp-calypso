@@ -152,7 +152,10 @@ function shoppingCartReducer(
 
 		case 'ADD_COUPON': {
 			const newCoupon = action.couponToAdd;
-			if ( couponStatus === 'applied' || couponStatus === 'pending' ) {
+			if (
+				( couponStatus === 'applied' || couponStatus === 'pending' ) &&
+				newCoupon === state.responseCart.coupon
+			) {
 				debug( `coupon status is '${ couponStatus }'; not submitting again` );
 				return state;
 			}

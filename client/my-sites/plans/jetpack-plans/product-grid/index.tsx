@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import { SWITCH_PLAN_SIDES_EXPERIMENT, SWITCH_PLAN_SIDES_TREATMENT } from '../experiments';
 import PlansFilterBar from '../plans-filter-bar';
 import ProductCard from '../product-card';
-import { getProductPosition } from './products-order';
+import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import Experiment from 'calypso/components/experiment';
@@ -178,11 +178,19 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</section>
+
 			<section className="product-grid__section product-grid__asterisk-items">
+				<h2 className="product-grid__asterisk-item">
+					{ translate( 'Special introductory pricing, all renewals are at full price.' ) }
+				</h2>
+				<h2 className="product-grid__asterisk-item">
+					{ translate( 'Monthly plans are 7-day money back guarantee.' ) }
+				</h2>
 				<h2 className="product-grid__asterisk-item">
 					{ translate( 'All plans include priority support' ) }
 				</h2>
 			</section>
+
 			<section className="product-grid__section">
 				<h2 className="product-grid__section-title">{ translate( 'More Products' ) }</h2>
 				<ul className="product-grid__product-grid">

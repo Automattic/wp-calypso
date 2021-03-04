@@ -1,11 +1,23 @@
 /**
  * External dependencies
  */
-import { AnyAction } from 'redux';
+import { Action, AnyAction } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 
 /**
  * Utility.
  */
+export interface DispatchRequest {
+	( options: unknown ): unknown;
+}
+
+export type PartnerPortalThunkAction< A extends Action = AnyAction, R = unknown > = ThunkAction<
+	void,
+	PartnerPortalStore,
+	R,
+	A
+>;
+
 export interface HttpAction extends AnyAction {
 	fetcher: string;
 }
@@ -31,8 +43,8 @@ export interface APIError {
 export interface PartnerKey {
 	id: number;
 	name: string;
-	oauth2_token: string;
-	disabled_on: string | null;
+	oAuth2Token: string;
+	disabledOn: string | null;
 }
 
 export interface Partner {
@@ -47,7 +59,7 @@ export interface PartnerStore {
 	isFetching: boolean;
 	activePartnerKey: number;
 	current: Partner | null;
-	error: string;
+	error: APIError | null;
 }
 
 export interface License {
