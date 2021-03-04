@@ -169,10 +169,12 @@ class SocialLoginForm extends Component {
 	};
 
 	renderSocialTos = () => {
-		const { redirectTo = '', translate } = this.props;
+		const { redirectTo, translate } = this.props;
 
 		const isJetpackMagicLinkSignUpFlow =
-			redirectTo.includes( 'jetpack/connect' ) && config.isEnabled( 'jetpack/magic-link-signup' );
+			redirectTo &&
+			redirectTo.includes( 'jetpack/connect' ) &&
+			config.isEnabled( 'jetpack/magic-link-signup' );
 		if ( isJetpackMagicLinkSignUpFlow ) {
 			return (
 				<>
