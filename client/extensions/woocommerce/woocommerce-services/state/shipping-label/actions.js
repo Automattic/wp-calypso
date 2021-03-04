@@ -6,7 +6,6 @@
 import { translate } from 'i18n-calypso';
 import {
 	every,
-	fill,
 	filter,
 	find,
 	first,
@@ -1028,7 +1027,7 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 						carrier_id: rate.carrier_id,
 						service_name: rate.title,
 						products: flatten(
-							pckg.items.map( ( item ) => fill( new Array( item.quantity ), item.product_id ) )
+							pckg.items.map( ( item ) => Array( item.quantity ).fill( item.product_id ) )
 						),
 					};
 				} ),
