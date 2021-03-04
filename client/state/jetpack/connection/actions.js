@@ -90,9 +90,6 @@ export const disconnect = ( siteId ) => ( dispatch ) =>
 				siteId,
 				status: response,
 			} );
-		} )
-		.catch( () => {
-			// ignore
 		} );
 
 /**
