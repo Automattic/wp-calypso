@@ -1,10 +1,4 @@
 /**
- * External dependencies
- *
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -17,6 +11,8 @@ import {
 import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const request = ( action ) =>
 	http(

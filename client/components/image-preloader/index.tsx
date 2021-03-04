@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { useState, useEffect, useRef } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Constants
@@ -13,6 +12,9 @@ enum LoadStatus {
 	LOADED,
 	FAILED,
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 type ImageEventHandler = ( event: string | Event ) => void;
 

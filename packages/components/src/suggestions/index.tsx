@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { find, groupBy, isEqual, partition, property, noop } from 'lodash';
+import { find, groupBy, isEqual, partition, property } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -15,6 +15,9 @@ import Item from './item';
  * Style depenedencies
  */
 import './style.scss';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 type Suggestion = { label: string; category?: string };
 

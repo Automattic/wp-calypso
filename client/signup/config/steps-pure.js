@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -23,6 +22,8 @@ import {
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from 'calypso/lib/plans/constants';
+
+const noop = () => {};
 
 export function generateSteps( {
 	addPlanToCart = noop,

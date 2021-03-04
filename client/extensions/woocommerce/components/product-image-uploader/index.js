@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { head, noop, trim, uniqueId } from 'lodash';
+import { head, trim, uniqueId } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
@@ -20,6 +20,8 @@ import FilePicker from 'calypso/components/file-picker';
 import getMediaErrors from 'calypso/state/selectors/get-media-errors';
 import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
 import { addWoocommerceProductImage } from 'calypso/state/media/thunks';
+
+const noop = () => {};
 
 class ProductImageUploader extends Component {
 	static propTypes = {

@@ -7,7 +7,6 @@ import React, { PureComponent } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +35,8 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {

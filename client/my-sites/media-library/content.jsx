@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { groupBy, head, isEmpty, map, noop, size, values } from 'lodash';
+import { groupBy, head, isEmpty, map, size, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import classnames from 'classnames';
@@ -44,6 +44,8 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
  * Style dependencies
  */
 import './content.scss';
+
+const noop = () => {};
 
 export class MediaLibraryContent extends React.Component {
 	static propTypes = {

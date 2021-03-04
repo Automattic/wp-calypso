@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
@@ -14,6 +9,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receiveConnectedApplications } from 'calypso/state/connected-applications/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const apiTransformer = ( data ) => data.connected_applications;
 

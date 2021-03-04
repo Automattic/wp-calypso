@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import userUtils from 'calypso/lib/user/utils';
+
+const noop = () => {};
 
 export class DowngradeStep extends Component {
 	static propTypes = {

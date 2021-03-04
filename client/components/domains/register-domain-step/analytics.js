@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { flow, mapKeys, mapValues, snakeCase, startsWith, noop } from 'lodash';
+import { flow, mapKeys, mapValues, snakeCase, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +11,8 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+
+const noop = () => {};
 
 export const recordMapDomainButtonClick = ( section ) =>
 	composeAnalytics(

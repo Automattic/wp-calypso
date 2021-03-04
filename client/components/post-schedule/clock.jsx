@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, flowRight as compose } from 'lodash';
+import { flowRight as compose } from 'lodash';
 import 'moment-timezone'; // monkey patches the existing moment.js
 
 /**
@@ -28,6 +28,8 @@ import {
 	convertHoursToHHMM,
 	convertMinutesToHHMM,
 } from './utils';
+
+const noop = () => {};
 
 class PostScheduleClock extends Component {
 	adjustHour = ( event ) => this.handleKeyDown( event, 'hour' );

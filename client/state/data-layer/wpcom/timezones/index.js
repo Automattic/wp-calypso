@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { fromPairs, map, mapValues, noop } from 'lodash';
+import { fromPairs, map, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +12,8 @@ import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
 import { timezonesReceive } from 'calypso/state/timezones/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Converts an value/label pairs from API into object whose

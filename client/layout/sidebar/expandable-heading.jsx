@@ -2,7 +2,6 @@
  * External dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
-import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -13,6 +12,8 @@ import Count from 'calypso/components/count';
 import MaterialIcon from 'calypso/components/material-icon';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
 import TranslatableString from 'calypso/components/translatable/proptype';
+
+const noop = () => {};
 
 const ExpandableSidebarHeading = ( {
 	title,

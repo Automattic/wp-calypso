@@ -8,7 +8,7 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,8 @@ import { identity, noop } from 'lodash';
 import { Auth } from '../login';
 import { makeAuthRequest } from '../login-request';
 import FormButton from 'calypso/components/forms/form-button';
+
+const noop = () => {};
 
 jest.mock( '../login-request', () => ( {
 	makeAuthRequest: require( 'sinon' ).stub(),

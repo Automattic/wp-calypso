@@ -3,7 +3,6 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,7 @@ jest.mock( 'calypso/signup/utils', () => ( {
 	getFilteredSteps: jest.fn(),
 } ) );
 
+const noop = () => {};
 const signupUtils = require( 'calypso/signup/utils' );
 const { getStepUrl, getFilteredSteps } = signupUtils;
 

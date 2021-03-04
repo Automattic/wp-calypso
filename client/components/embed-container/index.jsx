@@ -4,7 +4,7 @@
 
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
-import { assign, filter, forEach, forOwn, noop } from 'lodash';
+import { assign, filter, forEach, forOwn } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,6 +13,7 @@ import { loadScript } from '@automattic/load-script';
 import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 import debugFactory from 'debug';
 
+const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
 
 const embedsToLookFor = {

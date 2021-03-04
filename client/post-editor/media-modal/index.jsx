@@ -13,7 +13,6 @@ import {
 	isEmpty,
 	identity,
 	includes,
-	noop,
 	partial,
 	some,
 	values,
@@ -53,6 +52,8 @@ import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analyt
  * Style dependencies
  */
 import './index.scss';
+
+const noop = () => {};
 
 function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 	return (

@@ -7,12 +7,14 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { SiteStyleStep } from '../';
+
+const noop = () => {};
 
 describe( '<SiteStyleStep />', () => {
 	const defaultProps = {

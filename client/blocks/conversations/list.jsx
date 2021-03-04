@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
+import { map, zipObject, fill, size, filter, get, compact, partition, min } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,6 +57,8 @@ import './list.scss';
  */
 
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
+const noop = () => {};
+
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment

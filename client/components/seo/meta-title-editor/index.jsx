@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, identity, noop } from 'lodash';
+import { get, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,8 @@ import { localize } from 'i18n-calypso';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const titleTypes = ( translate ) => [
 	{ value: 'frontPage', label: translate( 'Front Page' ) },

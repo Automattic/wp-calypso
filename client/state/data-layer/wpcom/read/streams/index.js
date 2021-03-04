@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { random, map, includes, get, noop } from 'lodash';
+import { random, map, includes, get } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -20,6 +20,8 @@ import { keyForPost } from 'calypso/reader/post-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Pull the suffix off of a stream key

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -27,6 +26,8 @@ import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
  * Style dependencies
  */
 import './comment-actions.scss';
+
+const noop = () => {};
 
 const CommentActions = ( {
 	post,

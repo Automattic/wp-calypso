@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { keys, last, noop, sortBy } from 'lodash';
+import { keys, last, sortBy } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -17,6 +17,8 @@ import {
 } from 'woocommerce/state/sites/orders/activity-log/selectors';
 import OrderEvent from './event';
 import OrderEventsByDay from './day';
+
+const noop = () => {};
 
 function getSortedEvents( events ) {
 	const eventsByDay = {};

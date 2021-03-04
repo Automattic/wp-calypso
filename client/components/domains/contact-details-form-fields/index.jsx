@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
 import {
-	noop,
 	get,
 	deburr,
 	kebabCase,
@@ -50,6 +49,8 @@ import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class ContactDetailsFormFields extends Component {
 	static propTypes = {

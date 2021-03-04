@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { castArray, noop, zip } from 'lodash';
+import { castArray, zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,8 @@ import {
 import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
+
+const noop = () => {};
 
 /**
  * Add media items serially (one at a time) but dispatch creation

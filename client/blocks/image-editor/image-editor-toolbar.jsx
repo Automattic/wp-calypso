@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop, values as objectValues } from 'lodash';
+import { values as objectValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
@@ -22,6 +22,8 @@ import {
 	setImageEditorAspectRatio,
 } from 'calypso/state/editor/image-editor/actions';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
+
+const noop = () => {};
 
 export class ImageEditorToolbar extends Component {
 	static propTypes = {

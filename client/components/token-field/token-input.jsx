@@ -3,12 +3,14 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { omit, noop } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'calypso/components/forms/form-text-input';
+
+const noop = () => {};
 
 class TokenInput extends React.PureComponent {
 	static propTypes = {

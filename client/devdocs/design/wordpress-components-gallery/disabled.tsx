@@ -2,12 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import { noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { Disabled, SelectControl, TextControl, TextareaControl } from '@wordpress/components';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 const DisabledExample = () => {
 	return (

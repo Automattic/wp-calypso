@@ -3,12 +3,13 @@
  */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { recordTrack } from '../tracks-utils';
+
+const noop = () => {};
 
 describe( 'recordTrack', () => {
 	it( 'should be a function', () => {

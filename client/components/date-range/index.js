@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop, has } from 'lodash';
+import { has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -31,6 +31,7 @@ import './style.scss';
  * Module variables
  */
 const NO_DATE_SELECTED_VALUE = null;
+const noop = () => {};
 
 export class DateRange extends Component {
 	static propTypes = {

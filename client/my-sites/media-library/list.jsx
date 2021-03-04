@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRtl } from 'i18n-calypso';
-import { clone, filter, findIndex, min, noop } from 'lodash';
+import { clone, filter, findIndex, min } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
 
@@ -22,6 +22,8 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
+
+const noop = () => {};
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';

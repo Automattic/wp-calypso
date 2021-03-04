@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { isUndefined, noop } from 'lodash';
+import { isUndefined } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,6 +17,8 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import Popover from 'calypso/components/popover';
 import Tooltip from 'calypso/components/tooltip';
+
+const noop = () => {};
 
 class DashboardWidget extends Component {
 	constructor( props ) {
