@@ -289,6 +289,13 @@ export async function ensureNotLoggedIn( driver ) {
 	await driver.executeScript(
 		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;SameSite=None;Secure"'
 	);
+
+	// JUST FOR TESTING
+	process.env.FLAGS = 'nav-unification';
+
+	process.env.FLAGS &&
+	( await driver.manage().addCookie( { name: 'flags', value: process.env.FLAGS } ) );
+
 	return driver.sleep( 500 );
 }
 

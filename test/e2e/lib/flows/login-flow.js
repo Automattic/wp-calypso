@@ -54,8 +54,6 @@ export default class LoginFlow {
 
 	async login( { emailSSO = false, jetpackSSO = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
-		process.env.FLAGS &&
-			( await this.driver.manage().addCookie( { name: 'flags', value: process.env.FLAGS } ) );
 
 		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
 		// We can check later to see if we can find a different way to support it.

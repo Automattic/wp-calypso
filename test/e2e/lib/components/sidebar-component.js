@@ -38,99 +38,95 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPeople() {
-		await this.expandDrawerItem( 'Manage' );
-		return await this._scrollToAndClickMenuItem( 'people' );
+		await this.expandDrawerItem( 'Users' );
+		return await this._scrollToAndClickMenuItem( 'All People' );
 	}
 
 	async selectThemes() {
-		await this.expandDrawerItem( 'Design' );
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.menu-link-text[data-e2e-sidebar="Themes"]' )
-		); // TODO: data-tip-target target is missing
+		return await this.expandDrawerItem( 'Appearance' );
+	}
+
+	async selectAllSitesThemes() {
+		return await this._scrollToAndClickMenuItem( 'Themes' );
 	}
 
 	async selectSiteEditor() {
-		await this.expandDrawerItem( 'Design' );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.menu-link-text[data-e2e-sidebar="Site Editor (beta)"]' )
+			By.css( '.menu-link-text[data-e2e-sidebar*="Site Editor"]' )
 		);
 	}
 
 	async selectWPAdmin() {
-		return await this._scrollToAndClickMenuItem( 'wpadmin' );
+		return await this._scrollToAndClickMenuItemByText( 'wpadmin' );
 	}
 
 	async customizeTheme() {
-		return await this._scrollToAndClickMenuItem( 'themes' );
+		await this.expandDrawerItem( 'Appearance' );
+		return await this._scrollToAndClickMenuItemByText( 'Customize' );
 	}
 
 	async selectPlans() {
 		await this.expandDrawerItem( 'Upgrades' );
-		return await this._scrollToAndClickMenuItem( 'plans' );
+		return await this._scrollToAndClickMenuItem( 'Plans' );
 	}
 
 	async selectDomains() {
 		await this.expandDrawerItem( 'Upgrades' );
-		return await this._scrollToAndClickMenuItem( 'domains' );
+		return await this._scrollToAndClickMenuItem( 'Domains' );
 	}
 
 	async selectMyHome() {
-		return await this._scrollToAndClickMenuItem( 'myhome' );
+		return await this._scrollToAndClickMenuItem( 'My Home' );
 	}
 
 	async selectStats() {
-		return await this._scrollToAndClickMenuItem( 'stats' );
+		return await this._scrollToAndClickMenuItemByText( 'Stats' );
 	}
 
 	async selectActivity() {
 		await this.expandDrawerItem( 'Jetpack' );
-		return await this._scrollToAndClickMenuItem( 'activity' );
+		return await this._scrollToAndClickMenuItemByText( 'Activity Log' );
 	}
 
 	async selectMarketing() {
 		await this.expandDrawerItem( 'Tools' );
-		return await this._scrollToAndClickMenuItem( 'marketing' );
+		return await this._scrollToAndClickMenuItem( 'Marketing' );
 	}
 
 	async selectViewThisSite() {
-		return await this._scrollToAndClickMenuItem( 'sitePreview' );
+		return await this._scrollToAndClickMenuItemByText( 'sitePreview' );
 	}
 
 	async selectPlugins() {
-		await this.expandDrawerItem( 'Tools' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-plugins' );
+		return await this._scrollToAndClickMenuItemByText( 'Plugins' );
 	}
 
 	async selectSettings() {
-		await this.expandDrawerItem( 'Manage' );
-		return await this._scrollToAndClickMenuItem( 'settings' );
+		return await this.expandDrawerItem( 'Settings' );
 	}
 
 	async selectMedia() {
-		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-media' );
+		return await this._scrollToAndClickMenuItem( 'Media' );
 	}
 
 	async selectImport() {
 		await this.expandDrawerItem( 'Tools' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-import' );
+		return await this._scrollToAndClickMenuItem( 'Import' );
 	}
 
 	async selectPages() {
-		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-page' );
+		await this.expandDrawerItem( 'Pages' );
+		return await this._scrollToAndClickMenuItem( 'All Pages' );
 	}
 
 	async selectPosts() {
-		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-post' );
+		await this.expandDrawerItem( 'Posts' );
+		return await this._scrollToAndClickMenuItem( 'All Posts' );
 	}
 
 	async selectComments() {
-		await this.expandDrawerItem( 'Site' );
-		return await this._scrollToAndClickMenuItem( 'side-menu-comments' );
+		return await this._scrollToAndClickMenuItem( 'Comments' );
 	}
 
 	async selectStoreOption() {
@@ -144,19 +140,12 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async settingsOptionExists( click = false ) {
 		const isDisplayed = await driverHelper.isElementPresent(
 			this.driver,
-			SidebarComponent._getSidebarSelector( 'settings' )
+			SidebarComponent._getSidebarSelector( 'Settings' )
 		);
 		if ( click ) {
-			await this._scrollToAndClickMenuItem( 'settings' );
+			await this._scrollToAndClickMenuItem( 'Settings' );
 		}
 		return isDisplayed;
-	}
-
-	async mediaOptionExists() {
-		return await driverHelper.isElementPresent(
-			this.driver,
-			SidebarComponent._getSidebarSelector( 'side-menu-media' )
-		);
 	}
 
 	async numberOfMenuItems() {
@@ -164,15 +153,19 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		return elements.length;
 	}
 
+	async _scrollToAndClickMenuItemByText( text ) {
+		await driverHelper.selectElementByText(
+			this.driver,
+			By.css( '.sidebar__heading' ),
+			text
+		);
+	}
+
 	async _scrollToAndClickMenuItem( target, { clickButton = false } = {} ) {
 		const selector = SidebarComponent._getSidebarSelector( target, { getButton: clickButton } );
-		await driverHelper.waitTillPresentAndDisplayed(
-			this.driver,
-			By.css( '.current-site__notices' )
-		);
 
 		if ( ! ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector, 500 ) ) ) {
-			const settingsSelector = SidebarComponent._getSidebarSelector( 'settings' );
+			const settingsSelector = SidebarComponent._getSidebarSelector( 'Settings' );
 			await driverHelper.scrollIntoView( this.driver, settingsSelector );
 		}
 
@@ -181,8 +174,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	static _getSidebarSelector( target, { getButton = false } = {} ) {
-		const linkSelector = getButton ? 'a.sidebar__button' : 'a:not(.sidebar__button)';
-		return By.css( `.sidebar li[data-tip-target="${ target }"] ${ linkSelector }` );
+		return By.css( `.sidebar span[data-e2e-sidebar="${ target }"]` );
 	}
 
 	async ensureSidebarMenuVisible() {

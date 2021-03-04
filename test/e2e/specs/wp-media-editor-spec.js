@@ -35,14 +35,6 @@ describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, 
 			await loginFlow.loginAndSelectMySite();
 		} );
 
-		step( "Can see a 'Media' option", async function () {
-			const sideBarComponent = await SideBarComponent.Expect( driver );
-			return assert(
-				await sideBarComponent.mediaOptionExists(),
-				'The settings menu option does not exist'
-			);
-		} );
-
 		step( "Select 'Media' option and see media content", async function () {
 			const sideBarComponent = await SideBarComponent.Expect( driver );
 			await sideBarComponent.selectMedia();

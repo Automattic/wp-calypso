@@ -11,6 +11,7 @@ import URL from 'url';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import * as dataHelper from '../data-helper';
+import GuideComponent from "../components/guide-component";
 
 export default class ReaderPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
