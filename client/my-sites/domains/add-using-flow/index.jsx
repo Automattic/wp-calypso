@@ -9,7 +9,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import VerticalNav from 'calypso/components/vertical-nav';
-import { domainAddNew } from 'calypso/my-sites/domains/paths';
+import {
+	domainAddNew,
+	domainManagementList,
+	domainManagementRoot,
+} from 'calypso/my-sites/domains/paths';
 import HeaderCake from 'calypso/components/header-cake';
 import DomainManagementNavigationItem from 'calypso/my-sites/domains/domain-management/edit/navigation/domain-management-navigation-item';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -77,11 +81,22 @@ class AddUsingFlow extends React.Component {
 		);
 	}
 
+	getBackUrl() {
+		const { selectedSite } = this.props;
+		if ( selectedSite ) {
+			return domainManagementList( selectedSite.slug );
+		}
+		return domainManagementRoot();
+	}
+
 	render() {
 		const { translate, userManagedSites } = this.props;
+
 		return (
 			<VerticalNav>
-				<HeaderCake>{ translate( 'How would you like to use your new domain?' ) }</HeaderCake>
+				<HeaderCake backHref={ this.getBackUrl() }>
+					{ translate( 'How would you like to use your new domain?' ) }
+				</HeaderCake>
 				{ this.renderAddForSelectedSite() }
 				{ userManagedSites.length > 1 && (
 					<DomainManagementNavigationItem
