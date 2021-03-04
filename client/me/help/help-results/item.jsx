@@ -72,7 +72,9 @@ export default class extends React.PureComponent {
 					{ compact && this.getResultIcon() }
 					<div className="help-result__content-wrapper">
 						<h2 className="help-result__title">{ decodeEntities( helpLink.title ) }</h2>
-						{ ! compact && <p className="help-result__description">{ decodeEntities( helpLink.description ) }</p> }
+						{ ! compact && (
+							<p className="help-result__description">{ decodeEntities( helpLink.description ) }</p>
+						) }
 					</div>
 					{ ! compact && (
 						<div className="help-result__icon-wrapper">
