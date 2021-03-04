@@ -40,6 +40,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -48,6 +49,7 @@ import './style.scss';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
+		currentRoute: PropTypes.string,
 		post: PropTypes.object,
 		feed: PropTypes.object,
 		onBlock: PropTypes.func,
@@ -249,7 +251,17 @@ class ReaderPostOptionsMenu extends React.Component {
 	};
 
 	render() {
-		const { post, site, feed, teams, translate, position, posts, isWPForTeamsItem } = this.props;
+		const {
+			post,
+			site,
+			feed,
+			teams,
+			translate,
+			position,
+			posts,
+			isWPForTeamsItem,
+			currentRoute,
+		} = this.props;
 
 		if ( ! post ) {
 			return null;
@@ -312,7 +324,7 @@ class ReaderPostOptionsMenu extends React.Component {
 					) }
 
 					{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
-						canBeMarkedAsSeen( { post, posts } ) &&
+						canBeMarkedAsSeen( { post, posts, currentRoute } ) &&
 						post.is_seen && (
 							<PopoverMenuItem
 								onClick={ this.markAsUnSeen }
@@ -325,7 +337,7 @@ class ReaderPostOptionsMenu extends React.Component {
 						) }
 
 					{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
-						canBeMarkedAsSeen( { post, posts } ) &&
+						canBeMarkedAsSeen( { post, posts, currentRoute } ) &&
 						! post.is_seen && (
 							<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
 								{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
@@ -378,6 +390,7 @@ export default connect(
 		const siteId = is_external ? null : site_ID;
 
 		return Object.assign(
+			{ currentRoute: getCurrentRoute( state ) },
 			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
 			{ teams: getReaderTeams( state ) },
 			feedId > 0 && { feed: getFeed( state, feedId ) },
