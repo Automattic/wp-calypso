@@ -21,7 +21,7 @@ import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { clearPlan, retrieveMobileRedirect, retrievePlan } from './persistence-utils';
+import { clearPlan, retrieveMobileRedirect, retrievePlan, storePlan } from './persistence-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -50,6 +50,14 @@ const jetpackConnection = ( WrappedComponent ) => {
 			redirecting: false,
 			waitingForSites: true,
 		};
+
+		componentDidMount() {
+			const { queryArgs } = this.props;
+			// If a plan was passed as a query parameter, store it in local storage
+			if ( queryArgs && queryArgs.plan ) {
+				storePlan( queryArgs.plan );
+			}
+		}
 
 		renderFooter = () => {
 			const { translate } = this.props;
@@ -90,11 +98,10 @@ const jetpackConnection = ( WrappedComponent ) => {
 				if ( currentPlan ) {
 					if ( currentPlan === PLAN_JETPACK_FREE ) {
 						debug( `Redirecting to wpadmin` );
-						externalRedirect( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );
-					} else {
-						debug( `Redirecting to checkout with ${ currentPlan } plan retrieved from cookies` );
-						this.redirect( 'checkout', url, currentPlan, queryArgs );
+						return externalRedirect( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );
 					}
+					debug( `Redirecting to checkout with ${ currentPlan } plan retrieved from cookies` );
+					this.redirect( 'checkout', url, currentPlan, queryArgs );
 				} else {
 					debug( 'Redirecting to plans_selection' );
 					this.redirect( 'plans_selection', url );

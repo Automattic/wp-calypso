@@ -33,9 +33,11 @@ import {
 import { login } from 'calypso/lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import {
+	clearPlan,
 	isCalypsoStartedConnection,
 	persistMobileRedirect,
 	retrieveMobileRedirect,
+	retrievePlan,
 	storePlan,
 } from './persistence-utils';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
@@ -46,6 +48,7 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -111,8 +114,14 @@ export function offerResetRedirects( context, next ) {
 		return externalRedirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
 	}
 
-	// If selected site has a Free plan, redirect to URL passed as query param or wpadmin
-	if ( selectedSite.plan.is_free ) {
+	// If the user previously selected Jetpack Free, redirect them to their wp-admin page
+	const storedPlan = retrievePlan();
+	clearPlan();
+	if ( storedPlan === PLAN_JETPACK_FREE ) {
+		debug(
+			'controller: offerResetRedirects -> redirecting to wp-admin because the user got here by clicking Jetpack Free',
+			context.params
+		);
 		externalRedirect( context.query.redirect || selectedSite.options.admin_url );
 		return;
 	}
