@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import playwright from 'playwright';
 import webdriver from 'selenium-webdriver';
 import firefox from 'selenium-webdriver/firefox';
 import chrome from 'selenium-webdriver/chrome';
@@ -71,18 +72,44 @@ export function getProxyType() {
 	}
 }
 
-export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = true } = {} ) {
+export async function startBrowser( {
+	useCustomUA = true,
+	resizeBrowserWindow = true,
+	isPlaywright = false,
+} = {} ) {
 	if ( global.__BROWSER__ ) {
 		return global.__BROWSER__;
 	}
 	const screenSize = currentScreenSize();
 	const locale = currentLocale();
+
+	// Code path for Playwright-based tests, while keeping the same function calls in the tests, flows and pages.
+	// Currently, this will launch a new browser instance each time this function is called.
+	// As browser instances are expensive, look for way to launch a new context from a global browser instance.
+	if ( isPlaywright === true ) {
+		let isHeadless = true;
+		if ( ! process.env.HEADLESS || ! config.has( 'headless' ) ) {
+			isHeadless = false;
+		}
+
+		const browser = await playwright.chromium.launch( { headless: isHeadless } );
+		// const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ browser.version() } Safari/537.36`;
+		const screenDimensions = getSizeAsObject( screenSize );
+
+		const browserContext = await browser.newContext( {
+			viewport: { width: screenDimensions.width, height: screenDimensions.height },
+		} );
+		const page = await browserContext.newPage();
+		return page;
+	}
+
+	// Legacy Selenium WebDriver path.
 	let driver;
 	let options;
 	let builder;
+	const pref = new webdriver.logging.Preferences();
 	const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
 	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
-	const pref = new webdriver.logging.Preferences();
 	pref.setLevel( 'browser', webdriver.logging.Level.ALL );
 	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
