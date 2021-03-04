@@ -37,6 +37,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	if ( ! process.env.HEADLESS || ! config.has( 'headless' ) ) {
 		isHeadless = false;
 	}
+	global.isHeadless = isHeadless;
 
 	const browser = await playwright.chromium.launch( { headless: isHeadless } );
 	// const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ browser.version() } Safari/537.36`;
@@ -45,6 +46,18 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	const browserContext = await browser.newContext( {
 		viewport: { width: screenDimensions.width, height: screenDimensions.height },
 	} );
+
+	// Set the browser instance to the global object's attribute.
+	global.__BROWSER__ = browser;
+	global.__PLAYWRIGHT__ = true;
 	const page = await browserContext.newPage();
 	return page;
+}
+
+export function quitBrowser() {
+	const browser = global.__BROWSER__;
+	// Remove browser instance from global object.
+	global.__BROWSER__ = null;
+	// Close browser instance.
+	browser.close();
 }

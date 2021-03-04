@@ -14,6 +14,7 @@ import * as slackNotifier from './slack-notifier';
 import * as mediaHelper from './media-helper';
 
 import * as driverManager from './driver-manager';
+import * as browserManager from './browser-manager';
 import * as driverHelper from './driver-helper';
 import * as videoRecorder from '../lib/video-recorder';
 
@@ -177,6 +178,9 @@ after( function () {
 		config.get( 'closeBrowserOnComplete' ) === true ||
 		global.isHeadless === true
 	) {
+		if ( global.__PLAYWRIGHT__ === true ) {
+			return browserManager.quitBrowser( global.__BROWSER__ );
+		}
 		return driverManager.quitBrowser( driver );
 	}
 } );

@@ -35,12 +35,16 @@ describe( `[${ host }] Launch (${ screenSize }) @signup @parallel`, function () 
 		page = await browserManager.startBrowser( { isPlaywright: true } );
 	} );
 
-	describe( 'Launch a free site', function () {
+	describe.only( 'Launch a free site', function () {
 		const siteName = dataHelper.getNewBlogName();
 
 		step( 'can load google', async function () {
 			console.log( 'siteName' );
 			await page.goto( 'https://google.com' );
+		} );
+
+		after( 'Clean up', async function () {
+			await page.close();
 		} );
 
 		// before( 'Can log in', async function () {
