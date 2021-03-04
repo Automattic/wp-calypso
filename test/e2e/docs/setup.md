@@ -16,7 +16,7 @@ This document will cover the environment setup process to run the `wp-calypso` e
     - [Configuration](#configuration)
         - [Overview](#overview)
         - [In-repo configuration](#in-repo-configuration)
-        - [Custom configurations](#custom-configurations)
+        - [Custom configurations optional](#custom-configurations-optional)
     - [Environment Variables](#environment-variables)
     - [Naming Branches](#naming-branches)
 
@@ -41,7 +41,9 @@ It is strongly recommended to use `nvm` to manage multiple Node.js versions.
 
 #### Intel-based macOS
 
-Once the prerequisite software are installed, simply execute the following:
+Up-to-date instructions on installing individual pieces of required software can be found on their respective sites.
+
+Once installed, open a Terminal instance and execute the following:
 
 1. navigate to the test directory:
 
@@ -71,6 +73,8 @@ arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebr
 ```
 arch -x86_64 /usr/local/bin/brew install nvm
 ```
+
+**This is critical as if nvm is installed using ARM64 Homebrew, installed Node versions will also be the ARM64 variant!**
 
 3. using `nvm`, install the current version of node used in `wp-calypso`:
 
@@ -102,15 +106,15 @@ arch -x86_64 npm install yarn
 arch -x86_64 yarn install --frozen-lockfile
 ```
 
-8. verify that mocha runs in `test/e2e/` directory:
+8. verify that mocha can run under `test/e2e/` directory:
 
 ```
-./node_modules/.bin/mocha
+./test/e2e/node_modules/.bin/mocha
 ```
 
 At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.
 
-## Configuration
+## Configuration File
 
 ### Overview
 
@@ -130,7 +134,7 @@ There is a 'standard' configuration already in the GitHub repo under `test/e2e/c
 
 This configuration must be decrypted prior to running any e2e tests. To decrypt, please follow the steps outlined in the Field Guide.
 
-### Custom configurations
+### Custom configurations (optional)
 
 Custom config files should be added under `test/e2e/config/` and should follow the naming scheme:
 
