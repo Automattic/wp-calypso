@@ -25,8 +25,8 @@ const escape = ( str = '' ) =>
 		.replace( /[\n]/g, '|n' )
 		.replace( /[\r]/g, '|r' );
 
-const teamCityMessage = ( { messageName, flowId, ...args } ) => {
-	const payload = [ messageName ];
+const teamCityMessage = ( { messageName, ...args } ) => {
+	const payload = [ messageName, `flowId='${ process.pid }'` ];
 	for ( const [ name, value ] of Object.entries( args ) ) {
 		payload.push( `${ name }='${ escape( value ) }'` );
 	}
@@ -95,6 +95,7 @@ class TeamCityReporter {
 			reporterOptions = {
 				supportTestRetry: 'false',
 				rootSuiteName: 'Root suite',
+				recordHooks: 'false',
 			},
 		}
 	) {
@@ -102,27 +103,27 @@ class TeamCityReporter {
 			runner.once( EVENT_RUN_BEGIN, enableRetrySupport );
 		}
 
-		runner
-			.on( EVENT_SUITE_BEGIN, suiteBegin( reporterOptions.rootSuiteName ) )
-			.on( EVENT_SUITE_END, suiteEnd( reporterOptions.rootSuiteName ) )
+		if ( reporterOptions.recordHooks === 'true' ) {
+			runner.on( EVENT_HOOK_BEGIN, testBegin );
+			runner.on( EVENT_HOOK_END, testEnd );
+		}
 
-			.on( EVENT_TEST_BEGIN, testBegin )
-			.on( EVENT_HOOK_BEGIN, testBegin )
+		runner.on( EVENT_SUITE_BEGIN, suiteBegin( reporterOptions.rootSuiteName ) );
+		runner.on( EVENT_SUITE_END, suiteEnd( reporterOptions.rootSuiteName ) );
 
-			// No need to listen for TEST_PASS, TeamCity will assume a test passes it it is not PENDING or FAIL
-			.on( EVENT_TEST_PENDING, testPending )
-			.on( EVENT_TEST_FAIL, ( runable, err ) => {
-				if ( runable instanceof Hook ) {
-					// When a hook fails, it won't trigger EVENT_HOOK_END, so we log it manually here.
-					testFail( runable, err );
-					testEnd( runable );
-				} else {
-					testFail( runable, err );
-				}
-			} )
-
-			.on( EVENT_TEST_END, testEnd )
-			.on( EVENT_HOOK_END, testEnd );
+		// No need to listen for TEST_PASS, TeamCity will assume a test passes it it is not PENDING or FAIL
+		runner.on( EVENT_TEST_BEGIN, testBegin );
+		runner.on( EVENT_TEST_PENDING, testPending );
+		runner.on( EVENT_TEST_FAIL, ( runable, err ) => {
+			if ( reporterOptions.recordHooks === 'true' && runable instanceof Hook ) {
+				// When a hook fails, it won't trigger EVENT_HOOK_END, so we log it manually here.
+				testFail( runable, err );
+				testEnd( runable );
+			} else {
+				testFail( runable, err );
+			}
+		} );
+		runner.on( EVENT_TEST_END, testEnd );
 	}
 }
 
