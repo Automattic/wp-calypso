@@ -8,19 +8,10 @@ import cookie from 'cookie';
  */
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 export default ( state ) => {
 	// Disable if explicitly requested by the `?disable-nav-unification` query param.
 	if ( new URL( document.location ).searchParams.has( 'disable-nav-unification' ) ) {
-		return false;
-	}
-
-	// Disabled for Jetpack sites.
-	const siteId = getSelectedSiteId( state );
-	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
 		return false;
 	}
 
