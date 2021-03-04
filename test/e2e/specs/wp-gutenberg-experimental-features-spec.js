@@ -104,6 +104,25 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 				);
 			}
 		);
+
+		// Regression test for https://github.com/Automattic/wp-calypso/pull/48940.
+		// At the time I write this, the default block patterns in the test site /
+		// theme used to test this (edge and non-edge) amount to 10. When activated,
+		// it goes up to 96. Testing if total is > 10 would be too brittle and too
+		// close to the default baseline number. That's why we actually test if the
+		// number is >= the current total number. I assume it's more likely that more
+		// patterns will be added than removed. This also means if we see a dramatic
+		// change in the number to the lower end, then something is probably wrong.
+		step( `number of block patterns loaded should be greater than the default`, async function () {
+			const expectedExperimentalBlockPatternsLength = 96;
+			const __experimentalBlockPatternsLength = await driver.executeScript(
+				`return window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns.length`
+			);
+			assert(
+				__experimentalBlockPatternsLength >= expectedExperimentalBlockPatternsLength,
+				`Number of loaded block patterns does not seem right (expected: >= ${ expectedExperimentalBlockPatternsLength }, actual: ${ __experimentalBlockPatternsLength })`
+			);
+		} );
 	} );
 
 	after( async () => {
