@@ -71,6 +71,7 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -1054,7 +1055,7 @@ class Account extends React.Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
-						{ config.isEnabled( 'nav-unification' ) && (
+						{ this.props.isNavUnificationEnabled && (
 							<FormFieldset className="account__link-destination">
 								<FormLabel id="account__link_destination" htmlFor="link_destination">
 									{ translate( 'Dashboard appearance' ) }
@@ -1118,6 +1119,7 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
+			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		} ),
 		{
 			bumpStat,
