@@ -906,7 +906,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
-				#export MAGELLANDEBUG=true
+				export MAGELLANDEBUG=true
 				export TEST_VIDEO=true
 
 				function join() {
@@ -1013,10 +1013,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 20
-		// With testFailure=true, TeamCity detects test that fail but succeed after a retry as build failures
-		// With this option disabled, TeamCity fails the build if `yarn magellan` returns an exit code other than 0.
-		testFailure = false
-
 		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
 		// display a difference between real errors and retries, making it hard to understand what is actually failing.
 		supportTestRetry = true
