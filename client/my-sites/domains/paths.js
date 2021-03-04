@@ -61,7 +61,10 @@ export function domainAddNew( siteName, searchTerm ) {
 }
 
 export function domainAddUsingFlow( siteName ) {
-	return `/domains/add-using-flow/${ siteName }`;
+	if ( siteName ) {
+		return `/domains/add-using-flow/${ siteName }`;
+	}
+	return '/domains/add-using-flow';
 }
 
 export function domainManagementAllRoot() {

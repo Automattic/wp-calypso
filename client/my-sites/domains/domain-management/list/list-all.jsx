@@ -44,6 +44,7 @@ import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import EmptyContent from 'calypso/components/empty-content';
+import { domainAddUsingFlow } from 'calypso/my-sites/domains/paths';
 
 /**
  * Style dependencies
@@ -65,7 +66,7 @@ class ListAll extends Component {
 
 	clickAddDomain = () => {
 		this.props.addDomainClick();
-		page( '/start/add-domain' );
+		page( domainAddUsingFlow() );
 	};
 
 	handleDomainItemClick = ( domain ) => {

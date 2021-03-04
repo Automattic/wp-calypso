@@ -310,8 +310,17 @@ export default function () {
 			paths.domainAddUsingFlow( ':site' ),
 			siteSelection,
 			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToUseYourDomainIfVipSite(),
+			domainsController.redirectIfNoSite( paths.domainAddUsingFlow() ),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.domainsAddUsingFlow,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			paths.domainAddUsingFlow(),
+			siteSelection,
+			navigation,
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.domainsAddUsingFlow,
 			makeLayout,
