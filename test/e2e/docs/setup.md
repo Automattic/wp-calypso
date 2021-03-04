@@ -156,9 +156,11 @@ Environment Variables are values that are defined at the system level to serve a
 For e2e tests, the following are required environment variables without which e2e tests will not run locally:
 
 ```
-export CONFIG_KEY='<config_key_from_a8c_store>'
-export NODE_CONFIG='<config_name_to_use>'
+export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
+export CONFIG_KEY=<decryption_key_from_a8c_store>
 ```
+
+**Trial Engineers**: please contact a team member in your Slack chat for the decryption key.
 
 Additionally, see the list of other environment variables [here](environment_variables.md).
 
