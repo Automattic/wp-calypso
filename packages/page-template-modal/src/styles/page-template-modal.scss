@@ -226,13 +226,13 @@ $sidebar-width: 324px;
 		}
 	}
 
-	.page-template-modal__category-item-focus-wrapper {
-		border-bottom: var( --wp-admin-border-width-focus ) solid transparent;
-		padding: 4px 0;
+	.page-template-modal__category-item-selection-wrapper {
+		border-bottom: 2px solid transparent;
+		padding-bottom: 2px;
 	}
 
 	.components-menu-item__button:not( :disabled )[aria-selected='true'] {
-		.page-template-modal__category-item-focus-wrapper {
+		.page-template-modal__category-item-selection-wrapper {
 			border-bottom-color: $onboarding-accent-blue;
 		}
 	}

@@ -334,7 +334,9 @@ class PageTemplateModal extends Component {
 									className="page-template-modal__category-button"
 									tabIndex={ slug === selectedCategory ? null : -1 }
 								>
-									<span className="page-template-modal__category-item-focus-wrapper">{ name }</span>
+									<span className="page-template-modal__category-item-selection-wrapper">
+										{ name }
+									</span>
 								</MenuItem>
 							) ) }
 						</NavigableMenu>
