@@ -13,7 +13,7 @@ This document will cover the environment setup process to run the `wp-calypso` e
         - [Steps](#steps)
             - [Intel-based macOS](#intel-based-macos)
             - [Apple Silicon-based macOS](#apple-silicon-based-macos)
-    - [Configuration](#configuration)
+    - [Configuration File](#configuration-file)
         - [Overview](#overview)
         - [In-repo configuration](#in-repo-configuration)
         - [Custom configurations optional](#custom-configurations-optional)
