@@ -30,7 +30,7 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, key, link, 
 							isLink
 							target="_blank"
 						>
-							{ __( 'Learn more', 'Whats New Announcements' ) }
+							{ __( 'Learn more', __i18n_text_domain__ ) }
 						</Button>
 					) }
 				</div>
