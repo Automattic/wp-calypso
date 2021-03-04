@@ -190,10 +190,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	margin-top: auto;
 	align-self: center;
 
-	&.align-bottom {
-		align-self: flex-end;
-	}
-
 	max-height: 100%;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {

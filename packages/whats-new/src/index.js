@@ -39,7 +39,7 @@ const WhatsNewGuide = () => {
 		<Guide
 			className="src__main"
 			contentLabel={ __( "What's New at WordPress.com", __i18n_text_domain__ ) }
-			finishButtonText={ __( 'Close' ) }
+			finishButtonText={ __( 'Close', __i18n_text_domain__ ) }
 			onFinish={ toggleWhatsNew }
 		>
 			{ whatsNewData.map( ( page, index ) => (
