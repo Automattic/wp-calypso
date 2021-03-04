@@ -949,7 +949,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export TEST_FILES=${'$'}(join ',' ${'$'}(ls -1 specs*/**/*spec.js))
 
-				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --test=${'$'}{TEST_FILES}
+				yarn magellan --config=magellan.json --max_workers=%E2E_WORKERS% --suiteTag=parallel --local_browser=chrome --mocha_args="--reporter ./lib/mocha/teamcity-reporter.js" --test=${'$'}{TEST_FILES}
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerImage = "%docker_image_e2e%"
@@ -966,10 +966,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				set -o pipefail
 				set -x
 
-				# Collect results
-				mkdir -p reports
-				find test/e2e/ -path '*/reports/*' -print0 | xargs -r -0 mv -t reports
-
 				mkdir -p screenshots
 				find test/e2e/temp -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
@@ -983,11 +979,6 @@ object RunCalypsoE2eDesktopTests : BuildType({
 	}
 
 	features {
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "test/e2e/reports/*.xml")
-		}
 		perfmon {
 		}
 		pullRequests {
