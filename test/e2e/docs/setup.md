@@ -7,18 +7,18 @@ This document will cover the environment setup process to run the `wp-calypso` e
 <!-- TOC -->
 
 - [Setup](#setup)
-  - [Table of contents](#table-of-contents)
-  - [Software Environment](#software-environment)
-    - [Required software](#required-software)
-    - [Steps](#steps)
-      - [Intel-based macOS](#intel-based-macos)
-      - [Apple Silicon-based macOS](#apple-silicon-based-macos)
-  - [Configuration](#configuration)
-    - [Overview](#overview)
-    - [In-repo configuration](#in-repo-configuration)
-    - [Custom configurations](#custom-configurations)
-  - [Environment Variables](#environment-variables)
-  - [Naming Branches](#naming-branches)
+    - [Table of contents](#table-of-contents)
+    - [Software Environment](#software-environment)
+        - [Required software](#required-software)
+        - [Steps](#steps)
+            - [Intel-based macOS](#intel-based-macos)
+            - [Apple Silicon-based macOS](#apple-silicon-based-macos)
+    - [Configuration](#configuration)
+        - [Overview](#overview)
+        - [In-repo configuration](#in-repo-configuration)
+        - [Custom configurations](#custom-configurations)
+    - [Environment Variables](#environment-variables)
+    - [Naming Branches](#naming-branches)
 
 <!-- /TOC -->
 
@@ -116,7 +116,7 @@ At any point, run `arch` to verify whether shell is running with Rosetta 2 emula
 
 The tests use the node [config](https://www.npmjs.com/package/config) library to specify config values for the tests.
 
-Under the [tests/e2e/config](test/e2e/config) directory are JSON files for predefined environments:
+Under the `tests/e2e/config` directory are JSON files for predefined environments:
 
 - `default.json` is for all environments
 - `development.json` is for local
@@ -138,14 +138,16 @@ Custom config files should be added under `test/e2e/config/` and should follow t
 local-<env>.json
 ```
 
-`.gitignore` ensures that custom configurations prefixed with `local-` will not be commited to the repository. However, **please ensure username/passwords and other configuration values are not committed by accident!**
+**NOTE**
+
+`.gitignore` ensures that custom configurations prefixed with `local-` will not be commited to the repository. With tha said however, **please ensure username/passwords and other configuration values are not committed by accident!**
 
 Values found in the local configuration file will override ones found in `default.json`.
 
 This is useful to test various configurations in the local environment.
 e.g. testing on local Calypso instance, instead of production by setting the `calypsoBaseURL` property to `http://calypso.localhost:3000`.
 
-For the full list of possible configuration values, please see the following page: [config values](docs/config_values.md).
+For the full list of possible configuration values, please see the following page: [config values](config_values.md).
 
 ## Environment Variables
 
