@@ -1,7 +1,5 @@
 const BaseReporter = require( 'testarmada-magellan' ).Reporter;
-const logger = require( 'testarmada-magellan/src/logger.js' );
 const util = require( 'util' );
-const { Writable } = require( 'stream' );
 
 // Requirements for Slack output
 const slack = require( 'slack-notify' );
