@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
+import { combineReducers, serialize, deserialize } from 'calypso/state/utils';
 import {
 	dismissRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -25,7 +25,7 @@ const TIMESTAMP = 1496926224;
 describe( 'restoreProgress', () => {
 	test( 'should start at 0% queued', () => {
 		const state = restoreProgress( undefined, rewindRestore( SITE_ID, TIMESTAMP ) );
-		expect( state[ SITE_ID ] ).to.deep.equal( {
+		expect( state[ SITE_ID ] ).toEqual( {
 			errorCode: '',
 			failureReason: '',
 			message: '',
@@ -45,7 +45,7 @@ describe( 'restoreProgress', () => {
 		} );
 
 		const state = restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) );
-		expect( state[ SITE_ID ] ).to.be.null;
+		expect( state[ SITE_ID ] ).toBeNull();
 	} );
 
 	test( 'should preserve other sites', () => {
@@ -62,16 +62,14 @@ describe( 'restoreProgress', () => {
 		[
 			restoreProgress( prevState, rewindRestore( SITE_ID, TIMESTAMP ) ),
 			restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) ),
-		].forEach( ( state ) =>
-			expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] )
-		);
+		].forEach( ( state ) => expect( state[ otherSiteId ] ).toEqual( prevState[ otherSiteId ] ) );
 	} );
 } );
 
 describe( 'rewindRequestRestore', () => {
 	test( 'should set activity ID on request', () => {
 		const state = restoreRequest( undefined, rewindRequestRestore( SITE_ID, ACTIVITY_ID ) );
-		expect( state[ SITE_ID ] ).to.equal( ACTIVITY_ID );
+		expect( state[ SITE_ID ] ).toBe( ACTIVITY_ID );
 	} );
 
 	test( 'should clear on dismissal', () => {
@@ -80,6 +78,35 @@ describe( 'rewindRequestRestore', () => {
 		} );
 
 		const state = restoreRequest( prevState, rewindRequestDismiss( SITE_ID ) );
-		expect( state ).to.not.have.property( SITE_ID );
+		expect( state ).not.toHaveProperty( [ SITE_ID ] );
+	} );
+} );
+
+describe( 'restore persistence', () => {
+	const reducer = combineReducers( { restoreProgress, restoreRequest } );
+
+	const state = {
+		restoreProgress: {
+			[ SITE_ID ]: {
+				restoreId: 1,
+				status: 'queued',
+				timestamp: TIMESTAMP,
+			},
+		},
+		restoreRequest: {
+			[ SITE_ID ]: ACTIVITY_ID,
+		},
+	};
+
+	test( 'serialization persists only the restoreProgress part', () => {
+		const serialized = serialize( reducer, state ).root();
+		expect( serialized ).toHaveProperty( 'restoreProgress' );
+		expect( serialized ).not.toHaveProperty( 'restoreRequest' );
+	} );
+
+	test( 'deserialization restores only the restoreProgress part', () => {
+		const deserialized = deserialize( reducer, state );
+		expect( deserialized ).toHaveProperty( [ 'restoreProgress', SITE_ID ] );
+		expect( deserialized ).not.toHaveProperty( [ 'restoreRequest', SITE_ID ] );
 	} );
 } );
