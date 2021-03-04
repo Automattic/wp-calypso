@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { get, findLast, findIndex } from 'lodash';
+import { get } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
@@ -24,7 +24,6 @@ import { getABTestVariation } from 'calypso/lib/abtest';
  * Style dependencies
  */
 import './style.scss';
-import * as previousStepsUptoCurrent from '@wordpress/rich-text';
 
 export class NavigationLink extends Component {
 	static propTypes = {
